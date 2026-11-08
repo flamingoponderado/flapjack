@@ -341,6 +341,16 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "do_app",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/DoAppArith.lean",
+  "lean_name": "doApp_Arith",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Arith specialization with do_app_arith_replay in source_to_flat_init_probe.out, including arbitrary action and primitive type, the original premises, and the full state and result conclusions; the original HOL case and its arithmetic prerequisites are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "do_app",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/DoAppEquality.lean",
   "lean_name": "doApp_Equality",
   "statement_status": "reviewed_fmap_as_finite_support",

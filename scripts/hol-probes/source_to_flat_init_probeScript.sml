@@ -39,6 +39,42 @@ val do_app_rec_help_typed = ``!genv comp_map env_v_local env_v_local' env_v_top 
 val _ = (print "do_app_rec_help_typed="; print_term do_app_rec_help_typed; print "\n");
 val do_app_rec_v_rel_eqns = CONJUNCT1 source_to_flatProofTheory.v_rel_more_eqns;
 val (do_app_binders, do_app_body) = strip_forall do_app_typed;
+val do_app_arith_inl = Q.prove (
+  `EVERY (semanticPrimitives$check_type ty) vs /\ source_to_flatProof$genv_c_ok genv.c /\
+    LIST_REL (source_to_flatProof$v_rel genv) vs vs_i1 /\
+    semanticPrimitives$do_arith a ty vs = SOME (INL exn) ==>
+    exn = semanticPrimitives$div_exn_v /\
+    EVERY (semanticPrimitives$check_type ty) (MAP flatSem$flat_to_v vs_i1) /\
+    ?e. semanticPrimitives$do_arith a ty (MAP flatSem$flat_to_v vs_i1) = SOME (INL e)`,
+  strip_tac >> drule_all source_to_flatProofTheory.check_type_v_rel_MAP_flat_to_v >>
+  strip_tac >> fs [] >>
+  gvs [oneline semanticPrimitivesTheory.do_arith_def, AllCaseEqs()]);
+val do_app_arith_inr = Q.prove (
+  `EVERY (semanticPrimitives$check_type ty) vs /\ source_to_flatProof$genv_c_ok genv.c /\
+    LIST_REL (source_to_flatProof$v_rel genv) vs vs_i1 /\
+    semanticPrimitives$do_arith a ty vs = SOME (INR r) ==>
+    EVERY (semanticPrimitives$check_type ty) (MAP flatSem$flat_to_v vs_i1) /\
+    ?r'. semanticPrimitives$do_arith a ty (MAP flatSem$flat_to_v vs_i1) = SOME (INR r') /\
+      source_to_flatProof$v_rel genv r (flatSem$v_to_flat r')`,
+  strip_tac >> drule_all source_to_flatProofTheory.check_type_v_rel_MAP_flat_to_v >>
+  strip_tac >> fs [] >> drule_all semanticPrimitivesPropsTheory.do_arith_check_type >>
+  rpt strip_tac >> drule_all source_to_flatProofTheory.check_type_IMP_v_rel >> simp []);
+val arith_op = ``ast$Arith a ty``;
+val do_app_arith_typed = list_mk_forall
+  (List.take (do_app_binders, 3) @ List.rev (free_vars arith_op) @ List.drop (do_app_binders, 4),
+   subst [List.nth (do_app_binders, 3) |-> arith_op] do_app_body);
+val do_app_arith_replay = prove (do_app_arith_typed,
+  rpt gen_tac >> Cases_on `s1` >> Cases_on `s1_i1.refs` >> simp [] >> Cases_on `s1_i1` >>
+  simp [source_to_flatTheory.astOp_to_flatOp_def, astTheory.getOpClass_def] >>
+  gvs [oneline semanticPrimitivesTheory.do_app_def, AllCaseEqs()] >>
+  gvs [oneline flatSemTheory.do_app_def, AllCaseEqs()] >>
+  reverse (rw []) >> fs [] >> simp [source_to_flatProofTheory.result_rel_cases, PULL_EXISTS]
+  >- (drule_all do_app_arith_inr >> strip_tac >> simp []) >>
+  drule_all do_app_arith_inl >> strip_tac >> gvs [] >> EVAL_TAC >>
+  simp [Once source_to_flatProofTheory.v_rel_cases] >>
+  gvs [source_to_flatProofTheory.genv_c_ok_def, source_to_flatProofTheory.has_exns_def,
+       EVAL ``backend_common$div_tag``] >> EVAL_TAC);
+val _ = show_thm "do_app_arith_replay=" do_app_arith_replay;
 val do_app_equality_typed = list_mk_forall
   (List.take (do_app_binders, 3) @ List.drop (do_app_binders, 4),
    subst [List.nth (do_app_binders, 3) |-> ``ast$Equality``] do_app_body);
