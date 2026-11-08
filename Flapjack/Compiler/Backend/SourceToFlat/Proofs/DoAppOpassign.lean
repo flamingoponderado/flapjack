@@ -1284,4 +1284,46 @@ theorem doApp_Asub {C F : Type} (genv : GlobalEnv)
                   · simpa [source, ffiEq] using ffi
                   · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatRun]
 
+/-- The Alength case of `do_app`; the full theorem is not yet assembled. The
+dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
+  (fmap_as_finite_support := [c, tys])]
+theorem doApp_Alength {C F : Type} (genv : GlobalEnv)
+    (s1 s2 : Store Value × HolFfiState F) (vs : List Value)
+    (r : Result Value Value) (flat : FlatSem.State C F) (flatVs : List FlatSem.Value)
+    (premises : doApp s1 .alength vs = some (s2, r) ∧
+      List.Forall₂ (StoreValueRel genv) s1.1 flat.refs.tail ∧ flat.refs ≠ [] ∧
+      List.Forall₂ (ValueRel genv) vs flatVs ∧ s1.2 = flat.ffi ∧ genvCOk genv.c ∧
+      Op.alength ≠ .aallocEmpty ∧ Op.alength ≠ .envId) :
+    ∃ flatResult flatState,
+      List.Forall₂ (StoreValueRel genv) s2.1 flatState.refs.tail ∧ flatState.refs ≠ [] ∧
+      s2.2 = flatState.ffi ∧ flat.globals = flatState.globals ∧
+      flat.refs.take 1 = flatState.refs.take 1 ∧ ResultRel ValueRel genv r flatResult ∧
+      FlatSem.doApp flat (astOpToFlatOp .alength) flatVs = some (flatState, flatResult) := by
+  obtain ⟨run, stores, nonempty, values, ffi, _, _, _⟩ := premises
+  cases vs with
+  | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+  | cons first rest =>
+    cases rest with
+    | cons second rest => simp [doApp, doAppNumericCore, doAppBasic] at run
+    | nil =>
+      cases first <;> simp [doApp, doAppNumericCore, doAppBasic] at run
+      case loc flag address =>
+        cases lookup : storeLookup address s1.1 with
+        | none => simp [lookup] at run
+        | some stored =>
+          cases stored <;> simp [lookup] at run
+          case varray items =>
+            obtain ⟨rfl, rfl⟩ := run
+            cases values with
+            | cons locationRel tail =>
+              cases tail
+              cases locationRel
+              let source : SemanticPrimitivesHOL.State F := ⟨flat.clock, s1.1, s1.2, 0, 0, none⟩
+              have states : StateRel genv source flat := .intro source flat nonempty stores rfl ffi
+              have ⟨_, flatApply, related⟩ := alength_related genv source flat states flag address items lookup
+              refine ⟨.val (.litv (.intLit items.length)), flat, stores, nonempty, ffi, rfl, rfl,
+                .value related, ?_⟩
+              simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatApply]
+
 end Flapjack.Compiler.Backend.SourceToFlat
