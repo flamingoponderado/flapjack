@@ -17005,6 +17005,12 @@
     "reviewer": "Compared compile_prog_def_typed in bvl_inline_frontend_probe.out: the initial cache is LN and all arguments retain their order. compileProgFuel_eq_compileProg connects the executable."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "input_condition_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "inputCondition",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared input_condition_def_typed in bvi_tailrec_semantics_probe.out. The program payload remains polymorphic, and the EVERY, distinct-name, filtered namespace, lower-bound and modulo conditions retain their HOL meanings."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/bvl_constScript.sml", "hol_name": "compile_def",
     "lean_path": "Flapjack/Compiler/Backend/BvlConst/SourceCompile.lean", "lean_name": "compile",
     "statement_status": "reviewed_exact",

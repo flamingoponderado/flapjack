@@ -647,9 +647,11 @@ exported global-invariant equation and replay its original simplifier derivation
 
 `bvl_inline_frontend_probe.out` also records the typed optimizer, incremental compiler and whole-program compiler equations, including the polymorphic function name in `optimise`. Regenerate with `HOL_PROBE_ONLY=bvl_inline_frontend_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`bvi_tailrec_semantics_probe.out` captures the typed source condition and whole-program semantics theorem; the condition has a polymorphic program payload. Regenerate with `HOL_PROBE_ONLY=bvi_tailrec_semantics_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `bvl_const_rel_probe.out` captures the typed constant-propagation value and environment relations, unary and general operation correctness and the complete semantic simulation statement, and replays the original local environment lookup, recognizer, binary operand-flip, complete binary rewrite and variable-deletion proofs. Lean checks the complete binary and general operation rewrite theorems; the full constant-propagation simulation is proved for the total traversal, with a singleton consequence for the executed bounded traversal. The simulation and the relations remain untagged because their finite-map state is hidden in a quantifier, while the evaluator theorems carry the canonical state-field qualification. Regenerate with `HOL_PROBE_ONLY=bvl_const_rel_probeScript.sml scripts/hol-probes/regenerate.sh`; the capture is review evidence, not a cross-language equivalence proof.
 
-`bvi_tailrec_frontend_probe.out` captures the original tail-recursion candidate decisions for every BVI function of that example, focused recursion-detector and type-analysis cases, positive accumulator rewrites, worker labels and tail-modulo-constructor decisions.
+`bvi_tailrec_frontend_probe.out` captures the original tail-recursion candidate decisions for every BVI function of that example, focused recursion-detector and type-analysis cases, positive accumulator rewrites, worker labels, tail-modulo-constructor decisions, and typed scan, rewrite and compilation equations.
 
 `bvi_tmc_frontend_probe.out` captures full TMC wrapper and worker examples, including nested constructors, multiple calls, effectful arguments, and program-level worker allocation. These checks are regression evidence, not a correctness theorem.
 
