@@ -769,6 +769,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
 import Flapjack.Compiler.Backend.ClosCall.Proofs.SyntaxOk
 import Flapjack.Compiler.Backend.ClosCall.Stubs
 import Flapjack.Compiler.Backend.ClosCall.InsertEach
+import Flapjack.Compiler.Backend.ClosCall.Free
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeCorrect
 import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeList

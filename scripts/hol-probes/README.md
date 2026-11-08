@@ -659,7 +659,7 @@ exported global-invariant equation and replay its original simplifier derivation
 
 `clos_call_env_rel_probe.out` captures the original closure free-variable equations, polymorphic reference and direct-call environment relations, their structural theorems, and positive and negative binder, reference and environment examples replayed in Lean.
 
-`clos_call_free_correct_probe.out` captures the original free-analysis and closed-function statements and replays closedness decisions in the executable Lean pass. Its group cases include unequal lengths, which HOL's `EVERY2` rejects; the Lean fold correspondence proves the length precondition before comparing results.
+`clos_call_free_correct_probe.out` captures the typed direct-call free and closed definitions and their correctness statements, and replays closedness decisions in the executable Lean pass. Its group cases include unequal lengths, which HOL's `EVERY2` rejects; the Lean fold correspondence proves the length precondition before comparing results.
 
 `clos_call_stub_probe.out` records the polymorphic source stub-generator types and clauses and checks their generated argument order and labels against the Lean source-shaped and executable forms.
 

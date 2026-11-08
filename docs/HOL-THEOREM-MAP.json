@@ -16945,6 +16945,18 @@
     "reviewer": "Compared every original premise and conclusion and independently typed state, config, input, output carriers in backend_oracle_monotonic_probe.out. The proof maintains the invariant and nondecreasing counter, then orders earlier and later identifier sets."
   },
   {
+    "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "free_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosCall/Free.lean", "lean_name": "free",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared free_def_typed in clos_call_free_correct_probe.out. The HOL clos_call and clos_known free_def bodies are identical; this abbreviation shares the reviewed ClosKnown.freeHOL implementation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "closed_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosCall/Free.lean", "lean_name": "closed",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared closed_def_typed in clos_call_free_correct_probe.out. The HOL clos_call and clos_known closed_def bodies are identical; this abbreviation shares the reviewed ClosKnown.closedHOL implementation."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "insert_each_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosCall/InsertEach.lean", "lean_name": "insertEachSource",
     "statement_status": "reviewed_exact",
