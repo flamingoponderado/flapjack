@@ -547,6 +547,25 @@ val do_app_alength_replay = prove (do_app_alength_typed,
   full_simp_tac(srw_ss())[source_to_flatProofTheory.sv_rel_cases] >>
   metis_tac [semanticPrimitivesTheory.store_v_distinct, semanticPrimitivesTheory.store_v_11, LIST_REL_LENGTH]);
 val _ = show_thm "do_app_alength_replay=" do_app_alength_replay;
+val do_app_aupdate_typed = list_mk_forall
+  (List.take (do_app_binders, 3) @ List.drop (do_app_binders, 4),
+   subst [List.nth (do_app_binders, 3) |-> ``ast$Aupdate``] do_app_body);
+val do_app_aupdate_replay = prove (do_app_aupdate_typed,
+  rpt gen_tac >> Cases_on `s1` >> Cases_on `s1_i1.refs` >> simp [] >> Cases_on `s1_i1` >>
+  simp [source_to_flatTheory.astOp_to_flatOp_def, astTheory.getOpClass_def] >>
+  srw_tac[][semanticPrimitivesPropsTheory.do_app_cases, flatSemTheory.do_app_def] >>
+  full_simp_tac(srw_ss())[do_app_rec_v_rel_eqns, source_to_flatProofTheory.result_rel_cases, do_app_v_rel_lems] >>
+  full_simp_tac(srw_ss())[semanticPrimitivesTheory.store_lookup_def, semanticPrimitivesTheory.store_assign_def,
+    semanticPrimitivesTheory.store_v_same_type_def, flatSemTheory.Unitv_def] >>
+  fs [REWRITE_RULE [ADD1] EL, ADD1, REWRITE_RULE [ADD1] LUPDATE_def] >>
+  srw_tac[][] >> full_simp_tac(srw_ss())[] >> imp_res_tac LIST_REL_LENGTH >>
+  full_simp_tac(srw_ss())[LET_THM, arithmeticTheory.NOT_GREATER_EQ, GSYM arithmeticTheory.LESS_EQ] >>
+  every_case_tac >> full_simp_tac(srw_ss())[] >>
+  full_simp_tac(srw_ss())[LIST_REL_EL_EQN, source_to_flatProofTheory.sv_rel_cases] >>
+  res_tac >> full_simp_tac(srw_ss())[] >> srw_tac[][] >> full_simp_tac(srw_ss())[] >>
+  imp_res_tac LIST_REL_LENGTH >> full_simp_tac(srw_ss())[LIST_REL_EL_EQN, do_app_v_rel_lems] >>
+  srw_tac[][markerTheory.Abbrev_def, EL_LUPDATE] >> srw_tac[][] >> decide_tac);
+val _ = show_thm "do_app_aupdate_replay=" do_app_aupdate_replay;
 val shift_op = ``ast$Shift w sh n``;
 val do_app_shift_typed = list_mk_forall
   (List.take (do_app_binders, 3) @ List.rev (free_vars shift_op) @ List.drop (do_app_binders, 4),
