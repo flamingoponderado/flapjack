@@ -972,11 +972,26 @@ theorem evalPanValueFfiClockCodeCall_callee_returnedShapeMismatch_error
 Cake's `is_valid_value` (`panSemScript.sml:469-474`) compares `shape_of` only,
 so a `Global` call destination is checked against the caller state's binding
 shape.  The relation below records that two global maps bind the same names
-with the same value shapes.  The main invariant says every clocked code-map
-evaluation preserves it, which lets the Call clause validate a `Global`
-destination against the callee post-state globals exactly as HOL validates it
-against the caller state (`panSemScript.sml:657-693`).  This closes #1250
-report item 7. -/
+with the same value shapes.  The intended invariant is that every clocked
+code-map evaluation preserves it, which lets the Call clause validate a
+`Global` destination against the callee post-state globals exactly as HOL
+validates it against the caller state (`panSemScript.sml:657-693`), closing
+#1250 report item 7.
+
+What is proved here: every leaf result preserves global shapes
+(`panValue*Result_globals_stable`), the leaf dispatcher
+(`evalPanValueFfiClockLeaf_globals_stable`), the projection and composition
+helpers (`panValueFfiClockGlobalsStable_*`), the validated-update lemma
+`assignPanValueCallResult_globals_stable`, and the verdict congruence
+`panValueAssignmentValid_global_congr`.
+
+Open: the fuel induction over the three mutual evaluators
+(`evalPanValueFfiClockCodeCall`, `...DecCall`, `...CodeProg`) that lifts the
+leaf and helper results to arbitrary programs and calls, and the DecCall
+corollary built on it.  The invariant is believed true: the only global
+writes are a validated `Global` assignment, a `ShMemLoad` validated against
+`.word 0`, and the Call/DecCall `Global` destination, and every other clause
+passes the input globals through. -/
 
 /-- Two global maps bind the same names with the same value shapes.  This is
     exactly what `is_valid_value` (`panSemScript.sml:469-474`) can observe,
