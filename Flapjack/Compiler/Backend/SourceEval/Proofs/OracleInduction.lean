@@ -1,219 +1,13 @@
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateApp
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateMatch
 import Flapjack.SemanticsHOL
+import Flapjack.EvaluateHOL.Induction
 
 /-! Mutual lexicographic induction for source evaluator oracle adjustment. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL Flapjack.NamespaceHOL
 open Flapjack.SemanticsHOL
 
-mutual
-/-- Expression part of the oracle-adjusted evaluator induction. -/
-theorem evaluateOracleFull {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
-      (res : Result (SemEnv Value) Value),
-      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
-        evaluateDecs s env (compile ds) = (next, res))
-    (state : State F) (env : SemEnv Value) (exprs : List AstHOL.Exp) :
-    ExpsOracleAdjustedAt compile ci f state env exprs := by
-  intro next result ⟨run, inserted, safe⟩
-  cases exprs with
-  | nil => exact adjustOracle_evaluate_ExpsNil compile ci f preserves state env next result ⟨run, inserted, safe⟩
-  | cons first rest =>
-    cases rest with
-    | cons second tail =>
-      refine adjustOracle_evaluate_ExpsCons compile ci f preserves state env first second tail
-        ⟨?_, evaluateOracleFull ci f compile preserves state env [first]⟩ next result ⟨run, inserted, safe⟩
-      intro middle outcome values ⟨firstRun, outcomeEq⟩
-      subst outcome
-      have bound := evaluateClockFull state middle env [first] (.val values) firstRun
-      exact evaluateOracleFull ci f compile preserves middle env (second :: tail)
-    | nil =>
-      cases first with
-      | lit lit => exact adjustOracle_evaluate_Lit compile ci f preserves state env lit next result ⟨run, inserted, safe⟩
-      | var name => exact adjustOracle_evaluate_Var compile ci f preserves state env name next result ⟨run, inserted, safe⟩
-      | fn name body => exact adjustOracle_evaluate_Fn compile ci f preserves state env name body next result ⟨run, inserted, safe⟩
-      | raise expr =>
-        exact adjustOracle_evaluate_Raise compile ci f preserves state env expr
-          (evaluateOracleFull ci f compile preserves state env [expr]) next result ⟨run, inserted, safe⟩
-      | tannot expr typ =>
-        exact adjustOracle_evaluate_Tannot compile ci f preserves state env expr typ
-          (evaluateOracleFull ci f compile preserves state env [expr]) next result ⟨run, inserted, safe⟩
-      | lannot expr loc =>
-        exact adjustOracle_evaluate_Lannot compile ci f preserves state env expr loc
-          (evaluateOracleFull ci f compile preserves state env [expr]) next result ⟨run, inserted, safe⟩
-      | con name args =>
-        apply adjustOracle_evaluate_Con compile ci f preserves state env name args ?_ next result ⟨run, inserted, safe⟩
-        intro _
-        exact evaluateOracleFull ci f compile preserves state env args.reverse
-      | letrec funs body =>
-        apply adjustOracle_evaluate_Letrec compile ci f preserves state env funs body ?_ next result ⟨run, inserted, safe⟩
-        intro _
-        exact evaluateOracleFull ci f compile preserves state { env with v := buildRecEnv funs env env.v } [body]
-      | let_ name bound body =>
-        refine adjustOracle_evaluate_Let compile ci f preserves state env name bound body
-          ⟨?_, evaluateOracleFull ci f compile preserves state env [bound]⟩ next result ⟨run, inserted, safe⟩
-        intro middle outcome values ⟨boundRun, outcomeEq⟩
-        subst outcome
-        have clockBound := evaluateClockFull state middle env [bound] (.val values) boundRun
-        exact evaluateOracleFull ci f compile preserves middle { env with v := nsOptBind name (headValue values) env.v } [body]
-      | if_ condition yes no =>
-        refine adjustOracle_evaluate_If compile ci f preserves state env condition yes no
-          ⟨?_, evaluateOracleFull ci f compile preserves state env [condition]⟩ next result ⟨run, inserted, safe⟩
-        intro middle outcome values branch ⟨conditionRun, outcomeEq, chosen⟩
-        subst outcome
-        have clockBound := evaluateClockFull state middle env [condition] (.val values) conditionRun
-        rcases doIf_selected (headValue values) yes no branch chosen with equal | equal
-        · subst branch
-          exact evaluateOracleFull ci f compile preserves middle env [yes]
-        · subst branch
-          exact evaluateOracleFull ci f compile preserves middle env [no]
-      | log op first second =>
-        refine adjustOracle_evaluate_Log compile ci f preserves state env op first second
-          ⟨?_, evaluateOracleFull ci f compile preserves state env [first]⟩ next result ⟨run, inserted, safe⟩
-        intro middle outcome values selection branch ⟨firstRun, outcomeEq, chosen, selectionEq⟩
-        subst outcome
-        subst selection
-        have clockBound := evaluateClockFull state middle env [first] (.val values) firstRun
-        have equal := doLog_selected op (headValue values) second branch chosen
-        subst branch
-        exact evaluateOracleFull ci f compile preserves middle env [second]
-      | mat expr clauses =>
-        refine adjustOracle_evaluate_Mat compile ci f preserves state env expr clauses
-          ⟨?_, evaluateOracleFull ci f compile preserves state env [expr]⟩ next result ⟨run, inserted, safe⟩
-        intro middle outcome values ⟨exprRun, outcomeEq, _⟩
-        subst outcome
-        have clockBound := evaluateClockFull state middle env [expr] (.val values) exprRun
-        exact evaluateMatchOracleFull ci f compile preserves middle env (headValue values) clauses bindExnV
-      | handle expr clauses =>
-        refine adjustOracle_evaluate_Handle compile ci f preserves state env expr clauses
-          ⟨?_, evaluateOracleFull ci f compile preserves state env [expr]⟩ next result ⟨run, inserted, safe⟩
-        intro middle outcome err value ⟨exprRun, outcomeEq, errEq, _⟩
-        subst outcome
-        subst err
-        have clockBound := evaluateClockFull state middle env [expr] (.err (.raise value)) exprRun
-        exact evaluateMatchOracleFull ci f compile preserves middle env value clauses value
-      | app op args =>
-        refine adjustOracle_evaluate_App compile ci f preserves state env op args
-          ⟨?_, ?_, ?_, evaluateOracleFull ci f compile preserves state env args.reverse⟩
-          next result ⟨run, inserted, safe⟩
-        · intro middle outcome values pair callEnv body ⟨argsRun, outcomeEq, _, _, pairEq, nonzero⟩
-          subst outcome
-          subst pair
-          have clockBound := evaluateClockFull state middle env args.reverse (.val values) argsRun
-          exact evaluateOracleFull ci f compile preserves (decClock middle) callEnv [body]
-        · intro middle outcome values decoded decodedResult pair evalEnv decs
-            ⟨argsRun, outcomeEq, _, decodedRun, resultEq, pairEq, nonzero⟩
-          subst outcome
-          subst decodedResult
-          subst pair
-          have clockBound := evaluateClockFull state middle env args.reverse (.val values) argsRun
-          have clockEq : decoded.clock = middle.clock := by
-            have hclock := congrArg (fun pair => pair.1.clock) decodedRun
-            have hc := doEvalRes_clock values.reverse middle (β := Value)
-            exact hclock.symm.trans hc
-          exact evaluateDecsOracleFull ci f compile preserves (decClock decoded) evalEnv decs
-        · intro middle outcome values mode thunk pair callEnv body
-            ⟨argsRun, outcomeEq, _, _, modeEq, _, pairEq, nonzero⟩
-          subst outcome
-          subst mode
-          subst pair
-          have clockBound := evaluateClockFull state middle env args.reverse (.val values) argsRun
-          exact evaluateOracleFull ci f compile preserves (decClock middle) callEnv [body]
-termination_by (state.clock, sizeOf exprs)
-decreasing_by
-  all_goals try subst_vars
-  all_goals simp_wf
-  all_goals try simp only [listSize_reverse]
-  all_goals try simp only [Prod.lex_def, decClock]
-  all_goals try (have := expSize_pos second)
-  all_goals try (have := listSize_pos tail)
-  all_goals try dsimp only [decClock] at *
-  all_goals try simp only [Nat.lt_irrefl, false_or, true_and]
-  all_goals try omega
-
-/-- Pattern-match part of the oracle-adjusted evaluator induction. -/
-theorem evaluateMatchOracleFull {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
-      (res : Result (SemEnv Value) Value),
-      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
-        evaluateDecs s env (compile ds) = (next, res))
-    (state : State F) (env : SemEnv Value) (value : Value) (clauses : List (Pat × AstHOL.Exp)) (errValue : Value) :
-    MatchOracleAdjustedAt compile ci f state env value clauses errValue := by
-  intro next result ⟨run, inserted, safe⟩
-  cases clauses with
-  | nil => exact adjustOracle_evaluate_MatchNil compile ci f preserves state env value errValue next result ⟨run, inserted, safe⟩
-  | cons clause rest =>
-    cases clause with
-    | mk pat expr =>
-      refine adjustOracle_evaluate_MatchCons compile ci f preserves state env value pat expr rest errValue
-        ⟨?_, ?_⟩ next result ⟨run, inserted, safe⟩
-      · intro bindings ⟨_, _⟩
-        exact evaluateOracleFull ci f compile preserves state { env with v := nsAppend (alistToNs bindings) env.v } [expr]
-      · intro ⟨_, _⟩
-        exact evaluateMatchOracleFull ci f compile preserves state env value rest errValue
-termination_by (state.clock, sizeOf clauses)
-decreasing_by
-  all_goals try subst_vars
-  all_goals simp_wf
-  all_goals try simp only [Prod.lex_def]
-  all_goals try (have := patSize_pos pat)
-  all_goals try (have := listSize_pos rest)
-  all_goals try simp only [Nat.lt_irrefl, false_or, true_and]
-  all_goals try omega
-
-/-- Declaration part of the oracle-adjusted evaluator induction. -/
-theorem evaluateDecsOracleFull {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
-      (res : Result (SemEnv Value) Value),
-      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
-        evaluateDecs s env (compile ds) = (next, res))
-    (state : State F) (env : SemEnv Value) (decs : List Dec) :
-    DecsOracleAdjustedAt compile ci f state env decs := by
-  intro next result ⟨run, inserted, safe⟩
-  cases decs with
-  | nil => exact adjustOracle_evaluate_DecsNil compile ci f preserves state env next result ⟨run, inserted, safe⟩
-  | cons first rest =>
-    cases rest with
-    | cons second tail =>
-      refine adjustOracle_evaluate_DecsCons compile ci f preserves state env first second tail
-        ⟨?_, evaluateDecsOracleFull ci f compile preserves state env [first]⟩ next result ⟨run, inserted, safe⟩
-      intro middle outcome inner ⟨firstRun, outcomeEq⟩
-      subst outcome
-      have clockBound := evaluateDecsClockFull state middle env [first] (.val inner) firstRun
-      exact evaluateDecsOracleFull ci f compile preserves middle (extendDecEnv inner env) (second :: tail)
-    | nil =>
-      cases first with
-      | dtabbrev loc vars name typ => exact adjustOracle_evaluate_Dtabbrev compile ci f preserves state env loc vars name typ next result ⟨run, inserted, safe⟩
-      | dexn loc name types => exact adjustOracle_evaluate_Dexn compile ci f preserves state env loc name types next result ⟨run, inserted, safe⟩
-      | dtype loc types => exact adjustOracle_evaluate_Dtype compile ci f preserves state env loc types next result ⟨run, inserted, safe⟩
-      | denv name => exact adjustOracle_evaluate_Denv compile ci f preserves state env name next result ⟨run, inserted, safe⟩
-      | dletrec loc funs => exact adjustOracle_evaluate_Dletrec compile ci f preserves state env loc funs next result ⟨run, inserted, safe⟩
-      | dmod name ds =>
-        exact adjustOracle_evaluate_Dmod compile ci f preserves state env name ds
-          (evaluateDecsOracleFull ci f compile preserves state env ds) next result ⟨run, inserted, safe⟩
-      | dlet loc pat expr =>
-        apply adjustOracle_evaluate_Dlet compile ci f preserves state env loc pat expr ?_ next result ⟨run, inserted, safe⟩
-        intro _
-        exact evaluateOracleFull ci f compile preserves state env [expr]
-      | dlocal locals body =>
-        refine adjustOracle_evaluate_Dlocal compile ci f preserves state env locals body
-          ⟨?_, evaluateDecsOracleFull ci f compile preserves state env locals⟩ next result ⟨run, inserted, safe⟩
-        intro middle outcome inner ⟨firstRun, outcomeEq⟩
-        subst outcome
-        have clockBound := evaluateDecsClockFull state middle env locals (.val inner) firstRun
-        exact evaluateDecsOracleFull ci f compile preserves middle (extendDecEnv inner env) body
-termination_by (state.clock, sizeOf decs)
-decreasing_by
-  all_goals try subst_vars
-  all_goals simp_wf
-  all_goals try simp only [Prod.lex_def]
-  all_goals try (have := decSize_pos second)
-  all_goals try (have := listSize_pos tail)
-  all_goals try (have := patSize_pos pat)
-  all_goals try simp only [Nat.lt_irrefl, false_or, true_and]
-  all_goals try omega
-end
 
 /-- The three original evaluator simulations under oracle adjustment. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
@@ -244,13 +38,22 @@ theorem adjust_oracle_evaluate {Config F : Type} (compile : List Dec → List De
       isInsertOracle ci f next.evalState ∧
         evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env decs =
           ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)) := by
-  refine ⟨?_, ?_, ?_⟩
-  · intro state env exprs next result ⟨run, inserted, safe⟩
-    exact evaluateOracleFull ci f compile preserves state env exprs next result ⟨run, inserted, safe⟩
-  · intro state env value clauses errValue next result ⟨run, inserted, safe⟩
-    exact evaluateMatchOracleFull ci f compile preserves state env value clauses errValue next result ⟨run, inserted, safe⟩
-  · intro state env decs next result ⟨run, inserted, safe⟩
-    exact evaluateDecsOracleFull ci f compile preserves state env decs next result ⟨run, inserted, safe⟩
+  apply fullEvaluateInd (ExpsOracleAdjustedAt compile ci f) (MatchOracleAdjustedAt compile ci f)
+    (DecsOracleAdjustedAt compile ci f)
+  exact ⟨adjustOracle_evaluate_ExpsNil compile ci f preserves, adjustOracle_evaluate_ExpsCons compile ci f preserves,
+    adjustOracle_evaluate_Lit compile ci f preserves, adjustOracle_evaluate_Raise compile ci f preserves,
+    adjustOracle_evaluate_Handle compile ci f preserves, adjustOracle_evaluate_Con compile ci f preserves,
+    adjustOracle_evaluate_Var compile ci f preserves, adjustOracle_evaluate_Fn compile ci f preserves,
+    adjustOracle_evaluate_App compile ci f preserves, adjustOracle_evaluate_Log compile ci f preserves,
+    adjustOracle_evaluate_If compile ci f preserves, adjustOracle_evaluate_Mat compile ci f preserves,
+    adjustOracle_evaluate_Let compile ci f preserves, adjustOracle_evaluate_Letrec compile ci f preserves,
+    adjustOracle_evaluate_Tannot compile ci f preserves, adjustOracle_evaluate_Lannot compile ci f preserves,
+    adjustOracle_evaluate_MatchNil compile ci f preserves, adjustOracle_evaluate_MatchCons compile ci f preserves,
+    adjustOracle_evaluate_DecsNil compile ci f preserves, adjustOracle_evaluate_DecsCons compile ci f preserves,
+    adjustOracle_evaluate_Dlet compile ci f preserves, adjustOracle_evaluate_Dletrec compile ci f preserves,
+    adjustOracle_evaluate_Dtype compile ci f preserves, adjustOracle_evaluate_Dtabbrev compile ci f preserves,
+    adjustOracle_evaluate_Denv compile ci f preserves, adjustOracle_evaluate_Dexn compile ci f preserves,
+    adjustOracle_evaluate_Dmod compile ci f preserves, adjustOracle_evaluate_Dlocal compile ci f preserves⟩
 
 /-- HOL's local specialization of the declaration component at a chosen clock. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_ev_decs"]

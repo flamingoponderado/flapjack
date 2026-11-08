@@ -118416,6 +118416,15 @@
 },
   {
   "hol_path": "cakeml/semantics/evaluateScript.sml",
+  "hol_name": "full_evaluate_ind",
+  "lean_path": "Flapjack/EvaluateHOL/Induction.lean",
+  "lean_name": "fullEvaluateInd",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the three polymorphic motives and all 28 induction cases with the typed evaluate_induction capture in source_eval_oracle_adjust_probe.out. The cases retain the original evaluator equations, guards, constructor and declaration arguments, and recursive premises. The source evaluator inherits the reals_as_rational_cuts assumption through its dependencies."
+},
+  {
+  "hol_path": "cakeml/semantics/evaluateScript.sml",
   "hol_name": "evaluate_clock",
   "lean_path": "Flapjack/EvaluateHOL/ClockFull.lean",
   "lean_name": "evaluateClock",
