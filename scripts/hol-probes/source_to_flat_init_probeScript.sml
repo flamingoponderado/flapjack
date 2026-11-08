@@ -127,6 +127,11 @@ val result_rel_eqns_replay = let open source_to_flatProofTheory in Q.prove (
         r = Rerr (Rabort a))`,
   srw_tac[][result_rel_cases] >> metis_tac []) end;
 val _ = show_thm "result_rel_eqns_replay=" result_rel_eqns_replay;
+val drestrict_lem_replay = Q.prove (
+  `(f1 : 'a |-> 'b) SUBMAP f2 ==> DRESTRICT f2 (COMPL (FDOM f1)) ⊌ f1 = f2`,
+  rw [FLOOKUP_EXT, FUN_EQ_THM, FLOOKUP_FUNION] >>
+  every_case_tac >> fs [FLOOKUP_DRESTRICT, SUBMAP_DEF, AllCaseEqs(), FLOOKUP_DEF]);
+val _ = show_thm "drestrict_lem_replay=" drestrict_lem_replay;
 val do_app_conversion_inl = Q.prove (
   `semanticPrimitives$check_type ty1 v /\ source_to_flatProof$genv_c_ok genv.c /\
     source_to_flatProof$v_rel genv v v_i1 /\

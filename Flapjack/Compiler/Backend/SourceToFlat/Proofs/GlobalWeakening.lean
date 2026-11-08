@@ -1,5 +1,7 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
+import Flapjack.FiniteMap.CardinalityExact
+import Flapjack.FiniteMap.MapKeys
 
 /-! Weakening the factored source-to-flat relations across global growth. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -331,6 +333,51 @@ theorem globalEnvInv_weak (old : GlobalEnv) (map : Environment) (shadowers : Var
   obtain ⟨related, constructors, types, slots⟩ := premises
   exact globalEnvInv_growth old new (GlobalGrowth.ofSubglobals old new slots constructors types)
     map shadowers env related
+
+/-- Canonical finite-map domain restriction, used for HOL's `DRESTRICT`. -/
+noncomputable def finiteRestrict {α β : Type} (map : HolFiniteMapExact α β)
+    (keep : Set α) : HolFiniteMapExact α β := by
+  classical
+  refine ⟨fun key => if key ∈ keep then map.lookup key else none, ?_⟩
+  obtain ⟨keys, support⟩ := map.finiteSupport
+  refine ⟨keys, ?_⟩
+  intro key present
+  apply support key
+  by_cases member : key ∈ keep <;> simp_all
+
+private def maptoBroadlookup {α β : Type} (map : HolFiniteMapExact α β) : α → Option β := map.lookup
+private def mapofBroad {α β : Type} (lookup : α → Option β)
+    (support : ∃ keys : List α, ∀ key, lookup key ≠ none → key ∈ keys) : HolFiniteMapExact α β :=
+  ⟨lookup, support⟩
+
+/-- Canonical lookup/support roundtrip for the first finite-map argument. -/
+theorem holFmapAsFiniteSupportParamWitness_drestrict_lem_f1 {α β : Type}
+    (f1 : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f1) f1.finiteSupport = f1 := by
+  cases f1
+  rfl
+
+/-- Canonical lookup/support roundtrip for the second finite-map argument. -/
+theorem holFmapAsFiniteSupportParamWitness_drestrict_lem_f2 {α β : Type}
+    (f2 : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f2) f2.finiteSupport = f2 := by
+  cases f2
+  rfl
+
+/-- Restricting a larger map outside a submap's domain reconstructs the map. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "drestrict_lem"
+  (fmap_as_finite_support_parameters := [f1, f2])]
+theorem drestrict_lem {α β : Type} (f1 : HolFiniteMapExact α β) (f2 : HolFiniteMapExact α β)
+    (submap : finiteSubmap f1 f2) :
+    (finiteRestrict f2 f1.domainᶜ).union f1 = f2 := by
+  classical
+  apply HolFiniteMapExact.ext_lookup
+  intro key
+  cases lookup : f1.lookup key with
+  | none =>
+    cases h : f2.lookup key <;>
+      simp [HolFiniteMapExact.lookup_union, finiteRestrict, HolFiniteMapExact.domain, lookup, h]
+  | some value =>
+    have retained := submap key value lookup
+    simp [HolFiniteMapExact.lookup_union, finiteRestrict, HolFiniteMapExact.domain, lookup, retained]
 
 /-- The combined local and global environment relation survives global extension. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_all_rel_weak"

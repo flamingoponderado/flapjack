@@ -340,6 +340,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "drestrict_lem",
+  "lean_name": "drestrict_lem",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f1", "f2"],
+  "reviewer": "Compared the independent key and value carriers, submap premise and complete restriction/union equality with drestrict_lem_replay in source_to_flat_init_probe.out; the original local HOL proof is replayed. The finite restriction lookup returns the map lookup precisely on the given set, domain is the defined-lookup set, and union is HOL's left-biased FUNION. Both parameters use canonical finite maps with lookup/support roundtrip witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "result_rel_eqns",
   "lean_name": "resultRel_eqns",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateControl.lean",
