@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateLength
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyEvents
+import Flapjack.Misc.ClockWeightInduction
 
 /-! BVL event-prefix proof cases; these helpers have no standalone HOL declarations. -/
 namespace Flapjack.Compiler.Backend.BvlProps
@@ -254,32 +255,21 @@ theorem evaluate_ioEvents_prefix {C F : Type} (expressions : List Bvl.Exp)
     (env : List BvlSem.Value) (state final : State C F)
     (result : Result (List BvlSem.Value) BvlSem.Value)
     (run : evaluate expressions env state = (result, final)) : state.ffi.ioEvents <+: final.ffi.ioEvents := by
-  have allRanks : ∀ clock weight : Nat, ∀ (expressions : List Bvl.Exp)
-      (env : List BvlSem.Value) (state final : State C F)
-      (result : Result (List BvlSem.Value) BvlSem.Value), state.clock = clock →
-      expsWeight expressions = weight → evaluate expressions env state = (result, final) →
-      state.ffi.ioEvents <+: final.ffi.ioEvents := by
-    intro clock
-    induction clock using Nat.strongRecOn with
-    | ind clock clockIH =>
-      intro weight
-      induction weight using Nat.strongRecOn with
-      | ind weight weightIH =>
-        have exprIH : ∀ (expressions : List Bvl.Exp) (env : List BvlSem.Value)
-            (state final : State C F) (result : Result (List BvlSem.Value) BvlSem.Value),
-            state.clock ≤ clock → expsWeight expressions < weight →
-            evaluate expressions env state = (result, final) → state.ffi.ioEvents <+: final.ffi.ioEvents := by
-          intro expressions env state final result clockLe weightLt run
-          rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
-          · exact clockIH state.clock clockLt (expsWeight expressions) expressions env state final result rfl rfl run
-          · exact weightIH (expsWeight expressions) weightLt expressions env state final result clockEq rfl run
-        have smaller : ∀ (expressions : List Bvl.Exp) (env : List BvlSem.Value)
-            (state final : State C F) (result : Result (List BvlSem.Value) BvlSem.Value),
-            state.clock < clock → evaluate expressions env state = (result, final) →
-            state.ffi.ioEvents <+: final.ffi.ioEvents := by
-          intro expressions env state final result clockLt run
-          exact clockIH state.clock clockLt (expsWeight expressions) expressions env state final result rfl rfl run
-        intro expressions env state final result stateClock measure run
+  have lexInduction := clockWeightInduction (α := List Bvl.Exp) (σ := State C F) (·.clock)
+    expsWeight
+    (motive := fun expressions state => ∀ env final result,
+      evaluate expressions env state = (result, final) →
+      state.ffi.ioEvents <+: final.ffi.ioEvents) ?_
+  · exact lexInduction expressions state env final result run
+  ·
+        intro expressions state exprIH₀ smaller₀
+        have exprIH := fun (es : List Bvl.Exp) (env' : List BvlSem.Value) (s final : State C F)
+            (result : Result (List BvlSem.Value) BvlSem.Value) h1 h2 run =>
+          exprIH₀ es s h1 h2 env' final result run
+        have smaller := fun (es : List Bvl.Exp) (env' : List BvlSem.Value) (s final : State C F)
+            (result : Result (List BvlSem.Value) BvlSem.Value) h1 run =>
+          smaller₀ es s h1 env' final result run
+        intro env final result run
         cases expressions with
         | nil => simp [evaluate] at run; rcases run with ⟨rfl, rfl⟩; exact List.prefix_refl _
         | cons first rest =>
@@ -288,10 +278,10 @@ theorem evaluate_ioEvents_prefix {C F : Type} (expressions : List Bvl.Exp)
             apply evaluate_cons_ioEvents_step first second tail env state final result ?_ ?_ run
             · intro last headResult headRun
               apply exprIH [first] env state last headResult (by omega) ?_ headRun
-              simp only [expsWeight] at measure ⊢; have := expWeight_pos second; omega
+              simp only [expsWeight] at ⊢; have := expWeight_pos second; omega
             · intro start last tailResult bound tailRun
               apply exprIH (second :: tail) env start last tailResult (by omega) ?_ tailRun
-              simp only [expsWeight] at measure ⊢; omega
+              simp only [expsWeight] at ⊢; omega
           | nil =>
             cases first with
             | var index =>
@@ -303,7 +293,7 @@ theorem evaluate_ioEvents_prefix {C F : Type} (expressions : List Bvl.Exp)
               apply evaluate_raise_ioEvents_step body env state final result ?_ run
               intro last bodyResult bodyRun
               apply exprIH [body] env state last bodyResult (by omega) ?_ bodyRun
-              simp only [expsWeight, expWeight] at measure ⊢; omega
+              simp only [expsWeight, expWeight] at ⊢; omega
             | tick body =>
               apply evaluate_tick_ioEvents_step body env state final result ?_ run
               intro start last bodyResult bound bodyRun
@@ -312,43 +302,43 @@ theorem evaluate_ioEvents_prefix {C F : Type} (expressions : List Bvl.Exp)
               apply evaluate_let_ioEvents_step bindings body env state final result ?_ ?_ run
               · intro last bindingResult bindingRun
                 apply exprIH bindings env state last bindingResult (by omega) ?_ bindingRun
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
               · intro bodyEnv start last bodyResult bound bodyRun
                 apply exprIH [body] bodyEnv start last bodyResult (by omega) ?_ bodyRun
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
             | handle body handler =>
               apply evaluate_handle_ioEvents_step body handler env state final result ?_ ?_ run
               · intro last bodyResult bodyRun
                 apply exprIH [body] env state last bodyResult (by omega) ?_ bodyRun
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
               · intro value start last handlerResult bound handlerRun
                 apply exprIH [handler] (value :: env) start last handlerResult (by omega) ?_ handlerRun
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
             | ifThenElse condition yes no =>
               apply evaluate_if_ioEvents_step condition yes no env state final result ?_ ?_ run
               · intro last testResult testRun
                 apply exprIH [condition] env state last testResult (by omega) ?_ testRun
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
               · intro choice start last branchResult bound branchRun
                 apply exprIH [if choice then yes else no] env start last branchResult (by omega) ?_ branchRun
-                cases choice <;> simp only [Bool.false_eq_true, ↓reduceIte, expsWeight, expWeight] at measure ⊢ <;> omega
+                cases choice <;>
+                  simp only [Bool.false_eq_true, ↓reduceIte, expsWeight, expWeight] at ⊢ <;> omega
             | op op args =>
               apply evaluate_op_ioEvents_step op args env state final result ?_ run
               intro last argResult argRun
               apply exprIH args env state last argResult (by omega) ?_ argRun
-              simp only [expsWeight, expWeight] at measure ⊢; omega
+              simp only [expsWeight, expWeight] at ⊢; omega
             | call ticks location args =>
               apply evaluate_call_ioEvents_step ticks location args env state final result ?_ ?_ run
               · intro last argResult argRun
                 apply exprIH args env state last argResult (by omega) ?_ argRun
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
               · intro body bodyEnv start last bodyResult bound bodyRun
                 exact smaller [body] bodyEnv start last bodyResult (by omega) bodyRun
             | force location index =>
               apply evaluate_force_ioEvents_step location index env state final result ?_ run
               intro body bodyEnv start last bodyResult bound bodyRun
               exact smaller [body] bodyEnv start last bodyResult (by omega) bodyRun
-  exact allRanks state.clock (expsWeight expressions) expressions env state final result rfl rfl run
 
 /-- Evaluation preserves or extends the initial FFI event trace. -/
 @[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "evaluate_io_events_mono"

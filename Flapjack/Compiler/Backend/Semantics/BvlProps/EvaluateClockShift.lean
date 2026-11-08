@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyClock
+import Flapjack.Misc.ClockWeightInduction
 
 /-! Proof factoring for BVL evaluation clock extension; these helpers have no standalone HOL declarations. -/
 namespace Flapjack.Compiler.Backend.BvlProps
@@ -393,38 +394,22 @@ theorem evaluate_addClock {C F : Type} (expressions : List Bvl.Exp)
     (notTimeout : result ≠ .err (.abort .timeoutError)) :
     evaluate expressions env { state with clock := state.clock + extra } =
       (result, { next with clock := next.clock + extra }) := by
-  have allRanks : ∀ clock weight : Nat, ∀ (expressions : List Bvl.Exp)
-      (env : List BvlSem.Value) (state next : State C F)
-      (result : Result (List BvlSem.Value) BvlSem.Value),
-      state.clock = clock → expsWeight expressions = weight →
+  have lexInduction := clockWeightInduction (α := List Bvl.Exp) (σ := State C F) (·.clock)
+    expsWeight
+    (motive := fun expressions state => ∀ env next result,
       evaluate expressions env state = (result, next) → result ≠ .err (.abort .timeoutError) →
       ∀ extra, evaluate expressions env { state with clock := state.clock + extra } =
-        (result, { next with clock := next.clock + extra }) := by
-    intro clock
-    induction clock using Nat.strongRecOn with
-    | ind clock clockIH =>
-      intro weight
-      induction weight using Nat.strongRecOn with
-      | ind weight weightIH =>
-        have exprIH : ∀ (expressions : List Bvl.Exp) (env : List BvlSem.Value)
-            (state next : State C F) (result : Result (List BvlSem.Value) BvlSem.Value),
-            state.clock ≤ clock → expsWeight expressions < weight →
-            evaluate expressions env state = (result, next) → result ≠ .err (.abort .timeoutError) →
-            ∀ extra, evaluate expressions env { state with clock := state.clock + extra } =
-              (result, { next with clock := next.clock + extra }) := by
-          intro expressions env state next result clockLe weightLt run notTimeout extra
-          rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
-          · exact clockIH state.clock clockLt (expsWeight expressions) expressions env state next result rfl rfl run notTimeout extra
-          · exact weightIH (expsWeight expressions) weightLt expressions env state next result clockEq rfl run notTimeout extra
-        have smaller : ∀ (expressions : List Bvl.Exp) (env : List BvlSem.Value)
-            (state next : State C F) (result : Result (List BvlSem.Value) BvlSem.Value),
-            state.clock < clock → evaluate expressions env state = (result, next) →
-            result ≠ .err (.abort .timeoutError) → ∀ extra,
-            evaluate expressions env { state with clock := state.clock + extra } =
-              (result, { next with clock := next.clock + extra }) := by
-          intro expressions env state next result clockLt run notTimeout extra
-          exact clockIH state.clock clockLt (expsWeight expressions) expressions env state next result rfl rfl run notTimeout extra
-        intro expressions env state next result stateClock measure run notTimeout extra
+        (result, { next with clock := next.clock + extra })) ?_
+  · exact lexInduction expressions state env next result run notTimeout extra
+  ·
+        intro expressions state exprIH₀ smaller₀
+        have exprIH := fun (es : List Bvl.Exp) (env' : List BvlSem.Value) (s next : State C F)
+            (result : Result (List BvlSem.Value) BvlSem.Value) h1 h2 run notTimeout extra =>
+          exprIH₀ es s h1 h2 env' next result run notTimeout extra
+        have smaller := fun (es : List Bvl.Exp) (env' : List BvlSem.Value) (s next : State C F)
+            (result : Result (List BvlSem.Value) BvlSem.Value) h1 run notTimeout extra =>
+          smaller₀ es s h1 env' next result run notTimeout extra
+        intro env next result run notTimeout extra
         cases expressions with
         | nil => simp [evaluate] at run; rcases run with ⟨rfl, rfl⟩; simp [evaluate]
         | cons first rest =>
@@ -433,10 +418,10 @@ theorem evaluate_addClock {C F : Type} (expressions : List Bvl.Exp)
             apply evaluate_list_addClock first second tail env state next result extra ?_ ?_ run notTimeout
             · intro childResult childNext childRun childNotTimeout
               apply exprIH [first] env state childNext childResult (by omega) ?_ childRun childNotTimeout extra
-              simp only [expsWeight] at measure ⊢; have := expWeight_pos second; omega
+              simp only [expsWeight] at ⊢; have := expWeight_pos second; omega
             · intro headNext tailNext tailResult bound tailRun tailNotTimeout
               apply exprIH (second :: tail) env headNext tailNext tailResult (by omega) ?_ tailRun tailNotTimeout extra
-              simp only [expsWeight] at measure ⊢; omega
+              simp only [expsWeight] at ⊢; omega
           | nil =>
             cases first with
             | var index => exact evaluate_var_addClock index env state next result extra run
@@ -444,57 +429,57 @@ theorem evaluate_addClock {C F : Type} (expressions : List Bvl.Exp)
               apply evaluate_raise_addClock body env state next result extra ?_ run notTimeout
               intro childResult childNext childRun childNotTimeout
               apply exprIH [body] env state childNext childResult (by omega) ?_ childRun childNotTimeout extra
-              simp only [expsWeight, expWeight] at measure ⊢; omega
+              simp only [expsWeight, expWeight] at ⊢; omega
             | tick body =>
               apply evaluate_tick_addClock body env state next result extra ?_ run notTimeout
               intro childResult childNext childRun childNotTimeout
               by_cases zero : state.clock = 0
-              · apply exprIH [body] env (decClock 1 state) childNext childResult (by simp [decClock]; omega) ?_ childRun childNotTimeout extra
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+              · apply exprIH [body] env (decClock 1 state) childNext childResult
+                  (by simp [decClock]) ?_ childRun childNotTimeout extra
+                simp only [expsWeight, expWeight] at ⊢; omega
               · apply smaller [body] env (decClock 1 state) childNext childResult ?_ childRun childNotTimeout extra
                 simp only [decClock]; omega
             | «let» bindings body =>
               apply evaluate_let_addClock bindings body env state next result extra ?_ ?_ run notTimeout
               · intro childResult childNext childRun childNotTimeout
                 apply exprIH bindings env state childNext childResult (by omega) ?_ childRun childNotTimeout extra
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
               · intro values childNext final bodyResult bound bodyRun bodyNotTimeout
                 apply exprIH [body] (values ++ env) childNext final bodyResult (by omega) ?_ bodyRun bodyNotTimeout extra
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
             | handle body handler =>
               apply evaluate_handle_addClock body handler env state next result extra ?_ ?_ run notTimeout
               · intro childResult childNext childRun childNotTimeout
                 apply exprIH [body] env state childNext childResult (by omega) ?_ childRun childNotTimeout extra
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
               · intro value childNext final bodyResult bound bodyRun bodyNotTimeout
                 apply exprIH [handler] (value :: env) childNext final bodyResult (by omega) ?_ bodyRun bodyNotTimeout extra
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
             | ifThenElse condition yes no =>
               apply evaluate_if_addClock condition yes no env state next result extra ?_ ?_ run notTimeout
               · intro childResult childNext childRun childNotTimeout
                 apply exprIH [condition] env state childNext childResult (by omega) ?_ childRun childNotTimeout extra
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
               · intro choice childNext final bodyResult bound bodyRun bodyNotTimeout
                 apply exprIH [if choice then yes else no] env childNext final bodyResult (by omega) ?_ bodyRun bodyNotTimeout extra
                 cases choice <;> simp only [Bool.false_eq_true, ↓reduceIte,
-                  expsWeight, expWeight] at measure ⊢ <;> omega
+                  expsWeight, expWeight] at ⊢ <;> omega
             | op op args =>
               apply evaluate_op_addClock op args env state next result extra ?_ run notTimeout
               intro childResult childNext childRun childNotTimeout
               apply exprIH args env state childNext childResult (by omega) ?_ childRun childNotTimeout extra
-              simp only [expsWeight, expWeight] at measure ⊢; omega
+              simp only [expsWeight, expWeight] at ⊢; omega
             | call ticks location args =>
               apply evaluate_call_addClock ticks location args env state next result extra ?_ ?_ run notTimeout
               · intro childResult childNext childRun childNotTimeout
                 apply exprIH args env state childNext childResult (by omega) ?_ childRun childNotTimeout extra
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
               · intro body values childState childNext childResult bound bodyRun bodyNotTimeout
                 exact smaller [body] values childState childNext childResult (by omega) bodyRun bodyNotTimeout extra
             | force location index =>
               apply evaluate_force_addClock location index env state next result extra ?_ run notTimeout
               intro body values childState childNext childResult bound bodyRun bodyNotTimeout
               exact smaller [body] values childState childNext childResult (by omega) bodyRun bodyNotTimeout extra
-  exact allRanks state.clock (expsWeight expressions) expressions env state next result rfl rfl run notTimeout extra
 
 /-- A non-timeout evaluation remains unchanged when its clock is increased. -/
 @[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "evaluate_add_clock"

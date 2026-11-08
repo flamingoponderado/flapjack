@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyRefs
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
+import Flapjack.Misc.ClockWeightInduction
 
 /-! Reference-domain growth during BVL evaluation. -/
 namespace Flapjack.Compiler.Backend.BvlProps
@@ -27,35 +28,25 @@ theorem refsSubset_trans {C F D G E H : Type} {a : State C F} {b : State D G} {c
 proof-side invariant remains untagged until source statement review. -/
 theorem evaluate_refs_mono {C F : Type} (expressions : List Bvl.Exp) (env : List Value)
     (state : State C F) : refsSubset state (evaluate expressions env state).2 := by
-  have allRanks : ∀ clock weight : Nat, ∀ (expressions : List Bvl.Exp)
-      (env : List Value) (state : State C F),
-      state.clock = clock → expsWeight expressions = weight →
-      refsSubset state (evaluate expressions env state).2 := by
-    intro clock
-    induction clock using Nat.strongRecOn with
-    | ind clock clockIH =>
-      intro weight
-      induction weight using Nat.strongRecOn with
-      | ind weight weightIH =>
-        have exprIH : ∀ (expressions : List Bvl.Exp) (env : List Value) (state : State C F),
-            state.clock ≤ clock → expsWeight expressions < weight →
-            refsSubset state (evaluate expressions env state).2 := by
-          intro expressions env state clockLe weightLt
-          rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
-          · exact clockIH state.clock clockLt (expsWeight expressions) expressions env state rfl rfl
-          · exact weightIH (expsWeight expressions) weightLt expressions env state clockEq rfl
-        have smaller : ∀ (expressions : List Bvl.Exp) (env : List Value) (state : State C F),
-            state.clock < clock → refsSubset state (evaluate expressions env state).2 := by
-          intro expressions env state clockLt
-          exact clockIH state.clock clockLt (expsWeight expressions) expressions env state rfl rfl
-        intro expressions env state stateClock measure
+  have lexInduction := clockWeightInduction (α := List Bvl.Exp) (σ := State C F) (·.clock)
+    expsWeight
+    (motive := fun expressions state => ∀ env,
+      refsSubset state (evaluate expressions env state).2) ?_
+  · exact lexInduction expressions state env
+  ·
+        intro expressions state exprIH₀ smaller₀
+        have exprIH := fun (es : List Bvl.Exp) (env' : List Value) (s : State C F)
+            h1 h2 => exprIH₀ es s h1 h2 env'
+        have smaller := fun (es : List Bvl.Exp) (env' : List Value) (s : State C F)
+            h => smaller₀ es s h env'
+        intro env
         cases expressions with
         | nil => simp [evaluate, refsSubset]
         | cons first rest =>
           cases rest with
           | cons second tail =>
             have headRefs := exprIH [first] env state (by omega) (by
-              simp only [expsWeight] at measure ⊢; omega)
+              simp only [expsWeight] at ⊢; omega)
             have headClock := evaluate_clock_le [first] env state
             rw [evaluate, fixClock_evaluate]
             cases headRun : evaluate [first] env state with
@@ -65,7 +56,7 @@ theorem evaluate_refs_mono {C F : Type} (expressions : List Bvl.Exp) (env : List
               | err error => exact headRefs
               | val values =>
                 have tailRefs := exprIH (second :: tail) env next (by omega) (by
-                  simp only [expsWeight] at measure ⊢; omega)
+                  simp only [expsWeight] at ⊢; omega)
                 cases tailRun : evaluate (second :: tail) env next with
                 | mk result last =>
                   simp only [tailRun] at tailRefs
@@ -77,7 +68,7 @@ theorem evaluate_refs_mono {C F : Type} (expressions : List Bvl.Exp) (env : List
               split <;> simp [refsSubset]
             | ifThenElse condition yes no =>
               have firstRefs := exprIH [condition] env state (by omega) (by
-                simp only [expsWeight, expWeight] at measure ⊢; omega)
+                simp only [expsWeight, expWeight] at ⊢; omega)
               have firstClock := evaluate_clock_le [condition] env state
               rw [evaluate, fixClock_evaluate]
               cases firstRun : evaluate [condition] env state with
@@ -90,12 +81,12 @@ theorem evaluate_refs_mono {C F : Type} (expressions : List Bvl.Exp) (env : List
                   split
                   · exact firstRefs
                   · exact refsSubset_trans firstRefs (exprIH [yes] env next (by omega) (by
-                      simp only [expsWeight, expWeight] at measure ⊢; omega))
+                      simp only [expsWeight, expWeight] at ⊢; omega))
                   · exact refsSubset_trans firstRefs (exprIH [no] env next (by omega) (by
-                      simp only [expsWeight, expWeight] at measure ⊢; omega))
+                      simp only [expsWeight, expWeight] at ⊢; omega))
             | «let» bindings body =>
               have firstRefs := exprIH bindings env state (by omega) (by
-                simp only [expsWeight, expWeight] at measure ⊢; omega)
+                simp only [expsWeight, expWeight] at ⊢; omega)
               have firstClock := evaluate_clock_le bindings env state
               rw [evaluate, fixClock_evaluate]
               cases firstRun : evaluate bindings env state with
@@ -105,10 +96,10 @@ theorem evaluate_refs_mono {C F : Type} (expressions : List Bvl.Exp) (env : List
                 | err error => exact firstRefs
                 | val values =>
                   exact refsSubset_trans firstRefs (exprIH [body] (values ++ env) next (by omega) (by
-                    simp only [expsWeight, expWeight] at measure ⊢; omega))
+                    simp only [expsWeight, expWeight] at ⊢; omega))
             | raise body =>
               have bodyRefs := exprIH [body] env state (by omega) (by
-                simp only [expsWeight, expWeight] at measure ⊢; omega)
+                simp only [expsWeight, expWeight] at ⊢; omega)
               rw [evaluate]
               cases bodyRun : evaluate [body] env state with
               | mk result next =>
@@ -116,7 +107,7 @@ theorem evaluate_refs_mono {C F : Type} (expressions : List Bvl.Exp) (env : List
                 cases result <;> exact bodyRefs
             | handle body handler =>
               have firstRefs := exprIH [body] env state (by omega) (by
-                simp only [expsWeight, expWeight] at measure ⊢; omega)
+                simp only [expsWeight, expWeight] at ⊢; omega)
               have firstClock := evaluate_clock_le [body] env state
               rw [evaluate, fixClock_evaluate]
               cases firstRun : evaluate [body] env state with
@@ -129,7 +120,7 @@ theorem evaluate_refs_mono {C F : Type} (expressions : List Bvl.Exp) (env : List
                   | abort reason => exact firstRefs
                   | raise value =>
                     exact refsSubset_trans firstRefs (exprIH [handler] (value :: env) next (by omega) (by
-                      simp only [expsWeight, expWeight] at measure ⊢; omega))
+                      simp only [expsWeight, expWeight] at ⊢; omega))
             | tick body =>
               rw [evaluate]
               split
@@ -155,7 +146,7 @@ theorem evaluate_refs_mono {C F : Type} (expressions : List Bvl.Exp) (env : List
                       simpa [refsSubset, decClock] using bodyRefs
             | call ticks location args =>
               have firstRefs := exprIH args env state (by omega) (by
-                simp only [expsWeight, expWeight] at measure ⊢; omega)
+                simp only [expsWeight, expWeight] at ⊢; omega)
               have firstClock := evaluate_clock_le args env state
               rw [evaluate, fixClock_evaluate]
               cases firstRun : evaluate args env state with
@@ -176,7 +167,7 @@ theorem evaluate_refs_mono {C F : Type} (expressions : List Bvl.Exp) (env : List
                       simpa [refsSubset, decClock] using callRefs
             | op op args =>
               have firstRefs := exprIH args env state (by omega) (by
-                simp only [expsWeight, expWeight] at measure ⊢; omega)
+                simp only [expsWeight, expWeight] at ⊢; omega)
               rw [evaluate, fixClock_evaluate]
               cases firstRun : evaluate args env state with
               | mk result next =>
@@ -191,7 +182,6 @@ theorem evaluate_refs_mono {C F : Type} (expressions : List Bvl.Exp) (env : List
                     have appRefs : refsSubset next last := fun key present =>
                       doApp_refs_mono op values.reverse next last value appRun key present
                     simpa [appRun] using refsSubset_trans firstRefs appRefs
-  exact allRanks state.clock (expsWeight expressions) expressions env state rfl rfl
 
 /-- Successful or failing evaluation preserves the source reference domain. -/
 @[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "evaluate_refs_SUBSET"

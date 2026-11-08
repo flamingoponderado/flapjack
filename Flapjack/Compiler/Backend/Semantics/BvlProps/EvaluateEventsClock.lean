@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateClockShift
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateEvents
 import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyError
+import Flapjack.Misc.ClockWeightInduction
 
 /-! BVL trace comparisons across clocks; proof cases have no standalone HOL declarations. -/
 namespace Flapjack.Compiler.Backend.BvlProps
@@ -545,30 +546,19 @@ theorem evaluate_addClock_ioEvents_prefix {C F : Type} (expressions : List Bvl.E
     (env : List BvlSem.Value) (state : State C F) (extra : Nat) :
     (evaluate expressions env state).2.ffi.ioEvents <+:
       (evaluate expressions env { state with clock := state.clock + extra }).2.ffi.ioEvents := by
-  have allRanks : ∀ clock weight : Nat, ∀ (expressions : List Bvl.Exp)
-      (env : List BvlSem.Value) (state : State C F), state.clock = clock → expsWeight expressions = weight →
-      ∀ extra, (evaluate expressions env state).2.ffi.ioEvents <+:
-        (evaluate expressions env { state with clock := state.clock + extra }).2.ffi.ioEvents := by
-    intro clock
-    induction clock using Nat.strongRecOn with
-    | ind clock clockIH =>
-      intro weight
-      induction weight using Nat.strongRecOn with
-      | ind weight weightIH =>
-        have exprIH : ∀ (expressions : List Bvl.Exp) (env : List BvlSem.Value) (state : State C F),
-            state.clock ≤ clock → expsWeight expressions < weight → ∀ extra,
-            (evaluate expressions env state).2.ffi.ioEvents <+:
-              (evaluate expressions env { state with clock := state.clock + extra }).2.ffi.ioEvents := by
-          intro expressions env state clockLe weightLt extra
-          rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
-          · exact clockIH state.clock clockLt (expsWeight expressions) expressions env state rfl rfl extra
-          · exact weightIH (expsWeight expressions) weightLt expressions env state clockEq rfl extra
-        have smaller : ∀ (expressions : List Bvl.Exp) (env : List BvlSem.Value) (state : State C F),
-            state.clock < clock → ∀ extra, (evaluate expressions env state).2.ffi.ioEvents <+:
-              (evaluate expressions env { state with clock := state.clock + extra }).2.ffi.ioEvents := by
-          intro expressions env state clockLt extra
-          exact clockIH state.clock clockLt (expsWeight expressions) expressions env state rfl rfl extra
-        intro expressions env state stateClock measure extra
+  have lexInduction := clockWeightInduction (α := List Bvl.Exp) (σ := State C F) (·.clock)
+    expsWeight
+    (motive := fun expressions state => ∀ env extra,
+      (evaluate expressions env state).2.ffi.ioEvents <+:
+        (evaluate expressions env { state with clock := state.clock + extra }).2.ffi.ioEvents) ?_
+  · exact lexInduction expressions state env extra
+  ·
+        intro expressions state exprIH₀ smaller₀
+        have exprIH := fun (es : List Bvl.Exp) (env' : List BvlSem.Value) (s : State C F)
+            h1 h2 extra => exprIH₀ es s h1 h2 env' extra
+        have smaller := fun (es : List Bvl.Exp) (env' : List BvlSem.Value) (s : State C F)
+            h1 extra => smaller₀ es s h1 env' extra
+        intro env extra
         cases expressions with
         | nil => simp [evaluate]
         | cons first rest =>
@@ -576,10 +566,10 @@ theorem evaluate_addClock_ioEvents_prefix {C F : Type} (expressions : List Bvl.E
           | cons second tail =>
             apply evaluate_list_addClock_ioEvents_step first second tail env state extra ?_ ?_
             · apply exprIH [first] env state (by omega) ?_ extra
-              simp only [expsWeight] at measure ⊢; have := expWeight_pos second; omega
+              simp only [expsWeight] at ⊢; have := expWeight_pos second; omega
             · intro start bound
               apply exprIH (second :: tail) env start (by omega) ?_ extra
-              simp only [expsWeight] at measure ⊢; omega
+              simp only [expsWeight] at ⊢; omega
           | nil =>
             cases first with
             | var index =>
@@ -588,7 +578,7 @@ theorem evaluate_addClock_ioEvents_prefix {C F : Type} (expressions : List Bvl.E
             | raise body =>
               apply evaluate_raise_addClock_ioEvents_step body env state extra
               apply exprIH [body] env state (by omega) ?_ extra
-              simp only [expsWeight, expWeight] at measure ⊢; omega
+              simp only [expsWeight, expWeight] at ⊢; omega
             | tick body =>
               apply evaluate_tick_addClock_ioEvents_step body env state extra
               intro start bound
@@ -596,39 +586,39 @@ theorem evaluate_addClock_ioEvents_prefix {C F : Type} (expressions : List Bvl.E
             | «let» bindings body =>
               apply evaluate_let_addClock_ioEvents_step bindings body env state extra ?_ ?_
               · apply exprIH bindings env state (by omega) ?_ extra
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
               · intro bodyEnv start bound
                 apply exprIH [body] bodyEnv start (by omega) ?_ extra
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
             | handle body handler =>
               apply evaluate_handle_addClock_ioEvents_step body handler env state extra ?_ ?_
               · apply exprIH [body] env state (by omega) ?_ extra
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
               · intro value start bound
                 apply exprIH [handler] (value :: env) start (by omega) ?_ extra
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
             | ifThenElse condition yes no =>
               apply evaluate_if_addClock_ioEvents_step condition yes no env state extra ?_ ?_
               · apply exprIH [condition] env state (by omega) ?_ extra
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
               · intro choice start bound
                 apply exprIH [if choice then yes else no] env start (by omega) ?_ extra
-                cases choice <;> simp only [Bool.false_eq_true, ↓reduceIte, expsWeight, expWeight] at measure ⊢ <;> omega
+                cases choice <;>
+                  simp only [Bool.false_eq_true, ↓reduceIte, expsWeight, expWeight] at ⊢ <;> omega
             | op op args =>
               apply evaluate_op_addClock_ioEvents_step op args env state extra
               apply exprIH args env state (by omega) ?_ extra
-              simp only [expsWeight, expWeight] at measure ⊢; omega
+              simp only [expsWeight, expWeight] at ⊢; omega
             | call ticks location args =>
               apply evaluate_call_addClock_ioEvents_step ticks location args env state extra ?_ ?_
               · apply exprIH args env state (by omega) ?_ extra
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+                simp only [expsWeight, expWeight] at ⊢; omega
               · intro body bodyEnv start bound
                 exact smaller [body] bodyEnv start (by omega) extra
             | force location index =>
               apply evaluate_force_addClock_ioEvents_step location index env state extra
               intro body bodyEnv start bound
               exact smaller [body] bodyEnv start (by omega) extra
-  exact allRanks state.clock (expsWeight expressions) expressions env state rfl rfl extra
 
 /-- Increasing the clock extends the observable event trace. -/
 @[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "evaluate_add_to_clock_io_events_mono"
