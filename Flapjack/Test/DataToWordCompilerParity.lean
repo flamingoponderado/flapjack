@@ -19,6 +19,23 @@ example : compileControl? (width := 64) conf 5 9 (.assign 3 (.intOp (.const 7)) 
 example : compileControl? (width := 64) conf 5 9 (.assign 3 (.intOp (.const 4611686018427387904)) [] none) =
     some (.assign 8 (.const 0), 9) := by rfl
 
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.globOp (.global 2)) [] none) =
+    some (.assign 8 (.load (.op .add [.lookup .globReal, .const 24])), 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.globOp (.setGlobal 2)) [6] none) =
+    some (.seq (.store (.op .add [.lookup .globReal, .const 24]) 14) (.assign 8 (.const 2)), 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.globOp (.setGlobal 2)) [6, 7] none) =
+    some (.skip, 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.globOp .setGlobalsPtr) [6] none) =
+    some (.seq (.set .globals (.var 14))
+      (.seq (.set .globReal (.op .add [.lookup .currHeap, .shift .lsr (.var 14) (.const 5)]))
+        (.assign 8 (.const 2))), 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.globOp .setGlobalsPtr) [] none) =
+    some (.skip, 9) := by rfl
+
 example : compileControl? (width := 64) conf 5 2 (.ifThenElse 1 (.move 3 1) (.seq .tick (.return [1, 3]))) =
     some (.ite .equal 4 (.imm 18) (.move 0 [(8, 4)]) (.seq .tick (.return 0 [4, 8])), 2) := by rfl
 

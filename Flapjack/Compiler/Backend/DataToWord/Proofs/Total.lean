@@ -20,7 +20,8 @@ theorem compileControl64_succeeds (conf : Config) (secn label : Nat) (program : 
     obtain ⟨a, b, hx⟩ := ihx
     obtain ⟨c, d, hy⟩ := ihy b
     simp [hx, hy]
-  case case175 l ns names target args n handler ih =>
+  all_goals
+    rename_i l ns names target args n handler ih
     obtain ⟨a, b, h⟩ := ih
     simp [h]
 

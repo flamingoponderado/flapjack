@@ -248,6 +248,39 @@ def assignConst {width : Nat} [NeZero width] (i : Int) (l dest : Nat) :
   else
     (.assign (adjustVar dest) (.const (BitVec.ofNat width (4 * i).toNat)), l)
 
+/-- Apply a unary assignment when its argument list has exactly one element. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "arg1_def"]
+def arg1 {α β : Type} (args : List α) (f : α → β) (fallback : β) : β :=
+  match args with
+  | [arg] => f arg
+  | _ => fallback
+
+/-- Set the globals pointer and its derived real address. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_SetGlobalsPtr_def"
+  (words_as_type_indexed_bitvec)]
+def assignSetGlobalsPtr {width : Nat} [NeZero width] (conf : Config) (l dest src : Nat) :
+    WordLangProgHOL (BitVec width) × Nat :=
+  (.seq (.set .globals (.var (adjustVar src)))
+    (.seq (.set .globReal (realAddr conf (adjustVar src)))
+      (.assign (adjustVar dest) (.const 2))), l)
+
+/-- Load a global slot from the real globals pointer. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Global_def"
+  (words_as_type_indexed_bitvec)]
+def assignGlobal {width : Nat} [NeZero width] (_conf : Config) (n l dest : Nat) :
+    WordLangProgHOL (BitVec width) × Nat :=
+  let offset := BitVec.ofNat width (width / 8) * BitVec.ofNat width (n + 1)
+  (.assign (adjustVar dest) (.load (.op .add [.lookup .globReal, .const offset])), l)
+
+/-- Store a global slot and return the unit value. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_SetGlobal_def"
+  (words_as_type_indexed_bitvec)]
+def assignSetGlobal {width : Nat} [NeZero width] (_conf : Config) (n l dest src : Nat) :
+    WordLangProgHOL (BitVec width) × Nat :=
+  let offset := BitVec.ofNat width (width / 8) * BitVec.ofNat width (n + 1)
+  (.seq (.store (.op .add [.lookup .globReal, .const offset]) (adjustVar src))
+    (.assign (adjustVar dest) (.const 2)), l)
+
 /-- Flapjack's checked traversal. Some non-64-bit operations return `none`;
 this definition has not yet been reviewed as HOL's total `comp`. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
@@ -279,21 +312,11 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
   | l, .assign dest (.globOp .globalsPtr) _ _ =>
       some (.assign (adjustVar dest) (.lookup .globals), l)
   | l, .assign dest (.globOp .setGlobalsPtr) args _ =>
-      match args with
-      | [src] => some (.seq (.set .globals (.var (adjustVar src)))
-          (.seq (.set .globReal (realAddr conf (adjustVar src)))
-            (.assign (adjustVar dest) (.const 2))), l)
-      | _ => some (.skip, l)
+      some (arg1 args (assignSetGlobalsPtr conf l dest) (.skip, l))
   | l, .assign dest (.globOp (.global n)) _ _ =>
-      let offset := BitVec.ofNat width (width / 8) * BitVec.ofNat width (n + 1)
-      some (.assign (adjustVar dest) (.load (.op .add [.lookup .globReal, .const offset])), l)
+      some (assignGlobal conf n l dest)
   | l, .assign dest (.globOp (.setGlobal n)) args _ =>
-      match args with
-      | [src] =>
-          let offset := BitVec.ofNat width (width / 8) * BitVec.ofNat width (n + 1)
-          some (.seq (.store (.op .add [.lookup .globReal, .const offset]) (adjustVar src))
-            (.assign (adjustVar dest) (.const 2)), l)
-      | _ => some (.skip, l)
+      some (arg1 args (assignSetGlobal conf n l dest) (.skip, l))
   | l, .assign dest (.blockOp (.build parts)) _ _ =>
       if width != 32 && width != 64 then none else
       match Build.partsWords (width := width) conf parts with

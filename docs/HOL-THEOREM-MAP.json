@@ -125572,6 +125572,41 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "arg1_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "arg1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared arg1_def_typed: the input-list element and result types remain independent; a singleton invokes the function and every other list returns the supplied fallback. The executed globals dispatch uses this helper."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_SetGlobalsPtr_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignSetGlobalsPtr",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_set_globals_ptr_def_typed and Unit_def: globals, real address and unit destination are assigned in order; inputs and unchanged label agree. Positive-width BitVec represents the HOL word dimension. The compiler dispatch calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_Global_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignGlobal",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_global_def_typed and byteTheory.bytes_in_word_def: the independent configuration argument is retained, the offset is n2w(dimindex DIV 8) * n2w(n+1), and the adjusted destination, load and label agree. Positive-width BitVec represents HOL words. The compiler dispatch calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_SetGlobal_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignSetGlobal",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_set_global_def_typed, Unit_def and byteTheory.bytes_in_word_def: the configuration argument, word offset, adjusted source and destination, store followed by unit assignment, and unchanged label agree. Positive-width BitVec represents HOL words. The compiler dispatch calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "assign_Const_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "assignConst",

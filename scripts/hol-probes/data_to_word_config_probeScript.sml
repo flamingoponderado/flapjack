@@ -65,6 +65,19 @@ val _ = print_eval "assign_const_zero_64" ``(assign_Const 0 9 3 : 64 wordLang$pr
 val _ = print_eval "assign_const_positive_64" ``(assign_Const 7 9 3 : 64 wordLang$prog # num)``;
 val _ = print_eval "assign_const_wrap_64" ``(assign_Const 4611686018427387904 9 3 : 64 wordLang$prog # num)``;
 val _ = print_eval "assign_const_wrap_equal_64" ``(assign_Const 4611686018427387904 9 3 : 64 wordLang$prog # num) = (Assign 8 (Const 0w),9)``;
+val _ = (print "arg1_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.arg1_def); print "\n");
+val _ = (print "assign_set_globals_ptr_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_SetGlobalsPtr_def); print "\n");
+val _ = (print "assign_global_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_Global_def); print "\n");
+val _ = (print "assign_set_global_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_SetGlobal_def); print "\n");
+val _ = print_eval "assign_global_64" ``(assign ^conf 4 9 3 (closLang$GlobOp (Global 2)) [] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_set_global_64" ``(assign ^conf 4 9 3 (closLang$GlobOp (SetGlobal 2)) [6] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_set_global_bad_arity_64" ``(assign ^conf 4 9 3 (closLang$GlobOp (SetGlobal 2)) [6;7] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_set_globals_ptr_64" ``(assign ^conf 4 9 3 (closLang$GlobOp SetGlobalsPtr) [6] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_set_globals_ptr_bad_arity_64" ``(assign ^conf 4 9 3 (closLang$GlobOp SetGlobalsPtr) [] NONE : 64 wordLang$prog # num)``;
 val _ = print_eval "store_each_64" ``(StoreEach 2 [4;6] 8w : 64 wordLang$prog)``;
 val _ = print_eval "mem_eq_list_64" ``(MemEqList 8w [3w;7w] : 64 wordLang$prog)``;
 val _ = print_eval "silent_ffi_off_64" ``(SilentFFI ^conf 3 (LN,LN) : 64 wordLang$prog)``;
