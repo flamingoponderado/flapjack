@@ -130261,7 +130261,7 @@
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Thunk.lean",
   "lean_name": "blocksUnique_thunk",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared blocks_unique_Thunk and its typed capture in data_to_word_memory_thunk_probe.out: the lookup and uniqueness premises, unrestricted source refs, independent arbitrary second pair component, mapped first components and resulting uniqueness conclusion agree; the arbitrary pointer flag is preserved in the premise and the child replaces that pointer in the conclusion. The private support fact uses the original all_vs reference-cell disjunction, so no premise is added."
+  "reviewer": "Compared blocks_unique_Thunk and its typed capture in data_to_word_memory_thunk_probe.out: the lookup and uniqueness premises, unrestricted source refs, independent arbitrary second pair component, mapped first components and resulting uniqueness conclusion agree; the arbitrary pointer flag is preserved in the premise and the child replaces that pointer in the conclusion. The support fact uses the original all_vs reference-cell disjunction, so no premise is added."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
@@ -130269,7 +130269,7 @@
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Thunk.lean",
   "lean_name": "blocksUnique_thunk2",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared blocks_unique_Thunk2 and its typed capture in data_to_word_memory_thunk_probe.out: the lookup and uniqueness premises, unrestricted source refs, independent arbitrary second pair component, mapped first components and resulting uniqueness conclusion agree; the pointer flag is false and the conclusion adds the child before the retained pointer. The private support fact uses the original all_vs reference-cell disjunction, so no premise is added."
+  "reviewer": "Compared blocks_unique_Thunk2 and its typed capture in data_to_word_memory_thunk_probe.out: the lookup and uniqueness premises, unrestricted source refs, independent arbitrary second pair component, mapped first components and resulting uniqueness conclusion agree; the pointer flag is false and the conclusion adds the child before the retained pointer. The support fact uses the original all_vs reference-cell disjunction, so no premise is added."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
@@ -130278,5 +130278,14 @@
   "lean_name": "blocksUnique_word64",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared blocks_unique_Word64 and its typed data_to_word_memory_thunk_probe.out capture: the arbitrary stack prefix, stack, reference tree and timestamp are unchanged, and the conclusion replaces the prefix with a Word64 whose payload is the fixed 64-bit word carrier. The proof reuses blocks_unique_Number because neither value contributes a nested block."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "thunk_tag_bits_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/ThunkHeap.lean",
+  "lean_name": "thunkTagBits_evaluated",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the source-local theorem with the typed replay thunk_tag_bits_lemma_typed: the Evaluated tag, shift by three, bitwise OR with six, and equality to fourteen are preserved for every positive word width. BitVec width is the HOL word carrier; the Lean theorem is used in the allocated-thunk header proof."
 }
 ]

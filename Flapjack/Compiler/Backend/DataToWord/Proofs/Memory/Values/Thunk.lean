@@ -6,7 +6,7 @@ open Flapjack Flapjack.Compiler.Backend.DataSem
 
 /-- A thunk's contents already occur in the reference-cell part of `allValues`.
 This support fact is used to prove the two source block-uniqueness lemmas. -/
-private theorem allValues_addThunk (refs : Spt (BvlSem.Ref Value))
+theorem allValues_addThunk (refs : Spt (BvlSem.Ref Value))
     (index : Nat) (mode : AstHOL.ThunkMode) (child : Value) (stack : List Value)
     (found : sptLookup index refs = some (.thunk mode child)) (value : Value)
     (member : allValues refs (child :: stack) value) : allValues refs stack value := by

@@ -7,14 +7,14 @@ open Flapjack
 
 /-- A member of the left part of a separated heap belongs to the whole heap.
 This is Flapjack separation infrastructure. -/
-private theorem split_left_member {α : Type} (whole left right : α → Prop) (entry : α)
+theorem split_left_member {α : Type} (whole left right : α → Prop) (entry : α)
     (split : SetSep.split whole (left, right)) (member : left entry) : whole entry := by
   have eq := congrFun split.1 entry
   exact (iff_of_eq eq).mp (Or.inl member)
 
 /-- A member of the right part of a separated heap belongs to the whole heap.
 This is Flapjack separation infrastructure. -/
-private theorem split_right_member {α : Type} (whole left right : α → Prop) (entry : α)
+theorem split_right_member {α : Type} (whole left right : α → Prop) (entry : α)
     (split : SetSep.split whole (left, right)) (member : right entry) : whole entry := by
   have eq := congrFun split.1 entry
   exact (iff_of_eq eq).mp (Or.inr member)
