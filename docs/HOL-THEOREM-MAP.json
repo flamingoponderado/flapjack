@@ -127821,24 +127821,24 @@
   "hol_name": "do_build_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Build.lean",
   "lean_name": "doBuild",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared build_sequence in the typed DataSem probe: the reference payload is polymorphic, the empty case uses natural subtraction, and each part updates the value function and threads references and timestamp in order."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "do_build_const_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Build.lean",
   "lean_name": "doBuildConst",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared build_constant in the typed DataSem probe: the reference payload is polymorphic and construction starts with the zero-valued function and index zero."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "do_part_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Build.lean",
   "lean_name": "doPart",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared build_part in the typed DataSem probe: the reference payload is polymorphic, numeric and block cases preserve timestamp behavior, and strings allocate bytes at the least unused sparse-tree key."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128045,24 +128045,24 @@
   "hol_name": "do_eq_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Equality.lean",
   "lean_name": "doEq",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared value_equality in the typed DataSem probe: reference payloads remain independently polymorphic; numbers, fixed-width words, code and reference pointers, closure blocks, and ordinary blocks follow the original first-match and error cases."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "do_eq_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Equality.lean",
   "lean_name": "doEqList",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the list clauses of value_equality in the typed DataSem probe: equal empty lists succeed, mismatched lengths fail, and element comparisons short-circuit or propagate errors. Reference payloads remain polymorphic."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "isClos_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Equality.lean",
   "lean_name": "isClosure",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared is_closure in the typed DataSem probe: the argument list remains polymorphic, closure_tag = 30 and partial_app_tag = 31 (backend_commonScript.sml:63-67) are inlined, and the list must be nonempty."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128197,8 +128197,8 @@
   "hol_name": "do_int_app_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Int.lean",
   "lean_name": "doIntApp",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared integer_application in the typed DataSem probe: constants, arithmetic, zero-divisor errors, integer comparisons and the bounded small-constant comparison match the original clauses and fallback."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128469,8 +128469,9 @@
   "hol_name": "do_word_app_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Word.lean",
   "lean_name": "doWordApp",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared word_application in the typed DataSem probe: byte and 64-bit operations, tests, shifts, conversions and floating-point clauses preserve original guards and errors. Floating-point operations inherit reals_as_rational_cuts and SOUNDNESS item 8."
 },
 {
   "hol_path": "HOL/src/integer/integerScript.sml",

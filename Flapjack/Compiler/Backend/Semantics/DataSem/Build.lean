@@ -31,7 +31,7 @@ private theorem natList_bounded (keys : List Nat) : ∃ bound, ∀ key ∈ keys,
       omega
 
 /-- Every sparse tree has an unallocated natural key. -/
-theorem unusedRef_exists (refs : Spt (BvlSem.Ref Value)) : ∃ key, sptLookup key refs = none := by
+theorem unusedRef_exists {α : Type} (refs : Spt (BvlSem.Ref α)) : ∃ key, sptLookup key refs = none := by
   obtain ⟨bound, bounded⟩ := natList_bounded ((sptToAList refs).map Prod.fst)
   refine ⟨bound, ?_⟩
   cases found : sptLookup bound refs with
@@ -45,26 +45,26 @@ theorem unusedRef_exists (refs : Spt (BvlSem.Ref Value)) : ∃ key, sptLookup ke
     omega
 
 /-- The least unused reference index exists because the source tree is finite. -/
-noncomputable def leastUnusedRef (refs : Spt (BvlSem.Ref Value)) : Nat := by
+noncomputable def leastUnusedRef {α : Type} (refs : Spt (BvlSem.Ref α)) : Nat := by
   classical
   exact Nat.find (unusedRef_exists refs)
 
 /-- The chosen index is unused in the source tree. -/
-theorem leastUnusedRef_unused (refs : Spt (BvlSem.Ref Value)) :
+theorem leastUnusedRef_unused {α : Type} (refs : Spt (BvlSem.Ref α)) :
     sptLookup (leastUnusedRef refs) refs = none := by
   classical
   exact Nat.find_spec (unusedRef_exists refs)
 
 /-- Every smaller source-tree index is occupied. -/
-theorem leastUnusedRef_minimal (refs : Spt (BvlSem.Ref Value)) (index : Nat)
+theorem leastUnusedRef_minimal {α : Type} (refs : Spt (BvlSem.Ref α)) (index : Nat)
     (smaller : index < leastUnusedRef refs) : sptLookup index refs ≠ none := by
   classical
   exact Nat.find_min (unusedRef_exists refs) smaller
 
 /-- Construct one constant part, allocating strings at the least unused key. -/
 @[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "do_part_def"]
-noncomputable def doPart (values : Nat → Value) (part : ClosLang.ConstPart)
-    (refs : Spt (BvlSem.Ref Value)) (timestamp : Option Nat) : Value × Spt (BvlSem.Ref Value) × Option Nat :=
+noncomputable def doPart {α : Type} (values : Nat → Value) (part : ClosLang.ConstPart)
+    (refs : Spt (BvlSem.Ref α)) (timestamp : Option Nat) : Value × Spt (BvlSem.Ref α) × Option Nat :=
   match part with
   | .int i => (.number i, refs, timestamp)
   | .w64 w => (.word64 w, refs, timestamp)
@@ -79,8 +79,8 @@ noncomputable def doPart (values : Nat → Value) (part : ClosLang.ConstPart)
 
 /-- Build the parts sequentially, retaining the last value and timestamp. -/
 @[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "do_build_def"]
-noncomputable def doBuild (values : Nat → Value) (index : Nat) :
-    List ClosLang.ConstPart → Spt (BvlSem.Ref Value) → Option Nat → Value × Spt (BvlSem.Ref Value) × Option Nat
+noncomputable def doBuild {α : Type} (values : Nat → Value) (index : Nat) :
+    List ClosLang.ConstPart → Spt (BvlSem.Ref α) → Option Nat → Value × Spt (BvlSem.Ref α) × Option Nat
   | [], refs, timestamp => (values (index - 1), refs, timestamp)
   | part :: rest, refs, timestamp =>
       let (value, nextRefs, nextTimestamp) := doPart values part refs timestamp
@@ -88,8 +88,8 @@ noncomputable def doBuild (values : Nat → Value) (index : Nat) :
 
 /-- Build a constant with the source's zero-valued initial index function. -/
 @[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "do_build_const_def"]
-noncomputable def doBuildConst (parts : List ClosLang.ConstPart)
-    (refs : Spt (BvlSem.Ref Value)) (timestamp : Option Nat) : Value × Spt (BvlSem.Ref Value) × Option Nat :=
+noncomputable def doBuildConst {α : Type} (parts : List ClosLang.ConstPart)
+    (refs : Spt (BvlSem.Ref α)) (timestamp : Option Nat) : Value × Spt (BvlSem.Ref α) × Option Nat :=
   doBuild (fun _ => .number 0) 0 parts refs timestamp
 
 end Flapjack.Compiler.Backend.DataSem
