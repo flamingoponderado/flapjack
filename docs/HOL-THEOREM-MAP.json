@@ -128364,6 +128364,51 @@
   "reviewer": "Compared cut_state_opt_swap_input_replay_typed: free variables names_opt, s, s2, safe, peak; one shared state type; the single successful-cut premise; and the record equality showing the stack-maximum update is redundant after a cut. Derived from the reviewed cut_state_opt_stack_max."
 },
 {
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_fl_smx_safe_peak_swap_aux",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateResourceSwap.lean",
+  "lean_name": "evaluate_flagStackSafePeakSwap",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_fl_smx_safe_peak_swap_aux_replay_typed: binders c, s, r, s', fl, smx, safe, peak; one shared state type; both branches, updates and witnesses. The false-branch existential over an unused independently typed smx is omitted as vacuous under the unused-binder rule; the HOL export drops it likewise. Proved by clock and program-size induction over every evaluator case. Inherits reals_as_rational_cuts through evaluate (SOUNDNESS item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_smx_safe_peak_swap_aux",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateResourceSwap.lean",
+  "lean_name": "evaluate_stackSafePeakSwapAux",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_smx_safe_peak_swap_aux_typed: binders smx, safe, s', s, r, peak, c; shared state type; let-bound update and witnesses. Instance of the reviewed flag theorem. Inherits reals_as_rational_cuts through evaluate (SOUNDNESS item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_smx_safe_peak_swap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateResourceSwap.lean",
+  "lean_name": "evaluate_stackSafePeakSwap",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_smx_safe_peak_swap_typed: binders smx, safe, s', s, r, peak, c; shared state type; three-field updates and witnesses. Instance of the reviewed flag theorem. Inherits reals_as_rational_cuts through evaluate (SOUNDNESS item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_safe_peak_swap_aux",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateResourceSwap.lean",
+  "lean_name": "evaluate_safePeakSwapAux",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_safe_peak_swap_aux_typed: binders safe, s', s, r, peak, c; shared state type; let-bound update and witnesses. Instance of the reviewed flag theorem. Inherits reals_as_rational_cuts through evaluate (SOUNDNESS item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "evaluate_safe_peak_swap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateResourceSwap.lean",
+  "lean_name": "evaluate_safePeakSwap",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_safe_peak_swap_typed: binders safe, s', s, r, peak, c; shared state type; two-field updates and witnesses. Instance of the reviewed flag theorem. Inherits reals_as_rational_cuts through evaluate (SOUNDNESS item 8)."
+},
+{
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "set_vars_clock",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/ControlClock.lean",

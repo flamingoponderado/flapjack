@@ -64,6 +64,7 @@ val cutSwapInput = prove (``dataSem$cut_state_opt names_opt s = SOME s2 ⇒
   rw[] \\ imp_res_tac cutStackMax \\ rw[dataSemTheory.state_component_equality]);
 val _ = show "cut_state_opt_swap_input_replay_typed" cutSwapInput;
 val _ = show "evaluate_safe_peak_swap_aux_typed" evaluate_safe_peak_swap_aux;
+val _ = show "evaluate_smx_safe_peak_swap_aux_typed" evaluate_smx_safe_peak_swap_aux;
 val evalSwap = prove (``∀c s r s' fl smx safe peak.
   dataSem$evaluate (c,s) = (r,s') ⇒
     if fl then
