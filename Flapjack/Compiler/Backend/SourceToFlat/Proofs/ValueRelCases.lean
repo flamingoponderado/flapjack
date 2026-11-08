@@ -219,6 +219,82 @@ theorem valueRel_eqns_nonGlobal :
     · intro related; cases related
     · intro impossible; exact impossible.elim
 
+
+/-- The original value-relation equations, including closure and recursive
+closure cases. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_more_eqns"
+  (fmap_as_finite_support := [c, tys])]
+theorem valueRel_more_eqns :
+  (
+    (∀ (v : FlatSem.Value) (l : Lit) (genv : GlobalEnv),
+      ValueRel genv (.litv l) v ↔ v = .litv l) ∧
+    (∀ (vs : List Value) (v : FlatSem.Value) (genv : GlobalEnv) (cn : Option Stamp),
+      ValueRel genv (.conv cn vs) v ↔
+        (∃ cn' cn'' vs'', cn = some cn' ∧ v = .conv (some cn'') vs'' ∧
+          List.Forall₂ (ValueRel genv) vs vs'' ∧ genv.c.lookup (cn'', vs.length) = some cn') ∨
+        ∃ vs'', cn = none ∧ v = .conv none vs'' ∧ List.Forall₂ (ValueRel genv) vs vs'') ∧
+    (∀ (v : FlatSem.Value) (l : Nat) (genv : GlobalEnv) (b : Bool),
+      ValueRel genv (.loc b l) v ↔ v = .loc b (l + 1)) ∧
+    (∀ (vs : List Value) (v : FlatSem.Value) (genv : GlobalEnv),
+      ValueRel genv (.vectorv vs) v ↔ ∃ vs'', v = .vectorv vs'' ∧ List.Forall₂ (ValueRel genv) vs vs'') ∧
+    (∀ (genv : GlobalEnv) (env' : List (VarN × FlatSem.Value)),
+      EnvRel genv nsEmpty env' ↔ env' = []) ∧
+    (∀ (x : VarN) (v : Value) (genv : GlobalEnv) (env' : List (VarN × FlatSem.Value))
+      (env : Namespace ModN VarN Value), EnvRel genv (nsBind x v env) env' ↔
+        ∃ tail v', env' = (x, v') :: tail ∧ EnvRel genv env tail ∧ ValueRel genv v v') ∧
+    (∀ (v : FlatSem.Value) (id : Nat × Nat) (genv : GlobalEnv) (e : SemEnv Value),
+      ValueRel genv (.env e id) v ↔ False)) ∧
+    (∀ (v : FlatSem.Value) (nm : VarN) (genv : GlobalEnv) (exp : AstHOL.Exp)
+      (env : SemEnv Value), ValueRel genv (.closure env nm exp) v ↔
+      ∃ compMap globalEnv sourceLocal flatLocal trace traces,
+        env = { globalEnv with v := nsAppend sourceLocal globalEnv.v } ∧
+        v = .closure flatLocal nm
+          (compileExp trace { compMap with v := bindLocals traces (nm :: flatLocal.v.map Prod.fst) compMap.v } exp) ∧
+        EnvRel genv sourceLocal flatLocal.v ∧
+        GlobalEnvInv genv compMap (fun n => n ∈ flatLocal.v.map Prod.fst) globalEnv ∧
+        traces.length = flatLocal.v.length + 1) ∧
+    (∀ (x : VarN) (v : FlatSem.Value) (genv : GlobalEnv)
+      (funs : List (VarN × VarN × AstHOL.Exp)) (env : SemEnv Value),
+      ValueRel genv (.recclosure env funs x) v ↔
+      (∃ compMap globalEnv sourceLocal flatLocal trace traces,
+        env = { globalEnv with v := nsAppend sourceLocal globalEnv.v } ∧
+        v = .recclosure flatLocal
+          (compileFuns trace { compMap with v := bindLocals traces (funs.map Prod.fst ++ flatLocal.v.map Prod.fst) compMap.v } funs) x ∧
+        EnvRel genv sourceLocal flatLocal.v ∧
+        GlobalEnvInv genv compMap (fun n => n ∈ flatLocal.v.map Prod.fst) globalEnv ∧
+        traces.length = funs.length + flatLocal.v.length) ∨
+      (∃ compMap flatEnv arg body newVars trace localTrace,
+        v = .closure flatEnv arg
+          (compileExp trace { compMap with v := nsBindList ((arg, .localName localTrace arg) :: newVars) compMap.v } body) ∧
+        newVars.map Prod.fst = funs.reverse.map Prod.fst ∧
+        GlobalEnvInv genv compMap (fun _ => False) env ∧ flatEnv.v = [] ∧
+        findRecFun x funs = some (arg, body) ∧
+        ∀ name, name ∈ funs.map Prod.fst → ∃ n y e storedTrace bodyTrace argTrace,
+          newVars.lookup name = some (.glob storedTrace n) ∧ n < genv.v.length ∧
+          findRecFun name funs = some (y, e) ∧
+          Flapjack.holEl n genv.v = some (.closure flatEnv y
+            (compileExp bodyTrace { compMap with v := nsBindList ((y, .localName argTrace y) :: newVars) compMap.v } e)))) := by
+  refine ⟨valueRel_eqns_nonGlobal, ?_, ?_⟩
+  · intro v nm genv exp env
+    exact valueRel_closure_iff genv env nm exp v
+  · intro x v genv funs env
+    rw [valueRel_recclosure_iff]
+    constructor
+    · rintro (h | ⟨comp, flat, arg, body, vars, t, t', names, globals, empty, found, closures, eq⟩)
+      · exact Or.inl h
+      · refine Or.inr ⟨comp, flat, arg, body, vars, t, t', eq, names, globals, empty, found, ?_⟩
+        intro name mem
+        obtain ⟨n, y, e, st, bt, argTr, lookup, bound, find, slot⟩ := closures name mem
+        refine ⟨n, y, e, st, bt, argTr, lookup, bound, find, ?_⟩
+        simpa [Flapjack.holEl_eq_getElem n genv.v bound, List.getElem?_eq_getElem bound] using slot
+    · rintro (h | ⟨comp, flat, arg, body, vars, t, t', eq, names, globals, empty, found, closures⟩)
+      · exact Or.inl h
+      · refine Or.inr ⟨comp, flat, arg, body, vars, t, t', names, globals, empty, found, ?_, eq⟩
+        intro name mem
+        obtain ⟨n, y, e, st, bt, argTr, lookup, bound, find, slot⟩ := closures name mem
+        refine ⟨n, y, e, st, bt, argTr, lookup, bound, find, ?_⟩
+        simpa [Flapjack.holEl_eq_getElem n genv.v bound, List.getElem?_eq_getElem bound] using slot
+
 /-- An association-list source environment relates exactly when corresponding
 names agree and corresponding values satisfy the factored relation. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_rel_LIST_REL"

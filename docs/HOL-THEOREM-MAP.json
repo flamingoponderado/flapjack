@@ -340,6 +340,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "v_rel_more_eqns",
+  "lean_name": "valueRel_more_eqns",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRelCases.lean",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared the full nested conjunction, quantified carriers, closure equations, and bounded HOL EL against v_rel_more_eqns_typed in source_to_flat_value_relation_probe.out. GlobalEnv.c and tys use canonical finite maps."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "v_rel_global_eqn",
   "lean_name": "globalEnvInv_source_eqn",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRel.lean",

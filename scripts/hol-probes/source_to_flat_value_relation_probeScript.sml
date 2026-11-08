@@ -15,6 +15,7 @@ val _ = show_thm "value_rel_cases=" source_to_flatProofTheory.v_rel_cases;
 val _ = show_thm "env_rel_LIST_REL=" source_to_flatProofTheory.env_rel_LIST_REL;
 val _ = show_thm "env_all_rel_cases_typed=" source_to_flatProofTheory.env_all_rel_cases;
 val _ = show_thm "v_rel_global_eqn_typed=" source_to_flatProofTheory.v_rel_global_eqn;
+val _ = show_thm "v_rel_more_eqns_typed=" source_to_flatProofTheory.v_rel_more_eqns;
 
 (* Replay the original local case-equation construction. *)
 open source_to_flatProofTheory;
