@@ -130254,5 +130254,29 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared jump_exc_locals_typed and the original proof: both sides use the same complete wordSem state and unrestricted replacement locals, and the full option of state and two numeric labels is preserved. The independent compiler and FFI carriers match the HOL state. WordSemStateFiniteExact represents the two HOL finite-map fields fp_regs and store by HolFiniteMapExact, with the local canonical roundtrip witness; positive-width BitVec represents HOL words. The original jump_exc overwrites locals from the handler frame or fails, so both sides agree. The source review and witness do not independently prove cross-language correspondence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "blocks_unique_Thunk",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Thunk.lean",
+  "lean_name": "blocksUnique_thunk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared blocks_unique_Thunk and its typed capture in data_to_word_memory_thunk_probe.out: the lookup and uniqueness premises, unrestricted source refs, independent arbitrary second pair component, mapped first components and resulting uniqueness conclusion agree; the arbitrary pointer flag is preserved in the premise and the child replaces that pointer in the conclusion. The private support fact uses the original all_vs reference-cell disjunction, so no premise is added."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "blocks_unique_Thunk2",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Thunk.lean",
+  "lean_name": "blocksUnique_thunk2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared blocks_unique_Thunk2 and its typed capture in data_to_word_memory_thunk_probe.out: the lookup and uniqueness premises, unrestricted source refs, independent arbitrary second pair component, mapped first components and resulting uniqueness conclusion agree; the pointer flag is false and the conclusion adds the child before the retained pointer. The private support fact uses the original all_vs reference-cell disjunction, so no premise is added."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "blocks_unique_Word64",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/SmallNumber.lean",
+  "lean_name": "blocksUnique_word64",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared blocks_unique_Word64 and its typed data_to_word_memory_thunk_probe.out capture: the arbitrary stack prefix, stack, reference tree and timestamp are unchanged, and the conclusion replaces the prefix with a Word64 whose payload is the fixed 64-bit word carrier. The proof reuses blocks_unique_Number because neither value contributes a nested block."
 }
 ]
