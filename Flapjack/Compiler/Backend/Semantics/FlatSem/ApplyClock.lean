@@ -1,7 +1,6 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
 
-/-! Clock and evaluation-configuration preservation for the flat primitive dispatcher. These
-lemmas are untagged pending full review of the underlying dispatcher. -/
+/-! Clock and evaluation-configuration preservation for the flat primitive dispatcher. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
@@ -128,8 +127,8 @@ private theorem getD_some {α : Type} (value : Option (Option α)) (result : α)
     (h : value.getD none = some result) : value = some (some result) := by
   cases value <;> simp_all
 
-/-- The assembled flat primitive dispatcher preserves the clock and evaluation configuration. This is an
-untagged result about the dispatcher pending its full HOL source review. -/
+/-- The combined invariant supports the two separate source preservation
+theorems for the assembled primitive dispatcher. -/
 theorem doApp_stable {C F : Type} (state next : State C F) (op : FlatLang.Op)
     (values : List Value) (result : Result Value Value)
     (run : doApp state op values = some (next, result)) : next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
@@ -160,5 +159,13 @@ theorem doApp_stable {C F : Type} (state next : State C F) (op : FlatLang.Op)
   | globalVarAlloc _ | globalVarInit _ | globalVarLookup _ | tagLenEq _ _ | lenEq _ | el _ | id =>
     simp only [doApp] at run
     exact doAppFlat_stable state next _ values result (getD_some _ _ run)
+
+/-- A successful primitive application preserves the clock. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_const"]
+theorem doApp_const {C F : Type} (state : State C F) (op : FlatLang.Op)
+    (values : List Value) (next : State C F) (result : Result Value Value) :
+    doApp state op values = some (next, result) → state.clock = next.clock := by
+  intro run
+  exact (doApp_stable state next op values result run).1.symm
 
 end Flapjack.Compiler.Backend.FlatSem

@@ -1,0 +1,2 @@
+do_app_const_typed=do_app (s :(α, β) state) (op :op) (vs :v list) = SOME ((s' :(α, β) state),(r :(v, v) result)) ⇒ s.clock = s'.clock
+do_app_state_unchanged_typed=∀(c :α) (s :(β, γ) state) (op :op) (vs :v list) (s' :(β, γ) state) (r :(v, v) result). do_app s op vs = SOME (s',r) ⇒ s'.eval_config = s.eval_config

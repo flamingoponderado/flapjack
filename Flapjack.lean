@@ -81,6 +81,7 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleInduction
 import Flapjack.Compiler.Backend.FlatPattern.CompileOrder
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.InstallRelation
 import Flapjack.Compiler.Backend.FlatProps.ValueBasics
+import Flapjack.Compiler.Backend.FlatProps.DoAppState
 import Flapjack.Compiler.Backend.FlatProps.SimpleRelations
 import Flapjack.Compiler.Backend.FlatProps.SimpleStore
 import Flapjack.Compiler.Backend.FlatProps.SimpleEquality

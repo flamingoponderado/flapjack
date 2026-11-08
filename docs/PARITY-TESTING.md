@@ -16,8 +16,9 @@ This compares complete compiler output, diagnostics, and exit status; it is
 not a general equivalence proof.
 
 After replacing the data-to-word option-valued calls with the proved-total
-operation, 60 structured-option cases with seed `11051109` and 40 nested
-programs with seed `11050731` matched the pinned compiler. The total operation
+operation, the 143 fixed corpus cases, 60 structured-option cases with seed
+`11051109`, and 40 nested programs with seed `11050731` matched the pinned
+compiler. The total operation
 also has a kernel-checked equation
 showing it returns the same result as the previous traversal for every input.
 

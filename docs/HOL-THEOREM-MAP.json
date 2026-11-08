@@ -130345,5 +130345,23 @@
   "fmap_as_finite_support_relation": ["f", "tf"],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison: the original local proof and typed replay v_inv_Loc_typed in data_to_word_word_test_probe.out retain a state with two independent type parameters; its refs field, value invariant and explicit address, finite maps and heap tuple are unchanged. The location equality and zero-offset conclusion are unchanged. Both HOL finite maps use canonical finite support, and the shared word dimension uses positive-width BitVec."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+  "hol_name": "do_app_const",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyClock.lean",
+  "lean_name": "doApp_const",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison with do_app_const_typed in flat_do_app_preservation_probe.out: the independent state parameters, operation, value list, successful state/result and source-to-result clock equality match. The reviewed doApp dispatcher inherits the documented reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "do_app_state_unchanged",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/DoAppState.lean",
+  "lean_name": "doApp_stateUnchanged",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison with do_app_state_unchanged_typed in flat_do_app_preservation_probe.out: the unused universally quantified c retains its independent type, the state parameters remain independent, and the successful application and result-to-source evaluation-configuration equality match. The reviewed doApp dispatcher inherits the documented reals_as_rational_cuts assumption."
 }
 ]
