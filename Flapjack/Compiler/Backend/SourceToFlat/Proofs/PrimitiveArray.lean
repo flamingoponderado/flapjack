@@ -5,54 +5,6 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 
-/-- A non-type-error dynamic allocation has an integer size operand. -/
-theorem aalloc_size_operand {F : Type} (source : State F) (size value : Value)
-    (successful : doApp (source.refs, source.ffi) .aalloc [size, value] ≠ none) :
-    ∃ n, size = .litv (.intLit n) := by
-  cases size <;> simp [doApp, doAppNumericCore, doAppBasic] at successful
-  case litv lit =>
-    cases lit <;> simp at successful
-    case intLit n => exact ⟨n, rfl⟩
-
-/-- A non-type-error byte-array allocation has integer size and Word8 value operands. -/
-theorem aw8alloc_operands {F : Type} (source : State F) (size value : Value)
-    (successful : doApp (source.refs, source.ffi) .aw8alloc [size, value] ≠ none) :
-    ∃ n byte, size = .litv (.intLit n) ∧ value = .litv (.word8 byte) := by
-  cases size <;> cases value <;> simp [doApp, doAppNumericCore, doAppBasic] at successful
-  case litv.litv sizeLit valueLit =>
-    cases sizeLit <;> cases valueLit <;> simp at successful
-    case intLit.word8 n byte => exact ⟨n, byte, rfl, rfl⟩
-
-/-- A successful array length operation identifies a source array cell. -/
-theorem alength_operand {F : Type} (source : State F) (operand : Value)
-    (successful : doApp (source.refs, source.ffi) .alength [operand] ≠ none) :
-    ∃ flag address values, operand = .loc flag address ∧ storeLookup address source.refs = some (.varray values) := by
-  cases operand <;> simp [doApp, doAppNumericCore, doAppBasic] at successful
-  case loc flag address =>
-    cases lookup : storeLookup address source.refs with
-    | none => simp [lookup] at successful
-    | some cell =>
-      cases cell with
-      | varray values => exact ⟨flag, address, values, rfl, lookup⟩
-      | refv value => simp [lookup] at successful
-      | w8array bytes => simp [lookup] at successful
-      | thunk mode value => simp [lookup] at successful
-
-/-- A successful byte-array length operation identifies a source byte-array cell. -/
-theorem aw8length_operand {F : Type} (source : State F) (operand : Value)
-    (successful : doApp (source.refs, source.ffi) .aw8length [operand] ≠ none) :
-    ∃ flag address bytes, operand = .loc flag address ∧ storeLookup address source.refs = some (.w8array bytes) := by
-  cases operand <;> simp [doApp, doAppNumericCore, doAppBasic] at successful
-  case loc flag address =>
-    cases lookup : storeLookup address source.refs with
-    | none => simp [lookup] at successful
-    | some cell =>
-      cases cell with
-      | w8array bytes => exact ⟨flag, address, bytes, rfl, lookup⟩
-      | refv value => simp [lookup] at successful
-      | varray values => simp [lookup] at successful
-      | thunk mode value => simp [lookup] at successful
-
 /-- A byte-array subscript without a type error has a location, integer
 index, and byte-array store cell. -/
 theorem aw8sub_operands {F : Type} (source : State F) (pointer index : Value) (unsafeOp : Bool)

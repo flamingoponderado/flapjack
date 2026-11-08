@@ -77,42 +77,6 @@ theorem vsub_complete_related {C F : Type} (genv : GlobalEnv)
         cases unsafeOp <;> simp [doApp, doAppNumericCore, doAppBasic, FlatSem.doAppData,
           SemanticPrimitivesHOL.readIndexed, FlatSem.readIndexed, negative, src, dst, ResultRel.value pairRel]
 
-/-- A non-type-error string slice has a string and two integer operands. -/
-theorem copyStrStr_operands {F : Type} (source : State F) (first second third : Value)
-    (successful : doApp (source.refs, source.ffi) .copyStrStr [first, second, third] ≠ none) :
-    ∃ text offset length, first = .litv (.strLit text) ∧ second = .litv (.intLit offset) ∧
-      third = .litv (.intLit length) := by
-  cases first <;> simp [doApp, doAppNumericCore, doAppBasic] at successful
-  case litv firstLit =>
-    cases firstLit <;> try simp at successful
-    case strLit text =>
-      cases second <;> try simp at successful
-      case litv secondLit =>
-        cases secondLit <;> try simp at successful
-        case intLit offset =>
-          cases third <;> try simp at successful
-          case litv thirdLit =>
-            cases thirdLit <;> try simp at successful
-            case intLit length => exact ⟨text, offset, length, rfl, rfl, rfl⟩
-
-/-- String slicing has related normal and bounds-error results. -/
-theorem copyStrStr_complete_related {C F : Type} (genv : GlobalEnv)
-    (source : State F) (flat : FlatSem.State C F) (ok : genvCOk genv.c)
-    (text : Basis.Pure.MlString.MlString) (offset length : Int) :
-    match doApp (source.refs, source.ffi) .copyStrStr
-        [.litv (.strLit text), .litv (.intLit offset), .litv (.intLit length)],
-      FlatSem.doAppCopy flat .copyStrStr
-        [.litv (.strLit text), .litv (.intLit offset), .litv (.intLit length)] with
-    | some ((refs, ffi), result), some (some (nextFlat, flatResult)) =>
-        refs = source.refs ∧ ffi = source.ffi ∧ nextFlat = flat ∧ ResultRel ValueRel genv result flatResult
-    | _, _ => False := by
-  have exceptionRel := (valueRel_lemmas genv ok).2.2.2.2
-  cases copied : copyArray (text.explode, offset) length none with
-  | none => simp [doApp, doAppNumericCore, doAppBasic, FlatSem.doAppCopy,
-      SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, copied, ResultRel.raise exceptionRel]
-  | some chars => simp [doApp, doAppNumericCore, doAppBasic, FlatSem.doAppCopy, copied,
-      ResultRel.value (ValueRel.literal genv _)]
-
 /-- A non-type-error byte-array slice identifies its source store cell. -/
 theorem copyAw8Str_operands {F : Type} (source : State F) (first second third : Value)
     (successful : doApp (source.refs, source.ffi) .copyAw8Str [first, second, third] ≠ none) :
@@ -424,21 +388,5 @@ theorem copyStrAw8_related {C F : Type} (genv : GlobalEnv)
     have resultRel : ValueRel genv (.conv none []) FlatSem.unitValue := .tuple genv [] [] (.nil genv)
     simp [doApp, doAppNumericCore, doAppBasic, FlatSem.doAppCopy, lookup, flatLookup, copied,
       assigned, flatAssigned, nextRel, reserved, ResultRel.value resultRel]
-
-/-- A string length operation without a type error has a string operand. -/
-theorem strlen_operand {F : Type} (source : State F) (operand : Value)
-    (successful : doApp (source.refs, source.ffi) .strlen [operand] ≠ none) :
-    ∃ str, operand = .litv (.strLit str) := by
-  cases operand <;> simp [doApp, doAppNumericCore, doAppBasic] at successful
-  case litv lit =>
-    cases lit <;> simp at successful
-    case strLit str => exact ⟨str, rfl⟩
-
-/-- A vector length operation without a type error has a vector operand. -/
-theorem vlength_operand {F : Type} (source : State F) (operand : Value)
-    (successful : doApp (source.refs, source.ffi) .vlength [operand] ≠ none) :
-    ∃ values, operand = .vectorv values := by
-  cases operand <;> simp [doApp, doAppNumericCore, doAppBasic] at successful
-  case vectorv values => exact ⟨values, rfl⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat
