@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Budget
+import Flapjack.Misc.Option.MapM
 
 /-! Structural sufficiency for multi-argument closure introduction. These
 are Flapjack infrastructure lemmas, not HOL pass-correctness ports. -/
