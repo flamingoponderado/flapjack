@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColouring
+import Flapjack.Compiler.Backend.RegAlloc.ProductionLookupFirst
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ColourExtraction
 
@@ -19,18 +20,6 @@ private theorem lookup_member (entries : NatInfoMap Nat) (key value : Nat)
       exact List.mem_cons_self
     · simp [equal] at found
       exact List.mem_cons_of_mem _ (ih found)
-
-private theorem lookup_first (key : Nat) (entries : NatInfoMap Nat) :
-    lookupNatInfo key entries = sptAListLookup key entries := by
-  induction entries with
-  | nil => rfl
-  | cons entry rest ih =>
-    obtain ⟨other, value⟩ := entry
-    simp only [lookupNatInfo, sptAListLookup, Bool.beq_eq_decide_eq]
-    by_cases equal : key = other
-    · subst other
-      simp
-    · simp [equal, Ne.symm equal, ih]
 
 /-- Actual sorted extraction preserves both present and absent source-name
 lookups. Name uniqueness is proved by the executed mkBij producer. Untagged

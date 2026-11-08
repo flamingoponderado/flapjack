@@ -22,18 +22,6 @@ private theorem orderedLtTrans {κ ν : Type} (cmp : κ → κ → Ordering)
     exact ⟨hgood.2.2.2.2.2.2 x y root ⟨hxy, hordered.1⟩,
       ihl hordered.2.1, ihr hordered.2.2⟩
 
-/-- Lookup extensionality for the canonical carrier, using proof irrelevance
-for finite support. This is representation infrastructure, not a HOL port. -/
-private theorem mapExt {α β : Type} (left right : HolFiniteMapExact α β)
-    (h : ∀ key, left.lookup key = right.lookup key) : left = right := by
-  cases left with
-  | mk l hl =>
-    cases right with
-    | mk r hr =>
-      have heq : l = r := funext h
-      cases heq
-      rfl
-
 /-- Tree-wide greater transitivity from the original comparator clauses;
 Flapjack induction infrastructure with no separate HOL original. -/
 private theorem orderedGtTrans {κ ν : Type} (cmp : κ → κ → Ordering)

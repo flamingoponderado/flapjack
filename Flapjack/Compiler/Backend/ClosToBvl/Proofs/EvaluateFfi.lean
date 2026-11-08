@@ -6,18 +6,6 @@ namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 open Flapjack.Basis.Pure.MlString
 
-private theorem reverse_related {α β : Type} {R : α → β → Prop} {xs : List α} {ys : List β}
-    (related : List.Forall₂ R xs ys) : List.Forall₂ R xs.reverse ys.reverse := by
-  have appendRel : ∀ {a c : List α} {b d : List β}, List.Forall₂ R a b →
-      List.Forall₂ R c d → List.Forall₂ R (a ++ c) (b ++ d) := by
-    intro a c b d first second
-    induction first with
-    | nil => exact second
-    | cons head tail ih => exact .cons head ih
-  induction related with
-  | nil => exact .nil
-  | cons head tail ih => simpa using appendRel ih (.cons head .nil)
-
 /-- Argument errors propagate through the target foreign call. -/
 theorem evaluatePost_ffi_error {C F : Type} (s sFinal : ClosSem.State C F)
     (t : BvlSem.State C F) (targetEnv : List BvlSem.Value)
