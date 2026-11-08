@@ -159,12 +159,6 @@ theorem checkOp_candidate_call (ctx : List ValueType) (assoc : AssocOp) (loc : N
     cases dest <;> cases handler <;> simp_all
     exact ⟨pure, termOk, ticks, args, rfl, original⟩
 
-/-- `Noop` cannot select a source operation candidate. -/
-theorem checkOp_noop (ctx : List ValueType) (loc : Nat) (e : Exp) :
-    checkOp ctx .noop loc e = none := by
-  apply checkOp_of_not_opEq
-  cases e <;> rfl
-
 /-- The normalized operation branch is exactly the original source dispatch. -/
 theorem sourceDispatch_op (loc next : Nat) (op : AssocOp) (acc : Nat)
     (ctx : List ValueType) (actual : ClosLang.Op) (xs : List Exp) :
@@ -223,6 +217,7 @@ def rewriteSingle (loc next : Nat) (op : AssocOp) (acc : Nat)
 termination_by e => sizeOf e
 
 /-- Source-shaped rewrite using the original list-based scan. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "rewrite_def"]
 def rewriteSource (loc next : Nat) (op : AssocOp) (acc : Nat)
     (ctx : List ValueType) : Exp → Bool × Exp
   | .var n => (false, .var n)
@@ -462,6 +457,7 @@ theorem compileExpBounded_eq_source (fuel loc next arity : Nat) (e : Exp) :
 
 /-- Source-shaped expression compilation, with the original list scan and
 rewrite. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "compile_exp_def"]
 def compileExpSource (loc next arity : Nat) (e : Exp) : Option (Exp × Exp) :=
   match checkExpOriginal loc arity e with
   | none => none
@@ -475,6 +471,7 @@ theorem compileExpBounded_eq_compileExpSource (fuel loc next arity : Nat) (e : E
   simpa [compileExpSource, letWrap] using compileExpBounded_eq_source fuel loc next arity e
 
 /-- Source-shaped function-list compilation in source order. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "compile_each_def"]
 def compileEachSource : Nat → List (Nat × Nat × Exp) → Nat × List (Nat × Nat × Exp)
   | next, [] => (next, [])
   | next, (loc, arity, body) :: rest =>
@@ -503,6 +500,7 @@ theorem compileEachFuel_eq_source (fuel next : Nat) (code : List (Nat × Nat × 
         decision, ih]
 
 /-- Source-shaped program pass, including the disabled case. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "compile_prog_def"]
 def compileProgSource (enabled : Bool) (next : Nat) (code : List (Nat × Nat × Exp)) :
     Nat × List (Nat × Nat × Exp) :=
   if enabled then compileEachSource next code else (next, code)

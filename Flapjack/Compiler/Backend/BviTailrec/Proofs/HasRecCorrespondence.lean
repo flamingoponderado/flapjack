@@ -167,43 +167,5 @@ theorem hasRecBounded_eq_hasRec1 (fuel loc : Nat) (expression : Exp) :
     hasRecBounded fuel loc expression = some (hasRec1 loc expression) := by
   rw [hasRecBounded_eq, hasRec1, hasRec_sing_eq]
 
-/-- The candidate check rejects expressions for which CakeML's recursion
-query returns false. -/
-theorem checkExpFuel_noRec (fuel loc arity : Nat) (expression : Exp)
-    (noRec : hasRec1 loc expression = false) :
-    checkExpFuel fuel loc arity expression = some none := by
-  simp [checkExpFuel, hasRecBounded_eq_hasRec1, noRec]
-
-/-- Retrying cannot introduce a rewrite when the source recursion query
-rejects the expression. -/
-theorem compileExpBounded_noRec (fuel loc next arity : Nat) (expression : Exp)
-    (noRec : hasRec1 loc expression = false) :
-    compileExpBounded fuel loc next arity expression = some none := by
-  simp [compileExpBounded, compileExpFuel, checkExpFuel_noRec fuel loc arity expression noRec]
-
-/-- Processing a program with no recursive candidates preserves every
-entry and the next-label counter. -/
-theorem compileEachFuel_noRec (fuel next : Nat) (program : List (Nat × Nat × Exp))
-    (noRec : ∀ entry ∈ program, hasRec1 entry.1 entry.2.2 = false) :
-    compileEachFuel fuel next program = some (next, program) := by
-  induction program generalizing next with
-  | nil => rfl
-  | cons entry rest ih =>
-    obtain ⟨loc, arity, body⟩ := entry
-    have head := noRec (loc, arity, body) (by simp)
-    have tail : ∀ entry ∈ rest, hasRec1 entry.1 entry.2.2 = false := by
-      intro entry member
-      exact noRec entry (by simp [member])
-    simp [compileEachFuel, compileExpBounded_noRec fuel loc next arity body head, ih next tail]
-
-/-- The production tail-recursion pass leaves every no-candidate program
-unchanged, whether the pass is enabled or disabled. -/
-theorem compileProgFuel_noRec (fuel : Nat) (enabled : Bool) (next : Nat)
-    (program : List (Nat × Nat × Exp))
-    (noRec : ∀ entry ∈ program, hasRec1 entry.1 entry.2.2 = false) :
-    compileProgFuel fuel enabled next program = some (next, program) := by
-  cases enabled with
-  | false => rfl
-  | true => simpa [compileProgFuel] using compileEachFuel_noRec fuel next program noRec
 
 end Flapjack.Compiler.Backend.BviTailrec

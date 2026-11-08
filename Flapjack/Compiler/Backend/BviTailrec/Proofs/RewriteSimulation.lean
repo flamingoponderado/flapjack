@@ -4289,26 +4289,6 @@ theorem compileEach_semantics {C F : Type}
     (compileEach_initial_observations next program ffi oracle compiler start
       condition oracleCondition workerBound notFail)
 
-/-- The executed fuel-based compiler has the same whole-program behavior as
-the source program under the pass's input conditions. The oracle transformation
-is the source-shaped pass; its representation still requires HOL review. -/
-theorem compileEachFuel_semantics {C F : Type}
-    (fuel next : Nat) (program : List (Nat × Nat × Bvi.Exp)) (ffi : HolFfiState F)
-    (oracle : BviSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C) (start : Nat)
-    (last : Nat) (compiled : List (Nat × Nat × Bvi.Exp))
-    (condition : inputCondition next program)
-    (oracleCondition : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
-    (workerBound : ∀ n, n ∈ compiled.map Prod.fst → inWorkerNamespace n → n < (oracle 0).1.1)
-    (compiledEq : compileEachFuel fuel next program = some (last, compiled))
-    (notFail : BviSem.semantics ffi (sptFromAList program) oracle (transformCompiler compiler) start ≠ .fail) :
-    BviSem.semantics ffi (sptFromAList program) oracle (transformCompiler compiler) start =
-      BviSem.semantics ffi (sptFromAList compiled) (transformOracle oracle) compiler start := by
-  have equal := (compileEachFuel_eq_source fuel next program).symm.trans compiledEq
-  have compiledSame : (compileEachSource next program).2 = compiled := by
-    exact congrArg Prod.snd (Option.some.inj equal)
-  rw [← compiledSame] at workerBound ⊢
-  exact compileEach_semantics next program ffi oracle compiler start condition oracleCondition workerBound notFail
-
 /-- The tail-recursion oracle adapter is the standard incremental-pass
 oracle adapter. -/
 theorem transformOracle_eq_stateCo {C : Type} (oracle : BviSem.CompileOracle (Nat × C)) :
@@ -4329,28 +4309,6 @@ theorem transformCompiler_eq_stateCc {C : Type} (compiler : BviSem.Compiler C) :
     | some output =>
       rcases output with ⟨bytes, data, config'⟩
       simp [transformCompiler, BackendProps.stateCc, h, hcompiler]
-
-/-- With tail-recursion elimination enabled, the production program entry
-point preserves BVI behavior using the standard incremental oracle and
-callback adapters. The HOL carrier comparison remains outstanding. -/
-theorem compileProgFuel_enabled_semantics {C F : Type}
-    (fuel next : Nat) (program : List (Nat × Nat × Bvi.Exp)) (ffi : HolFfiState F)
-    (oracle : BviSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C) (start : Nat)
-    (last : Nat) (compiled : List (Nat × Nat × Bvi.Exp))
-    (condition : inputCondition next program)
-    (oracleCondition : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
-    (workerBound : ∀ n, n ∈ compiled.map Prod.fst → inWorkerNamespace n → n < (oracle 0).1.1)
-    (compiledEq : compileProgFuel fuel true next program = some (last, compiled))
-    (notFail : BviSem.semantics ffi (sptFromAList program) oracle
-      (BackendProps.stateCc compileEachSource compiler) start ≠ .fail) :
-    BviSem.semantics ffi (sptFromAList program) oracle
-        (BackendProps.stateCc compileEachSource compiler) start =
-      BviSem.semantics ffi (sptFromAList compiled)
-        (BackendProps.stateCo compileEachSource oracle) compiler start := by
-  rw [← transformCompiler_eq_stateCc] at notFail ⊢
-  rw [← transformOracle_eq_stateCo]
-  exact compileEachFuel_semantics fuel next program ffi oracle compiler start last compiled
-    condition oracleCondition workerBound (by simpa [compileProgFuel] using compiledEq) notFail
 
 /-- Removing an identity pass from the incremental compiler adapters
 preserves BVI behavior. The evaluator and state carriers remain under HOL
@@ -4394,28 +4352,23 @@ theorem compileProgSource_semantics {C F : Type}
       BviSem.semantics ffi (sptFromAList compiled)
         (BackendProps.stateCo (compileProgSource enabled) oracle) compiler start := by
   obtain ⟨condition, oracleCondition, workerBound, compiledEq, notFail⟩ := premises
-  have run : compileProgFuel 0 enabled next program =
-      some ((compileProgSource enabled next program).1, compiled) := by
-    rw [compileProgFuel_eq_source]
-    cases result : compileProgSource enabled next program with
-    | mk last output => simp_all
   cases enabled with
   | false =>
     have passEq : compileProgSource false = (fun c p => (c, p)) := by funext c p; rfl
     rw [passEq] at notFail ⊢
-    have same : program = compiled := by
-      have pairEq : (next, program) =
-          ((compileProgSource false next program).1, compiled) := by
-        simpa [compileProgFuel] using run
-      exact congrArg Prod.snd pairEq
+    have same : program = compiled := by simpa [compileProgSource] using compiledEq
     subst compiled
     exact semantics_identity_adapter ffi (sptFromAList program) oracle compiler start notFail
   | true =>
     have passEq : compileProgSource true = compileEachSource := by funext c p; rfl
     rw [passEq] at notFail ⊢
-    exact compileProgFuel_enabled_semantics 0 next program ffi oracle compiler start
-      ((compileProgSource true next program).1) compiled
-      condition (fun k => oracleCondition k _ _ _ rfl)
-      (fun n member inNamespace => workerBound n ⟨member, inNamespace⟩) run notFail
+    have compiledSame : (compileEachSource next program).2 = compiled := by
+      simpa [compileProgSource] using compiledEq
+    rw [← transformCompiler_eq_stateCc] at notFail ⊢
+    rw [← transformOracle_eq_stateCo]
+    rw [← compiledSame] at workerBound ⊢
+    exact compileEach_semantics next program ffi oracle compiler start condition
+      (fun k => oracleCondition k _ _ _ rfl)
+      (fun n member inNamespace => workerBound n ⟨member, inNamespace⟩) notFail
 
 end Flapjack.Compiler.Backend.BviTailrec

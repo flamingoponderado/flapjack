@@ -752,7 +752,7 @@ run_probe data_sem_stack_probeScript.sml data_sem_stack_probe.out \
   any_arith_call_tree stack_consumed do_stack "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvi_tailrec_frontend_probeScript.sml bvi_tailrec_frontend_probe.out \
-  decisions cases tmc analysis rewrites program scan_expr_def_typed check_exp_def_typed rewrite_def_typed compile_exp_def_typed compile_each_def_typed compile_prog_def_typed "$cake_dir/compiler/backend/bvi_tailrecScript.sml" "$cake_dir/compiler/backend"
+  decisions cases tmc analysis rewrites program scan_expr_def_typed check_exp_def_typed rewrite_def_typed compile_exp_def_typed compile_each_def_typed compile_prog_def_typed scan_expr_eq_typed "$cake_dir/compiler/backend/bvi_tailrecScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvi_tailrec_semantics_probeScript.sml bvi_tailrec_semantics_probe.out \
   input_condition_def_typed compile_prog_semantics_typed "$cake_dir/compiler/backend/proofs/bvi_tailrecProofScript.sml" "$cake_dir/compiler/backend/proofs"

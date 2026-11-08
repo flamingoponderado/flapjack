@@ -17011,6 +17011,48 @@
     "reviewer": "Compared input_condition_def_typed in bvi_tailrec_semantics_probe.out. The program payload remains polymorphic, and the EVERY, distinct-name, filtered namespace, lower-bound and modulo conditions retain their HOL meanings."
   },
   {
+    "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml", "hol_name": "scan_expr_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean", "lean_name": "scanExpr",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared scan_expr_def_typed in bvi_tailrec_frontend_probe.out, including all singleton clauses, context threading, MAP2 truncation and LAST1. scanExpr_single and scanExpr_length establish that singleton scans are nonempty, so the headD defaults cannot occur; nonrecursive cases delegate to the matching scanSing clauses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml", "hol_name": "scan_expr_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/ScanCorrespondence.lean", "lean_name": "scanExpr_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared scan_expr_eq_typed in bvi_tailrec_frontend_probe.out. Both universally quantified singleton and list conjuncts retain their original binder order and conclusions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml", "hol_name": "check_exp_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/ScanCorrespondence.lean", "lean_name": "checkExpOriginal",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared check_exp_def_typed in bvi_tailrec_frontend_probe.out, including the recursion guard, empty scan branch and operator type check."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml", "hol_name": "rewrite_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteCorrespondence.lean", "lean_name": "rewriteSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared rewrite_def_typed in bvi_tailrec_frontend_probe.out, including both fallback branches and the rebound checked expression. scanExpr_single establishes that the If branch's singleton headD default cannot occur; rewriteSingle_eq_source and rewriteFuel_eq connect the executed rewrite."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml", "hol_name": "compile_exp_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteCorrespondence.lean", "lean_name": "compileExpSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_exp_def_typed in bvi_tailrec_frontend_probe.out, including operator decision, replicated context, worker and wrapper ordering. compileExpBounded_eq_compileExpSource connects the executed traversal."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml", "hol_name": "compile_each_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteCorrespondence.lean", "lean_name": "compileEachSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_each_def_typed in bvi_tailrec_frontend_probe.out, including both recursion branches, worker label stride, arity increment and output order. compileEachFuel_eq_source connects the executed traversal."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml", "hol_name": "compile_prog_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteCorrespondence.lean", "lean_name": "compileProgSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_prog_def_typed in bvi_tailrec_frontend_probe.out, including both enabled and disabled cases. compileProgFuel_eq_source connects the executed traversal."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/bvl_constScript.sml", "hol_name": "compile_def",
     "lean_path": "Flapjack/Compiler/Backend/BvlConst/SourceCompile.lean", "lean_name": "compile",
     "statement_status": "reviewed_exact",

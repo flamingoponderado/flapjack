@@ -63,3 +63,4 @@ val _ = show_thm "rewrite_def_typed=" bvi_tailrecTheory.rewrite_def;
 val _ = show_thm "compile_exp_def_typed=" bvi_tailrecTheory.compile_exp_def;
 val _ = show_thm "compile_each_def_typed=" bvi_tailrecTheory.compile_each_def;
 val _ = show_thm "compile_prog_def_typed=" bvi_tailrecTheory.compile_prog_def;
+val _ = show_thm "scan_expr_eq_typed=" bvi_tailrecTheory.scan_expr_eq;
