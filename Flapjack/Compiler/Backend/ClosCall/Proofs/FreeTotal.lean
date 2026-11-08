@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosCall
 import Flapjack.Compiler.Backend.ClosLang.Proofs.Budget
+import Flapjack.Misc.Option.MapM
 
 /-! Structural sufficiency for closure free-variable analysis. These are
 Flapjack infrastructure lemmas, not HOL pass-correctness ports. -/
