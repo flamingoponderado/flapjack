@@ -651,7 +651,7 @@ exported global-invariant equation and replay its original simplifier derivation
 
 `bvi_tmc_frontend_probe.out` captures full TMC wrapper and worker examples, including nested constructors, multiple calls, effectful arguments, and program-level worker allocation. These checks are regression evidence, not a correctness theorem.
 
-`clos_call_frontend_probe.out` captures closure free-variable annotations, direct-call conversion, effectful calls, and mutually recursive code extraction. `full_clos_call_cake_word_probe.out` captures the complete word program for a nested-function CakeML declaration with direct-call conversion and the ported BVL/BVI optimizations enabled; known-function optimization is disabled.
+`clos_call_frontend_probe.out` captures closure free-variable annotations, direct-call conversion, effectful calls, mutually recursive code extraction, and enabled and disabled incremental conversion. The enabled incremental result is replayed at two fuel values by `ClosCallParity`; the disabled capture records the HOL behavior for future integration. `full_clos_call_cake_word_probe.out` captures the complete word program for a nested-function CakeML declaration with direct-call conversion and the ported BVL/BVI optimizations enabled; known-function optimization is disabled.
 
 `clos_call_code_list_probe.out` captures the polymorphic source type and typed label-accounting theorems for the direct-call code-list helper, together with a concrete example replayed by the executable-pass parity tests.
 

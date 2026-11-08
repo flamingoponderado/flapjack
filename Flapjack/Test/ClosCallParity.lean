@@ -68,6 +68,21 @@ example : ¬ List.Forall₂
   | _ => false
 
 private def state : State := (sptInsert 4 () .ln, [])
+
+-- `incremental` in the HOL probe: the input auxiliary code is replaced,
+-- existing known locations are preserved, and a closed function adds its code.
+private def incrementalProgram : List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp) :=
+  ([.fn (ofString "f") (some 4) none 1 (.var .none 0)], [(99, 1, .var .none 0)])
+
+#guard match compileIncFuel? 0 (sptInsert 2 () .ln) incrementalProgram with
+  | some (set, ([.fn name (some 4) none 1 (.call .none 0 5 [.var .none 0])],
+      [(5, 1, .var .none 0)])) =>
+      decide (name = ofString "f") && sptToAList set == [(4, ()), (2, ())]
+  | _ => false
+
+#guard compileIncFuel? 0 (sptInsert 2 () .ln) incrementalProgram ==
+  compileIncFuel? 100 (sptInsert 2 () .ln) incrementalProgram
+
 #guard match callsFuel 100 (.app .none (some 4) (.var .none 0) [.var .none 1, .var .none 2]) state,
     callsFuel 100 (.app .none (some 4) (.tick .none (.var .none 0)) [.var .none 1, .var .none 2]) state with
   | some (.call .none 2 5 [.var .none 1, .var .none 2], _),
