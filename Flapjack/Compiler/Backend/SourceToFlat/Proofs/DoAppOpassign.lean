@@ -1714,4 +1714,59 @@ theorem doApp_ThunkOp {C F : Type} (genv : GlobalEnv) (op : ThunkOp)
                 afterFfi, rfl, reserved.symm, .value (.tuple genv [] [] (.nil genv)), ?_⟩
               simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, dst]
 
+/-- The ListAppend case of `do_app`; the full theorem is not yet assembled. The
+dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
+  (fmap_as_finite_support := [c, tys])]
+theorem doApp_ListAppend {C F : Type} (genv : GlobalEnv)
+    (s1 s2 : Store Value × HolFfiState F) (vs : List Value)
+    (r : Result Value Value) (flat : FlatSem.State C F) (flatVs : List FlatSem.Value)
+    (premises : doApp s1 .listAppend vs = some (s2, r) ∧
+      List.Forall₂ (StoreValueRel genv) s1.1 flat.refs.tail ∧ flat.refs ≠ [] ∧
+      List.Forall₂ (ValueRel genv) vs flatVs ∧ s1.2 = flat.ffi ∧ genvCOk genv.c ∧
+      Op.listAppend ≠ .aallocEmpty ∧ Op.listAppend ≠ .envId) :
+    ∃ flatResult flatState,
+      List.Forall₂ (StoreValueRel genv) s2.1 flatState.refs.tail ∧ flatState.refs ≠ [] ∧
+      s2.2 = flatState.ffi ∧ flat.globals = flatState.globals ∧
+      flat.refs.take 1 = flatState.refs.take 1 ∧ ResultRel ValueRel genv r flatResult ∧
+      FlatSem.doApp flat (astOpToFlatOp .listAppend) flatVs = some (flatState, flatResult) := by
+  obtain ⟨run, stores, nonempty, values, ffi, ok, _, _⟩ := premises
+  cases vs with
+  | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+    | cons second rest =>
+      cases rest with
+      | cons third rest => simp [doApp, doAppNumericCore, doAppBasic] at run
+      | nil =>
+        cases leftDecoded : valueToList first with
+        | none => simp [doApp, doAppNumericCore, doAppBasic, leftDecoded] at run
+        | some left =>
+          cases rightDecoded : valueToList second with
+          | none => simp [doApp, doAppNumericCore, doAppBasic, leftDecoded, rightDecoded] at run
+          | some right =>
+            simp [doApp, doAppNumericCore, doAppBasic, leftDecoded, rightDecoded] at run
+            obtain ⟨rfl, rfl⟩ := run
+            cases values with
+            | cons firstRel tail =>
+              cases tail with
+              | cons secondRel tail =>
+                cases tail
+                rename_i flatFirst flatSecond
+                obtain ⟨flatLeft, flatLeftDecoded, leftRel⟩ :=
+                  valueToList_related genv ok first flatFirst left ⟨firstRel, leftDecoded⟩
+                obtain ⟨flatRight, flatRightDecoded, rightRel⟩ :=
+                  valueToList_related genv ok second flatSecond right ⟨secondRel, rightDecoded⟩
+                have appended : List.Forall₂ (ValueRel genv) (left ++ right) (flatLeft ++ flatRight) := by
+                  clear leftDecoded flatLeftDecoded
+                  induction leftRel with
+                  | nil => exact rightRel
+                  | cons head _ ih => exact .cons head ih
+                have related := listToValue_related genv _ _ ⟨ok.2.2.1, appended⟩
+                refine ⟨.val (FlatSem.listToValue (flatLeft ++ flatRight)), flat, stores, nonempty, ffi,
+                  rfl, rfl, .value related, ?_⟩
+                simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                  FlatSem.doAppData, flatLeftDecoded, flatRightDecoded]
+
 end Flapjack.Compiler.Backend.SourceToFlat

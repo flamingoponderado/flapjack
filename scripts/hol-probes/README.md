@@ -9580,13 +9580,14 @@ simulation theorem; `do_app_configGC_replay`, `do_app_shift_replay`,
 `do_app_vlength_replay`, `do_app_aalloc_replay`, `do_app_aallocfixed_replay`,
 `do_app_asub_replay`, `do_app_alength_replay`, `do_app_aupdate_replay`,
 `do_app_asubunsafe_replay`, `do_app_aupdateunsafe_replay`,
-`do_app_aw8subunsafe_replay`, and `do_app_aw8updateunsafe_replay`
+`do_app_aw8subunsafe_replay`, `do_app_aw8updateunsafe_replay`, and
+`do_app_listappend_replay`
 replay its ConfigGC, Shift, Equality, Arith, FromTo, Test, Opapp, Opassign,
 Opref, Opderef, Aw8alloc, Aw8sub, Aw8length, Aw8update, CopyStrStr,
 CopyStrAw8, CopyAw8Str, CopyAw8Aw8, XorAw8Str_unsafe, Implode, Explode,
 Strsub, Strlen, Strcat, VfromList, Vsub, Vsub_unsafe, Vlength, Aalloc,
 AallocFixed, Asub, Alength, Aupdate, Asub_unsafe, Aupdate_unsafe,
-Aw8sub_unsafe, and Aw8update_unsafe cases. The replays reconstruct the relevant
+Aw8sub_unsafe, Aw8update_unsafe, and ListAppend cases. The replays reconstruct the relevant
 local HOL prerequisites.
 `do_app_thunkop_typed` records the complete ThunkOp specialization; the
 isolated original tactic has not been replayed.
