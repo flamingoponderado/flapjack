@@ -749,10 +749,16 @@ run_probe sptree_delete_definition_probeScript.sml sptree_delete_definition_prob
   mk_bn mk_bs delete size union from_alist "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend"
 
 run_probe data_sem_limits_probeScript.sml data_sem_limits_probe.out \
-  lim_safe_part lim_safe ref_array_inside ref_array_boundary ref_array_negative ref_array_malformed nullary_tag_boundary "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
+  lim_safe_part lim_safe do_lim_safe ref_array_inside ref_array_boundary ref_array_negative ref_array_malformed nullary_tag_boundary "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
+
+run_probe data_space_req_probeScript.sml data_space_req_probe.out \
+  num_size part_space_req op_space_req "$cake_dir/compiler/backend/data_spaceScript.sml" "$cake_dir/compiler/backend"
+
+run_probe integer_division_probeScript.sml integer_division_probe.out \
+  int_div int_mod "$hol_dir/src/integer/integerScript.sml" "$cake_dir/compiler/backend"
 
 run_probe data_sem_stack_probeScript.sml data_sem_stack_probe.out \
-  any_arith_call_tree location_FromList_location location_FromList1_location location_RefByte_location location_RefArray_location location_Replicate_location location_AnyArith_location location_Add_location location_Sub_location location_Mul_location location_Div_location location_Mod_location location_Compare1_location location_Compare_location location_Equal1_location location_Equal_location location_LongDiv1_location location_LongDiv_location location_MemCopy_location location_ByteCopy_location location_ByteCopyAdd_location location_ByteCopySub_location location_ByteCopyNew_location location_Install_location location_InstallCode_location location_InstallData_location location_Dummy_location location_Append_location location_AppendMainLoop_location location_AppendLenLoop_location location_XorLoop_location location_Unused_location location_StringCmpLoop_location location_Bignum_location stack_consumed do_stack "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
+  any_arith_call_tree location_FromList_location location_FromList1_location location_RefByte_location location_RefArray_location location_Replicate_location location_AnyArith_location location_Add_location location_Sub_location location_Mul_location location_Div_location location_Mod_location location_Compare1_location location_Compare_location location_Equal1_location location_Equal_location location_LongDiv1_location location_LongDiv_location location_MemCopy_location location_ByteCopy_location location_ByteCopyAdd_location location_ByteCopySub_location location_ByteCopyNew_location location_Install_location location_InstallCode_location location_InstallData_location location_Dummy_location location_Append_location location_AppendMainLoop_location location_AppendLenLoop_location location_XorLoop_location location_Unused_location location_StringCmpLoop_location location_Bignum_location vs_depth eq_code_stack_max stack_consumed do_stack "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvi_tailrec_frontend_probeScript.sml bvi_tailrec_frontend_probe.out \
   decisions cases tmc analysis rewrites program scan_expr_def_typed check_exp_def_typed rewrite_def_typed compile_exp_def_typed compile_each_def_typed compile_prog_def_typed scan_expr_eq_typed "$cake_dir/compiler/backend/bvi_tailrecScript.sml" "$cake_dir/compiler/backend"
@@ -3293,6 +3299,9 @@ run_probe mlstring_carrier_probeScript.sml mlstring_carrier_probe.out \
   ml_strlen ml_concat_len \
   "$cake_dir/basis/pure/mlstringScript.sml" \
   "$cake_dir/basis/pure"
+
+run_probe mlstring_length_probeScript.sml mlstring_length_probe.out \
+  strlen length_explode "$cake_dir/basis/pure/mlstringScript.sml" "$cake_dir/basis/pure"
 
 # The loopSem state-carrier probe pins the exact field shapes of a concrete
 # (8,'ffi) loopSem$state: num_map locals/code, total memory, set domain, clock, be.

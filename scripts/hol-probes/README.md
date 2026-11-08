@@ -381,16 +381,29 @@ size, union, and association-list construction definitions used by data
 heap accounting and installation.
 Regenerate with `HOL_PROBE_ONLY=sptree_delete_definition_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-`data_sem_limits_probe.out` captures the typed operation-limit definitions and
-original array-length and nullary-tag boundary observations. Corresponding
+`mlstring_length_probe.out` captures the typed `strlen` definition and the
+original length-of-explode theorem used by data-space accounting.
+Regenerate with `HOL_PROBE_ONLY=mlstring_length_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`data_space_req_probe.out` captures the typed number, constant-part, and
+operation space-requirement definitions.
+Regenerate with `HOL_PROBE_ONLY=data_space_req_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`integer_division_probe.out` captures HOL integer division and remainder's
+nonzero-divisor specifications; neither constrains the value at zero.
+Regenerate with `HOL_PROBE_ONLY=integer_division_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`data_sem_limits_probe.out` captures the typed operation-limit definitions,
+their state-update wrapper, and original array-length and nullary-tag boundary
+observations. Corresponding
 Lean cases cover valid, invalid, and malformed inputs. The observations do not
 establish the complete evaluator correspondence. Regenerate with
 `HOL_PROBE_ONLY=data_sem_limits_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `data_sem_stack_probe.out` captures the typed computed arithmetic call tree,
-its data-to-word location constants, the data-language stack-consumption
-clauses, and the stack update. The tree was regenerated against the pinned
-CakeML and HOL revisions; run
+its data-to-word location constants, value-depth and stack-maximum helpers,
+the stack-consumption clauses, and the stack update. The tree was regenerated
+against the pinned CakeML and HOL revisions; run
 `python3 scripts/check-data-stack-call-tree.py` to compare it with the Lean
 tree. The capture and comparison do not establish whole-evaluator correctness.
 Regenerate with `HOL_PROBE_ONLY=data_sem_stack_probeScript.sml scripts/hol-probes/regenerate.sh`.

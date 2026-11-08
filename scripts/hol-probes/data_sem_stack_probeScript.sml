@@ -39,5 +39,7 @@ val _ = show "location_XorLoop_location=" data_to_wordTheory.XorLoop_location_de
 val _ = show "location_Unused_location=" data_to_wordTheory.Unused_location_def;
 val _ = show "location_StringCmpLoop_location=" data_to_wordTheory.StringCmpLoop_location_def;
 val _ = show "location_Bignum_location=" data_to_wordTheory.Bignum_location_def;
+val _ = show "vs_depth=" dataSemTheory.vs_depth_def;
+val _ = show "eq_code_stack_max=" dataSemTheory.eq_code_stack_max_def;
 val _ = show "stack_consumed=" dataSemTheory.stack_consumed_def;
 val _ = show "do_stack=" dataSemTheory.do_stack_def;

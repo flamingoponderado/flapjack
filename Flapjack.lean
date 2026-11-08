@@ -3829,6 +3829,7 @@ import Flapjack.Compiler.Backend.StackLang.Overloads
 import Flapjack.Compiler.Backend.StackLang.WordPayloads.InstructionBoundary
 import Flapjack.Compiler.Backend.StackCarrier
 import Flapjack.Basis.Pure.MlString
+import Flapjack.Basis.Pure.MlString.Length
 import Flapjack.Compiler.Backend.MlStringBridge
 import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Compiler.Backend.RegAlloc

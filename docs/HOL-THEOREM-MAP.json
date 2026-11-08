@@ -19932,6 +19932,22 @@
   },
   {
     "hol_path": "cakeml/basis/pure/mlstringScript.sml",
+    "hol_name": "strlen_def",
+    "lean_path": "Flapjack/Basis/Pure/MlString/Length.lean",
+    "lean_name": "strlen",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared strlen in mlstring_length_probe.out: the length of the implode payload is returned over the reviewed MlString carrier."
+  },
+  {
+    "hol_path": "cakeml/basis/pure/mlstringScript.sml",
+    "hol_name": "LENGTH_explode",
+    "lean_path": "Flapjack/Basis/Pure/MlString/Length.lean",
+    "lean_name": "length_explode",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared length_explode in mlstring_length_probe.out: the exploded character-list length equals strlen for every MlString, with the same orientation as HOL."
+  },
+  {
+    "hol_path": "cakeml/basis/pure/mlstringScript.sml",
     "hol_name": "mlstring",
     "lean_path": "Flapjack/Basis/Pure/MlString.lean",
     "lean_name": "MlString",
@@ -116902,24 +116918,24 @@
     "lean_name": "numSize",
     "hol_path": "cakeml/compiler/backend/data_spaceScript.sml",
     "hol_name": "num_size_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared num_size in data_space_req_probe.out: the HOL 2^32 threshold and divisor are written as 4294967296, with identical base and recursive branches."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataSpace/Requirements.lean",
     "lean_name": "partSpaceReq",
     "hol_path": "cakeml/compiler/backend/data_spaceScript.sml",
     "hol_name": "part_space_req_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all part_space_req clauses in data_space_req_probe.out: the 2^29 threshold is written as 536870912, isEmpty implements length = 0, and the reviewed strlen and numSize supply the original operations."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataSpace/Requirements.lean",
     "lean_name": "opSpaceReq",
     "hol_path": "cakeml/compiler/backend/data_spaceScript.sml",
     "hol_name": "op_space_req_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all nonzero op_space_req clauses and the expanded default cases in data_space_req_probe.out, preserving operand counts, operation constructors and the reviewed partSpaceReq sum."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Assign.lean",
@@ -128223,7 +128239,7 @@
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Int.lean",
   "lean_name": "doIntApp",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared integer_application in the typed DataSem probe: constants, arithmetic, zero-divisor errors, integer comparisons and the bounded small-constant comparison match the original clauses and fallback."
+  "reviewer": "Compared integer_application in the typed DataSem probe: constants, arithmetic, zero-divisor errors, integer comparisons and the bounded small-constant comparison match the original clauses and fallback. Division and remainder use fdiv and fmod only under the nonzero-divisor guard."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128238,24 +128254,24 @@
   "hol_name": "do_lim_safe",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Limits.lean",
   "lean_name": "doLimSafe",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared do_lim_safe in the typed DataSem limits probe: independent compiler and FFI types are retained and only safeForSpace is updated, conjoining reviewed limSafe with the original flag in HOL order."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "lim_safe_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Limits.lean",
   "lean_name": "limSafe",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every lim_safe clause and expanded fallback with data_sem_limits_probe.out, including malformed inputs and zero-divisor branches using the reviewed unspecified-at-zero integer operations. HOL size lets are inlined and a repeated ConsExtend length is shared."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "lim_safe_part_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Limits.lean",
   "lean_name": "limSafePart",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all four lim_safe_part clauses with the typed DataSem limits probe, including nullary and nonempty block bounds, integer size, string length and word bounds. The integer-size let is inlined; strlen and all carriers are reviewed."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128318,8 +128334,8 @@
   "hol_name": "do_stack_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Stack.lean",
   "lean_name": "doStack",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared do_stack in data_sem_stack_probe.out: independent compiler and FFI types, original-state field reads, option sums and maxima, and the stack-limit comparison agree. HOL the F is rendered by Option.getD false."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128334,16 +128350,16 @@
   "hol_name": "eq_code_stack_max_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Stack.lean",
   "lean_name": "eqCodeStackMax",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared eq_code_stack_max in data_sem_stack_probe.out: the same three reviewed locations, nested OPTION_MAP2 maxima, and left multiplication by depth are retained."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "stack_consumed_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Stack.lean",
   "lean_name": "stackConsumed",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all 16 explicit clauses and expanded fallbacks in data_sem_stack_probe.out, retaining the reviewed location lookups, value depths, option maxima, arithmetic guards and allowedOp fallback."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128358,16 +128374,16 @@
   "hol_name": "vs_depth_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Stack.lean",
   "lean_name": "valueDepth",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the value clauses of vs_depth in data_sem_stack_probe.out: blocks recurse on their children and every other reviewed Value constructor has depth zero."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "vs_depth_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Stack.lean",
   "lean_name": "valuesDepth",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the list clauses of vs_depth in data_sem_stack_probe.out: the empty list has depth zero and the cons case preserves the MAX and 1 + depth operand order."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128503,16 +128519,16 @@
   "hol_name": "int_div",
   "lean_path": "Flapjack/Misc/Integer.lean",
   "lean_name": "holIntDiv",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared int_div in integer_division_probe.out: the new_specification port chooses a function satisfying the captured nonzero-divisor clauses; divisor-zero values remain unconstrained."
 },
 {
   "hol_path": "HOL/src/integer/integerScript.sml",
   "hol_name": "int_mod",
   "lean_path": "Flapjack/Misc/Integer.lean",
   "lean_name": "holIntMod",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared int_mod in integer_division_probe.out: the new_specification port chooses a function satisfying the captured nonzero-divisor remainder equation; divisor-zero values remain independently unconstrained."
 },
 {
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
