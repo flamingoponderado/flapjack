@@ -130363,5 +130363,29 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Source comparison with do_app_state_unchanged_typed in flat_do_app_preservation_probe.out: the unused universally quantified c retains its independent type, the state parameters remain independent, and the successful application and result-to-source evaluation-configuration equality match. The reviewed doApp dispatcher inherits the documented reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_state",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternMatch.lean",
+  "lean_name": "pmatch_state",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with pmatch_state_typed in flat_do_app_preservation_probe.out: the single-pattern and list conjuncts retain the matching-result and reference-store equality premises and the same result conclusion. The compiler-state types are independent and the FFI type is shared, exactly as in HOL."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_ignore_clock",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternMatch.lean",
+  "lean_name": "pmatch_ignoreClock",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with pmatch_ignore_clock_typed in flat_do_app_preservation_probe.out: the two original matching equalities share the state, replacement clock and bindings while retaining independent pattern and value arguments."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_rows_ignore_clock",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternMatch.lean",
+  "lean_name": "pmatchRows_ignoreClock",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with pmatch_rows_ignore_clock_typed in flat_do_app_preservation_probe.out: the row payload type is independent of both state parameters, and row selection before and after the clock update is unchanged."
 }
 ]

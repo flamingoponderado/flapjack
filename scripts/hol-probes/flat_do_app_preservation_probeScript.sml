@@ -6,3 +6,6 @@ fun show_thm label th =
   else raise Fail (label ^ " has hypotheses");
 val _ = show_thm "do_app_const_typed=" flatSemTheory.do_app_const;
 val _ = show_thm "do_app_state_unchanged_typed=" flatPropsTheory.do_app_state_unchanged;
+val _ = show_thm "pmatch_state_typed=" flatPropsTheory.pmatch_state;
+val _ = show_thm "pmatch_ignore_clock_typed=" flatPropsTheory.pmatch_ignore_clock;
+val _ = show_thm "pmatch_rows_ignore_clock_typed=" flatPropsTheory.pmatch_rows_ignore_clock;

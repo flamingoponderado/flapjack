@@ -4253,7 +4253,7 @@ run_probe data_to_word_memory_thunk_probeScript.sml data_to_word_memory_thunk_pr
   "$cake_dir/compiler/backend/proofs/data_to_word_memoryProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 run_probe flat_do_app_preservation_probeScript.sml flat_do_app_preservation_probe.out \
-  do_app_const_typed do_app_state_unchanged_typed \
+  do_app_const_typed do_app_state_unchanged_typed pmatch_state_typed pmatch_ignore_clock_typed pmatch_rows_ignore_clock_typed \
   "$cake_dir/compiler/backend/semantics/flatPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 run_probe data_to_word_word_test_probeScript.sml data_to_word_word_test_probe.out \

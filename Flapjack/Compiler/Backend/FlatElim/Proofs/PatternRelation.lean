@@ -6,58 +6,6 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
 namespace Flapjack.Compiler.Backend.FlatElim
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
-/-- Pattern matching observes the state only through the reference store.
-This is a Flapjack helper for the original state-relation theorem. -/
-theorem pmatch_refs_eq {C F : Type} (first second : FlatSem.State C F)
-    (refs : first.refs = second.refs) :
-    (∀ pattern value bindings, FlatSem.pmatch first pattern value bindings =
-      FlatSem.pmatch second pattern value bindings) ∧
-    (∀ patterns values bindings, FlatSem.pmatchList first patterns values bindings =
-      FlatSem.pmatchList second patterns values bindings) := by
-  have one : ∀ pattern : FlatLang.Pat, ∀ value bindings,
-      FlatSem.pmatch first pattern value bindings = FlatSem.pmatch second pattern value bindings := by
-    apply FlatLang.Pat.rec
-      (motive_1 := fun pattern => ∀ value bindings,
-        FlatSem.pmatch first pattern value bindings = FlatSem.pmatch second pattern value bindings)
-      (motive_2 := fun patterns => ∀ values bindings,
-        FlatSem.pmatchList first patterns values bindings = FlatSem.pmatchList second patterns values bindings)
-    case pany => intros; simp [FlatSem.pmatch]
-    case pvar => intros; simp [FlatSem.pmatch]
-    case plit => intro lit value bindings; cases value <;> simp [FlatSem.pmatch]
-    case pcon =>
-      intro stamp patterns ih value bindings
-      cases value <;> simp [FlatSem.pmatch]
-      case conv actual values =>
-        split <;> simp_all
-    case pref =>
-      intro pattern ih value bindings
-      cases value <;> simp [FlatSem.pmatch]
-      case loc flag index =>
-        simp only [refs]
-        cases storeLookup index second.refs <;> simp_all
-    case pas =>
-      intro pattern name ih value bindings
-      simpa [FlatSem.pmatch] using ih value ((name, value) :: bindings)
-    case nil => intro values bindings; cases values <;> simp [FlatSem.pmatchList]
-    case cons =>
-      intro pattern patterns ihHead ihTail values bindings
-      cases values with
-      | nil => simp [FlatSem.pmatchList]
-      | cons value values =>
-        simp only [FlatSem.pmatchList, ihHead value bindings]
-        cases FlatSem.pmatch second pattern value bindings <;> simp_all
-  refine ⟨one, ?_⟩
-  intro patterns
-  induction patterns with
-  | nil => intro values bindings; cases values <;> simp [FlatSem.pmatchList]
-  | cons pattern patterns ih =>
-    intro values bindings
-    cases values with
-    | nil => simp [FlatSem.pmatchList]
-    | cons value values =>
-      simp only [FlatSem.pmatchList, one pattern value bindings]
-      cases FlatSem.pmatch second pattern value bindings <;> simp_all
-
 /-- Related elimination states produce the same single-pattern and
 pattern-list results, with the original conjunct quantification. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "flat_state_rel_pmatch"]
@@ -68,9 +16,9 @@ theorem flatStateRel_pmatch {C F : Type} (reachable : NumSet) (removed : FlatSem
       FlatSem.pmatchList removed patterns values bindings = FlatSem.pmatchList source patterns values bindings) := by
   constructor
   · intro source pattern value bindings related
-    exact (pmatch_refs_eq removed source related.2.1.symm).1 pattern value bindings
+    exact FlatProps.pmatch_state.1 source pattern value bindings removed _ ⟨rfl, related.2.1⟩
   · intro source patterns values bindings related
-    exact (pmatch_refs_eq removed source related.2.1.symm).2 patterns values bindings
+    exact FlatProps.pmatch_state.2 source patterns values bindings removed _ ⟨rfl, related.2.1⟩
 
 /-- Selecting the first matching expression row is unchanged by elimination. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "flat_state_rel_pmatch_rows"]
