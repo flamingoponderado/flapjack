@@ -14,9 +14,13 @@ val _ = show_thm "value_rel_induction=" source_to_flatProofTheory.v_rel_ind;
 val _ = show_thm "value_rel_cases=" source_to_flatProofTheory.v_rel_cases;
 val _ = show_thm "env_rel_LIST_REL=" source_to_flatProofTheory.env_rel_LIST_REL;
 val _ = show_thm "env_all_rel_cases_typed=" source_to_flatProofTheory.env_all_rel_cases;
+val _ = show_thm "v_rel_global_eqn_typed=" source_to_flatProofTheory.v_rel_global_eqn;
 
 (* Replay the original local case-equation construction. *)
 open source_to_flatProofTheory;
+val v_rel_global_eqn_replay = SIMP_CONV (srw_ss ()) [Once v_rel_cases]
+  ``global_env_inv genv comp_map shadowers env``;
+val _ = show_thm "v_rel_global_eqn_replay=" v_rel_global_eqn_replay;
 val local_eqns =
   [``v_rel genv (Litv l) v``, ``v_rel genv (Conv cn vs) v``,
    ``v_rel genv (Loc b l) v``, ``v_rel genv (Vectorv vs) v``,

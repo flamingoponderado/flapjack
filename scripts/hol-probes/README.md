@@ -517,6 +517,9 @@ It also captures flat pattern-binding names and declaration evaluation over appe
 
 `source_to_flat_value_relation_probe.out` captures the typed mutual relation rules, induction and case principles, and local inversion equations. The generated HOL induction uses the induction predicates alone in recursive list and lookup premises; `ValueRelInduction.lean` proves a corresponding principle for the factored Lean relations. This is evidence for reviewing those relations, not a proof of HOL-to-Lean equivalence.
 
+The `v_rel_global_eqn_typed` and `v_rel_global_eqn_replay` rows capture the
+exported global-invariant equation and replay its original simplifier derivation.
+
 `cake_flat_sem_ops_probe.out` captures the full original flat equality and closure-application equations and examples for literals, locations, constructor types, vector lengths, list mismatch, successful closure application, and duplicate recursive functions. The Lean fixtures replay these observations; they do not prove cross-language equivalence or pass correctness.
 
 `cake_flat_sem_carriers_probe.out` captures flat-semantics value constructors, environment and state field types, compiler callback widths, and basic value and constructor helper definitions with inferred types. It is carrier and definition evidence, not evaluator or simulation correctness.

@@ -340,6 +340,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "v_rel_global_eqn",
+  "lean_name": "globalEnvInv_source_eqn",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRel.lean",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared the complete global-invariant case equation with v_rel_global_eqn_typed in source_to_flat_value_relation_probe.out, retaining both conjuncts, the quantified shadowing disjunction, bounded HOL EL lookup, and constructor/type-map clauses. The original simplifier construction is replayed; its output renders the shadowing disjunction as an equivalent implication. GlobalEnv.c and tys use canonical finite maps."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "env_rel_el",
   "lean_name": "envRel_el",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateCases.lean",
