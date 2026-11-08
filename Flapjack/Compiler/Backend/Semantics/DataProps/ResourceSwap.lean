@@ -43,11 +43,12 @@ theorem doAppAux_stackSafePeakSwap {C F : Type} (op : ClosLang.Op) (args : List 
   obtain ⟨safe', changed⟩ := doAppAux_safeSuccess op args state next value safe run
   have fields := doAppAux_withFields op args {state with safeForSpace := safe}
     state.stack state.localsSize mx peak state.locals state.space
+    state.handler state.clock state.stackFrameSizes state.compile
   rw [changed] at fields
   refine ⟨safe', peak, mx, ?_⟩
-  obtain ⟨stackEq, localsSizeEq, _, _, localsEq, spaceEq⟩ :=
+  obtain ⟨stackEq, localsSizeEq, _, _, localsEq, spaceEq, handlerEq, clockEq, frameSizesEq, compileEq⟩ :=
     doAppAux_fieldFrame op args state next value run
-  simpa [Flapjack.SemanticPrimitivesProps.mapResult, stackEq, localsSizeEq, localsEq, spaceEq] using fields
+  simpa [Flapjack.SemanticPrimitivesProps.mapResult, stackEq, localsSizeEq, localsEq, spaceEq, handlerEq, clockEq, frameSizesEq, compileEq] using fields
 
 /-- The successful space-and-auxiliary path preserves the returned value
 under resource updates. This is proof infrastructure for the HOL swap. -/

@@ -7,41 +7,42 @@ open Flapjack Flapjack.Compiler.Backend.DataSem Flapjack.SemanticPrimitivesHOL
 
 private def applyNonFfiFields {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value) : Prop :=
   ∀ (state : State C F) (stack : List Stack) (localsSize mx : Option Nat)
-    (peak : Nat) (locals : Spt DataSem.Value) (space : Nat),
-    applyNonFfi op values { state with stack := stack, localsSize := localsSize, stackMax := mx, peakHeapLength := peak, locals := locals, space := space } =
+    (peak : Nat) (locals : Spt DataSem.Value) (space : Nat)
+    (handler clock : Nat) (frameSizes : Spt Nat) (compiler : Compiler C),
+    applyNonFfi op values { state with stack := stack, localsSize := localsSize, stackMax := mx, peakHeapLength := peak, locals := locals, space := space, handler := handler, clock := clock, stackFrameSizes := frameSizes, compile := compiler } =
       (applyNonFfi op values state).map (fun (value, next) =>
-        (value, { next with stack := stack, localsSize := localsSize, stackMax := mx, peakHeapLength := peak, locals := locals, space := space }))
+        (value, { next with stack := stack, localsSize := localsSize, stackMax := mx, peakHeapLength := peak, locals := locals, space := space, handler := handler, clock := clock, stackFrameSizes := frameSizes, compile := compiler }))
 
 private theorem applyNonFfiFields_int {C F : Type} (op : ClosLang.IntOp) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.intOp op) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases result : doIntApp op values <;> simp [applyNonFfi, result]
 
 private theorem applyNonFfiFields_word {C F : Type} (op : ClosLang.WordOp) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.wordOp op) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases result : doWordApp op values <;> simp [applyNonFfi, result]
 
 private theorem applyNonFfiFields_label {C F : Type} (label : Nat) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.label label) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => cases found : (sptLookup label state.code).isSome <;> simp [applyNonFfi, found]
   | cons value rest => simp [applyNonFfi]
 
 private theorem applyNonFfiFields_install {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) .install values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   simp [applyNonFfi]
 
 private theorem applyNonFfiFields_ffi {C F : Type} (name : Basis.Pure.MlString.MlString)
     (values : List DataSem.Value) : applyNonFfiFields (C := C) (F := F) (.ffi name) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   simp [applyNonFfi]
 
 private theorem applyNonFfiFields_thunk {C F : Type} (op : AstHOL.ThunkOp) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.thunkOp op) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases op <;> cases values <;> simp only [applyNonFfi] <;>
     repeat' (split <;> simp_all)
   all_goals try simp_all
@@ -51,14 +52,14 @@ private theorem applyNonFfiFields_thunk {C F : Type} (op : AstHOL.ThunkOp) (valu
 
 private theorem applyNonFfiFields_globalsPtr {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.globOp .globalsPtr) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => cases ptr : state.global <;> simp [applyNonFfi, ptr]
   | cons value rest => simp [applyNonFfi]
 
 private theorem applyNonFfiFields_global {C F : Type} (index : Nat) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.globOp (.global index)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil =>
     cases globalEq : state.global with
@@ -76,7 +77,7 @@ private theorem applyNonFfiFields_global {C F : Type} (index : Nat) (values : Li
 
 private theorem applyNonFfiFields_setGlobal {C F : Type} (index : Nat) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.globOp (.setGlobal index)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons value rest =>
@@ -97,12 +98,12 @@ private theorem applyNonFfiFields_setGlobal {C F : Type} (index : Nat) (values :
 
 private theorem applyNonFfiFields_allocGlobal {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.globOp .allocGlobal) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values <;> simp [applyNonFfi]
 
 private theorem applyNonFfiFields_setGlobalsPtr {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.globOp .setGlobalsPtr) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons value rest =>
@@ -123,40 +124,40 @@ private theorem applyNonFfiFields_globalOp {C F : Type} (op : ClosLang.GlobOp) (
 
 private theorem applyNonFfiFields_constant {C F : Type} (constant : ClosLang.Const) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.blockOp (.constant constant)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values <;> simp [applyNonFfi]
 
 private theorem applyNonFfiFields_tagEq {C F : Type} (tag : Nat) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.blockOp (.tagEq tag)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons value rest => cases rest <;> cases value <;> simp [applyNonFfi]
 
 private theorem applyNonFfiFields_lenEq {C F : Type} (length : Nat) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.blockOp (.lenEq length)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons value rest => cases rest <;> cases value <;> simp [applyNonFfi]
 
 private theorem applyNonFfiFields_tagLenEq {C F : Type} (tag length : Nat) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.blockOp (.tagLenEq tag length)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons value rest => cases rest <;> cases value <;> simp [applyNonFfi]
 
 private theorem applyNonFfiFields_lengthBlock {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.blockOp .lengthBlock) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons value rest => cases rest <;> cases value <;> simp [applyNonFfi]
 
 private theorem applyNonFfiFields_build {C F : Type} (parts : List ClosLang.ConstPart) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.blockOp (.build parts)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil =>
     cases built : doBuildConst parts state.refs state.tstamps with
@@ -167,7 +168,7 @@ private theorem applyNonFfiFields_build {C F : Type} (parts : List ClosLang.Cons
 
 private theorem applyNonFfiFields_boolNot {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.blockOp .boolNot) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons value rest =>
@@ -177,7 +178,7 @@ private theorem applyNonFfiFields_boolNot {C F : Type} (values : List DataSem.Va
 
 private theorem applyNonFfiFields_boolTest {C F : Type} (test : AstHOL.Test) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.blockOp (.boolTest test)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons first rest =>
@@ -191,7 +192,7 @@ private theorem applyNonFfiFields_boolTest {C F : Type} (test : AstHOL.Test) (va
 
 private theorem applyNonFfiFields_equal {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.blockOp .equal) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons first rest =>
@@ -204,7 +205,7 @@ private theorem applyNonFfiFields_equal {C F : Type} (values : List DataSem.Valu
 
 private theorem applyNonFfiFields_boundsCheckBlock {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.blockOp .boundsCheckBlock) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons first rest =>
@@ -217,7 +218,7 @@ private theorem applyNonFfiFields_boundsCheckBlock {C F : Type} (values : List D
 
 private theorem applyNonFfiFields_cons {C F : Type} (tag : Nat) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.blockOp (.cons tag)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons value rest =>
@@ -225,7 +226,7 @@ private theorem applyNonFfiFields_cons {C F : Type} (tag : Nat) (values : List D
 
 private theorem applyNonFfiFields_fromList {C F : Type} (tag : Nat) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.blockOp (.fromList tag)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons first rest =>
@@ -251,7 +252,7 @@ private theorem applyNonFfiFields_fromList {C F : Type} (tag : Nat) (values : Li
 
 private theorem applyNonFfiFields_listAppend {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.blockOp .listAppend) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons first rest =>
@@ -267,7 +268,7 @@ private theorem applyNonFfiFields_listAppend {C F : Type} (values : List DataSem
 
 private theorem applyNonFfiFields_elemAt {C F : Type} (index : Nat) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.blockOp (.elemAt index)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons value rest =>
@@ -288,7 +289,7 @@ private theorem applyNonFfiFields_elemAt {C F : Type} (index : Nat) (values : Li
 
 private theorem applyNonFfiFields_equalConst {C F : Type} (constant : ClosLang.ConstPart) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.blockOp (.equalConst constant)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => cases constant <;> simp [applyNonFfi]
   | cons value rest =>
@@ -311,7 +312,7 @@ private theorem applyNonFfiFields_equalConst {C F : Type} (constant : ClosLang.C
 
 private theorem applyNonFfiFields_consExtend {C F : Type} (tag : Nat) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.blockOp (.consExtend tag)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   rcases values with _ | ⟨first, _ | ⟨second, _ | ⟨third, _ | ⟨fourth, rest⟩⟩⟩⟩ <;>
     try simp [applyNonFfi]
   cases first <;> try simp
@@ -347,18 +348,18 @@ private theorem applyNonFfiFields_block {C F : Type} (op : ClosLang.BlockOp) (va
 
 private theorem applyNonFfiFields_ref {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .ref) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   simp [applyNonFfi]
 
 private theorem applyNonFfiFields_refArray {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .refArray) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   rcases values with _ | ⟨first, _ | ⟨second, _ | ⟨third, rest⟩⟩⟩ <;> try simp [applyNonFfi]
   cases first <;> simp [apply_ite]
 
 private theorem applyNonFfiFields_refByte {C F : Type} (flag : Bool) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp (.refByte flag)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   rcases values with _ | ⟨first, _ | ⟨second, _ | ⟨third, rest⟩⟩⟩ <;> try simp [applyNonFfi]
   cases first <;> try simp
   case number count =>
@@ -368,48 +369,48 @@ private theorem applyNonFfiFields_refByte {C F : Type} (flag : Bool) (values : L
 
 private theorem applyNonFfiFields_concatByteVec {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .concatByteVec) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values <;> simp [applyNonFfi]
 
 private theorem applyNonFfiFields_fromListByte {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .fromListByte) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values <;> simp [applyNonFfi]
 
 private theorem applyNonFfiFields_toListByte {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .toListByte) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values <;> simp [applyNonFfi]
 
 private theorem applyNonFfiFields_lengthByteVec {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .lengthByteVec) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values <;> simp [applyNonFfi]
 
 private theorem applyNonFfiFields_derefByteVec {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .derefByteVec) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values <;> simp [applyNonFfi]
 
 private theorem applyNonFfiFields_copyByteTrue {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp (.copyByte true)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values <;> simp [applyNonFfi]
 
 private theorem applyNonFfiFields_configGC {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .configGC) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   rcases values with _ | ⟨first, _ | ⟨second, _ | ⟨third, rest⟩⟩⟩ <;> try simp [applyNonFfi]
   cases first <;> cases second <;> simp
 
 private theorem applyNonFfiFields_mutCons {C F : Type} (tag index : Nat) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp (.mutCons tag index)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases child : values[index]? <;> simp [applyNonFfi, child]
 
 private theorem applyNonFfiFields_finaliseCons {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .finaliseCons) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons value rest =>
@@ -424,7 +425,7 @@ private theorem applyNonFfiFields_finaliseCons {C F : Type} (values : List DataS
 
 private theorem applyNonFfiFields_length {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .length) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons value rest =>
@@ -440,7 +441,7 @@ private theorem applyNonFfiFields_length {C F : Type} (values : List DataSem.Val
 
 private theorem applyNonFfiFields_lengthByte {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .lengthByte) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons value rest =>
@@ -456,7 +457,7 @@ private theorem applyNonFfiFields_lengthByte {C F : Type} (values : List DataSem
 
 private theorem applyNonFfiFields_boundsCheckByte {C F : Type} (loose : Bool) (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp (.boundsCheckByte loose)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons first rest =>
@@ -478,7 +479,7 @@ private theorem applyNonFfiFields_boundsCheckByte {C F : Type} (loose : Bool) (v
 
 private theorem applyNonFfiFields_boundsCheckArray {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .boundsCheckArray) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons first rest =>
@@ -500,7 +501,7 @@ private theorem applyNonFfiFields_boundsCheckArray {C F : Type} (values : List D
 
 private theorem applyNonFfiFields_el {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .el) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons first rest =>
@@ -532,7 +533,7 @@ private theorem applyNonFfiFields_el {C F : Type} (values : List DataSem.Value) 
 
 private theorem applyNonFfiFields_derefByte {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .derefByte) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons first rest =>
@@ -561,7 +562,7 @@ private theorem applyNonFfiFields_derefByte {C F : Type} (values : List DataSem.
 private theorem applyNonFfiFields_stringCmp {C F : Type} (fast : Bool) (cmp : Opb)
     (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp (.stringCmp fast cmp)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases values with
   | nil => simp [applyNonFfi]
   | cons first rest =>
@@ -589,7 +590,7 @@ private theorem applyNonFfiFields_stringCmp {C F : Type} (fast : Bool) (cmp : Op
 
 private theorem applyNonFfiFields_update {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .update) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   rcases values with _ | ⟨first, _ | ⟨second, _ | ⟨third, _ | ⟨fourth, rest⟩⟩⟩⟩ <;>
     try simp [applyNonFfi]
   cases first <;> try simp
@@ -606,7 +607,7 @@ private theorem applyNonFfiFields_update {C F : Type} (values : List DataSem.Val
 
 private theorem applyNonFfiFields_updateByte {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .updateByte) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   rcases values with _ | ⟨first, _ | ⟨second, _ | ⟨third, _ | ⟨fourth, rest⟩⟩⟩⟩ <;>
     try simp [applyNonFfi]
   cases first <;> try simp
@@ -627,7 +628,7 @@ private theorem applyNonFfiFields_updateByte {C F : Type} (values : List DataSem
 
 private theorem applyNonFfiFields_updateCons {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .updateCons) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   rcases values with _ | ⟨first, _ | ⟨second, _ | ⟨third, _ | ⟨fourth, rest⟩⟩⟩⟩ <;>
     try simp [applyNonFfi]
   cases first <;> try simp
@@ -644,7 +645,7 @@ private theorem applyNonFfiFields_updateCons {C F : Type} (values : List DataSem
 
 private theorem applyNonFfiFields_xorByte {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp .xorByte) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   rcases values with _ | ⟨first, _ | ⟨second, _ | ⟨third, rest⟩⟩⟩ <;> try simp [applyNonFfi]
   cases first <;> try simp
   case refPtr bit1 dst =>
@@ -666,7 +667,7 @@ private theorem applyNonFfiFields_xorByte {C F : Type} (values : List DataSem.Va
 
 private theorem applyNonFfiFields_copyByteFalse {C F : Type} (values : List DataSem.Value) :
     applyNonFfiFields (C := C) (F := F) (.memOp (.copyByte false)) values := by
-  intro state stack localsSize mx peak locals space
+  intro state stack localsSize mx peak locals space handler clock frameSizes compiler
   rcases values with _ | ⟨first, _ | ⟨second, _ | ⟨third, _ | ⟨fourth, _ | ⟨fifth, _ | ⟨sixth, rest⟩⟩⟩⟩⟩⟩ <;>
     try simp [applyNonFfi]
   cases first <;> try simp
@@ -737,12 +738,13 @@ private theorem applyNonFfiFields_all {C F : Type} (op : ClosLang.Op) (values : 
 This Flapjack-specific equation supports the HOL field-swap theorems. -/
 theorem doAppAux_withFields {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
     (state : State C F) (stack : List Stack) (localsSize mx : Option Nat)
-    (peak : Nat) (locals : Spt DataSem.Value) (space : Nat) :
-    doAppAux op values { state with stack := stack, localsSize := localsSize, stackMax := mx, peakHeapLength := peak, locals := locals, space := space } =
+    (peak : Nat) (locals : Spt DataSem.Value) (space : Nat)
+    (handler clock : Nat) (frameSizes : Spt Nat) (compiler : Compiler C) :
+    doAppAux op values { state with stack := stack, localsSize := localsSize, stackMax := mx, peakHeapLength := peak, locals := locals, space := space, handler := handler, clock := clock, stackFrameSizes := frameSizes, compile := compiler } =
       Flapjack.SemanticPrimitivesProps.mapResult
-        (fun (value, next) => (value, { next with stack := stack, localsSize := localsSize, stackMax := mx, peakHeapLength := peak, locals := locals, space := space }))
+        (fun (value, next) => (value, { next with stack := stack, localsSize := localsSize, stackMax := mx, peakHeapLength := peak, locals := locals, space := space, handler := handler, clock := clock, stackFrameSizes := frameSizes, compile := compiler }))
         id (doAppAux op values state) := by
-  have fields := applyNonFfiFields_all (C := C) (F := F) op values state stack localsSize mx peak locals space
+  have fields := applyNonFfiFields_all (C := C) (F := F) op values state stack localsSize mx peak locals space handler clock frameSizes compiler
   cases op with
   | ffi name =>
     rcases values with _ | ⟨first, _ | ⟨second, _ | ⟨third, rest⟩⟩⟩ <;>
@@ -811,18 +813,35 @@ theorem doAppAux_fieldFrame {C F : Type} (op : ClosLang.Op) (values : List DataS
     (state next : State C F) (value : DataSem.Value)
     (run : doAppAux op values state = .val (value, next)) :
     next.stack = state.stack ∧ next.localsSize = state.localsSize ∧ next.stackMax = state.stackMax ∧
-      next.peakHeapLength = state.peakHeapLength ∧ next.locals = state.locals ∧ next.space = state.space := by
+      next.peakHeapLength = state.peakHeapLength ∧ next.locals = state.locals ∧ next.space = state.space ∧
+      next.handler = state.handler ∧ next.clock = state.clock ∧
+      next.stackFrameSizes = state.stackFrameSizes ∧ next.compile = state.compile := by
   have self := doAppAux_withFields op values state state.stack state.localsSize state.stackMax
-    state.peakHeapLength state.locals state.space
-  have same : next = { next with stack := state.stack, localsSize := state.localsSize, stackMax := state.stackMax, peakHeapLength := state.peakHeapLength, locals := state.locals, space := state.space } := by
+    state.peakHeapLength state.locals state.space state.handler state.clock state.stackFrameSizes state.compile
+  have same : next = { next with stack := state.stack, localsSize := state.localsSize, stackMax := state.stackMax, peakHeapLength := state.peakHeapLength, locals := state.locals, space := state.space, handler := state.handler, clock := state.clock, stackFrameSizes := state.stackFrameSizes, compile := state.compile } := by
     simpa [run, Flapjack.SemanticPrimitivesProps.mapResult] using self
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · simpa only using congrArg (fun s : State C F => s.stack) same
   · simpa only using congrArg (fun s : State C F => s.localsSize) same
   · simpa only using congrArg (fun s : State C F => s.stackMax) same
   · simpa only using congrArg (fun s : State C F => s.peakHeapLength) same
   · simpa only using congrArg (fun s : State C F => s.locals) same
   · simpa only using congrArg (fun s : State C F => s.space) same
+  · simpa only using congrArg (fun s : State C F => s.handler) same
+  · simpa only using congrArg (fun s : State C F => s.clock) same
+  · simpa only using congrArg (fun s : State C F => s.stackFrameSizes) same
+  · simpa only using congrArg (fun s : State C F => s.compile) same
+
+/-- Successful auxiliary application preserves the source control and compiler fields. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_aux_const"]
+theorem doAppAux_const {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
+    (state : State C F) (value : DataSem.Value) (next : State C F)
+    (run : doAppAux op values state = .val (value, next)) :
+    next.stack = state.stack ∧ next.handler = state.handler ∧ next.locals = state.locals ∧
+      next.clock = state.clock ∧ next.compile = state.compile := by
+  obtain ⟨stack, _, _, _, locals, _, handler, clock, _, compiler⟩ :=
+    doAppAux_fieldFrame op values state next value run
+  exact ⟨stack, handler, locals, clock, compiler⟩
 
 /-- Auxiliary application commutes with replacing locals. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_aux_with_locals"]
@@ -832,7 +851,7 @@ theorem doAppAux_withLocals {C F : Type} (op : ClosLang.Op) (values : List DataS
       Flapjack.SemanticPrimitivesProps.mapResult
         (fun (value, next) => (value, { next with locals := locals })) id (doAppAux op values state) := by
   have changed := doAppAux_withFields op values state state.stack state.localsSize state.stackMax
-    state.peakHeapLength locals state.space
+    state.peakHeapLength locals state.space state.handler state.clock state.stackFrameSizes state.compile
   cases run : doAppAux op values state with
   | err error => simpa [run, Flapjack.SemanticPrimitivesProps.mapResult,
       Flapjack.SemanticPrimitivesProps.mapErrorResult] using changed
@@ -840,7 +859,8 @@ theorem doAppAux_withLocals {C F : Type} (op : ClosLang.Op) (values : List DataS
     obtain ⟨value, next⟩ := pair
     have frame := doAppAux_fieldFrame op values state next value run
     simpa [run, Flapjack.SemanticPrimitivesProps.mapResult, frame.1, frame.2.1,
-      frame.2.2.1, frame.2.2.2.1, frame.2.2.2.2.2] using changed
+      frame.2.2.1, frame.2.2.2.1, frame.2.2.2.2.2.1, frame.2.2.2.2.2.2.1, frame.2.2.2.2.2.2.2.1,
+      frame.2.2.2.2.2.2.2.2.1, frame.2.2.2.2.2.2.2.2.2] using changed
 
 /-- Auxiliary application commutes with replacing reserved space. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_aux_with_space"]
@@ -850,7 +870,7 @@ theorem doAppAux_withSpace {C F : Type} (op : ClosLang.Op) (values : List DataSe
       Flapjack.SemanticPrimitivesProps.mapResult
         (fun (value, next) => (value, { next with space := space })) id (doAppAux op values state) := by
   have changed := doAppAux_withFields op values state state.stack state.localsSize state.stackMax
-    state.peakHeapLength state.locals space
+    state.peakHeapLength state.locals space state.handler state.clock state.stackFrameSizes state.compile
   cases run : doAppAux op values state with
   | err error => simpa [run, Flapjack.SemanticPrimitivesProps.mapResult,
       Flapjack.SemanticPrimitivesProps.mapErrorResult] using changed
@@ -858,6 +878,7 @@ theorem doAppAux_withSpace {C F : Type} (op : ClosLang.Op) (values : List DataSe
     obtain ⟨value, next⟩ := pair
     have frame := doAppAux_fieldFrame op values state next value run
     simpa [run, Flapjack.SemanticPrimitivesProps.mapResult, frame.1, frame.2.1,
-      frame.2.2.1, frame.2.2.2.1, frame.2.2.2.2.1] using changed
+      frame.2.2.1, frame.2.2.2.1, frame.2.2.2.2.1, frame.2.2.2.2.2.2.1, frame.2.2.2.2.2.2.2.1,
+      frame.2.2.2.2.2.2.2.2.1, frame.2.2.2.2.2.2.2.2.2] using changed
 
 end Flapjack.Compiler.Backend.DataProps

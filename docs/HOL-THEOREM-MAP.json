@@ -16304,6 +16304,20 @@
     "reviewer": "Compared with the source theorem and its captured inferred type: arbitrary natural m and n with m ≤ n yield the same ordering of n2mw digit lengths. Both lists use the same positive HOL word dimension."
   },
   {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "do_app_aux_const",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ApplyAuxFields.lean", "lean_name": "doAppAux_const",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed source capture in bvi_to_data_state_probe.out: successful auxiliary application preserves stack, handler, locals, clock and compiler in the original conjunction order. Inherits reals_as_rational_cuts through doAppAux (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "do_app_const",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ApplyConst.lean", "lean_name": "doApp_const",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed source capture in bvi_to_data_state_probe.out: successful primitive application preserves stack, handler, locals, clock and compiler in the original conjunction order. Inherits reals_as_rational_cuts through doApp (SOUNDNESS item 8)."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "do_app_aux_err",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ApplyErrors.lean", "lean_name": "doAppAux_err",
     "statement_status": "reviewed_exact",
