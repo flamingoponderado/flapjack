@@ -8,6 +8,48 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
+namespace DoAppRecHelpPort
+/-- Roundtrip for the finite maps of the global environment. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+end DoAppRecHelpPort
+
+/-- Recursive closures generated from a function list preserve the local
+environment relation when they capture the same related environments. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app_rec_help"
+  (fmap_as_finite_support := [c, tys])]
+theorem doApp_rec_help {α : Type} [Nonempty α] {baseEnv : SemEnv Value} {traces : List BackendCommon.Tra}
+    {capturedFuns : List (VarN × VarN × AstHOL.Exp)} :
+    ∀ (genv : GlobalEnv) (compMap : Environment) (sourceLocal : Namespace ModN VarN Value)
+      (flatLocal : FlatSem.Environment FlatSem.Value) (_envVTop : α)
+      (funs : List (VarN × VarN × AstHOL.Exp)) (trace : List VarN),
+      EnvRel genv sourceLocal flatLocal.v ∧
+      GlobalEnvInv genv compMap (fun n => n ∈ flatLocal.v.map Prod.fst) baseEnv ∧
+      traces.length = capturedFuns.length + flatLocal.v.length →
+      EnvRel genv
+        (alistToNs (funs.map (fun (f, _, _) =>
+          (f, Value.recclosure { baseEnv with v := nsAppend sourceLocal baseEnv.v } capturedFuns f))))
+        ((compileFuns trace { compMap with v := (List.foldr (fun (x, v) e => nsBind x v e) compMap.v
+          (List.zipWith (fun t x => (x, VarName.localName t x)) traces
+            (capturedFuns.map Prod.fst ++ flatLocal.v.map Prod.fst))) } funs).map
+          (fun (f, _, _) => (f, FlatSem.Value.recclosure flatLocal
+            (compileFuns trace { compMap with v := (List.foldr (fun (x, v) e => nsBind x v e) compMap.v
+              (List.zipWith (fun t x => (x, VarName.localName t x)) traces
+                (capturedFuns.map Prod.fst ++ flatLocal.v.map Prod.fst))) } capturedFuns) f))) := by
+  intro genv compMap sourceLocal flatLocal _ funs trace ⟨localRel, globalInv, length⟩
+  have recRel : ∀ name, ValueRel genv
+      (.recclosure { baseEnv with v := nsAppend sourceLocal baseEnv.v } capturedFuns name)
+      (.recclosure flatLocal (compileFuns trace { compMap with v := bindLocals traces (capturedFuns.map Prod.fst ++ flatLocal.v.map Prod.fst) compMap.v } capturedFuns) name) := by
+    intro name
+    exact .recclosure genv compMap baseEnv sourceLocal capturedFuns name flatLocal trace traces
+      localRel globalInv length
+  induction funs with
+  | nil => simpa [compileFuns, alistToNs, nsEmpty] using EnvRel.empty genv
+  | cons head rest ih =>
+    obtain ⟨name, arg, body⟩ := head
+    simpa [compileFuns, alistToNs, nsBind, bindLocals, nsBindList] using
+      EnvRel.bind genv name _ _ _ _ ih (recRel name)
+
 /-- An expression simulation restricted to states at or below a clock bound. -/
 def LocalEnvBoundedIH {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)

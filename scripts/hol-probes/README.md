@@ -9564,6 +9564,8 @@ proofs with inferred types visible, including the type-changing record update.
 It also replays `lookup_build_rec_env_lem`, whose unused tuple components have
 independent types, and the local `global_env_inv_extend2` and
 `global_env_inv_add_locals` proofs with inferred types visible.
+It also replays the local `do_app_rec_help` proof, retaining its unused
+polymorphic binder and separate recursive groups in the inferred statement.
 
 `source_to_flat_init_probe.out` captures the typed original source-to-flat
 initialization definitions and evaluates the initial constructor entries and

@@ -340,6 +340,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "do_app_rec_help",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateLocalEnvironment.lean",
+  "lean_name": "doApp_rec_help",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared do_app_rec_help_replay in source_to_flat_init_probe.out with the local HOL theorem: the traversed and captured recursive groups, unused inhabited polymorphic env_v_top binder, free environment and traces, three premises and related closure-list conclusion agree. The binding fold and zipWith match HOL FOLDR and MAP2 for all list lengths. GlobalEnv.c and tys use canonical finite maps. The original HOL proof is replayed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "global_env_inv_add_locals",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EnvironmentDomain.lean",
   "lean_name": "globalEnvInv_addLocals",

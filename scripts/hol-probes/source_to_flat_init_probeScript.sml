@@ -6,6 +6,35 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val do_app_rec_help_typed = ``!genv comp_map env_v_local env_v_local' env_v_top funs t.
+  source_to_flatProof$env_rel genv env_v_local env_v_local'.v /\
+  source_to_flatProof$global_env_inv genv comp_map (set (MAP FST env_v_local'.v)) env' /\
+  LENGTH ts = LENGTH funs' + LENGTH env_v_local'.v ==>
+  source_to_flatProof$env_rel genv
+    (namespace$alist_to_ns
+      (MAP (\(f,n,e). (f,semanticPrimitives$Recclosure
+        (env' with v := namespace$nsAppend env_v_local env'.v) funs' f)) funs))
+    (MAP (\(fn,n,e). (fn,flatSem$Recclosure env_v_local'
+      (source_to_flat$compile_funs t
+        (comp_map with v := FOLDR (\(x,v) e. namespace$nsBind x v e) comp_map.v
+          (MAP2 (\t x. (x,source_to_flat$Local t x)) ts
+            (MAP FST funs' ++ MAP FST env_v_local'.v))) funs') fn))
+      (source_to_flat$compile_funs t
+        (comp_map with v := FOLDR (\(x,v) e. namespace$nsBind x v e) comp_map.v
+          (MAP2 (\t x. (x,source_to_flat$Local t x)) ts
+            (MAP FST funs' ++ MAP FST env_v_local'.v))) funs))``;
+val _ = (print "do_app_rec_help_typed="; print_term do_app_rec_help_typed; print "\n");
+val do_app_rec_v_rel_eqns = CONJUNCT1 source_to_flatProofTheory.v_rel_more_eqns;
+val do_app_rec_help_replay = prove (do_app_rec_help_typed,
+  Induct_on `funs`
+  >- srw_tac[][do_app_rec_v_rel_eqns, source_to_flatTheory.compile_exp_def] >>
+  rw [] >> PairCases_on `h` >> fs [source_to_flatTheory.compile_exp_def] >>
+  simp [do_app_rec_v_rel_eqns] >>
+  simp [Once source_to_flatProofTheory.v_rel_cases] >>
+  MAP_EVERY qexists_tac [`comp_map`, `env'`, `env_v_local`, `t`, `ts`] >>
+  simp [source_to_flatTheory.compile_exp_def, source_to_flatProofTheory.bind_locals_def] >>
+  simp_tac (std_ss) [GSYM APPEND, namespaceTheory.nsBindList_def]);
+val _ = show_thm "do_app_rec_help_replay=" do_app_rec_help_replay;
 val global_env_inv_add_locals_replay = Q.prove (
   `!genv comp_map locals1 locals2 env.
     source_to_flatProof$global_env_inv genv comp_map locals1 env ==>
