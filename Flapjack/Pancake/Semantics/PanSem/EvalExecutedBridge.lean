@@ -573,55 +573,6 @@ def evalPanSemStateExpViaHOLWordDomain {σ : Type}
     (e : Exp (RiscV.Word 64)) : Option (PanValue (RiscV.Word 64)) :=
   evalPanSemStateExpViaHOLRuntime (panSemExpressionWordDomain state) e
 
-/-- Restricting the domain to present word cells does not change any source
-    expression result. In particular, failed partial-memory reads remain
-    failures instead of becoming reads of the totalized zero cell. -/
-private theorem panSemWordDomain_readWord (s : PanSemState (RiscV.Word 64) (FfiState σ)) :
-    panValueFlatReadWord s.memory panSemBitVec64BytesInWord
-      (some (panSemWordMemoryAccess (panSemExpressionWordDomain s))) =
-    panValueFlatReadWord s.memory panSemBitVec64BytesInWord
-      (some (panSemWordMemoryAccess s)) := by
-  funext a
-  simp only [panValueFlatReadWord, panSemWordMemoryAccess, panValueMemoryAccessOfModel,
-    panSemExpressionWordDomain]
-  by_cases hd : s.memaddrs a = true
-  · simp only [hd, Bool.true_and]
-    cases hm : s.memory a with
-    | none => simp
-    | some v => cases v <;> simp
-  · simp [hd]
-private theorem panSemWordDomain_readByte (s : PanSemState (RiscV.Word 64) (FfiState σ)) (a : RiscV.Word 64) :
-    (panSemWordMemoryAccess (panSemExpressionWordDomain s)).readByte
-      (panSemWordMemoryAccess (panSemExpressionWordDomain s)).domain s.memory panSemBitVec64BytesInWord a =
-    (panSemWordMemoryAccess s).readByte (panSemWordMemoryAccess s).domain s.memory panSemBitVec64BytesInWord a := by
-  simp only [panSemWordMemoryAccess, panValueMemoryAccessOfModel,
-    panSemExpressionWordDomain, panModelReadByte]
-  generalize h : (panSemWordModel (width := 64)).byteAlign panSemBitVec64BytesInWord a = aligned
-  by_cases hd : s.memaddrs aligned = true
-  · simp only [hd, Bool.true_and]
-    cases hm : s.memory aligned with
-    | none => simp [hm, panValueWordMemory]
-    | some v => cases v <;> simp [hm, panValueWordMemory]
-  · simp [hd]
-private theorem panSemWordDomain_read32 (s : PanSemState (RiscV.Word 64) (FfiState σ)) (a : RiscV.Word 64) :
-    (panSemWordMemoryAccess (panSemExpressionWordDomain s)).read32
-      (panSemWordMemoryAccess (panSemExpressionWordDomain s)).domain s.memory panSemBitVec64BytesInWord a =
-    (panSemWordMemoryAccess s).read32 (panSemWordMemoryAccess s).domain s.memory panSemBitVec64BytesInWord a := by
-  simp only [panSemWordMemoryAccess, panValueMemoryAccessOfModel,
-    panSemExpressionWordDomain, panModelRead32]
-  split
-  · generalize h : (panSemWordModel (width := 64)).byteAlign panSemBitVec64BytesInWord a = aligned
-    by_cases hd : s.memaddrs aligned = true
-    · simp only [hd, Bool.true_and]
-      cases hm : s.memory aligned with
-      | none => simp [hm, panValueWordMemory]
-      | some v => cases v <;> simp [hm, panValueWordMemory]
-    · simp [hd]
-  · rfl
-
-/-- Execute a list of source expressions through the same finite HOL view as
-    `evalPanSemStateExpViaHOL`. This is the adapter needed for call and
-    primitive arguments; failure of any expression fails the whole list. -/
 def evalPanSemStateExpsViaHOL {σ : Type}
     (state : PanSemState (RiscV.Word 64) (FfiState σ))
     (hmem : PanSemMemoryRel state.memaddrs state.memory (panSemMemoryExactOf state.memory))

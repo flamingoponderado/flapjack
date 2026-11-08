@@ -170,43 +170,4 @@ theorem map_map_snd {α β γ δ : Type} (f : α → β) (g : γ → δ)
   rw [List.map_map, List.map_map]
   rfl
 
-/-! ### Shape range in the exact-context expression path
-
-An exact context stores only `ShapeHOL` values, and `expOfHOL` only decodes
-`MlString` names. The compiler output-shape range fact is needed to decode the
-paired expression result back to the production carrier without a premise. -/
-
-private theorem compileField_shapeByteRanged {width : Nat} [NeZero width]
-    (index : Nat) (shapes : List Shape)
-    (hshapes : ∀ shape ∈ shapes, ShapeByteRanged shape)
-    (expressions : List (CrepExp (BitVec width))) :
-    ShapeByteRanged (compileField (α := BitVec width) index shapes expressions).2 := by
-  induction shapes generalizing index expressions with
-  | nil => simp [compileField, ShapeByteRanged]
-  | cons shape shapes ih =>
-      by_cases hzero : index = 0
-      · simp [compileField, hzero, hshapes shape (by simp)]
-      · have htail : ∀ field ∈ shapes, ShapeByteRanged field := by
-          intro field hfield
-          exact hshapes field (by simp [hfield])
-        simpa [compileField, hzero] using
-          ih (index - 1) htail (expressions.drop (Shape.shapeSize shape))
-
-private theorem compileExpListHOL_eq_of_pointwise {width : Nat} [NeZero width]
-    (left right : PanToCrepHOLContext (BitVec width))
-    (expressions : List (Exp (BitVec width)))
-    (hpoint : ∀ expression ∈ expressions,
-      compileExpHOL left expression = compileExpHOL right expression) :
-    compileExpHOL.compileExpListHOL left expressions =
-      compileExpHOL.compileExpListHOL right expressions := by
-  induction expressions with
-  | nil => simp [compileExpHOL.compileExpListHOL]
-  | cons head tail ih =>
-      simp only [compileExpHOL.compileExpListHOL.eq_2]
-      rw [hpoint head (by simp)]
-      congr 1
-      apply ih
-      intro expression hmem
-      exact hpoint expression (by simp [hmem])
-
 end Flapjack

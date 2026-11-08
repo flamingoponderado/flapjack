@@ -184,7 +184,6 @@ mutual
               panShapeListMatches_eq leftTail rightTail htail]
 end
 
-
 /-! The exact HOL theorems `res_var_commutes'`, `MEM_compile_exp_vmax`,
     and `genlist_vmax_distinct_lists_compiled_exps` remain to be ported over
     the faithful finite-map and expression carriers. -/
@@ -296,7 +295,6 @@ theorem maxListNotMemHol (x : Nat) (values : List Nat)
 /-! HOL `flookup_res_var_thm_quant` remains to be ported over a finite-map
     carrier. The former raw-function statement admitted infinite maps and
     required Boolean equality instances. -/
-
 
 /-! The `mem_comp_field` proof helper over the faithful HOL carriers. -/
 private theorem compFieldHOL_mem_of_index_lt {width : Nat} [NeZero width]
@@ -434,7 +432,6 @@ structure PanToCrepProofContext (α : Type) where
   funcs : FiniteMap String (List (String × Shape) × Shape)
   eids : FiniteMap String α
   vmax : Nat
-
 
 /-! ### HOL `get_eids_imp_excp_rel` (Flapjack-specific; tag withdrawn since
     `flapjack-pxn.18.3.5.7.2`)
@@ -607,7 +604,6 @@ def slc (parameters : List (String × Shape))
     (arguments : List (PanValue α)) : FiniteMap String (PanValue α) :=
   FUPDATE_LIST FEMPTY ((parameters.map Prod.fst).zip arguments)
 
-
 private theorem updatePanValueMap_eq_FUPDATE
     (locals : VarName → Option (PanValue α)) (name : VarName)
     (value : PanValue α) :
@@ -622,22 +618,6 @@ private theorem updatePanValueMap_eq_FUPDATE
       beq_eq_false_iff_ne.mpr (Ne.symm hkey)
     simp [updatePanValueMap, FUPDATE, hkeyName, hnameKey]
 
-private theorem updatePanValueMap_fold_eq_FUPDATE_LIST
-    (entries : List (VarName × PanValue α))
-    (locals : VarName → Option (PanValue α)) :
-    entries.foldl
-        (fun current (name, value) => updatePanValueMap current name value) locals =
-      FUPDATE_LIST locals entries := by
-  induction entries generalizing locals with
-  | nil => rfl
-  | cons entry entries ih =>
-      simp only [List.foldl_cons, FUPDATE_LIST]
-      rw [updatePanValueMap_eq_FUPDATE, ih]
-      rfl
-
-/-! These list facts support the generated `ctxtFc` invariants: each
-`withShape` slot group inherits duplicate-freedom and membership from its flat
-source slot list. -/
 theorem withShapeGetElemNodupOfSlotsNodup (shapes : List Shape) (slots : List Nat)
     (index : Nat) (hslots : slots.Nodup)
     (hsize : slots.length = Shape.shapeSize (.comb shapes))
@@ -786,7 +766,6 @@ theorem panToCrepSourceLoad32HOLCase
   simp only [hdomainView]
   simp only [Option.map_map]
   rfl
-
 
 /-- Source-shaped port of HOL `state_rel_globals[local]`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:65`), a projection of
@@ -970,7 +949,6 @@ def localsRel (context : PanToCrepProofContext α)
     `flapjack-4ac.5.83`, and exact PanSem state/name carriers. The exact lookup
     invariant is tracked separately by `flapjack-4ac.4.66.1`. -/
 
-
 /-! Execute the finite-map compiler with the HOL proof context. Every map is
     passed directly to `compileProgHOL`; no queried-name projection to an
     `InfoMap` is performed. -/
@@ -1008,7 +986,6 @@ def codeRel [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
       let nextContext := ctxtFc context.funcs context.eids variables shapes names
       FLOOKUP targetCode function = some
         (names, compileCodeRelProg nextContext program)
-
 
 /-! The exact HOL lemmas `compile_exp_not_mem_load_glob` and
     `rewritten_context_unassigned` remain to be ported over the faithful carriers. -/
@@ -1702,7 +1679,6 @@ theorem panValueFfiSharedStore_stateRel_final
          crepRuntimeSharedMem, hname, Option.map_some, panTheWord, hvalid, if_true]
        erw [hcallGoal])
   · simpa only [stateRel] using hstate
-
 
 /-- Flapjack-specific analogue of HOL `pan_to_crepProofScript.sml:3051`
 `evaluate_replicate_const`.  NOT a port: the production Crep evaluator

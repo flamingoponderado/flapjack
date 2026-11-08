@@ -1015,19 +1015,6 @@ theorem panSemBitVec64Read32_eq_panMemLoad32HOL (state : PanSemState (RiscV.Word
       | rStruct fs => simp [panValueWordDefined, hcell]
       | nStruct nm fs => simp [panValueWordDefined, hcell]
 
-private theorem bitVecSetWidth_eq_ofNat_toNat {sourceWidth targetWidth : Nat}
-    (value : BitVec sourceWidth) :
-    BitVec.setWidth targetWidth value = BitVec.ofNat targetWidth value.toNat := by
-  apply BitVec.eq_of_toNat_eq
-  simp only [BitVec.toNat_setWidth, BitVec.toNat_ofNat]
-
-/-! ### Structured `.load` word-node bridge (flapjack-pxn.18.3.6.9.2.2)
-
-The executed structured `.load` uses `panValueFlatLoad`; the HOL-shaped
-(core currently untagged) `panMemLoadHOL` reads the same nodes.  The `One` clause is proved here; the
-`Comb`/`Named` clauses require the fuel/context/offset machinery and are tracked
-by the child bead `flapjack-pxn.18.3.6.9.2.2.1`. -/
-
 theorem panValueFlatLoad_one_eq_panMemLoadHOL (state : PanSemState (RiscV.Word 64) ffi)
     (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
     (structs : StructContext) (address : RiscV.Word 64) :

@@ -275,16 +275,6 @@ private theorem resVarEq_updateEq_of_lookup {width : Nat} [NeZero width]
   | none => exact eraseEq_self m k h
   | some x => exact updateEq_self m k x h
 
-/-- Flapjack-only support: the `BEq` update form of
-    `resVarEq_updateEq_of_lookup`. -/
-private theorem resVarEq_update_of_lookup {width : Nat} [NeZero width]
-    (m : HolFiniteMapExact MlS (ValueHOL width)) (k : MlS) (v : ValueHOL width)
-    (old : Option (ValueHOL width)) (h : m.lookup k = old) :
-    HolFiniteMapExact.resVarEq (m.update (k, v)) (k, old) = m := by
-  rw [← updateEq_eq_update]
-  exact resVarEq_updateEq_of_lookup m k v old h
-
-/-- Flapjack-only support: the lookup of `setVarHOLFinite`. -/
 private theorem lookup_setVarHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (name : MlS) (value : ValueHOL width)
     (key : MlS) :
