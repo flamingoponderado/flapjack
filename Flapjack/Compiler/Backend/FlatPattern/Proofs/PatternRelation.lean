@@ -51,7 +51,7 @@ theorem pmatch_var_related {C F : Type} (n : Nat) (source target : FlatSem.State
     MatchRel n (FlatSem.pmatch source (.pvar name) value bindings)
       (FlatSem.pmatch target (.pvar name) value' bindings') := by
   simp only [FlatSem.pmatch, MatchRel]
-  exact aLookupRel_cons _ _ _ _ _ _ _ (fun _ => values) envs
+  exact aLookupRel_cons _ _ _ _ _ _ _ ⟨fun _ => values, envs⟩
 
 /-- Wildcard patterns leave related bindings unchanged. -/
 theorem pmatch_any_related {C F : Type} (n : Nat) (source target : FlatSem.State C F)
@@ -213,7 +213,7 @@ theorem pmatch_related {C F : Type} (cfg : Config) (n : Nat) (source target : Fl
   | pas pattern name =>
     apply pmatch_as_related n source target pattern name value value' bindings bindings'
     apply pmatch_related cfg n source target pattern value value' _ _ states values
-    · exact aLookupRel_cons _ _ _ _ _ _ _ (fun _ => values) envs
+    · exact aLookupRel_cons _ _ _ _ _ _ _ ⟨fun _ => values, envs⟩
     · simpa [FlatSem.pmatch] using safe
   | pref pattern =>
     apply pmatch_ref_related cfg n source target pattern value value' bindings bindings' states values safe

@@ -51,3 +51,6 @@ tuple_lookup=SOME ()
 closure_eval=T
 refs_globals_mem_typed=∀(refs :v store_v list) (reachable :sptree$num_set). (domain (find_refs_globals refs) :num -> bool) ⊆ (R :num -> bool) ⇒ (∀(a :v). MEM (Refv a) refs ⇒ (domain (find_v_globals a) :num -> bool) ⊆ R) ∧ (∀(vs :v list). MEM (Varray vs) refs ⇒ (domain (find_v_globalsL vs) :num -> bool) ⊆ R) ∧ ∀(m :thunk_mode) (a :v). MEM (Thunk m a) refs ⇒ (domain (find_v_globals a) :num -> bool) ⊆ R
 lookups_list_mem_typed=∀(e :exp) (es :exp list). MEM e es ⇒ (domain (find_lookups e) :num -> bool) ⊆ (domain (find_lookupsL es) :num -> bool)
+filter_sub_bag_typed=elist_globals (FILTER (P :exp -> bool) (ds :exp list)) ≤ elist_globals ds
+filter_empty_typed=elist_globals (ds :exp list) = ({||} :num -> num) ⇒ elist_globals (FILTER (P :exp -> bool) ds) = ({||} :num -> num)
+esgc_free_filter_typed=EVERY esgc_free (ds :exp list) ⇒ EVERY esgc_free (FILTER (P :exp -> bool) ds)

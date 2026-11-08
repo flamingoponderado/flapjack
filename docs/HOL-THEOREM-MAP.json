@@ -3353,7 +3353,7 @@
   "lean_name": "compilePatBindings_simulation",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared the complete HOL theorem and typed compile_pat_bindings_simulation capture: LIST_REL is stated explicitly using sptMem for domain membership, with lower and upper corresponding to j and i. The independent inhabited vset binder is vacuous and omitted. The theorem inherits reals_as_rational_cuts through the reviewed flat evaluator."
+  "reviewer": "Compared the complete HOL theorem and typed compile_pat_bindings_simulation capture: LIST_REL is stated explicitly using sptMem for domain membership, with lower and upper corresponding to j and i. The original independent, universally quantified vset binder is retained. The theorem inherits reals_as_rational_cuts through the reviewed flat evaluator. Source-shaped grouped premises and free-variable order were rechecked against HOL."
 },
 {
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
@@ -3506,7 +3506,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
   "lean_name": "filterEqALookupEq",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the typed filter_eq_alookup_eq capture with independent key and value types and the reviewed ALOOKUP definition. Both filtered-list equality and the universal retained-key premise are preserved."
+  "reviewer": "Compared the typed filter_eq_alookup_eq capture with independent key and value types and the reviewed ALOOKUP definition. Both filtered-list equality and the universal retained-key premise are preserved. Source-shaped grouped premises and free-variable order were rechecked against HOL."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -3522,7 +3522,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
   "lean_name": "filterEqMono",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the typed filter_eq_mono capture. Specialization of LIST_REL_FILTER_MONO at R = (=); the single element type, both narrowing premises and entry-equality agreement match HOL."
+  "reviewer": "Compared the typed filter_eq_mono capture. Specialization of LIST_REL_FILTER_MONO at R = (=); the single element type, both narrowing premises and entry-equality agreement match HOL. Source-shaped grouped premises and free-variable order were rechecked against HOL."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -3530,7 +3530,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
   "lean_name": "filterEqMonoTrans",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the typed filter_eq_mono_trans capture. The HOL rewrite removes the right-narrowing premise; the trivially true P3 agreement premise remains in the Lean statement."
+  "reviewer": "Compared the typed filter_eq_mono_trans capture. The HOL rewrite removes the right-narrowing premise; the trivially true P3 agreement premise remains in the Lean statement. Source-shaped grouped premises and free-variable order were rechecked against HOL."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -3554,7 +3554,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
   "lean_name": "listRelFilterMono",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the typed list_rel_filter_mono capture with both independent element types, all four predicates, both narrowing premises, and the related-member agreement. Bool predicates with List.filter render HOL FILTER, Bool equality renders the HOL boolean equation, and Forall₂ renders LIST_REL."
+  "reviewer": "Compared the typed list_rel_filter_mono capture with both independent element types, all four predicates, both narrowing premises, and the related-member agreement. Bool predicates with List.filter render HOL FILTER, Bool equality renders the HOL boolean equation, and Forall₂ renders LIST_REL. Source-shaped grouped premises and free-variable order were rechecked against HOL."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -3562,7 +3562,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
   "lean_name": "listRelALookup",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the typed list_rel_alookup capture, including both membership premises and full pair equality. Both lists use the same key and value types; LIST_REL is Forall₂ and ALOOKUP is the reviewed holALookup."
+  "reviewer": "Compared the typed list_rel_alookup capture, including both membership premises and full pair equality. Both lists use the same key and value types; LIST_REL is Forall₂ and ALOOKUP is the reviewed holALookup. Source-shaped premise grouping and free-variable order were rechecked against HOL."
 },
 {
   "hol_path": "HOL/src/finite_maps/alistScript.sml",
@@ -3586,7 +3586,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
   "lean_name": "listRelALookupOptRel",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the typed list_rel_alookup_optrel capture, including both membership premises and the key condition. LIST_REL is Forall₂, OPTREL is the reviewed optionRel, ALOOKUP is the reviewed holALookup, and key and payload types remain independent."
+  "reviewer": "Compared the typed list_rel_alookup_optrel capture, including both membership premises and the key condition. LIST_REL is Forall₂, OPTREL is the reviewed optionRel, ALOOKUP is the reviewed holALookup, and key and payload types remain independent. Source-shaped premise grouping and free-variable order were rechecked against HOL."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
@@ -17727,7 +17727,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
   "lean_name": "aLookupRel_map_same",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the HOL source and typed lookup_map_same capture: the mapped input type, key type and two value types are independent; the same pointwise key equality and predicate-guarded value relation imply the bounded association-lookup relation."
+  "reviewer": "Compared the HOL source and typed lookup_map_same capture: the mapped input type, key type and two value types are independent; the same pointwise key equality and predicate-guarded value relation imply the bounded association-lookup relation. Source-shaped premise grouping and free-variable order were rechecked against HOL."
 },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -18786,7 +18786,7 @@
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_cons_false",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the HOL theorem and typed lookup_relation_cons_false capture: both conjuncts use the same inserted value and shared value type, with the original exclusion premise and equivalences."
+    "reviewer": "Compared the HOL theorem and typed lookup_relation_cons_false capture: both conjuncts use the same inserted value and shared value type, with the original exclusion premise and equivalences. The free-variable order follows HOL."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -18820,7 +18820,7 @@
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_mono",
     "statement_status": "reviewed_exact",
-    "reviewer": "Reviewed against HOL and typed lookup_relation_mono capture: the second conjunct quantifies two vacuous variables of independent inhabited types, omitted in Lean; the remaining premises and conclusion match."
+    "reviewer": "Reviewed against HOL and alookup_rel_mono_typed: the original grouped premises and free-variable order are retained, including two vacuous universally quantified variables of independent inhabited types. Source-shaped grouped premises and free-variable order were rechecked against HOL."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -18828,7 +18828,7 @@
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_cons",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the HOL theorem and typed lookup_relation_cons capture: key predicate, independently typed payloads, head implication, tail relation, and conclusion agree."
+    "reviewer": "Compared the HOL theorem and typed lookup_relation_cons capture: key predicate, independently typed payloads, head implication, tail relation, and conclusion agree. Source-shaped premise grouping and free-variable order were rechecked against HOL."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -18836,7 +18836,7 @@
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_mono_rel",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the HOL theorem and typed lookup_relation_mono_rel capture: the universally quantified value relation implication and related lookup premise preserve independent payload types."
+    "reviewer": "Compared the HOL theorem and typed lookup_relation_mono_rel capture: the universally quantified value relation implication and related lookup premise preserve independent payload types. Source-shaped premise grouping and free-variable order were rechecked against HOL."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -18844,7 +18844,7 @@
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_eq_lookup",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the HOL theorem and typed lookup_relation_equal capture: equality relation, selected-key premise, and lookup equality agree."
+    "reviewer": "Compared the HOL theorem and typed lookup_relation_equal capture: equality relation, selected-key premise, and lookup equality agree. Source-shaped grouped premises and free-variable order were rechecked against HOL."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -18852,7 +18852,7 @@
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_append_left_false",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the HOL theorem and typed lookup_relation_append_false capture: the EVERY exclusion is expressed pointwise over prefix members; left and right payload types remain independent."
+    "reviewer": "Compared the HOL theorem and typed lookup_relation_append_false capture: the EVERY exclusion is expressed pointwise over prefix members; left and right payload types remain independent. Source-shaped premise grouping and free-variable order were rechecked against HOL."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -18860,7 +18860,7 @@
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_append",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the HOL theorem and typed lookup_relation_append capture: both component relations, append order, and independent left and right payload types agree."
+    "reviewer": "Compared the HOL theorem and typed lookup_relation_append capture: both component relations, append order, and independent left and right payload types agree. Source-shaped grouped premises and free-variable order were rechecked against HOL."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -18972,16 +18972,16 @@
     "hol_name": "remove_flat_prog_sub_bag",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalInvariants.lean",
     "lean_name": "removeFlatProg_subBag",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Expression carriers and complete declaration review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared removed_global_sub_bag in flat_elim_value_globals_probe.out and HOL: the global bag of the executed removal pass is a sub-bag of the original. The expression, bag, and removeFlatProgTotal carriers are reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "remove_flat_prog_elist_globals_eq_empty",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalInvariants.lean",
     "lean_name": "removeFlatProg_globals_empty",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Expression carriers and complete declaration review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared removed_global_bag_empty in flat_elim_value_globals_probe.out and HOL: the empty input global bag premise implies an empty output bag. The executed removal, bag, and expression carriers are reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
@@ -18996,8 +18996,8 @@
     "hol_name": "remove_flat_prog_distinct_globals",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalInvariants.lean",
     "lean_name": "removeFlatProg_distinctGlobals",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Expression carriers and complete declaration review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared removed_global_distinct in flat_elim_value_globals_probe.out and HOL: BAG_ALL_DISTINCT of the input bag implies it for the output bag. The executed removal and bag carriers are reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -19650,7 +19650,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
     "lean_name": "compileDecs_envGenInv",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed compile_decs_env_gen_inv capture: identical declaration compilation equality and input generation-store validity imply output validity and an old-to-new sptree submap. The Lean sptSubspt definition preserves both domain membership and lookup values, matching HOL subspt."
+    "reviewer": "Compared the typed compile_decs_env_gen_inv capture: identical declaration compilation equality and input generation-store validity imply output validity and an old-to-new sptree submap. The Lean sptSubspt definition preserves both domain membership and lookup values, matching HOL subspt. Source-shaped grouped premises and free-variable order were rechecked against HOL."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -19658,7 +19658,7 @@
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
     "lean_name": "incCompileProg_envSubmap",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed inc_compile_env_submap probe and incremental compiler definition: identical environment-id pair, source config and declarations, compiler-result equality and initial environment-store invariant imply the same final invariant and old-to-new sptree submap. The Lean sptSubspt definition preserves both domain membership and lookup values, matching HOL subspt; the new generation uses the old next index and the same sptree insertion."
+    "reviewer": "Compared the typed inc_compile_env_submap probe and incremental compiler definition: identical environment-id pair, source config and declarations, compiler-result equality and initial environment-store invariant imply the same final invariant and old-to-new sptree submap. The Lean sptSubspt definition preserves both domain membership and lookup values, matching HOL subspt; the new generation uses the old next index and the same sptree insertion. Source-shaped grouped premises and free-variable order were rechecked against HOL."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -129513,7 +129513,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleStore.lean",
   "lean_name": "simpleStateRel_storeAssign",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the HOL source and typed simple_store_assignment capture: the original assignment, state and store-value relation premises and existential updated target store are retained. Source and target compiler-state types are independent and their FFI type is shared; conjunction premises are curried."
+  "reviewer": "Compared the HOL source and typed simple_store_assignment capture: the original assignment, state and store-value relation premises and existential updated target store are retained. Source and target compiler-state types are independent and their FFI type is shared; the original conjunctive premises are grouped."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -129521,7 +129521,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleStore.lean",
   "lean_name": "simpleStateRel_storeAlloc",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the HOL source and typed simple_store_allocation capture: the original allocation equation, shared allocated index, and existential related updated target store are retained. Source and target compiler-state types are independent and their FFI type is shared; conjunction premises are curried."
+  "reviewer": "Compared the HOL source and typed simple_store_allocation capture: the original allocation equation, shared allocated index, and existential related updated target store are retained. Source and target compiler-state types are independent and their FFI type is shared; the original conjunctive premises are grouped."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -129529,7 +129529,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleStore.lean",
   "lean_name": "simpleStateRel_storeLookup",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the HOL source and typed simple_store_lookup capture: the original lookup and state premises and existential related target entry are retained. Source and target compiler-state types are independent and their FFI type is shared; conjunction premises are curried."
+  "reviewer": "Compared the HOL source and typed simple_store_lookup capture: the original lookup and state premises and existential related target entry are retained. Source and target compiler-state types are independent and their FFI type is shared; the original conjunctive premises are grouped."
 },
 {
   "hol_path": "HOL/src/list/src/listScript.sml",
@@ -129798,7 +129798,7 @@
   "lean_name": "compileDecs_semantics",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared decs_semantics in flat_pattern_install_relation_probe.out: shared compiler and independent FFI carriers, installation relation, non-failure premise, separate compilation configuration and semantics equality agree. Evaluation inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared decs_semantics in flat_pattern_install_relation_probe.out: shared compiler and independent FFI carriers, installation relation, non-failure premise, separate compilation configuration and semantics equality agree. Evaluation inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Source-shaped grouped premises and free-variable order were rechecked against HOL."
 }
 ,
 {
@@ -130435,5 +130435,29 @@
   "lean_name": "findLookupsList_member",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared lookups_list_mem_typed in flat_elim_value_globals_probe.out. The expression and list binders, membership premise and domain inclusion conclusion are retained. findGlobalsList destGlobalVarLookup follows the original mutual find_lookupsL clauses, and sptMem expresses membership in each domain."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "elist_globals_filter_SUB_BAG",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalInvariants.lean",
+  "lean_name": "elistGlobals_filter_sub",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared filter_sub_bag_typed in flat_elim_value_globals_probe.out, replaying the original local proof. The predicate and expression list remain independent; the filtered global-initialization bag is a sub-bag of the original. The expression and bag carriers and subBag are reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "elist_globals_filter",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalInvariants.lean",
+  "lean_name": "elistGlobals_filter_empty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared filter_empty_typed in flat_elim_value_globals_probe.out, replaying the original local proof. The expression list and filter predicate retain their types and order; the empty original bag premise and empty filtered bag conclusion agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "esgc_free_filter",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalInvariants.lean",
+  "lean_name": "esgcFree_filter",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared esgc_free_filter_typed in flat_elim_value_globals_probe.out, replaying the original local proof. EVERY esgc_free is rendered by universal membership before and after filtering; the list and Boolean predicate remain independently quantified."
 }
 ]

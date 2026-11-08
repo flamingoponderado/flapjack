@@ -3652,7 +3652,8 @@ and the original match-result mapping definition.
 payloads and indexed result in the pattern compiler's row-selection theorem.
 
 `flat_elim_value_globals_probeScript.sml` also captures the complete
-reference-store membership theorem, including its unused `reachable` binder.
+reference-store membership theorem, including its unused `reachable` binder,
+and replays the three local filter-invariant proofs.
 
 `data_to_word_memory_thunk_probeScript.sml` captures the inferred original statements of `blocks_unique_Thunk`, `blocks_unique_Thunk2`, and `blocks_unique_Word64`, including the independent type of the second pair component and the fixed 64-bit word type. Their Lean proofs are in `Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Thunk.lean` and `Memory/Relation/SmallNumber.lean`. The probe also captures `memory_rel_Thunk_IMP` and `memory_rel_Thunk_inlined`, proved in `Memory/Relation/Thunk.lean`, and replays the local `thunk_tag_bits_lemma`, proved in `Memory/Relation/ThunkHeap.lean`.
 

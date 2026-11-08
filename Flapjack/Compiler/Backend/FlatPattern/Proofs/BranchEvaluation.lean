@@ -34,7 +34,7 @@ theorem bindingInputs_single_generated {C F : Type} (trace : BackendCommon.Tra) 
     have interval : n - 1 < decNameToNum (encNumToName n) ∧ decNameToNum (encNumToName n) < n + 1 := by
       simp only [decEnc]
       omega
-    have eq := aLookupRel_eq_lookup _ _ _ (encNumToName n) related interval
+    have eq := aLookupRel_eq_lookup _ _ _ (encNumToName n) ⟨related, interval⟩
     have found : env2.v.lookup (encNumToName n) = some value := by
       rw [← holALookup_eq_lookup, eq, envEq]
       simp [holALookup]
@@ -74,7 +74,7 @@ theorem evaluate_compilePatRhs {C F A : Type} (env3 : FlatSem.Environment A)
   have inputs := bindingInputs_single_generated trace n compiled.1 pattern env state value env2.v envEq positive
   have initialRel : aLookupRel (fun name => decNameToNum name < n - 1) Eq env.v ([] ++ env2.v) := by
     rw [envEq]
-    apply ((aLookupRel_cons_false (fun name => decNameToNum name < n - 1) Eq (encNumToName n) value
+    apply ((aLookupRel_cons_false (fun name => decNameToNum name < n - 1) (encNumToName n) Eq value
       env2.v env2.v).1 ?_).2
     · exact aLookupRel_refl _ _ _ (by intros; rfl)
     · simp only [decEnc]
@@ -95,10 +95,10 @@ theorem evaluate_compilePatRhs {C F A : Type} (env3 : FlatSem.Environment A)
   obtain ⟨extEnv, extEval, extRelated⟩ := sim
   refine ⟨extEnv, extEval, (envRel_iff_lookup _ _ _).2 ?_⟩
   have combined := aLookupRel_append (fun name => decNameToNum name < m) ValueRel
-    sourceBindings env1.v bindings env2.v bindingRel ((envRel_iff_lookup m env1 env2).1 envRel)
+    sourceBindings bindings env1.v env2.v ⟨bindingRel, (envRel_iff_lookup m env1 env2).1 envRel⟩
   intro name nameBound
   have h := combined name (by omega)
-  have eq := aLookupRel_eq_lookup _ _ _ name extRelated nameBound
+  have eq := aLookupRel_eq_lookup _ _ _ name ⟨extRelated, nameBound⟩
   simpa only [eq] using h
 
 end Flapjack.Compiler.Backend.FlatPattern

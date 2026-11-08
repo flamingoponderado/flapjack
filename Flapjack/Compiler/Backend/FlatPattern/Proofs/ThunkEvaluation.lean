@@ -20,6 +20,7 @@ theorem forceBody_envRel (n : Nat) (value value' : FlatSem.Value) (related : Val
     EnvRel n ⟨[(ofString "f", value)]⟩ ⟨[(ofString "f", value')]⟩ := by
   apply (envRel_iff_lookup _ _ _).2
   apply aLookupRel_cons
+  constructor
   · intro _
     exact related
   · exact aLookupRel_empty _ _

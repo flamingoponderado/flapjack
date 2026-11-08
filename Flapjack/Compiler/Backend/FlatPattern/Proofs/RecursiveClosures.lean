@@ -74,7 +74,7 @@ theorem envRel_buildRec (n : Nat) (left right : Environment Value) (cfg : Config
       (funs.map fun (name, _, _) => (name, Value.recclosure right (compiledRecFuns cfg funs) name)) := by
     simp [compiledRecFuns, List.map_map, Function.comp_def]
   rw [rightMap]
-  exact aLookupRel_append _ _ _ _ _ _ prefixRel ((envRel_iff_lookup n left right).1 envs)
+  exact aLookupRel_append _ _ _ _ _ _ ⟨prefixRel, (envRel_iff_lookup n left right).1 envs⟩
 
 /-- Recursive-closure application produces the compiled selected body and
 related recursive environments. This is a case of the application simulation. -/

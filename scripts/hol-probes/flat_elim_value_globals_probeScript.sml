@@ -59,3 +59,17 @@ val _ = show_eval "tuple_lookup=" ``sptree$lookup 3 (flat_elimProof$find_v_globa
 val _ = show_eval "closure_eval=" ``flat_elimProof$v_has_Eval (flatSem$Closure <|v := []|> «x» (flatLang$App backend_common$None (flatLang$Src ast$Eval) []))``;
 val _ = show_thm "refs_globals_mem_typed=" flat_elimProofTheory.find_refs_globals_MEM;
 val _ = show_thm "lookups_list_mem_typed=" flat_elimProofTheory.find_lookupsL_MEM;
+(* This theorem is local in HOL, so replay its original proof. *)
+val filter_sub_bag_replay = prove (
+  ``flatProps$elist_globals (FILTER P ds) <= flatProps$elist_globals ds``,
+  Induct_on `ds` \\ rw [] \\ fs [bagTheory.SUB_BAG_UNION]);
+val _ = show_thm "filter_sub_bag_typed=" filter_sub_bag_replay;
+val filter_empty_replay = prove (
+  ``flatProps$elist_globals ds = {||} ==>
+    flatProps$elist_globals (FILTER P ds) = {||}``,
+  Induct_on `ds` \\ rw [] \\ fs [bagTheory.SUB_BAG_UNION]);
+val _ = show_thm "filter_empty_typed=" filter_empty_replay;
+val esgc_free_filter_replay = prove (
+  ``EVERY flatProps$esgc_free ds ==> EVERY flatProps$esgc_free (FILTER P ds)``,
+  Induct_on `ds` \\ rw []);
+val _ = show_thm "esgc_free_filter_typed=" esgc_free_filter_replay;

@@ -68,11 +68,12 @@ theorem outcomeRel_noTypeError (source target : Option (SemanticPrimitivesHOL.Er
 
 /-- Pattern compilation preserves the semantics of a non-failing program. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_decs_semantics"]
-theorem compileDecs_semantics {C F : Type} (cfg cfg2 : Config) (ffi : HolFfiState F)
-    (source : List FlatLang.Exp) (sourceConfig targetConfig : FlatSem.InstallConfig C)
-    (configs : installConfRel cfg sourceConfig targetConfig)
-    (notFail : FlatSem.semantics sourceConfig ffi source ≠ .fail) :
+theorem compileDecs_semantics {C F : Type} (cfg : Config) (sourceConfig targetConfig : FlatSem.InstallConfig C)
+    (ffi : HolFfiState F) (source : List FlatLang.Exp) (cfg2 : Config)
+    (premises : installConfRel cfg sourceConfig targetConfig ∧
+      FlatSem.semantics sourceConfig ffi source ≠ .fail) :
     FlatSem.semantics sourceConfig ffi source = FlatSem.semantics targetConfig ffi (source.map (compileDec cfg2)) := by
+  obtain ⟨configs, notFail⟩ := premises
   classical
   have safe : ∀ clock, (FlatSem.evaluateDecs (FlatSem.initialState ffi clock sourceConfig) source).2 ≠
       some (.abort .typeError) := by
