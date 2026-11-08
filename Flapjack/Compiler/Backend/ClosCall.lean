@@ -185,7 +185,8 @@ def callsListBounded (fuel : Nat) (es : List Exp) (state : State) : Option (List
 /-- The executable incremental direct-call step starts with no auxiliary
 code, discards the input auxiliary code, and returns the updated known set and
 new auxiliary code. Its bounded optional interface differs from HOL's total
-`compile_inc`; correspondence to that definition remains to be proved. -/
+`compile_inc`; `compileIncFuel_correct` proves agreement with the total
+single-list traversal used in HOL's `compile_inc_eq`. -/
 def compileIncFuel? (fuel : Nat) (known : NumSet)
     (program : List Exp × List (Nat × Nat × Exp)) :
     Option (NumSet × (List Exp × List (Nat × Nat × Exp))) := do

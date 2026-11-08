@@ -16948,13 +16948,13 @@
     "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "calls_sing_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosCall/Calls.lean", "lean_name": "callsSing",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared all single-expression clauses and concrete state carriers with calls_sing_def_typed in clos_call_frontend_probe.out. EVERY2 is encoded by equal lengths and pairwise zip/all; callsSingList_length establishes the equal lengths used by ZIP in the else branch. This is the single-expression component of HOL's mutual definition; production correspondence remains open."
+    "reviewer": "Compared all single-expression clauses and concrete state carriers with calls_sing_def_typed in clos_call_frontend_probe.out. EVERY2 is encoded by equal lengths and pairwise zip/all; callsSingList_length establishes the equal lengths used by ZIP in the else branch. This is the single-expression component of HOL's mutual definition. callsFuel_correct proves every successful bounded expression traversal agrees with it."
   },
   {
     "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "calls_sing_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosCall/Calls.lean", "lean_name": "callsSingList",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared both list clauses with calls_sing_def_typed in clos_call_frontend_probe.out, including state threading and result order. This is the list component of HOL's mutual definition; production correspondence remains open."
+    "reviewer": "Compared both list clauses with calls_sing_def_typed in clos_call_frontend_probe.out, including state threading and result order. This is the list component of HOL's mutual definition; callsListBounded_correct proves unconditional agreement with the executable retry wrapper."
   },
   {
     "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "free_def",
