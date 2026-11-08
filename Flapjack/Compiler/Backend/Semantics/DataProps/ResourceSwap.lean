@@ -1,7 +1,9 @@
 import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveAll
 import Flapjack.Compiler.Backend.Semantics.DataProps.HeapSwap
 
-/-! Primitive success under resource-field updates. -/
+/-! Primitive success under resource-field updates. The proof reuses the
+liveness pass's primitive cases; those cases must remain independent of this
+module to avoid an import cycle. -/
 namespace Flapjack.Compiler.Backend.DataProps
 open Flapjack Flapjack.Compiler.Backend.DataSem Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend.DataLive
@@ -67,5 +69,70 @@ theorem doAppAux_stackSafePeakSwap {C F : Type} (op : ClosLang.Op) (args : List 
       simp_all [SameLocalControl, target]
     refine ⟨otherNext.safeForSpace, otherNext.peakHeapLength, otherNext.stackMax, ?_⟩
     rw [← same]
+
+/-- The successful space-and-auxiliary path preserves the returned value
+under resource updates. This is proof infrastructure for the HOL swap. -/
+private theorem appSpace_success {C F : Type} (op : ClosLang.Op)
+    (args : List DataSem.Value) (state : State C F) (value : DataSem.Value) (next : State C F)
+    (mx : Option Nat) (safe : Bool) (peak : Nat)
+    (run : (match doSpace op args state with
+      | none => Result.err (.abort .typeError)
+      | some accounted => doAppAux op args (doStack op args (doLimSafe accounted op args))) = .val (value, next)) :
+    ∃ safe' peak' mx',
+      (match doSpace op args { state with stackMax := mx, safeForSpace := safe, peakHeapLength := peak } with
+      | none => Result.err (.abort .typeError)
+      | some accounted => doAppAux op args (doStack op args (doLimSafe accounted op args))) =
+        .val (value, { next with stackMax := mx', safeForSpace := safe', peakHeapLength := peak' }) := by
+  cases source : doSpace op args state with
+  | none => simp [source] at run
+  | some accounted =>
+    have appRun : doAppAux op args (doStack op args (doLimSafe accounted op args)) = .val (value, next) := by
+      simpa [source] using run
+    obtain ⟨safe', peak', mx', target⟩ := doSpace_some_resource op args state accounted safe peak mx source
+    obtain ⟨safe'', peak'', mx'', account⟩ := doStack_doLimSafe_resource op args accounted safe' peak' mx'
+    obtain ⟨safe''', peak''', mx''', result⟩ := doAppAux_stackSafePeakSwap op args
+      (doStack op args (doLimSafe accounted op args)) value next mx'' safe'' peak'' appRun
+    exact ⟨safe''', peak''', mx''', by simpa only [target, account] using result⟩
+
+/-- Primitive success is preserved by updating resource fields. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_sm_safe_peak_swap"]
+theorem doApp_stackSafePeakSwap {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (state : State C F) (value : DataSem.Value) (next : State C F) (mx : Option Nat) (safe : Bool) (peak : Nat)
+    (run : doApp op args state = .val (value, next)) :
+    ∃ safe' peak' mx', doApp op args { state with stackMax := mx, safeForSpace := safe, peakHeapLength := peak } =
+      .val (value, { next with stackMax := mx', safeForSpace := safe', peakHeapLength := peak' }) := by
+  cases op with
+  | install =>
+    simp only [doApp] at run ⊢
+    have equation := doInstall_safePeak (R := DataSem.Value) args
+      { state with stackMax := none, stackFrameSizes := .ln } safe peak
+    rw [run] at equation
+    refine ⟨next.safeForSpace, peak, next.stackMax, ?_⟩
+    simpa using equation
+  | intOp intop =>
+    have normal := appSpace_success (.intOp intop) args state value next mx safe peak
+    cases intop <;> simp only [doApp] at run ⊢
+    all_goals first | exact normal run | contradiction
+  | label label =>
+    simp only [doApp] at run ⊢
+    exact appSpace_success (.label label) args state value next mx safe peak run
+  | ffi name =>
+    simp only [doApp] at run ⊢
+    exact appSpace_success (.ffi name) args state value next mx safe peak run
+  | wordOp wordop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_success (.wordOp wordop) args state value next mx safe peak run
+  | blockOp blockop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_success (.blockOp blockop) args state value next mx safe peak run
+  | globOp globop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_success (.globOp globop) args state value next mx safe peak run
+  | memOp memop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_success (.memOp memop) args state value next mx safe peak run
+  | thunkOp thunkop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_success (.thunkOp thunkop) args state value next mx safe peak run
 
 end Flapjack.Compiler.Backend.DataProps

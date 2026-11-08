@@ -128340,6 +128340,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "do_app_sm_safe_peak_swap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ResourceSwap.lean",
+  "lean_name": "doApp_stackSafePeakSwap",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_sm_safe_peak_swap_typed: binders op, vs, s, q, s-prime, smx, safe, peak; one shared state type; the successful-application premise; and existential stack, safety and peak witnesses with HOL field order. Installation uses the exact installation equation; other operations compose the reviewed space, limit, stack and auxiliary swaps. Inherits reals_as_rational_cuts through doApp (SOUNDNESS item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
   "hol_name": "do_app_aux_sm_safe_peak_swap",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ResourceSwap.lean",
   "lean_name": "doAppAux_stackSafePeakSwap",
