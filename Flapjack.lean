@@ -139,6 +139,7 @@ import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Output
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Labels
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
 import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
+import Flapjack.RiscV.CorrectnessEncoding.ArithNative
 import Flapjack.RiscV.CorrectnessEncoding.Div
 import Flapjack.RiscV.CorrectnessEncoding.LongMul
 import Flapjack.RiscV.CorrectnessEncoding.AddCarry
