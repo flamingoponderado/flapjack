@@ -9566,6 +9566,8 @@ independent types, and the local `global_env_inv_extend2` and
 `global_env_inv_add_locals` proofs with inferred types visible.
 It also replays the local `do_app_rec_help` proof, retaining its unused
 polymorphic binder and separate recursive groups in the inferred statement.
+The `result_rel_eqns_replay` row records all three result-relation case
+equations, including the independent unused abort-clause binder.
 The `env_all_rel_weak_replay` row records the combined environment relation
 under global extension, replaying the local HOL proof.
 The `list_rel_imp_el2_replay` and `list_rel_imp_el_replay` rows record the

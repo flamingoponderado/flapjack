@@ -340,6 +340,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "result_rel_eqns",
+  "lean_name": "resultRel_eqns",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateControl.lean",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared all three case equations and inferred carriers with result_rel_eqns_replay in source_to_flat_init_probe.out, including the shared independent success payload types and the unused independently polymorphic abort-clause binder. The original local HOL proof is replayed; GlobalEnv.c and tys use canonical finite maps."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "env_all_rel_weak",
   "lean_name": "envAllRel_weak",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",

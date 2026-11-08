@@ -115,6 +115,18 @@ val env_all_rel_weak_replay = let open source_to_flatProofTheory in Q.prove (
   MAP_EVERY qexists_tac [`alist_to_ns l`, `env''`, `env'''`] >>
   rw [] >> metis_tac [SUBMAP_FDOM_SUBSET, SUBSET_TRANS]) end;
 val _ = show_thm "env_all_rel_weak_replay=" env_all_rel_weak_replay;
+val result_rel_eqns_replay = let open source_to_flatProofTheory in Q.prove (
+  `(!genv v r.
+      source_to_flatProof$result_rel f genv (Rval v) r <=>
+        ?v'. f genv v v' /\ r = Rval v') /\
+   (!genv v r.
+      source_to_flatProof$result_rel f genv (Rerr (Rraise v)) r <=>
+        ?v'. source_to_flatProof$v_rel genv v v' /\ r = Rerr (Rraise v')) /\
+   (!genv v r a.
+      source_to_flatProof$result_rel f genv (Rerr (Rabort a)) r <=>
+        r = Rerr (Rabort a))`,
+  srw_tac[][result_rel_cases] >> metis_tac []) end;
+val _ = show_thm "result_rel_eqns_replay=" result_rel_eqns_replay;
 val do_app_conversion_inl = Q.prove (
   `semanticPrimitives$check_type ty1 v /\ source_to_flatProof$genv_c_ok genv.c /\
     source_to_flatProof$v_rel genv v v_i1 /\
