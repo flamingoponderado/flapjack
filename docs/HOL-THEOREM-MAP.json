@@ -16945,6 +16945,12 @@
     "reviewer": "Compared every original premise and conclusion and independently typed state, config, input, output carriers in backend_oracle_monotonic_probe.out. The proof maintains the invariant and nondecreasing counter, then orders earlier and later identifier sets."
   },
   {
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "oracle_monotonic_state_with_inv_init",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonicInit.lean", "lean_name": "oracleMonotonic_stateWithInvInit",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original premise conjunction, independent state, input, output and configuration types, and conclusion with oracle_monotonic_state_with_inv_init_typed in backend_props_state_oracle_probe.out."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "monotonic_globals_state_co_compile",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalOracle.lean", "lean_name": "monotonicGlobals_stateCoCompile",
     "statement_status": "reviewed_exact",
