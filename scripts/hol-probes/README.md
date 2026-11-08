@@ -369,12 +369,17 @@ success with an existing label. The capture is not a full installation proof.
 Regenerate with `HOL_PROBE_ONLY=data_sem_install_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `data_sem_apply_probe.out` captures the typed data primitive dispatcher, its
-`do_app_clock` theorem and the architecture-size and small-number definitions,
+`do_app_clock` and `check_res_IMP` theorems, the heap-accounting definitions,
+and the architecture-size and small-number definitions,
 alongside
 original observations for block construction, timestamp updates, invalid list
 lengths, integer arithmetic, and unsupported byte copying. Lean examples cover
 the same cases; these checks do not establish full dispatcher correspondence.
 Regenerate with `HOL_PROBE_ONLY=data_sem_apply_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`sptree_delete_definition_probe.out` also captures the polymorphic sparse-tree
+size definition used by the data heap-accounting theorem.
+Regenerate with `HOL_PROBE_ONLY=sptree_delete_definition_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `data_sem_limits_probe.out` captures the typed operation-limit definitions and
 original array-length and nullary-tag boundary observations. Corresponding

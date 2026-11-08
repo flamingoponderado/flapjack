@@ -3413,6 +3413,14 @@
 },
 {
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "size_def",
+  "lean_path": "Flapjack/Misc/Sptree.lean",
+  "lean_name": "sptSize",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared size in the typed sparse-tree probe: all four recursive clauses and the polymorphic payload match the reviewed Spt carrier."
+},
+{
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
   "hol_name": "delete_def",
   "lean_path": "Flapjack/Misc/Sptree.lean",
   "lean_name": "sptDelete",
@@ -128102,40 +128110,40 @@
   "hol_name": "bignum_digits_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Heap.lean",
   "lean_name": "bignumDigits",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bignum_digits in the typed DataSem probe: the constant takes the architecture flag then the natural argument; the 64- or 32-bit divisor inlines the HOL local d, and zero and recursive clauses match."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "bignum_size_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Heap.lean",
   "lean_name": "bignumSize",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bignum_size in the typed DataSem probe: Num (ABS i) is rendered by Int.natAbs and the digit count has the same header increment."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "check_res_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Heap.lean",
   "lean_name": "checkRes",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared check_res in the typed DataSem probe: the first result, tree payload and final result types remain independently polymorphic; the original tree is restored exactly when the result tree grew."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "check_res_IMP",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Heap.lean",
   "lean_name": "checkRes_size",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared check_res_imp in the typed DataSem probe: the tuple components and original tree retain independent polymorphic carriers and the conclusion bounds the returned tree size."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "consume_space_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Heap.lean",
   "lean_name": "consumeSpace",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared consume_space in the typed DataSem probe: a request exceeding available space returns none; otherwise natural subtraction updates the space field of the same polymorphic state."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128158,8 +128166,8 @@
   "hol_name": "no_thunks_in_refs_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Heap.lean",
   "lean_name": "noThunksInRefs",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared no_thunks_in_refs in the typed DataSem probe: the reference payload is polymorphic and all keys, thunk modes and payloads are universally quantified."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",

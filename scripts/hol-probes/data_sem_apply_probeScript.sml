@@ -34,6 +34,12 @@ val _ = show "do_app_aux=" dataSemTheory.do_app_aux_def;
 val _ = show "do_app_clock=" dataSemTheory.do_app_clock;
 val _ = show "arch_size=" dataSemTheory.arch_size_def;
 val _ = show "small_num=" dataSemTheory.small_num_def;
+val _ = show "check_res=" dataSemTheory.check_res_def;
+val _ = show "check_res_imp=" dataSemTheory.check_res_IMP;
+val _ = show "bignum_digits=" dataSemTheory.bignum_digits_def;
+val _ = show "bignum_size=" dataSemTheory.bignum_size_def;
+val _ = show "no_thunks_in_refs=" dataSemTheory.no_thunks_in_refs_def;
+val _ = show "consume_space=" dataSemTheory.consume_space_def;
 val _ = show "nullary_cons=" (EVAL ``dataSem$do_app_aux (closLang$BlockOp (closLang$Cons 9)) []
   (s:('c,'ffi) dataSem$state)``);
 val _ = show "nonempty_cons=" (EVAL ``dataSem$do_app_aux (closLang$BlockOp (closLang$Cons 9))

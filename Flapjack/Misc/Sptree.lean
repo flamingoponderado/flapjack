@@ -1162,9 +1162,8 @@ def sptOel {α : Type} : Nat → List α → Option α
   | 0, value :: _ => some value
   | n + 1, _ :: rest => sptOel n rest
 
-/-- HOL `sptree$size` (`HOL/src/finite_maps/sptreeScript.sml:117-122`): the
-number of stored values.  Untagged Flapjack infrastructure (source outside
-`cakeml/`). -/
+/-- Count the values stored in a sparse tree. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "size_def"]
 def sptSize {α : Type} : Spt α → Nat
   | .ln => 0
   | .ls _ => 1

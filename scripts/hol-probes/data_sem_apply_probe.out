@@ -27,6 +27,12 @@ do_app_aux=∀(op :closLang$op) (vs :v list) (s :(γ, 'ffi) state). do_app_aux o
 do_app_clock=(do_app (op :closLang$op) (args :v list) (s1 :(α, β) state) :(v # (α, β) state, v) result) = (Rval ((res :v),(s2 :(α, β) state)) :(v # (α, β) state, v) result) ⇒ s2.clock ≤ s1.clock
 arch_size=∀(lims :limits). arch_size lims = if lims.arch_64_bit then (64 :num) else (32 :num)
 small_num=∀(arch64 :bool) (i :int). small_num arch64 i ⇔ if arch64 then -((2 :int) ** (61 :num)) ≤ i ∧ i < (2 :int) ** (61 :num) else -((2 :int) ** (29 :num)) ≤ i ∧ i < (2 :int) ** (29 :num)
+check_res=∀(r :β sptree$num_map) (n :α) (refs :β sptree$num_map) (seen :γ). check_res r (n,refs,seen) = if size refs ≤ size r then (n,refs,seen) else (n,r,seen)
+check_res_imp=∀(y :α # β sptree$num_map # γ). ((n :α),(r :β sptree$num_map),(s :γ)) = check_res (t :β sptree$num_map) y ⇒ size r ≤ size t
+bignum_digits=∀(n :num) (arch64 :bool). bignum_digits arch64 n = if n = (0 :num) then (0 :num) else (let (d :num) = if arch64 then (64 :num) else (32 :num) in (1 :num) + bignum_digits arch64 (n DIV (2 :num) ** d))
+bignum_size=∀(arch64 :bool) (i :int). bignum_size arch64 i = (1 :num) + bignum_digits arch64 (Num (ABS i))
+no_thunks_in_refs=∀(refs :α ref sptree$num_map). no_thunks_in_refs refs ⇔ ∀(k :num) (e :thunk_mode) (v :α). (lookup k refs :α ref option) ≠ SOME (Thunk e v :α ref)
+consume_space=∀(k :num) (s :(γ, 'ffi) state). consume_space k s = if s.space < k then (NONE :(γ, 'ffi) state option) else SOME (s with space := s.space − k)
 nullary_cons=do_app_aux (BlockOp (Cons (9 :num) :block_op)) ([] :v list) (s :(γ, 'ffi) state) = (Rval ((Block (0 :num) (9 :num) ([] :v list) :v),s) :(v # (γ, 'ffi) state, v) result)
 nonempty_cons=do_app_aux (BlockOp (Cons (9 :num) :block_op)) [(Number (4 :int) :v)] ((s :(γ, 'ffi) state) with tstamps := SOME (7 :num)) = (Rval ((Block (7 :num) (9 :num) [(Number (4 :int) :v)] :v),s with <|tstamps := SOME (8 :num); safe_for_space := ((1 :num) < (2 :num) ** s.limits.length_limit ∧ s.safe_for_space)|>) :(v # (γ, 'ffi) state, v) result)
 invalid_list_length=do_app_aux (BlockOp (FromList (9 :num))) [(Number (1 :int) :v); Block_nil] (s :(γ, 'ffi) state) = (Rerr (Rabort Rtype_error :v error_result) :(v # (γ, 'ffi) state, v) result)
