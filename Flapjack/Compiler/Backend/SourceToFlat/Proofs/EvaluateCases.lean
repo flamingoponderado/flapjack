@@ -20,6 +20,12 @@ theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
 
 end EnvRelLookupReview
 
+/-- A list is nonempty exactly when it has a head and tail. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "NOT_NULL_EQ"]
+theorem notNull_eq_cons {α : Type} (xs : List α) :
+    xs ≠ [] ↔ ∃ head tail, xs = head :: tail := by
+  cases xs <;> simp
+
 /-- Evaluating a Boolean expression yields its flat Boolean value. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "evaluate_Bool"
   (fmap_as_finite_support := [c, tys])]

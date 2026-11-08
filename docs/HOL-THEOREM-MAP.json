@@ -340,6 +340,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "NOT_NULL_EQ",
+  "lean_name": "notNull_eq_cons",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateCases.lean",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local polymorphic nonempty-list equivalence and inferred carrier with not_null_eq_replay in source_to_flat_init_probe.out; the original HOL proof is replayed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "v_rel_lems",
   "lean_name": "valueRel_lemmas",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PrimitiveType.lean",
