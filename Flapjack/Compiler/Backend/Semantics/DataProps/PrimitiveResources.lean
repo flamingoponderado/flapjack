@@ -1,7 +1,7 @@
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateControl
 import Flapjack.Compiler.Backend.BackendProps
 
-/-! Resource observations of data-language primitive bookkeeping. -/
+/-! Resource observations of data-language primitive applications. -/
 namespace Flapjack.Compiler.Backend.DataSem
 open Flapjack Flapjack.SemanticPrimitivesHOL
 
@@ -78,205 +78,6 @@ theorem doApp_install_resource_frame {C F : Type} (args : List Value) (state nex
   obtain ⟨ffi, stack, safe⟩ := facts
   simp [ffi, stack, safe, BackendProps.optionLe]
 
-/-- Lift an auxiliary primitive's resource facts through the actual space,
-limit, and stack accounting performed by the dispatcher. -/
-theorem accounted_resource_frame {C F : Type} (op : ClosLang.Op) (args : List Value)
-    (state accounted next : State C F) (value : Value)
-    (space : doSpace op args state = some accounted)
-    (aux : doAppAux op args (doStack op args (doLimSafe accounted op args)) = .val (value, next))
-    (auxFrame : ∀ (before after : State C F) (v : Value), doAppAux op args before = .val (v, after) →
-      before.ffi.ioEvents <+: after.ffi.ioEvents ∧ BackendProps.optionLe before.stackMax after.stackMax ∧
-      (after.safeForSpace = true → before.safeForSpace = true)) :
-    state.ffi.ioEvents <+: next.ffi.ioEvents ∧ BackendProps.optionLe state.stackMax next.stackMax ∧
-      (next.safeForSpace = true → state.safeForSpace = true) := by
-  have spaceFacts := doSpace_resource_frame op args state accounted space
-  have limitFacts := doLimSafe_resource_frame op args accounted
-  have stackFacts := doStack_resource_frame op args (doLimSafe accounted op args)
-  have auxFacts := auxFrame _ next value aux
-  refine ⟨?_, ?_, ?_⟩
-  · simpa [stackFacts.1, limitFacts.1, spaceFacts.1] using auxFacts.1
-  · apply BackendProps.optionLe_trans _ _ _ ⟨?_, auxFacts.2.1⟩
-    simpa [limitFacts.2.1, spaceFacts.2.1] using stackFacts.2.2
-  · intro safe
-    exact spaceFacts.2.2 (limitFacts.2.2 (stackFacts.2.1 (auxFacts.2.2 safe)))
-
-/-- Arithmetic auxiliary operations do not alter the state. -/
-theorem doAppAux_int_resource_frame {C F : Type} (op : ClosLang.IntOp) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doAppAux (.intOp op) args state = .val (value, next)) :
-    state.ffi.ioEvents <+: next.ffi.ioEvents ∧ BackendProps.optionLe state.stackMax next.stackMax ∧
-      (next.safeForSpace = true → state.safeForSpace = true) := by
-  cases result : doIntApp op args with
-  | none => simp [doAppAux, applyNonFfi, result] at run
-  | some number =>
-    simp [doAppAux, applyNonFfi, result] at run
-    obtain ⟨rfl, rfl⟩ := run
-    simp [BackendProps.optionLe_refl]
-
-/-- Word auxiliary operations, including floating-point words, do not alter
-the state. -/
-theorem doAppAux_word_resource_frame {C F : Type} (op : ClosLang.WordOp) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doAppAux (.wordOp op) args state = .val (value, next)) :
-    state.ffi.ioEvents <+: next.ffi.ioEvents ∧ BackendProps.optionLe state.stackMax next.stackMax ∧
-      (next.safeForSpace = true → state.safeForSpace = true) := by
-  cases result : doWordApp op args with
-  | none => simp [doAppAux, applyNonFfi, result] at run
-  | some word =>
-    simp [doAppAux, applyNonFfi, result] at run
-    obtain ⟨rfl, rfl⟩ := run
-    simp [BackendProps.optionLe_refl]
-
-/-- Full integer primitive accounting respects the three observations. -/
-theorem doApp_int_resource_frame {C F : Type} (op : ClosLang.IntOp) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doApp (.intOp op) args state = .val (value, next)) :
-    state.ffi.ioEvents <+: next.ffi.ioEvents ∧ BackendProps.optionLe state.stackMax next.stackMax ∧
-      (next.safeForSpace = true → state.safeForSpace = true) := by
-  cases op <;> simp only [doApp] at run
-  all_goals try simp at run
-  all_goals split at run
-  all_goals try simp at run
-  all_goals rename_i accounted space
-  all_goals exact accounted_resource_frame _ args state accounted next value space run (fun before after v h => doAppAux_int_resource_frame _ args before after v h)
-
-/-- Full word primitive accounting respects the three observations. -/
-theorem doApp_word_resource_frame {C F : Type} (op : ClosLang.WordOp) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doApp (.wordOp op) args state = .val (value, next)) :
-    state.ffi.ioEvents <+: next.ffi.ioEvents ∧ BackendProps.optionLe state.stackMax next.stackMax ∧
-      (next.safeForSpace = true → state.safeForSpace = true) := by
-  simp only [doApp] at run
-  cases space : doSpace (.wordOp op) args state with
-  | none => simp [space] at run
-  | some accounted =>
-    simp only [space] at run
-    exact accounted_resource_frame _ args state accounted next value space run
-      (fun before after v h => doAppAux_word_resource_frame op args before after v h)
-
-/-- Successful global-variable operations preserve the resource observations. -/
-theorem doAppAux_global_resource_frame {C F : Type} (op : ClosLang.GlobOp) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doAppAux (.globOp op) args state = .val (value, next)) :
-    state.ffi.ioEvents <+: next.ffi.ioEvents ∧ BackendProps.optionLe state.stackMax next.stackMax ∧
-      (next.safeForSpace = true → state.safeForSpace = true) := by
-  cases op with
-  | allocGlobal => simp [doAppAux, applyNonFfi] at run
-  | globalsPtr =>
-    cases args with
-    | cons a rest => simp [doAppAux, applyNonFfi] at run
-    | nil =>
-      cases global : state.global with
-      | none => simp [doAppAux, applyNonFfi, global] at run
-      | some ptr =>
-        simp [doAppAux, applyNonFfi, global] at run
-        obtain ⟨rfl, rfl⟩ := run
-        simp [BackendProps.optionLe_refl]
-  | setGlobalsPtr =>
-    cases args with
-    | nil => simp [doAppAux, applyNonFfi] at run
-    | cons a rest =>
-      cases rest with
-      | cons b rest => simp [doAppAux, applyNonFfi] at run
-      | nil =>
-        cases a <;> simp [doAppAux, applyNonFfi] at run
-        case refPtr bit ptr =>
-          cases bit with
-          | false => simp at run
-          | true =>
-            simp at run
-            obtain ⟨rfl, rfl⟩ := run
-            simp [BackendProps.optionLe_refl]
-  | global index =>
-    cases args with
-    | cons a rest => simp [doAppAux, applyNonFfi] at run
-    | nil =>
-      cases global : state.global with
-      | none => simp [doAppAux, applyNonFfi, global] at run
-      | some ptr =>
-        cases found : sptLookup ptr state.refs with
-        | none => simp [doAppAux, applyNonFfi, global, found] at run
-        | some entry =>
-          cases entry with
-          | byteArray flag bytes => simp [doAppAux, applyNonFfi, global, found] at run
-          | thunk mode v => simp [doAppAux, applyNonFfi, global, found] at run
-          | mutBlock tag done left child right => simp [doAppAux, applyNonFfi, global, found] at run
-          | valueArray values =>
-            cases slot : values[index]? with
-            | none => simp [doAppAux, applyNonFfi, global, found, slot] at run
-            | some v =>
-              simp [doAppAux, applyNonFfi, global, found, slot] at run
-              obtain ⟨rfl, rfl⟩ := run
-              simp [BackendProps.optionLe_refl]
-  | setGlobal index =>
-    cases args with
-    | nil => simp [doAppAux, applyNonFfi] at run
-    | cons a rest =>
-      cases rest with
-      | cons b rest => simp [doAppAux, applyNonFfi] at run
-      | nil =>
-        cases global : state.global with
-        | none => simp [doAppAux, applyNonFfi, global] at run
-        | some ptr =>
-          cases found : sptLookup ptr state.refs with
-          | none => simp [doAppAux, applyNonFfi, global, found] at run
-          | some entry =>
-            cases entry with
-            | byteArray flag bytes => simp [doAppAux, applyNonFfi, global, found] at run
-            | thunk mode v => simp [doAppAux, applyNonFfi, global, found] at run
-            | mutBlock tag done left child right => simp [doAppAux, applyNonFfi, global, found] at run
-            | valueArray values =>
-              by_cases bound : index < values.length
-              · simp [doAppAux, applyNonFfi, global, found, bound] at run
-                obtain ⟨rfl, rfl⟩ := run
-                simp [BackendProps.optionLe_refl]
-              · simp [doAppAux, applyNonFfi, global, found, bound] at run
-
-
-/-- Global-variable operations preserve resources through all accounting. -/
-theorem doApp_global_resource_frame {C F : Type} (op : ClosLang.GlobOp) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doApp (.globOp op) args state = .val (value, next)) :
-    state.ffi.ioEvents <+: next.ffi.ioEvents ∧ BackendProps.optionLe state.stackMax next.stackMax ∧
-      (next.safeForSpace = true → state.safeForSpace = true) := by
-  simp only [doApp] at run
-  cases space : doSpace (.globOp op) args state with
-  | none => simp [space] at run
-  | some accounted =>
-    simp only [space] at run
-    exact accounted_resource_frame _ args state accounted next value space run
-      (fun before after v h => doAppAux_global_resource_frame op args before after v h)
-
-/-- A successful code-label lookup does not change source resources. -/
-theorem doAppAux_label_resource_frame {C F : Type} (label : Nat) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doAppAux (.label label) args state = .val (value, next)) :
-    state.ffi.ioEvents <+: next.ffi.ioEvents ∧ BackendProps.optionLe state.stackMax next.stackMax ∧
-      (next.safeForSpace = true → state.safeForSpace = true) := by
-  cases args with
-  | cons a rest => simp [doAppAux, applyNonFfi] at run
-  | nil =>
-    cases found : sptLookup label state.code with
-    | none => simp [doAppAux, applyNonFfi, found] at run
-    | some entry =>
-      simp [doAppAux, applyNonFfi, found] at run
-      obtain ⟨rfl, rfl⟩ := run
-      simp [BackendProps.optionLe_refl]
-
-/-- The production code-label dispatcher satisfies resource monotonicity. -/
-theorem doApp_label_resource_frame {C F : Type} (label : Nat) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doApp (.label label) args state = .val (value, next)) :
-    state.ffi.ioEvents <+: next.ffi.ioEvents ∧ BackendProps.optionLe state.stackMax next.stackMax ∧
-      (next.safeForSpace = true → state.safeForSpace = true) := by
-  simp only [doApp] at run
-  cases space : doSpace (.label label) args state with
-  | none => simp [space] at run
-  | some accounted =>
-    simp only [space] at run
-    exact accounted_resource_frame _ args state accounted next value space run
-      (fun before after v h => doAppAux_label_resource_frame label args before after v h)
-
 /-- A returning FFI application extends the event list while preserving the
 resource fields; this is a component of the original primitive monotonicity results. -/
 theorem doAppAux_ffi_resource_frame {C F : Type} (name : Basis.Pure.MlString.MlString) (args : List Value)
@@ -334,31 +135,51 @@ theorem doAppAux_ffi_resource_frame {C F : Type} (name : Basis.Pure.MlString.MlS
                           obtain ⟨rfl, rfl⟩ := run
                           exact ⟨callFFIHOL_return_ioEvents_prefix state.ffi (.extCall name) config bytes ffi updated call, rfl, rfl⟩
 
-/-- A successful FFI primitive satisfies all three resource monotonicity
-properties through the full production accounting path. -/
-theorem doApp_ffi_resource_frame {C F : Type} (name : Basis.Pure.MlString.MlString)
-    (args : List Value) (state next : State C F) (value : Value)
-    (run : doApp (.ffi name) args state = .val (value, next)) :
-    state.ffi.ioEvents <+: next.ffi.ioEvents ∧
-    BackendProps.optionLe state.stackMax next.stackMax ∧
-    (next.safeForSpace = true → state.safeForSpace = true) := by
-  simp only [doApp] at run
-  cases space : doSpace (.ffi name) args state with
-  | none => simp [space] at run
-  | some accounted =>
-    simp only [space] at run
-    have spaceFacts := doSpace_resource_frame (.ffi name) args state accounted space
-    have limitFacts := doLimSafe_resource_frame (.ffi name) args accounted
-    have stackFacts := doStack_resource_frame (.ffi name) args (doLimSafe accounted (.ffi name) args)
-    have auxFacts := doAppAux_ffi_resource_frame name args _ next value run
-    refine ⟨?_, ?_, ?_⟩
-    · simpa [stackFacts.1, limitFacts.1, spaceFacts.1] using auxFacts.1
-    · simpa [auxFacts.2.1, limitFacts.2.1, spaceFacts.2.1] using stackFacts.2.2
-    · intro safe
-      apply spaceFacts.2.2
-      apply limitFacts.2.2
-      apply stackFacts.2.1
-      simpa [auxFacts.2.2] using safe
+set_option maxRecDepth 4096 in
+set_option maxHeartbeats 5000000 in
+/-- Successful non-FFI applications preserve FFI state and cannot improve safety. -/
+private theorem nonFfiResource {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : applyNonFfi op args state = some (value, next)) :
+    next.ffi = state.ffi ∧ (next.safeForSpace = true → state.safeForSpace = true) := by
+  simp only [applyNonFfi, Option.bind] at run
+  repeat' (split at run <;> try simp_all [withFreshTimestamp, checkLim, Option.bind])
+  all_goals try (aesop (config := {warnOnNonterminal := false}))
 
+/-- Every successful auxiliary application preserves the event prefix and resource ordering. -/
+theorem doAppAux_resource_frame {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doAppAux op args state = .val (value, next)) :
+    state.ffi.ioEvents <+: next.ffi.ioEvents ∧ BackendProps.optionLe state.stackMax next.stackMax ∧
+      (next.safeForSpace = true → state.safeForSpace = true) := by
+  by_cases ffi : ∃ name, op = .ffi name
+  · obtain ⟨name, rfl⟩ := ffi
+    obtain ⟨events, stack, safe⟩ := doAppAux_ffi_resource_frame name args state next value run
+    exact ⟨events, by simpa [stack] using BackendProps.optionLe_refl state.stackMax, by simp [safe]⟩
+  · have app : applyNonFfi op args state = some (value, next) := by
+      simp only [doAppAux] at run
+      repeat' (split at run <;> try simp_all)
+    obtain ⟨sameFfi, safe⟩ := nonFfiResource op args state next value app
+    have stack := (doAppAux_fieldFrame op args state next value run).2.2.1
+    exact ⟨by simp [sameFfi], by simpa [stack] using BackendProps.optionLe_refl state.stackMax, safe⟩
+
+/-- Lift an auxiliary primitive's resource facts through the actual space,
+limit, and stack accounting performed by the dispatcher. -/
+theorem accounted_resource_frame {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (state accounted next : State C F) (value : Value)
+    (space : doSpace op args state = some accounted)
+    (aux : doAppAux op args (doStack op args (doLimSafe accounted op args)) = .val (value, next)) :
+    state.ffi.ioEvents <+: next.ffi.ioEvents ∧ BackendProps.optionLe state.stackMax next.stackMax ∧
+      (next.safeForSpace = true → state.safeForSpace = true) := by
+  have spaceFacts := doSpace_resource_frame op args state accounted space
+  have limitFacts := doLimSafe_resource_frame op args accounted
+  have stackFacts := doStack_resource_frame op args (doLimSafe accounted op args)
+  have auxFacts := doAppAux_resource_frame op args _ next value aux
+  refine ⟨?_, ?_, ?_⟩
+  · simpa [stackFacts.1, limitFacts.1, spaceFacts.1] using auxFacts.1
+  · apply BackendProps.optionLe_trans _ _ _ ⟨?_, auxFacts.2.1⟩
+    simpa [limitFacts.2.1, spaceFacts.2.1] using stackFacts.2.2
+  · intro safe
+    exact spaceFacts.2.2 (limitFacts.2.2 (stackFacts.2.1 (auxFacts.2.2 safe)))
 
 end Flapjack.Compiler.Backend.DataSem

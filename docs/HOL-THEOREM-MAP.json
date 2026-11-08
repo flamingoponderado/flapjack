@@ -16304,6 +16304,48 @@
     "reviewer": "Compared with the source theorem and its captured inferred type: arbitrary natural m and n with m ≤ n yield the same ordering of n2mw digit lengths. Both lists use the same positive HOL word dimension."
   },
   {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "do_app_io_events_mono",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ResourceCall.lean", "lean_name": "doApp_events_of_result",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed source capture in bvi_to_data_state_probe.out. A successful primitive preserves the original event prefix, with the same result and state carriers. Inherits reals_as_rational_cuts through doApp (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "do_app_stack_max",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ResourceCall.lean", "lean_name": "doApp_stack_of_result",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed source capture in bvi_to_data_state_probe.out. A successful primitive preserves the HOL option_le ordering of stack maxima. Inherits reals_as_rational_cuts through doApp (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "do_app_safe_for_space_mono",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ResourceCall.lean", "lean_name": "doApp_safety_of_result",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed source capture in bvi_to_data_state_probe.out. The single conjunctive premise of successful application and final safety implies initial safety. Inherits reals_as_rational_cuts through doApp (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "evaluate_io_events_mono",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ResourceCall.lean", "lean_name": "evaluate_events_of_result",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed source capture in bvi_to_data_state_probe.out. An arbitrary explicit evaluation result preserves the initial event prefix. Inherits reals_as_rational_cuts through evaluate (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "evaluate_safe_for_space_mono",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ResourceCall.lean", "lean_name": "evaluate_safety_of_result",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed source capture in bvi_to_data_state_probe.out. The single conjunctive premise of an explicit evaluation result and final safety implies initial safety. Inherits reals_as_rational_cuts through evaluate (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "evaluate_option_le_stack_max",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ResourceCall.lean", "lean_name": "evaluate_stack_of_result",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed source capture in bvi_to_data_state_probe.out. An arbitrary explicit evaluation result preserves the HOL option_le ordering of stack maxima. Inherits reals_as_rational_cuts through evaluate (SOUNDNESS item 8)."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "do_app_aux_const",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ApplyAuxFields.lean", "lean_name": "doAppAux_const",
     "statement_status": "reviewed_exact",
