@@ -1227,4 +1227,61 @@ theorem doApp_AallocFixed {C F : Type} (genv : GlobalEnv)
         afterNonempty, afterFfi, rfl, reserved.symm, .value related, ?_⟩
       simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatApply]
 
+/-- The Asub case of `do_app`; the full theorem is not yet assembled. The
+dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
+  (fmap_as_finite_support := [c, tys])]
+theorem doApp_Asub {C F : Type} (genv : GlobalEnv)
+    (s1 s2 : Store Value × HolFfiState F) (vs : List Value)
+    (r : Result Value Value) (flat : FlatSem.State C F) (flatVs : List FlatSem.Value)
+    (premises : doApp s1 .asub vs = some (s2, r) ∧
+      List.Forall₂ (StoreValueRel genv) s1.1 flat.refs.tail ∧ flat.refs ≠ [] ∧
+      List.Forall₂ (ValueRel genv) vs flatVs ∧ s1.2 = flat.ffi ∧ genvCOk genv.c ∧
+      Op.asub ≠ .aallocEmpty ∧ Op.asub ≠ .envId) :
+    ∃ flatResult flatState,
+      List.Forall₂ (StoreValueRel genv) s2.1 flatState.refs.tail ∧ flatState.refs ≠ [] ∧
+      s2.2 = flatState.ffi ∧ flat.globals = flatState.globals ∧
+      flat.refs.take 1 = flatState.refs.take 1 ∧ ResultRel ValueRel genv r flatResult ∧
+      FlatSem.doApp flat (astOpToFlatOp .asub) flatVs = some (flatState, flatResult) := by
+  obtain ⟨run, stores, nonempty, values, ffi, ok, _, _⟩ := premises
+  let source : SemanticPrimitivesHOL.State F := ⟨flat.clock, s1.1, s1.2, 0, 0, none⟩
+  have states : StateRel genv source flat := .intro source flat nonempty stores rfl ffi
+  cases vs with
+  | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+    | cons second rest =>
+      cases rest with
+      | cons third rest => simp [doApp, doAppNumericCore, doAppBasic] at run
+      | nil =>
+        have successful : doApp (source.refs, source.ffi) .asub [first, second] ≠ none := by
+          simp [source, run]
+        obtain ⟨flag, address, index, sourceValues, rfl, rfl, lookup⟩ :=
+          asub_operands source first second false successful
+        cases values with
+        | cons locationRel tail =>
+          cases tail with
+          | cons indexRel tail =>
+            cases tail
+            cases locationRel
+            cases indexRel
+            have sim := asub_complete_related genv source flat states ok flag address sourceValues lookup index false
+            simp only [Bool.false_eq_true, if_false, source, run] at sim
+            cases flatRun : FlatSem.doAppMemory flat .asub [.loc flag (address + 1), .litv (.intLit index)] with
+            | none => simp [flatRun] at sim
+            | some result =>
+              cases result with
+              | none => simp [flatRun] at sim
+              | some pair =>
+                cases pair with
+                | mk next result =>
+                  simp only [flatRun] at sim
+                  obtain ⟨refsEq, ffiEq, nextEq, resultRel⟩ := sim
+                  subst next
+                  refine ⟨result, flat, ?_, nonempty, ?_, rfl, rfl, resultRel, ?_⟩
+                  · simpa [source, refsEq] using stores
+                  · simpa [source, ffiEq] using ffi
+                  · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatRun]
+
 end Flapjack.Compiler.Backend.SourceToFlat
