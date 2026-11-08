@@ -12,7 +12,7 @@ theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
     GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
 end DoAppOpassignPort
 
-/-- The Opassign case of `do_app`; the full theorem is not yet assembled. The
+/-- The Opassign case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -62,7 +62,7 @@ theorem doApp_Opassign {C F : Type} (genv : GlobalEnv)
                   afterNonempty, afterFfi, rfl, reserved.symm, .value relatedUnit, ?_⟩
                 simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatApply]
 
-/-- The Opref case of `do_app`; the full theorem is not yet assembled. The
+/-- The Opref case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -106,7 +106,7 @@ theorem doApp_Opref {C F : Type} (genv : GlobalEnv)
               afterNonempty, afterFfi, rfl, reserved.symm, .value related, ?_⟩
             simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatApply]
 
-/-- The Opderef case of `do_app`; the full theorem is not yet assembled. The
+/-- The Opderef case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -148,7 +148,7 @@ theorem doApp_Opderef {C F : Type} (genv : GlobalEnv)
               refine ⟨.val flatValue, flat, stores, nonempty, ffi, rfl, rfl, .value related, ?_⟩
               simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppFlat, flatLookup]
 
-/-- The Aw8alloc case of `do_app`; the full theorem is not yet assembled. The
+/-- The Aw8alloc case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -209,7 +209,7 @@ theorem doApp_Aw8alloc {C F : Type} (genv : GlobalEnv)
                         afterNonempty, afterFfi, rfl, reserved.symm, .value related, ?_⟩
                       simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatApply]
 
-/-- The Aw8sub case of `do_app`; the full theorem is not yet assembled. The
+/-- The Aw8sub case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -277,7 +277,7 @@ theorem doApp_Aw8sub {C F : Type} (genv : GlobalEnv)
                         simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                           FlatSem.readIndexed, flatLookup, negative, element]
 
-/-- The Aw8length case of `do_app`; the full theorem is not yet assembled. The
+/-- The Aw8length case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -319,7 +319,7 @@ theorem doApp_Aw8length {C F : Type} (genv : GlobalEnv)
                 .value related, ?_⟩
               simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatApply]
 
-/-- The Aw8update case of `do_app`; the full theorem is not yet assembled. The
+/-- The Aw8update case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -394,7 +394,7 @@ theorem doApp_Aw8update {C F : Type} (genv : GlobalEnv)
                             afterNonempty, afterFfi, rfl, reserved.symm, .value unitRel, ?_⟩
                           simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, dst]
 
-/-- The CopyStrStr case of `do_app`; the full theorem is not yet assembled. The
+/-- The CopyStrStr case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -455,7 +455,7 @@ theorem doApp_CopyStrStr {C F : Type} (genv : GlobalEnv)
                       simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                         FlatSem.doAppData, FlatSem.doAppCopy, copied]
 
-/-- The CopyStrAw8 case of `do_app`; the full theorem is not yet assembled. The
+/-- The CopyStrAw8 case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -535,7 +535,7 @@ theorem doApp_CopyStrAw8 {C F : Type} (genv : GlobalEnv)
                               · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                                   FlatSem.doAppData, flatRun]
 
-/-- The CopyAw8Str case of `do_app`; the full theorem is not yet assembled. The
+/-- The CopyAw8Str case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -600,7 +600,7 @@ theorem doApp_CopyAw8Str {C F : Type} (genv : GlobalEnv)
                       · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                           FlatSem.doAppData, flatRun]
 
-/-- The CopyAw8Aw8 case of `do_app`; the full theorem is not yet assembled. The
+/-- The CopyAw8Aw8 case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -732,7 +732,7 @@ theorem doApp_XorAw8StrUnsafe {C F : Type} (genv : GlobalEnv)
             simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
               FlatSem.doAppData, dst]
 
-/-- The Implode case of `do_app`; the full theorem is not yet assembled. The
+/-- The Implode case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -770,7 +770,7 @@ theorem doApp_Implode {C F : Type} (genv : GlobalEnv)
           simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
             FlatSem.doAppData, flatDecoded]
 
-/-- The Explode case of `do_app`; the full theorem is not yet assembled. The
+/-- The Explode case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -813,7 +813,7 @@ theorem doApp_Explode {C F : Type} (genv : GlobalEnv)
               flat, stores, nonempty, ffi, rfl, rfl, .value resultRel, ?_⟩
             simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData]
 
-/-- The Strsub case of `do_app`; the full theorem is not yet assembled. The
+/-- The Strsub case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -868,7 +868,7 @@ theorem doApp_Strsub {C F : Type} (genv : GlobalEnv)
                   · simpa [source, ffiEq] using ffi
                   · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, flatRun]
 
-/-- The Strlen case of `do_app`; the full theorem is not yet assembled. The
+/-- The Strlen case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -904,7 +904,7 @@ theorem doApp_Strlen {C F : Type} (genv : GlobalEnv)
               .value (.literal genv _), ?_⟩
             simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData]
 
-/-- The Strcat case of `do_app`; the full theorem is not yet assembled. The
+/-- The Strcat case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -947,7 +947,7 @@ theorem doApp_Strcat {C F : Type} (genv : GlobalEnv)
             simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
               FlatSem.doAppData, flatDecoded, flatString]
 
-/-- The VfromList case of `do_app`; the full theorem is not yet assembled. The
+/-- The VfromList case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -986,7 +986,7 @@ theorem doApp_VfromList {C F : Type} (genv : GlobalEnv)
           simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
             FlatSem.doAppData, flatDecoded]
 
-/-- The Vsub case of `do_app`; the full theorem is not yet assembled. The
+/-- The Vsub case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -1041,7 +1041,7 @@ theorem doApp_Vsub {C F : Type} (genv : GlobalEnv)
                   · simpa [source, ffiEq] using ffi
                   · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, flatRun]
 
-/-- The Vsub_unsafe case of `do_app`; the full theorem is not yet assembled. The
+/-- The Vsub_unsafe case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -1096,7 +1096,7 @@ theorem doApp_VsubUnsafe {C F : Type} (genv : GlobalEnv)
                   · simpa [source, ffiEq] using ffi
                   · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, flatRun]
 
-/-- The Vlength case of `do_app`; the full theorem is not yet assembled. The
+/-- The Vlength case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -1132,7 +1132,7 @@ theorem doApp_Vlength {C F : Type} (genv : GlobalEnv)
           simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
             FlatSem.doAppData, ← lengths]
 
-/-- The Aalloc case of `do_app`; the full theorem is not yet assembled. The
+/-- The Aalloc case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -1193,7 +1193,7 @@ theorem doApp_Aalloc {C F : Type} (genv : GlobalEnv)
                         afterNonempty, afterFfi, rfl, reserved.symm, .value related, ?_⟩
                       simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatApply]
 
-/-- The AallocFixed case of `do_app`; the full theorem is not yet assembled. The
+/-- The AallocFixed case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -1227,7 +1227,7 @@ theorem doApp_AallocFixed {C F : Type} (genv : GlobalEnv)
         afterNonempty, afterFfi, rfl, reserved.symm, .value related, ?_⟩
       simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatApply]
 
-/-- The Asub case of `do_app`; the full theorem is not yet assembled. The
+/-- The Asub case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -1284,7 +1284,7 @@ theorem doApp_Asub {C F : Type} (genv : GlobalEnv)
                   · simpa [source, ffiEq] using ffi
                   · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatRun]
 
-/-- The Alength case of `do_app`; the full theorem is not yet assembled. The
+/-- The Alength case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -1326,7 +1326,7 @@ theorem doApp_Alength {C F : Type} (genv : GlobalEnv)
                 .value related, ?_⟩
               simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatApply]
 
-/-- The Aupdate case of `do_app`; the full theorem is not yet assembled. The
+/-- The Aupdate case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -1392,7 +1392,7 @@ theorem doApp_Aupdate {C F : Type} (genv : GlobalEnv)
                       · rw [nextEq]
                       · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatRun]
 
-/-- The Asub_unsafe case of `do_app`; the full theorem is not yet assembled. The
+/-- The Asub_unsafe case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -1449,7 +1449,7 @@ theorem doApp_AsubUnsafe {C F : Type} (genv : GlobalEnv)
                   · simpa [source, ffiEq] using ffi
                   · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatRun]
 
-/-- The Aupdate_unsafe case of `do_app`; the full theorem is not yet assembled. The
+/-- The Aupdate_unsafe case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -1515,7 +1515,7 @@ theorem doApp_AupdateUnsafe {C F : Type} (genv : GlobalEnv)
                       · rw [nextEq]
                       · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatRun]
 
-/-- The Aw8sub_unsafe case of `do_app`; the full theorem is not yet assembled. The
+/-- The Aw8sub_unsafe case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -1572,7 +1572,7 @@ theorem doApp_Aw8subUnsafe {C F : Type} (genv : GlobalEnv)
                   · simpa [source, ffiEq] using ffi
                   · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatRun]
 
-/-- The Aw8update_unsafe case of `do_app`; the full theorem is not yet assembled. The
+/-- The Aw8update_unsafe case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -1638,7 +1638,7 @@ theorem doApp_Aw8updateUnsafe {C F : Type} (genv : GlobalEnv)
                       · rw [nextEq]
                       · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatRun]
 
-/-- The ThunkOp case of `do_app`; the full theorem is not yet assembled. The
+/-- The ThunkOp case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -1714,7 +1714,7 @@ theorem doApp_ThunkOp {C F : Type} (genv : GlobalEnv) (op : ThunkOp)
                 afterFfi, rfl, reserved.symm, .value (.tuple genv [] [] (.nil genv)), ?_⟩
               simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, dst]
 
-/-- The ListAppend case of `do_app`; the full theorem is not yet assembled. The
+/-- The ListAppend case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]
@@ -1769,7 +1769,7 @@ theorem doApp_ListAppend {C F : Type} (genv : GlobalEnv)
                 simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                   FlatSem.doAppData, flatLeftDecoded, flatRightDecoded]
 
-/-- The FFI case of `do_app`; the full theorem is not yet assembled. The
+/-- The FFI case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]

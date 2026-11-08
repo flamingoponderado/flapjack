@@ -55,7 +55,7 @@ theorem doApp_ConfigGC {C F : Type} (genv : GlobalEnv)
               · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric,
                   FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.unitValue]
 
-/-- The Opapp case of `do_app`; the full theorem is not yet assembled. The
+/-- The Opapp case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]

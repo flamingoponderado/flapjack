@@ -11,7 +11,7 @@ theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
     GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
 end DoAppEqualityPort
 
-/-- The Equality case of `do_app`; the full theorem is not yet assembled. The
+/-- The Equality case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
   (fmap_as_finite_support := [c, tys])]

@@ -341,12 +341,22 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "do_app",
+  "lean_name": "doApp_correct",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/DoApp.lean",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete statement and inferred carriers with do_app_typed in source_to_flat_init_probe.out. All operator cases are assembled from their reviewed HOL case pieces; Eval is impossible and AallocEmpty and Env_id are excluded by the original premises. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "do_app",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/DoAppOpassign.lean",
   "lean_name": "doApp_FFI",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the FFI specialization with do_app_ffi_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. The name retains the HOL mlstring carrier. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the FFI specialization with do_app_ffi_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. The name retains the HOL mlstring carrier. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -356,7 +366,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the ListAppend specialization with do_app_listappend_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof and local list decoding prerequisite are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the ListAppend specialization with do_app_listappend_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof and local list decoding prerequisite are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -366,7 +376,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the ThunkOp specialization with do_app_thunkop_typed in source_to_flat_init_probe.out and the original HOL proof, including the original premises and the complete store, FFI, result and target-execution conclusions. The isolated original tactic replay did not complete. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the ThunkOp specialization with do_app_thunkop_typed in source_to_flat_init_probe.out and the original HOL proof, including the original premises and the complete store, FFI, result and target-execution conclusions. The isolated original tactic replay did not complete. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -376,7 +386,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Aw8update_unsafe specialization with do_app_aw8updateunsafe_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Aw8update_unsafe specialization with do_app_aw8updateunsafe_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -386,7 +396,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Aw8sub_unsafe specialization with do_app_aw8subunsafe_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Aw8sub_unsafe specialization with do_app_aw8subunsafe_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -396,7 +406,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Aupdate_unsafe specialization with do_app_aupdateunsafe_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Aupdate_unsafe specialization with do_app_aupdateunsafe_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -406,7 +416,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Asub_unsafe specialization with do_app_asubunsafe_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Asub_unsafe specialization with do_app_asubunsafe_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -416,7 +426,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Aupdate specialization with do_app_aupdate_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Aupdate specialization with do_app_aupdate_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -426,7 +436,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Alength specialization with do_app_alength_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Alength specialization with do_app_alength_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -436,7 +446,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Asub specialization with do_app_asub_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Asub specialization with do_app_asub_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -446,7 +456,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the AallocFixed specialization with do_app_aallocfixed_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the AallocFixed specialization with do_app_aallocfixed_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -456,7 +466,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Aalloc specialization with do_app_aalloc_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Aalloc specialization with do_app_aalloc_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -466,7 +476,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Vlength specialization with do_app_vlength_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Vlength specialization with do_app_vlength_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -476,7 +486,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Vsub_unsafe specialization with do_app_vsubunsafe_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Vsub_unsafe specialization with do_app_vsubunsafe_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -486,7 +496,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Vsub specialization with do_app_vsub_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Vsub specialization with do_app_vsub_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -496,7 +506,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the VfromList specialization with do_app_vfromlist_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof and its local list decoding prerequisite are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the VfromList specialization with do_app_vfromlist_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof and its local list decoding prerequisite are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -506,7 +516,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Strcat specialization with do_app_strcat_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof and its local list and string decoding prerequisites are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Strcat specialization with do_app_strcat_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof and its local list and string decoding prerequisites are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -516,7 +526,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Strlen specialization with do_app_strlen_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Strlen specialization with do_app_strlen_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -526,7 +536,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Strsub specialization with do_app_strsub_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Strsub specialization with do_app_strsub_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -536,7 +546,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Explode specialization with do_app_explode_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof and its local character-list prerequisite are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Explode specialization with do_app_explode_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof and its local character-list prerequisite are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -546,7 +556,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Implode specialization with do_app_implode_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof and its local character-list prerequisite are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Implode specialization with do_app_implode_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof and its local character-list prerequisite are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -556,7 +566,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the XorAw8Str_unsafe specialization with do_app_xoraw8str_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the XorAw8Str_unsafe specialization with do_app_xoraw8str_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -566,7 +576,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the CopyAw8Aw8 specialization with do_app_copyaw8aw8_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the CopyAw8Aw8 specialization with do_app_copyaw8aw8_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -576,7 +586,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the CopyAw8Str specialization with do_app_copyaw8str_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the CopyAw8Str specialization with do_app_copyaw8str_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -586,7 +596,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the CopyStrAw8 specialization with do_app_copystraw8_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the CopyStrAw8 specialization with do_app_copystraw8_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -596,7 +606,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the CopyStrStr specialization with do_app_copystrstr_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the CopyStrStr specialization with do_app_copystrstr_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -606,7 +616,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Aw8update specialization with do_app_aw8update_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Aw8update specialization with do_app_aw8update_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -616,7 +626,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Aw8length specialization with do_app_aw8length_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Aw8length specialization with do_app_aw8length_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -626,7 +636,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Aw8sub specialization with do_app_aw8sub_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Aw8sub specialization with do_app_aw8sub_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -636,7 +646,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Aw8alloc specialization with do_app_aw8alloc_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Aw8alloc specialization with do_app_aw8alloc_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -646,7 +656,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Opderef specialization with do_app_opderef_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Opderef specialization with do_app_opderef_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -656,7 +666,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Opref specialization with do_app_opref_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Opref specialization with do_app_opref_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -666,7 +676,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Opassign specialization with do_app_opassign_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Opassign specialization with do_app_opassign_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -676,7 +686,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Opapp specialization with do_app_opapp_replay in source_to_flat_init_probe.out, including the original premises and full conclusion; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Opapp specialization with do_app_opapp_replay in source_to_flat_init_probe.out, including the original premises and full conclusion; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -686,7 +696,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Test specialization with do_app_test_replay in source_to_flat_init_probe.out, including arbitrary test and primitive type, the original premises, and the full state and result conclusions; the original HOL case and its comparison prerequisite are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Test specialization with do_app_test_replay in source_to_flat_init_probe.out, including arbitrary test and primitive type, the original premises, and the full state and result conclusions; the original HOL case and its comparison prerequisite are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -696,7 +706,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the FromTo specialization with do_app_fromto_replay in source_to_flat_init_probe.out, including arbitrary source and target primitive types, the original premises, and the full state and result conclusions; the original HOL case and its conversion prerequisites are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the FromTo specialization with do_app_fromto_replay in source_to_flat_init_probe.out, including arbitrary source and target primitive types, the original premises, and the full state and result conclusions; the original HOL case and its conversion prerequisites are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -706,7 +716,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Arith specialization with do_app_arith_replay in source_to_flat_init_probe.out, including arbitrary action and primitive type, the original premises, and the full state and result conclusions; the original HOL case and its arithmetic prerequisites are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Arith specialization with do_app_arith_replay in source_to_flat_init_probe.out, including arbitrary action and primitive type, the original premises, and the full state and result conclusions; the original HOL case and its arithmetic prerequisites are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -716,7 +726,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Equality specialization with do_app_equality_replay in source_to_flat_init_probe.out, including the original premises and full state and result conclusions. The HOL equality-preservation prerequisite and equality case are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Equality specialization with do_app_equality_replay in source_to_flat_init_probe.out, including the original premises and full state and result conclusions. The HOL equality-preservation prerequisite and equality case are replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -726,7 +736,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Shift specialization with do_app_shift_replay in source_to_flat_init_probe.out, including both word widths and all shift operations, the original premises and the full state and result conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the Shift specialization with do_app_shift_replay in source_to_flat_init_probe.out, including both word widths and all shift operations, the original premises and the full state and result conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -736,7 +746,7 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the ConfigGC specialization against do_app_configGC_replay in source_to_flat_init_probe.out, including source success, related stores and values, FFI, global and reserved-store preservation, related result and target evaluation; the original case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  "reviewer": "Case piece assembled into doApp_correct. Compared the ConfigGC specialization against do_app_configGC_replay in source_to_flat_init_probe.out, including source success, related stores and values, FFI, global and reserved-store preservation, related result and target evaluation; the original case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
