@@ -49,6 +49,26 @@ theorem evalFreshUpdate {width : Nat} {σ : Type} [NeZero width]
     (@evalHOLExact_updLocals_not_mem width σ _ state.toExact
       (fun address => Classical.propDecidable (state.memaddrs address)) name value expression h)
 
+/-- Flapjack-specific transport of existing broad expression-list freshness
+through the canonical state codec, for the list-valued evaluator. -/
+theorem evalFreshUpdateList {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (name : MlS) (value : ValueHOL width)
+    (expression : List (ExpHOL width)) (h : name ∉ (expression.map varExpHOL).flatten) :
+    @evalListHOLExact width σ _
+      ({state with locals := state.locals.updateEq (name, value)} :
+        PanSemStateFiniteExact width σ).toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) expression =
+    @evalListHOLExact width σ _ state.toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) expression := by
+  classical
+  have hlookup : (state.locals.updateEq (name, value)).lookup =
+      FUPDATE_HOL state.locals.lookup (name, value) := by
+    funext key
+    exact HolFiniteMapExact.lookup_updateEq _ _ _
+  simpa only [toExact_setLocals, hlookup] using
+    (@evalListHOLExact_updLocals_not_mem width σ _ state.toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) name value expression h)
+
 /-- Flapjack-only pointwise map algebra: independent updates commute. -/
 theorem updateCommute {width : Nat} [NeZero width]
     (locals : HolFiniteMapExact MlS (ValueHOL width)) (a b : MlS)
