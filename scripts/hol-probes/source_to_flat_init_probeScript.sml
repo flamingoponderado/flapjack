@@ -39,6 +39,50 @@ val do_app_rec_help_typed = ``!genv comp_map env_v_local env_v_local' env_v_top 
 val _ = (print "do_app_rec_help_typed="; print_term do_app_rec_help_typed; print "\n");
 val do_app_rec_v_rel_eqns = CONJUNCT1 source_to_flatProofTheory.v_rel_more_eqns;
 val (do_app_binders, do_app_body) = strip_forall do_app_typed;
+val do_app_equality_typed = list_mk_forall
+  (List.take (do_app_binders, 3) @ List.drop (do_app_binders, 4),
+   subst [List.nth (do_app_binders, 3) |-> ``ast$Equality``] do_app_body);
+val do_app_v_rel_lems = Q.prove (
+  `!genv. source_to_flatProof$genv_c_ok genv.c ==>
+    (!b. source_to_flatProof$v_rel genv (semanticPrimitives$Boolv b) (flatSem$Boolv b)) /\
+    source_to_flatProof$v_rel genv semanticPrimitives$div_exn_v flatSem$div_exn_v /\
+    source_to_flatProof$v_rel genv semanticPrimitives$chr_exn_v flatSem$chr_exn_v /\
+    source_to_flatProof$v_rel genv semanticPrimitives$bind_exn_v flatSem$bind_exn_v /\
+    source_to_flatProof$v_rel genv semanticPrimitives$sub_exn_v flatSem$subscript_exn_v`,
+  rw [semanticPrimitivesTheory.div_exn_v_def, flatSemTheory.div_exn_v_def,
+      semanticPrimitivesTheory.chr_exn_v_def, flatSemTheory.chr_exn_v_def,
+      semanticPrimitivesTheory.bind_exn_v_def, flatSemTheory.bind_exn_v_def,
+      semanticPrimitivesTheory.sub_exn_v_def, flatSemTheory.subscript_exn_v_def,
+      do_app_rec_v_rel_eqns, source_to_flatProofTheory.genv_c_ok_def,
+      source_to_flatProofTheory.has_exns_def, source_to_flatProofTheory.has_bools_def,
+      semanticPrimitivesTheory.Boolv_def, flatSemTheory.Boolv_def] >>
+  every_case_tac >> simp [do_app_rec_v_rel_eqns]);
+val do_app_eq_rel = Q.prove (
+  `!genv. source_to_flatProof$genv_c_ok genv.c ==>
+    (!v1 v2 r v1_i1 v2_i1.
+      semanticPrimitives$do_eq v1 v2 = r /\ source_to_flatProof$v_rel genv v1 v1_i1 /\
+      source_to_flatProof$v_rel genv v2 v2_i1 ==> flatSem$do_eq v1_i1 v2_i1 = r) /\
+    (!vs1 vs2 r vs1_i1 vs2_i1.
+      semanticPrimitives$do_eq_list vs1 vs2 = r /\ LIST_REL (source_to_flatProof$v_rel genv) vs1 vs1_i1 /\
+      LIST_REL (source_to_flatProof$v_rel genv) vs2 vs2_i1 ==> flatSem$do_eq_list vs1_i1 vs2_i1 = r)`,
+  ntac 2 strip_tac >> ho_match_mp_tac semanticPrimitivesTheory.do_eq_ind >> rpt strip_tac >>
+  fs [flatSemTheory.Boolv_def, semanticPrimitivesTheory.do_eq_def, flatSemTheory.do_eq_def,
+      source_to_flatProofTheory.v_rel_more_eqns] >>
+  rveq >> fs [] >> rpt (irule COND_CONG >> rpt strip_tac) >>
+  imp_res_tac LIST_REL_LENGTH >>
+  fs [flatSemTheory.ctor_same_type_def, semanticPrimitivesTheory.ctor_same_type_def] >>
+  TRY every_case_tac >> gs [semanticPrimitivesTheory.lit_same_type_def] >>
+  metis_tac [SOME_11, source_to_flatProofTheory.genv_c_ok_def
+    |> SIMP_RULE (srw_ss()) [semanticPrimitivesTheory.ctor_same_type_def]]);
+val do_app_equality_replay = prove (do_app_equality_typed,
+  rpt gen_tac >> Cases_on `s1` >> Cases_on `s1_i1.refs` >> simp [] >> Cases_on `s1_i1` >>
+  simp [source_to_flatTheory.astOp_to_flatOp_def, astTheory.getOpClass_def] >>
+  srw_tac[][semanticPrimitivesPropsTheory.do_app_cases, flatSemTheory.do_app_def] >>
+  full_simp_tac(srw_ss())[do_app_rec_v_rel_eqns, source_to_flatProofTheory.result_rel_cases, do_app_v_rel_lems] >>
+  every_case_tac >> full_simp_tac(srw_ss())[] >>
+  metis_tac [source_to_flatProofTheory.Boolv_11, do_app_eq_rel,
+    semanticPrimitivesTheory.eq_result_11, semanticPrimitivesTheory.eq_result_distinct, do_app_v_rel_lems]);
+val _ = show_thm "do_app_equality_replay=" do_app_equality_replay;
 val shift_op = ``ast$Shift w sh n``;
 val do_app_shift_typed = list_mk_forall
   (List.take (do_app_binders, 3) @ List.rev (free_vars shift_op) @ List.drop (do_app_binders, 4),
