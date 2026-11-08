@@ -1,11 +1,24 @@
 #!/usr/bin/env python3
 """Pin full original SLTI/SLTIU equations and both source hypotheses.
 Syntactic regression guard; source comparison and kernel checking are required.
+The shared mode rewrite lives in ComparisonMode.lean and is pinned at the same
+whole-file strength, since the equations below depend on its exact statement.
 """
 from pathlib import Path
 import hashlib
 ROOT = Path(__file__).resolve().parents[2]
-CHECKS = {'Flapjack/RiscV/L3/Step/ImmediateComparison.lean': '4960f7fd244d3704081871a77084876d8ef44603921bb23a9f3becd526f3421d', 'HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml': '40efdb718c87d4c87be4c377e6650cfffa11cd84be52518c8c90044219f97dac', 'scripts/hol-probes/l3_step_immediate_comparison_probeScript.sml': '845620412609ae8ba84312763404a3e6ecbc18f4c9b6fb0f5d488748c6828610', 'scripts/hol-probes/l3_step_immediate_comparison_probe.out': '1c78bc14b6c773c679d96e6d94580d796b9c9fc654ba473bd20b42b23a21d63c'}
+CHECKS = {
+    'Flapjack/RiscV/L3/Step/ComparisonMode.lean':
+        '876ac81140173498028f17b3e55557f9673519dd51ada71f7d8889f0d93c5993',
+    'Flapjack/RiscV/L3/Step/ImmediateComparison.lean':
+        'dc70b215dc8551d24547d0db20f3ca38ec8e0c5cf31f67be899953a0722835b1',
+    'HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml':
+        '40efdb718c87d4c87be4c377e6650cfffa11cd84be52518c8c90044219f97dac',
+    'scripts/hol-probes/l3_step_immediate_comparison_probeScript.sml':
+        '845620412609ae8ba84312763404a3e6ecbc18f4c9b6fb0f5d488748c6828610',
+    'scripts/hol-probes/l3_step_immediate_comparison_probe.out':
+        '1c78bc14b6c773c679d96e6d94580d796b9c9fc654ba473bd20b42b23a21d63c',
+}
 def check(root=ROOT):
     for name, expected in CHECKS.items():
         if hashlib.sha256((root / name).read_bytes()).hexdigest() != expected:
