@@ -203,8 +203,8 @@ environment relation rules, induction and cases, state and store relations,
 polymorphic incremental and installation relations, complete compiler
 correctness and observational statements, polymorphic result and exception relations, operator and arithmetic lowering, and expanded byte-copy
 quotations. It also captures the polymorphic HOL
-`findi` definition and `env_rel_def` lookup equivalence used by the environment
-relation. It also records the proof-side initial state and initial-state relation
+`findi` definition, `LIST_REL_EL`, and `env_rel_def` lookup equivalence used by
+the relations. It also records the proof-side initial state and initial-state relation
 with their independent compiler and FFI types. The captured rules support
 source review; they do not establish cross-language equivalence.
 

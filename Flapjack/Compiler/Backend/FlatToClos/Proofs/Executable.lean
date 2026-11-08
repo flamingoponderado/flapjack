@@ -9,8 +9,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.NoMti
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Semantics
 
 /-! Connecting the proof-side declaration simulation to the initializer used
-by the executed flat-to-closure compilation. This is Flapjack infrastructure;
-the semantic carriers and HOL correspondence remain under review. -/
+by the executed flat-to-closure compilation. This is Flapjack infrastructure. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL Flapjack.Basis.Pure.MlString
 
@@ -37,8 +36,8 @@ theorem evaluate_compileInit {C F : Type} (interpreter : Bool) (ffi : Flapjack.H
 /-- Compiling declarations with the executable initializer simulates their
 flat evaluation at the same clock. The initial unit is retained in successful
 closure results; errors and the final related state are preserved. The
-installation relation uses `incCompileDecsProofSide`, which does not yet
-establish correspondence with the optimized incremental compiler. -/
+installation relation uses `incCompileDecsProofSide`; the production semantics
+theorem composes this simulation with interpreter attachment. -/
 theorem compileProg_evaluate_related {C F : Type}
     (ffi : Flapjack.HolFfiState F) (maxApp clock : Nat) (config : FlatSem.InstallConfig C)
     (oracle : ClosSem.CompileOracle C) (compiler : ClosSem.Compiler C) (declarations : List FlatLang.Exp)

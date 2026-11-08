@@ -2564,6 +2564,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "LIST_REL_EL",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ListRel.lean",
+  "lean_name": "listRel_el",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the independent polymorphic list element types, relation, length equality, second-list bound and HOL EL lookups against list_rel_el_typed in flat_to_clos_relation_probe.out. Lean's Nonempty instances represent the inhabited HOL types needed by EL."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "inc_compile_decs_intro",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/InstallPipeline.lean",
   "lean_name": "incCompileDecs_intro",

@@ -4,9 +4,8 @@ import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemanticsSource
 import Flapjack.FiniteMap.EmptyExact
 
 /-!
-Observational composition of the proof-side flat-to-closure evaluator and
-interpreter attachment. The evaluator and its relations still require HOL
-correspondence review.
+Observational composition of the flat-to-closure evaluator and interpreter
+attachment.
 -/
 namespace Flapjack.Compiler.Backend.FlatToClos
 
@@ -76,17 +75,18 @@ theorem compileProg_clock_observation {C F : Type} (ffi : HolFfiState F)
   rw [run]
   cases result <;> exact ⟨by simpa using rel, ffiEq⟩
 
-/-- Non-failing match-free flat programs and their closure compilation have
-the same proof-side observable behavior. This Flapjack proof helper is shared
-by the two tagged semantics theorems and has no separate HOL theorem. -/
-theorem compileProg_semantics_proofSide {C F : Type} (ffi : HolFfiState F)
+/-- The original primed observational theorem, with its three premises
+grouped as in the source. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_semantics'"
+  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty])]
+theorem compileSemantics_prime_source {C F : Type} (ffi : HolFfiState F)
     (maxApp : Nat) (config : FlatSem.InstallConfig C) (oracle : ClosSem.CompileOracle C)
-    (compiler : ClosSem.Compiler C) (decs : List FlatLang.Exp)
-    (positive : 0 < maxApp) (install : installConfigRel config oracle compiler)
-    (matchFree : FlatProps.noMatDecs decs = true)
-    (safe : FlatSem.semantics config ffi decs ≠ .fail) :
-    ClosSem.semantics ffi maxApp HolFiniteMapExact.empty oracle compiler (compileProg decs) =
+    (compiler : ClosSem.Compiler C) (decs : List FlatLang.Exp) :
+    0 < maxApp ∧ FlatProps.noMatDecs decs = true ∧ installConfigRel config oracle compiler →
+    FlatSem.semantics config ffi decs ≠ .fail →
+    ClosSem.semantics ffi maxApp HolFiniteMapExact.holEmpty oracle compiler (compileProg decs) =
       FlatSem.semantics config ffi decs := by
+  rintro ⟨positive, matchFree, install⟩ safe
   classical
   let flat := fun clock => FlatSem.evaluateDecs (FlatSem.initialState ffi clock config) decs
   let clos := fun clock => ClosSem.evaluate (compileProg decs) []
@@ -180,20 +180,6 @@ theorem compileProg_semantics_proofSide {C F : Type} (ffi : HolFfiState F)
   rw [termEq, tracesEq]
   rfl
 
-/-- The original primed observational theorem, with its three premises
-grouped as in the source. -/
-@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_semantics'"
-  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty])]
-theorem compileSemantics_prime_source {C F : Type} (ffi : HolFfiState F)
-    (maxApp : Nat) (config : FlatSem.InstallConfig C) (oracle : ClosSem.CompileOracle C)
-    (compiler : ClosSem.Compiler C) (decs : List FlatLang.Exp) :
-    0 < maxApp ∧ FlatProps.noMatDecs decs = true ∧ installConfigRel config oracle compiler →
-    FlatSem.semantics config ffi decs ≠ .fail →
-    ClosSem.semantics ffi maxApp HolFiniteMapExact.holEmpty oracle compiler (compileProg decs) =
-      FlatSem.semantics config ffi decs := by
-  rintro ⟨positive, matchFree, install⟩ safe
-  exact compileProg_semantics_proofSide ffi maxApp config oracle compiler decs positive install matchFree safe
-
 /-- The production incremental compiler's installation relation. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "install_config_rel_def"]
 def installConfigRelProduction {C OraclePayload CompilerPayload : Type} (source : FlatSem.InstallConfig C)
@@ -220,8 +206,11 @@ theorem compileSemantics_source {C F : Type} (ffi : HolFfiState F)
   let initialCompiler := pureCc ClosInterp.insertProgram compiler
   have install : installConfigRel config initialOracle initialCompiler :=
     production_installConfigRel config compiler oracleSafe compilerEq
-  have flatClos := compileProg_semantics_proofSide ffi maxApp config initialOracle initialCompiler decs
-    positive install matchFree safe
+  have flatClos : ClosSem.semantics ffi maxApp HolFiniteMapExact.empty initialOracle
+      initialCompiler (compileProg decs) = FlatSem.semantics config ffi decs := by
+    simpa [HolFiniteMapExact.holEmpty] using
+      compileSemantics_prime_source ffi maxApp config initialOracle initialCompiler decs
+        ⟨positive, matchFree, install⟩ safe
   have initialSafe : ClosSem.semantics ffi maxApp HolFiniteMapExact.empty initialOracle
       initialCompiler (compileProg decs) ≠ .fail := by
     rw [flatClos]
