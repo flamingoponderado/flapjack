@@ -1403,9 +1403,7 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.Op
 import Flapjack.Compiler.Backend.BviToData.Proofs.OpFrame
 import Flapjack.Compiler.Backend.BviToData.Proofs.Call
 import Flapjack.Compiler.Backend.BviToData.Proofs.Force
-import Flapjack.Compiler.Backend.BviToData.Proofs.Simulation
 import Flapjack.Compiler.Backend.BviToData.Proofs.Program
-import Flapjack.Compiler.Backend.BviToData.Proofs.Semantics
 import Flapjack.Compiler.Backend.DataSimp.Proofs.Correct
 import Flapjack.Compiler.Backend.DataLive.Proofs.State
 import Flapjack.Compiler.Backend.DataLive.Proofs.Simulation
@@ -1444,12 +1442,7 @@ import Flapjack.Compiler.Backend.DataSpace.Proofs.PrimitiveSpace
 import Flapjack.Compiler.Backend.DataSpace.Proofs.PrimitiveMemorySpace
 import Flapjack.Compiler.Backend.DataSpace.Proofs.PrimitiveBlockSpace
 import Flapjack.Compiler.Backend.DataSpace.Proofs.ReservationAssign
-import Flapjack.Compiler.Backend.DataSpace.Proofs.ResourceVariation
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Sequence
-import Flapjack.Compiler.Backend.DataSpace.Proofs.SequenceReservation
-import Flapjack.Compiler.Backend.DataSpace.Proofs.SequenceMove
-import Flapjack.Compiler.Backend.DataSpace.Proofs.CompileCorrect
-import Flapjack.Compiler.Backend.DataSpace.Proofs.TimeoutSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.FrameSize
 import Flapjack.Compiler.Backend.DataSpace.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Simulation
