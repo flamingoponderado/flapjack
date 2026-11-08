@@ -7,28 +7,6 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataSem Flapja
 open Classical
 noncomputable section
 
-/-- Reduce equal numeric headers to their payload comparison loop. -/
-private theorem numberEqStep {width : Nat} [NeZero width] (conf : DataToWord.Config)
-    (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (domain : BitVec width → Bool)
-    (memory : BitVec width → WordLocW width) (limit clock : Nat) (w1 w2 a1 a2 h r : BitVec width)
-    (diff : w1 ≠ w2) (low1 : w1.getLsbD 0 = true) (low2 : w2.getLsbD 0 = true)
-    (addr1 : getRealAddr conf store w1 = some a1) (addr2 : getRealAddr conf store w2 = some a2)
-    (dom1 : domain a1 = true) (dom2 : domain a2 = true)
-    (mem1 : memory a1 = .word h) (mem2 : memory a2 = .word h)
-    (mask : h &&& 12 ≠ 0) (bit2 : h.getLsbD 2 = true) (bit3 : h.getLsbD 3 = true)
-    (enough : (WordGcFunctions.decodeLength conf h).toNat < limit)
-    (loop : wordCmpLoop (WordGcFunctions.decodeLength conf h)
-      (a1 + StackRemove.bytesInWord width * WordGcFunctions.decodeLength conf h)
-      (a2 + StackRemove.bytesInWord width * WordGcFunctions.decodeLength conf h) domain memory = some r) :
-    wordEq conf store domain memory limit clock w1 w2 =
-      some (r, limit - 1 - (WordGcFunctions.decodeLength conf h).toNat, clock) := by
-  rw [wordEq]
-  simp only [diff, ↓reduceIte, low1, low2, Bool.true_and, Bool.not_true, Bool.false_eq_true]
-  simp [wordHeader, addr1, addr2, dom1, dom2, mem1, mem2, bit2, bit3,
-    show ¬ limit ≤ (WordGcFunctions.decodeLength conf h).toNat by omega, loop]
-  intro zero
-  exact False.elim (mask zero)
-
 /-- Distinct related numeric words cannot encode equal integers when at
     least one is immediate. -/
 private theorem differentImmediateNumbers {width : Nat} [NeZero width] (conf : DataToWord.Config) (be : Bool)
@@ -132,7 +110,8 @@ theorem wordEqThm0_number {width : Nat} [NeZero width] (conf : DataToWord.Config
             simpa only [decoded1] using loop
           rw [← headerEq] at mem2
           refine ⟨result, limit - 1 - (WordGcFunctions.decodeLength conf h1).toNat, 0, ?_, ?_, ?_⟩
-          · exact numberEqStep conf store domain memory limit 0 w1 w2 a1 a2 h1 result eq low1 low2 addr1 addr2
+          · exact eqStep conf store domain memory limit 0 w1 w2 a1 a2 h1 result eq
+              low1 low2 addr1 addr2
               dom1 dom2 mem1 mem2 mask h12 h13 enough loop'
           · simpa using correct
           · rw [decoded1, BitVec.toNat_ofNat, Nat.mod_eq_of_lt small1]

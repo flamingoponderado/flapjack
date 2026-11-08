@@ -8,46 +8,6 @@ position and flag binders are retained; no target relation is assumed. -/
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Basis.Pure.MlString Flapjack Flapjack.Misc
-private abbrev NativeLine (width : Nat) [NeZero width] :=
-  Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
-    (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)
-
-/-- Proof infrastructure with no separate HOL original: erase precisely the
-bytes, lengths and resolved positions that line_similar ignores. -/
-private def normalLine {width : Nat} [NeZero width] (line : NativeLine width) : NativeLine width :=
-  match line with
-  | .label s l _ => .label s l 0
-  | .asm a _ _ => .asm a [] 0
-  | .labAsm a _ _ _ => .labAsm a 0 [] 0
-
-private theorem lineSimilar_normal_iff {width : Nat} [NeZero width]
-    (a b : NativeLine width) : lineSimilar a b ↔ normalLine a = normalLine b := by
-  cases a <;> cases b <;> simp [lineSimilar, normalLine]
-
-/-- List relation infrastructure for the original EVERY2; no separate HOL
-source declaration is claimed for the normalized-map characterization. -/
-private theorem linesRel_normal_iff {width : Nat} [NeZero width]
-    (a b : List (NativeLine width)) :
-    LinesRel lineSimilar a b ↔ a.map normalLine = b.map normalLine := by
-  induction a generalizing b with
-  | nil =>
-    cases b with
-    | nil => exact ⟨fun _ => rfl, fun _ => .nil⟩
-    | cons y ys => constructor <;> intro h <;> cases h
-  | cons x xs ih =>
-    cases b with
-    | nil => constructor <;> intro h <;> cases h
-    | cons y ys =>
-      constructor
-      · intro h
-        cases h with
-        | cons hxy hrest =>
-          simp only [List.map_cons, List.cons.injEq]
-          exact ⟨(lineSimilar_normal_iff x y).mp hxy, (ih ys).mp hrest⟩
-      · intro h
-        simp only [List.map_cons, List.cons.injEq] at h
-        exact .cons ((lineSimilar_normal_iff x y).mpr h.1) ((ih ys).mpr h.2)
-
 
 private theorem normal_encLine {width : Nat} [NeZero width]
     (enc : HolAsm width → List (BitVec 8)) (len : Nat) (line : NativeLine width) :
