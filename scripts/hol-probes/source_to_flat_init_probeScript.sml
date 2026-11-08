@@ -363,6 +363,26 @@ val do_app_xoraw8str_replay = prove (do_app_xoraw8str_typed,
   simp [semanticPrimitivesTheory.store_v_same_type_def, REWRITE_RULE [ADD1] LUPDATE_def] >>
   match_mp_tac EVERY2_LUPDATE_same >> simp [source_to_flatProofTheory.sv_rel_cases]);
 val _ = show_thm "do_app_xoraw8str_replay=" do_app_xoraw8str_replay;
+val do_app_v_to_char_list = prove (
+  ``!genv. source_to_flatProof$genv_c_ok genv.c ⇒ !v1 v2 vs1.
+    source_to_flatProof$v_rel genv v1 v2 ∧ semanticPrimitives$v_to_char_list v1 = SOME vs1 ⇒
+    flatSem$v_to_char_list v2 = SOME vs1``,
+  ntac 2 strip_tac >> ho_match_mp_tac semanticPrimitivesTheory.v_to_char_list_ind >>
+  srw_tac[][semanticPrimitivesTheory.v_to_char_list_def] >> every_case_tac >>
+  full_simp_tac(srw_ss())[source_to_flatProofTheory.v_rel_more_eqns, flatSemTheory.v_to_char_list_def] >>
+  imp_res_tac source_to_flatProofTheory.genv_lookup_nil >>
+  imp_res_tac source_to_flatProofTheory.genv_lookup_cons >>
+  fs [] >> rw [flatSemTheory.v_to_char_list_def]);
+val do_app_implode_typed = list_mk_forall
+  (List.take (do_app_binders, 3) @ List.drop (do_app_binders, 4),
+   subst [List.nth (do_app_binders, 3) |-> ``ast$Implode``] do_app_body);
+val do_app_implode_replay = prove (do_app_implode_typed,
+  rpt gen_tac >> Cases_on `s1` >> Cases_on `s1_i1.refs` >> simp [] >> Cases_on `s1_i1` >>
+  simp [source_to_flatTheory.astOp_to_flatOp_def, astTheory.getOpClass_def] >>
+  srw_tac[][semanticPrimitivesPropsTheory.do_app_cases, flatSemTheory.do_app_def] >>
+  full_simp_tac(srw_ss())[do_app_rec_v_rel_eqns, source_to_flatProofTheory.result_rel_cases, do_app_v_rel_lems] >>
+  imp_res_tac do_app_v_to_char_list >> srw_tac[][]);
+val _ = show_thm "do_app_implode_replay=" do_app_implode_replay;
 val shift_op = ``ast$Shift w sh n``;
 val do_app_shift_typed = list_mk_forall
   (List.take (do_app_binders, 3) @ List.rev (free_vars shift_op) @ List.drop (do_app_binders, 4),
