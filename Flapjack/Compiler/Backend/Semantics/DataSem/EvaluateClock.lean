@@ -4,6 +4,17 @@ import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyClock
 namespace Flapjack.Compiler.Backend.DataSem
 open Flapjack Flapjack.SemanticPrimitivesHOL
 
+/-- Fixing a result's clock cannot exceed the input state's clock. -/
+@[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "fix_clock_IMP"]
+theorem fixClock_imp {C F D G R : Type} (state : State C F) (result : R × State D G)
+    (value : R) (next : State D G) (fixed : fixClock state result = (value, next)) :
+    next.clock ≤ state.clock := by
+  cases result with
+  | mk resultValue resultState =>
+    simp only [fixClock, Prod.mk.injEq] at fixed
+    obtain ⟨_, rfl⟩ := fixed
+    exact Nat.min_le_left _ _
+
 /-- A successful local-environment cut preserves the clock. -/
 theorem cutStateOpt_clock {C F : Type} (live : Option NumSet) (state next : State C F)
     (run : cutStateOpt live state = some next) : next.clock = state.clock :=

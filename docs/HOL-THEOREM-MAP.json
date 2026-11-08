@@ -127845,24 +127845,24 @@
   "hol_name": "list_to_v_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Build.lean",
   "lean_name": "listToValue",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared list_to_value in the typed DataSem probe: the tail is returned on empty input, and each cons block uses the current timestamp and recursively increments it."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "with_fresh_ts_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Build.lean",
   "lean_name": "withFreshTimestamp",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared with_fresh_timestamp in the typed DataSem probe: absent timestamps call the callback with zero and the original state, while present timestamps increment by the requested count. Compiler, FFI, and callback result types remain independent."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "dest_thunk_ret",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "DestThunkResult",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed thunk_bad_ref_type, thunk_not_thunk_type and thunk_is_thunk_type captures: constructor order and payloads match; thunk mode and value carriers are reviewed."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -127877,8 +127877,8 @@
   "hol_name": "bad_thunk_update_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "badThunkUpdate",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bad_thunk_update in the typed DataSem probe: the predicate is evaluated mode conjoined with the inspected value not being NotThunk."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -127917,16 +127917,16 @@
   "hol_name": "dest_Boolv_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "destBool",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared dest_bool in the typed DataSem probe: only empty blocks with tag below two decode, with tag one corresponding to true; other values yield NONE."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "dest_thunk_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "destThunk",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared dest_thunk in the typed DataSem probe: missing references and flagged thunks give BadRef; unflagged thunks retain mode and value; non-thunk entries and non-pointers give NotThunk."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128074,6 +128074,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
+  "hol_name": "fix_clock_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/EvaluateClock.lean",
+  "lean_name": "fixClock_imp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local source proof and its typed fix_clock_imp replay: the result equality is the only premise, the input and output state carriers remain independent, and the conclusion bounds the output clock by the input clock."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "finalise_cons_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Finalise.lean",
   "lean_name": "finaliseCons",
@@ -128197,8 +128205,8 @@
   "hol_name": "check_lim_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Limits.lean",
   "lean_name": "checkLim",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared check_limit in the typed DataSem probe: the safety flag is conjoined with the strict length bound determined by the current limits."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128373,16 +128381,16 @@
   "hol_name": "dec_clock_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/State.lean",
   "lean_name": "decClock",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared dec_clock in the typed DataSem probe: the same state carrier is returned with one subtracted from its natural clock."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "fix_clock_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/State.lean",
   "lean_name": "fixClock",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fix_clock in the typed DataSem probe: the input and result states have independent compiler and FFI types, the result payload is independent, and the result state clock is the minimum of both clocks."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128437,24 +128445,24 @@
   "hol_name": "Boolv_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Value.lean",
   "lean_name": "boolValue",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bool_value in the typed DataSem probe: Boolean values are zero-timestamp blocks using the reviewed bool_to_tag and an empty payload."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "Unit_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Value.lean",
   "lean_name": "unitValue",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared unit_value in the typed DataSem probe: the zero-timestamp empty block has tuple_tag, whose original definition is zero."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "v_to_list_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Value.lean",
   "lean_name": "valueToList",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared value_to_list in the typed DataSem probe: nil and two-element cons blocks are decoded recursively with the original tags; all other values and arities yield NONE."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",

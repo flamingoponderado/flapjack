@@ -42,6 +42,13 @@ val _ = show_type "state_limits_type=" ``λ(s:('c,'ffi) dataSem$state). s.limits
 val _ = show_type "state_safe_type=" ``λ(s:('c,'ffi) dataSem$state). s.safe_for_space``;
 val _ = show_type "state_peak_type=" ``λ(s:('c,'ffi) dataSem$state). s.peak_heap_length``;
 val _ = show_type "state_oracle_type=" ``λ(s:('c,'ffi) dataSem$state). s.compile_oracle``;
+val _ = show "dec_clock=" dataSemTheory.dec_clock_def;
+val _ = show "fix_clock=" dataSemTheory.fix_clock_def;
+(* Typed replay of the local fix_clock_IMP theorem, which HOL does not export. *)
+val fix_clock_imp_replay = Q.prove (
+  `dataSem$fix_clock s x = (res,s1) ==> s1.clock <= s.clock`,
+  Cases_on `x` THEN fs [dataSemTheory.fix_clock_def] THEN rw [] THEN fs []);
+val _ = show "fix_clock_imp=" fix_clock_imp_replay;
 val _ = show "evaluate=" dataSemTheory.evaluate_def;
 val _ = show "eval_skip=" (EVAL ``dataSem$evaluate (dataLang$Skip, s:('c,'ffi) dataSem$state)``);
 val _ = show "eval_tick_timeout=" (EVAL ``dataSem$evaluate (dataLang$Tick,

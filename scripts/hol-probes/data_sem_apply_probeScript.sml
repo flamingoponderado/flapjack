@@ -10,6 +10,18 @@ val _ = show_type "value_word64_type=" ``dataSem$Word64``;
 val _ = show_type "value_block_type=" ``dataSem$Block``;
 val _ = show_type "value_code_ptr_type=" ``dataSem$CodePtr``;
 val _ = show_type "value_ref_ptr_type=" ``dataSem$RefPtr``;
+val _ = show_type "thunk_bad_ref_type=" ``dataSem$BadRef``;
+val _ = show_type "thunk_not_thunk_type=" ``dataSem$NotThunk``;
+val _ = show_type "thunk_is_thunk_type=" ``dataSem$IsThunk``;
+val _ = show "bool_value=" dataSemTheory.Boolv_def;
+val _ = show "unit_value=" dataSemTheory.Unit_def;
+val _ = show "value_to_list=" dataSemTheory.v_to_list_def;
+val _ = show "list_to_value=" dataSemTheory.list_to_v_def;
+val _ = show "with_fresh_timestamp=" dataSemTheory.with_fresh_ts_def;
+val _ = show "check_limit=" dataSemTheory.check_lim_def;
+val _ = show "dest_bool=" dataSemTheory.dest_Boolv_def;
+val _ = show "dest_thunk=" dataSemTheory.dest_thunk_def;
+val _ = show "bad_thunk_update=" dataSemTheory.bad_thunk_update_def;
 val _ = show "finalise_cons=" dataSemTheory.finalise_cons_def;
 val _ = show "do_app_aux=" dataSemTheory.do_app_aux_def;
 val _ = show "nullary_cons=" (EVAL ``dataSem$do_app_aux (closLang$BlockOp (closLang$Cons 9)) []
