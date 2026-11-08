@@ -868,4 +868,40 @@ theorem doApp_Strsub {C F : Type} (genv : GlobalEnv)
                   · simpa [source, ffiEq] using ffi
                   · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, flatRun]
 
+/-- The Strlen case of `do_app`; the full theorem is not yet assembled. The
+dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
+  (fmap_as_finite_support := [c, tys])]
+theorem doApp_Strlen {C F : Type} (genv : GlobalEnv)
+    (s1 s2 : Store Value × HolFfiState F) (vs : List Value)
+    (r : Result Value Value) (flat : FlatSem.State C F) (flatVs : List FlatSem.Value)
+    (premises : doApp s1 .strlen vs = some (s2, r) ∧
+      List.Forall₂ (StoreValueRel genv) s1.1 flat.refs.tail ∧ flat.refs ≠ [] ∧
+      List.Forall₂ (ValueRel genv) vs flatVs ∧ s1.2 = flat.ffi ∧ genvCOk genv.c ∧
+      Op.strlen ≠ .aallocEmpty ∧ Op.strlen ≠ .envId) :
+    ∃ flatResult flatState,
+      List.Forall₂ (StoreValueRel genv) s2.1 flatState.refs.tail ∧ flatState.refs ≠ [] ∧
+      s2.2 = flatState.ffi ∧ flat.globals = flatState.globals ∧
+      flat.refs.take 1 = flatState.refs.take 1 ∧ ResultRel ValueRel genv r flatResult ∧
+      FlatSem.doApp flat (astOpToFlatOp .strlen) flatVs = some (flatState, flatResult) := by
+  obtain ⟨run, stores, nonempty, values, ffi, _, _, _⟩ := premises
+  cases vs with
+  | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+  | cons value rest =>
+    cases rest with
+    | cons second rest => simp [doApp, doAppNumericCore, doAppBasic] at run
+    | nil =>
+      cases value <;> simp [doApp, doAppNumericCore, doAppBasic] at run
+      case litv lit =>
+        cases lit <;> simp at run
+        case strLit text =>
+          obtain ⟨rfl, rfl⟩ := run
+          cases values with
+          | cons valueRel tail =>
+            cases tail
+            cases valueRel
+            refine ⟨.val (.litv (.intLit text.explode.length)), flat, stores, nonempty, ffi, rfl, rfl,
+              .value (.literal genv _), ?_⟩
+            simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData]
+
 end Flapjack.Compiler.Backend.SourceToFlat
