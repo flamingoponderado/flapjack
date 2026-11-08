@@ -213,7 +213,8 @@ theorem doApp_some_flatStateRel_test {C F G : Type} (reachable : NumSet)
 
 /-- Primitive application preserves the flat-elimination state relation and
 result invariants. The underlying assembled evaluator still requires its full
-source and carrier review. -/
+source and carrier review. `Nonempty G` reflects the inhabited HOL type of the
+otherwise unused removed state. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
 theorem doApp_some_flatStateRel {C F G : Type} [Nonempty G] (tra : BackendCommon.Tra)
     (reachable : NumSet) (source target : FlatSem.State C F) (op : FlatLang.Op)

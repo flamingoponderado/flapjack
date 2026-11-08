@@ -36,7 +36,9 @@ private theorem applyMemory_frame {C D F G : Type} (op : ClosLang.MemOp) (args :
   all_goals try (repeat' (congr 1; funext value; cases value <;> simp [Option.map_bind, Function.comp_def]))
 
 /-- Successful non-global, non-install application transfers across states with arbitrary
-compiler and FFI carrier types when the code domain grows. -/
+compiler and FFI carrier types when the code domain grows. This Flapjack-specific
+variant of HOL's `do_app_Rval_swap` excludes globals because the BVI fallback
+discards BVL globals, so the original lemma cannot be used directly. -/
 theorem doAppFallbackRvalSwap {C D F G : Type} (op : ClosLang.Op) (args : List BvlSem.Value)
     (source next : Flapjack.Compiler.Backend.BvlSem.State C F) (value : BvlSem.Value)
     (target : Flapjack.Compiler.Backend.BvlSem.State D G)
@@ -97,7 +99,9 @@ theorem doAppFallbackRvalSwap {C D F G : Type} (op : ClosLang.Op) (args : List B
     all_goals aesop
 
 /-- A non-global, non-install error transfers across independently typed compiler and FFI
-carriers when the target code domain is contained in the source domain. -/
+carriers when the target code domain is contained in the source domain. This
+Flapjack-specific variant of HOL's `do_app_Rerr_swap` excludes globals because
+the BVI fallback discards BVL globals, so the original lemma cannot be used directly. -/
 theorem doAppFallbackRerrSwap {C D F G : Type} (op : ClosLang.Op) (args : List BvlSem.Value)
     (source : Flapjack.Compiler.Backend.BvlSem.State C F) (error : ErrorResult BvlSem.Value)
     (target : Flapjack.Compiler.Backend.BvlSem.State D G)

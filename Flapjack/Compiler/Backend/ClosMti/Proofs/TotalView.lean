@@ -151,6 +151,19 @@ theorem introExp_let (maxApp : Nat) (trace : BackendCommon.Tra) (bindings : List
   rw [introMultiFuel, hs, hb]
   rfl
 
+/-- Direct calls transform all argument expressions. -/
+theorem introExp_call (maxApp : Nat) (trace : BackendCommon.Tra) (ticks location : Nat) (args : List Exp) :
+    introExp maxApp (.call trace ticks location args) =
+      .call trace ticks location (introList maxApp args) := by
+  let fuel := listBudget args + 1
+  have hs := introList_fuel fuel maxApp args (by
+    intro e member
+    have h := member_budget_lt args e member
+    dsimp [fuel]; omega)
+  apply introExp_eq_of_fuel (fuel + 1)
+  rw [introMultiFuel, hs]
+  rfl
+
 /-- Primitive operations transform all argument expressions. -/
 theorem introExp_op (maxApp : Nat) (trace : BackendCommon.Tra) (op : ClosLang.Op) (args : List Exp) :
     introExp maxApp (.op trace op args) = .op trace op (introList maxApp args) := by
@@ -184,6 +197,21 @@ theorem introExp_app_none (maxApp : Nat) (trace : BackendCommon.Tra) (body : Exp
     rw [hh, hs]
     rfl
 
+/-- A direct application retains its location and transforms its children. -/
+theorem introExp_app_some (maxApp : Nat) (trace : BackendCommon.Tra) (location : Nat)
+    (body : Exp) (args : List Exp) :
+    introExp maxApp (.app trace (some location) body args) =
+      .app trace (some location) (introExp maxApp body) (introList maxApp args) := by
+  let fuel := expBudget body + listBudget args + 1
+  have hb := introExp_fuel fuel maxApp body (by dsimp [fuel]; omega)
+  have hs := introList_fuel fuel maxApp args (by
+    intro e member
+    have h := member_budget_lt args e member
+    dsimp [fuel]; omega)
+  apply introExp_eq_of_fuel (fuel + 1)
+  rw [introMultiFuel, hb, hs]
+  rfl
+
 /-- An unannotated function collects nested arguments before transforming its
 remaining body. -/
 theorem introExp_fn_none (maxApp : Nat) (name : Flapjack.Basis.Pure.MlString.MlString)
@@ -201,6 +229,27 @@ theorem introExp_fn_none (maxApp : Nat) (name : Flapjack.Basis.Pure.MlString.MlS
     dsimp only
     rw [hb]
     rfl
+
+/-- A function with a location annotation does not collect nested arguments. -/
+theorem introExp_fn_location (maxApp : Nat) (name : Flapjack.Basis.Pure.MlString.MlString)
+    (location : Nat) (vars : Option (List Nat)) (arity : Nat) (body : Exp) :
+    introExp maxApp (.fn name (some location) vars arity body) =
+      .fn name (some location) vars arity (introExp maxApp body) := by
+  let fuel := expBudget body + 1
+  have hb := introExp_fuel fuel maxApp body (by dsimp [fuel]; omega)
+  apply introExp_eq_of_fuel (fuel + 1)
+  cases vars <;> rw [introMultiFuel, hb] <;> simp_all
+
+/-- A function with an explicit free-variable list is transformed without
+collecting nested arguments. -/
+theorem introExp_fn_vars (maxApp : Nat) (name : Flapjack.Basis.Pure.MlString.MlString)
+    (vars : List Nat) (arity : Nat) (body : Exp) :
+    introExp maxApp (.fn name none (some vars) arity body) =
+      .fn name none (some vars) arity (introExp maxApp body) := by
+  let fuel := expBudget body + 1
+  have hb := introExp_fuel fuel maxApp body (by dsimp [fuel]; omega)
+  apply introExp_eq_of_fuel (fuel + 1)
+  rw [introMultiFuel, hb] <;> simp_all
 
 /-- The collected recursive-function body and its transformed expression. -/
 noncomputable def introFun (maxApp : Nat) (function : Nat × Exp) : Nat × Exp :=
@@ -243,6 +292,26 @@ theorem introExp_letrec_none (maxApp : Nat) (names : List Flapjack.Basis.Pure.Ml
   apply introExp_eq_of_fuel (fuel + 1)
   rw [introMultiFuel, hf, hb]
   rfl
+
+/-- Recursive functions carrying a location retain their function bundle. -/
+theorem introExp_letrec_location (maxApp : Nat) (names : List Flapjack.Basis.Pure.MlString.MlString)
+    (location : Nat) (vars : Option (List Nat)) (funs : List (Nat × Exp)) (body : Exp) :
+    introExp maxApp (.letrec names (some location) vars funs body) =
+      .letrec names (some location) vars funs (introExp maxApp body) := by
+  let fuel := expBudget body + 1
+  have hb := introExp_fuel fuel maxApp body (by dsimp [fuel]; omega)
+  apply introExp_eq_of_fuel (fuel + 1)
+  cases vars <;> rw [introMultiFuel, hb] <;> simp_all
+
+/-- Recursive functions carrying explicit free variables retain their bundle. -/
+theorem introExp_letrec_vars (maxApp : Nat) (names : List Flapjack.Basis.Pure.MlString.MlString)
+    (vars : List Nat) (funs : List (Nat × Exp)) (body : Exp) :
+    introExp maxApp (.letrec names none (some vars) funs body) =
+      .letrec names none (some vars) funs (introExp maxApp body) := by
+  let fuel := expBudget body + 1
+  have hb := introExp_fuel fuel maxApp body (by dsimp [fuel]; omega)
+  apply introExp_eq_of_fuel (fuel + 1)
+  rw [introMultiFuel, hb] <;> simp_all
 
 /-- Apply multi-argument introduction when enabled. -/
 @[hol "cakeml/compiler/backend/clos_mtiScript.sml" "compile_def"]

@@ -203,7 +203,8 @@ def compileBounded (fuel limit env : Nat) (e : Exp) : Option (Exp × DbVarSet ×
   | some result => some result
   | none => compileFuel (max fuel (expBudget e + 1)) limit env e
 
-/-- Run handler simplification and compilation after constant propagation. -/
+/-- Run handler simplification and compilation; the input has already undergone
+constant propagation. -/
 def compileExpWithoutConstantsFuel (fuel limit arity : Nat) (e : Exp) : Option Exp := do
   let e ← simplifyBounded fuel e
   let (e, _, _, _) ← compileBounded fuel limit arity e
