@@ -509,20 +509,6 @@ private theorem returningHandlerException {width : Nat} [NeZero width] {C F : Ty
     · exact inA.elim (fun h => Or.inr ((rootKeys a).mp (keys ▸ h))) Or.inl
     · exact inB.elim (fun h => Or.inr ((rootKeys b).mp (keys ▸ h))) Or.inl
 
-/-- Internal native Seq normalization, with clock fix derived from evaluation. -/
-private theorem returningEvaluateSeqNative {width : Nat} [NeZero width] {C F : Type}
-    (first second : WordLangProgHOL (BitVec width))
-    (state : WordSemStateFiniteExact width C F) :
-    WordSemStateFiniteExact.evaluate (.seq first second) state =
-      match WordSemStateFiniteExact.evaluate first state with
-      | (none, after) => WordSemStateFiniteExact.evaluate second after
-      | (some result, after) => (some result, after) := by
-  simp only [WordSemStateFiniteExact.evaluate,
-    WordSemStateFiniteExact.fix_clock_evaluate]
-  cases WordSemStateFiniteExact.evaluate first state with
-  | mk result after => cases result <;> rfl
-
-
 /-- Internal returning-handler reconciliation composition. Its move specification
 is derived from native fixInconsistenciesCorrectL/R inside the full handler case;
 it is not an extra premise of a HOL correctness statement. -/
@@ -571,7 +557,7 @@ private theorem returningAppendReconciliation {width : Nat} [NeZero width] {C F 
         simp only [if_neg noError,targetEval] at post
         have equal : targetResult = some result := post.1.symm
         subst targetResult
-        simp only [returningEvaluateSeqNative,targetEval,if_neg noError]
+        simp only [evaluateSeqNative,targetEval,if_neg noError]
         cases result <;> try (simpa only using post)
 
 
