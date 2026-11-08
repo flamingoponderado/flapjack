@@ -2661,6 +2661,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "mk_flat_install_conf_def",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/InstallConfig.lean",
+  "lean_name": "mkFlatInstallConf",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the polymorphic configuration carrier, compiler and oracle function types, and both record fields with mk_flat_install_conf_typed in flat_props_evaluate_match_probe.out. The byte and bitmap word widths match the HOL types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
   "hol_name": "pmatch_bindings",
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternBindings.lean",
   "lean_name": "pmatchBindings",

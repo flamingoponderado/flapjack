@@ -300,7 +300,7 @@ run_probe source_to_flat_compile_correct_probeScript.sml source_to_flat_compile_
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe flat_props_evaluate_match_probeScript.sml flat_props_evaluate_match_probe.out \
-  evaluate_match_typed build_rec_env_eq_MAP_typed \
+  mk_flat_install_conf_typed evaluate_match_typed build_rec_env_eq_MAP_typed \
   "$cake_dir/compiler/backend/semantics/flatPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_interp_review_probeScript.sml clos_interp_review_probe.out \
