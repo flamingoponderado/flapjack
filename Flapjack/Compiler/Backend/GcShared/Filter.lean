@@ -12,7 +12,9 @@ theorem heapLength_heapExpand {α β : Type} (n : Nat) :
     heapLength (heapExpand n : List (HeapElement α β)) = n := by
   cases n <;> simp [heapExpand, heapLength, elLength]
 
-private theorem heapFilterAux_of_covers {α β : Type} (heap : List (HeapElement α β))
+/-- Filtering by a predicate that covers every element address retains the
+heap. Shared by the GC proofs; no separately named HOL original. -/
+theorem heapFilterAux_of_covers {α β : Type} (heap : List (HeapElement α β))
     (offset : Nat) (selected : Nat → Prop)
     (covers : ∀ p, heapAddresses offset heap p → selected p) :
     heapFilterAux offset selected heap = heap := by

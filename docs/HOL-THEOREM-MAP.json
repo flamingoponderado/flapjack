@@ -83196,14 +83196,6 @@
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
-    "lean_name": "lookupOfMemNodup",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack association-list helper: with distinct keys, membership determines ALOOKUP (HOL ALOOKUP_ALL_DISTINCT_MEM); library fact, no CakeML declaration claimed."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
     "lean_name": "lookupReverseOfNodup",
     "hol_path": null,
     "hol_name": null,
@@ -94128,14 +94120,6 @@
     "lean_name": "list_lookup_mem",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Private list/finite-map helper of stateRelImpSemanticsDeclsToCrep (bead flapjack-pxn.18.4.4): List.lookup returns a member; no HOL declaration (HOL uses library lemmas inline)."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
-    "lean_name": "list_lookup_of_mem_nodup",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Private list/finite-map helper of stateRelImpSemanticsDeclsToCrep (bead flapjack-pxn.18.4.4): List.lookup of a member under distinct keys; no HOL declaration (HOL uses library lemmas inline)."
   },
   {
     "hol_path": null,

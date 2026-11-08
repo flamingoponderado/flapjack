@@ -19,22 +19,6 @@ theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
 end LoopSetupWitnesses
 
 
--- Flapjack factoring of the original inline fake-initialization argument;
--- no independently claimed HOL declaration or public simulation assumption.
-private theorem initializedLookup {α : Type} (names : List Nat) (value : α)
-    (locals : Spt α) (key : Nat) :
-    sptLookup key (names.foldr (fun name tree => sptInsert name value tree) locals) =
-      if key ∈ names then some value else sptLookup key locals := by
-  induction names with
-  | nil => simp
-  | cons name names ih =>
-    simp only [List.foldr_cons]
-    by_cases equal : key = name
-    · subst key
-      simp [sptLookup_sptInsert_same]
-    · rw [sptLookup_sptInsert_ne _ _ _ _ equal,ih]
-      simp [equal]
-
 private theorem extendedLocals {width : Nat} [NeZero width]
     (names : List Nat) (ssa : Spt Nat) (next : Nat)
     (source target : Spt (WordLocW width))
@@ -56,7 +40,7 @@ private theorem extendedLocals {width : Nat} [NeZero width]
         sptLookup register target := by
     intro register bound
     have absent : register ∉ outputs := by intro member; have := fresh register member; omega
-    simp [initializedLookup,absent]
+    simp [constFoldLookup,absent]
   refine ⟨?_,?_⟩
   · intro key register read
     apply (sptMem_iff_lookup register _).mpr
@@ -64,7 +48,7 @@ private theorem extendedLocals {width : Nat} [NeZero width]
     · have written : register ∈ outputs := by
         rw [lookup.1]
         exact List.mem_map.mpr ⟨key,member,by simp [read]⟩
-      exact ⟨.word 0,by simp [initializedLookup,written]⟩
+      exact ⟨.word 0,by simp [constFoldLookup,written]⟩
     · have original : sptLookup key ssa = some register := by
         rw [←lookup.2.2.1 key member]
         exact read

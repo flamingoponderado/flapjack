@@ -177,4 +177,20 @@ theorem readBytes_eight (m : BitVec 64 → BitVec 8) (a : BitVec 64) :
     show a + 1 + 1 + 1 = a + 3 by bv_omega,
     show a + 1 + 1 = a + 2 by bv_omega]
 
+/-- `readBytes` only looks at the bytes at `a`, `a + 1`, ... -/
+theorem readBytes_congr (m m' : BitVec 64 → BitVec 8) (a : BitVec 64) (n : Nat)
+    (h : ∀ k, k < n → m (a + BitVec.ofNat 64 k) = m' (a + BitVec.ofNat 64 k)) :
+    readBytes m a n = readBytes m' a n := by
+  induction n generalizing a with
+  | zero => rfl
+  | succ n ih =>
+      have h0 : m a = m' a := by simpa using h 0 (by omega)
+      have hrec : readBytes m (a + 1) n = readBytes m' (a + 1) n := by
+        refine ih (a + 1) ?_
+        intro k hk
+        have hk' := h (k + 1) (by omega)
+        rwa [show a + BitVec.ofNat 64 (k + 1) = a + 1 + BitVec.ofNat 64 k by bv_omega] at hk'
+      simp only [readBytes]
+      rw [hrec, h0]
+
 end Flapjack.Compiler.Encoders
