@@ -212,7 +212,7 @@ theorem localEnvBounded_arrayTree_of_smaller {C F : Type} [Nonempty C]
     (expr : AstHOL.Exp) :
     LocalEnvBoundedIH (F := F) interp transform limit expr :=
   localEnvBounded_arrayTree interp transform limit
-    (localEnvClockIH_of_smaller interp transform limit smallerExprs)
-    (factoredDecClockIH_of_smaller interp transform limit smallerDecs) expr (allExpressions_covered expr)
+    smallerExprs
+    smallerDecs expr (allExpressions_covered expr)
 
 end Flapjack.Compiler.Backend.SourceToFlat

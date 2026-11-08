@@ -424,21 +424,9 @@ theorem doOpApp_source (genv : GlobalEnv) (vs : List Value) (flatVs : List FlatS
 
 /-- The local expression simulation available at strictly smaller source
 clocks, used as the recursive induction hypothesis for function calls. -/
-def LocalEnvClockIH {C F : Type} [Nonempty C]
+abbrev LocalEnvClockIH {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat) : Prop :=
-  ∀ (expr : AstHOL.Exp) (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source : State F) (flat : FlatSem.State C F) (baseEnv : SemEnv Value)
-    (sourceLocal : Namespace ModN VarN Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (traces : List BackendCommon.Tra) (trace : List VarN) (baseMap : Environment) (gen : EnvironmentGenerationStore),
-    source.clock < limit → EnvRel genv sourceLocal flatEnv.v →
-    GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv →
-    traces.length = flatEnv.v.length → factoredInvariant interp transform gen genv (start, finish, other) source flat →
-    envGenRel gen source.evalState →
-    (∀ last, EvaluateHOL.evaluate source { baseEnv with v := nsAppend sourceLocal baseEnv.v } [expr] ≠
-      (last, .err (.abort .typeError))) →
-    LocalExpressionStep interp transform genv start finish other source flat
-      { baseEnv with v := nsAppend sourceLocal baseEnv.v } flatEnv trace
-      { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } gen expr
+  ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr
 
 /-- Source function application after argument evaluation. -/
 noncomputable def sourceCallResult {F : Type} (source : State F) (function argument : Value) :
@@ -534,9 +522,9 @@ theorem localCallResult_related {C F : Type} [Nonempty C]
     have smaller : (EvaluateHOL.decClock source).clock < limit := by
       simp only [EvaluateHOL.decClock]
       omega
-    obtain ⟨nextGenv, bodySim, bodyPost⟩ := calledIH body genv start finish other
+    obtain ⟨nextGenv, bodySim, bodyPost⟩ := calledIH _ smaller body genv start finish other
       (EvaluateHOL.decClock source) (FlatSem.decClock flat) baseEnv sourceLocal flatLocal traces trace baseMap gen
-      smaller locals globals len ((invariantDecClock interp transform gen genv (start, finish, other) source flat invariant).2)
+      (Nat.le_refl _) locals globals len ((invariantDecClock interp transform gen genv (start, finish, other) source flat invariant).2)
       generation bodySafe
     refine ⟨nextGenv, ?_, ?_⟩
     · simpa [sourceCallResult, srcApp, zero, flatCallResult, dstApp, flatNonzero, ExprSim] using bodySim
@@ -1024,17 +1012,6 @@ theorem localEnvBounded_forceThunk {C F : Type} [Nonempty C]
                     obtain ⟨callGrowth, finalInvariant, finalGeneration, callForward⟩ := callPost
                     exact ⟨growth.trans callGrowth, finalInvariant, finalGeneration,
                       oracForwardRel_trans interp _ _ _ ⟨forward, callForward⟩⟩
-
-/-- Bounded simulations below the current clock yield the called-body
-induction hypothesis needed by function application. -/
-theorem localEnvClockIH_of_smaller {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
-    (smaller : ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr) :
-    LocalEnvClockIH (F := F) interp transform limit := by
-  intro expr genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen below
-    localRel envInv tracesLen invariant generation safe
-  exact smaller source.clock below expr genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen
-    (Nat.le_refl _) localRel envInv tracesLen invariant generation safe
 
 
 end Flapjack.Compiler.Backend.SourceToFlat
