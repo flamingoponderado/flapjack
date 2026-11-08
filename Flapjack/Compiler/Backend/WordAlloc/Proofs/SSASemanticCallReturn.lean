@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCut
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 
@@ -331,52 +332,6 @@ theorem returningPopCutRelation {width : Nat} [NeZero width] {C F : Type}
     apply injective a b _ _ equal
     · exact inA.elim (fun h => Or.inr (inSecond a h)) Or.inl
     · exact inB.elim (fun h => Or.inr (inSecond b h)) Or.inl
-
-/-- Flapjack-specific original8477-8550 restricted SSA reconstruction.
-Actual popped cut domain and remapped lookup relation establish every conjunct
-of the restricted SSA map, including defined lookups and original source bounds.
-These internal lookup/domain facts are derived by returningPopCutRelation; no
-output SSA relation is assumed. No standalone HOL declaration or tag exists. -/
-theorem returningCutSSA {α : Type} (next : Nat) (ssa : Spt Nat)
-    (names : Spt Unit) (source target : Spt α)
-    (mapped : ∀ key, sptDomain names key → sptDomain ssa key)
-    (sourceDomain : sptDomain source = sptDomain names)
-    (matching : Flapjack.WordAlloc.strongLocalsRel (optionLookup ssa)
-      (sptDomain names) source target)
-    (below : ∀ key, sptDomain names key → key < next) :
-    ssaLocalsRel next (sptInter ssa names) source target := by
-  have interRead : ∀ key register, sptLookup key (sptInter ssa names) = some register →
-      sptLookup key ssa = some register ∧ sptDomain names key := by
-    intro key register read
-    rw [sptLookup_sptInterCases] at read
-    cases left : sptLookup key ssa with
-    | none => simp [left] at read
-    | some value =>
-      cases right : sptLookup key names with
-      | none => simp [left,right] at read
-      | some payload =>
-        have equal : value = register := by simpa [left,right] using read
-        subst value
-        exact ⟨rfl,(sptMem_iff_lookup key names).mpr ⟨payload,right⟩⟩
-  refine ⟨?_,?_⟩
-  · intro key register read
-    obtain ⟨original,inNames⟩ := interRead key register read
-    have inSource : sptDomain source key := by rw [sourceDomain]; exact inNames
-    obtain ⟨value,sourceRead⟩ := (sptMem_iff_lookup key source).mp inSource
-    have targetRead := matching key value ⟨inNames,sourceRead⟩
-    apply (sptMem_iff_lookup register target).mpr
-    exact ⟨value,by simpa [optionLookup,original] using targetRead⟩
-  · intro key value read
-    have inNames : sptDomain names key := by
-      rw [←sourceDomain]
-      exact (sptMem_iff_lookup key source).mpr ⟨value,read⟩
-    obtain ⟨register,original⟩ := (sptMem_iff_lookup key ssa).mp (mapped key inNames)
-    obtain ⟨payload,nameRead⟩ := (sptMem_iff_lookup key names).mp inNames
-    have interLookup : sptLookup key (sptInter ssa names) = some register := by
-      simp [sptLookup_sptInterCases,original,nameRead]
-    refine ⟨(sptMem_iff_lookup key _).mpr ⟨register,interLookup⟩,?_,fun _ => below key inNames⟩
-    simpa only [interLookup,Option.getD_some,optionLookup,original] using
-      matching key value ⟨inNames,read⟩
 
 
 /-- Flapjack-specific original8575-8590 physical return reread factoring.
