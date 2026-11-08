@@ -2,7 +2,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
 import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
 
-/-! The ConfigGC case of the source-to-flat primitive simulation. -/
+/-! The ConfigGC and Opapp cases of the source-to-flat primitive simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
@@ -54,5 +54,24 @@ theorem doApp_ConfigGC {C F : Type} (genv : GlobalEnv)
               · exact ResultRel.value (ValueRel.tuple genv [] [] (.nil genv))
               · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric,
                   FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.unitValue]
+
+/-- The Opapp case of `do_app`; the full theorem is not yet assembled. The
+dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
+  (fmap_as_finite_support := [c, tys])]
+theorem doApp_Opapp {C F : Type} (genv : GlobalEnv)
+    (s1 s2 : Store Value × HolFfiState F) (vs : List Value)
+    (r : Result Value Value) (flat : FlatSem.State C F) (flatVs : List FlatSem.Value)
+    (premises : doApp s1 .opapp vs = some (s2, r) ∧
+      List.Forall₂ (StoreValueRel genv) s1.1 flat.refs.tail ∧ flat.refs ≠ [] ∧
+      List.Forall₂ (ValueRel genv) vs flatVs ∧ s1.2 = flat.ffi ∧ genvCOk genv.c ∧
+      Op.opapp ≠ .aallocEmpty ∧ Op.opapp ≠ .envId) :
+    ∃ flatResult flatState,
+      List.Forall₂ (StoreValueRel genv) s2.1 flatState.refs.tail ∧ flatState.refs ≠ [] ∧
+      s2.2 = flatState.ffi ∧ flat.globals = flatState.globals ∧
+      flat.refs.take 1 = flatState.refs.take 1 ∧ ResultRel ValueRel genv r flatResult ∧
+      FlatSem.doApp flat (astOpToFlatOp .opapp) flatVs = some (flatState, flatResult) := by
+  obtain ⟨run, _⟩ := premises
+  simp [doApp, doAppNumericCore, doAppBasic] at run
 
 end Flapjack.Compiler.Backend.SourceToFlat
