@@ -128340,6 +128340,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "do_app_aux_sm_safe_peak_swap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ResourceSwap.lean",
+  "lean_name": "doAppAux_stackSafePeakSwap",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_aux_sm_safe_peak_swap_typed: binders op, vs, s, q, s-prime, smx, safe, peak; one shared state type; the successful-application premise; and existential stack, safety and peak witnesses from the swapped result. The proof uses the liveness primitive simulation and local-control frames. Inherits reals_as_rational_cuts through doAppAux (SOUNDNESS item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
   "hol_name": "do_app_err_safe_peak_swap",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/HeapSwap.lean",
   "lean_name": "doApp_err_safePeakSwap",

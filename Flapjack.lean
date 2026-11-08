@@ -330,6 +330,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorHeap
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorSetup
 import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceCall
 import Flapjack.Compiler.Backend.Semantics.DataProps.HeapSwap
+import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceSwap
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
