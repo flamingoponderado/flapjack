@@ -49,7 +49,7 @@ theorem evaluate_assign_clock {C F : Type} (dest : Nat) (op : ClosLang.Op) (name
         | err error => simp [evaluate, invalid, read, cut, app, flushState, installSfs, cutClock]
         | val pair =>
           obtain ⟨value, applied⟩ := pair
-          have appClock := doApp_clock op args prepared applied value app
+          have appClock := (doApp_controlFrame op args prepared applied value app).2.2.2.2.2
           simp [evaluate, invalid, read, cut, app, setVar, installSfs, appClock, cutClock]
 
 /-- Moves do not increase the clock. -/

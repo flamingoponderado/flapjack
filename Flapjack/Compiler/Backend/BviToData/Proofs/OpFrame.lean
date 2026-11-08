@@ -3,9 +3,6 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.CutEnv
 import Flapjack.Compiler.Backend.BviToData.Proofs.Compare
 import Flapjack.Compiler.Backend.BviToData.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyFrame
-import Flapjack.Compiler.Backend.Semantics.DataSem.BlockFrame
-import Flapjack.Compiler.Backend.Semantics.DataSem.ThunkFrame
-import Flapjack.Compiler.Backend.Semantics.DataSem.MemFrame
 import Mathlib.Tactic.CasesM
 
 /-! Assignment local/control frames for the BVI-to-data operation proof. -/
@@ -117,7 +114,7 @@ theorem evaluate_iAssign_block_lookup {C F : Type} (op : ClosLang.BlockOp) (dest
         if cutEnabled then (if key ∈ operands ++ live ++ corr then sptLookup key state.locals else none)
         else sptLookup key state.locals) ∧ DataSem.SameControl state next :=
   evaluate_iAssign_lookup_of_shape (.blockOp op) dest operands live corr state next
-    (iAssign_block_shape op dest operands live corr) (DataSem.doApp_block_frame op) run
+    (iAssign_block_shape op dest operands live corr) (fun args before after value run => by simpa using DataSem.doApp_controlFrame (.blockOp op) args before after value run) run
 
 /-- A compiled thunk operation writes its destination and preserves the
 compiler's live roots and control fields. -/
@@ -129,21 +126,20 @@ theorem evaluate_iAssign_thunk_lookup {C F : Type} (op : AstHOL.ThunkOp) (dest :
         if cutEnabled then (if key ∈ operands ++ live ++ corr then sptLookup key state.locals else none)
         else sptLookup key state.locals) ∧ DataSem.SameControl state next :=
   evaluate_iAssign_lookup_of_shape (.thunkOp op) dest operands live corr state next
-    (iAssign_thunk_shape op dest operands live corr) (DataSem.doApp_thunk_frame op) run
+    (iAssign_thunk_shape op dest operands live corr) (fun args before after value run => by simpa using DataSem.doApp_controlFrame (.thunkOp op) args before after value run) run
 
 /-- A compiled memory operation writes its destination and preserves the
-compiler's live roots and control fields, assuming its primitive frame. -/
-theorem evaluate_iAssign_mem_lookup_of_frame {C F : Type} (op : ClosLang.MemOp) (dest : Nat)
+compiler's live roots and control fields. -/
+theorem evaluate_iAssign_mem_lookup {C F : Type} (op : ClosLang.MemOp) (dest : Nat)
     (operands live corr : List Nat) (state next : DataSem.State C F)
-    (primitiveFrame : ∀ (args : List DataSem.Value) (before after : DataSem.State C F) (value : DataSem.Value),
-      DataSem.doApp (.memOp op) args before = .val (value, after) → DataSem.SameLocalControl before after)
     (run : DataSem.evaluate (iAssign dest (.memOp op) operands live corr) state = (none, next)) :
     ∃ (value : DataSem.Value) (cutEnabled : Bool), sptLookup dest next.locals = some value ∧
       (∀ key, key ≠ dest → sptLookup key next.locals =
         if cutEnabled then (if key ∈ operands ++ live ++ corr then sptLookup key state.locals else none)
         else sptLookup key state.locals) ∧ DataSem.SameControl state next :=
   evaluate_iAssign_lookup_of_shape (.memOp op) dest operands live corr state next
-    (iAssign_mem_shape op dest operands live corr) primitiveFrame run
+    (iAssign_mem_shape op dest operands live corr)
+    (fun args before after value run => by simpa using DataSem.doApp_controlFrame (.memOp op) args before after value run) run
 
 /-- Integer lowering emits a single assignment, including its two operand
 reversal cases. -/
@@ -208,7 +204,7 @@ theorem evaluate_iAssign_int_locals {C F : Type} (op : ClosLang.IntOp) (dest : N
   rw [shape] at run
   obtain ⟨prepared, value, cut, locals, control⟩ :=
     DataSem.evaluate_assign_locals (.intOp actualOp) dest actualOperands actualLive state next
-      (DataSem.doApp_int_frame actualOp) run
+      (fun args before after value run => by simpa using DataSem.doApp_controlFrame (.intOp actualOp) args before after value run) run
   exact ⟨actualLive, prepared, value, cut, locals, control⟩
 
 /-- A successful generated integer assignment retains every original root
@@ -222,7 +218,7 @@ theorem evaluate_iAssign_int_keepRoots {C F : Type} (op : ClosLang.IntOp) (dest 
   obtain ⟨prepared, value, cut, locals, control⟩ :=
     DataSem.evaluate_assign_locals (.intOp actualOp) dest actualOperands
       (if DataLang.opRequiresNames (.intOp op) then some (namesOfList (operands ++ live ++ corr)) else none)
-      state next (DataSem.doApp_int_frame actualOp) run
+      state next (fun args before after value run => by simpa using DataSem.doApp_controlFrame (.intOp actualOp) args before after value run) run
   intro key member different
   rw [locals, sptLookup_sptInsert_ne dest key value prepared.locals different]
   exact cutStateOpt_names_keep (DataLang.opRequiresNames (.intOp op)) (operands ++ live ++ corr)
@@ -241,7 +237,7 @@ theorem evaluate_iAssign_int_exactLocals {C F : Type} (op : ClosLang.IntOp) (des
   rw [shape] at run
   exact DataSem.evaluate_assign_locals (.intOp actualOp) dest actualOperands
     (if DataLang.opRequiresNames (.intOp op) then some (namesOfList (operands ++ live ++ corr)) else none)
-    state next (DataSem.doApp_int_frame actualOp) run
+    state next (fun args before after value run => by simpa using DataSem.doApp_controlFrame (.intOp actualOp) args before after value run) run
 
 /-- Lookup after a successful generated integer assignment is the new value
 at the destination and the optional compiler root cut everywhere else. -/
@@ -397,7 +393,7 @@ theorem evaluate_iAssign_word_lookup {C F : Type} (op : ClosLang.WordOp) (dest :
     rw [shape] at run
     obtain ⟨prepared, value, cut, locals, _⟩ :=
       DataSem.evaluate_assign_locals (.wordOp actualOp) dest actualOperands none state next
-        (DataSem.doApp_word_frame actualOp) run
+        (fun args before after value run => by simpa using DataSem.doApp_controlFrame (.wordOp actualOp) args before after value run) run
     simp [DataSem.cutStateOpt] at cut
     subst prepared
     refine ⟨value, false, ?_, ?_, control⟩
@@ -413,7 +409,7 @@ theorem evaluate_iAssign_word_lookup {C F : Type} (op : ClosLang.WordOp) (dest :
     have midLocals := evaluate_makeSpace_names_locals amount (operands ++ live ++ corr) state mid firstRun
     obtain ⟨prepared, value, cut, locals, _⟩ :=
       DataSem.evaluate_assign_locals (.wordOp actualOp) dest actualOperands none mid next
-        (DataSem.doApp_word_frame actualOp) secondRun
+        (fun args before after value run => by simpa using DataSem.doApp_controlFrame (.wordOp actualOp) args before after value run) secondRun
     simp [DataSem.cutStateOpt] at cut
     subst prepared
     refine ⟨value, true, ?_, ?_, control⟩
@@ -438,7 +434,7 @@ theorem evaluate_iAssign_ffi_lookup {C F : Type} (name : Basis.Pure.MlString.MlS
   rw [shape] at run
   obtain ⟨prepared, value, cut, locals, control⟩ :=
     DataSem.evaluate_assign_locals (.ffi name) dest operands (some (namesOfList (operands ++ live ++ corr)))
-      state next (DataSem.doApp_ffi_frame name) run
+      state next (fun args before after value run => by simpa using DataSem.doApp_controlFrame (.ffi name) args before after value run) run
   refine ⟨value, ?_, ?_, control⟩
   · simp [locals, sptLookup_sptInsert_same]
   · intro key different
@@ -456,7 +452,7 @@ theorem evaluate_iAssign_global_lookup {C F : Type} (op : ClosLang.GlobOp) (dest
     cases op <;> simp [iAssign, DataLang.opRequiresNames, DataLang.opSpaceReset, DataSpace.opSpaceReq]
   rw [shape] at run
   obtain ⟨prepared, value, cut, locals, control⟩ :=
-    DataSem.evaluate_assign_locals (.globOp op) dest operands none state next (DataSem.doApp_global_frame op) run
+    DataSem.evaluate_assign_locals (.globOp op) dest operands none state next (fun args before after value run => by simpa using DataSem.doApp_controlFrame (.globOp op) args before after value run) run
   simp [DataSem.cutStateOpt] at cut
   subst prepared
   refine ⟨value, ?_, ?_, control⟩
@@ -694,14 +690,11 @@ theorem evaluate_iAssign_thunk_outcome {C F : Type} (op : AstHOL.ThunkOp)
     · simp [DataSem.getVar, sptLookup_sptMap, destRead, projected]
     · constructor
 
-/-- A successful memory `iAssign` establishes the continuing invariant,
-assuming its primitive frame. -/
-theorem evaluate_iAssign_mem_outcome_of_frame {C F : Type} (op : ClosLang.MemOp)
+/-- A successful memory `iAssign` establishes the continuing invariant. -/
+theorem evaluate_iAssign_mem_outcome {C F : Type} (op : ClosLang.MemOp)
     (target : DataSem.State C F) (source next : BviSem.BviState C F)
     (operands live corr : List Nat) (env : List BvlSem.Value)
     (args : List DataSem.Value) (dest : Nat) (result : BvlSem.Value)
-    (primitiveFrame : ∀ (args : List DataSem.Value) (before after : DataSem.State C F) (value : DataSem.Value),
-      DataSem.doApp (.memOp op) args before = .val (value, after) → DataSem.SameLocalControl before after)
     (related : stateRel source target)
     (vars : DataProps.varCorr env corr (sptMap dataToBviValue target.locals))
     (livePresent : ∀ key ∈ live, sptLookup key target.locals ≠ none)
@@ -717,7 +710,7 @@ theorem evaluate_iAssign_mem_outcome_of_frame {C F : Type} (op : ClosLang.MemOp)
     evaluate_iAssign_success (.memOp op) target source operands live corr env args dest result next
       (by simp) (by simp) related vars livePresent read run
   obtain ⟨_, cutEnabled, _, lookupOther, control⟩ :=
-    evaluate_iAssign_mem_lookup_of_frame op dest operands live corr target targetNext primitiveFrame execution
+    evaluate_iAssign_mem_lookup op dest operands live corr target targetNext execution
   have keeps : ∀ key ∈ operands ++ live ++ corr, key ≠ dest →
       sptLookup key targetNext.locals = sptLookup key target.locals := by
     intro key member different
@@ -924,7 +917,7 @@ theorem evaluate_iAssign_label_lookup {C F : Type} (label : Nat) (dest : Nat)
     simp [iAssign, DataLang.opRequiresNames, DataLang.opSpaceReset, DataSpace.opSpaceReq]
   rw [shape] at run
   obtain ⟨prepared, value, cut, locals, control⟩ :=
-    DataSem.evaluate_assign_locals (.label label) dest operands none state next (DataSem.doApp_label_frame label) run
+    DataSem.evaluate_assign_locals (.label label) dest operands none state next (fun args before after value run => by simpa using DataSem.doApp_controlFrame (.label label) args before after value run) run
   simp [DataSem.cutStateOpt] at cut
   subst prepared
   refine ⟨value, ?_, ?_, control⟩
