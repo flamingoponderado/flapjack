@@ -130287,5 +130287,17 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Compared the source-local theorem with the typed replay thunk_tag_bits_lemma_typed: the Evaluated tag, shift by three, bitwise OR with six, and equality to fourteen are preserved for every positive word width. BitVec width is the HOL word carrier; the Lean theorem is used in the allocated-thunk header proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
+  "hol_name": "memory_rel_Number_bignum_header",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/NumberHeader.lean",
+  "lean_name": "memoryRel_bignumHeader",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison with memory_rel_Number_bignum_header_typed in data_to_word_memory_repr_probe.out. The complete original conjunction of premises, location equality, real-address lookup, header encodability and memory result agree. The independent unused existential types β, γ and δ are represented by three independent Lean types with Nonempty instances, matching HOL type inhabitation; their quantifier order is retained. The sign bit inlines multiword b2w_def and b2n_def as if-then-else over word values 1 and 0. The standalone store uses canonical finite support, and positive-width BitVec represents HOL words. The private helper additionally proves domain membership for the pending thunk proof; it is not the tagged statement."
 }
 ]
