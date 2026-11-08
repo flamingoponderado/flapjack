@@ -322,6 +322,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AdjustedSet
 import Flapjack.Compiler.Backend.DataToWord.Proofs.JoinEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Total
 import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateCode
+import Flapjack.Compiler.Backend.Semantics.NatListBounded
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Code
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallLookup
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.StoreEach
@@ -813,6 +814,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallLookup
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallClock
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
+import Flapjack.Compiler.Backend.ListFoldTotal
 import Flapjack.Compiler.Backend.BvlInline.Proofs.StateRel
 import Flapjack.Compiler.Backend.BvlInline.Proofs.ApplySimulation
 import Flapjack.Compiler.Backend.BvlInline.Proofs.RemoveTicksSimulation
@@ -2657,6 +2659,7 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionInitialSeed
 import Flapjack.Compiler.Backend.RegAlloc.ProductionStackTransition
 import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTransition
 import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTraversal
+import Flapjack.Compiler.Backend.RegAlloc.ProductionLookupFirst
 import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyCache
 import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyQuery
 import Flapjack.Compiler.Backend.RegAlloc.ProductionMoveRevival

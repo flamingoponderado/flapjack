@@ -61,12 +61,6 @@ private theorem append_related (f : HolFiniteMapExact Nat Nat) {xs ys xs' ys' : 
   | nil => exact second
   | cons head tail ih => exact .cons head ih
 
-private theorem reverse_related (f : HolFiniteMapExact Nat Nat) {xs ys : List Value}
-    (related : List.Forall₂ (valueRel f) xs ys) : List.Forall₂ (valueRel f) xs.reverse ys.reverse := by
-  induction related with
-  | nil => exact .nil
-  | cons head tail ih => simpa using append_related f ih (.cons head .nil)
-
 /-- Flapjack infrastructure: a well-formed call-block constructor frame
 preserves ordinary simulation of its child. -/
 theorem evaluate_frame_core {C F : Type} (loc tag : Nat) (left right : List Nat) (child : CallBlock)

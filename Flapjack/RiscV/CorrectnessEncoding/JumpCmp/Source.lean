@@ -20,18 +20,7 @@ theorem source_guard (c : Cmp) (r : Nat) (ri : HolRegImm 64) (a : BitVec 64)
   rw [lo,hi,align] at offset
   exact ⟨⟨of_decide_eq_true offset.1.1,of_decide_eq_true offset.1.2⟩,
     of_decide_eq_true offset.2,original.2⟩
-theorem reg_nonzero (r : Nat) (guard : asmRegOkExact r riscvConfig = true) :
-    BitVec.ofNat 5 r ≠ 0#5 := by
-  have g : r < 32 ∧ r ≠ 0 := by
-    have g := guard
-    simp [asmRegOkExact,riscvConfig] at g
-    exact ⟨of_decide_eq_true g.1,g.2.1⟩
-  intro eq
-  have n := congrArg BitVec.toNat eq
-  simp only [BitVec.toNat_ofNat] at n
-  norm_num at n
-  rw [Nat.mod_eq_of_lt g.1] at n
-  exact g.2 n
+
 theorem reg_read (r : Nat) (s : AsmState 64) (ms : riscv_state)
     (guard : asmRegOkExact r riscvConfig = true)
     (rel : targetStateRel riscvTarget s ms) :

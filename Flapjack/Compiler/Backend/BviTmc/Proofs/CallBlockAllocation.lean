@@ -255,19 +255,6 @@ theorem evaluate_wrapper_success_related {C F : Type}
   exact ⟨value, refs, evaluate_wrapper_success tag left right child dest env state next
     leftWf rightWf value refs workerRun finalise, related, heaps', unchanged', still'⟩
 
-private theorem reverse_related (f : HolFiniteMapExact Nat Nat) {xs ys : List Value}
-    (related : List.Forall₂ (valueRel f) xs ys) : List.Forall₂ (valueRel f) xs.reverse ys.reverse := by
-  induction related with
-  | nil => exact .nil
-  | cons head tail ih =>
-    have appendRelated : ∀ {a b c d : List Value}, List.Forall₂ (valueRel f) a b →
-        List.Forall₂ (valueRel f) c d → List.Forall₂ (valueRel f) (a ++ c) (b ++ d) := by
-      intro a b c d first second
-      induction first with
-      | nil => exact second
-      | cons h t rest => exact .cons h rest
-    simpa using appendRelated ih (.cons head .nil)
-
 /-- Flapjack infrastructure: the wrapper simulation for a constructor frame,
 using the original auxiliary induction hypothesis for the child. The HOL
 measure and the separate ordinary and worker conclusions are omitted. -/

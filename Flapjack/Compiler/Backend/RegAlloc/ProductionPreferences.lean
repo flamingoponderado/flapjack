@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.RegAlloc.ProductionHandledColourReads
+import Flapjack.Compiler.Backend.RegAlloc.ProductionLookupFirst
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc Translator.Monadic.MonadBase
@@ -9,18 +10,6 @@ def ProductionMoveTableRel (native : Spt (List Nat))
     (production : CakeNodeMap (List Nat)) : Prop :=
   ∀ key, production.get key = sptLookup key native
 
-private theorem moveLookup_first (key : Nat) (entries : NatInfoMap (List Nat)) :
-    lookupNatInfo key entries = sptAListLookup key entries := by
-  induction entries with
-  | nil => rfl
-  | cons entry rest ih =>
-    obtain ⟨other, value⟩ := entry
-    simp only [lookupNatInfo, sptAListLookup, Bool.beq_eq_decide_eq]
-    by_cases equal : key = other
-    · subst other
-      simp
-    · simp [equal, Ne.symm equal, ih]
-
 /-- The same association input constructs both table carriers, including
 duplicate first-binding behavior. The executed moves-to-table and resorting
 producer still requires its own correspondence proof. -/
@@ -29,7 +18,7 @@ theorem moveTableCodec_production (dimension : Nat) (entries : NatInfoMap (List 
       (CakeNodeMap.ofNatInfoMap dimension entries) := by
   intro key
   rw [CakeNodeMap.get_ofNatInfoMap, sptLookup_sptFromAList]
-  exact moveLookup_first key entries
+  exact lookup_first key entries
 
 /-- Read-only root traversal agrees completely. Parent and tag bounds follow
 from the original invariant, and recursion follows its strictly smaller node.

@@ -28,6 +28,22 @@ inductive valueRel (f : HolFiniteMapExact Nat Nat) : Value → Value → Prop wh
   | codePtr (n : Nat) : valueRel f (.codePtr n) (.codePtr n)
   | refPtr (n m : Nat) (b : Bool) : f.lookup n = some m → valueRel f (.refPtr b n) (.refPtr b m)
 
+/-- Flapjack infrastructure: the value relation is preserved when both lists are
+reversed. No separately named HOL original. -/
+theorem reverse_related (f : HolFiniteMapExact Nat Nat) {xs ys : List Value}
+    (related : List.Forall₂ (valueRel f) xs ys) :
+    List.Forall₂ (valueRel f) xs.reverse ys.reverse := by
+  induction related with
+  | nil => exact .nil
+  | cons head tail ih =>
+    have appendRelated : ∀ {a b c d : List Value}, List.Forall₂ (valueRel f) a b →
+        List.Forall₂ (valueRel f) c d → List.Forall₂ (valueRel f) (a ++ c) (b ++ d) := by
+      intro a b c d first second
+      induction first with
+      | nil => exact second
+      | cons h t rest => exact .cons h rest
+    simpa using appendRelated ih (.cons head .nil)
+
 theorem holFmapAsFiniteSupportParamWitness_refRel_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 

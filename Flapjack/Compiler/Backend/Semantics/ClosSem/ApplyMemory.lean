@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
+import Flapjack.Compiler.Backend.Semantics.NatListBounded
 import Flapjack.SemanticPrimitivesHOL.Array
 import Flapjack.SemanticPrimitivesHOL.Thunk
 import Flapjack.SemanticPrimitivesHOL.Compare
@@ -7,18 +8,6 @@ import Mathlib.Data.Nat.Find
 /-! Memory cases of the closure primitive dispatcher. -/
 namespace Flapjack.Compiler.Backend.ClosSem
 open Flapjack.SemanticPrimitivesHOL Flapjack.Basis.Pure.MlString
-
-private theorem natList_bounded (keys : List Nat) : ∃ bound, ∀ key ∈ keys, key < bound := by
-  induction keys with
-  | nil => exact ⟨0, by simp⟩
-  | cons first rest ih =>
-    obtain ⟨bound, h⟩ := ih
-    refine ⟨max first bound + 1, ?_⟩
-    intro key member
-    rcases List.mem_cons.mp member with rfl | member
-    · omega
-    · have := h key member
-      omega
 
 /-- A finite-support reference map always has an unused natural index. -/
 theorem unusedRef_exists (refs : HolFiniteMapExact Nat (Ref Value)) : ∃ index, refs.lookup index = none := by
