@@ -128340,6 +128340,24 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "do_app_err_safe_peak_swap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/HeapSwap.lean",
+  "lean_name": "doApp_err_safePeakSwap",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_err_safe_peak_swap_typed: binders op, vs, s, e, safe, peak; independent compiler and FFI state types; the same error result before and after the safety and peak update. Derived from doApp_error_resource. Inherits reals_as_rational_cuts through doApp (SOUNDNESS item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "do_app_err_sm_safe_peak_swap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/HeapSwap.lean",
+  "lean_name": "doApp_err_stackSafePeakSwap",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_err_sm_safe_peak_swap_typed: binders op, vs, s, e, smx, safe, peak; independent compiler and FFI state types; the same error result before and after the stack, safety and peak update. Derived from doApp_error_resource. Inherits reals_as_rational_cuts through doApp (SOUNDNESS item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
   "hol_name": "size_of_heap_with_safe",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/HeapSwap.lean",
   "lean_name": "sizeOfHeap_with_safe",
