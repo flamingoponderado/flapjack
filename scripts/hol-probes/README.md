@@ -199,6 +199,9 @@ environment lookup and restriction, recursive closure construction, and the
 full-application length theorem. These captures support source review, not
 closure-evaluator or compiler correctness.
 
+`backend_props_state_oracle_probe.out` captures the polymorphic state-oracle
+constructors and a multi-step example also checked by `StateCompilerParity`.
+
 `flat_to_clos_relation_probe.out` captures the original typed value and
 environment relation rules, induction and cases, state and store relations,
 polymorphic incremental and installation relations, complete compiler

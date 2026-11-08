@@ -16881,6 +16881,38 @@
     "reviewer": "Compared original typed theorem: esgc_free of SmartCons is equivalent to EVERY esgc_free on its input. esgcFreeList_iff proves the structural list helper expresses EVERY. Typed original captured in flat_to_clos_globals_probe.out."
   },
   {
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+  "hol_name": "syntax_to_full_oracle_def",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/StateCompiler.lean",
+  "lean_name": "syntaxToFullOracle",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the independently polymorphic carriers, arguments and clauses with the typed syntax_to_full_oracle_typed capture in backend_props_state_oracle_probe.out and original definition."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+  "hol_name": "state_orac_states_def",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/StateCompiler.lean",
+  "lean_name": "stateOracStates",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the independently polymorphic carriers, arguments and clauses with the typed state_orac_states_typed capture in backend_props_state_oracle_probe.out and original definition."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+  "hol_name": "state_co_progs_def",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/StateCompiler.lean",
+  "lean_name": "stateCoProgs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the independently polymorphic carriers, arguments and clauses with the typed state_co_progs_typed capture in backend_props_state_oracle_probe.out and original definition."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+  "hol_name": "add_state_co_def",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/StateCompiler.lean",
+  "lean_name": "addStateCo",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the independently polymorphic carriers, arguments and clauses with the typed add_state_co_typed capture in backend_props_state_oracle_probe.out and original definition."
+},
+{
     "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "state_co_def",
     "lean_path": "Flapjack/Compiler/Backend/BackendProps/StateCompiler.lean", "lean_name": "stateCo",
     "statement_status": "reviewed_exact",
