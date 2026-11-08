@@ -11,3 +11,5 @@ val _ = show "delete=" sptreeTheory.delete_def;
 val _ = show "size=" sptreeTheory.size_def;
 val _ = show "union=" sptreeTheory.union_def;
 val _ = show "from_alist=" sptreeTheory.fromAList_def;
+val _ = show "inter=" sptreeTheory.inter_def;
+val _ = show "mk_wf=" sptreeTheory.mk_wf_def;

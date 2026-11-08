@@ -1041,11 +1041,9 @@ theorem sptDomain_sptUnion {α : Type} (left right : Spt α) :
   funext key
   exact propext (sptMem_sptUnion left right key)
 
-/-- HOL `sptree$inter` (`HOL/src/finite_maps/sptreeScript.sml:272-291`): keep
-only keys present in both trees, with the left operand's value.  HOL's declared
-type is heterogeneous (`'a num_map -> 'b num_map -> 'a num_map`; the second
-tree's values are never read), so this rendering is generic in both value
-types.  Untagged Flapjack infrastructure (source outside `cakeml/`). -/
+/-- Keep keys present in both trees, with the left operand's value. The two
+trees may have different value types. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "inter_def"]
 def sptInter {α β : Type} : Spt α → Spt β → Spt α
   | .ln, _ => .ln
   | .ls value, right =>

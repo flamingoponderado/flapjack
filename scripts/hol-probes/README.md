@@ -19,9 +19,10 @@ evaluator equations, guard-correctness theorem, and pattern compiler
 correctness theorem.
 
 `data_resource_mono_probe.out` captures the exported data-semantics primitive
-and evaluator monotonicity statements, resource-field swap theorems, and the
-heap-size safety-update theorem, with inferred configuration, FFI, value, and
-result carriers. These captures alone do not review the evaluator and primitive
+and evaluator monotonicity statements, resource-field swap theorems, the
+heap-size safety-update theorem, evaluator-control definitions, and local
+cut-state swap replays, with inferred configuration, FFI, value, and result
+carriers. These captures alone do not review the evaluator and primitive
 dependencies or establish HOL-to-Lean equivalence.
 
 `data_to_word_gc_stack_probe.out` captures the exported `flat_PERM_extract_stack`,
@@ -377,8 +378,8 @@ the same cases; these checks do not establish full dispatcher correspondence.
 Regenerate with `HOL_PROBE_ONLY=data_sem_apply_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `sptree_delete_definition_probe.out` also captures the polymorphic sparse-tree
-size, union, and association-list construction definitions used by data
-heap accounting and installation.
+size, union, association-list construction, intersection and well-formedness
+construction definitions used by data heap accounting and state cuts.
 Regenerate with `HOL_PROBE_ONLY=sptree_delete_definition_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `mlstring_length_probe.out` captures the typed `strlen` definition and the
@@ -397,6 +398,12 @@ Regenerate with `HOL_PROBE_ONLY=integer_division_probeScript.sml scripts/hol-pro
 definitions. It also replays the local growth-bound lemma and the complete
 original `size_of` equations, which HOL subsequently rebinds to a simplified theorem.
 Regenerate with `HOL_PROBE_ONLY=data_sem_space_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`data_sem_evaluate_original_probe.out` replays the original evaluator
+equations before HOL rebinds them to remove the clock clamps. Each equation
+is parsed and generalized separately to retain its independently typed
+pattern variables.
+Regenerate with `HOL_PROBE_ONLY=data_sem_evaluate_original_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `data_sem_limits_probe.out` captures the typed operation-limit definitions,
 their state-update wrapper, and original array-length and nullary-tag boundary

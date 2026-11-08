@@ -116902,8 +116902,8 @@
     "lean_name": "opRequiresNames",
     "hol_path": "cakeml/compiler/backend/dataLangScript.sml",
     "hol_name": "op_requires_names_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source syntax or clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared op_requires_names_typed: the reviewed reset predicate, FFI, installation, copy-byte, XOR and string-comparison cases agree; HOL constructor existentials are rendered by pattern matching."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataLang/Syntax.lean",
@@ -127927,32 +127927,32 @@
   "hol_name": "call_env_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "callEnv",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared call_env_typed: binders args, size and s, independent state types, stack maximum and safety let bindings, and the ordered four-field update. HOL the F is rendered by Option.getD false."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "cut_env_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "cutEnv",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_env_typed: independent tree value type, subset test and both branches match. HOL domain membership is rendered via the reviewed domain_lookup theorem and sptMem; intersection and mk_wf use the reviewed sparse-tree definitions."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "cut_state_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "cutState",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_state_typed: independent compiler and FFI state types, cut environment and locals update agree; Option.map renders the HOL option case."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "cut_state_opt_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "cutStateOpt",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_state_opt_typed: independent compiler and FFI state types, absent-name identity and present-name cut branches agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -127975,48 +127975,48 @@
   "hol_name": "find_code_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "findCode",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared find_code_typed: direct and indirect lookup, arity checks, failures and independently polymorphic code and frame payloads agree. HOL FRONT is rendered by List.dropLast."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "flush_state_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "flushState",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flush_state_typed: both Boolean cases and their locals, stack and locals-size updates agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "install_sfs_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "installSfs",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared install_sfs_typed: installation clears safety and all other operations retain it, matching the HOL Boolean conjunction."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "isBool_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "isBool",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared is_bool_typed: the empty-block tag test and all other value cases agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "jump_exc_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "jumpExc",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared jump_exc_typed: bounds guard, stack cases and updates agree. HOL LASTN is rendered by List.drop with length subtraction, using the pinned LASTN_DROP_UNCOND identity."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "pop_env_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "popEnv",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pop_env_typed: empty stack, environment frame and exception frame cases and their state updates agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128031,8 +128031,8 @@
   "hol_name": "push_env_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "pushEnv",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared push_env_typed: both frame constructors, stack and safety calculations, and handler update agree. The merged false case writes the old handler; HOL the F is Option.getD false."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128047,8 +128047,8 @@
   "hol_name": "set_vars_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "setVars",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared set_vars_typed: left-biased tree union and zipped bindings agree; pinned HOL ZIP and Lean List.zip both truncate on unequal lengths."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128111,8 +128111,9 @@
   "hol_name": "evaluate_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Evaluate.lean",
   "lean_name": "evaluate",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete original line-1349 equations in data_sem_evaluate_original_probe, kernel-derived from the exported rebinding and fix_clock_evaluate: all eleven clauses, the three fix_clock clamps, unclamped tail calls and independently quantified state types. Lean is curried; ALL_DISTINCT renders as Nodup and HD with length one as a singleton pattern. Inherits reals_as_rational_cuts through doApp (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128135,8 +128136,8 @@
   "hol_name": "add_space_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Heap.lean",
   "lean_name": "addSpace",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared add_space_typed and its source overloads: independent compiler and FFI types, space reset, safety conjunction and heap peak update agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128340,6 +128341,30 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "cut_state_opt_with_swap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/CutSwap.lean",
+  "lean_name": "cutStateOpt_withSwap",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_state_opt_with_swap_replay_typed: free variables names_opt, s, smx, safe, peak; independent state types; and the option map of the same three-field update."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "cut_state_opt_stack_max",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/CutSwap.lean",
+  "lean_name": "cutStateOpt_stackMax",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_state_opt_stack_max_replay_typed: free variables names_opt, s, s2; the single successful-cut premise; and preserved stack maximum."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "cut_state_opt_swap_input",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/CutSwap.lean",
+  "lean_name": "cutStateOpt_swapInput",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cut_state_opt_swap_input_replay_typed: free variables names_opt, s, s2, safe, peak; one shared state type; the single successful-cut premise; and the record equality showing the stack-maximum update is redundant after a cut. Derived from the reviewed cut_state_opt_stack_max."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
   "hol_name": "do_app_safe_peak_swap",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ResourceSwap.lean",
   "lean_name": "doApp_safePeakSwap",
@@ -128510,32 +128535,32 @@
   "hol_name": "get_var_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/State.lean",
   "lean_name": "getVar",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared get_var_typed: independent tree payload type and lookup agree; the point-free HOL equation is eta-expanded."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "get_vars_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/State.lean",
   "lean_name": "getVars",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared get_vars_typed: independent tree payload type, empty-list result and both ordered option cases agree; Lean uses option binds for the nested cases."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "initial_state_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/State.lean",
   "lean_name": "initialState",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared initial_state_typed: all eight binders, independent compiler and FFI types, and every initialized state field agree. HOL if stamps then T else F is rendered as stamps."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "set_var_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/State.lean",
   "lean_name": "setVar",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared set_var_typed: independent compiler and FFI state types and insertion into locals agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128604,11 +128629,19 @@
 },
 {
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "inter_def",
+  "lean_path": "Flapjack/Misc/Sptree.lean",
+  "lean_name": "sptInter",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed inter capture: heterogeneous value types, all sixteen left-biased clauses and mk_BN/mk_BS rebuilding; HOL prints the LN clause with the isEmpty overload."
+},
+{
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
   "hol_name": "mk_wf_def",
   "lean_path": "Flapjack/Misc/Sptree/MkWf.lean",
   "lean_name": "sptMkWf",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed mk_wf capture: the four recursive clauses use the reviewed smart constructors; HOL prints the LN clause with the isEmpty overload."
 },
 {
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml",

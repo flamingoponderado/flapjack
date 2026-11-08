@@ -746,7 +746,7 @@ run_probe data_sem_apply_probeScript.sml data_sem_apply_probe.out \
   value_number_type value_word64_type value_block_type value_code_ptr_type value_ref_ptr_type thunk_bad_ref_type thunk_not_thunk_type thunk_is_thunk_type bool_value unit_value value_to_list list_to_value with_fresh_timestamp check_limit dest_bool dest_thunk bad_thunk_update is_closure value_equality integer_application word_application build_part build_sequence build_constant finalise_cons do_app_aux do_app_clock arch_size small_num check_res check_res_imp bignum_digits bignum_size no_thunks_in_refs consume_space extract_stack global_to_vs allowed_op size_of_stack_frame size_of_stack nullary_cons nonempty_cons invalid_list_length integer_add unsupported_copy "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
 
 run_probe sptree_delete_definition_probeScript.sml sptree_delete_definition_probe.out \
-  mk_bn mk_bs delete size union from_alist "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend"
+  mk_bn mk_bs delete size union from_alist inter mk_wf "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend"
 
 run_probe data_sem_limits_probeScript.sml data_sem_limits_probe.out \
   lim_safe_part lim_safe do_lim_safe ref_array_inside ref_array_boundary ref_array_negative ref_array_malformed nullary_tag_boundary "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
@@ -756,6 +756,9 @@ run_probe data_space_req_probeScript.sml data_space_req_probe.out \
 
 run_probe data_sem_space_probeScript.sml data_sem_space_probe.out \
   op_space_reset size_of check_res_size_of_replay size_of_initial_cons_replay size_of_original_typed_replay stack_to_vs size_of_heap size_of_heap_args space_consumed do_space "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
+
+run_probe data_sem_evaluate_original_probeScript.sml data_sem_evaluate_original_probe.out \
+  evaluate_original_typed_replay "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe integer_division_probeScript.sml integer_division_probe.out \
   int_div int_mod "$hol_dir/src/integer/integerScript.sml" "$cake_dir/compiler/backend"
@@ -8424,6 +8427,11 @@ run_probe data_resource_mono_probeScript.sml data_resource_mono_probe.out \
   do_app_err_safe_peak_swap_typed do_app_err_sm_safe_peak_swap_typed do_app_safe_peak_swap_typed do_app_sm_safe_peak_swap_typed \
   size_of_heap_with_safe_typed \
   do_app_aux_safe_peak_swap_typed do_app_aux_sm_safe_peak_swap_typed \
+  cut_env_typed cut_state_typed cut_state_opt_typed call_env_typed \
+  get_var_typed get_vars_typed set_var_typed set_vars_typed flush_state_typed \
+  push_env_typed pop_env_typed jump_exc_typed find_code_typed is_bool_typed install_sfs_typed initial_state_typed \
+  add_space_typed op_requires_names_typed fix_clock_evaluate_typed \
+  cut_state_opt_with_swap_replay_typed cut_state_opt_stack_max_replay_typed cut_state_opt_swap_input_replay_typed \
   "$cake_dir/compiler/backend/semantics/dataPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_mti_collect_args_probeScript.sml clos_mti_collect_args_probe.out \
