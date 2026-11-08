@@ -24,7 +24,9 @@ heap-size safety-update theorem, evaluator-control definitions, and local
 cut-state swap replays, and the local evaluator resource-swap theorem replayed
 from its exported consequences. The latter exposes an independent type for an
 unused existential in its false branch. Captures include inferred configuration,
-FFI, value, and result carriers. These captures alone do not review the evaluator and primitive
+FFI, value, and result carriers. The same probe records the polymorphic
+semantic result-mapping definitions and inversion lemmas used by the primitive
+swap proof. These captures alone do not review the evaluator and primitive
 dependencies or establish HOL-to-Lean equivalence.
 
 `data_to_word_gc_stack_probe.out` captures the exported `flat_PERM_extract_stack`,

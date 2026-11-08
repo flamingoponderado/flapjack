@@ -1,4 +1,4 @@
-load "preamble"; load "dataPropsTheory";
+load "preamble"; load "dataPropsTheory"; load "semanticPrimitivesPropsTheory";
 open HolKernel Parse bossLib preamble dataPropsTheory;
 val _ = new_theory "flapjack_data_resource_mono_probe";
 val _ = Globals.linewidth := 1000000;
@@ -101,3 +101,10 @@ val consumeSpaceLocals = prove (``dataSem$consume_space x (y with locals := z) =
   simp [dataSemTheory.consume_space_def] \\ every_case_tac \\ simp []);
 val _ = show "consume_space_with_locals_replay_typed" consumeSpaceLocals;
 val _ = show "consume_space_add_space_typed" consume_space_add_space;
+val _ = show "do_app_aux_with_locals_typed" do_app_aux_with_locals;
+val _ = show "map_error_result_typed" semanticPrimitivesPropsTheory.map_error_result_def;
+val _ = show "map_result_typed" semanticPrimitivesPropsTheory.map_result_def;
+val _ = show "map_error_result_Rtype_error_typed" semanticPrimitivesPropsTheory.map_error_result_Rtype_error;
+val _ = show "map_error_result_I_typed" semanticPrimitivesPropsTheory.map_error_result_I;
+val _ = show "map_result_Rval_typed" semanticPrimitivesPropsTheory.map_result_Rval;
+val _ = show "map_result_Rerr_typed" semanticPrimitivesPropsTheory.map_result_Rerr;

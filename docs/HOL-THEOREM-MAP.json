@@ -128372,6 +128372,54 @@
   "reviewer": "Compared cut_state_opt_with_const_typed: free variables x, y, z, k, lsz with one state type; the three option-map commutations for stack, clock and locals-size updates in source order."
 },
 {
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "map_error_result_def",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/ResultMap.lean",
+  "lean_name": "mapErrorResult",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared map_error_result_typed: independent input and output payload types; raise payloads are mapped, and abort reasons are retained and retyped."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "map_error_result_Rtype_error",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/ResultMap.lean",
+  "lean_name": "mapErrorResult_abort",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared map_error_result_Rtype_error_typed: free variables f, e, a over independent payload types; the source quantifies over any abort reason despite the theorem name; the abort-preservation equivalence."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "map_error_result_I",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/ResultMap.lean",
+  "lean_name": "mapErrorResult_id",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared map_error_result_I_typed: one payload type; mapping HOL I, rendered as id, is the identity."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "map_result_def",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/ResultMap.lean",
+  "lean_name": "mapResult",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared map_result_typed: four independent value/error input/output types; successful values are mapped by f1 and errors by map_error_result f2."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "map_result_Rval",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/ResultMap.lean",
+  "lean_name": "mapResult_val",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared map_result_Rval_typed: free variables f1, f2, e, x over four independent value/error types; the success inversion with the source equality orientation."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "map_result_Rerr",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/ResultMap.lean",
+  "lean_name": "mapResult_err",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared map_result_Rerr_typed: free variables f1, f2, e, e'; the error inversion through map_error_result with the source orientation."
+},
+{
   "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
   "hol_name": "consume_space_with_stack",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ConsumeSpaceFields.lean",

@@ -48,3 +48,10 @@ cut_state_opt_with_const_typed=cut_state_opt (x :sptree$num_set option) ((y :(α
 consume_space_with_stack_replay_typed=consume_space (x :num) ((y :(α, β) dataSem$state) with stack := (z :stack list)) = OPTION_MAP (λ(s :(α, β) dataSem$state). s with stack := z) (consume_space x y)
 consume_space_with_locals_replay_typed=consume_space (x :num) ((y :(α, β) dataSem$state) with locals := (z :v sptree$num_map)) = OPTION_MAP (λ(s :(α, β) dataSem$state). s with locals := z) (consume_space x y)
 consume_space_add_space_typed=∃(sf :bool) (hp :num). consume_space (k :num) (add_space ((t :(α, β) dataSem$state) with locals := (env1 :v sptree$num_map)) k) = SOME (t with <|locals := env1; space := (0 :num); safe_for_space := sf; peak_heap_length := hp|>)
+do_app_aux_with_locals_typed=do_app_aux (op :closLang$op) (vs :v list) ((s :(α, β) dataSem$state) with locals := (z :v sptree$num_map)) = map_result (λ((x :v),(y :(α, β) dataSem$state)). (x,y with locals := z)) (I :v -> v) (do_app_aux op vs s)
+map_error_result_typed=(∀(f :β -> α) (e :β). map_error_result f (Rraise e) = Rraise (f e)) ∧ ∀(f :β -> α) (a :abort). map_error_result f (Rabort a :β error_result) = (Rabort a :α error_result)
+map_result_typed=(∀(f1 :γ -> α) (f2 :δ -> β) (v :γ). map_result f1 f2 (Rval v :(γ, δ) result) = (Rval (f1 v) :(α, β) result)) ∧ ∀(f1 :γ -> α) (f2 :δ -> β) (e :δ error_result). map_result f1 f2 (Rerr e :(γ, δ) result) = (Rerr (map_error_result f2 e) :(α, β) result)
+map_error_result_Rtype_error_typed=map_error_result (f :β -> α) (e :β error_result) = (Rabort (a :abort) :α error_result) ⇔ e = (Rabort a :β error_result)
+map_error_result_I_typed=map_error_result (I :α -> α) (e :α error_result) = e
+map_result_Rval_typed=map_result (f1 :γ -> α) (f2 :δ -> β) (e :(γ, δ) result) = (Rval (x :α) :(α, β) result) ⇔ ∃(y :γ). e = (Rval y :(γ, δ) result) ∧ x = f1 y
+map_result_Rerr_typed=map_result (f1 :γ -> α) (f2 :δ -> β) (e :(γ, δ) result) = (Rerr (e' :β error_result) :(α, β) result) ⇔ ∃(a :δ error_result). e = (Rerr a :(γ, δ) result) ∧ map_error_result f2 a = e'
