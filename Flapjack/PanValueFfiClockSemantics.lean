@@ -967,6 +967,173 @@ theorem evalPanValueFfiClockCodeCall_callee_returnedShapeMismatch_error
   simp [evalPanValueFfiClockCodeCall, panValueCallArgumentsValue, Option.elim_some,
     harguments, hlookup, hclock, hbody, hmismatch, decPanClock]
 
+/-! ### Globals shape stability
+
+Cake's `is_valid_value` (`panSemScript.sml:469-474`) compares `shape_of` only,
+so a `Global` call destination is checked against the caller state's binding
+shape.  The relation below records that two global maps bind the same names
+with the same value shapes.  The main invariant says every clocked code-map
+evaluation preserves it, which lets the Call clause validate a `Global`
+destination against the callee post-state globals exactly as HOL validates it
+against the caller state (`panSemScript.sml:657-693`).  This closes #1250
+report item 7. -/
+
+/-- Two global maps bind the same names with the same value shapes.  This is
+    exactly what `is_valid_value` (`panSemScript.sml:469-474`) can observe,
+    since it compares `shape_of` and requires the binding to exist. -/
+def panValueGlobalsShapeStable (structs : StructContext)
+    (before after : VarName → Option (PanValue α)) : Prop :=
+  ∀ name, (before name).map (panValueShape structs) =
+    (after name).map (panValueShape structs)
+
+/-- The globals component of a control result. -/
+def panValueControlGlobals {α : Type u} {σ : Type v} :
+    PanValueFfiControlResult α σ → (VarName → Option (PanValue α))
+  | .normal _ globals _ _ => globals
+  | .error _ globals _ _ => globals
+  | .returned _ globals _ _ _ => globals
+  | .raised _ globals _ _ _ _ => globals
+  | .broke _ globals _ _ => globals
+  | .continued _ globals _ _ => globals
+  | .finalFfi _ globals _ _ _ => globals
+
+/-- Every `some` control result keeps the input globals shape-stable.  Stated
+    over the result pair so case splits can consume the equation directly. -/
+def panValueFfiControlGlobalsStable (structs : StructContext)
+    (globals : VarName → Option (PanValue α))
+    (result : Option (PanValueFfiControlResult α σ)) : Prop :=
+  ∀ r, result = some r →
+    panValueGlobalsShapeStable structs globals (panValueControlGlobals r)
+
+/-- Every `some` clocked result keeps the input globals shape-stable. -/
+def panValueFfiClockGlobalsStable (structs : StructContext)
+    (globals : VarName → Option (PanValue α))
+    (result : Option (PanValueFfiClockResult α σ)) : Prop :=
+  ∀ r, result = some r →
+    match r.1 with
+    | .control c => panValueGlobalsShapeStable structs globals (panValueControlGlobals c)
+    | .timeout _ g _ _ => panValueGlobalsShapeStable structs globals g
+
+theorem panValueGlobalsShapeStable_refl (structs : StructContext)
+    (globals : VarName → Option (PanValue α)) :
+    panValueGlobalsShapeStable structs globals globals := by
+  intro name
+  rfl
+
+theorem panValueGlobalsShapeStable_symm {structs : StructContext}
+    {before after : VarName → Option (PanValue α)}
+    (h : panValueGlobalsShapeStable structs before after) :
+    panValueGlobalsShapeStable structs after before := by
+  intro name
+  exact (h name).symm
+
+theorem panValueGlobalsShapeStable_trans {structs : StructContext}
+    {first second third : VarName → Option (PanValue α)}
+    (h₁ : panValueGlobalsShapeStable structs first second)
+    (h₂ : panValueGlobalsShapeStable structs second third) :
+    panValueGlobalsShapeStable structs first third := by
+  intro name
+  exact (h₁ name).trans (h₂ name)
+
+mutual
+  theorem panShapeMatches_eq_true_iff (left right : Shape) :
+      panShapeMatches left right = true ↔ left = right := by
+    cases left with
+    | one => cases right <;> simp [panShapeMatches]
+    | named name => cases right <;> simp [panShapeMatches]
+    | comb fields =>
+        cases right with
+        | one => simp [panShapeMatches]
+        | named name => simp [panShapeMatches]
+        | comb otherFields =>
+            simp only [panShapeMatches]
+            rw [panShapeListMatches_eq_true_iff]
+            simp
+  theorem panShapeListMatches_eq_true_iff (left right : List Shape) :
+      panShapeMatches.panShapeListMatches left right = true ↔ left = right := by
+    cases left with
+    | nil => cases right <;> simp [panShapeMatches.panShapeListMatches]
+    | cons head tail =>
+        cases right with
+        | nil => simp [panShapeMatches.panShapeListMatches]
+        | cons otherHead otherTail =>
+            simp only [panShapeMatches.panShapeListMatches, Bool.and_eq_true, List.cons.injEq]
+            rw [panShapeMatches_eq_true_iff, panShapeListMatches_eq_true_iff]
+end
+
+/-- A valid `Global` assignment binds an existing value whose shape matches. -/
+theorem panValueAssignmentValid_global_true
+    (structs : StructContext) (locals : VarName → Option (PanValue α))
+    (globals : VarName → Option (PanValue α)) (name : VarName) (value : PanValue α)
+    (hvalid : panValueAssignmentValid structs locals globals .global name value = true) :
+    ∃ oldValue, globals name = some oldValue ∧
+      panShapeMatches (panValueShape structs value) (panValueShape structs oldValue) = true := by
+  unfold panValueAssignmentValid at hvalid
+  cases hg : globals name with
+  | none => simp [hg] at hvalid
+  | some oldValue => exact ⟨oldValue, rfl, by simpa [hg] using hvalid⟩
+
+/-- Updating a bound global to a shape-matching value keeps the global map
+    shape-stable. -/
+theorem panValueGlobalsShapeStable_update_of_match
+    (structs : StructContext) (globals : VarName → Option (PanValue α))
+    (name : VarName) (newValue oldValue : PanValue α)
+    (hold : globals name = some oldValue)
+    (hmatch : panShapeMatches (panValueShape structs newValue)
+      (panValueShape structs oldValue) = true) :
+    panValueGlobalsShapeStable structs globals (updatePanValueMap globals name newValue) := by
+  have hshape : panValueShape structs newValue = panValueShape structs oldValue :=
+    (panShapeMatches_eq_true_iff _ _).mp hmatch
+  intro other
+  by_cases hsame : other = name
+  · subst hsame
+    simp only [updatePanValueMap]
+    rw [if_pos (by simp), hold]
+    simp [hshape]
+  · simp only [updatePanValueMap]
+    have hbeq : (other == name) = false := by
+      by_cases hb : (other == name) = true
+      · exact absurd (by simpa using hb) hsame
+      · simpa using hb
+    rw [if_neg (by simp [hbeq])]
+
+/-- A valid `Global` assignment keeps the global map shape-stable. -/
+theorem panValueGlobalsShapeStable_update_of_valid
+    (structs : StructContext) (locals : VarName → Option (PanValue α))
+    (globals : VarName → Option (PanValue α)) (name : VarName) (value : PanValue α)
+    (hvalid : panValueAssignmentValid structs locals globals .global name value = true) :
+    panValueGlobalsShapeStable structs globals (updatePanValueMap globals name value) := by
+  obtain ⟨oldValue, hold, hmatch⟩ :=
+    panValueAssignmentValid_global_true structs locals globals name value hvalid
+  exact panValueGlobalsShapeStable_update_of_match structs globals name value oldValue hold hmatch
+
+/-- The `Global` destination verdict of `assignPanValueCallResult` depends only
+    on the binding shapes, so validating against shape-stable callee globals is
+    the same as validating against the caller globals, exactly as HOL's
+    `is_valid_value` does (`panSemScript.sml:469-474`). -/
+theorem panValueAssignmentValid_global_congr
+    (structs : StructContext) (locals : VarName → Option (PanValue α))
+    (before after : VarName → Option (PanValue α))
+    (hstable : panValueGlobalsShapeStable structs before after)
+    (name : VarName) (value : PanValue α) :
+    panValueAssignmentValid structs locals after .global name value =
+      panValueAssignmentValid structs locals before .global name value := by
+  unfold panValueAssignmentValid
+  have h := hstable name
+  cases hb : before name with
+  | none =>
+      cases ha : after name with
+      | none => simp
+      | some value' => simp [hb, ha] at h
+  | some oldValue =>
+      cases ha : after name with
+      | none => simp [hb, ha] at h
+      | some newValue =>
+          simp only [hb, ha] at h ⊢
+          have hshape : panValueShape structs oldValue = panValueShape structs newValue := by
+            simpa using h
+          rw [← hshape]
+
 /-! This declaration-boundary adapter exposes the executed source-owned call
     after declaration evaluation. It shares the exact code-map conversion,
     exception-shape lookup, and return-contract path used by the public
