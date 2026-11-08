@@ -1960,6 +1960,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSetup
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeConstChain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSemanticHelpers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticShareInst
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCut
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
 import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceR
 import Flapjack.Misc.BalancedMap.RotationCorrect.RotateL
