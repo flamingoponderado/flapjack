@@ -1772,6 +1772,142 @@ theorem panValueFfiExtCallResult_globals_stable
                                               subst r
                                               exact panValueGlobalsShapeStable_refl structs globals
 
+/-- A clocked leaf result is the control result at the unchanged clock, so a
+    control-level globals-stability fact lifts to the clocked result. -/
+theorem panValueFfiClockGlobalsStable_map_control
+    (structs : StructContext) (globals : VarName → Option (PanValue α)) (clock : Nat)
+    (result : Option (PanValueFfiControlResult α σ))
+    (h : panValueFfiControlGlobalsStable structs globals result) :
+    panValueFfiClockGlobalsStable structs globals
+      (result.map (fun control => (.control control, clock))) := by
+  intro r hr
+  obtain ⟨outcome, resultClock⟩ := r
+  cases hres : result with
+  | none => simp [hres] at hr
+  | some control =>
+      simp only [hres, Option.map_some, Option.some.injEq, Prod.mk.injEq] at hr
+      obtain ⟨houtcome, _⟩ := hr
+      subst outcome
+      exact h control hres
+
+/-- Every leaf result keeps the input globals shape-stable.  The leaf clauses
+    either leave globals untouched or perform a validated `Global` assignment,
+    so the per-leaf control lemmas lift through `evalPanValueFfiClockLeaf`. -/
+theorem evalPanValueFfiClockLeaf_globals_stable
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (base top bytes : α) (clock : Nat)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ) (program : Prog α)
+    (access : Option (PanValueMemoryAccess α)) (contracts : Option PanValueCallContracts)
+    (mh : Option (PanValueMemoryFfiHandler α σ))
+    (evaluator : Option (PanExprEvaluator α) := none) :
+    panValueFfiClockGlobalsStable structs globals
+      (evalPanValueFfiClockLeaf context primitive handler structs base top bytes clock locals
+        globals memory ffi program access contracts mh evaluator) := by
+  cases program with
+  | skip =>
+      simp only [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+      apply panValueFfiClockGlobalsStable_map_control
+      intro r hr
+      simp only [Option.some.injEq] at hr
+      subst r
+      simp [panValueControlGlobals, panValueGlobalsShapeStable]
+  | «break» =>
+      simp only [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+      apply panValueFfiClockGlobalsStable_map_control
+      intro r hr
+      simp only [Option.some.injEq] at hr
+      subst r
+      simp [panValueControlGlobals, panValueGlobalsShapeStable]
+  | «continue» =>
+      simp only [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+      apply panValueFfiClockGlobalsStable_map_control
+      intro r hr
+      simp only [Option.some.injEq] at hr
+      subst r
+      simp [panValueControlGlobals, panValueGlobalsShapeStable]
+  | annot tag text =>
+      simp only [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+      apply panValueFfiClockGlobalsStable_map_control
+      intro r hr
+      simp only [Option.some.injEq] at hr
+      subst r
+      simp [panValueControlGlobals, panValueGlobalsShapeStable]
+  | assign kind name value =>
+      simp only [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+      apply panValueFfiClockGlobalsStable_map_control
+      cases kind with
+      | «local» =>
+          exact panValueAssignLocalResult_globals_stable structs base top bytes locals globals
+            memory ffi name value access evaluator
+      | «global» =>
+          exact panValueAssignGlobalResult_globals_stable structs base top bytes locals globals
+            memory ffi name value access evaluator
+  | primitive name operator args =>
+      simp only [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+      apply panValueFfiClockGlobalsStable_map_control
+      exact panValuePrimitiveResult_globals_stable structs base top bytes locals globals memory
+        ffi name operator args access primitive evaluator
+  | store address value =>
+      simp only [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+      apply panValueFfiClockGlobalsStable_map_control
+      exact panValueStoreResult_globals_stable structs base top bytes locals globals memory ffi
+        address value access evaluator
+  | store32 address value =>
+      simp only [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+      apply panValueFfiClockGlobalsStable_map_control
+      exact panValueStore32Result_globals_stable structs base top bytes locals globals memory
+        ffi address value access evaluator
+  | storeByte address value =>
+      simp only [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+      apply panValueFfiClockGlobalsStable_map_control
+      exact panValueStoreByteResult_globals_stable structs base top bytes locals globals memory
+        ffi address value access evaluator
+  | extCall function configuration configurationLength array arrayLength =>
+      simp only [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+      apply panValueFfiClockGlobalsStable_map_control
+      exact panValueFfiExtCallResult_globals_stable context handler structs base top bytes locals
+        globals memory ffi function configuration configurationLength array arrayLength access mh
+        evaluator
+  | «return» value =>
+      simp only [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+      apply panValueFfiClockGlobalsStable_map_control
+      exact panValueReturnResult_globals_stable structs base top bytes locals globals memory ffi
+        value access evaluator
+  | «raise» exception expression =>
+      simp only [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+      apply panValueFfiClockGlobalsStable_map_control
+      exact panValueRaiseResult_globals_stable structs base top bytes locals globals memory ffi
+        contracts exception expression access evaluator
+  | shMemLoad size kind name address =>
+      simp only [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+      apply panValueFfiClockGlobalsStable_map_control
+      exact panValueShMemLoadResult_globals_stable context structs base top bytes locals globals
+        memory ffi size kind name address access evaluator
+  | shMemStore size address value =>
+      simp only [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl]
+      apply panValueFfiClockGlobalsStable_map_control
+      exact panValueShMemStoreResult_globals_stable context structs base top bytes locals globals
+        memory ffi size address value access evaluator
+  | tick => simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl,
+      panValueFfiClockGlobalsStable]
+  | dec name shape value body => simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl,
+      panValueFfiClockGlobalsStable]
+  | seq first second => simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl,
+      panValueFfiClockGlobalsStable]
+  | ite condition thenBranch elseBranch => simp [evalPanValueFfiClockLeaf,
+      evalPanValueFfiLeafControl, panValueFfiClockGlobalsStable]
+  | «while» conditionExp body => simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl,
+      panValueFfiClockGlobalsStable]
+  | call info function arguments => simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl,
+      panValueFfiClockGlobalsStable]
+  | decCall name shape function arguments body => simp [evalPanValueFfiClockLeaf,
+      evalPanValueFfiLeafControl, panValueFfiClockGlobalsStable]
+
 /-! This declaration-boundary adapter exposes the executed source-owned call
     after declaration evaluation. It shares the exact code-map conversion,
     exception-shape lookup, and return-contract path used by the public
