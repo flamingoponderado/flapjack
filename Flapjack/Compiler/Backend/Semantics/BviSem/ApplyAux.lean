@@ -81,4 +81,15 @@ noncomputable def doAppAux {C F : Type} (op : ClosLang.Op) (args : List Value)
   | .memOp (.copyByte true), _ => none
   | _, _ => some none
 
+/-- A global operation is handled by BVI and cannot reach the BVL fallback.
+This dispatcher fact is Flapjack infrastructure used to discard BVL's
+arbitrary global fields; HOL uses the corresponding cases inline. -/
+theorem doAppAux_delegates_not_global {C F : Type} (op : ClosLang.GlobOp)
+    (args : List Value) (s : BviState C F) :
+    doAppAux (.globOp op) args s ≠ some none := by
+  cases op <;> cases args <;> simp [doAppAux]
+  all_goals repeat' split <;> simp_all
+  all_goals simp_all [Option.bind_eq_some_iff]
+  all_goals aesop
+
 end Flapjack.Compiler.Backend.BviSem

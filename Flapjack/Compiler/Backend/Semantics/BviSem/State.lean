@@ -87,4 +87,18 @@ qualifier can name the references in both state carriers. -/
 def fromBvl {C F : Type} (source : BvlSem.State C F) (target : BviState C F) : BviState C F :=
   { target with refs := source.refs, clock := source.clock, ffi := source.ffi }
 
+/-- Apply the same source field update to the explicit lookup views. This
+independent operation supports review of the cross-carrier representation. -/
+def broadFromBvl {C F : Type} (source : BvlSem.StateBroad C F)
+    (target : BviStateBroad C F) : BviStateBroad C F :=
+  ⟨source.refs, source.refsFiniteSupport, source.clock, target.global,
+    target.compile, target.compileOracle, target.code, source.ffi⟩
+
+/-- Copying fields commutes with forgetting the canonical finite-map carrier. -/
+theorem holFmapAsFiniteSupportConversionWitness_fromBvl {C F : Type} (source : BvlSem.State C F) (target : BviState C F) :
+    (fromBvl source target).toBroad = broadFromBvl source.toBroad target.toBroad := by
+  cases source
+  cases target
+  rfl
+
 end Flapjack.Compiler.Backend.BviSem
