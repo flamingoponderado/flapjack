@@ -329,6 +329,23 @@ val do_app_copyaw8str_replay = prove (do_app_copyaw8str_typed,
   imp_res_tac LIST_REL_LENGTH >> rw [] >> imp_res_tac LIST_REL_EL_EQN >>
   rfs [source_to_flatProofTheory.sv_rel_cases, do_app_v_rel_lems, do_app_rec_v_rel_eqns]);
 val _ = show_thm "do_app_copyaw8str_replay=" do_app_copyaw8str_replay;
+val do_app_copyaw8aw8_typed = list_mk_forall
+  (List.take (do_app_binders, 3) @ List.drop (do_app_binders, 4),
+   subst [List.nth (do_app_binders, 3) |-> ``ast$CopyAw8Aw8``] do_app_body);
+val do_app_copyaw8aw8_replay = prove (do_app_copyaw8aw8_typed,
+  rpt gen_tac >> Cases_on `s1` >> Cases_on `s1_i1.refs` >> simp [] >> Cases_on `s1_i1` >>
+  simp [source_to_flatTheory.astOp_to_flatOp_def, astTheory.getOpClass_def] >>
+  rw [semanticPrimitivesPropsTheory.do_app_cases, flatSemTheory.do_app_def] >>
+  fs [do_app_rec_v_rel_eqns, stringTheory.IMPLODE_EXPLODE_I, source_to_flatProofTheory.result_rel_cases,
+      PULL_EXISTS, semanticPrimitivesTheory.store_lookup_def, EXISTS_PROD,
+      semanticPrimitivesTheory.store_assign_def, flatSemTheory.Unitv_def] >>
+  fs [REWRITE_RULE [ADD1] EL, ADD1] >>
+  imp_res_tac LIST_REL_LENGTH >> rw [] >> TRY (asm_exists_tac >> simp []) >>
+  imp_res_tac LIST_REL_EL_EQN >>
+  rfs [source_to_flatProofTheory.sv_rel_cases, do_app_v_rel_lems, do_app_rec_v_rel_eqns] >>
+  simp [semanticPrimitivesTheory.store_v_same_type_def, REWRITE_RULE [ADD1] LUPDATE_def] >>
+  match_mp_tac EVERY2_LUPDATE_same >> simp [source_to_flatProofTheory.sv_rel_cases]);
+val _ = show_thm "do_app_copyaw8aw8_replay=" do_app_copyaw8aw8_replay;
 val shift_op = ``ast$Shift w sh n``;
 val do_app_shift_typed = list_mk_forall
   (List.take (do_app_binders, 3) @ List.rev (free_vars shift_op) @ List.drop (do_app_binders, 4),

@@ -600,4 +600,86 @@ theorem doApp_CopyAw8Str {C F : Type} (genv : GlobalEnv)
                       · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                           FlatSem.doAppData, flatRun]
 
+/-- The CopyAw8Aw8 case of `do_app`; the full theorem is not yet assembled. The
+dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
+  (fmap_as_finite_support := [c, tys])]
+theorem doApp_CopyAw8Aw8 {C F : Type} (genv : GlobalEnv)
+    (s1 s2 : Store Value × HolFfiState F) (vs : List Value)
+    (r : Result Value Value) (flat : FlatSem.State C F) (flatVs : List FlatSem.Value)
+    (premises : doApp s1 .copyAw8Aw8 vs = some (s2, r) ∧
+      List.Forall₂ (StoreValueRel genv) s1.1 flat.refs.tail ∧ flat.refs ≠ [] ∧
+      List.Forall₂ (ValueRel genv) vs flatVs ∧ s1.2 = flat.ffi ∧ genvCOk genv.c ∧
+      Op.copyAw8Aw8 ≠ .aallocEmpty ∧ Op.copyAw8Aw8 ≠ .envId) :
+    ∃ flatResult flatState,
+      List.Forall₂ (StoreValueRel genv) s2.1 flatState.refs.tail ∧ flatState.refs ≠ [] ∧
+      s2.2 = flatState.ffi ∧ flat.globals = flatState.globals ∧
+      flat.refs.take 1 = flatState.refs.take 1 ∧ ResultRel ValueRel genv r flatResult ∧
+      FlatSem.doApp flat (astOpToFlatOp .copyAw8Aw8) flatVs = some (flatState, flatResult) := by
+  obtain ⟨run, stores, nonempty, values, ffi, ok, _, _⟩ := premises
+  let source : SemanticPrimitivesHOL.State F := ⟨flat.clock, s1.1, s1.2, 0, 0, none⟩
+  have states : StateRel genv source flat := .intro source flat nonempty stores rfl ffi
+  cases vs with
+  | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+    | cons second rest =>
+      cases rest with
+      | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+      | cons third rest =>
+        cases rest with
+        | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+        | cons fourth rest =>
+          cases rest with
+          | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+          | cons fifth rest =>
+            cases rest with
+            | cons sixth rest => simp [doApp, doAppNumericCore, doAppBasic] at run
+            | nil =>
+              have successful : doApp (source.refs, source.ffi) .copyAw8Aw8 [first, second, third, fourth, fifth] ≠ none := by
+                simp [source, run]
+              obtain ⟨srcFlag, srcAddress, offset, length, dstFlag, dstAddress, dstOffset, srcBytes, dstBytes,
+                rfl, rfl, rfl, rfl, rfl, srcLookup, dstLookup⟩ :=
+                copyAw8Aw8_operands source first second third fourth fifth successful
+              cases values with
+              | cons srcRel tail =>
+                cases tail with
+                | cons offsetRel tail =>
+                  cases tail with
+                  | cons lengthRel tail =>
+                    cases tail with
+                    | cons dstRel tail =>
+                      cases tail with
+                      | cons dstOffsetRel tail =>
+                        cases tail
+                        cases srcRel
+                        cases offsetRel
+                        cases lengthRel
+                        cases dstRel
+                        cases dstOffsetRel
+                        have sim := copyAw8Aw8_related genv source flat states ok srcFlag srcAddress srcBytes offset length
+                          dstFlag dstAddress dstBytes dstOffset srcLookup dstLookup
+                        simp only [source, run] at sim
+                        cases flatRun : FlatSem.doAppCopy flat .copyAw8Aw8
+                            [.loc srcFlag (srcAddress + 1), .litv (.intLit offset), .litv (.intLit length),
+                             .loc dstFlag (dstAddress + 1), .litv (.intLit dstOffset)] with
+                        | none => simp [flatRun] at sim
+                        | some result =>
+                          cases result with
+                          | none => simp [flatRun] at sim
+                          | some pair =>
+                            cases pair with
+                            | mk next result =>
+                              simp only [flatRun] at sim
+                              obtain ⟨ffiEq, nextEq, nextRel, reserved, resultRel⟩ := sim
+                              obtain ⟨afterNonempty, afterStores, _, afterFfi⟩ :=
+                                (stateRel_iff genv { source with refs := s2.1 } next).mp nextRel
+                              refine ⟨result, next, afterStores, afterNonempty, ?_, ?_,
+                                reserved.symm, resultRel, ?_⟩
+                              · simpa [source, ffiEq] using afterFfi
+                              · rw [nextEq]
+                              · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                                  FlatSem.doAppData, flatRun]
+
 end Flapjack.Compiler.Backend.SourceToFlat
