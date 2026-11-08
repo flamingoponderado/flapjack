@@ -15,8 +15,8 @@ theorem doInstall_clock {C F R : Type} (args : List Value) (state next : State C
   all_goals obtain ⟨_, rfl⟩ := run
   all_goals rfl
 
-/-- Every successful primitive application preserves the clock, including
-installation and memory operations. -/
+/-- Successful primitive application preserves the clock exactly. This stronger
+Flapjack lemma supports HOL's clock bound. -/
 theorem doApp_clock {C F : Type} (op : ClosLang.Op) (args : List Value)
     (state next : State C F) (value : Value)
     (run : doApp op args state = .val (value, next)) : next.clock = state.clock := by
@@ -32,5 +32,12 @@ theorem doApp_clock {C F : Type} (op : ClosLang.Op) (args : List Value)
   | install =>
     have aux := doInstall_clock args { state with stackMax := none, stackFrameSizes := .ln } next value run
     exact aux
+
+/-- A successful primitive application cannot increase the clock. -/
+@[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "do_app_clock"]
+theorem doApp_clock_le {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (state : State C F) (value : Value) (next : State C F)
+    (run : doApp op args state = .val (value, next)) : next.clock ≤ state.clock :=
+  Nat.le_of_eq (doApp_clock op args state next value run)
 
 end Flapjack.Compiler.Backend.DataSem

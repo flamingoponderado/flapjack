@@ -127837,8 +127837,9 @@
   "hol_name": "do_app_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Apply.lean",
   "lean_name": "doApp",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app in data_sem_install_probe.out: installation resets the same fields, both forbidden integer comparisons and failed space checks return the same error, and successful operations compose the reviewed space, limit, stack and auxiliary dispatchers in HOL order. Compiler and FFI carriers remain independent. Floating-point cases inherit reals_as_rational_cuts, documented in SOUNDNESS item 8."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128336,6 +128337,15 @@
   "lean_name": "doStack",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared do_stack in data_sem_stack_probe.out: independent compiler and FFI types, original-state field reads, option sums and maxima, and the stack-limit comparison agree. HOL the F is rendered by Option.getD false."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
+  "hol_name": "do_app_clock",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/ApplyClock.lean",
+  "lean_name": "doApp_clock_le",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_clock in data_sem_apply_probe.out: identical op, args, input state, result and output state binders, shared state type, successful-application premise and clock bound. Derived from the stronger Flapjack equality doApp_clock. Inherits reals_as_rational_cuts through doApp (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
