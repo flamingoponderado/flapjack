@@ -4270,25 +4270,6 @@ theorem semantics_eq_of_initial_projections {C D F : Type} (ffi : HolFfiState F)
   unfold BviSem.semantics
   simp_rw [sameResult, sameTrace, sameObservation]
 
-/-- Compiling each function preserves whole-program BVI behavior when the
-source does not fail. This source-shaped result remains untagged until the
-evaluator, state relation, and compilation carriers are reviewed against HOL. -/
-theorem compileEach_semantics {C F : Type}
-    (next : Nat) (program : List (Nat × Nat × Bvi.Exp)) (ffi : HolFfiState F)
-    (oracle : BviSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C) (start : Nat)
-    (condition : inputCondition next program)
-    (oracleCondition : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
-    (workerBound : ∀ n, n ∈ (compileEachSource next program).2.map Prod.fst →
-      inWorkerNamespace n → n < (oracle 0).1.1)
-    (notFail : BviSem.semantics ffi (sptFromAList program) oracle (transformCompiler compiler) start ≠ .fail) :
-    BviSem.semantics ffi (sptFromAList program) oracle (transformCompiler compiler) start =
-      BviSem.semantics ffi (sptFromAList (compileEachSource next program).2)
-        (transformOracle oracle) compiler start := by
-  exact semantics_eq_of_initial_projections ffi _ _ oracle (transformOracle oracle)
-    (transformCompiler compiler) compiler start
-    (compileEach_initial_observations next program ffi oracle compiler start
-      condition oracleCondition workerBound notFail)
-
 /-- The tail-recursion oracle adapter is the standard incremental-pass
 oracle adapter. -/
 theorem transformOracle_eq_stateCo {C : Type} (oracle : BviSem.CompileOracle (Nat × C)) :
@@ -4309,6 +4290,32 @@ theorem transformCompiler_eq_stateCc {C : Type} (compiler : BviSem.Compiler C) :
     | some output =>
       rcases output with ⟨bytes, data, config'⟩
       simp [transformCompiler, BackendProps.stateCc, h, hcompiler]
+
+/-- Compiling each function preserves whole-program BVI behavior when the
+source does not fail. This source-shaped result remains untagged until the
+evaluator, state relation, and compilation carriers are reviewed against HOL. -/
+theorem compileEach_semantics {C F : Type}
+    (next : Nat) (program : List (Nat × Nat × Bvi.Exp))
+    (oracle : BviSem.CompileOracle (Nat × C)) (compiled : List (Nat × Nat × Bvi.Exp))
+    (ffi : HolFfiState F) (compiler : BviSem.Compiler C) (start : Nat)
+    (premises : inputCondition next program ∧
+      (∀ k n cfg prog, oracle k = ((n, cfg), prog) → inputCondition n prog) ∧
+      (∀ n, n ∈ compiled.map Prod.fst ∧ inWorkerNamespace n → n < (oracle 0).1.1) ∧
+      (compileEachSource next program).2 = compiled ∧
+      BviSem.semantics ffi (sptFromAList program) oracle
+        (BackendProps.stateCc compileEachSource compiler) start ≠ .fail) :
+    BviSem.semantics ffi (sptFromAList program) oracle (BackendProps.stateCc compileEachSource compiler) start =
+      BviSem.semantics ffi (sptFromAList compiled)
+        (BackendProps.stateCo compileEachSource oracle) compiler start := by
+  obtain ⟨condition, oracleCondition, workerBound, compiledEq, notFail⟩ := premises
+  rw [← transformCompiler_eq_stateCc] at notFail ⊢
+  rw [← transformOracle_eq_stateCo]
+  rw [← compiledEq] at workerBound ⊢
+  exact semantics_eq_of_initial_projections ffi _ _ oracle (transformOracle oracle)
+    (transformCompiler compiler) compiler start
+    (compileEach_initial_observations next program ffi oracle compiler start
+      condition (fun k => oracleCondition k _ _ _ rfl)
+      (fun n member inNamespace => workerBound n ⟨member, inNamespace⟩) notFail)
 
 /-- Removing an identity pass from the incremental compiler adapters
 preserves BVI behavior. The evaluator and state carriers remain under HOL
@@ -4364,11 +4371,7 @@ theorem compileProgSource_semantics {C F : Type}
     rw [passEq] at notFail ⊢
     have compiledSame : (compileEachSource next program).2 = compiled := by
       simpa [compileProgSource] using compiledEq
-    rw [← transformCompiler_eq_stateCc] at notFail ⊢
-    rw [← transformOracle_eq_stateCo]
-    rw [← compiledSame] at workerBound ⊢
-    exact compileEach_semantics next program ffi oracle compiler start condition
-      (fun k => oracleCondition k _ _ _ rfl)
-      (fun n member inNamespace => workerBound n ⟨member, inNamespace⟩) notFail
+    exact compileEach_semantics next program oracle compiled ffi compiler start
+      ⟨condition, oracleCondition, workerBound, compiledSame, notFail⟩
 
 end Flapjack.Compiler.Backend.BviTailrec
