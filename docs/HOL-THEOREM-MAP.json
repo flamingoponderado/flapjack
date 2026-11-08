@@ -17011,6 +17011,13 @@
     "reviewer": "Compared input_condition_def_typed in bvi_tailrec_semantics_probe.out. The program payload remains polymorphic, and the EVERY, distinct-name, filtered namespace, lower-bound and modulo conditions retain their HOL meanings."
   },
   {
+    "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml", "hol_name": "finalise_cons_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/Finalise.lean", "lean_name": "finaliseCons",
+    "statement_status": "reviewed_fmap_as_finite_support_heterogeneous_function",
+    "fmap_as_finite_support_heterogeneous_function": ["argument_2", "result_2"],
+    "reviewer": "Compared finalise_cons in bvi_sem_state_probe.out: argument_2 and result_2 are canonical finite maps. Mutable blocks recurse after removing their reference, restore it as finalised, and produce the original block fields; finalised, missing and ordinary values retain the source outcomes. The unconditional same-module witness compares both result components and the output lookup with an independent raw lookup recursion, whose fuel exceeds the input finite domain cardinality."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml", "hol_name": "scan_expr_def",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean", "lean_name": "scanExpr",
     "statement_status": "reviewed_exact",
