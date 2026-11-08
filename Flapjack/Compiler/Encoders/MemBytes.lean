@@ -1,3 +1,4 @@
+import Mathlib.Tactic
 import Flapjack.Compiler.Encoders.AsmSem.Memory
 
 /-!
@@ -47,6 +48,97 @@ theorem readMemWord_fst (a : BitVec 64) (n : Nat) (s : AsmState 64) (hbe : s.be 
         simp only [readMem, hmem']
       rw [hw, hread]
       rfl
+
+/-- `readMemWord` preserves the memory domain. -/
+theorem readMemWord_memDomain (a : BitVec 64) (n : Nat) (s : AsmState 64) :
+    (readMemWord (resultWidth := 64) a n s).2.memDomain = s.memDomain := by
+  induction n generalizing a s with
+  | zero => rfl
+  | succ n ih =>
+      rw [readMemWord_succ]
+      simp only [assertState_memDomain]
+      exact ih _ _
+
+/-- `writeMemWord` preserves the memory domain. -/
+theorem writeMemWord_memDomain (a : BitVec 64) (n : Nat) (w : BitVec 64) (s : AsmState 64) :
+    (writeMemWord (valueWidth := 64) a n w s).memDomain = s.memDomain := by
+  induction n generalizing a w s with
+  | zero => rfl
+  | succ n ih =>
+      rw [writeMemWord_succ]
+      simp only [assertState_memDomain, updMem_memDomain]
+      exact ih _ _ _
+
+/-- A `Bool` equal to `false` is not `true`. -/
+theorem not_of_eq_false {b : Bool} (h : b = false) : ¬b := by
+  rw [h]; intro h'; exact Bool.noConfusion h'
+
+/-- A successful `readMemWord` reads all of its bytes out of the domain. This is
+the domain side of the source alignment guard: `memLoad` fails unless the read
+succeeds, so the bytes the target reads are the bytes the source read. Shared by
+the x86-64 and ARMv8 memory cases. -/
+theorem readMemWord_domain (a : BitVec 64) (n : Nat) (s : AsmState 64) (hbe : s.be = false)
+    (h : (readMemWord (resultWidth := 64) a n s).2.failed = false) :
+    ∀ k, k < n → s.memDomain (a + BitVec.ofNat 64 k) := by
+  induction n generalizing a s with
+  | zero => intro k hk; omega
+  | succ n ih =>
+      intro k hk
+      classical
+      rw [readMemWord_succ] at h
+      simp only [hbe, Bool.false_eq_true, if_false] at h
+      set s1 : AsmState 64 := (readMemWord (resultWidth := 64) (a + 1) n s).2 with hs1
+      simp only [assertState, Bool.or_eq_false_iff] at h
+      obtain ⟨hdom, hf⟩ := h
+      have hdom' : s1.memDomain a := by
+        have hc : decide (s1.memDomain a) = true := by
+          cases hd : decide (s1.memDomain a) with
+          | false => rw [hd] at hdom; exact Bool.noConfusion hdom
+          | true => rfl
+        exact of_decide_eq_true hc
+      have hf' : (readMemWord (resultWidth := 64) (a + 1) n s).2.failed = false := by
+        rw [← hs1]; exact hf
+      rcases k with _ | k
+      · have hdom'' : s1.memDomain a := hdom'
+        rw [hs1, readMemWord_memDomain] at hdom''
+        simpa using hdom''
+      · have hk' : k < n := by omega
+        have hrec := ih (a + 1) s hbe hf' k hk'
+        rw [show a + 1 + BitVec.ofNat 64 k = a + BitVec.ofNat 64 (k + 1) by bv_omega] at hrec
+        exact hrec
+
+/-- A store writes only bytes the source state has in its memory domain.
+Shared by the x86-64 and ARMv8 memory cases. -/
+theorem writeMemWord_domain (a : BitVec 64) (n : Nat) (v : BitVec 64) (s : AsmState 64)
+    (hbe : s.be = false) (h : ¬ (writeMemWord (valueWidth := 64) a n v s).failed) :
+    ∀ k, k < n → s.memDomain (a + BitVec.ofNat 64 k) := by
+  induction n generalizing a v s with
+  | zero => intro k hk; omega
+  | succ n ih =>
+      intro k hk
+      rw [writeMemWord_succ] at h
+      have hif : (if s.be then a - 1 else a + 1) = a + 1 := by
+        rw [hbe]
+        rw [if_neg (by decide : ¬((false : Bool) = true))]
+      rw [hif] at h
+      set s1 : AsmState 64 :=
+        writeMemWord (valueWidth := 64) (a + 1) n (v >>> (8 : Nat)) s with hs1
+      obtain ⟨hdom, hfl⟩ := not_failed_assertState h
+      have hfl' : (writeMemWord (valueWidth := 64) (a + 1) n (v >>> (8 : Nat)) s).failed =
+          false := by
+        rw [updMem_failed] at hfl
+        rw [← hs1]
+        exact hfl
+      have hdom' : s.memDomain a := by
+        classical
+        rw [hs1, writeMemWord_memDomain] at hdom
+        exact of_decide_eq_true hdom
+      rcases k with _ | k
+      · simpa using hdom'
+      · have hk' : k < n := by omega
+        have hrec := ih (a + 1) (v >>> (8 : Nat)) s hbe (not_of_eq_false hfl') k hk'
+        rw [show a + 1 + BitVec.ofNat 64 k = a + BitVec.ofNat 64 (k + 1) by bv_omega] at hrec
+        exact hrec
 
 /-- The one-byte value of `readBytes`. -/
 theorem readBytes_one (m : BitVec 64 → BitVec 8) (a : BitVec 64) :
