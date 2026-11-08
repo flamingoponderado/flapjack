@@ -16981,6 +16981,30 @@
     "reviewer": "Compared compile_any_def_typed in bvl_handle_frontend_probe.out, including the zero-arity/split condition and NONE accumulator. compileAnyFuel_eq_compileAny connects the executed pass."
   },
   {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml", "hol_name": "optimise_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/SourceCompile.lean", "lean_name": "optimise",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared optimise_def_typed in bvl_inline_frontend_probe.out, including the polymorphic name. optimise_source_head proves the source head of singleton tick removal is the computed singleton body."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml", "hol_name": "optimise_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/SourceCompile.lean", "lean_name": "optimise_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared optimise_eq_typed in bvl_inline_frontend_probe.out, including the polymorphic name and complete singleton equation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml", "hol_name": "compile_inc_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/SourceCompile.lean", "lean_name": "compileInc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_inc_def_typed in bvl_inline_frontend_probe.out, including argument order, cache and mapped program. compileIncFuel_eq_compileInc proves equality with the executed compiler for arbitrary caches and fuel."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_inlineScript.sml", "hol_name": "compile_prog_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/SourceCompile.lean", "lean_name": "compileProg",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_prog_def_typed in bvl_inline_frontend_probe.out: the initial cache is LN and all arguments retain their order. compileProgFuel_eq_compileProg connects the executable."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/bvl_constScript.sml", "hol_name": "compile_def",
     "lean_path": "Flapjack/Compiler/Backend/BvlConst/SourceCompile.lean", "lean_name": "compile",
     "statement_status": "reviewed_exact",
