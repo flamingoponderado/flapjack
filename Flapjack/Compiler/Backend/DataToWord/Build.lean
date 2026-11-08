@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataToWord.Header
 import Flapjack.Compiler.Backend.DataToWord.Numbers
+import Flapjack.Compiler.Backend.DataToWord.Bytes
 import Flapjack.Misc.Multiword
 import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.Misc.Sptree
@@ -15,16 +16,6 @@ abbrev Value (width : Nat) := Bool × BitVec width
 
 private def pointer {width : Nat} [NeZero width] (conf : Config) (offset : BitVec width) : BitVec width :=
   (offset <<< (shiftLength conf - wordShiftAmount width)) ||| 1
-
-private def byteWord {width : Nat} (be : Bool) (bs : List HolChar) : BitVec width :=
-  let k := width / 8
-  (List.range k).foldl (fun word i =>
-    let b := ((bs[i]?).getD 0).toNat
-    let shift := 8 * (if be then k - 1 - i else i)
-    word ||| (BitVec.ofNat width b <<< shift)) 0
-
-private def bytesWords {width : Nat} (be : Bool) (bytes : List HolChar) (count : Nat) : List (BitVec width) :=
-  (List.range count).map fun i => byteWord be (bytes.drop (i * (width / 8)))
 
 /-- Lower one closure constant part. The sparse map supplies preceding
 constant values; the Boolean indicates a pointer relative to the allocation base.
@@ -60,7 +51,7 @@ def partWords {width : Nat} [NeZero width] (conf : Config) (memory : Spt (Value 
     let k := if width == 32 then n / 4 + 1 else n / 8 + 1
     if !(k < 2 ^ (width - 4) ∧ k < 2 ^ conf.lenSize) then none else
     let header := makeByteHeader (width := width) conf true n
-    let ws := header :: bytesWords conf.be bs k
+    let ws := header :: writeBytes bs (List.replicate k 0) conf.be
     some ((true, pointer conf offset), ws.map (false, ·))
 
 /-- Convert all constant parts in source order, preserving earlier references

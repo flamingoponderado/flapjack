@@ -21,6 +21,15 @@ private def conf : Config := ⟨1, 2, 3, 16, false, false, false, false, false, 
        (false, 0x11223344), (false, 0x55667788), (false, 0x1000F), (false, 0x80000000)]
   | _ => false
 
+-- Partial words must retain the source byte order at both target widths.
+#guard match Build.partsWords (width := 32) conf [.str (ofString "abc")] with
+  | some (_, [(_, _), (false, bytes)]) => bytes == 0x00636261
+  | _ => false
+
+#guard match Build.partsWords (width := 64) { conf with be := true } [.str (ofString "abc")] with
+  | some (_, [(_, _), (false, bytes)]) => bytes == 0x6162630000000000
+  | _ => false
+
 #guard match compileControl? (width := 64) conf 5 2
     (.assign 3 (.blockOp (.build [.int 1, .con 0 [0]])) [] none) with
   | some (.seq (.assign 1 (.lookup .nextFree))
