@@ -16963,6 +16963,30 @@
     "reviewer": "Compared the original premise conjunction and independent state, input, output and configuration types with oracle_monotonic_state_init_typed in backend_props_state_oracle_probe.out; the proof specializes the invariant theorem to True as in HOL."
   },
   {
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "option_le_SOME_0",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/OptionArithmetic.lean", "lean_name": "optionLe_some_zero",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the exported typed theorem in backend_props_option_max_probe.out: x is num option, and SOME 0 is below x under option_le."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "option_add_comm",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/OptionArithmetic.lean", "lean_name": "optionAdd_comm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed option_add_comm in backend_props_option_max_probe.out: n and m are num options and Option.map₂ addition follows OPTION_MAP2."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "option_add_assoc",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/OptionArithmetic.lean", "lean_name": "optionAdd_assoc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed option_add_assoc in backend_props_option_max_probe.out, including the association and num option carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "option_le_add",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/OptionArithmetic.lean", "lean_name": "optionLe_add",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed option_le_add in backend_props_option_max_probe.out: both inputs are num options and the same n appears in the order and addition."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml", "hol_name": "monotonic_globals_state_co_compile",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalOracle.lean", "lean_name": "monotonicGlobals_stateCoCompile",
     "statement_status": "reviewed_exact",

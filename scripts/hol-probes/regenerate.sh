@@ -8306,7 +8306,7 @@ run_probe backend_props_state_oracle_probeScript.sml backend_props_state_oracle_
   "$cake_dir/compiler/backend/semantics/backendPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe backend_props_option_max_probeScript.sml backend_props_option_max_probe.out \
-  option_le_max_typed option_le_eq_eqns_typed option_map2_max_add_typed OPTION_MAP2_MAX_COMM_typed OPTION_MAP2_MAX_ASSOC_typed \
+  option_le_SOME_0_typed option_add_comm_typed option_add_assoc_typed option_le_add_typed option_le_max_typed option_le_eq_eqns_typed option_map2_max_add_typed OPTION_MAP2_MAX_COMM_typed OPTION_MAP2_MAX_ASSOC_typed \
   "$cake_dir/compiler/backend/semantics/backendPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe word_depth_helpers_probeScript.sml word_depth_helpers_probe.out \

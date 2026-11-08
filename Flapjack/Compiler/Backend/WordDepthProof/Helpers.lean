@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.WordDepth
-import Flapjack.Compiler.Backend.BackendProps
+import Flapjack.Compiler.Backend.BackendProps.OptionArithmetic
 import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
 import Flapjack.Compiler.Backend.LinearScan.Proofs.ApplyBijection
 
@@ -91,10 +91,6 @@ theorem optionLe_add_mono {a b b' : Option Nat} (hb : optionLe b b') :
     optionLe (optionMap₂ (· + ·) a b) (optionMap₂ (· + ·) a b') := by
   rcases a with _ | _ <;> rcases b with _ | _ <;> rcases b' with _ | _ <;>
     simp_all [optionLe, optionMap₂]
-
-/-- `SOME 0` is below everything (Flapjack infrastructure). -/
-theorem optionLe_some_zero (x : Option Nat) : optionLe (some 0) x := by
-  rcases x with _ | _ <;> simp [optionLe]
 
 /-- Full original `MEM_max_depth_graphs`:
 `!ns name y. MEM name ns /\ lookup name code = SOME y ==>

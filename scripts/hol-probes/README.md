@@ -205,6 +205,9 @@ as well as the
 constructors, the state invariant theorem, and a multi-step example also
 checked by `StateCompilerParity`.
 
+`backend_props_option_max_probe.out` captures typed optional-bound ordering,
+addition, and maximum theorems from the original backend properties script.
+
 `flat_to_clos_relation_probe.out` captures the original typed value and
 environment relation rules, induction and cases, state and store relations,
 polymorphic incremental and installation relations, complete compiler
