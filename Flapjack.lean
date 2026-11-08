@@ -322,9 +322,6 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PointerAddress
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AdjustedSet
 import Flapjack.Compiler.Backend.DataToWord.Proofs.JoinEnv
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Total
-import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateCode
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.Code
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.CallLookup
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.StoreEach
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorFree
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorHeap
