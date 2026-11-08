@@ -766,8 +766,6 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.Arity
 import Flapjack.Compiler.Backend.ClosMti.Proofs.Globals
 import Flapjack.Compiler.Backend.ClosMti.Proofs.GlobalTraversal
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
-import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalOracle
-import Flapjack.Compiler.Backend.ClosCall.Proofs.IncrementalCode
 import Flapjack.Compiler.Backend.ClosCall.Proofs.SyntaxOk
 import Flapjack.Compiler.Backend.ClosCall.Stubs
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeCorrect
@@ -800,17 +798,8 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.PartialApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FullApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateApplication
 import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateAppExpression
-import Flapjack.Compiler.Backend.ClosCall.Proofs.TraversalSimulation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallLookup
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallClock
-import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallImpure
-import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallPure
-import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallPureSimulation
-import Flapjack.Compiler.Backend.ClosCall.Proofs.ApplicationSimulation
-import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantOrdinaryOp
-import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantThunk
-import Flapjack.Compiler.Backend.ClosCall.Proofs.InvariantRecursiveBinding
-import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallImpureSimulation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.StateWellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.NumericWellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.BlockWellformed
@@ -818,8 +807,6 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.MemoryWellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveWellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ThunkWellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InstallWellformed
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateOrdinaryWellformed
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateControlWellformed
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
 import Flapjack.Compiler.Backend.BvlInline.Proofs.StateRel
