@@ -546,79 +546,77 @@ theorem evaluate_addClock_ioEvents_prefix {C F : Type} (expressions : List Bvl.E
     (env : List BvlSem.Value) (state : State C F) (extra : Nat) :
     (evaluate expressions env state).2.ffi.ioEvents <+:
       (evaluate expressions env { state with clock := state.clock + extra }).2.ffi.ioEvents := by
-  have lexInduction := clockWeightInduction (α := List Bvl.Exp) (σ := State C F) (·.clock)
-    expsWeight
+  refine clockWeightInduction (α := List Bvl.Exp) (σ := State C F) (·.clock) expsWeight
     (motive := fun expressions state => ∀ env extra,
       (evaluate expressions env state).2.ffi.ioEvents <+:
         (evaluate expressions env { state with clock := state.clock + extra }).2.ffi.ioEvents) ?_
-  · exact lexInduction expressions state env extra
-  ·
-        intro expressions state exprIH₀ smaller₀
-        have exprIH := fun (es : List Bvl.Exp) (env' : List BvlSem.Value) (s : State C F)
-            h1 h2 extra => exprIH₀ es s h1 h2 env' extra
-        have smaller := fun (es : List Bvl.Exp) (env' : List BvlSem.Value) (s : State C F)
-            h1 extra => smaller₀ es s h1 env' extra
-        intro env extra
-        cases expressions with
-        | nil => simp [evaluate]
-        | cons first rest =>
-          cases rest with
-          | cons second tail =>
-            apply evaluate_list_addClock_ioEvents_step first second tail env state extra ?_ ?_
-            · apply exprIH [first] env state (by omega) ?_ extra
-              simp only [expsWeight] at ⊢; have := expWeight_pos second; omega
-            · intro start bound
-              apply exprIH (second :: tail) env start (by omega) ?_ extra
-              simp only [expsWeight] at ⊢; omega
-          | nil =>
-            cases first with
-            | var index =>
-              rw [evaluate, evaluate]
-              split <;> simp
-            | raise body =>
-              apply evaluate_raise_addClock_ioEvents_step body env state extra
-              apply exprIH [body] env state (by omega) ?_ extra
-              simp only [expsWeight, expWeight] at ⊢; omega
-            | tick body =>
-              apply evaluate_tick_addClock_ioEvents_step body env state extra
-              intro start bound
-              exact smaller [body] env start (by omega) extra
-            | «let» bindings body =>
-              apply evaluate_let_addClock_ioEvents_step bindings body env state extra ?_ ?_
-              · apply exprIH bindings env state (by omega) ?_ extra
-                simp only [expsWeight, expWeight] at ⊢; omega
-              · intro bodyEnv start bound
-                apply exprIH [body] bodyEnv start (by omega) ?_ extra
-                simp only [expsWeight, expWeight] at ⊢; omega
-            | handle body handler =>
-              apply evaluate_handle_addClock_ioEvents_step body handler env state extra ?_ ?_
-              · apply exprIH [body] env state (by omega) ?_ extra
-                simp only [expsWeight, expWeight] at ⊢; omega
-              · intro value start bound
-                apply exprIH [handler] (value :: env) start (by omega) ?_ extra
-                simp only [expsWeight, expWeight] at ⊢; omega
-            | ifThenElse condition yes no =>
-              apply evaluate_if_addClock_ioEvents_step condition yes no env state extra ?_ ?_
-              · apply exprIH [condition] env state (by omega) ?_ extra
-                simp only [expsWeight, expWeight] at ⊢; omega
-              · intro choice start bound
-                apply exprIH [if choice then yes else no] env start (by omega) ?_ extra
-                cases choice <;>
-                  simp only [Bool.false_eq_true, ↓reduceIte, expsWeight, expWeight] at ⊢ <;> omega
-            | op op args =>
-              apply evaluate_op_addClock_ioEvents_step op args env state extra
-              apply exprIH args env state (by omega) ?_ extra
-              simp only [expsWeight, expWeight] at ⊢; omega
-            | call ticks location args =>
-              apply evaluate_call_addClock_ioEvents_step ticks location args env state extra ?_ ?_
-              · apply exprIH args env state (by omega) ?_ extra
-                simp only [expsWeight, expWeight] at ⊢; omega
-              · intro body bodyEnv start bound
-                exact smaller [body] bodyEnv start (by omega) extra
-            | force location index =>
-              apply evaluate_force_addClock_ioEvents_step location index env state extra
-              intro body bodyEnv start bound
-              exact smaller [body] bodyEnv start (by omega) extra
+    expressions state env extra
+  intro expressions state exprIH₀ smaller₀
+  have exprIH := fun (es : List Bvl.Exp) (env' : List BvlSem.Value) (s : State C F)
+      h1 h2 extra => exprIH₀ es s h1 h2 env' extra
+  have smaller := fun (es : List Bvl.Exp) (env' : List BvlSem.Value) (s : State C F)
+      h1 extra => smaller₀ es s h1 env' extra
+  intro env extra
+  cases expressions with
+  | nil => simp [evaluate]
+  | cons first rest =>
+    cases rest with
+    | cons second tail =>
+      apply evaluate_list_addClock_ioEvents_step first second tail env state extra ?_ ?_
+      · apply exprIH [first] env state (by omega) ?_ extra
+        simp only [expsWeight] at ⊢; have := expWeight_pos second; omega
+      · intro start bound
+        apply exprIH (second :: tail) env start (by omega) ?_ extra
+        simp only [expsWeight] at ⊢; omega
+    | nil =>
+      cases first with
+      | var index =>
+        rw [evaluate, evaluate]
+        split <;> simp
+      | raise body =>
+        apply evaluate_raise_addClock_ioEvents_step body env state extra
+        apply exprIH [body] env state (by omega) ?_ extra
+        simp only [expsWeight, expWeight] at ⊢; omega
+      | tick body =>
+        apply evaluate_tick_addClock_ioEvents_step body env state extra
+        intro start bound
+        exact smaller [body] env start (by omega) extra
+      | «let» bindings body =>
+        apply evaluate_let_addClock_ioEvents_step bindings body env state extra ?_ ?_
+        · apply exprIH bindings env state (by omega) ?_ extra
+          simp only [expsWeight, expWeight] at ⊢; omega
+        · intro bodyEnv start bound
+          apply exprIH [body] bodyEnv start (by omega) ?_ extra
+          simp only [expsWeight, expWeight] at ⊢; omega
+      | handle body handler =>
+        apply evaluate_handle_addClock_ioEvents_step body handler env state extra ?_ ?_
+        · apply exprIH [body] env state (by omega) ?_ extra
+          simp only [expsWeight, expWeight] at ⊢; omega
+        · intro value start bound
+          apply exprIH [handler] (value :: env) start (by omega) ?_ extra
+          simp only [expsWeight, expWeight] at ⊢; omega
+      | ifThenElse condition yes no =>
+        apply evaluate_if_addClock_ioEvents_step condition yes no env state extra ?_ ?_
+        · apply exprIH [condition] env state (by omega) ?_ extra
+          simp only [expsWeight, expWeight] at ⊢; omega
+        · intro choice start bound
+          apply exprIH [if choice then yes else no] env start (by omega) ?_ extra
+          cases choice <;> simp only [Bool.false_eq_true, ↓reduceIte, expsWeight, expWeight] at ⊢
+            <;> omega
+      | op op args =>
+        apply evaluate_op_addClock_ioEvents_step op args env state extra
+        apply exprIH args env state (by omega) ?_ extra
+        simp only [expsWeight, expWeight] at ⊢; omega
+      | call ticks location args =>
+        apply evaluate_call_addClock_ioEvents_step ticks location args env state extra ?_ ?_
+        · apply exprIH args env state (by omega) ?_ extra
+          simp only [expsWeight, expWeight] at ⊢; omega
+        · intro body bodyEnv start bound
+          exact smaller [body] bodyEnv start (by omega) extra
+      | force location index =>
+        apply evaluate_force_addClock_ioEvents_step location index env state extra
+        intro body bodyEnv start bound
+        exact smaller [body] bodyEnv start (by omega) extra
 
 /-- Increasing the clock extends the observable event trace. -/
 @[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "evaluate_add_to_clock_io_events_mono"

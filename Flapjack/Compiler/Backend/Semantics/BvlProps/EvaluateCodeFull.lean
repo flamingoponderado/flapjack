@@ -258,89 +258,88 @@ private theorem evaluate_code_prefix {C F : Type} (expressions : List Bvl.Exp)
     (env : List BvlSem.Value) (state final : State C F)
     (result : Result (List BvlSem.Value) BvlSem.Value)
     (run : evaluate expressions env state = (result, final)) : sptSubspt state.code final.code := by
-  have lexInduction := clockWeightInduction (α := List Bvl.Exp) (σ := State C F) (·.clock)
-    expsWeight
+  refine clockWeightInduction (α := List Bvl.Exp) (σ := State C F) (·.clock) expsWeight
     (motive := fun expressions state => ∀ env final result,
       evaluate expressions env state = (result, final) → sptSubspt state.code final.code) ?_
-  · exact lexInduction expressions state env final result run
-  ·
-        intro expressions state exprIH₀ smaller₀
-        have exprIH := fun (es : List Bvl.Exp) (env' : List BvlSem.Value) (s final : State C F)
-            (result : Result (List BvlSem.Value) BvlSem.Value) h1 h2 run =>
-          exprIH₀ es s h1 h2 env' final result run
-        have smaller := fun (es : List Bvl.Exp) (env' : List BvlSem.Value) (s final : State C F)
-            (result : Result (List BvlSem.Value) BvlSem.Value) h1 run =>
-          smaller₀ es s h1 env' final result run
-        intro env final result run
-        cases expressions with
-        | nil => simp [evaluate] at run; rcases run with ⟨rfl, rfl⟩; exact subsptRefl _
-        | cons first rest =>
-          cases rest with
-          | cons second tail =>
-            apply evaluate_cons_code_step first second tail env state final result ?_ ?_ run
-            · intro last headResult headRun
-              apply exprIH [first] env state last headResult (by omega) ?_ headRun
-              simp only [expsWeight] at ⊢; have := expWeight_pos second; omega
-            · intro start last tailResult bound tailRun
-              apply exprIH (second :: tail) env start last tailResult (by omega) ?_ tailRun
-              simp only [expsWeight] at ⊢; omega
-          | nil =>
-            cases first with
-            | var index =>
-              rw [evaluate] at run
-              split at run <;> simp at run
-              all_goals rcases run with ⟨rfl, rfl⟩
-              all_goals exact subsptRefl _
-            | raise body =>
-              apply evaluate_raise_code_step body env state final result ?_ run
-              intro last bodyResult bodyRun
-              apply exprIH [body] env state last bodyResult (by omega) ?_ bodyRun
-              simp only [expsWeight, expWeight] at ⊢; omega
-            | tick body =>
-              apply evaluate_tick_code_step body env state final result ?_ run
-              intro start last bodyResult bound bodyRun
-              exact smaller [body] env start last bodyResult (by omega) bodyRun
-            | «let» bindings body =>
-              apply evaluate_let_code_step bindings body env state final result ?_ ?_ run
-              · intro last bindingResult bindingRun
-                apply exprIH bindings env state last bindingResult (by omega) ?_ bindingRun
-                simp only [expsWeight, expWeight] at ⊢; omega
-              · intro bodyEnv start last bodyResult bound bodyRun
-                apply exprIH [body] bodyEnv start last bodyResult (by omega) ?_ bodyRun
-                simp only [expsWeight, expWeight] at ⊢; omega
-            | handle body handler =>
-              apply evaluate_handle_code_step body handler env state final result ?_ ?_ run
-              · intro last bodyResult bodyRun
-                apply exprIH [body] env state last bodyResult (by omega) ?_ bodyRun
-                simp only [expsWeight, expWeight] at ⊢; omega
-              · intro value start last handlerResult bound handlerRun
-                apply exprIH [handler] (value :: env) start last handlerResult (by omega) ?_ handlerRun
-                simp only [expsWeight, expWeight] at ⊢; omega
-            | ifThenElse condition yes no =>
-              apply evaluate_if_code_step condition yes no env state final result ?_ ?_ run
-              · intro last testResult testRun
-                apply exprIH [condition] env state last testResult (by omega) ?_ testRun
-                simp only [expsWeight, expWeight] at ⊢; omega
-              · intro choice start last branchResult bound branchRun
-                apply exprIH [if choice then yes else no] env start last branchResult (by omega) ?_ branchRun
-                cases choice <;>
-                  simp only [Bool.false_eq_true, ↓reduceIte, expsWeight, expWeight] at ⊢ <;> omega
-            | op op args =>
-              apply evaluate_op_code_step op args env state final result ?_ run
-              intro last argResult argRun
-              apply exprIH args env state last argResult (by omega) ?_ argRun
-              simp only [expsWeight, expWeight] at ⊢; omega
-            | call ticks location args =>
-              apply evaluate_call_code_step ticks location args env state final result ?_ ?_ run
-              · intro last argResult argRun
-                apply exprIH args env state last argResult (by omega) ?_ argRun
-                simp only [expsWeight, expWeight] at ⊢; omega
-              · intro body bodyEnv start last bodyResult bound bodyRun
-                exact smaller [body] bodyEnv start last bodyResult (by omega) bodyRun
-            | force location index =>
-              apply evaluate_force_code_step location index env state final result ?_ run
-              intro body bodyEnv start last bodyResult bound bodyRun
-              exact smaller [body] bodyEnv start last bodyResult (by omega) bodyRun
+    expressions state env final result run
+  intro expressions state exprIH₀ smaller₀
+  have exprIH := fun (es : List Bvl.Exp) (env' : List BvlSem.Value) (s final : State C F)
+      (result : Result (List BvlSem.Value) BvlSem.Value) h1 h2 run =>
+    exprIH₀ es s h1 h2 env' final result run
+  have smaller := fun (es : List Bvl.Exp) (env' : List BvlSem.Value) (s final : State C F)
+      (result : Result (List BvlSem.Value) BvlSem.Value) h1 run =>
+    smaller₀ es s h1 env' final result run
+  intro env final result run
+  cases expressions with
+  | nil => simp [evaluate] at run; rcases run with ⟨rfl, rfl⟩; exact subsptRefl _
+  | cons first rest =>
+    cases rest with
+    | cons second tail =>
+      apply evaluate_cons_code_step first second tail env state final result ?_ ?_ run
+      · intro last headResult headRun
+        apply exprIH [first] env state last headResult (by omega) ?_ headRun
+        simp only [expsWeight] at ⊢; have := expWeight_pos second; omega
+      · intro start last tailResult bound tailRun
+        apply exprIH (second :: tail) env start last tailResult (by omega) ?_ tailRun
+        simp only [expsWeight] at ⊢; omega
+    | nil =>
+      cases first with
+      | var index =>
+        rw [evaluate] at run
+        split at run <;> simp at run
+        all_goals rcases run with ⟨rfl, rfl⟩
+        all_goals exact subsptRefl _
+      | raise body =>
+        apply evaluate_raise_code_step body env state final result ?_ run
+        intro last bodyResult bodyRun
+        apply exprIH [body] env state last bodyResult (by omega) ?_ bodyRun
+        simp only [expsWeight, expWeight] at ⊢; omega
+      | tick body =>
+        apply evaluate_tick_code_step body env state final result ?_ run
+        intro start last bodyResult bound bodyRun
+        exact smaller [body] env start last bodyResult (by omega) bodyRun
+      | «let» bindings body =>
+        apply evaluate_let_code_step bindings body env state final result ?_ ?_ run
+        · intro last bindingResult bindingRun
+          apply exprIH bindings env state last bindingResult (by omega) ?_ bindingRun
+          simp only [expsWeight, expWeight] at ⊢; omega
+        · intro bodyEnv start last bodyResult bound bodyRun
+          apply exprIH [body] bodyEnv start last bodyResult (by omega) ?_ bodyRun
+          simp only [expsWeight, expWeight] at ⊢; omega
+      | handle body handler =>
+        apply evaluate_handle_code_step body handler env state final result ?_ ?_ run
+        · intro last bodyResult bodyRun
+          apply exprIH [body] env state last bodyResult (by omega) ?_ bodyRun
+          simp only [expsWeight, expWeight] at ⊢; omega
+        · intro value start last handlerResult bound handlerRun
+          apply exprIH [handler] (value :: env) start last handlerResult (by omega) ?_ handlerRun
+          simp only [expsWeight, expWeight] at ⊢; omega
+      | ifThenElse condition yes no =>
+        apply evaluate_if_code_step condition yes no env state final result ?_ ?_ run
+        · intro last testResult testRun
+          apply exprIH [condition] env state last testResult (by omega) ?_ testRun
+          simp only [expsWeight, expWeight] at ⊢; omega
+        · intro choice start last branchResult bound branchRun
+          apply exprIH [if choice then yes else no] env start last branchResult (by omega) ?_
+            branchRun
+          cases choice <;> simp only [Bool.false_eq_true, ↓reduceIte, expsWeight, expWeight] at ⊢
+            <;> omega
+      | op op args =>
+        apply evaluate_op_code_step op args env state final result ?_ run
+        intro last argResult argRun
+        apply exprIH args env state last argResult (by omega) ?_ argRun
+        simp only [expsWeight, expWeight] at ⊢; omega
+      | call ticks location args =>
+        apply evaluate_call_code_step ticks location args env state final result ?_ ?_ run
+        · intro last argResult argRun
+          apply exprIH args env state last argResult (by omega) ?_ argRun
+          simp only [expsWeight, expWeight] at ⊢; omega
+        · intro body bodyEnv start last bodyResult bound bodyRun
+          exact smaller [body] bodyEnv start last bodyResult (by omega) bodyRun
+      | force location index =>
+        apply evaluate_force_code_step location index env state final result ?_ run
+        intro body bodyEnv start last bodyResult bound bodyRun
+        exact smaller [body] bodyEnv start last bodyResult (by omega) bodyRun
 
 /-- BVL evaluation preserves every code entry present at its start. -/
 @[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "evaluate_mono"

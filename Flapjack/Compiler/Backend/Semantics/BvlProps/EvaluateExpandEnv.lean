@@ -305,94 +305,92 @@ theorem evaluateExpandEnv {C F : Type} (expressions : List Bvl.Exp)
     (extra : List BvlSem.Value)
     (notType : (evaluateTuple (expressions, env, state)).1 ≠ .err (.abort .typeError)) :
     evaluateTuple (expressions, env ++ extra, state) = evaluateTuple (expressions, env, state) := by
-  have lexInduction := clockWeightInduction (α := List Bvl.Exp) (σ := State C F) (·.clock)
-    expsWeight
+  refine clockWeightInduction (α := List Bvl.Exp) (σ := State C F) (·.clock) expsWeight
     (motive := fun es s => ∀ a suffix, (evaluateTuple (es, a, s)).1 ≠ .err (.abort .typeError) →
       evaluateTuple (es, a ++ suffix, s) = evaluateTuple (es, a, s)) ?_
-  · exact lexInduction expressions state env extra notType
-  ·
-        intro es s exprIH₀ smaller₀
-        have exprIH := fun (es' : List Bvl.Exp) (a suffix : List BvlSem.Value) (s' : State C F)
-            h1 h2 valid => exprIH₀ es' s' h1 h2 a suffix valid
-        have smaller := fun (es' : List Bvl.Exp) (a suffix : List BvlSem.Value) (s' : State C F)
-            h1 valid => smaller₀ es' s' h1 a suffix valid
-        intro a suffix valid
-        cases es with
-        | nil => exact evaluateExpandEnv_nil a suffix s valid
-        | cons first rest =>
-          cases rest with
-          | cons second tail =>
-            apply evaluateExpandEnv_cons first second tail a suffix s ?_ ?_ valid
-            · intro h
-              apply exprIH [first] a suffix s (by omega) ?_ h
-              simp only [expsWeight] at ⊢; have := expWeight_pos second; omega
-            · intro values middle run h
-              change evaluate [first] a s = _ at run
-              have bound : middle.clock ≤ s.clock := by
-                have b := evaluate_clock_le [first] a s
-                simpa [run] using b
-              apply exprIH (second :: tail) a suffix middle (by omega) ?_ h
-              simp only [expsWeight] at ⊢; omega
-          | nil =>
-            cases first with
-            | var index => exact evaluateExpandEnv_var index a suffix s valid
-            | force location index => exact evaluateExpandEnv_force location index a suffix s valid
-            | tick body =>
-              apply evaluateExpandEnv_tick body a suffix s ?_ valid
-              intro nonzero h
-              have bodySmaller : (decClock 1 s).clock < s.clock := by simp [decClock]; omega
-              exact smaller₀ [body] (decClock 1 s) bodySmaller a suffix h
-            | raise body =>
-              apply evaluateExpandEnv_raise body a suffix s ?_ valid
-              intro h
-              apply exprIH [body] a suffix s (by omega) ?_ h
-              simp only [expsWeight, expWeight] at ⊢; omega
-            | op op args =>
-              apply evaluateExpandEnv_op op args a suffix s ?_ valid
-              intro h
-              apply exprIH args a suffix s (by omega) ?_ h
-              simp only [expsWeight, expWeight] at ⊢; omega
-            | call ticks dest args =>
-              apply evaluateExpandEnv_call ticks dest args a suffix s ?_ valid
-              intro h
-              apply exprIH args a suffix s (by omega) ?_ h
-              simp only [expsWeight, expWeight] at ⊢; omega
-            | «let» bindings body =>
-              apply evaluateExpandEnv_let bindings body a suffix s ?_ ?_ valid
-              · intro h
-                apply exprIH bindings a suffix s (by omega) ?_ h
-                simp only [expsWeight, expWeight] at ⊢; omega
-              · intro values middle run h
-                change evaluate bindings a s = _ at run
-                have bound : middle.clock ≤ s.clock := by
-                  have b := evaluate_clock_le bindings a s
-                  simpa [run] using b
-                apply exprIH [body] (values ++ a) suffix middle (by omega) ?_ h
-                simp only [expsWeight, expWeight] at ⊢; omega
-            | handle body handler =>
-              apply evaluateExpandEnv_handle body handler a suffix s ?_ ?_ valid
-              · intro h
-                apply exprIH [body] a suffix s (by omega) ?_ h
-                simp only [expsWeight, expWeight] at ⊢; omega
-              · intro value middle run h
-                change evaluate [body] a s = _ at run
-                have bound : middle.clock ≤ s.clock := by
-                  have b := evaluate_clock_le [body] a s
-                  simpa [run] using b
-                apply exprIH [handler] (value :: a) suffix middle (by omega) ?_ h
-                simp only [expsWeight, expWeight] at ⊢; omega
-            | ifThenElse condition yes no =>
-              apply evaluateExpandEnv_if condition yes no a suffix s ?_ ?_ valid
-              · intro h
-                apply exprIH [condition] a suffix s (by omega) ?_ h
-                simp only [expsWeight, expWeight] at ⊢; omega
-              · intro choice value middle run _ h
-                change evaluate [condition] a s = _ at run
-                have bound : middle.clock ≤ s.clock := by
-                  have b := evaluate_clock_le [condition] a s
-                  simpa [run] using b
-                apply exprIH [if choice then yes else no] a suffix middle (by omega) ?_ h
-                cases choice <;>
-                  simp only [Bool.false_eq_true, ↓reduceIte, expsWeight, expWeight] at ⊢ <;> omega
+    expressions state env extra notType
+  intro es s exprIH₀ smaller₀
+  have exprIH := fun (es' : List Bvl.Exp) (a suffix : List BvlSem.Value) (s' : State C F)
+      h1 h2 valid => exprIH₀ es' s' h1 h2 a suffix valid
+  have smaller := fun (es' : List Bvl.Exp) (a suffix : List BvlSem.Value) (s' : State C F)
+      h1 valid => smaller₀ es' s' h1 a suffix valid
+  intro a suffix valid
+  cases es with
+  | nil => exact evaluateExpandEnv_nil a suffix s valid
+  | cons first rest =>
+    cases rest with
+    | cons second tail =>
+      apply evaluateExpandEnv_cons first second tail a suffix s ?_ ?_ valid
+      · intro h
+        apply exprIH [first] a suffix s (by omega) ?_ h
+        simp only [expsWeight] at ⊢; have := expWeight_pos second; omega
+      · intro values middle run h
+        change evaluate [first] a s = _ at run
+        have bound : middle.clock ≤ s.clock := by
+          have b := evaluate_clock_le [first] a s
+          simpa [run] using b
+        apply exprIH (second :: tail) a suffix middle (by omega) ?_ h
+        simp only [expsWeight] at ⊢; omega
+    | nil =>
+      cases first with
+      | var index => exact evaluateExpandEnv_var index a suffix s valid
+      | force location index => exact evaluateExpandEnv_force location index a suffix s valid
+      | tick body =>
+        apply evaluateExpandEnv_tick body a suffix s ?_ valid
+        intro nonzero h
+        have bodySmaller : (decClock 1 s).clock < s.clock := by simp [decClock]; omega
+        exact smaller₀ [body] (decClock 1 s) bodySmaller a suffix h
+      | raise body =>
+        apply evaluateExpandEnv_raise body a suffix s ?_ valid
+        intro h
+        apply exprIH [body] a suffix s (by omega) ?_ h
+        simp only [expsWeight, expWeight] at ⊢; omega
+      | op op args =>
+        apply evaluateExpandEnv_op op args a suffix s ?_ valid
+        intro h
+        apply exprIH args a suffix s (by omega) ?_ h
+        simp only [expsWeight, expWeight] at ⊢; omega
+      | call ticks dest args =>
+        apply evaluateExpandEnv_call ticks dest args a suffix s ?_ valid
+        intro h
+        apply exprIH args a suffix s (by omega) ?_ h
+        simp only [expsWeight, expWeight] at ⊢; omega
+      | «let» bindings body =>
+        apply evaluateExpandEnv_let bindings body a suffix s ?_ ?_ valid
+        · intro h
+          apply exprIH bindings a suffix s (by omega) ?_ h
+          simp only [expsWeight, expWeight] at ⊢; omega
+        · intro values middle run h
+          change evaluate bindings a s = _ at run
+          have bound : middle.clock ≤ s.clock := by
+            have b := evaluate_clock_le bindings a s
+            simpa [run] using b
+          apply exprIH [body] (values ++ a) suffix middle (by omega) ?_ h
+          simp only [expsWeight, expWeight] at ⊢; omega
+      | handle body handler =>
+        apply evaluateExpandEnv_handle body handler a suffix s ?_ ?_ valid
+        · intro h
+          apply exprIH [body] a suffix s (by omega) ?_ h
+          simp only [expsWeight, expWeight] at ⊢; omega
+        · intro value middle run h
+          change evaluate [body] a s = _ at run
+          have bound : middle.clock ≤ s.clock := by
+            have b := evaluate_clock_le [body] a s
+            simpa [run] using b
+          apply exprIH [handler] (value :: a) suffix middle (by omega) ?_ h
+          simp only [expsWeight, expWeight] at ⊢; omega
+      | ifThenElse condition yes no =>
+        apply evaluateExpandEnv_if condition yes no a suffix s ?_ ?_ valid
+        · intro h
+          apply exprIH [condition] a suffix s (by omega) ?_ h
+          simp only [expsWeight, expWeight] at ⊢; omega
+        · intro choice value middle run _ h
+          change evaluate [condition] a s = _ at run
+          have bound : middle.clock ≤ s.clock := by
+            have b := evaluate_clock_le [condition] a s
+            simpa [run] using b
+          apply exprIH [if choice then yes else no] a suffix middle (by omega) ?_ h
+          cases choice <;> simp only [Bool.false_eq_true, ↓reduceIte, expsWeight, expWeight] at ⊢
+            <;> omega
 
 end Flapjack.Compiler.Backend.BvlProps
