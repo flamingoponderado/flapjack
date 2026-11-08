@@ -226,6 +226,8 @@ theorem doApp_Aw8sub {C F : Type} (genv : GlobalEnv)
       flat.refs.take 1 = flatState.refs.take 1 ∧ ResultRel ValueRel genv r flatResult ∧
       FlatSem.doApp flat (astOpToFlatOp .aw8sub) flatVs = some (flatState, flatResult) := by
   obtain ⟨run, stores, nonempty, values, ffi, ok, _, _⟩ := premises
+  let source : SemanticPrimitivesHOL.State F := ⟨flat.clock, s1.1, s1.2, 0, 0, none⟩
+  have states : StateRel genv source flat := .intro source flat nonempty stores rfl ffi
   cases vs with
   | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
   | cons first rest =>
@@ -235,47 +237,34 @@ theorem doApp_Aw8sub {C F : Type} (genv : GlobalEnv)
       cases rest with
       | cons third rest => simp [doApp, doAppNumericCore, doAppBasic] at run
       | nil =>
-        cases first <;> cases second <;> simp [doApp, doAppNumericCore, doAppBasic] at run
-        case loc.litv flag address lit =>
-          cases lit <;> simp at run
-          case intLit index =>
-            cases lookup : storeLookup address s1.1 with
-            | none => simp [lookup] at run
-            | some stored =>
-              cases stored <;> simp [lookup] at run
-              case w8array bytes =>
-                cases values with
-                | cons locationRel tail =>
-                  cases tail with
-                  | cons indexRel tail =>
-                    cases tail
-                    cases locationRel
-                    cases indexRel
-                    let source : SemanticPrimitivesHOL.State F := ⟨flat.clock, s1.1, s1.2, 0, 0, none⟩
-                    have states : StateRel genv source flat := .intro source flat nonempty stores rfl ffi
-                    have flatLookup := stateRel_byteArray_lookup genv source flat states address bytes lookup
-                    by_cases negative : index < 0
-                    · simp [readIndexed, boundsFailure, negative] at run
-                      obtain ⟨rfl, rfl⟩ := run
-                      refine ⟨.err (.raise FlatSem.subscriptExnV), flat, stores, nonempty, ffi, rfl, rfl, ?_, ?_⟩
-                      · exact .raise (valueRel_lemmas genv ok).2.2.2.2
-                      · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
-                          FlatSem.readIndexed, FlatSem.boundsFailure, flatLookup, negative]
-                    · cases element : bytes[index.toNat]? with
-                      | none =>
-                        simp [readIndexed, boundsFailure, negative, element] at run
-                        obtain ⟨rfl, rfl⟩ := run
-                        refine ⟨.err (.raise FlatSem.subscriptExnV), flat, stores, nonempty, ffi, rfl, rfl, ?_, ?_⟩
-                        · exact .raise (valueRel_lemmas genv ok).2.2.2.2
-                        · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
-                            FlatSem.readIndexed, FlatSem.boundsFailure, flatLookup, negative, element]
-                      | some byte =>
-                        simp [readIndexed, negative, element] at run
-                        obtain ⟨rfl, rfl⟩ := run
-                        refine ⟨.val (.litv (.word8 byte)), flat, stores, nonempty, ffi, rfl, rfl,
-                          .value (.literal genv _), ?_⟩
-                        simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
-                          FlatSem.readIndexed, flatLookup, negative, element]
+        have successful : doApp (source.refs, source.ffi) .aw8sub [first, second] ≠ none := by
+          simp [source, run]
+        obtain ⟨flag, address, index, sourceValues, rfl, rfl, lookup⟩ :=
+          aw8sub_operands source first second false successful
+        cases values with
+        | cons locationRel tail =>
+          cases tail with
+          | cons indexRel tail =>
+            cases tail
+            cases locationRel
+            cases indexRel
+            have sim := aw8sub_complete_related genv source flat states ok flag address sourceValues lookup index false
+            simp only [Bool.false_eq_true, if_false, source, run] at sim
+            cases flatRun : FlatSem.doAppMemory flat .aw8sub [.loc flag (address + 1), .litv (.intLit index)] with
+            | none => simp [flatRun] at sim
+            | some result =>
+              cases result with
+              | none => simp [flatRun] at sim
+              | some pair =>
+                cases pair with
+                | mk next result =>
+                  simp only [flatRun] at sim
+                  obtain ⟨refsEq, ffiEq, nextEq, resultRel⟩ := sim
+                  subst next
+                  refine ⟨result, flat, ?_, nonempty, ?_, rfl, rfl, resultRel, ?_⟩
+                  · simpa [source, refsEq] using stores
+                  · simpa [source, ffiEq] using ffi
+                  · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatRun]
 
 /-- The Aw8length case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
@@ -336,7 +325,8 @@ theorem doApp_Aw8update {C F : Type} (genv : GlobalEnv)
       flat.refs.take 1 = flatState.refs.take 1 ∧ ResultRel ValueRel genv r flatResult ∧
       FlatSem.doApp flat (astOpToFlatOp .aw8update) flatVs = some (flatState, flatResult) := by
   obtain ⟨run, stores, nonempty, values, ffi, ok, _, _⟩ := premises
-  have original := run
+  let source : SemanticPrimitivesHOL.State F := ⟨flat.clock, s1.1, s1.2, 0, 0, none⟩
+  have states : StateRel genv source flat := .intro source flat nonempty stores rfl ffi
   cases vs with
   | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
   | cons first rest =>
@@ -345,54 +335,44 @@ theorem doApp_Aw8update {C F : Type} (genv : GlobalEnv)
     | cons second rest =>
       cases rest with
       | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
-      | cons third rest =>
+      | cons value rest =>
         cases rest with
         | cons fourth rest => simp [doApp, doAppNumericCore, doAppBasic] at run
         | nil =>
-          cases first <;> cases second <;> cases third <;>
-            simp [doApp, doAppNumericCore, doAppBasic] at run
-          case loc.litv.litv flag address indexLit byteLit =>
-            cases indexLit <;> cases byteLit <;> simp at run
-            case intLit.word8 index byte =>
-              cases lookup : storeLookup address s1.1 with
-              | none => simp [lookup] at run
-              | some stored =>
-                cases stored <;> simp [lookup] at run
-                case w8array bytes =>
-                  cases values with
-                  | cons locationRel tail =>
-                    cases tail with
-                    | cons indexRel tail =>
-                      cases tail with
-                      | cons byteRel tail =>
-                        cases tail
-                        cases locationRel
-                        cases indexRel
-                        cases byteRel
-                        let source : SemanticPrimitivesHOL.State F := ⟨flat.clock, s1.1, s1.2, 0, 0, none⟩
-                        have states : StateRel genv source flat := .intro source flat nonempty stores rfl ffi
-                        by_cases bad : index < 0 ∨ bytes.length ≤ index.toNat
-                        · have ⟨src, dst, exceptionRel⟩ :=
-                            aw8update_outOfBounds genv source flat states ok flag address bytes lookup index bad byte false
-                          simp only [Bool.false_eq_true, if_false] at src dst
-                          simp [doApp, doAppNumericCore, src, source] at original
-                          obtain ⟨rfl, rfl⟩ := original
-                          refine ⟨.err (.raise FlatSem.subscriptExnV), flat, stores, nonempty, ffi, rfl, rfl,
-                            .raise exceptionRel, ?_⟩
-                          simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, dst]
-                        · have nonnegative : 0 ≤ index := Int.le_of_not_gt (fun h => bad (.inl h))
-                          have inBounds : index.toNat < bytes.length := Nat.lt_of_not_ge (fun h => bad (.inr h))
-                          obtain ⟨flatRefs, src, dst, unitRel, nextRel, reserved⟩ :=
-                            aw8update_related genv source flat states flag address bytes lookup index nonnegative inBounds byte false
-                          simp only [Bool.false_eq_true, if_false] at src dst
-                          simp [doApp, doAppNumericCore, src, source] at original
-                          obtain ⟨rfl, rfl⟩ := original
-                          obtain ⟨afterNonempty, afterStores, _, afterFfi⟩ :=
-                            (stateRel_iff genv { source with refs := s1.1.set address (.w8array (bytes.set index.toNat byte)) }
-                              { flat with refs := flatRefs }).mp nextRel
-                          refine ⟨.val FlatSem.unitValue, { flat with refs := flatRefs }, afterStores,
-                            afterNonempty, afterFfi, rfl, reserved.symm, .value unitRel, ?_⟩
-                          simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, dst]
+          have successful : doApp (source.refs, source.ffi) .aw8update [first, second, value] ≠ none := by
+            simp [source, run]
+          obtain ⟨flag, address, index, byte, sourceValues, rfl, rfl, rfl, lookup⟩ :=
+            aw8update_operands source first second value false successful
+          cases values with
+          | cons locationRel tail =>
+            cases tail with
+            | cons indexRel tail =>
+              cases tail with
+              | cons valueRel tail =>
+                cases tail
+                cases locationRel
+                cases indexRel
+                cases valueRel
+                have sim := aw8update_complete_related genv source flat states ok flag address sourceValues lookup
+                  index byte false
+                simp only [Bool.false_eq_true, if_false, source, run] at sim
+                cases flatRun : FlatSem.doAppMemory flat .aw8update
+                    [.loc flag (address + 1), .litv (.intLit index), .litv (.word8 byte)] with
+                | none => simp [flatRun] at sim
+                | some result =>
+                  cases result with
+                  | none => simp [flatRun] at sim
+                  | some pair =>
+                    cases pair with
+                    | mk next result =>
+                      simp only [flatRun] at sim
+                      obtain ⟨ffiEq, nextEq, nextRel, reserved, resultRel⟩ := sim
+                      obtain ⟨afterNonempty, afterStores, _, afterFfi⟩ :=
+                        (stateRel_iff genv { source with refs := s2.1 } next).mp nextRel
+                      refine ⟨result, next, afterStores, afterNonempty, ?_, ?_, reserved.symm, resultRel, ?_⟩
+                      · simpa [source, ffiEq] using afterFfi
+                      · rw [nextEq]
+                      · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatRun]
 
 /-- The CopyStrStr case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
