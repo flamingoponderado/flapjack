@@ -125572,6 +125572,33 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "LoadWord64_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "loadWord64",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared load_word64_def_typed: configuration and independent destination and source registers are retained, and the destination receives the load at real_addr plus bytes_in_word. Positive-width BitVec represents HOL words. The executed Word64 shift uses this helper."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "WordShift64_on_32_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "wordShift64On32",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared word_shift64_on32_def_typed: rotate reduces n modulo 64 and splits at 32; other shifts split at 32 and retain the original per-constructor assignments, shift amounts, and unreachable rotate clauses. Natural subtraction and all registers and ordering agree. Positive-width BitVec represents HOL words. The executed Word64 shift uses this helper."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_WordShiftW64_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignWordShiftW64",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_word_shift_w64_def_typed: shift, count, config, section, label, destination, optional names and source remain in order, including unused inputs. Width below 64 selects a two-word header and sequence; every other positive width selects a one-word header and sequence. Both header failure and label are preserved. Positive-width BitVec represents HOL words. The production dispatcher calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "WriteWord64_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "writeWord64",

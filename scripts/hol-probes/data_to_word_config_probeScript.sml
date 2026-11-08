@@ -162,6 +162,29 @@ val _ = print_eval "word_op64_add_16" ``(assign (^conf with len_size := 4) 4 9 3
 val _ = print_eval "word_op64_xor_64" ``(assign ^conf 4 9 3 (closLang$WordOp (WordOpw ast$W64 backend_common$Xor)) [1;2] NONE : 64 wordLang$prog # num)``;
 val _ = print_eval "word_op64_header_failure_32" ``(assign (^conf with len_size := 0) 4 9 3 (closLang$WordOp (WordOpw ast$W64 backend_common$Add)) [1;2] NONE : 32 wordLang$prog # num)``;
 val _ = print_eval "word_op64_bad_arity_32" ``(assign ^conf 4 9 3 (closLang$WordOp (WordOpw ast$W64 backend_common$Add)) [1] NONE : 32 wordLang$prog # num)``;
+val _ = (print "load_word64_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.LoadWord64_def); print "\n");
+val _ = (print "word_shift64_on32_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.WordShift64_on_32_def); print "\n");
+val _ = (print "assign_word_shift_w64_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_WordShiftW64_def); print "\n");
+val _ = print_eval "load_word64_registers_64" ``(LoadWord64 ^conf 11 5 : 64 wordLang$prog)``;
+val _ = print_eval "word_shift32_lsl_0" ``(WordShift64_on_32 Lsl 0 : 32 wordLang$prog)``;
+val _ = print_eval "word_shift32_lsl_31" ``(WordShift64_on_32 Lsl 31 : 32 wordLang$prog)``;
+val _ = print_eval "word_shift32_lsl_32" ``(WordShift64_on_32 Lsl 32 : 32 wordLang$prog)``;
+val _ = print_eval "word_shift32_lsr_31" ``(WordShift64_on_32 Lsr 31 : 32 wordLang$prog)``;
+val _ = print_eval "word_shift32_lsr_32" ``(WordShift64_on_32 Lsr 32 : 32 wordLang$prog)``;
+val _ = print_eval "word_shift32_asr_31" ``(WordShift64_on_32 Asr 31 : 32 wordLang$prog)``;
+val _ = print_eval "word_shift32_asr_64" ``(WordShift64_on_32 Asr 64 : 32 wordLang$prog)``;
+val _ = print_eval "word_shift32_ror_31" ``(WordShift64_on_32 Ror 31 : 32 wordLang$prog)``;
+val _ = print_eval "word_shift32_ror_32" ``(WordShift64_on_32 Ror 32 : 32 wordLang$prog)``;
+val _ = print_eval "word_shift32_ror_63" ``(WordShift64_on_32 Ror 63 : 32 wordLang$prog)``;
+val _ = print_eval "word_shift32_ror_64" ``(WordShift64_on_32 Ror 64 : 32 wordLang$prog)``;
+val _ = print_eval "word_shift64_lsl_32" ``(assign ^conf 4 9 3 (closLang$WordOp (WordShift ast$W64 Lsl 32)) [1] NONE : 32 wordLang$prog # num)``;
+val _ = print_eval "word_shift64_ror_64" ``(assign ^conf 4 9 3 (closLang$WordOp (WordShift ast$W64 Ror 64)) [1] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "word_shift64_lsl_128" ``(assign ^conf 4 9 3 (closLang$WordOp (WordShift ast$W64 Lsl 1)) [1] NONE : 128 wordLang$prog # num)``;
+val _ = print_eval "word_shift64_header_failure_32" ``(assign (^conf with len_size := 0) 4 9 3 (closLang$WordOp (WordShift ast$W64 Lsl 1)) [1] NONE : 32 wordLang$prog # num)``;
+val _ = print_eval "word_shift64_bad_arity_32" ``(assign ^conf 4 9 3 (closLang$WordOp (WordShift ast$W64 Lsl 1)) [] NONE : 32 wordLang$prog # num)``;
 val _ = print_eval "store_each_64" ``(StoreEach 2 [4;6] 8w : 64 wordLang$prog)``;
 val _ = print_eval "mem_eq_list_64" ``(MemEqList 8w [3w;7w] : 64 wordLang$prog)``;
 val _ = print_eval "silent_ffi_off_64" ``(SilentFFI ^conf 3 (LN,LN) : 64 wordLang$prog)``;

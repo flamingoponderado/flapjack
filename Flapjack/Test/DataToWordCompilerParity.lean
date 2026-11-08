@@ -7,6 +7,77 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord
 
 private def conf : Config := ⟨1, 2, 3, 16, false, false, false, false, false, false, .simple⟩
 
+example : loadWord64 (width := 64) conf 11 5 =
+    .assign 11 (.load (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 5) (.const 5)], .const 8])) := by rfl
+
+example : wordShift64On32 (width := 32) .lsl 0 =
+    .seq (.assign 33 (.var 13)) (.assign 31 (.op .or [.const 0, .var 11])) := by rfl
+example : wordShift64On32 (width := 32) .lsl 31 =
+    .seq (.assign 33 (.shift .lsl (.var 13) (.const 31)))
+      (.assign 31 (.op .or [.shift .lsr (.var 13) (.const 1), .shift .lsl (.var 11) (.const 31)])) := by rfl
+example : wordShift64On32 (width := 32) .lsl 32 =
+    .seq (.assign 33 (.const 0)) (.assign 31 (.var 13)) := by rfl
+example : wordShift64On32 (width := 32) .lsr 31 =
+    .seq (.assign 33 (.op .or [.shift .lsl (.var 11) (.const 1), .shift .lsr (.var 13) (.const 31)]))
+      (.assign 31 (.shift .lsr (.var 11) (.const 31))) := by rfl
+example : wordShift64On32 (width := 32) .lsr 32 =
+    .seq (.assign 33 (.var 11)) (.assign 31 (.const 0)) := by rfl
+example : wordShift64On32 (width := 32) .asr 31 =
+    .seq (.assign 33 (.op .or [.shift .lsl (.var 11) (.const 1), .shift .lsr (.var 13) (.const 31)]))
+      (.assign 31 (.shift .asr (.var 11) (.const 31))) := by rfl
+example : wordShift64On32 (width := 32) .asr 64 =
+    .seq (.assign 33 (.shift .asr (.var 11) (.const 31)))
+      (.assign 31 (.shift .asr (.var 11) (.const 31))) := by rfl
+example : wordShift64On32 (width := 32) .ror 31 =
+    .seq (.assign 33 (.op .or [.shift .lsl (.var 11) (.const 1), .shift .lsr (.var 13) (.const 31)]))
+      (.assign 31 (.op .or [.shift .lsl (.var 13) (.const 1), .shift .lsr (.var 11) (.const 31)])) := by rfl
+example : wordShift64On32 (width := 32) .ror 32 =
+    .seq (.assign 33 (.op .or [.const 0, .var 11])) (.assign 31 (.op .or [.const 0, .var 13])) := by rfl
+example : wordShift64On32 (width := 32) .ror 63 =
+    .seq (.assign 33 (.op .or [.shift .lsl (.var 13) (.const 1), .shift .lsr (.var 11) (.const 31)]))
+      (.assign 31 (.op .or [.shift .lsl (.var 11) (.const 1), .shift .lsr (.var 13) (.const 31)])) := by rfl
+example : wordShift64On32 (width := 32) .ror 64 =
+    .seq (.assign 33 (.op .or [.const 0, .var 13])) (.assign 31 (.op .or [.const 0, .var 11])) := by rfl
+
+example : compileControl? (width := 32) conf 4 9 (.assign 3 (.wordOp (.wordShift .w64 .lsl 32)) [1] none) =
+    some (wordListSeq [
+      .assign 15 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 6)]),
+      .assign 11 (.load (.op .add [.var 15, .const 4])),
+      .assign 13 (.load (.op .add [.var 15, .const 8])),
+      .seq (.assign 33 (.const 0)) (.assign 31 (.var 13)),
+      wordListSeq [
+        .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const 4]) 31,
+        .store (.op .add [.var 1, .const 8]) 33, .assign 3 (.const 0x2000F), .store (.var 1) 3,
+        .set .nextFree (.op .add [.var 1, .const 12]),
+        .assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 6), .const 1])]], 9) := by rfl
+
+example : compileControl? (width := 128) conf 4 9 (.assign 3 (.wordOp (.wordShift .w64 .lsl 1)) [1] none) =
+    some (wordListSeq [
+      .assign 3 (.load (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)], .const 16])),
+      .assign 3 (.shift .lsl (.var 3) (.const 1)),
+      wordListSeq [
+        .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const 16]) 3,
+        .assign 3 (.const 0x1000000000000000000000000000F), .store (.var 1) 3,
+        .set .nextFree (.op .add [.var 1, .const 32]),
+        .assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1])]], 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.wordOp (.wordShift .w64 .ror 64)) [1] none) =
+    some (wordListSeq [
+      .assign 3 (.load (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)], .const 8])),
+      .assign 3 (.var 3),
+      wordListSeq [
+        .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const 8]) 3,
+        .assign 3 (.const 0x100000000000F), .store (.var 1) 3,
+        .set .nextFree (.op .add [.var 1, .const 16]),
+        .assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1])]], 9) := by rfl
+
+example : compileControl? (width := 32) { conf with lenSize := 0 } 4 9
+    (.assign 3 (.wordOp (.wordShift .w64 .lsl 1)) [1] none) =
+    some (.seq (.assign 1 (.const (-1))) (.alloc 1 (adjustSets (.ln : NumSet))), 9) := by rfl
+
+example : compileControl? (width := 32) conf 4 9 (.assign 3 (.wordOp (.wordShift .w64 .lsl 1)) [] none) =
+    some (.skip, 9) := by rfl
+
 example : writeWord64 (width := 64) conf 42 3 7 = wordListSeq [
     .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const 8]) 7,
     .assign 3 (.const 42), .store (.var 1) 3, .set .nextFree (.op .add [.var 1, .const 16]),
