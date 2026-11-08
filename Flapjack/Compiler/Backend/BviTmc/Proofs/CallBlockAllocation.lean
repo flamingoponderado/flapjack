@@ -343,7 +343,7 @@ theorem evaluate_wrapper_core {C F : Type} (loc dest tag : Nat) (left right : Li
         evaluate_wrapper_success_related tag left right child dest env2 target next f g mid.refs
           (right.map (fun n => holEl n env1)).reverse (left.map (fun n => holEl n env1)).reverse
           sourceValue targetValue targetLeft targetRight workerRun outside unchanged nextHole blocks
-          (reverse_related g rightNext) (reverse_related g leftNext) nextStates.1 invariants.2.2
+          (List.rel_reverse rightNext) (List.rel_reverse leftNext) nextStates.1 invariants.2.2
       simp [childRun, holHd] at run
       obtain ⟨rfl, rfl⟩ := run.symm
       refine ⟨{ next with refs := refs }, g, .val [value], targetRun, ?_, ⟨heaps, nextStates.2⟩,

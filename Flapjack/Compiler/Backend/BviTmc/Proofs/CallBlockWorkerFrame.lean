@@ -206,7 +206,8 @@ theorem evaluate_worker_frame_core {C F : Type} (loc dest tag ptr : Nat) (left r
         (right.map (fun n => holEl n env2)).reverse (left.map (fun n => holEl n env2)).reverse
         (right.map (fun n => holEl n env1)).reverse (left.map (fun n => holEl n env1)).reverse
         sourceValue targetValue returnedHole.2 different (Set.Subset.rfl) freshOutside unchanged
-        (by simpa using singleHole) childBlocks (reverse_related g rightNext) (reverse_related g leftNext)
+        (by simpa using singleHole) childBlocks (List.rel_reverse rightNext)
+          (List.rel_reverse leftNext)
       have workerHole := alloc_hole_as_worker f env1 env2 next.refs ptr idx (.refPtr false (leastUnusedRef target.refs))
         hole.1 pointer index returnedHole.1
       simp [childRun, holHd] at run

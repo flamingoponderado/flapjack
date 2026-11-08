@@ -41,7 +41,7 @@ theorem evaluate_op_core {C F : Type} (op : ClosLang.Op) (args : List Bvi.Exp)
       | err error => simp [resultRel] at related
       | val values' =>
         have reversed : List.Forall₂ (valueRel g) values.reverse values'.reverse :=
-          reverse_related g related
+          List.rel_reverse related
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun] at run
         cases appRun : BviSem.doApp op values.reverse middle with
         | err error =>

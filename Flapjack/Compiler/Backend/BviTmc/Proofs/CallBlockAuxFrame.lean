@@ -448,7 +448,8 @@ theorem evaluate_aux_frame_core {C F : Type} (loc dest tag : Nat) (left right : 
         (right.map (fun n => holEl n env2)).reverse (left.map (fun n => holEl n env2)).reverse
         (right.map (fun n => holEl n env1)).reverse (left.map (fun n => holEl n env1)).reverse
         sourceValue targetValue returnedHole.2 different oldDomain freshOutside unchanged
-        (by simpa using singleHole) childBlocks (reverse_related g rightNext) (reverse_related g leftNext)
+        (by simpa using singleHole) childBlocks (List.rel_reverse rightNext)
+          (List.rel_reverse leftNext)
       simp [childRun, holHd] at run
       obtain ⟨rfl, rfl⟩ := run.symm
       refine ⟨targetResult, next, g, targetRun, ?_, nextStates, extension,
