@@ -515,10 +515,11 @@ theorem list_mapM_congr {α β : Type} (g h : α → Option β) (xs : List α)
   | nil => rfl
   | cons x xs ih =>
     rw [List.mapM_cons, List.mapM_cons, hgh x (by simp), ih (fun y hy => hgh y (by simp [hy]))]
-/-- Flapjack-specific analogue of Cake `opt_mmap_some_eq_zip_flookup`
-(`pan_commonPropsScript.sml:170`), not an exact HOL port: folding the
-`(key,value)` list over a finite map makes every key look up its paired value,
-provided the key list is duplicate-free and lengths agree. -/
+
+/-- Flapjack-specific support corresponding to HOL `opt_mmap_some_eq_zip_flookup`.
+    This uses raw lookup functions, which admit maps with infinite support;
+    HOL uses finite maps. Any Boolean equality instances are extra assumptions.
+    The faithful HOL declaration remains to be ported. -/
 theorem opt_mmap_some_eq_zip_flookup [BEq α] [LawfulBEq α]
     (xs : List α) (f : FiniteMap α β) (ys : List β)
     (hdistinct : xs.Nodup) (hlen : xs.length = ys.length) :
@@ -550,9 +551,11 @@ theorem opt_mmap_some_eq_zip_flookup [BEq α] [LawfulBEq α]
         ih (ys := ys) (f := FUPDATE f (x, y)) hdistinct' hlen'
       rw [hhead, htail]
       rfl
-/-- Flapjack-specific analogue of Cake `opt_mmap_disj_zip_flookup`
-(`pan_commonPropsScript.sml:188`), not an exact HOL port: if the updated keys are
-disjoint from the queried keys, the list update is invisible to the query. -/
+
+/-- Flapjack-specific support corresponding to HOL `opt_mmap_disj_zip_flookup`.
+    This uses raw lookup functions, which admit maps with infinite support;
+    HOL uses finite maps. Any Boolean equality instances are extra assumptions.
+    The faithful HOL declaration remains to be ported. -/
 theorem opt_mmap_disj_zip_flookup [BEq α] [LawfulBEq α]
     (xs : List α) (f : FiniteMap α β) (ys : List α) (zs : List β)
     (hdisj : ListDisjoint xs ys) (hlen : xs.length = zs.length) :
