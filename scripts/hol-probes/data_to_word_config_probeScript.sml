@@ -116,6 +116,21 @@ val _ = print_eval "assign_update_thunk_pending_64" ``(assign ^conf 4 9 3 (closL
 val _ = print_eval "assign_update_thunk_done_64" ``(assign ^conf 4 9 3 (closLang$ThunkOp (UpdateThunk Evaluated)) [1;2] NONE : 64 wordLang$prog # num)``;
 val _ = print_eval "assign_update_thunk_header_failure_64" ``(assign (^conf with len_size := 0) 4 9 3 (closLang$ThunkOp (UpdateThunk Evaluated)) [1;2] NONE : 64 wordLang$prog # num)``;
 val _ = print_eval "assign_update_thunk_bad_arity_64" ``(assign ^conf 4 9 3 (closLang$ThunkOp (UpdateThunk Evaluated)) [1] NONE : 64 wordLang$prog # num)``;
+val _ = (print "assign_bool_not_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_BoolNot_def); print "\n");
+val _ = (print "assign_finalise_cons_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_FinaliseCons_def); print "\n");
+val _ = (print "assign_length_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_Length_def); print "\n");
+val _ = (print "assign_length_byte_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_LengthByte_def); print "\n");
+val _ = print_eval "assign_bool_not_64" ``(assign ^conf 4 9 3 (closLang$BlockOp BoolNot) [1] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_bool_not_bad_arity_64" ``(assign ^conf 4 9 3 (closLang$BlockOp BoolNot) [] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_finalise_cons_64" ``(assign ^conf 4 9 3 (closLang$MemOp FinaliseCons) [1] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_finalise_cons_bad_arity_64" ``(assign ^conf 4 9 3 (closLang$MemOp FinaliseCons) [1;2] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_length_64" ``(assign ^conf 4 9 3 (closLang$MemOp Length) [1] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_length_byte_32" ``(assign ^conf 4 9 3 (closLang$MemOp LengthByte) [1] NONE : 32 wordLang$prog # num)``;
+val _ = print_eval "assign_length_byte_bad_arity_64" ``(assign ^conf 4 9 3 (closLang$MemOp LengthByte) [] NONE : 64 wordLang$prog # num)``;
 val _ = print_eval "store_each_64" ``(StoreEach 2 [4;6] 8w : 64 wordLang$prog)``;
 val _ = print_eval "mem_eq_list_64" ``(MemEqList 8w [3w;7w] : 64 wordLang$prog)``;
 val _ = print_eval "silent_ffi_off_64" ``(SilentFFI ^conf 3 (LN,LN) : 64 wordLang$prog)``;

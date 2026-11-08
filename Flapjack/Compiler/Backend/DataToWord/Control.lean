@@ -351,6 +351,38 @@ def assignUpdateThunk {width : Nat} [NeZero width] (mode : Flapjack.AstHOL.Thunk
           .store (.op .add [.var 1, .const wordSemBytesInWord]) (adjustVar value),
           .assign (adjustVar dest) unitExp], l)
 
+/-- Invert a tagged Boolean value. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_BoolNot_def"
+  (words_as_type_indexed_bitvec)]
+def assignBoolNot {width : Nat} [NeZero width] (l dest src : Nat) :
+    WordLangProgHOL (BitVec width) × Nat :=
+  (.assign (adjustVar dest) (.op .xor [.var (adjustVar src), .const 16]), l)
+
+/-- Finish a constructor by copying its tagged value. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_FinaliseCons_def"
+  (words_as_type_indexed_bitvec)]
+def assignFinaliseCons {width : Nat} [NeZero width] (l dest src : Nat) :
+    WordLangProgHOL (BitVec width) × Nat :=
+  (.assign (adjustVar dest) (.var (adjustVar src)), l)
+
+/-- Read and retag the length field of a word array. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Length_def"
+  (words_as_type_indexed_bitvec)]
+def assignLength {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (src : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let header := WordLangExpHOL.load (realAddr conf (adjustVar src))
+  let len := shiftN .lsr header (width - conf.lenSize)
+  (.assign (adjustVar dest) (shiftN .lsl len 2), l)
+
+/-- Read, adjust, and retag the length field of a byte array. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_LengthByte_def"
+  (words_as_type_indexed_bitvec)]
+def assignLengthByte {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (src : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let header := WordLangExpHOL.load (realAddr conf (adjustVar src))
+  let len := shiftN .lsr header (width - wordShiftAmount width - conf.lenSize)
+  (.assign (adjustVar dest) (shiftN .lsl (.op .sub [len, .const wordSemBytesInWord]) 2), l)
+
 /-- Set the globals pointer and its derived real address. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_SetGlobalsPtr_def"
   (words_as_type_indexed_bitvec)]
@@ -443,9 +475,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
               (some appendLocation) [adjustVar second, adjustVar first] none), l + 1)
       | _ => some (.skip, l)
   | l, .assign dest (.blockOp .boolNot) args _ =>
-      match args with
-      | [src] => some (.assign (adjustVar dest) (.op .xor [.var (adjustVar src), .const 16]), l)
-      | _ => some (.skip, l)
+      some (arg1 args (assignBoolNot l dest) (.skip, l))
   | l, .assign dest (.blockOp .lengthBlock) args _ =>
       match args with
       | [src] =>
@@ -920,20 +950,10 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       | _ => some (.skip, l)
   | l, .assign dest (.memOp .el) args _ =>
       some (arg2 args (assignEl conf l dest) (.skip, l))
-  | l, .assign dest (.memOp .length) args _ =>
-      match args with
-      | [src] =>
-          let header := WordLangExpHOL.load (realAddr conf (adjustVar src))
-          some (.assign (adjustVar dest) (shiftN .lsl (shiftN .lsr header (width - conf.lenSize)) 2), l)
-      | _ => some (.skip, l)
-  | l, .assign dest (.memOp .lengthByte) args _ =>
-      match args with
-      | [src] =>
-          let header := WordLangExpHOL.load (realAddr conf (adjustVar src))
-          let length := shiftN .lsr header (width - wordShiftAmount width - conf.lenSize)
-          some (.assign (adjustVar dest)
-            (shiftN .lsl (.op .sub [length, .const ((wordSemBytesInWord : BitVec width))]) 2), l)
-      | _ => some (.skip, l)
+  | l, .assign dest (.memOp .length) args names =>
+      some (arg1 args (assignLength conf secn l dest names) (.skip, l))
+  | l, .assign dest (.memOp .lengthByte) args names =>
+      some (arg1 args (assignLengthByte conf secn l dest names) (.skip, l))
   | l, .assign dest (.memOp .derefByte) args _ =>
       some (arg2 args (assignDerefByte conf l dest) (.skip, l))
   | l, .assign dest (.memOp .updateByte) args _ =>
@@ -1001,8 +1021,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
           match conf.gcKind with
           | .generational _ => some (giveUp, l)
           | _ => some (compileCons conf l dest tag args)
-      | .finaliseCons, [src] => some (.assign (adjustVar dest) (.var (adjustVar src)), l)
-      | .finaliseCons, _ => some (.skip, l)
+      | .finaliseCons, args => some (arg1 args (assignFinaliseCons l dest) (.skip, l))
       | .update, args | .updateCons, args =>
           some (arg3 args (assignUpdate conf l dest) (.skip, l))
       | _, _ => some (.skip, l)

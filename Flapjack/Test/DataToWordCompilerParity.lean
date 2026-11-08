@@ -96,6 +96,23 @@ example : compileControl? (width := 64) { conf with lenSize := 0 } 4 9
 example : compileControl? (width := 64) conf 4 9
     (.assign 3 (.thunkOp (.updateThunk .evaluated)) [1] none) = some (.skip, 9) := by rfl
 
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.blockOp .boolNot) [] none) =
+    some (.skip, 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.memOp .finaliseCons) [1] none) =
+    some (.assign 8 (.var 4), 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.memOp .finaliseCons) [1, 2] none) =
+    some (.skip, 9) := by rfl
+
+example : compileControl? (width := 32) conf 4 9 (.assign 3 (.memOp .lengthByte) [1] none) =
+    some (.assign 8 (.shift .lsl (.op .sub [
+      .shift .lsr (.load (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 6)])) (.const 14),
+      .const 4]) (.const 2)), 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.memOp .lengthByte) [] none) =
+    some (.skip, 9) := by rfl
+
 example : compileControl? (width := 64) conf 5 2 (.ifThenElse 1 (.move 3 1) (.seq .tick (.return [1, 3]))) =
     some (.ite .equal 4 (.imm 18) (.move 0 [(8, 4)]) (.seq .tick (.return 0 [4, 8])), 2) := by rfl
 

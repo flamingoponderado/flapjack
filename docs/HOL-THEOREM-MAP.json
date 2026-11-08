@@ -125572,6 +125572,42 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_BoolNot_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignBoolNot",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_bool_not_def_typed: label, destination and source inputs agree, and the adjusted destination receives the XOR of the adjusted source and 16w with the label unchanged. Positive-width BitVec represents HOL words. The production dispatch uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_FinaliseCons_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignFinaliseCons",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_finalise_cons_def_typed: the input label is retained and the adjusted destination receives the adjusted source variable. Positive-width BitVec represents the HOL word dimension. The production dispatch uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_Length_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignLength",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_length_def_typed: config, section, label, destination, optional name set and source are retained in order, including the two unused inputs; the real-address load is shifted right by dimindex minus len_size and left by two, returning the unchanged label. Positive-width BitVec represents HOL words. The production dispatch uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_LengthByte_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignLengthByte",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_length_byte_def_typed: all original inputs, including unused section and optional name set, remain; the header shift by dimindex minus shift minus len_size, word subtraction of bytes_in_word, final left shift and unchanged label agree. Positive-width BitVec represents HOL words. The production dispatch uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "Unit_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "unitExp",
