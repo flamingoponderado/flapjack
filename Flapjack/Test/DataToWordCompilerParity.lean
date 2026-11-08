@@ -7,6 +7,100 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord
 
 private def conf : Config := ⟨1, 2, 3, 16, false, false, false, false, false, false, .simple⟩
 
+/-- The HOL-observed two-word integer-to-Word64 conversion program. -/
+private def expectedFromIntSmall {width : Nat} [NeZero width] (cfg : Config)
+    (header : BitVec width) (addressShift lengthShift bytes : Nat) : WordLangProgHOL (BitVec width) :=
+  let store := writeWord64On32 cfg header 3
+  .ite .test 4 (.imm 1)
+    (wordListSeq [.assign 3 (.shift .asr (.var 4) (.const 2)),
+      .assign 5 (.shift .asr (.var 4) (.const 31)), store 3 5])
+    (wordListSeq [
+      .assign 1 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const (BitVec.ofNat width addressShift))]),
+      .assign 3 (.load (.var 1)),
+      .assign 5 (.load (.op .add [.var 1, .const (BitVec.ofNat width bytes)])),
+      .assign 7 (.shift .lsr (.var 3) (.const (BitVec.ofNat width lengthShift))),
+      .ite .equal 7 (.imm 1)
+        (.ite .test 3 (.imm 16)
+          (.seq (.assign 9 (.const 0)) (store 5 9))
+          (.seq (.assign 9 (.const (-1))) (.seq (.assign 5 (.op .sub [.const 0, .var 5])) (store 5 9))))
+        (.ite .test 3 (.imm 16)
+          (.seq (.assign 9 (.load (.op .add [.var 1, .const (BitVec.ofNat width (2 * bytes))]))) (store 5 9))
+          (wordListSeq [.assign 11 (.const 0), .assign 13 (.const 1),
+            .assign 9 (.load (.op .add [.var 1, .const (BitVec.ofNat width (2 * bytes))])),
+            .assign 5 (.op .xor [.const (-1), .var 5]), .assign 9 (.op .xor [.const (-1), .var 9]),
+            .inst (.arith (.addCarry 15 11 5 13)), .inst (.arith (.addCarry 19 11 9 13)), store 15 19]))])
+
+/-- The HOL-observed two-word Word64-to-integer conversion program. -/
+private def expectedToIntSmall {width : Nat} [NeZero width] (cfg : Config)
+    (header header1 : BitVec width) (addressShift bytes : Nat) : WordLangProgHOL (BitVec width) :=
+  wordListSeq [
+    .assign 15 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const (BitVec.ofNat width addressShift))]),
+    .assign 13 (.load (.op .add [.var 15, .const (BitVec.ofNat width bytes)])),
+    .assign 11 (.load (.op .add [.var 15, .const (BitVec.ofNat width (2 * bytes))])),
+    .ite .notEqual 13 (.imm 0) (writeWord64On32 cfg header 3 13 11)
+      (wordListSeq [.assign 1 (.shift .lsr (.var 11) (.const 29)),
+        .ite .equal 1 (.imm 0) (.assign 8 (.shift .lsl (.var 11) (.const 2)))
+          (writeWord32On32 cfg header1 3 11)])]
+
+/-- The HOL-observed one-word integer-to-Word64 conversion program. -/
+private def expectedFromIntWide {width : Nat} [NeZero width] (cfg : Config)
+    (header : BitVec width) (addressShift bytes : Nat) : WordLangProgHOL (BitVec width) :=
+  .seq (.ite .test 4 (.imm 1) (.assign 3 (.shift .asr (.var 4) (.const 2)))
+    (.seq (wordListSeq [
+      .assign 3 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const (BitVec.ofNat width addressShift))]),
+      .assign 1 (.load (.var 3)), .assign 3 (.load (.op .add [.var 3, .const (BitVec.ofNat width bytes)]))])
+      (.ite .test 1 (.imm 16) .skip (.assign 3 (.op .sub [.const 0, .var 3])))))
+    (writeWord64 cfg header 3 3)
+
+/-- The HOL-observed one-word Word64-to-integer conversion program. -/
+private def expectedToIntWide {width : Nat} [NeZero width] (cfg : Config)
+    (header : BitVec width) (addressShift bytes : Nat) : WordLangProgHOL (BitVec width) :=
+  wordListSeq [
+    .assign 3 (.load (.op .add [
+      .op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const (BitVec.ofNat width addressShift))],
+      .const (BitVec.ofNat width bytes)])),
+    .assign 1 (.shift .lsr (.var 3) (.const 61)),
+    .ite .equal 1 (.imm 0) (.assign 8 (.shift .lsl (.var 3) (.const 2))) (writeWord64 cfg header 3 3)]
+
+example : loadBignum (width := 64) conf 7 9 5 = wordListSeq [
+    .assign 9 (.op .add [.lookup .currHeap, .shift .lsr (.var 5) (.const 5)]),
+    .assign 7 (.load (.var 9)), .assign 9 (.load (.op .add [.var 9, .const 8]))] := by rfl
+
+example : writeWord32On32 (width := 32) conf 42 3 7 = wordListSeq [
+    .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const 4]) 7,
+    .assign 3 (.const 42), .store (.var 1) 3, .set .nextFree (.op .add [.var 1, .const 8]),
+    .assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 6), .const 1])] := by rfl
+
+example : compileControl? (width := 16) { conf with lenSize := 4 } 4 9
+    (.assign 3 (.wordOp .wordFromInt) [1] none) =
+    some (expectedFromIntSmall { conf with lenSize := 4 } 8207 5 12 2, 9) := by rfl
+example : compileControl? (width := 32) conf 4 9 (.assign 3 (.wordOp .wordFromInt) [1] none) =
+    some (expectedFromIntSmall conf 0x2000F 6 16 4, 9) := by rfl
+example : compileControl? (width := 16) { conf with lenSize := 4 } 4 9
+    (.assign 3 (.wordOp .wordToInt) [1] none) =
+    some (expectedToIntSmall { conf with lenSize := 4 } 8207 4111 5 2, 9) := by rfl
+example : compileControl? (width := 32) conf 4 9 (.assign 3 (.wordOp .wordToInt) [1] none) =
+    some (expectedToIntSmall conf 0x2000F 0x1000F 6 4, 9) := by rfl
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.wordOp .wordFromInt) [1] none) =
+    some (expectedFromIntWide conf 0x100000000000F 5 8, 9) := by rfl
+example : compileControl? (width := 128) conf 4 9 (.assign 3 (.wordOp .wordFromInt) [1] none) =
+    some (expectedFromIntWide conf 0x1000000000000000000000000000F 5 16, 9) := by rfl
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.wordOp .wordToInt) [1] none) =
+    some (expectedToIntWide conf 0x100000000000F 5 8, 9) := by rfl
+example : compileControl? (width := 128) conf 4 9 (.assign 3 (.wordOp .wordToInt) [1] none) =
+    some (expectedToIntWide conf 0x1000000000000000000000000000F 5 16, 9) := by rfl
+
+example : compileControl? (width := 32) { conf with lenSize := 0 } 4 9
+    (.assign 3 (.wordOp .wordFromInt) [1] none) =
+    some (.seq (.assign 1 (.const (-1))) (.alloc 1 (adjustSets (.ln : NumSet))), 9) := by rfl
+example : compileControl? (width := 32) { conf with lenSize := 0 } 4 9
+    (.assign 3 (.wordOp .wordToInt) [1] none) =
+    some (.seq (.assign 1 (.const (-1))) (.alloc 1 (adjustSets (.ln : NumSet))), 9) := by rfl
+example : compileControl? (width := 16) { conf with lenSize := 4 } 4 9
+    (.assign 3 (.wordOp .wordFromInt) [] none) = some (.skip, 9) := by rfl
+example : compileControl? (width := 16) { conf with lenSize := 4 } 4 9
+    (.assign 3 (.wordOp .wordToInt) [1, 2] none) = some (.skip, 9) := by rfl
+
 /-- Original one-byte conversion layout, parameterized by the captured width-specific offsets. -/
 private def narrowWordExpected {width : Nat} [NeZero width] (shift offset : Nat) :
     WordLangProgHOL (BitVec width) := wordListSeq [

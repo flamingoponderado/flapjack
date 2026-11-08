@@ -102,6 +102,15 @@ def loadWord64 {width : Nat} [NeZero width] (conf : Config) (dest src : Nat) :
     WordLangProgHOL (BitVec width) :=
   .assign dest (.load (.op .add [realAddr conf src, .const wordSemBytesInWord]))
 
+/-- Load a bignum header and first payload word into the selected registers. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "LoadBignum_def"
+  (words_as_type_indexed_bitvec)]
+def loadBignum {width : Nat} [NeZero width] (conf : Config) (header word1 src : Nat) :
+    WordLangProgHOL (BitVec width) :=
+  wordListSeq [
+    .assign word1 (realAddr conf src), .assign header (.load (.var word1)),
+    .assign word1 (.load (.op .add [.var word1, .const wordSemBytesInWord]))]
+
 /-- Allocate and write a one-word representation of a Word64 value. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "WriteWord64_def"
   (words_as_type_indexed_bitvec)]
@@ -127,6 +136,19 @@ def writeWord64On32 {width : Nat} [NeZero width] (conf : Config) (header : BitVe
     .store (.op .add [.var 1, .const (2 * bytes)]) high,
     .assign 3 (.const header), .store (.var 1) 3,
     .set .nextFree (.op .add [.var 1, .const (3 * bytes)]),
+    .assign (adjustVar dest) (.op .or [
+      shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
+      .const 1])]
+
+/-- Allocate a boxed one-word value on a two-word Word64 target. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "WriteWord32_on_32_def"
+  (words_as_type_indexed_bitvec)]
+def writeWord32On32 {width : Nat} [NeZero width] (conf : Config) (header : BitVec width)
+    (dest src : Nat) : WordLangProgHOL (BitVec width) :=
+  wordListSeq [
+    .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const wordSemBytesInWord]) src,
+    .assign 3 (.const header), .store (.var 1) 3,
+    .set .nextFree (.op .add [.var 1, .const (2 * wordSemBytesInWord)]),
     .assign (adjustVar dest) (.op .or [
       shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
       .const 1])]
@@ -564,6 +586,75 @@ def assignWordFromWord {width : Nat} [NeZero width] (narrow : Bool) (conf : Conf
           wordListSeq [.assign 5 (shiftN .lsr (.var (adjustVar src)) 2), .assign 3 (.const 0),
             writeWord64On32 conf header dest 5 3], l)
 
+/-- Convert a tagged integer to a boxed Word64 value. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_WordFromInt_def"
+  (words_as_type_indexed_bitvec)]
+def assignWordFromInt {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (src : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let len := if width < 64 then 2 else 1
+  match encodeHeader (width := width) conf 3 len with
+  | none => (giveUp, l)
+  | some header =>
+      (if len = 1 then
+        .seq (.ite .test (adjustVar src) (.imm 1)
+          (.assign 3 (shiftN .asr (.var (adjustVar src)) 2))
+          (.seq (loadBignum conf 1 3 (adjustVar src))
+            (.ite .test 1 (.imm 16) .skip (.assign 3 (.op .sub [.const 0, .var 3])))))
+          (writeWord64 conf header dest 3)
+       else
+        .ite .test (adjustVar src) (.imm 1)
+          (wordListSeq [
+            .assign 3 (shiftN .asr (.var (adjustVar src)) 2),
+            .assign 5 (shiftN .asr (.var (adjustVar src)) 31),
+            writeWord64On32 conf header dest 3 5])
+          (wordListSeq [
+            .assign 1 (realAddr conf (adjustVar src)), .assign 3 (.load (.var 1)),
+            .assign 5 (.load (.op .add [.var 1, .const wordSemBytesInWord])),
+            .assign 7 (shiftVar .lsr 3 (width - conf.lenSize)),
+            .ite .equal 7 (.imm 1)
+              (.ite .test 3 (.imm 16)
+                (.seq (.assign 9 (.const 0)) (writeWord64On32 conf header dest 5 9))
+                (.seq (.assign 9 (.const (~~~(0 : BitVec width))))
+                  (.seq (.assign 5 (.op .sub [.const 0, .var 5]))
+                    (writeWord64On32 conf header dest 5 9))))
+              (.ite .test 3 (.imm 16)
+                (.seq (.assign 9 (.load (.op .add [.var 1, .const (2 * wordSemBytesInWord)])))
+                  (writeWord64On32 conf header dest 5 9))
+                (wordListSeq [
+                  .assign 11 (.const 0), .assign 13 (.const 1),
+                  .assign 9 (.load (.op .add [.var 1, .const (2 * wordSemBytesInWord)])),
+                  .assign 5 (.op .xor [.const (~~~(0 : BitVec width)), .var 5]),
+                  .assign 9 (.op .xor [.const (~~~(0 : BitVec width)), .var 9]),
+                  .inst (.arith (.addCarry 15 11 5 13)), .inst (.arith (.addCarry 19 11 9 13)),
+                  writeWord64On32 conf header dest 15 19]))]), l)
+
+/-- Convert a boxed Word64 value to a tagged integer or bignum. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_WordToInt_def"
+  (words_as_type_indexed_bitvec)]
+def assignWordToInt {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (src : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let len := if width < 64 then 2 else 1
+  match encodeHeader (width := width) conf 3 len with
+  | none => (giveUp, l)
+  | some header =>
+      if len = 1 then
+        (wordListSeq [loadWord64 conf 3 (adjustVar src), .assign 1 (shiftN .lsr (.var 3) 61),
+          .ite .equal 1 (.imm 0) (.assign (adjustVar dest) (shiftN .lsl (.var 3) 2))
+            (writeWord64 conf header dest 3)], l)
+      else
+        match encodeHeader (width := width) conf 3 1 with
+        | none => (giveUp, l)
+        | some header1 =>
+            (wordListSeq [
+              .assign 15 (realAddr conf (adjustVar src)),
+              .assign 13 (.load (.op .add [.var 15, .const wordSemBytesInWord])),
+              .assign 11 (.load (.op .add [.var 15, .const (2 * wordSemBytesInWord)])),
+              .ite .notEqual 13 (.imm 0) (writeWord64On32 conf header dest 13 11)
+                (wordListSeq [
+                  .assign 1 (shiftN .lsr (.var 11) 29),
+                  .ite .equal 1 (.imm 0) (.assign (adjustVar dest) (shiftN .lsl (.var 11) 2))
+                    (writeWord32On32 conf header1 dest 11)])], l)
+
 /-- Flapjack's checked traversal. Some non-64-bit operations return `none`;
 this definition has not yet been reviewed as HOL's total `comp`. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
@@ -893,38 +984,10 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       some (arg1 args (assignWordShiftW64 sh n conf secn l dest names) (.skip, l))
   | l, .assign dest (.wordOp (.wordFromWord narrow)) args names =>
       some (arg1 args (assignWordFromWord narrow conf secn l dest names) (.skip, l))
-  | l, .assign dest (.wordOp .wordFromInt) args _ =>
-      match args with
-      | [src] =>
-          if width != 64 then none else
-          match encodeHeader (width := width) conf 3 1 with
-          | none => some (giveUp, l)
-          | some header =>
-              let src := adjustVar src
-              let bytes := (wordSemBytesInWord : BitVec width)
-              let loadBignum := wordListSeq [
-                .assign 3 (realAddr conf src), .assign 1 (.load (.var 3)),
-                .assign 3 (.load (.op .add [.var 3, .const bytes]))]
-              let value := WordLangProgHOL.ite .test src (.imm 1)
-                (.assign 3 (shiftN .asr (.var src) 2))
-                (.seq loadBignum (.ite .test 1 (.imm 16) .skip
-                  (.assign 3 (.op .sub [.const 0, .var 3]))))
-              some (.seq value (writeWord64 conf header dest 3), l)
-      | _ => some (.skip, l)
-  | l, .assign dest (.wordOp .wordToInt) args _ =>
-      match args with
-      | [src] =>
-          if width != 64 then none else
-          match encodeHeader (width := width) conf 3 1 with
-          | none => some (giveUp, l)
-          | some header =>
-              let bytes := (wordSemBytesInWord : BitVec width)
-              let address := WordLangExpHOL.op .add [realAddr conf (adjustVar src), .const bytes]
-              some (wordListSeq [
-                .assign 3 (.load address), .assign 1 (shiftN .lsr (.var 3) 61),
-                .ite .equal 1 (.imm 0) (.assign (adjustVar dest) (shiftN .lsl (.var 3) 2))
-                  (writeWord64 conf header dest 3)], l)
-      | _ => some (.skip, l)
+  | l, .assign dest (.wordOp .wordFromInt) args names =>
+      some (arg1 args (assignWordFromInt conf secn l dest names) (.skip, l))
+  | l, .assign dest (.wordOp .wordToInt) args names =>
+      some (arg1 args (assignWordToInt conf secn l dest names) (.skip, l))
   | l, .assign dest (.blockOp .boundsCheckBlock) args _ =>
       match args with
       | [base, index] =>

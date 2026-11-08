@@ -197,6 +197,28 @@ val _ = print_eval "word_from_word_wide_64" ``(assign ^conf 4 9 3 (closLang$Word
 val _ = print_eval "word_from_word_wide_128" ``(assign ^conf 4 9 3 (closLang$WordOp (WordFromWord F)) [1] NONE : 128 wordLang$prog # num)``;
 val _ = print_eval "word_from_word_header_failure_32" ``(assign (^conf with len_size := 0) 4 9 3 (closLang$WordOp (WordFromWord F)) [1] NONE : 32 wordLang$prog # num)``;
 val _ = print_eval "word_from_word_bad_arity_16" ``(assign (^conf with len_size := 4) 4 9 3 (closLang$WordOp (WordFromWord F)) [] NONE : 16 wordLang$prog # num)``;
+val _ = (print "load_bignum_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.LoadBignum_def); print "\n");
+val _ = (print "write_word32_on32_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.WriteWord32_on_32_def); print "\n");
+val _ = (print "assign_word_from_int_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_WordFromInt_def); print "\n");
+val _ = (print "assign_word_to_int_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_WordToInt_def); print "\n");
+val _ = print_eval "load_bignum_registers_64" ``(LoadBignum ^conf 7 9 5 : 64 wordLang$prog)``;
+val _ = print_eval "write_word32_registers_32" ``(WriteWord32_on_32 ^conf 42w 3 7 : 32 wordLang$prog)``;
+val _ = print_eval "word_from_int_16" ``(assign (^conf with len_size := 4) 4 9 3 (closLang$WordOp WordFromInt) [1] NONE : 16 wordLang$prog # num)``;
+val _ = print_eval "word_from_int_32" ``(assign ^conf 4 9 3 (closLang$WordOp WordFromInt) [1] NONE : 32 wordLang$prog # num)``;
+val _ = print_eval "word_from_int_64" ``(assign ^conf 4 9 3 (closLang$WordOp WordFromInt) [1] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "word_from_int_128" ``(assign ^conf 4 9 3 (closLang$WordOp WordFromInt) [1] NONE : 128 wordLang$prog # num)``;
+val _ = print_eval "word_to_int_16" ``(assign (^conf with len_size := 4) 4 9 3 (closLang$WordOp WordToInt) [1] NONE : 16 wordLang$prog # num)``;
+val _ = print_eval "word_to_int_32" ``(assign ^conf 4 9 3 (closLang$WordOp WordToInt) [1] NONE : 32 wordLang$prog # num)``;
+val _ = print_eval "word_to_int_64" ``(assign ^conf 4 9 3 (closLang$WordOp WordToInt) [1] NONE : 64 wordLang$prog # num)``;
+val _ = print_eval "word_to_int_128" ``(assign ^conf 4 9 3 (closLang$WordOp WordToInt) [1] NONE : 128 wordLang$prog # num)``;
+val _ = print_eval "word_from_int_header_failure_32" ``(assign (^conf with len_size := 0) 4 9 3 (closLang$WordOp WordFromInt) [1] NONE : 32 wordLang$prog # num)``;
+val _ = print_eval "word_to_int_header_failure_32" ``(assign (^conf with len_size := 0) 4 9 3 (closLang$WordOp WordToInt) [1] NONE : 32 wordLang$prog # num)``;
+val _ = print_eval "word_from_int_bad_arity_16" ``(assign (^conf with len_size := 4) 4 9 3 (closLang$WordOp WordFromInt) [] NONE : 16 wordLang$prog # num)``;
+val _ = print_eval "word_to_int_bad_arity_16" ``(assign (^conf with len_size := 4) 4 9 3 (closLang$WordOp WordToInt) [1;2] NONE : 16 wordLang$prog # num)``;
 val _ = print_eval "store_each_64" ``(StoreEach 2 [4;6] 8w : 64 wordLang$prog)``;
 val _ = print_eval "mem_eq_list_64" ``(MemEqList 8w [3w;7w] : 64 wordLang$prog)``;
 val _ = print_eval "silent_ffi_off_64" ``(SilentFFI ^conf 3 (LN,LN) : 64 wordLang$prog)``;

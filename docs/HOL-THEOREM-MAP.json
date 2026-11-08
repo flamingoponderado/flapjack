@@ -125572,6 +125572,42 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "LoadBignum_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "loadBignum",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared load_bignum_def_typed: config, header, word and source register inputs remain independent; the real address, header load and payload load occur in the same order using bytes_in_word. Positive-width BitVec represents HOL words. The production integer conversion uses this helper."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "WriteWord32_on_32_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "writeWord32On32",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared write_word32_on32_def_typed: config, header, destination and arbitrary source register are retained; the payload, header, next-free increment and tagged destination are written in the same order using the original word offsets. Positive-width BitVec represents HOL words. The production integer conversion uses this helper."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_WordFromInt_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignWordFromInt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_word_from_int_def_typed: config, section, label, destination, optional names and source remain in order, including unused inputs. The width split, header failure, one-word smallnum and bignum cases, and two-word smallnum, single-word and longer signed-bignum cases retain their tests, instructions, carry registers, storage calls and label. Positive-width BitVec represents HOL words. The production dispatcher calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_WordToInt_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignWordToInt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_word_to_int_def_typed: config, section, label, destination, optional names and source remain in order. The width split, initial and second header-encoding failures, one-word smallnum/bignum test and two-word high-word and smallnum tests retain the original shifts, loads, storage helpers and label. Positive-width BitVec represents HOL words. The production dispatcher calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "assign_WordFromWord_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "assignWordFromWord",
