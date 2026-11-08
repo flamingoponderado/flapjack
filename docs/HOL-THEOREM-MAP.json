@@ -116846,8 +116846,8 @@
     "lean_name": "Prog",
     "hol_path": "cakeml/compiler/backend/dataLangScript.sml",
     "hol_name": "prog",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source syntax or clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all eleven constructors with the typed prog_*_type captures in data_sem_evaluate_probe.out: call and force retain their optional return and live-name sets, assignment retains its operation and optional name set, and all recursive program and handler fields match. ClosLang.Op and NumSet are separately reviewed."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataLang/Syntax.lean",
@@ -128341,24 +128341,24 @@
   "hol_name": "limits",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/State.lean",
   "lean_name": "Limits",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all six fields and the typed limits projections in data_sem_evaluate_probe.out: heap, length and stack limits are natural numbers, and architecture and floating-point flags are booleans. Field order matches HOL."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "stack",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/State.lean",
   "lean_name": "Stack",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed stack_env_type and stack_exc_type captures: both constructors retain their optional size and sparse value environment, and the exception frame also retains its handler index. Value and Spt are separately reviewed."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "state",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/State.lean",
   "lean_name": "State",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all eighteen fields with the typed state_*_type captures in data_sem_evaluate_probe.out. Local, code and reference trees use the reviewed Spt carrier; compiler and FFI type variables remain independent, and compile and oracle callbacks preserve the original fixed word widths and program payloads. The program, value, reference, stack and limits carriers are separately reviewed."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
