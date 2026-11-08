@@ -636,6 +636,27 @@ val do_app_aw8updateunsafe_replay = prove (do_app_aw8updateunsafe_typed,
   srw_tac[][markerTheory.Abbrev_def, EL_LUPDATE] >>
   srw_tac[][do_app_v_rel_lems] >> CCONTR_TAC >> rfs [] >> rveq >> fs []);
 val _ = show_thm "do_app_aw8updateunsafe_replay=" do_app_aw8updateunsafe_replay;
+val ffi_op = ``ast$FFI name``;
+val do_app_ffi_typed = list_mk_forall
+  (List.take (do_app_binders, 3) @ free_vars ffi_op @ List.drop (do_app_binders, 4),
+   subst [List.nth (do_app_binders, 3) |-> ffi_op] do_app_body);
+val do_app_ffi_replay = prove (do_app_ffi_typed,
+  rpt gen_tac >> Cases_on `s1` >> Cases_on `s1_i1.refs` >> simp [] >> Cases_on `s1_i1` >>
+  simp [source_to_flatTheory.astOp_to_flatOp_def, astTheory.getOpClass_def] >>
+  srw_tac[][semanticPrimitivesPropsTheory.do_app_cases, flatSemTheory.do_app_def] >>
+  fs[do_app_rec_v_rel_eqns,flatSemTheory.Unitv_def] >> rw[] >>
+  fs[semanticPrimitivesTheory.store_lookup_def, LIST_REL_EL_EQN] >> fs[] >> rfs[] >>
+  fs [REWRITE_RULE [ADD1] EL, ADD1, REWRITE_RULE [ADD1] LUPDATE_def] >>
+  res_tac >> qpat_x_assum `EL _ _ = _` assume_tac >> fs[] >>
+  qhdtm_x_assum `source_to_flatProof$sv_rel` mp_tac >>
+  simp[Once source_to_flatProofTheory.sv_rel_cases] >> rw[] >>
+  fs[IMPLODE_EXPLODE_I,combinTheory.o_DEF] >> CASE_TAC >>
+  fs[semanticPrimitivesTheory.store_assign_def,semanticPrimitivesTheory.store_v_same_type_def,EL_LUPDATE] >>
+  fs [REWRITE_RULE [ADD1] EL, ADD1, REWRITE_RULE [ADD1] LUPDATE_def] >>
+  rfs[] >> rw[EL_LUPDATE] >>
+  rw[source_to_flatProofTheory.sv_rel_cases, source_to_flatProofTheory.result_rel_cases,
+    do_app_rec_v_rel_eqns]);
+val _ = show_thm "do_app_ffi_replay=" do_app_ffi_replay;
 val do_app_listappend_typed = list_mk_forall
   (List.take (do_app_binders, 3) @ List.drop (do_app_binders, 4),
    subst [List.nth (do_app_binders, 3) |-> ``ast$ListAppend``] do_app_body);

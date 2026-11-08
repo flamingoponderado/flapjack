@@ -1769,4 +1769,66 @@ theorem doApp_ListAppend {C F : Type} (genv : GlobalEnv)
                 simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                   FlatSem.doAppData, flatLeftDecoded, flatRightDecoded]
 
+/-- The FFI case of `do_app`; the full theorem is not yet assembled. The
+dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
+  (fmap_as_finite_support := [c, tys])]
+theorem doApp_FFI {C F : Type} (genv : GlobalEnv) (name : Basis.Pure.MlString.MlString)
+    (s1 s2 : Store Value × HolFfiState F) (vs : List Value)
+    (r : Result Value Value) (flat : FlatSem.State C F) (flatVs : List FlatSem.Value)
+    (premises : doApp s1 (.ffi name) vs = some (s2, r) ∧
+      List.Forall₂ (StoreValueRel genv) s1.1 flat.refs.tail ∧ flat.refs ≠ [] ∧
+      List.Forall₂ (ValueRel genv) vs flatVs ∧ s1.2 = flat.ffi ∧ genvCOk genv.c ∧
+      Op.ffi name ≠ .aallocEmpty ∧ Op.ffi name ≠ .envId) :
+    ∃ flatResult flatState,
+      List.Forall₂ (StoreValueRel genv) s2.1 flatState.refs.tail ∧ flatState.refs ≠ [] ∧
+      s2.2 = flatState.ffi ∧ flat.globals = flatState.globals ∧
+      flat.refs.take 1 = flatState.refs.take 1 ∧ ResultRel ValueRel genv r flatResult ∧
+      FlatSem.doApp flat (astOpToFlatOp (.ffi name)) flatVs = some (flatState, flatResult) := by
+  obtain ⟨run, stores, nonempty, values, ffi, _, _, _⟩ := premises
+  let source : SemanticPrimitivesHOL.State F := ⟨flat.clock, s1.1, s1.2, 0, 0, none⟩
+  have states : StateRel genv source flat := .intro source flat nonempty stores rfl ffi
+  cases vs with
+  | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+    | cons second rest =>
+      cases rest with
+      | cons third rest => simp [doApp, doAppNumericCore, doAppBasic] at run
+      | nil =>
+        have successful : doApp (source.refs, source.ffi) (.ffi name) [first, second] ≠ none := by
+          simp [source, run]
+        obtain ⟨text, flag, address, bytes, rfl, rfl, lookup⟩ :=
+          ffi_operands source name first second successful
+        cases values with
+        | cons textRel tail =>
+          cases tail with
+          | cons locationRel tail =>
+            cases tail
+            cases textRel
+            cases locationRel
+            cases call : callFFIHOL source.ffi (.extCall name) text.explode bytes with
+            | ret nextFfi output =>
+              obtain ⟨sourceRefs, flatRefs, sourceRun, flatRun, nextRel, reserved⟩ :=
+                ffi_return_related genv source flat states name text flag address bytes output nextFfi lookup call
+              simp only [source, doApp, doAppNumericCore, sourceRun] at run
+              obtain ⟨rfl, rfl, rfl⟩ := run
+              obtain ⟨afterNonempty, afterStores, _, afterFfi⟩ :=
+                (stateRel_iff genv { source with refs := sourceRefs, ffi := nextFfi }
+                  { flat with refs := flatRefs, ffi := nextFfi }).mp nextRel
+              refine ⟨.val FlatSem.unitValue, { flat with refs := flatRefs, ffi := nextFfi },
+                afterStores, afterNonempty, afterFfi, rfl, reserved.symm,
+                .value (.tuple genv [] [] (.nil genv)), ?_⟩
+              simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, flatRun]
+            | final event =>
+              obtain ⟨sourceRun, flatRun⟩ :=
+                ffi_final_related genv source flat states name text flag address bytes event lookup call
+              simp only [source, doApp, doAppNumericCore, sourceRun] at run
+              obtain ⟨rfl, rfl⟩ := run
+              refine ⟨.err (.abort (.ffiError event)), flat, stores, nonempty, ffi,
+                rfl, rfl, ?_, ?_⟩
+              · exact .abort (.ffiError event)
+              · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, flatRun]
+
 end Flapjack.Compiler.Backend.SourceToFlat
