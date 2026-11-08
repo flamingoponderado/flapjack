@@ -87,3 +87,6 @@ val evalSwap = prove (``∀c s r s' fl smx safe peak.
        (Q.SPECL [`safe`,`s'`,`s`,`r`,`peak`,`c`] evaluate_safe_peak_swap_aux) th))
   \\ simp [LET_DEF]);
 val _ = show "evaluate_fl_smx_safe_peak_swap_aux_replay_typed" evalSwap;
+val _ = show "same_stack_size_typed" same_stack_size_def;
+val _ = show "same_stack_size_size_of_stack_typed" same_stack_size_size_of_stack;
+val _ = show "s_peak_heap_typed" s_peak_heap;

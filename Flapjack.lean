@@ -333,6 +333,8 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.HeapSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.CutSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateResourceSwap
+import Flapjack.Compiler.Backend.Semantics.DataProps.StackSize
+import Flapjack.Compiler.Backend.Semantics.DataProps.StateUpdates
 import Flapjack.Compiler.Backend.Semantics.DataSem.ControlClock
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation

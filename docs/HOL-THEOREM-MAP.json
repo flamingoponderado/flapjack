@@ -128374,6 +128374,30 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "same_stack_size_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/StackSize.lean",
+  "lean_name": "sameStackSize",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared same_stack_size_typed: binders x, y over the reviewed stack carrier; equality of accounted frame sizes, rendered as a Prop."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "same_stack_size_size_of_stack",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/StackSize.lean",
+  "lean_name": "sameStackSize_sizeOfStack",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared same_stack_size_size_of_stack_typed: binders xs, ys; LIST_REL rendered as List.Forall₂; equal total stack sizes."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "s_peak_heap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/StateUpdates.lean",
+  "lean_name": "state_resourceUpdates",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared s_peak_heap_typed: free variables s, smnew, clock, ssnew, plnnew with one state type; all six record-update identities in source order and with source field orders."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
   "hol_name": "evaluate_smx_safe_peak_swap_aux",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateResourceSwap.lean",
   "lean_name": "evaluate_stackSafePeakSwapAux",
