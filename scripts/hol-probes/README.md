@@ -9567,7 +9567,8 @@ independent types, and the local `global_env_inv_extend2` and
 It also replays the local `do_app_rec_help` proof, retaining its unused
 polymorphic binder and separate recursive groups in the inferred statement.
 The `do_app_typed` row records the inferred statement of the local primitive
-simulation theorem, and `do_app_configGC_replay` replays its ConfigGC case.
+simulation theorem; `do_app_configGC_replay` and `do_app_shift_replay` replay
+its ConfigGC and Shift cases.
 
 `source_to_flat_init_probe.out` captures the typed original source-to-flat
 initialization definitions and evaluates the initial constructor entries and

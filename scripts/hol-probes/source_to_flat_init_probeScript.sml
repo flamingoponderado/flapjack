@@ -39,6 +39,23 @@ val do_app_rec_help_typed = ``!genv comp_map env_v_local env_v_local' env_v_top 
 val _ = (print "do_app_rec_help_typed="; print_term do_app_rec_help_typed; print "\n");
 val do_app_rec_v_rel_eqns = CONJUNCT1 source_to_flatProofTheory.v_rel_more_eqns;
 val (do_app_binders, do_app_body) = strip_forall do_app_typed;
+val shift_op = ``ast$Shift w sh n``;
+val do_app_shift_typed = list_mk_forall
+  (List.take (do_app_binders, 3) @ List.rev (free_vars shift_op) @ List.drop (do_app_binders, 4),
+   subst [List.nth (do_app_binders, 3) |-> shift_op] do_app_body);
+val do_app_shift_replay = prove (do_app_shift_typed,
+  rpt gen_tac >> Cases_on `s1` >> Cases_on `s1_i1.refs` >> simp [] >> Cases_on `s1_i1` >>
+  simp [source_to_flatTheory.astOp_to_flatOp_def, astTheory.getOpClass_def] >>
+  srw_tac[][semanticPrimitivesPropsTheory.do_app_cases] >>
+  full_simp_tac(srw_ss())[do_app_rec_v_rel_eqns] >>
+  fs [flatSemTheory.do_app_def] >>
+  TRY (rename1 `shift8_lookup s11 w11 n11`) >>
+  TRY (rename1 `shift64_lookup s11 w11 n11`) >>
+  full_simp_tac(srw_ss())[do_app_rec_v_rel_eqns] >>
+  Cases_on `w11` >> Cases_on `s11` >>
+  fs [semanticPrimitivesTheory.shift8_lookup_def, semanticPrimitivesTheory.shift64_lookup_def,
+      source_to_flatProofTheory.result_rel_cases, Once do_app_rec_v_rel_eqns]);
+val _ = show_thm "do_app_shift_replay=" do_app_shift_replay;
 val do_app_configGC_typed = list_mk_forall
   (List.take (do_app_binders, 3) @ List.drop (do_app_binders, 4),
    subst [List.nth (do_app_binders, 3) |-> ``ast$ConfigGC``] do_app_body);
