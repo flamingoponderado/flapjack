@@ -9579,13 +9579,14 @@ simulation theorem; `do_app_configGC_replay`, `do_app_shift_replay`,
 `do_app_vfromlist_replay`, `do_app_vsub_replay`, `do_app_vsubunsafe_replay`,
 `do_app_vlength_replay`, `do_app_aalloc_replay`, `do_app_aallocfixed_replay`,
 `do_app_asub_replay`, `do_app_alength_replay`, `do_app_aupdate_replay`,
-`do_app_asubunsafe_replay`, and `do_app_aupdateunsafe_replay`
+`do_app_asubunsafe_replay`, `do_app_aupdateunsafe_replay`, and
+`do_app_aw8subunsafe_replay`
 replay its ConfigGC, Shift, Equality, Arith, FromTo, Test, Opapp, Opassign,
 Opref, Opderef, Aw8alloc, Aw8sub, Aw8length, Aw8update, CopyStrStr,
 CopyStrAw8, CopyAw8Str, CopyAw8Aw8, XorAw8Str_unsafe, Implode, Explode,
 Strsub, Strlen, Strcat, VfromList, Vsub, Vsub_unsafe, Vlength, Aalloc,
-AallocFixed, Asub, Alength, Aupdate, Asub_unsafe, and Aupdate_unsafe cases.
-The replays reconstruct the relevant local HOL prerequisites.
+AallocFixed, Asub, Alength, Aupdate, Asub_unsafe, Aupdate_unsafe, and
+Aw8sub_unsafe cases. The replays reconstruct the relevant local HOL prerequisites.
 
 `source_to_flat_init_probe.out` captures the typed original source-to-flat
 initialization definitions and evaluates the initial constructor entries and

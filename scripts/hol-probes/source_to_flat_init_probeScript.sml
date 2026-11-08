@@ -604,6 +604,21 @@ val do_app_aupdateunsafe_replay = prove (do_app_aupdateunsafe_typed,
   full_simp_tac(srw_ss())[flatSemTheory.Unitv_def, source_to_flatProofTheory.sv_rel_cases] >>
   DEP_REWRITE_TAC [listTheory.EVERY2_LUPDATE_same] >> gvs [] >> decide_tac);
 val _ = show_thm "do_app_aupdateunsafe_replay=" do_app_aupdateunsafe_replay;
+val do_app_aw8subunsafe_typed = list_mk_forall
+  (List.take (do_app_binders, 3) @ List.drop (do_app_binders, 4),
+   subst [List.nth (do_app_binders, 3) |-> ``ast$Aw8sub_unsafe``] do_app_body);
+val do_app_aw8subunsafe_replay = prove (do_app_aw8subunsafe_typed,
+  rpt gen_tac >> Cases_on `s1` >> Cases_on `s1_i1.refs` >> simp [] >> Cases_on `s1_i1` >>
+  simp [source_to_flatTheory.astOp_to_flatOp_def, astTheory.getOpClass_def] >>
+  srw_tac[][semanticPrimitivesPropsTheory.do_app_cases, flatSemTheory.do_app_def] >>
+  full_simp_tac(srw_ss())[do_app_rec_v_rel_eqns, source_to_flatProofTheory.result_rel_cases, do_app_v_rel_lems] >>
+  full_simp_tac(srw_ss())[semanticPrimitivesTheory.store_lookup_def] >>
+  fs [REWRITE_RULE [ADD1] EL, ADD1, REWRITE_RULE [ADD1] LUPDATE_def] >>
+  imp_res_tac LIST_REL_LENGTH >> every_case_tac >>
+  full_simp_tac(srw_ss())[LIST_REL_EL_EQN, source_to_flatProofTheory.sv_rel_cases] >>
+  res_tac >> srw_tac[][] >> full_simp_tac(srw_ss())[] >> rfs[] >>
+  srw_tac[][markerTheory.Abbrev_def, do_app_v_rel_lems]);
+val _ = show_thm "do_app_aw8subunsafe_replay=" do_app_aw8subunsafe_replay;
 val shift_op = ``ast$Shift w sh n``;
 val do_app_shift_typed = list_mk_forall
   (List.take (do_app_binders, 3) @ List.rev (free_vars shift_op) @ List.drop (do_app_binders, 4),
