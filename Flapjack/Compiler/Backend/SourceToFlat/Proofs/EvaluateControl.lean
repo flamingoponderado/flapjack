@@ -70,9 +70,8 @@ theorem resultRel_eqns {α β γ : Type} [Nonempty γ] (payload : GlobalEnv → 
 /-- Related successful expression lists use pointwise value correspondence. -/
 abbrev EvalResultRel := ResultRel (fun genv => List.Forall₂ (ValueRel genv))
 
-/-- Simulation for a single source expression, at a fixed global relation.
-Changing global environments and the remaining pass invariants are not yet
-captured by this preliminary relation. -/
+/-- Fixed-global expression simulation used inside the growing simulation for
+the source-to-flat correctness proof. -/
 def ExprSim {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
     (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
     (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F) (expr : AstHOL.Exp) : Prop :=

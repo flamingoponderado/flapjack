@@ -617,7 +617,6 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingNamedLet
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundList
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundConstructor
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalEnvironment
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalArray
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocal
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileCorrectShape
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileSemantics

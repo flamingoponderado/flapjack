@@ -3,7 +3,6 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateModule
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateException
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDatatype
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingConstructors
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalArray
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedArrayTree
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Initialization
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics

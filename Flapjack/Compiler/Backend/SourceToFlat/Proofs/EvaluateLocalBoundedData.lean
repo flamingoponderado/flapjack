@@ -11,7 +11,7 @@ open OracleInvariant
 /-- The environment-ID operation leaves any related, well-formed operand
 unchanged; source environment values themselves have no related flat value in
 the factored value relation. -/
-theorem envId_related_identity {F : Type} (genv : GlobalEnv) (source : State F)
+private theorem envId_related_identity {F : Type} (genv : GlobalEnv) (source : State F)
     (value : Value) (flatValue : FlatSem.Value) (related : ValueRel genv value flatValue)
     (successful : doApp (source.refs, source.ffi) .envId [value] ≠ none) :
     doApp (source.refs, source.ffi) .envId [value] = some ((source.refs, source.ffi), .val value) := by
