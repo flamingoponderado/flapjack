@@ -1367,7 +1367,7 @@
     {"bytes": 1533, "out": "source_to_flat_function_handle_probe.out", "rows": 3, "sha256": "6bd0c50ceb38d463964e204ff4fc273fbcc5a27eaa4f0a6c0ccb440d4a6d37da"},
     {"bytes": 3733, "out": "source_to_flat_global_env_probe.out", "rows": 22, "sha256": "92f3f7f4845edba99df3727ea4a51d50ef2a3902d87692fb91c8158d9bcc5802"},
     {"bytes": 8302, "out": "source_to_flat_helpers_probe.out", "rows": 23, "sha256": "58be151fd864d3a13876ec182879255436d622a598649c5abd60493fbb88a45b"},
-    {"bytes": 69851, "out": "source_to_flat_init_probe.out", "rows": 121, "sha256": "4a465a8873ce6997456c179142c83cafe0d3b9fff74e453654774d5596d466fe"},
+    {"bytes": 70886, "out": "source_to_flat_init_probe.out", "rows": 122, "sha256": "3446b1ed54dfe366f1526777445189b01f89e944de3c1b303612332838fd4da2"},
     {"bytes": 781, "out": "source_to_flat_invariant_clock_probe.out", "rows": 2, "sha256": "fe722ff55a3eff81f40af294ebb5fd7eaabb55d39c0e00da679a73dd895235d2"},
     {"bytes": 3326, "out": "source_to_flat_invariant_helpers_probe.out", "rows": 6, "sha256": "dbe61da727047650f8057351fbc39aeb4efe43e50a3b38303f7014f82e26d9a0"},
     {"bytes": 706, "out": "source_to_flat_let_probe.out", "rows": 3, "sha256": "9fe1148ce12f67766545b8c89a7ed3993d5d2c32e3afc95ce7319ff874d15d5b"},
