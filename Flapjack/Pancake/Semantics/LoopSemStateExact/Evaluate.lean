@@ -3,6 +3,25 @@ import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 import Flapjack.Compiler.Encoders.Asm
 
 namespace Flapjack
+
+/-- Lexicographic induction on the pair `(clock s, sizeOf p)`, for loop proofs
+    whose recursion decreases the clock or the program size. This is the
+    Flapjack analogue of the lexicographic measure HOL's `evaluate_ind` is
+    derived from; the step only has to handle strictly smaller pairs. -/
+theorem clockSizeLexInduction {α σ : Type _} [SizeOf α] (clock : σ → Nat)
+    {motive : α → σ → Prop}
+    (step : ∀ p s, (∀ p' s', Prod.Lex (· < ·) (· < ·) (clock s', sizeOf p') (clock s, sizeOf p) →
+      motive p' s') → motive p s) :
+    ∀ p s, motive p s := by
+  intro p s
+  have key : ∀ (x : Nat × Nat) (p : α) (s : σ), (clock s, sizeOf p) = x → motive p s := by
+    intro x
+    induction x using (Prod.lex Nat.lt_wfRel Nat.lt_wfRel).wf.induction with
+    | h x ih0 =>
+      intro p s hx
+      exact step p s fun p' s' hlt => ih0 _ (hx ▸ hlt) p' s' rfl
+  exact key _ p s rfl
+
 namespace LoopSemStateFiniteExact
 
 theorem cutState_clock {width : Nat} [NeZero width] {F : Type} {live : NumSet}
