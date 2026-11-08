@@ -2,7 +2,7 @@ import Flapjack.Pancake.Semantics.LoopSemState
 import Flapjack.Pancake.Semantics.LoopProps
 import Flapjack.Pancake.LoopLang
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Misc.Sptree
+import Flapjack.Misc.Sptree.FromList
 import Flapjack.FfiBridge
 import Flapjack.Compiler.Backend.Semantics.WordSem
 
@@ -300,13 +300,6 @@ def setVars {width : Nat} [NeZero width] {F : Type}
     (names : List Nat) (values : List (WordLocW width)) (state : LoopSemStateFiniteExact width F) :
     LoopSemStateFiniteExact width F :=
   { state with locals := sptAlistInsert names values state.locals }
-
-/-- Rendering of HOL `sptree$fromList` (`HOL/src/finite_maps/sptreeScript.sml`):
-    `fromList l = SND (FOLDL (\(i,t) a. (i + 1, insert i a t)) (0,LN) l)`.
-    HOL standard library, untagged. -/
-def sptFromList {α : Type} (values : List α) : Spt α :=
-  (values.foldl (fun (acc : Nat × Spt α) value => (acc.1 + 1, sptInsert acc.1 value acc.2))
-    (0, .ln)).2
 
 /-- Exact HOL `call_env_def` (`loopSemScript.sml:177-180`):
     `call_env args s = s with locals := fromList args`. The replacement is

@@ -1,7 +1,6 @@
 import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.ClosTicks.Source
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.Total
-import Flapjack.Misc.ListMapM
 import Mathlib.Tactic
 
 /-! Agreement of executable tick removal with the source-shaped traversal. -/

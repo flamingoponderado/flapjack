@@ -3413,6 +3413,22 @@
 },
 {
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "union_def",
+  "lean_path": "Flapjack/Misc/Sptree.lean",
+  "lean_name": "sptUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed union capture and all sixteen source cases: the polymorphic tree constructors, recursive branches and left-biased values match HOL without normalization."
+},
+{
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "fromAList_def",
+  "lean_path": "Flapjack/Misc/Sptree.lean",
+  "lean_name": "sptFromAList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed from_alist capture and original clauses: the empty list yields LN and each head pair is inserted over the recursively constructed tail, retaining a polymorphic payload."
+},
+{
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
   "hol_name": "size_def",
   "lean_path": "Flapjack/Misc/Sptree.lean",
   "lean_name": "sptSize",
@@ -99369,7 +99385,7 @@
       "globals"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-28; bead flapjack-up10.2): HOL call_env replaces only locals with sptree fromList (loopSemScript.sml:177-180); Lean sptFromList is the source-shaped fold over exact Spt inserts. HOL rows remain checked by LoopSemStateExactHelpersParity. The full state carrier's globals |-> field is HolFiniteMapExact with the same-module canonical witness; the qualifier records only this representation, and words_as_type_indexed_bitvec separately records positive BitVec width. No statement or behavior changed."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28; bead flapjack-up10.2): HOL call_env replaces only locals with sptree fromList (loopSemScript.sml:177-180); Lean uses the shared, HOL-tagged sptFromList fold over exact Spt inserts; the removed local duplicate had the same body. HOL rows remain checked by LoopSemStateExactHelpersParity. The full state carrier's globals |-> field is HolFiniteMapExact with the same-module canonical witness; the qualifier records only this representation, and words_as_type_indexed_bitvec separately records positive BitVec width. No statement or behavior changed."
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",

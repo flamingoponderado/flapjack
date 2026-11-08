@@ -378,7 +378,8 @@ the same cases; these checks do not establish full dispatcher correspondence.
 Regenerate with `HOL_PROBE_ONLY=data_sem_apply_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `sptree_delete_definition_probe.out` also captures the polymorphic sparse-tree
-size definition used by the data heap-accounting theorem.
+size, union, and association-list construction definitions used by data
+heap accounting and installation.
 Regenerate with `HOL_PROBE_ONLY=sptree_delete_definition_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `data_sem_limits_probe.out` captures the typed operation-limit definitions and

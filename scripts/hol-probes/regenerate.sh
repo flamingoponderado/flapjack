@@ -746,7 +746,7 @@ run_probe data_sem_apply_probeScript.sml data_sem_apply_probe.out \
   value_number_type value_word64_type value_block_type value_code_ptr_type value_ref_ptr_type thunk_bad_ref_type thunk_not_thunk_type thunk_is_thunk_type bool_value unit_value value_to_list list_to_value with_fresh_timestamp check_limit dest_bool dest_thunk bad_thunk_update is_closure value_equality integer_application word_application build_part build_sequence build_constant finalise_cons do_app_aux do_app_clock arch_size small_num check_res check_res_imp bignum_digits bignum_size no_thunks_in_refs consume_space nullary_cons nonempty_cons invalid_list_length integer_add unsupported_copy "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
 
 run_probe sptree_delete_definition_probeScript.sml sptree_delete_definition_probe.out \
-  mk_bn mk_bs delete size "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend"
+  mk_bn mk_bs delete size union from_alist "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend"
 
 run_probe data_sem_limits_probeScript.sml data_sem_limits_probe.out \
   lim_safe_part lim_safe ref_array_inside ref_array_boundary ref_array_negative ref_array_malformed nullary_tag_boundary "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"

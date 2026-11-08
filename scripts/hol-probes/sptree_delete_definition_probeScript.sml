@@ -9,3 +9,5 @@ val _ = show "mk_bn=" sptreeTheory.mk_BN_def;
 val _ = show "mk_bs=" sptreeTheory.mk_BS_def;
 val _ = show "delete=" sptreeTheory.delete_def;
 val _ = show "size=" sptreeTheory.size_def;
+val _ = show "union=" sptreeTheory.union_def;
+val _ = show "from_alist=" sptreeTheory.fromAList_def;

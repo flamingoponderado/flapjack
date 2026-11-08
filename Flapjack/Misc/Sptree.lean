@@ -976,9 +976,8 @@ def sptDelete {α : Type} (key : Nat) : Spt α → Spt α
         sptMkBS (sptDelete ((key - 1) / 2) left) value right
       else sptMkBS left value (sptDelete ((key - 1) / 2) right)
 
-/-- HOL `sptree$union` (`HOL/src/finite_maps/sptreeScript.sml:219-244`).  The
-left operand's value wins on shared keys, matching HOL's clause order.
-Untagged Flapjack infrastructure (source outside `cakeml/`). -/
+/-- Union sparse trees, retaining the left value at shared keys. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "union_def"]
 def sptUnion {α : Type} : Spt α → Spt α → Spt α
   | .ln, right => right
   | .ls value, right =>
@@ -1378,24 +1377,16 @@ theorem sptInsert_swap {α : Type} :
               conv => rhs; rw [sptInsert.eq_4, if_neg ha0, if_neg ha2, sptInsert.eq_4, if_neg hc0, if_pos hc2]
               rw [sptInsert.eq_4, if_neg hc0, if_pos hc2, sptInsert.eq_4, if_neg ha0, if_neg ha2]
 
-/-! ## HOL `fromAList` rendering
+/-! ## Sparse trees from association lists -/
 
-The `fromAList` definition is in HOL's external standard-library
-`HOL/src/finite_maps/sptreeScript.sml`, not in the CakeML submodule. Its Lean
-rendering below is therefore Flapjack infrastructure without an `@[hol]` tag.
-The CakeML theorem `mem_lookup_fromalist_some` is ported in the
-`Flapjack.Pancake.CrepToLoop.StateRel` proof counterpart. -/
-
-/-- Flapjack rendering of HOL `sptree$fromAList`: each head association is
-inserted over the tree built from the tail, matching the external HOL
-standard-library definition. -/
+/-- Insert each head association over the tree built from the tail. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "fromAList_def"]
 def sptFromAList {α : Type} : List (Nat × α) → Spt α
   | [] => .ln
   | (key, value) :: entries => sptInsert key value (sptFromAList entries)
 
-/-- External HOL-library `ALOOKUP` rendering for numeric Spt association lists:
-return the first value paired with `key`. This helper is untagged because
-`ALOOKUP` and `fromAList` here come from the external Sptree library. -/
+/-- Return the first value paired with `key`. This untagged proof helper
+specializes HOL `ALOOKUP` to the natural-number keys used by sparse trees. -/
 def sptAListLookup {α : Type} (key : Nat) : List (Nat × α) → Option α
   | [] => none
   | (other, value) :: entries =>
