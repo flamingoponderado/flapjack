@@ -40,6 +40,7 @@ val _ = show "install_sfs_typed" dataSemTheory.install_sfs_def;
 val _ = show "initial_state_typed" dataSemTheory.initial_state_def;
 val _ = show "add_space_typed" dataSemTheory.add_space_def;
 val _ = show "op_requires_names_typed" dataLangTheory.op_requires_names_def;
+val _ = show "evaluate_clock_typed" dataSemTheory.evaluate_clock;
 val _ = show "fix_clock_evaluate_typed" dataSemTheory.fix_clock_evaluate;
 val cutSwap = prove (``dataSem$cut_state_opt names_opt
     (s with <|stack_max := smx; safe_for_space := safe; peak_heap_length := peak|>) =

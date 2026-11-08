@@ -268,8 +268,8 @@ theorem evaluate_call_clock_step {C F : Type} (ret : Option (List Nat × NumSet)
                         simpa [evaluate, read, found, nodup, cut, zero, called] using finalBound
         · simp [evaluate, read, found, nodup]
 
-/-- Evaluation does not increase the data-language clock. This invariant is
-Flapjack infrastructure; evaluator correspondence review remains open. -/
+/-- Evaluation does not increase the data-language clock. This unconditional
+form is Flapjack infrastructure used to prove the HOL-shaped theorem. -/
 theorem evaluate_clock_le {C F : Type} (program : DataLang.Prog) (state : State C F) :
     (evaluate program state).2.clock ≤ state.clock := by
   refine clockWeightInduction (α := DataLang.Prog) (σ := State C F) (·.clock) sizeOf
@@ -306,6 +306,14 @@ theorem evaluate_clock_le {C F : Type} (program : DataLang.Prog) (state : State 
     intro body next bound
     exact smaller body next (by omega)
 
+/-- A completed evaluation does not increase the clock. -/
+@[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "evaluate_clock"]
+theorem evaluateClock {C F : Type} (program : DataLang.Prog) (state : State C F)
+    (result : Option (Result (List Value) Value)) (next : State C F)
+    (run : evaluate program state = (result, next)) : next.clock ≤ state.clock := by
+  have bound := evaluate_clock_le program state
+  simpa only [run] using bound
+
 /-- The evaluator's termination clamp is inert on a completed evaluation. -/
 theorem fixClock_evaluate {C F : Type} (program : DataLang.Prog) (state : State C F) :
     fixClock state (evaluate program state) = evaluate program state := by
@@ -314,6 +322,12 @@ theorem fixClock_evaluate {C F : Type} (program : DataLang.Prog) (state : State 
   | mk result next =>
     simp only [run] at bound
     simp [fixClock, Nat.min_eq_right bound]
+
+/-- The HOL clock clamp is inert on an evaluation result. -/
+@[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "fix_clock_evaluate"]
+theorem fixClockEvaluate {C F : Type} (state : State C F) (program : DataLang.Prog) :
+    fixClock state (evaluate program state) = evaluate program state :=
+  fixClock_evaluate program state
 
 /-- A trailing skip does not change a result whose evaluator clock is already
 known to be bounded. -/

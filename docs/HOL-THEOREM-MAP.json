@@ -128364,6 +128364,24 @@
   "reviewer": "Compared cut_state_opt_swap_input_replay_typed: free variables names_opt, s, s2, safe, peak; one shared state type; the single successful-cut premise; and the record equality showing the stack-maximum update is redundant after a cut. Derived from the reviewed cut_state_opt_stack_max."
 },
 {
+  "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
+  "hol_name": "evaluate_clock",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/EvaluateClock.lean",
+  "lean_name": "evaluateClock",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_clock_typed: binders xs, s1, vs, s2 with one shared state type, the single evaluation premise and the clock bound; Lean curries the evaluator arguments. Derived from the unconditional Flapjack evaluate_clock_le. Inherits reals_as_rational_cuts through evaluate (SOUNDNESS item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
+  "hol_name": "fix_clock_evaluate",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/EvaluateClock.lean",
+  "lean_name": "fixClockEvaluate",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared fix_clock_evaluate_typed: free variables s then xs, fix_clock instantiated at the evaluator's single state type, and the unconditional equation. Derived from Flapjack fixClock_evaluate. Inherits reals_as_rational_cuts through evaluate (SOUNDNESS item 8)."
+},
+{
   "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
   "hol_name": "do_app_safe_peak_swap",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ResourceSwap.lean",
