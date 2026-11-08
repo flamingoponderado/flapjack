@@ -383,6 +383,21 @@ val do_app_implode_replay = prove (do_app_implode_typed,
   full_simp_tac(srw_ss())[do_app_rec_v_rel_eqns, source_to_flatProofTheory.result_rel_cases, do_app_v_rel_lems] >>
   imp_res_tac do_app_v_to_char_list >> srw_tac[][]);
 val _ = show_thm "do_app_implode_replay=" do_app_implode_replay;
+val do_app_explode_typed = list_mk_forall
+  (List.take (do_app_binders, 3) @ List.drop (do_app_binders, 4),
+   subst [List.nth (do_app_binders, 3) |-> ``ast$Explode``] do_app_body);
+val do_app_explode_replay = prove (do_app_explode_typed,
+  rpt gen_tac >> Cases_on `s1` >> Cases_on `s1_i1.refs` >> simp [] >> Cases_on `s1_i1` >>
+  simp [source_to_flatTheory.astOp_to_flatOp_def, astTheory.getOpClass_def] >>
+  srw_tac[][semanticPrimitivesPropsTheory.do_app_cases, flatSemTheory.do_app_def] >>
+  full_simp_tac(srw_ss())[do_app_rec_v_rel_eqns, source_to_flatProofTheory.result_rel_cases, do_app_v_rel_lems] >>
+  imp_res_tac do_app_v_to_char_list >> srw_tac[][] >>
+  Cases_on `str` >> fs [] >> Induct_on `s` >>
+  fs [semanticPrimitivesTheory.list_to_v_def, flatSemTheory.list_to_v_def] >>
+  simp [Once source_to_flatProofTheory.v_rel_cases] >>
+  fs [source_to_flatProofTheory.genv_c_ok_def, source_to_flatProofTheory.has_lists_def] >>
+  simp [Once source_to_flatProofTheory.v_rel_cases]);
+val _ = show_thm "do_app_explode_replay=" do_app_explode_replay;
 val shift_op = ``ast$Shift w sh n``;
 val do_app_shift_typed = list_mk_forall
   (List.take (do_app_binders, 3) @ List.rev (free_vars shift_op) @ List.drop (do_app_binders, 4),
