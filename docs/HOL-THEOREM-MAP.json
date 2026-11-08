@@ -342,6 +342,16 @@
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "do_app",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/DoAppOpassign.lean",
+  "lean_name": "doApp_Aw8updateUnsafe",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Case piece only; the complete do_app theorem is not assembled. Compared the Aw8update_unsafe specialization with do_app_aw8updateunsafe_replay in source_to_flat_init_probe.out, including the original premises and the complete store, FFI, result and target-execution conclusions; the original HOL case proof is replayed. GlobalEnv.c and tys use canonical finite maps; the dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "do_app",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/DoAppOpassign.lean",
   "lean_name": "doApp_Aw8subUnsafe",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
