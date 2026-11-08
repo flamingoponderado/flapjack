@@ -318,4 +318,79 @@ theorem doApp_Aw8length {C F : Type} (genv : GlobalEnv)
                 .value related, ?_⟩
               simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatApply]
 
+/-- The Aw8update case of `do_app`; the full theorem is not yet assembled. The
+dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
+  (fmap_as_finite_support := [c, tys])]
+theorem doApp_Aw8update {C F : Type} (genv : GlobalEnv)
+    (s1 s2 : Store Value × HolFfiState F) (vs : List Value)
+    (r : Result Value Value) (flat : FlatSem.State C F) (flatVs : List FlatSem.Value)
+    (premises : doApp s1 .aw8update vs = some (s2, r) ∧
+      List.Forall₂ (StoreValueRel genv) s1.1 flat.refs.tail ∧ flat.refs ≠ [] ∧
+      List.Forall₂ (ValueRel genv) vs flatVs ∧ s1.2 = flat.ffi ∧ genvCOk genv.c ∧
+      Op.aw8update ≠ .aallocEmpty ∧ Op.aw8update ≠ .envId) :
+    ∃ flatResult flatState,
+      List.Forall₂ (StoreValueRel genv) s2.1 flatState.refs.tail ∧ flatState.refs ≠ [] ∧
+      s2.2 = flatState.ffi ∧ flat.globals = flatState.globals ∧
+      flat.refs.take 1 = flatState.refs.take 1 ∧ ResultRel ValueRel genv r flatResult ∧
+      FlatSem.doApp flat (astOpToFlatOp .aw8update) flatVs = some (flatState, flatResult) := by
+  obtain ⟨run, stores, nonempty, values, ffi, ok, _, _⟩ := premises
+  have original := run
+  cases vs with
+  | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+    | cons second rest =>
+      cases rest with
+      | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+      | cons third rest =>
+        cases rest with
+        | cons fourth rest => simp [doApp, doAppNumericCore, doAppBasic] at run
+        | nil =>
+          cases first <;> cases second <;> cases third <;>
+            simp [doApp, doAppNumericCore, doAppBasic] at run
+          case loc.litv.litv flag address indexLit byteLit =>
+            cases indexLit <;> cases byteLit <;> simp at run
+            case intLit.word8 index byte =>
+              cases lookup : storeLookup address s1.1 with
+              | none => simp [lookup] at run
+              | some stored =>
+                cases stored <;> simp [lookup] at run
+                case w8array bytes =>
+                  cases values with
+                  | cons locationRel tail =>
+                    cases tail with
+                    | cons indexRel tail =>
+                      cases tail with
+                      | cons byteRel tail =>
+                        cases tail
+                        cases locationRel
+                        cases indexRel
+                        cases byteRel
+                        let source : SemanticPrimitivesHOL.State F := ⟨flat.clock, s1.1, s1.2, 0, 0, none⟩
+                        have states : StateRel genv source flat := .intro source flat nonempty stores rfl ffi
+                        by_cases bad : index < 0 ∨ bytes.length ≤ index.toNat
+                        · have ⟨src, dst, exceptionRel⟩ :=
+                            aw8update_outOfBounds genv source flat states ok flag address bytes lookup index bad byte false
+                          simp only [Bool.false_eq_true, if_false] at src dst
+                          simp [doApp, doAppNumericCore, src, source] at original
+                          obtain ⟨rfl, rfl⟩ := original
+                          refine ⟨.err (.raise FlatSem.subscriptExnV), flat, stores, nonempty, ffi, rfl, rfl,
+                            .raise exceptionRel, ?_⟩
+                          simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, dst]
+                        · have nonnegative : 0 ≤ index := Int.le_of_not_gt (fun h => bad (.inl h))
+                          have inBounds : index.toNat < bytes.length := Nat.lt_of_not_ge (fun h => bad (.inr h))
+                          obtain ⟨flatRefs, src, dst, unitRel, nextRel, reserved⟩ :=
+                            aw8update_related genv source flat states flag address bytes lookup index nonnegative inBounds byte false
+                          simp only [Bool.false_eq_true, if_false] at src dst
+                          simp [doApp, doAppNumericCore, src, source] at original
+                          obtain ⟨rfl, rfl⟩ := original
+                          obtain ⟨afterNonempty, afterStores, _, afterFfi⟩ :=
+                            (stateRel_iff genv { source with refs := s1.1.set address (.w8array (bytes.set index.toNat byte)) }
+                              { flat with refs := flatRefs }).mp nextRel
+                          refine ⟨.val FlatSem.unitValue, { flat with refs := flatRefs }, afterStores,
+                            afterNonempty, afterFfi, rfl, reserved.symm, .value unitRel, ?_⟩
+                          simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, dst]
+
 end Flapjack.Compiler.Backend.SourceToFlat
