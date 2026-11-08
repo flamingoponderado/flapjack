@@ -92,4 +92,17 @@ theorem getVars_imp_domain {α : Type} (names : List Nat) (x : Nat) (env : Spt �
           simp [sptDomain, lookup]
         · exact ih tail member rest
 
+/-- Reads agree when every requested lookup agrees. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "EVERY_get_vars"]
+theorem every_getVars {α : Type} (names : List Nat) (first second : Spt α)
+    (agree : ∀ name ∈ names, sptLookup name first = sptLookup name second) :
+    DataSem.getVars names first = DataSem.getVars names second := by
+  induction names with
+  | nil => rfl
+  | cons name names ih =>
+    have head := agree name (by simp)
+    have tail : ∀ key ∈ names, sptLookup key first = sptLookup key second :=
+      fun key member => agree key (by simp [member])
+    simp [DataSem.getVars, DataSem.getVar, head, ih tail]
+
 end Flapjack.Compiler.Backend.DataProps

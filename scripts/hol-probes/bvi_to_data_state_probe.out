@@ -18,6 +18,7 @@ var_corr=∀(env :α list) (corr :num list) (t :α sptree$num_map). var_corr env
 get_vars_thm=∀(vs :num list) (a :α list) (t2 :α sptree$num_map). var_corr a vs t2 ⇒ (get_vars vs t2 :α list option) = SOME a
 get_vars_append=∀(l1 :num list) (l2 :num list) (s :α sptree$num_map). (get_vars (l1 ++ l2) s :α list option) = OPTION_BIND (get_vars l1 s :α list option) (λ(y1 :α list). OPTION_BIND (get_vars l2 s :α list option) (λ(y2 :α list). SOME (y1 ++ y2)))
 get_vars_reverse=∀(ls :num list) (s :α sptree$num_map) (ys :α list). (get_vars ls s :α list option) = SOME ys ⇒ (get_vars (REVERSE ls) s :α list option) = SOME (REVERSE ys)
+EVERY_get_vars=∀(args :num list) (s1 :α sptree$num_map) (s2 :α sptree$num_map). EVERY (λ(a :num). (lookup a s1 :α option) = (lookup a s2 :α option)) args ⇒ (get_vars args s1 :α list option) = (get_vars args s2 :α list option)
 get_vars_IMP_domain=∀(args :num list) (x :num) (s :α sptree$num_map) (vs :α list). MEM x args ∧ (get_vars args s :α list option) = SOME vs ⇒ x ∈ (domain s :num -> bool)
 var_corr_map=∀(p :α sptree$num_map) (f :α -> β) (vs :num list) (z :α list). var_corr z vs p ⇒ var_corr (MAP f z) vs (map f p :β sptree$num_map)
 get_vars_lift_thm=∀(vs :num list) (a :bvlSem$v list) (t2 :v sptree$num_map). var_corr a vs (map data_to_bvi_v t2 :bvlSem$v sptree$num_map) ⇒ ∃(z :v list). (get_vars vs t2 :v list option) = SOME z ∧ a = MAP data_to_bvi_v z

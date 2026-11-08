@@ -16304,6 +16304,12 @@
     "reviewer": "Compared with the source theorem and its captured inferred type: arbitrary natural m and n with m ≤ n yield the same ordering of n2mw digit lengths. Both lists use the same positive HOL word dimension."
   },
   {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "EVERY_get_vars",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/Variables.lean", "lean_name": "every_getVars",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: the two arbitrary sparse trees share one polymorphic payload type, their lookup results agree for every requested name, and the corresponding option-valued list reads agree. HOL EVERY is rendered as membership-indexed universal quantification."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "get_vars_IMP_domain",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/Variables.lean", "lean_name": "getVars_imp_domain",
     "statement_status": "reviewed_exact",
