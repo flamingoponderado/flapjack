@@ -70,4 +70,26 @@ theorem getVars_reverse {α : Type} (names : List Nat) (env : Spt α) (values : 
         subst values
         simp [List.reverse_cons, getVars_append, ih tail rest, DataSem.getVars, found]
 
+/-- Every name read successfully belongs to the sparse environment domain. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "get_vars_IMP_domain"]
+theorem getVars_imp_domain {α : Type} (names : List Nat) (x : Nat) (env : Spt α) (values : List α)
+    (premise : x ∈ names ∧ DataSem.getVars names env = some values) :
+    sptDomain env x := by
+  obtain ⟨member, read⟩ := premise
+  induction names generalizing values with
+  | nil => simp at member
+  | cons name names ih =>
+    simp only [DataSem.getVars] at read
+    cases found : DataSem.getVar name env with
+    | none => simp [found] at read
+    | some value =>
+      simp only [found] at read
+      cases rest : DataSem.getVars names env with
+      | none => simp [rest] at read
+      | some tail =>
+        rcases List.mem_cons.mp member with rfl | member
+        · have lookup : sptLookup x env = some value := found
+          simp [sptDomain, lookup]
+        · exact ih tail member rest
+
 end Flapjack.Compiler.Backend.DataProps
