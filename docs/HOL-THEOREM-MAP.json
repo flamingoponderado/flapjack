@@ -127813,8 +127813,9 @@
   "hol_name": "do_app_aux_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/ApplyAux.lean",
   "lean_name": "doAppAux",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_aux and its typed DataSem probe arm by arm, including FFI, allocation, timestamp, limit and error behavior; state and result carriers retain independent compiler and FFI types. Floating-point operations inherit reals_as_rational_cuts (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
