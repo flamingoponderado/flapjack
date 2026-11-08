@@ -1,48 +1,37 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveAll
 import Flapjack.Compiler.Backend.Semantics.DataProps.HeapSwap
 import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyAuxFields
 
-/-! Primitive success under resource-field updates. The proof reuses the
-liveness pass's primitive cases; those cases must remain independent of this
-module to avoid an import cycle. -/
+/-! Primitive success under resource-field updates. -/
 namespace Flapjack.Compiler.Backend.DataProps
 open Flapjack Flapjack.Compiler.Backend.DataSem Flapjack.SemanticPrimitivesHOL
-open Flapjack.Compiler.Backend.DataLive
 
-/-- Assemble the existing liveness primitive cases. This is proof infrastructure. -/
-private theorem auxRelation {C F : Type} (source target : State C F) (live : NumSet)
-    (op : ClosLang.Op) (args : List DataSem.Value) (related : stateRel source target live) :
-    appRel live (doAppAux op args source) (doAppAux op args target) := by
-  cases op with
-  | blockOp op => exact stateRel_doAppAux_block source target live op args related
-  | memOp op => exact stateRel_doAppAux_memory source target live op args related
-  | globOp op => exact stateRel_doAppAux_global source target live op args related
-  | ffi name => exact stateRel_doAppAux_ffi source target live name args related
-  | thunkOp op => exact stateRel_doAppAux_thunk source target live op args related
-  | intOp op =>
-    cases h : doIntApp op args <;> simp [doAppAux_int_exact, h, appRel, related]
-  | wordOp op =>
-    cases h : doWordApp op args <;> simp [doAppAux_word_exact, h, appRel, related]
-  | label label =>
-    have code := related.1
-    cases args with
-    | nil => cases found : (sptLookup label source.code).isSome <;> simp [doAppAux, applyNonFfi, appRel, ← code, found, related]
-    | cons first rest => simp [doAppAux, applyNonFfi, appRel]
-  | install => simp [doAppAux, applyNonFfi, appRel]
-/-- Successful auxiliary applications preserve local control fields. -/
-private theorem auxControl {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
-    (state next : State C F) (value : DataSem.Value)
-    (run : doAppAux op args state = .val (value, next)) : SameLocalControl state next := by
-  cases op with
-  | label label => exact doAppAux_label_frame label args state next value run
-  | ffi name => exact doAppAux_ffi_frame name args state next value run
-  | intOp op => exact doAppAux_int_frame op args state next value run
-  | wordOp op => exact doAppAux_word_frame op args state next value run
-  | blockOp op => exact doAppAux_block_frame op args state next value run
-  | globOp op => exact doAppAux_global_frame op args state next value run
-  | memOp op => exact doAppAux_mem_frame op args state next value run
-  | thunkOp op => exact doAppAux_thunk_frame op args state next value run
-  | install => simp [doAppAux, applyNonFfi] at run
+set_option maxRecDepth 4096 in
+set_option maxHeartbeats 5000000 in
+/-- Safety updates preserve successful non-FFI primitive applications. This
+Flapjack helper supports the HOL resource-swap proof. The exhaustive proof
+spends about 12 seconds in simplification on this checkout; fold safety into
+the per-operation field proof to avoid repeating the case analysis. -/
+private theorem applyNonFfi_safeSuccess {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
+    (state next : State C F) (value : DataSem.Value) (safe : Bool)
+    (run : applyNonFfi op values state = some (value, next)) :
+    ∃ safe', applyNonFfi op values {state with safeForSpace := safe} =
+      some (value, {next with safeForSpace := safe'}) := by
+  simp only [applyNonFfi, Option.bind] at run ⊢
+  all_goals repeat' (first | split at run | split) <;> simp_all [withFreshTimestamp, checkLim, Option.bind]
+  all_goals try (aesop (config := {warnOnNonterminal := false}))
+  all_goals cases safe <;> (simp; try omega)
+
+/-- Safety updates preserve successful auxiliary applications, including FFI.
+This Flapjack helper supports the HOL resource-swap proof. -/
+private theorem doAppAux_safeSuccess {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
+    (state next : State C F) (value : DataSem.Value) (safe : Bool)
+    (run : doAppAux op values state = .val (value, next)) :
+    ∃ safe', doAppAux op values {state with safeForSpace := safe} =
+      .val (value, {next with safeForSpace := safe'}) := by
+  simp only [doAppAux] at run ⊢
+  all_goals repeat' (split at run <;> simp_all)
+  all_goals try (obtain ⟨safe', result⟩ := applyNonFfi_safeSuccess _ _ state next value safe (by assumption); simp_all)
+  all_goals try aesop
 
 /-- Auxiliary primitive success is preserved by updating resource fields. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_aux_sm_safe_peak_swap"]
@@ -51,25 +40,14 @@ theorem doAppAux_stackSafePeakSwap {C F : Type} (op : ClosLang.Op) (args : List 
     (run : doAppAux op args state = .val (value, next)) :
     ∃ safe' peak' mx', doAppAux op args {state with stackMax := mx, safeForSpace := safe, peakHeapLength := peak} =
       .val (value, {next with stackMax := mx', safeForSpace := safe', peakHeapLength := peak'}) := by
-  let target := {state with safeForSpace := safe, peakHeapLength := peak, stackMax := mx}
-  have related : stateRel state target .ln := by simp [stateRel, target]
-  have simulation := auxRelation state target .ln op args related
-  rw [run] at simulation
-  cases targetRun : doAppAux op args target with
-  | err e => simp [appRel, targetRun] at simulation
-  | val pair =>
-    obtain ⟨otherValue, otherNext⟩ := pair
-    simp [appRel, targetRun] at simulation
-    obtain ⟨rfl, nextRel⟩ := simulation
-    have left := auxControl op args state next value run
-    have right := auxControl op args target otherNext value targetRun
-    have same : otherNext = {next with safeForSpace := otherNext.safeForSpace, peakHeapLength := otherNext.peakHeapLength, stackMax := otherNext.stackMax} := by
-      rcases nextRel with ⟨code, clock, space, ffi, refs, global, handler, stack, compiler, oracle, stamps, limits, frames, locals⟩
-      cases next
-      cases otherNext
-      simp_all [SameLocalControl, target]
-    refine ⟨otherNext.safeForSpace, otherNext.peakHeapLength, otherNext.stackMax, ?_⟩
-    rw [← same]
+  obtain ⟨safe', changed⟩ := doAppAux_safeSuccess op args state next value safe run
+  have fields := doAppAux_withFields op args {state with safeForSpace := safe}
+    state.stack state.localsSize mx peak state.locals state.space
+  rw [changed] at fields
+  refine ⟨safe', peak, mx, ?_⟩
+  obtain ⟨stackEq, localsSizeEq, _, _, localsEq, spaceEq⟩ :=
+    doAppAux_fieldFrame op args state next value run
+  simpa [Flapjack.SemanticPrimitivesProps.mapResult, stackEq, localsSizeEq, localsEq, spaceEq] using fields
 
 /-- The successful space-and-auxiliary path preserves the returned value
 under resource updates. This is proof infrastructure for the HOL swap. -/

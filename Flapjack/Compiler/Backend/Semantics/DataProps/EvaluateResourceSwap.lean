@@ -3,11 +3,7 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.CutSwap
 import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
 import Flapjack.Misc.ClockWeightInduction
 
-/-! Resource-field variation for data-language evaluation.
-
-The primitive swap proofs currently depend on DataLive's primitive relations;
-moving DataLive onto these evaluator swaps requires first removing that import
-dependency to avoid a cycle. -/
+/-! Resource-field variation for data-language evaluation. -/
 namespace Flapjack.Compiler.Backend.DataProps
 open Flapjack Flapjack.Compiler.Backend.DataSem Flapjack.SemanticPrimitivesHOL
 
