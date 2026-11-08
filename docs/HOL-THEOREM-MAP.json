@@ -340,6 +340,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "v_rel_weakening",
+  "lean_name": "valueRel_weakening",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared all three mutual clauses and their independently quantified target environments with v_rel_weakening_replay in source_to_flat_init_probe.out, retaining equal constructor/type maps and the original subglobals premise. The original local HOL induction proof is replayed; GlobalEnv.c and tys use canonical finite maps."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "v_rel_weakening2",
   "lean_name": "valueRel_weakening2",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",

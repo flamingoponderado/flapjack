@@ -156,6 +156,38 @@ val v_rel_weakening2_replay = let open source_to_flatProofTheory in prove (
   >- fs [LIST_REL_EL_EQN]
   >- (fs [v_rel_global_eqn] >> rw [] >> res_tac >> fs [] >> metis_tac [])) end;
 val _ = show_thm "v_rel_weakening2_replay=" v_rel_weakening2_replay;
+val v_rel_weakening_typed = ``
+  (!genv v v'. source_to_flatProof$v_rel genv v v' ==>
+    !genv'. genv.c = genv'.c /\ genv.tys = genv'.tys /\
+      source_to_flatProof$subglobals genv.v genv'.v ==> source_to_flatProof$v_rel genv' v v') /\
+  (!genv env env'. source_to_flatProof$env_rel genv env env' ==>
+    !genv'. genv.c = genv'.c /\ genv.tys = genv'.tys /\
+      source_to_flatProof$subglobals genv.v genv'.v ==> source_to_flatProof$env_rel genv' env env') /\
+  (!genv comp_map shadowers env. source_to_flatProof$global_env_inv genv comp_map shadowers env ==>
+    !genv'. genv.c = genv'.c /\ genv.tys = genv'.tys /\
+      source_to_flatProof$subglobals genv.v genv'.v ==>
+      source_to_flatProof$global_env_inv genv' comp_map shadowers env)``;
+val v_rel_weakening_replay = let open source_to_flatProofTheory in prove (
+  v_rel_weakening_typed,
+  ho_match_mp_tac v_rel_ind >>
+  srw_tac[][do_app_rec_v_rel_eqns, subglobals_def] >> fs[]
+  >- fs [LIST_REL_EL_EQN]
+  >- fs [LIST_REL_EL_EQN]
+  >- (srw_tac[][Once v_rel_cases] >>
+      MAP_EVERY qexists_tac [`comp_map`, `env`, `env'`, `t`, `ts`] >>
+      full_simp_tac(srw_ss())[FDOM_FUPDATE_LIST, SUBSET_DEF, do_app_rec_v_rel_eqns])
+  >- (srw_tac[][Once v_rel_cases] >>
+      MAP_EVERY qexists_tac [`comp_map`, `env`, `env'`, `t`,`ts`] >>
+      full_simp_tac(srw_ss())[FDOM_FUPDATE_LIST, SUBSET_DEF, do_app_rec_v_rel_eqns])
+  >- (srw_tac[][Once v_rel_cases] >>
+      MAP_EVERY qexists_tac [`comp_map`, `new_vars`, `t1`, `t2`] >>
+      full_simp_tac(srw_ss())[FDOM_FUPDATE_LIST, SUBSET_DEF, do_app_rec_v_rel_eqns, EL_APPEND1] >>
+      srw_tac[][] >> res_tac >> qexists_tac `n` >> srw_tac[][EL_APPEND1] >>
+      map_every qexists_tac [`t2`,`t3`] >> rw [] >> metis_tac [IS_SOME_DEF])
+  >- fs [LIST_REL_EL_EQN]
+  >- (rw [v_rel_global_eqn] >> res_tac >> rw [] >> res_tac >>
+      rveq >> fs [] >> rveq >> fs [] >> rfs [])) end;
+val _ = show_thm "v_rel_weakening_replay=" v_rel_weakening_replay;
 val do_app_conversion_inl = Q.prove (
   `semanticPrimitives$check_type ty1 v /\ source_to_flatProof$genv_c_ok genv.c /\
     source_to_flatProof$v_rel genv v v_i1 /\

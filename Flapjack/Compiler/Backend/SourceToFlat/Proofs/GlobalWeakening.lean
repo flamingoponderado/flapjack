@@ -334,6 +334,28 @@ theorem globalEnvInv_weak (old : GlobalEnv) (map : Environment) (shadowers : Var
   exact globalEnvInv_growth old new (GlobalGrowth.ofSubglobals old new slots constructors types)
     map shadowers env related
 
+/-- Mutual weakening with unchanged constructor/type maps and growing global slots. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_weakening"
+  (fmap_as_finite_support := [c, tys])]
+theorem valueRel_weakening :
+    (∀ (old : GlobalEnv) source flat, ValueRel old source flat → ∀ new,
+      old.c = new.c ∧ old.tys = new.tys ∧ subglobals old.v new.v → ValueRel new source flat) ∧
+    (∀ (old : GlobalEnv) env locals, EnvRel old env locals → ∀ new,
+      old.c = new.c ∧ old.tys = new.tys ∧ subglobals old.v new.v → EnvRel new env locals) ∧
+    (∀ (old : GlobalEnv) map shadowers env, GlobalEnvInv old map shadowers env → ∀ new,
+      old.c = new.c ∧ old.tys = new.tys ∧ subglobals old.v new.v →
+        GlobalEnvInv new map shadowers env) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro old source flat related new ⟨constructors, types, slots⟩
+    exact valueRel_weak old source flat new
+      ⟨related, by simp [← constructors, finiteSubmap], by simp [← types, finiteSubmap], slots⟩
+  · intro old env locals related new ⟨constructors, types, slots⟩
+    exact envRel_weak old env locals new
+      ⟨related, by simp [← constructors, finiteSubmap], by simp [← types, finiteSubmap], slots⟩
+  · intro old map shadowers env related new ⟨constructors, types, slots⟩
+    exact globalEnvInv_weak old map shadowers env new
+      ⟨related, by simp [← constructors, finiteSubmap], by simp [← types, finiteSubmap], slots⟩
+
 /-- Mutual value, local-environment, and global-environment weakening when
 the value slots agree and the constructor/type maps grow. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_weakening2"
