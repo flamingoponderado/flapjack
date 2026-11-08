@@ -189,7 +189,7 @@ theorem doApp_Aw8alloc {C F : Type} (genv : GlobalEnv)
                 · simp [negative, boundsFailure] at run
                   obtain ⟨rfl, rfl⟩ := run
                   refine ⟨.err (.raise FlatSem.subscriptExnV), flat, stores, nonempty, ffi, rfl, rfl, ?_, ?_⟩
-                  · exact .raise (exceptionValues_related genv ok).2.2.2
+                  · exact .raise (valueRel_lemmas genv ok).2.2.2.2
                   · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                       FlatSem.boundsFailure, negative]
                 · let source : SemanticPrimitivesHOL.State F := ⟨flat.clock, s1.1, s1.2, 0, 0, none⟩
@@ -258,7 +258,7 @@ theorem doApp_Aw8sub {C F : Type} (genv : GlobalEnv)
                     · simp [readIndexed, boundsFailure, negative] at run
                       obtain ⟨rfl, rfl⟩ := run
                       refine ⟨.err (.raise FlatSem.subscriptExnV), flat, stores, nonempty, ffi, rfl, rfl, ?_, ?_⟩
-                      · exact .raise (exceptionValues_related genv ok).2.2.2
+                      · exact .raise (valueRel_lemmas genv ok).2.2.2.2
                       · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                           FlatSem.readIndexed, FlatSem.boundsFailure, flatLookup, negative]
                     · cases element : bytes[index.toNat]? with
@@ -266,7 +266,7 @@ theorem doApp_Aw8sub {C F : Type} (genv : GlobalEnv)
                         simp [readIndexed, boundsFailure, negative, element] at run
                         obtain ⟨rfl, rfl⟩ := run
                         refine ⟨.err (.raise FlatSem.subscriptExnV), flat, stores, nonempty, ffi, rfl, rfl, ?_, ?_⟩
-                        · exact .raise (exceptionValues_related genv ok).2.2.2
+                        · exact .raise (valueRel_lemmas genv ok).2.2.2.2
                         · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                             FlatSem.readIndexed, FlatSem.boundsFailure, flatLookup, negative, element]
                       | some byte =>
@@ -443,7 +443,7 @@ theorem doApp_CopyStrStr {C F : Type} (genv : GlobalEnv)
                       simp [copied, boundsFailure] at run
                       obtain ⟨rfl, rfl⟩ := run
                       refine ⟨.err (.raise FlatSem.subscriptExnV), flat, stores, nonempty, ffi, rfl, rfl,
-                        .raise (exceptionValues_related genv ok).2.2.2, ?_⟩
+                        .raise (valueRel_lemmas genv ok).2.2.2.2, ?_⟩
                       simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                         FlatSem.doAppData, FlatSem.doAppCopy,
                         FlatSem.boundsFailure, copied]
@@ -1173,7 +1173,7 @@ theorem doApp_Aalloc {C F : Type} (genv : GlobalEnv)
                 · simp [negative, boundsFailure] at run
                   obtain ⟨rfl, rfl⟩ := run
                   refine ⟨.err (.raise FlatSem.subscriptExnV), flat, stores, nonempty, ffi, rfl, rfl, ?_, ?_⟩
-                  · exact .raise (exceptionValues_related genv ok).2.2.2
+                  · exact .raise (valueRel_lemmas genv ok).2.2.2.2
                   · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                       FlatSem.boundsFailure, negative]
                 · let source : SemanticPrimitivesHOL.State F := ⟨flat.clock, s1.1, s1.2, 0, 0, none⟩

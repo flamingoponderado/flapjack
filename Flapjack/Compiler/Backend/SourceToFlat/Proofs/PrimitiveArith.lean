@@ -98,7 +98,7 @@ theorem integerArith_related {C F : Type} (genv : GlobalEnv) (ok : genvCOk genv.
   by_cases zero : right = 0 <;> cases action <;>
     simp [doApp, doAppNumericCore, FlatSem.doAppNumeric,
       FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat, zero]
-  all_goals first | exact ResultRel.value (.literal genv _) | exact ResultRel.raise (exceptionValues_related genv ok).1
+  all_goals first | exact ResultRel.value (.literal genv _) | exact ResultRel.raise (valueRel_lemmas genv ok).2.1
 
 /-- Word8 arithmetic preserves literal results and rejects the same unsupported
 operations, without changing either state. This is Flapjack infrastructure
@@ -223,7 +223,7 @@ theorem conversion_related {C F : Type} (genv : GlobalEnv) (ok : genvCOk genv.c)
     by_cases bad : n < 0 ∨ n > 255 <;>
       simp [doApp, doAppNumericCore, FlatSem.doAppNumeric,
         FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat, bad]
-    · exact ResultRel.raise (exceptionValues_related genv ok).2.1
+    · exact ResultRel.raise (valueRel_lemmas genv ok).2.2.1
     · exact ResultRel.value (.literal genv _)
   all_goals simp [doApp, doAppNumericCore, FlatSem.doAppNumeric,
     FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat]

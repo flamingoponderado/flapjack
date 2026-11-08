@@ -340,6 +340,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "v_rel_lems",
+  "lean_name": "valueRel_lemmas",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PrimitiveType.lean",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared the complete local v_rel_lems statement and inferred types with v_rel_lems_replay in source_to_flat_init_probe.out: the constructor-map premise implies related boolean values and all four built-in exceptions. GlobalEnv.c and tys use canonical finite maps; the original HOL proof is replayed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "do_app",
   "lean_name": "doApp_correct",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/DoApp.lean",

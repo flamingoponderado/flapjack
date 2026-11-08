@@ -25,7 +25,7 @@ theorem strsub_complete_related {C F : Type} (genv : GlobalEnv)
     | some ((refs, ffi), result), some (some (nextFlat, flatResult)) =>
         refs = source.refs ∧ ffi = source.ffi ∧ nextFlat = flat ∧ ResultRel ValueRel genv result flatResult
     | _, _ => False := by
-  have exceptionRel := (exceptionValues_related genv ok).2.2.2
+  have exceptionRel := (valueRel_lemmas genv ok).2.2.2.2
   by_cases negative : index < 0
   · simp [doApp, doAppNumericCore, doAppBasic, FlatSem.doAppData, SemanticPrimitivesHOL.readIndexed,
       FlatSem.readIndexed, SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, negative, ResultRel.raise exceptionRel]
@@ -57,7 +57,7 @@ theorem vsub_complete_related {C F : Type} (genv : GlobalEnv)
     | some ((refs, ffi), result), some (some (nextFlat, flatResult)) =>
         refs = source.refs ∧ ffi = source.ffi ∧ nextFlat = flat ∧ ResultRel ValueRel genv result flatResult
     | _, _ => False := by
-  have exceptionRel := (exceptionValues_related genv ok).2.2.2
+  have exceptionRel := (valueRel_lemmas genv ok).2.2.2.2
   have pairRel := forall₂_lookupRel related index.toNat
   by_cases negative : index < 0
   · cases unsafeOp <;> simp [doApp, doAppNumericCore, doAppBasic, FlatSem.doAppData,
@@ -107,7 +107,7 @@ theorem copyStrStr_complete_related {C F : Type} (genv : GlobalEnv)
     | some ((refs, ffi), result), some (some (nextFlat, flatResult)) =>
         refs = source.refs ∧ ffi = source.ffi ∧ nextFlat = flat ∧ ResultRel ValueRel genv result flatResult
     | _, _ => False := by
-  have exceptionRel := (exceptionValues_related genv ok).2.2.2
+  have exceptionRel := (valueRel_lemmas genv ok).2.2.2.2
   cases copied : copyArray (text.explode, offset) length none with
   | none => simp [doApp, doAppNumericCore, doAppBasic, FlatSem.doAppCopy,
       SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, copied, ResultRel.raise exceptionRel]
@@ -152,7 +152,7 @@ theorem copyAw8Str_complete_related {C F : Type} (genv : GlobalEnv)
         refs = source.refs ∧ ffi = source.ffi ∧ nextFlat = flat ∧ ResultRel ValueRel genv result flatResult
     | _, _ => False := by
   have flatLookup := stateRel_byteArray_lookup genv source flat states address bytes lookup
-  have exceptionRel := (exceptionValues_related genv ok).2.2.2
+  have exceptionRel := (valueRel_lemmas genv ok).2.2.2.2
   cases copied : copyArray (bytes, offset) length none with
   | none => simp [doApp, doAppNumericCore, doAppBasic, FlatSem.doAppCopy, lookup, flatLookup,
       SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, copied, ResultRel.raise exceptionRel]
@@ -375,7 +375,7 @@ theorem copyAw8Aw8_related {C F : Type} (genv : GlobalEnv)
     | _, _ => False := by
   have flatSrc := stateRel_byteArray_lookup genv source flat states srcAddress srcBytes srcLookup
   have flatDst := stateRel_byteArray_lookup genv source flat states dstAddress dstBytes dstLookup
-  have exceptionRel := (exceptionValues_related genv ok).2.2.2
+  have exceptionRel := (valueRel_lemmas genv ok).2.2.2.2
   cases copied : copyArray (srcBytes, offset) length (some (dstBytes, dstOffset)) with
   | none =>
     simp [doApp, doAppNumericCore, doAppBasic, FlatSem.doAppCopy, srcLookup, dstLookup, flatSrc, flatDst,
@@ -409,7 +409,7 @@ theorem copyStrAw8_related {C F : Type} (genv : GlobalEnv)
         ResultRel ValueRel genv result flatResult
     | _, _ => False := by
   have flatLookup := stateRel_byteArray_lookup genv source flat states address bytes lookup
-  have exceptionRel := (exceptionValues_related genv ok).2.2.2
+  have exceptionRel := (valueRel_lemmas genv ok).2.2.2.2
   cases copied : copyArray (text.explode, offset) length (some (bytes, dstOffset)) with
   | none =>
     simp [doApp, doAppNumericCore, doAppBasic, FlatSem.doAppCopy, lookup, flatLookup,

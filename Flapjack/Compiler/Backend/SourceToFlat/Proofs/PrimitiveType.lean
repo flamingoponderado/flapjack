@@ -176,13 +176,18 @@ theorem boolValueRel_iff (genv : GlobalEnv) (b : Bool) (flat : FlatSem.Value) (o
     · simpa [SemanticPrimitivesHOL.boolValue, FlatSem.boolValue, boolToTag, boolTypeNum] using ok.1.2
     · simpa [SemanticPrimitivesHOL.boolValue, FlatSem.boolValue, boolToTag, boolTypeNum] using ok.1.1
 
-/-- Related original exception constructors under the constructor-map assumptions.
-This is infrastructure over the factored relation. -/
-theorem exceptionValues_related (genv : GlobalEnv) (ok : genvCOk genv.c) :
+/-- Boolean values and the four built-in exceptions are related. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_lems"
+  (fmap_as_finite_support := [c, tys])]
+theorem valueRel_lemmas (genv : GlobalEnv) (ok : genvCOk genv.c) :
+    (∀ b, ValueRel genv (SemanticPrimitivesHOL.boolValue b) (FlatSem.boolValue b)) ∧
     ValueRel genv SemanticPrimitivesHOL.divExnV FlatSem.divExnV ∧
     ValueRel genv SemanticPrimitivesHOL.chrExnV FlatSem.chrExnV ∧
     ValueRel genv SemanticPrimitivesHOL.bindExnV FlatSem.bindExnV ∧
     ValueRel genv SemanticPrimitivesHOL.subExnV FlatSem.subscriptExnV := by
+  constructor
+  · intro b
+    exact (boolValueRel_iff genv b _ ok).mpr rfl
   constructor
   · exact .constructor genv _ _ [] [] (.nil genv) ok.2.1.1
   constructor

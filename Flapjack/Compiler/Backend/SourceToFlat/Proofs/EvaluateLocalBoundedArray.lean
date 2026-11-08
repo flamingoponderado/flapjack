@@ -245,7 +245,7 @@ theorem localEnvBounded_aalloc {C F : Type} [Nonempty C]
               simp [getOpClass, doApp, doAppNumericCore, doAppBasic, boundsFailure, negative, astOpToFlatOp,
                 FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                 FlatSem.boundsFailure, EvaluateHOL.listResult]
-              exact ⟨.raise (exceptionValues_related nextGenv nextInvariant.1).2.2.2, states⟩
+              exact ⟨.raise (valueRel_lemmas nextGenv nextInvariant.1).2.2.2.2, states⟩
             ·
               rw [EvaluateHOL.evaluate]
               simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
@@ -406,7 +406,7 @@ theorem localEnvBounded_aw8alloc {C F : Type} [Nonempty C]
               simp [getOpClass, doApp, doAppNumericCore, doAppBasic, boundsFailure, negative, astOpToFlatOp,
                 FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
                 FlatSem.boundsFailure, EvaluateHOL.listResult]
-              exact ⟨.raise (exceptionValues_related nextGenv nextInvariant.1).2.2.2, states⟩
+              exact ⟨.raise (valueRel_lemmas nextGenv nextInvariant.1).2.2.2.2, states⟩
             ·
               rw [EvaluateHOL.evaluate]
               simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]

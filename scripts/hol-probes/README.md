@@ -9566,7 +9566,8 @@ independent types, and the local `global_env_inv_extend2` and
 `global_env_inv_add_locals` proofs with inferred types visible.
 It also replays the local `do_app_rec_help` proof, retaining its unused
 polymorphic binder and separate recursive groups in the inferred statement.
-The `do_app_typed` row records the inferred statement of the local primitive
+The `v_rel_lems_replay` row records the complete local boolean and exception
+relation lemma, replaying its HOL proof. The `do_app_typed` row records the inferred statement of the local primitive
 simulation theorem; `do_app_configGC_replay`, `do_app_shift_replay`,
 `do_app_equality_replay`, `do_app_arith_replay`, `do_app_fromto_replay`,
 `do_app_test_replay`, `do_app_opapp_replay`, `do_app_opassign_replay`,

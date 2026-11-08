@@ -93,6 +93,7 @@ val do_app_v_rel_lems = Q.prove (
       source_to_flatProofTheory.has_exns_def, source_to_flatProofTheory.has_bools_def,
       semanticPrimitivesTheory.Boolv_def, flatSemTheory.Boolv_def] >>
   every_case_tac >> simp [do_app_rec_v_rel_eqns]);
+val _ = show_thm "v_rel_lems_replay=" do_app_v_rel_lems;
 val do_app_conversion_inl = Q.prove (
   `semanticPrimitives$check_type ty1 v /\ source_to_flatProof$genv_c_ok genv.c /\
     source_to_flatProof$v_rel genv v v_i1 /\

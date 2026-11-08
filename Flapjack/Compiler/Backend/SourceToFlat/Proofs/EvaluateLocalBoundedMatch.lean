@@ -427,7 +427,7 @@ theorem localEnvBounded_mat {C F : Type} [Nonempty C]
             middleSource middleFlat baseEnv sourceLocal flatEnv traces trace baseMap gen
             (Nat.le_trans (EvaluateHOL.evaluateClockFull source middleSource sourceEnv [body] _ sourceRun) clockBound)
             middleLocal middleEnv tracesLen
-            middleInvariant middleGeneration value bindExnV flatValue FlatSem.bindExnV valueRel (exceptionValues_related middleGenv middleInvariant.1).2.2.1 rows can rowSafe each
+            middleInvariant middleGeneration value bindExnV flatValue FlatSem.bindExnV valueRel (valueRel_lemmas middleGenv middleInvariant.1).2.2.2.1 rows can rowSafe each
           have sourceOuter : EvaluateHOL.evaluate source sourceEnv [.mat body rows] =
               EvaluateHOL.evaluateMatch middleSource sourceEnv value rows bindExnV := by
             rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
