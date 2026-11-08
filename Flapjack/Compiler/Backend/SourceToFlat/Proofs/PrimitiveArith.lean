@@ -207,7 +207,7 @@ theorem conversion_operand {F : Type} (source : SemanticPrimitivesHOL.State F)
       simp [doApp, doAppNumericCore] at successful
 
 /-- Source and flat conversions agree on literals, including `Chr` failures.
-This is infrastructure over the preliminary factored relation. -/
+This is Flapjack proof infrastructure for the source-to-flat simulation. -/
 theorem conversion_related {C F : Type} (genv : GlobalEnv) (ok : genvCOk genv.c)
     (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
     (fromType toType : PrimType) (lit : Lit) :

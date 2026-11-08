@@ -93,6 +93,39 @@ val do_app_v_rel_lems = Q.prove (
       source_to_flatProofTheory.has_exns_def, source_to_flatProofTheory.has_bools_def,
       semanticPrimitivesTheory.Boolv_def, flatSemTheory.Boolv_def] >>
   every_case_tac >> simp [do_app_rec_v_rel_eqns]);
+val do_app_conversion_inl = Q.prove (
+  `semanticPrimitives$check_type ty1 v /\ source_to_flatProof$genv_c_ok genv.c /\
+    source_to_flatProof$v_rel genv v v_i1 /\
+    semanticPrimitives$do_conversion v ty1 ty2 = SOME (INL exn) ==>
+    exn = semanticPrimitives$chr_exn_v /\
+    semanticPrimitives$check_type ty1 (flatSem$flat_to_v v_i1) /\
+    ?e. semanticPrimitives$do_conversion (flatSem$flat_to_v v_i1) ty1 ty2 = SOME (INL e)`,
+  strip_tac >> drule_all source_to_flatProofTheory.check_type_v_rel_flat_to_v >>
+  strip_tac >> fs [] >> gvs [oneline semanticPrimitivesTheory.do_conversion_def, AllCaseEqs()]);
+val do_app_conversion_inr = Q.prove (
+  `semanticPrimitives$check_type ty1 v /\ source_to_flatProof$genv_c_ok genv.c /\
+    source_to_flatProof$v_rel genv v v_i1 /\
+    semanticPrimitives$do_conversion v ty1 ty2 = SOME (INR r) ==>
+    semanticPrimitives$check_type ty1 (flatSem$flat_to_v v_i1) /\
+    ?r'. semanticPrimitives$do_conversion (flatSem$flat_to_v v_i1) ty1 ty2 = SOME (INR r') /\
+      source_to_flatProof$v_rel genv r (flatSem$v_to_flat r')`,
+  strip_tac >> drule_all source_to_flatProofTheory.check_type_v_rel_flat_to_v >>
+  strip_tac >> fs [] >> drule_all semanticPrimitivesPropsTheory.do_conversion_check_type >>
+  rpt strip_tac >> drule_all source_to_flatProofTheory.check_type_IMP_v_rel >> simp []);
+val from_to_op = ``ast$FromTo ty1 ty2``;
+val do_app_fromto_typed = list_mk_forall
+  (List.take (do_app_binders, 3) @ List.rev (free_vars from_to_op) @ List.drop (do_app_binders, 4),
+   subst [List.nth (do_app_binders, 3) |-> from_to_op] do_app_body);
+val do_app_fromto_replay = prove (do_app_fromto_typed,
+  rpt gen_tac >> Cases_on `s1` >> Cases_on `s1_i1.refs` >> simp [] >> Cases_on `s1_i1` >>
+  simp [source_to_flatTheory.astOp_to_flatOp_def, astTheory.getOpClass_def] >>
+  gvs [oneline semanticPrimitivesTheory.do_app_def, AllCaseEqs()] >>
+  gvs [oneline flatSemTheory.do_app_def, AllCaseEqs()] >>
+  reverse (rw []) >> fs [] >> simp [source_to_flatProofTheory.result_rel_cases, PULL_EXISTS]
+  >- (drule_all do_app_conversion_inr >> strip_tac >> simp []) >>
+  drule_all do_app_conversion_inl >> strip_tac >> gvs [] >>
+  imp_res_tac do_app_v_rel_lems >> gvs []);
+val _ = show_thm "do_app_fromto_replay=" do_app_fromto_replay;
 val do_app_eq_rel = Q.prove (
   `!genv. source_to_flatProof$genv_c_ok genv.c ==>
     (!v1 v2 r v1_i1 v2_i1.
