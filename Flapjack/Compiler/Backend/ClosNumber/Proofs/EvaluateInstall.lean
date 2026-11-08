@@ -1,40 +1,12 @@
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.Install
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.EvaluateCases
+import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
 
 /-! Dynamic installation in the closure-numbering evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.ClosNumber
 open Flapjack Flapjack.Compiler.Backend.ClosSem
+open Flapjack.Compiler.Backend.ClosProps
 open Flapjack.SemanticPrimitivesHOL (Result)
-
-/-- Continuation after the closure evaluator has evaluated install arguments. -/
-noncomputable def runInstalled {C F : Type} (values : List Value) (state : State C F) : EvalResult C F :=
-  match doInstall values state with
-  | (.err error, next) => (.err error, next)
-  | (.val program, next) =>
-    let (result, last) := evaluate program [] next
-    match result with
-    | .err error => (.err error, last)
-    | .val values => (.val [@holLast Value ⟨unitValue⟩ values], last)
-
-/-- The installation operator evaluates its arguments before the dynamic
-compiler and installed program. -/
-theorem evaluate_install_eq {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (env : List Value) (state : State C F) :
-    evaluate [.op trace .install args] env state =
-      match evaluate args env state with
-      | (.err error, next) => (.err error, next)
-      | (.val values, next) => runInstalled values.reverse next := by
-  rw [evaluate, fixClock_evaluate]
-  cases evaluated : evaluate args env state with
-  | mk result next =>
-    cases result with
-    | err error => rfl
-    | val values =>
-      dsimp only
-      unfold runInstalled
-      split <;> simp_all
-      split <;> simp_all
-      rfl
 
 /-- Related nonempty value lists have related HOL last elements. -/
 theorem holLast_related (maxApp : Nat) {left right : List Value}

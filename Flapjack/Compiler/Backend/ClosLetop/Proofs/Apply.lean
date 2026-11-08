@@ -1,9 +1,11 @@
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Operation
 import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
+import Flapjack.Compiler.Backend.Semantics.ClosProps.DestClosure
 
 /-! Mutual closure-application cases for let-operation cleanup. -/
 namespace Flapjack.Compiler.Backend.ClosLetop
 open Flapjack.Compiler.Backend.ClosSem
+open Flapjack.Compiler.Backend.ClosProps
 open Flapjack.SemanticPrimitivesHOL (Result)
 
 /-- Indexing related lists gives related optional entries. This helper has no standalone HOL declaration. -/
@@ -83,25 +85,6 @@ theorem destClosure_full_closure (maxApp : Nat) (requested location : Option Nat
         simp [needed, ← suppliedRel.length_eq]
   · rw [destClosure_closure_source, if_neg valid] at run
     contradiction
-
-/-- Unfold recursive-closure inspection at a known function entry. This helper has no standalone HOL declaration. -/
-theorem destClosure_rec_found (maxApp : Nat) (requested location : Option Nat)
-    (supplied env args : List Value) (functions : List (Nat × ClosLang.Exp)) (index arity : Nat)
-    (body : ClosLang.Exp) (found : functions[index]? = some (arity, body)) :
-    destClosure maxApp requested (.recclosure location supplied env functions index) args =
-      if checkLoc maxApp requested (location.map (fun loc => 2 * index + loc)) arity args.length supplied.length &&
-          supplied.length < arity then
-        if args.length + supplied.length < arity then
-          some (.partialApp (.recclosure location (args ++ supplied) env functions index))
-        else
-          some (.fullApp body ((args.reverse.take (arity - supplied.length)).reverse ++
-            (supplied ++ ((List.range functions.length).map (fun i => Value.recclosure location [] env functions i) ++ env)))
-            ((args.reverse.drop (arity - supplied.length)).reverse))
-      else none := by
-  simp only [destClosure, found]
-  split
-  · split <;> simp [List.append_assoc]
-  · rfl
 
 /-- The recursive-closure case of full application selects corresponding
 bodies and constructs related recursive environments. -/

@@ -1450,7 +1450,7 @@ theorem runInstalled_incremental_sim {C F : Type} (fuel relationFuel : Nat) (g :
     (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
     (targetCompiler : target.compile = compiler)
     (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
-    (run : ClosProps.AdjustOracle.runInstalled sourceValues source = (result, final))
+    (run : ClosProps.runInstalled sourceValues source = (result, final))
     (notType : result ≠ .err (.abort .typeError))
     (programIH : ∀ program nextKnown converted,
       compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) →
@@ -1458,7 +1458,7 @@ theorem runInstalled_incremental_sim {C F : Type} (fuel relationFuel : Nat) (g :
         (nextKnown, converted.2 ++ g.2) allowed program converted.1) :
     ∃ nextG targetResult targetFinal,
       stateExtends g nextG ∧
-      ClosProps.AdjustOracle.runInstalled targetValues target = (targetResult, targetFinal) ∧
+      ClosProps.runInstalled targetValues target = (targetResult, targetFinal) ∧
       resultRel (List.Forall₂ (ValueRelFuel relationFuel nextG allowed targetFinal.code))
         (ValueRelFuel relationFuel nextG allowed targetFinal.code) result targetResult ∧
       StateRelFuel relationFuel nextG allowed final targetFinal ∧
@@ -1467,7 +1467,7 @@ theorem runInstalled_incremental_sim {C F : Type} (fuel relationFuel : Nat) (g :
       final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
       targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
-  unfold ClosProps.AdjustOracle.runInstalled at run ⊢
+  unfold ClosProps.runInstalled at run ⊢
   cases installRun : doInstall sourceValues source with
   | mk installResult installed =>
     rw [installRun] at run
@@ -1557,7 +1557,7 @@ theorem runInstalled_incremental_sim_withClock {C F : Type} (fuel relationFuel :
     (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
     (targetCompiler : target.compile = compiler)
     (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
-    (run : ClosProps.AdjustOracle.runInstalled sourceValues source = (result, final))
+    (run : ClosProps.runInstalled sourceValues source = (result, final))
     (notType : result ≠ .err (.abort .typeError))
     (programIH : ∀ program nextKnown converted,
       compileIncFuel? fuel g.1 (program, []) = some (nextKnown, converted) →
@@ -1565,7 +1565,7 @@ theorem runInstalled_incremental_sim_withClock {C F : Type} (fuel relationFuel :
         (nextKnown, converted.2 ++ g.2) allowed program converted.1) :
     ∃ extraClock nextG targetResult targetFinal,
       stateExtends g nextG ∧
-      ClosProps.AdjustOracle.runInstalled targetValues { target with clock := target.clock + extraClock } =
+      ClosProps.runInstalled targetValues { target with clock := target.clock + extraClock } =
         (targetResult, targetFinal) ∧
       resultRel (List.Forall₂ (ValueRelFuel relationFuel nextG allowed targetFinal.code))
         (ValueRelFuel relationFuel nextG allowed targetFinal.code) result targetResult ∧
@@ -1575,7 +1575,7 @@ theorem runInstalled_incremental_sim_withClock {C F : Type} (fuel relationFuel :
       final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
       targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
-  unfold ClosProps.AdjustOracle.runInstalled at run ⊢
+  unfold ClosProps.runInstalled at run ⊢
   cases installRun : doInstall sourceValues source with
   | mk installResult installed =>
     rw [installRun] at run
@@ -1665,7 +1665,7 @@ theorem runInstalled_incremental_sim_withOpenClock {C F : Type} (fuel relationFu
     (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
     (targetCompiler : target.compile = compiler)
     (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
-    (run : ClosProps.AdjustOracle.runInstalled sourceValues source = (result, final))
+    (run : ClosProps.runInstalled sourceValues source = (result, final))
     (notType : result ≠ .err (.abort .typeError))
     (disjoint : Disjoint allowed (sptDomain g.1))
     (avoids : OracleLocationsAvoid allowed source)
@@ -1679,7 +1679,7 @@ theorem runInstalled_incremental_sim_withOpenClock {C F : Type} (fuel relationFu
     ∃ extraClock nextG nextAllowed targetResult targetFinal,
       stateExtends g nextG ∧ allowed ⊆ nextAllowed ∧
       Disjoint nextAllowed (sptDomain nextG.1) ∧ OracleLocationsAvoid nextAllowed final ∧
-      ClosProps.AdjustOracle.runInstalled targetValues { target with clock := target.clock + extraClock } =
+      ClosProps.runInstalled targetValues { target with clock := target.clock + extraClock } =
         (targetResult, targetFinal) ∧
       resultRel (List.Forall₂ (ValueRelFuel relationFuel nextG nextAllowed targetFinal.code))
         (ValueRelFuel relationFuel nextG nextAllowed targetFinal.code) result targetResult ∧
@@ -1689,7 +1689,7 @@ theorem runInstalled_incremental_sim_withOpenClock {C F : Type} (fuel relationFu
       final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
       targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
-  unfold ClosProps.AdjustOracle.runInstalled at run ⊢
+  unfold ClosProps.runInstalled at run ⊢
   cases installRun : doInstall sourceValues source with
   | mk installResult installed =>
     rw [installRun] at run
@@ -1785,7 +1785,7 @@ theorem runInstalled_incremental_sim_withOpenClockAndResultWf {C F : Type} (fuel
     (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
     (targetCompiler : target.compile = compiler)
     (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
-    (run : ClosProps.AdjustOracle.runInstalled sourceValues source = (result, final))
+    (run : ClosProps.runInstalled sourceValues source = (result, final))
     (notType : result ≠ .err (.abort .typeError))
     (disjoint : Disjoint allowed (sptDomain g.1))
     (avoids : OracleLocationsAvoid allowed source)
@@ -1799,7 +1799,7 @@ theorem runInstalled_incremental_sim_withOpenClockAndResultWf {C F : Type} (fuel
     ∃ extraClock nextG nextAllowed targetResult targetFinal,
       stateExtends g nextG ∧ allowed ⊆ nextAllowed ∧
       Disjoint nextAllowed (sptDomain nextG.1) ∧ OracleLocationsAvoid nextAllowed final ∧
-      ClosProps.AdjustOracle.runInstalled targetValues { target with clock := target.clock + extraClock } =
+      ClosProps.runInstalled targetValues { target with clock := target.clock + extraClock } =
         (targetResult, targetFinal) ∧
       resultRel (List.Forall₂ (ValueRelFuel relationFuel nextG nextAllowed targetFinal.code))
         (ValueRelFuel relationFuel nextG nextAllowed targetFinal.code) result targetResult ∧
@@ -1810,7 +1810,7 @@ theorem runInstalled_incremental_sim_withOpenClockAndResultWf {C F : Type} (fuel
       final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
       targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
-  unfold ClosProps.AdjustOracle.runInstalled at run ⊢
+  unfold ClosProps.runInstalled at run ⊢
   cases installRun : doInstall sourceValues source with
   | mk installResult installed =>
     rw [installRun] at run
@@ -1934,8 +1934,8 @@ theorem evaluate_install_incremental_sim {C F : Type} (fuel relationFuel : Nat) 
       final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
       targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
-  rw [ClosProps.AdjustOracle.evaluateInstallEq trace sourceArgs sourceEnv source] at run
-  rw [ClosProps.AdjustOracle.evaluateInstallEq trace targetArgs targetEnv target]
+  rw [ClosProps.evaluate_install_eq trace sourceArgs sourceEnv source] at run
+  rw [ClosProps.evaluate_install_eq trace targetArgs targetEnv target]
   cases argsRun : evaluate sourceArgs sourceEnv source with
   | mk argsResult sourceMiddle =>
     rw [argsRun] at run
@@ -2023,7 +2023,7 @@ theorem evaluate_install_incremental_sim_withClock {C F : Type} (fuel relationFu
       final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
       targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
-  rw [ClosProps.AdjustOracle.evaluateInstallEq trace sourceArgs sourceEnv source] at run
+  rw [ClosProps.evaluate_install_eq trace sourceArgs sourceEnv source] at run
   cases argsRun : evaluate sourceArgs sourceEnv source with
   | mk argsResult sourceMiddle =>
     rw [argsRun] at run
@@ -2043,7 +2043,7 @@ theorem evaluate_install_incremental_sim_withClock {C F : Type} (fuel relationFu
         cases run
         refine ⟨argsExtra, middleG, .err targetError, targetMiddle, firstExt, ?_, argsRelated, middleStates,
           middleWf, middleReady, sourceCompiler, targetCompiler, targetOracle, argsGrowth⟩
-        rw [ClosProps.AdjustOracle.evaluateInstallEq, targetArgsRun]
+        rw [ClosProps.evaluate_install_eq, targetArgsRun]
     | val sourceValues =>
       cases targetArgsResult with
       | err targetError => simp [resultRel] at argsRelated
@@ -2072,7 +2072,7 @@ theorem evaluate_install_incremental_sim_withClock {C F : Type} (fuel relationFu
           stateExtends_trans g middleG nextG firstExt secondExt, ?_, related, finalStates, finalWf,
           finalReady, finalCompiler, targetFinalCompiler, finalOracle,
           fun key entry found => growth key entry (argsGrowth key entry found)⟩
-        rw [ClosProps.AdjustOracle.evaluateInstallEq]
+        rw [ClosProps.evaluate_install_eq]
         have shiftedArgs' : evaluate targetArgs targetEnv
             { target with clock := target.clock + (argsExtra + bodyExtra) } =
             (.val targetValues, { targetMiddle with clock := targetMiddle.clock + bodyExtra }) := by
@@ -2126,7 +2126,7 @@ theorem evaluate_install_incremental_sim_withOpenClock {C F : Type} (fuel relati
       final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
       targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
-  rw [ClosProps.AdjustOracle.evaluateInstallEq trace sourceArgs sourceEnv source] at run
+  rw [ClosProps.evaluate_install_eq trace sourceArgs sourceEnv source] at run
   cases argsRun : evaluate sourceArgs sourceEnv source with
   | mk argsResult sourceMiddle =>
     rw [argsRun] at run
@@ -2147,7 +2147,7 @@ theorem evaluate_install_incremental_sim_withOpenClock {C F : Type} (fuel relati
         refine ⟨argsExtra, middleG, middleAllowed, .err targetError, targetMiddle, firstExt,
           firstAllowed, middleDisjoint, middleAvoids, ?_, argsRelated, middleStates, middleWf,
           middleReady, sourceCompiler, targetCompiler, targetOracle, argsGrowth⟩
-        rw [ClosProps.AdjustOracle.evaluateInstallEq, targetArgsRun]
+        rw [ClosProps.evaluate_install_eq, targetArgsRun]
     | val sourceValues =>
       cases targetArgsResult with
       | err targetError => simp [resultRel] at argsRelated
@@ -2181,7 +2181,7 @@ theorem evaluate_install_incremental_sim_withOpenClock {C F : Type} (fuel relati
           finalDisjoint, finalAvoids, ?_, related, finalStates, finalWf, finalReady,
           finalCompiler, targetFinalCompiler, finalOracle,
           fun key entry found => growth key entry (argsGrowth key entry found)⟩
-        rw [ClosProps.AdjustOracle.evaluateInstallEq]
+        rw [ClosProps.evaluate_install_eq]
         have shiftedArgs' : evaluate targetArgs targetEnv
             { target with clock := target.clock + (argsExtra + bodyExtra) } =
             (.val targetValues, { targetMiddle with clock := targetMiddle.clock + bodyExtra }) := by
@@ -2234,7 +2234,7 @@ theorem evaluate_install_incremental_sim_withOpenClockAndResultWf {C F : Type} (
       final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
       targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
-  rw [ClosProps.AdjustOracle.evaluateInstallEq trace sourceArgs sourceEnv source] at run
+  rw [ClosProps.evaluate_install_eq trace sourceArgs sourceEnv source] at run
   cases argsRun : evaluate sourceArgs sourceEnv source with
   | mk argsResult sourceMiddle =>
     rw [argsRun] at run
@@ -2255,7 +2255,7 @@ theorem evaluate_install_incremental_sim_withOpenClockAndResultWf {C F : Type} (
         refine ⟨argsExtra, middleG, middleAllowed, .err targetError, targetMiddle, firstExt,
           firstAllowed, middleDisjoint, middleAvoids, ?_, argsRelated, argsResultWf, middleStates, middleWf,
           middleReady, sourceCompiler, targetCompiler, targetOracle, argsGrowth⟩
-        rw [ClosProps.AdjustOracle.evaluateInstallEq, targetArgsRun]
+        rw [ClosProps.evaluate_install_eq, targetArgsRun]
     | val sourceValues =>
       cases targetArgsResult with
       | err targetError => simp [resultRel] at argsRelated
@@ -2289,7 +2289,7 @@ theorem evaluate_install_incremental_sim_withOpenClockAndResultWf {C F : Type} (
           finalDisjoint, finalAvoids, ?_, related, bodyResultWf, finalStates, finalWf, finalReady,
           finalCompiler, targetFinalCompiler, finalOracle,
           fun key entry found => growth key entry (argsGrowth key entry found)⟩
-        rw [ClosProps.AdjustOracle.evaluateInstallEq]
+        rw [ClosProps.evaluate_install_eq]
         have shiftedArgs' : evaluate targetArgs targetEnv
             { target with clock := target.clock + (argsExtra + bodyExtra) } =
             (.val targetValues, { targetMiddle with clock := targetMiddle.clock + bodyExtra }) := by
@@ -20624,7 +20624,7 @@ theorem runInstalled_incremental_sim_withOpenClockAndResultWf_closed {C F : Type
     (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
     (targetCompiler : target.compile = compiler)
     (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
-    (run : ClosProps.AdjustOracle.runInstalled sourceValues source = (result, final))
+    (run : ClosProps.runInstalled sourceValues source = (result, final))
     (notType : result ≠ .err (.abort .typeError))
     (disjoint : Disjoint allowed (sptDomain g.1))
     (avoids : OracleLocationsAvoid allowed source)
@@ -20632,7 +20632,7 @@ theorem runInstalled_incremental_sim_withOpenClockAndResultWf_closed {C F : Type
     ∃ extraClock nextG nextAllowed targetResult targetFinal,
       stateExtends g nextG ∧ allowed ⊆ nextAllowed ∧
       Disjoint nextAllowed (sptDomain nextG.1) ∧ OracleLocationsAvoid nextAllowed final ∧
-      ClosProps.AdjustOracle.runInstalled targetValues { target with clock := target.clock + extraClock } =
+      ClosProps.runInstalled targetValues { target with clock := target.clock + extraClock } =
         (targetResult, targetFinal) ∧
       resultRel (List.Forall₂ (ValueRelFuel relationFuel nextG nextAllowed targetFinal.code))
         (ValueRelFuel relationFuel nextG nextAllowed targetFinal.code) result targetResult ∧
@@ -23537,7 +23537,7 @@ theorem runInstalled_incremental_sim_withOpenClockAndOrigin {C F : Type} (fuel r
     (sourceCompiler : source.compile = compileIncFuelCallback fuel compiler)
     (targetCompiler : target.compile = compiler)
     (targetOracle : target.compileOracle = compileIncFuelOracle fuel source.compileOracle)
-    (run : ClosProps.AdjustOracle.runInstalled sourceValues source = (result, final))
+    (run : ClosProps.runInstalled sourceValues source = (result, final))
     (notType : result ≠ .err (.abort .typeError))
     (disjoint : Disjoint allowed (sptDomain g.1))
     (avoids : OracleLocationsAvoid allowed source)
@@ -23552,7 +23552,7 @@ theorem runInstalled_incremental_sim_withOpenClockAndOrigin {C F : Type} (fuel r
       stateExtends g nextG ∧ allowed ⊆ nextAllowed ∧
       Disjoint nextAllowed (sptDomain nextG.1) ∧ OracleLocationsAvoid nextAllowed final ∧
       OpenLocationOrigin allowed source nextAllowed final ∧
-      ClosProps.AdjustOracle.runInstalled targetValues { target with clock := target.clock + extraClock } =
+      ClosProps.runInstalled targetValues { target with clock := target.clock + extraClock } =
         (targetResult, targetFinal) ∧
       resultRel (List.Forall₂ (ValueRelFuel relationFuel nextG nextAllowed targetFinal.code))
         (ValueRelFuel relationFuel nextG nextAllowed targetFinal.code) result targetResult ∧
@@ -23563,7 +23563,7 @@ theorem runInstalled_incremental_sim_withOpenClockAndOrigin {C F : Type} (fuel r
       final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
       targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
-  unfold ClosProps.AdjustOracle.runInstalled at run ⊢
+  unfold ClosProps.runInstalled at run ⊢
   cases installRun : doInstall sourceValues source with
   | mk installResult installed =>
     rw [installRun] at run
@@ -23694,7 +23694,7 @@ theorem evaluate_install_incremental_sim_withOpenClockAndOrigin {C F : Type} (fu
       final.compile = compileIncFuelCallback fuel compiler ∧ targetFinal.compile = compiler ∧
       targetFinal.compileOracle = compileIncFuelOracle fuel final.compileOracle ∧
       (∀ key entry, target.code.lookup key = some entry → targetFinal.code.lookup key = some entry) := by
-  rw [ClosProps.AdjustOracle.evaluateInstallEq trace sourceArgs sourceEnv source] at run
+  rw [ClosProps.evaluate_install_eq trace sourceArgs sourceEnv source] at run
   cases argsRun : evaluate sourceArgs sourceEnv source with
   | mk argsResult sourceMiddle =>
     rw [argsRun] at run
@@ -23715,7 +23715,7 @@ theorem evaluate_install_incremental_sim_withOpenClockAndOrigin {C F : Type} (fu
         refine ⟨argsExtra, middleG, middleAllowed, .err targetError, targetMiddle, firstExt,
           firstAllowed, middleDisjoint, middleAvoids, argsOrigin, ?_, argsRelated, argsResultWf, middleStates, middleWf,
           middleReady, sourceCompiler, targetCompiler, targetOracle, argsGrowth⟩
-        rw [ClosProps.AdjustOracle.evaluateInstallEq, targetArgsRun]
+        rw [ClosProps.evaluate_install_eq, targetArgsRun]
     | val sourceValues =>
       cases targetArgsResult with
       | err targetError => simp [resultRel] at argsRelated
@@ -23749,7 +23749,7 @@ theorem evaluate_install_incremental_sim_withOpenClockAndOrigin {C F : Type} (fu
           finalDisjoint, finalAvoids, openLocationOrigin_trans allowed middleAllowed nextAllowed source sourceMiddle final argsOrigin bodyOrigin, ?_, related, bodyResultWf, finalStates, finalWf, finalReady,
           finalCompiler, targetFinalCompiler, finalOracle,
           fun key entry found => growth key entry (argsGrowth key entry found)⟩
-        rw [ClosProps.AdjustOracle.evaluateInstallEq]
+        rw [ClosProps.evaluate_install_eq]
         have shiftedArgs' : evaluate targetArgs targetEnv
             { target with clock := target.clock + (argsExtra + bodyExtra) } =
             (.val targetValues, { targetMiddle with clock := targetMiddle.clock + bodyExtra }) := by

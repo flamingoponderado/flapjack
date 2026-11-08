@@ -184,8 +184,8 @@ theorem runInstalled_wellFormedFuel_of_actual_install {C F : Type} {fuel : Nat} 
     (installedWf : StateWellFormedFuel fuel g allowed code (doInstall values source).2)
     (programIH : ∀ program installed, doInstall values source = (.val program, installed) →
       EvalWellFormedFuel fuel g allowed code (evaluate program [] installed)) :
-    EvalWellFormedFuel fuel g allowed code (ClosProps.AdjustOracle.runInstalled values source) := by
-  unfold ClosProps.AdjustOracle.runInstalled
+    EvalWellFormedFuel fuel g allowed code (ClosProps.runInstalled values source) := by
+  unfold ClosProps.runInstalled
   cases installRun : doInstall values source with
   | mk installResult installed =>
     rw [installRun] at installedWf
@@ -225,9 +225,9 @@ theorem evaluate_install_wellFormedFuel_of_actual_args {C F : Type} {fuel : Nat}
     (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
     (argsWf : EvalWellFormedFuel fuel g allowed code (evaluate args env state))
     (installIH : ∀ values next, evaluate args env state = (.val values, next) →
-      EvalWellFormedFuel fuel g allowed code (ClosProps.AdjustOracle.runInstalled values.reverse next)) :
+      EvalWellFormedFuel fuel g allowed code (ClosProps.runInstalled values.reverse next)) :
     EvalWellFormedFuel fuel g allowed code (evaluate [.op trace .install args] env state) := by
-  rw [ClosProps.AdjustOracle.evaluateInstallEq]
+  rw [ClosProps.evaluate_install_eq]
   cases argsRun : evaluate args env state with
   | mk result next =>
     rw [argsRun] at argsWf
@@ -250,7 +250,7 @@ theorem evaluate_install_wellFormedFuel {C F : Type} {fuel : Nat} {g : State} {a
   cases argsRun : evaluate args env state with
   | mk argsResult argsFinal =>
     rw [argsRun] at argsIH oracleEmpty
-    rw [ClosProps.AdjustOracle.evaluateInstallEq, argsRun]
+    rw [ClosProps.evaluate_install_eq, argsRun]
     cases argsResult with
     | err error => exact argsIH
     | val values =>

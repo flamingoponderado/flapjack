@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.DirectCall
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.CodeLocations
+import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
 
 /-! Dynamic installation under closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate
@@ -179,35 +180,6 @@ theorem doInstall_related_nonType {C F : Type} (source target : State C F)
       · simpa [nextEq, nextTarget] using stateRel_install source target auxiliary states
       · rw [resultEq]
         split <;> simp [InstallResultRel]
-
-/-- Continue an installation by evaluating the installed program. -/
-noncomputable def runInstalled {C F : Type} (values : List Value) (state : State C F) : EvalResult C F :=
-  match doInstall values state with
-  | (.err error, next) => (.err error, next)
-  | (.val program, next) =>
-    let (result, last) := evaluate program [] next
-    match result with
-    | .err error => (.err error, last)
-    | .val values => (.val [@holLast Value ⟨unitValue⟩ values], last)
-
-/-- Installation evaluates its arguments before the compiler and program. -/
-theorem evaluate_install_eq {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (env : List Value) (state : State C F) :
-    evaluate [.op trace .install args] env state =
-      match evaluate args env state with
-      | (.err error, next) => (.err error, next)
-      | (.val values, next) => runInstalled values.reverse next := by
-  rw [evaluate, fixClock_evaluate]
-  cases evaluated : evaluate args env state with
-  | mk result next =>
-    cases result with
-    | err error => rfl
-    | val values =>
-      dsimp only
-      unfold runInstalled
-      split <;> simp_all
-      split <;> simp_all
-      rfl
 
 /-- Nonempty related lists have related HOL last elements. -/
 theorem holLast_related {left right : List Value}

@@ -1,10 +1,12 @@
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateOp
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.Install
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
 
 /-! Installation path of the tick-removal evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.ClosTicks
 open Flapjack.Compiler.Backend.ClosSem
+open Flapjack.Compiler.Backend.ClosProps
 open Flapjack.SemanticPrimitivesHOL (Result)
 
 /-- Related nonempty lists have related HOL last values. This is Flapjack
@@ -20,37 +22,6 @@ theorem related_holLast {left right : List Value} (related : List.Forall₂ Valu
     | @cons second nextSecond tail nextTail nextHead restRel =>
       simp only [Flapjack.holLast]
       exact ih (by simp)
-
-/-- Installation continuation in the closure evaluator. This is Flapjack
-infrastructure for the installation case. -/
-noncomputable def runInstalled {C F : Type} (values : List Value) (state : State C F) : EvalResult C F :=
-  match doInstall values state with
-  | (.err error, next) => (.err error, next)
-  | (.val program, next) =>
-    let (result, last) := evaluate program [] next
-    match result with
-    | .err error => (.err error, last)
-    | .val values => (.val [@Flapjack.holLast Value ⟨unitValue⟩ values], last)
-
-/-- Installation first evaluates its arguments. This is Flapjack
-infrastructure for the installation case. -/
-theorem evaluate_install_eq {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (env : List Value) (state : State C F) :
-    evaluate [.op trace .install args] env state =
-      match evaluate args env state with
-      | (.err error, next) => (.err error, next)
-      | (.val values, next) => runInstalled values.reverse next := by
-  rw [evaluate, fixClock_evaluate]
-  cases evaluated : evaluate args env state with
-  | mk result next =>
-    cases result with
-    | err error => rfl
-    | val values =>
-      dsimp only
-      unfold runInstalled
-      split <;> simp_all
-      split <;> simp_all
-      rfl
 
 /-- The installation branch of the operation simulation. This is Flapjack
 infrastructure for assembling the original operation induction case. -/

@@ -1,9 +1,11 @@
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateOp
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Install
+import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
 
 /-! Installation case of closure let-operation correctness. -/
 namespace Flapjack.Compiler.Backend.ClosLetop
 open ClosSem
+open Flapjack.Compiler.Backend.ClosProps
 open Flapjack.SemanticPrimitivesHOL (Result)
 
 namespace EvaluateInstallPort
@@ -26,35 +28,6 @@ theorem related_holLast {left right : List Value} (related : List.Forall₂ Valu
     | @cons second nextSecond tail nextTail nextHead restRel =>
       simp only [Flapjack.holLast]
       exact ih (by simp)
-
-/-- The continuation of an installation after its arguments are evaluated. This helper has no standalone HOL declaration. -/
-noncomputable def runInstalled {C F : Type} (values : List Value) (state : State C F) : EvalResult C F :=
-  match doInstall values state with
-  | (.err error, next) => (.err error, next)
-  | (.val program, next) =>
-    let (result, last) := evaluate program [] next
-    match result with
-    | .err error => (.err error, last)
-    | .val values => (.val [@Flapjack.holLast Value ⟨unitValue⟩ values], last)
-
-/-- Installation evaluates its arguments before running the continuation. This helper has no standalone HOL declaration. -/
-theorem evaluate_install_eq {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (env : List Value) (state : State C F) :
-    evaluate [.op trace .install args] env state =
-      match evaluate args env state with
-      | (.err error, next) => (.err error, next)
-      | (.val values, next) => runInstalled values.reverse next := by
-  rw [evaluate, fixClock_evaluate]
-  cases evaluated : evaluate args env state with
-  | mk result next =>
-    cases result with
-    | err error => rfl
-    | val values =>
-      dsimp only
-      unfold runInstalled
-      split <;> simp_all
-      split <;> simp_all
-      rfl
 
 /-- Installing related code simulates errors and evaluation of the newly
 installed, nonempty program. -/
