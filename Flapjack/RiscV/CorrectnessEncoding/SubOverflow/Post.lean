@@ -1,7 +1,8 @@
-import Flapjack.RiscV.CorrectnessEncoding.SubOverflow.Native
+import Flapjack.RiscV.CorrectnessEncoding.ArithNative
 import Flapjack.RiscV.CorrectnessEncoding.SubOverflow.Arithmetic
 import Flapjack.RiscV.CorrectnessEncoding.ConstRelation
 namespace Flapjack.RiscV.TargetProof.SubOverflow
+open Flapjack.RiscV.TargetProof.ArithNative
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target
   Compiler.Encoders.Asm Compiler.Encoders.AsmSem Compiler.Encoders.AsmProps
 set_option autoImplicit false
