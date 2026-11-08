@@ -601,7 +601,6 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternSimulation
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalLookup
 import Flapjack.Compiler.Backend.Semantics.FlatSem
 import Flapjack.Compiler.Backend.Semantics.ClosSem
 import Flapjack.Compiler.Backend.Semantics.ClosSem.State

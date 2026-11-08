@@ -1,4 +1,3 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalLookup
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
@@ -145,9 +144,22 @@ theorem evaluate_global_unbounded {C F : Type} (genv : GlobalEnv) (compMap : Env
     ∃ flat, EvaluateHOL.evaluate sourceState sourceEnv [.var id] = (sourceState, .val [source]) ∧
       FlatSem.evaluate flatEnv flatState [compileExp trace compMap (.var id)] =
         (flatState, .val [flat]) ∧ ValueRel genv source flat ∧ StateRel genv sourceState flatState := by
-  obtain ⟨n, flat, t, compiled, valueRel, flatDo⟩ :=
-    globalLookupRel_doApp genv compMap id source flatState globalsEq related
-  refine ⟨flat, ?_, ?_, valueRel, statesRel⟩
-  · simp [EvaluateHOL.evaluate, lookup]
-  · simp [compileExp, compiled, compileVar, FlatSem.evaluate, FlatSem.fixClock, FlatSem.applyResult, FlatSem.doApp, flatDo]
+  cases related with
+  | intro _ _ _ n flat t compiled bound slot valueRel =>
+    have slotLookup : genv.v[n]? = some (some flat) := by
+      cases h : genv.v[n]? with
+      | none => simp [h] at slot
+      | some entry =>
+        cases entry with
+        | none => simp [h] at slot
+        | some value =>
+          simp [h] at slot
+          subst value
+          rfl
+    refine ⟨flat, ?_, ?_, valueRel, statesRel⟩
+    · simp [EvaluateHOL.evaluate, lookup]
+    · simp [compileExp, compiled, compileVar, FlatSem.evaluate, FlatSem.fixClock,
+        FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat, globalsEq, slotLookup]
+      cases flatState
+      simp_all
 end Flapjack.Compiler.Backend.SourceToFlat
