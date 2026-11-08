@@ -9566,6 +9566,8 @@ independent types, and the local `global_env_inv_extend2` and
 `global_env_inv_add_locals` proofs with inferred types visible.
 It also replays the local `do_app_rec_help` proof, retaining its unused
 polymorphic binder and separate recursive groups in the inferred statement.
+The `env_rel_el_replay` row records the environment relation's bounded
+association-list characterization, replaying its local HOL proof.
 The `v_rel_weakening_replay` row records the three mutual weakening clauses
 for equal maps and growing global slots.
 The `v_rel_weakening2_typed` and `v_rel_weakening2_replay` rows record the

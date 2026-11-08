@@ -188,6 +188,22 @@ val v_rel_weakening_replay = let open source_to_flatProofTheory in prove (
   >- (rw [v_rel_global_eqn] >> res_tac >> rw [] >> res_tac >>
       rveq >> fs [] >> rveq >> fs [] >> rfs [])) end;
 val _ = show_thm "v_rel_weakening_replay=" v_rel_weakening_replay;
+val env_rel_el_replay = let open source_to_flatProofTheory in Q.prove (
+  `!genv env env_i1.
+    source_to_flatProof$env_rel genv (alist_to_ns env) env_i1 <=>
+    LENGTH env = LENGTH env_i1 /\
+    !n. n < LENGTH env ==>
+      FST (EL n env) = FST (EL n env_i1) /\
+      source_to_flatProof$v_rel genv (SND (EL n env)) (SND (EL n env_i1))`,
+  Induct_on `env` >> srw_tac[][do_app_rec_v_rel_eqns] >> PairCases_on `h` >>
+  srw_tac[][do_app_rec_v_rel_eqns] >> eq_tac >> srw_tac[][] >> srw_tac[][]
+  >- (Cases_on `n` >> full_simp_tac(srw_ss())[])
+  >- (Cases_on `n` >> full_simp_tac(srw_ss())[])
+  >- (Cases_on `env_i1` >> full_simp_tac(srw_ss())[] >>
+      FIRST_ASSUM (qspecl_then [`0`] mp_tac) >> SIMP_TAC (srw_ss()) [] >>
+      srw_tac[][] >> qexists_tac `SND h` >> srw_tac[][] >>
+      FIRST_X_ASSUM (qspecl_then [`SUC n`] mp_tac) >> srw_tac[][])) end;
+val _ = show_thm "env_rel_el_replay=" env_rel_el_replay;
 val do_app_conversion_inl = Q.prove (
   `semanticPrimitives$check_type ty1 v /\ source_to_flatProof$genv_c_ok genv.c /\
     source_to_flatProof$v_rel genv v v_i1 /\

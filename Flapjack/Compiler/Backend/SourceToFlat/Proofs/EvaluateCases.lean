@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalLookup
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
@@ -20,6 +21,36 @@ theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
     GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
 
 end EnvRelLookupReview
+
+local instance : Nonempty (VarN × Value) :=
+  ⟨(Flapjack.Basis.Pure.MlString.ofString "", .litv (.intLit 0))⟩
+
+local instance : Nonempty (VarN × FlatSem.Value) :=
+  ⟨(Flapjack.Basis.Pure.MlString.ofString "", .litv (.intLit 0))⟩
+
+/-- An association-list environment is related exactly when its lengths and
+corresponding entries agree. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_rel_el"
+  (fmap_as_finite_support := [c, tys])]
+theorem envRel_el (genv : GlobalEnv) (env : List (VarN × Value))
+    (flatEnv : List (VarN × FlatSem.Value)) :
+    EnvRel genv (alistToNs env) flatEnv ↔
+      env.length = flatEnv.length ∧ ∀ n, n < env.length →
+        (Flapjack.holEl n env).1 = (Flapjack.holEl n flatEnv).1 ∧
+        ValueRel genv (Flapjack.holEl n env).2 (Flapjack.holEl n flatEnv).2 := by
+  rw [envRel_alist_iff, List.forall₂_iff_get]
+  constructor
+  · rintro ⟨length, related⟩
+    refine ⟨length, ?_⟩
+    intro n bound
+    have flatBound : n < flatEnv.length := by simpa [← length] using bound
+    simpa only [List.get_eq_getElem, Flapjack.holEl_eq_getElem n env bound,
+      Flapjack.holEl_eq_getElem n flatEnv flatBound] using related n bound flatBound
+  · rintro ⟨length, related⟩
+    refine ⟨length, ?_⟩
+    intro n bound flatBound
+    simpa only [List.get_eq_getElem, Flapjack.holEl_eq_getElem n env bound,
+      Flapjack.holEl_eq_getElem n flatEnv flatBound] using related n bound
 
 /-- Pointwise relation at an index bounded by the second list. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "LIST_REL_IMP_EL2"]

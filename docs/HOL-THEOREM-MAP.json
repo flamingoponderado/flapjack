@@ -340,6 +340,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "env_rel_el",
+  "lean_name": "envRel_el",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateCases.lean",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared the complete environment relation equivalence, fixed source and flat carriers, length equality and bounded EL pair projections with env_rel_el_replay in source_to_flat_init_probe.out. The original local HOL proof is replayed; holEl models HOL EL and its chosen inhabitants are unobservable under the retained bounds. GlobalEnv.c and tys use canonical finite maps."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "v_rel_weakening",
   "lean_name": "valueRel_weakening",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
