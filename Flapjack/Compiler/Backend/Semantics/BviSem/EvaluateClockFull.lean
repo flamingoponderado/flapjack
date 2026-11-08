@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateClock
+import Flapjack.Misc.ClockWeightInduction
 /-! Full clock invariant for the source-shaped BVI evaluator. -/
 namespace Flapjack.Compiler.Backend.BviSem
 open Flapjack.Compiler.Backend.BvlSem (Value)
@@ -139,89 +140,76 @@ is a Flapjack invariant; the evaluator itself has not yet been reviewed as an
 exact HOL port. -/
 theorem evaluate_clock_le {C F : Type} (expressions : List Bvi.Exp) (env : List Value) (state : BviState C F) :
     (evaluate expressions env state).2.clock ≤ state.clock := by
-  have allRanks : ∀ clock weight : Nat, ∀ (expressions : List Bvi.Exp)
-      (env : List Value) (state : BviState C F), state.clock = clock → expsWeight expressions = weight →
-      (evaluate expressions env state).2.clock ≤ state.clock := by
-    intro clock
-    induction clock using Nat.strongRecOn with
-    | ind clock clockIH =>
-      intro weight
-      induction weight using Nat.strongRecOn with
-      | ind weight weightIH =>
-        have exprIH : ∀ (expressions : List Bvi.Exp) (env : List Value) (state : BviState C F),
-            state.clock ≤ clock → expsWeight expressions < weight →
-            (evaluate expressions env state).2.clock ≤ state.clock := by
-          intro expressions env state clockLe weightLt
-          rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
-          · exact clockIH state.clock clockLt (expsWeight expressions) expressions env state rfl rfl
-          · exact weightIH (expsWeight expressions) weightLt expressions env state clockEq rfl
-        have smaller : ∀ (expressions : List Bvi.Exp) (env : List Value) (state : BviState C F),
-            state.clock < clock → (evaluate expressions env state).2.clock ≤ state.clock := by
-          intro expressions env state clockLt
-          exact clockIH state.clock clockLt (expsWeight expressions) expressions env state rfl rfl
-        intro expressions env state stateClock measure
-        cases expressions with
-        | nil => simp [evaluate]
-        | cons first rest =>
-          cases rest with
-          | cons second tail =>
-            apply evaluate_list_clock_step
-            intro next nextBound
-            apply exprIH (second :: tail) env next (by omega)
-            simp only [expsWeight] at measure ⊢
-            omega
-          | nil =>
-            cases first with
-            | var index => simp [evaluate]; split <;> simp
-            | raise body =>
-              apply evaluate_raise_clock_step
-              apply exprIH [body] env state (by omega)
-              simp only [expsWeight, expWeight] at measure ⊢
-              omega
-            | «let» bindings body =>
-              apply evaluate_let_clock_step
-              intro newEnv next nextBound
-              apply exprIH [body] newEnv next (by omega)
-              simp only [expsWeight, expWeight] at measure ⊢
-              omega
-            | ifThenElse condition yes no =>
-              apply evaluate_if_clock_step
-              · intro next nextBound
-                apply exprIH [yes] env next (by omega)
-                simp only [expsWeight, expWeight] at measure ⊢
-                omega
-              · intro next nextBound
-                apply exprIH [no] env next (by omega)
-                simp only [expsWeight, expWeight] at measure ⊢
-                omega
-            | tick body =>
-              apply evaluate_tick_clock_step
-              by_cases zero : state.clock = 0
-              · apply exprIH [body] env (decClock 1 state) (by simp [decClock]; omega)
-                simp only [expsWeight, expWeight] at measure ⊢
-                omega
-              · apply smaller [body] env (decClock 1 state)
-                simp [decClock]
-                omega
-            | call ticks location args handler =>
-              apply evaluate_call_clock_step
-              intro body values next nextLt
-              exact smaller [body] values next (by omega)
-            | letCall rets ticks dest args body =>
-              apply evaluate_letCall_clock_step
-              intro expression values next nextLt
-              exact smaller [expression] values next (by omega)
-            | «return» args =>
-              apply evaluate_return_clock_step
-              apply exprIH args env state (by omega)
-              simp only [expsWeight, expWeight] at measure ⊢
-              omega
-            | force location index =>
-              apply evaluate_force_clock_step
-              intro body values next nextLt
-              exact smaller [body] values next (by omega)
-            | op op args => exact evaluate_op_clock env state op args
-  exact allRanks state.clock (expsWeight expressions) expressions env state rfl rfl
+  refine clockWeightInduction (α := List Bvi.Exp) (σ := BviState C F) (·.clock) expsWeight
+    (motive := fun expressions state => ∀ env,
+      (evaluate expressions env state).2.clock ≤ state.clock) ?_ expressions state env
+  intro expressions state exprIH₀ smaller₀
+  have exprIH := fun (es : List Bvi.Exp) (env' : List Value) (s : BviState C F)
+      h1 h2 => exprIH₀ es s h1 h2 env'
+  have smaller := fun (es : List Bvi.Exp) (env' : List Value) (s : BviState C F)
+      h => smaller₀ es s h env'
+  intro env
+  cases expressions with
+  | nil => simp [evaluate]
+  | cons first rest =>
+    cases rest with
+    | cons second tail =>
+      apply evaluate_list_clock_step
+      intro next nextBound
+      apply exprIH (second :: tail) env next (by omega)
+      simp only [expsWeight] at ⊢
+      omega
+    | nil =>
+      cases first with
+      | var index => simp [evaluate]; split <;> simp
+      | raise body =>
+        apply evaluate_raise_clock_step
+        apply exprIH [body] env state (by omega)
+        simp only [expsWeight, expWeight] at ⊢
+        omega
+      | «let» bindings body =>
+        apply evaluate_let_clock_step
+        intro newEnv next nextBound
+        apply exprIH [body] newEnv next (by omega)
+        simp only [expsWeight, expWeight] at ⊢
+        omega
+      | ifThenElse condition yes no =>
+        apply evaluate_if_clock_step
+        · intro next nextBound
+          apply exprIH [yes] env next (by omega)
+          simp only [expsWeight, expWeight] at ⊢
+          omega
+        · intro next nextBound
+          apply exprIH [no] env next (by omega)
+          simp only [expsWeight, expWeight] at ⊢
+          omega
+      | tick body =>
+        apply evaluate_tick_clock_step
+        by_cases zero : state.clock = 0
+        · apply exprIH [body] env (decClock 1 state) (by simp [decClock])
+          simp only [expsWeight, expWeight] at ⊢
+          omega
+        · apply smaller [body] env (decClock 1 state)
+          simp [decClock]
+          omega
+      | call ticks location args handler =>
+        apply evaluate_call_clock_step
+        intro body values next nextLt
+        exact smaller [body] values next (by omega)
+      | letCall rets ticks dest args body =>
+        apply evaluate_letCall_clock_step
+        intro expression values next nextLt
+        exact smaller [expression] values next (by omega)
+      | «return» args =>
+        apply evaluate_return_clock_step
+        apply exprIH args env state (by omega)
+        simp only [expsWeight, expWeight] at ⊢
+        omega
+      | force location index =>
+        apply evaluate_force_clock_step
+        intro body values next nextLt
+        exact smaller [body] values next (by omega)
+      | op op args => exact evaluate_op_clock env state op args
 
 
 /-- The termination-only clock clamp is inert on BVI evaluation results. This

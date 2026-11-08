@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceMonotonicity
+import Flapjack.Misc.ClockWeightInduction
 
 /-! Resource observations of data-language call setup and restoration. -/
 namespace Flapjack.Compiler.Backend.DataSem
@@ -341,60 +342,43 @@ stack maximum, and space safety. This combined Lean theorem is infrastructure
 for the separate HOL monotonicity declarations; it is not tagged as a port. -/
 theorem evaluate_resourceMono {C F : Type} (program : DataLang.Prog) (state : State C F) :
     ResourceMono program state := by
-  have allRanks : ∀ clock weight : Nat, ∀ (program : DataLang.Prog) (state : State C F),
-      state.clock = clock → sizeOf program = weight → ResourceMono program state := by
-    intro clock
-    induction clock using Nat.strongRecOn with
-    | ind clock clockIH =>
-      intro weight
-      induction weight using Nat.strongRecOn with
-      | ind weight weightIH =>
-        have exprIH : ∀ (program : DataLang.Prog) (state : State C F),
-            state.clock ≤ clock → sizeOf program < weight → ResourceMono program state := by
-          intro program state clockLe weightLt
-          rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
-          · exact clockIH state.clock clockLt (sizeOf program) program state rfl rfl
-          · exact weightIH (sizeOf program) weightLt program state clockEq rfl
-        have smaller : ∀ (program : DataLang.Prog) (state : State C F),
-            state.clock < clock → ResourceMono program state := by
-          intro program state clockLt
-          exact clockIH state.clock clockLt (sizeOf program) program state rfl rfl
-        intro program state stateClock measure
-        cases program with
-        | skip => exact resourceMono_skip state
-        | move dest src => exact resourceMono_move dest src state
-        | assign dest op names live => exact resourceMono_assign_all dest op names live state
-        | tick => exact resourceMono_tick state
-        | makeSpace amount names => exact resourceMono_makeSpace amount names state
-        | raise name => exact resourceMono_raise name state
-        | «return» names => exact resourceMono_return names state
-        | seq first second =>
-          have firstMono : ResourceMono first state := by
-            apply exprIH first state (by omega)
-            simp only [DataLang.Prog.seq.sizeOf_spec] at measure
-            omega
-          apply resourceMono_seq_bounded first second state firstMono
-          intro mid bound
-          apply exprIH second mid (by omega)
-          simp only [DataLang.Prog.seq.sizeOf_spec] at measure
-          omega
-        | ifThenElse name yes no =>
-          apply resourceMono_if name yes no state
-          · apply exprIH yes state (by omega)
-            simp only [DataLang.Prog.ifThenElse.sizeOf_spec] at measure
-            omega
-          · apply exprIH no state (by omega)
-            simp only [DataLang.Prog.ifThenElse.sizeOf_spec] at measure
-            omega
-        | force ret label src =>
-          apply resourceMono_force ret label src state
-          intro body next bound
-          exact smaller body next (by omega)
-        | call ret dest names handler =>
-          apply resourceMono_call ret dest names handler state
-          intro body next bound
-          exact smaller body next (by omega)
-  exact allRanks state.clock (sizeOf program) program state rfl rfl
+  refine clockWeightInduction (α := DataLang.Prog) (σ := State C F) (·.clock) sizeOf
+    (motive := fun program state => ResourceMono program state) ?_ program state
+  intro program state exprIH smaller
+  cases program with
+  | skip => exact resourceMono_skip state
+  | move dest src => exact resourceMono_move dest src state
+  | assign dest op names live => exact resourceMono_assign_all dest op names live state
+  | tick => exact resourceMono_tick state
+  | makeSpace amount names => exact resourceMono_makeSpace amount names state
+  | raise name => exact resourceMono_raise name state
+  | «return» names => exact resourceMono_return names state
+  | seq first second =>
+    have firstMono : ResourceMono first state := by
+      apply exprIH first state (by omega)
+      simp only [DataLang.Prog.seq.sizeOf_spec] at ⊢
+      omega
+    apply resourceMono_seq_bounded first second state firstMono
+    intro mid bound
+    apply exprIH second mid (by omega)
+    simp only [DataLang.Prog.seq.sizeOf_spec] at ⊢
+    omega
+  | ifThenElse name yes no =>
+    apply resourceMono_if name yes no state
+    · apply exprIH yes state (by omega)
+      simp only [DataLang.Prog.ifThenElse.sizeOf_spec] at ⊢
+      omega
+    · apply exprIH no state (by omega)
+      simp only [DataLang.Prog.ifThenElse.sizeOf_spec] at ⊢
+      omega
+  | force ret label src =>
+    apply resourceMono_force ret label src state
+    intro body next bound
+    exact smaller body next (by omega)
+  | call ret dest names handler =>
+    apply resourceMono_call ret dest names handler state
+    intro body next bound
+    exact smaller body next (by omega)
 
 /-- Flapjack projection of the combined resource proof onto event prefixes.
 The direct-result formulation is infrastructure, and the full cross-language

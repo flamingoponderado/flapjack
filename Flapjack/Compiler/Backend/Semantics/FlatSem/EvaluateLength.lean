@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
+import Flapjack.Misc.ClockWeightInduction
 
 /-! Successful-result length properties for the clocked flat evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatSem
@@ -256,104 +257,106 @@ evaluator and this theorem remain pending HOL correspondence review. -/
 theorem evaluate_singleton_length {C F : Type} (env : Environment Value) (state next : State C F)
     (expression : FlatLang.Exp) (values : List Value)
     (run : evaluate env state [expression] = (next, .val values)) : values.length = 1 := by
-  have allRanks : ∀ clock weight : Nat,
-      ∀ (env : Environment Value) (state next : State C F) (expression : FlatLang.Exp) (values : List Value),
-        state.clock = clock → expWeight expression = weight →
-        evaluate env state [expression] = (next, .val values) → values.length = 1 := by
-    intro clock
-    induction clock using Nat.strongRecOn with
-    | ind clock clockIH =>
-      intro weight
-      induction weight using Nat.strongRecOn with
-      | ind weight weightIH =>
-        have exprIH : ∀ (env : Environment Value) (state next : State C F) (expression : FlatLang.Exp)
-            (values : List Value), state.clock ≤ clock → expWeight expression < weight →
-            evaluate env state [expression] = (next, .val values) → values.length = 1 := by
-          intro env state next expression values clockLe weightLt run
-          rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
-          · exact clockIH state.clock clockLt (expWeight expression) env state next expression values rfl rfl run
-          · exact weightIH (expWeight expression) weightLt env state next expression values clockEq rfl run
-        intro env state next expression values clockEq weightEq run
-        cases expression with
-        | lit trace lit => exact evaluate_atom_length env state next _ values (Or.inl ⟨trace, lit, rfl⟩) run
-        | varLocal trace name => exact evaluate_atom_length env state next _ values (Or.inr (Or.inl ⟨trace, name, rfl⟩)) run
-        | fn trace name body => exact evaluate_atom_length env state next _ values (Or.inr (Or.inr ⟨trace, name, body, rfl⟩)) run
-        | raise trace body => exact (evaluate_raise_noValue env state next trace body values run).elim
-        | con trace tag args => exact evaluate_con_length env state next trace tag args values run
-        | letrec name funs body =>
-          apply evaluate_letrec_length_step env state next name funs body values ?_ run
-          intro newEnv final result bodyRun
-          apply exprIH newEnv state final body result (by omega)
-          · simp only [expWeight] at weightEq
-            omega
-          · exact bodyRun
-        | let_ trace name first body =>
-          apply evaluate_let_length_step env state next trace name first body values ?_ run
-          intro newEnv newState final result nextBound bodyRun
-          apply exprIH newEnv newState final body result (by omega)
-          · simp only [expWeight] at weightEq
-            omega
-          · exact bodyRun
-        | if_ trace condition yes no =>
-          apply evaluate_if_length_step env state next trace condition yes no values ?_ ?_ run
-          · intro newState final result nextBound bodyRun
-            apply exprIH env newState final yes result (by omega)
-            · simp only [expWeight] at weightEq
+  refine clockWeightInduction (α := FlatLang.Exp) (σ := State C F) (·.clock) expWeight
+    (motive := fun expression state => ∀ env next values,
+      evaluate env state [expression] = (next, .val values) → values.length = 1) ?_
+    expression state env next values run
+  intro expression state exprIH₀ smaller₀
+  have exprIH := fun (env' : Environment Value) (s next : State C F) (expression' : FlatLang.Exp)
+      (values' : List Value) h1 h2 run =>
+    exprIH₀ expression' s h1 h2 env' next values' run
+  have smaller := fun (env' : Environment Value) (s next : State C F) (expression' : FlatLang.Exp)
+      (values' : List Value) h1 run =>
+    smaller₀ expression' s h1 env' next values' run
+  intro env next values run
+  cases expression with
+  | lit trace lit => exact evaluate_atom_length env state next _ values (Or.inl ⟨trace, lit, rfl⟩)
+                       run
+  | varLocal trace name => exact evaluate_atom_length env state next _ values
+                             (Or.inr (Or.inl ⟨trace, name, rfl⟩)) run
+  | fn trace name body => exact evaluate_atom_length env state next _ values
+                            (Or.inr (Or.inr ⟨trace, name, body, rfl⟩)) run
+  | raise trace body => exact (evaluate_raise_noValue env state next trace body values run).elim
+  | con trace tag args => exact evaluate_con_length env state next trace tag args values run
+  | letrec name funs body =>
+    apply evaluate_letrec_length_step env state next name funs body values ?_ run
+    intro newEnv final result bodyRun
+    apply exprIH newEnv state final body result (by omega)
+    · simp only [expWeight] at ⊢
+      omega
+    · exact bodyRun
+  | let_ trace name first body =>
+    apply evaluate_let_length_step env state next trace name first body values ?_ run
+    intro newEnv newState final result nextBound bodyRun
+    apply exprIH newEnv newState final body result (by omega)
+    · simp only [expWeight] at ⊢
+      omega
+    · exact bodyRun
+  | if_ trace condition yes no =>
+    apply evaluate_if_length_step env state next trace condition yes no values ?_ ?_ run
+    · intro newState final result nextBound bodyRun
+      apply exprIH env newState final yes result (by omega)
+      · simp only [expWeight] at ⊢
+        omega
+      · exact bodyRun
+    · intro newState final result nextBound bodyRun
+      apply exprIH env newState final no result (by omega)
+      · simp only [expWeight] at ⊢
+        omega
+      · exact bodyRun
+  | mat trace body rows =>
+    apply evaluate_mat_length_step env state next trace body rows values ?_ run
+    intro newEnv newState final branch result nextBound branchWeight branchRun
+    apply exprIH newEnv newState final branch result (by omega)
+    · simp only [expWeight] at ⊢
+      omega
+    · exact branchRun
+  | handle trace body rows =>
+    apply evaluate_handle_length_step env state next trace body rows values ?_ ?_ run
+    · intro final result bodyRun
+      apply exprIH env state final body result (by omega)
+      · simp only [expWeight] at ⊢
+        omega
+      · exact bodyRun
+    · intro newEnv newState final branch result nextBound branchWeight branchRun
+      apply exprIH newEnv newState final branch result (by omega)
+      · simp only [expWeight] at ⊢
+        omega
+      · exact branchRun
+  | app trace op args =>
+    cases op with
+    | src source =>
+      by_cases call : source = .opapp
+      · subst source
+        apply evaluate_call_length_step env state next trace args values ?_ run
+        intro newEnv newState final body result smaller bodyRun
+        exact smaller₀ body newState (by omega) newEnv final result bodyRun
+      · by_cases isEval : source = .eval
+        · subst source
+          exact evaluate_eval_length env state next trace args values run
+        · by_cases force : source = .thunkOp .forceThunk
+          · subst source
+            apply evaluate_force_length_step env state next trace args values ?_ run
+            intro newState final value result nextBound bodyRun
+            apply exprIH _ newState final
+              (appUnit (.varLocal .none (Flapjack.Basis.Pure.MlString.ofString "f"))) result
+                (by omega)
+            · have smaller := appUnit_force_weight trace args
               omega
             · exact bodyRun
-          · intro newState final result nextBound bodyRun
-            apply exprIH env newState final no result (by omega)
-            · simp only [expWeight] at weightEq
-              omega
-            · exact bodyRun
-        | mat trace body rows =>
-          apply evaluate_mat_length_step env state next trace body rows values ?_ run
-          intro newEnv newState final branch result nextBound branchWeight branchRun
-          apply exprIH newEnv newState final branch result (by omega)
-          · simp only [expWeight] at weightEq
-            omega
-          · exact branchRun
-        | handle trace body rows =>
-          apply evaluate_handle_length_step env state next trace body rows values ?_ ?_ run
-          · intro final result bodyRun
-            apply exprIH env state final body result (by omega)
-            · simp only [expWeight] at weightEq
-              omega
-            · exact bodyRun
-          · intro newEnv newState final branch result nextBound branchWeight branchRun
-            apply exprIH newEnv newState final branch result (by omega)
-            · simp only [expWeight] at weightEq
-              omega
-            · exact branchRun
-        | app trace op args =>
-          cases op with
-          | src source =>
-            by_cases call : source = .opapp
-            · subst source
-              apply evaluate_call_length_step env state next trace args values ?_ run
-              intro newEnv newState final body result smaller bodyRun
-              exact clockIH newState.clock (by omega) (expWeight body) newEnv newState final body result rfl rfl bodyRun
-            · by_cases isEval : source = .eval
-              · subst source
-                exact evaluate_eval_length env state next trace args values run
-              · by_cases force : source = .thunkOp .forceThunk
-                · subst source
-                  apply evaluate_force_length_step env state next trace args values ?_ run
-                  intro newState final value result nextBound bodyRun
-                  apply exprIH _ newState final
-                    (appUnit (.varLocal .none (Flapjack.Basis.Pure.MlString.ofString "f"))) result (by omega)
-                  · have smaller := appUnit_force_weight trace args
-                    omega
-                  · exact bodyRun
-                · exact evaluate_simpleSourceApp_length env state next trace source args values call isEval force run
-          | globalVarAlloc id => exact evaluate_flatApp_length env state next trace _ args values (by simp) run
-          | globalVarInit id => exact evaluate_flatApp_length env state next trace _ args values (by simp) run
-          | globalVarLookup id => exact evaluate_flatApp_length env state next trace _ args values (by simp) run
-          | tagLenEq tag len => exact evaluate_flatApp_length env state next trace _ args values (by simp) run
-          | lenEq len => exact evaluate_flatApp_length env state next trace _ args values (by simp) run
-          | el index => exact evaluate_flatApp_length env state next trace _ args values (by simp) run
-          | id => exact evaluate_flatApp_length env state next trace _ args values (by simp) run
-  exact allRanks state.clock (expWeight expression) env state next expression values rfl rfl run
+          · exact evaluate_simpleSourceApp_length env state next trace source args values call
+              isEval force run
+    | globalVarAlloc id => exact evaluate_flatApp_length env state next trace _ args values
+                             (by simp) run
+    | globalVarInit id => exact evaluate_flatApp_length env state next trace _ args values (by simp)
+                            run
+    | globalVarLookup id => exact evaluate_flatApp_length env state next trace _ args values
+                              (by simp) run
+    | tagLenEq tag len => exact evaluate_flatApp_length env state next trace _ args values (by simp)
+                            run
+    | lenEq len => exact evaluate_flatApp_length env state next trace _ args values (by simp) run
+    | el index => exact evaluate_flatApp_length env state next trace _ args values (by simp) run
+    | id => exact evaluate_flatApp_length env state next trace _ args values (by simp) run
 
 /-- Successful evaluation preserves expression-list length. -/
 theorem evaluate_length {C F : Type} (env : Environment Value) (state next : State C F)
