@@ -99,20 +99,6 @@ theorem post_read (r1 r2 r3 r4 i : BitVec 5) (ms : riscv_state)
       simp [purePost,writePost,holUpdate,eq4,Ne.symm eq4]
     · simp [purePost,writePost,holUpdate,eq4,eq1,Ne.symm eq4,
         Ne.symm eq1,Ne.symm scratch]
-theorem guard (r : Nat) (g : asmRegOkExact r riscvConfig = true) :
-    r < 32 ∧ BitVec.ofNat 5 r ≠ 0#5 ∧ BitVec.ofNat 5 r ≠ 31#5 := by
-  have facts : r < 32 ∧ r ≠ 0 ∧ r ≠ 31 := by
-    simp [asmRegOkExact,riscvConfig] at g
-    exact ⟨of_decide_eq_true g.1,g.2.1,g.2.2.2.2.2⟩
-  refine ⟨facts.1,?_,?_⟩
-  all_goals
-    intro eq
-    have n := congrArg BitVec.toNat eq
-    simp only [BitVec.toNat_ofNat] at n
-    norm_num at n
-    rw [Nat.mod_eq_of_lt facts.1] at n
-  · exact facts.2.1 n
-  · exact facts.2.2 n
 /-- AddOverflow-local execution/source composition; no separately named HOL declaration. -/
 theorem reg_ne (a b : Nat) (ha : a < 32) (hb : b < 32) (h : a ≠ b) :
     BitVec.ofNat 5 a ≠ BitVec.ofNat 5 b := by
@@ -122,16 +108,6 @@ theorem reg_ne (a b : Nat) (ha : a < 32) (hb : b < 32) (h : a ≠ b) :
   norm_num at n
   rw [Nat.mod_eq_of_lt ha,Nat.mod_eq_of_lt hb] at n
   exact h n
-/-- AddOverflow-local execution/source composition; no separately named HOL declaration. -/
-theorem reg_read (r : Nat) (s : AsmState 64) (ms : riscv_state)
-    (g : asmRegOkExact r riscvConfig = true)
-    (rel : targetStateRel riscvTarget s ms) :
-    GPR (BitVec.ofNat 5 r) ms = readReg r s := by
-  have valid : r < riscvConfig.regCount ∧ riscvConfig.avoidRegs.contains r = false := by
-    simpa [asmRegOkExact] using g
-  have before := rel.2.2.2.1 r valid
-  change ms.c_gpr ms.procID (BitVec.ofNat 5 r) = s.regs r at before
-  simpa [GPR,gpr,(guard r g).2.1,readReg] using before
 /-- AddOverflow-local execution/source composition; no separately named HOL declaration. -/
 theorem program_family (r1 r2 r3 r4 : BitVec 5) :
     ∀ i ∈ program r1 r2 r3 r4, Family i := by

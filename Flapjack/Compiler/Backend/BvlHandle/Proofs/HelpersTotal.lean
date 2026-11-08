@@ -6,26 +6,6 @@ Flapjack infrastructure, not HOL pass-correctness ports. -/
 namespace Flapjack.Compiler.Backend.BvlHandle
 open Bvl BvlToBvi
 
-private theorem member_budget_lt (xs : List Exp) (e : Exp) (h : e ∈ xs) :
-    expBudget e < listBudget xs := by
-  induction xs with
-  | nil => simp at h
-  | cons x xs ih =>
-    simp only [List.mem_cons] at h
-    simp only [listBudget]
-    rcases h with rfl | h
-    · omega
-    · have := ih h; omega
-
-private theorem mapM_succeeds {α β : Type} (xs : List α) (f : α → Option β)
-    (h : ∀ x ∈ xs, ∃ y, f x = some y) : ∃ ys, xs.mapM f = some ys := by
-  induction xs with
-  | nil => exact ⟨[], rfl⟩
-  | cons x xs ih =>
-    obtain ⟨y, hy⟩ := h x (by simp)
-    obtain ⟨ys, hys⟩ := ih (by intro z hz; exact h z (by simp [hz]))
-    exact ⟨y :: ys, by simp [List.mapM_cons, hy, hys]⟩
-
 /-- Raise detection succeeds under a structural traversal bound. -/
 theorem canRaiseFuel_succeeds (fuel : Nat) (e : Exp) (bound : expBudget e < fuel) :
     ∃ result, canRaiseFuel fuel e = some result := by

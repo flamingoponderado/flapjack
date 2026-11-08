@@ -30,16 +30,6 @@ private theorem binop_low (op : HolBinop) (rd rs1 rs2 : BitVec 5) :
   cases op <;> simp only [binopWord, riscvBopR, Encode, Rtype, opc,
     BitVec.setWidth_eq, BitVec.getLsbD_append] <;> simp
 
-private theorem reg_read (r : Nat) (s : AsmState 64) (ms : riscv_state)
-    (guard : asmRegOkExact r riscvConfig = true)
-    (rel : targetStateRel riscvTarget s ms) :
-    GPR (BitVec.ofNat 5 r) ms = readReg r s := by
-  have g : r < riscvConfig.regCount ∧ riscvConfig.avoidRegs.contains r = false := by
-    simpa [asmRegOkExact] using guard
-  have before := rel.2.2.2.1 r g
-  change ms.c_gpr ms.procID (BitVec.ofNat 5 r) = s.regs r at before
-  simpa [GPR, gpr, reg_nonzero r guard, readReg] using before
-
 /-- Genuine original Reg operand case of riscv_encoder_correct's Binop branch
 (550-559). All five operators, unrestricted natural registers, original sole
 asmStep/initial relation premise, and full existential/interference/assertion

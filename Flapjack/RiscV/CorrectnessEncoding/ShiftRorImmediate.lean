@@ -10,16 +10,6 @@ set_option autoImplicit false
 set_option maxRecDepth 200000
 set_option maxHeartbeats 2000000
 
-private theorem reg_read (r : Nat) (s : AsmState 64) (ms : riscv_state)
-    (guard : asmRegOkExact r riscvConfig = true)
-    (rel : targetStateRel riscvTarget s ms) :
-    GPR (BitVec.ofNat 5 r) ms = readReg r s := by
-  have g : r < riscvConfig.regCount ∧ riscvConfig.avoidRegs.contains r = false := by
-    simpa [asmRegOkExact] using guard
-  have before := rel.2.2.2.1 r g
-  change ms.c_gpr ms.procID (BitVec.ofNat 5 r) = s.regs r at before
-  simpa [GPR, gpr, reg_nonzero r guard, readReg] using before
-
 
 private theorem reg_scratch (r : Nat) (guard : asmRegOkExact r riscvConfig = true) :
     BitVec.ofNat 5 r ≠ 31#5 := by
@@ -139,16 +129,6 @@ private theorem nonzero (rd rs : Nat) (c : BitVec 64)
   · simp [rorDestination]
   · simpa [rorDestination,constDestination] using reg_nonzero rd guard
   · simpa [rorDestination,constDestination] using reg_nonzero rd guard
-
-private theorem bytes_from_domain (pc : BitVec 64) (bs : List (BitVec 8))
-    (m1 m2 : BitVec 64 → BitVec 8) (d : BitVec 64 → Prop)
-    (bytes : bytesInMemoryHOL pc bs m1 d)
-    (agree : ∀ a, d a → m2 a = m1 a) : bytesInMemoryHOL pc bs m2 d := by
-  induction bs generalizing pc with
-  | nil => trivial
-  | cons b bs ih =>
-    exact ⟨(agree pc bytes.2.1).trans bytes.1, bytes.2.1,
-      ih (pc + 1) bytes.2.2⟩
 
 /-- Full original Shift Imm/Ror constructor (560-620), including the actual three-instruction SRLI31/SLLIrd/ORrd lowering. Source count/avoid-register guards, every fetch/Next, scratch effect, PC coverage and both full original assertions are derived. This case inherits reals_as_rational_cuts, SOUNDNESS8. The Reg/Ror case is riscv_encoder_correct_shiftRorRegister, and riscv_encoder_correct_shift (Shift.lean) assembles every Shift case.: original source step and initial target
 relation only; every original environment and both assertion predicates retained. -/

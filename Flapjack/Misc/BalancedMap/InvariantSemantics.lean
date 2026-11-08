@@ -72,4 +72,17 @@ theorem invProps {κ ν : Type} (cmp : κ → κ → Ordering)
     exact (keySetCmpThm cmp key x .lt hgood).mp
       ((keyOrderedToFmap cmp key right .lt hgood).mp hinv.2.2.1 _ hx)
 
+/-- Lookup extensionality for the canonical carrier, using proof irrelevance
+for finite support. This is representation infrastructure, not a HOL port;
+shared by the rotation-correctness cases. -/
+theorem mapExt {α β : Type} (left right : HolFiniteMapExact α β)
+    (h : ∀ key, left.lookup key = right.lookup key) : left = right := by
+  cases left with
+  | mk l hl =>
+    cases right with
+    | mk r hr =>
+      have heq : l = r := funext h
+      cases heq
+      rfl
+
 end Flapjack.Misc.BalancedMap

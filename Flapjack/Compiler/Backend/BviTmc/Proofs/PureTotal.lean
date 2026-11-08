@@ -5,17 +5,6 @@ Flapjack infrastructure; HOL correspondence remains a separate obligation. -/
 namespace Flapjack.Compiler.Backend.BviTmc
 open Bvi
 
-private theorem member_budget_lt (xs : List Exp) (e : Exp) (h : e ∈ xs) :
-    expBudget e < listBudget xs := by
-  induction xs with
-  | nil => simp at h
-  | cons x xs ih =>
-    simp only [List.mem_cons] at h
-    simp only [listBudget]
-    rcases h with rfl | h
-    · omega
-    · have := ih h; omega
-
 private theorem foldPure_succeeds {α : Type} (xs : List α) (f : α → Option Bool)
     (init : Bool) (h : ∀ x ∈ xs, ∃ result, f x = some result) :
     ∃ result, xs.foldlM (fun yes x => if yes then f x else pure false) init = some result := by
