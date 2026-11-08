@@ -238,6 +238,16 @@ private def compileCons {width : Nat} [NeZero width] (conf : Config) (l dest tag
             .const pointer]),
           .set .nextFree (.op .add [.var 1, .const bytes])], l)
 
+/-- Lower an integer constant into its tagged word representation. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Const_def"
+  (words_as_type_indexed_bitvec)]
+def assignConst {width : Nat} [NeZero width] (i : Int) (l dest : Nat) :
+    WordLangProgHOL (BitVec width) × Nat :=
+  if i < 0 then
+    (.assign (adjustVar dest) (.const (0 - BitVec.ofNat width (4 * (0 - i)).toNat)), l)
+  else
+    (.assign (adjustVar dest) (.const (BitVec.ofNat width (4 * i).toNat)), l)
+
 /-- Flapjack's checked traversal. Some non-64-bit operations return `none`;
 this definition has not yet been reviewed as HOL's total `comp`. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
@@ -265,9 +275,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
           (wordListSeq [silentFfi conf 3 cutsets, .assign 1 (.const value),
             .alloc 1 cutsets, silentFfi conf 3 cutsets]) .skip), l)
   | l, .assign dest (.intOp (.const i)) _ _ =>
-      let magnitude := BitVec.ofNat width (4 * i.natAbs)
-      let value := if i < 0 then -magnitude else magnitude
-      some (.assign (adjustVar dest) (.const value), l)
+      some (assignConst i l dest)
   | l, .assign dest (.globOp .globalsPtr) _ _ =>
       some (.assign (adjustVar dest) (.lookup .globals), l)
   | l, .assign dest (.globOp .setGlobalsPtr) args _ =>

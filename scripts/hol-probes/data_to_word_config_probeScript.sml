@@ -58,6 +58,13 @@ val _ = (print "adjust_sets_def_typed="; Lib.with_flag (Globals.show_types,true)
   print_term (concl data_to_wordTheory.adjust_sets_def); print "\n");
 val _ = (print "alloc_var_def_typed="; Lib.with_flag (Globals.show_types,true)
   print_term (concl data_to_wordTheory.AllocVar_def); print "\n");
+val _ = (print "assign_const_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.assign_Const_def); print "\n");
+val _ = print_eval "assign_const_negative_64" ``(assign_Const (~7) 9 3 : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_const_zero_64" ``(assign_Const 0 9 3 : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_const_positive_64" ``(assign_Const 7 9 3 : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_const_wrap_64" ``(assign_Const 4611686018427387904 9 3 : 64 wordLang$prog # num)``;
+val _ = print_eval "assign_const_wrap_equal_64" ``(assign_Const 4611686018427387904 9 3 : 64 wordLang$prog # num) = (Assign 8 (Const 0w),9)``;
 val _ = print_eval "store_each_64" ``(StoreEach 2 [4;6] 8w : 64 wordLang$prog)``;
 val _ = print_eval "mem_eq_list_64" ``(MemEqList 8w [3w;7w] : 64 wordLang$prog)``;
 val _ = print_eval "silent_ffi_off_64" ``(SilentFFI ^conf 3 (LN,LN) : 64 wordLang$prog)``;

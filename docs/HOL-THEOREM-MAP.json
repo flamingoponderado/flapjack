@@ -125572,6 +125572,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_Const_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignConst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared the generated definition at data_to_wordScript.sml:1182 and assign_const_def_typed: the integer, label and destination inputs retain their order, the sign branches convert the same nonnegative integer magnitude to a word, negative constants subtract it from zero, and both branches return the unchanged label. Positive-width BitVec represents the HOL word dimension. The executed compiler calls this definition; concrete original observations check representative signs and word wraparound but are not a cross-language equivalence proof."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "AllocVar_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "allocVar",

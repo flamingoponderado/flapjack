@@ -10,6 +10,15 @@ private def conf : Config := ⟨1, 2, 3, 16, false, false, false, false, false, 
 example : compileControl? (width := 64) conf 5 2 (.seq (.assign 3 (.intOp (.const (-7))) [] none) (.return [3])) =
     some (.seq (.assign 8 (.const 0xFFFFFFFFFFFFFFE4)) (.return 0 [8]), 2) := by rfl
 
+example : compileControl? (width := 64) conf 5 9 (.assign 3 (.intOp (.const 0)) [] none) =
+    some (.assign 8 (.const 0), 9) := by rfl
+
+example : compileControl? (width := 64) conf 5 9 (.assign 3 (.intOp (.const 7)) [] none) =
+    some (.assign 8 (.const 28), 9) := by rfl
+
+example : compileControl? (width := 64) conf 5 9 (.assign 3 (.intOp (.const 4611686018427387904)) [] none) =
+    some (.assign 8 (.const 0), 9) := by rfl
+
 example : compileControl? (width := 64) conf 5 2 (.ifThenElse 1 (.move 3 1) (.seq .tick (.return [1, 3]))) =
     some (.ite .equal 4 (.imm 18) (.move 0 [(8, 4)]) (.seq .tick (.return 0 [4, 8])), 2) := by rfl
 
