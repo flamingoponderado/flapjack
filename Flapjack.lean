@@ -2471,6 +2471,7 @@ import Flapjack.Compiler.Backend.BackendProps
 import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 import Flapjack.Compiler.Backend.BackendProps.StateOracleInvariant
 import Flapjack.Compiler.Backend.BackendProps.OracleMonotonicInit
+import Flapjack.Compiler.Backend.BackendProps.OracleMonotonicSpecializations
 import Flapjack.Test.StateCompilerParity
 import Flapjack.Compiler.Backend.LabToTarget.Interference
 import Flapjack.Compiler.Backend.LabToTarget.NopEncoding

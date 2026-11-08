@@ -39,7 +39,7 @@
     {"bytes": 2213, "out": "backend_oracle_monotonic_probe.out", "rows": 9, "sha256": "b634af844301f491fb0ebece9d3f48066a4b87afbc4cb14bbdb25def94cf910e"},
     {"bytes": 1473, "out": "backend_prim_src_config_probe.out", "rows": 2, "sha256": "1e78745de866afe3264b1e17e50c62edaf1ffe1c43ff32065e788be256beea2d"},
     {"bytes": 1125, "out": "backend_props_option_max_probe.out", "rows": 5, "sha256": "7ec1d88d0f0a00af914c953a058cd0c026818093e6d9b69e70d97b10c1d5c8ae"},
-    {"bytes": 2213, "out": "backend_props_state_oracle_probe.out", "rows": 7, "sha256": "ef02aa2264c88b8fa24d0d87b814938280c74c946dc1f8f38d0d09e11a4676b7"},
+    {"bytes": 3207, "out": "backend_props_state_oracle_probe.out", "rows": 9, "sha256": "c4c8ceb9d8ef0188d11871d3e1b496f31c1598d2a8af81a30a2e2d2c3fd71cc3"},
     {"bytes": 415, "out": "backend_read_limits_probe.out", "rows": 1, "sha256": "a5351f4d32a5143bf9c106cf7f527cf20ed21079a08dd7b6a5f5ab6dc94caf20"},
     {"bytes": 203, "out": "backend_restrict_zero_probe.out", "rows": 8, "sha256": "3f228e5d30cea9ec11092d89764a02c196433ddafc470c32a9896cd4da3a9820"},
     {"bytes": 795, "out": "backend_runtime_stub_names_probe.out", "rows": 10, "sha256": "2de45e8c9fc9b32ccee4bea6367f57eca5b23d4d262e26a7066b74d7a4189213"},
