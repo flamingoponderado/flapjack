@@ -1,4 +1,7 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
+import Flapjack.FiniteMap.CardinalityExact
+import Flapjack.FiniteMap.MapKeys
 
 /-! Weakening the factored source-to-flat relations across global growth. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -330,6 +333,113 @@ theorem globalEnvInv_weak (old : GlobalEnv) (map : Environment) (shadowers : Var
   obtain ⟨related, constructors, types, slots⟩ := premises
   exact globalEnvInv_growth old new (GlobalGrowth.ofSubglobals old new slots constructors types)
     map shadowers env related
+
+/-- Mutual weakening with unchanged constructor/type maps and growing global slots. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_weakening"
+  (fmap_as_finite_support := [c, tys])]
+theorem valueRel_weakening :
+    (∀ (old : GlobalEnv) source flat, ValueRel old source flat → ∀ new,
+      old.c = new.c ∧ old.tys = new.tys ∧ subglobals old.v new.v → ValueRel new source flat) ∧
+    (∀ (old : GlobalEnv) env locals, EnvRel old env locals → ∀ new,
+      old.c = new.c ∧ old.tys = new.tys ∧ subglobals old.v new.v → EnvRel new env locals) ∧
+    (∀ (old : GlobalEnv) map shadowers env, GlobalEnvInv old map shadowers env → ∀ new,
+      old.c = new.c ∧ old.tys = new.tys ∧ subglobals old.v new.v →
+        GlobalEnvInv new map shadowers env) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro old source flat related new ⟨constructors, types, slots⟩
+    exact valueRel_weak old source flat new
+      ⟨related, by simp [← constructors, finiteSubmap], by simp [← types, finiteSubmap], slots⟩
+  · intro old env locals related new ⟨constructors, types, slots⟩
+    exact envRel_weak old env locals new
+      ⟨related, by simp [← constructors, finiteSubmap], by simp [← types, finiteSubmap], slots⟩
+  · intro old map shadowers env related new ⟨constructors, types, slots⟩
+    exact globalEnvInv_weak old map shadowers env new
+      ⟨related, by simp [← constructors, finiteSubmap], by simp [← types, finiteSubmap], slots⟩
+
+/-- Mutual value, local-environment, and global-environment weakening when
+the value slots agree and the constructor/type maps grow. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_weakening2"
+  (fmap_as_finite_support := [c, tys])]
+theorem valueRel_weakening2 {A B C : Type} [Nonempty A] [Nonempty B] [Nonempty C]
+    (new : GlobalEnv) :
+    (∀ old source flat, ValueRel old source flat → ∀ (_unused : A),
+      finiteSubmap old.c new.c ∧ finiteSubmap old.tys new.tys ∧ old.v = new.v →
+        ValueRel new source flat) ∧
+    (∀ old env locals, EnvRel old env locals → ∀ (_unused : B),
+      finiteSubmap old.c new.c ∧ finiteSubmap old.tys new.tys ∧ old.v = new.v →
+        EnvRel new env locals) ∧
+    (∀ old map shadowers env, GlobalEnvInv old map shadowers env → ∀ (_unused : C),
+      finiteSubmap old.c new.c ∧ finiteSubmap old.tys new.tys ∧ old.v = new.v →
+        GlobalEnvInv new map shadowers env) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro old source flat related _ ⟨constructors, types, slots⟩
+    exact valueRel_weak old source flat new
+      ⟨related, constructors, types, slots ▸ subglobals_refl old.v⟩
+  · intro old env locals related _ ⟨constructors, types, slots⟩
+    exact envRel_weak old env locals new
+      ⟨related, constructors, types, slots ▸ subglobals_refl old.v⟩
+  · intro old map shadowers env related _ ⟨constructors, types, slots⟩
+    exact globalEnvInv_weak old map shadowers env new
+      ⟨related, constructors, types, slots ▸ subglobals_refl old.v⟩
+
+/-- Canonical finite-map domain restriction, used for HOL's `DRESTRICT`. -/
+noncomputable def finiteRestrict {α β : Type} (map : HolFiniteMapExact α β)
+    (keep : Set α) : HolFiniteMapExact α β := by
+  classical
+  refine ⟨fun key => if key ∈ keep then map.lookup key else none, ?_⟩
+  obtain ⟨keys, support⟩ := map.finiteSupport
+  refine ⟨keys, ?_⟩
+  intro key present
+  apply support key
+  by_cases member : key ∈ keep <;> simp_all
+
+private def maptoBroadlookup {α β : Type} (map : HolFiniteMapExact α β) : α → Option β := map.lookup
+private def mapofBroad {α β : Type} (lookup : α → Option β)
+    (support : ∃ keys : List α, ∀ key, lookup key ≠ none → key ∈ keys) : HolFiniteMapExact α β :=
+  ⟨lookup, support⟩
+
+/-- Canonical lookup/support roundtrip for the first finite-map argument. -/
+theorem holFmapAsFiniteSupportParamWitness_drestrict_lem_f1 {α β : Type}
+    (f1 : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f1) f1.finiteSupport = f1 := by
+  cases f1
+  rfl
+
+/-- Canonical lookup/support roundtrip for the second finite-map argument. -/
+theorem holFmapAsFiniteSupportParamWitness_drestrict_lem_f2 {α β : Type}
+    (f2 : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f2) f2.finiteSupport = f2 := by
+  cases f2
+  rfl
+
+/-- Restricting a larger map outside a submap's domain reconstructs the map. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "drestrict_lem"
+  (fmap_as_finite_support_parameters := [f1, f2])]
+theorem drestrict_lem {α β : Type} (f1 : HolFiniteMapExact α β) (f2 : HolFiniteMapExact α β)
+    (submap : finiteSubmap f1 f2) :
+    (finiteRestrict f2 f1.domainᶜ).union f1 = f2 := by
+  classical
+  apply HolFiniteMapExact.ext_lookup
+  intro key
+  cases lookup : f1.lookup key with
+  | none =>
+    cases h : f2.lookup key <;>
+      simp [HolFiniteMapExact.lookup_union, finiteRestrict, HolFiniteMapExact.domain, lookup, h]
+  | some value =>
+    have retained := submap key value lookup
+    simp [HolFiniteMapExact.lookup_union, finiteRestrict, HolFiniteMapExact.domain, lookup, retained]
+
+/-- The combined local and global environment relation survives global extension. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_all_rel_weak"
+  (fmap_as_finite_support := [c, tys])]
+theorem envAllRel_weak (old : GlobalEnv) (map : Environment) (locals : List VarN)
+    (env : SemEnv Value) (flatEnv : FlatSem.Environment FlatSem.Value) (new : GlobalEnv)
+    (premises : FactoredEnvAllRel old map env flatEnv locals ∧ finiteSubmap old.c new.c ∧
+      finiteSubmap old.tys new.tys ∧ subglobals old.v new.v) :
+    FactoredEnvAllRel new map env flatEnv locals := by
+  obtain ⟨⟨base, sourceLocal, bindings, envEq, localEq, names, globals, localRel⟩,
+    constructors, types, slots⟩ := premises
+  exact ⟨base, sourceLocal, bindings, envEq, localEq, names,
+    globalEnvInv_weak old map _ base new ⟨globals, constructors, types, slots⟩,
+    envRel_weak old sourceLocal flatEnv.v new ⟨localRel, constructors, types, slots⟩⟩
 
 /-- Related store lists remain related when the global environment grows. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "LIST_REL_sv_rel_weak"

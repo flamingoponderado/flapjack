@@ -1,6 +1,16 @@
 load "bvl_handleTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
+fun show_thm label th =
+  if null (hyp th) then
+    (print label; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
+  else raise Fail ("hypotheses: " ^ label);
+val _ = show_thm "compile_def_typed=" bvl_handleTheory.compile_def;
+val _ = show_thm "compile_sing_eq_typed=" bvl_handleTheory.compile_sing_eq;
+val _ = show_thm "compile_exp_def_typed=" bvl_handleTheory.compile_exp_def;
+val _ = show_thm "compile_exp_eq_typed=" bvl_handleTheory.compile_exp_eq;
+val _ = show_thm "compile_seqs_def_typed=" bvl_handleTheory.compile_seqs_def;
+val _ = show_thm "compile_any_def_typed=" bvl_handleTheory.compile_any_def;
 val _ = (print "simplify="; print_term (rhs (concl (EVAL ``
  MAP bvl_handle$handle_simp
    [bvl$Handle (bvl$Let [bvl$Var 0] (bvl$Raise (bvl$Var 0))) (bvl$Var 1);

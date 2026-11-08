@@ -675,11 +675,11 @@ theorem eval_declarations_factored {C F : Type} [Nonempty C]
       valuesRel evalEnv decs begin decoded positive
   refine ⟨baseGenv, envId, config, next, flatDecs, n, newMap, nextGen, body,
     flatDecoded, flatLength, compiled, bodyEq, growth, nextCfg, previous, envInv, oracleSubmap, oracleShape, ?_⟩
-  apply decsIH decs baseGenv (lookupEnvId envId config.envs) newMap evalEnv []
+  apply decsIH _ (by omega) decs baseGenv (lookupEnvId envId config.envs) newMap evalEnv []
     (EvaluateHOL.decClock { source with evalState := begin }) sourceLast
     (FlatSem.decClock { flat with globals := flat.globals ++ List.replicate (next.next.vidx - config.next.vidx) none, evalConfig := { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle } })
     config.next next.next next.next (idxBlock start finish ∪ other) 1 n ⟨0, config.envs.next, .ln⟩ nextGen body result
-    (by omega) sourceRun decInv bodyEq envInv safe
+    (Nat.le_refl _) sourceRun decInv bodyEq envInv safe
   · simpa [EvaluateHOL.decClock] using generation
   · simpa [EvaluateHOL.decClock] using future
   · exact idxPrev_refl _

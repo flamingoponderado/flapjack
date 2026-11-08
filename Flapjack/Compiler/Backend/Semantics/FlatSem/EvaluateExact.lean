@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Measure
 import Flapjack.Misc.ListEl
+import Flapjack.Misc.OptBind
 
 /-! Clocked flat evaluation without an extra fuel parameter. Lean currently
 fails to derive the generated functional induction principle for this mutual
@@ -130,7 +131,7 @@ noncomputable def evaluate {C F : Type} (env : Environment Value) (state : State
       match next.2 with
       | .err error => (next.1, .err error)
       | .val values =>
-        let bindings := match name with | none => env.v | some name => (name, headValue values) :: env.v
+        let bindings := optBind name (headValue values) env.v
         evaluate { env with v := bindings } next.1 [body]
     | .letrec _ funs body =>
       if (funs.map Prod.fst).Nodup then

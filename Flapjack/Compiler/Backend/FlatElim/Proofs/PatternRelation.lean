@@ -103,9 +103,10 @@ set when every row body has already been analysed. -/
 theorem pmatchRows_findLookups {C F R : Type} (rows : List (FlatLang.Pat × FlatLang.Exp))
     (state : FlatSem.State C F) (value : FlatSem.Value) (bindings : List (VarN × FlatSem.Value))
     (pattern : FlatLang.Pat) (body : FlatLang.Exp) (reachable : Spt R)
-    (selected : FlatSem.pmatchRows rows state value = .match (bindings, pattern, body))
-    (bounded : ∀ key, sptMem key (findGlobalsList destGlobalVarLookup (rows.map Prod.snd)) → sptMem key reachable) :
+    (premises : FlatSem.pmatchRows rows state value = .match (bindings, pattern, body) ∧
+      ∀ key, sptMem key (findGlobalsList destGlobalVarLookup (rows.map Prod.snd)) → sptMem key reachable) :
     ∀ key, sptMem key (findLookups body) → sptMem key reachable := by
+  obtain ⟨selected, bounded⟩ := premises
   intro key found
   apply bounded key
   apply findLookupsList_member body _ _ key found
@@ -241,15 +242,18 @@ theorem pmatchReachable_aux {C F : Type} (state : FlatSem.State C F) (reachable 
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "pmatch_Match_reachable"]
 theorem pmatch_Match_reachable {C F : Type} :
     (∀ (state : FlatSem.State C F) pattern value bindings result reachable,
-      FlatSem.pmatch state pattern value bindings = .match result →
-      globalsWithin (findValueGlobals value) reachable → bindingsWithin bindings reachable →
+      FlatSem.pmatch state pattern value bindings = .match result ∧
+      globalsWithin (findValueGlobals value) reachable ∧ bindingsWithin bindings reachable ∧
       globalsWithin (findRefsGlobals state.refs) reachable → bindingsWithin result reachable) ∧
     (∀ (state : FlatSem.State C F) patterns values bindings result reachable,
-      FlatSem.pmatchList state patterns values bindings = .match result →
-      globalsWithin (findValuesGlobals values) reachable → bindingsWithin bindings reachable →
+      FlatSem.pmatchList state patterns values bindings = .match result ∧
+      globalsWithin (findValuesGlobals values) reachable ∧ bindingsWithin bindings reachable ∧
       globalsWithin (findRefsGlobals state.refs) reachable → bindingsWithin result reachable) := by
-  exact ⟨fun state _ _ _ _ reachable => (pmatchReachable_aux state reachable).1 _ _ _ _,
-    fun state _ _ _ _ reachable => (pmatchReachable_aux state reachable).2 _ _ _ _⟩
+  constructor
+  · intro state pattern value bindings result reachable ⟨matched, valueClosed, bindingsClosed, refsClosed⟩
+    exact (pmatchReachable_aux state reachable).1 pattern value bindings result matched valueClosed bindingsClosed refsClosed
+  · intro state patterns values bindings result reachable ⟨matched, valuesClosed, bindingsClosed, refsClosed⟩
+    exact (pmatchReachable_aux state reachable).2 patterns values bindings result matched valuesClosed bindingsClosed refsClosed
 
 /-- Every value in a list is free of dynamic evaluation. -/
 def valuesNoEval (values : List FlatSem.Value) : Prop :=
@@ -384,14 +388,18 @@ theorem pmatchNoEval_aux {C F : Type} (state : FlatSem.State C F) :
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "pmatch_not_has_Eval"]
 theorem pmatch_not_has_Eval {C F : Type} :
     (∀ (state : FlatSem.State C F) pattern value bindings result,
-      FlatSem.pmatch state pattern value bindings = .match result →
-      valueHasEval value = false → storeHasNoEval state.refs → bindingsNoEval bindings →
+      FlatSem.pmatch state pattern value bindings = .match result ∧
+      valueHasEval value = false ∧ storeHasNoEval state.refs ∧ bindingsNoEval bindings →
       bindingsNoEval result) ∧
     (∀ (state : FlatSem.State C F) patterns values bindings result,
-      FlatSem.pmatchList state patterns values bindings = .match result →
-      valuesNoEval values → storeHasNoEval state.refs → bindingsNoEval bindings →
+      FlatSem.pmatchList state patterns values bindings = .match result ∧
+      valuesNoEval values ∧ storeHasNoEval state.refs ∧ bindingsNoEval bindings →
       bindingsNoEval result) := by
-  exact ⟨fun state => (pmatchNoEval_aux state).1, fun state => (pmatchNoEval_aux state).2⟩
+  constructor
+  · intro state pattern value bindings result ⟨matched, valueSafe, refsSafe, bindingsSafe⟩
+    exact (pmatchNoEval_aux state).1 pattern value bindings result matched valueSafe refsSafe bindingsSafe
+  · intro state patterns values bindings result ⟨matched, valuesSafe, refsSafe, bindingsSafe⟩
+    exact (pmatchNoEval_aux state).2 patterns values bindings result matched valuesSafe refsSafe bindingsSafe
 
 /-- The selected row's environment satisfies both invariants needed by the
 flat-elimination evaluation simulation. This combines the original matching
@@ -406,9 +414,10 @@ theorem pmatchRows_selected_invariants {C F : Type} (rows : List (FlatLang.Pat �
     bindingsNoEval bindings ∧ bindingsWithin bindings reachable := by
   have matched := (FlatProps.pmatchRows_imp_pmatch rows state value bindings pattern body selected).1
   constructor
-  · exact (pmatch_not_has_Eval.1 state pattern value [] bindings matched valueSafe storeSafe
-      (by simp [bindingsNoEval]))
-  · exact (pmatch_Match_reachable.1 state pattern value [] bindings reachable matched valueReachable
-      (by simp [bindingsWithin, globalsWithin, findValuesGlobals, sptMem, sptDomain]) storeReachable)
+  · exact pmatch_not_has_Eval.1 state pattern value [] bindings
+      ⟨matched, valueSafe, storeSafe, by simp [bindingsNoEval]⟩
+  · exact pmatch_Match_reachable.1 state pattern value [] bindings reachable
+      ⟨matched, valueReachable, by simp [bindingsWithin, globalsWithin, findValuesGlobals, sptMem, sptDomain],
+        storeReachable⟩
 
 end Flapjack.Compiler.Backend.FlatElim

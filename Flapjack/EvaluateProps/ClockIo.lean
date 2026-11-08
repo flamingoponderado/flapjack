@@ -1,8 +1,7 @@
 import Flapjack.EvaluateProps.EvaluateFfiFull
 
-/-! Original combined clock, state-growth and FFI-trace invariant. The main
-mutual evaluator proof is assembled in ClockIoFull. The source evaluator
-and its carriers remain pending review. -/
+/-! Combined clock, state-growth and FFI-trace invariant. The mutual
+evaluator proof is assembled in ClockIoFull. -/
 namespace Flapjack.EvaluateProps
 open Flapjack.SemanticPrimitivesHOL
 
@@ -28,12 +27,12 @@ def isClockIoMono {σ α β : Type} (f : State σ → State σ × Result α β) 
     (clock ≤ s.clock → ioEventsMonoHOL other.ffi next.ffi)
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_return"]
-theorem isClockIoMono_return {σ α β : Type} (s : State σ) (value : α) :
+theorem isClockIoMono_return {σ α β : Type} (value : α) (s : State σ) :
     isClockIoMono (fun st => (st, Result.val (β := β) value)) s := by
   simp [isClockIoMono, ioEventsMonoHOL]
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_err"]
-theorem isClockIoMono_err {σ α β : Type} (s : State σ) (error : ErrorResult β) :
+theorem isClockIoMono_err {σ α β : Type} (error : ErrorResult β) (s : State σ) :
     isClockIoMono (fun st => (st, Result.err (α := α) error)) s := by
   simp [isClockIoMono, ioEventsMonoHOL]
   intros
@@ -50,7 +49,7 @@ theorem decIncClock {σ : Type} (s : State σ) : EvaluateHOL.decClock (adjClock 
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_extra"]
 theorem isClockIoMono_extra {σ α β : Type} (f : State σ → State σ × Result α β)
-    (mono : ∀ s, isClockIoMono f s) (s next : State σ) (result : Result α β) (extra : Nat)
+    (s next : State σ) (result : Result α β) (extra : Nat) (mono : ∀ s, isClockIoMono f s)
     (h : f s = (next, result) ∧ result ≠ .err (.abort .timeoutError)) :
     f { s with clock := s.clock + extra } = ({ next with clock := next.clock + extra }, result) := by
   obtain ⟨h, notTimeout⟩ := h
@@ -69,7 +68,7 @@ theorem isClockIoMono_extra {σ α β : Type} (f : State σ → State σ × Resu
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_extra_mono"]
 theorem isClockIoMono_extra_mono {σ α β : Type} (f : State σ → State σ × Result α β)
-    (mono : ∀ s, isClockIoMono f s) (s : State σ) (extra : Nat) :
+    (s : State σ) (extra : Nat) (mono : ∀ s, isClockIoMono f s) :
     ioEventsMonoHOL (f s).1.ffi (f { s with clock := s.clock + extra }).1.ffi := by
   let raised := { s with clock := s.clock + extra }
   have inv := mono raised
@@ -97,7 +96,7 @@ theorem isClockIoMono_cong {σ α β : Type} (s t : State σ)
   simp only [isClockIoMono, mainEq, clockEq]
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_check"]
-theorem isClockIoMono_check {σ α β : Type} (f : State σ → State σ × Result α β) (s : State σ)
+theorem isClockIoMono_check {σ α β : Type} (s : State σ) (f : State σ → State σ × Result α β)
     (h : s.clock ≠ 0 → isClockIoMono (fun st => f (adjClock 1 0 st)) (EvaluateHOL.decClock s)) :
     isClockIoMono (fun st => if st.clock = 0 then (st, Result.err (α := α) (.abort .timeoutError)) else f st) s := by
   by_cases hs : s.clock = 0

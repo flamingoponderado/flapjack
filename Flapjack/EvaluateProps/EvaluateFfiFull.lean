@@ -1,7 +1,7 @@
 import Flapjack.EvaluateProps.EvaluateFfi
 
-/-! Lexicographic induction assembling the source evaluator FFI cases.
-Source/carrier review remains pending, including the inherited rational-cut assumption. -/
+/-! Lexicographic induction for the source evaluator FFI theorems.
+The tagged theorems inherit the rational-cut assumption (SOUNDNESS item 8). -/
 namespace Flapjack.EvaluateProps
 open Flapjack.EvaluateHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL Flapjack.AstHOL
 

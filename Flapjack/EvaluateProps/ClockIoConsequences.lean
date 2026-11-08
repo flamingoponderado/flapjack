@@ -15,7 +15,7 @@ theorem evaluate_addToClock {σ : Type} (st : State σ) (env : SemEnv Value) (es
     (next : State σ) (result : Result (List Value) Value) (extra : Nat)
     (h : evaluate st env es = (next, result) ∧ result ≠ .err (.abort .timeoutError)) :
     evaluate { st with clock := st.clock + extra } env es = ({ next with clock := next.clock + extra }, result) :=
-  isClockIoMono_extra (fun state => evaluate state env es) (fun state => clockIoEvaluateFull state env es) st next result extra h
+  isClockIoMono_extra (fun state => evaluate state env es) st next result extra (fun state => clockIoEvaluateFull state env es) h
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_match_add_to_clock"]
 theorem evaluateMatch_addToClock {σ : Type} (st : State σ) (env : SemEnv Value) (value : Value)
@@ -25,14 +25,14 @@ theorem evaluateMatch_addToClock {σ : Type} (st : State σ) (env : SemEnv Value
     evaluateMatch { st with clock := st.clock + extra } env value clauses errorValue =
       ({ next with clock := next.clock + extra }, result) :=
   isClockIoMono_extra (fun state => evaluateMatch state env value clauses errorValue)
-    (fun state => clockIoMatchFull state env value clauses errorValue) st next result extra h
+    st next result extra (fun state => clockIoMatchFull state env value clauses errorValue) h
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_decs_add_to_clock"]
 theorem evaluateDecs_addToClock {σ : Type} (st : State σ) (env : SemEnv Value) (ds : List Dec)
     (next : State σ) (result : Result (SemEnv Value) Value) (extra : Nat)
     (h : evaluateDecs st env ds = (next, result) ∧ result ≠ .err (.abort .timeoutError)) :
     evaluateDecs { st with clock := st.clock + extra } env ds = ({ next with clock := next.clock + extra }, result) :=
-  isClockIoMono_extra (fun state => evaluateDecs state env ds) (fun state => clockIoDecsFull state env ds) st next result extra h
+  isClockIoMono_extra (fun state => evaluateDecs state env ds) st next result extra (fun state => clockIoDecsFull state env ds) h
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_add_to_clock_io_events_mono"]
 theorem evaluate_addToClockIoEventsMono {σ : Type} :
@@ -43,23 +43,23 @@ theorem evaluate_addToClockIoEventsMono {σ : Type} :
         (evaluateMatch { st with clock := st.clock + extra } env value clauses errorValue).1.ffi) := by
   refine ⟨?_, ?_⟩
   · intro st env es extra
-    exact isClockIoMono_extra_mono (fun state => evaluate state env es) (fun state => clockIoEvaluateFull state env es) st extra
+    exact isClockIoMono_extra_mono (fun state => evaluate state env es) st extra (fun state => clockIoEvaluateFull state env es)
   · intro st env value clauses errorValue extra
     exact isClockIoMono_extra_mono (fun state => evaluateMatch state env value clauses errorValue)
-      (fun state => clockIoMatchFull state env value clauses errorValue) st extra
+      st extra (fun state => clockIoMatchFull state env value clauses errorValue)
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_decs_add_to_clock_io_events_mono"]
-theorem evaluateDecs_addToClockIoEventsMono {σ : Type} (st : State σ) (env : SemEnv Value)
-    (ds : List Dec) (extra : Nat) :
+theorem evaluateDecs_addToClockIoEventsMono {σ : Type} (extra : Nat) (st : State σ)
+    (env : SemEnv Value) (ds : List Dec) :
     ioEventsMonoHOL (evaluateDecs st env ds).1.ffi (evaluateDecs { st with clock := st.clock + extra } env ds).1.ffi :=
-  isClockIoMono_extra_mono (fun state => evaluateDecs state env ds) (fun state => clockIoDecsFull state env ds) st extra
+  isClockIoMono_extra_mono (fun state => evaluateDecs state env ds) st extra (fun state => clockIoDecsFull state env ds)
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_decs_ffi_mono_clock"]
 theorem evaluateDecs_ffiMonoClock {σ : Type} (k1 k2 : Nat) (st : State σ) (env : SemEnv Value) (ds : List Dec)
     (h : k1 ≤ k2) :
     ioEventsMonoHOL (evaluateDecs { st with clock := k1 } env ds).1.ffi
       (evaluateDecs { st with clock := k2 } env ds).1.ffi := by
-  have bound := evaluateDecs_addToClockIoEventsMono { st with clock := k1 } env ds (k2 - k1)
+  have bound := evaluateDecs_addToClockIoEventsMono (k2 - k1) { st with clock := k1 } env ds
   have eq : k1 + (k2 - k1) = k2 := by omega
   simpa only [eq] using bound
 
@@ -97,5 +97,74 @@ theorem evaluateDecs_clockDeterm {σ : Type} (st : State σ) (env : SemEnv Value
     have ffiEq := congrArg (fun state : State σ => state.ffi) stateEq
     exact ⟨ffiEq, resultEq⟩
   repeat' first | split | simp_all
+
+/-- Evaluation of an empty expression list returns the unchanged state. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_nil"]
+theorem evaluateNil {σ : Type} (state : State σ) (env : SemEnv Value) :
+    evaluate state env [] = (state, .val []) := by
+  simp [evaluate]
+
+/-- Evaluation cannot decrease the next type stamp. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_next_type_stamp_mono"]
+theorem evaluateNextTypeStampMono {σ : Type} (state : State σ) (env : SemEnv Value)
+    (expressions : List AstHOL.Exp) (next : State σ) (result : Result (List Value) Value)
+    (value : Value) (clauses : List (Pat × AstHOL.Exp)) (errorValue : Value)
+    (matchResult : Result (List Value) Value) (decs : List Dec) (decResult : Result (SemEnv Value) Value) :
+    (evaluate state env expressions = (next, result) → state.nextTypeStamp ≤ next.nextTypeStamp) ∧
+    (evaluateMatch state env value clauses errorValue = (next, matchResult) → state.nextTypeStamp ≤ next.nextTypeStamp) ∧
+    (evaluateDecs state env decs = (next, decResult) → state.nextTypeStamp ≤ next.nextTypeStamp) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro run
+    have inv := (isClockIoMono_evaluate (σ := σ)).1 state env expressions
+    simp only [isClockIoMono, run] at inv
+    exact inv.2.2.1
+  · intro run
+    have inv := (isClockIoMono_evaluate (σ := σ)).2.1 state env value clauses errorValue
+    simp only [isClockIoMono, run] at inv
+    exact inv.2.2.1
+  · intro run
+    have inv := (isClockIoMono_evaluate (σ := σ)).2.2 state env decs
+    simp only [isClockIoMono, run] at inv
+    exact inv.2.2.1
+
+/-- Evaluation cannot decrease the next exception stamp. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_next_exn_stamp_mono"]
+theorem evaluateNextExnStampMono {σ : Type} (state : State σ) (env : SemEnv Value)
+    (expressions : List AstHOL.Exp) (next : State σ) (result : Result (List Value) Value)
+    (value : Value) (clauses : List (Pat × AstHOL.Exp)) (errorValue : Value)
+    (matchResult : Result (List Value) Value) (decs : List Dec) (decResult : Result (SemEnv Value) Value) :
+    (evaluate state env expressions = (next, result) → state.nextExnStamp ≤ next.nextExnStamp) ∧
+    (evaluateMatch state env value clauses errorValue = (next, matchResult) → state.nextExnStamp ≤ next.nextExnStamp) ∧
+    (evaluateDecs state env decs = (next, decResult) → state.nextExnStamp ≤ next.nextExnStamp) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro run
+    have inv := (isClockIoMono_evaluate (σ := σ)).1 state env expressions
+    simp only [isClockIoMono, run] at inv
+    exact inv.2.2.2.1
+  · intro run
+    have inv := (isClockIoMono_evaluate (σ := σ)).2.1 state env value clauses errorValue
+    simp only [isClockIoMono, run] at inv
+    exact inv.2.2.2.1
+  · intro run
+    have inv := (isClockIoMono_evaluate (σ := σ)).2.2 state env decs
+    simp only [isClockIoMono, run] at inv
+    exact inv.2.2.2.1
+
+/-- Expression and match evaluation cannot shorten the reference store. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "evaluate_refs_length_mono"]
+theorem evaluateRefsLengthMono {σ : Type} :
+    (∀ (state : State σ) env expressions next result,
+      evaluate state env expressions = (next, result) → state.refs.length ≤ next.refs.length) ∧
+    (∀ (state : State σ) env value clauses errorValue next result,
+      evaluateMatch state env value clauses errorValue = (next, result) → state.refs.length ≤ next.refs.length) := by
+  constructor
+  · intro state env expressions next result run
+    have inv := (isClockIoMono_evaluate (σ := σ)).1 state env expressions
+    simp only [isClockIoMono, run] at inv
+    exact inv.2.2.2.2.1
+  · intro state env value clauses errorValue next result run
+    have inv := (isClockIoMono_evaluate (σ := σ)).2.1 state env value clauses errorValue
+    simp only [isClockIoMono, run] at inv
+    exact inv.2.2.2.2.1
 
 end Flapjack.EvaluateProps

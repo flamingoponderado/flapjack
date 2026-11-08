@@ -44,3 +44,7 @@ val _ = (print "mono_antisym="; print_thm evaluatePropsTheory.io_events_mono_ant
 val _ = (print "call_consts="; print_thm evaluatePropsTheory.call_FFI_rel_consts; print "\n");
 val _ = (print "rtc_consts="; print_thm evaluatePropsTheory.RTC_call_FFI_rel_consts; print "\n");
 val _ = (print "rtc_mono="; print_thm evaluatePropsTheory.call_FFI_rel_io_events_mono; print "\n");
+val _ = (print "evaluate_nil="; print_thm evaluatePropsTheory.evaluate_nil; print "\n");
+val _ = (print "evaluate_type_stamp_mono="; print_thm evaluatePropsTheory.evaluate_next_type_stamp_mono; print "\n");
+val _ = (print "evaluate_exn_stamp_mono="; print_thm evaluatePropsTheory.evaluate_next_exn_stamp_mono; print "\n");
+val _ = (print "evaluate_refs_length_mono="; print_thm evaluatePropsTheory.evaluate_refs_length_mono; print "\n");

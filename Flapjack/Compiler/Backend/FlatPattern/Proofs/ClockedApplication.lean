@@ -153,7 +153,7 @@ theorem compile_call_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
       | some selected =>
         obtain ⟨callEnv, body⟩ := selected
         obtain ⟨bodyBound, flag, compiledBody, targetCallEnv, bodyCfg, bodyCompiled, callEnvs, targetCall⟩ :=
-          doOpApp_simulation_reverse sourceValues targetValues callEnv body call valuesRel
+          doOpApp_simulation_reverse sourceValues callEnv body targetValues ⟨call, valuesRel⟩
         have targetClock : targetFixed.clock = sourceFixed.clock := fixedStates.1
         by_cases zero : sourceFixed.clock = 0
         · have targetZero : targetFixed.clock = 0 := by omega

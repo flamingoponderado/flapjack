@@ -1,3 +1,4 @@
+import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.Simplify
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.HelpersProduction
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyTotal

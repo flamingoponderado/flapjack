@@ -1,8 +1,10 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalLookup
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 import Flapjack.EvaluateHOL.Definition
+import Flapjack.Misc.ListEl
 
 /-! Source-to-flat lookup and variable helpers, including the HOL
 `env_rel_lookup` port. The untagged helpers are Flapjack-specific infrastructure
@@ -18,6 +20,82 @@ theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
     GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
 
 end EnvRelLookupReview
+
+local instance : Nonempty (VarN × Value) :=
+  ⟨(Flapjack.Basis.Pure.MlString.ofString "", .litv (.intLit 0))⟩
+
+local instance : Nonempty (VarN × FlatSem.Value) :=
+  ⟨(Flapjack.Basis.Pure.MlString.ofString "", .litv (.intLit 0))⟩
+
+/-- An association-list environment is related exactly when its lengths and
+corresponding entries agree. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_rel_el"
+  (fmap_as_finite_support := [c, tys])]
+theorem envRel_el (genv : GlobalEnv) (env : List (VarN × Value))
+    (flatEnv : List (VarN × FlatSem.Value)) :
+    EnvRel genv (alistToNs env) flatEnv ↔
+      env.length = flatEnv.length ∧ ∀ n, n < env.length →
+        (Flapjack.holEl n env).1 = (Flapjack.holEl n flatEnv).1 ∧
+        ValueRel genv (Flapjack.holEl n env).2 (Flapjack.holEl n flatEnv).2 := by
+  rw [envRel_alist_iff, List.forall₂_iff_get]
+  constructor
+  · rintro ⟨length, related⟩
+    refine ⟨length, ?_⟩
+    intro n bound
+    have flatBound : n < flatEnv.length := by simpa [← length] using bound
+    simpa only [List.get_eq_getElem, Flapjack.holEl_eq_getElem n env bound,
+      Flapjack.holEl_eq_getElem n flatEnv flatBound] using related n bound flatBound
+  · rintro ⟨length, related⟩
+    refine ⟨length, ?_⟩
+    intro n bound flatBound
+    simpa only [List.get_eq_getElem, Flapjack.holEl_eq_getElem n env bound,
+      Flapjack.holEl_eq_getElem n flatEnv flatBound] using related n bound
+
+/-- Pointwise relation at an index bounded by the second list. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "LIST_REL_IMP_EL2"]
+theorem listRel_imp_el2 {α β : Type} [Nonempty α] [Nonempty β]
+    (relation : α → β → Prop) (xs : List α) (ys : List β)
+    (related : List.Forall₂ relation xs ys) (i : Nat) (bound : i < ys.length) :
+    relation (Flapjack.holEl i xs) (Flapjack.holEl i ys) := by
+  have leftBound : i < xs.length := by simpa [related.length_eq] using bound
+  rw [Flapjack.holEl_eq_getElem i xs leftBound, Flapjack.holEl_eq_getElem i ys bound]
+  exact related.get leftBound bound
+
+/-- Pointwise relation at an index bounded by the first list. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "LIST_REL_IMP_EL"]
+theorem listRel_imp_el {α β : Type} [Nonempty α] [Nonempty β]
+    (relation : α → β → Prop) (xs : List α) (ys : List β)
+    (related : List.Forall₂ relation xs ys) (i : Nat) (bound : i < xs.length) :
+    relation (Flapjack.holEl i xs) (Flapjack.holEl i ys) := by
+  have rightBound : i < ys.length := by simpa [← related.length_eq] using bound
+  exact listRel_imp_el2 relation xs ys related i rightBound
+
+/-- A list is nonempty exactly when it has a head and tail. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "NOT_NULL_EQ"]
+theorem notNull_eq_cons {α : Type} (xs : List α) :
+    xs ≠ [] ↔ ∃ head tail, xs = head :: tail := by
+  cases xs <;> simp
+
+/-- Evaluating a Boolean expression yields its flat Boolean value. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "evaluate_Bool"
+  (fmap_as_finite_support := [c, tys])]
+theorem evaluate_bool {C F : Type} (genv : GlobalEnv) (source : State F)
+    (flat : FlatSem.State C F) (env : FlatSem.Environment FlatSem.Value) (t : Tra) (b : Bool)
+    (_premises : StateRel genv source flat ∧ genvCOk genv.c) :
+    FlatSem.evaluate env flat [FlatLang.mkBool t b] = (flat, .val [FlatSem.boolValue b]) := by
+  cases b <;> simp [FlatSem.evaluate, FlatLang.mkBool, FlatSem.boolValue]
+
+/-- Flat Boolean values distinguish their Boolean arguments. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "Boolv_11"]
+theorem boolValue_eq_iff (b b' : Bool) : FlatSem.boolValue b = FlatSem.boolValue b' ↔ b = b' := by
+  cases b <;> cases b' <;> simp [FlatSem.boolValue, boolToTag, trueTag, falseTag]
+
+/-- An option case yielding a proposition separates into its two constructors. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "opt_case_bool_eq"]
+theorem optionCase_bool_eq {α : Type} (opt : Option α) (nc : Prop) (scc : α → Prop) :
+    (match opt with | none => nc | some x => scc x) ↔
+      (opt = none ∧ nc) ∨ ∃ x, opt = some x ∧ scc x := by
+  cases opt <;> simp
 
 /-- A local lookup in related environments produces a related flat value. -/
 theorem envRel_lookup (genv : GlobalEnv) (source : Namespace ModN VarN SemanticPrimitivesHOL.Value)
@@ -48,8 +126,9 @@ termination_by flat.length
   (fmap_as_finite_support := [c, tys])]
 theorem envRel_alist_lookup (genv : GlobalEnv) (source : List (VarN × SemanticPrimitivesHOL.Value))
     (name : VarN) (value : SemanticPrimitivesHOL.Value) (flat : List (VarN × FlatSem.Value))
-    (lookup : source.lookup name = some value) (related : EnvRel genv (alistToNs source) flat) :
+    (premises : source.lookup name = some value ∧ EnvRel genv (alistToNs source) flat) :
     ∃ flatValue, ValueRel genv value flatValue ∧ flat.lookup name = some flatValue := by
+  obtain ⟨lookup, related⟩ := premises
   have sourceLookup : nsLookup (alistToNs source : Namespace ModN VarN SemanticPrimitivesHOL.Value)
       (.short name) = some value := by simpa [alistToNs, nsLookup] using lookup
   obtain ⟨flatValue, flatLookup, valueRel⟩ := envRel_lookup genv (alistToNs source) flat related name value sourceLookup
@@ -65,9 +144,22 @@ theorem evaluate_global_unbounded {C F : Type} (genv : GlobalEnv) (compMap : Env
     ∃ flat, EvaluateHOL.evaluate sourceState sourceEnv [.var id] = (sourceState, .val [source]) ∧
       FlatSem.evaluate flatEnv flatState [compileExp trace compMap (.var id)] =
         (flatState, .val [flat]) ∧ ValueRel genv source flat ∧ StateRel genv sourceState flatState := by
-  obtain ⟨n, flat, t, compiled, valueRel, flatDo⟩ :=
-    globalLookupRel_doApp genv compMap id source flatState globalsEq related
-  refine ⟨flat, ?_, ?_, valueRel, statesRel⟩
-  · simp [EvaluateHOL.evaluate, lookup]
-  · simp [compileExp, compiled, compileVar, FlatSem.evaluate, FlatSem.fixClock, FlatSem.applyResult, FlatSem.doApp, flatDo]
+  cases related with
+  | intro _ _ _ n flat t compiled bound slot valueRel =>
+    have slotLookup : genv.v[n]? = some (some flat) := by
+      cases h : genv.v[n]? with
+      | none => simp [h] at slot
+      | some entry =>
+        cases entry with
+        | none => simp [h] at slot
+        | some value =>
+          simp [h] at slot
+          subst value
+          rfl
+    refine ⟨flat, ?_, ?_, valueRel, statesRel⟩
+    · simp [EvaluateHOL.evaluate, lookup]
+    · simp [compileExp, compiled, compileVar, FlatSem.evaluate, FlatSem.fixClock,
+        FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat, globalsEq, slotLookup]
+      cases flatState
+      simp_all
 end Flapjack.Compiler.Backend.SourceToFlat

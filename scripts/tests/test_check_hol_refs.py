@@ -386,6 +386,18 @@ def lookupCodeHOLFiniteExact
             [],
         )
 
+    def test_accepts_same_canonical_input_and_result_map_type(self):
+        source = self.SOURCE.replace("HolFiniteMapExact MlS CodeEntry",
+                                     "HolFiniteMapExact MlS Value")
+        witness = self.WITNESS.replace("HolFiniteMapExact MlS CodeEntry",
+                                       "HolFiniteMapExact MlS Value")
+        self.assertEqual(self.CHECK(self.module(source, witness).splitlines(),
+                                    source, "lookupCodeHOLFiniteExact", self.POSITIONS), [])
+        bad = witness.replace("lookupCodeHOLExact code.lookup fname arguments",
+                              "lookupCodeHOLFiniteExact code fname arguments")
+        self.assertTrue(self.CHECK(self.module(source, bad).splitlines(), source,
+                                   "lookupCodeHOLFiniteExact", self.POSITIONS))
+
     def test_rejects_extra_implicit_proof_and_instance_binders(self):
         equality = self.WITNESS.split(" :\n", 1)[1].split(" :=", 1)[0]
         for binder in ("{h : True}", "[h : Inhabited Value]",

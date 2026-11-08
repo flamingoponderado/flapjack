@@ -693,9 +693,9 @@ theorem esgcFree_naivePatternMatches_hol (t : Tra) (x : FlatLang.Exp)
 
 /-- Compiling match branches on a local scrutinee preserves the invariant. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "esgc_free_compile_pats"]
-theorem esgcFree_compilePats_hol (cfg : Config) (naive : Bool) (t : Tra) (n : Nat)
-    (t' : Tra) (name : Flapjack.Basis.Pure.MlString.MlString) (dflt : FlatLang.Exp)
-    (ps : List (FlatLang.Pat × FlatLang.Exp))
+theorem esgcFree_compilePats_hol (dflt : FlatLang.Exp)
+    (ps : List (FlatLang.Pat × FlatLang.Exp)) (cfg : Config) (naive : Bool)
+    (t : Tra) (n : Nat) (t' : Tra) (name : Flapjack.Basis.Pure.MlString.MlString)
     (safe : esgcFree dflt ∧ ∀ exp ∈ ps.map Prod.snd, esgcFree exp) :
     esgcFree (compilePats cfg naive t n (.varLocal t' name) dflt ps) := by
   apply esgcFree_compilePats cfg naive t n (.varLocal t' name) dflt ps

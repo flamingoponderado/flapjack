@@ -150,27 +150,6 @@ def findGlobalsFuns (select : Op → Option Nat) : List (AstHOL.VarN × AstHOL.V
   | (_, _, e) :: fs => sptUnion (findGlobals select e) (findGlobalsFuns select fs)
 end
 
-/-- The factored branch traversal is the original map-of-second-components
-followed by the list traversal. This is Flapjack proof infrastructure. -/
-theorem findGlobalsPats_eq_map (select : Op → Option Nat) (branches : List (Pat × Exp)) :
-    findGlobalsPats select branches = findGlobalsList select (branches.map Prod.snd) := by
-  induction branches with
-  | nil => rfl
-  | cons branch branches ih =>
-    cases branch
-    simp only [findGlobalsPats, List.map_cons, findGlobalsList, ih]
-
-/-- The factored recursive-function traversal is HOL's map of the third
-component followed by the list traversal. This is Flapjack proof infrastructure. -/
-theorem findGlobalsFuns_eq_map (select : Op → Option Nat)
-    (funs : List (AstHOL.VarN × AstHOL.VarN × Exp)) :
-    findGlobalsFuns select funs = findGlobalsList select (funs.map (fun f => f.2.2)) := by
-  induction funs with
-  | nil => rfl
-  | cons fn funs ih =>
-    rcases fn with ⟨_, _, _⟩
-    simp only [findGlobalsFuns, List.map_cons, findGlobalsList, ih]
-
 /-- Global locations initialized in an expression, including nested functions. -/
 @[hol "cakeml/compiler/backend/flat_elimScript.sml" "find_loc_def"]
 def findLoc (e : Exp) : NumSet := findGlobals destGlobalVarInit e

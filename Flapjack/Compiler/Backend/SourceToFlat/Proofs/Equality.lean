@@ -94,8 +94,8 @@ theorem equality_list_cons_step (x y : SemanticPrimitivesHOL.Value) (xs ys : Lis
   | val b => cases b <;> simp [tailIH]
 
 mutual
-/-- Equality preservation for the factored relation, pending correspondence
-to the original HOL value relation. -/
+/-- Equality preservation for the source-to-flat value relation. This is
+Flapjack proof infrastructure for the HOL-shaped equality simulation below. -/
 theorem equality_preserved (genv : GlobalEnv) (ok : genvCOk genv.c)
     (a b : SemanticPrimitivesHOL.Value) (fa fb : FlatSem.Value)
     (ha : ValueRel genv a fa) (hb : ValueRel genv b fb) :

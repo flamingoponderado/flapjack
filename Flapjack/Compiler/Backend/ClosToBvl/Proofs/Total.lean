@@ -174,28 +174,4 @@ theorem compileProg_succeeds (maxApp : Nat) (prog : List (Nat × Nat × ClosLang
   obtain ⟨⟨expressions, aux⟩, h⟩ := compileExpList_succeeds maxApp (prog.map (fun (_, _, e) => e)) []
   exact ⟨_, by simp [compileProg?, h]; rfl⟩
 
-/-- Once preprocessing has produced a closure program, the checked assembly
-stage cannot fail during expression lowering. -/
-theorem compilePrepared_succeeds (original current : Config) (es : List ClosLang.Exp)
-    (prog : List (Nat × Nat × ClosLang.Exp)) :
-    ∃ result, compilePrepared? original current es prog = some result := by
-  obtain ⟨compiled, h⟩ := compileProg_succeeds current.maxApp prog
-  exact ⟨_, by simp [compilePrepared?, h]; rfl⟩
-
-/-- With the optional closure optimizations disabled, neither preprocessing
-nor the prepared conversion can fail. -/
-theorem compileNoOpts_succeeds (config : Config) (es : List ClosLang.Exp)
-    (mti : config.doMti = false) (call : config.doCall = false)
-    (known : config.knownConf = none) :
-    ∃ result, compileNoOpts? config es = some result := by
-  unfold compileNoOpts? compileCommonNoOpts?
-  simp only [mti, call, Bool.false_or, Bool.false_eq_true, ↓reduceIte, known]
-  generalize renumbered : ClosNumber.renumberList
-      (if (config.nextLoc + max 1 es.length) % 2 = 0 then config.nextLoc + max 1 es.length
-       else config.nextLoc + max 1 es.length + 1) es = pair
-  obtain ⟨next, code⟩ := pair
-  simpa [mti, call] using compilePrepared_succeeds config
-    { config with start := config.nextLoc, nextLoc := next, knownConf := none, callState := (.ln, []) }
-    es (ClosAnnotate.compile (chainExps config.nextLoc code))
-
 end Flapjack.Compiler.Backend.ClosToBvl

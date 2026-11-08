@@ -627,7 +627,8 @@ theorem namespaceRel_union {α : Type} (x y t s : Spt α)
     · exact Or.inr (rightBelow n ⟨mem, bound⟩)
 
 /-- Source side conditions for a function list and the next worker label. -/
-def inputCondition (next : Nat) (program : List (Nat × Nat × Bvi.Exp)) : Prop :=
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "input_condition_def"]
+def inputCondition {α : Type} (next : Nat) (program : List (Nat × α)) : Prop :=
   (∀ p ∈ program, freeNames next p.1) ∧
   (program.map fun p => p.1).Nodup ∧
   (∀ p ∈ program.filter (fun p => decide (Flapjack.bvlNumStubs ≤ p.1)), ¬inWorkerNamespace p.1) ∧

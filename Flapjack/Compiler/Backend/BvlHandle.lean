@@ -203,30 +203,12 @@ def compileBounded (fuel limit env : Nat) (e : Exp) : Option (Exp × DbVarSet ×
   | some result => some result
   | none => compileFuel (max fuel (expBudget e + 1)) limit env e
 
-/-- Run handler simplification and compilation on an expression. The original
-first runs `bvl_const`; this explicitly restricted entry point omits it. -/
+/-- Run handler simplification and compilation; the input has already undergone
+constant propagation. -/
 def compileExpWithoutConstantsFuel (fuel limit arity : Nat) (e : Exp) : Option Exp := do
   let e ← simplifyBounded fuel e
   let (e, _, _, _) ← compileBounded fuel limit arity e
   pure e
-
-/-- Split a sequence at the source pass's exact syntactic boundary. -/
-def compileSeqsWithoutConstantsFuel : Nat → Nat → Exp → Option Exp → Option Exp
-  | 0, _, _, _ => none
-  | fuel + 1, limit, .let [x, y] (.var 1), acc => do
-      let rest ← compileSeqsWithoutConstantsFuel fuel limit y acc
-      compileSeqsWithoutConstantsFuel fuel limit x (some rest)
-  | fuel + 1, limit, e, acc => do
-      let e ← compileExpWithoutConstantsFuel fuel limit 0 e
-      match acc with
-      | none => pure e
-      | some rest => pure (.let [e] (.let [] (.let [] rest)))
-
-/-- The handler stage with the constant-folding prerequisite omitted. -/
-def compileAnyWithoutConstantsFuel (fuel : Nat) (splitSeq : Bool) (limit arity : Nat)
-    (e : Exp) : Option Exp :=
-  if arity == 0 && splitSeq then compileSeqsWithoutConstantsFuel fuel limit e none
-  else compileExpWithoutConstantsFuel fuel limit arity e
 
 /-- Run constant propagation followed by handler simplification and lowering. -/
 def compileExpFuel (fuel limit arity : Nat) (e : Exp) : Option Exp := do

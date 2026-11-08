@@ -1,7 +1,7 @@
 import Flapjack.EvaluateProps.ClockIoApp
 
-/-! Lexicographic induction assembling the original source evaluator
-clock-and-I/O invariant. Source and carrier review remains pending. -/
+/-! Lexicographic induction for the source evaluator clock-and-I/O theorem.
+Evaluation inherits the rational-cut assumption (SOUNDNESS item 8). -/
 namespace Flapjack.EvaluateProps
 open Flapjack.EvaluateHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL Flapjack.AstHOL
 

@@ -3,6 +3,8 @@ open HolKernel Parse boolLib bossLib;
 open flatPropsTheory;
 val _ = Globals.linewidth := 1000000;
 val _ = set_trace "Unicode" 0;
+val _ = (print "mk_flat_install_conf_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl flatPropsTheory.mk_flat_install_conf_def); print "\n");
 val _ = (print "evaluate_match_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl evaluate_match_def); print "\n");
 
 val _ = if null (hyp flatPropsTheory.build_rec_env_eq_MAP) then () else raise Fail "build_rec_env_eq_MAP has hypotheses";

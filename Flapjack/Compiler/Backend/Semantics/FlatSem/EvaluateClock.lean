@@ -15,7 +15,7 @@ theorem applyResult_clock {C F : Type} (state : State C F) (op : FlatLang.Op)
   | none => simp
   | some pair =>
     obtain ⟨next, result⟩ := pair
-    have clock := doApp_clock state next op values result run
+    have clock := (doApp_stable state next op values result run).1
     cases result <;> simpa using clock
 
 /-- Evaluating a constructor preserves the bound when its argument list does. -/

@@ -1,6 +1,14 @@
 load "backendPropsTheory";
 open HolKernel Parse boolLib bossLib backendPropsTheory;
 val _ = Globals.linewidth := 1000000;
+fun show_thm label th =
+  if null (hyp th) then
+    (print label; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
+  else raise Fail ("hypotheses: " ^ label);
+val _ = show_thm "option_le_SOME_0_typed=" option_le_SOME_0;
+val _ = show_thm "option_add_comm_typed=" option_add_comm;
+val _ = show_thm "option_add_assoc_typed=" option_add_assoc;
+val _ = show_thm "option_le_add_typed=" option_le_add;
 val _ = if null (hyp (option_le_max)) then () else raise Fail "hypotheses: option_le_max";
 val _ = (print "option_le_max_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (option_le_max)); print "\n");
 val _ = if null (hyp (option_le_eq_eqns)) then () else raise Fail "hypotheses: option_le_eq_eqns";

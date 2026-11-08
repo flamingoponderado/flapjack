@@ -63,8 +63,8 @@ theorem doApp_assign_related {C F : Type} (reachable : NumSet)
       · simpa [storeHasNoEval] using valueSafe
 
 /-- The assignment case of the original primitive simulation, with arbitrary
-argument lists and the original result obligations. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+argument lists and the original result obligations.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_assign {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -108,8 +108,8 @@ theorem doApp_some_flatStateRel_assign {C F G : Type} (reachable : NumSet)
               valuesNoEval, FlatSem.unitValue, valueHasEval, valuesHaveEval]
 
 /-- The reference-allocation case of the original primitive simulation, with
-arbitrary argument lists and the original result obligations. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+arbitrary argument lists and the original result obligations.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_ref {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -147,8 +147,8 @@ theorem doApp_some_flatStateRel_ref {C F G : Type} (reachable : NumSet)
       · simp [Flapjack.Compiler.Backend.FlatProps.resultValues, Flapjack.EvaluateHOL.listResult,
           valuesNoEval, valueHasEval]
 
-/-- The fixed-array allocation case of the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The fixed-array allocation case of the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_fixedArray {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -185,8 +185,8 @@ theorem replicateValues_within (n : Nat) (value : FlatSem.Value) (reachable : Nu
   | zero => simp [findValuesGlobals, globalsWithin, sptMem, sptDomain]
   | succ n ih => simp [List.replicate, findValuesGlobals, globalsWithin_union, safe, ih]
 
-/-- The variable-size array allocation case of the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The variable-size array allocation case of the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_array {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -246,8 +246,8 @@ theorem doApp_some_flatStateRel_array {C F G : Type} (reachable : NumSet)
               · simp [Flapjack.Compiler.Backend.FlatProps.resultValues, Flapjack.EvaluateHOL.listResult,
                   valuesNoEval, valueHasEval]
 
-/-- The byte-array allocation case of the primitive simulation. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The byte-array allocation case of the primitive simulation.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_byteArray {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -305,8 +305,8 @@ theorem doApp_some_flatStateRel_byteArray {C F G : Type} (reachable : NumSet)
                   · simp [Flapjack.Compiler.Backend.FlatProps.resultValues, Flapjack.EvaluateHOL.listResult,
                       valuesNoEval, valueHasEval]
 
-/-- The arrayLength case preserves related states and primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The arrayLength case preserves related states and primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_arrayLength {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -343,8 +343,8 @@ theorem doApp_some_flatStateRel_arrayLength {C F G : Type} (reachable : NumSet)
               by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, ← related.2.1, lookup],
               resultSafe.1, resultSafe.2⟩
 
-/-- The byteArrayLength case preserves related states and primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The byteArrayLength case preserves related states and primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_byteArrayLength {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -426,8 +426,8 @@ theorem readIndexed_array_related {C F : Type} (reachable : NumSet)
       have resultSafe := primitiveResult_value_invariants reachable value valueReachable (itemsSafe value member)
       exact ⟨target, related, by simp [FlatSem.readIndexed, negative, lookup], resultSafe.1, resultSafe.2⟩
 
-/-- The arraySub case preserves related states and primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The arraySub case preserves related states and primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_arraySub {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -475,8 +475,8 @@ theorem doApp_some_flatStateRel_arraySub {C F G : Type} (reachable : NumSet)
                   refine ⟨targetNext, stateRel, ?_, closed, safe⟩
                   simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, ← related.2.1, lookup, opEq] using read
 
-/-- The arraySubUnsafe case preserves related states and primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The arraySubUnsafe case preserves related states and primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_arraySubUnsafe {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -563,8 +563,8 @@ theorem readIndexed_literal_related {C F : Type} (reachable : NumSet)
         (by simp [findValueGlobals, globalsWithin, sptMem, sptDomain]) (by simp [valueHasEval])
       exact ⟨target, related, by simp [FlatSem.readIndexed, negative, lookup], resultSafe.1, resultSafe.2⟩
 
-/-- The byteArraySub case preserves related states and primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The byteArraySub case preserves related states and primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_byteArraySub {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -607,8 +607,8 @@ theorem doApp_some_flatStateRel_byteArraySub {C F G : Type} (reachable : NumSet)
                   refine ⟨targetNext, stateRel, ?_, closed, safe⟩
                   simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, ← related.2.1, lookup, opEq] using read
 
-/-- The byteArraySubUnsafe case preserves related states and primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The byteArraySubUnsafe case preserves related states and primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_byteArraySubUnsafe {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -715,8 +715,8 @@ theorem updateIndexed_related {C F α : Type} (reachable : NumSet)
       flatStateRel_setRefs reachable source target address _ related newReachable newSafe, ?_, resultSafe.1, resultSafe.2⟩
     simp [FlatSem.updateIndexed, good, targetAssigned]
 
-/-- The arrayUpdate case preserves related states and primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The arrayUpdate case preserves related states and primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_arrayUpdate {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -774,8 +774,8 @@ theorem doApp_some_flatStateRel_arrayUpdate {C F G : Type} (reachable : NumSet)
                     refine ⟨targetNext, stateRel, ?_, closed, safe⟩
                     simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, ← related.2.1, lookup, opEq] using updated
 
-/-- The arrayUpdateUnsafe case preserves related states and primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The arrayUpdateUnsafe case preserves related states and primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_arrayUpdateUnsafe {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -833,8 +833,8 @@ theorem doApp_some_flatStateRel_arrayUpdateUnsafe {C F G : Type} (reachable : Nu
                     refine ⟨targetNext, stateRel, ?_, closed, safe⟩
                     simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, ← related.2.1, lookup] using updated
 
-/-- The byteArrayUpdate case preserves related states and primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The byteArrayUpdate case preserves related states and primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_byteArrayUpdate {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
@@ -887,8 +887,8 @@ theorem doApp_some_flatStateRel_byteArrayUpdate {C F G : Type} (reachable : NumS
                         refine ⟨targetNext, stateRel, ?_, closed, safe⟩
                         simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, ← related.2.1, lookup, opEq] using updated
 
-/-- The byteArrayUpdateUnsafe case preserves related states and primitive-result invariants. -/
-@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+/-- The byteArrayUpdateUnsafe case preserves related states and primitive-result invariants.
+This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_byteArrayUpdateUnsafe {C F G : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (values : List FlatSem.Value)
     (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)

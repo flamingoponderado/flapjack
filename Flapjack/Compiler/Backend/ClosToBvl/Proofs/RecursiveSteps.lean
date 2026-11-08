@@ -62,27 +62,6 @@ theorem evaluate_reccLets_succ {C F : Type} (state : BvlSem.State C F)
   rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, step]
   rfl
 
-/-- The initial generated write also preserves the source-to-target relation
-when it targets a cell that was fresh in the original target store. -/
-theorem evaluate_reccLet0_targetOnly {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
-    (f : HolFiniteMapExact Nat Nat) (current : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
-    (env : List BvlSem.Value) (ptr label arity index : Nat) (values : List BvlSem.Value)
-    (states : stateRel f s t) (unused : t.refs.lookup ptr = none)
-    (extension : ∀ key cell, t.refs.lookup key = some cell → current.lookup key = some cell)
-    (labelInstalled : ∃ entry, sptLookup label t.code = some entry)
-    (lookup : current.lookup ptr = some (.valueArray values)) (bound : index < values.length) :
-    let block := BvlSem.Value.block 30 [.codePtr label, .number (Int.ofNat (arity - 1)), .refPtr true ptr]
-    let next := { t with refs := current.updateEq (ptr, .valueArray (values.set index block)) }
-    BvlSem.evaluate [reccLet0 label arity index] (.refPtr true ptr :: env) { t with refs := current } =
-      (.val [block], next) ∧
-    stateRel f s next ∧ unmappedRefsSubmap t.refs next.refs f f ∧
-    (¬ ∃ sourcePtr, f.lookup sourcePtr = some ptr) ∧
-    next.refs.lookup ptr = some (.valueArray (values.set index block)) := by
-  refine ⟨?_, stateRel_targetRefs_update_originally_fresh s t f current ptr
-    (.valueArray (values.set index (.block 30 [.codePtr label, .number (Int.ofNat (arity - 1)), .refPtr true ptr])))
-    states unused extension⟩
-  exact evaluate_reccLet0 { t with refs := current } env ptr label arity index values labelInstalled lookup bound
-
 /-- A list of zero constants evaluates without changing the BVL state. -/
 theorem evaluate_zero_constants {C F : Type} (count : Nat) (env : List BvlSem.Value)
     (state : BvlSem.State C F) :

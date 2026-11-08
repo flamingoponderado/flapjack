@@ -6,14 +6,14 @@ namespace Flapjack.Compiler.Backend.ClosConstant.Proofs
 open Flapjack.Compiler.Backend.ClosLang Flapjack.Compiler.Backend.ClosSem
 open Flapjack.Compiler.Backend.BackendCommon
 
-def lookupPart (part : ConstPart) : List (ConstPart × Nat) → Option Nat
+def lookupPart {α β : Type} [DecidableEq α] (part : α) : List (α × β) → Option β
   | [] => none
   | (other, index) :: rest => if part = other then some index else lookupPart part rest
 
 /-- Assign an index to a part, reusing its previous index when present. -/
 @[hol "cakeml/compiler/backend/proofs/clos_constantProofScript.sml" "make_part_def"]
-def makePart (index : Nat) (part : ConstPart) (aux : List (ConstPart × Nat)) :
-    Nat × Nat × List (ConstPart × Nat) :=
+def makePart {α : Type} [DecidableEq α] (index : Nat) (part : α) (aux : List (α × Nat)) :
+    Nat × Nat × List (α × Nat) :=
   match lookupPart part aux with
   | some old => (index, old, aux)
   | none => (index + 1, index, (part, index) :: aux)

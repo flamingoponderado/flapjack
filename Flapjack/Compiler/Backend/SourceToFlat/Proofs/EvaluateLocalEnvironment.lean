@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundControl
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundConstructor
 import Flapjack.NamespaceProps
 import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
 
@@ -7,6 +7,48 @@ These factored relations remain pending HOL correspondence review. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
+
+namespace DoAppRecHelpPort
+/-- Roundtrip for the finite maps of the global environment. -/
+theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
+    GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
+end DoAppRecHelpPort
+
+/-- Recursive closures generated from a function list preserve the local
+environment relation when they capture the same related environments. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app_rec_help"
+  (fmap_as_finite_support := [c, tys])]
+theorem doApp_rec_help {α : Type} [Nonempty α] {baseEnv : SemEnv Value} {traces : List BackendCommon.Tra}
+    {capturedFuns : List (VarN × VarN × AstHOL.Exp)} :
+    ∀ (genv : GlobalEnv) (compMap : Environment) (sourceLocal : Namespace ModN VarN Value)
+      (flatLocal : FlatSem.Environment FlatSem.Value) (_envVTop : α)
+      (funs : List (VarN × VarN × AstHOL.Exp)) (trace : List VarN),
+      EnvRel genv sourceLocal flatLocal.v ∧
+      GlobalEnvInv genv compMap (fun n => n ∈ flatLocal.v.map Prod.fst) baseEnv ∧
+      traces.length = capturedFuns.length + flatLocal.v.length →
+      EnvRel genv
+        (alistToNs (funs.map (fun (f, _, _) =>
+          (f, Value.recclosure { baseEnv with v := nsAppend sourceLocal baseEnv.v } capturedFuns f))))
+        ((compileFuns trace { compMap with v := (List.foldr (fun (x, v) e => nsBind x v e) compMap.v
+          (List.zipWith (fun t x => (x, VarName.localName t x)) traces
+            (capturedFuns.map Prod.fst ++ flatLocal.v.map Prod.fst))) } funs).map
+          (fun (f, _, _) => (f, FlatSem.Value.recclosure flatLocal
+            (compileFuns trace { compMap with v := (List.foldr (fun (x, v) e => nsBind x v e) compMap.v
+              (List.zipWith (fun t x => (x, VarName.localName t x)) traces
+                (capturedFuns.map Prod.fst ++ flatLocal.v.map Prod.fst))) } capturedFuns) f))) := by
+  intro genv compMap sourceLocal flatLocal _ funs trace ⟨localRel, globalInv, length⟩
+  have recRel : ∀ name, ValueRel genv
+      (.recclosure { baseEnv with v := nsAppend sourceLocal baseEnv.v } capturedFuns name)
+      (.recclosure flatLocal (compileFuns trace { compMap with v := bindLocals traces (capturedFuns.map Prod.fst ++ flatLocal.v.map Prod.fst) compMap.v } capturedFuns) name) := by
+    intro name
+    exact .recclosure genv compMap baseEnv sourceLocal capturedFuns name flatLocal trace traces
+      localRel globalInv length
+  induction funs with
+  | nil => simpa [compileFuns, alistToNs, nsEmpty] using EnvRel.empty genv
+  | cons head rest ih =>
+    obtain ⟨name, arg, body⟩ := head
+    simpa [compileFuns, alistToNs, nsBind, bindLocals, nsBindList] using
+      EnvRel.bind genv name _ _ _ _ ih (recRel name)
 
 /-- An expression simulation restricted to states at or below a clock bound. -/
 def LocalEnvBoundedIH {C F : Type} [Nonempty C]
@@ -108,7 +150,7 @@ theorem bindLocals_lookup_hit (locals : List (VarN × FlatSem.Value)) (traces : 
         obtain ⟨foundTrace, found⟩ := ih traces len restLookup
         refine ⟨foundTrace, ?_⟩
         change nsLookup (nsBind key (.localName tr key) (bindLocals traces (rest.map Prod.fst) base)) (.short name) = _
-        rw [nsLookup_bind_other _ key (VarName.localName tr key) (.short name) (by simpa using same)]
+        rw [nsLookup_nsBind.2 (.short name) key (VarName.localName tr key) _ (by simpa using same)]
         exact found
 
 /-- Names absent from the local stack retain their original compiler lookup. -/
@@ -133,7 +175,7 @@ theorem bindLocals_lookup_other (locals : List (VarN × FlatSem.Value)) (traces 
         intro n mem
         exact fresh n (by simp [mem])
       change nsLookup (nsBind key (.localName tr key) (bindLocals traces (rest.map Prod.fst) base)) id = _
-      rw [nsLookup_bind_other _ key (VarName.localName tr key) id different]
+      rw [nsLookup_nsBind.2 id key (VarName.localName tr key) _ different]
       exact ih traces len restFresh
 
 /-- A missing flat local lookup is also absent from the related source locals. -/
@@ -150,7 +192,7 @@ theorem envRel_missing (genv : GlobalEnv) (source : Namespace ModN VarN Value)
         change decide (name = key) = false
         simp [same]
       have restMissing : flatEnv.lookup name = none := by simpa [List.lookup_cons, neq] using missing
-      rw [nsLookup_bind_other _ key sourceValue (.short name) (by simpa using same)]
+      rw [nsLookup_nsBind.2 (.short name) key sourceValue _ (by simpa using same)]
       exact envRel_missing genv sourceEnv flatEnv envRel name restMissing
 termination_by flat.length
 
@@ -169,7 +211,7 @@ theorem envRel_source_missing (genv : GlobalEnv) (source : Namespace ModN VarN V
         change decide (name = key) = false
         simp [same]
       have restMissing : nsLookup sourceEnv (.short name) = none := by
-        simpa [nsLookup_bind_other _ key sourceValue (.short name) (by simpa using same)] using missing
+        simpa [nsLookup_nsBind.2 (.short name) key sourceValue _ (by simpa using same)] using missing
       simpa [List.lookup_cons, neq] using envRel_source_missing genv sourceEnv flatEnv envRel name restMissing
 termination_by flat.length
 
@@ -277,11 +319,5 @@ theorem localEnvBounded_variable {C F : Type} [Nonempty C]
           exact ⟨.value (.cons valueRel .nil), invariant.2.2.1⟩
         · rw [sourceRun, flatRun]
           exact ⟨GlobalGrowth.refl genv, invariant, generation, oracForwardRel_refl interp source.evalState⟩
-
-/-- Leaf expressions using arbitrary related local environments. -/
-inductive LocalEnvExpression : AstHOL.Exp → Prop where
-  | literal (lit : Lit) : LocalEnvExpression (.lit lit)
-  | variable_ (id : Ident ModN VarN) : LocalEnvExpression (.var id)
-  | function_ (name : VarN) (body : AstHOL.Exp) : LocalEnvExpression (.fn name body)
 
 end Flapjack.Compiler.Backend.SourceToFlat

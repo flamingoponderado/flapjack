@@ -31,6 +31,42 @@ inductive ResultRel {α β : Type} (payload : GlobalEnv → α → β → Prop) 
       ResultRel payload genv (.err (.raise source)) (.err (.raise flat))
   | abort (error : Abort) : ResultRel payload genv (.err (.abort error)) (.err (.abort error))
 
+/-- The complete case equations for the result relation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "result_rel_eqns"
+  (fmap_as_finite_support := [c, tys])]
+theorem resultRel_eqns {α β γ : Type} [Nonempty γ] (payload : GlobalEnv → α → β → Prop) :
+    (∀ genv (value : α) (result : Result β FlatSem.Value),
+      ResultRel payload genv (.val value) result ↔
+        ∃ value', payload genv value value' ∧ result = .val value') ∧
+    (∀ genv (value : SemanticPrimitivesHOL.Value) (result : Result β FlatSem.Value),
+      ResultRel payload genv (.err (.raise value)) result ↔
+        ∃ value', ValueRel genv value value' ∧ result = .err (.raise value')) ∧
+    (∀ genv (_unused : γ) (result : Result β FlatSem.Value) (error : Abort),
+      ResultRel payload genv (.err (.abort error)) result ↔ result = .err (.abort error)) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro genv value result
+    constructor
+    · intro related
+      cases related with
+      | value relation => exact ⟨_, relation, rfl⟩
+    · rintro ⟨value', relation, rfl⟩
+      exact .value relation
+  · intro genv value result
+    constructor
+    · intro related
+      cases related with
+      | raise relation => exact ⟨_, relation, rfl⟩
+    · rintro ⟨value', relation, rfl⟩
+      exact .raise relation
+  · intro genv _ result error
+    constructor
+    · intro related
+      cases related
+      rfl
+    · intro equal
+      subst result
+      exact .abort error
+
 /-- Related successful expression lists use pointwise value correspondence. -/
 abbrev EvalResultRel := ResultRel (fun genv => List.Forall₂ (ValueRel genv))
 

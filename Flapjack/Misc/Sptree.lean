@@ -947,25 +947,22 @@ def sptListInsert : List Nat → NumSet → NumSet
   | [], tree => tree
   | key :: keys, tree => sptListInsert keys (sptInsert key () tree)
 
-/-- HOL `sptree$mk_BN` (`HOL/src/finite_maps/sptreeScript.sml:88-92`): collapse
-two empty children back to `LN`. This helper remains untagged pending its own
-source review; external HOL sources can be tagged using `hol4/` references. -/
+/-- Collapse two empty children back to `LN`. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "mk_BN_def"]
 def sptMkBN {α : Type} (left right : Spt α) : Spt α :=
   match left, right with
   | .ln, .ln => .ln
   | _, _ => .bn left right
 
-/-- HOL `sptree$mk_BS` (`HOL/src/finite_maps/sptreeScript.sml:94-98`): collapse
-the two empty children around a value to `LS`. This helper remains untagged
-pending its own source review, as for `sptMkBN`. -/
+/-- Collapse two empty children around a value to `LS`. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "mk_BS_def"]
 def sptMkBS {α : Type} (left : Spt α) (value : α) (right : Spt α) : Spt α :=
   match left, right with
   | .ln, .ln => .ls value
   | _, _ => .bs left value right
 
-/-- HOL `sptree$delete` (`HOL/src/finite_maps/sptreeScript.sml:99-113`) with the
-recursive key arithmetic `(k - 1) DIV 2` and the `mk_BN`/`mk_BS` collapsing.
-Untagged Flapjack infrastructure (source outside `cakeml/`). -/
+/-- Delete a key while collapsing empty child nodes. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "delete_def"]
 def sptDelete {α : Type} (key : Nat) : Spt α → Spt α
   | .ln => .ln
   | .ls value => if key = 0 then .ln else .ls value

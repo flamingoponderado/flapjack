@@ -1,3 +1,4 @@
+import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.ClosTicks.Source
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.Total
 import Flapjack.Misc.ListMapM

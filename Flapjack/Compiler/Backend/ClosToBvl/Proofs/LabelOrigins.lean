@@ -26,30 +26,6 @@ theorem buildAux_label_list (entries : List (Nat × Bvl.Exp)) (start : Nat) (aux
     simp only [Function.comp_def]
     omega
 
-/-- Recursive-group construction emits exactly the old labels and the
-evenly spaced labels reserved for the group. -/
-theorem buildAux_label_iff (entries : List (Nat × Bvl.Exp)) (start : Nat)
-    (aux : Aux) (label : Nat) :
-    label ∈ (buildAux start entries aux).2.map Prod.fst ↔
-      label ∈ aux.map Prod.fst ∨ ∃ index, index < entries.length ∧ label = start + 2 * index := by
-  constructor
-  · exact buildAux_label_mem entries start aux label
-  · intro origin
-    cases origin with
-    | inl previous =>
-      obtain ⟨entry, entryMem, entryLabel⟩ := List.mem_map.mp previous
-      obtain ⟨added, equal⟩ := buildAux_acc entries start aux
-      apply List.mem_map.mpr
-      exact ⟨entry, by rw [equal]; exact List.mem_append_right added entryMem, entryLabel⟩
-    | inr generated =>
-      obtain ⟨index, bound, rfl⟩ := generated
-      have built : buildAux start entries aux =
-          ((buildAux start entries aux).1, (buildAux start entries aux).2) := by
-        cases buildAux start entries aux
-        rfl
-      obtain ⟨item, member⟩ := buildAux_mem entries start aux _ _ built index bound
-      exact List.mem_map.mpr ⟨(start + 2 * index, item), member, rfl⟩
-
 mutual
 
 /-- Compiling an expression prepends its closure labels, shifted by the stub
@@ -185,39 +161,5 @@ theorem compileProg_checked_codeLocations (maxApp : Nat) (program : List (Nat ×
           (fun location => location + numStubs maxApp)) := by
   rw [compileProg_checked_label_origins maxApp program compiled run]
   simp [compileExpList_aux_labels]
-
-/-- Every checked program label is at or above the application-stub prefix. -/
-theorem compileProg_checked_label_lower (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp))
-    (compiled : Aux) (run : compileProg? maxApp program = some compiled)
-    (label : Nat) (member : label ∈ compiled.map Prod.fst) :
-    numStubs maxApp ≤ label := by
-  rw [compileProg_checked_codeLocations maxApp program compiled run] at member
-  simp only [List.mem_append, List.mem_map] at member
-  rcases member with ⟨entry, _, equal⟩ | ⟨location, _, equal⟩ <;> omega
-
-/-- Source entry labels and nested locations that are jointly distinct remain
-distinct in the checked BVL program. -/
-theorem compileProg_checked_nodup_of_source (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp))
-    (compiled : Aux) (run : compileProg? maxApp program = some compiled)
-    (sourceDistinct : ((program.map Prod.fst) ++
-      ClosProps.codeLocations (program.map (fun (_, _, body) => body))).Nodup) :
-    (compiled.map Prod.fst).Nodup := by
-  rw [compileProg_checked_codeLocations maxApp program compiled run]
-  apply List.Nodup.append
-  · have entries := sourceDistinct.of_append_left
-    have shifted : ((program.map Prod.fst).map (fun label => label + numStubs maxApp)).Nodup :=
-      entries.map (fun _ _ equal => Nat.add_right_cancel equal)
-    simpa [List.map_map, Function.comp_def] using shifted
-  · have nested := sourceDistinct.of_append_right
-    apply List.Nodup.map (fun _ _ equal => Nat.add_right_cancel equal)
-    exact List.nodup_reverse.mpr nested
-  · intro label entryMember nestedMember
-    obtain ⟨entry, entryMem, entryEq⟩ := List.mem_map.mp entryMember
-    obtain ⟨location, locationMem, locationEq⟩ := List.mem_map.mp nestedMember
-    have sourceEntry : entry.1 ∈ program.map Prod.fst := List.mem_map.mpr ⟨entry, entryMem, rfl⟩
-    have sourceNested : location ∈ ClosProps.codeLocations (program.map (fun (_, _, body) => body)) := by
-      simpa using locationMem
-    have equal : entry.1 = location := by omega
-    exact sourceDistinct.disjoint sourceEntry (equal ▸ sourceNested)
 
 end Flapjack.Compiler.Backend.ClosToBvl

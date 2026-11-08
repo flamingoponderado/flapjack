@@ -105,7 +105,7 @@ theorem doOpApp_recclosure (leftEnv : Environment Value)
       have extended := envRel_cons (i + 1)
         { leftEnv with v := FlatSem.buildRecEnv funs leftEnv leftEnv.v }
         { captured with v := FlatSem.buildRecEnv (compiledRecFuns cfg funs) captured captured.v }
-        argName arg targetArg (envRel_mono n (i + 1) _ _ recEnvs smaller) args
+        argName arg targetArg (envRel_mono n _ _ (i + 1) ⟨recEnvs, smaller⟩) args
       refine ⟨i, sg, body',
         { captured with v := (argName, targetArg) :: FlatSem.buildRecEnv (compiledRecFuns cfg funs) captured captured.v },
         cfg, compiled, extended, ?_⟩
@@ -115,11 +115,13 @@ theorem doOpApp_recclosure (leftEnv : Environment Value)
 
 /-- Function application simulation for arbitrary related input lists. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "do_opapp_thm"]
-theorem doOpApp_simulation (source target : List Value) (env : Environment Value) (body : FlatLang.Exp)
-    (run : FlatSem.doOpApp source = some (env, body)) (related : List.Forall₂ ValueRel source target) :
+theorem doOpApp_simulation (source : List Value) (env : Environment Value) (body : FlatLang.Exp)
+    (target : List Value) (premises : FlatSem.doOpApp source = some (env, body) ∧
+      List.Forall₂ ValueRel source target) :
     ∃ i sg body' targetEnv cfg,
       compileExp cfg body = (i, sg, body') ∧ EnvRel (i + 1) env targetEnv ∧
       FlatSem.doOpApp target = some (targetEnv, body') := by
+  obtain ⟨run, related⟩ := premises
   cases source with
   | nil => simp [FlatSem.doOpApp] at run
   | cons funValue rest =>
@@ -154,12 +156,12 @@ theorem doOpApp_simulation (source target : List Value) (env : Environment Value
 
 /-- Reversed related argument lists preserve function application. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "do_opapp_thm_REVERSE"]
-theorem doOpApp_simulation_reverse (source target : List Value) (env : Environment Value)
-    (body : FlatLang.Exp) (run : FlatSem.doOpApp source.reverse = some (env, body))
-    (related : List.Forall₂ ValueRel source target) :
+theorem doOpApp_simulation_reverse (source : List Value) (env : Environment Value)
+    (body : FlatLang.Exp) (target : List Value)
+    (premises : FlatSem.doOpApp source.reverse = some (env, body) ∧ List.Forall₂ ValueRel source target) :
     ∃ i sg body' targetEnv cfg,
       compileExp cfg body = (i, sg, body') ∧ EnvRel (i + 1) env targetEnv ∧
       FlatSem.doOpApp target.reverse = some (targetEnv, body') :=
-  doOpApp_simulation source.reverse target.reverse env body run (List.forall₂_reverse_iff.mpr related)
+  doOpApp_simulation source.reverse env body target.reverse ⟨premises.1, List.forall₂_reverse_iff.mpr premises.2⟩
 
 end Flapjack.Compiler.Backend.FlatPattern

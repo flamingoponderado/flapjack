@@ -198,7 +198,7 @@ theorem asub_outOfBounds {C F : Type} (genv : GlobalEnv)
     ValueRel genv subExnV FlatSem.subscriptExnV := by
   obtain ⟨flatValues, flatLookup, valuesRel⟩ := stateRel_array_lookup genv sourceState flatState statesRel n values lookup
   have length := List.Forall₂.length_eq valuesRel
-  have exceptionRel := (exceptionValues_related genv ok).2.2.2
+  have exceptionRel := (valueRel_lemmas genv ok).2.2.2.2
   rcases outOfBounds with negative | absent
   · cases unsafeOp <;> simp [doAppBasic, FlatSem.doAppMemory, SemanticPrimitivesHOL.readIndexed,
       FlatSem.readIndexed, SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, *]
@@ -243,7 +243,7 @@ theorem aw8sub_outOfBounds {C F : Type} (genv : GlobalEnv)
       some (if unsafeOp then none else some (flatState, .err (.raise FlatSem.subscriptExnV))) ∧
     ValueRel genv subExnV FlatSem.subscriptExnV := by
   have flatLookup := stateRel_byteArray_lookup genv sourceState flatState statesRel n bytes lookup
-  have exceptionRel := (exceptionValues_related genv ok).2.2.2
+  have exceptionRel := (valueRel_lemmas genv ok).2.2.2.2
   rcases outOfBounds with negative | absent <;> cases unsafeOp <;>
     simp [doAppBasic, FlatSem.doAppMemory, SemanticPrimitivesHOL.readIndexed, FlatSem.readIndexed,
       SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, *]
@@ -302,7 +302,7 @@ theorem aw8update_outOfBounds {C F : Type} (genv : GlobalEnv)
         some (if unsafeOp then none else some (flatState, .err (.raise FlatSem.subscriptExnV))) ∧
     ValueRel genv subExnV FlatSem.subscriptExnV := by
   have flatLookup := stateRel_byteArray_lookup genv sourceState flatState statesRel n bytes lookup
-  have exceptionRel := (exceptionValues_related genv ok).2.2.2
+  have exceptionRel := (valueRel_lemmas genv ok).2.2.2.2
   rcases outOfBounds with negative | tooLarge <;> cases unsafeOp <;>
     simp [doAppBasic, FlatSem.doAppMemory, SemanticPrimitivesHOL.updateIndexed, FlatSem.updateIndexed,
       SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, *]
@@ -365,7 +365,7 @@ theorem aupdate_outOfBounds {C F : Type} (genv : GlobalEnv)
     ValueRel genv subExnV FlatSem.subscriptExnV := by
   obtain ⟨flatValues, flatLookup, valuesRel⟩ :=
     stateRel_array_lookup genv sourceState flatState statesRel n values lookup
-  have exceptionRel := (exceptionValues_related genv ok).2.2.2
+  have exceptionRel := (valueRel_lemmas genv ok).2.2.2.2
   rcases outOfBounds with negative | tooLarge
   · cases unsafeOp <;>
       simp [doAppBasic, FlatSem.doAppMemory, SemanticPrimitivesHOL.updateIndexed, FlatSem.updateIndexed,
