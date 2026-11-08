@@ -19,10 +19,10 @@ evaluator equations, guard-correctness theorem, and pattern compiler
 correctness theorem.
 
 `data_resource_mono_probe.out` captures the exported data-semantics primitive
-and evaluator monotonicity statements and both resource-field swap theorems,
-with inferred configuration, FFI, value, and result carriers. These captures
-alone do not review the evaluator and primitive dependencies or establish
-HOL-to-Lean equivalence.
+and evaluator monotonicity statements, resource-field swap theorems, and the
+heap-size safety-update theorem, with inferred configuration, FFI, value, and
+result carriers. These captures alone do not review the evaluator and primitive
+dependencies or establish HOL-to-Lean equivalence.
 
 `data_to_word_gc_stack_probe.out` captures the exported `flat_PERM_extract_stack`,
 `soundness_size_of`, and `soundness_size_of_gen` statements with inferred types.

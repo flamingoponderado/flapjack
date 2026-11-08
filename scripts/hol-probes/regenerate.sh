@@ -8421,6 +8421,8 @@ run_probe data_resource_mono_probeScript.sml data_resource_mono_probe.out \
   do_app_io_events_mono_typed do_app_safe_for_space_mono_typed do_app_stack_max_typed \
   evaluate_io_events_mono_typed evaluate_safe_for_space_mono_typed evaluate_option_le_stack_max_typed \
   evaluate_smx_safe_peak_swap_typed evaluate_safe_peak_swap_typed \
+  do_app_err_safe_peak_swap_typed do_app_err_sm_safe_peak_swap_typed do_app_safe_peak_swap_typed do_app_sm_safe_peak_swap_typed \
+  size_of_heap_with_safe_typed \
   "$cake_dir/compiler/backend/semantics/dataPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_mti_collect_args_probeScript.sml clos_mti_collect_args_probe.out \

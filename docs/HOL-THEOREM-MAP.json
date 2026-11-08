@@ -128339,6 +128339,14 @@
   "reviewer": "Compared do_stack in data_sem_stack_probe.out: independent compiler and FFI types, original-state field reads, option sums and maxima, and the stack-limit comparison agree. HOL the F is rendered by Option.getD false."
 },
 {
+  "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+  "hol_name": "size_of_heap_with_safe",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/HeapSwap.lean",
+  "lean_name": "sizeOfHeap_with_safe",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared size_of_heap_with_safe_typed: independent compiler and FFI state types, binders s and safe, and the unconditional equation agree; size_of_heap does not read safe_for_space."
+},
+{
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "do_app_clock",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/ApplyClock.lean",
