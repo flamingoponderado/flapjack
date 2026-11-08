@@ -481,6 +481,16 @@ val do_app_vsubunsafe_replay = prove (do_app_vsubunsafe_typed,
   full_simp_tac(srw_ss())[LIST_REL_EL_EQN, source_to_flatProofTheory.sv_rel_cases] >>
   full_simp_tac(srw_ss())[arithmeticTheory.NOT_GREATER_EQ, GSYM arithmeticTheory.LESS_EQ, do_app_v_rel_lems]);
 val _ = show_thm "do_app_vsubunsafe_replay=" do_app_vsubunsafe_replay;
+val do_app_vlength_typed = list_mk_forall
+  (List.take (do_app_binders, 3) @ List.drop (do_app_binders, 4),
+   subst [List.nth (do_app_binders, 3) |-> ``ast$Vlength``] do_app_body);
+val do_app_vlength_replay = prove (do_app_vlength_typed,
+  rpt gen_tac >> Cases_on `s1` >> Cases_on `s1_i1.refs` >> simp [] >> Cases_on `s1_i1` >>
+  simp [source_to_flatTheory.astOp_to_flatOp_def, astTheory.getOpClass_def] >>
+  srw_tac[][semanticPrimitivesPropsTheory.do_app_cases, flatSemTheory.do_app_def] >>
+  full_simp_tac(srw_ss())[do_app_rec_v_rel_eqns, source_to_flatProofTheory.result_rel_cases, do_app_v_rel_lems] >>
+  srw_tac[][] >> metis_tac [LIST_REL_LENGTH]);
+val _ = show_thm "do_app_vlength_replay=" do_app_vlength_replay;
 val shift_op = ``ast$Shift w sh n``;
 val do_app_shift_typed = list_mk_forall
   (List.take (do_app_binders, 3) @ List.rev (free_vars shift_op) @ List.drop (do_app_binders, 4),
