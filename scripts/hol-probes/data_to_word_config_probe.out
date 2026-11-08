@@ -55,6 +55,18 @@ assign_el_64=(Assign 8 (Load (Op Add [Op Add [Lookup CurrHeap; ShiftN Lsr (Var 4
 assign_el_bad_arity_64=(Skip,9)
 assign_elem_at_64=(Assign 8 (Load (Op Add [Op Add [Lookup CurrHeap; ShiftN Lsr (Var 4) 5]; Const 24w])),9)
 assign_elem_at_bad_arity_64=(Skip,9)
+arg3_def_typed=∀(vs :β list) (f :β -> β -> β -> α) (x :α). arg3 vs f x = case vs of ([] :β list) => x | [v1] => x | [v1; v2] => x | [v1; v2; v3] => f v1 v2 v3 | v1::v2::v3::v17::v18 => x
+real_byte_offset_def_typed=∀(r :num). (real_byte_offset r :α exp) = (Op Add [(Const (bytes_in_word :α word) :α exp); ShiftN Lsr (Var r :α exp) (2 :num)] :α exp)
+assign_deref_byte_def_typed=∀(c :config) (l :num) (dest :num) (v1 :num) (v2 :num). (assign_DerefByte c l dest v1 v2 :α prog # num) = (list_Seq [(Assign (1 :num) (Op Add [(real_addr c (adjust_var v1) :α exp); (real_byte_offset (adjust_var v2) :α exp)] :α exp) :α prog); (Inst (Mem Load8 (3 :num) (Addr (1 :num) (0w :α word))) :α prog); (Assign (adjust_var dest) (ShiftN Lsl (Var (3 :num) :α exp) (2 :num)) :α prog)],l)
+assign_update_def_typed=∀(c :config) (l :num) (dest :num) (v1 :num) (v2 :num) (v3 :num). (assign_Update c l dest v1 v2 v3 :α prog # num) = (Seq (Store (Op Add [(real_addr c (adjust_var v1) :α exp); (real_offset c (adjust_var v2) :α exp)] :α exp) (adjust_var v3) :α prog) (Assign (adjust_var dest) (Unit :α exp) :α prog),l)
+assign_update_byte_def_typed=∀(c :config) (l :num) (dest :num) (v1 :num) (v2 :num) (v3 :num). (assign_UpdateByte c l dest v1 v2 v3 :α prog # num) = (list_Seq [(Assign (1 :num) (Op Add [(real_addr c (adjust_var v1) :α exp); (real_byte_offset (adjust_var v2) :α exp)] :α exp) :α prog); (Assign (3 :num) (ShiftN Lsr (Var (adjust_var v3) :α exp) (2 :num)) :α prog); (Inst (Mem Store8 (3 :num) (Addr (1 :num) (0w :α word))) :α prog); (Assign (adjust_var dest) (Unit :α exp) :α prog)],l)
+assign_deref_byte_64=(Seq (Assign 1 (Op Add [Op Add [Lookup CurrHeap; ShiftN Lsr (Var 4) 5]; Op Add [Const 8w; ShiftN Lsr (Var 6) 2]])) (Seq (Inst (Mem Load8 3 (Addr 1 0w))) (Assign 8 (ShiftN Lsl (Var 3) 2))),9)
+assign_deref_byte_bad_arity_64=(Skip,9)
+assign_update_32=(Seq (Store (Op Add [Op Add [Lookup CurrHeap; ShiftN Lsr (Var 4) 6]; Op Add [Const 4w; Var 6]]) 8) (Assign 8 FALSE_CONST),9)
+assign_update_cons_64=(Seq (Store (Op Add [Op Add [Lookup CurrHeap; ShiftN Lsr (Var 4) 5]; Op Add [Const 8w; ShiftN Lsl (Var 6) 1]]) 8) (Assign 8 FALSE_CONST),9)
+assign_update_bad_arity_64=(Skip,9)
+assign_update_byte_64=(Seq (Assign 1 (Op Add [Op Add [Lookup CurrHeap; ShiftN Lsr (Var 4) 5]; Op Add [Const 8w; ShiftN Lsr (Var 6) 2]])) (Seq (Assign 3 (ShiftN Lsr (Var 8) 2)) (Seq (Inst (Mem Store8 3 (Addr 1 0w))) (Assign 8 FALSE_CONST))),9)
+assign_update_byte_bad_arity_64=(Skip,9)
 store_each_64=Seq (Store (Op Add [Var 2; Const 8w]) 4) (Seq (Store (Op Add [Var 2; Const 16w]) 6) Skip)
 mem_eq_list_64=Seq (Assign 5 (Load (Op Add [Var 3; Const 8w]))) (If Equal 5 (Imm 3w) (Seq (Assign 5 (Load (Op Add [Var 3; Const 16w]))) (If Equal 5 (Imm 7w) (Assign 1 TRUE_CONST) Skip)) Skip)
 silent_ffi_off_64=Skip

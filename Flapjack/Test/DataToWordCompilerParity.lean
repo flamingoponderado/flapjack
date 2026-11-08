@@ -51,6 +51,32 @@ example : compileControl? (width := 64) conf 4 9 (.assign 3 (.blockOp (.elemAt 2
 example : compileControl? (width := 64) conf 4 9 (.assign 3 (.blockOp (.elemAt 2)) [] none) =
     some (.skip, 9) := by rfl
 
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.memOp .derefByte) [1] none) =
+    some (.skip, 9) := by rfl
+
+example : compileControl? (width := 32) conf 4 9 (.assign 3 (.memOp .update) [1, 2, 3] none) =
+    some (.seq (.store (.op .add [
+      .op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 6)],
+      .op .add [.const 4, .var 6]]) 8) (.assign 8 (.const 2)), 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.memOp .updateCons) [1, 2, 3] none) =
+    some (.seq (.store (.op .add [
+      .op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)],
+      .op .add [.const 8, .shift .lsl (.var 6) (.const 1)]]) 8) (.assign 8 (.const 2)), 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.memOp .update) [1, 2] none) =
+    some (.skip, 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.memOp .updateByte) [1, 2, 3] none) =
+    some (.seq (.assign 1 (.op .add [
+      .op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)],
+      .op .add [.const 8, .shift .lsr (.var 6) (.const 2)]]))
+      (.seq (.assign 3 (.shift .lsr (.var 8) (.const 2)))
+        (.seq (.inst (.mem .store8 3 (.addr 1 0))) (.assign 8 (.const 2)))), 9) := by rfl
+
+example : compileControl? (width := 64) conf 4 9 (.assign 3 (.memOp .updateByte) [] none) =
+    some (.skip, 9) := by rfl
+
 example : compileControl? (width := 64) conf 5 2 (.ifThenElse 1 (.move 3 1) (.seq .tick (.return [1, 3]))) =
     some (.ite .equal 4 (.imm 18) (.move 0 [(8, 4)]) (.seq .tick (.return 0 [4, 8])), 2) := by rfl
 

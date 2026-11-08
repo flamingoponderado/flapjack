@@ -125572,6 +125572,50 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "arg3_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "arg3",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared arg3_def_typed: the list-element and result types are independent, the three function inputs share the list-element type, exactly three elements invoke the function in order, and all other lists yield the supplied fallback. The executed update dispatch uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "real_byte_offset_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "realByteOffset",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared real_byte_offset_def_typed: the register input is unchanged and the result adds the reviewed bytes_in_word constant to ShiftN Lsr (Var r) 2. Positive-width BitVec represents HOL words. Both executed byte accesses call this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_DerefByte_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignDerefByte",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_deref_byte_def_typed: config, label, destination, base and index are retained; the real address and byte offset, Load8 registers, and tagged result shift occur in the same ordered sequence with the label unchanged. Positive-width BitVec represents HOL words. The compiler dispatch calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_Update_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignUpdate",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_update_def_typed and Unit_def: the adjusted base and index feed real_addr and real_offset, Store uses the adjusted value register, the following assignment returns unit, and the input label is retained. Positive-width BitVec represents HOL words. Both update variants in the compiler dispatch call this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "assign_UpdateByte_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "assignUpdateByte",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared assign_update_byte_def_typed and Unit_def: the real address and byte offset, shifted value, Store8 instruction and unit assignment occur in order with the same registers and unchanged label. Positive-width BitVec represents HOL words. The compiler dispatch calls this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "arg2_def",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
     "lean_name": "arg2",
