@@ -507,4 +507,84 @@ theorem FLOOKUP_FUPDATE_LIST_HOL_not_mem [DecidableEq α] (f : FiniteMap α β)
     have hk' : ¬ k = entry.1 := fun hc => hk hc.symm
     simp [hk']
 
+/-- `mapM` congruence: pointwise-equal maps on the elements of a list give the
+same `OPT_MMAP` result. Flapjack proof infrastructure; no exact HOL counterpart. -/
+theorem list_mapM_congr {α β : Type} (g h : α → Option β) (xs : List α)
+    (hgh : ∀ x, x ∈ xs → g x = h x) : xs.mapM g = xs.mapM h := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih =>
+    rw [List.mapM_cons, List.mapM_cons, hgh x (by simp), ih (fun y hy => hgh y (by simp [hy]))]
+
+/-- Flapjack-specific support corresponding to HOL `opt_mmap_some_eq_zip_flookup`.
+    This uses raw lookup functions, which admit maps with infinite support;
+    HOL uses finite maps. Any Boolean equality instances are extra assumptions.
+    The faithful HOL declaration remains to be ported. -/
+theorem opt_mmap_some_eq_zip_flookup [BEq α] [LawfulBEq α]
+    (xs : List α) (f : FiniteMap α β) (ys : List β)
+    (hdistinct : xs.Nodup) (hlen : xs.length = ys.length) :
+    xs.mapM (fun key => FLOOKUP (FUPDATE_LIST f (xs.zip ys)) key) = some ys := by
+  induction xs generalizing ys f with
+  | nil => cases ys <;> simp_all
+  | cons x xs ih =>
+    cases ys with
+    | nil => simp at hlen
+    | cons y ys =>
+      obtain ⟨hxnot, hdistinct'⟩ := List.nodup_cons.mp hdistinct
+      have hlen' : xs.length = ys.length := by
+        simp only [List.length_cons] at hlen
+        omega
+      have hxzip : x ∉ (xs.zip ys).map Prod.fst := by
+        intro hmem
+        obtain ⟨p, hp, hfst⟩ := List.mem_map.mp hmem
+        obtain ⟨hpin, _hpy⟩ := List.of_mem_zip hp
+        rw [hfst] at hpin
+        exact hxnot hpin
+      rw [List.zip_cons_cons, FUPDATE_LIST_cons, List.mapM_cons]
+      have hhead : FLOOKUP (FUPDATE_LIST (FUPDATE f (x, y)) (xs.zip ys)) x = some y := by
+        rw [FLOOKUP_FUPDATE_LIST_not_mem (FUPDATE f (x, y)) (xs.zip ys) x hxzip,
+          FLOOKUP_update]
+        simp
+      have htail :
+          xs.mapM (fun key => FLOOKUP (FUPDATE_LIST (FUPDATE f (x, y)) (xs.zip ys)) key)
+            = some ys :=
+        ih (ys := ys) (f := FUPDATE f (x, y)) hdistinct' hlen'
+      rw [hhead, htail]
+      rfl
+
+/-- Flapjack-specific support corresponding to HOL `opt_mmap_disj_zip_flookup`.
+    This uses raw lookup functions, which admit maps with infinite support;
+    HOL uses finite maps. Any Boolean equality instances are extra assumptions.
+    The faithful HOL declaration remains to be ported. -/
+theorem opt_mmap_disj_zip_flookup [BEq α] [LawfulBEq α]
+    (xs : List α) (f : FiniteMap α β) (ys : List α) (zs : List β)
+    (hdisj : ListDisjoint xs ys) (hlen : xs.length = zs.length) :
+    ys.mapM (fun key => FLOOKUP (FUPDATE_LIST f (xs.zip zs)) key) =
+      ys.mapM (fun key => FLOOKUP f key) := by
+  induction xs generalizing zs f with
+  | nil => rfl
+  | cons x xs ih =>
+    cases zs with
+    | nil => simp at hlen
+    | cons z zs =>
+      have hlen' : xs.length = zs.length := by
+        simp only [List.length_cons] at hlen
+        omega
+      have hxnot : x ∉ ys := by
+        intro hmem
+        exact hdisj x (by simp) hmem
+      have hdisj' : ListDisjoint xs ys := by
+        intro value hin hin'
+        exact hdisj value (by simp [hin]) hin'
+      rw [List.zip_cons_cons, FUPDATE_LIST_cons]
+      rw [ih (zs := zs) (f := FUPDATE f (x, z)) hdisj' hlen']
+      apply list_mapM_congr
+      intro key hkey
+      rw [FLOOKUP_update]
+      have hkx : (x == key) = false := by
+        apply beq_eq_false_iff_ne.mpr
+        intro he
+        exact hxnot (he ▸ hkey)
+      simp [hkx]
+
 end Flapjack

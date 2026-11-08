@@ -23,28 +23,6 @@ private theorem wsrSetFp {width : Nat} [NeZero width] {C F : Type}
     (h : wordStateEqRel s t) : wordStateEqRel (setFpVar n v s) (setFpVar n v t) := by
   simp_all [wordStateEqRel, setFpVar]
 
-/-- Flapjack proof infrastructure for the source's ordered two-register
-updates. Injectivity is scoped to the two writes and final live set; aliases
-are allowed. This is not a separate HOL declaration. -/
-private theorem twoFpWritesLocals {α : Type} (f : Nat → Nat) (a b : Nat)
-    (live : Nat → Prop) (source target : Spt α) (x y : α)
-    (hinj : ∀ k l, (k = a ∨ k = b ∨ live k) →
-      (l = a ∨ l = b ∨ live l) → f k = f l → k = l)
-    (hrel : strongLocalsRel f (fun k => live k ∧ k ≠ a ∧ k ≠ b) source target) :
-    strongLocalsRel f live (sptInsert b y (sptInsert a x source))
-      (sptInsert (f b) y (sptInsert (f a) x target)) := by
-  apply strongLocalsRelInsert f b live _ _ y
-  constructor
-  · intro k l hk hl he
-    exact hinj k l (hk.elim (fun h => Or.inr (Or.inl h)) (fun h => Or.inr (Or.inr h)))
-      (hl.elim (fun h => Or.inr (Or.inl h)) (fun h => Or.inr (Or.inr h))) he
-  · apply strongLocalsRelInsert f a (fun k => live k ∧ k ≠ b) source target x
-    constructor
-    · intro k l hk hl he
-      exact hinj k l (hk.elim Or.inl (fun h => Or.inr (Or.inr h.1)))
-        (hl.elim Or.inl (fun h => Or.inr (Or.inr h.1))) he
-    · exact slrMono hrel (fun _ hk => ⟨hk.1.1, hk.2, hk.1.2⟩)
-
 /-- HOL `evaluate_apply_colour[Inst]`, literal Skip instruction case. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
@@ -232,7 +210,7 @@ theorem evaluateApplyColour_InstFp {width : Nat} [NeZero width] {C F : Type}
           dsimp only
           refine ⟨rfl, wsrLocals _ _ hs, ?_⟩
           simp only [applyColourLocals, setVar]
-          apply twoFpWritesLocals f r1 r2 (sptDomain live)
+          apply twoWritesLocals f r1 r2 (sptDomain live)
           · intro k l hk hl heq
             apply hok.2 k l _ _ heq
             all_goals simp only [sptDomain_uni, sptDomain_ins, sptDomain_ln]; grind
