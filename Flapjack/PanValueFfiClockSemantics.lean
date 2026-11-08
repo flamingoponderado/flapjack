@@ -1134,6 +1134,644 @@ theorem panValueAssignmentValid_global_congr
             simpa using h
           rw [← hshape]
 
+/-! ### Leaf results preserve global shapes
+
+Every leaf helper either leaves the globals map untouched or performs a single
+validated `Global` assignment (`Assign` and `ShMemLoad`), which preserves the
+binding shape by `panValueAssignmentValid`. -/
+
+/-- A `ShMemLoad` `Global` destination is validated against `.word 0`, whose
+    shape is the same `.one` as the loaded word, so the update preserves the
+    binding shape. -/
+theorem panValueGlobalsShapeStable_update_word
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (structs : StructContext) (locals : VarName → Option (PanValue α))
+    (globals : VarName → Option (PanValue α)) (name : VarName) (value : α)
+    (hvalid : panValueAssignmentValid structs locals globals .global name (.word 0) = true) :
+    panValueGlobalsShapeStable structs globals (updatePanValueMap globals name (.word value)) := by
+  obtain ⟨oldValue, hold, hmatch⟩ :=
+    panValueAssignmentValid_global_true structs locals globals name (.word 0) hvalid
+  have holdShape : panValueShape structs oldValue = .one := by
+    cases hshape : panValueShape structs oldValue with
+    | one => rfl
+    | named shapeName => simp [panValueShape, panShapeMatches, hshape] at hmatch
+    | comb shapeFields => simp [panValueShape, panShapeMatches, hshape] at hmatch
+  apply panValueGlobalsShapeStable_update_of_match structs globals name (.word value) oldValue hold
+  simp [panValueShape, panShapeMatches, holdShape]
+
+theorem panValueAssignLocalResult_globals_stable
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (structs : StructContext) (base top bytes : α)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (name : VarName) (value : Exp α) (access : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) :
+    panValueFfiControlGlobalsStable structs globals
+      (panValueAssignLocalResult structs base top bytes locals globals memory ffi name value
+        access evaluator) := by
+  intro r h
+  simp only [panValueAssignLocalResult] at h ⊢
+  cases h' : evalPanValueExpWith evaluator structs locals globals memory base top bytes value
+      access with
+  | none =>
+    simp [h', Option.some.injEq] at *
+    subst r
+    simp [panValueControlGlobals, panValueGlobalsShapeStable]
+  | some value' =>
+      by_cases hvalid : panValueAssignmentValid structs locals globals .local name value' = true
+      ·
+        simp [h', hvalid, Option.some.injEq] at *
+        subst r
+        simp [panValueControlGlobals, panValueGlobalsShapeStable]
+      ·
+        simp [h', hvalid, Option.some.injEq] at *
+        subst r
+        simp [panValueControlGlobals, panValueGlobalsShapeStable]
+
+theorem panValueAssignGlobalResult_globals_stable
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (structs : StructContext) (base top bytes : α)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (name : VarName) (value : Exp α) (access : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) :
+    panValueFfiControlGlobalsStable structs globals
+      (panValueAssignGlobalResult structs base top bytes locals globals memory ffi name value
+        access evaluator) := by
+  intro r h
+  simp only [panValueAssignGlobalResult] at h ⊢
+  cases h' : evalPanValueExpWith evaluator structs locals globals memory base top bytes value
+      access with
+  | none =>
+    simp [h', Option.some.injEq] at *
+    subst r
+    simp [panValueControlGlobals, panValueGlobalsShapeStable]
+  | some value' =>
+      by_cases hvalid : panValueAssignmentValid structs locals globals .global name value' = true
+      · simp [h', hvalid] at h
+        subst r
+        simp only [panValueControlGlobals]
+        exact panValueGlobalsShapeStable_update_of_valid structs locals globals name value' hvalid
+      ·
+        simp [h', hvalid, Option.some.injEq] at *
+        subst r
+        simp [panValueControlGlobals, panValueGlobalsShapeStable]
+
+theorem panValuePrimitiveResult_globals_stable
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (structs : StructContext) (base top bytes : α)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (name : VarName) (operator : PrimOp) (arguments : List (Exp α))
+    (access : Option (PanValueMemoryAccess α)) (primitive : PanPrimitiveHandler α)
+    (evaluator : Option (PanExprEvaluator α) := none) :
+    panValueFfiControlGlobalsStable structs globals
+      (panValuePrimitiveResult structs base top bytes locals globals memory ffi name operator
+        arguments access primitive evaluator) := by
+  intro r h
+  simp only [panValuePrimitiveResult] at h ⊢
+  cases h' : evalPanValueExpsWith evaluator structs locals globals memory base top bytes arguments
+      access with
+  | none =>
+    simp [h', Option.some.injEq] at *
+    subst r
+    simp [panValueControlGlobals, panValueGlobalsShapeStable]
+  | some values =>
+      cases hprim : primitive operator values with
+      | none =>
+        simp [h', hprim, Option.some.injEq] at *
+        subst r
+        simp [panValueControlGlobals, panValueGlobalsShapeStable]
+      | some value' =>
+          cases hloc : locals name with
+          | none =>
+            simp [h', hprim, hloc, Option.some.injEq] at *
+            subst r
+            simp [panValueControlGlobals, panValueGlobalsShapeStable]
+          | some oldValue =>
+              by_cases hshape : panShapeMatches (panValueShape structs value')
+                (panValueShape structs oldValue) = true
+              ·
+                simp [h', hprim, hloc, hshape, Option.some.injEq] at *
+                subst r
+                simp [panValueControlGlobals, panValueGlobalsShapeStable]
+              ·
+                simp [h', hprim, hloc, hshape, Option.some.injEq] at *
+                subst r
+                simp [panValueControlGlobals, panValueGlobalsShapeStable]
+
+theorem panValueStoreResult_globals_stable
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (structs : StructContext) (base top bytes : α)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (address value : Exp α) (access : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) :
+    panValueFfiControlGlobalsStable structs globals
+      (panValueStoreResult structs base top bytes locals globals memory ffi address value
+        access evaluator) := by
+  intro r h
+  simp only [panValueStoreResult] at h ⊢
+  cases h' : evalPanValueExpWith evaluator structs locals globals memory base top bytes address
+      access with
+  | none =>
+    simp [h', Option.some.injEq] at *
+    subst r
+    simp [panValueControlGlobals, panValueGlobalsShapeStable]
+  | some address' =>
+      cases h2 : evalPanValueExpWith evaluator structs locals globals memory base top bytes value
+          access with
+      | none =>
+        simp [h', h2, Option.some.injEq] at *
+        subst r
+        simp [panValueControlGlobals, panValueGlobalsShapeStable]
+      | some value' =>
+          cases haddr : address' with
+          | word a =>
+              cases hstore : panValueStoreWithAccess memory bytes a value' access with
+              | none =>
+                simp [h', h2, haddr, hstore, Option.some.injEq] at *
+                subst r
+                simp [panValueControlGlobals, panValueGlobalsShapeStable]
+              | some memory' =>
+                simp [h', h2, haddr, hstore, Option.some.injEq] at *
+                subst r
+                simp [panValueControlGlobals, panValueGlobalsShapeStable]
+          | rStruct _ =>
+            simp [h', h2, haddr, Option.some.injEq] at *
+            subst r
+            simp [panValueControlGlobals, panValueGlobalsShapeStable]
+          | nStruct _ _ =>
+            simp [h', h2, haddr, Option.some.injEq] at *
+            subst r
+            simp [panValueControlGlobals, panValueGlobalsShapeStable]
+
+theorem panValueStore32Result_globals_stable
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (structs : StructContext) (base top bytes : α)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (address value : Exp α) (access : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) :
+    panValueFfiControlGlobalsStable structs globals
+      (panValueStore32Result structs base top bytes locals globals memory ffi address value
+        access evaluator) := by
+  intro r h
+  simp only [panValueStore32Result] at h ⊢
+  cases h' : evalPanValueExpWith evaluator structs locals globals memory base top bytes address
+      access with
+  | none =>
+    simp [h', Option.some.injEq] at *
+    subst r
+    simp [panValueControlGlobals, panValueGlobalsShapeStable]
+  | some address' =>
+      cases h2 : evalPanValueExpWith evaluator structs locals globals memory base top bytes value
+          access with
+      | none =>
+        simp [h', h2, Option.some.injEq] at *
+        subst r
+        simp [panValueControlGlobals, panValueGlobalsShapeStable]
+      | some value' =>
+          cases haddr : address' with
+          | word a =>
+              cases hval : value' with
+              | word v =>
+                  cases hacc : access with
+                  | none =>
+                      simp only [hacc] at *
+                      simp only [h', h2, haddr, hval, Option.some.injEq] at h
+                      subst r
+                      simp [panValueControlGlobals, panValueGlobalsShapeStable]
+                  | some acc =>
+                      cases hstore : acc.store32 acc.domain memory bytes a v with
+                      | none =>
+                          simp only [hacc] at *
+                          simp only [h', h2, haddr, hval, hstore, Option.some.injEq] at h
+                          subst r
+                          simp [panValueControlGlobals, panValueGlobalsShapeStable]
+                      | some memory' =>
+                          simp only [hacc] at *
+                          simp only [h', h2, haddr, hval, hstore, Option.some.injEq] at h
+                          subst r
+                          simp [panValueControlGlobals, panValueGlobalsShapeStable]
+              | rStruct _ =>
+                simp [h', h2, haddr, hval, Option.some.injEq] at *
+                subst r
+                simp [panValueControlGlobals, panValueGlobalsShapeStable]
+              | nStruct _ _ =>
+                simp [h', h2, haddr, hval, Option.some.injEq] at *
+                subst r
+                simp [panValueControlGlobals, panValueGlobalsShapeStable]
+          | rStruct _ =>
+            simp [h', h2, haddr, Option.some.injEq] at *
+            subst r
+            simp [panValueControlGlobals, panValueGlobalsShapeStable]
+          | nStruct _ _ =>
+            simp [h', h2, haddr, Option.some.injEq] at *
+            subst r
+            simp [panValueControlGlobals, panValueGlobalsShapeStable]
+
+theorem panValueStoreByteResult_globals_stable
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (structs : StructContext) (base top bytes : α)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (address value : Exp α) (access : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) :
+    panValueFfiControlGlobalsStable structs globals
+      (panValueStoreByteResult structs base top bytes locals globals memory ffi address value
+        access evaluator) := by
+  intro r h
+  simp only [panValueStoreByteResult] at h ⊢
+  cases h' : evalPanValueExpWith evaluator structs locals globals memory base top bytes address
+      access with
+  | none =>
+    simp [h', Option.some.injEq] at *
+    subst r
+    simp [panValueControlGlobals, panValueGlobalsShapeStable]
+  | some address' =>
+      cases h2 : evalPanValueExpWith evaluator structs locals globals memory base top bytes value
+          access with
+      | none =>
+        simp [h', h2, Option.some.injEq] at *
+        subst r
+        simp [panValueControlGlobals, panValueGlobalsShapeStable]
+      | some value' =>
+          cases haddr : address' with
+          | word a =>
+              cases hval : value' with
+              | word v =>
+                  cases hacc : access with
+                  | none =>
+                      simp only [hacc] at *
+                      simp only [h', h2, haddr, hval, Option.some.injEq] at h
+                      subst r
+                      simp [panValueControlGlobals, panValueGlobalsShapeStable]
+                  | some acc =>
+                      cases hstore : acc.storeByte acc.domain memory bytes a v with
+                      | none =>
+                          simp only [hacc] at *
+                          simp only [h', h2, haddr, hval, hstore, Option.some.injEq] at h
+                          subst r
+                          simp [panValueControlGlobals, panValueGlobalsShapeStable]
+                      | some memory' =>
+                          simp only [hacc] at *
+                          simp only [h', h2, haddr, hval, hstore, Option.some.injEq] at h
+                          subst r
+                          simp [panValueControlGlobals, panValueGlobalsShapeStable]
+              | rStruct _ =>
+                simp [h', h2, haddr, hval, Option.some.injEq] at *
+                subst r
+                simp [panValueControlGlobals, panValueGlobalsShapeStable]
+              | nStruct _ _ =>
+                simp [h', h2, haddr, hval, Option.some.injEq] at *
+                subst r
+                simp [panValueControlGlobals, panValueGlobalsShapeStable]
+          | rStruct _ =>
+            simp [h', h2, haddr, Option.some.injEq] at *
+            subst r
+            simp [panValueControlGlobals, panValueGlobalsShapeStable]
+          | nStruct _ _ =>
+            simp [h', h2, haddr, Option.some.injEq] at *
+            subst r
+            simp [panValueControlGlobals, panValueGlobalsShapeStable]
+
+theorem panValueReturnResult_globals_stable
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (structs : StructContext) (base top bytes : α)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (value : Exp α) (access : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) :
+    panValueFfiControlGlobalsStable structs globals
+      (panValueReturnResult structs base top bytes locals globals memory ffi value access
+        evaluator) := by
+  intro r h
+  simp only [panValueReturnResult] at h ⊢
+  cases h' : evalPanValueExpWith evaluator structs locals globals memory base top bytes value
+      access with
+  | none =>
+    simp [h', Option.some.injEq] at *
+    subst r
+    simp [panValueControlGlobals, panValueGlobalsShapeStable]
+  | some value' =>
+      by_cases hlimit : panValuePayloadWithinLimit structs value' = true
+      ·
+        simp [h', hlimit, Option.some.injEq] at *
+        subst r
+        simp [panValueControlGlobals, panValueGlobalsShapeStable]
+      ·
+        simp [h', hlimit, Option.some.injEq] at *
+        subst r
+        simp [panValueControlGlobals, panValueGlobalsShapeStable]
+
+theorem panValueRaiseResult_globals_stable
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (structs : StructContext) (base top bytes : α)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (contracts : Option PanValueCallContracts) (exception : VarName) (value : Exp α)
+    (access : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) :
+    panValueFfiControlGlobalsStable structs globals
+      (panValueRaiseResult structs base top bytes locals globals memory ffi contracts exception
+        value access evaluator) := by
+  intro r h
+  simp only [panValueRaiseResult] at h ⊢
+  cases h' : evalPanValueExpWith evaluator structs locals globals memory base top bytes value
+      access with
+  | none =>
+    simp [h', Option.some.injEq] at *
+    subst r
+    simp [panValueControlGlobals, panValueGlobalsShapeStable]
+  | some value' =>
+      by_cases hvalid : panValueExceptionValid structs contracts exception value' = true ∧
+          panValuePayloadWithinLimit structs value' = true
+      ·
+        simp [h', hvalid, Option.some.injEq] at *
+        subst r
+        simp [panValueControlGlobals, panValueGlobalsShapeStable]
+      ·
+        simp [h', hvalid, Option.some.injEq] at *
+        subst r
+        simp [panValueControlGlobals, panValueGlobalsShapeStable]
+
+theorem panValueShMemStoreResult_globals_stable
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (structs : StructContext) (base top bytes : α)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (size : OpSize) (address value : Exp α)
+    (access : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) :
+    panValueFfiControlGlobalsStable structs globals
+      (panValueShMemStoreResult context structs base top bytes locals globals memory ffi size
+        address value access evaluator) := by
+  intro r h
+  simp only [panValueShMemStoreResult] at h ⊢
+  cases h' : evalPanValueExpWith evaluator structs locals globals memory base top bytes address
+      access with
+  | none =>
+    simp [h', Option.some.injEq] at *
+    subst r
+    simp [panValueControlGlobals, panValueGlobalsShapeStable]
+  | some address' =>
+      cases h2 : evalPanValueExpWith evaluator structs locals globals memory base top bytes value
+          access with
+      | none =>
+        simp [h', h2, Option.some.injEq] at *
+        subst r
+        simp [panValueControlGlobals, panValueGlobalsShapeStable]
+      | some value' =>
+          cases haddr : address' with
+          | word a =>
+              cases hval : value' with
+              | word v =>
+                  cases hstore : panValueFfiSharedStore context ffi size a v with
+                  | none =>
+                    simp [h', h2, haddr, hval, hstore, Option.some.injEq] at *
+                    subst r
+                    simp [panValueControlGlobals, panValueGlobalsShapeStable]
+                  | some result =>
+                      cases result with
+                      | loaded _ _ =>
+                          simp [h', h2, haddr, hval, hstore, Option.some.injEq] at *
+                          subst r
+                          simp [panValueControlGlobals, panValueGlobalsShapeStable]
+                      | stored nextFfi =>
+                          simp [h', h2, haddr, hval, hstore, Option.some.injEq] at *
+                          subst r
+                          simp [panValueControlGlobals, panValueGlobalsShapeStable]
+                      | final nextFfi event =>
+                          simp [h', h2, haddr, hval, hstore, Option.some.injEq] at *
+                          subst r
+                          simp [panValueControlGlobals, panValueGlobalsShapeStable]
+              | rStruct _ =>
+                simp [h', h2, haddr, hval, Option.some.injEq] at *
+                subst r
+                simp [panValueControlGlobals, panValueGlobalsShapeStable]
+              | nStruct _ _ =>
+                simp [h', h2, haddr, hval, Option.some.injEq] at *
+                subst r
+                simp [panValueControlGlobals, panValueGlobalsShapeStable]
+          | rStruct _ =>
+            simp [h', h2, haddr, Option.some.injEq] at *
+            subst r
+            simp [panValueControlGlobals, panValueGlobalsShapeStable]
+          | nStruct _ _ =>
+            simp [h', h2, haddr, Option.some.injEq] at *
+            subst r
+            simp [panValueControlGlobals, panValueGlobalsShapeStable]
+
+theorem panValueShMemLoadResult_globals_stable
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (structs : StructContext) (base top bytes : α)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (size : OpSize) (kind : VarKind) (name : VarName) (address : Exp α)
+    (access : Option (PanValueMemoryAccess α))
+    (evaluator : Option (PanExprEvaluator α) := none) :
+    panValueFfiControlGlobalsStable structs globals
+      (panValueShMemLoadResult context structs base top bytes locals globals memory ffi size
+        kind name address access evaluator) := by
+  intro r h
+  simp only [panValueShMemLoadResult] at h ⊢
+  cases h' : evalPanValueExpWith evaluator structs locals globals memory base top bytes address
+      access with
+  | none =>
+      simp [h', Option.some.injEq] at *
+      subst r
+      simp [panValueControlGlobals, panValueGlobalsShapeStable]
+  | some address' =>
+      cases haddr : address' with
+      | word a =>
+          by_cases hvalid : panValueSharedLoadValid structs locals globals kind name (.word 0) =
+            true
+          · cases hload : panValueFfiSharedLoad context ffi size a with
+            | none =>
+                simp [h', haddr, hvalid, hload, Option.some.injEq] at *
+                subst r
+                simp [panValueControlGlobals, panValueGlobalsShapeStable]
+            | some result =>
+                cases result with
+                | loaded nextFfi value' =>
+                    cases kind with
+                    | «local» =>
+                        simp [h', haddr, hvalid, hload, Option.some.injEq] at *
+                        subst r
+                        simp [panValueControlGlobals, panValueGlobalsShapeStable]
+                    | «global» =>
+                        simp [h', haddr, hvalid, hload] at h
+                        subst r
+                        simp only [panValueControlGlobals]
+                        have hassign : panValueAssignmentValid structs locals globals .global
+                            name (.word 0) = true := by
+                          simpa [panValueSharedLoadValid] using hvalid
+                        exact panValueGlobalsShapeStable_update_word structs locals globals
+                          name value' hassign
+                | stored _ =>
+                    simp [h', haddr, hvalid, hload, Option.some.injEq] at *
+                    subst r
+                    simp [panValueControlGlobals, panValueGlobalsShapeStable]
+                | final nextFfi event =>
+                    simp [h', haddr, hvalid, hload, Option.some.injEq] at *
+                    subst r
+                    simp [panValueControlGlobals, panValueGlobalsShapeStable]
+          · simp [h', haddr, hvalid, Option.some.injEq] at *
+            subst r
+            simp [panValueControlGlobals, panValueGlobalsShapeStable]
+      | rStruct _ =>
+          simp [h', haddr, Option.some.injEq] at *
+          subst r
+          simp [panValueControlGlobals, panValueGlobalsShapeStable]
+      | nStruct _ _ =>
+          simp [h', haddr, Option.some.injEq] at *
+          subst r
+          simp [panValueControlGlobals, panValueGlobalsShapeStable]
+
+theorem panValueFfiExtCallResult_globals_stable
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (handler : PanValueStatefulFfiHandler α σ)
+    (structs : StructContext) (base top bytes : α)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (function : FunName)
+    (configuration configurationLength array arrayLength : Exp α)
+    (access : Option (PanValueMemoryAccess α))
+    (mh : Option (PanValueMemoryFfiHandler α σ))
+    (evaluator : Option (PanExprEvaluator α) := none) :
+    panValueFfiControlGlobalsStable structs globals
+      (panValueFfiExtCallResult context handler structs base top bytes locals globals memory ffi
+        function configuration configurationLength array arrayLength access mh evaluator) := by
+  intro r h
+  simp only [panValueFfiExtCallResult] at h ⊢
+  cases h' : evalPanValueExpsWith evaluator structs locals globals memory base top bytes
+      [configuration, configurationLength, array, arrayLength] access with
+  | none => simp [h', Option.some.injEq] at *; subst r; simp [panValueControlGlobals,
+      panValueGlobalsShapeStable]
+  | some values =>
+      cases values with
+      | nil => simp [h', Option.some.injEq] at *; subst r; simp [panValueControlGlobals,
+          panValueGlobalsShapeStable]
+      | cons v1 rest =>
+          cases rest with
+          | nil => simp [h', Option.some.injEq] at *; subst r; simp [panValueControlGlobals,
+              panValueGlobalsShapeStable]
+          | cons v2 rest2 =>
+              cases rest2 with
+              | nil => simp [h', Option.some.injEq] at *; subst r; simp
+                  [panValueControlGlobals, panValueGlobalsShapeStable]
+              | cons v3 rest3 =>
+                  cases rest3 with
+                  | nil =>
+                      simp [h', Option.some.injEq] at *
+                      subst r
+                      simp [panValueControlGlobals, panValueGlobalsShapeStable]
+                  | cons v4 rest4 =>
+                      cases rest4 with
+                      | cons _ _ =>
+                          simp [h', Option.some.injEq] at *
+                          subst r
+                          simp [panValueControlGlobals, panValueGlobalsShapeStable]
+                      | nil =>
+                          cases v1 <;> cases v2 <;> cases v3 <;> cases v4
+                          all_goals
+                            try simp [h', Option.some.injEq] at *
+                            try subst r
+                            try simp only [panValueControlGlobals]
+                            try exact panValueGlobalsShapeStable_refl structs globals
+                          rename_i wordValue3 wordValue2 wordValue1 wordValue
+                          cases mh with
+                          | none =>
+                              cases access with
+                              | none =>
+                                  cases hhandler : handler function wordValue3 wordValue2
+                                      wordValue1 wordValue locals ffi with
+                                  | none => simp_all
+                                  | some pair =>
+                                      obtain ⟨locals', ffi'⟩ := pair
+                                      simp_all
+                                      subst r
+                                      exact panValueGlobalsShapeStable_refl structs globals
+                              | some acc =>
+                                  cases hext : panValueFfiExtCall acc context memory bytes
+                                      ffi function wordValue3 wordValue2 wordValue1 wordValue with
+                                  | none =>
+                                      simp_all
+                                      subst r
+                                      exact panValueGlobalsShapeStable_refl structs globals
+                                  | some result =>
+                                      cases result with
+                                      | returned memory' ffi' =>
+                                          simp_all
+                                          subst r
+                                          exact panValueGlobalsShapeStable_refl structs globals
+                                      | final ffi' event =>
+                                          simp_all
+                                          subst r
+                                          exact panValueGlobalsShapeStable_refl structs globals
+                          | some handler' =>
+                              cases hres : handler' function wordValue3 wordValue2 wordValue1
+                                  wordValue locals memory ffi with
+                              | some triple =>
+                                  obtain ⟨locals', memory', ffi'⟩ := triple
+                                  simp_all
+                                  subst r
+                                  exact panValueGlobalsShapeStable_refl structs globals
+                              | none =>
+                                  cases access with
+                                  | none =>
+                                      cases hhandler : handler function wordValue3 wordValue2
+                                          wordValue1 wordValue locals ffi with
+                                      | none => simp_all
+                                      | some pair =>
+                                          obtain ⟨locals', ffi'⟩ := pair
+                                          simp_all
+                                          subst r
+                                          exact panValueGlobalsShapeStable_refl structs globals
+                                  | some acc =>
+                                      cases hext : panValueFfiExtCall acc context memory bytes
+                                          ffi function wordValue3 wordValue2 wordValue1
+                                          wordValue with
+                                      | none =>
+                                          simp_all
+                                          subst r
+                                          exact panValueGlobalsShapeStable_refl structs globals
+                                      | some result =>
+                                          cases result with
+                                          | returned memory' ffi' =>
+                                              simp_all
+                                              subst r
+                                              exact panValueGlobalsShapeStable_refl structs globals
+                                          | final ffi' event =>
+                                              simp_all
+                                              subst r
+                                              exact panValueGlobalsShapeStable_refl structs globals
+
 /-! This declaration-boundary adapter exposes the executed source-owned call
     after declaration evaluation. It shares the exact code-map conversion,
     exception-shape lookup, and return-contract path used by the public
