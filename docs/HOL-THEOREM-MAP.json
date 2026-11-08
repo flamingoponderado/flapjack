@@ -17568,7 +17568,15 @@
     "reviewer": "Compared adjust_semantics in source_eval_oracle_adjust_probe.out: independent compiler and FFI carriers, full compiler-preservation premise, insertion, non-failure and source-semantics conjunction, and adjusted-state semantics conclusion match. Evaluation inherits reals_as_rational_cuts."
   },
   {
-    "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
+  "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
+  "hol_name": "env_c_lemma",
+  "lean_name": "envC_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Evaluate.lean",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the recursive-function list, value environment, namespace carrier, and constructor-environment equality with the typed env_c_lemma_replay in source_let_proof_probe.out. The original local proof is replayed from extend_dec_env_def."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
     "hol_name": "compile_semantics_oracle",
     "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Semantics.lean",
     "lean_name": "compile_semantics_oracle",

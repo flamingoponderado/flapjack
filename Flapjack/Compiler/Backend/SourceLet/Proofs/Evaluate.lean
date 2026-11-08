@@ -6,6 +6,14 @@ import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
 namespace Flapjack.Compiler.Backend.SourceLet
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 
+/-- Extending an environment with recursive value bindings preserves its
+constructor namespace. -/
+@[hol "cakeml/compiler/backend/proofs/source_letProofScript.sml" "env_c_lemma"]
+theorem envC_lemma (funs : List (VarN × VarN × AstHOL.Exp)) (env : SemEnv Value)
+    (env1 : Namespace ModN VarN Value) :
+    (extendDecEnv { v := buildRecEnv funs env env1, c := nsEmpty } env).c = env.c := by
+  exact (nsAppend_nsEmpty env.c).2
+
 /-- Expanding a recursive function group checks every function body. This
 Flapjack helper exposes the list traversal; it has no separate HOL theorem. -/
 theorem everyExp_letrec (predicate : AstHOL.Exp → Bool)

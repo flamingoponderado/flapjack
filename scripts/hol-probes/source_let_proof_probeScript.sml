@@ -5,6 +5,11 @@ val _ = Globals.show_types := true;
 fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
+val env_c_lemma_replay = prove(
+  ``(semanticPrimitives$extend_dec_env
+       <|v := semanticPrimitives$build_rec_env q env env1; c := namespace$nsEmpty|> env).c = env.c``,
+  fs [semanticPrimitivesTheory.extend_dec_env_def]);
+val _ = show_thm "env_c_lemma_replay=" env_c_lemma_replay;
 val _ = show_thm "lift_prefix=" source_letProofTheory.lift_lets_is_prefix;
 val local_let_lifting = prove(
   ``(!ds1 ds2. source_let$lift_lets [] (Dlocal ds1 ds2) = NONE) /\

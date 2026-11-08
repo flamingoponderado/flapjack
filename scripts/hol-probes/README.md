@@ -483,7 +483,7 @@ The same flat-pattern probe captures the typed position, test, guard and decisio
 
 `source_to_flat_store_relation_probe.out` captures the original typed store and state relation rules, including independently typed compiler and FFI parameters. Lean's store-case and state-shape equivalences expose the same four store constructors and reserved flat-store slot, conditional on its preliminary value relation; they do not establish that relation's HOL correspondence.
 
-`source_let_proof_probe.out` captures the inferred types and clauses of the original source let-lifting definitions, prefix, evaluation, semantics and oracle-adjustment theorems, and replays the local module/local lemma and the original specialization that constructs `evaluate_lift_start`. Its `nested_lifts` row evaluates a module containing successive anonymous and named lets; `Flapjack/Test/FlatElim.lean` checks the same input and output in Lean.
+`source_let_proof_probe.out` captures the inferred types and clauses of the original source let-lifting definitions, prefix, evaluation, semantics and oracle-adjustment theorems, and replays the local constructor-environment and module/local lemmas and the original specialization that constructs `evaluate_lift_start`. Its `nested_lifts` row evaluates a module containing successive anonymous and named lets; `Flapjack/Test/FlatElim.lean` checks the same input and output in Lean.
 
 `source_to_source_proof_probe.out` captures the source-to-source pass definition and its inferred function type, plus the original semantics and oracle-adjustment theorems.
 
