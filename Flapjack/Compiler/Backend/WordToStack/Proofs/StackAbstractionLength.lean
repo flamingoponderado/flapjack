@@ -48,11 +48,7 @@ theorem absStackLength {width : Nat} {frameWidth : Nat} [NeZero width] [NeZero f
   induction wstack generalizing tstack lens astack with
   | nil =>
     obtain ⟨hs, hl⟩ := absStackEmpty bitmaps tstack lens astack h
-    subst lens
-    subst tstack
-    simp [absStack] at h
-    subst astack
-    rfl
+    subst hl; subst hs; simp [absStack] at h; subst astack; simp [handlerVal]
   | cons frame frames ih =>
     cases frame with
     | stackFrame size l0 locals handler =>
@@ -65,49 +61,31 @@ theorem absStackLength {width : Nat} {frameWidth : Nat} [NeZero width] [NeZero f
           cases handler with
           | none =>
             rw [absStack] at h
-            cases hr : StackSem.fullReadBitmap bitmaps header with
-            | none => simp [hr] at h
-            | some bits =>
-              simp only [hr] at h
-              split at h
-              · contradiction
-              · split at h
-                · contradiction
-                · cases he : absStack bitmaps frames (stack.drop len) lens with
-                  | none => simp [he] at h
-                  | some tail =>
-                    simp only [he, Option.some.injEq] at h
-                    rw [← h, handlerVal, ih (stack.drop len) lens tail he]
-                    simp only [List.length_take, List.length_drop, List.length_cons]
-                    omega
+            repeat' split at h <;> try contradiction
+            cases he : absStack bitmaps frames (stack.drop len) lens with
+            | none => simp [he] at h
+            | some ys =>
+              simp only [he, Option.some.injEq] at h
+              rw [← h, handlerVal, ih (stack.drop len) lens ys he]
+              simp only [List.length_take, List.length_drop, List.length_cons]
+              omega
           | some payload =>
             cases stack with
             | nil => simp [absStack] at h
-            | cons loc stack =>
-              cases stack with
+            | cons loc stack => cases stack with
               | nil => simp [absStack] at h
-              | cons hv stack =>
-                cases stack with
+              | cons hv stack => cases stack with
                 | nil => simp [absStack] at h
                 | cons word stack =>
                   rw [absStack] at h
-                  split at h
-                  · contradiction
-                  · cases hr : StackSem.fullReadBitmap bitmaps word with
-                    | none => simp [hr] at h
-                    | some bits =>
-                      simp only [hr] at h
-                      split at h
-                      · contradiction
-                      · split at h
-                        · contradiction
-                        · cases he : absStack bitmaps frames (stack.drop len) lens with
-                          | none => simp [he] at h
-                          | some tail =>
-                            simp only [he, Option.some.injEq] at h
-                            rw [← h, handlerVal, ih (stack.drop len) lens tail he]
-                            simp only [List.length_take, List.length_drop, List.length_cons]
-                            omega
+                  repeat' split at h <;> try contradiction
+                  cases he : absStack bitmaps frames (stack.drop len) lens with
+                  | none => simp [he] at h
+                  | some ys =>
+                    simp only [he, Option.some.injEq] at h
+                    rw [← h, handlerVal, ih (stack.drop len) lens ys he]
+                    simp only [List.length_take, List.length_drop, List.length_cons]
+                    omega
 
 /-- Full original impossibility of successful abstraction from an empty target. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "abs_stack_empty'"

@@ -17,10 +17,7 @@ theorem stackRelAuxStackSize {locWidth width frameWidth : Nat}
     (related : stackRelAux len k source stack) :
     miscThe (handlerVal stack) (wordSemStackSize source) = handlerVal stack := by
   induction source generalizing stack with
-  | nil =>
-    cases stack with
-    | nil => rfl
-    | cons head rest => simp [stackRelAux] at related
+  | nil => cases stack with | nil => rfl | cons _ _ => simp [stackRelAux] at related
   | cons head sourceRest ih =>
     cases head with
     | stackFrame size nonGc gc sourceHandler =>
@@ -31,46 +28,30 @@ theorem stackRelAuxStackSize {locWidth width frameWidth : Nat}
         cases sourceHandler <;> cases targetHandler
         all_goals try solve | simp [stackRelAux] at related
         · rw [stackRelAux] at related
-          rcases related with ⟨_, _, sizeEq, tailRel⟩
+          obtain ⟨_, _, sizeEq, tailRel⟩ := related
           have tailSize := ih rest tailRel
           cases size with
           | none => simp [wordSemStackSize, wordSemStackSizeFrame, wordSemOptionAdd, miscThe]
           | some n =>
             simp only [Option.getD_some] at sizeEq
             subst n
-            cases tailRun : wordSemStackSize sourceRest with
-            | none =>
-              change miscThe (handlerVal _) (wordSemOptionAdd (some _) (wordSemStackSize sourceRest)) = _
-              rw [tailRun]
-              rfl
-            | some tail =>
-              rw [tailRun] at tailSize
-              simp only [miscThe] at tailSize
-              subst tail
-              change miscThe (handlerVal _) (wordSemOptionAdd (some _) (wordSemStackSize sourceRest)) = _
-              rw [tailRun]
-              simp [wordSemOptionAdd, miscThe, handlerVal]
-              omega
+            cases h : wordSemStackSize sourceRest
+            all_goals
+              simp only [wordSemStackSize, wordSemStackSizeFrame] at h tailSize ⊢
+              simp_all [wordSemOptionAdd, miscThe, handlerVal]
+              try omega
         · rw [stackRelAux] at related
-          rcases related with ⟨_, _, _, _, sizeEq, tailRel⟩
+          obtain ⟨_, _, _, _, sizeEq, tailRel⟩ := related
           have tailSize := ih rest tailRel
           cases size with
           | none => simp [wordSemStackSize, wordSemStackSizeFrame, wordSemOptionAdd, miscThe]
           | some n =>
             simp only [Option.getD_some] at sizeEq
             subst n
-            cases tailRun : wordSemStackSize sourceRest with
-            | none =>
-              change miscThe (handlerVal _) (wordSemOptionAdd (some _) (wordSemStackSize sourceRest)) = _
-              rw [tailRun]
-              rfl
-            | some tail =>
-              rw [tailRun] at tailSize
-              simp only [miscThe] at tailSize
-              subst tail
-              change miscThe (handlerVal _) (wordSemOptionAdd (some _) (wordSemStackSize sourceRest)) = _
-              rw [tailRun]
-              simp [wordSemOptionAdd, miscThe, handlerVal]
-              omega
+            cases h : wordSemStackSize sourceRest
+            all_goals
+              simp only [wordSemStackSize, wordSemStackSizeFrame] at h tailSize ⊢
+              simp_all [wordSemOptionAdd, miscThe, handlerVal]
+              try omega
 
 end Flapjack.WordToStackProofs
