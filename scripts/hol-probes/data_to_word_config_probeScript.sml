@@ -46,6 +46,18 @@ val _ = (print "mem_eq_list_def_typed="; Lib.with_flag (Globals.show_types,true)
   print_term (concl data_to_wordTheory.MemEqList_def); print "\n");
 val _ = (print "silent_ffi_def_typed="; Lib.with_flag (Globals.show_types,true)
   print_term (concl data_to_wordTheory.SilentFFI_def); print "\n");
+val _ = (print "spt_lrnext_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl sptreeTheory.lrnext_def); print "\n");
+val _ = (print "spt_to_alist_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl sptreeTheory.toAList_def); print "\n");
+val _ = (print "adjust_var_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.adjust_var_def); print "\n");
+val _ = (print "adjust_set_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.adjust_set_def); print "\n");
+val _ = (print "adjust_sets_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.adjust_sets_def); print "\n");
+val _ = (print "alloc_var_def_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl data_to_wordTheory.AllocVar_def); print "\n");
 val _ = print_eval "store_each_64" ``(StoreEach 2 [4;6] 8w : 64 wordLang$prog)``;
 val _ = print_eval "mem_eq_list_64" ``(MemEqList 8w [3w;7w] : 64 wordLang$prog)``;
 val _ = print_eval "silent_ffi_off_64" ``(SilentFFI ^conf 3 (LN,LN) : 64 wordLang$prog)``;

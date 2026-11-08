@@ -463,14 +463,14 @@ theorem sptMem_sptInsert {α : Type} (key other : Nat) (value : α) (tree : Spt 
 
 /-- HOL `lrnext`: the increment used when placing subtrees in the spt index
 space (`HOL/src/finite_maps/sptreeScript.sml:421-422`). -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "lrnext_def"]
 def lrNext : Nat → Nat
   | 0 => 1
   | n + 1 => 2 * lrNext (n / 2)
 
 /-! The `foldi` traversal in HOL's `toAList` relies on these two adjacent
 `lrNext` identities (`lrlemma1` and `lrlemma2` in
-`HOL/src/finite_maps/sptreeScript.sml`).  They are untagged infrastructure
-because the source is the external HOL standard library, not CakeML. -/
+`HOL/src/finite_maps/sptreeScript.sml`). -/
 
 theorem lrNext_offset_one (index : Nat) :
     lrNext (index + lrNext index) = 2 * lrNext index := by
@@ -653,8 +653,8 @@ theorem sptAcc_childRight (index key : Nat) :
   rw [Nat.mul_add, ← Nat.mul_assoc, Nat.mul_comm (lrNext index) 2]
   omega
 
-/-- HOL sptree `foldi` (`HOL/src/finite_maps/sptreeScript.sml:737-749`) over
-the exact tree, in the same mixed order. -/
+/-- Association-list instance of HOL sptree `foldi`, related to the generic
+port by `sptFoldi_eq_sptFoldiGen`. -/
 def sptFoldi {α : Type} (f : Nat → α → List (Nat × α) → List (Nat × α))
     (index : Nat) (accumulator : List (Nat × α)) : Spt α → List (Nat × α)
   | .ln => accumulator
@@ -670,6 +670,7 @@ def sptFoldi {α : Type} (f : Nat → α → List (Nat × α) → List (Nat × �
 
 /-- HOL `toAList` (`HOL/src/finite_maps/sptreeScript.sml:898-899`): the
 association list of the tree in the mixed sptree enumeration order. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "toAList_def"]
 def sptToAList {α : Type} (tree : Spt α) : List (Nat × α) :=
   sptFoldi (fun key value accumulator => (key, value) :: accumulator) 0 [] tree
 

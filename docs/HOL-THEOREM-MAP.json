@@ -69559,6 +69559,22 @@
   },
   {
     "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "lrnext_def",
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "lrNext",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original and spt_lrnext_def_typed capture: zero gives 1 and a successor n+1 gives 2 * lrnext (n / 2), the HOL nonzero branch after natural subtraction."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "toAList_def",
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptToAList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original and spt_to_alist_def_typed capture: the polymorphic sptree maps to the foldi association list, starting with index zero and the empty list. The kernel-checked sptFoldi_eq_sptFoldiGen establishes that the executed specialized fold is the list instance of the reviewed HOL foldi."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
     "hol_name": "foldi_def",
     "lean_path": "Flapjack/Misc/Sptree/Foldi.lean",
     "lean_name": "sptFoldiGen",
@@ -117124,24 +117140,24 @@
     "lean_name": "adjustVar",
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "adjust_var_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and adjust_var_def_typed capture: the natural input maps to 2 * n + 2 without an extra premise."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Variables.lean",
     "lean_name": "adjustSet",
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "adjust_set_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and adjust_set_def_typed capture: the polymorphic sptree input, toAList traversal, adjusted keys, unit values, map order and fromAList construction agree. Lean Spt is the constructor-for-constructor HOL sptree carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Variables.lean",
     "lean_name": "adjustSets",
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "adjust_sets_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the source and adjust_sets_def_typed capture: the polymorphic sptree input produces the pair LS () and adjust_set names in that order. Lean Spt is the constructor-for-constructor HOL sptree carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Header.lean",
@@ -125553,6 +125569,15 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source comparison against data_to_wordScript.sml:1102-1107: empty list assigns TRUE_CONST 18 to register 1; each nonempty step loads offset from register 3 into 5, compares against the next word, and advances by bytes_in_word only on equality. Typed original definitions and representative 64-bit observations are captured in data_to_word_config_probe.out and executable rows are kernel replayed in DataToWordConfigParity. Positive-width BitVec represents HOL word width. The definition is used by the executed data-to-word control path; the probes and qualifier do not prove cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "AllocVar_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+    "lean_name": "allocVar",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Compared data_to_wordScript.sml:350-362 and the typed alloc_var_def_typed capture: all arguments, word shifts, lower comparisons, fallback value, heap-space subtraction, cutset insertion, allocation and optional FFI sequence agree. The positive-width BitVec models the HOL word dimension. The tagged definition is used by the executed data-to-word traversal and runtime stubs; this comparison is not a cross-language equivalence proof."
   },
   {
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",

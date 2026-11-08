@@ -201,8 +201,9 @@ def makePtrBitsCode {width : Nat} [NeZero width] (conf : Config) (tag len dest :
       (shiftLength conf - wordShiftAmount width)]),
     maxout conf.tagBits (1 + conf.lenBits) tag, maxout conf.lenBits 1 len]
 
-/-- Internal variable-allocation sequence for the reference-array case;
-the standalone width-indexed HOL definition remains to be reviewed. -/
+/-- Construct the variable-allocation sequence used for reference arrays. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "AllocVar_def"
+  (words_as_type_indexed_bitvec)]
 def allocVar {width : Nat} [NeZero width] (conf : Config) (limit : Nat) (names : NumSet) :
     WordLangProgHOL (BitVec width) :=
   let cutsets := adjustSets names
