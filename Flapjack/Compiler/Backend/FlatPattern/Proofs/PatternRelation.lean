@@ -254,20 +254,20 @@ end
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "pmatch_thm"]
 theorem pmatch_simulation {C F : Type} (cfg : Config) (n : Nat) :
     (∀ (source : FlatSem.State C F) pattern value bindings result target value' bindings',
-      FlatSem.pmatch source pattern value bindings = result → result ≠ .typeError →
-      StateRel cfg source target → ValueRel value value' →
+      FlatSem.pmatch source pattern value bindings = result ∧ result ≠ .typeError ∧
+      StateRel cfg source target ∧ ValueRel value value' ∧
       aLookupRel (fun key => decNameToNum key < n) ValueRel bindings bindings' →
       ∃ result', FlatSem.pmatch target pattern value' bindings' = result' ∧ MatchRel n result result') ∧
     (∀ (source : FlatSem.State C F) patterns values bindings result target values' bindings',
-      FlatSem.pmatchList source patterns values bindings = result → result ≠ .typeError →
-      StateRel cfg source target → List.Forall₂ ValueRel values values' →
+      FlatSem.pmatchList source patterns values bindings = result ∧ result ≠ .typeError ∧
+      StateRel cfg source target ∧ List.Forall₂ ValueRel values values' ∧
       aLookupRel (fun key => decNameToNum key < n) ValueRel bindings bindings' →
       ∃ result', FlatSem.pmatchList target patterns values' bindings' = result' ∧ MatchRel n result result') := by
   constructor
-  · intro source pattern value bindings result target value' bindings' resultEq safe states values envs
+  · intro source pattern value bindings result target value' bindings' ⟨resultEq, safe, states, values, envs⟩
     subst result
     exact ⟨_, rfl, pmatch_related cfg n source target pattern value value' bindings bindings' states values envs safe⟩
-  · intro source patterns values bindings result target values' bindings' resultEq safe states related envs
+  · intro source patterns values bindings result target values' bindings' ⟨resultEq, safe, states, related, envs⟩
     subst result
     exact ⟨_, rfl, pmatchList_related cfg n source target patterns values values' bindings bindings' states related envs safe⟩
 

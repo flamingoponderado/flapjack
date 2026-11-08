@@ -30,10 +30,10 @@ theorem pmatchList_decision_independent {C F : Type} (state : FlatSem.State C F)
     (left right : List (VarN × FlatSem.Value)) :
     matchDecision (FlatSem.pmatchList state patterns values left) =
       matchDecision (FlatSem.pmatchList state patterns values right) := by
-  have l := pmatchList_append_bindings state patterns values [] left
-  have r := pmatchList_append_bindings state patterns values [] right
+  have l := (FlatProps.pmatch_append (α := Unit) (β := Unit) left).2 state patterns values [] ()
+  have r := (FlatProps.pmatch_append (α := Unit) (β := Unit) right).2 state patterns values [] ()
   simp only [List.nil_append] at l r
-  rw [l, r]
+  rw [← l, ← r]
   cases FlatSem.pmatchList state patterns values [] <;> rfl
 
 /-- Both parts of a pattern-list match are checked for type errors, even if

@@ -9,3 +9,6 @@ val _ = show_thm "do_app_state_unchanged_typed=" flatPropsTheory.do_app_state_un
 val _ = show_thm "pmatch_state_typed=" flatPropsTheory.pmatch_state;
 val _ = show_thm "pmatch_ignore_clock_typed=" flatPropsTheory.pmatch_ignore_clock;
 val _ = show_thm "pmatch_rows_ignore_clock_typed=" flatPropsTheory.pmatch_rows_ignore_clock;
+val _ = show_thm "pmatch_extend_typed=" flatPropsTheory.pmatch_extend;
+val _ = show_thm "map_match_def_typed=" semanticPrimitivesPropsTheory.map_match_def;
+val _ = show_thm "pmatch_append_typed=" flatPropsTheory.pmatch_append;

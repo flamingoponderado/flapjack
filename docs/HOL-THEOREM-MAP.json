@@ -129409,7 +129409,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/PatternRelation.lean",
   "lean_name": "pmatch_simulation",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the complete HOL source and typed pmatch_simulation capture: both single-pattern and pattern-list conjuncts retain their state, value and binding relations, source non-type-error premise, and existential target result with match relation. The conjunction premises are curried and the local nv_rel overload is expanded."
+  "reviewer": "Compared the complete HOL source and typed pmatch_simulation capture: both single-pattern and pattern-list conjuncts retain their grouped premises, state, value and binding relations, source non-type-error premise, and existential target result with match relation. The local nv_rel abbreviation is expanded to the bounded ALOOKUP relation."
 },
 {
   "hol_path": "HOL/src/list/src/rich_listScript.sml",
@@ -130387,5 +130387,29 @@
   "lean_name": "pmatchRows_ignoreClock",
   "statement_status": "reviewed_exact",
   "reviewer": "Source comparison with pmatch_rows_ignore_clock_typed in flat_do_app_preservation_probe.out: the row payload type is independent of both state parameters, and row selection before and after the clock update is unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_extend",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternBindings.lean",
+  "lean_name": "pmatchExtend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pmatch_extend_typed in flat_do_app_preservation_probe.out: both conjuncts retain the successful match premise and existential added bindings with the same append and binding-name equalities. Each conjunct retains its independently typed unused universal binder; compiler and FFI state carriers are shared between the conjuncts."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "map_match_def",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/MatchMap.lean",
+  "lean_name": "mapMatch",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared map_match_def_typed in flat_do_app_preservation_probe.out: the function has the same type α → α and maps only successful results, preserving both failure constructors."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_append",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternAppend.lean",
+  "lean_name": "pmatch_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pmatch_append_typed in flat_do_app_preservation_probe.out: the shared suffix, both matching equations, and the independently typed unused universal binders in the two conjuncts are retained. The lambda appending the suffix renders HOL's flip APPEND."
 }
 ]

@@ -3645,7 +3645,8 @@ the executed allocator. Regenerate read-only with
 `flat_do_app_preservation_probeScript.sml` captures the inferred HOL types of
 the flat primitive application's clock and evaluation-configuration
 preservation theorems, including the latter's independent unused binder, and
-the pattern matching state and clock preservation theorems.
+the pattern matching state, clock, binding extension and append theorems,
+and the original match-result mapping definition.
 
 `data_to_word_memory_thunk_probeScript.sml` captures the inferred original statements of `blocks_unique_Thunk`, `blocks_unique_Thunk2`, and `blocks_unique_Word64`, including the independent type of the second pair component and the fixed 64-bit word type. Their Lean proofs are in `Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Thunk.lean` and `Memory/Relation/SmallNumber.lean`. The probe also captures `memory_rel_Thunk_IMP` and `memory_rel_Thunk_inlined`, proved in `Memory/Relation/Thunk.lean`, and replays the local `thunk_tag_bits_lemma`, proved in `Memory/Relation/ThunkHeap.lean`.
 
