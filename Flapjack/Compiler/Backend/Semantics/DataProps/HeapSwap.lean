@@ -76,6 +76,20 @@ theorem doStack_doLimSafe_resource {C F : Type} (op : ClosLang.Op)
   refine ⟨result.safeForSpace, result.peakHeapLength, result.stackMax, ?_⟩
   rfl
 
+/-- Installation preserves errors and changes only the returned peak field
+when the input safety and peak observations change. This supports the HOL
+primitive resource-swap proofs. -/
+theorem doInstall_safePeak {C F R : Type} (values : List DataSem.Value) (state : State C F)
+    (safe : Bool) (peak : Nat) :
+    doInstall (R := R) values { state with safeForSpace := safe, peakHeapLength := peak } =
+      match doInstall (R := R) values state with
+      | .val (value, next) => .val (value, { next with peakHeapLength := peak })
+      | .err error => .err error := by
+  rcases values with _ | ⟨v1, _ | ⟨v2, _ | ⟨v3, _ | ⟨v4, _ | ⟨v5, rest⟩⟩⟩⟩⟩ <;> try rfl
+  cases bytes : valueToBytes v1 <;> cases words : valueToWords v2 <;>
+    simp [doInstall, bytes, words]
+  all_goals repeat' (split <;> simp_all)
+
 /-- Installation errors are independent of safety and peak observations.
 This is an auxiliary case for the HOL primitive error-swap theorem. -/
 theorem doInstall_error_safePeak {C F R : Type} (values : List DataSem.Value)
@@ -83,9 +97,7 @@ theorem doInstall_error_safePeak {C F R : Type} (values : List DataSem.Value)
     (error : Flapjack.SemanticPrimitivesHOL.ErrorResult R)
     (run : doInstall (R := R) values state = .err error) :
     doInstall (R := R) values { state with safeForSpace := safe, peakHeapLength := peak } = .err error := by
-  simp only [doInstall] at run ⊢
-  repeat' (split at run <;> simp_all)
-  all_goals repeat' (split <;> simp_all)
+  rw [doInstall_safePeak, run]
 
 /-- Non-FFI operation failure depends on neither safety, peak, nor stack
 accounting. This supports the HOL primitive error-swap proof. -/

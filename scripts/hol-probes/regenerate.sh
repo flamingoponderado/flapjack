@@ -8423,6 +8423,7 @@ run_probe data_resource_mono_probeScript.sml data_resource_mono_probe.out \
   evaluate_smx_safe_peak_swap_typed evaluate_safe_peak_swap_typed \
   do_app_err_safe_peak_swap_typed do_app_err_sm_safe_peak_swap_typed do_app_safe_peak_swap_typed do_app_sm_safe_peak_swap_typed \
   size_of_heap_with_safe_typed \
+  do_app_aux_safe_peak_swap_typed do_app_aux_sm_safe_peak_swap_typed \
   "$cake_dir/compiler/backend/semantics/dataPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe clos_mti_collect_args_probeScript.sml clos_mti_collect_args_probe.out \

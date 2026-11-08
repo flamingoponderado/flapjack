@@ -20,3 +20,5 @@ val _ = show "do_app_err_sm_safe_peak_swap_typed" do_app_err_sm_safe_peak_swap;
 val _ = show "do_app_safe_peak_swap_typed" do_app_safe_peak_swap;
 val _ = show "do_app_sm_safe_peak_swap_typed" do_app_sm_safe_peak_swap;
 val _ = show "size_of_heap_with_safe_typed" size_of_heap_with_safe;
+val _ = show "do_app_aux_safe_peak_swap_typed" do_app_aux_safe_peak_swap;
+val _ = show "do_app_aux_sm_safe_peak_swap_typed" do_app_aux_sm_safe_peak_swap;
