@@ -43,6 +43,8 @@ val _ = show "do_app_safe_for_space_mono=" dataPropsTheory.do_app_safe_for_space
 val _ = show "evaluate_io_events_mono=" dataPropsTheory.evaluate_io_events_mono;
 val _ = show "evaluate_safe_for_space_mono=" dataPropsTheory.evaluate_safe_for_space_mono;
 val _ = show "evaluate_option_le_stack_max=" dataPropsTheory.evaluate_option_le_stack_max;
+val _ = show "pop_env_const=" dataPropsTheory.pop_env_const;
+val _ = show "pop_env_safe_for_space=" dataPropsTheory.pop_env_safe_for_space;
 val _ = show "var_corr_map=" bvi_to_dataProofTheory.var_corr_map;
 val _ = show "get_vars_lift_thm=" bvi_to_dataProofTheory.get_vars_lift_thm;
 val _ = show "var_corr_inter=" bvi_to_dataProofTheory.var_corr_inter;

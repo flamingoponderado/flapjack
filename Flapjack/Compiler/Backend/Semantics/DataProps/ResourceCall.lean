@@ -12,10 +12,6 @@ def ResourceLe {C F : Type} (before after : State C F) : Prop :=
   BackendProps.optionLe before.stackMax after.stackMax ∧
   (after.safeForSpace = true → before.safeForSpace = true)
 
-/-- Resource observations are reflexive. -/
-theorem ResourceLe.refl {C F : Type} (state : State C F) : ResourceLe state state := by
-  simp [ResourceLe, BackendProps.optionLe_refl]
-
 /-- Resource observations compose through multiple state transitions. -/
 theorem ResourceLe.trans {C F : Type} {first middle last : State C F}
     (a : ResourceLe first middle) (b : ResourceLe middle last) : ResourceLe first last :=
@@ -43,13 +39,23 @@ theorem callEnv_resourceLe {C F : Type} (args : List Value) (size : Option Nat) 
   · simp
     tauto
 
-/-- Popping a saved frame preserves all three resource observations. -/
-theorem popEnv_resourceLe {C F : Type} (state next : State C F) (run : popEnv state = some next) :
-    ResourceLe state next := by
+/-- A successful frame pop preserves the FFI state, clock and stack maximum. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "pop_env_const"]
+theorem popEnv_const {C F : Type} (state next : State C F) (run : popEnv state = some next) :
+    next.ffi = state.ffi ∧ next.clock = state.clock ∧ next.stackMax = state.stackMax := by
   cases stack : state.stack with
   | nil => simp [popEnv, stack] at run
   | cons frame rest =>
-    cases frame <;> simp [popEnv, stack] at run <;> subst next <;> exact ResourceLe.refl _
+    cases frame <;> simp [popEnv, stack] at run <;> subst next <;> exact ⟨rfl, rfl, rfl⟩
+
+/-- A successful frame pop preserves the safety flag. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "pop_env_safe_for_space"]
+theorem popEnv_safeForSpace {C F : Type} (state next : State C F) (run : popEnv state = some next) :
+    next.safeForSpace = state.safeForSpace := by
+  cases stack : state.stack with
+  | nil => simp [popEnv, stack] at run
+  | cons frame rest =>
+    cases frame <;> simp [popEnv, stack] at run <;> subst next <;> rfl
 
 /-- A tail call inherits resource monotonicity from its strictly lower-clock
 callee, including bad lookups and timeout. This is one case of the pending
@@ -176,7 +182,10 @@ theorem resourceMono_returningForce {C F : Type} (dest : Nat) (names : NumSet) (
                         cases popped : popEnv after with
                         | none => simpa [ResourceMono, ResourceLe, evaluate, read, th, found, cut, zero, bodyRun, popped] using facts
                         | some final =>
-                          have finalFacts := facts.trans (popEnv_resourceLe after final popped)
+                          have ⟨popFfi, _, popMax⟩ := popEnv_const after final popped
+                          have popSafe := popEnv_safeForSpace after final popped
+                          have finalFacts := facts.trans (show ResourceLe after final from by
+                            simp [ResourceLe, popFfi, popMax, popSafe, BackendProps.optionLe_refl])
                           simpa [ResourceMono, ResourceLe, evaluate, read, th, found, cut, zero, bodyRun, popped, setVar] using finalFacts
 
 /-- All force forms inherit resource monotonicity from lower-clock callees. -/
@@ -238,7 +247,10 @@ theorem resourceMono_returningCall_noHandler {C F : Type} (returns : List Nat) (
                   · cases popped : popEnv after with
                     | none => simpa [ResourceMono, ResourceLe, evaluate, read, found, distinct, cut, zero, bodyRun, length, popped] using facts
                     | some final =>
-                      have finalFacts := facts.trans (popEnv_resourceLe after final popped)
+                      have ⟨popFfi, _, popMax⟩ := popEnv_const after final popped
+                      have popSafe := popEnv_safeForSpace after final popped
+                      have finalFacts := facts.trans (show ResourceLe after final from by
+                        simp [ResourceLe, popFfi, popMax, popSafe, BackendProps.optionLe_refl])
                       simpa [ResourceMono, ResourceLe, evaluate, read, found, distinct, cut, zero, bodyRun, length, popped, setVars] using finalFacts
                   · simpa [ResourceMono, ResourceLe, evaluate, read, found, distinct, cut, zero, bodyRun, length] using facts
       · simp [ResourceMono, evaluate, read, found, distinct, BackendProps.optionLe_refl]
@@ -305,7 +317,10 @@ theorem resourceMono_returningCall_handler {C F : Type} (returns : List Nat) (li
                   · cases popped : popEnv after with
                     | none => simpa [ResourceMono, ResourceLe, evaluate, read, found, distinct, cut, zero, bodyRun, length, popped] using facts
                     | some final =>
-                      have finalFacts := facts.trans (popEnv_resourceLe after final popped)
+                      have ⟨popFfi, _, popMax⟩ := popEnv_const after final popped
+                      have popSafe := popEnv_safeForSpace after final popped
+                      have finalFacts := facts.trans (show ResourceLe after final from by
+                        simp [ResourceLe, popFfi, popMax, popSafe, BackendProps.optionLe_refl])
                       simpa [ResourceMono, ResourceLe, evaluate, read, found, distinct, cut, zero, bodyRun, length, popped, setVars] using finalFacts
                   · simpa [ResourceMono, ResourceLe, evaluate, read, found, distinct, cut, zero, bodyRun, length] using facts
       · simp [ResourceMono, evaluate, read, found, distinct, BackendProps.optionLe_refl]

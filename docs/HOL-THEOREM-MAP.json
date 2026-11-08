@@ -13219,6 +13219,16 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+    "hol_name": "compile_decs_correct",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileCorrectShape.lean",
+    "lean_name": "compileDecs_correct",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared compile_decs_correct_typed: this is the original declaration conjunct of compile_correct with the same grouped premises, existential target result and state, state relation, and independently polymorphic success-list witness. Nonempty models HOL type inhabitation. Closure-state refs and code use the reviewed finite-map carrier and local witness; evaluator dependencies inherit reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
     "hol_name": "compile_decs_correct2",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileCorrectShape.lean",
     "lean_name": "compileDecs_correct2",
@@ -16302,6 +16312,18 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Compared with the source theorem and its captured inferred type: arbitrary natural m and n with m ≤ n yield the same ordering of n2mw digit lengths. Both lists use the same positive HOL word dimension."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "pop_env_const",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ResourceCall.lean", "lean_name": "popEnv_const",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source capture in bvi_to_data_state_probe.out: successful popping preserves FFI, clock and stack maximum in the original conjunction order, for arbitrary source and result states of the same type."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "pop_env_safe_for_space",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/ResourceCall.lean", "lean_name": "popEnv_safeForSpace",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source capture in bvi_to_data_state_probe.out: a successful pop preserves the Boolean safety field exactly; HOL pretty-prints Boolean equality as an iff."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml", "hol_name": "do_app_io_events_mono",
