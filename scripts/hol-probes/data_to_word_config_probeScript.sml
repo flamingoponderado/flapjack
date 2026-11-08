@@ -227,3 +227,18 @@ val _ = (print "fp_cmp_inst_typed="; Lib.with_flag (Globals.show_types,true) pri
 val _ = (print "fp_bop_inst_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl fp_bop_inst_def); print "\n");
 val _ = (print "fp_uop_inst_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl fp_uop_inst_def); print "\n");
 val _ = (print "fp_top_inst_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl fp_top_inst_def); print "\n");
+val _ = (print "get_words_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl getWords_def); print "\n");
+val _ = (print "store_any_consts_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl StoreAnyConsts_def); print "\n");
+val _ = (print "lookup_mem_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl lookup_mem_def); print "\n");
+val _ = (print "get_word_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl get_Word_def); print "\n");
+val _ = (print "byte_len_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl byte_len_def); print "\n");
+val _ = (print "make_ptr_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl make_ptr_def); print "\n");
+val _ = (print "part_to_words_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl part_to_words_def); print "\n");
+val _ = (print "parts_to_words_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl parts_to_words_def); print "\n");
+val _ = (print "const_parts_to_words_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl const_parts_to_words_def); print "\n");
+val _ = print_eval "const_w64_48" ``(part_to_words ^conf LN (W64 0x1122334455667788w) 0w : ((bool # 48 word_loc) # (bool # 48 word_loc) list) option)``;
+val _ = print_eval "const_location_64" ``(part_to_words ^conf (insert 0 (T,Loc 42 7) LN) (closLang$Con 1 [0]) 0w : ((bool # 64 word_loc) # (bool # 64 word_loc) list) option)``;
+val _ = print_eval "store_location_64" ``(StoreAnyConsts 4 1 3 [(F,Loc 42 7)] (T,Loc 9 8) : 64 wordLang$prog)``;
+val _ = print_eval "get_words_generic_32" ``(getWords [(7,Word 3w);(8,Loc 2 3);(9,Word 5w)] [(10,4w)] : (num # 32 word) list # (num # 32 word_loc) list)``;
+val _ = print_eval "parts_existing_location_64" ``(parts_to_words ^conf (insert 3 (T,Loc 19 2) LN) 4 [] 16w : ((bool # 64 word_loc) # (bool # 64 word_loc) list) option)``;
+val _ = print_eval "equal_const_8" ``(assign ^conf 5 2 3 (closLang$BlockOp (EqualConst (Int 32))) [1] NONE : 8 wordLang$prog # num)``;

@@ -130142,5 +130142,86 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
   "reviewer": "Compared initial_global_imp in source_to_flat_init_probe.out: the initial global-environment invariant premise and global invariant conclusion over the empty name set match. GlobalEnv.c and tys use the reviewed finite-support representation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "getWords_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Build.lean",
+  "lean_name": "getWords",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed original getWords_def capture in data_to_word_config_probe.out against the complete Lean definition. The input annotation type is independently polymorphic; the accumulator is reversed on a location or end, and leading words are collected in source order. The generic accumulator and location remainder are replayed against get_words_generic_32. Positive-width BitVec and WordLocW represent HOL words and word_loc; this source review and executable examples do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "StoreAnyConsts_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean",
+  "lean_name": "storeAnyConsts",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed original StoreAnyConsts_def capture in data_to_word_config_probe.out against the complete Lean definition. The empty case sets NextFree and assigns the final word or location; a location head emits LocValue, Store and the word-sized advance, while a word prefix emits StoreConsts and recurses on the remainder. The termination bound is proved as in the original inline termination proof; store_location_64 is replayed. Positive-width BitVec and WordLocW represent HOL words and word_loc; this source review and executable examples do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "lookup_mem_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Build.lean",
+  "lean_name": "lookupMem",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed original lookup_mem_def capture in data_to_word_config_probe.out against the complete Lean definition. The full sparse-tree lookup returns the stored Boolean and WordLocW unchanged, or (false, Word 0) when absent. Positive-width BitVec and WordLocW represent HOL words and word_loc; this source review and executable examples do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "get_Word_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Build.lean",
+  "lean_name": "getWord",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed original get_Word_def capture in data_to_word_config_probe.out against the complete Lean definition. Word returns its value and every Loc returns zero, preserving both location fields in the input carrier. Positive-width BitVec and WordLocW represent HOL words and word_loc; this source review and executable examples do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "make_ptr_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Build.lean",
+  "lean_name": "makePtr",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed original make_ptr_def capture in data_to_word_config_probe.out against the complete Lean definition. All four original inputs are retained; tag and length have independent arbitrary types and are ignored as in HOL, and the result is Word of the shifted offset OR one. Positive-width BitVec and WordLocW represent HOL words and word_loc; this source review and executable examples do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "part_to_words_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Build.lean",
+  "lean_name": "partWords",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed original part_to_words_def capture in data_to_word_config_probe.out against the complete Lean definition. All four constant constructors and arbitrary sparse-memory values are retained. The Word64 halves use independent 32-bit slices, including at width 48; Str uses the original byte length, header and writeBytes. const_w64_48 and const_location_64 are replayed. Positive-width BitVec and WordLocW represent HOL words and word_loc; this source review and executable examples do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "parts_to_words_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Build.lean",
+  "lean_name": "partsToWords",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed original parts_to_words_def capture in data_to_word_config_probe.out against the complete Lean definition. The original arbitrary memory, index, list and offset are threaded recursively; each offset uses bytes_in_word times the emitted length, and the result appends words in order. The pre-existing-location base case is replayed. Positive-width BitVec and WordLocW represent HOL words and word_loc; this source review and executable examples do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "const_parts_to_words_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Build.lean",
+  "lean_name": "partsWords",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared the typed original const_parts_to_words_def capture in data_to_word_config_probe.out against the complete Lean definition. The original specialization starts partsToWords with LN, index zero and offset zero. Positive-width BitVec and WordLocW represent HOL words and word_loc; this source review and executable examples do not prove cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+  "hol_name": "byte_len_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Build.lean",
+  "lean_name": "byteLen",
+  "statement_status": "reviewed_word_dimension_as_width",
+  "word_dimension_as_width": "width",
+  "reviewer": "Source comparison with byte_len_def_typed: the HOL type witness is represented by the explicit positive width, with division by four for width 32 and by eight at every other width, followed by one. The production string-constant lowering uses this definition."
 }
 ]

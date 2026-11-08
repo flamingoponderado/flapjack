@@ -20,6 +20,28 @@ def wordListSeq {width : Nat} [NeZero width] :
   | [x] => x
   | x :: y :: xs => .seq x (wordListSeq (y :: xs))
 
+/-- Store a constant layout, including location values. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "StoreAnyConsts_def"
+  (words_as_type_indexed_bitvec)]
+def storeAnyConsts {width : Nat} [NeZero width] (r1 r2 r3 : Nat)
+    (values : List (Build.Value width)) (last : Build.Value width) : WordLangProgHOL (BitVec width) :=
+  match values with
+  | [] => .seq (.set .nextFree (.var r2)) (match last with
+      | (_, .loc block _) => .locValue r1 block
+      | (relative, .word w) => .assign r1 (if relative then .op .add [.const w, .var r3] else .const w))
+  | (_, .loc block _) :: rest => wordListSeq [.locValue r1 block, .store (.var r2) r1,
+      .assign r2 (.op .add [.var r2, .const wordSemBytesInWord]), storeAnyConsts r1 r2 r3 rest last]
+  | (b, .word w) :: rest =>
+      let result := Build.getWords ((b, .word w) :: rest) []
+      .seq (.storeConsts r2 r3 r2 r3 result.1) (storeAnyConsts r1 r2 r3 result.2 last)
+termination_by values.length
+decreasing_by
+  · simp_wf
+  · simp_wf
+    have h := Build.getWordsRestLength rest [(b, w)]
+    simp only [Build.getWords]
+    omega
+
 /-- Store registers at consecutive word-sized offsets from a base register. -/
 @[hol "cakeml/compiler/backend/data_to_wordScript.sml" "StoreEach_def"
   (words_as_type_indexed_bitvec)]
@@ -692,13 +714,10 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
   | l, .assign dest (.globOp (.setGlobal n)) args _ =>
       some (arg1 args (assignSetGlobal conf n l dest) (.skip, l))
   | l, .assign dest (.blockOp (.build parts)) _ _ =>
-      if width != 32 && width != 64 then none else
       match Build.partsWords (width := width) conf parts with
       | none => some (giveUp, l)
-      | some ((relative, value), words) =>
-          let final : WordLangProgHOL (BitVec width) := .seq (.set .nextFree (.var 1))
-            (.assign (adjustVar dest) (if relative then .op .add [.const value, .var 3] else .const value))
-          let store := if words.isEmpty then final else .seq (.storeConsts 1 3 1 3 words) final
+      | some (value, words) =>
+          let store := storeAnyConsts (adjustVar dest) 1 3 words value
           some (wordListSeq [.assign 1 (.lookup .nextFree),
             .assign 3 (shiftN .lsl (.op .sub [.var 1, .lookup .currHeap])
               (shiftLength conf - wordShiftAmount width)), store], l)
@@ -795,12 +814,11 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
   | l, .assign dest (.blockOp (.equalConst part)) args _ =>
       match args with
       | [src] =>
-          if width != 32 && width != 64 then none else
           match Build.partWords conf .ln part 0 with
           | none => some (.assign (adjustVar dest) (.const 2), l)
-          | some ((false, w), _) => some (boolResult dest .equal (adjustVar src) (.imm w), l)
+          | some ((false, w), _) => some (boolResult dest .equal (adjustVar src) (.imm (Build.getWord w)), l)
           | some ((true, _), words) =>
-              let words := words.map Prod.snd
+              let words := words.map (fun w => Build.getWord w.2)
               let compare (address : WordLangExpHOL (BitVec width)) (words : List (BitVec width)) :=
                 wordListSeq [.assign 1 (.const 2), .assign 3 address, memEqList 0 words,
                   .assign (adjustVar dest) (.var 1)]
