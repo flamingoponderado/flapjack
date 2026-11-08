@@ -33,6 +33,8 @@ val _ = show "get_vars_append=" dataPropsTheory.get_vars_append;
 val _ = show "get_vars_reverse=" dataPropsTheory.get_vars_reverse;
 val _ = show "EVERY_get_vars=" dataPropsTheory.EVERY_get_vars;
 val _ = show "get_vars_IMP_domain=" dataPropsTheory.get_vars_IMP_domain;
+val _ = show "do_app_aux_err=" dataPropsTheory.do_app_aux_err;
+val _ = show "do_app_err=" dataPropsTheory.do_app_err;
 val _ = show "var_corr_map=" bvi_to_dataProofTheory.var_corr_map;
 val _ = show "get_vars_lift_thm=" bvi_to_dataProofTheory.get_vars_lift_thm;
 val _ = show "var_corr_inter=" bvi_to_dataProofTheory.var_corr_inter;

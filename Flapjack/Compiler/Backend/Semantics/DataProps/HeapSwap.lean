@@ -1,5 +1,6 @@
 import Aesop
 import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
+import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyFrame
 
 /-! Heap-size invariance for resource-field updates. -/
 namespace Flapjack.Compiler.Backend.DataProps
@@ -39,15 +40,18 @@ theorem doSpace_none_resource {C F : Type} (op : ClosLang.Op)
         simp_all [doSpace, consumeSpace]
   · simp [doSpace, reset] at run
 
-/-- Successful space accounting changes only resource observations when the
-input differs only in those observations. This supports the HOL swap proof. -/
+/-- Successful space accounting preserves all fields apart from the changed
+locals, stack and resource observations. This Flapjack helper supports the HOL
+primitive swap proofs. -/
 theorem doSpace_some_resource {C F : Type} (op : ClosLang.Op)
     (values : List DataSem.Value) (state next : State C F) (safe : Bool) (peak : Nat) (mx : Option Nat)
+    (stack : List Stack) (localsSize : Option Nat) (locals : Spt DataSem.Value)
     (run : doSpace op values state = some next) :
     ∃ safe' peak' mx',
-      doSpace op values { state with safeForSpace := safe, peakHeapLength := peak, stackMax := mx } =
-        some { next with safeForSpace := safe', peakHeapLength := peak', stackMax := mx' } := by
+      doSpace op values { state with safeForSpace := safe, peakHeapLength := peak, stackMax := mx, stack := stack, localsSize := localsSize, locals := locals } =
+        some { next with safeForSpace := safe', peakHeapLength := peak', stackMax := mx', stack := stack, localsSize := localsSize, locals := locals } := by
   classical
+  let target := { state with safeForSpace := safe, peakHeapLength := peak, stackMax := mx, stack := stack, localsSize := localsSize, locals := locals }
   cases reset : DataLang.opSpaceReset op
   · by_cases zero : DataSpace.opSpaceReq op values.length = 0
     · simp [doSpace, reset, zero] at run
@@ -60,10 +64,10 @@ theorem doSpace_some_resource {C F : Type} (op : ClosLang.Op)
         exact ⟨safe, peak, mx, by simp [doSpace, reset, zero, consumeSpace, low]⟩
   · simp [doSpace, reset] at run
     subst next
-    refine ⟨safe && decide (noThunksInRefs state.refs ∧
-      sizeOfHeapArgs values state + spaceConsumed state op values ≤ state.limits.heapLimit),
-      max peak (sizeOfHeapArgs values state + spaceConsumed state op values), mx, ?_⟩
-    simp [doSpace, reset, sizeOfHeapArgs_resource, spaceConsumed_resource]
+    refine ⟨safe && decide (noThunksInRefs target.refs ∧
+      sizeOfHeapArgs values target + spaceConsumed target op values ≤ target.limits.heapLimit),
+      max peak (sizeOfHeapArgs values target + spaceConsumed target op values), mx, ?_⟩
+    simp [doSpace, reset, target]
 
 /-- Limit and stack accounting preserve equality of all other state fields.
 This supports the HOL primitive error-swap proof. -/
@@ -142,14 +146,18 @@ theorem doApp_space_error_resource {C F : Type} (op : ClosLang.Op)
   | some next =>
     have appRun : doAppAux op values (doStack op values (doLimSafe next op values)) = .err error := by
       simpa [source] using run
-    obtain ⟨safe', peak', mx', target⟩ := doSpace_some_resource op values state next safe peak mx source
+    obtain ⟨safe', peak', mx', target⟩ := doSpace_some_resource op values state next safe peak mx state.stack state.localsSize state.locals source
+    have frame := doSpace_frame op values state next source
+    have target' : doSpace op values { state with safeForSpace := safe, peakHeapLength := peak, stackMax := mx } =
+        some { next with safeForSpace := safe', peakHeapLength := peak', stackMax := mx' } := by
+      simpa only [frame.1, frame.2.1, frame.2.2.2.1] using target
     obtain ⟨safe'', peak'', mx'', account⟩ := doStack_doLimSafe_resource op values next safe' peak' mx'
     have result := doAppAux_error_resource op values (doStack op values (doLimSafe next op values))
       safe'' peak'' mx'' (doStack op values (doLimSafe next op values)).stack
       (doStack op values (doLimSafe next op values)).localsSize
       (doStack op values (doLimSafe next op values)).locals
       (doStack op values (doLimSafe next op values)).space error appRun
-    simpa only [target, account] using result
+    simpa only [target', account] using result
 
 /-- Primitive errors remain unchanged when resource observations change.
 This strengthens the two HOL error-swap theorems for their shared proof. -/

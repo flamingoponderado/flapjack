@@ -67,11 +67,15 @@ private theorem appSpace_success {C F : Type} (op : ClosLang.Op)
   | some accounted =>
     have appRun : doAppAux op args (doStack op args (doLimSafe accounted op args)) = .val (value, next) := by
       simpa [source] using run
-    obtain ⟨safe', peak', mx', target⟩ := doSpace_some_resource op args state accounted safe peak mx source
+    obtain ⟨safe', peak', mx', target⟩ := doSpace_some_resource op args state accounted safe peak mx state.stack state.localsSize state.locals source
+    have frame := doSpace_frame op args state accounted source
+    have target' : doSpace op args { state with stackMax := mx, safeForSpace := safe, peakHeapLength := peak } =
+        some { accounted with stackMax := mx', safeForSpace := safe', peakHeapLength := peak' } := by
+      simpa only [frame.1, frame.2.1, frame.2.2.2.1] using target
     obtain ⟨safe'', peak'', mx'', account⟩ := doStack_doLimSafe_resource op args accounted safe' peak' mx'
     obtain ⟨safe''', peak''', mx''', result⟩ := doAppAux_stackSafePeakSwap op args
       (doStack op args (doLimSafe accounted op args)) value next mx'' safe'' peak'' appRun
-    exact ⟨safe''', peak''', mx''', by simpa only [target, account] using result⟩
+    exact ⟨safe''', peak''', mx''', by simpa only [target', account] using result⟩
 
 /-- Primitive success is preserved by updating resource fields. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_sm_safe_peak_swap"]
@@ -154,13 +158,17 @@ private theorem spaceSafe {C F : Type} (op : ClosLang.Op) (values : List DataSem
     (state next : State C F) (safe : Bool) (peak : Nat) (run : doSpace op values state = some next) :
     ∃ safe' peak', doSpace op values {state with safeForSpace := safe, peakHeapLength := peak} =
       some {next with safeForSpace := safe', peakHeapLength := peak'} := by
-  obtain ⟨safe', peak', mx', result⟩ := doSpace_some_resource op values state next safe peak state.stackMax run
+  obtain ⟨safe', peak', mx', result⟩ := doSpace_some_resource op values state next safe peak state.stackMax state.stack state.localsSize state.locals run
+  have frame := doSpace_frame op values state next run
+  have result' : doSpace op values { state with safeForSpace := safe, peakHeapLength := peak } =
+      some { next with safeForSpace := safe', peakHeapLength := peak', stackMax := mx' } := by
+    simpa only [frame.1, frame.2.1, frame.2.2.2.1] using result
   have first := spaceStack op values state next run
   have second := spaceStack op values {state with safeForSpace := safe, peakHeapLength := peak, stackMax := state.stackMax}
-    {next with safeForSpace := safe', peakHeapLength := peak', stackMax := mx'} result
+    {next with safeForSpace := safe', peakHeapLength := peak', stackMax := mx'} result'
   have same : mx' = next.stackMax := second.trans first.symm
   subst mx'
-  exact ⟨safe', peak', by simpa using result⟩
+  exact ⟨safe', peak', by simpa using result'⟩
 
 /-- Limit and stack accounting respect safety and peak updates. This is proof infrastructure. -/
 private theorem stackSafe {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
