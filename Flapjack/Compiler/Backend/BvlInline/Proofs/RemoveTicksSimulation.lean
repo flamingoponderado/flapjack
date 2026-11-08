@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.BvlInline.Proofs.ApplySimulation
 import Flapjack.Compiler.Backend.BvlInline.Proofs.FindCode
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateClockShift
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+import Flapjack.Misc.ClockWeightInduction
 
 /-! Case factoring for the BVL tick-removal evaluator simulation. The full
 source theorem remains open until all cases are assembled. -/
@@ -572,101 +573,94 @@ theorem evaluateRemoveTicks {C F : Type} (clock : Nat) (expressions : List Bvl.E
     (h : stateRel t s ∧ s.clock = clock ∧ evaluateTuple (removeTicks expressions, env, s) = (result, final)) :
     ∃ extra sourceFinal, evaluateTuple (expressions, env, { t with clock := t.clock + extra }) =
       (result, sourceFinal) ∧ stateRel sourceFinal final := by
-  have allRanks : ∀ clock weight : Nat, ∀ (expressions : List Bvl.Exp) (env : List BvlSem.Value)
-      (s t final : State C F) (result : Result (List BvlSem.Value) BvlSem.Value),
-      s.clock = clock → expsWeight expressions = weight → stateRel t s →
+  refine clockWeightInduction (α := List Bvl.Exp) (σ := State C F) (·.clock) expsWeight
+    (motive := fun expressions s => ∀ env t final result, stateRel t s →
       evaluateTuple (removeTicks expressions, env, s) = (result, final) →
       ∃ extra sourceFinal, evaluateTuple (expressions, env, { t with clock := t.clock + extra }) =
-        (result, sourceFinal) ∧ stateRel sourceFinal final := by
-    intro clock
-    induction clock using Nat.strongRecOn with
-    | ind clock clockIH =>
-      intro weight
-      induction weight using Nat.strongRecOn with
-      | ind weight weightIH =>
-        have exprIH : ∀ (expressions : List Bvl.Exp) (env : List BvlSem.Value)
-            (s t final : State C F) (result : Result (List BvlSem.Value) BvlSem.Value),
-            s.clock ≤ clock → expsWeight expressions < weight → stateRel t s →
-            evaluateTuple (removeTicks expressions, env, s) = (result, final) →
-            ∃ extra sourceFinal, evaluateTuple (expressions, env, { t with clock := t.clock + extra }) =
-              (result, sourceFinal) ∧ stateRel sourceFinal final := by
-          intro expressions env s t final result clockLe weightLt related run
-          rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
-          · exact clockIH s.clock clockLt (expsWeight expressions) expressions env s t final result rfl rfl related run
-          · exact weightIH (expsWeight expressions) weightLt expressions env s t final result clockEq rfl related run
-        have smaller : ∀ (expressions : List Bvl.Exp) (env : List BvlSem.Value)
-            (s t final : State C F) (result : Result (List BvlSem.Value) BvlSem.Value),
-            s.clock < clock → stateRel t s → evaluateTuple (removeTicks expressions, env, s) = (result, final) →
-            ∃ extra sourceFinal, evaluateTuple (expressions, env, { t with clock := t.clock + extra }) =
-              (result, sourceFinal) ∧ stateRel sourceFinal final := by
-          intro expressions env s t final result clockLt related run
-          exact clockIH s.clock clockLt (expsWeight expressions) expressions env s t final result rfl rfl related run
-        intro expressions env s t final result clockEq measure related run
-        cases expressions with
-        | nil => exact evaluateRemoveTicks_nil clock env s t final result related clockEq run
-        | cons first rest =>
-          cases rest with
-          | cons second tail =>
-            apply evaluateRemoveTicks_cons clock first second tail env s t final result ?_ ?_ related clockEq run
-            · intro s t final result related clockEq run
-              apply exprIH [first] env s t final result (by omega) ?_ related run
-              simp only [expsWeight] at measure ⊢; have := expWeight_pos second; omega
-            · intro s t final result related clockLe run
-              apply exprIH (second :: tail) env s t final result clockLe ?_ related run
-              simp only [expsWeight] at measure ⊢; omega
-          | nil =>
-            cases first with
-            | var index => exact evaluateRemoveTicks_var clock index env s t final result related clockEq run
-            | tick body =>
-              apply evaluateRemoveTicks_tick clock body env s t final result ?_ related clockEq run
-              intro s t final result related clockEq run
-              apply exprIH [body] env s t final result (by omega) ?_ related run
-              simp only [expsWeight, expWeight] at measure ⊢; omega
-            | raise body =>
-              apply evaluateRemoveTicks_raise clock body env s t final result ?_ related clockEq run
-              intro s t final result related clockEq run
-              apply exprIH [body] env s t final result (by omega) ?_ related run
-              simp only [expsWeight, expWeight] at measure ⊢; omega
-            | op op args =>
-              apply evaluateRemoveTicks_op clock op args env s t final result ?_ related clockEq run
-              intro s t final result related clockEq run
-              apply exprIH args env s t final result (by omega) ?_ related run
-              simp only [expsWeight, expWeight] at measure ⊢; omega
-            | «let» bindings body =>
-              apply evaluateRemoveTicks_let clock bindings body env s t final result ?_ ?_ related clockEq run
-              · intro s t final result related clockEq run
-                apply exprIH bindings env s t final result (by omega) ?_ related run
-                simp only [expsWeight, expWeight] at measure ⊢; omega
-              · intro bodyEnv s t final result related clockLe run
-                apply exprIH [body] bodyEnv s t final result clockLe ?_ related run
-                simp only [expsWeight, expWeight] at measure ⊢; omega
-            | handle body handler =>
-              apply evaluateRemoveTicks_handle clock body handler env s t final result ?_ ?_ related clockEq run
-              · intro s t final result related clockEq run
-                apply exprIH [body] env s t final result (by omega) ?_ related run
-                simp only [expsWeight, expWeight] at measure ⊢; omega
-              · intro bodyEnv s t final result related clockLe run
-                apply exprIH [handler] bodyEnv s t final result clockLe ?_ related run
-                simp only [expsWeight, expWeight] at measure ⊢; omega
-            | ifThenElse condition yes no =>
-              apply evaluateRemoveTicks_if clock condition yes no env s t final result ?_ ?_ related clockEq run
-              · intro s t final result related clockEq run
-                apply exprIH [condition] env s t final result (by omega) ?_ related run
-                simp only [expsWeight, expWeight] at measure ⊢; omega
-              · intro choice s t final result related clockLe run
-                apply exprIH [if choice then yes else no] env s t final result clockLe ?_ related run
-                cases choice <;> simp only [Bool.false_eq_true, ↓reduceIte, expsWeight, expWeight] at measure ⊢ <;> omega
-            | force location index =>
-              apply evaluateRemoveTicks_force clock location index env s t final result ?_ related clockEq run
-              intro body bodyEnv s t final result related clockLt run
-              exact smaller [body] bodyEnv s t final result clockLt related run
-            | call ticks dest args =>
-              apply evaluateRemoveTicks_call clock ticks dest args env s t final result ?_ ?_ related clockEq run
-              · intro s t final result related clockEq run
-                apply exprIH args env s t final result (by omega) ?_ related run
-                simp only [expsWeight, expWeight] at measure ⊢; omega
-              · intro body bodyEnv s t final result related clockLt run
-                exact smaller [body] bodyEnv s t final result clockLt related run
-  exact allRanks clock (expsWeight expressions) expressions env s t final result h.2.1 rfl h.1 h.2.2
+        (result, sourceFinal) ∧ stateRel sourceFinal final) ?_
+    expressions s env t final result h.1 h.2.2
+  intro expressions s exprIH₀ smaller₀
+  have exprIH := fun (es : List Bvl.Exp) (env' : List BvlSem.Value) (s' t final : State C F)
+      (result : Result (List BvlSem.Value) BvlSem.Value) h1 h2 related run =>
+    exprIH₀ es s' h1 h2 env' t final result related run
+  have smaller := fun (es : List Bvl.Exp) (env' : List BvlSem.Value) (s' t final : State C F)
+      (result : Result (List BvlSem.Value) BvlSem.Value) h1 related run =>
+    smaller₀ es s' h1 env' t final result related run
+  intro env t final result related run
+  let clock := s.clock
+  have clockEq : s.clock = clock := rfl
+  cases expressions with
+  | nil => exact evaluateRemoveTicks_nil clock env s t final result related clockEq run
+  | cons first rest =>
+    cases rest with
+    | cons second tail =>
+      apply evaluateRemoveTicks_cons clock first second tail env s t final result ?_ ?_ related
+        clockEq run
+      · intro s t final result related clockEq run
+        apply exprIH [first] env s t final result (by omega) ?_ related run
+        simp only [expsWeight] at ⊢; have := expWeight_pos second; omega
+      · intro s t final result related clockLe run
+        apply exprIH (second :: tail) env s t final result clockLe ?_ related run
+        simp only [expsWeight] at ⊢; omega
+    | nil =>
+      cases first with
+      | var index => exact evaluateRemoveTicks_var clock index env s t final result related clockEq
+                       run
+      | tick body =>
+        apply evaluateRemoveTicks_tick clock body env s t final result ?_ related clockEq run
+        intro s t final result related clockEq run
+        apply exprIH [body] env s t final result (by omega) ?_ related run
+        simp only [expsWeight, expWeight] at ⊢; omega
+      | raise body =>
+        apply evaluateRemoveTicks_raise clock body env s t final result ?_ related clockEq run
+        intro s t final result related clockEq run
+        apply exprIH [body] env s t final result (by omega) ?_ related run
+        simp only [expsWeight, expWeight] at ⊢; omega
+      | op op args =>
+        apply evaluateRemoveTicks_op clock op args env s t final result ?_ related clockEq run
+        intro s t final result related clockEq run
+        apply exprIH args env s t final result (by omega) ?_ related run
+        simp only [expsWeight, expWeight] at ⊢; omega
+      | «let» bindings body =>
+        apply evaluateRemoveTicks_let clock bindings body env s t final result ?_ ?_ related clockEq
+          run
+        · intro s t final result related clockEq run
+          apply exprIH bindings env s t final result (by omega) ?_ related run
+          simp only [expsWeight, expWeight] at ⊢; omega
+        · intro bodyEnv s t final result related clockLe run
+          apply exprIH [body] bodyEnv s t final result clockLe ?_ related run
+          simp only [expsWeight, expWeight] at ⊢; omega
+      | handle body handler =>
+        apply evaluateRemoveTicks_handle clock body handler env s t final result ?_ ?_ related
+          clockEq run
+        · intro s t final result related clockEq run
+          apply exprIH [body] env s t final result (by omega) ?_ related run
+          simp only [expsWeight, expWeight] at ⊢; omega
+        · intro bodyEnv s t final result related clockLe run
+          apply exprIH [handler] bodyEnv s t final result clockLe ?_ related run
+          simp only [expsWeight, expWeight] at ⊢; omega
+      | ifThenElse condition yes no =>
+        apply evaluateRemoveTicks_if clock condition yes no env s t final result ?_ ?_ related
+          clockEq run
+        · intro s t final result related clockEq run
+          apply exprIH [condition] env s t final result (by omega) ?_ related run
+          simp only [expsWeight, expWeight] at ⊢; omega
+        · intro choice s t final result related clockLe run
+          apply exprIH [if choice then yes else no] env s t final result clockLe ?_ related run
+          cases choice <;> simp only [Bool.false_eq_true, ↓reduceIte, expsWeight, expWeight] at ⊢
+            <;> omega
+      | force location index =>
+        apply evaluateRemoveTicks_force clock location index env s t final result ?_ related clockEq
+          run
+        intro body bodyEnv s t final result related clockLt run
+        exact smaller [body] bodyEnv s t final result clockLt related run
+      | call ticks dest args =>
+        apply evaluateRemoveTicks_call clock ticks dest args env s t final result ?_ ?_ related
+          clockEq run
+        · intro s t final result related clockEq run
+          apply exprIH args env s t final result (by omega) ?_ related run
+          simp only [expsWeight, expWeight] at ⊢; omega
+        · intro body bodyEnv s t final result related clockLt run
+          exact smaller [body] bodyEnv s t final result clockLt related run
 
 end Flapjack.Compiler.Backend.BvlInline.Proofs

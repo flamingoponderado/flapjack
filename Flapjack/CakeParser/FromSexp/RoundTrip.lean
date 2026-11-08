@@ -909,45 +909,24 @@ theorem decodeLocPoint_canonical (s : Sexp) (z : Locn) (h : decodeLocPoint s = s
   | sym name =>
     simp only [decodeLocPoint] at h
     split at h
-    next unk =>
-      simp at h
-      subst z
-      simp only [beq_iff_eq] at unk
-      simp [locnsexp, unk]
-      rfl
-    next notUnk =>
-      split at h
-      next eof =>
-        simp at h
-        subst z
-        simp only [beq_iff_eq] at eof
-        simp [locnsexp, eof]
-        rfl
-      next _ => simp at h
+    · obtain rfl : z = .unknownPt := by simpa using h.symm
+      simp_all [locnsexp]; rfl
+    · split at h
+      · obtain rfl : z = .eofPt := by simpa using h.symm
+        simp_all [locnsexp]; rfl
+      · simp at h
   | num _ | str _ => simp [decodeLocPoint, decodeList] at h
   | cons head tail =>
     cases hs : decodeList some (.cons head tail) with
     | none => simp [decodeLocPoint, hs] at h
     | some xs =>
-      have shape := (decodeList_some_identity (.cons head tail) xs).mp hs
-      cases xs with
-      | nil => simp [decodeLocPoint, hs] at h
-      | cons a rest =>
-        cases rest with
-        | nil => simp [decodeLocPoint, hs] at h
-        | cons b rest =>
-          cases rest with
-          | cons c more => simp [decodeLocPoint, hs] at h
-          | nil =>
-            cases a with
-            | num row =>
-              cases b with
-              | num col =>
-                simp [decodeLocPoint, hs] at h
-                subst z
-                simpa [locnsexp] using shape.symm
-              | sym _ | str _ | cons _ _ => simp [decodeLocPoint, hs] at h
-            | sym _ | str _ | cons _ _ => simp [decodeLocPoint, hs] at h
+      have shape := (decodeList_some_identity _ xs).mp hs
+      simp [decodeLocPoint, hs] at h
+      split at h
+      · simp only [Option.some.injEq] at h
+        subst z
+        simpa [locnsexp] using shape.symm
+      · simp at h
 
 /-- Source locations round trip through S-expressions. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplocn_locnsexp"]

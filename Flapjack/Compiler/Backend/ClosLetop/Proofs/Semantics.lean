@@ -1,59 +1,13 @@
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Simulation
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
 import Flapjack.FiniteMap.EmptyExact
+import Flapjack.Compiler.Backend.Semantics.ClosProps.ResultObservations
 
 /-! Whole-program observations of let-operation cleanup. -/
 namespace Flapjack.Compiler.Backend.ClosLetop
 open Flapjack Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.BackendProps
+open Flapjack.Compiler.Backend.ClosProps
 open Flapjack.SemanticPrimitivesHOL (Result)
-
-private def resultHasOutcome (result : Result (List Value) Value) (outcome : HolOutcome) : Prop :=
-  match result with
-  | .err (.abort .timeoutError) => False
-  | .err (.abort (.ffiError event)) => outcome = .ffiOutcome event
-  | _ => outcome = .success
-
-private theorem resultHasOutcome_iff (result : Result (List Value) Value) (outcome : HolOutcome) :
-    resultHasOutcome result outcome ↔
-      (match result, outcome with
-       | .err (.abort .timeoutError), _ => False
-       | .err (.abort (.ffiError event)), outcome => outcome = .ffiOutcome event
-       | _, outcome => outcome = .success) := by
-  cases result with
-  | val values => rfl
-  | err error => cases error with
-    | raise value => rfl
-    | abort reason => cases reason <;> rfl
-
-/-- Related results agree on type errors and all terminating observations. This
-Lean-side helper has no standalone HOL declaration. -/
-theorem resultRel_observations (left right : Result (List Value) Value) (related : ResultRel left right) :
-    (left = .err (.abort .typeError) ↔ right = .err (.abort .typeError)) ∧
-    ∀ outcome : HolOutcome, resultHasOutcome left outcome ↔ resultHasOutcome right outcome := by
-  cases left with
-  | val values =>
-    cases right with
-    | val nextValues => simp [resultHasOutcome]
-    | err error => cases error <;> simp [ResultRel] at related
-  | err error =>
-    cases error with
-    | raise value =>
-      cases right with
-      | val values => simp [ResultRel] at related
-      | err nextError =>
-        cases nextError with
-        | raise nextValue => simp [resultHasOutcome]
-        | abort reason => cases related
-    | abort reason =>
-      cases right with
-      | val values => simp [ResultRel] at related
-      | err nextError =>
-        cases nextError with
-        | raise value => simp [ResultRel] at related
-        | abort nextReason =>
-          have same : reason = nextReason := related
-          subst nextReason
-          cases reason <;> simp [resultHasOutcome]
 
 /-- Initial states satisfy the let-operation relation under the source's
 oracle and maximum-application assumptions. This Lean-side helper has no

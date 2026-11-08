@@ -76,78 +76,70 @@ theorem frameLC_cutRes_pair (live : NumSet) (e : Option (LoopResultExact width) 
 
 theorem compSyntaxOk_evaluate_frame (p : HolLoopProg width) (s : LoopSemStateFiniteExact width F)
     (l : NumSet) (hc : compSyntaxOkHOL l p = true) : FrameLC s (evaluate p s).2 := by
-  have key : ∀ (x : Nat × Nat) (p : HolLoopProg width) (s : LoopSemStateFiniteExact width F),
-      (s.clock, sizeOf p) = x → ∀ l, compSyntaxOkHOL l p = true → FrameLC s (evaluate p s).2 := by
-    intro x
-    induction x using (Prod.lex Nat.lt_wfRel Nat.lt_wfRel).wf.induction with
-    | h x ih0 =>
-      intro p s hx l hc
-      have ih : ∀ (p' : HolLoopProg width) (s' : LoopSemStateFiniteExact width F),
-          Prod.Lex (· < ·) (· < ·) (s'.clock, sizeOf p') (s.clock, sizeOf p) →
-          ∀ l', compSyntaxOkHOL l' p' = true → FrameLC s' (evaluate p' s').2 :=
-        fun p' s' hlt => ih0 _ (hx ▸ hlt) p' s' rfl
-      clear ih0 hx
-      cases p
-      case seq c1 c2 =>
-        rw [compSyntaxOkHOL, Bool.and_eq_true] at hc
-        rw [evaluate_seq]
-        have h1 := ih c1 s (lexLt (Nat.le_refl _) (by simp +arith)) l hc.1
-        cases he : evaluate c1 s with
-        | mk r s1 =>
-          rw [he] at h1; simp only at h1
-          cases r with
-          | none =>
-            simp only
-            exact h1.trans (ih c2 s1 (lexLt (evaluate_clock _ _ _ _ he) (by simp +arith)) _ hc.2)
-          | some v => exact h1
-      case ite cmp r1 ri c1 c2 live =>
-        rw [compSyntaxOkHOL, Bool.and_eq_true, Bool.and_eq_true] at hc
-        rw [evaluate]
-        split
-        · split
-          · exact (ih c1 s (lexLt (Nat.le_refl _) (by simp +arith)) l hc.1.1).trans
-              (frameLC_cutRes_pair _ _)
-          · exact (ih c2 s (lexLt (Nat.le_refl _) (by simp +arith)) l hc.1.2).trans
-              (frameLC_cutRes_pair _ _)
-        · exact FrameLC.refl s
-      case loop li body lo =>
-        have hc' := hc
-        rw [compSyntaxOkHOL, Bool.and_eq_true, Bool.and_eq_true, decide_eq_true_eq,
-          decide_eq_true_eq] at hc'
-        obtain ⟨⟨rfl, rfl⟩, hb⟩ := hc'
-        rw [evaluate]
-        split
-        · rename_i s1 hcr
-          have hf1 : FrameLC s s1 := by
-            have := frameLC_cutRes l none s; rw [hcr] at this; exact this
-          have hs1 := cutRes_none_clock hcr
-          rw [fix_clock_evaluate]
-          have hbf := ih body s1 (lexLtClock hs1) l hb
-          cases hbe : evaluate body s1 with
-          | mk rb s2 =>
-            rw [hbe] at hbf; simp only at hbf
-            have hs2 : s2.clock < s.clock := Nat.lt_of_le_of_lt (evaluate_clock _ _ _ _ hbe) hs1
-            rcases rb with _ | (vs | e | k | k | _ | o | _)
-            · exact hf1.trans (hbf.trans (ih _ s2 (lexLtClock hs2) l hc))
-            · exact hf1.trans hbf
-            · exact hf1.trans hbf
-            · cases k with
-              | zero => exact hf1.trans (hbf.trans (frameLC_cutRes l none s2))
-              | succ k => exact hf1.trans hbf
-            · cases k with
-              | zero => exact hf1.trans (hbf.trans (ih _ s2 (lexLtClock hs2) l hc))
-              | succ k => exact hf1.trans hbf
-            · exact hf1.trans hbf
-            · exact hf1.trans hbf
-            · exact hf1.trans hbf
-        · exact frameLC_cutRes l none s
-      all_goals (try (simp [compSyntaxOkHOL] at hc; done))
-      all_goals (rw [evaluate]; repeat' split)
-      all_goals (first
-        | exact FrameLC.refl s
-        | exact frameLC_setVar _ _ _
-        | exact frameLC_loopArith ‹_›)
-  exact key _ p s rfl l hc
+  revert l hc
+  refine clockSizeLexInduction (α := HolLoopProg width) (·.clock) (motive := fun p s =>
+    ∀ l, compSyntaxOkHOL l p = true → FrameLC s (evaluate p s).2) ?_ p s
+  intro p s ih l hc
+  cases p
+  case seq c1 c2 =>
+    rw [compSyntaxOkHOL, Bool.and_eq_true] at hc
+    rw [evaluate_seq]
+    have h1 := ih c1 s (lexLt (Nat.le_refl _) (by simp +arith)) l hc.1
+    cases he : evaluate c1 s with
+    | mk r s1 =>
+      rw [he] at h1; simp only at h1
+      cases r with
+      | none =>
+        simp only
+        exact h1.trans (ih c2 s1 (lexLt (evaluate_clock _ _ _ _ he) (by simp +arith)) _ hc.2)
+      | some v => exact h1
+  case ite cmp r1 ri c1 c2 live =>
+    rw [compSyntaxOkHOL, Bool.and_eq_true, Bool.and_eq_true] at hc
+    rw [evaluate]
+    split
+    · split
+      · exact (ih c1 s (lexLt (Nat.le_refl _) (by simp +arith)) l hc.1.1).trans
+          (frameLC_cutRes_pair _ _)
+      · exact (ih c2 s (lexLt (Nat.le_refl _) (by simp +arith)) l hc.1.2).trans
+          (frameLC_cutRes_pair _ _)
+    · exact FrameLC.refl s
+  case loop li body lo =>
+    have hc' := hc
+    rw [compSyntaxOkHOL, Bool.and_eq_true, Bool.and_eq_true, decide_eq_true_eq,
+      decide_eq_true_eq] at hc'
+    obtain ⟨⟨rfl, rfl⟩, hb⟩ := hc'
+    rw [evaluate]
+    split
+    · rename_i s1 hcr
+      have hf1 : FrameLC s s1 := by
+        have := frameLC_cutRes l none s; rw [hcr] at this; exact this
+      have hs1 := cutRes_none_clock hcr
+      rw [fix_clock_evaluate]
+      have hbf := ih body s1 (lexLtClock hs1) l hb
+      cases hbe : evaluate body s1 with
+      | mk rb s2 =>
+        rw [hbe] at hbf; simp only at hbf
+        have hs2 : s2.clock < s.clock := Nat.lt_of_le_of_lt (evaluate_clock _ _ _ _ hbe) hs1
+        rcases rb with _ | (vs | e | k | k | _ | o | _)
+        · exact hf1.trans (hbf.trans (ih _ s2 (lexLtClock hs2) l hc))
+        · exact hf1.trans hbf
+        · exact hf1.trans hbf
+        · cases k with
+          | zero => exact hf1.trans (hbf.trans (frameLC_cutRes l none s2))
+          | succ k => exact hf1.trans hbf
+        · cases k with
+          | zero => exact hf1.trans (hbf.trans (ih _ s2 (lexLtClock hs2) l hc))
+          | succ k => exact hf1.trans hbf
+        · exact hf1.trans hbf
+        · exact hf1.trans hbf
+        · exact hf1.trans hbf
+    · exact frameLC_cutRes l none s
+  all_goals (try (simp [compSyntaxOkHOL] at hc; done))
+  all_goals (rw [evaluate]; repeat' split)
+  all_goals (first
+    | exact FrameLC.refl s
+    | exact frameLC_setVar _ _ _
+    | exact frameLC_loopArith ‹_›)
 
 theorem cutRes_lookup_nt {live : NumSet} {r r' : Option (LoopResultExact width)}
     {s s' : LoopSemStateFiniteExact width F} {n : Nat}
@@ -173,112 +165,100 @@ theorem compSyntaxOk_lookup_locals (n : Nat) :
       evaluate p s = (res, t) → res ≠ some .timeOut → compSyntaxOkHOL l p = true →
       sptMem n l → n ∉ holLoopAssignedVars p →
       sptLookup n t.locals = sptLookup n s.locals := by
-  have key : ∀ (x : Nat × Nat) (p : HolLoopProg width) (s : LoopSemStateFiniteExact width F),
-      (s.clock, sizeOf p) = x → ∀ res t l, evaluate p s = (res, t) → res ≠ some .timeOut →
+  refine clockSizeLexInduction (α := HolLoopProg width) (·.clock) (motive := fun p s =>
+    ∀ res t l, evaluate p s = (res, t) → res ≠ some .timeOut →
       compSyntaxOkHOL l p = true → sptMem n l → n ∉ holLoopAssignedVars p →
-      sptLookup n t.locals = sptLookup n s.locals := by
-    intro x
-    induction x using (Prod.lex Nat.lt_wfRel Nat.lt_wfRel).wf.induction with
-    | h x ih0 =>
-      intro p s hx
-      have ih : ∀ (p' : HolLoopProg width) (s' : LoopSemStateFiniteExact width F),
-          Prod.Lex (· < ·) (· < ·) (s'.clock, sizeOf p') (s.clock, sizeOf p) →
-          ∀ res t l, evaluate p' s' = (res, t) → res ≠ some .timeOut →
-          compSyntaxOkHOL l p' = true → sptMem n l → n ∉ holLoopAssignedVars p' →
-          sptLookup n t.locals = sptLookup n s'.locals :=
-        fun p' s' hlt => ih0 _ (hx ▸ hlt) p' s' rfl
-      clear ih0 hx
-      intro res t l h hne hc hn hna
-      cases p
-      case seq c1 c2 =>
-        rw [compSyntaxOkHOL, Bool.and_eq_true] at hc
-        simp only [holLoopAssignedVars, List.mem_append, not_or] at hna
-        rw [evaluate_seq] at h
-        cases he : evaluate c1 s with
-        | mk r1 s1 =>
-          rw [he] at h
-          cases r1 with
-          | none =>
+      sptLookup n t.locals = sptLookup n s.locals) ?_
+  intro p s ih res t l h hne hc hn hna
+  cases p
+  case seq c1 c2 =>
+    rw [compSyntaxOkHOL, Bool.and_eq_true] at hc
+    simp only [holLoopAssignedVars, List.mem_append, not_or] at hna
+    rw [evaluate_seq] at h
+    cases he : evaluate c1 s with
+    | mk r1 s1 =>
+      rw [he] at h
+      cases r1 with
+      | none =>
+        simp only at h
+        have e1 := ih c1 s (lexLt (Nat.le_refl _) (by simp +arith)) _ _ l he (by simp) hc.1 hn hna.1
+        rw [← e1]
+        exact ih c2 s1 (lexLt (evaluate_clock _ _ _ _ he) (by simp +arith)) _ _ _ h hne hc.2
+          (comp_syn_cut_sets_mem_domain c1 l n ⟨hc.1, hn⟩) hna.2
+      | some v =>
+        simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h
+        exact ih c1 s (lexLt (Nat.le_refl _) (by simp +arith)) _ _ l he hne hc.1 hn hna.1
+  case ite cmp r1 ri c1 c2 live =>
+    rw [compSyntaxOkHOL, Bool.and_eq_true, Bool.and_eq_true, holPropBool_eq_true] at hc
+    obtain ⟨⟨hc1, hc2⟩, names, hlive⟩ := hc
+    simp only [holLoopAssignedVars, List.mem_append, not_or] at hna
+    have hnl : sptMem n live := by rw [hlive]; exact sptMem_sptListInsert_of _ _ _ hn
+    rw [evaluate] at h
+    have step : ∀ c, Prod.Lex (· < ·) (· < ·) (s.clock, sizeOf c)
+          (s.clock, sizeOf (HolLoopProg.ite cmp r1 ri c1 c2 live)) →
+        compSyntaxOkHOL l c = true → n ∉ holLoopAssignedVars c →
+        cutRes live (evaluate c s) = (res, t) → sptLookup n t.locals = sptLookup n s.locals := by
+      intro c hlex hcc hnac hcut
+      cases he : evaluate c s with
+      | mk rc sc =>
+        rw [he] at hcut
+        have hrc : rc ≠ some .timeOut := by
+          rintro rfl; unfold cutRes at hcut; simp only [Prod.mk.injEq] at hcut
+          exact hne hcut.1.symm
+        rw [cutRes_lookup_nt hcut hne hnl]
+        exact ih c s hlex _ _ l he hrc hcc hn hnac
+    split at h
+    · split at h
+      · exact step c1 (lexLt (Nat.le_refl _) (by simp +arith)) hc1 hna.1 h
+      · exact step c2 (lexLt (Nat.le_refl _) (by simp +arith)) hc2 hna.2 h
+    · simp only [Prod.mk.injEq] at h; obtain ⟨-, rfl⟩ := h; rfl
+  case loop li body lo =>
+    have hc' := hc
+    rw [compSyntaxOkHOL, Bool.and_eq_true, Bool.and_eq_true, decide_eq_true_eq,
+      decide_eq_true_eq] at hc'
+    obtain ⟨⟨rfl, rfl⟩, hb⟩ := hc'
+    simp only [holLoopAssignedVars] at hna
+    rw [evaluate] at h
+    split at h
+    · rename_i s1 hcr
+      have e1 := cutRes_lookup_nt hcr (by simp) hn
+      have hs1 := cutRes_none_clock hcr
+      rw [fix_clock_evaluate] at h
+      rw [← e1]
+      cases hbe : evaluate body s1 with
+      | mk rb s2 =>
+        rw [hbe] at h
+        have hs2 : s2.clock < s.clock := Nat.lt_of_le_of_lt (evaluate_clock _ _ _ _ hbe) hs1
+        have ihb := fun hrb => ih body s1 (lexLtClock hs1) _ _ l hbe hrb hb hn hna
+        rcases rb with _ | (vs | e | k | k | _ | o | _)
+        · simp only at h
+          rw [← ihb (by simp)]
+          exact ih _ s2 (lexLtClock hs2) _ _ l h hne hc hn hna
+        · simp only [Prod.mk.injEq] at h; obtain ⟨-, rfl⟩ := h; exact ihb (by simp)
+        · simp only [Prod.mk.injEq] at h; obtain ⟨-, rfl⟩ := h; exact ihb (by simp)
+        · cases k with
+          | zero =>
             simp only at h
-            have e1 := ih c1 s (lexLt (Nat.le_refl _) (by simp +arith)) _ _ l he (by simp) hc.1 hn hna.1
-            rw [← e1]
-            exact ih c2 s1 (lexLt (evaluate_clock _ _ _ _ he) (by simp +arith)) _ _ _ h hne hc.2
-              (comp_syn_cut_sets_mem_domain c1 l n ⟨hc.1, hn⟩) hna.2
-          | some v =>
-            simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h
-            exact ih c1 s (lexLt (Nat.le_refl _) (by simp +arith)) _ _ l he hne hc.1 hn hna.1
-      case ite cmp r1 ri c1 c2 live =>
-        rw [compSyntaxOkHOL, Bool.and_eq_true, Bool.and_eq_true, holPropBool_eq_true] at hc
-        obtain ⟨⟨hc1, hc2⟩, names, hlive⟩ := hc
-        simp only [holLoopAssignedVars, List.mem_append, not_or] at hna
-        have hnl : sptMem n live := by rw [hlive]; exact sptMem_sptListInsert_of _ _ _ hn
-        rw [evaluate] at h
-        have step : ∀ c, Prod.Lex (· < ·) (· < ·) (s.clock, sizeOf c)
-              (s.clock, sizeOf (HolLoopProg.ite cmp r1 ri c1 c2 live)) →
-            compSyntaxOkHOL l c = true → n ∉ holLoopAssignedVars c →
-            cutRes live (evaluate c s) = (res, t) → sptLookup n t.locals = sptLookup n s.locals := by
-          intro c hlex hcc hnac hcut
-          cases he : evaluate c s with
-          | mk rc sc =>
-            rw [he] at hcut
-            have hrc : rc ≠ some .timeOut := by
-              rintro rfl; unfold cutRes at hcut; simp only [Prod.mk.injEq] at hcut
-              exact hne hcut.1.symm
-            rw [cutRes_lookup_nt hcut hne hnl]
-            exact ih c s hlex _ _ l he hrc hcc hn hnac
-        split at h
-        · split at h
-          · exact step c1 (lexLt (Nat.le_refl _) (by simp +arith)) hc1 hna.1 h
-          · exact step c2 (lexLt (Nat.le_refl _) (by simp +arith)) hc2 hna.2 h
-        · simp only [Prod.mk.injEq] at h; obtain ⟨-, rfl⟩ := h; rfl
-      case loop li body lo =>
-        have hc' := hc
-        rw [compSyntaxOkHOL, Bool.and_eq_true, Bool.and_eq_true, decide_eq_true_eq,
-          decide_eq_true_eq] at hc'
-        obtain ⟨⟨rfl, rfl⟩, hb⟩ := hc'
-        simp only [holLoopAssignedVars] at hna
-        rw [evaluate] at h
-        split at h
-        · rename_i s1 hcr
-          have e1 := cutRes_lookup_nt hcr (by simp) hn
-          have hs1 := cutRes_none_clock hcr
-          rw [fix_clock_evaluate] at h
-          rw [← e1]
-          cases hbe : evaluate body s1 with
-          | mk rb s2 =>
-            rw [hbe] at h
-            have hs2 : s2.clock < s.clock := Nat.lt_of_le_of_lt (evaluate_clock _ _ _ _ hbe) hs1
-            have ihb := fun hrb => ih body s1 (lexLtClock hs1) _ _ l hbe hrb hb hn hna
-            rcases rb with _ | (vs | e | k | k | _ | o | _)
-            · simp only at h
-              rw [← ihb (by simp)]
-              exact ih _ s2 (lexLtClock hs2) _ _ l h hne hc hn hna
-            · simp only [Prod.mk.injEq] at h; obtain ⟨-, rfl⟩ := h; exact ihb (by simp)
-            · simp only [Prod.mk.injEq] at h; obtain ⟨-, rfl⟩ := h; exact ihb (by simp)
-            · cases k with
-              | zero =>
-                simp only at h
-                rw [cutRes_lookup_nt h hne hn]; exact ihb (by simp)
-              | succ k => simp only [Prod.mk.injEq] at h; obtain ⟨-, rfl⟩ := h; exact ihb (by simp)
-            · cases k with
-              | zero =>
-                simp only at h
-                rw [← ihb (by simp)]
-                exact ih _ s2 (lexLtClock hs2) _ _ l h hne hc hn hna
-              | succ k => simp only [Prod.mk.injEq] at h; obtain ⟨-, rfl⟩ := h; exact ihb (by simp)
-            · simp only [Prod.mk.injEq] at h; obtain ⟨rfl, -⟩ := h; simp [exitLoop] at hne
-            · simp only [Prod.mk.injEq] at h; obtain ⟨-, rfl⟩ := h; exact ihb (by simp)
-            · simp only [Prod.mk.injEq] at h; obtain ⟨-, rfl⟩ := h; exact ihb (by simp)
-        · exact cutRes_lookup_nt h hne hn
-      all_goals (try (simp [compSyntaxOkHOL] at hc; done))
-      all_goals (rw [evaluate] at h; revert h; repeat' split)
-      all_goals intro h
-      all_goals (try (simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h))
-      all_goals (try rfl)
-      all_goals (try (simp only [holLoopAssignedVars, List.mem_singleton] at hna
-                      exact sptLookup_setVar_ne hna _ _))
-      all_goals (try (exact loopArith_lookup ‹loopArith _ _ = some _› hna))
-  exact fun p s => key _ p s rfl
+            rw [cutRes_lookup_nt h hne hn]; exact ihb (by simp)
+          | succ k => simp only [Prod.mk.injEq] at h; obtain ⟨-, rfl⟩ := h; exact ihb (by simp)
+        · cases k with
+          | zero =>
+            simp only at h
+            rw [← ihb (by simp)]
+            exact ih _ s2 (lexLtClock hs2) _ _ l h hne hc hn hna
+          | succ k => simp only [Prod.mk.injEq] at h; obtain ⟨-, rfl⟩ := h; exact ihb (by simp)
+        · simp only [Prod.mk.injEq] at h; obtain ⟨rfl, -⟩ := h; simp [exitLoop] at hne
+        · simp only [Prod.mk.injEq] at h; obtain ⟨-, rfl⟩ := h; exact ihb (by simp)
+        · simp only [Prod.mk.injEq] at h; obtain ⟨-, rfl⟩ := h; exact ihb (by simp)
+    · exact cutRes_lookup_nt h hne hn
+  all_goals (try (simp [compSyntaxOkHOL] at hc; done))
+  all_goals (rw [evaluate] at h; revert h; repeat' split)
+  all_goals intro h
+  all_goals (try (simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h))
+  all_goals (try rfl)
+  all_goals (try (simp only [holLoopAssignedVars, List.mem_singleton] at hna
+                  exact sptLookup_setVar_ne hna _ _))
+  all_goals (try (exact loopArith_lookup ‹loopArith _ _ = some _› hna))
 
 namespace LoopPropsCompSyntaxEvalFiniteSupport
 

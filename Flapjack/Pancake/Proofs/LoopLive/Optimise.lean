@@ -35,138 +35,131 @@ end LoopLiveOptimiseWitnesses
 private theorem markAll_evaluate_eq {width : Nat} [NeZero width] {F : Type} :
     ∀ (prog : HolLoopProg width) (s : LoopSemStateFiniteExact width F),
       evaluate (markAllHOL prog).1 s = evaluate prog s := by
-  have key : ∀ (x : Nat × Nat) (prog : HolLoopProg width) (s : LoopSemStateFiniteExact width F),
-      (s.clock, sizeOf prog) = x → evaluate (markAllHOL prog).1 s = evaluate prog s := by
-    intro x
-    induction x using (Prod.lex Nat.lt_wfRel Nat.lt_wfRel).wf.induction with
-    | h x ih0 =>
-      intro prog s hx
-      have ih : ∀ (p' : HolLoopProg width) (t' : LoopSemStateFiniteExact width F),
-          Prod.Lex (· < ·) (· < ·) (t'.clock, sizeOf p') (s.clock, sizeOf prog) →
-          evaluate (markAllHOL p').1 t' = evaluate p' t' :=
-        fun p' t' hlt => ih0 _ (hx ▸ hlt) p' t' rfl
-      clear ih0 hx
-      have ihc : ∀ (p' : HolLoopProg width) (t' : LoopSemStateFiniteExact width F),
-          t'.clock < s.clock → evaluate (markAllHOL p').1 t' = evaluate p' t' :=
-        fun p' t' h => ih p' t' (Prod.Lex.left _ _ h)
-      have ihle : ∀ (p' : HolLoopProg width) (t' : LoopSemStateFiniteExact width F),
-          t'.clock ≤ s.clock → sizeOf p' < sizeOf prog →
-          evaluate (markAllHOL p').1 t' = evaluate p' t' := fun p' t' h hs => by
-        rcases Nat.lt_or_eq_of_le h with h | h
-        · exact ihc p' t' h
-        · exact ih p' t' (by rw [h]; exact Prod.Lex.right _ hs)
-      have hmark : ∀ (p : HolLoopProg width) (t : LoopSemStateFiniteExact width F),
-          evaluate (.mark p) t = evaluate p t := fun p t => by rw [evaluate]
-      cases prog with
-      | seq c1 c2 =>
-        have hseq : evaluate (.seq (markAllHOL c1).1 (markAllHOL c2).1) s = evaluate (.seq c1 c2) s := by
-          rw [evaluate_seq, evaluate_seq, ihle c1 s (Nat.le_refl _) (by simp <;> omega)]
-          rcases h1 : evaluate c1 s with ⟨r, s1⟩
-          cases r with
-          | none =>
-            simp only
-            have hle := evaluate_clock_snd c1 s
-            rw [h1] at hle
-            exact ihle c2 s1 hle (by simp <;> omega)
-          | some _ => rfl
-        simp only [markAllHOL]
-        split
-        · rw [hmark]; exact hseq
-        · exact hseq
-      | loop liveIn body liveOut =>
-        simp only [markAllHOL]
+  refine clockSizeLexInduction (α := HolLoopProg width) (·.clock)
+    (motive := fun prog s => evaluate (markAllHOL prog).1 s = evaluate prog s) ?_
+  intro prog s ih
+  have ihc : ∀ (p' : HolLoopProg width) (t' : LoopSemStateFiniteExact width F),
+      t'.clock < s.clock → evaluate (markAllHOL p').1 t' = evaluate p' t' :=
+    fun p' t' h => ih p' t' (Prod.Lex.left _ _ h)
+  have ihle : ∀ (p' : HolLoopProg width) (t' : LoopSemStateFiniteExact width F),
+      t'.clock ≤ s.clock → sizeOf p' < sizeOf prog →
+      evaluate (markAllHOL p').1 t' = evaluate p' t' := fun p' t' h hs => by
+    rcases Nat.lt_or_eq_of_le h with h | h
+    · exact ihc p' t' h
+    · exact ih p' t' (by rw [h]; exact Prod.Lex.right _ hs)
+  have hmark : ∀ (p : HolLoopProg width) (t : LoopSemStateFiniteExact width F),
+      evaluate (.mark p) t = evaluate p t := fun p t => by rw [evaluate]
+  cases prog with
+  | seq c1 c2 =>
+    have hseq : evaluate (.seq (markAllHOL c1).1 (markAllHOL c2).1) s =
+        evaluate (.seq c1 c2) s := by
+      rw [evaluate_seq, evaluate_seq, ihle c1 s (Nat.le_refl _) (by simp <;> omega)]
+      rcases h1 : evaluate c1 s with ⟨r, s1⟩
+      cases r with
+      | none =>
+        simp only
+        have hle := evaluate_clock_snd c1 s
+        rw [h1] at hle
+        exact ihle c2 s1 hle (by simp <;> omega)
+      | some _ => rfl
+    simp only [markAllHOL]
+    split
+    · rw [hmark]; exact hseq
+    · exact hseq
+  | loop liveIn body liveOut =>
+    simp only [markAllHOL]
+    rw [evaluate, evaluate]
+    rcases hc : cutRes liveIn (none, s) with ⟨r0, s1⟩
+    cases r0 with
+    | some _ => rfl
+    | none =>
+      simp only
+      have hs1 := cutRes_none_clock hc
+      rw [fix_clock_evaluate, fix_clock_evaluate, ihc body s1 hs1]
+      rcases hb : evaluate body s1 with ⟨rb, s2⟩
+      have hs2 : s2.clock < s.clock := by
+        have := evaluate_clock_snd body s1
+        rw [hb] at this; simp only at this; omega
+      have hL : evaluate (.loop liveIn (markAllHOL body).1 liveOut) s2 =
+          evaluate (.loop liveIn body liveOut) s2 := by
+        have := ihc (.loop liveIn body liveOut) s2 hs2
+        simpa [markAllHOL] using this
+      rcases rb with _ | r
+      · exact hL
+      · cases r with
+        | «continue» n => cases n with
+          | zero => exact hL
+          | succ n => rfl
+        | «break» n => cases n <;> rfl
+        | _ => rfl
+  | ite cmp r1 ri c1 c2 live =>
+    have hite : evaluate (.ite cmp r1 ri (markAllHOL c1).1 (markAllHOL c2).1 live) s =
+        evaluate (.ite cmp r1 ri c1 c2 live) s := by
+      rw [evaluate, evaluate, ihle c1 s (Nat.le_refl _) (by simp <;> omega),
+        ihle c2 s (Nat.le_refl _) (by simp <;> omega)]
+    simp only [markAllHOL]
+    split
+    · rw [hmark]; exact hite
+    · exact hite
+  | mark body =>
+    simp only [markAllHOL]
+    rw [ihle body s (Nat.le_refl _) (by simp)]
+    rw [evaluate]
+  | call ret dest args handler =>
+    cases handler with
+    | none => simp only [markAllHOL]; rw [evaluate]
+    | some hd =>
+      obtain ⟨e, h, r, lo⟩ := hd
+      have hP : evaluate (.call ret dest args
+          (some (e, (markAllHOL h).1, (markAllHOL r).1, lo))) s =
+          evaluate (.call ret dest args (some (e, h, r, lo))) s := by
         rw [evaluate, evaluate]
-        rcases hc : cutRes liveIn (none, s) with ⟨r0, s1⟩
+        cases hg : LoopSemStateFiniteExact.getVars args s with
+        | none => rfl
+        | some av =>
+        simp only
+        cases hfc : LoopSemStateFiniteExact.findCode dest av s.code with
+        | none => rfl
+        | some ep =>
+        obtain ⟨env, pr⟩ := ep
+        simp only
+        cases ret with
+        | none => rfl
+        | some rl =>
+        obtain ⟨ns, live⟩ := rl
+        simp only
+        by_cases hnd' : ¬ ns.Nodup
+        · simp [hnd']
+        have hnd : ns.Nodup := Classical.not_not.mp hnd'
+        simp only [hnd, not_true_eq_false, if_false]
+        rcases hc : cutRes live (none, s) with ⟨r0, s1⟩
         cases r0 with
         | some _ => rfl
         | none =>
           simp only
           have hs1 := cutRes_none_clock hc
-          rw [fix_clock_evaluate, fix_clock_evaluate, ihc body s1 hs1]
-          rcases hb : evaluate body s1 with ⟨rb, s2⟩
-          have hs2 : s2.clock < s.clock := by
-            have := evaluate_clock_snd body s1
-            rw [hb] at this; simp only at this; omega
-          have hL : evaluate (.loop liveIn (markAllHOL body).1 liveOut) s2 =
-              evaluate (.loop liveIn body liveOut) s2 := by
-            have := ihc (.loop liveIn body liveOut) s2 hs2
-            simpa [markAllHOL] using this
-          rcases rb with _ | r
-          · exact hL
-          · cases r with
-            | «continue» n => cases n with
-              | zero => exact hL
-              | succ n => rfl
-            | «break» n => cases n <;> rfl
-            | _ => rfl
-      | ite cmp r1 ri c1 c2 live =>
-        have hite : evaluate (.ite cmp r1 ri (markAllHOL c1).1 (markAllHOL c2).1 live) s =
-            evaluate (.ite cmp r1 ri c1 c2 live) s := by
-          rw [evaluate, evaluate, ihle c1 s (Nat.le_refl _) (by simp <;> omega),
-            ihle c2 s (Nat.le_refl _) (by simp <;> omega)]
-        simp only [markAllHOL]
-        split
-        · rw [hmark]; exact hite
-        · exact hite
-      | mark body =>
-        simp only [markAllHOL]
-        rw [ihle body s (Nat.le_refl _) (by simp)]
-        rw [evaluate]
-      | call ret dest args handler =>
-        cases handler with
-        | none => simp only [markAllHOL]; rw [evaluate]
-        | some hd =>
-          obtain ⟨e, h, r, lo⟩ := hd
-          have hP : evaluate (.call ret dest args (some (e, (markAllHOL h).1, (markAllHOL r).1, lo))) s =
-              evaluate (.call ret dest args (some (e, h, r, lo))) s := by
-            rw [evaluate, evaluate]
-            cases hg : LoopSemStateFiniteExact.getVars args s with
-            | none => rfl
-            | some av =>
-            simp only
-            cases hfc : LoopSemStateFiniteExact.findCode dest av s.code with
-            | none => rfl
-            | some ep =>
-            obtain ⟨env, pr⟩ := ep
-            simp only
-            cases ret with
-            | none => rfl
-            | some rl =>
-            obtain ⟨ns, live⟩ := rl
-            simp only
-            by_cases hnd' : ¬ ns.Nodup
-            · simp [hnd']
-            have hnd : ns.Nodup := Classical.not_not.mp hnd'
-            simp only [hnd, not_true_eq_false, if_false]
-            rcases hc : cutRes live (none, s) with ⟨r0, s1⟩
-            cases r0 with
-            | some _ => rfl
-            | none =>
+          rw [fix_clock_evaluate]
+          rcases hcal : evaluate pr { s1 with locals := env } with ⟨rc, st⟩
+          have hst : st.clock < s.clock := by
+            have := evaluate_clock_snd pr { s1 with locals := env }
+            rw [hcal] at this; simp only at this; omega
+          rcases rc with _ | rv
+          · rfl
+          · cases rv with
+            | result retvs =>
               simp only
-              have hs1 := cutRes_none_clock hc
-              rw [fix_clock_evaluate]
-              rcases hcal : evaluate pr { s1 with locals := env } with ⟨rc, st⟩
-              have hst : st.clock < s.clock := by
-                have := evaluate_clock_snd pr { s1 with locals := env }
-                rw [hcal] at this; simp only at this; omega
-              rcases rc with _ | rv
+              split
               · rfl
-              · cases rv with
-                | result retvs =>
-                  simp only
-                  split
-                  · rfl
-                  · rw [ihc r _ (by simp [LoopSemStateFiniteExact.setVars]; exact hst)]
-                | exception w =>
-                  simp only
-                  rw [ihc h _ (by simp [LoopSemStateFiniteExact.setVar]; exact hst)]
-                | _ => rfl
-          simp only [markAllHOL]
-          split
-          · rw [hmark]; exact hP
-          · exact hP
-      | _ => simp [markAllHOL, evaluate]
-  exact fun prog s => key _ prog s rfl
+              · rw [ihc r _ (by simp [LoopSemStateFiniteExact.setVars]; exact hst)]
+            | exception w =>
+              simp only
+              rw [ihc h _ (by simp [LoopSemStateFiniteExact.setVar]; exact hst)]
+            | _ => rfl
+      simp only [markAllHOL]
+      split
+      · rw [hmark]; exact hP
+      · exact hP
+  | _ => simp [markAllHOL, evaluate]
 
 /-- Exact HOL `mark_correct` (`loop_liveProofScript.sml:860-862`):
     `∀prog s res s1. evaluate (prog,s) = (res,s1) ⇒

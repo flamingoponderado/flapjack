@@ -2,44 +2,56 @@ import Flapjack.RiscV.CorrectnessEncoding.ConstExecution
 import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
 import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
 import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
+import Flapjack.RiscV.CorrectnessEncoding.DecodeSltu
+import Flapjack.RiscV.L3.Step.RegisterComparison
 import Flapjack.RiscV.L3.Step.RegisterALUStep
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
-namespace Flapjack.RiscV.TargetProof.SubOverflow
+namespace Flapjack.RiscV.TargetProof.ArithNative
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target
   Compiler.Encoders.AsmProps
 set_option autoImplicit false
 set_option maxRecDepth 200000
 set_option maxHeartbeats 2000000
-/-- The five literal native families used by the six SubOverflow instructions.
-Untagged local composition infrastructure; no separately named HOL declaration. -/
+/-- The native arithmetic families shared by the SubOverflow and AddOverflow
+encodings, and prepared for the AddCarry follow-up. Untagged local composition
+infrastructure; no separately named HOL declaration. Each lemma is universally
+quantified over `Family i`, so a caller supplies the constructor for its own
+instruction. -/
 inductive Family : instruction → Prop
   | xor (rd rs rt : BitVec 5) : Family (.ArithR (.XOR (rd,rs,rt)))
   | xori (rd rs : BitVec 5) (imm : BitVec 12) : Family (.ArithI (.XORI (rd,rs,imm)))
+  | add (rd rs rt : BitVec 5) : Family (.ArithR (.ADD (rd,rs,rt)))
   | sub (rd rs rt : BitVec 5) : Family (.ArithR (.SUB (rd,rs,rt)))
   | and (rd rs rt : BitVec 5) : Family (.ArithR (.AND (rd,rs,rt)))
   | srli (rd rs : BitVec 5) (imm : BitVec 6) : Family (.Shift (.SRLI (rd,rs,imm)))
+  | sltu (rd rs rt : BitVec 5) : Family (.ArithR (.SLTU (rd,rs,rt)))
+  | or (rd rs rt : BitVec 5) : Family (.ArithR (.OR (rd,rs,rt)))
 /-- Family-local destination. The fallback is excluded by Family proofs. -/
 def destination : instruction → BitVec 5
   | .ArithR (.XOR (rd,_,_)) | .ArithI (.XORI (rd,_,_))
-  | .ArithR (.SUB (rd,_,_)) | .ArithR (.AND (rd,_,_))
-  | .Shift (.SRLI (rd,_,_)) => rd
+  | .ArithR (.ADD (rd,_,_)) | .ArithR (.SUB (rd,_,_)) | .ArithR (.AND (rd,_,_))
+  | .Shift (.SRLI (rd,_,_)) | .ArithR (.SLTU (rd,_,_)) | .ArithR (.OR (rd,_,_)) => rd
   | _ => 0
 /-- Literal native Run values, restricted by Family in every effect theorem. -/
 def value (i : instruction) (ms : riscv_state) : BitVec 64 :=
   match i with
   | .ArithR (.XOR (_,rs,rt)) => GPR rs ms ^^^ GPR rt ms
   | .ArithI (.XORI (_,rs,imm)) => GPR rs ms ^^^ imm.signExtend 64
+  | .ArithR (.ADD (_,rs,rt)) => GPR rs ms + GPR rt ms
   | .ArithR (.SUB (_,rs,rt)) => GPR rs ms - GPR rt ms
   | .ArithR (.AND (_,rs,rt)) => GPR rs ms &&& GPR rt ms
   | .Shift (.SRLI (_,rs,imm)) => GPR rs ms >>> imm.toNat
+  | .ArithR (.SLTU (_,rs,rt)) => holV2w 64 [BitVec.ult (GPR rs ms) (GPR rt ms)]
+  | .ArithR (.OR (_,rs,rt)) => GPR rs ms ||| GPR rt ms
   | _ => 0
 /-- Actual Run effect from original riscvOk; no target run is assumed. -/
 theorem run_eq (i : instruction) (kind : Family i) (ms : riscv_state)
     (ok : riscvOk ms = true) :
     Run i ms = «write'GPR» (value i ms,destination i) ms := by
   have arch := ((riscvOk_iff ms).mp ok).2.1
-  cases kind <;> simp [value,destination,Run,«dfn'XOR»,«dfn'XORI»,«dfn'SUB»,
-    «dfn'AND»,«dfn'SRLI»,in32BitMode,curArch,architecture,MCSR,arch,GPR,gpr]
+  cases kind <;> simp [value,destination,Run,«dfn'XOR»,«dfn'XORI»,«dfn'ADD»,
+    «dfn'SUB»,«dfn'AND»,«dfn'SRLI»,«dfn'SLTU»,«dfn'OR»,
+    in32BitMode,curArch,architecture,MCSR,arch,GPR,gpr]
 /-- Full native Next from actual encoded bytes and original validity. -/
 theorem native_step (i : instruction) (kind : Family i) (ms : riscv_state)
     (rn : destination i ≠ 0#5) (ok : riscvOk ms = true)
@@ -53,9 +65,12 @@ theorem native_step (i : instruction) (kind : Family i) (ms : riscv_state)
     cases kind
     · exact decode_encode_xor _ _ _
     · exact decode_encode_xori _ _ _
+    · exact decode_encode_add _ _ _
     · exact decode_encode_sub _ _ _
     · exact decode_encode_and _ _ _
     · exact decode_encode_srli _ _ _
+    · exact decode_encode_sltu _ _ _
+    · exact decode_encode_or _ _ _
   have updatedOk : riscvOk {ms with c_Skip := holUpdate ms.procID 4 ms.c_Skip} = true := ok
   have run := run_eq i kind {ms with c_Skip := holUpdate ms.procID 4 ms.c_Skip} updatedOk
   have val : value i {ms with c_Skip := holUpdate ms.procID 4 ms.c_Skip} = value i ms := by
@@ -142,7 +157,8 @@ theorem step_projection_eq (d : BitVec 64 → Prop) (i : instruction)
       h.2.2.2.2.2.1, h.2.2.2.2.2.2⟩
 
 /-- Whole complete-step list congruence with native PC advancement. Untagged
-infrastructure for full SubOverflow execution; no target execution is assumed. -/
+shared native-execution infrastructure used by the SubOverflow and AddOverflow
+(and later AddCarry) encoding proofs; no target execution is assumed. -/
 theorem step_list_projection (d : BitVec 64 → Prop) (is : List instruction)
     (kinds : ∀ i ∈ is, Family i) (ms ns : riscv_state)
     (ok : riscvOk ms = true) (h : riscvProj d ms = riscvProj d ns) :
@@ -181,8 +197,9 @@ theorem interleaved_projection (d : BitVec 64 → Prop)
 
 /-- Complete pure-list native frame and total PC increment, for arbitrary
 length and every intrinsic operand. The emitted-byte execution connection is
-proved per instruction above; full encoded-list assertions are assembled in the
-parent SubOverflow counterpart module. -/
+proved per instruction above; full encoded-list assertions are assembled in
+each encoding's parent counterpart module (SubOverflow, AddOverflow, and later
+AddCarry). -/
 theorem step_list_frame (is : List instruction)
     (kinds : ∀ i ∈ is, Family i) (ms : riscv_state)
     (ok : riscvOk ms = true) :
@@ -205,7 +222,9 @@ theorem step_list_frame (is : List instruction)
       ms.c_PC ms.procID + (BitVec.ofNat 64 (4 * is.length) + 4)
     rw [BitVec.add_assoc, BitVec.add_comm (4 : BitVec 64) (BitVec.ofNat 64 (4 * is.length))]
 
-/-- SubOverflow-local composition infrastructure with no separately named HOL original. -/
+/-- Shared native-execution infrastructure used by the SubOverflow and
+AddOverflow (and later AddCarry) encoding proofs, with no separately named HOL
+original. -/
 theorem native_execute (d : BitVec 64 → Prop) (is : List instruction)
     (kinds : ∀ i ∈ is, Family i)
     (nonzero : ∀ i ∈ is, destination i ≠ 0#5)
@@ -269,7 +288,7 @@ exactly four per instruction, and preserves every byte in the original domain.
 The environment may change processor identity or memory outside that domain;
 no stronger preservation premise is introduced. Untagged composition
 infrastructure; original full encoder assertions are assembled separately in
-the parent SubOverflow counterpart module. -/
+each encoding's parent counterpart module. -/
 theorem execute_frame (d : BitVec 64 → Prop) (is : List instruction)
     (kinds : ∀ i ∈ is, Family i)
     (nonzero : ∀ i ∈ is, destination i ≠ 0#5)
@@ -348,4 +367,4 @@ theorem native_asserts2 (d : BitVec 64 → Prop) (is : List instruction)
     · have counters : index + (is.length + 1) = index + 1 + is.length := by omega
       simpa only [counters] using tail
 
-end Flapjack.RiscV.TargetProof.SubOverflow
+end Flapjack.RiscV.TargetProof.ArithNative

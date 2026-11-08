@@ -40,56 +40,32 @@ theorem sptLookupInterEq {α : Type} [DecidableEq α] :
         | some v => if sptLookup k m2 = some v then some v else none := by
   intro m1
   induction m1 with
-  | ln => intro m2 k; simp [sptInterEq, sptLookup]
-  | ls a =>
-      intro m2 k
-      cases m2 <;> simp only [sptInterEq] <;> by_cases hk : k = 0 <;>
-        simp [sptLookup, hk] <;> split <;> simp_all [sptLookup, eq_comm]
+  | ln => intro m2 k; cases m2 <;> simp [sptInterEq, sptLookup]
+  | ls a => intro m2 k; cases m2 <;> simp only [sptInterEq] <;>
+      by_cases hk : k = 0 <;> simp [sptLookup, hk] <;> split <;> simp_all [sptLookup, eq_comm]
   | bn l r ihl ihr =>
       intro m2 k
       cases m2 with
-      | ln => by_cases hk : k = 0 <;> simp [sptInterEq, sptLookup, hk] <;> split <;> rfl
-      | ls b => by_cases hk : k = 0 <;> simp [sptInterEq, sptLookup, hk] <;> split <;> rfl
-      | bn l' r' =>
-          simp only [sptInterEq]
-          rw [sptLookupMkBN]
-          by_cases hk : k = 0
-          · simp [sptLookup, hk]
-          · simp only [sptLookup, hk, if_false]
-            split <;> first | exact ihl _ _ | exact ihr _ _
-      | bs l' b r' =>
-          simp only [sptInterEq]
-          rw [sptLookupMkBN]
-          by_cases hk : k = 0
-          · simp [sptLookup, hk]
-          · simp only [sptLookup, hk, if_false]
-            split <;> first | exact ihl _ _ | exact ihr _ _
+      | ln => by_cases hk : k = 0 <;> simp [sptInterEq, sptLookup, hk] <;> split <;> simp_all
+      | ls b => by_cases hk : k = 0 <;> simp [sptInterEq, sptLookup, hk] <;> split <;> simp_all
+      | bn l' r' => simp only [sptInterEq, sptLookupMkBN]; by_cases hk : k = 0 <;>
+          simp [sptLookup, hk] <;> split <;> first | exact ihl _ _ | exact ihr _ _
+      | bs l' b r' => simp only [sptInterEq, sptLookupMkBN]; by_cases hk : k = 0 <;>
+          simp [sptLookup, hk] <;> split <;> first | exact ihl _ _ | exact ihr _ _
   | bs l a r ihl ihr =>
       intro m2 k
       cases m2 with
-      | ln => by_cases hk : k = 0 <;> simp [sptInterEq, sptLookup, hk] <;> split <;> rfl
-      | ls b =>
-          by_cases hk : k = 0 <;> by_cases hab : b = a <;>
-            simp [sptInterEq, sptLookup, hk, hab] <;> split <;> simp_all [eq_comm]
-      | bn l' r' =>
-          simp only [sptInterEq]
-          rw [sptLookupMkBN]
-          by_cases hk : k = 0
-          · simp [sptLookup, hk]
-          · simp only [sptLookup, hk, if_false]
-            split <;> first | exact ihl _ _ | exact ihr _ _
+      | ln => by_cases hk : k = 0 <;> simp [sptInterEq, sptLookup, hk] <;> split <;> simp_all
+      | ls b => by_cases hk : k = 0 <;> by_cases hab : b = a <;>
+          simp [sptInterEq, sptLookup, hk, hab] <;> split <;> simp_all [eq_comm]
+      | bn l' r' => simp only [sptInterEq, sptLookupMkBN]; by_cases hk : k = 0 <;>
+          simp [sptLookup, hk] <;> split <;> first | exact ihl _ _ | exact ihr _ _
       | bs l' b r' =>
           simp only [sptInterEq]
           by_cases hab : b = a
-          · rw [if_pos hab, sptLookupMkBS]
-            by_cases hk : k = 0
-            · simp [sptLookup, hk, hab]
-            · simp only [sptLookup, hk, if_false]
-              split <;> first | exact ihl _ _ | exact ihr _ _
-          · rw [if_neg hab, sptLookupMkBN]
-            by_cases hk : k = 0
-            · simp [sptLookup, hk, hab]
-            · simp only [sptLookup, hk, if_false]
-              split <;> first | exact ihl _ _ | exact ihr _ _
+          · rw [if_pos hab, sptLookupMkBS]; by_cases hk : k = 0 <;>
+              simp [sptLookup, hk, hab] <;> split <;> first | exact ihl _ _ | exact ihr _ _
+          · rw [if_neg hab, sptLookupMkBN]; by_cases hk : k = 0 <;>
+              simp [sptLookup, hk, hab] <;> split <;> first | exact ihl _ _ | exact ihr _ _
 
 end Flapjack

@@ -1,6 +1,7 @@
 import Flapjack.RiscV.CorrectnessEncoding.AddCarry.Post
 import Flapjack.RiscV.CorrectnessEncoding.ConstAssertions
 namespace Flapjack.RiscV.TargetProof
+open Flapjack.RiscV.TargetProof.ArithNative
 open Flapjack RiscV.L3 Compiler.Encoders.Asm Compiler.Encoders.AsmSem
   Compiler.Encoders.AsmProps Compiler.Encoders.RiscV.Target AddCarry
 set_option autoImplicit false

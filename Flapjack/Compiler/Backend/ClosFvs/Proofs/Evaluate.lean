@@ -7,10 +7,12 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
+import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
 
 /-! Evaluator cases for free-variable removal correctness. -/
 namespace Flapjack.Compiler.Backend.ClosFvs
 open Flapjack.Compiler.Backend.ClosSem
+open Flapjack.Compiler.Backend.ClosProps
 open Flapjack.SemanticPrimitivesHOL (Result)
 
 /-- Original result relation specialized to related lists and exceptions. -/
@@ -1038,35 +1040,6 @@ theorem related_holLast {left right : List Value} (related : List.Forall₂ Valu
     | @cons second nextSecond tail nextTail nextHead restRel =>
       simp only [Flapjack.holLast]
       exact ih (by simp)
-
-/-- The continuation of an installation after its arguments are evaluated. -/
-noncomputable def runInstalled {C F : Type} (values : List Value) (state : State C F) : EvalResult C F :=
-  match doInstall values state with
-  | (.err error, next) => (.err error, next)
-  | (.val program, next) =>
-    let (result, last) := evaluate program [] next
-    match result with
-    | .err error => (.err error, last)
-    | .val values => (.val [@Flapjack.holLast Value ⟨unitValue⟩ values], last)
-
-/-- Installation evaluates its arguments before running the continuation. -/
-theorem evaluate_install_eq {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (env : List Value) (state : State C F) :
-    evaluate [.op trace .install args] env state =
-      match evaluate args env state with
-      | (.err error, next) => (.err error, next)
-      | (.val values, next) => runInstalled values.reverse next := by
-  rw [evaluate, fixClock_evaluate]
-  cases evaluated : evaluate args env state with
-  | mk result next =>
-    cases result with
-    | err error => rfl
-    | val values =>
-      dsimp only
-      unfold runInstalled
-      split <;> simp_all
-      split <;> simp_all
-      rfl
 
 /-- Installing related code simulates errors and evaluation of the newly
 installed, nonempty program. -/

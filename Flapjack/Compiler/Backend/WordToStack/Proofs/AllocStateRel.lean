@@ -342,45 +342,14 @@ theorem wordGcEmptyFrame {width : Nat} [NeZero width] {C F : Type}
 theorem interEqEmpty2 {α β : Type} (s : Spt α) (t : Spt β) :
     sptDomain t = (fun _ => False) → sptInter s t = .ln := by
   intro h
-  have hn : ∀ n, sptLookup n t = none := by
+  have hnone : ∀ n, sptLookup n t = none := by
     intro n
     have := congrFun h n
-    simp only [sptDomain, eq_iff_iff, iff_false, Option.isSome_iff_ne_none, ne_eq,
-      Decidable.not_not] at this
-    exact this
-  clear h
-  induction s generalizing t with
-  | ln => simp [sptInter]
-  | ls v =>
-      cases t with
-      | ln => simp [sptInter]
-      | ls _ => simpa [sptLookup] using hn 0
-      | bn _ _ => simp [sptInter]
-      | bs _ _ _ => simpa [sptLookup] using hn 0
-  | bn a b iha ihb =>
-      cases t with
-      | ln => simp [sptInter]
-      | ls _ => simp [sptInter]
-      | bn a' b' =>
-          simp only [sptInter]
-          rw [iha a' (fun m => by
-              have h := hn (2 * m + 2); simp [sptLookup] at h
-              rwa [show (2 * m + 1) / 2 = m by omega] at h),
-            ihb b' (fun m => by simpa [sptLookup] using hn (2 * m + 1))]
-          rfl
-      | bs _ _ _ => simpa [sptLookup] using hn 0
-  | bs a v b iha ihb =>
-      cases t with
-      | ln => simp [sptInter]
-      | ls _ => simpa [sptLookup] using hn 0
-      | bn a' b' =>
-          simp only [sptInter]
-          rw [iha a' (fun m => by
-              have h := hn (2 * m + 2); simp [sptLookup] at h
-              rwa [show (2 * m + 1) / 2 = m by omega] at h),
-            ihb b' (fun m => by simpa [sptLookup] using hn (2 * m + 1))]
-          rfl
-      | bs _ _ _ => simpa [sptLookup] using hn 0
+    simp only [sptDomain] at this
+    cases hk : sptLookup n t <;> simp_all
+  apply sptWf_empty_of_lookup _ (sptWfInter _ _)
+  intro k
+  cases hl : sptLookup k s <;> simp [sptLookup_sptInterCases, hl, hnone k]
 
 theorem gc_stackMax {width : Nat} [NeZero width] {C F : Type}
     {s s' : WordSemStateFiniteExact width C F} (h : gc s = some s') :

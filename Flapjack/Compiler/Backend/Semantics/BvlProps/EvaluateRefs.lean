@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyRefs
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
+import Flapjack.Misc.ClockWeightInduction
 
 /-! Reference-domain growth during BVL evaluation. -/
 namespace Flapjack.Compiler.Backend.BvlProps
@@ -27,171 +28,157 @@ theorem refsSubset_trans {C F D G E H : Type} {a : State C F} {b : State D G} {c
 proof-side invariant remains untagged until source statement review. -/
 theorem evaluate_refs_mono {C F : Type} (expressions : List Bvl.Exp) (env : List Value)
     (state : State C F) : refsSubset state (evaluate expressions env state).2 := by
-  have allRanks : ∀ clock weight : Nat, ∀ (expressions : List Bvl.Exp)
-      (env : List Value) (state : State C F),
-      state.clock = clock → expsWeight expressions = weight →
-      refsSubset state (evaluate expressions env state).2 := by
-    intro clock
-    induction clock using Nat.strongRecOn with
-    | ind clock clockIH =>
-      intro weight
-      induction weight using Nat.strongRecOn with
-      | ind weight weightIH =>
-        have exprIH : ∀ (expressions : List Bvl.Exp) (env : List Value) (state : State C F),
-            state.clock ≤ clock → expsWeight expressions < weight →
-            refsSubset state (evaluate expressions env state).2 := by
-          intro expressions env state clockLe weightLt
-          rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
-          · exact clockIH state.clock clockLt (expsWeight expressions) expressions env state rfl rfl
-          · exact weightIH (expsWeight expressions) weightLt expressions env state clockEq rfl
-        have smaller : ∀ (expressions : List Bvl.Exp) (env : List Value) (state : State C F),
-            state.clock < clock → refsSubset state (evaluate expressions env state).2 := by
-          intro expressions env state clockLt
-          exact clockIH state.clock clockLt (expsWeight expressions) expressions env state rfl rfl
-        intro expressions env state stateClock measure
-        cases expressions with
-        | nil => simp [evaluate, refsSubset]
-        | cons first rest =>
-          cases rest with
-          | cons second tail =>
-            have headRefs := exprIH [first] env state (by omega) (by
-              simp only [expsWeight] at measure ⊢; omega)
-            have headClock := evaluate_clock_le [first] env state
-            rw [evaluate, fixClock_evaluate]
-            cases headRun : evaluate [first] env state with
-            | mk result next =>
-              simp only [headRun] at headRefs headClock
-              cases result with
-              | err error => exact headRefs
-              | val values =>
-                have tailRefs := exprIH (second :: tail) env next (by omega) (by
-                  simp only [expsWeight] at measure ⊢; omega)
-                cases tailRun : evaluate (second :: tail) env next with
-                | mk result last =>
-                  simp only [tailRun] at tailRefs
-                  cases result <;> exact refsSubset_trans headRefs tailRefs
-          | nil =>
-            cases first with
-            | var index =>
-              rw [evaluate]
-              split <;> simp [refsSubset]
-            | ifThenElse condition yes no =>
-              have firstRefs := exprIH [condition] env state (by omega) (by
-                simp only [expsWeight, expWeight] at measure ⊢; omega)
-              have firstClock := evaluate_clock_le [condition] env state
-              rw [evaluate, fixClock_evaluate]
-              cases firstRun : evaluate [condition] env state with
-              | mk result next =>
-                simp only [firstRun] at firstRefs firstClock
-                cases result with
-                | err error => exact firstRefs
-                | val values =>
-                  dsimp only
-                  split
-                  · exact firstRefs
-                  · exact refsSubset_trans firstRefs (exprIH [yes] env next (by omega) (by
-                      simp only [expsWeight, expWeight] at measure ⊢; omega))
-                  · exact refsSubset_trans firstRefs (exprIH [no] env next (by omega) (by
-                      simp only [expsWeight, expWeight] at measure ⊢; omega))
-            | «let» bindings body =>
-              have firstRefs := exprIH bindings env state (by omega) (by
-                simp only [expsWeight, expWeight] at measure ⊢; omega)
-              have firstClock := evaluate_clock_le bindings env state
-              rw [evaluate, fixClock_evaluate]
-              cases firstRun : evaluate bindings env state with
-              | mk result next =>
-                simp only [firstRun] at firstRefs firstClock
-                cases result with
-                | err error => exact firstRefs
-                | val values =>
-                  exact refsSubset_trans firstRefs (exprIH [body] (values ++ env) next (by omega) (by
-                    simp only [expsWeight, expWeight] at measure ⊢; omega))
-            | raise body =>
-              have bodyRefs := exprIH [body] env state (by omega) (by
-                simp only [expsWeight, expWeight] at measure ⊢; omega)
-              rw [evaluate]
-              cases bodyRun : evaluate [body] env state with
-              | mk result next =>
-                simp only [bodyRun] at bodyRefs
-                cases result <;> exact bodyRefs
-            | handle body handler =>
-              have firstRefs := exprIH [body] env state (by omega) (by
-                simp only [expsWeight, expWeight] at measure ⊢; omega)
-              have firstClock := evaluate_clock_le [body] env state
-              rw [evaluate, fixClock_evaluate]
-              cases firstRun : evaluate [body] env state with
-              | mk result next =>
-                simp only [firstRun] at firstRefs firstClock
-                cases result with
-                | val values => exact firstRefs
-                | err error =>
-                  cases error with
-                  | abort reason => exact firstRefs
-                  | raise value =>
-                    exact refsSubset_trans firstRefs (exprIH [handler] (value :: env) next (by omega) (by
-                      simp only [expsWeight, expWeight] at measure ⊢; omega))
-            | tick body =>
-              rw [evaluate]
+  refine clockWeightInduction (α := List Bvl.Exp) (σ := State C F) (·.clock) expsWeight
+    (motive := fun expressions state => ∀ env,
+      refsSubset state (evaluate expressions env state).2) ?_ expressions state env
+  intro expressions state exprIH₀ smaller₀
+  have exprIH := fun (es : List Bvl.Exp) (env' : List Value) (s : State C F)
+      h1 h2 => exprIH₀ es s h1 h2 env'
+  have smaller := fun (es : List Bvl.Exp) (env' : List Value) (s : State C F)
+      h => smaller₀ es s h env'
+  intro env
+  cases expressions with
+  | nil => simp [evaluate, refsSubset]
+  | cons first rest =>
+    cases rest with
+    | cons second tail =>
+      have headRefs := exprIH [first] env state (by omega) (by
+        simp only [expsWeight] at ⊢; omega)
+      have headClock := evaluate_clock_le [first] env state
+      rw [evaluate, fixClock_evaluate]
+      cases headRun : evaluate [first] env state with
+      | mk result next =>
+        simp only [headRun] at headRefs headClock
+        cases result with
+        | err error => exact headRefs
+        | val values =>
+          have tailRefs := exprIH (second :: tail) env next (by omega) (by
+            simp only [expsWeight] at ⊢; omega)
+          cases tailRun : evaluate (second :: tail) env next with
+          | mk result last =>
+            simp only [tailRun] at tailRefs
+            cases result <;> exact refsSubset_trans headRefs tailRefs
+    | nil =>
+      cases first with
+      | var index =>
+        rw [evaluate]
+        split <;> simp [refsSubset]
+      | ifThenElse condition yes no =>
+        have firstRefs := exprIH [condition] env state (by omega) (by
+          simp only [expsWeight, expWeight] at ⊢; omega)
+        have firstClock := evaluate_clock_le [condition] env state
+        rw [evaluate, fixClock_evaluate]
+        cases firstRun : evaluate [condition] env state with
+        | mk result next =>
+          simp only [firstRun] at firstRefs firstClock
+          cases result with
+          | err error => exact firstRefs
+          | val values =>
+            dsimp only
+            split
+            · exact firstRefs
+            · exact refsSubset_trans firstRefs (exprIH [yes] env next (by omega) (by
+                simp only [expsWeight, expWeight] at ⊢; omega))
+            · exact refsSubset_trans firstRefs (exprIH [no] env next (by omega) (by
+                simp only [expsWeight, expWeight] at ⊢; omega))
+      | «let» bindings body =>
+        have firstRefs := exprIH bindings env state (by omega) (by
+          simp only [expsWeight, expWeight] at ⊢; omega)
+        have firstClock := evaluate_clock_le bindings env state
+        rw [evaluate, fixClock_evaluate]
+        cases firstRun : evaluate bindings env state with
+        | mk result next =>
+          simp only [firstRun] at firstRefs firstClock
+          cases result with
+          | err error => exact firstRefs
+          | val values =>
+            exact refsSubset_trans firstRefs (exprIH [body] (values ++ env) next (by omega) (by
+              simp only [expsWeight, expWeight] at ⊢; omega))
+      | raise body =>
+        have bodyRefs := exprIH [body] env state (by omega) (by
+          simp only [expsWeight, expWeight] at ⊢; omega)
+        rw [evaluate]
+        cases bodyRun : evaluate [body] env state with
+        | mk result next =>
+          simp only [bodyRun] at bodyRefs
+          cases result <;> exact bodyRefs
+      | handle body handler =>
+        have firstRefs := exprIH [body] env state (by omega) (by
+          simp only [expsWeight, expWeight] at ⊢; omega)
+        have firstClock := evaluate_clock_le [body] env state
+        rw [evaluate, fixClock_evaluate]
+        cases firstRun : evaluate [body] env state with
+        | mk result next =>
+          simp only [firstRun] at firstRefs firstClock
+          cases result with
+          | val values => exact firstRefs
+          | err error =>
+            cases error with
+            | abort reason => exact firstRefs
+            | raise value =>
+              exact refsSubset_trans firstRefs (exprIH [handler] (value :: env) next (by omega) (by
+                simp only [expsWeight, expWeight] at ⊢; omega))
+      | tick body =>
+        rw [evaluate]
+        split
+        · simp [refsSubset]
+        · have bodyRefs := smaller [body] env (decClock 1 state) (by
+            simp only [decClock]; omega)
+          simpa [refsSubset, decClock] using bodyRefs
+      | force location index =>
+        rw [evaluate]
+        split
+        · simp [refsSubset]
+        · split
+          · simp [refsSubset]
+          · simp [refsSubset]
+          · simp [refsSubset]
+          · split
+            · simp [refsSubset]
+            · rename_i args body found
               split
               · simp [refsSubset]
-              · have bodyRefs := smaller [body] env (decClock 1 state) (by
+              · have bodyRefs := smaller [body] args (decClock 1 state) (by
                   simp only [decClock]; omega)
                 simpa [refsSubset, decClock] using bodyRefs
-            | force location index =>
-              rw [evaluate]
+      | call ticks location args =>
+        have firstRefs := exprIH args env state (by omega) (by
+          simp only [expsWeight, expWeight] at ⊢; omega)
+        have firstClock := evaluate_clock_le args env state
+        rw [evaluate, fixClock_evaluate]
+        cases firstRun : evaluate args env state with
+        | mk result next =>
+          simp only [firstRun] at firstRefs firstClock
+          cases result with
+          | err error => exact firstRefs
+          | val values =>
+            dsimp only
+            split
+            · exact firstRefs
+            · rename_i selected body found
               split
-              · simp [refsSubset]
-              · split
-                · simp [refsSubset]
-                · simp [refsSubset]
-                · simp [refsSubset]
-                · split
-                  · simp [refsSubset]
-                  · rename_i args body found
-                    split
-                    · simp [refsSubset]
-                    · have bodyRefs := smaller [body] args (decClock 1 state) (by
-                        simp only [decClock]; omega)
-                      simpa [refsSubset, decClock] using bodyRefs
-            | call ticks location args =>
-              have firstRefs := exprIH args env state (by omega) (by
-                simp only [expsWeight, expWeight] at measure ⊢; omega)
-              have firstClock := evaluate_clock_le args env state
-              rw [evaluate, fixClock_evaluate]
-              cases firstRun : evaluate args env state with
-              | mk result next =>
-                simp only [firstRun] at firstRefs firstClock
-                cases result with
-                | err error => exact firstRefs
-                | val values =>
-                  dsimp only
-                  split
-                  · exact firstRefs
-                  · rename_i selected body found
-                    split
-                    · exact firstRefs
-                    · have callRefs := smaller [body] selected (decClock (ticks + 1) next) (by
-                        simp only [decClock]; omega)
-                      apply refsSubset_trans firstRefs
-                      simpa [refsSubset, decClock] using callRefs
-            | op op args =>
-              have firstRefs := exprIH args env state (by omega) (by
-                simp only [expsWeight, expWeight] at measure ⊢; omega)
-              rw [evaluate, fixClock_evaluate]
-              cases firstRun : evaluate args env state with
-              | mk result next =>
-                simp only [firstRun] at firstRefs
-                cases result with
-                | err error => exact firstRefs
-                | val values =>
-                  cases appRun : doApp op values.reverse next with
-                  | err error => simpa [appRun] using firstRefs
-                  | val pair =>
-                    obtain ⟨value, last⟩ := pair
-                    have appRefs : refsSubset next last := fun key present =>
-                      doApp_refs_mono op values.reverse next last value appRun key present
-                    simpa [appRun] using refsSubset_trans firstRefs appRefs
-  exact allRanks state.clock (expsWeight expressions) expressions env state rfl rfl
+              · exact firstRefs
+              · have callRefs := smaller [body] selected (decClock (ticks + 1) next) (by
+                  simp only [decClock]; omega)
+                apply refsSubset_trans firstRefs
+                simpa [refsSubset, decClock] using callRefs
+      | op op args =>
+        have firstRefs := exprIH args env state (by omega) (by
+          simp only [expsWeight, expWeight] at ⊢; omega)
+        rw [evaluate, fixClock_evaluate]
+        cases firstRun : evaluate args env state with
+        | mk result next =>
+          simp only [firstRun] at firstRefs
+          cases result with
+          | err error => exact firstRefs
+          | val values =>
+            cases appRun : doApp op values.reverse next with
+            | err error => simpa [appRun] using firstRefs
+            | val pair =>
+              obtain ⟨value, last⟩ := pair
+              have appRefs : refsSubset next last := fun key present =>
+                doApp_refs_mono op values.reverse next last value appRun key present
+              simpa [appRun] using refsSubset_trans firstRefs appRefs
 
 /-- Successful or failing evaluation preserves the source reference domain. -/
 @[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "evaluate_refs_SUBSET"

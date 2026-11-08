@@ -1,6 +1,7 @@
 import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.ClosFvs.Source
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Total
+import Flapjack.Misc.ListMapM
 import Mathlib.Tactic
 
 /-! Agreement of the executed retry with source-shaped free-variable removal. -/

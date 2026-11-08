@@ -44,6 +44,25 @@ private theorem instCong {s : WordSemStateFiniteExact width C F} {i i' : WordLan
 
 end
 
+local macro "copyPropImmCong" gvi:term:max cong:term:max : tactic =>
+  `(tactic| (
+      simp only [copyPropInst, lookupEqImm, reduceCtorEq, if_false]
+      apply instCong
+      simp only [WordSemStateFiniteExact.inst, WordSemStateFiniteExact.assign]
+      first
+      | (rw [$cong ?_] <;> simp only [List.map_cons, List.map_nil, $gvi:term])
+      | (rw [$cong ?_ ?_] <;> simp only [$gvi:term])))
+
+local macro "copyPropRegCong" cs:term:max r1:term:max r3:term:max gvi:term:max
+    cong:term:max : tactic =>
+  `(tactic| (
+      by_cases hc : lookupEq $cs $r3 = $r1 <;>
+        simp only [copyPropInst, lookupEqImm, WordRegImm.reg.injEq, hc, if_true, if_false] <;>
+        apply instCong <;> simp only [WordSemStateFiniteExact.inst, WordSemStateFiniteExact.assign] <;>
+        first
+        | (rw [$cong ?_ ?_] <;> simp only [$gvi:term])
+        | (rw [$cong ?_] <;> simp only [List.map_cons, List.map_nil, $gvi:term])))
+
 /-- Exact HOL `copy_prop_inst_eval` (`word_copyProofScript.sml:919-929`). -/
 @[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "copy_prop_inst_eval"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
@@ -54,118 +73,50 @@ theorem copyPropInstEval {width : Nat} [NeZero width] {C F : Type} :
       Flapjack.WordSemStateFiniteExact.evaluate prog' st =
         Flapjack.WordSemStateFiniteExact.evaluate (.inst ins) st := by
   intro ins cs st prog' cs' hinv hm h
+  have hprog : prog' = (copyPropInst ins cs).1 := congrArg Prod.fst h
+  subst prog'
   have gv : ∀ x, WordSemStateFiniteExact.getVar (lookupEq cs x) st =
       WordSemStateFiniteExact.getVar x st := fun x => cpStateModelsDGetVar ⟨hinv, hm⟩
   have gvi : ∀ x, WordSemStateFiniteExact.wordExp st (.var (lookupEq cs x)) =
       WordSemStateFiniteExact.wordExp st (.var x) := fun x => cpStateModelsDVar ⟨hinv, hm⟩
-  have gvs : ∀ (l l' : List Nat), l'.map (fun x => WordSemStateFiniteExact.getVar x st) =
-      l.map (fun x => WordSemStateFiniteExact.getVar x st) →
-      WordSemStateFiniteExact.getVars l' st = WordSemStateFiniteExact.getVars l st :=
-    fun _ _ h => mapGetVarEqD h
   have gadr : ∀ (a : Nat) (w : BitVec width),
       WordSemStateFiniteExact.wordExp st (.op .add [.var (lookupEq cs a), .const w]) =
         WordSemStateFiniteExact.wordExp st (.op .add [.var a, .const w]) := by
     intro a w; apply wordExpCongOp; simp only [List.map_cons, List.map_nil, gvi]
-  have hif : ∀ (a b r : Nat), WordSemStateFiniteExact.getVar (if lookupEq cs a = r then a else
+  have hif : ∀ (a r : Nat), WordSemStateFiniteExact.getVar (if lookupEq cs a = r then a else
       lookupEq cs a) st = WordSemStateFiniteExact.getVar a st := by
-    intro a b r; split
-    · rfl
-    · exact gv a
+    intro a r; split <;> first | rfl | exact gv a
   rcases ins with _ | ⟨r, w⟩ | ⟨a⟩ | ⟨m, r, ⟨a, w⟩⟩ | ⟨f⟩
-  · simp only [copyPropInst, Prod.mk.injEq] at h
-    obtain ⟨rfl, -⟩ := h
+  · simp only [copyPropInst]
     rw [(WordSemStateFiniteExact.evaluate_def_rebound (width := width) (C := C) (F := F)).1 st,
       evInst]
     rfl
-  · simp only [copyPropInst, Prod.mk.injEq] at h
-    obtain ⟨rfl, -⟩ := h
-    rfl
+  · simp only [copyPropInst]
   · cases a with
     | binop bop r1 r2 ri =>
         cases ri with
-        | imm w =>
-            simp only [copyPropInst, lookupEqImm, reduceCtorEq, if_false, Prod.mk.injEq] at h
-            obtain ⟨rfl, -⟩ := h
-            apply instCong
-            simp only [WordSemStateFiniteExact.inst, WordSemStateFiniteExact.assign]
-            rw [wordExpCongOp (aa := [.var r2, .const w]) ?_]
-            simp only [List.map_cons, List.map_nil, gvi]
-        | reg r3 =>
-            by_cases hc : lookupEq cs r3 = r1 <;>
-              simp only [copyPropInst, lookupEqImm, WordRegImm.reg.injEq, hc, if_true, if_false,
-                Prod.mk.injEq] at h <;>
-              obtain ⟨rfl, -⟩ := h <;>
-              apply instCong <;>
-              simp only [WordSemStateFiniteExact.inst, WordSemStateFiniteExact.assign] <;>
-              rw [wordExpCongOp (aa := [.var r2, .var r3]) ?_] <;>
-              simp only [List.map_cons, List.map_nil, gvi]
+        | imm w => copyPropImmCong gvi wordExpCongOp
+        | reg r3 => copyPropRegCong cs r1 r3 gvi wordExpCongOp
     | shift sh r1 r2 ri =>
         cases ri with
-        | imm w =>
-            simp only [copyPropInst, lookupEqImm, reduceCtorEq, if_false, Prod.mk.injEq] at h
-            obtain ⟨rfl, -⟩ := h
-            apply instCong
-            simp only [WordSemStateFiniteExact.inst, WordSemStateFiniteExact.assign]
-            rw [wordExpCongShift (gvi r2) rfl]
-        | reg r3 =>
-            by_cases hc : lookupEq cs r3 = r1 <;>
-              simp only [copyPropInst, lookupEqImm, WordRegImm.reg.injEq, hc, if_true, if_false,
-                Prod.mk.injEq] at h <;>
-              obtain ⟨rfl, -⟩ := h <;>
-              apply instCong <;>
-              simp only [WordSemStateFiniteExact.inst, WordSemStateFiniteExact.assign]
-            · rw [wordExpCongShift (gvi r2) rfl]
-            · rw [wordExpCongShift (gvi r2) (gvi r3)]
-    | div r1 r2 r3 =>
-        simp only [copyPropInst, Prod.mk.injEq] at h
-        obtain ⟨rfl, -⟩ := h
-        apply instCong
-        simp only [WordSemStateFiniteExact.inst]
-        rw [gvs [r3, r2] _ (by simp only [List.map_cons, List.map_nil, gv])]
+        | imm w => copyPropImmCong gvi wordExpCongShift
+        | reg r3 => copyPropRegCong cs r1 r3 gvi wordExpCongShift
     | longMul r1 r2 r3 r4 =>
-        simp only [copyPropInst, Prod.mk.injEq] at h
-        obtain ⟨rfl, -⟩ := h
-        rfl
-    | longDiv r1 r2 r3 r4 r5 =>
-        simp only [copyPropInst, Prod.mk.injEq] at h
-        obtain ⟨rfl, -⟩ := h
+        simp only [copyPropInst]
+    | _ =>
+        simp only [copyPropInst]
         apply instCong
         simp only [WordSemStateFiniteExact.inst]
-        rw [gvs [r3, r4, r5] _ (by simp only [List.map_cons, List.map_nil, gv])]
-    | addCarry r1 r2 r3 r4 =>
-        simp only [copyPropInst, Prod.mk.injEq] at h
-        obtain ⟨rfl, -⟩ := h
-        apply instCong
-        simp only [WordSemStateFiniteExact.inst]
-        rw [gvs [r2, r3, r4] _ (by simp only [List.map_cons, List.map_nil, gv, hif r3 r3 r1])]
-    | addOverflow r1 r2 r3 r4 =>
-        simp only [copyPropInst, Prod.mk.injEq] at h
-        obtain ⟨rfl, -⟩ := h
-        apply instCong
-        simp only [WordSemStateFiniteExact.inst]
-        rw [gvs [r2, r3] _ (by simp only [List.map_cons, List.map_nil, gv, hif r3 r3 r1])]
-    | subOverflow r1 r2 r3 r4 =>
-        simp only [copyPropInst, Prod.mk.injEq] at h
-        obtain ⟨rfl, -⟩ := h
-        apply instCong
-        simp only [WordSemStateFiniteExact.inst]
-        rw [gvs [r2, r3] _ (by simp only [List.map_cons, List.map_nil, gv, hif r3 r3 r1])]
-  · cases m <;> simp only [copyPropInst, Prod.mk.injEq] at h <;> obtain ⟨rfl, -⟩ := h <;>
+        first
+        | rfl
+        | (rw [mapGetVarEqD ?_] <;> simp only [List.map_cons, List.map_nil, gv, hif]; done)
+  · cases m <;> simp only [copyPropInst] <;>
       apply instCong <;> simp only [WordSemStateFiniteExact.inst, gadr, gv]
   · cases f with
     | fpMovFromReg d r1 r2 =>
-        by_cases hq : lookupEq cs r1 = lookupEq cs r2
-        · simp only [copyPropInst, hq, if_true, Prod.mk.injEq] at h
-          obtain ⟨rfl, -⟩ := h
-          rfl
-        · simp only [copyPropInst, hq, if_false, Prod.mk.injEq] at h
-          obtain ⟨rfl, -⟩ := h
-          apply instCong
-          simp only [WordSemStateFiniteExact.inst, gv]
-    | _ =>
-        simp only [copyPropInst, Prod.mk.injEq] at h
-        obtain ⟨rfl, -⟩ := h
-        rfl
+        simp only [copyPropInst]
+        split <;> first | rfl | (apply instCong; simp only [WordSemStateFiniteExact.inst, gv])
+    | _ => simp only [copyPropInst]
 
 /-- `mem_store` changes only the memory (Flapjack infrastructure). -/
 theorem memStoreModel {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
