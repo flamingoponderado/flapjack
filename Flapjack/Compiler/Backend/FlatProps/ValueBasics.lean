@@ -22,6 +22,15 @@ theorem buildRecEnv_eq_map (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL
       simp [ih]
   exact foldMap funs
 
+/-- Recursive bindings are the mapped closure list followed by the initial environment. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "build_rec_env_merge"]
+theorem buildRecEnv_merge {α : Type}
+    (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp)) (_unused : α)
+    (env : FlatSem.Environment FlatSem.Value) (initial : List (Flapjack.AstHOL.VarN × FlatSem.Value)) :
+    FlatSem.buildRecEnv funs env initial =
+      funs.map (fun f => (f.1, FlatSem.Value.recclosure env funs f.1)) ++ initial :=
+  buildRecEnv_eq_map funs env initial
+
 /-- A closure value is either a single or recursive closure. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "isClosure_def"]
 def isClosure (value : Value) : Prop :=

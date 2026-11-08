@@ -87,4 +87,21 @@ theorem mapMatchEqCase {α : Type} (f : α → α)
       | other => other := by
   cases value <;> rfl
 
+/-- Matching with bindings is the empty-binding result with those bindings appended. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "pmatch_nil"]
+theorem pmatchNil {C F : Type} :
+    (∀ (value : Value) (tail : List (VarN × Value)) (state : FlatSem.State C F) pattern,
+      FlatSem.pmatch state pattern value tail =
+        Flapjack.SemanticPrimitivesProps.mapMatch (fun items => items ++ tail)
+          (FlatSem.pmatch state pattern value [])) ∧
+    (∀ (values : List Value) (tail : List (VarN × Value)) (state : FlatSem.State C F) patterns,
+      FlatSem.pmatchList state patterns values tail =
+        Flapjack.SemanticPrimitivesProps.mapMatch (fun items => items ++ tail)
+          (FlatSem.pmatchList state patterns values [])) := by
+  constructor
+  · intro value tail state pattern
+    simpa using ((pmatch_append (α := Unit) (β := Unit) tail).1 state pattern value [] ()).symm
+  · intro values tail state patterns
+    simpa using ((pmatch_append (α := Unit) (β := Unit) tail).2 state patterns values [] ()).symm
+
 end Flapjack.Compiler.Backend.FlatProps

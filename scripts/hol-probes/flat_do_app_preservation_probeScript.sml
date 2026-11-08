@@ -20,3 +20,5 @@ val _ = show_thm "pmatch_list_snoc_nil_typed=" flatPropsTheory.pmatch_list_snoc_
 val _ = show_thm "pmatch_list_append_typed=" flatPropsTheory.pmatch_list_append;
 val _ = show_thm "pmatch_list_snoc_typed=" flatPropsTheory.pmatch_list_snoc;
 val _ = show_thm "map_match_eq_case_typed=" flatPropsTheory.map_match_eq_case;
+val _ = show_thm "pmatch_nil_typed=" flatPropsTheory.pmatch_nil;
+val _ = show_thm "flat_build_rec_env_merge_typed=" flatPropsTheory.build_rec_env_merge;

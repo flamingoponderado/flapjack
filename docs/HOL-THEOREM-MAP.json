@@ -130483,5 +130483,21 @@
   "lean_name": "mapMatchEqCase",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared map_match_eq_case_typed in flat_do_app_preservation_probe.out: the same arbitrary endofunction and match-result carrier are retained, and both error alternatives return the original result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_nil",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternList.lean",
+  "lean_name": "pmatchNil",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pmatch_nil_typed in flat_do_app_preservation_probe.out: both conjuncts retain the HOL-generated binder order, shared state parameters, equality orientation and mapped append over the empty-binding result."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "build_rec_env_merge",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/ValueBasics.lean",
+  "lean_name": "buildRecEnv_merge",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_build_rec_env_merge_typed in flat_do_app_preservation_probe.out: the vacuous independent type and parameter, quantified order, recursive closure list, and final environment append are retained."
 }
 ]
