@@ -30,19 +30,6 @@ private theorem binop_low (op : HolBinop) (rd rs1 rs2 : BitVec 5) :
   cases op <;> simp only [binopWord, riscvBopR, Encode, Rtype, opc,
     BitVec.setWidth_eq, BitVec.getLsbD_append] <;> simp
 
-private theorem reg_nonzero (r : Nat) (guard : asmRegOkExact r riscvConfig = true) :
-    BitVec.ofNat 5 r ≠ 0#5 := by
-  have g : r < 32 ∧ r ≠ 0 := by
-    have g := guard
-    simp [asmRegOkExact, riscvConfig] at g
-    exact ⟨of_decide_eq_true g.1, g.2.1⟩
-  intro eq
-  have n := congrArg BitVec.toNat eq
-  simp only [BitVec.toNat_ofNat] at n
-  norm_num at n
-  rw [Nat.mod_eq_of_lt g.1] at n
-  exact g.2 n
-
 private theorem reg_read (r : Nat) (s : AsmState 64) (ms : riscv_state)
     (guard : asmRegOkExact r riscvConfig = true)
     (rel : targetStateRel riscvTarget s ms) :

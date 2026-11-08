@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.BvlInline
+import Flapjack.Compiler.Backend.ListFoldTotal
 
 /-! Structural sufficiency for the BVL inliner's recursion test. These are
 Flapjack infrastructure lemmas, not HOL pass-correctness ports. -/
@@ -15,21 +16,6 @@ private theorem member_budget_lt (xs : List Exp) (e : Exp) (h : e ∈ xs) :
     rcases h with rfl | h
     · omega
     · have := ih h; omega
-
-private theorem foldRec_succeeds {α : Type} (xs : List α) (f : α → Option Bool)
-    (init : Bool) (h : ∀ x ∈ xs, ∃ result, f x = some result) :
-    ∃ result, xs.foldlM (fun found x => if found then pure true else f x) init = some result := by
-  induction xs generalizing init with
-  | nil => exact ⟨init, rfl⟩
-  | cons x xs ih =>
-    cases init with
-    | true =>
-      obtain ⟨result, hr⟩ := ih true (by intro y hy; exact h y (by simp [hy]))
-      exact ⟨result, by simpa using hr⟩
-    | false =>
-      obtain ⟨value, hv⟩ := h x (by simp)
-      obtain ⟨result, hr⟩ := ih value (by intro y hy; exact h y (by simp [hy]))
-      exact ⟨result, by simpa [hv] using hr⟩
 
 /-- Recursion detection succeeds under a structural traversal bound. -/
 theorem recursiveFuel_succeeds (fuel name : Nat) (e : Exp) (bound : expBudget e < fuel) :

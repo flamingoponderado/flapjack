@@ -1,21 +1,10 @@
 import Flapjack.Compiler.Backend.Semantics.BvlSem.State
+import Flapjack.Compiler.Backend.Semantics.NatListBounded
 import Mathlib.Data.Nat.Find
 
 /-! BVL constant construction with the original least-fresh allocation rule. -/
 namespace Flapjack.Compiler.Backend.BvlSem
 open Flapjack.Basis.Pure.MlString
-
-private theorem natList_bounded (keys : List Nat) : ∃ bound, ∀ key ∈ keys, key < bound := by
-  induction keys with
-  | nil => exact ⟨0, by simp⟩
-  | cons first rest ih =>
-    obtain ⟨bound, h⟩ := ih
-    refine ⟨max first bound + 1, ?_⟩
-    intro key member
-    rcases List.mem_cons.mp member with rfl | member
-    · omega
-    · have := h key member
-      omega
 
 /-- A finite-support BVL reference map has an unallocated natural index. -/
 theorem unusedRef_exists (refs : HolFiniteMapExact Nat (Ref Value)) : ∃ index, refs.lookup index = none := by

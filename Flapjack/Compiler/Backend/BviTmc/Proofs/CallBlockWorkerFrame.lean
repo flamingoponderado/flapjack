@@ -110,19 +110,6 @@ theorem evaluate_worker_frame {C F : Type} (dest tag ptr : Nat) (left right : Li
   dsimp only [fresh, newBlock] at mapComm
   rw [mapComm]
 
-private theorem reverse_related (f : HolFiniteMapExact Nat Nat) {xs ys : List Value}
-    (related : List.Forall₂ (valueRel f) xs ys) : List.Forall₂ (valueRel f) xs.reverse ys.reverse := by
-  induction related with
-  | nil => exact .nil
-  | cons head tail ih =>
-    have appendRelated : ∀ {a b c d : List Value}, List.Forall₂ (valueRel f) a b →
-        List.Forall₂ (valueRel f) c d → List.Forall₂ (valueRel f) (a ++ c) (b ++ d) := by
-      intro a b c d first second
-      induction first with
-      | nil => exact second
-      | cons h t rest => exact .cons h rest
-    simpa using appendRelated ih (.cons head .nil)
-
 /-- Flapjack infrastructure: the optimized worker constructor case follows
 from auxiliary simulation of its child and the smaller-clock body hypothesis.
 The other call-block conclusions and the original measure are omitted. -/

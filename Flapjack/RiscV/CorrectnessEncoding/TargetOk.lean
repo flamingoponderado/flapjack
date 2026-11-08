@@ -7,6 +7,22 @@ positive and negative offset-length implications without assuming a target run. 
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 Compiler.Encoders.Asm Compiler.Encoders.RiscV.Target
 
+/-- Flapjack target-register guard infrastructure: a register accepted by
+`asmRegOkExact` is not the zero register. Shared by the register-operand
+encoder cases; no separately named HOL original. -/
+theorem reg_nonzero (r : Nat) (guard : asmRegOkExact r riscvConfig = true) :
+    BitVec.ofNat 5 r ≠ 0#5 := by
+  have g : r < 32 ∧ r ≠ 0 := by
+    have g := guard
+    simp [asmRegOkExact, riscvConfig] at g
+    exact ⟨of_decide_eq_true g.1, g.2.1⟩
+  intro eq
+  have n := congrArg BitVec.toNat eq
+  simp only [BitVec.toNat_ofNat] at n
+  rw [show 2 ^ 5 = 32 by decide, Nat.zero_mod] at n
+  rw [Nat.mod_eq_of_lt g.1] at n
+  exact g.2 n
+
 /-- Flapjack signed-interval infrastructure: the nearer-to-zero word remains
 in a signed interval containing zero, for both original monotonic directions. -/
 private theorem range_near (lo hi a1 a2 : BitVec 64)
