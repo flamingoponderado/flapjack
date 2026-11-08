@@ -32,54 +32,29 @@ theorem mergeComm (a b : ValApprox) : mergeHOL a b = mergeHOL b a := by
       intro a b bound
       cases a <;> cases b <;> simp only [mergeHOL]
       case closNoInline.closNoInline loc arity loc' arity' =>
-        simp only [Bool.and_eq_true, beq_iff_eq]
-        by_cases h : loc = loc' ∧ arity = arity'
-        · have rev : loc' = loc ∧ arity' = arity := ⟨h.1.symm, h.2.symm⟩
-          rw [if_pos h, if_pos rev]
-          rcases h with ⟨rfl, rfl⟩
-          rfl
-        · have rev : ¬(loc' = loc ∧ arity' = arity) := by
-            intro r; exact h ⟨r.1.symm, r.2.symm⟩
-          rw [if_neg h, if_neg rev]
+        rw [beqSym loc' loc, beqSym arity' arity]
+        split <;> simp_all [Bool.and_eq_true, beq_iff_eq]
       case clos.clos loc arity body size loc' arity' body' size' =>
-        rw [← beqSym loc loc', ← beqSym arity arity', ← beqSym body body', ← beqSym size size']
+        rw [beqSym loc' loc, beqSym arity' arity, beqSym body' body, beqSym size' size]
+        split <;> simp_all [Bool.and_eq_true, beq_iff_eq]
+      case int.int i j =>
+        rw [beqSym j i]
+        split <;> simp_all [beq_iff_eq]
+      case tuple.tuple tag xs tag' ys =>
+        rw [beqSym tag' tag, beqSym ys.length xs.length]
         split
         · rename_i test
-          obtain ⟨h123, h4⟩ := Bool.and_eq_true_iff.mp test
-          obtain ⟨h12, h3⟩ := Bool.and_eq_true_iff.mp h123
-          obtain ⟨h1, h2⟩ := Bool.and_eq_true_iff.mp h12
-          have e1 := beq_iff_eq.mp h1
-          have e2 := beq_iff_eq.mp h2
-          have e3 := beq_iff_eq.mp h3
-          have e4 := beq_iff_eq.mp h4
-          subst loc'; subst arity'; subst body'; subst size'
-          rfl
-        · rfl
-      case int.int i j =>
-        simp only [beq_iff_eq]
-        by_cases h : i = j
-        · subst j; rfl
-        · have rev : j ≠ i := Ne.symm h
-          rw [if_neg h, if_neg rev]
-      case tuple.tuple tag xs tag' ys =>
-        simp only [Bool.and_eq_true, beq_iff_eq]
-        by_cases h : xs.length = ys.length ∧ tag = tag'
-        · have rev : ys.length = xs.length ∧ tag' = tag := ⟨h.1.symm, h.2.symm⟩
-          rw [if_pos h, if_pos rev]
-          have tagEq := h.2
+          obtain ⟨h1, h2⟩ := Bool.and_eq_true_iff.mp test
+          simp only [beq_iff_eq] at h1 h2
           subst tag'
           congr 1
-          apply mergeListComm xs ys h.1
-          intro child member otherApprox
+          refine mergeListComm xs ys h1 (fun child member otherApprox => ?_)
           have small := List.sizeOf_lt_of_mem member
           have childBound : sizeOf child + 1 < n := by
             simp only [ValApprox.tuple.sizeOf_spec] at bound
             omega
           exact ih (sizeOf child + 1) childBound child otherApprox (by omega)
-        · have rev : ¬(ys.length = xs.length ∧ tag' = tag) := by
-            intro h'
-            exact h ⟨h'.1.symm, h'.2.symm⟩
-          rw [if_neg h, if_neg rev]
+        · rfl
   exact all (sizeOf a + 1) a b (by omega)
 
 end Flapjack.Compiler.Backend.ClosKnownProps
