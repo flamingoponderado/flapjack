@@ -183,7 +183,7 @@ the cited name occurs in one of the two syntactic forms.
 | `misc/miscScript.sml` (`lookup_vars`) | `Flapjack/Misc/LookupVars.lean` |
 | `compiler/backend/proofs/lab_filterProofScript.sml` | `Flapjack/Compiler/Backend/LabFilter/Proofs.lean` (submodules in `LabFilter/Proofs/`) |
 | `compiler/backend/proofs/lab_to_targetProofScript.sml` | `Flapjack/Compiler/Backend/LabToTarget/` (code similarity and structural preservation; `ShareMemDomain.lean` share_mem_domain_code_rel, `ShareMemState.lean` share_mem_state_rel) |
-| `compiler/backend/proofs/backendProofScript.sml` | `Flapjack/Compiler/Backend/BackendProof/` (`MachineInit.lean`, `WordToStackSfs.lean`, `CompileLab.lean`, `ConfigOk.lean`, and `ReadLimits.lean`) |
+| `compiler/backend/proofs/backendProofScript.sml` | `Flapjack/Compiler/Backend/BackendProof/` (`MachineInit.lean`, `WordToStackSfs.lean`, `CompileLab.lean`, `ConfigOk.lean`, `ConfigTuple.lean`, and `ReadLimits.lean`) |
 | `compiler/backend/proofs/data_to_wordProofScript.sml` | `Flapjack/Compiler/Backend/DataToWord/Proofs/` (`OptionLe.lean`, `Space.lean`, and `Control.lean` for option, space-accounting, and environment-cut lemmas; `Gc/` for the gc section) |
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |

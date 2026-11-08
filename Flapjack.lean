@@ -254,6 +254,7 @@ import Flapjack.Compiler.Backend.BackendProof.MachineInit
 import Flapjack.Compiler.Backend.BackendProof.WordToStackSfs
 import Flapjack.Compiler.Backend.BackendProof.CompileLab
 import Flapjack.Compiler.Backend.BackendProof.ConfigOk
+import Flapjack.Compiler.Backend.BackendProof.ConfigTuple
 import Flapjack.Compiler.Backend.BackendProof.ReadLimits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.OptionLe
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Limits

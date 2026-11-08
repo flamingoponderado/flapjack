@@ -107405,6 +107405,22 @@
     "reviewer": "flapjack-sol-c source comparison2026-10-04: original riscv_targetProofScript Shift560-620 Imm/Asr case; complete encoder_correct_def117-132 shape. Arbitrary Nat rd/rs1 and word64 immediate c, original sole asmStep/initial targetStateRel; full existential n/allenv/asserts/asserts2. Original asmArithOk immediate range and nonzero condition remain inside unchanged asmStep (zero allowed for Lsl only). Count<64 derived from source validity, word6 native amount identity proved from that bound. Actual SRAI four emitted bytes, unrestricted Decode/Run and complete Next derived; no added range/nonzero/target-run/output premise. Native target closure inherits reals_as_rational_cuts SOUNDNESS item8; both Ror routes remain open."
   },
   {
+  "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+  "hol_name": "config_tuple2_def",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProof/ConfigTuple.lean",
+  "lean_name": "configTuple2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every field and the inferred tuple type with config_tuple2_typed and config_tuple2_type in backend_config_tuple_probe.out. Sparse maps and sets retain their respective HOL tree carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+  "hol_name": "config_tuple1_def",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProof/ConfigTuple.lean",
+  "lean_name": "configTuple1",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every field and the inferred tuple type with config_tuple1_typed and config_tuple1_type in backend_config_tuple_probe.out. Sparse maps and sets retain their respective HOL tree carriers."
+},
+{
     "lean_path": "Flapjack/Compiler/Backend/BackendProof/MachineInit.lean",
     "lean_name": "mcInitOk",
     "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
