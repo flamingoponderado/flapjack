@@ -1,7 +1,7 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppConfigGC
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
 
-/-! Assignment, reference, and byte-array cases of the primitive simulation. -/
+/-! Assignment, reference, byte-array, and string-copy cases of the primitive simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
@@ -392,5 +392,66 @@ theorem doApp_Aw8update {C F : Type} (genv : GlobalEnv)
                           refine ⟨.val FlatSem.unitValue, { flat with refs := flatRefs }, afterStores,
                             afterNonempty, afterFfi, rfl, reserved.symm, .value unitRel, ?_⟩
                           simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, dst]
+
+/-- The CopyStrStr case of `do_app`; the full theorem is not yet assembled. The
+dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
+  (fmap_as_finite_support := [c, tys])]
+theorem doApp_CopyStrStr {C F : Type} (genv : GlobalEnv)
+    (s1 s2 : Store Value × HolFfiState F) (vs : List Value)
+    (r : Result Value Value) (flat : FlatSem.State C F) (flatVs : List FlatSem.Value)
+    (premises : doApp s1 .copyStrStr vs = some (s2, r) ∧
+      List.Forall₂ (StoreValueRel genv) s1.1 flat.refs.tail ∧ flat.refs ≠ [] ∧
+      List.Forall₂ (ValueRel genv) vs flatVs ∧ s1.2 = flat.ffi ∧ genvCOk genv.c ∧
+      Op.copyStrStr ≠ .aallocEmpty ∧ Op.copyStrStr ≠ .envId) :
+    ∃ flatResult flatState,
+      List.Forall₂ (StoreValueRel genv) s2.1 flatState.refs.tail ∧ flatState.refs ≠ [] ∧
+      s2.2 = flatState.ffi ∧ flat.globals = flatState.globals ∧
+      flat.refs.take 1 = flatState.refs.take 1 ∧ ResultRel ValueRel genv r flatResult ∧
+      FlatSem.doApp flat (astOpToFlatOp .copyStrStr) flatVs = some (flatState, flatResult) := by
+  obtain ⟨run, stores, nonempty, values, ffi, ok, _, _⟩ := premises
+  cases vs with
+  | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+    | cons second rest =>
+      cases rest with
+      | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+      | cons third rest =>
+        cases rest with
+        | cons fourth rest => simp [doApp, doAppNumericCore, doAppBasic] at run
+        | nil =>
+          cases first <;> cases second <;> cases third <;>
+            simp [doApp, doAppNumericCore, doAppBasic] at run
+          case litv.litv.litv textLit offsetLit lengthLit =>
+            cases textLit <;> cases offsetLit <;> cases lengthLit <;> simp at run
+            case strLit.intLit.intLit text offset length =>
+              cases values with
+              | cons textRel tail =>
+                cases tail with
+                | cons offsetRel tail =>
+                  cases tail with
+                  | cons lengthRel tail =>
+                    cases tail
+                    cases textRel
+                    cases offsetRel
+                    cases lengthRel
+                    cases copied : copyArray (text.explode, offset) length none with
+                    | none =>
+                      simp [copied, boundsFailure] at run
+                      obtain ⟨rfl, rfl⟩ := run
+                      refine ⟨.err (.raise FlatSem.subscriptExnV), flat, stores, nonempty, ffi, rfl, rfl,
+                        .raise (exceptionValues_related genv ok).2.2.2, ?_⟩
+                      simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                        FlatSem.doAppData, FlatSem.doAppCopy,
+                        FlatSem.boundsFailure, copied]
+                    | some chars =>
+                      simp [copied] at run
+                      obtain ⟨rfl, rfl⟩ := run
+                      refine ⟨.val (.litv (.strLit (.implode chars))), flat, stores, nonempty, ffi, rfl, rfl,
+                        .value (.literal genv _), ?_⟩
+                      simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                        FlatSem.doAppData, FlatSem.doAppCopy, copied]
 
 end Flapjack.Compiler.Backend.SourceToFlat
