@@ -8,10 +8,18 @@ namespace Flapjack.Compiler.Backend.BviSem
 open Flapjack.Compiler.Backend.BvlSem
 open Flapjack.Compiler.Backend.BackendCommon
 
+namespace ApplyAuxCarrier
+/-- Canonical reference-map state roundtrip for BVI primitive dispatch. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end ApplyAuxCarrier
+
 /-- BVI-specific primitive handling. `none` denotes a type error, `some none`
-delegates to BVL, and `some (some ...)` returns a value and state. This follows
-`do_app_aux_def` but remains untagged while the recursive `finaliseCons` map
-input/output correspondence is not qualified. -/
+delegates to BVL, and `some (some ...)` returns a value and state. -/
+@[hol "cakeml/compiler/backend/semantics/bviSemScript.sml" "do_app_aux_def"
+  (fmap_as_finite_support := [refs])]
 noncomputable def doAppAux {C F : Type} (op : ClosLang.Op) (args : List Value)
     (s : BviState C F) : Option (Option (Value × BviState C F)) :=
   let result (value : Value) := some (some (value, s))

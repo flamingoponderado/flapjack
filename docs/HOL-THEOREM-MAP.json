@@ -17018,6 +17018,13 @@
     "reviewer": "Compared finalise_cons in bvi_sem_state_probe.out: argument_2 and result_2 are canonical finite maps. Mutable blocks recurse after removing their reference, restore it as finalised, and produce the original block fields; finalised, missing and ordinary values retain the source outcomes. The unconditional same-module witness compares both result components and the output lookup with an independent raw lookup recursion, whose fuel exceeds the input finite domain cardinality."
   },
   {
+    "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml", "hol_name": "do_app_aux_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/ApplyAux.lean", "lean_name": "doAppAux",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Compared typed do_app_aux in bvi_sem_state_probe.out, including constant and label checks, global operations, list conversion, byte allocation, mutable constructor updates and finalisation, explicit failures and BVL delegation. The local canonical BviState roundtrip witnesses refs; code remains an Spt tree. finaliseCons has its own reviewed input/result lookup witness."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml", "hol_name": "scan_expr_def",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean", "lean_name": "scanExpr",
     "statement_status": "reviewed_exact",
