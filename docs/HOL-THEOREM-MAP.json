@@ -3396,6 +3396,30 @@
   "reviewer": "Compared all four pinned HOL insert_def clauses against Lean and the typed sptree_insert capture; EVEN_MOD2 establishes parity, and the key arithmetic and recursively constructed trees match."
 },
 {
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "mk_BN_def",
+  "lean_path": "Flapjack/Misc/Sptree.lean",
+  "lean_name": "sptMkBN",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed mk_bn probe and original clauses: two empty children collapse to LN, and all other pairs form BN. The tree element type remains polymorphic."
+},
+{
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "mk_BS_def",
+  "lean_path": "Flapjack/Misc/Sptree.lean",
+  "lean_name": "sptMkBS",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed mk_bs probe and original clauses: two empty children around a value collapse to LS, and all other pairs form BS. The tree element type remains polymorphic."
+},
+{
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "delete_def",
+  "lean_path": "Flapjack/Misc/Sptree.lean",
+  "lean_name": "sptDelete",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed delete probe and four original clauses: zero deletes the root value, nonzero keys recurse into the matching branch and use mk_BN or mk_BS, and the polymorphic tree payload is retained. EVEN_MOD2 relates parity tests; truncated natural subtraction and division agree."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "pmatch_list_append_Match_exists",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/PatternList.lean",
@@ -128053,8 +128077,8 @@
   "hol_name": "finalise_cons_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Finalise.lean",
   "lean_name": "finaliseCons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared finalise_cons in data_sem_apply_probe.out and every original case. References use the reviewed sptree carrier; an unfinished mutable block recurses after deletion, restores its original child with the finalised flag, builds a block with the returned timestamp, and increments that timestamp. Finalised, absent, non-mutable and non-reference cases agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128405,8 +128429,8 @@
   "hol_name": "v",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Value.lean",
   "lean_name": "Value",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all five constructors and their types in data_sem_apply_probe.out: integer, fixed 64-bit word, timestamp and tag with value list, code pointer and boolean reference pointer. Constructor order, arity and field types match."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",

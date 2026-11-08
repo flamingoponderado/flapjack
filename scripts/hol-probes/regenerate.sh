@@ -743,7 +743,10 @@ run_probe data_sem_install_probeScript.sml data_sem_install_probe.out \
   v_to_bytes v_to_words do_install do_app install_bad_arity greater_rejected outer_install_bad_arity bytes_nil words_nil "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
 
 run_probe data_sem_apply_probeScript.sml data_sem_apply_probe.out \
-  do_app_aux nullary_cons nonempty_cons invalid_list_length integer_add unsupported_copy "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
+  value_number_type value_word64_type value_block_type value_code_ptr_type value_ref_ptr_type finalise_cons do_app_aux nullary_cons nonempty_cons invalid_list_length integer_add unsupported_copy "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
+
+run_probe sptree_delete_definition_probeScript.sml sptree_delete_definition_probe.out \
+  mk_bn mk_bs delete "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend"
 
 run_probe data_sem_limits_probeScript.sml data_sem_limits_probe.out \
   lim_safe_part lim_safe ref_array_inside ref_array_boundary ref_array_negative ref_array_malformed nullary_tag_boundary "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
