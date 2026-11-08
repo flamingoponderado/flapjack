@@ -23,12 +23,8 @@ theorem bVarBound_mono (expressions : List Bvl.Exp) (n m : Nat)
       cases first with
       | var index => simp only [bVarBound] at bound ⊢; omega
       | force location index => simp only [bVarBound] at bound ⊢; omega
-      | tick body =>
-        simp only [bVarBound] at bound ⊢
-        exact bVarBound_mono [body] n m le bound
-      | raise body =>
-        simp only [bVarBound] at bound ⊢
-        exact bVarBound_mono [body] n m le bound
+      | tick body => simp only [bVarBound] at bound ⊢; exact bVarBound_mono [body] n m le bound
+      | raise body => simp only [bVarBound] at bound ⊢; exact bVarBound_mono [body] n m le bound
       | op operation args =>
         simp only [bVarBound] at bound ⊢
         exact bVarBound_mono args n m le bound
@@ -47,7 +43,8 @@ theorem bVarBound_mono (expressions : List Bvl.Exp) (n m : Nat)
       | «let» bindings body =>
         simp only [bVarBound] at bound ⊢
         exact ⟨bVarBound_mono bindings n m le bound.1,
-          bVarBound_mono [body] (n + bindings.length) (m + bindings.length) (by omega) bound.2⟩
+          bVarBound_mono [body] (n + bindings.length) (m + bindings.length) (by omega)
+            bound.2⟩
 termination_by expsWeight expressions
 decreasing_by
   all_goals simp_all only [expsWeight, expWeight]
