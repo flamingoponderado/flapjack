@@ -900,63 +900,54 @@ theorem loopCall_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
 private theorem loopCall_compile_correct_at {width : Nat} [NeZero width] {F : Type} :
     ∀ (v : HolLoopProg width) (v1 : LoopSemStateFiniteExact width F),
       loopCallCompileCorrectAt v v1 := by
-  have key : ∀ (x : Nat × Nat) (v : HolLoopProg width) (v1 : LoopSemStateFiniteExact width F),
-      (v1.clock, sizeOf v) = x → loopCallCompileCorrectAt v v1 := by
-    intro x
-    induction x using (Prod.lex Nat.lt_wfRel Nat.lt_wfRel).wf.induction with
-    | h x ih0 =>
-      intro v v1 hx
-      have ih : ∀ (p' : HolLoopProg width) (t' : LoopSemStateFiniteExact width F),
-          Prod.Lex (· < ·) (· < ·) (t'.clock, sizeOf p') (v1.clock, sizeOf v) →
-          loopCallCompileCorrectAt p' t' :=
-        fun p' t' hlt => ih0 _ (hx ▸ hlt) p' t' rfl
-      clear ih0 hx
-      have ihc : ∀ (p' : HolLoopProg width) (t' : LoopSemStateFiniteExact width F),
-          t'.clock < v1.clock → loopCallCompileCorrectAt p' t' :=
-        fun p' t' h => ih p' t' (Prod.Lex.left _ _ h)
-      have ihs : ∀ (p' : HolLoopProg width), sizeOf p' < sizeOf v →
-          loopCallCompileCorrectAt p' v1 :=
-        fun p' h => ih p' v1 (Prod.Lex.right _ h)
-      cases v with
-      | skip => exact loopCall_compile_correct_skip v1
-      | fail => exact loopCall_compile_correct_fail v1
-      | tick => exact loopCall_compile_correct_tick v1
-      | «continue» k => exact loopCall_compile_correct_continue k v1
-      | «break» k => exact loopCall_compile_correct_break k v1
-      | «return» ns => exact loopCall_compile_correct_return ns v1
-      | raise x => exact loopCall_compile_correct_raise x v1
-      | mark p => exact loopCall_compile_correct_mark p v1 (ihs p (by simp <;> omega))
-      | seq c1 c2 =>
-        refine loopCall_compile_correct_seq c1 c2 v1 (ihs c1 (by simp <;> omega)) fun s1' hs1' => ?_
-        have hle : s1'.clock ≤ v1.clock := by
-          have := evaluate_clock_snd c1 v1
-          rw [fix_clock_evaluate] at hs1'
-          rw [hs1'] at this; exact this
-        rcases Nat.lt_or_eq_of_le hle with hlt | heq
-        · exact ihc c2 s1' hlt
-        · exact ih c2 s1' (by rw [heq]; exact Prod.Lex.right _ (by simp <;> omega))
-      | loop liveIn body liveOut =>
-        exact loopCall_compile_correct_loop liveIn body liveOut v1
-          fun st hst => ⟨ihc body st hst, ihc _ st hst⟩
-      | assign n x => exact loopCall_compile_correct_assign n x v1
-      | setGlobal g x => exact loopCall_compile_correct_setGlobal g x v1
-      | locValue r m => exact loopCall_compile_correct_locValue r m v1
-      | store e n => exact loopCall_compile_correct_store e n v1
-      | store32 a w => exact loopCall_compile_correct_store32 a w v1
-      | storeByte a w => exact loopCall_compile_correct_storeByte a w v1
-      | load32 a y => exact loopCall_compile_correct_load32 a y v1
-      | loadByte a y => exact loopCall_compile_correct_loadByte a y v1
-      | arith a => exact loopCall_compile_correct_arith a v1
-      | primitive lhss pop rhss => exact loopCall_compile_correct_primitive lhss pop rhss v1
-      | shMem op r ad => exact loopCall_compile_correct_shMem op r ad v1
-      | ffi idx p1 n1 p2 n2 cs => exact loopCall_compile_correct_ffi idx p1 n1 p2 n2 cs v1
-      | ite cmp r1 ri c1 c2 live =>
-        refine loopCall_compile_correct_if cmp r1 ri c1 c2 live v1 fun x y _ _ => ?_
-        by_cases hb : Compiler.Encoders.Asm.wordCmpHOL cmp x y = true
-        · simp only [hb, if_true]; exact ihs c1 (by simp <;> omega)
-        · simp only [hb, if_false, Bool.false_eq_true]; exact ihs c2 (by simp <;> omega)
-      | call ret dest args handler => exact loopCall_compile_correct_call ret dest args handler v1
-  exact fun v v1 => key _ v v1 rfl
+  refine clockSizeLexInduction (α := HolLoopProg width) (·.clock)
+    (motive := fun v v1 => loopCallCompileCorrectAt v v1) ?_
+  intro v v1 ih
+  have ihc : ∀ (p' : HolLoopProg width) (t' : LoopSemStateFiniteExact width F),
+      t'.clock < v1.clock → loopCallCompileCorrectAt p' t' :=
+    fun p' t' h => ih p' t' (Prod.Lex.left _ _ h)
+  have ihs : ∀ (p' : HolLoopProg width), sizeOf p' < sizeOf v →
+      loopCallCompileCorrectAt p' v1 :=
+    fun p' h => ih p' v1 (Prod.Lex.right _ h)
+  cases v with
+  | skip => exact loopCall_compile_correct_skip v1
+  | fail => exact loopCall_compile_correct_fail v1
+  | tick => exact loopCall_compile_correct_tick v1
+  | «continue» k => exact loopCall_compile_correct_continue k v1
+  | «break» k => exact loopCall_compile_correct_break k v1
+  | «return» ns => exact loopCall_compile_correct_return ns v1
+  | raise x => exact loopCall_compile_correct_raise x v1
+  | mark p => exact loopCall_compile_correct_mark p v1 (ihs p (by simp <;> omega))
+  | seq c1 c2 =>
+    refine loopCall_compile_correct_seq c1 c2 v1 (ihs c1 (by simp <;> omega)) fun s1' hs1' => ?_
+    have hle : s1'.clock ≤ v1.clock := by
+      have := evaluate_clock_snd c1 v1
+      rw [fix_clock_evaluate] at hs1'
+      rw [hs1'] at this; exact this
+    rcases Nat.lt_or_eq_of_le hle with hlt | heq
+    · exact ihc c2 s1' hlt
+    · exact ih c2 s1' (by rw [heq]; exact Prod.Lex.right _ (by simp <;> omega))
+  | loop liveIn body liveOut =>
+    exact loopCall_compile_correct_loop liveIn body liveOut v1
+      fun st hst => ⟨ihc body st hst, ihc _ st hst⟩
+  | assign n x => exact loopCall_compile_correct_assign n x v1
+  | setGlobal g x => exact loopCall_compile_correct_setGlobal g x v1
+  | locValue r m => exact loopCall_compile_correct_locValue r m v1
+  | store e n => exact loopCall_compile_correct_store e n v1
+  | store32 a w => exact loopCall_compile_correct_store32 a w v1
+  | storeByte a w => exact loopCall_compile_correct_storeByte a w v1
+  | load32 a y => exact loopCall_compile_correct_load32 a y v1
+  | loadByte a y => exact loopCall_compile_correct_loadByte a y v1
+  | arith a => exact loopCall_compile_correct_arith a v1
+  | primitive lhss pop rhss => exact loopCall_compile_correct_primitive lhss pop rhss v1
+  | shMem op r ad => exact loopCall_compile_correct_shMem op r ad v1
+  | ffi idx p1 n1 p2 n2 cs => exact loopCall_compile_correct_ffi idx p1 n1 p2 n2 cs v1
+  | ite cmp r1 ri c1 c2 live =>
+    refine loopCall_compile_correct_if cmp r1 ri c1 c2 live v1 fun x y _ _ => ?_
+    by_cases hb : Compiler.Encoders.Asm.wordCmpHOL cmp x y = true
+    · simp only [hb, if_true]; exact ihs c1 (by simp <;> omega)
+    · simp only [hb, if_false, Bool.false_eq_true]; exact ihs c2 (by simp <;> omega)
+  | call ret dest args handler => exact loopCall_compile_correct_call ret dest args handler v1
 
 /-- Exact HOL `compile_correct` (`loop_callProofScript.sml:16-20`), assembled from the
     auxiliary per-constructor lemmas above by the lexicographic `(clock, program size)` induction that
