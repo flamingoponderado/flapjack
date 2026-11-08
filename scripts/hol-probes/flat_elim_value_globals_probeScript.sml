@@ -6,6 +6,7 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val _ = show_thm "pure_every_eta=" flat_elimProofTheory.is_pure_EVERY_aconv;
 val _ = show_thm "value_globals=" flat_elimProofTheory.find_v_globals_def;
 val _ = show_thm "refs_globals=" flat_elimProofTheory.find_refs_globals_def;
 val _ = show_thm "env_globals=" flat_elimProofTheory.find_env_globals_def;

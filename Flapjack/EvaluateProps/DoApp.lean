@@ -31,7 +31,7 @@ theorem doAppNumericCore_ffi {σ : Type} (store store' : Store Value)
     repeat' first | split at h | simp_all [Option.bind_eq_some_iff]
   all_goals obtain ⟨_, _, ⟨_, hffi⟩, _⟩ := h; exact hffi.symm
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "do_app_call_FFI_rel"]
+/-- Flapjack operation-specific helper for the general FFI transition proof. -/
 theorem doAppArith_callFFIRel {σ : Type} (store store' : Store Value)
     (ffi ffi' : HolFfiState σ) (action : AstHOL.Arith) (typ : AstHOL.PrimType)
     (values : List Value) (result : Result Value Value)
@@ -51,7 +51,7 @@ theorem doAppArith_callFFIRel {σ : Type} (store store' : Store Value)
     subst ffi'
     exact Relation.ReflTransGen.refl
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "do_app_call_FFI_rel"]
+/-- Flapjack operation-specific helper for the general FFI transition proof. -/
 theorem doAppFromTo_callFFIRel {σ : Type} (store store' : Store Value)
     (ffi ffi' : HolFfiState σ) (source target : AstHOL.PrimType)
     (values : List Value) (result : Result Value Value)
@@ -66,7 +66,7 @@ theorem doAppFromTo_callFFIRel {σ : Type} (store store' : Store Value)
     subst ffi'
     exact Relation.ReflTransGen.refl
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "do_app_call_FFI_rel"]
+/-- Flapjack operation-specific helper for the general FFI transition proof. -/
 theorem doAppTest_callFFIRel {σ : Type} (store store' : Store Value)
     (ffi ffi' : HolFfiState σ) (test : AstHOL.Test) (typ : AstHOL.PrimType)
     (values : List Value) (result : Result Value Value)
@@ -76,7 +76,7 @@ theorem doAppTest_callFFIRel {σ : Type} (store store' : Store Value)
   repeat' first | split at h | simp_all
   all_goals exact Relation.ReflTransGen.refl
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "do_app_call_FFI_rel"]
+/-- Flapjack operation-specific helper for the general FFI transition proof. -/
 theorem doAppFfi_callFFIRel {σ : Type} (store store' : Store Value)
     (ffi ffi' : HolFfiState σ) (name : MlString) (values : List Value)
     (result : Result Value Value)
@@ -107,11 +107,11 @@ theorem doAppBasic_getD_callFFIRel {σ : Type} (store store' : Store Value)
     · subst ffi'; exact Relation.ReflTransGen.refl
     · exact Relation.ReflTransGen.single ⟨name, conf, bytes, returned, hcall⟩
 
-/-- The complete original primitive-application FFI transition theorem.
-The dispatcher and its carriers are pending full source review. -/
+/-- The original primitive-application FFI transition theorem. The dispatcher
+inherits the rational-cut real-number assumption (SOUNDNESS item 8). -/
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "do_app_call_FFI_rel"]
-theorem doApp_callFFIRel {σ : Type} (store store' : Store Value)
-    (ffi ffi' : HolFfiState σ) (op : AstHOL.Op) (values : List Value)
+theorem doApp_callFFIRel {σ : Type} (store : Store Value) (ffi : HolFfiState σ) (op : AstHOL.Op)
+    (values : List Value) (store' : Store Value) (ffi' : HolFfiState σ)
     (result : Result Value Value)
     (h : doApp (store, ffi) op values = some ((store', ffi'), result)) :
     Relation.ReflTransGen callFFIRelHOL ffi ffi' := by
@@ -126,11 +126,11 @@ theorem doApp_callFFIRel {σ : Type} (store store' : Store Value)
 
 /-- Primitive execution preserves and extends FFI traces. -/
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "do_app_io_events_mono"]
-theorem doApp_ioEventsMono {σ : Type} (store store' : Store Value)
-    (ffi ffi' : HolFfiState σ) (op : AstHOL.Op) (values : List Value)
+theorem doApp_ioEventsMono {σ : Type} (store : Store Value) (ffi : HolFfiState σ) (op : AstHOL.Op)
+    (values : List Value) (store' : Store Value) (ffi' : HolFfiState σ)
     (result : Result Value Value)
     (h : doApp (store, ffi) op values = some ((store', ffi'), result)) :
     ioEventsMonoHOL ffi ffi' :=
-  callFFIRelHOL_rtc_ioEventsMono ffi ffi' (doApp_callFFIRel store store' ffi ffi' op values result h)
+  callFFIRelHOL_rtc_ioEventsMono ffi ffi' (doApp_callFFIRel store ffi op values store' ffi' result h)
 
 end Flapjack.EvaluateProps

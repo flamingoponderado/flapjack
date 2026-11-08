@@ -46,3 +46,27 @@ val _ = (print "ns_all_extend_env="; print_term (concl source_to_flatProofTheory
 val snd_eq_local = Q.prove (`SND x = y ⇔ ∃a. x = (a,y)`, Cases_on `x` >> rw []);
 val _ = if null (hyp snd_eq_local) then () else raise Fail "local theorem has hypotheses";
 val _ = (print "snd_eq_local="; print_term (concl snd_eq_local); print "\n");
+
+load "preamble";
+open preamble;
+val fold_opt_bind_local = Q.prove (`misc$opt_bind NONE = \x y. y`,
+  rw [FUN_EQ_THM, miscTheory.opt_bind_def]);
+val fold_env_updated_local = Q.prove (`env with v updated_by (\y. y) = (env : 'a flatSem$environment)`,
+  rw [flatSemTheory.environment_component_equality]);
+val evaluate_foldr_let_err_local = Q.prove (
+  `!env s s' exps e x.
+     flatSem$evaluate env s exps = (s', Rerr x) ==>
+     flatSem$evaluate env s [FOLDR (flatLang$Let t NONE) e exps] = (s', Rerr x)`,
+  Induct_on `exps` >>
+  rw [flatSemTheory.evaluate_def] >>
+  fs [Once flatPropsTheory.evaluate_cons] >>
+  every_case_tac >>
+  fs [flatSemTheory.evaluate_def] >>
+  rw [] >>
+  first_x_assum drule >>
+  disch_then (qspec_then `e` mp_tac) >>
+  rw [] >>
+  every_case_tac >>
+  fs [fold_opt_bind_local, fold_env_updated_local]);
+val _ = if null (hyp evaluate_foldr_let_err_local) then () else raise Fail "local theorem has hypotheses";
+val _ = (print "evaluate_foldr_let_err_local="; print_term (concl evaluate_foldr_let_err_local); print "\n");

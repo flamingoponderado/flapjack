@@ -14,6 +14,11 @@ is `∃ x, y = f x ∧ s x` (HOL `IN_IMAGE`), and `UNIV` is `fun _ => True`.
 
 namespace Flapjack
 
+/-- HOL's injectivity relation between two sets. -/
+@[hol "HOL/src/pred_set/src/pred_setScript.sml" "INJ_DEF"]
+def holInj {α β : Type} (f : α → β) (s : α → Prop) (t : β → Prop) : Prop :=
+  (∀ x, s x → t (f x)) ∧ (∀ x y, s x ∧ s y → f x = f y → x = y)
+
 open Classical in
 /-- HOL `LINV_OPT_def` (`pred_setScript.sml:2715-2718`, `[nocompute]`):
 `LINV_OPT f s y = if y IN IMAGE f s then SOME (@x. x IN s /\ (f x = y)) else NONE`. Under the

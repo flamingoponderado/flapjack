@@ -7,20 +7,36 @@ import Flapjack.HolArb
 namespace Flapjack.Compiler.Backend.BviSem
 open Flapjack.Compiler.Backend.BvlSem
 
-/-- Construct the BVL state used by the source fallback dispatcher. Fields
-not provided by the source record are HOL arbitrary values; the code tree
-retains its source shape and replaces each payload with the same arbitrary
-BVL payload. Untagged until the two state-carrier map translations are
-qualified together. -/
+/-- Construct the BVL state used by the source fallback dispatcher. The
+unspecified fields come from one arbitrary BVL state, as in the source record
+literal; code retains its source tree shape with arbitrary BVL payloads. This
+remains untagged until both state-carrier map translations are qualified. -/
 noncomputable def toBvl {C F : Type} (s : BviState C F) : BvlSem.State C F :=
   let config := (s.compileOracle 0).1
   let arbitraryCode : Nat × Bvl.Exp := @Flapjack.holArb (Nat × Bvl.Exp) ⟨(0, .var 0)⟩
-  let arbitraryCompiler : BvlSem.Compiler C :=
-    @Flapjack.holArb (BvlSem.Compiler C) ⟨fun _ _ => none⟩
-  let arbitraryOracle : BvlSem.CompileOracle C :=
-    @Flapjack.holArb (BvlSem.CompileOracle C) ⟨fun _ => (config, [])⟩
-  ⟨@Flapjack.holArb (List (Option Value)) ⟨[]⟩, s.refs, s.clock,
-    arbitraryCompiler, arbitraryOracle, sptMap (fun _ => arbitraryCode) s.code, s.ffi⟩
+  let seed : BvlSem.State C F :=
+    ⟨[], s.refs, 0, (fun _ _ => none), (fun _ => (config, [])), .ln, s.ffi⟩
+  let arbitrary := @Flapjack.holArb (BvlSem.State C F) ⟨seed⟩
+  ⟨arbitrary.globals, s.refs, s.clock, arbitrary.compile, arbitrary.compileOracle,
+    sptMap (fun _ => arbitraryCode) s.code, s.ffi⟩
+
+/-- Construct the same fallback state over explicit lookup views. The
+arbitrary fields and code-tree payload follow the original record construction. -/
+noncomputable def broadToBvl {C F : Type} (s : BviStateBroad C F) : BvlSem.StateBroad C F :=
+  let config := (s.compileOracle 0).1
+  let arbitraryCode : Nat × Bvl.Exp := @Flapjack.holArb (Nat × Bvl.Exp) ⟨(0, .var 0)⟩
+  let seed : BvlSem.State C F :=
+    ⟨[], ⟨s.refs, s.refsFiniteSupport⟩, 0, (fun _ _ => none),
+      (fun _ => (config, [])), .ln, s.ffi⟩
+  let arbitrary := @Flapjack.holArb (BvlSem.State C F) ⟨seed⟩
+  ⟨arbitrary.globals, s.refs, s.refsFiniteSupport, s.clock,
+    arbitrary.compile, arbitrary.compileOracle, sptMap (fun _ => arbitraryCode) s.code, s.ffi⟩
+
+/-- Fallback-state construction commutes with exposing reference lookups. -/
+theorem holFmapAsFiniteSupportConversionWitness_toBvl {C F : Type} (s : BviState C F) :
+    (toBvl s).toBroad = broadToBvl s.toBroad := by
+  cases s
+  rfl
 
 /-- Copying the shared fields back from the fallback input leaves the BVI
 state unchanged. This is Flapjack infrastructure for dispatcher proofs. -/

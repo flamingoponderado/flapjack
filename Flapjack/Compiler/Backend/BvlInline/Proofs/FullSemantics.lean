@@ -1,40 +1,10 @@
 import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpSemantics
 import Flapjack.Compiler.Backend.BvlInline.Proofs.ProductionSemantics
+import Flapjack.Compiler.Backend.BvlInline.SourceCompile
 
 /-! Production correspondence and behavior for the complete BVL optimizer. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs
 open Flapjack.Compiler.Backend.BvlSem
-
-/-- The production tick-removal and let-operation traversals compute their
-source-shaped body maps in program order. -/
-theorem removeTicksLetOp_map (fuel : Nat) (program : List (Nat × Nat × Bvl.Exp)) :
-    program.mapM (fun entry => do
-      let body ← removeTicksBounded fuel entry.2.2
-      pure (entry.1, entry.2.1, ← letOpBounded fuel body)) =
-    some (program.map fun (name, arity, body) => (name, arity, letOpOne (removeTicksSing body))) := by
-  induction program with
-  | nil => rfl
-  | cons entry rest ih =>
-    obtain ⟨name, arity, body⟩ := entry
-    simp only [List.mapM_cons, List.map_cons]
-    rw [ih]
-    simp [removeTicksBounded_eq, letOpBounded_eq]
-
-/-- Handler compilation maps a program of already optimized bodies through
-the same total expression pipeline used by the state relation. -/
-theorem handle_map (fuel : Nat) (splitSeq : Bool) (limit : Nat)
-    (program : List (Nat × Nat × Bvl.Exp)) :
-    (program.map fun (name, arity, body) => (name, arity, letOpOne body)).mapM
-      (fun entry => do
-        pure (entry.1, entry.2.1, ← BvlHandle.compileAnyFuel fuel splitSeq limit entry.2.1 entry.2.2)) =
-    some (program.map fun (name, arity, body) => (name, arity, letOpTransform splitSeq limit arity body)) := by
-  induction program with
-  | nil => rfl
-  | cons entry rest ih =>
-    obtain ⟨name, arity, body⟩ := entry
-    simp only [List.map_cons, List.mapM_cons]
-    rw [BvlHandle.compileAnyFuel_eq_source, ih]
-    simp [letOpTransform, letOpSing, letOp, letOpList]
 
 /-- The executed program optimizer returns the total inlining, tick-removal,
 let-operation, and handler transformations. -/
@@ -45,17 +15,9 @@ theorem compileProgFuel_eq (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
       let unticked := inlined.2.map fun (name, arity, body) => (name, arity, removeTicksSing body)
       some (inlined.1, unticked.map fun (name, arity, body) =>
         (name, arity, letOpTransform splitSeq cutSize arity body)) := by
-  unfold compileProgFuel compileWithoutHandleFuel
-  have stage := removeTicksLetOp_map fuel (tickCompileProg inlineLimit .ln program).2
-  have next := handle_map fuel splitSeq cutSize
-    ((tickCompileProg inlineLimit .ln program).2.map fun (name, arity, body) => (name, arity, removeTicksSing body))
-  simp only [bind, Option.bind, pure] at stage next
-  simp only [tickInlineAllFuel_eq, bind, Option.bind, pure]
-  rw [stage]
-  simp only [List.map_map, Function.comp_def] at next
-  dsimp only
-  rw [next]
-  simp [List.map_map, Function.comp_def]
+  rw [compileProgFuel, compileIncFuel_eq_compileInc]
+  simp [compileInc, optimise, letOpTransform, List.map_map,
+    Function.comp_def]
 
 /-- The production optimizer preserves the ordered list of program labels. -/
 theorem compileProgFuel_names (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)

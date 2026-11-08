@@ -1,5 +1,7 @@
+import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.ClosLetop.Source
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Total
+import Flapjack.Misc.ListMapM
 import Mathlib.Tactic
 
 /-! Agreement of executable let-operation cleanup with the source traversal. -/
@@ -43,23 +45,6 @@ theorem varListArity_eq_source {α : Type} (xs : List Exp) (args : List α) :
   rw [varList_range]
   simp [varListArity, List.range_eq_range']
   rfl
-
-private theorem mapM_eq_map {α β : Type} (visit : α → Option β) (f : α → β)
-    (correct : ∀ x y, visit x = some y → y = f x) (xs : List α) (ys : List β)
-    (run : xs.mapM visit = some ys) : ys = xs.map f := by
-  induction xs generalizing ys with
-  | nil => simpa using run.symm
-  | cons x rest ih =>
-    simp only [List.mapM_cons] at run
-    cases first : visit x with
-    | none => simp [first] at run
-    | some value =>
-      cases remaining : rest.mapM visit with
-      | none => simp [first, remaining] at run
-      | some values =>
-        simp [first, remaining] at run
-        subst ys
-        simp [correct x value first, ih values remaining]
 
 /-- Every successful bounded traversal returns the source traversal. This is
 Flapjack infrastructure for the production agreement proof. -/

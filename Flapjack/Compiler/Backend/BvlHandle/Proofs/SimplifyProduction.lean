@@ -1,6 +1,8 @@
+import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.Simplify
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.HelpersProduction
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyTotal
+import Flapjack.Misc.ListMapM
 import Aesop
 
 /-! Executable correspondence for BVL handler simplification. -/
@@ -23,23 +25,6 @@ theorem foldRaiseBounded_eq (fuel : Nat) (xs : List Exp) (init : Bool) :
       simp only [List.foldlM_cons, Bool.false_eq_true, ↓reduceIte,
         bind, Option.bind]
       simpa [canRaiseList] using ih (canRaise e)
-
-private theorem mapM_eq_map {α β : Type} (visit : α → Option β) (f : α → β)
-    (correct : ∀ x y, visit x = some y → y = f x) (xs : List α) (ys : List β)
-    (run : xs.mapM visit = some ys) : ys = xs.map f := by
-  induction xs generalizing ys with
-  | nil => simpa using run.symm
-  | cons x rest ih =>
-    simp only [List.mapM_cons] at run
-    cases first : visit x with
-    | none => simp [first] at run
-    | some value =>
-      cases remaining : rest.mapM visit with
-      | none => simp [first, remaining] at run
-      | some values =>
-        simp [first, remaining] at run
-        subst ys
-        simp [correct x value first, ih values remaining]
 
 private theorem fallback_eq (fuel : Nat)
     (ih : ∀ expression result, simplifyFuel fuel expression = some result → result = handleSimp expression)

@@ -95,62 +95,39 @@ theorem noMat_naivePatternMatch (trace : Tra) (todo : List (FlatLang.Pat × Flat
       (safe : ∀ pattern expression, (pattern, expression) ∈ todo → FlatProps.noMat expression = true) :
       FlatProps.noMat (naivePatternMatch trace todo) = true := by
     induction todo using naivePatternMatch.induct trace with
-    | case1 => simpa [naivePatternMatch] using noMat_mkBool trace true
+    | case1 => simp [naivePatternMatch, noMat_mkBool]
     | case2 value rest ih | case3 value rest _ ih =>
-      simp only [naivePatternMatch]
-      apply ih
-      intro pattern expression member
-      exact safe pattern expression (by simp [member])
+      simpa [naivePatternMatch] using ih fun p e m => safe p e (by simp [m])
     | case4 value rest literal ih =>
-      have valueSafe := safe (.plit literal) value (by simp)
-      have restSafe : ∀ pattern expression, (pattern, expression) ∈ rest → FlatProps.noMat expression = true := by
-        intro pattern expression member
-        exact safe pattern expression (by simp [member])
-      simp only [naivePatternMatch]
-      apply noMat_smartIf
-      · simp [FlatProps.noMat, FlatProps.noMatList, valueSafe]
-      · exact ih restSafe
-      · exact noMat_mkBool trace false
+      simp [naivePatternMatch, FlatProps.noMat, FlatProps.noMatList, noMat_mkBool, noMat_smartIf,
+        ih (fun p e m => safe p e (by simp [m])), safe (.plit literal) value (by simp)]
     | case5 value rest patterns ih =>
-      have valueSafe := safe (.pcon none patterns) value (by simp)
-      simp only [naivePatternMatch]
-      apply ih
-      intro pattern expression member
-      rcases List.mem_append.mp member with member | member
-      · exact noMat_children trace value patterns valueSafe pattern expression member
-      · exact safe pattern expression (by simp [member])
+      simp [naivePatternMatch, ih (fun p e m => by
+          rcases List.mem_append.mp m with m | m
+          · exact noMat_children trace value patterns
+              (safe (.pcon none patterns) value (by simp)) p e m
+          · exact safe p e (by simp [m]))]
     | case6 value rest patterns tag typ ih =>
-      have valueSafe := safe (.pcon (some (tag, typ)) patterns) value (by simp)
       simp only [naivePatternMatch]
-      apply noMat_smartIf
-      · simp [FlatProps.noMat, FlatProps.noMatList, valueSafe]
-      · apply ih
-        intro pattern expression member
-        rcases List.mem_append.mp member with member | member
-        · exact noMat_children trace value patterns valueSafe pattern expression member
-        · exact safe pattern expression (by simp [member])
-      · exact noMat_mkBool trace false
+      exact noMat_smartIf trace _ _ _
+        (by simp [FlatProps.noMat, FlatProps.noMatList,
+          safe (.pcon (some (tag, typ)) patterns) value (by simp)])
+        (ih fun p e m => by
+          rcases List.mem_append.mp m with m | m
+          · exact noMat_children trace value patterns
+              (safe (.pcon (some (tag, typ)) patterns) value (by simp)) p e m
+          · exact safe p e (by simp [m])) (noMat_mkBool trace false)
     | case7 value rest pattern name ih =>
-      simp only [naivePatternMatch]
-      apply ih
-      intro pattern' expression member
-      simp only [List.mem_cons, Prod.mk.injEq] at member
-      rcases member with ⟨_, rfl⟩ | member
-      · exact safe (.pas pattern name) expression (by simp)
-      · exact safe pattern' expression (by simp [member])
+      simp [naivePatternMatch, ih (fun p e m => by
+        simp only [List.mem_cons, Prod.mk.injEq] at m; rcases m with ⟨_, rfl⟩ | m
+        · exact safe (.pas pattern name) e (by simp)
+        · exact safe p e (by simp [m]))]
     | case8 value rest pattern ih =>
-      have valueSafe := safe (.pref pattern) value (by simp)
-      simp only [naivePatternMatch]
-      apply ih
-      intro pattern' expression member
-      simp only [List.mem_cons, Prod.mk.injEq] at member
-      rcases member with ⟨_, rfl⟩ | member
-      · simpa [FlatProps.noMat, FlatProps.noMatList] using valueSafe
-      · exact safe pattern' expression (by simp [member])
-
-  apply general todo
-  intro pattern expression member
-  exact safe (pattern, expression) member
+      simp [naivePatternMatch, ih (fun p e m => by
+        simp only [List.mem_cons, Prod.mk.injEq] at m; rcases m with ⟨_, rfl⟩ | m
+        · simpa [FlatProps.noMat, FlatProps.noMatList] using safe (.pref pattern) value (by simp)
+        · exact safe p e (by simp [m]))]
+  exact general todo (fun p e m => safe (p, e) m)
 
 /-- Naive branch chains are match-free when their value, default, and
 branch expressions are match-free. -/

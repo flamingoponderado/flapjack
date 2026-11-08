@@ -1,7 +1,7 @@
 import Flapjack.EvaluateProps.ClockIoBind
 
 /-! Clock-independent branching prerequisites for the source evaluator
-clock-and-I/O proof. Source and carrier review remain pending. -/
+clock-and-I/O proof. -/
 namespace Flapjack.EvaluateProps
 open Flapjack.SemanticPrimitivesHOL
 
@@ -17,8 +17,8 @@ theorem isClockIoMono_accSafe {σ α β γ : Type} (f : State σ → α) (s : St
   exact invariant
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_if_safe"]
-theorem isClockIoMono_ifSafe {σ α β : Type} (f : State σ → Bool)
-    (j k : State σ → State σ × Result α β) (st : State σ)
+theorem isClockIoMono_ifSafe {σ α β : Type} (f : State σ → Bool) (st : State σ)
+    (j k : State σ → State σ × Result α β)
     (h : (∀ state clock, f { state with clock } = f state) ∧
       isClockIoMono (fun state => if f st then j state else k state) st) :
     isClockIoMono (fun state => if f state then j state else k state) st := by
@@ -26,9 +26,8 @@ theorem isClockIoMono_ifSafe {σ α β : Type} (f : State σ → Bool)
   exact ⟨h.1, Classical.em _, h.2⟩
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_option_case_safe"]
-theorem isClockIoMono_optionCaseSafe {σ α β γ : Type} (f : State σ → Option α)
+theorem isClockIoMono_optionCaseSafe {σ α β γ : Type} (f : State σ → Option α) (st : State σ)
     (g : State σ → State σ × Result β γ) (h : α → State σ → State σ × Result β γ)
-    (st : State σ)
     (assumptions : (∀ state clock, f { state with clock } = f state) ∧
       isClockIoMono (fun state => match f st with | none => g state | some x => h x state) st) :
     isClockIoMono (fun state => match f state with | none => g state | some x => h x state) st := by
@@ -36,9 +35,8 @@ theorem isClockIoMono_optionCaseSafe {σ α β γ : Type} (f : State σ → Opti
   exact ⟨assumptions.1, Classical.em _, assumptions.2⟩
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_match_case_safe"]
-theorem isClockIoMono_matchCaseSafe {σ α β γ : Type} (f : State σ → MatchResult α)
+theorem isClockIoMono_matchCaseSafe {σ α β γ : Type} (f : State σ → MatchResult α) (st : State σ)
     (g h : State σ → State σ × Result β γ) (j : α → State σ → State σ × Result β γ)
-    (st : State σ)
     (assumptions : (∀ state clock, f { state with clock } = f state) ∧
       isClockIoMono (fun state => match f st with
         | .noMatch => g state | .typeError => h state | .match value => j value state) st) :
@@ -49,8 +47,8 @@ theorem isClockIoMono_matchCaseSafe {σ α β γ : Type} (f : State σ → Match
   exact ⟨assumptions.1, Classical.em _, assumptions.2⟩
 
 @[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_match_case_pair_safe"]
-theorem isClockIoMono_matchCasePairSafe {σ α β γ : Type} (f : State σ → MatchResult α)
-    (g h : State σ → Result β γ) (j : α → State σ → Result β γ) (st : State σ)
+theorem isClockIoMono_matchCasePairSafe {σ α β γ : Type} (f : State σ → MatchResult α) (st : State σ)
+    (g h : State σ → Result β γ) (j : α → State σ → Result β γ)
     (assumptions : (∀ state clock, f { state with clock } = f state) ∧
       isClockIoMono (fun state => (state, match f st with
         | .noMatch => g state | .typeError => h state | .match value => j value state)) st) :

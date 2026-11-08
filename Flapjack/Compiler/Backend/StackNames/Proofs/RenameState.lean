@@ -407,60 +407,23 @@ theorem comp_STOP_Loop {width : Nat} [NeZero width] {f : Spt Nat} {c1 : HolProg 
   (words_as_type_indexed_bitvec)]
 theorem getLabels_comp {width : Nat} [NeZero width] : ∀ (f : Spt Nat) (p : HolProg width),
     StackSem.getLabelsExact (progCompHOL f p) = StackSem.getLabelsExact p
-  | f, .seq a b => by
-      show StackSem.getLabelsExact (.seq (progCompHOL f a) (progCompHOL f b)) = _
-      rw [StackSem.getLabelsExact, StackSem.getLabelsExact, getLabels_comp f a, getLabels_comp f b]
-  | f, .ite op r ri a b => by
-      show StackSem.getLabelsExact (.ite op (findNameSpt f r) (riFindNameHOL f ri)
-        (progCompHOL f a) (progCompHOL f b)) = _
-      rw [StackSem.getLabelsExact, StackSem.getLabelsExact, getLabels_comp f a, getLabels_comp f b]
-  | f, .loop b => by
-      show StackSem.getLabelsExact (.loop (progCompHOL f b)) = _
-      rw [StackSem.getLabelsExact, StackSem.getLabelsExact, getLabels_comp f b]
-  | f, .call none t none => by
-      simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .call none t (some (hb, h1, h2)) => by
-      simp only [progCompHOL, StackSem.getLabelsExact]
+  | f, .seq a b => by simp only [progCompHOL, StackSem.getLabelsExact, getLabels_comp]
+  | f, .ite op r ri a b => by simp only [progCompHOL, StackSem.getLabelsExact, getLabels_comp]
+  | f, .loop b => by simp only [progCompHOL, StackSem.getLabelsExact, getLabels_comp]
+  | f, .call none t none => by simp only [progCompHOL, StackSem.getLabelsExact]
+  | f, .call none t (some (hb, h1, h2)) => by simp only [progCompHOL, StackSem.getLabelsExact]
   | f, .call (some (body, link, l1, l2)) t none => by
-      show StackSem.getLabelsExact (.call (some (progCompHOL f body, findNameSpt f link, l1, l2))
-        (destFindNameHOL f t) none) = _
-      rw [StackSem.getLabelsExact, StackSem.getLabelsExact, getLabels_comp f body]
+      simp only [progCompHOL, StackSem.getLabelsExact, getLabels_comp]
   | f, .call (some (body, link, l1, l2)) t (some (hb, h1, h2)) => by
-      show StackSem.getLabelsExact (.call (some (progCompHOL f body, findNameSpt f link, l1, l2))
-        (destFindNameHOL f t) (some (progCompHOL f hb, h1, h2))) = _
-      rw [StackSem.getLabelsExact, StackSem.getLabelsExact, getLabels_comp f body]
-      dsimp only
-      rw [getLabels_comp f hb]
-  | f, .skip => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .inst _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .get _ _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .set _ _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .opCurrHeap _ _ _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .jumpLower _ _ _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .alloc _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .storeConsts _ _ _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .raise _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .ret _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .break _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .continue _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .ffi _ _ _ _ _ _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .tick => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .locValue _ _ _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .install _ _ _ _ _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .shMemOp _ _ _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .codeBufferWrite _ _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .dataBufferWrite _ _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .rawCall _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .stackAlloc _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .stackFree _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .stackStore _ _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .stackStoreAny _ _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .stackLoad _ _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .stackLoadAny _ _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .stackGetSize _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .stackSetSize _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .bitmapLoad _ _ => by simp only [progCompHOL, StackSem.getLabelsExact]
-  | f, .halt _ => by simp only [progCompHOL, StackSem.getLabelsExact]
+      simp only [progCompHOL, StackSem.getLabelsExact, getLabels_comp]
+  | f, .skip | f, .inst _ | f, .get _ _ | f, .set _ _ | f, .opCurrHeap _ _ _
+    | f, .jumpLower _ _ _ | f, .alloc _ | f, .storeConsts _ _ _ | f, .raise _ | f, .ret _
+    | f, .break _ | f, .continue _ | f, .ffi _ _ _ _ _ _ | f, .tick | f, .locValue _ _ _
+    | f, .install _ _ _ _ _ | f, .shMemOp _ _ _ | f, .codeBufferWrite _ _
+    | f, .dataBufferWrite _ _ | f, .rawCall _ | f, .stackAlloc _ | f, .stackFree _
+    | f, .stackStore _ _ | f, .stackStoreAny _ _ | f, .stackLoad _ _ | f, .stackLoadAny _ _
+    | f, .stackGetSize _ | f, .stackSetSize _ | f, .bitmapLoad _ _ | f, .halt _ => by
+      simp only [progCompHOL, StackSem.getLabelsExact]
 
 /-- Exact HOL `loc_check_rename_state` (`stack_namesProofScript.sml:295-302`, `[local]`). -/
 @[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "loc_check_rename_state"

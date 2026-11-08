@@ -101,7 +101,7 @@ theorem evaluate_let_source {C F : Type} (env : Environment Value) (state : Stat
   rw [evaluate]
   generalize fixClock state (evaluate env state [first]) = result
   obtain ⟨next, result⟩ := result
-  cases result <;> rfl
+  cases result <;> cases name <;> rfl
 
 /-- A conditional checks the clamped condition value using `doIf`. -/
 @[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "evaluate_def" 815]

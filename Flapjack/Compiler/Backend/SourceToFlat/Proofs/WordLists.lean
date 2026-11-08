@@ -1,9 +1,19 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ListConversion
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
+import Flapjack.Misc.PredSet
 
 /-! Byte and word list decoding across the source-to-flat value relation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
+
+/-- An injective function has a unique optional preimage at an image value. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "some_f_inj_eq"]
+theorem some_f_inj_eq {α β : Type} (f : α → β) (y : β) (x : α)
+    (premises : holInj f (fun _ => True) (fun _ => True) ∧ y = f x) :
+    holOptionSome (fun x => y = f x) = some x := by
+  apply (holOptionSome_eq_some_iff _ ?_ x).mpr premises.2
+  intro a b ha hb
+  exact premises.1.2 a b ⟨trivial, trivial⟩ (ha.symm.trans hb)
 
 namespace WordListsPort
 /-- Roundtrip for the global environment's canonical finite maps. -/

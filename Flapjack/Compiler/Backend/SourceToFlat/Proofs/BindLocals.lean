@@ -29,6 +29,14 @@ def bindLocals {ModuleName : Type} (traces : List Tra) (locals : List MlString)
     (compMap : Namespace ModuleName MlString VarName) : Namespace ModuleName MlString VarName :=
   nsBindList (List.zipWith (fun trace name => (name, VarName.localName trace name)) traces locals) compMap
 
+/-- A leading local binding is a leading trace and name in the binding fold. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "bind_locals_fold_nsBind"]
+theorem bindLocals_fold_nsBind {ModuleName : Type} (nm : MlString) (t : Tra)
+    (ts : List Tra) (locals : List MlString) (vMap : Namespace ModuleName MlString VarName) :
+    nsBind nm (.localName t nm) (bindLocals ts locals vMap) =
+      bindLocals (t :: ts) (nm :: locals) vMap := by
+  rfl
+
 private theorem zipLocals_append {α : Type} (funs : List (MlString × α)) (trace : Tra)
     (traces : List Tra) (locals : List MlString) :
     List.zipWith (fun t x => (x, VarName.localName t x))

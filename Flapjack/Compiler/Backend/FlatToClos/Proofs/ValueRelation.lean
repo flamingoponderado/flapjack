@@ -112,54 +112,38 @@ theorem valueToList_related (source : FlatSem.Value) (target : ClosSem.Value)
     (decoded : FlatSem.valueToList source = some sourceValues) :
     ∃ targetValues, ClosSem.valueToList target = some targetValues ∧
       List.Forall₂ ValueRel sourceValues targetValues := by
-  cases source with
-  | conv stamp fields =>
-    cases stamp with
-    | none => simp [FlatSem.valueToList] at decoded
-    | some stamp =>
-      obtain ⟨tag, typeId⟩ := stamp
-      cases fields with
-      | nil =>
-        simp only [FlatSem.valueToList] at decoded
-        split at decoded
-        · rename_i tags
-          simp only [Option.some.injEq] at decoded
-          subst sourceValues
-          cases related with
-          | con values =>
-            cases values
-            exact ⟨[], by simp [ClosSem.valueToList, tags.1], .nil⟩
-        · simp at decoded
-      | cons head rest =>
+  revert target sourceValues
+  refine FlatSem.valueToList.induct (motive := fun source =>
+    ∀ (target : ClosSem.Value) (sourceValues : List FlatSem.Value),
+      ValueRel source target → FlatSem.valueToList source = some sourceValues →
+      ∃ targetValues, ClosSem.valueToList target = some targetValues ∧
+        List.Forall₂ ValueRel sourceValues targetValues) ?_ ?_ ?_ ?_ ?_ source
+  · intro cid tid h target sourceValues rel dec
+    simp [FlatSem.valueToList, h] at dec
+    subst sourceValues
+    cases rel with
+    | con values =>
+      cases values
+      exact ⟨[], by simp [ClosSem.valueToList, h.1], .nil⟩
+  · intro cid tid h target sourceValues rel dec
+    simp [FlatSem.valueToList, h] at dec
+  · intro cid tid head tail h ih target sourceValues rel dec
+    simp only [FlatSem.valueToList, h] at dec
+    obtain ⟨tailValues, tailDec, rfl⟩ := Option.map_eq_some_iff.mp dec
+    cases rel with
+    | con values =>
+      cases values with
+      | cons headRel rest =>
         cases rest with
-        | nil => simp [FlatSem.valueToList] at decoded
-        | cons tail rest =>
-          cases rest with
-          | cons extra rest => simp [FlatSem.valueToList] at decoded
-          | nil =>
-            simp only [FlatSem.valueToList] at decoded
-            split at decoded
-            · rename_i tags
-              cases tailDecoded : FlatSem.valueToList tail with
-              | none => simp [tailDecoded] at decoded
-              | some tailValues =>
-                simp [tailDecoded] at decoded
-                subst sourceValues
-                cases related with
-                | con values =>
-                  cases values with
-                  | cons headRel restRel =>
-                    cases restRel with
-                    | cons tailRel endRel =>
-                      cases endRel
-                      obtain ⟨targetTail, targetDecoded, tailRelated⟩ :=
-                        valueToList_related tail _ tailValues tailRel tailDecoded
-                      refine ⟨_, ?_, .cons headRel tailRelated⟩
-                      simp [ClosSem.valueToList, tags.1, targetDecoded]
-            · simp at decoded
-  | litv | closure | recclosure | loc | vectorv =>
-    simp [FlatSem.valueToList] at decoded
-termination_by sizeOf source
+        | cons tailRel endRel =>
+          cases endRel
+          obtain ⟨targetTail, targetDec, tailRelated⟩ := ih _ tailValues tailRel tailDec
+          exact ⟨_, by simp [ClosSem.valueToList, h.1, targetDec],
+            .cons headRel tailRelated⟩
+  · intro cid tid head tail h target sourceValues rel dec
+    simp [FlatSem.valueToList, h] at dec
+  · intro x h1 h2 target sourceValues rel dec
+    simp [FlatSem.valueToList] at dec
 
 /-- Flapjack rendering of a type-changing update of the flat environment’s
 single value field; the previous field value is discarded. -/

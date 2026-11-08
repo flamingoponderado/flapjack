@@ -114,16 +114,7 @@ theorem sptDomain_makeCtxtHOL (next : Nat) (names : List Nat)
         (sptMem key context ∨ key ∈ name :: names)
       rw [sptMem_sptInsert]
       simp only [List.mem_cons]
-      constructor
-      · rintro ((hkey | hctx) | hnames)
-        · exact Or.inr (Or.inl hkey)
-        · exact Or.inl hctx
-        · exact Or.inr (Or.inr hnames)
-      · rintro (hctx | hrest)
-        · exact Or.inl (Or.inr hctx)
-        · rcases hrest with hkey | hnames
-          · exact Or.inl (Or.inl hkey)
-          · exact Or.inr hnames
+      grind
 
 /-- Exact HOL `env_to_list_IMP` from
 `cakeml/pancake/proofs/loop_to_wordProofScript.sml:410-417`. The result equation

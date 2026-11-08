@@ -227,41 +227,6 @@ theorem install_source_inv {C F : Type} (s next : ClosSem.State C F)
                   simp only [Prod.mk.injEq] at run
                   exact False.elim (noType run.1.symm)
 
-/-- Every non-type-error source installation has a matching successful target
-installation. Source timeout still installs code and shifts the oracle. -/
-theorem install_dispatch {C F : Type} (s next : ClosSem.State C F) (t : BvlSem.State C F)
-    (f : HolFiniteMapExact Nat Nat) (values : List ClosSem.Value) (targets : List BvlSem.Value)
-    (result : Result (List ClosLang.Exp) ClosSem.Value)
-    (run : ClosSem.doInstall values s = (result, next))
-    (noType : result ≠ .err (.abort .typeError))
-    (related : List.Forall₂ (vRel s.maxApp f t.refs t.code) values targets)
-    (oracle : compileOracleInv s.maxApp s.code s.compile s.compileOracle t.code t.compile t.compileOracle) :
-    ∃ expressions auxiliary start body tail,
-      result = (if s.clock = 0 then .err (.abort .timeoutError) else .val expressions) ∧
-      next = { s with
-        code := s.code.updateListEq auxiliary
-        compileOracle := Flapjack.holShiftSeq 1 s.compileOracle
-        clock := s.clock - 1 } ∧
-      expressions ≠ [] ∧ (extractName expressions).1 = start ∧
-      compileInc s.maxApp (expressions, auxiliary) = (start + numStubs s.maxApp, 0, body) :: tail ∧
-      BvlSem.doInstall (R := BvlSem.Value) targets t =
-        .val (.codePtr (start + numStubs s.maxApp), { t with
-          code := sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))
-          compileOracle := fun n => t.compileOracle (n + 1) }) := by
-  obtain ⟨sourceBytes, sourceWords, bytes, words, config, expressions, auxiliary, nextConfig,
-    valuesEq, bytesRun, wordsRun, sourceHead, compiled, sourceNext, nonempty, _, _, nextEq, resultEq⟩ :=
-      install_source_inv s next values result run noType
-  subst values
-  cases related with
-  | cons bytesRel tail =>
-    cases tail with
-    | cons wordsRel tail =>
-      cases tail
-      obtain ⟨start, body, tail, extracted, program, targetRun⟩ :=
-        install_target_run s t f sourceBytes sourceWords _ _ bytes words config nextConfig expressions auxiliary
-          bytesRel wordsRel bytesRun wordsRun sourceHead sourceNext compiled oracle
-      exact ⟨expressions, auxiliary, start, body, tail, resultEq, nextEq, nonempty, extracted, program, targetRun⟩
-
 /-- Each indexed output expression comes from compiling the corresponding
 source singleton, and its auxiliary output is installed whenever the final
 accumulator is installed. This supports the new-code part of installation. -/
@@ -512,43 +477,6 @@ theorem install_codeAnnotations {C F : Type} (s : ClosSem.State C F) (t : BvlSem
     | inl member => exact newVars (name, arity, body) member
     | inr old => exact annotations.2 name arity body old
 
-/-- A non-type-error source installation is matched by target installation,
-preserving the candidate state relation and source code annotations. -/
-theorem install_dispatch_stateRel {C F : Type} (s next : ClosSem.State C F) (t : BvlSem.State C F)
-    (f : HolFiniteMapExact Nat Nat) (values : List ClosSem.Value) (targets : List BvlSem.Value)
-    (result : Result (List ClosLang.Exp) ClosSem.Value)
-    (run : ClosSem.doInstall values s = (result, next))
-    (noType : result ≠ .err (.abort .typeError))
-    (related : List.Forall₂ (vRel s.maxApp f t.refs t.code) values targets)
-    (states : stateRel f s t) (annotations : codeAnnotations s) :
-    ∃ expressions auxiliary start body tail,
-      result = (if s.clock = 0 then .err (.abort .timeoutError) else .val expressions) ∧
-      expressions ≠ [] ∧ (extractName expressions).1 = start ∧
-      compileInc s.maxApp (expressions, auxiliary) = (start + numStubs s.maxApp, 0, body) :: tail ∧
-      let targetNext := { t with
-        code := sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))
-        compileOracle := fun n => t.compileOracle (n + 1) }
-      BvlSem.doInstall (R := BvlSem.Value) targets t = .val (.codePtr (start + numStubs s.maxApp), targetNext) ∧
-      stateRel f next targetNext ∧ codeAnnotations next := by
-  obtain ⟨sourceBytes, sourceWords, bytes, words, config, expressions, auxiliary, nextConfig,
-    valuesEq, bytesRun, wordsRun, sourceHead, compiled, sourceNext, nonempty, _, _, nextEq, resultEq⟩ :=
-      install_source_inv s next values result run noType
-  have oracle := states.2.2.2.2.2.2.2.2.2.2.2.1
-  have statesNext := install_stateRel s t f config expressions auxiliary sourceHead states
-  have annotationsNext := install_codeAnnotations s t config expressions auxiliary sourceHead annotations oracle
-  subst values
-  cases related with
-  | cons bytesRel tail =>
-    cases tail with
-    | cons wordsRel tail =>
-      cases tail
-      obtain ⟨start, body, tail, extracted, program, targetRun⟩ :=
-        install_target_run s t f sourceBytes sourceWords _ _ bytes words config nextConfig expressions auxiliary
-          bytesRel wordsRel bytesRun wordsRun sourceHead sourceNext compiled oracle
-      refine ⟨expressions, auxiliary, start, body, tail, resultEq, nonempty, extracted, program, targetRun, ?_, ?_⟩
-      · simpa [nextEq] using statesNext
-      · simpa [nextEq, codeAnnotations] using annotationsNext
-
 /-- The next installation's compiled main entry can be called indirectly
 with no arguments in the extended target code. -/
 theorem install_main_findCode {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
@@ -576,35 +504,6 @@ theorem install_main_findCode {C F : Type} (s : ClosSem.State C F) (t : BvlSem.S
   have lookup := installed (start + numStubs s.maxApp, 0, body) member
   refine ⟨start, body, tail, extracted, program, ?_⟩
   simp [BvlSem.findCode, Flapjack.holLast, lookup]
-
-/-- Every source entry in the generated main chain has its corresponding
-compiled target entry and installed auxiliary code after installation. -/
-theorem install_chain_entry {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
-    (config : C) (expressions : List ClosLang.Exp) (auxiliary : List (Nat × Nat × ClosLang.Exp))
-    (start : Nat) (chain : List ClosLang.Exp) (name arity : Nat) (source : ClosLang.Exp)
-    (sourceHead : s.compileOracle 0 = (config, expressions, auxiliary))
-    (extract : extractName expressions = (start, chain))
-    (member : (name, arity, source) ∈ chainExps start chain)
-    (oracle : compileOracleInv s.maxApp s.code s.compile s.compileOracle t.code t.compile t.compileOracle) :
-    ∃ auxBefore target auxAfter,
-      compileExpsHOL s.maxApp [source] auxBefore = ([target], auxAfter) ∧
-      sptLookup (name + numStubs s.maxApp)
-        (sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))) = some (arity, target) ∧
-      codeInstalled auxAfter (sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))) := by
-  obtain ⟨headEq, _, nodup, fresh⟩ := compileOracleInv_head s.maxApp s.code s.compile s.compileOracle
-    t.code t.compile t.compileOracle oracle
-  have targetHead : t.compileOracle 0 = (config, compileInc s.maxApp (expressions, auxiliary)) := by
-    simpa [sourceHead, BackendProps.pureCo] using headEq
-  have distinct : ((compileInc s.maxApp (expressions, auxiliary)).map Prod.fst).Nodup := by
-    simpa [targetHead] using nodup
-  have targetFresh : ∀ entry ∈ compileInc s.maxApp (expressions, auxiliary), sptLookup entry.1 t.code = none := by
-    simpa [targetHead] using fresh
-  have installed := install_codeInstalled t.code (compileInc s.maxApp (expressions, auxiliary)) distinct targetFresh
-  have installed' : codeInstalled (compileProgExpsHOL s.maxApp (chainExps start chain ++ auxiliary))
-      (sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))) := by
-    simpa [compileInc, extract] using installed
-  exact compileProgExps_entry_installed s.maxApp (chainExps start chain ++ auxiliary) _ name arity source installed'
-    (List.mem_append_left _ member)
 
 /-- After the installation primitive succeeds and returns a resolvable main
 entry, the generated target expression either times out or enters that entry. -/

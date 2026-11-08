@@ -1,5 +1,7 @@
+import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.ClosFvs.Source
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Total
+import Flapjack.Misc.ListMapM
 import Mathlib.Tactic
 
 /-! Agreement of the executed retry with source-shaped free-variable removal. -/
@@ -22,23 +24,6 @@ theorem removeFuns_eq_map (count captured : Nat) (functions : List (Nat × Exp))
   | cons function rest ih =>
     obtain ⟨arity, body⟩ := function
     simp [removeFuns, ih]
-
-private theorem mapM_eq_map {α β : Type} (visit : α → Option β) (f : α → β)
-    (correct : ∀ x y, visit x = some y → y = f x) (xs : List α) (ys : List β)
-    (run : xs.mapM visit = some ys) : ys = xs.map f := by
-  induction xs generalizing ys with
-  | nil => simpa using run.symm
-  | cons x rest ih =>
-    simp only [List.mapM_cons] at run
-    cases first : visit x with
-    | none => simp [first] at run
-    | some value =>
-      cases remaining : rest.mapM visit with
-      | none => simp [first, remaining] at run
-      | some values =>
-        simp [first, remaining] at run
-        subst ys
-        simp [correct x value first, ih values remaining]
 
 /-- Every successful bounded traversal agrees with the total source traversal. -/
 theorem removeFuel_eq_source (fuel bound : Nat) (expression result : Exp)

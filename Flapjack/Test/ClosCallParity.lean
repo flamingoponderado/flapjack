@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.ClosCall.Stubs
+import Flapjack.Compiler.Backend.ClosCall.Calls
+import Flapjack.Compiler.Backend.ClosCall.Compile
 import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
 
 /-! Replay original `clos_call_frontend_probe.out` cases. -/
@@ -68,6 +70,56 @@ example : ¬ List.Forall₂
   | _ => false
 
 private def state : State := (sptInsert 4 () .ln, [])
+
+-- The total traversal replays the original HOL closed, open, application and
+-- recursive-group results independently of the bounded executable.
+#guard match callsSing (.fn (ofString "f") (some 4) none 1 (.var .none 0)) (.ln, []) with
+  | (.fn name (some 4) none 1 (.call .none 0 5 [.var .none 0]), (set, [(5, 1, .var .none 0)])) =>
+      decide (name = ofString "f") && sptToAList set == [(4, ())]
+  | _ => false
+#guard match callsSing (.fn (ofString "f") (some 4) none 1 (.var .none 2)) (.ln, []) with
+  | (.fn name (some 4) none 1 (.var .none 2), (set, [])) =>
+      decide (name = ofString "f") && (sptToAList set).isEmpty
+  | _ => false
+#guard match callsSing (.app .none (some 4) (.var .none 0) [.var .none 1, .var .none 2]) state,
+    callsSing (.app .none (some 4) (.tick .none (.var .none 0)) [.var .none 1, .var .none 2]) state with
+  | (.call .none 2 5 [.var .none 1, .var .none 2], _),
+    (.let .none [.var .none 1, .var .none 2, .tick .none (.var .none 0)]
+      (.call .none 2 5 [.var .none 0, .var .none 1]), _) => true
+  | _, _ => false
+#guard match callsSing (.letrec [ofString "f", ofString "g"] (some 10) none
+    [(1, .var .none 0), (1, .var .none 0)] (.var .none 0)) (.ln, []) with
+  | (.letrec names (some 10) none
+      [(1, .call .none 0 11 [.var .none 0]), (1, .call .none 0 13 [.var .none 0])] (.var .none 0),
+      (set, [(13, 1, .var .none 0), (11, 1, .var .none 0)])) =>
+      decide (names = [ofString "f", ofString "g"]) && sptToAList set == [(12, ()), (10, ())]
+  | _ => false
+
+-- `incremental` in the HOL probe: the input auxiliary code is replaced,
+-- existing known locations are preserved, and a closed function adds its code.
+private def incrementalProgram : List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp) :=
+  ([.fn (ofString "f") (some 4) none 1 (.var .none 0)], [(99, 1, .var .none 0)])
+
+#guard match condCallCompileInc false (sptInsert 2 () .ln) incrementalProgram with
+  | (set, ([.fn name (some 4) none 1 (.var .none 0)], [(99, 1, .var .none 0)])) =>
+      decide (name = ofString "f") && sptToAList set == [(2, ())]
+  | _ => false
+
+#guard match condCallCompileInc true (sptInsert 2 () .ln) incrementalProgram with
+  | (set, ([.fn name (some 4) none 1 (.call .none 0 5 [.var .none 0])],
+      [(5, 1, .var .none 0)])) =>
+      decide (name = ofString "f") && sptToAList set == [(4, ()), (2, ())]
+  | _ => false
+
+#guard match compileIncFuel? 0 (sptInsert 2 () .ln) incrementalProgram with
+  | some (set, ([.fn name (some 4) none 1 (.call .none 0 5 [.var .none 0])],
+      [(5, 1, .var .none 0)])) =>
+      decide (name = ofString "f") && sptToAList set == [(4, ()), (2, ())]
+  | _ => false
+
+#guard compileIncFuel? 0 (sptInsert 2 () .ln) incrementalProgram ==
+  compileIncFuel? 100 (sptInsert 2 () .ln) incrementalProgram
+
 #guard match callsFuel 100 (.app .none (some 4) (.var .none 0) [.var .none 1, .var .none 2]) state,
     callsFuel 100 (.app .none (some 4) (.tick .none (.var .none 0)) [.var .none 1, .var .none 2]) state with
   | some (.call .none 2 5 [.var .none 1, .var .none 2], _),

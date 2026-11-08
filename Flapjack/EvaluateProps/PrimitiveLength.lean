@@ -1,8 +1,7 @@
 import Flapjack.EvaluateProps.DoApp
 import Flapjack.EvaluateProps.ClockIo
 
-/-! Store-length prerequisites for source primitive monotonicity. The full
-source evaluator and its carriers are pending review. -/
+/-! Store-length prerequisites for source primitive monotonicity. -/
 namespace Flapjack.EvaluateProps
 open Flapjack.SemanticPrimitivesHOL Flapjack.AstHOL
 
@@ -100,7 +99,7 @@ theorem isClockIoMono_doAppSimple {σ : Type} (op : Op) (values : List Value) (s
   | some output =>
     rcases output with ⟨⟨refs, ffi⟩, result⟩
     have length := doApp_refs_length (st.refs, st.ffi) op values ((refs, ffi), result) happ
-    have trace := doApp_ioEventsMono st.refs refs st.ffi ffi op values result happ
+    have trace := doApp_ioEventsMono st.refs st.ffi op values refs ffi result happ
     simp only [isClockIoMono, happ]
     simp [length, ioEventsMonoHOL]
     constructor

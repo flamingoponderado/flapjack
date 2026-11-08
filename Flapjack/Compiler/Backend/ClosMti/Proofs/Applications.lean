@@ -4,8 +4,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 import Mathlib.Data.List.Induction
 
-/-! Application-reconstruction lemmas for the current Lean closure evaluator.
-These are untagged until the evaluator and its carriers are reviewed against HOL. -/
+/-! Application-reconstruction lemmas for the closure evaluator. -/
 namespace Flapjack.Compiler.Backend.ClosMti
 open Flapjack.SemanticPrimitivesHOL
 
@@ -42,8 +41,17 @@ theorem unaryApp_success {C F : Type} (trace : BackendCommon.Tra)
   rw [ClosSem.fixClock_evaluate, functionRun]
   rfl
 
-/-- Apply collected values in the same order as nested unary applications.
-This is Lean-side infrastructure until closure evaluator review is complete. -/
+namespace EvaluateAppsWitness
+/-- The closure state uses the canonical finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ state : ClosSem.StateBroad C F, (ClosSem.State.ofBroad state).toBroad = state) ∧
+      (∀ state : ClosSem.State C F, ClosSem.State.ofBroad state.toBroad = state) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end EvaluateAppsWitness
+
+/-- Apply collected values in the same order as nested unary applications. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_apps_def"
+  (fmap_as_finite_support := [refs, code])]
 noncomputable def evaluateApps {C F : Type} (fn : ClosSem.Value) :
     List ClosSem.Value → ClosSem.State C F → ClosSem.EvalResult C F
   | [], state => (.val [fn], state)
@@ -458,21 +466,5 @@ theorem mkApps_success {C F : Type} (traces : List BackendCommon.Tra)
                   have run := unaryApp_success trace (mkApps function (traces.zip args)) arg
                     env state afterFirst afterApply value appliedValue first nested
                   simpa [mkApps, evaluateApps, applied] using run
-
-/-- Successful evaluation of a collected source application agrees with
-repeated unary application of its collected values. The collector and
-reconstruction are source-reviewed; evaluator correspondence remains open. -/
-theorem collectApps_success {C F : Type} (expression : ClosLang.Exp) (maxApp : Nat)
-    (arguments : List ClosLang.Exp) (function : ClosLang.Exp) (env : List ClosSem.Value)
-    (state middle next : ClosSem.State C F) (values : List ClosSem.Value) (fn : ClosSem.Value)
-    (collected : collectApps maxApp [] expression = (arguments, function))
-    (safe : ClosProps.noMti expression)
-    (functionRun : ClosSem.evaluate [function] env middle = (.val [fn], next))
-    (argsRun : ClosSem.evaluate arguments env state = (.val values, middle)) :
-    ClosSem.evaluate [expression] env state = evaluateApps fn values next := by
-  obtain ⟨traces, rebuilt, lengths, _⟩ :=
-    collectAppsRebuild expression maxApp [] arguments function collected safe
-  rw [rebuilt]
-  exact mkApps_success traces arguments env state middle next values fn function functionRun argsRun lengths
 
 end Flapjack.Compiler.Backend.ClosMti

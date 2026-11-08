@@ -8,10 +8,18 @@ namespace Flapjack.Compiler.Backend.BviSem
 open Flapjack.Compiler.Backend.BvlSem
 open Flapjack.Compiler.Backend.BackendCommon
 
+namespace ApplyAuxCarrier
+/-- Canonical reference-map state roundtrip for BVI primitive dispatch. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end ApplyAuxCarrier
+
 /-- BVI-specific primitive handling. `none` denotes a type error, `some none`
-delegates to BVL, and `some (some ...)` returns a value and state. This follows
-`do_app_aux_def` but remains untagged while the recursive `finaliseCons` map
-input/output correspondence is not qualified. -/
+delegates to BVL, and `some (some ...)` returns a value and state. -/
+@[hol "cakeml/compiler/backend/semantics/bviSemScript.sml" "do_app_aux_def"
+  (fmap_as_finite_support := [refs])]
 noncomputable def doAppAux {C F : Type} (op : ClosLang.Op) (args : List Value)
     (s : BviState C F) : Option (Option (Value × BviState C F)) :=
   let result (value : Value) := some (some (value, s))
@@ -72,5 +80,16 @@ noncomputable def doAppAux {C F : Type} (op : ClosLang.Op) (args : List Value)
   | .memOp .concatByteVec, _ => none
   | .memOp (.copyByte true), _ => none
   | _, _ => some none
+
+/-- A global operation is handled by BVI and cannot reach the BVL fallback.
+This dispatcher fact is Flapjack infrastructure used to discard BVL's
+arbitrary global fields; HOL uses the corresponding cases inline. -/
+theorem doAppAux_delegates_not_global {C F : Type} (op : ClosLang.GlobOp)
+    (args : List Value) (s : BviState C F) :
+    doAppAux (.globOp op) args s ≠ some none := by
+  cases op <;> cases args <;> simp [doAppAux]
+  all_goals repeat' split <;> simp_all
+  all_goals simp_all [Option.bind_eq_some_iff]
+  all_goals aesop
 
 end Flapjack.Compiler.Backend.BviSem

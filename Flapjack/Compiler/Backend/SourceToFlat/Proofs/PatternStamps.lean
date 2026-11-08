@@ -6,6 +6,36 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.SemanticPrimitivesHOL
 
+/-- Eta expansion of the second argument leaves a partially applied function unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "eta2"]
+theorem eta2 {α β γ : Type} : ∀ (f : α → β → γ) (x : α), (fun y => f x y) = f x := by
+  intro f x
+  rfl
+
+/-- Every optional constructor identifier has the same type as itself. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ctor_same_type_refl"]
+theorem ctorSameType_refl {α β : Type} (x : Option (α × β)) :
+    FlatSem.ctorSameType x x := by
+  cases x with
+  | none => trivial
+  | some pair => cases pair; rfl
+
+/-- Two present constructor identifiers have the same type exactly when their
+type components agree. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "ctor_same_type_SND"]
+theorem ctorSameType_some_iff {α β γ : Type} (x : α × β) (y : γ × β) :
+    FlatSem.ctorSameType (some x) (some y) ↔ x.2 = y.2 := by
+  cases x
+  cases y
+  rfl
+
+/-- Mapping the second component of a pair preserves its first component. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "FST_PAIR_MAP_I"]
+theorem fst_pairMap_id {α β γ : Type} (f : β → γ) (pair : α × β) :
+    (Prod.map id f pair).1 = pair.1 := by
+  cases pair
+  rfl
+
 /-- Equal flat constructor IDs and arities determine the same source constructor. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml"
   "genv_c_ok_same_type_FST_eq_imp_same_ctor" (fmap_as_finite_support_parameters := [genvC])]

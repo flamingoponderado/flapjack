@@ -1129,23 +1129,6 @@ theorem doIntApp_result_related (maxApp : Nat) (op : ClosLang.IntOp) (args : Lis
       all_goals try (subst value; exact boolValue_related _ _)
       all_goals try (obtain ⟨_, rfl⟩ := run; exact .number _)
 
-/-- Integer primitive application preserves errors, related values and states. -/
-theorem doApp_int_simulation {C F : Type} (op : ClosLang.IntOp) (args nextArgs : List Value)
-    (source : State (Nat × C) F) (target : State C F)
-    (argsRel : List.Forall₂ (ValueRel source.maxApp) args nextArgs)
-    (stateRel : StateRel source target) :
-    match doApp (.intOp op) args source with
-    | .err error => doApp (.intOp op) nextArgs target = .err error
-    | .val (value, next) => ∃ nextValue nextState,
-        doApp (.intOp op) nextArgs target = .val (nextValue, nextState) ∧
-        ValueRel source.maxApp value nextValue ∧ StateRel next nextState := by
-  have same := doIntApp_related source.maxApp op argsRel
-  cases run : doIntApp op args with
-  | none => simp [doApp, applyNumeric, ← same, run]
-  | some value =>
-    have valueRel := doIntApp_result_related source.maxApp op args value run
-    simp [doApp, applyNumeric, ← same, run, valueRel, stateRel]
-
 /-- Related arguments give identical word-primitive observations, including
     the existing floating-point operations and their FpSemHOL assumptions. -/
 theorem doWordApp_related (maxApp : Nat) (op : ClosLang.WordOp) {args nextArgs : List Value}

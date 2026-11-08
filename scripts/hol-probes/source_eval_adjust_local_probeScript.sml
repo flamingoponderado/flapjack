@@ -3,6 +3,33 @@ open HolKernel Parse boolLib bossLib preamble;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
 fun show_term label tm = (print label; print_term tm; print "\n");
+val neq_imp_to_cases_replay = prove (
+  ``!y. (x <> y ==> P) ==> (x = y) \/ (x <> y)``, simp []);
+val _ = if null (hyp neq_imp_to_cases_replay) then () else raise Fail "neq_imp_to_cases hypotheses";
+val _ = show_term "neq_imp_to_cases_replay=" (concl neq_imp_to_cases_replay);
+val pair_case_eq_pairarg_replay = prove (
+  ``pair_CASE p f = (\ (x, y). f x y) p``, Cases_on `p` >> simp []);
+val _ = if null (hyp pair_case_eq_pairarg_replay) then () else raise Fail "pair_case_eq_pairarg hypotheses";
+val _ = show_term "pair_case_eq_pairarg_replay=" (concl pair_case_eq_pairarg_replay);
+val alist_to_ns_to_bind2_replay = GEN_ALL namespacePropsTheory.nsAppend_to_nsBindList
+  |> Q.SPEC `namespace$nsEmpty`
+  |> REWRITE_RULE [namespacePropsTheory.nsAppend_nsEmpty];
+val _ = if null (hyp alist_to_ns_to_bind2_replay) then () else raise Fail "alist_to_ns_to_bind2 hypotheses";
+val _ = show_term "alist_to_ns_to_bind2_replay=" (concl alist_to_ns_to_bind2_replay);
+val nsSing_eq_bind_replay = namespaceTheory.nsSing_def
+  |> REWRITE_RULE [GSYM namespaceTheory.nsBind_def, GSYM namespaceTheory.nsEmpty_def];
+val _ = if null (hyp nsSing_eq_bind_replay) then () else raise Fail "nsSing_eq_bind hypotheses";
+val _ = show_term "nsSing_eq_bind_replay=" (concl nsSing_eq_bind_replay);
+val env_rel_nsLookup_c_replay = prove (
+  ``source_evalProof$env_rel R env env' /\ namespace$nsLookup env.c id = r ==> env'.c = env.c``,
+  rw [source_evalProofTheory.env_rel_def]);
+val _ = if null (hyp env_rel_nsLookup_c_replay) then () else raise Fail "env_rel_nsLookup_c hypotheses";
+val _ = show_term "env_rel_nsLookup_c_replay=" (concl env_rel_nsLookup_c_replay);
+val less_sub_1_cases_replay = prove (
+  ``k <= clock /\ (k <= clock - 1 ==> P) ==>
+    (k = clock \/ k <= clock - (1 : num))``, DECIDE_TAC);
+val _ = if null (hyp less_sub_1_cases_replay) then () else raise Fail "less_sub_1_cases hypotheses";
+val _ = show_term "less_sub_1_cases_replay=" (concl less_sub_1_cases_replay);
 val env_rel_imp_c_replay = prove (
   ``source_evalProof$env_rel x env env' ==> env'.c = env.c``,
   fs [source_evalProofTheory.env_rel_def]);

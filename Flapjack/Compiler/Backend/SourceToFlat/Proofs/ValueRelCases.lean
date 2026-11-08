@@ -13,64 +13,6 @@ theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
 
 end EnvRelListReview
 
-/-- A related source closure must be a compiled flat closure with related
-captured locals and a compatible global environment. This is an inversion
-lemma for the factored relation, not a separate HOL theorem port. -/
-theorem valueRel_closure_iff (genv : GlobalEnv) (sourceEnv : SemEnv Value)
-    (name : VarN) (body : AstHOL.Exp) (flat : FlatSem.Value) :
-    ValueRel genv (.closure sourceEnv name body) flat ↔
-      ∃ compMap globalEnv sourceLocal flatLocal trace traces,
-        sourceEnv = { globalEnv with v := nsAppend sourceLocal globalEnv.v } ∧
-        flat = .closure flatLocal name
-          (compileExp trace { compMap with v := bindLocals traces (name :: flatLocal.v.map Prod.fst) compMap.v } body) ∧
-        EnvRel genv sourceLocal flatLocal.v ∧
-        GlobalEnvInv genv compMap (fun n => n ∈ flatLocal.v.map Prod.fst) globalEnv ∧
-        traces.length = flatLocal.v.length + 1 := by
-  constructor
-  · intro related
-    cases related with
-    | closure compMap globalEnv sourceLocal _ _ flatLocal trace traces locals globals length =>
-      exact ⟨compMap, globalEnv, sourceLocal, flatLocal, trace, traces, rfl, rfl, locals, globals, length⟩
-  · rintro ⟨compMap, globalEnv, sourceLocal, flatLocal, trace, traces, rfl, rfl, locals, globals, length⟩
-    exact .closure genv compMap globalEnv sourceLocal name body flatLocal trace traces locals globals length
-
-/-- Recursive closures relate either to a compiled local recursive closure or
-to the top-level global-closure representation. -/
-theorem valueRel_recclosure_iff (genv : GlobalEnv) (sourceEnv : SemEnv Value)
-    (funs : List (VarN × VarN × AstHOL.Exp)) (name : VarN) (flat : FlatSem.Value) :
-    ValueRel genv (.recclosure sourceEnv funs name) flat ↔
-      (∃ compMap globalEnv sourceLocal flatLocal trace traces,
-        sourceEnv = { globalEnv with v := nsAppend sourceLocal globalEnv.v } ∧
-        flat = .recclosure flatLocal
-          (compileFuns trace { compMap with v := bindLocals traces (funs.map Prod.fst ++ flatLocal.v.map Prod.fst) compMap.v } funs) name ∧
-        EnvRel genv sourceLocal flatLocal.v ∧
-        GlobalEnvInv genv compMap (fun n => n ∈ flatLocal.v.map Prod.fst) globalEnv ∧
-        traces.length = funs.length + flatLocal.v.length) ∨
-      (∃ compMap flatEnv arg body newVars trace localTrace,
-        newVars.map Prod.fst = funs.reverse.map Prod.fst ∧
-        GlobalEnvInv genv compMap (fun _ => False) sourceEnv ∧ flatEnv.v = [] ∧
-        findRecFun name funs = some (arg, body) ∧
-        (∀ x, x ∈ funs.map Prod.fst → ∃ n y e storedTrace bodyTrace argTrace,
-          newVars.lookup x = some (.glob storedTrace n) ∧ n < genv.v.length ∧
-          findRecFun x funs = some (y, e) ∧
-          genv.v[n]?.getD none = some (.closure flatEnv y
-            (compileExp bodyTrace { compMap with v := nsBindList ((y, .localName argTrace y) :: newVars) compMap.v } e))) ∧
-        flat = .closure flatEnv arg
-          (compileExp trace { compMap with v := nsBindList ((arg, .localName localTrace arg) :: newVars) compMap.v } body)) := by
-  constructor
-  · intro related
-    cases related with
-    | recclosure compMap globalEnv sourceLocal _ _ flatLocal trace traces locals globals length =>
-      exact Or.inl ⟨compMap, globalEnv, sourceLocal, flatLocal, trace, traces, rfl, rfl, locals, globals, length⟩
-    | topRecclosure =>
-      rename_i compMap flatEnv arg body newVars trace localTrace empty globals names closures found
-      exact Or.inr ⟨compMap, flatEnv, arg, body, newVars, trace, localTrace, names, globals, empty, found, closures, rfl⟩
-  · rintro (⟨compMap, globalEnv, sourceLocal, flatLocal, trace, traces, rfl, rfl, locals, globals, length⟩ |
-      ⟨compMap, flatEnv, arg, body, newVars, trace, localTrace, names, globals, empty, found, closures, rfl⟩)
-    · exact .recclosure genv compMap globalEnv sourceLocal funs name flatLocal trace traces locals globals length
-    · exact .topRecclosure genv compMap sourceEnv funs flatEnv name arg body newVars trace localTrace
-        names globals empty found closures
-
 /-- Related literal values have the same literal. -/
 theorem valueRel_literal_iff (genv : GlobalEnv) (lit : Lit) (flat : FlatSem.Value) :
     ValueRel genv (.litv lit) flat ↔ flat = .litv lit := by
@@ -169,6 +111,142 @@ theorem envRel_bind_iff (genv : GlobalEnv) (name : VarN) (source : SemanticPrimi
   · rintro ⟨flat, tail, hValue, hEnv, rfl⟩
     exact .bind genv name source env tail flat hEnv hValue
 
+/-- The non-global constructor equations derived from the mutual value relation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_eqns_non_global"
+  (fmap_as_finite_support := [c, tys])]
+theorem valueRel_eqns_nonGlobal :
+    (∀ (v : FlatSem.Value) (l : Lit) (genv : GlobalEnv),
+      ValueRel genv (.litv l) v ↔ v = .litv l) ∧
+    (∀ (vs : List Value) (v : FlatSem.Value) (genv : GlobalEnv) (cn : Option Stamp),
+      ValueRel genv (.conv cn vs) v ↔
+        (∃ cn' cn'' vs'', cn = some cn' ∧ v = .conv (some cn'') vs'' ∧
+          List.Forall₂ (ValueRel genv) vs vs'' ∧ genv.c.lookup (cn'', vs.length) = some cn') ∨
+        ∃ vs'', cn = none ∧ v = .conv none vs'' ∧ List.Forall₂ (ValueRel genv) vs vs'') ∧
+    (∀ (v : FlatSem.Value) (l : Nat) (genv : GlobalEnv) (b : Bool),
+      ValueRel genv (.loc b l) v ↔ v = .loc b (l + 1)) ∧
+    (∀ (vs : List Value) (v : FlatSem.Value) (genv : GlobalEnv),
+      ValueRel genv (.vectorv vs) v ↔ ∃ vs'', v = .vectorv vs'' ∧ List.Forall₂ (ValueRel genv) vs vs'') ∧
+    (∀ (genv : GlobalEnv) (env' : List (VarN × FlatSem.Value)),
+      EnvRel genv nsEmpty env' ↔ env' = []) ∧
+    (∀ (x : VarN) (v : Value) (genv : GlobalEnv) (env' : List (VarN × FlatSem.Value))
+      (env : Namespace ModN VarN Value), EnvRel genv (nsBind x v env) env' ↔
+        ∃ tail v', env' = (x, v') :: tail ∧ EnvRel genv env tail ∧ ValueRel genv v v') ∧
+    (∀ (v : FlatSem.Value) (id : Nat × Nat) (genv : GlobalEnv) (e : SemEnv Value),
+      ValueRel genv (.env e id) v ↔ False) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro v l genv; exact valueRel_literal_iff genv l v
+  · intro vs v genv cn
+    constructor
+    · intro related
+      cases related with
+      | constructor _ ctor _ flats rel lookup =>
+        exact Or.inl ⟨_, ctor, flats, rfl, rfl, (valueListRel_iff genv vs flats).mp rel, lookup⟩
+      | tuple _ flats rel =>
+        exact Or.inr ⟨flats, rfl, rfl, (valueListRel_iff genv vs flats).mp rel⟩
+    · rintro (⟨cn', cn'', vs'', rfl, rfl, rel, lookup⟩ | ⟨vs'', rfl, rfl, rel⟩)
+      · exact valueRel_constructor genv cn' cn'' vs vs'' rel lookup
+      · exact valueRel_tuple genv vs vs'' rel
+  · intro v l genv b; exact valueRel_location_iff genv b l v
+  · intro vs v genv; exact valueRel_vector_iff genv vs v
+  · intro genv env'; exact envRel_empty_iff genv env'
+  · intro x v genv env' env
+    rw [envRel_bind_iff]
+    constructor
+    · rintro ⟨v', tail, values, envs, eq⟩
+      exact ⟨tail, v', eq, envs, values⟩
+    · rintro ⟨tail, v', eq, envs, values⟩
+      exact ⟨v', tail, values, envs, eq⟩
+  · intro v id genv e
+    constructor
+    · intro related; cases related
+    · intro impossible; exact impossible.elim
+
+
+/-- The original value-relation equations, including closure and recursive
+closure cases. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_more_eqns"
+  (fmap_as_finite_support := [c, tys])]
+theorem valueRel_more_eqns :
+  (
+    (∀ (v : FlatSem.Value) (l : Lit) (genv : GlobalEnv),
+      ValueRel genv (.litv l) v ↔ v = .litv l) ∧
+    (∀ (vs : List Value) (v : FlatSem.Value) (genv : GlobalEnv) (cn : Option Stamp),
+      ValueRel genv (.conv cn vs) v ↔
+        (∃ cn' cn'' vs'', cn = some cn' ∧ v = .conv (some cn'') vs'' ∧
+          List.Forall₂ (ValueRel genv) vs vs'' ∧ genv.c.lookup (cn'', vs.length) = some cn') ∨
+        ∃ vs'', cn = none ∧ v = .conv none vs'' ∧ List.Forall₂ (ValueRel genv) vs vs'') ∧
+    (∀ (v : FlatSem.Value) (l : Nat) (genv : GlobalEnv) (b : Bool),
+      ValueRel genv (.loc b l) v ↔ v = .loc b (l + 1)) ∧
+    (∀ (vs : List Value) (v : FlatSem.Value) (genv : GlobalEnv),
+      ValueRel genv (.vectorv vs) v ↔ ∃ vs'', v = .vectorv vs'' ∧ List.Forall₂ (ValueRel genv) vs vs'') ∧
+    (∀ (genv : GlobalEnv) (env' : List (VarN × FlatSem.Value)),
+      EnvRel genv nsEmpty env' ↔ env' = []) ∧
+    (∀ (x : VarN) (v : Value) (genv : GlobalEnv) (env' : List (VarN × FlatSem.Value))
+      (env : Namespace ModN VarN Value), EnvRel genv (nsBind x v env) env' ↔
+        ∃ tail v', env' = (x, v') :: tail ∧ EnvRel genv env tail ∧ ValueRel genv v v') ∧
+    (∀ (v : FlatSem.Value) (id : Nat × Nat) (genv : GlobalEnv) (e : SemEnv Value),
+      ValueRel genv (.env e id) v ↔ False)) ∧
+    (∀ (v : FlatSem.Value) (nm : VarN) (genv : GlobalEnv) (exp : AstHOL.Exp)
+      (env : SemEnv Value), ValueRel genv (.closure env nm exp) v ↔
+      ∃ compMap globalEnv sourceLocal flatLocal trace traces,
+        env = { globalEnv with v := nsAppend sourceLocal globalEnv.v } ∧
+        v = .closure flatLocal nm
+          (compileExp trace { compMap with v := bindLocals traces (nm :: flatLocal.v.map Prod.fst) compMap.v } exp) ∧
+        EnvRel genv sourceLocal flatLocal.v ∧
+        GlobalEnvInv genv compMap (fun n => n ∈ flatLocal.v.map Prod.fst) globalEnv ∧
+        traces.length = flatLocal.v.length + 1) ∧
+    (∀ (x : VarN) (v : FlatSem.Value) (genv : GlobalEnv)
+      (funs : List (VarN × VarN × AstHOL.Exp)) (env : SemEnv Value),
+      ValueRel genv (.recclosure env funs x) v ↔
+      (∃ compMap globalEnv sourceLocal flatLocal trace traces,
+        env = { globalEnv with v := nsAppend sourceLocal globalEnv.v } ∧
+        v = .recclosure flatLocal
+          (compileFuns trace { compMap with v := bindLocals traces (funs.map Prod.fst ++ flatLocal.v.map Prod.fst) compMap.v } funs) x ∧
+        EnvRel genv sourceLocal flatLocal.v ∧
+        GlobalEnvInv genv compMap (fun n => n ∈ flatLocal.v.map Prod.fst) globalEnv ∧
+        traces.length = funs.length + flatLocal.v.length) ∨
+      (∃ compMap flatEnv arg body newVars trace localTrace,
+        v = .closure flatEnv arg
+          (compileExp trace { compMap with v := nsBindList ((arg, .localName localTrace arg) :: newVars) compMap.v } body) ∧
+        newVars.map Prod.fst = funs.reverse.map Prod.fst ∧
+        GlobalEnvInv genv compMap (fun _ => False) env ∧ flatEnv.v = [] ∧
+        findRecFun x funs = some (arg, body) ∧
+        ∀ name, name ∈ funs.map Prod.fst → ∃ n y e storedTrace bodyTrace argTrace,
+          newVars.lookup name = some (.glob storedTrace n) ∧ n < genv.v.length ∧
+          findRecFun name funs = some (y, e) ∧
+          Flapjack.holEl n genv.v = some (.closure flatEnv y
+            (compileExp bodyTrace { compMap with v := nsBindList ((y, .localName argTrace y) :: newVars) compMap.v } e)))) := by
+  refine ⟨valueRel_eqns_nonGlobal, ?_, ?_⟩
+  · intro v nm genv exp env
+    constructor
+    · intro related
+      cases related with
+      | closure compMap globalEnv sourceLocal _ _ flatLocal trace traces locals globals length =>
+        exact ⟨compMap, globalEnv, sourceLocal, flatLocal, trace, traces, rfl, rfl, locals, globals, length⟩
+    · rintro ⟨compMap, globalEnv, sourceLocal, flatLocal, trace, traces, rfl, rfl, locals, globals, length⟩
+      exact .closure genv compMap globalEnv sourceLocal nm exp flatLocal trace traces locals globals length
+  · intro x v genv funs env
+    constructor
+    · intro related
+      cases related with
+      | recclosure comp globalEnv sourceLocal _ _ flatLocal trace traces locals globals length =>
+        exact Or.inl ⟨comp, globalEnv, sourceLocal, flatLocal, trace, traces, rfl, rfl, locals, globals, length⟩
+      | topRecclosure =>
+        rename_i comp flat arg body vars t t' empty globals names closures found
+        refine Or.inr ⟨comp, flat, arg, body, vars, t, t', rfl, names, globals, empty, found, ?_⟩
+        intro name mem
+        obtain ⟨n, y, e, st, bt, argTr, lookup, bound, find, slot⟩ := closures name mem
+        refine ⟨n, y, e, st, bt, argTr, lookup, bound, find, ?_⟩
+        simpa [Flapjack.holEl_eq_getElem n genv.v bound, List.getElem?_eq_getElem bound] using slot
+    · rintro (⟨comp, globalEnv, sourceLocal, flatLocal, trace, traces, rfl, rfl, locals, globals, length⟩ |
+        ⟨comp, flat, arg, body, vars, t, t', rfl, names, globals, empty, found, closures⟩)
+      · exact .recclosure genv comp globalEnv sourceLocal funs x flatLocal trace traces locals globals length
+      · apply ValueRel.topRecclosure genv comp env funs flat x arg body vars t t' names globals empty found
+        intro name mem
+        obtain ⟨n, y, e, st, bt, argTr, lookup, bound, find, slot⟩ := closures name mem
+        refine ⟨n, y, e, st, bt, argTr, lookup, bound, find, ?_⟩
+        simpa [Flapjack.holEl_eq_getElem n genv.v bound, List.getElem?_eq_getElem bound] using slot
+
 /-- An association-list source environment relates exactly when corresponding
 names agree and corresponding values satisfy the factored relation. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_rel_LIST_REL"
@@ -216,8 +294,9 @@ theorem envRel_dom (genv : GlobalEnv) (env : Namespace ModN VarN SemanticPrimiti
 theorem envRel_nsAppend (genv : GlobalEnv)
     (left right : Namespace ModN VarN SemanticPrimitivesHOL.Value)
     (flatLeft flatRight : List (VarN × FlatSem.Value))
-    (leftRel : EnvRel genv left flatLeft) (rightRel : EnvRel genv right flatRight) :
+    (premises : EnvRel genv left flatLeft ∧ EnvRel genv right flatRight) :
     EnvRel genv (nsAppend left right) (flatLeft ++ flatRight) := by
+  obtain ⟨leftRel, rightRel⟩ := premises
   induction flatLeft generalizing left with
   | nil =>
     cases leftRel
@@ -247,8 +326,57 @@ theorem envRel_one (genv : GlobalEnv) (name : VarN) (source : SemanticPrimitives
 theorem envRel_bind_one (genv : GlobalEnv) (env : Namespace ModN VarN SemanticPrimitivesHOL.Value)
     (flat : FlatSem.Value) (name : VarN) (source : SemanticPrimitivesHOL.Value)
     (flatEnv : List (VarN × FlatSem.Value))
-    (valueRel : ValueRel genv source flat) (envRel : EnvRel genv env flatEnv) :
+    (premises : ValueRel genv source flat ∧ EnvRel genv env flatEnv) :
     EnvRel genv (nsBind name source env) ((name, flat) :: flatEnv) :=
-  .bind genv name source env flatEnv flat envRel valueRel
+  .bind genv name source env flatEnv flat premises.2 premises.1
+
+/-- Combined local and global environment relation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_all_rel"
+  (fmap_as_finite_support := [c, tys])]
+def FactoredEnvAllRel (genv : GlobalEnv) (compMap : Environment) (sourceEnv : SemEnv Value)
+    (flatEnv : FlatSem.Environment FlatSem.Value) (locals : List VarN) : Prop :=
+  ∃ (baseEnv : SemEnv Value) (sourceLocal : Namespace ModN VarN Value) (bindings : List (VarN × Value)),
+    sourceEnv = { baseEnv with v := nsAppend sourceLocal baseEnv.v } ∧
+    sourceLocal = alistToNs bindings ∧ bindings.map Prod.fst = locals ∧
+    GlobalEnvInv genv compMap (fun name => name ∈ locals) baseEnv ∧ EnvRel genv sourceLocal flatEnv.v
+
+/-- The combined environment relation exposes its original case structure. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_all_rel_cases"
+  (fmap_as_finite_support := [c, tys])]
+theorem factoredEnvAllRel_source_cases (genv : GlobalEnv) (compMap : Environment)
+    (sourceEnv : SemEnv Value) (flatEnv : FlatSem.Environment FlatSem.Value) (locals : List VarN) :
+    FactoredEnvAllRel genv compMap sourceEnv flatEnv locals ↔
+      ∃ sourceLocal baseEnv flatValues,
+        sourceEnv = { baseEnv with v := nsAppend sourceLocal baseEnv.v } ∧
+        flatEnv = ⟨flatValues⟩ ∧
+        (∃ bindings, sourceLocal = alistToNs bindings ∧ bindings.map Prod.fst = locals) ∧
+        GlobalEnvInv genv compMap (fun name => name ∈ locals) baseEnv ∧
+        EnvRel genv sourceLocal flatValues := by
+  constructor
+  · rintro ⟨base, sourceLocal, bindings, sourceEq, localEq, names, globals, localsRel⟩
+    exact ⟨sourceLocal, base, flatEnv.v, sourceEq, by cases flatEnv; rfl,
+      ⟨bindings, localEq, names⟩, globals, localsRel⟩
+  · rintro ⟨sourceLocal, base, values, sourceEq, rfl, ⟨bindings, localEq, names⟩, globals, localsRel⟩
+    exact ⟨base, sourceLocal, bindings, sourceEq, localEq, names, globals, localsRel⟩
+
+/-- The factored combined environment relation determines the flat local
+names. -/
+theorem factoredEnvAllRel_names (genv : GlobalEnv) (compMap : Environment) (sourceEnv : SemEnv Value)
+    (flatEnv : FlatSem.Environment FlatSem.Value) (locals : List VarN)
+    (related : FactoredEnvAllRel genv compMap sourceEnv flatEnv locals) :
+    locals = flatEnv.v.map Prod.fst := by
+  obtain ⟨_, _, bindings, _, localEq, names, _, localRel⟩ := related
+  rw [localEq] at localRel
+  have pairs := (envRel_alist_iff genv bindings flatEnv.v).mp localRel
+  have namesOfPairs : ∀ (xs : List (VarN × Value)) (ys : List (VarN × FlatSem.Value)),
+      List.Forall₂ (fun a b => a.1 = b.1 ∧ ValueRel genv a.2 b.2) xs ys →
+      xs.map Prod.fst = ys.map Prod.fst := by
+    intro xs ys pairs
+    induction pairs with
+    | nil => rfl
+    | cons head tail ih =>
+      simp only [List.map_cons]
+      rw [head.1, ih]
+  exact names.symm.trans (namesOfPairs bindings flatEnv.v pairs)
 
 end Flapjack.Compiler.Backend.SourceToFlat

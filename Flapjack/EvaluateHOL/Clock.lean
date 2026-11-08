@@ -1,7 +1,6 @@
 import Flapjack.EvaluateHOL.Definition
 
-/-! Cases of the original source evaluator clock theorem. The assembling
-clock theorem remains open; these are individual constructor cases. -/
+/-! Flapjack proof cases used by the assembled source evaluator clock theorem. -/
 namespace Flapjack.EvaluateHOL
 open Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL Flapjack.AstHOL
 
@@ -20,7 +19,8 @@ theorem doEvalRes_clock {σ β : Type} (values : List Value) (st : State σ) :
   unfold doEvalRes
   split <;> rfl
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateClock_nil {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (result : Result (List Value) Value) (h : evaluate st env [] = (st', result)) :
     st'.clock ≤ st.clock := by
@@ -29,7 +29,8 @@ theorem evaluateClock_nil {σ : Type} (st st' : State σ) (env : SemEnv Value)
   subst st'
   exact Nat.le_refl _
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateClock_lit {σ : Type} (st st' : State σ) (env : SemEnv Value) (lit : Lit)
     (result : Result (List Value) Value) (h : evaluate st env [.lit lit] = (st', result)) :
     st'.clock ≤ st.clock := by
@@ -38,7 +39,8 @@ theorem evaluateClock_lit {σ : Type} (st st' : State σ) (env : SemEnv Value) (
   subst st'
   exact Nat.le_refl _
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateClock_fun {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (name : VarN) (body : Flapjack.AstHOL.Exp) (result : Result (List Value) Value)
     (h : evaluate st env [.fn name body] = (st', result)) : st'.clock ≤ st.clock := by
@@ -47,7 +49,8 @@ theorem evaluateClock_fun {σ : Type} (st st' : State σ) (env : SemEnv Value)
   subst st'
   exact Nat.le_refl _
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateClock_var {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (name : Ident ModN VarN) (result : Result (List Value) Value)
     (h : evaluate st env [.var name] = (st', result)) : st'.clock ≤ st.clock := by
@@ -55,7 +58,8 @@ theorem evaluateClock_var {σ : Type} (st st' : State σ) (env : SemEnv Value)
   simp only [evaluate] at hs
   split at hs <;> simp_all [typeError]
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateMatchClock_nil {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (value errorValue : Value) (result : Result (List Value) Value)
     (h : evaluateMatch st env value [] errorValue = (st', result)) : st'.clock ≤ st.clock := by
@@ -64,7 +68,8 @@ theorem evaluateMatchClock_nil {σ : Type} (st st' : State σ) (env : SemEnv Val
   subst st'
   exact Nat.le_refl _
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateDecsClock_nil {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (result : Result (SemEnv Value) Value) (h : evaluateDecs st env [] = (st', result)) :
     st'.clock ≤ st.clock := by
@@ -73,7 +78,8 @@ theorem evaluateDecsClock_nil {σ : Type} (st st' : State σ) (env : SemEnv Valu
   subst st'
   exact Nat.le_refl _
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateDecsClock_tabbrev {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (loc : Flapjack.Misc.Location.Locs) (vars : List TvarN) (name : TypeN) (typ : AstT)
     (result : Result (SemEnv Value) Value)
@@ -83,7 +89,8 @@ theorem evaluateDecsClock_tabbrev {σ : Type} (st st' : State σ) (env : SemEnv 
   subst st'
   exact Nat.le_refl _
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateClock_raise {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (expr : Flapjack.AstHOL.Exp) (result : Result (List Value) Value)
     (ih : ∀ next outcome, evaluate st env [expr] = (next, outcome) → next.clock ≤ st.clock)
@@ -95,7 +102,8 @@ theorem evaluateClock_raise {σ : Type} (st st' : State σ) (env : SemEnv Value)
   simp only [evaluate] at hs
   cases hv : (evaluate st env [expr]).2 <;> simp_all
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateClock_tannot {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (expr : Flapjack.AstHOL.Exp) (typ : AstT) (result : Result (List Value) Value)
     (ih : ∀ next outcome, evaluate st env [expr] = (next, outcome) → next.clock ≤ st.clock)
@@ -103,7 +111,8 @@ theorem evaluateClock_tannot {σ : Type} (st st' : State σ) (env : SemEnv Value
   simp only [evaluate] at h
   exact ih st' result h
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateClock_lannot {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (expr : Flapjack.AstHOL.Exp) (loc : Flapjack.Misc.Location.Locs) (result : Result (List Value) Value)
     (ih : ∀ next outcome, evaluate st env [expr] = (next, outcome) → next.clock ≤ st.clock)
@@ -111,7 +120,8 @@ theorem evaluateClock_lannot {σ : Type} (st st' : State σ) (env : SemEnv Value
   simp only [evaluate] at h
   exact ih st' result h
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateClock_con {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (name : Option (Ident ModN ConN)) (args : List Flapjack.AstHOL.Exp)
     (result : Result (List Value) Value)
@@ -131,7 +141,8 @@ theorem evaluateClock_con {σ : Type} (st st' : State σ) (env : SemEnv Value)
       cases hc : buildConv env.c name vs.reverse <;> simp_all [typeError]
   · simp_all [typeError]
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateDecsClock_mod {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (name : ModN) (decs : List Dec) (result : Result (SemEnv Value) Value)
     (ih : ∀ next outcome, evaluateDecs st env decs = (next, outcome) → next.clock ≤ st.clock)
@@ -143,7 +154,8 @@ theorem evaluateDecsClock_mod {σ : Type} (st st' : State σ) (env : SemEnv Valu
   simp only [evaluateDecs] at hs
   cases hv : (evaluateDecs st env decs).2 <;> simp_all
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateDecsClock_let {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (loc : Flapjack.Misc.Location.Locs) (pat : Pat) (expr : Flapjack.AstHOL.Exp)
     (result : Result (SemEnv Value) Value)
@@ -165,7 +177,8 @@ theorem evaluateDecsClock_let {σ : Type} (st st' : State σ) (env : SemEnv Valu
       cases hp : pmatch env.c (evaluate st env [expr]).1.refs pat (headValue vs) [] <;> simp_all [typeError]
   · simp_all [typeError]
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateDecsClock_exn {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (loc : Flapjack.Misc.Location.Locs) (name : ConN) (types : List AstT)
     (result : Result (SemEnv Value) Value)
@@ -174,7 +187,8 @@ theorem evaluateDecsClock_exn {σ : Type} (st st' : State σ) (env : SemEnv Valu
   simp only [evaluateDecs] at hs
   exact Nat.le_of_eq hs.symm
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateDecsClock_type {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (loc : Flapjack.Misc.Location.Locs) (types : TypeDef) (result : Result (SemEnv Value) Value)
     (h : evaluateDecs st env [.dtype loc types] = (st', result)) : st'.clock ≤ st.clock := by
@@ -182,7 +196,8 @@ theorem evaluateDecsClock_type {σ : Type} (st st' : State σ) (env : SemEnv Val
   simp only [evaluateDecs] at hs
   split at hs <;> simp_all [typeError]
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateDecsClock_env {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (name : TvarN) (result : Result (SemEnv Value) Value)
     (h : evaluateDecs st env [.denv name] = (st', result)) : st'.clock ≤ st.clock := by
@@ -190,7 +205,8 @@ theorem evaluateDecsClock_env {σ : Type} (st st' : State σ) (env : SemEnv Valu
   simp only [evaluateDecs] at hs
   split at hs <;> simp_all [typeError]
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateDecsClock_letrec {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (loc : Flapjack.Misc.Location.Locs) (funs : List (VarN × VarN × Flapjack.AstHOL.Exp))
     (result : Result (SemEnv Value) Value)
@@ -199,7 +215,8 @@ theorem evaluateDecsClock_letrec {σ : Type} (st st' : State σ) (env : SemEnv V
   simp only [evaluateDecs] at hs
   split at hs <;> simp_all [typeError]
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateClock_letrec {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (funs : List (VarN × VarN × Flapjack.AstHOL.Exp)) (body : Flapjack.AstHOL.Exp)
     (result : Result (List Value) Value)
@@ -213,7 +230,8 @@ theorem evaluateClock_letrec {σ : Type} (st st' : State σ) (env : SemEnv Value
     exact ih distinct st' result h
   · simp_all [typeError]
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateMatchClock_cons {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (value errorValue : Value) (pat : Pat) (expr : Flapjack.AstHOL.Exp)
     (rest : List (Pat × Flapjack.AstHOL.Exp)) (result : Result (List Value) Value)
@@ -233,7 +251,8 @@ theorem evaluateMatchClock_cons {σ : Type} (st st' : State σ) (env : SemEnv Va
     | «match» bindings => exact ihBody distinct bindings st' result hp (by simpa only [hp] using h)
   · simp_all [typeError]
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateDecsClock_local {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (localDecs decs : List Dec) (result : Result (SemEnv Value) Value)
     (ihFirst : ∀ next outcome, evaluateDecs st env localDecs = (next, outcome) → next.clock ≤ st.clock)
@@ -260,7 +279,8 @@ theorem evaluateDecsClock_local {σ : Type} (st st' : State σ) (env : SemEnv Va
       simpa only [hv] using (Prod.eta first).symm
     exact Nat.le_trans (ihBody first.1 inner st' result firstEq h) firstBound
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateDecsClock_cons {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (first second : Dec) (rest : List Dec) (result : Result (SemEnv Value) Value)
     (ihFirst : ∀ next outcome, evaluateDecs st env [first] = (next, outcome) → next.clock ≤ st.clock)
@@ -293,7 +313,8 @@ theorem evaluateDecsClock_cons {σ : Type} (st st' : State σ) (env : SemEnv Val
     have hs := congrArg (fun pair => pair.1.clock) h
     exact Nat.le_trans (Nat.le_of_eq hs.symm) (Nat.le_trans tailBound firstBound)
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateClock_cons {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (first second : Flapjack.AstHOL.Exp) (rest : List Flapjack.AstHOL.Exp)
     (result : Result (List Value) Value)
@@ -332,7 +353,8 @@ theorem evaluateClock_cons {σ : Type} (st st' : State σ) (env : SemEnv Value)
     cases ht : tail.2 <;> simp only [ht] at hs
     all_goals exact Nat.le_trans (Nat.le_of_eq hs.symm) (Nat.le_trans tailBound firstBound)
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateClock_let {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (name : Option VarN) (first body : Flapjack.AstHOL.Exp) (result : Result (List Value) Value)
     (ihFirst : ∀ next outcome, evaluate st env [first] = (next, outcome) → next.clock ≤ st.clock)
@@ -361,7 +383,8 @@ theorem evaluateClock_let {σ : Type} (st st' : State σ) (env : SemEnv Value)
       simpa only [hv] using (Prod.eta firstResult).symm
     exact Nat.le_trans (ihBody firstResult.1 values st' result firstEq h) firstBound
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateClock_if {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (test yes no : Flapjack.AstHOL.Exp) (result : Result (List Value) Value)
     (ihTest : ∀ next outcome, evaluate st env [test] = (next, outcome) → next.clock ≤ st.clock)
@@ -398,7 +421,8 @@ theorem evaluateClock_if {σ : Type} (st st' : State σ) (env : SemEnv Value)
       rw [hc] at h
       exact Nat.le_trans (ihBranch testResult.1 values chosen st' result testEq hc h) testBound
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateClock_log {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (op : Lop) (first second : Flapjack.AstHOL.Exp) (result : Result (List Value) Value)
     (ihFirst : ∀ next outcome, evaluate st env [first] = (next, outcome) → next.clock ≤ st.clock)
@@ -442,7 +466,8 @@ theorem evaluateClock_log {σ : Type} (st st' : State σ) (env : SemEnv Value)
         rw [hc] at h
         exact Nat.le_trans (ihBranch firstResult.1 values chosen st' result firstEq hc h) firstBound
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateClock_mat {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (expr : Flapjack.AstHOL.Exp) (clauses : List (Pat × Flapjack.AstHOL.Exp))
     (result : Result (List Value) Value)
@@ -480,7 +505,8 @@ theorem evaluateClock_mat {σ : Type} (st st' : State σ) (env : SemEnv Value)
       simp only [typeError] at hs
       exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateClock_handle {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (expr : Flapjack.AstHOL.Exp) (clauses : List (Pat × Flapjack.AstHOL.Exp))
     (result : Result (List Value) Value)
@@ -524,7 +550,8 @@ theorem evaluateClock_handle {σ : Type} (st st' : State σ) (env : SemEnv Value
         simp only [typeError] at hs
         exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
 
-@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+/-- Flapjack helper in the assembled clock proof, which uses unclamped
+recursive evaluations instead of HOL's original fix_clock-based induction. -/
 theorem evaluateClock_app {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (op : Op) (args : List Flapjack.AstHOL.Exp) (result : Result (List Value) Value)
     (ihArgs : ∀ next outcome, evaluate st env args.reverse = (next, outcome) → next.clock ≤ st.clock)

@@ -8,6 +8,7 @@ the native raw store frame preserves every other byte. No target run result,
 alignment guard or desired post-state is assumed. -/
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 Compiler.Encoders.Asm Compiler.Encoders.AsmSem
+open Flapjack.RiscV.L3.Step.ByteMemory
   Compiler.Encoders.RiscV.Target
 set_option autoImplicit false
 

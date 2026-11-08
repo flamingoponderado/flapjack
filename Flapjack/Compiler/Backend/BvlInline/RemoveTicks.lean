@@ -1,6 +1,8 @@
+import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.BvlInline.Proofs.TraversalTotal
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Measure
 import Flapjack.HolRef
+import Flapjack.Misc.ListMapM
 import Aesop
 
 /-! Total source-shaped BVL tick removal and its executable correspondence. -/
@@ -62,23 +64,6 @@ theorem removeTicksList_eq_map (expressions : List Bvl.Exp) :
   induction expressions with
   | nil => simp [removeTicksList]
   | cons first rest ih => simp [removeTicksList, ih]
-
-private theorem mapM_eq_map {α β : Type} (visit : α → Option β) (f : α → β)
-    (correct : ∀ x y, visit x = some y → y = f x) (xs : List α) (ys : List β)
-    (run : xs.mapM visit = some ys) : ys = xs.map f := by
-  induction xs generalizing ys with
-  | nil => simpa using run.symm
-  | cons x rest ih =>
-    simp only [List.mapM_cons] at run
-    cases first : visit x with
-    | none => simp [first] at run
-    | some value =>
-      cases remaining : rest.mapM visit with
-      | none => simp [first, remaining] at run
-      | some values =>
-        simp [first, remaining] at run
-        subst ys
-        simp [correct x value first, ih values remaining]
 
 /-- Any successful fuel-bounded run agrees with the total source traversal. -/
 theorem removeTicksFuel_eq (fuel : Nat) (expression result : Bvl.Exp)

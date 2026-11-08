@@ -2,59 +2,13 @@ import Flapjack.Compiler.Backend.ClosTicks.Proofs.Simulation
 import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
 import Flapjack.FiniteMap.EmptyExact
+import Flapjack.Compiler.Backend.Semantics.ClosProps.ResultObservations
 
 /-! Whole-program observations of closure tick removal. -/
 namespace Flapjack.Compiler.Backend.ClosTicks
 open Flapjack Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.BackendProps
+open Flapjack.Compiler.Backend.ClosProps
 open Flapjack.SemanticPrimitivesHOL (Result)
-
-private def resultHasOutcome (result : Result (List Value) Value) (outcome : HolOutcome) : Prop :=
-  match result with
-  | .err (.abort .timeoutError) => False
-  | .err (.abort (.ffiError event)) => outcome = .ffiOutcome event
-  | _ => outcome = .success
-
-private theorem resultHasOutcome_iff (result : Result (List Value) Value) (outcome : HolOutcome) :
-    resultHasOutcome result outcome ↔
-      (match result, outcome with
-       | .err (.abort .timeoutError), _ => False
-       | .err (.abort (.ffiError event)), outcome => outcome = .ffiOutcome event
-       | _, outcome => outcome = .success) := by
-  cases result with
-  | val values => rfl
-  | err error => cases error with
-    | raise value => rfl
-    | abort reason => cases reason <;> rfl
-
-/-- Related results agree on type errors and terminating observations. This is
-Flapjack infrastructure for the observational theorem. -/
-theorem resultRel_observations (left right : Result (List Value) Value) (related : ResultRel left right) :
-    (left = .err (.abort .typeError) ↔ right = .err (.abort .typeError)) ∧
-    ∀ outcome : HolOutcome, resultHasOutcome left outcome ↔ resultHasOutcome right outcome := by
-  cases left with
-  | val values =>
-    cases right with
-    | val nextValues => simp [resultHasOutcome]
-    | err error => cases error <;> simp [ResultRel] at related
-  | err error =>
-    cases error with
-    | raise value =>
-      cases right with
-      | val values => simp [ResultRel] at related
-      | err nextError =>
-        cases nextError with
-        | raise nextValue => simp [resultHasOutcome]
-        | abort reason => cases related
-    | abort reason =>
-      cases right with
-      | val values => simp [ResultRel] at related
-      | err nextError =>
-        cases nextError with
-        | raise value => simp [ResultRel] at related
-        | abort nextReason =>
-          have same : reason = nextReason := related
-          subst nextReason
-          cases reason <;> simp [resultHasOutcome]
 
 /-- Initial states satisfy the tick-removal relation under the original
 oracle and maximum-application assumptions. This is Flapjack infrastructure

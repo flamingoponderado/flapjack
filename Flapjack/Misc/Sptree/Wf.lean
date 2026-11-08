@@ -145,39 +145,9 @@ theorem sptWfInter {α β : Type} : ∀ (m1 : Spt α) (m2 : Spt β), sptWf (sptI
 theorem sptWfUnion {α : Type} :
     ∀ (m1 m2 : Spt α), sptWf m1 = true ∧ sptWf m2 = true → sptWf (sptUnion m1 m2) = true := by
   intro m1
-  induction m1 with
-  | ln => intro m2 h; simpa [sptUnion] using h.2
-  | ls a => intro m2 h; cases m2 <;> simp_all [sptUnion, sptWf]
-  | bn l r ihl ihr =>
-      intro m2 h
-      cases m2 with
-      | ln => simpa [sptUnion] using h.1
-      | ls b => simp_all [sptUnion, sptWf]
-      | bn l' r' =>
-          simp only [sptUnion, sptWf, Bool.and_eq_true, Bool.not_eq_true'] at h ⊢
-          refine ⟨⟨ihl l' ⟨h.1.1.1, h.2.1.1⟩, ihr r' ⟨h.1.1.2, h.2.1.2⟩⟩, ?_⟩
-          rw [sptIsEmpty_sptUnion, sptIsEmpty_sptUnion]
-          cases hl : sptIsEmpty l <;> cases hr : sptIsEmpty r <;> simp_all
-      | bs l' b r' =>
-          simp only [sptUnion, sptWf, Bool.and_eq_true, Bool.not_eq_true'] at h ⊢
-          refine ⟨⟨ihl l' ⟨h.1.1.1, h.2.1.1⟩, ihr r' ⟨h.1.1.2, h.2.1.2⟩⟩, ?_⟩
-          rw [sptIsEmpty_sptUnion, sptIsEmpty_sptUnion]
-          cases hl : sptIsEmpty l <;> cases hr : sptIsEmpty r <;> simp_all
-  | bs l a r ihl ihr =>
-      intro m2 h
-      cases m2 with
-      | ln => simpa [sptUnion] using h.1
-      | ls b => simp_all [sptUnion, sptWf]
-      | bn l' r' =>
-          simp only [sptUnion, sptWf, Bool.and_eq_true, Bool.not_eq_true'] at h ⊢
-          refine ⟨⟨ihl l' ⟨h.1.1.1, h.2.1.1⟩, ihr r' ⟨h.1.1.2, h.2.1.2⟩⟩, ?_⟩
-          rw [sptIsEmpty_sptUnion, sptIsEmpty_sptUnion]
-          cases hl : sptIsEmpty l <;> cases hr : sptIsEmpty r <;> simp_all
-      | bs l' b r' =>
-          simp only [sptUnion, sptWf, Bool.and_eq_true, Bool.not_eq_true'] at h ⊢
-          refine ⟨⟨ihl l' ⟨h.1.1.1, h.2.1.1⟩, ihr r' ⟨h.1.1.2, h.2.1.2⟩⟩, ?_⟩
-          rw [sptIsEmpty_sptUnion, sptIsEmpty_sptUnion]
-          cases hl : sptIsEmpty l <;> cases hr : sptIsEmpty r <;> simp_all
+  induction m1 <;> intro m2 h <;> cases m2 <;>
+    simp_all only [sptUnion, sptWf, Bool.and_eq_true, Bool.not_eq_true', sptIsEmpty_sptUnion] <;>
+    grind
 
 section KeyDecomposition
 
@@ -342,54 +312,9 @@ theorem sptLookupDifference {α β : Type} :
       sptLookup k (sptDifference m1 m2) =
         if sptLookup k m2 = none then sptLookup k m1 else none := by
   intro m1
-  induction m1 with
-  | ln => intro m2 k; simp [sptDifference, sptLookup]
-  | ls a =>
-      intro m2 k
-      cases m2 <;> simp only [sptDifference] <;> by_cases hk : k = 0 <;>
-        simp [sptLookup, hk]
-  | bn l r ihl ihr =>
-      intro m2 k
-      cases m2 with
-      | ln => simp [sptDifference, sptLookup]
-      | ls b =>
-          simp only [sptDifference]
-          by_cases hk : k = 0 <;> simp [sptLookup, hk]
-      | bn l' r' =>
-          simp only [sptDifference]
-          rw [sptLookupMkBN]
-          by_cases hk : k = 0
-          · simp [sptLookup, hk]
-          · simp only [sptLookup, hk, if_false]
-            split <;> first | exact ihl _ _ | exact ihr _ _
-      | bs l' b r' =>
-          simp only [sptDifference]
-          rw [sptLookupMkBN]
-          by_cases hk : k = 0
-          · simp [sptLookup, hk]
-          · simp only [sptLookup, hk, if_false]
-            split <;> first | exact ihl _ _ | exact ihr _ _
-  | bs l a r ihl ihr =>
-      intro m2 k
-      cases m2 with
-      | ln => simp [sptDifference, sptLookup]
-      | ls b =>
-          simp only [sptDifference]
-          by_cases hk : k = 0 <;> simp [sptLookup, hk]
-      | bn l' r' =>
-          simp only [sptDifference]
-          rw [sptLookupMkBS]
-          by_cases hk : k = 0
-          · simp [sptLookup, hk]
-          · simp only [sptLookup, hk, if_false]
-            split <;> first | exact ihl _ _ | exact ihr _ _
-      | bs l' b r' =>
-          simp only [sptDifference]
-          rw [sptLookupMkBN]
-          by_cases hk : k = 0
-          · simp [sptLookup, hk]
-          · simp only [sptLookup, hk, if_false]
-            split <;> first | exact ihl _ _ | exact ihr _ _
+  induction m1 <;> intro m2 k <;> cases m2 <;>
+    simp only [sptDifference, sptLookupMkBN, sptLookupMkBS] <;>
+    grind [sptLookup]
 
 /-- Exact HOL `wf_difference` (`HOL/src/finite_maps/sptreeScript.sml:1925-1930`). -/
 @[hol "hol4/src/finite_maps/sptreeScript.sml" "wf_difference"]
@@ -397,44 +322,8 @@ theorem sptWfDifference {α β : Type} :
     ∀ (t1 : Spt α) (t2 : Spt β), sptWf t1 = true ∧ sptWf t2 = true →
       sptWf (sptDifference t1 t2) = true := by
   intro t1
-  induction t1 with
-  | ln => intro t2 _; simp [sptDifference]
-  | ls a => intro t2 _; cases t2 <;> simp [sptDifference, sptWf]
-  | bn l r ihl ihr =>
-      intro t2 h
-      have hl : sptWf l = true := by have := h.1; simp_all [sptWf]
-      have hr : sptWf r = true := by have := h.1; simp_all [sptWf]
-      cases t2 with
-      | ln => simpa [sptDifference] using h.1
-      | ls b => simpa [sptDifference] using h.1
-      | bn l' r' =>
-          have hl' : sptWf l' = true := by have := h.2; simp_all [sptWf]
-          have hr' : sptWf r' = true := by have := h.2; simp_all [sptWf]
-          simp only [sptDifference]
-          exact wfMkBN _ _ (ihl l' ⟨hl, hl'⟩) (ihr r' ⟨hr, hr'⟩)
-      | bs l' b r' =>
-          have hl' : sptWf l' = true := by have := h.2; simp_all [sptWf]
-          have hr' : sptWf r' = true := by have := h.2; simp_all [sptWf]
-          simp only [sptDifference]
-          exact wfMkBN _ _ (ihl l' ⟨hl, hl'⟩) (ihr r' ⟨hr, hr'⟩)
-  | bs l a r ihl ihr =>
-      intro t2 h
-      have hl : sptWf l = true := by have := h.1; simp_all [sptWf]
-      have hr : sptWf r = true := by have := h.1; simp_all [sptWf]
-      cases t2 with
-      | ln => simpa [sptDifference] using h.1
-      | ls b =>
-          simp only [sptDifference]
-          simpa [sptWf] using h.1
-      | bn l' r' =>
-          have hl' : sptWf l' = true := by have := h.2; simp_all [sptWf]
-          have hr' : sptWf r' = true := by have := h.2; simp_all [sptWf]
-          simp only [sptDifference]
-          exact wfMkBS _ _ _ (ihl l' ⟨hl, hl'⟩) (ihr r' ⟨hr, hr'⟩)
-      | bs l' b r' =>
-          have hl' : sptWf l' = true := by have := h.2; simp_all [sptWf]
-          have hr' : sptWf r' = true := by have := h.2; simp_all [sptWf]
-          simp only [sptDifference]
-          exact wfMkBN _ _ (ihl l' ⟨hl, hl'⟩) (ihr r' ⟨hr, hr'⟩)
+  induction t1 <;> intro t2 h <;> cases t2 <;>
+    simp_all only [sptDifference, sptWf, Bool.and_eq_true, Bool.not_eq_true'] <;>
+    grind [wfMkBN, wfMkBS]
 
 end Flapjack

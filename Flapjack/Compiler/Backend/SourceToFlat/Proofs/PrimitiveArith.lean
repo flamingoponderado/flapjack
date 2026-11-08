@@ -98,7 +98,7 @@ theorem integerArith_related {C F : Type} (genv : GlobalEnv) (ok : genvCOk genv.
   by_cases zero : right = 0 <;> cases action <;>
     simp [doApp, doAppNumericCore, FlatSem.doAppNumeric,
       FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat, zero]
-  all_goals first | exact ResultRel.value (.literal genv _) | exact ResultRel.raise (exceptionValues_related genv ok).1
+  all_goals first | exact ResultRel.value (.literal genv _) | exact ResultRel.raise (valueRel_lemmas genv ok).2.1
 
 /-- Word8 arithmetic preserves literal results and rejects the same unsupported
 operations, without changing either state. This is Flapjack infrastructure
@@ -141,60 +141,6 @@ theorem word64Arith_related {C F : Type} (genv : GlobalEnv)
   all_goals exact ResultRel.value (.literal genv _)
 
 
-/-- Successful Word8 shifts have a single word operand. -/
-theorem word8Shift_operand {F : Type} (source : SemanticPrimitivesHOL.State F)
-    (shift : Shift) (amount : Nat) (operand : SemanticPrimitivesHOL.Value)
-    (successful : doApp (source.refs, source.ffi) (.shift .w8 shift amount) [operand] ≠ none) :
-    ∃ word, operand = .litv (.word8 word) := by
-  simp only [doApp, doAppNumericCore, doAppBasic] at successful
-  cases operand <;> simp at successful
-  case litv lit =>
-    cases lit <;> simp at successful
-    case word8 word => exact ⟨word, rfl⟩
-
-/-- The two primitive dispatchers agree on a Word8 shift and preserve both
-states. This is infrastructure over the preliminary factored relation. -/
-theorem word8Shift_related {C F : Type} (genv : GlobalEnv)
-    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
-    (shift : Shift) (amount : Nat) (word : BitVec 8) :
-    doApp (source.refs, source.ffi) (.shift .w8 shift amount) [.litv (.word8 word)] =
-      some ((source.refs, source.ffi), .val (.litv (.word8 (shift8Lookup shift word amount)))) ∧
-    FlatSem.doAppNumeric flat (.shift .w8 shift amount) [.litv (.word8 word)] =
-      some (some (flat, .val (.litv (.word8 (shift8Lookup shift word amount))))) ∧
-    ValueRel genv (.litv (.word8 (shift8Lookup shift word amount)))
-      (.litv (.word8 (shift8Lookup shift word amount))) := by
-  refine ⟨?_, ?_, .literal genv _⟩
-  · simp [doApp, doAppNumericCore, doAppBasic]
-  · simp [FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue,
-      doApp, doAppNumericCore, doAppBasic, FlatSem.valueToFlat]
-
-/-- Successful Word64 shifts have a single word operand. -/
-theorem word64Shift_operand {F : Type} (source : SemanticPrimitivesHOL.State F)
-    (shift : Shift) (amount : Nat) (operand : SemanticPrimitivesHOL.Value)
-    (successful : doApp (source.refs, source.ffi) (.shift .w64 shift amount) [operand] ≠ none) :
-    ∃ word, operand = .litv (.word64 word) := by
-  simp only [doApp, doAppNumericCore, doAppBasic] at successful
-  cases operand <;> simp at successful
-  case litv lit =>
-    cases lit <;> simp at successful
-    case word64 word => exact ⟨word, rfl⟩
-
-/-- The two primitive dispatchers agree on a Word64 shift and preserve both
-states. This is infrastructure over the preliminary factored relation. -/
-theorem word64Shift_related {C F : Type} (genv : GlobalEnv)
-    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
-    (shift : Shift) (amount : Nat) (word : BitVec 64) :
-    doApp (source.refs, source.ffi) (.shift .w64 shift amount) [.litv (.word64 word)] =
-      some ((source.refs, source.ffi), .val (.litv (.word64 (shift64Lookup shift word amount)))) ∧
-    FlatSem.doAppNumeric flat (.shift .w64 shift amount) [.litv (.word64 word)] =
-      some (some (flat, .val (.litv (.word64 (shift64Lookup shift word amount))))) ∧
-    ValueRel genv (.litv (.word64 (shift64Lookup shift word amount)))
-      (.litv (.word64 (shift64Lookup shift word amount))) := by
-  refine ⟨?_, ?_, .literal genv _⟩
-  · simp [doApp, doAppNumericCore, doAppBasic]
-  · simp [FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue,
-      doApp, doAppNumericCore, doAppBasic, FlatSem.valueToFlat]
-
 /-- Successful primitive conversions consume a literal operand. -/
 theorem conversion_operand {F : Type} (source : SemanticPrimitivesHOL.State F)
     (fromType toType : PrimType) (operand : SemanticPrimitivesHOL.Value)
@@ -207,7 +153,7 @@ theorem conversion_operand {F : Type} (source : SemanticPrimitivesHOL.State F)
       simp [doApp, doAppNumericCore] at successful
 
 /-- Source and flat conversions agree on literals, including `Chr` failures.
-This is infrastructure over the preliminary factored relation. -/
+This is Flapjack proof infrastructure for the source-to-flat simulation. -/
 theorem conversion_related {C F : Type} (genv : GlobalEnv) (ok : genvCOk genv.c)
     (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
     (fromType toType : PrimType) (lit : Lit) :
@@ -223,7 +169,7 @@ theorem conversion_related {C F : Type} (genv : GlobalEnv) (ok : genvCOk genv.c)
     by_cases bad : n < 0 ∨ n > 255 <;>
       simp [doApp, doAppNumericCore, FlatSem.doAppNumeric,
         FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat, bad]
-    · exact ResultRel.raise (exceptionValues_related genv ok).2.1
+    · exact ResultRel.raise (valueRel_lemmas genv ok).2.2.1
     · exact ResultRel.value (.literal genv _)
   all_goals simp [doApp, doAppNumericCore, FlatSem.doAppNumeric,
     FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat]
@@ -257,7 +203,7 @@ theorem booleanNot_related {C F : Type} (genv : GlobalEnv) (ok : genvCOk genv.c)
       some (some (flat, .val (FlatSem.boolValue (!b)))) ∧
     ValueRel genv (SemanticPrimitivesHOL.boolValue (!b)) (FlatSem.boolValue (!b)) := by
   have distinct : Basis.Pure.MlString.ofString "False" ≠ Basis.Pure.MlString.ofString "True" := by decide
-  have related := boolValue_related genv ok (!b)
+  have related := (boolValueRel_iff genv (!b) _ ok).mpr rfl
   cases b <;> simp [doApp, doAppNumericCore, checkType, SemanticPrimitivesHOL.boolValue, boolTypeNum,
     FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue,
     FlatSem.valueToFlat, FlatSem.boolValue, BackendCommon.boolToTag,

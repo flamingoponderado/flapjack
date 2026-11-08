@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
 
 /-! Closure-state relation for changing the compiler-oracle configuration. -/
 namespace Flapjack.Compiler.Backend.ClosProps.AdjustOracle
@@ -798,36 +799,6 @@ theorem evaluateAdjOracOrdinaryOp {C D F U : Type} (_unused : U) (cc : Compiler 
         cases run
         exact ⟨targetFinal, by simp [targetApp], finalRel⟩
 
-/-- Installation continuation factored out for the oracle-adjustment
-simulation; this helper has no independent HOL declaration. -/
-noncomputable def runInstalled {C F : Type} (values : List Value) (state : State C F) : EvalResult C F :=
-  match doInstall values state with
-  | (.err error, next) => (.err error, next)
-  | (.val program, next) =>
-    let (result, last) := evaluate program [] next
-    match result with
-    | .err error => (.err error, last)
-    | .val values => (.val [@Flapjack.holLast Value ⟨unitValue⟩ values], last)
-
-/-- Unfold the install operation at its argument evaluation boundary. -/
-theorem evaluateInstallEq {C F : Type} (trace : BackendCommon.Tra) (args : List ClosLang.Exp)
-    (env : List Value) (state : State C F) :
-    evaluate [.op trace .install args] env state =
-      match evaluate args env state with
-      | (.err error, next) => (.err error, next)
-      | (.val values, next) => runInstalled values.reverse next := by
-  rw [evaluate, fixClock_evaluate]
-  cases evaluated : evaluate args env state with
-  | mk result next =>
-    cases result with
-    | err error => rfl
-    | val values =>
-      dsimp only
-      unfold runInstalled
-      split <;> simp_all
-      split <;> simp_all
-      rfl
-
 /-- Installation case of the source evaluator simulation. The second
 induction hypothesis applies to the dynamically installed program. -/
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_adj_orac"
@@ -840,8 +811,8 @@ theorem evaluateAdjOracInstall {C D F U : Type} (_unused : U) (cc : Compiler D) 
       doInstall values.reverse middle = (.val program, installed) → EvalAt cc f program [] installed) :
     EvalAt cc f [.op trace .install args] env s := by
   intro result next t ⟨run, noType, rel⟩
-  rw [evaluateInstallEq trace args env s] at run
-  rw [evaluateInstallEq trace args env t]
+  rw [evaluate_install_eq trace args env s] at run
+  rw [evaluate_install_eq trace args env t]
   cases argsRun : evaluate args env s with
   | mk argResult middle =>
     rw [argsRun] at run

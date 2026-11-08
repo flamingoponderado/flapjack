@@ -1,11 +1,11 @@
 import Flapjack.EvaluateProps.ClockIoCases
 
-/-! Recursive expression cases of the source clock-and-I/O invariant.
-The mutual evaluator theorem is assembled in ClockIoFull; source/carrier review remains open. -/
+/-! Flapjack expression proof helpers for the clock-and-I/O evaluator theorem. -/
 namespace Flapjack.EvaluateProps
 open Flapjack.EvaluateHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL Flapjack.AstHOL
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_evaluate"]
+/-- Flapjack helper for the assembled clock-and-I/O theorem; its induction
+hypotheses are proof infrastructure rather than literal HOL case clauses. -/
 theorem clockIoEvaluate_let {σ : Type} (st : State σ) (env : SemEnv Value)
     (name : Option VarN) (first body : AstHOL.Exp)
     (ihFirst : isClockIoMono (fun state => evaluate state env [first]) st)
@@ -21,12 +21,12 @@ theorem clockIoEvaluate_let {σ : Type} (st : State σ) (env : SemEnv Value)
     intro next result heval
     cases result with
     | val values => exact ihBody next values heval
-    | err error => exact isClockIoMono_err (α := List Value) next error
+    | err error => exact isClockIoMono_err (α := List Value) (s := next) error
   have htimeout : ∀ next, continuation (.err (.abort .timeoutError)) next =
       (next, .err (.abort .timeoutError)) := by
     intro next
     rfl
-  have bound := isClockIoMono_bind (fun state => evaluate state env [first]) continuation st
+  have bound := isClockIoMono_bind (fun state => evaluate state env [first]) st continuation
     ⟨ihFirst, hcont, htimeout⟩
   have fnEq : (fun state => let (next, result) := evaluate state env [first]; continuation result next) =
       (fun state => evaluate state env [.let_ name first body]) := by
@@ -49,15 +49,16 @@ theorem clockIo_mapResult {σ α β γ δ : Type} (st : State σ)
   have hcont : ∀ next result, f st = (next, result) → isClockIoMono (continuation result) next := by
     intro next result _
     cases hmap : mapResult result with
-    | val value => simpa only [continuation, hmap] using isClockIoMono_return (β := δ) next value
-    | err error => simpa only [continuation, hmap] using isClockIoMono_err (α := γ) next error
+    | val value => simpa only [continuation, hmap] using isClockIoMono_return (β := δ) (s := next) value
+    | err error => simpa only [continuation, hmap] using isClockIoMono_err (α := γ) (s := next) error
   have htimeout : ∀ next, continuation (.err (.abort .timeoutError)) next =
       (next, .err (.abort .timeoutError)) := by
     intro next
     simp only [continuation, timeout]
-  exact isClockIoMono_bind f continuation st ⟨ih, hcont, htimeout⟩
+  exact isClockIoMono_bind f st continuation ⟨ih, hcont, htimeout⟩
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_evaluate"]
+/-- Flapjack helper for the assembled clock-and-I/O theorem; its induction
+hypotheses are proof infrastructure rather than literal HOL case clauses. -/
 theorem clockIoEvaluate_cons {σ : Type} (st : State σ) (env : SemEnv Value)
     (first second : AstHOL.Exp) (rest : List AstHOL.Exp)
     (ihFirst : isClockIoMono (fun state => evaluate state env [first]) st)
@@ -76,7 +77,7 @@ theorem clockIoEvaluate_cons {σ : Type} (st : State σ) (env : SemEnv Value)
       isClockIoMono (continuation result) next := by
     intro next result heval
     cases result with
-    | err error => exact isClockIoMono_err (α := List Value) next error
+    | err error => exact isClockIoMono_err (α := List Value) (s := next) error
     | val values =>
       let mapResult : Result (List Value) Value → Result (List Value) Value := fun result => match result with
         | .err error => .err error
@@ -94,7 +95,7 @@ theorem clockIoEvaluate_cons {σ : Type} (st : State σ) (env : SemEnv Value)
       (next, .err (.abort .timeoutError)) := by
     intro next
     rfl
-  have bound := isClockIoMono_bind (fun state => evaluate state env [first]) continuation st
+  have bound := isClockIoMono_bind (fun state => evaluate state env [first]) st continuation
     ⟨ihFirst, hcont, htimeout⟩
   have fnEq : (fun state => let (next, result) := evaluate state env [first]; continuation result next) =
       (fun state => evaluate state env (first :: second :: rest)) := by
@@ -112,7 +113,8 @@ theorem clockIoEvaluate_cons {σ : Type} (st : State σ) (env : SemEnv Value)
   rw [fnEq] at bound
   exact bound
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_evaluate"]
+/-- Flapjack helper for the assembled clock-and-I/O theorem; its induction
+hypotheses are proof infrastructure rather than literal HOL case clauses. -/
 theorem clockIoEvaluate_con {σ : Type} (st : State σ) (env : SemEnv Value)
     (name : Option (Ident ModN ConN)) (args : List AstHOL.Exp)
     (ih : isClockIoMono (fun state => evaluate state env args.reverse) st) :
@@ -137,9 +139,10 @@ theorem clockIoEvaluate_con {σ : Type} (st : State σ) (env : SemEnv Value)
           cases buildConv env.c name values.reverse <;> rfl
     rw [fnEq] at mapped
     exact mapped
-  · simpa [evaluate, valid, typeError] using isClockIoMono_err (α := List Value) st (.abort .typeError)
+  · simpa [evaluate, valid, typeError] using isClockIoMono_err (α := List Value) (s := st) (.abort .typeError)
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_evaluate"]
+/-- Flapjack helper for the assembled clock-and-I/O theorem; its induction
+hypotheses are proof infrastructure rather than literal HOL case clauses. -/
 theorem clockIoEvaluate_if {σ : Type} (st : State σ) (env : SemEnv Value)
     (test yes no : AstHOL.Exp)
     (ihTest : isClockIoMono (fun state => evaluate state env [test]) st)
@@ -156,16 +159,16 @@ theorem clockIoEvaluate_if {σ : Type} (st : State σ) (env : SemEnv Value)
       isClockIoMono (continuation result) next := by
     intro next result heval
     cases result with
-    | err error => exact isClockIoMono_err (α := List Value) next error
+    | err error => exact isClockIoMono_err (α := List Value) (s := next) error
     | val values =>
       cases hif : doIf (headValue values) yes no with
-      | none => simpa only [continuation, hif, typeError] using isClockIoMono_err (α := List Value) next (.abort .typeError)
+      | none => simpa only [continuation, hif, typeError] using isClockIoMono_err (α := List Value) (s := next) (.abort .typeError)
       | some chosen => simpa only [continuation, hif] using ihBranch next values chosen heval hif
   have htimeout : ∀ next, continuation (.err (.abort .timeoutError)) next =
       (next, .err (.abort .timeoutError)) := by
     intro next
     rfl
-  have bound := isClockIoMono_bind (fun state => evaluate state env [test]) continuation st
+  have bound := isClockIoMono_bind (fun state => evaluate state env [test]) st continuation
     ⟨ihTest, hcont, htimeout⟩
   have fnEq : (fun state => let (next, result) := evaluate state env [test]; continuation result next) =
       (fun state => evaluate state env [.if_ test yes no]) := by
@@ -182,7 +185,8 @@ theorem clockIoEvaluate_if {σ : Type} (st : State σ) (env : SemEnv Value)
   rw [fnEq] at bound
   exact bound
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_evaluate"]
+/-- Flapjack helper for the assembled clock-and-I/O theorem; its induction
+hypotheses are proof infrastructure rather than literal HOL case clauses. -/
 theorem clockIoEvaluate_log {σ : Type} (st : State σ) (env : SemEnv Value)
     (op : Lop) (first second : AstHOL.Exp)
     (ihFirst : isClockIoMono (fun state => evaluate state env [first]) st)
@@ -201,19 +205,19 @@ theorem clockIoEvaluate_log {σ : Type} (st : State σ) (env : SemEnv Value)
       isClockIoMono (continuation result) next := by
     intro next result heval
     cases result with
-    | err error => exact isClockIoMono_err (α := List Value) next error
+    | err error => exact isClockIoMono_err (α := List Value) (s := next) error
     | val values =>
       cases hlog : doLog op (headValue values) second with
-      | none => simpa only [continuation, hlog, typeError] using isClockIoMono_err (α := List Value) next (.abort .typeError)
+      | none => simpa only [continuation, hlog, typeError] using isClockIoMono_err (α := List Value) (s := next) (.abort .typeError)
       | some choice =>
         cases choice with
-        | val value => simpa only [continuation, hlog] using isClockIoMono_return (β := Value) next [value]
+        | val value => simpa only [continuation, hlog] using isClockIoMono_return (β := Value) (s := next) [value]
         | exp chosen => simpa only [continuation, hlog] using ihBranch next values chosen heval hlog
   have htimeout : ∀ next, continuation (.err (.abort .timeoutError)) next =
       (next, .err (.abort .timeoutError)) := by
     intro next
     rfl
-  have bound := isClockIoMono_bind (fun state => evaluate state env [first]) continuation st
+  have bound := isClockIoMono_bind (fun state => evaluate state env [first]) st continuation
     ⟨ihFirst, hcont, htimeout⟩
   have fnEq : (fun state => let (next, result) := evaluate state env [first]; continuation result next) =
       (fun state => evaluate state env [.log op first second]) := by
@@ -232,7 +236,8 @@ theorem clockIoEvaluate_log {σ : Type} (st : State σ) (env : SemEnv Value)
   rw [fnEq] at bound
   exact bound
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_evaluate"]
+/-- Flapjack helper for the assembled clock-and-I/O theorem; its induction
+hypotheses are proof infrastructure rather than literal HOL case clauses. -/
 theorem clockIoEvaluate_mat {σ : Type} (st : State σ) (env : SemEnv Value)
     (expr : AstHOL.Exp) (clauses : List (Pat × AstHOL.Exp))
     (ihExpr : isClockIoMono (fun state => evaluate state env [expr]) st)
@@ -251,27 +256,27 @@ theorem clockIoEvaluate_mat {σ : Type} (st : State σ) (env : SemEnv Value)
       isClockIoMono (continuation result) next := by
     intro next result heval
     cases result with
-    | err error => exact isClockIoMono_err (α := List Value) next error
+    | err error => exact isClockIoMono_err (α := List Value) (s := next) error
     | val values =>
       let f : State σ → Bool := fun state => canPmatchAll env.c state.refs (clauses.map Prod.fst) (headValue values)
       let j : State σ → State σ × Result (List Value) Value := fun state => evaluateMatch state env (headValue values) clauses bindExnV
       let k : State σ → State σ × Result (List Value) Value := fun state => typeError state
       have fixed : isClockIoMono (fun state => if f next then j state else k state) next := by
         cases hmatch : f next with
-        | false => simpa [hmatch, k, typeError] using isClockIoMono_err (α := List Value) next (.abort .typeError)
+        | false => simpa [hmatch, k, typeError] using isClockIoMono_err (α := List Value) (s := next) (.abort .typeError)
         | true =>
           have condition : canPmatchAll env.c next.refs (clauses.map Prod.fst) (headValue values) = true := hmatch
           simpa only [hmatch, ↓reduceIte, j] using ihMatch next values heval condition
       have independent : ∀ state clock, f { state with clock } = f state := by
         intro state clock
         rfl
-      have branch := isClockIoMono_ifSafe f j k next ⟨independent, fixed⟩
+      have branch := isClockIoMono_ifSafe f next j k ⟨independent, fixed⟩
       simpa only [f, j, k, continuation] using branch
   have htimeout : ∀ next, continuation (.err (.abort .timeoutError)) next =
       (next, .err (.abort .timeoutError)) := by
     intro next
     rfl
-  have bound := isClockIoMono_bind (fun state => evaluate state env [expr]) continuation st
+  have bound := isClockIoMono_bind (fun state => evaluate state env [expr]) st continuation
     ⟨ihExpr, hcont, htimeout⟩
   have fnEq : (fun state => let (next, result) := evaluate state env [expr]; continuation result next) =
       (fun state => evaluate state env [.mat expr clauses]) := by
@@ -283,7 +288,8 @@ theorem clockIoEvaluate_mat {σ : Type} (st : State σ) (env : SemEnv Value)
   rw [fnEq] at bound
   exact bound
 
-@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_evaluate"]
+/-- Flapjack helper for the assembled clock-and-I/O theorem; its induction
+hypotheses are proof infrastructure rather than literal HOL case clauses. -/
 theorem clockIoEvaluate_handle {σ : Type} (st : State σ) (env : SemEnv Value)
     (expr : AstHOL.Exp) (clauses : List (Pat × AstHOL.Exp))
     (ihExpr : isClockIoMono (fun state => evaluate state env [expr]) st)
@@ -303,30 +309,30 @@ theorem clockIoEvaluate_handle {σ : Type} (st : State σ) (env : SemEnv Value)
       isClockIoMono (continuation result) next := by
     intro next result heval
     cases result with
-    | val values => exact isClockIoMono_return (β := Value) next values
+    | val values => exact isClockIoMono_return (β := Value) (s := next) values
     | err error =>
       cases error with
-      | abort error => exact isClockIoMono_err (α := List Value) next (.abort error)
+      | abort error => exact isClockIoMono_err (α := List Value) (s := next) (.abort error)
       | raise value =>
         let f : State σ → Bool := fun state => canPmatchAll env.c state.refs (clauses.map Prod.fst) value
         let j : State σ → State σ × Result (List Value) Value := fun state => evaluateMatch state env value clauses value
         let k : State σ → State σ × Result (List Value) Value := fun state => typeError state
         have fixed : isClockIoMono (fun state => if f next then j state else k state) next := by
           cases hmatch : f next with
-          | false => simpa [hmatch, k, typeError] using isClockIoMono_err (α := List Value) next (.abort .typeError)
+          | false => simpa [hmatch, k, typeError] using isClockIoMono_err (α := List Value) (s := next) (.abort .typeError)
           | true =>
             have condition : canPmatchAll env.c next.refs (clauses.map Prod.fst) value = true := hmatch
             simpa only [hmatch, ↓reduceIte, j] using ihMatch next value heval condition
         have independent : ∀ state clock, f { state with clock } = f state := by
           intro state clock
           rfl
-        have branch := isClockIoMono_ifSafe f j k next ⟨independent, fixed⟩
+        have branch := isClockIoMono_ifSafe f next j k ⟨independent, fixed⟩
         simpa only [f, j, k, continuation] using branch
   have htimeout : ∀ next, continuation (.err (.abort .timeoutError)) next =
       (next, .err (.abort .timeoutError)) := by
     intro next
     rfl
-  have bound := isClockIoMono_bind (fun state => evaluate state env [expr]) continuation st
+  have bound := isClockIoMono_bind (fun state => evaluate state env [expr]) st continuation
     ⟨ihExpr, hcont, htimeout⟩
   have fnEq : (fun state => let (next, result) := evaluate state env [expr]; continuation result next) =
       (fun state => evaluate state env [.handle expr clauses]) := by

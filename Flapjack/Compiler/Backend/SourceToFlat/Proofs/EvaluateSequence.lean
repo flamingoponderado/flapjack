@@ -27,30 +27,9 @@ def FactoredDecBoundedIH {C F : Type} [Nonempty C]
 /-- Declaration induction at a strictly smaller clock. This is the form
 needed for dynamic evaluation; unlike an unbounded hypothesis it can be
 supplied by well-founded induction on the evaluator clock. -/
-def FactoredDecClockIH {C F : Type} [Nonempty C]
+abbrev FactoredDecClockIH {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat) : Prop :=
-  ∀ (decs : List Dec) (genv : GlobalEnv) (env nextEnv : Environment) (sourceEnv : SemEnv Value) (trace : List VarN)
-    (source sourceLast : State F) (flat : FlatSem.State C F) (start finish next : NextIndices)
-    (other : Set (Nat × IndexKind)) (n n' : Nat) (gen nextGen : EnvironmentGenerationStore)
-    (flatDecs : List FlatLang.Exp) (result : Result (SemEnv Value) Value),
-    source.clock < limit → EvaluateHOL.evaluateDecs source sourceEnv decs = (sourceLast, result) →
-    factoredInvariant interp transform gen genv (start, finish, other) source flat →
-    compileDecs trace n start env gen decs = (n', next, nextEnv, nextGen, flatDecs) →
-    GlobalEnvInv genv env (fun _ => False) sourceEnv →
-    result ≠ .err (.abort .typeError) → envGenRel gen source.evalState →
-    envGenFutureRel interp nextGen source.evalState → idxPrev next finish →
-    FactoredDecCase interp transform genv source sourceLast flat finish next other nextGen nextEnv flatDecs result
-
-/-- Bounded declaration simulations below a limit supply the declaration
-hypothesis used by a smaller-clock dynamic evaluation. -/
-theorem factoredDecClockIH_of_smaller {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
-    (smaller : ∀ n, n < limit → ∀ decs, FactoredDecBoundedIH (F := F) interp transform n decs) :
-    FactoredDecClockIH (F := F) interp transform limit := by
-  intro decs genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result below
-  exact smaller source.clock below decs genv env nextEnv sourceEnv trace source sourceLast flat
-    start finish next other n n' gen nextGen flatDecs result (Nat.le_refl _)
+  ∀ n, n < limit → ∀ decs, FactoredDecBoundedIH (F := F) interp transform n decs
 
 /-- Empty declaration lists satisfy the factored induction hypothesis. -/
 theorem factoredDecBoundedIH_empty {C F : Type} [Nonempty C]

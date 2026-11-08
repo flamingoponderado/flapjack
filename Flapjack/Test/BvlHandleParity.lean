@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.BvlHandle.Compile
+import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
 
 /-! Replay examples from `bvl_handle_frontend_probe.out`. -/
 namespace Flapjack.Test.BvlHandleParity
@@ -44,9 +44,9 @@ open Flapjack.Compiler.Backend BvlHandle
       .union (.var 2) (.union (.var 0) .empty), 0, false) => true
   | _ => false
 #guard (simplifyFuel 0 (.var 0)).isNone
-#guard match compileAnyWithoutConstantsFuel 100 true 100 0
+#guard match compileAny true 100 0
     (.let [.call 0 (some 1) [], .call 0 (some 2) []] (.var 1)) with
-  | some (.let [.call 0 (some 1) []] (.let [] (.let [] (.call 0 (some 2) [])))) => true
+  | .let [.call 0 (some 1) []] (.let [] (.let [] (.call 0 (some 2) []))) => true
   | _ => false
 
 end Flapjack.Test.BvlHandleParity

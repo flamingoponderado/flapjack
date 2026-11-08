@@ -1,8 +1,20 @@
 import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyClock
+import Flapjack.Misc.ClockWeightInduction
 
 /-! Clock-bound building blocks for data-language evaluation. -/
 namespace Flapjack.Compiler.Backend.DataSem
 open Flapjack Flapjack.SemanticPrimitivesHOL
+
+/-- Fixing a result's clock cannot exceed the input state's clock. -/
+@[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "fix_clock_IMP"]
+theorem fixClock_imp {C F D G R : Type} (state : State C F) (result : R × State D G)
+    (value : R) (next : State D G) (fixed : fixClock state result = (value, next)) :
+    next.clock ≤ state.clock := by
+  cases result with
+  | mk resultValue resultState =>
+    simp only [fixClock, Prod.mk.injEq] at fixed
+    obtain ⟨_, rfl⟩ := fixed
+    exact Nat.min_le_left _ _
 
 /-- A successful local-environment cut preserves the clock. -/
 theorem cutStateOpt_clock {C F : Type} (live : Option NumSet) (state next : State C F)
@@ -260,56 +272,39 @@ theorem evaluate_call_clock_step {C F : Type} (ret : Option (List Nat × NumSet)
 Flapjack infrastructure; evaluator correspondence review remains open. -/
 theorem evaluate_clock_le {C F : Type} (program : DataLang.Prog) (state : State C F) :
     (evaluate program state).2.clock ≤ state.clock := by
-  have allRanks : ∀ clock weight : Nat, ∀ (program : DataLang.Prog) (state : State C F),
-      state.clock = clock → sizeOf program = weight → (evaluate program state).2.clock ≤ state.clock := by
-    intro clock
-    induction clock using Nat.strongRecOn with
-    | ind clock clockIH =>
-      intro weight
-      induction weight using Nat.strongRecOn with
-      | ind weight weightIH =>
-        have exprIH : ∀ (program : DataLang.Prog) (state : State C F),
-            state.clock ≤ clock → sizeOf program < weight → (evaluate program state).2.clock ≤ state.clock := by
-          intro program state clockLe weightLt
-          rcases Nat.lt_or_eq_of_le clockLe with clockLt | clockEq
-          · exact clockIH state.clock clockLt (sizeOf program) program state rfl rfl
-          · exact weightIH (sizeOf program) weightLt program state clockEq rfl
-        have smaller : ∀ (program : DataLang.Prog) (state : State C F),
-            state.clock < clock → (evaluate program state).2.clock ≤ state.clock := by
-          intro program state clockLt
-          exact clockIH state.clock clockLt (sizeOf program) program state rfl rfl
-        intro program state stateClock measure
-        cases program with
-        | skip => simp [evaluate]
-        | move dest src => exact evaluate_move_clock dest src state
-        | assign dest op names live => exact evaluate_assign_clock dest op names live state
-        | tick => exact evaluate_tick_clock state
-        | makeSpace amount names => exact evaluate_makeSpace_clock amount names state
-        | raise name => exact evaluate_raise_clock name state
-        | «return» names => exact evaluate_return_clock names state
-        | seq first second =>
-          apply evaluate_seq_clock_step first second state
-          intro mid bound
-          apply exprIH second mid (by omega)
-          simp only [DataLang.Prog.seq.sizeOf_spec] at measure
-          omega
-        | ifThenElse name yes no =>
-          apply evaluate_if_clock_step name yes no state
-          · apply exprIH yes state (by omega)
-            simp only [DataLang.Prog.ifThenElse.sizeOf_spec] at measure
-            omega
-          · apply exprIH no state (by omega)
-            simp only [DataLang.Prog.ifThenElse.sizeOf_spec] at measure
-            omega
-        | force ret label src =>
-          apply evaluate_force_clock_step ret label src state
-          intro body next bound
-          exact smaller body next (by omega)
-        | call ret dest names handler =>
-          apply evaluate_call_clock_step ret dest names handler state
-          intro body next bound
-          exact smaller body next (by omega)
-  exact allRanks state.clock (sizeOf program) program state rfl rfl
+  refine clockWeightInduction (α := DataLang.Prog) (σ := State C F) (·.clock) sizeOf
+    (motive := fun program state => (evaluate program state).2.clock ≤ state.clock) ?_ program state
+  intro program state exprIH smaller
+  cases program with
+  | skip => simp [evaluate]
+  | move dest src => exact evaluate_move_clock dest src state
+  | assign dest op names live => exact evaluate_assign_clock dest op names live state
+  | tick => exact evaluate_tick_clock state
+  | makeSpace amount names => exact evaluate_makeSpace_clock amount names state
+  | raise name => exact evaluate_raise_clock name state
+  | «return» names => exact evaluate_return_clock names state
+  | seq first second =>
+    apply evaluate_seq_clock_step first second state
+    intro mid bound
+    apply exprIH second mid (by omega)
+    simp only [DataLang.Prog.seq.sizeOf_spec] at ⊢
+    omega
+  | ifThenElse name yes no =>
+    apply evaluate_if_clock_step name yes no state
+    · apply exprIH yes state (by omega)
+      simp only [DataLang.Prog.ifThenElse.sizeOf_spec] at ⊢
+      omega
+    · apply exprIH no state (by omega)
+      simp only [DataLang.Prog.ifThenElse.sizeOf_spec] at ⊢
+      omega
+  | force ret label src =>
+    apply evaluate_force_clock_step ret label src state
+    intro body next bound
+    exact smaller body next (by omega)
+  | call ret dest names handler =>
+    apply evaluate_call_clock_step ret dest names handler state
+    intro body next bound
+    exact smaller body next (by omega)
 
 /-- The evaluator's termination clamp is inert on a completed evaluation. -/
 theorem fixClock_evaluate {C F : Type} (program : DataLang.Prog) (state : State C F) :
