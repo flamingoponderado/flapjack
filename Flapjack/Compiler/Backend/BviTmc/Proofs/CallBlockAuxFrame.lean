@@ -20,19 +20,6 @@ def AuxCore {C F : Type} (cb : CallBlock) (dest : Nat) (env : List Value)
       ∃ targetValue, mutableBlockRel g oldRefs (next.refs.eraseEq ptr) sourceValue targetValue ∧
         CallBlockEnvironment.allocHoleHasVal f next.refs extras slot idx targetValue
 
-private theorem reverse_related (f : HolFiniteMapExact Nat Nat) {xs ys : List Value}
-    (related : List.Forall₂ (valueRel f) xs ys) : List.Forall₂ (valueRel f) xs.reverse ys.reverse := by
-  induction related with
-  | nil => exact .nil
-  | cons head tail ih =>
-    have appendRelated : ∀ {a b c d : List Value}, List.Forall₂ (valueRel f) a b →
-        List.Forall₂ (valueRel f) c d → List.Forall₂ (valueRel f) (a ++ c) (b ++ d) := by
-      intro a b c d first second
-      induction first with
-      | nil => exact second
-      | cons h t rest => exact .cons h rest
-    simpa using appendRelated ih (.cons head .nil)
-
 /-- Flapjack infrastructure: linking a freshly allocated frame into the
 current auxiliary hole preserves the source heap relation and provides the
 unfinalised hole and heap-domain extension required by the recursive child. -/
@@ -461,7 +448,8 @@ theorem evaluate_aux_frame_core {C F : Type} (loc dest tag : Nat) (left right : 
         (right.map (fun n => holEl n env2)).reverse (left.map (fun n => holEl n env2)).reverse
         (right.map (fun n => holEl n env1)).reverse (left.map (fun n => holEl n env1)).reverse
         sourceValue targetValue returnedHole.2 different oldDomain freshOutside unchanged
-        (by simpa using singleHole) childBlocks (reverse_related g rightNext) (reverse_related g leftNext)
+        (by simpa using singleHole) childBlocks (List.rel_reverse rightNext)
+          (List.rel_reverse leftNext)
       simp [childRun, holHd] at run
       obtain ⟨rfl, rfl⟩ := run.symm
       refine ⟨targetResult, next, g, targetRun, ?_, nextStates, extension,

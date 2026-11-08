@@ -54,19 +54,6 @@ theorem evaluate_frame {C F : Type} (loc tag : Nat) (left right : List Nat)
       obtain ⟨value, rfl⟩ := evaluate_singleton _ env state next values childRun
       simp [BviTailrec.doApp_blockCons, List.reverse_append, holHd]
 
-private theorem append_related (f : HolFiniteMapExact Nat Nat) {xs ys xs' ys' : List Value}
-    (first : List.Forall₂ (valueRel f) xs ys) (second : List.Forall₂ (valueRel f) xs' ys') :
-    List.Forall₂ (valueRel f) (xs ++ xs') (ys ++ ys') := by
-  induction first with
-  | nil => exact second
-  | cons head tail ih => exact .cons head ih
-
-private theorem reverse_related (f : HolFiniteMapExact Nat Nat) {xs ys : List Value}
-    (related : List.Forall₂ (valueRel f) xs ys) : List.Forall₂ (valueRel f) xs.reverse ys.reverse := by
-  induction related with
-  | nil => exact .nil
-  | cons head tail ih => simpa using append_related f ih (.cons head .nil)
-
 /-- Flapjack infrastructure: a well-formed call-block constructor frame
 preserves ordinary simulation of its child. -/
 theorem evaluate_frame_core {C F : Type} (loc tag : Nat) (left right : List Nat) (child : CallBlock)
@@ -117,8 +104,8 @@ theorem evaluate_frame_core {C F : Type} (loc tag : Nat) (left right : List Nat)
         have fields : List.Forall₂ (valueRel g)
             ((right.map (fun n => holEl n env1)).reverse ++ [value] ++ (left.map (fun n => holEl n env1)).reverse)
             ((right.map (fun n => holEl n env2)).reverse ++ [value'] ++ (left.map (fun n => holEl n env2)).reverse) := by
-          simpa [List.append_assoc] using append_related g (reverse_related g rightNext)
-            (.cons valueRelated (reverse_related g leftNext))
+          simpa [List.append_assoc] using List.rel_append (List.rel_reverse rightNext)
+            (.cons valueRelated (List.rel_reverse leftNext))
         simp [childRun, holHd] at run
         obtain ⟨rfl, rfl⟩ := run.symm
         refine ⟨next, g, .val [.block tag ((right.map (fun n => holEl n env2)).reverse ++
