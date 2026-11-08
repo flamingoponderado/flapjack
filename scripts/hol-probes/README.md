@@ -393,6 +393,11 @@ Regenerate with `HOL_PROBE_ONLY=data_space_req_probeScript.sml scripts/hol-probe
 nonzero-divisor specifications; neither constrains the value at zero.
 Regenerate with `HOL_PROBE_ONLY=integer_division_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`data_sem_space_probe.out` captures the data-language heap and space
+definitions. It also replays the local growth-bound lemma and the complete
+original `size_of` equations, which HOL subsequently rebinds to a simplified theorem.
+Regenerate with `HOL_PROBE_ONLY=data_sem_space_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `data_sem_limits_probe.out` captures the typed operation-limit definitions,
 their state-update wrapper, and original array-length and nullary-tag boundary
 observations. Corresponding

@@ -116894,8 +116894,8 @@
     "lean_name": "opSpaceReset",
     "hol_path": "cakeml/compiler/backend/dataLangScript.sml",
     "hol_name": "op_space_reset_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source syntax or clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared op_space_reset in data_sem_space_probe.out: all eighteen resetting operations, the CopyByte flag, and the default case match the typed HOL clauses."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataLang/Syntax.lean",
@@ -128206,32 +128206,32 @@
   "hol_name": "size_of_heap_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Heap.lean",
   "lean_name": "sizeOfHeap",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared size_of_heap in data_sem_space_probe.out: the first component of size_of over stack_to_vs, references and the empty seen set matches HOL."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "size_of_heap_args_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Heap.lean",
   "lean_name": "sizeOfHeapArgs",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared size_of_heap_args in data_sem_space_probe.out: the arguments are prepended to stack_to_vs and the first component of size_of is returned with the same references and empty seen set."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "size_of_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Heap.lean",
   "lean_name": "sizeOfValues",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the line-112 definition with size_of_original_typed_replay in data_sem_space_probe.out, including check_res, all reference and block cases, and typed sparse-tree carriers. HOL later rebinds size_of_def at line 159 after proving check_res_size_of; Lean retains checkRes and proves its redundancy in checkRes_sizeOfValues."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "stack_to_vs_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Heap.lean",
   "lean_name": "stackToValues",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared stack_to_vs in data_sem_space_probe.out: locals, flattened stack extractions and global values are concatenated in the same order with independent compiler and FFI types."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128318,16 +128318,16 @@
   "hol_name": "do_space_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Space.lean",
   "lean_name": "doSpace",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared do_space in data_sem_space_probe.out and its source overloads: reset and non-reset branches, heap and operation space, safety checks, peak accounting and returned state match the original."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "space_consumed_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Space.lean",
   "lean_name": "spaceConsumed",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all typed space_consumed equations in data_sem_space_probe.out, including bignum and default operation cases, against the Lean clauses and reviewed arithmetic helpers."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",

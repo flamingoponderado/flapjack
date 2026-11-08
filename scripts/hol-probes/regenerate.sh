@@ -754,6 +754,9 @@ run_probe data_sem_limits_probeScript.sml data_sem_limits_probe.out \
 run_probe data_space_req_probeScript.sml data_space_req_probe.out \
   num_size part_space_req op_space_req "$cake_dir/compiler/backend/data_spaceScript.sml" "$cake_dir/compiler/backend"
 
+run_probe data_sem_space_probeScript.sml data_sem_space_probe.out \
+  op_space_reset size_of check_res_size_of_replay size_of_initial_cons_replay size_of_original_typed_replay stack_to_vs size_of_heap size_of_heap_args space_consumed do_space "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend"
+
 run_probe integer_division_probeScript.sml integer_division_probe.out \
   int_div int_mod "$hol_dir/src/integer/integerScript.sml" "$cake_dir/compiler/backend"
 

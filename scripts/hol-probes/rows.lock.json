@@ -388,6 +388,7 @@
     {"bytes": 3716, "out": "data_sem_install_probe.out", "rows": 9, "sha256": "cd7ce2fad58b99be37ab2e54397529e0700854f6e5b736cb99764d38fed21d7e"},
     {"bytes": 15175, "out": "data_sem_limits_probe.out", "rows": 8, "sha256": "6a58ceabd47462d2451bd25ee5c4ff9621dedefc5c460f422ecfed3cf4797c0b"},
     {"bytes": 3954, "out": "data_sem_semantics_probe.out", "rows": 9, "sha256": "402330070bb1479ec05a1eae25b636390ef008f0e3f88892a6cc67bb4d203d2a"},
+    {"bytes": 22405, "out": "data_sem_space_probe.out", "rows": 10, "sha256": "7e96b591d696e95e3261dcbd874b8b8f7ecb145477a58f1f1e671e38005224e2"},
     {"bytes": 29360, "out": "data_sem_stack_probe.out", "rows": 38, "sha256": "0dcab6de4137bc772f9b24b2ad70923d12f16b41f23bb326e0143c4eef9c82c4"},
     {"bytes": 4277, "out": "data_space_req_probe.out", "rows": 3, "sha256": "d7c02972a99f4d3e5069b70eeaf5371a0ddb0484b8752397b4a150f8908bb0af"},
     {"bytes": 4640, "out": "data_to_word_config_probe.out", "rows": 35, "sha256": "5bf59214bb68675496eb9b6f1f6dc9d699a507230c6ce6b55ba11dccaaa891f9"},
