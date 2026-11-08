@@ -1,7 +1,7 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppConfigGC
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
 
-/-! Assignment, allocation, and dereference cases of the primitive simulation. -/
+/-! Assignment, reference, and byte-array allocation cases of the primitive simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
@@ -146,5 +146,66 @@ theorem doApp_Opderef {C F : Type} (genv : GlobalEnv)
                 stateRel_ref_lookup genv source flat states address value lookup
               refine ⟨.val flatValue, flat, stores, nonempty, ffi, rfl, rfl, .value related, ?_⟩
               simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppFlat, flatLookup]
+
+/-- The Aw8alloc case of `do_app`; the full theorem is not yet assembled. The
+dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
+  (fmap_as_finite_support := [c, tys])]
+theorem doApp_Aw8alloc {C F : Type} (genv : GlobalEnv)
+    (s1 s2 : Store Value × HolFfiState F) (vs : List Value)
+    (r : Result Value Value) (flat : FlatSem.State C F) (flatVs : List FlatSem.Value)
+    (premises : doApp s1 .aw8alloc vs = some (s2, r) ∧
+      List.Forall₂ (StoreValueRel genv) s1.1 flat.refs.tail ∧ flat.refs ≠ [] ∧
+      List.Forall₂ (ValueRel genv) vs flatVs ∧ s1.2 = flat.ffi ∧ genvCOk genv.c ∧
+      Op.aw8alloc ≠ .aallocEmpty ∧ Op.aw8alloc ≠ .envId) :
+    ∃ flatResult flatState,
+      List.Forall₂ (StoreValueRel genv) s2.1 flatState.refs.tail ∧ flatState.refs ≠ [] ∧
+      s2.2 = flatState.ffi ∧ flat.globals = flatState.globals ∧
+      flat.refs.take 1 = flatState.refs.take 1 ∧ ResultRel ValueRel genv r flatResult ∧
+      FlatSem.doApp flat (astOpToFlatOp .aw8alloc) flatVs = some (flatState, flatResult) := by
+  obtain ⟨run, stores, nonempty, values, ffi, ok, _, _⟩ := premises
+  cases vs with
+  | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
+    | cons second rest =>
+      cases rest with
+      | cons third rest => simp [doApp, doAppNumericCore, doAppBasic] at run
+      | nil =>
+        cases first <;> cases second <;> simp [doApp, doAppNumericCore, doAppBasic] at run
+        case litv.litv sizeLit byteLit =>
+          cases sizeLit <;> cases byteLit <;> simp at run
+          case intLit.word8 size byte =>
+            cases values with
+            | cons sizeRel tail =>
+              cases tail with
+              | cons byteRel tail =>
+                cases tail
+                cases sizeRel
+                cases byteRel
+                by_cases negative : size < 0
+                · simp [negative, boundsFailure] at run
+                  obtain ⟨rfl, rfl⟩ := run
+                  refine ⟨.err (.raise FlatSem.subscriptExnV), flat, stores, nonempty, ffi, rfl, rfl, ?_, ?_⟩
+                  · exact .raise (exceptionValues_related genv ok).2.2.2
+                  · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                      FlatSem.boundsFailure, negative]
+                · let source : SemanticPrimitivesHOL.State F := ⟨flat.clock, s1.1, s1.2, 0, 0, none⟩
+                  have states : StateRel genv source flat := .intro source flat nonempty stores rfl ffi
+                  have sim := aw8alloc_related genv source flat states size (Int.le_of_not_gt negative) byte
+                  cases sourceAlloc : storeAlloc (.w8array (List.replicate size.toNat byte)) s1.1 with
+                  | mk sourceRefs sourceAddress =>
+                    simp [negative, sourceAlloc] at run
+                    obtain ⟨rfl, rfl⟩ := run
+                    cases flatAlloc : storeAlloc (.w8array (List.replicate size.toNat byte)) flat.refs with
+                    | mk flatRefs flatAddress =>
+                      simp only [source, sourceAlloc, flatAlloc] at sim
+                      obtain ⟨_, flatApply, related, afterRel, reserved⟩ := sim
+                      obtain ⟨afterNonempty, afterStores, _, afterFfi⟩ :=
+                        (stateRel_iff genv { source with refs := sourceRefs } { flat with refs := flatRefs }).mp afterRel
+                      refine ⟨.val (.loc true flatAddress), { flat with refs := flatRefs }, afterStores,
+                        afterNonempty, afterFfi, rfl, reserved.symm, .value related, ?_⟩
+                      simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatApply]
 
 end Flapjack.Compiler.Backend.SourceToFlat
