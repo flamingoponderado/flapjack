@@ -636,6 +636,10 @@ val do_app_aw8updateunsafe_replay = prove (do_app_aw8updateunsafe_typed,
   srw_tac[][markerTheory.Abbrev_def, EL_LUPDATE] >>
   srw_tac[][do_app_v_rel_lems] >> CCONTR_TAC >> rfs [] >> rveq >> fs []);
 val _ = show_thm "do_app_aw8updateunsafe_replay=" do_app_aw8updateunsafe_replay;
+val do_app_thunkop_typed = list_mk_forall
+  (List.take (do_app_binders, 3) @ [``thunk : ast$thunk_op``] @ List.drop (do_app_binders, 4),
+   subst [List.nth (do_app_binders, 3) |-> ``ast$ThunkOp thunk``] do_app_body);
+val _ = (print "do_app_thunkop_typed="; print_term do_app_thunkop_typed; print "\n");
 val shift_op = ``ast$Shift w sh n``;
 val do_app_shift_typed = list_mk_forall
   (List.take (do_app_binders, 3) @ List.rev (free_vars shift_op) @ List.drop (do_app_binders, 4),

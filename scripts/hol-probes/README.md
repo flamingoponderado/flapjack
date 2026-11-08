@@ -9588,6 +9588,8 @@ Strsub, Strlen, Strcat, VfromList, Vsub, Vsub_unsafe, Vlength, Aalloc,
 AallocFixed, Asub, Alength, Aupdate, Asub_unsafe, Aupdate_unsafe,
 Aw8sub_unsafe, and Aw8update_unsafe cases. The replays reconstruct the relevant
 local HOL prerequisites.
+`do_app_thunkop_typed` records the complete ThunkOp specialization; the
+isolated original tactic has not been replayed.
 
 `source_to_flat_init_probe.out` captures the typed original source-to-flat
 initialization definitions and evaluates the initial constructor entries and

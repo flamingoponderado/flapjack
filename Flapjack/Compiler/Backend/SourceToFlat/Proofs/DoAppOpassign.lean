@@ -1638,4 +1638,80 @@ theorem doApp_Aw8updateUnsafe {C F : Type} (genv : GlobalEnv)
                       · rw [nextEq]
                       · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatRun]
 
+/-- The ThunkOp case of `do_app`; the full theorem is not yet assembled. The
+dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app"
+  (fmap_as_finite_support := [c, tys])]
+theorem doApp_ThunkOp {C F : Type} (genv : GlobalEnv) (op : ThunkOp)
+    (s1 s2 : Store Value × HolFfiState F) (vs : List Value)
+    (r : Result Value Value) (flat : FlatSem.State C F) (flatVs : List FlatSem.Value)
+    (premises : doApp s1 (.thunkOp op) vs = some (s2, r) ∧
+      List.Forall₂ (StoreValueRel genv) s1.1 flat.refs.tail ∧ flat.refs ≠ [] ∧
+      List.Forall₂ (ValueRel genv) vs flatVs ∧ s1.2 = flat.ffi ∧ genvCOk genv.c ∧
+      Op.thunkOp op ≠ .aallocEmpty ∧ Op.thunkOp op ≠ .envId) :
+    ∃ flatResult flatState,
+      List.Forall₂ (StoreValueRel genv) s2.1 flatState.refs.tail ∧ flatState.refs ≠ [] ∧
+      s2.2 = flatState.ffi ∧ flat.globals = flatState.globals ∧
+      flat.refs.take 1 = flatState.refs.take 1 ∧ ResultRel ValueRel genv r flatResult ∧
+      FlatSem.doApp flat (astOpToFlatOp (.thunkOp op)) flatVs = some (flatState, flatResult) := by
+  obtain ⟨run, stores, nonempty, values, ffi, _, _, _⟩ := premises
+  let source : SemanticPrimitivesHOL.State F := ⟨flat.clock, s1.1, s1.2, 0, 0, none⟩
+  have states : StateRel genv source flat := .intro source flat nonempty stores rfl ffi
+  cases op with
+  | forceThunk => simp [doApp, doAppNumericCore, doAppBasic, thunkOp] at run
+  | allocThunk mode =>
+    cases vs with
+    | nil => simp [doApp, doAppNumericCore, doAppBasic, thunkOp] at run
+    | cons value rest =>
+      cases rest with
+      | cons second rest => simp [doApp, doAppNumericCore, doAppBasic, thunkOp] at run
+      | nil =>
+        cases values with
+        | cons valueRel tail =>
+          cases tail
+          rename_i flatValue
+          have successful : doApp (source.refs, source.ffi) (.thunkOp (.allocThunk mode)) [value] ≠ none := by
+            simp [source, run]
+          have sim := allocThunk_related genv source flat states mode value flatValue valueRel successful
+          cases sourceAlloc : storeAlloc (.thunk mode value) s1.1 with
+          | mk sourceRefs sourceAddress =>
+            cases flatAlloc : storeAlloc (.thunk mode flatValue) flat.refs with
+            | mk flatRefs flatAddress =>
+              simp only [source, sourceAlloc, flatAlloc, run, Option.some.injEq, Prod.mk.injEq] at sim
+              obtain ⟨⟨rfl, rfl⟩, flatApply, related, afterRel, reserved⟩ := sim
+              obtain ⟨afterNonempty, afterStores, _, afterFfi⟩ :=
+                (stateRel_iff genv { source with refs := sourceRefs } { flat with refs := flatRefs }).mp afterRel
+              refine ⟨.val (.loc false flatAddress), { flat with refs := flatRefs }, afterStores,
+                afterNonempty, afterFfi, rfl, reserved.symm, .value related, ?_⟩
+              simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, flatApply]
+  | updateThunk mode =>
+    cases vs with
+    | nil => simp [doApp, doAppNumericCore, doAppBasic, thunkOp] at run
+    | cons pointer rest =>
+      cases rest with
+      | nil => simp [doApp, doAppNumericCore, doAppBasic, thunkOp] at run
+      | cons value rest =>
+        cases rest with
+        | cons third rest => simp [doApp, doAppNumericCore, doAppBasic, thunkOp] at run
+        | nil =>
+          have successful : doApp (source.refs, source.ffi) (.thunkOp (.updateThunk mode)) [pointer, value] ≠ none := by
+            simp [source, run]
+          obtain ⟨address, sourceRefs, rfl, guard, assigned⟩ := updateThunkOp_operands source mode pointer value successful
+          cases values with
+          | cons pointerRel tail =>
+            cases tail with
+            | cons valueRel tail =>
+              cases tail
+              cases pointerRel
+              rename_i flatValue
+              obtain ⟨flatRefs, src, dst, afterRel, reserved⟩ :=
+                updateThunkOp_related genv source flat states mode address value flatValue valueRel sourceRefs guard assigned
+              simp only [source, run, Option.some.injEq, Prod.mk.injEq] at src
+              obtain ⟨rfl, rfl, rfl⟩ := src.symm
+              obtain ⟨afterNonempty, afterStores, _, afterFfi⟩ :=
+                (stateRel_iff genv { source with refs := sourceRefs } { flat with refs := flatRefs }).mp afterRel
+              refine ⟨.val FlatSem.unitValue, { flat with refs := flatRefs }, afterStores, afterNonempty,
+                afterFfi, rfl, reserved.symm, .value (.tuple genv [] [] (.nil genv)), ?_⟩
+              simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, dst]
+
 end Flapjack.Compiler.Backend.SourceToFlat
