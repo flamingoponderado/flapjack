@@ -22,6 +22,13 @@ val _ = show "check_limit=" dataSemTheory.check_lim_def;
 val _ = show "dest_bool=" dataSemTheory.dest_Boolv_def;
 val _ = show "dest_thunk=" dataSemTheory.dest_thunk_def;
 val _ = show "bad_thunk_update=" dataSemTheory.bad_thunk_update_def;
+val _ = show "is_closure=" dataSemTheory.isClos_def;
+val _ = show "value_equality=" dataSemTheory.do_eq_def;
+val _ = show "integer_application=" dataSemTheory.do_int_app_def;
+val _ = show "word_application=" dataSemTheory.do_word_app_def;
+val _ = show "build_part=" dataSemTheory.do_part_def;
+val _ = show "build_sequence=" dataSemTheory.do_build_def;
+val _ = show "build_constant=" dataSemTheory.do_build_const_def;
 val _ = show "finalise_cons=" dataSemTheory.finalise_cons_def;
 val _ = show "do_app_aux=" dataSemTheory.do_app_aux_def;
 val _ = show "nullary_cons=" (EVAL ``dataSem$do_app_aux (closLang$BlockOp (closLang$Cons 9)) []
