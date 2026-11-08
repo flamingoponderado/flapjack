@@ -25,11 +25,26 @@ theorem bVarBound_mono (expressions : List Bvl.Exp) (n m : Nat)
       | force location index => simp only [bVarBound] at bound ⊢; omega
       | tick body => simp only [bVarBound] at bound ⊢; exact bVarBound_mono [body] n m le bound
       | raise body => simp only [bVarBound] at bound ⊢; exact bVarBound_mono [body] n m le bound
-      | op operation args => simp only [bVarBound] at bound ⊢; exact bVarBound_mono args n m le bound
-      | call ticks dest args => simp only [bVarBound] at bound ⊢; exact bVarBound_mono args n m le bound
-      | ifThenElse condition yes no => simp only [bVarBound] at bound ⊢; exact ⟨bVarBound_mono [condition] n m le bound.1, bVarBound_mono [yes] n m le bound.2.1, bVarBound_mono [no] n m le bound.2.2⟩
-      | handle body handler => simp only [bVarBound] at bound ⊢; exact ⟨bVarBound_mono [body] n m le bound.1, bVarBound_mono [handler] (n + 1) (m + 1) (by omega) bound.2⟩
-      | «let» bindings body => simp only [bVarBound] at bound ⊢; exact ⟨bVarBound_mono bindings n m le bound.1, bVarBound_mono [body] (n + bindings.length) (m + bindings.length) (by omega) bound.2⟩
+      | op operation args =>
+        simp only [bVarBound] at bound ⊢
+        exact bVarBound_mono args n m le bound
+      | call ticks dest args =>
+        simp only [bVarBound] at bound ⊢
+        exact bVarBound_mono args n m le bound
+      | ifThenElse condition yes no =>
+        simp only [bVarBound] at bound ⊢
+        exact ⟨bVarBound_mono [condition] n m le bound.1,
+          bVarBound_mono [yes] n m le bound.2.1,
+          bVarBound_mono [no] n m le bound.2.2⟩
+      | handle body handler =>
+        simp only [bVarBound] at bound ⊢
+        exact ⟨bVarBound_mono [body] n m le bound.1,
+          bVarBound_mono [handler] (n + 1) (m + 1) (by omega) bound.2⟩
+      | «let» bindings body =>
+        simp only [bVarBound] at bound ⊢
+        exact ⟨bVarBound_mono bindings n m le bound.1,
+          bVarBound_mono [body] (n + bindings.length) (m + bindings.length) (by omega)
+            bound.2⟩
 termination_by expsWeight expressions
 decreasing_by
   all_goals simp_all only [expsWeight, expWeight]
