@@ -321,7 +321,6 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapExpand
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PointerAddress
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AdjustedSet
 import Flapjack.Compiler.Backend.DataToWord.Proofs.JoinEnv
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Total
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.StoreEach
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorFree
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorHeap
