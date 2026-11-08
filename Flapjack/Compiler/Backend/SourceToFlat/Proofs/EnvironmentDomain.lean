@@ -31,6 +31,21 @@ theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
     GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
 end GlobalEnvAppendPort
 
+/-- Additional local names may shadow global value bindings. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "global_env_inv_add_locals"
+  (fmap_as_finite_support := [c, tys])]
+theorem globalEnvInv_addLocals (genv : GlobalEnv) (compMap : Environment)
+    (locals1 locals2 : VarN → Prop) (env : SemEnv Value)
+    (inv : GlobalEnvInv genv compMap locals1 env) :
+    GlobalEnvInv genv compMap (fun name => locals2 name ∨ locals1 name) env := by
+  obtain ⟨values, constructors⟩ := (globalEnvInv_iff genv compMap locals1 env).mp inv
+  apply (globalEnvInv_iff genv compMap (fun name => locals2 name ∨ locals1 name) env).mpr
+  refine ⟨?_, constructors⟩
+  intro id value notShadowed lookup
+  apply values id value ?_ lookup
+  rintro ⟨name, member, same⟩
+  exact notShadowed ⟨name, Or.inr member, same⟩
+
 /-- Extending the value namespace with compiler bindings preserves the global
 environment invariant when their domain matches the new source namespace. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "global_env_inv_extend2"

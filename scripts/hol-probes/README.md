@@ -9562,8 +9562,8 @@ two-sided namespace identity, including the former's unused polymorphic binder.
 `ctor_same_type_SND`, `ctor_same_type_refl`, `eta2`, and `sem_env_eq_lemma`
 proofs with inferred types visible, including the type-changing record update.
 It also replays `lookup_build_rec_env_lem`, whose unused tuple components have
-independent types, and the local `global_env_inv_extend2` proof with its
-inferred types visible.
+independent types, and the local `global_env_inv_extend2` and
+`global_env_inv_add_locals` proofs with inferred types visible.
 
 `source_to_flat_init_probe.out` captures the typed original source-to-flat
 initialization definitions and evaluates the initial constructor entries and

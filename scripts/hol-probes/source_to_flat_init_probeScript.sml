@@ -6,6 +6,12 @@ fun show_thm label th =
   if null (hyp th) then (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
+val global_env_inv_add_locals_replay = Q.prove (
+  `!genv comp_map locals1 locals2 env.
+    source_to_flatProof$global_env_inv genv comp_map locals1 env ==>
+    source_to_flatProof$global_env_inv genv comp_map (locals2 UNION locals1) env`,
+  srw_tac[][source_to_flatProofTheory.v_rel_global_eqn] >> metis_tac []);
+val _ = show_thm "global_env_inv_add_locals_replay=" global_env_inv_add_locals_replay;
 (* The theorem is local to the original proof; preserve its inferred types. *)
 val global_env_inv_extend2_typed = ``!genv comp_map env new_vars env' locals env_c.
   set (MAP (Short o FST) new_vars) = namespace$nsDom env' /\

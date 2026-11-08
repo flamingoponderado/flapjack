@@ -340,6 +340,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "global_env_inv_add_locals",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EnvironmentDomain.lean",
+  "lean_name": "globalEnvInv_addLocals",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared global_env_inv_add_locals_replay in source_to_flat_init_probe.out: quantified carriers, premise, and conclusion using the union of locals2 and locals1 agree. The original local HOL proof is replayed. GlobalEnv.c and tys use the reviewed canonical finite-map carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "global_env_inv_extend2",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EnvironmentDomain.lean",
   "lean_name": "globalEnvInv_extendBindings",
