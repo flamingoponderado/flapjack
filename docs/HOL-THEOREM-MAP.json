@@ -16945,6 +16945,12 @@
     "reviewer": "Compared every original premise and conclusion and independently typed state, config, input, output carriers in backend_oracle_monotonic_probe.out. The proof maintains the invariant and nondecreasing counter, then orders earlier and later identifier sets."
   },
   {
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "clos_to_bvl_compile_inc_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/FullIncremental.lean", "lean_name": "closToBvlCompileInc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared clos_to_bvl_compile_inc_typed in clos_to_bvl_incremental_probe.out, including every pass, configuration update, and the concrete closure and BVL program carriers. compileIncFuel_eq_source proves the executed incremental path agrees for all inputs and starting fuel."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "calls_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosCall/Compile.lean", "lean_name": "calls",
     "statement_status": "reviewed_exact",

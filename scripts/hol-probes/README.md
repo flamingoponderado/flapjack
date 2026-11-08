@@ -9663,8 +9663,8 @@ composition replays these observations in `Flapjack/Test/CakeIncrementalBviParit
 Regenerate with `HOL_PROBE_ONLY=source_to_bvi_incremental_probeScript.sml scripts/hol-probes/regenerate.sh`.
 These observations do not prove correspondence for arbitrary programs.
 
-`clos_to_bvl_incremental_probe.out` captures the pinned original
-`clos_to_bvl_compile_inc` with closure optimizations disabled for empty input,
+`clos_to_bvl_incremental_probe.out` captures the typed original definition and
+observations of `clos_to_bvl_compile_inc` with closure optimizations disabled for empty input,
 a single closure, and a program with incoming auxiliary code and a nonempty
 call-state set. It also captures enabled multi-argument introduction for
 empty input and a nested closure, both with incoming auxiliary code. It also
