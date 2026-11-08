@@ -84,7 +84,8 @@ theorem stateRel_doApp_success_sameLocals {C F : Type} (source target sourceNext
       sourceNext.locals = targetNext.locals := by
   obtain ⟨targetNext, targetRun, after⟩ := stateRel_doApp_success source target sourceNext live op args value related run
   refine ⟨targetNext, targetRun, after, ?_⟩
-  rw [doApp_locals op args source sourceNext value run, doApp_locals op args target targetNext value targetRun]
+  rw [(doApp_control op args source sourceNext value run).1,
+    (doApp_control op args target targetNext value targetRun).1]
   exact sameLocals
 
 /-- Equal local environments make the liveness relation valid for any live
