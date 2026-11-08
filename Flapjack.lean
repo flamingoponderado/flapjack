@@ -1124,6 +1124,8 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InitialState
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ProgramCode
 import Flapjack.Compiler.Backend.ClosToBvl.FullIncremental
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FullIncremental
+import Flapjack.Compiler.Backend.BvlConst.SourceCompile
+import Flapjack.Compiler.Backend.BvlConst.Proofs.SourceCompile
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRejected
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateOrdinary
 import Flapjack.Test.ClosToBvlRecursive

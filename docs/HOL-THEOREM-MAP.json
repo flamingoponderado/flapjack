@@ -16945,6 +16945,30 @@
     "reviewer": "Compared every original premise and conclusion and independently typed state, config, input, output carriers in backend_oracle_monotonic_probe.out. The proof maintains the invariant and nondecreasing counter, then orders earlier and later identifier sets."
   },
   {
+    "hol_path": "cakeml/compiler/backend/bvl_constScript.sml", "hol_name": "compile_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/SourceCompile.lean", "lean_name": "compile",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_def_typed and compile_eq_typed in bvl_const_frontend_probe.out. HOL's compile_eq identifies the source list traversal with the reviewed compileList. compile_list_equations checks its empty and multi-element clauses, while compile_eq and compileSing give the singleton cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_constScript.sml", "hol_name": "compile_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/SourceCompile.lean", "lean_name": "compile_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both quantified conjuncts and expression/environment carrier types with compile_eq_typed in bvl_const_frontend_probe.out."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_constScript.sml", "hol_name": "compile_exp_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/SourceCompile.lean", "lean_name": "compileExp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_exp_def_typed in bvl_const_frontend_probe.out, including the empty-list Var 0 fallback. compileBounded_eq_compileExp connects the executed pass to this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_constScript.sml", "hol_name": "compile_exp_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BvlConst/SourceCompile.lean", "lean_name": "compileExp_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_exp_eq_typed in bvl_const_frontend_probe.out; the result is the reviewed singleton traversal at the empty environment."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "clos_to_bvl_compile_inc_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/FullIncremental.lean", "lean_name": "closToBvlCompileInc",
     "statement_status": "reviewed_exact",
