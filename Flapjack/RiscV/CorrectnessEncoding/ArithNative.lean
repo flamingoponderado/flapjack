@@ -12,10 +12,11 @@ open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target
 set_option autoImplicit false
 set_option maxRecDepth 200000
 set_option maxHeartbeats 2000000
-/-- The arithmetic native families shared by the arithmetic, AddOverflow and
-AddCarry encodings. Untagged local composition infrastructure; no separately
-named HOL declaration. Each lemma is universally quantified over `Family i`, so
-a caller supplies the constructor for its own instruction. -/
+/-- The native arithmetic families shared by the SubOverflow and AddOverflow
+encodings, and prepared for the AddCarry follow-up. Untagged local composition
+infrastructure; no separately named HOL declaration. Each lemma is universally
+quantified over `Family i`, so a caller supplies the constructor for its own
+instruction. -/
 inductive Family : instruction → Prop
   | xor (rd rs rt : BitVec 5) : Family (.ArithR (.XOR (rd,rs,rt)))
   | xori (rd rs : BitVec 5) (imm : BitVec 12) : Family (.ArithI (.XORI (rd,rs,imm)))
@@ -156,7 +157,8 @@ theorem step_projection_eq (d : BitVec 64 → Prop) (i : instruction)
       h.2.2.2.2.2.1, h.2.2.2.2.2.2⟩
 
 /-- Whole complete-step list congruence with native PC advancement. Untagged
-infrastructure for full arithmetic execution; no target execution is assumed. -/
+shared native-execution infrastructure used by the SubOverflow and AddOverflow
+(and later AddCarry) encoding proofs; no target execution is assumed. -/
 theorem step_list_projection (d : BitVec 64 → Prop) (is : List instruction)
     (kinds : ∀ i ∈ is, Family i) (ms ns : riscv_state)
     (ok : riscvOk ms = true) (h : riscvProj d ms = riscvProj d ns) :
@@ -195,8 +197,9 @@ theorem interleaved_projection (d : BitVec 64 → Prop)
 
 /-- Complete pure-list native frame and total PC increment, for arbitrary
 length and every intrinsic operand. The emitted-byte execution connection is
-proved per instruction above; full encoded-list assertions are assembled in the
-parent arithmetic counterpart module. -/
+proved per instruction above; full encoded-list assertions are assembled in
+each encoding's parent counterpart module (SubOverflow, AddOverflow, and later
+AddCarry). -/
 theorem step_list_frame (is : List instruction)
     (kinds : ∀ i ∈ is, Family i) (ms : riscv_state)
     (ok : riscvOk ms = true) :
@@ -219,7 +222,9 @@ theorem step_list_frame (is : List instruction)
       ms.c_PC ms.procID + (BitVec.ofNat 64 (4 * is.length) + 4)
     rw [BitVec.add_assoc, BitVec.add_comm (4 : BitVec 64) (BitVec.ofNat 64 (4 * is.length))]
 
-/-- arithmetic-local composition infrastructure with no separately named HOL original. -/
+/-- Shared native-execution infrastructure used by the SubOverflow and
+AddOverflow (and later AddCarry) encoding proofs, with no separately named HOL
+original. -/
 theorem native_execute (d : BitVec 64 → Prop) (is : List instruction)
     (kinds : ∀ i ∈ is, Family i)
     (nonzero : ∀ i ∈ is, destination i ≠ 0#5)
@@ -283,7 +288,7 @@ exactly four per instruction, and preserves every byte in the original domain.
 The environment may change processor identity or memory outside that domain;
 no stronger preservation premise is introduced. Untagged composition
 infrastructure; original full encoder assertions are assembled separately in
-the parent arithmetic counterpart module. -/
+each encoding's parent counterpart module. -/
 theorem execute_frame (d : BitVec 64 → Prop) (is : List instruction)
     (kinds : ∀ i ∈ is, Family i)
     (nonzero : ∀ i ∈ is, destination i ≠ 0#5)
