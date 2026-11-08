@@ -18900,19 +18900,27 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "is_pure_EVERY_aconv",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Reachability.lean",
+    "lean_name": "isPure_every_aconv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared pure_every_eta in the typed HOL probe: the single expression-list binder and the eta-expanded and plain purity tests agree, with EVERY rendered as List.all and Boolean equality. The expression carrier and purity analysis are separately reviewed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "total_pat_IMP",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/TotalPattern.lean",
     "lean_name": "totalPat_imp",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out. Full pattern evaluator, carrier, and statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared both conjuncts with total_pattern_no_match in the typed HOL probe: the shared, independent compiler and FFI state types, match results, totality premises, length condition and no-match conclusions agree. The pattern matchers, total-pattern analysis and carriers have separately reviewed source counterparts."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "EXISTS_total_pat",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/TotalPattern.lean",
     "lean_name": "exists_totalPat",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; row payload type remains polymorphic. Full pattern evaluator, carrier, and statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared row_total_pattern_no_match in the typed HOL probe: the premise applies the total-pattern test to the mapped first components, and the conclusion excludes a row no-match. The row payload type and compiler and FFI state types remain independent. The matcher, analysis and carriers have separately reviewed source counterparts."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",

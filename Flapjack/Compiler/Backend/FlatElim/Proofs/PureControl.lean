@@ -289,7 +289,8 @@ theorem pureEvaluation_mat {C F : Type} (env : FlatSem.Environment FlatSem.Value
         have rowTotal : rows.any (fun row => totalPat row.1) = true := by
           rw [← hasTotalPat_eq_any]
           exact pure.2
-        exact (exists_totalPat rows bodyState value rowTotal noMatch).elim
+        exact (exists_totalPat rows bodyState value
+          (by simpa only [List.any_map, Function.comp_def] using rowTotal) noMatch).elim
     · rename_i bindings branch selected
       simp only [bodyEval, clocks, Nat.min_self] at selected
       change FlatSem.selectRow bodyState rows value FlatSem.bindExnV = .ok (bindings, branch) at selected

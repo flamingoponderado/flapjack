@@ -7,6 +7,12 @@ import Aesop
 /-! Dependency bounds for flat elimination closure. -/
 namespace Flapjack.Compiler.Backend.FlatElim
 
+/-- Eta expansion leaves the list-wide purity test unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "is_pure_EVERY_aconv"]
+theorem isPure_every_aconv (expressions : List FlatLang.Exp) :
+    expressions.all (fun expression => isPure expression) = expressions.all isPure := by
+  rfl
+
 /-- A dependency edge looks up the source key and then the target key in its
 stored set. -/
 @[hol "HOL/examples/algorithms/spt_closureScript.sml" "is_adjacent_def"]
