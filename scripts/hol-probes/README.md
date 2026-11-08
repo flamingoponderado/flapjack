@@ -9570,10 +9570,11 @@ The `do_app_typed` row records the inferred statement of the local primitive
 simulation theorem; `do_app_configGC_replay`, `do_app_shift_replay`,
 `do_app_equality_replay`, `do_app_arith_replay`, `do_app_fromto_replay`,
 `do_app_test_replay`, `do_app_opapp_replay`, `do_app_opassign_replay`,
-`do_app_opref_replay`, `do_app_opderef_replay`, and `do_app_aw8alloc_replay`
+`do_app_opref_replay`, `do_app_opderef_replay`, `do_app_aw8alloc_replay`, and
+`do_app_aw8sub_replay`
 replay its ConfigGC, Shift, Equality, Arith, FromTo, Test, Opapp, Opassign,
-Opref, Opderef, and Aw8alloc cases. The replays reconstruct the relevant local
-HOL prerequisites.
+Opref, Opderef, Aw8alloc, and Aw8sub cases. The replays reconstruct the
+relevant local HOL prerequisites.
 
 `source_to_flat_init_probe.out` captures the typed original source-to-flat
 initialization definitions and evaluates the initial constructor entries and
