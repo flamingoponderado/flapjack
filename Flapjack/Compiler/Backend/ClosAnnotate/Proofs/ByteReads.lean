@@ -59,7 +59,7 @@ theorem applyMemory_byteAt {C F : Type} (reference : Bool) (value : Value) (inde
   cases reference with
   | false =>
     cases value <;> simp [applyMemory, byteAt, observedBytes]
-    all_goals split <;> simp_all [Option.map_eq_bind, Function.comp_def, Option.bind_assoc]
+    all_goals split <;> simp_all [Option.map_eq_bind, Option.bind_assoc]
   | true =>
     cases value with
     | refPtr flag ptr =>
@@ -67,7 +67,7 @@ theorem applyMemory_byteAt {C F : Type} (reference : Bool) (value : Value) (inde
       | none => simp [applyMemory, byteAt, observedBytes, refByteArray, h]
       | some ref =>
         cases ref <;> simp [applyMemory, byteAt, observedBytes, refByteArray, h]
-        all_goals split <;> simp_all [Option.map_eq_bind, Function.comp_def, Option.bind_assoc]
+        all_goals split <;> simp_all [Option.map_eq_bind, Option.bind_assoc]
     | _ => simp [applyMemory, byteAt, observedBytes]
 
 /-- Reading byte arrays or byte vectors preserves the primitive simulation. -/

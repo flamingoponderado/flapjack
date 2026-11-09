@@ -1,4 +1,5 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables.Original
+import Flapjack.Compiler.Backend.ClosAnnotate.Shift.OriginalEquivalence
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ShiftedEnv
 import Flapjack.Compiler.Backend.Semantics.ClosSem
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
@@ -10,9 +11,10 @@ namespace Flapjack.Compiler.Backend.ClosAnnotate
 open Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.ClosProps
 
 mutual
-/-- Relate source and annotated closure values. The mutually inductive
-relation follows the source cases, but is untagged until the evaluator and
-value carriers have been reviewed against HOL. -/
+/-- Relate source and annotated closure values. HOL's nested list relation is
+factored into the mutually inductive `FunctionsRel`, characterized by
+`functionsRel_iff` below. This non-identity representation is not yet covered
+by a reviewed HOL qualifier, so the relation remains untagged. -/
 inductive ValueRel : Value → Value → Prop where
   | number (value : Int) : ValueRel (.number value) (.number value)
   | word64 (value : BitVec 64) : ValueRel (.word64 value) (.word64 value)
@@ -22,8 +24,8 @@ inductive ValueRel : Value → Value → Prop where
   | refPtr (flag : Bool) (address : Nat) : ValueRel (.refPtr flag address) (.refPtr flag address)
   | closure (location : Option Nat) (args nextArgs env nextEnv : List Value)
       (arity m : Nat) (body nextBody : ClosLang.Exp) (index : Spt Nat) :
-      shiftList (altFree [body]).1 m arity index = [nextBody] →
-      (∀ n, altFv n [body] = true → arity ≤ n → EnvOk m 0 index env nextEnv (n - arity)) →
+      shiftSource (altFreeSource [body]).1 m arity index = [nextBody] →
+      (∀ n, altFvSource n [body] = true ∧ arity ≤ n → EnvOk m 0 index env nextEnv (n - arity)) →
       everyFnVarsNone [body] → env.length = m → List.Forall₂ ValueRel args nextArgs →
       ValueRel (.closure location args env arity body) (.closure location nextArgs nextEnv arity nextBody)
   | recclosure (location : Option Nat) (args nextArgs env nextEnv : List Value)
@@ -40,8 +42,8 @@ inductive FunctionsRel : List Value → List Value → Nat →
   | nil (env nextEnv : List Value) (count : Nat) : FunctionsRel env nextEnv count [] []
   | cons (env nextEnv : List Value) (count arity m : Nat) (body nextBody : ClosLang.Exp)
       (index : Spt Nat) (functions nextFunctions : List (Nat × ClosLang.Exp)) :
-      shiftList (altFree [body]).1 m (count + arity) index = [nextBody] →
-      (∀ n, altFv n [body] = true → arity + count ≤ n →
+      shiftSource (altFreeSource [body]).1 m (count + arity) index = [nextBody] →
+      (∀ n, altFvSource n [body] = true ∧ arity + count ≤ n →
         EnvOk m 0 index env nextEnv (n - (arity + count))) →
       everyFnVarsNone [body] → env.length = m →
       FunctionsRel env nextEnv count functions nextFunctions →
@@ -56,7 +58,7 @@ inductive EnvOk : Nat → Nat → Spt Nat → List Value → List Value → Nat 
       n < l → ValueRel (@Flapjack.holEl Value ⟨unitValue⟩ n env) (@Flapjack.holEl Value ⟨unitValue⟩ n nextEnv) →
       n < env.length → n < nextEnv.length → EnvOk m l index env nextEnv n
   | captured (m l : Nat) (index : Spt Nat) (env nextEnv : List Value) (n compact : Nat) :
-      l ≤ n → n < l + m → sptLookup (n - l) index = some compact →
+      l ≤ n → n < l + m → n < l + m → sptLookup (n - l) index = some compact →
       n < env.length → l + compact < nextEnv.length →
       ValueRel (@Flapjack.holEl Value ⟨unitValue⟩ n env) (@Flapjack.holEl Value ⟨unitValue⟩ (l + compact) nextEnv) →
       EnvOk m l index env nextEnv n
@@ -69,8 +71,8 @@ theorem functionsRel_iff (env nextEnv : List Value) (count : Nat)
     FunctionsRel env nextEnv count functions nextFunctions ↔
       List.Forall₂ (fun left right => ∃ m i,
         right.1 = left.1 ∧
-        shiftList (altFree [left.2]).1 m (count + left.1) i = [right.2] ∧
-        (∀ n, altFv n [left.2] = true → left.1 + count ≤ n →
+        shiftSource (altFreeSource [left.2]).1 m (count + left.1) i = [right.2] ∧
+        (∀ n, altFvSource n [left.2] = true ∧ left.1 + count ≤ n →
           EnvOk m 0 i env nextEnv (n - (left.1 + count))) ∧
         everyFnVarsNone [left.2] ∧ env.length = m) functions nextFunctions := by
   constructor
@@ -103,7 +105,7 @@ theorem envOk_getVar (m l : Nat) (index : Spt Nat) (env nextEnv : List Value) (n
   | outside _ _ _ _ _ _ beyond => omega
   | «local» _ _ _ _ _ _ below valueRel sourceBound targetBound =>
     simpa [getVar, below] using And.intro sourceBound (And.intro targetBound valueRel)
-  | captured _ _ _ _ _ _ compact above below lookup sourceBound targetBound valueRel =>
+  | captured _ _ _ _ _ _ compact above below _ lookup sourceBound targetBound valueRel =>
     have notBelow : ¬ n < l := by omega
     simpa [getVar, notBelow, lookup] using And.intro sourceBound (And.intro targetBound valueRel)
 
@@ -163,7 +165,7 @@ theorem envOk_shiftedEnv (m l : Nat) (index : Spt Nat) (env nextEnv selected : L
       rw [Flapjack.holEl_eq_getElem _ _ selectedInfo.1]
       exact selectedInfo.2
     have sourceRelated := envOk_getVar m l index env nextEnv n related (by omega)
-    apply EnvOk.captured (m + l) 0 (shiftedEnv 0 filtered) env selected n position (by omega) (by omega)
+    apply EnvOk.captured (m + l) 0 (shiftedEnv 0 filtered) env selected n position (by omega) (by omega) (by omega)
     · simpa using mapLookup
     · exact sourceRelated.1
     · simpa using selectedInfo.1

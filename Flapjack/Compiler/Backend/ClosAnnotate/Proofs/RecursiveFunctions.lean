@@ -21,8 +21,9 @@ theorem functionsRel_annotate (env captured : List Value) (count m : Nat) (index
     obtain ⟨arity, body⟩ := first
     simp only [altFreeFuns, List.map_cons, shiftFuns]
     apply FunctionsRel.cons env captured count arity m body _ index rest _
-    · simp [altFree_singleton, shiftList, Nat.add_comm]
-    · exact live arity body (by simp)
+    · simp [shiftSource_eq_shiftList, altFreeSource_eq_altFree, altFree_singleton, shiftList, Nat.add_comm]
+    · intro n ⟨present, bound⟩
+      exact live arity body (by simp) n (by simpa only [altFvSource_eq_altFv] using present) bound
     · exact safe arity body (by simp)
     · exact length
     · apply ih

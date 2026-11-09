@@ -59,7 +59,7 @@ theorem primitiveSimulation_elemAt {C F : Type} (index : Nat) :
     cases args with
     | nil => rfl
     | cons first rest => cases rest with
-      | nil => cases first <;> simp [applyBlock, Option.map_eq_bind, Function.comp_def]
+      | nil => cases first <;> simp [applyBlock, Option.map_eq_bind]
       | cons second rest => cases first <;> rfl
   · intro tag fields nextFields related
     exact optionRel_getElem fields nextFields related index

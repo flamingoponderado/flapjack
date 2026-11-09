@@ -39,9 +39,9 @@ theorem envOk_extend_ignore (m l : Nat) (index : Spt Nat)
       exact valueRel
     · simp only [List.length_append]; omega
     · simp only [List.length_append]; omega
-  | captured _ _ _ _ _ _ compact above below lookup sourceBound targetBound valueRel =>
+  | captured _ _ _ _ _ _ compact above below _ lookup sourceBound targetBound valueRel =>
     apply EnvOk.captured m (l + front.length) index (front ++ env) (nextFront ++ nextEnv)
-      (front.length + _) compact (by omega) (by omega)
+      (front.length + _) compact (by omega) (by omega) (by omega)
     · have sameIndex : front.length + (n - front.length) - (l + front.length) = n - front.length - l := by omega
       simpa [sameIndex] using lookup
     · simp only [List.length_append]; omega

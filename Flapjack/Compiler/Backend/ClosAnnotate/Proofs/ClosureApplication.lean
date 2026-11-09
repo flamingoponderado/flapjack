@@ -28,6 +28,8 @@ theorem functionsRel_getElem (env nextEnv : List Value) (count : Nat)
       obtain ⟨nextArity, nextBody⟩ := right
       simp only at equalArity shifted
       subst nextArity
+      simp only [shiftSource_eq_shiftList, altFreeSource_eq_altFree] at shifted
+      simp only [altFvSource_eq_altFv, and_imp] at live
       exact ⟨nextBody, m, index, by simp, shifted, live, safe, length⟩
     | succ i =>
       have rest : functions[i]? = some (arity, body) := by simpa using found
@@ -72,6 +74,8 @@ theorem destClosure_related_full (maxApp : Nat) (requested : Option Nat)
   cases related with
   | number _ | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ => simp [destClosure] at run
   | closure location supplied nextSupplied env nextEnv arity m original nextBody index shifted live safe length suppliedRel =>
+    simp only [shiftSource_eq_shiftList, altFreeSource_eq_altFree] at shifted
+    simp only [altFvSource_eq_altFv, and_imp] at live
     have argsLen := argsRel.length_eq
     have suppliedLen := suppliedRel.length_eq
     by_cases valid : checkLoc maxApp requested location arity args.length supplied.length && supplied.length < arity

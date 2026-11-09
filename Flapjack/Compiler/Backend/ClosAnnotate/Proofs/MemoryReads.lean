@@ -123,7 +123,7 @@ theorem applyMemory_valueAt {C F : Type} (value : Value) (index : Int) (state : 
     applyMemory .el [value, .number index] state = (valueAt value index state.refs).map (fun x => (x, state)) := by
   cases value with
   | block tag fields =>
-    by_cases negative : index < 0 <;> simp [applyMemory, valueAt, negative, Option.map_eq_bind, Function.comp_def]
+    by_cases negative : index < 0 <;> simp [applyMemory, valueAt, negative, Option.map_eq_bind]
   | refPtr flag ptr =>
     cases h : state.refs.lookup ptr with
     | none => simp [applyMemory, valueAt, refValueArray, h]
@@ -131,7 +131,7 @@ theorem applyMemory_valueAt {C F : Type} (value : Value) (index : Int) (state : 
       cases ref with
       | valueArray fields =>
         by_cases negative : index < 0 <;> simp [applyMemory, valueAt, refValueArray, h, negative,
-          Option.map_eq_bind, Function.comp_def]
+          Option.map_eq_bind]
       | _ => simp [applyMemory, valueAt, refValueArray, h]
   | _ => simp [applyMemory, valueAt]
 
