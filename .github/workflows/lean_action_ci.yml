@@ -26,7 +26,7 @@ jobs:
       # restore it here before lean-action builds, and save it only from main.
       - name: Restore Lake build cache
         id: lake-cache
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v5.1.0
         with:
           path: .lake/build
           key: lake-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
@@ -125,7 +125,7 @@ jobs:
         if: >-
           github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
           && steps.lake-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v5.1.0
         with:
           path: .lake/build
           key: ${{ steps.lake-cache.outputs.cache-primary-key }}
