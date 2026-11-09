@@ -415,6 +415,7 @@ theorem specRow_match (constructor : Ctor) (original row : List Pat)
     (premises : destVal refs value = some (constructor, fields) ∧ row ∈ specRow constructor original) :
     pmatchList refs row (fields ++ values) = pmatchList refs original (value :: values) := by
   obtain ⟨found, member⟩ := premises
+  have lenEq := destVal_length refs value constructor fields found
   cases original with
   | nil => simp [specRow] at member
   | cons pattern rest =>
@@ -423,11 +424,37 @@ theorem specRow_match (constructor : Ctor) (original row : List Pat)
     | any =>
       simp only [specRow, List.mem_singleton] at member
       subst row
-      have lengthEq := destVal_length refs value constructor fields found
-      rw [pmatchList_append refs (anys (ctorArity constructor)) rest fields values (by simp [lengthEq])]
-      simp [pmatchList_anys, lengthEq, pmatch, pand]
-    | ref pattern =>
-      by_cases isRef : constructor = .refC
+      rw [pmatchList_append refs (anys (ctorArity constructor)) rest fields values (by simp [lenEq])]
+      simp [pmatchList_anys, pmatch, pand, lenEq]
+    | cons info qs =>
+      cases info with
+      | none =>
+        by_cases ctorEq : constructor = .tupC qs.length
+        · subst constructor
+          simp only [specRow, ↓reduceIte, List.mem_singleton] at member
+          subst row
+          simp only [destVal] at found
+          split at found
+          all_goals try split at found
+          all_goals simp_all [pmatch, pand, Ctor.tupC.injEq]
+          all_goals rw [pmatchList_append refs qs rest fields values (by simp_all [ctorArity])]
+          all_goals simp [pand]
+        · simp [specRow, ctorEq] at member
+      | some ts =>
+        obtain ⟨tag, siblings⟩ := ts
+        by_cases ctorEq : constructor = .tagC tag qs.length
+        · subst constructor
+          simp only [specRow, ↓reduceIte, List.mem_singleton] at member
+          subst row
+          simp only [destVal] at found
+          split at found
+          all_goals try split at found
+          all_goals simp_all [pmatch, pand, Ctor.tagC.injEq]
+          all_goals rw [pmatchList_append refs qs rest fields values (by simp_all [ctorArity])]
+          all_goals simp [pand, ctorArity]
+        · simp [specRow, ctorEq] at member
+    | ref q =>
+      by_cases ctorEq : constructor = .refC
       · subst constructor
         simp only [specRow, ↓reduceIte, List.mem_singleton] at member
         subst row
@@ -438,48 +465,10 @@ theorem specRow_match (constructor : Ctor) (original row : List Pat)
           cases lookup : refs.lookup address with
           | none => simp [destVal, lookup] at found
           | some child =>
-            simp only [destVal, lookup, Option.some.injEq, Prod.mk.injEq,
-              true_and] at found
+            simp only [destVal, lookup, Option.some.injEq, Prod.mk.injEq, true_and] at found
             subst fields
             simp [pmatch, lookup]
-      · simp [specRow, isRef] at member
-    | cons info patterns =>
-      cases info with
-      | none =>
-        by_cases ctorEq : constructor = .tupC patterns.length
-        · subst constructor
-          simp only [specRow, ↓reduceIte, List.mem_singleton] at member
-          subst row
-          cases value with
-          | litv _ | other => simp [destVal] at found
-          | refPtr address => cases lookup : refs.lookup address <;> simp [destVal, lookup] at found
-          | term tag args =>
-            cases tag with
-            | some actual => simp [destVal] at found
-            | none =>
-              simp only [destVal, Option.some.injEq, Prod.mk.injEq, Ctor.tupC.injEq] at found
-              obtain ⟨lengthEq, rfl⟩ := found
-              rw [pmatchList_append refs patterns rest args values lengthEq.symm]
-              simp [pmatch]
-        · simp [specRow, ctorEq] at member
-      | some info =>
-        obtain ⟨tag, siblings⟩ := info
-        by_cases ctorEq : constructor = .tagC tag patterns.length
-        · subst constructor
-          simp only [specRow, ↓reduceIte, List.mem_singleton] at member
-          subst row
-          cases value with
-          | litv _ | other => simp [destVal] at found
-          | refPtr address => cases lookup : refs.lookup address <;> simp [destVal, lookup] at found
-          | term actual args =>
-            cases actual with
-            | none => simp [destVal] at found
-            | some actual =>
-              simp only [destVal, Option.some.injEq, Prod.mk.injEq, Ctor.tagC.injEq] at found
-              obtain ⟨⟨rfl, lengthEq⟩, rfl⟩ := found
-              rw [pmatchList_append refs patterns rest args values lengthEq.symm]
-              simp [pmatch, lengthEq]
-        · simp [specRow, ctorEq] at member
+      · simp [specRow, ctorEq] at member
 
 /-- Each row of a specialized matrix comes from an equally matching source row. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "spec_mat_MEM"
