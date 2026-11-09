@@ -23,4 +23,33 @@ theorem altFvSource_eq_altFv (index : Nat) (expressions : List Exp) :
     altFvSource index expressions = altFv index expressions := by
   simp [altFvSource, altFv, altFreeSource_eq_altFree]
 
+/-- Free-variable membership in a singleton expression. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "alt_fv1_def"]
+noncomputable def altFvOneSource (index : Nat) (expression : Exp) : Bool :=
+  altFvSource index [expression]
+
+/-- The empty expression list has no free variables. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "alt_fv_nil"]
+theorem altFvSource_nil (index : Nat) : altFvSource index [] = false := by
+  rw [altFvSource_eq_altFv, altFv_nil]
+
+/-- Free-variable membership of a list is membership in its head or tail. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "alt_fv_cons"]
+theorem altFvSource_cons (index : Nat) (first : Exp) (rest : List Exp) :
+    altFvSource index (first :: rest) =
+      (altFvOneSource index first || altFvSource index rest) := by
+  simp only [altFvOneSource, altFvSource_eq_altFv]
+  exact altFv_cons index first rest
+
+/-- Replication has the same free variables as its element when nonempty. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "alt_fv_REPLICATE"]
+theorem altFvSource_replicate (index count : Nat) (expression : Exp) :
+    altFvSource index (List.replicate count expression) =
+      (decide (0 < count) && altFvOneSource index expression) := by
+  induction count with
+  | zero => simp [altFvSource_nil]
+  | succ count ih =>
+    rw [List.replicate_succ, altFvSource_cons, ih]
+    cases count <;> simp
+
 end Flapjack.Compiler.Backend.ClosAnnotate

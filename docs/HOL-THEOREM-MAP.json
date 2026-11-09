@@ -120,6 +120,30 @@
   "reviewer": "Compared shift_obeys_max_app_typed: the bound and all expression-list, natural and sparse-tree index variables are unrestricted. Both occurrences of EVERY are membership quantification over the reviewed obeysMaxApp predicate, and the conclusion uses original shiftSource."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_fv1_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "altFvOneSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alt_fv1_def_typed: the natural index and expression feed the original free-variable observation on a singleton. Both observations return HOL Boolean values as Lean Bool."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_fv_nil",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "altFvSource_nil",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alt_fv_nil_typed: the unrestricted natural index and empty expression list give Boolean false under the original free-variable observation."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_fv_cons",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "altFvSource_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alt_fv_cons_typed: index, head and tail are unrestricted, and the original free-variable observation equals the Boolean disjunction of the source singleton and tail observations."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_fv_REPLICATE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "altFvSource_replicate",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alt_fv_REPLICATE_typed: unrestricted index, natural count and expression, original replication and Boolean conjunction of positive count and the singleton observation agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_free_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "altFreeSource_observation",
   "statement_status": "reviewed_exact",
