@@ -35,12 +35,10 @@ example : Flapjack.Compiler.Backend.FlatSem.valueSizeHOL
 
 open Flapjack.Compiler.Backend.FlatSem in
 example : valueSizeHOL (.closure ⟨[(.implode [97], .litv (.intLit 2))]⟩
-    (.implode [120]) (.lit .none (.intLit 4))) =
-    1 + (environmentSizeHOL ⟨[(.implode [97], .litv (.intLit 2))]⟩ + 4) := by decide
+    (.implode [120]) (.lit .none (.intLit 4))) = 12 := by decide
 
 open Flapjack.Compiler.Backend.FlatSem in
 example : valueSizeHOL (.recclosure ⟨[]⟩
-    [(.implode [102], .implode [120], .lit .none (.intLit 1))] (.implode [102])) =
-    1 + (environmentSizeHOL ⟨[]⟩ + 11) := by decide
+    [(.implode [102], .implode [120], .lit .none (.intLit 1))] (.implode [102])) = 13 := by decide
 
 end Flapjack.Test.FlatGeneratedSizeParity

@@ -215,6 +215,14 @@ val _ = show_thm "flat_environment_size_def_typed=" flatSemTheory.environment_si
 fun show_flat_value_size label tm =
   let val th = (REWRITE_CONV [flatSemTheory.v_size_def] THENC EVAL) tm
   in print label; print_term (rhs (concl th)); print "\n" end;
-val _ = show_flat_value_size "flat_value_size_closure=" ``flatSem$v_size (flatSem$Closure <|v := [(mlstring$implode [CHR 97],flatSem$Litv (ast$IntLit 2))]|> (mlstring$implode [CHR 120]) (flatLang$Lit backend_common$None (ast$IntLit 4)))``;
-val _ = show_flat_value_size "flat_value_size_recclosure=" ``flatSem$v_size (flatSem$Recclosure <|v := []|> [(mlstring$implode [CHR 102],mlstring$implode [CHR 120],flatLang$Lit backend_common$None (ast$IntLit 1))] (mlstring$implode [CHR 102]))``;
+(* Build the actual generated record constructor, avoiding record-update syntax
+   that leaves v1_size symbolic under EVAL. *)
+val environment_ctor = prim_mk_const {Thy = "flatSem", Name = "recordtype.environment"};
+fun mk_flat_environment entries =
+  let val (domain, _) = dom_rng (type_of environment_ctor)
+  in mk_comb (inst (match_type domain (type_of entries)) environment_ctor, entries) end;
+val closure_env = mk_flat_environment ``[(mlstring$implode [CHR 97],flatSem$Litv (ast$IntLit 2))]``;
+val empty_flat_env = mk_flat_environment ``[]:(mlstring # flatSem$v) list``;
+val _ = show_flat_value_size "flat_value_size_closure=" ``flatSem$v_size (flatSem$Closure ^closure_env (mlstring$implode [CHR 120]) (flatLang$Lit backend_common$None (ast$IntLit 4)))``;
+val _ = show_flat_value_size "flat_value_size_recclosure=" ``flatSem$v_size (flatSem$Recclosure ^empty_flat_env [(mlstring$implode [CHR 102],mlstring$implode [CHR 120],flatLang$Lit backend_common$None (ast$IntLit 1))] (mlstring$implode [CHR 102]))``;
 val _ = show_eval "flat_value_size_vector=" ``flatSem$v_size (flatSem$Vectorv [flatSem$Conv (SOME (2,SOME 3)) [flatSem$Loc T 4]])``;

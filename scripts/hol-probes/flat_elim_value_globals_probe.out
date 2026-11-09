@@ -123,6 +123,6 @@ flat_exp_size_branch=(19 :num)
 flat_exp_size_binding=(23 :num)
 bool_size_def_typed=∀(b :bool). bool_size b = (0 :num)
 flat_environment_size_def_typed=∀(f :φ -> num) (a :(mlstring # φ) list). environment_size f (environment a) = (1 :num) + list_size (pair_size mlstring_size f) a
-flat_value_size_closure=(1 :num) + (v1_size <|v := [(«a»,(Litv (IntLit (2 :int)) :v))]|> + (4 :num))
-flat_value_size_recclosure=(1 :num) + (v1_size <|v := ([] :(mlstring # v) list)|> + (11 :num))
+flat_value_size_closure=(12 :num)
+flat_value_size_recclosure=(13 :num)
 flat_value_size_vector=(17 :num)
