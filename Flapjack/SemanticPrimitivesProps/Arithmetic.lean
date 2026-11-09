@@ -4,18 +4,6 @@ import Flapjack.SemanticPrimitivesHOL.Arithmetic
 namespace Flapjack.SemanticPrimitivesProps
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
-/-- Mapping a checked float list through the HOL selector and constructor
-recovers the list. This Flapjack helper has no separate HOL declaration. -/
-theorem checkedFloatValues_roundtrip (values : List Value)
-    (checked : values.all (checkType .float64T) = true) :
-    values.map (fun v => Value.litv (.float64 (theLitvFloat64 v))) = values := by
-  induction values with
-  | nil => rfl
-  | cons value rest ih =>
-    simp only [List.all_cons, Bool.and_eq_true] at checked
-    cases value <;> simp_all [checkType]
-    case litv lit => cases lit <;> simp_all [theLitvFloat64]
-
 /-- A successful primitive arithmetic operation has the requested type. -/
 @[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "do_arith_check_type"]
 theorem doArith_checkType (action : Arith) (typ : PrimType) (values : List Value) (result : Value)
