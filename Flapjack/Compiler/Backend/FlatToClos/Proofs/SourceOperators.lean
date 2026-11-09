@@ -4,7 +4,6 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveConversions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ApplicationOperators
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Array
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.ThunkOperations
 
 /-! Dispatcher for ordinary source operators in the proof-side simulation.
 The special application, assignment, dynamic installation, and thunk forcing cases
@@ -147,8 +146,18 @@ theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.
     · simp [destNop]
     · intro s vs sNext result tNext xs db t ws tt premises
       exact opFfi _ s vs sNext result tNext xs db t ws tt (⟨name, rfl⟩) premises
-  | allocThunk mode => exact evaluate_allocThunk env names values source target trace mode args argsSim notTypeError
-  | updateThunk mode => exact evaluate_updateThunk env names values source target trace mode args argsSim notTypeError
+  | allocThunk mode =>
+    apply evalSim_app_of_op env names values source target trace (.src (.thunkOp (.allocThunk mode))) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opThunk _ s vs sNext result tNext xs db t ws tt _ rfl premises
+  | updateThunk mode =>
+    apply evalSim_app_of_op env names values source target trace (.src (.thunkOp (.updateThunk mode))) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opThunk _ s vs sNext result tNext xs db t ws tt _ rfl premises
   | opderef =>
     apply evalSim_app_of_op env names values source target trace (.src .opderef) args
       ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError

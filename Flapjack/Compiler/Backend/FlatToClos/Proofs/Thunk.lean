@@ -6,6 +6,28 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL
 
+/-- Allocating related thunk payloads preserves the corresponding stores. -/
+theorem storeRel_allocThunk (refs : Store FlatSem.Value)
+    (targetRefs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value)) (mode : Flapjack.AstHOL.ThunkMode)
+    (value : FlatSem.Value) (targetValue : ClosSem.Value)
+    (stores : StoreRel refs targetRefs) (related : ValueRel value targetValue) :
+    StoreRel (refs ++ [.thunk mode value])
+      (targetRefs.updateEq (refs.length, .thunk mode targetValue)) := by
+  intro index
+  have original := stores index
+  by_cases same : index = refs.length
+  · subst index
+    simp [HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL, related]
+  · have different : refs.length ≠ index := Ne.symm same
+    by_cases bound : index < refs.length
+    · simpa [List.getElem?_append, bound, HolFiniteMapExact.lookup_updateEq,
+        Flapjack.FUPDATE_HOL, same, different] using original
+    · have past : refs.length + 1 ≤ index := by omega
+      have originalNone : refs[index]? = none := List.getElem?_eq_none (by omega)
+      have originalFree : targetRefs.lookup index = none := by simpa [originalNone] using original
+      simpa [List.getElem?_append, bound, past, HolFiniteMapExact.lookup_updateEq,
+        Flapjack.FUPDATE_HOL, same, different] using originalFree
+
 /-- Correspondence of thunk inspection results. -/
 inductive ThunkResultRel : FlatSem.DestThunkResult → ClosSem.DestThunkResult → Prop where
   | badRef : ThunkResultRel .badRef .badRef

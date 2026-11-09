@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.Ffi
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Globals
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Thunk
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 import Flapjack.Compiler.Backend.FlatToClos.Op
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
@@ -1074,5 +1075,124 @@ theorem opString {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                           simp [body, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
                           exact ⟨states, ValueRel.char byte⟩
 
+
+/-- The original thunk operator case of value-level correctness; forcing is excluded by the HOL premise. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "op_thunk"
+  (fmap_as_finite_support := [refs, code])]
+theorem opThunk {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
+    (vs : List FlatSem.Value) (sourceNext : FlatSem.State C F)
+    (result : Result FlatSem.Value FlatSem.Value) (targetNext : ClosSem.State C F)
+    (xs : List ClosLang.Exp) (db : List ClosSem.Value) (target : ClosSem.State C F)
+    (ws : List ClosSem.Value) (trace : BackendCommon.Tra) :
+    (∀ thOp, op = .src (.thunkOp thOp) →
+      FlatSem.doApp source op vs = some (sourceNext, result) ∧
+      StateRel source targetNext ∧ ClosSem.evaluate xs db target = (.val ws, targetNext) ∧
+      List.Forall₂ ValueRel vs ws.reverse ∧ xs.length = vs.length ∧
+      op ≠ .src .opapp ∧ op ≠ .src (.thunkOp .forceThunk) →
+    ∃ targetResult targetLast,
+      ClosSem.evaluate [compileOp trace op xs] db target = (targetResult, targetLast) ∧
+      StateRel sourceNext targetLast ∧
+      SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel
+        (Flapjack.EvaluateHOL.listResult result) targetResult) := by
+  intro thOp opEq premises
+  subst op
+  obtain ⟨applied, states, evaluated, related, length, _, notForce⟩ := premises
+  cases thOp with
+  | forceThunk => contradiction
+  | allocThunk mode =>
+    cases vs with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+    | cons v rest =>
+      cases rest with
+      | cons z zs => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+      | nil =>
+        have wsLen : ws.length = 1 := by simpa using related.length_eq.symm
+        cases ws with
+        | nil => simp at wsLen
+        | cons w rest =>
+          cases rest with
+          | cons z zs => simp at wsLen
+          | nil =>
+            simp only [List.reverse_singleton] at related
+            cases related with
+            | cons valRel tail =>
+              cases safe : FlatSem.badThunkUpdate mode v source.refs with
+              | true => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, safe] at applied
+              | false =>
+                have targetSafe := badThunkUpdate_related mode v w source.refs targetNext.refs valRel states.2.2.2.1
+                rw [safe] at targetSafe
+                have index := leastUnusedRef_eq_length source.refs targetNext.refs states.2.2.2.1
+                have stores := storeRel_allocThunk source.refs targetNext.refs mode v w states.2.2.2.1 valRel
+                have updated : StateRel { source with refs := source.refs ++ [.thunk mode v] }
+                    { targetNext with refs := targetNext.refs.updateEq (source.refs.length, .thunk mode w) } := by
+                  rcases states with ⟨maxApp, ffi, clock, _, globals, globalValues, install⟩
+                  exact ⟨maxApp, ffi, clock, stores, globals, globalValues, install⟩
+                simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, safe] at applied
+                obtain ⟨rfl, rfl⟩ := applied
+                simp only [compileOp]
+                rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+                simp [ClosSem.doApp, ← targetSafe, index, storeAlloc,
+                  Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                exact ⟨updated, ValueRel.loc false source.refs.length⟩
+  | updateThunk mode =>
+    cases vs with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+    | cons v vs =>
+      cases vs with
+      | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+      | cons u rest =>
+        cases rest with
+        | cons z zs => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+        | nil =>
+          have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
+          cases ws with
+          | nil => simp at wsLen
+          | cons w rest =>
+            cases rest with
+            | nil => simp at wsLen
+            | cons t rest =>
+              cases rest with
+              | cons z zs => simp at wsLen
+              | nil =>
+                simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
+                cases related with
+                | cons ptrRel tail =>
+                  cases tail with
+                  | cons valRel tail =>
+                    cases ptrRel <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+                    case loc flag pointer =>
+                      cases flag with
+                      | true => simp at applied
+                      | false =>
+                        cases safe : FlatSem.badThunkUpdate mode u source.refs with
+                        | true => simp [safe] at applied
+                        | false =>
+                          cases found : source.refs[pointer]? with
+                          | none => simp [safe, storeAssign, found] at applied
+                          | some entry =>
+                            cases entry with
+                            | refv _ | w8array _ | varray _ =>
+                              simp [safe, storeAssign, found, storeValueSameType] at applied
+                            | thunk oldMode old =>
+                              cases oldMode with
+                              | evaluated => simp [safe, storeAssign, found, storeValueSameType] at applied
+                              | notEvaluated =>
+                                have slot := states.2.2.2.1 pointer
+                                simp only [found] at slot
+                                obtain ⟨oldTarget, targetFound, _⟩ := slot
+                                have targetSafe := badThunkUpdate_related mode u w source.refs targetNext.refs valRel states.2.2.2.1
+                                rw [safe] at targetSafe
+                                have newStores := storeRel_setThunk source.refs targetNext.refs pointer _ mode u w states.2.2.2.1 found valRel
+                                have updated : StateRel { source with refs := source.refs.set pointer (.thunk mode u) }
+                                    { targetNext with refs := targetNext.refs.updateEq (pointer, .thunk mode w) } := by
+                                  rcases states with ⟨maxApp, ffi, clock, _, globals, values, install⟩
+                                  exact ⟨maxApp, ffi, clock, newStores, globals, values, install⟩
+                                simp [safe, storeAssign, found, storeValueSameType] at applied
+                                obtain ⟨rfl, rfl⟩ := applied
+                                simp only [compileOp]
+                                rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+                                simp [ClosSem.doApp, ← targetSafe, targetFound,
+                                  Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                                exact ⟨updated, ValueRel.tuple .nil⟩
 
 end Flapjack.Compiler.Backend.FlatToClos

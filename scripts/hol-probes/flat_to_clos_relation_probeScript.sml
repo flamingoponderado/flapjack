@@ -212,3 +212,6 @@ val _ = if null (hyp op_vectors) then () else raise Fail "hypotheses: op_vectors
 val _ = (print "op_vectors_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl op_vectors); print "\n");
 val _ = if null (hyp op_str) then () else raise Fail "hypotheses: op_str";
 val _ = (print "op_str_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl op_str); print "\n");
+
+val _ = if null (hyp op_thunk) then () else raise Fail "hypotheses: op_thunk";
+val _ = (print "op_thunk_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl op_thunk); print "\n");
