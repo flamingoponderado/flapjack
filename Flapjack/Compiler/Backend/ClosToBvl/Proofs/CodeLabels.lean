@@ -78,4 +78,26 @@ theorem reccLets_codeLabels (n : Nat) (nargs : List Nat) (k : Nat) (rest : Bvl.E
         · exact Or.inr (Or.inl ⟨j, by omega, rfl⟩)
       · exact Or.inr (Or.inr h)
 
+/-- Each generated auxiliary entry comes from the input list or the original
+accumulator. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "MEM_build_aux_imp_SND_MEM"]
+theorem mem_buildAux_imp_snd_mem (n : Nat) (ls : List (Nat × Bvl.Exp))
+    (acc : List (Nat × Nat × Bvl.Exp)) (m : Nat) (aux : List (Nat × Nat × Bvl.Exp))
+    (x : Nat × Nat × Bvl.Exp) (h : buildAux n ls acc = (m, aux) ∧ x ∈ aux) :
+    x.2 ∈ ls ∨ x ∈ acc := by
+  induction ls generalizing n acc with
+  | nil =>
+    simp only [buildAux, Prod.mk.injEq] at h
+    rcases h with ⟨⟨_, rfl⟩, member⟩
+    exact Or.inr member
+  | cons entry rest ih =>
+    obtain ⟨arity, body⟩ := entry
+    simp only [buildAux] at h
+    rcases ih (n + 2) ((n, arity, body) :: acc) h with member | member
+    · exact Or.inl (List.mem_cons_of_mem _ member)
+    · simp only [List.mem_cons] at member
+      rcases member with rfl | member
+      · exact Or.inl (by simp)
+      · exact Or.inr member
+
 end Flapjack.Compiler.Backend.ClosToBvl

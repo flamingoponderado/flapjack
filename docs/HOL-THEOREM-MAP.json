@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "MEM_build_aux_imp_SND_MEM",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CodeLabels.lean", "lean_name": "mem_buildAux_imp_snd_mem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared MEM_build_aux_imp_SND_MEM_typed: all six binders, grouped build and membership premise, pair projection and both disjuncts match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "compile_exps_SING",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Accumulator.lean", "lean_name": "compileExps_sing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_exps_SING_typed: the source singleton compilation equation entails the target list is a singleton, with all inferred source and target carriers preserved."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "get_code_labels_def", "hol_line": 3694,
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/CodeLabels.lean", "lean_name": "getCodeLabels",
   "statement_status": "reviewed_exact",
@@ -116521,24 +116533,24 @@
     "lean_name": "freeLet",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "free_let_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared free_let_def_typed: GENLIST is List.range.map, and mkElemAt renders the HOL mk_elem_at overload with the same index and operand."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
     "lean_name": "codeForReccCase",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "code_for_recc_case_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_for_recc_case_def_typed: arity, GENLIST traversals, environment indices, append order and nested lets agree."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
     "lean_name": "buildAux",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "build_aux_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared build_aux_def_typed: the empty and recursive clauses preserve the fixed pair and triple carriers, successor location and accumulator order."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Measures.lean",
@@ -117583,8 +117595,8 @@
     "lean_name": "reccLet0",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "recc_Let0_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared recc_Let0_def_typed: the reviewed closureTag, constant and label operands, update and nested lets agree."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
@@ -117599,8 +117611,8 @@
     "lean_name": "buildReccLetsHOL",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "build_recc_lets_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "The typed HOL signature and examples are captured by clos_to_bvl_recursive_types_probe; complete imported carrier and source review remains pending. The checked executable builder is proved equal for nonempty groups of matching length."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared build_recc_lets_def_typed: map and reverse order, named closure construction, HOL HD including its unspecified empty case, and TL rendered by List.tail agree."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Analysis.lean",
@@ -128847,8 +128859,8 @@
   "hol_name": "compile_exps_LENGTH",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Accumulator.lean",
   "lean_name": "compileExps_length",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_exps_LENGTH_typed: the compilation equation and exact target/source length equality agree, with all list and accumulator carriers preserved."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",

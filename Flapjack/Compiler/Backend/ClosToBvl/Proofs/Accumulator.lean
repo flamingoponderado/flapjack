@@ -201,4 +201,18 @@ theorem compileExps_length (maxApp : Nat) (expressions : List ClosLang.Exp) (aux
   rw [run] at invariant
   exact invariant.1
 
+/-- Compiling a singleton source list produces a singleton target list. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "compile_exps_SING"]
+theorem compileExps_sing (maxApp : Nat) (expression : ClosLang.Exp) (aux : Aux)
+    (compiled : List Bvl.Exp) (finalAux : Aux)
+    (run : compileExpsHOL maxApp [expression] aux = (compiled, finalAux)) :
+    ∃ result, compiled = [result] := by
+  have length := compileExps_length maxApp [expression] aux compiled finalAux run
+  cases compiled with
+  | nil => simp at length
+  | cons first rest =>
+    cases rest with
+    | nil => exact ⟨first, rfl⟩
+    | cons next rest => simp at length
+
 end Flapjack.Compiler.Backend.ClosToBvl

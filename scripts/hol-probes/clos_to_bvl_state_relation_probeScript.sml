@@ -54,6 +54,14 @@ val _ = show "bvl_get_code_labels_def_typed=" bvlPropsTheory.get_code_labels_def
 val _ = show "clos_get_code_labels_def_typed=" closPropsTheory.get_code_labels_def;
 val _ = show "compile_exps_code_labels_typed=" clos_to_bvlProofTheory.compile_exps_code_labels;
 val _ = show "compile_prog_code_labels_typed=" clos_to_bvlProofTheory.compile_prog_code_labels;
+val _ = show "compile_exps_SING_typed=" clos_to_bvlTheory.compile_exps_SING;
+val _ = show "compile_exps_LENGTH_typed=" clos_to_bvlTheory.compile_exps_LENGTH;
+val _ = show "MEM_build_aux_imp_SND_MEM_typed=" clos_to_bvlProofTheory.MEM_build_aux_imp_SND_MEM;
+val _ = show "build_aux_def_typed=" clos_to_bvlTheory.build_aux_def;
+val _ = show "free_let_def_typed=" clos_to_bvlTheory.free_let_def;
+val _ = show "code_for_recc_case_def_typed=" clos_to_bvlTheory.code_for_recc_case_def;
+val _ = show "build_recc_lets_def_typed=" clos_to_bvlTheory.build_recc_lets_def;
+val _ = show "recc_Let0_def_typed=" clos_to_bvlTheory.recc_Let0_def;
 val _ = show "recc_Lets_code_labels_typed=" clos_to_bvlProofTheory.recc_Lets_code_labels;
 val _ = show "recc_Let_def_typed=" clos_to_bvlTheory.recc_Let_def;
 val _ = show "recc_Lets_def_typed=" clos_to_bvlTheory.recc_Lets_def;
