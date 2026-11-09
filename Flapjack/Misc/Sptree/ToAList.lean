@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Misc.Sptree.Wf
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.Sptree.Wf
+
+@[expose] public section
 
 /-!
 # HOL sptree `toAList` and `domain` library theorems

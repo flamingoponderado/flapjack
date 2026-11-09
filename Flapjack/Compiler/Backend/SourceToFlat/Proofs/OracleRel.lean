@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.OracleStep
-import Flapjack.Compiler.Backend.SourceEval.Proofs
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.OracleStep
+public import Flapjack.Compiler.Backend.SourceEval.Proofs
+
+@[expose] public section
 
 /-! Agreement between the source and flat compiler callbacks. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat.OracleInvariant
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
-private instance : Nonempty Config :=
+instance oracleRelInst1 : Nonempty Config :=
   ⟨{ next := ⟨0, 0, 0⟩, modEnv := emptyEnv, patternCfg := ⟨0⟩, envs := ⟨0, .ln⟩ }⟩
 
 /-- Incremental source-to-flat compilation always emits the global-allocation

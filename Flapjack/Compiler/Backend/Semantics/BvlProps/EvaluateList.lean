@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateLength
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateLength
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Sequencing properties of BVL expression-list evaluation. -/
 namespace Flapjack.Compiler.Backend.BvlProps

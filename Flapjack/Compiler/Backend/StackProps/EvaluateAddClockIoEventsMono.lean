@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
+module
+
+public import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
+
+@[expose] public section
 
 /-! Full original StackProps extra-clock event monotonicity
 (stackPropsScript.sml:542–638), over the faithful native evaluator.

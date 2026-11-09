@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineStateRel
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyRuntimeFrame
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineStateRel
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyRuntimeFrame
+
+@[expose] public section
 
 /-! Primitive application under the BVL inlining state relation. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Assign
-import Flapjack.Pancake.Proofs.PanToCrep.Primop
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Assign
+public import Flapjack.Pancake.Proofs.PanToCrep.Primop
+
+@[expose] public section
 
 /-!
 # `pc_compile_correct` Primitive case over the exact carriers

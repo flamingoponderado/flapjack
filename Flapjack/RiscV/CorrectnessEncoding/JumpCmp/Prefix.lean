@@ -1,6 +1,10 @@
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Comparison
-import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Encoding
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Comparison
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Encoding
+
+@[expose] public section
 
 /-! Byte-driven scratch-prefix steps for the full JumpCmp case. These local
 compositions have no separately named HOL declaration and remain untagged. -/

@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.WordLang
-import Flapjack.Compiler.Backend.RegAlloc
-import Flapjack.Misc.Sptree.InterEq
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Compiler.Backend.RegAlloc
+public import Flapjack.Misc.Sptree.InterEq
+
+@[expose] public section
 
 /-!
 # `word_copy`: copy propagation

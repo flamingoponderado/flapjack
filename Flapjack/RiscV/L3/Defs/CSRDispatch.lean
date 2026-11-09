@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.SupervisorCSR
+module
+
+public import Flapjack.RiscV.L3.Defs.SupervisorCSR
+
+@[expose] public section
 namespace Flapjack.RiscV.L3
 open Flapjack.Basis.Pure.MlString
 

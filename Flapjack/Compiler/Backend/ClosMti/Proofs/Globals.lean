@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.Syntactic
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.Syntactic
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+
+@[expose] public section
 
 /-! Global-write and closure-safety invariants for argument collection. -/
 namespace Flapjack.Compiler.Backend.ClosMti

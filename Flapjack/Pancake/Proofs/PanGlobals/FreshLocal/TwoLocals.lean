@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Assembly
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Assembly
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsTwoFreshLocals
 open Flapjack.Pancake.PanLang

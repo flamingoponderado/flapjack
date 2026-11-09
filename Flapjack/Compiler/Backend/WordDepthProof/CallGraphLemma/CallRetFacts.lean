@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.CallUnfold
+module
+
+public import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.CallUnfold
+
+@[expose] public section
 
 /-!
 # `max_depth_call_graph_lemma`: frame facts for the returning `Call`

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordGcFunctions.Roots
-import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFpLemmas
+module
+
+public import Flapjack.Compiler.Backend.WordGcFunctions.Roots
+public import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFpLemmas
+
+@[expose] public section
 
 /-! `gc_fun_const_ok_word_gc_fun` (`data_to_word_gcProofScript.sml:6409-6417`): the word
 garbage collector keeps every GC-constant root, as `word_gc_IMP_EVERY2` gives. -/

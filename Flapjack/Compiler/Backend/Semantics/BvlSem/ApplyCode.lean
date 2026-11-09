@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyClock
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyClock
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Code and compiler state preservation for BVL primitive application. -/
 namespace Flapjack.Compiler.Backend.BvlSem

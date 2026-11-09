@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveByteVector
-import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveAlloc
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveByteVector
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveAlloc
+
+@[expose] public section
 
 /-! Byte copying and XOR for multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti

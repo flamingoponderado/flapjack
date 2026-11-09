@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabProps.EvaluateAddClockIoEventsMono
+module
+
+public import Flapjack.Compiler.Backend.LabProps.EvaluateAddClockIoEventsMono
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.LabSem

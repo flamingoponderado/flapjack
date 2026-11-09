@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSASetup
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSASetup
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.WordAlloc
 open Flapjack
 /-- Flapjack infrastructure proving the full lookup result with a total selector. -/

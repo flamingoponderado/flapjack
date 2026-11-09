@@ -1,5 +1,9 @@
-import Flapjack.Pancake.CrepToLoop.ContextExact
-import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
+module
+
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+public import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
+
+@[expose] public section
 
 /-!
 # crep_to_loop `comp_exp_assigned_vars_tmp_bound`

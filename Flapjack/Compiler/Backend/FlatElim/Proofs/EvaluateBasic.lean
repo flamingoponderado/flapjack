@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyNumeric
-import Flapjack.Compiler.Backend.FlatElim.Proofs.GlobalLists
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
-import Flapjack.Compiler.Backend.FlatProps.EvaluateLength
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyNumeric
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.GlobalLists
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+public import Flapjack.Compiler.Backend.FlatProps.EvaluateLength
+
+@[expose] public section
 
 /-! Basic expression cases of the flat-elimination evaluation simulation. -/
 namespace Flapjack.Compiler.Backend.FlatElim

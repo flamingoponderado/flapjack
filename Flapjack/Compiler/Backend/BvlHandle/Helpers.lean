@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Bvl.Syntax
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Bvl.Syntax
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Source-shaped helpers for BVL handler compilation. -/
 namespace Flapjack.Compiler.Backend.BvlHandle

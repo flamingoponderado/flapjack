@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL
+module
+
+public import Flapjack.SemanticPrimitivesHOL
+
+@[expose] public section
 
 /-! Relations on CakeML evaluation results. -/
 namespace Flapjack.SemanticPrimitivesProps

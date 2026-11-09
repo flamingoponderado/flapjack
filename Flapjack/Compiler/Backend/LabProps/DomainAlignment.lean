@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabSem.State
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Misc.Alignment
+module
+
+public import Flapjack.Compiler.Backend.LabSem.State
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Misc.Alignment
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm

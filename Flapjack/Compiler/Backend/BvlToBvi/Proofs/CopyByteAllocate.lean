@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileUnsupported
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileUnsupported
+
+@[expose] public section
 
 /-! Allocating byte-copy lowering in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
-import Flapjack.Pancake.Semantics.PanProps
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
+public import Flapjack.Pancake.Semantics.PanProps
+
+@[expose] public section
 
 /-!
 # pan_globals `compile_top` shape well-formedness (exact carriers)

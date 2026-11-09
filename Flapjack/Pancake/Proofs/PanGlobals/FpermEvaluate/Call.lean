@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.CallEntry
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.CallEntry
+
+@[expose] public section
 
 namespace Flapjack
 open Pancake.PanLang PanSemStateFiniteExact

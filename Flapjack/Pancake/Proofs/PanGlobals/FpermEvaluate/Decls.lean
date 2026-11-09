@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
+
+@[expose] public section
 
 namespace Flapjack
 open Pancake.PanLang PanSemStateFiniteExact

@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.FlatProps.SimpleConversions
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.FunctionApplication
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.SimpleConversions
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.FunctionApplication
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Dynamic compiler input preservation for the flat pattern pass. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

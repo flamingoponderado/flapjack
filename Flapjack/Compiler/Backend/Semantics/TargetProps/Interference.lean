@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
-import Flapjack.Compiler.Encoders.AsmSem.State
-import Flapjack.Misc.ShiftSeq
-import Flapjack.Misc.BytesInMemory
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+public import Flapjack.Compiler.Encoders.AsmSem.State
+public import Flapjack.Misc.ShiftSeq
+public import Flapjack.Misc.BytesInMemory
+
+@[expose] public section
 
 /-! Original machine-oracle shifts and byte-region protection. HOL sets use
 predicate membership; finite FFI-entry lists and all wrapped offsets are retained. -/

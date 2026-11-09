@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
-import Flapjack.SemanticPrimitivesHOL.Primitives
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
+public import Flapjack.SemanticPrimitivesHOL.Primitives
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendCommon
 open Flapjack.Basis.Pure.MlString

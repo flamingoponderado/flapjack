@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.PureCorrespondence
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractTotal
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.PureCorrespondence
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractTotal
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Source-shaped constructor extraction and its executable correspondence. -/
 namespace Flapjack.Compiler.Backend.BviTmc

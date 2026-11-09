@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.LabToTarget.BytesInMemoryFetch
-import Flapjack.Compiler.Backend.LabToTarget.ShareMemDomain
-import Flapjack.Compiler.Backend.Semantics.TargetProps.Interference
-import Mathlib.Data.BitVec
-import Mathlib.Tactic.Ring
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.BytesInMemoryFetch
+public import Flapjack.Compiler.Backend.LabToTarget.ShareMemDomain
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.Interference
+public import Mathlib.Data.BitVec
+public import Mathlib.Tactic.Ring
+
+@[expose] public section
 
 /-! Original FFI-entry disjointness of the bytes of a fetched non-shared-memory
 instruction (lab_to_targetProofScript.sml:6570-6627). All code-similarity,

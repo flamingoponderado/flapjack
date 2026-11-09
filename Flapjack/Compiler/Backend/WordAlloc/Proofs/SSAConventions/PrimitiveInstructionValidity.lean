@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.InstructionValidity
-import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.InstructionValidity
+public import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Flapjack Flapjack.Compiler.Backend.WordAlloc Flapjack.Compiler.Encoders.Asm

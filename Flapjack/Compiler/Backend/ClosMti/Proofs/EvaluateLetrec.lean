@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateCases
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateCases
+
+@[expose] public section
 
 /-! Recursive function bindings in the closure introduction simulation. -/
 namespace Flapjack.Compiler.Backend.ClosMti

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
+
+@[expose] public section
 
 /-! Equality simulation over the source-to-flat value relation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

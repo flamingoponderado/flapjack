@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.X64.Machine.JumpCmpCase
-import Flapjack.Compiler.Encoders.X64.Machine.LocCase
-import Flapjack.Compiler.Encoders.X64.Machine.MemCase
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.JumpCmpCase
+public import Flapjack.Compiler.Encoders.X64.Machine.LocCase
+public import Flapjack.Compiler.Encoders.X64.Machine.MemCase
+
+@[expose] public section
 
 /-!
 # `encoder_correct x64Target`

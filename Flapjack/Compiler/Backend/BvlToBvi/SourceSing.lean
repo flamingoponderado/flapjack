@@ -1,8 +1,16 @@
-import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
-import Flapjack.Compiler.Backend.BvlToBvi.Budget
-import Flapjack.Compiler.Backend.BviLet.SourceSing
-import Flapjack.Misc.AppList
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
+public import Flapjack.Compiler.Backend.BvlToBvi.Budget
+public import Flapjack.Compiler.Backend.BviLet.SourceSing
+public import Flapjack.Misc.AppList
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Total source-shaped BVL-to-BVI expression conversion. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi

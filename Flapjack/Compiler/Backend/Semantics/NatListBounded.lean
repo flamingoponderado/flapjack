@@ -1,4 +1,8 @@
-import Mathlib.Data.Nat.Find
+module
+
+public import Mathlib.Data.Nat.Find
+
+@[expose] public section
 
 /-!
 # A shared bound for finite lists of natural numbers

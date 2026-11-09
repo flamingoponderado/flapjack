@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.PatternSemantics
-import Flapjack.SemanticPrimitivesHOL
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Compiler.Backend.PatternSemantics
+public import Flapjack.SemanticPrimitivesHOL
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Semantics of pattern-compiler inputs and decision trees. -/
 namespace Flapjack.Compiler.Backend.PatternSemantics

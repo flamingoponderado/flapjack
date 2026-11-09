@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
-import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
+public import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang

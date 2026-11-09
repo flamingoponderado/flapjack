@@ -1,5 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
-import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyFields
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyFields
+
+-- Proofs below unfold the private error helpers of `DataSem.evaluate`.
+import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+@[expose] public section
 
 /-! Control fields preserved by primitive application and evaluation. -/
 namespace Flapjack.Compiler.Backend.DataSem

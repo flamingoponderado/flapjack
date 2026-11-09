@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Recorded-oracle agreement and prefix preservation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

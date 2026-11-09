@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Limits
-import Flapjack.Compiler.Backend.Semantics.DataSem.Finalise
-import Flapjack.Compiler.Backend.Semantics.DataSem.Build
-import Flapjack.Compiler.Backend.Semantics.DataSem.Equality
-import Flapjack.Compiler.Backend.Semantics.DataSem.Int
-import Flapjack.Compiler.Backend.Semantics.DataSem.Word
-import Flapjack.SemanticPrimitivesHOL.Array
-import Flapjack.SemanticPrimitivesHOL.Compare
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Limits
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Finalise
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Build
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Equality
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Int
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Word
+public import Flapjack.SemanticPrimitivesHOL.Array
+public import Flapjack.SemanticPrimitivesHOL.Compare
+
+@[expose] public section
 
 /-! Primitive application in the data-language semantics. -/
 namespace Flapjack.Compiler.Backend.DataSem

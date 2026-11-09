@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterOffset
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister
-import Flapjack.Pancake.WordLang.MaxVarInst
-import Flapjack.Compiler.Backend.RegAlloc
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterOffset
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister
+public import Flapjack.Pancake.WordLang.MaxVarInst
+public import Flapjack.Compiler.Backend.RegAlloc
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.InstSimulation.MemoryLoad
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

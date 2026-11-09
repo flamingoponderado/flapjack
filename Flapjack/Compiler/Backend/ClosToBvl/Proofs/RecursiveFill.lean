@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveSteps
-import Flapjack.FiniteMap.MapKeys
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveSteps
+public import Flapjack.FiniteMap.MapKeys
+
+@[expose] public section
 
 /-! Repeated writes in generated recursive closure construction. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

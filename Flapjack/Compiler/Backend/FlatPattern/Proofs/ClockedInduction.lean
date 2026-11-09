@@ -1,7 +1,11 @@
-import Flapjack.SemanticPrimitivesProps.ResultRelation
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedApplication
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedDeclaration
-import Flapjack.Compiler.Backend.Semantics.FlatSem.MeasureMembers
+module
+
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedApplication
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedDeclaration
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.MeasureMembers
+
+@[expose] public section
 
 /-! Induction on the flat evaluator clock and expression weight. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeRelation
-import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeRelation
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
+
+@[expose] public section
 
 /-! Wrapper decomposition and preservation of optimized code. -/
 namespace Flapjack.Compiler.Backend.BviTmc.WrapperCases

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.Machine.Decode
-import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Machine.Decode
+public import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
+
+@[expose] public section
 
 /-!
 # Execution of the closed ARMv8 instruction subset

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationCons
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentConstructors
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationCons
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentConstructors
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Constructor-expression case of the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

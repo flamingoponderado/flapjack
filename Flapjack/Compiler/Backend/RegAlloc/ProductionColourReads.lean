@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionAllocLoop
-import Flapjack.Compiler.Backend.RegAlloc.Colouring
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionAllocLoop
+public import Flapjack.Compiler.Backend.RegAlloc.Colouring
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc Translator.Monadic.MonadBase

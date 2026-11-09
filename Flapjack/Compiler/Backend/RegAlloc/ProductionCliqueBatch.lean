@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionGraphRows
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionGraphRows
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc

@@ -1,7 +1,11 @@
-import Mathlib.Tactic.IntervalCases
-import Flapjack.Misc.Alignment
-import Flapjack.RiscV.L3.Defs.Encode
-import Flapjack.RiscV.L3.Step.DecodeAny
+module
+
+public import Mathlib.Tactic.IntervalCases
+public import Flapjack.Misc.Alignment
+public import Flapjack.RiscV.L3.Defs.Encode
+public import Flapjack.RiscV.L3.Step.DecodeAny
+
+@[expose] public section
 
 /-! Full intrinsic-domain decoder compositions needed by the original Const
 constructor. These are Flapjack infrastructure, with no separately named HOL

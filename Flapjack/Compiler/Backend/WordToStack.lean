@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Misc.AppList
-import Flapjack.Compiler.Backend.StackLang
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.AppList
+public import Flapjack.Compiler.Backend.StackLang
+
+@[expose] public section
 
 /-!
 # Faithful Cake Word-to-Stack bitmap helpers

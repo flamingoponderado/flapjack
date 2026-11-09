@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
-import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` Simple-collector unfolding

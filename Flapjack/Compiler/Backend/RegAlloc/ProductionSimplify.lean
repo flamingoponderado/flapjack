@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionUnspill
-import Flapjack.Compiler.Backend.RegAlloc.ProductionStackTransition
-import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTraversal
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionUnspill
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionStackTransition
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTraversal
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc Translator.Monadic.MonadBase

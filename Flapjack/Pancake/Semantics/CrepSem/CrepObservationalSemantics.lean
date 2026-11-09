@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClockIoEventsMono
-import Flapjack.Misc.LprefixLub
-import Flapjack.PanObservationalSemantics
-import Flapjack.FfiHOL
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClockIoEventsMono
+public import Flapjack.Misc.LprefixLub
+public import Flapjack.PanObservationalSemantics
+public import Flapjack.FfiHOL
+
+@[expose] public section
 
 /-!
 # Pancake `crepSem.semantics`

@@ -1,4 +1,8 @@
-import Flapjack.StackAlloc
+module
+
+public import Flapjack.StackAlloc
+
+@[expose] public section
 
 /-!
 # StackAlloc runtime code

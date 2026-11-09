@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Pattern extraction used by the source-to-flat Eval compilation case. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
-private instance : Nonempty FlatSem.Value := ⟨.conv none []⟩
+instance evalPatternInst1 : Nonempty FlatSem.Value := ⟨.conv none []⟩
 
 namespace OracleInvariant
 

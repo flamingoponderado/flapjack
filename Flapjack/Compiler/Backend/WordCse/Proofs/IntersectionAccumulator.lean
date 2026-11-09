@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordCse.Join
-import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
-import Flapjack.Misc.BalancedMap.InsertCorrect
-import Flapjack.Misc.BalancedMap.LookupSemantics
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Join
+public import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
+public import Flapjack.Misc.BalancedMap.InsertCorrect
+public import Flapjack.Misc.BalancedMap.LookupSemantics
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack Misc.BalancedMap

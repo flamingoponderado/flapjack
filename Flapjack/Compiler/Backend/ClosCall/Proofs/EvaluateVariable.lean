@@ -1,6 +1,13 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.StateRelation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import Flapjack.SemanticPrimitivesProps.ResultRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Variable evaluation for the fuel-aware direct-call simulation. -/
 namespace Flapjack.Compiler.Backend.ClosCall

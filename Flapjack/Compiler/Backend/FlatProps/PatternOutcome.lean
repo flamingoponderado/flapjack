@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatProps.PatternAppend
-import Batteries.Data.List.Basic
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.PatternAppend
+public import Batteries.Data.List.Basic
+
+@[expose] public section
 /-! Pattern-match outcome independence from incoming bindings. -/
 namespace Flapjack.Compiler.Backend.FlatProps
 open Flapjack.AstHOL Flapjack.Compiler.Backend.FlatSem

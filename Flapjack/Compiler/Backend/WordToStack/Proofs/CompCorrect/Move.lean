@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
-import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxSimulation
-import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveDiv2
-import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveReconstruction
-import Flapjack.Compiler.Backend.Parmove.Correct
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Parmove
-import Flapjack.Compiler.Backend.Parmove.AllDistinct.Parmove
-import Flapjack.Compiler.Backend.Parmove.SourceMembershipWrapper
-import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Parmove
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxSimulation
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveDiv2
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveReconstruction
+public import Flapjack.Compiler.Backend.Parmove.Correct
+public import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Parmove
+public import Flapjack.Compiler.Backend.Parmove.AllDistinct.Parmove
+public import Flapjack.Compiler.Backend.Parmove.SourceMembershipWrapper
+public import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Parmove
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CompCorrect.Move
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

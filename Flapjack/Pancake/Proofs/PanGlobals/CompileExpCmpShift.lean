@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCompileExpCmpShift
 open Flapjack

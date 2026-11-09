@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosTicks.Source
-import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+module
+
+public import Flapjack.Compiler.Backend.ClosTicks.Source
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+
+@[expose] public section
 
 /-! Code-location preservation by tick removal. -/
 namespace Flapjack.Compiler.Backend.ClosTicks

@@ -1,9 +1,13 @@
-import Flapjack.Pancake.Semantics.CrepProps
-import Flapjack.Pancake.CrepInline.Canonical
-import Flapjack.Pancake.CrepInline.Pass
-import Flapjack.Pancake.Proofs.CrepInline
-import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
-import Flapjack.Pancake.Semantics.CrepProps.EveryExpHOL
+module
+
+public import Flapjack.Pancake.Semantics.CrepProps
+public import Flapjack.Pancake.CrepInline.Canonical
+public import Flapjack.Pancake.CrepInline.Pass
+public import Flapjack.Pancake.Proofs.CrepInline
+public import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
+public import Flapjack.Pancake.Semantics.CrepProps.EveryExpHOL
+
+@[expose] public section
 
 namespace Flapjack
 

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.RecursiveClosures
-import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
-import Flapjack.Compiler.Backend.FlatProps.SimpleStore
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.RecursiveClosures
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+public import Flapjack.Compiler.Backend.FlatProps.SimpleStore
+
+@[expose] public section
 
 /-! Pattern result and store lookup relations for flat pattern compilation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

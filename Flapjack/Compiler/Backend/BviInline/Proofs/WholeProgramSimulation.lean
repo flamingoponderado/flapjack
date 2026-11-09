@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviInline.Proofs.RemoveTicksInduction
+module
+
+public import Flapjack.Compiler.Backend.BviInline.Proofs.RemoveTicksInduction
+
+@[expose] public section
 
 /-! Whole-program execution through BVI inlining and tick removal. -/
 namespace Flapjack.Compiler.Backend.BviInline

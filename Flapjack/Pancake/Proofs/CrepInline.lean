@@ -1,13 +1,17 @@
-import Flapjack.HolRef
-import Flapjack.PanToCrepMaxList
-import Flapjack.Pancake.Semantics.CrepSem
-import Flapjack.Pancake.Semantics.CrepSem.Eval
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.Semantics.CrepProps
-import Flapjack.Pancake.CrepInline.Pass
-import Flapjack.Pancake.CrepInline.Canonical
+module
+
+public import Flapjack.HolRef
+public import Flapjack.PanToCrepMaxList
+public import Flapjack.Pancake.Semantics.CrepSem
+public import Flapjack.Pancake.Semantics.CrepSem.Eval
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.Semantics.CrepProps
+public import Flapjack.Pancake.CrepInline.Pass
+public import Flapjack.Pancake.CrepInline.Canonical
+
+@[expose] public section
 
 /-! Exact theorem counterpart for CakeML's `crep_inlineProofScript.sml`.
 

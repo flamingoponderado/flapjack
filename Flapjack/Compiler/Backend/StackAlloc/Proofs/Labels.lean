@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackAlloc.Compile
-import Flapjack.Compiler.Backend.StackProps.OrderedLabels
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Compile
+public import Flapjack.Compiler.Backend.StackProps.OrderedLabels
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` label lemmas

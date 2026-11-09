@@ -1,9 +1,13 @@
-import Flapjack.Pancake.PanToWord
-import Flapjack.Pancake.Proofs.PanToWord.PanToCrepProgramValidity
-import Flapjack.Pancake.Proofs.PanToWord.PanSimpValidity
-import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess.PanStructs
-import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess.PanGlobals
-import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess
+module
+
+public import Flapjack.Pancake.PanToWord
+public import Flapjack.Pancake.Proofs.PanToWord.PanToCrepProgramValidity
+public import Flapjack.Pancake.Proofs.PanToWord.PanSimpValidity
+public import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess.PanStructs
+public import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess.PanGlobals
+public import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess
+
+@[expose] public section
 
 namespace Flapjack.PanToWord
 open Pancake.PanLang Compiler.Encoders.Asm

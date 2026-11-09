@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove
+module
+
+public import Flapjack.Compiler.Backend.Parmove
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

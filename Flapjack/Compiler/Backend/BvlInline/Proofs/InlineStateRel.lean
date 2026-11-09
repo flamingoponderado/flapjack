@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlInline.Program
-import Flapjack.Compiler.Backend.BvlInline.Proofs.ExpRel
-import Flapjack.Compiler.Backend.Semantics.BvlSem.State
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Program
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.ExpRel
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.State
+
+@[expose] public section
 
 /-! State and compiler relations for BVL call inlining. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.Colour
-import Flapjack.Compiler.Backend.WordAlloc.TotalColour
-import Flapjack.Compiler.Backend.WordAlloc.EvenColour
-import Flapjack.Compiler.Backend.RegAlloc.ClashTree
-import Flapjack.Pancake.WordLang.OccurrencesExact
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Colour
+public import Flapjack.Compiler.Backend.WordAlloc.TotalColour
+public import Flapjack.Compiler.Backend.WordAlloc.EvenColour
+public import Flapjack.Compiler.Backend.RegAlloc.ClashTree
+public import Flapjack.Pancake.WordLang.OccurrencesExact
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

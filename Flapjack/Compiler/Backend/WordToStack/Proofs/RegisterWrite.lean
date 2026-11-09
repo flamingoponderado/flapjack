@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
+
+@[expose] public section
 namespace Flapjack.WordToStackProofs.RegisterWrite
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Backend.WordToStack.Native

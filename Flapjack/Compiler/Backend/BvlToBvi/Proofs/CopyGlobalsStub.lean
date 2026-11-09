@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileMemory
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileMemory
+
+@[expose] public section
 
 /-! Global-array copying stub used when allocating globals. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.IfSimulation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.MutableBlockOld
-import Flapjack.Compiler.Backend.BviTmc.Proofs.WrapperCases
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.IfSimulation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.MutableBlockOld
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.WrapperCases
+
+@[expose] public section
 
 /-! Optimized conditional worker simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc.IfWorker

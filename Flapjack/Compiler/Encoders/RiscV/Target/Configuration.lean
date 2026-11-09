@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.RiscV.Target
+module
+
+public import Flapjack.Compiler.Encoders.RiscV.Target
+
+@[expose] public section
 
 /-! Full original native RISC-V assembler configuration. All fields use the
 accepted exact ASM carrier; encode is the complete native byte encoder.

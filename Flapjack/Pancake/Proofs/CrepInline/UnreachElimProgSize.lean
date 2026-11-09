@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.CrepInline.UnreachElim
-import Flapjack.Pancake.CrepLang.GeneratedSize
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.UnreachElim
+public import Flapjack.Pancake.CrepLang.GeneratedSize
+
+@[expose] public section
 
 /-!
 # crep_inline: `unreach_elim` size and return lemmas

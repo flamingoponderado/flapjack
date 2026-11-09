@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialMove
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialAccumulator
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialMove
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialAccumulator
+
+@[expose] public section
 
 /-! Root-list simulation for the partial generational collector. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -9,9 +13,9 @@ open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 private theorem partialRootsStarEmptyRight {α : Type} (p : (α → Prop) → Prop) : SetSep.star p SetSep.emp = p := by
   rw [SetSep.starComm, StackRemove.StackHeap.starEmptyLeft]
 
-private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+instance partialRootsInst1 {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
-private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
+instance partialRootsInst2 {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
 
 /-- Original partial-collector root-list simulation. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_gen_gc_partial_move_roots_thm"

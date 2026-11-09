@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
+
+@[expose] public section
 
 /-! The data-to-word memory relation and its abstract heap invariants. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.LabelLookup
-import Mathlib.Data.Set.Basic
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.LabelLookup
+public import Mathlib.Data.Set.Basic
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack

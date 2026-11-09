@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.DecCall
-import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.DecCall
+public import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
+
+@[expose] public section
 
 /-!
 # `pc_compile_correct` Assign case over the exact carriers

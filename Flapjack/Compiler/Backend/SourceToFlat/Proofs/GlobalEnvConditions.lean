@@ -1,8 +1,16 @@
-import Mathlib.Data.Set.Disjoint
-import Flapjack.FiniteMap.UnionExact
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnv
-import Flapjack.Compiler.Backend.BackendCommon.ConstructorTags
-import Flapjack.SemanticPrimitivesHOL.Conversions
+module
+
+public import Mathlib.Data.Set.Disjoint
+public import Flapjack.FiniteMap.UnionExact
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnv
+public import Flapjack.Compiler.Backend.BackendCommon.ConstructorTags
+public import Flapjack.SemanticPrimitivesHOL.Conversions
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Constructor-map assumptions used by the original source-to-flat proof. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.Semantics
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.Semantics
+
+@[expose] public section
 
 /-! Shared observation-witness reduction for the Pan semantics: a terminating
 behaviour of a run pair is witnessed by its result and post-state, and

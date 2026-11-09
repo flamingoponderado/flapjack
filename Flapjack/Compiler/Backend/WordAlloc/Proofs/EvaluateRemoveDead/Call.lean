@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Move
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Move
+
+@[expose] public section
 
 /-!
 # `evaluate_remove_dead` Call cases

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.TargetProps.NextInterference
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.NextInterference
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Classical

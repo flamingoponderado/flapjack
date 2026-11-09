@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlInline.Small
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Small
+
+@[expose] public section
 
 /-! Correspondence between the executable and total BVL size traversals. -/
 namespace Flapjack.Compiler.Backend.BvlInline

@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.RiscV.CorrectnessEncoding.Jump.Far
+module
+
+public import Flapjack.HolRef
+public import Flapjack.RiscV.CorrectnessEncoding.Jump.Far
+
+@[expose] public section
 
 /-! Full original Jump constructor case. Both source-selected near JAL rd0
 and far AUIPC31/JALR rd0 execute from literal encoded bytes, with source bounds

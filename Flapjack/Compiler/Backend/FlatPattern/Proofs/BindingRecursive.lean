@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingSimulation
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingSimulation
+
+@[expose] public section
 
 /-! Recursive proof obligations for generated pattern bindings. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateSequence
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockList
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateSequence
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockList
+
+@[expose] public section
 
 /-! list operation case of the closure-to-BVL simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

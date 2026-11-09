@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.RiscVConfig.RegisterNames
-import Flapjack.Lab
-import Flapjack.StackAlloc
-import Flapjack.StackAlloc.Runtime
-import Flapjack.StackRawCall
-import Flapjack.RiscV.Ffi
-import Flapjack.RiscV.WordToStack
-import Flapjack.RiscV.CakeStackReseat
-import Flapjack.RiscV.LongDivRuntime
+module
+
+public import Flapjack.Compiler.Backend.RiscVConfig.RegisterNames
+public import Flapjack.Lab
+public import Flapjack.StackAlloc
+public import Flapjack.StackAlloc.Runtime
+public import Flapjack.StackRawCall
+public import Flapjack.RiscV.Ffi
+public import Flapjack.RiscV.WordToStack
+public import Flapjack.RiscV.CakeStackReseat
+public import Flapjack.RiscV.LongDivRuntime
+
+@[expose] public section
 
 /-!
 # LabLang to RISC-V

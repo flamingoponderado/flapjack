@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Config
-import Flapjack.Compiler.Backend.BackendCommon
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Config
+public import Flapjack.Compiler.Backend.BackendCommon
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.DataToWord
 

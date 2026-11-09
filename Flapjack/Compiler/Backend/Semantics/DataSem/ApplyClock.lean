@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyFrame
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyFrame
+
+@[expose] public section
 
 /-! Clock preservation for data-language primitive applications. -/
 namespace Flapjack.Compiler.Backend.DataSem

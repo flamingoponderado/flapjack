@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabFilter.Map
-import Flapjack.Compiler.Backend.LabProps.SectionEnd
+module
+
+public import Flapjack.Compiler.Backend.LabFilter.Map
+public import Flapjack.Compiler.Backend.LabProps.SectionEnd
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabFilter.Proofs
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

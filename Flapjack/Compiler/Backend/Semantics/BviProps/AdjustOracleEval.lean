@@ -1,5 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.BviProps.AdjustOracle
-import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateClockFull
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviProps.AdjustOracle
+public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateClockFull
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+@[expose] public section
 
 /-! Evaluator cases for BVI compiler-oracle adjustment. -/
 namespace Flapjack.Compiler.Backend.BviProps

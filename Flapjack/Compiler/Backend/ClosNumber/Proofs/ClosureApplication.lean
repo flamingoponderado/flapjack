@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.ValueRelation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
+module
+
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
+
+@[expose] public section
 
 /-! Closure application prerequisites for numbering correctness. -/
 namespace Flapjack.Compiler.Backend.ClosNumber

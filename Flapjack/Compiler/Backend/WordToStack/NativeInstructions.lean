@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStackRegFormat
+module
+
+public import Flapjack.Compiler.Backend.WordToStackRegFormat
+
+@[expose] public section
 
 /-! Native instruction helpers for the literal Word-to-Stack compiler.
 The instruction and program payloads use the same positive word width as the

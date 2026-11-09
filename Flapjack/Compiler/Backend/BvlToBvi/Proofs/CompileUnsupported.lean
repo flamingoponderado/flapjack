@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.BuildSimulation
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.BuildSimulation
+
+@[expose] public section
 
 /-! Source type-error cases in BVL-to-BVI operation simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Stack
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Stack
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Source value depth and ancestor chains for the equality resource bound. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

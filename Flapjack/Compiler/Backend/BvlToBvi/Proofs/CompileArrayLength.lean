@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileBlockBounds
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileBlockBounds
+
+@[expose] public section
 
 /-! Reference-backed array length in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

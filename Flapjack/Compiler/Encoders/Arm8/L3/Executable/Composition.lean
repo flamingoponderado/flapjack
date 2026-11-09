@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Address
-import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Logical
-import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Shift
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Address
+public import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Logical
+public import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Shift
+
+@[expose] public section
 
 /-!
 # Composition of the ARMv8 encoder bridge

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateCases
-import Flapjack.Compiler.Backend.ClosMti.Proofs.Install
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateCases
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.Install
+
+@[expose] public section
 
 /-! Installation continuation for the backward closure evaluation simulation. -/
 namespace Flapjack.Compiler.Backend.ClosMti

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.InstallDecoding
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.InstallDecoding
+
+@[expose] public section
 
 /-! Dynamic installation prerequisites for flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

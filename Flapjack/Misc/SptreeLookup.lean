@@ -1,5 +1,9 @@
-import Flapjack.Misc.Sptree
-import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
+module
+
+public import Flapjack.Misc.Sptree
+public import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
+
+@[expose] public section
 
 /-!
 # sptree `delete` / `list_delete` lookup lemmas

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionMergeMoves
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionMergeMoves
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

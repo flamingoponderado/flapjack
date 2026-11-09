@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.GcShared.State
-import Flapjack.HolArb
+module
+
+public import Flapjack.Compiler.Backend.GcShared.State
+public import Flapjack.HolArb
+
+@[expose] public section
 
 /-! Heap slicing from the shared collector development. -/
 namespace Flapjack.Compiler.Backend

@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.PanSimp.CodeUpdate
-import Flapjack.Pancake.Proofs.PanSimp.CompileSameState
-import Flapjack.Pancake.Proofs.PanSimp.StateRel
+module
+
+public import Flapjack.Pancake.Proofs.PanSimp.CodeUpdate
+public import Flapjack.Pancake.Proofs.PanSimp.CompileSameState
+public import Flapjack.Pancake.Proofs.PanSimp.StateRel
+
+@[expose] public section
 
 /-!
 The original pan_simp `compile_correct` (pan_simpProofScript.sml:654-1015).

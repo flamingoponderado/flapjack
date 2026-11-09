@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationCons
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentRecursive
-import Flapjack.NamespaceProps.EmptyLookup
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationCons
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentRecursive
+public import Flapjack.NamespaceProps.EmptyLookup
+
+@[expose] public section
 
 /-! Declaration cases of the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

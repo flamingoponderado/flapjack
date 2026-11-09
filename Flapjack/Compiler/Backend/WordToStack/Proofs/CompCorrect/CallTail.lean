@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallDest
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallHelpers
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallLocalRecovery
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeInsertWf
-import Flapjack.Compiler.Backend.StackProps.OrderedLabels
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateLaws
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallDest
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallHelpers
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallLocalRecovery
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeInsertWf
+public import Flapjack.Compiler.Backend.StackProps.OrderedLabels
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateLaws
+
+@[expose] public section
 
 /-!
 # Word-to-Stack `comp_correct`: the tail-call case

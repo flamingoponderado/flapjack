@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentLookup
-import Flapjack.NamespaceProps.Append
-import Flapjack.SemanticPrimitivesHOL.Control
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentLookup
+public import Flapjack.NamespaceProps.Append
+public import Flapjack.SemanticPrimitivesHOL.Control
+
+@[expose] public section
 
 /-! Environment relation under namespace and declaration append. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

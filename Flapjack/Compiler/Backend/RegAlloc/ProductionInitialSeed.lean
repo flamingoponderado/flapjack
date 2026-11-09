@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionStateRelation
-import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyCache
-import Flapjack.Compiler.Backend.RegAlloc.Initialization
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionStateRelation
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyCache
+public import Flapjack.Compiler.Backend.RegAlloc.Initialization
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackLang.Prog
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.StackLang.Prog
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Native Stack raw-call transformation. Production routing is a separate
 obligation: the broad fuelled StackRawCall helper is not this definition. -/

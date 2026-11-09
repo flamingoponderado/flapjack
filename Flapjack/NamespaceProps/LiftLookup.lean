@@ -1,4 +1,8 @@
-import Flapjack.NamespaceHOL
+module
+
+public import Flapjack.NamespaceHOL
+
+@[expose] public section
 
 /-! Lookup equations for module-lifted namespaces. -/
 namespace Flapjack.NamespaceHOL

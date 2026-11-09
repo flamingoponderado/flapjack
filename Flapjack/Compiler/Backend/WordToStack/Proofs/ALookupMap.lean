@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack Flapjack.WordAlloc

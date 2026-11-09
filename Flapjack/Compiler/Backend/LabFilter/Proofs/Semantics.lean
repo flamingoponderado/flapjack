@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabFilter.Proofs.FilterCorrect
-import Flapjack.Compiler.Backend.LabProps.EvaluateAddClock
-import Flapjack.Compiler.Backend.LabSem.Semantics
+module
+
+public import Flapjack.Compiler.Backend.LabFilter.Proofs.FilterCorrect
+public import Flapjack.Compiler.Backend.LabProps.EvaluateAddClock
+public import Flapjack.Compiler.Backend.LabSem.Semantics
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabFilter.Proofs
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

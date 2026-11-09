@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Bytes
-import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Bytes
+public import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+
+@[expose] public section
 
 set_option maxHeartbeats 4000000
 

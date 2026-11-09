@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateAll
-import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Semantics
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateEventsClock
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateAll
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Semantics
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateEventsClock
+
+@[expose] public section
 
 /-! Observable consequences of the closure-to-BVL simulation candidate.
 The evaluators and their carriers remain subject to source review. -/

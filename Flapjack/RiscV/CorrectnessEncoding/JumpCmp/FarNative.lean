@@ -1,4 +1,8 @@
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Prefix
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Prefix
+
+@[expose] public section
 
 /-! Actual inverse branches for far JumpCmp lowering. Local untagged
 compositions retain the original native branch semantics. -/

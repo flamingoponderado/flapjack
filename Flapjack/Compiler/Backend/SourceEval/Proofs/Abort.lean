@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL
+module
+
+public import Flapjack.SemanticPrimitivesHOL
+
+@[expose] public section
 
 /-! Abort classification for source-evaluator simulations. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

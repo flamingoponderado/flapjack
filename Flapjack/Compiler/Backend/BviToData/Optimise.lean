@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataLive
-import Flapjack.Compiler.Backend.DataSimp
-import Flapjack.Compiler.Backend.DataSpace.Compile
+module
+
+public import Flapjack.Compiler.Backend.DataLive
+public import Flapjack.Compiler.Backend.DataSimp
+public import Flapjack.Compiler.Backend.DataSpace.Compile
+
+@[expose] public section
 
 /-! The data optimization sequence used by BVI-to-data lowering. -/
 namespace Flapjack.Compiler.Backend.BviToData

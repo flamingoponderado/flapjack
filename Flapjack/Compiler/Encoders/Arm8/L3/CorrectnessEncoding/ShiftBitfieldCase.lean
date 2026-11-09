@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftBitfieldMasks
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftBitfieldMasks
+public import Flapjack.HolRef
+
+@[expose] public section
 
 set_option maxHeartbeats 12000000
 set_option maxRecDepth 10000

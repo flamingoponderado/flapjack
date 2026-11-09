@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack
-import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWordLemmas
+module
+
+public import Flapjack.Compiler.Backend.WordToStack
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWordLemmas
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack
 

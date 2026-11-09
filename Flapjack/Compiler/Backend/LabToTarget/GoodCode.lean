@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.LabProps.LabelSets
-import Flapjack.Compiler.Backend.LabProps.Labels
-import Flapjack.Compiler.Backend.LabProps.SectionEnd
-import Flapjack.Compiler.Backend.LabProps.Native
-import Flapjack.Compiler.Backend.BackendProps
-import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
+module
+
+public import Flapjack.Compiler.Backend.LabProps.LabelSets
+public import Flapjack.Compiler.Backend.LabProps.Labels
+public import Flapjack.Compiler.Backend.LabProps.SectionEnd
+public import Flapjack.Compiler.Backend.LabProps.Native
+public import Flapjack.Compiler.Backend.BackendProps
+public import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

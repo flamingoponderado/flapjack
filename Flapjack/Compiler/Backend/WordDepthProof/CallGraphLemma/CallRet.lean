@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.CallRetArith
-import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.CallTail
+module
+
+public import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.CallRetArith
+public import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.CallTail
+
+@[expose] public section
 
 /-!
 # `max_depth_call_graph_lemma`: returning part of the `Call` case

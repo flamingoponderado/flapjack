@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClock
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClock
+
+@[expose] public section
 
 namespace Flapjack
 

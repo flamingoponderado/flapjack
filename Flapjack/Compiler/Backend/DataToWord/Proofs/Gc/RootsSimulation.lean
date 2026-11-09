@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Move
-import Flapjack.Compiler.Backend.CopyingGc.Proofs.Append
-import Flapjack.Compiler.Backend.CopyingGc.Proofs.Progress
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Move
+public import Flapjack.Compiler.Backend.CopyingGc.Proofs.Append
+public import Flapjack.Compiler.Backend.CopyingGc.Proofs.Progress
+
+@[expose] public section
 
 /-! Simulation of the copying collector over the entire root list. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

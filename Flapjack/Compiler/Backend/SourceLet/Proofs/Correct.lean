@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceLet.Proofs.Repeated
+module
+
+public import Flapjack.Compiler.Backend.SourceLet.Proofs.Repeated
+
+@[expose] public section
 
 /-! Declaration-list correctness for the source let-lifting pass. -/
 namespace Flapjack.Compiler.Backend.SourceLet

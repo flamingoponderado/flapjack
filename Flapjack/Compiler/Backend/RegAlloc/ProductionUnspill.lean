@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionMoveRevival
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionMoveRevival
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc Translator.Monadic.MonadBase

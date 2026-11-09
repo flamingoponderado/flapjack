@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopRaw
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopPointer
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopRaw
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopPointer
+
+@[expose] public section
 
 /-! Full abstract-to-word copying-collector scan simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

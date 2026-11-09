@@ -3,7 +3,7 @@
 from pathlib import Path
 import hashlib
 ROOT = Path(__file__).resolve().parents[2]
-CHECKS = {'Flapjack/RiscV/CorrectnessEncoding/DecodeMemory.lean': '9ec8a0c79f1a2dcf00702625f3a4c466eec7d3224f386ecdf7d4218f97635600', 'scripts/hol-probes/riscv_memory_decode_probeScript.sml': '7b7cf5b708ee8ea736c21627c3882bdd3ce89eeccd02d307751c6cf01aa34b1f', 'scripts/hol-probes/riscv_memory_decode_probe.out': '77bca760f0eeef26de9e0c0fb8df32e2d3eb944e44b672b8ba428b9c62bdc0fd'}
+CHECKS = {'Flapjack/RiscV/CorrectnessEncoding/DecodeMemory.lean': '29832fa0a939791e01e224091a33de0e7bb8018e29e23205537fab3665393a1f', 'scripts/hol-probes/riscv_memory_decode_probeScript.sml': '7b7cf5b708ee8ea736c21627c3882bdd3ce89eeccd02d307751c6cf01aa34b1f', 'scripts/hol-probes/riscv_memory_decode_probe.out': '77bca760f0eeef26de9e0c0fb8df32e2d3eb944e44b672b8ba428b9c62bdc0fd'}
 def check(root=ROOT):
     for name, digest in CHECKS.items():
         if hashlib.sha256((root / name).read_bytes()).hexdigest() != digest:

@@ -1,5 +1,9 @@
-import Flapjack.SemanticPrimitivesHOL.ConversionCorrespondence
-import Flapjack.SemanticPrimitivesHOL.ArithmeticCorrespondence
+module
+
+public import Flapjack.SemanticPrimitivesHOL.ConversionCorrespondence
+public import Flapjack.SemanticPrimitivesHOL.ArithmeticCorrespondence
+
+@[expose] public section
 
 /-! Source primitive application dispatcher. -/
 namespace Flapjack.SemanticPrimitivesHOL

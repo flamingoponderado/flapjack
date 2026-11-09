@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Leaf
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Leaf
+
+@[expose] public section
 
 /-!
 # `crep_to_loop` expression simulation: load case

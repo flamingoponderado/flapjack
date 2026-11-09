@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
-import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack

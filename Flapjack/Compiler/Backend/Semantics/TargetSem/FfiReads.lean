@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
-import Flapjack.Pancake.Semantics.LoopSem
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
+public import Flapjack.Pancake.Semantics.LoopSem
+
+@[expose] public section
 
 /-
 Counterpart of `cakeml/compiler/backend/semantics/targetSemScript.sml` FFI read

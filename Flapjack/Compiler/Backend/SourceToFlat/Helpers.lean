@@ -1,6 +1,10 @@
-import Flapjack.AstHOL.Syntax
-import Flapjack.Compiler.Backend.FlatLang
-import Flapjack.Compiler.Backend.SourceToFlat.Config
+module
+
+public import Flapjack.AstHOL.Syntax
+public import Flapjack.Compiler.Backend.FlatLang
+public import Flapjack.Compiler.Backend.SourceToFlat.Config
+
+@[expose] public section
 
 /-!
 # `source_to_flatScript`: helper definitions (lines 46-340)

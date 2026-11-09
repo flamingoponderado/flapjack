@@ -1,4 +1,8 @@
-import Flapjack.Misc.SetSep
+module
+
+public import Flapjack.Misc.SetSep
+
+@[expose] public section
 
 /-! `miscScript.sml` `fun2set_disjoint_union`: separation over the graph of one
 memory on a disjoint union of domains. Sets are predicates, as in the reviewed

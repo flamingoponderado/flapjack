@@ -1,7 +1,13 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpState
-import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
-import Flapjack.Compiler.Backend.BvlInline.Proofs.VarListEvaluate
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateLength
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpState
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.VarListEvaluate
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateLength
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Structural evaluator cases for the let-operation simulation. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

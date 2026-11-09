@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.State
-import Flapjack.Misc.Sptree.SizeDelete
-import Flapjack.Misc.Sptree.ToList
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.State
+public import Flapjack.Misc.Sptree.SizeDelete
+public import Flapjack.Misc.Sptree.ToList
+
+@[expose] public section
 
 /-! Heap-space accounting for the data-language semantics. -/
 namespace Flapjack.Compiler.Backend.DataSem

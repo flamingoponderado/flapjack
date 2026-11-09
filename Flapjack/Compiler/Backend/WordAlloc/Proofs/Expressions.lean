@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.LiveExpressions
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.LiveExpressions
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

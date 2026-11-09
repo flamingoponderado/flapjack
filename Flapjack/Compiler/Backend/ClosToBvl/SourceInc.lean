@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.SourceExps
-import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.SourceExps
+public import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
+
+@[expose] public section
 
 /-! Source-shaped incremental closure-to-BVL compilation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

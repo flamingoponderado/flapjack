@@ -1,3 +1,7 @@
+module
+
+@[expose] public section
+
 /-!
 # Shared total-fold facts for the backend passes
 

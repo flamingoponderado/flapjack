@@ -1,5 +1,9 @@
-import Flapjack.EvaluateProps.NoEvalApp
-import Flapjack.EvaluateHOL.Induction
+module
+
+public import Flapjack.EvaluateProps.NoEvalApp
+public import Flapjack.EvaluateHOL.Induction
+
+@[expose] public section
 
 /-! Complete mutual simulation from an absent Eval state for the source evaluator. -/
 namespace Flapjack.EvaluateProps

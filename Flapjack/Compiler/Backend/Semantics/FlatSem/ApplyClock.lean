@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
-import Flapjack.FfiHOL
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+public import Flapjack.FfiHOL
+
+@[expose] public section
 
 /-! Clock, evaluation-configuration, and I/O-event preservation for the flat primitive dispatcher. -/
 namespace Flapjack.Compiler.Backend.FlatSem

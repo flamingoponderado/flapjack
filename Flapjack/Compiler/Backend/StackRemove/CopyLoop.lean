@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove
-import Flapjack.Compiler.Backend.StackLang.InstBuilders
+module
+
+public import Flapjack.Compiler.Backend.StackRemove
+public import Flapjack.Compiler.Backend.StackLang.InstBuilders
+
+@[expose] public section
 
 /-! Literal stack_removeScript.sml:139–159 StoreConsts copy builders.
 The default Pancake and assembly modes initializedRuntimeLab? executes these native

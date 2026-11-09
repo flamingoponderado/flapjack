@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundFlat
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnRegisterBounds
-import Mathlib.Tactic.Tauto
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundFlat
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnRegisterBounds
+public import Mathlib.Tactic.Tauto
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.RegisterBoundRecursive
 open Flapjack Flapjack.Compiler.Backend.WordToStack.Native

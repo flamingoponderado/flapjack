@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.FlatToClos.Compile
-import Flapjack.Compiler.Backend.FlatProps.NoMat
-import Flapjack.Compiler.Backend.Semantics.FlatSem
-import Flapjack.Compiler.Backend.Semantics.ClosSem
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
-import Batteries.Data.List.Basic
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Compile
+public import Flapjack.Compiler.Backend.FlatProps.NoMat
+public import Flapjack.Compiler.Backend.Semantics.FlatSem
+public import Flapjack.Compiler.Backend.Semantics.ClosSem
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
+public import Batteries.Data.List.Basic
+
+@[expose] public section
 
 /-! Proof-side value and environment relations for flat-to-closure lowering. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

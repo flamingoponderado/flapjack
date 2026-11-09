@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.ClosKnown.Inline
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.ContainsCorrect
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SizeCorrect
-import Flapjack.Compiler.Backend.ClosKnown.Inline.SizeShortCircuit
-import Flapjack.Compiler.Backend.ClosLang.Proofs.Budget
-import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeTotal
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Inline
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ContainsCorrect
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SizeCorrect
+public import Flapjack.Compiler.Backend.ClosKnown.Inline.SizeShortCircuit
+public import Flapjack.Compiler.Backend.ClosLang.Proofs.Budget
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeTotal
+
+@[expose] public section
 
 /-! Structural sufficiency of known-closure inlining analyses. These are
 Flapjack infrastructure lemmas, not HOL pass-correctness ports. -/

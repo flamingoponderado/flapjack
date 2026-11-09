@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanToWord.PanToCrepValidity
-import Flapjack.Pancake.Proofs.CrepInline.ExpressionProvenance
+module
+
+public import Flapjack.Pancake.Proofs.PanToWord.PanToCrepValidity
+public import Flapjack.Pancake.Proofs.CrepInline.ExpressionProvenance
+
+@[expose] public section
 namespace Flapjack.PanToCrepInlineTableValidity
 /-- Internal key-filter lookup correspondence, all lists including duplicate keys; no separate HOL declaration. -/
 private theorem filter_lookup {α β : Type} [BEq α] [LawfulBEq α]

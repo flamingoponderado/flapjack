@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StateRelation
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+
+@[expose] public section
 
 /-! Source-local relation laws used by StackRemove's faithful evaluation
 simulation. The states and operations are the imported evaluator's carriers. -/

@@ -1,4 +1,8 @@
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-! Length of the faithful HOL `mlstring` carrier. -/
 namespace Flapjack.Basis.Pure.MlString.MlString

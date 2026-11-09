@@ -1,5 +1,9 @@
-import Flapjack.Parser.Localise
-import Flapjack.Parser.GrammarByteRanged
+module
+
+public import Flapjack.Parser.Localise
+public import Flapjack.Parser.GrammarByteRanged
+
+@[expose] public section
 
 /-!
 Byte-rangedness is preserved by the localisation pass.

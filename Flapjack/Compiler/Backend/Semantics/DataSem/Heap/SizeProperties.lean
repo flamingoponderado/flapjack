@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Heap
-import Flapjack.Misc.Sptree.Subspt
-import Flapjack.Misc.SptreeLookup
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Heap
+public import Flapjack.Misc.Sptree.Subspt
+public import Flapjack.Misc.SptreeLookup
+
+@[expose] public section
 
 /-! Reference-tree bounds for source heap size accounting. -/
 namespace Flapjack.Compiler.Backend.DataSem

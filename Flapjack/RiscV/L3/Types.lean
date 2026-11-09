@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-!
 # L3 RISC-V model: datatypes and the machine state

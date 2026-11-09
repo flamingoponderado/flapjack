@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs
+module
+
+public import Flapjack.RiscV.L3.Defs
+
+@[expose] public section
 namespace Flapjack.RiscV.L3
 
 /-- Source review: riscvScript3460-3472 passes the original exception and

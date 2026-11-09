@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
-import Flapjack.Pancake.Proofs.LoopToWord.FindVar
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
+public import Flapjack.Pancake.Proofs.LoopToWord.FindVar
+
+@[expose] public section
 
 /-!
 # `Arith` and `Primitive` cases of `loop_to_word`'s `compile_correct`

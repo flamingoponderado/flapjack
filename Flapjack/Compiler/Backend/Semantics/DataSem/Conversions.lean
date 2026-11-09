@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Value
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Value
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
+
+@[expose] public section
 
 /-! Data-language installation value decoders. -/
 namespace Flapjack.Compiler.Backend.DataSem

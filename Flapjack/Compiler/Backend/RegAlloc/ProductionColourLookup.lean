@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
-import Std.Data.HashMap.Lemmas
-import Std.Data.TreeMap.Lemmas
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
+public import Std.Data.HashMap.Lemmas
+public import Std.Data.TreeMap.Lemmas
+
+@[expose] public section
 
 /-!
 Actual optimized allocator correspondence infrastructure. Source comparison:

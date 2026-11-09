@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftEvaluate
-import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateAppend
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftEvaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateAppend
+
+@[expose] public section
 
 /-! Semantic cases for source direct equality simplification. -/
 namespace Flapjack.Compiler.Backend.ClosOp

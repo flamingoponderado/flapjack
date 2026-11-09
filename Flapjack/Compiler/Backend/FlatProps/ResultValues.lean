@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem
+
+@[expose] public section
 
 /-! Values exposed by a flat evaluator result. -/
 namespace Flapjack.Compiler.Backend.FlatProps

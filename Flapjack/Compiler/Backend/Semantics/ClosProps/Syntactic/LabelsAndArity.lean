@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+
+@[expose] public section
 
 /-! Source closure label and application-arity predicates. -/
 namespace Flapjack.Compiler.Backend.ClosProps

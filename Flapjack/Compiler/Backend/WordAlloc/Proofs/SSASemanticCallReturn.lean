@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallTail
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Alloc
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCut
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallTail
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Alloc
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCut
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

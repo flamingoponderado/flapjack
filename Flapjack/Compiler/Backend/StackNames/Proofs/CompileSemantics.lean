@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackNames.Proofs.CompCorrect
-import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
+module
+
+public import Flapjack.Compiler.Backend.StackNames.Proofs.CompCorrect
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
+
+@[expose] public section
 
 /-!
 # stack_namesProof: `compile_semantics` and `compile_semantics_alt`

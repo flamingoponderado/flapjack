@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviInline.Proofs.ProgramCache
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.CodeRelation
+module
+
+public import Flapjack.Compiler.Backend.BviInline.Proofs.ProgramCache
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.CodeRelation
+
+@[expose] public section
 
 /-! Code-entry relations for BVI program inlining. -/
 namespace Flapjack.Compiler.Backend.BviInline

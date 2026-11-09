@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeaderInjective
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
-import Flapjack.Compiler.Backend.Semantics.DataSem.Equality
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeaderInjective
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Equality
+
+@[expose] public section
 
 /-! Shared-pointer constructor facts for the source equality proof. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

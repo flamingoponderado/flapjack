@@ -1,7 +1,11 @@
-import Flapjack.FiniteMap.AlistExact.Lookup
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDlet
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateEmptyDeclarations
-import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
+module
+
+public import Flapjack.FiniteMap.AlistExact.Lookup
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDlet
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateEmptyDeclarations
+public import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
+
+@[expose] public section
 
 /-! Recursive declaration simulation over the preliminary factored value and
 state relations. These helpers are not yet a port of `compile_correct`. -/

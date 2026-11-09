@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.WordAlloc.ClashTreeProg
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.WordAlloc.ClashTreeProg
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

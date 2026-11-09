@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalApp
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedApp
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedArray
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedData
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedPrimitive
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedMatch
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalCall
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalApp
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedApp
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedArray
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedData
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedPrimitive
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedMatch
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalCall
+
+@[expose] public section
 
 /-! A total expression induction tree for bounded simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

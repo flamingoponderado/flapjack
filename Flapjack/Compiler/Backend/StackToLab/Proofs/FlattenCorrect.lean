@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Install
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.ShMem
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Ffi
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Install
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.ShMem
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Ffi
+
+@[expose] public section
 
 /-! `flatten_correct` (`stack_to_labProofScript.sml:1207-2740`): the HOL proof
 is by `evaluate_ind`; here the constructor cases of `FlattenCorrect/` are

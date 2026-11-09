@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordGcFunctions
+module
+
+public import Flapjack.Compiler.Backend.WordGcFunctions
+
+@[expose] public section
 
 /-! Selection of partial collection. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Bvl.Syntax
-import Flapjack.Compiler.Backend.Bvi.Syntax
-import Flapjack.Misc.Sptree
-import Flapjack.Compiler.Backend.BackendCommon.BvlStubs
+module
+
+public import Flapjack.Compiler.Backend.Bvl.Syntax
+public import Flapjack.Compiler.Backend.Bvi.Syntax
+public import Flapjack.Misc.Sptree
+public import Flapjack.Compiler.Backend.BackendCommon.BvlStubs
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.BvlToBvi
 

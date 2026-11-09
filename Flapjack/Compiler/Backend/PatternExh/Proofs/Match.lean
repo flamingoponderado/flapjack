@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.PatternSemantics.Semantics
+module
+
+public import Flapjack.Compiler.Backend.PatternSemantics.Semantics
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Row-matching safety for the exhaustiveness proof and pattern compiler. -/
 namespace Flapjack.Compiler.Backend.PatternExh

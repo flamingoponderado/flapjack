@@ -2,8 +2,14 @@
 Copyright (c) 2025 Flapjack contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Flapjack.Compiler.Encoders.Arm8.Machine.ConstCase
-import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Machine.ConstCase
+public import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
+
+-- Sum `==` must reduce by `rfl`/`decide`; core's derived instance is not exposed.
+import all Init.Data.Sum.Basic
+@[expose] public section
 
 /-!
 # The ARM8 arithmetic encoder-correctness cases

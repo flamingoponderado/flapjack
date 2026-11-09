@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotateCorrect
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotateCorrect
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
+
+@[expose] public section
 
 /-! Observable consequences of the candidate annotation simulation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

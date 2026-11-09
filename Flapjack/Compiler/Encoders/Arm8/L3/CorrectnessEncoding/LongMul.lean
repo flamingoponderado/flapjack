@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Multiply
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Simulate
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Multiply
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Simulate
+
+@[expose] public section
 
 set_option maxHeartbeats 12000000
 set_option maxRecDepth 10000

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Leaf
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingle
-import Flapjack.Misc.Sptree.ToAList
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Leaf
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingle
+public import Flapjack.Misc.Sptree.ToAList
+
+@[expose] public section
 set_option autoImplicit false
 namespace Flapjack.Compiler.Backend.WordToWord
 open Flapjack Flapjack.WordSemStateFiniteExact Flapjack.Compiler.Encoders.Asm

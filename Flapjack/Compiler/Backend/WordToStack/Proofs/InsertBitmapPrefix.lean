@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack
+module
+
+public import Flapjack.Compiler.Backend.WordToStack
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack
 open Flapjack

@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CorrectnessEncoding.MemoryStep
-import Flapjack.RiscV.CorrectnessEncoding.BytesInMemory
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.MemoryStep
+public import Flapjack.RiscV.CorrectnessEncoding.BytesInMemory
+
+@[expose] public section
 
 /-! Actual native memory Fetch/Next from original source instruction bytes.
 Local untagged compositions have no separately named HOL originals. The

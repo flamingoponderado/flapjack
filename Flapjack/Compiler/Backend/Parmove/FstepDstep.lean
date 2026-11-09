@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Parmove.DSteps
-import Flapjack.Compiler.Backend.Parmove.SplitSource
+module
+
+public import Flapjack.Compiler.Backend.Parmove.DSteps
+public import Flapjack.Compiler.Backend.Parmove.SplitSource
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

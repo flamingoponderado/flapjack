@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyNumeric
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyNumeric
+
+@[expose] public section
 
 /-! Integer and word primitive simulation over preliminary factored relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

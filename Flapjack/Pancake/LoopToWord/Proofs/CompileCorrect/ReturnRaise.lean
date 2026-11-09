@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
+
+@[expose] public section
 
 /-!
 # `Return` and `Raise` cases of `loop_to_word`'s `compile_correct`

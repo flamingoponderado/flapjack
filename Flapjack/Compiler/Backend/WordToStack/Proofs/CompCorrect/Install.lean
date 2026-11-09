@@ -1,14 +1,18 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterTwo
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadContinuations
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
-import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocStateRel
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramBitmaps
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
-import Flapjack.Misc.Sptree.Wf
-import Flapjack.Misc.Sptree.ToAList
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterTwo
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadContinuations
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocStateRel
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramBitmaps
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
+public import Flapjack.Misc.Sptree.Wf
+public import Flapjack.Misc.Sptree.ToAList
+
+@[expose] public section
 
 /-!
 # Word-to-Stack `comp_correct`: the `Install` case

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorPartial
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorNone
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorSimple
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorPartial
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorNone
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorSimple
+
+@[expose] public section
 
 /-! Abstract memory correctness for the combined collector. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

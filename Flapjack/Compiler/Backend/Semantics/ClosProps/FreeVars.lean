@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+
+@[expose] public section
 
 /-! Free de Bruijn variables in closure-language expressions. -/
 namespace Flapjack.Compiler.Backend.ClosProps

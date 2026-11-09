@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CorrectnessEncoding.RorStep
-import Flapjack.RiscV.CorrectnessEncoding.ConstExecution
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.RorStep
+public import Flapjack.RiscV.CorrectnessEncoding.ConstExecution
+
+@[expose] public section
 
 /-! Ror case-local native list composition, not a named HOL port.
 The actual target iterator is reused unchanged. Every fetch/Next transition and

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.CanonizeSort
-import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.CanonizeSort
+public import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

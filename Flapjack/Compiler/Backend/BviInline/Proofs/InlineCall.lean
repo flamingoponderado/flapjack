@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.BviInline.Proofs.ExpandInduction
+module
+
+public import Flapjack.Compiler.Backend.BviInline.Proofs.ExpandInduction
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+@[expose] public section
 
 /-! Evaluation of an inlined direct call. -/
 namespace Flapjack.Compiler.Backend.BviInline

@@ -1,5 +1,16 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracle
-import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsRelated
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracle
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsRelated
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Assemble oracle-adjustment evaluator cases by clock and expression size. -/
 namespace Flapjack.Compiler.Backend.ClosProps.AdjustOracle

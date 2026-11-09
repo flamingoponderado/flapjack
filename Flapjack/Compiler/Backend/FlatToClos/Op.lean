@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatToClos.Arith
-import Flapjack.Compiler.Backend.FlatToClos.CopyByte
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Arith
+public import Flapjack.Compiler.Backend.FlatToClos.CopyByte
+
+@[expose] public section
 
 /-! Translation of flat operators to closure operators and explicit checks. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

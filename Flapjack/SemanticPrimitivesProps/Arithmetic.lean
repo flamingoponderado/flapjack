@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL.Arithmetic
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Arithmetic
+
+@[expose] public section
 
 /-! Type preservation for source primitive arithmetic. -/
 namespace Flapjack.SemanticPrimitivesProps

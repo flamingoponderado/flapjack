@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAux
-import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxReconstruction
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAux
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxReconstruction
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.MoveAuxSimulation
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

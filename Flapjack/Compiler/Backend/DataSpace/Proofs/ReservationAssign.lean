@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.DataSpace.Proofs.PrimitiveBlockSpace
-import Flapjack.Compiler.Backend.DataSpace.Proofs.Simulation
+module
+
+public import Flapjack.Compiler.Backend.DataSpace.Proofs.PrimitiveBlockSpace
+public import Flapjack.Compiler.Backend.DataSpace.Proofs.Simulation
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+@[expose] public section
 
 /-! Reservation transport for unannotated assignments. -/
 namespace Flapjack.Compiler.Backend.DataSpace

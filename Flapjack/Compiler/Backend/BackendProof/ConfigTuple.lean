@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Backend
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Backend
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Configuration projections used by the backend compiler oracle. -/
 namespace Flapjack.Compiler.Backend.BackendProof

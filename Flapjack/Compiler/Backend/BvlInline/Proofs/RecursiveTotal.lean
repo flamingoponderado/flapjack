@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline
-import Flapjack.Compiler.Backend.ListFoldTotal
+module
+
+public import Flapjack.Compiler.Backend.BvlInline
+public import Flapjack.Compiler.Backend.ListFoldTotal
+
+@[expose] public section
 
 /-! Structural sufficiency for the BVL inliner's recursion test. These are
 Flapjack infrastructure lemmas, not HOL pass-correctness ports. -/

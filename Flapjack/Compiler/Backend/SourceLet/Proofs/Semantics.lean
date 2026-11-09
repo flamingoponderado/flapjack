@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceLet.Proofs.Correct
-import Flapjack.SemanticsHOL
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleInduction
+module
+
+public import Flapjack.Compiler.Backend.SourceLet.Proofs.Correct
+public import Flapjack.SemanticsHOL
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleInduction
+
+@[expose] public section
 
 /-! Observable semantics preservation for source let-lifting. -/
 namespace Flapjack.Compiler.Backend.SourceLet

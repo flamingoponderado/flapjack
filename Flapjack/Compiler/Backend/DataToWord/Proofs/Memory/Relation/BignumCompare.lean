@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberHeader
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordCompare
-import Flapjack.Misc.Multiword.Length
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberHeader
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordCompare
+public import Flapjack.Misc.Multiword.Length
+
+@[expose] public section
 
 /-! Signed comparison of the concrete multiword bignum payloads. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

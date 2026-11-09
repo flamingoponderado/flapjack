@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosOp
+module
+
+public import Flapjack.Compiler.Backend.ClosOp
+
+@[expose] public section
 
 /-! Agreement of the reviewed source matchers with the former executable
 patterns. These are Flapjack preservation facts, not separate HOL theorems. -/

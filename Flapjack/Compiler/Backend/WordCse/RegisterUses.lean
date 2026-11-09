@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.InstructionKeys
+module
+
+public import Flapjack.Compiler.Backend.WordCse.InstructionKeys
+
+@[expose] public section
 
 /-! Native CSE register classifiers. Carry reads its flag register; overflow
 operations omit their output flag from reads. FP writes list only general-purpose

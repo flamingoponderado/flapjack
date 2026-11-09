@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.EqDirectReduction
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.EqDirectReduction
+
+@[expose] public section
 
 /-! Source smart-operation reduction correctness. -/
 namespace Flapjack.Compiler.Backend.ClosOp

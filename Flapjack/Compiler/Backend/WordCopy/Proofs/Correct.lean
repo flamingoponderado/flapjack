@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCopy.Proofs.Inst
-import Flapjack.Misc.Sptree.InsertUnchanged
+module
+
+public import Flapjack.Compiler.Backend.WordCopy.Proofs.Inst
+public import Flapjack.Misc.Sptree.InsertUnchanged
+
+@[expose] public section
 
 /-!
 # word_copyProof: `copy_prop_correct` and `evaluate_copy_prop`

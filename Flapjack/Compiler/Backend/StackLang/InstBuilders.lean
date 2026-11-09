@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackLang.Overloads
+module
+
+public import Flapjack.Compiler.Backend.StackLang.Overloads
+
+@[expose] public section
 
 /-! Compatibility names for earlier Flapjack consumers. The canonical HOL ports
 live in Overloads.lean; this module adds no logical port or HOL tag.

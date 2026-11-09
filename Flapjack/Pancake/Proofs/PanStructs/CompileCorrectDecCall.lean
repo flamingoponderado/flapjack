@@ -1,13 +1,17 @@
-import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
-import Flapjack.Pancake.Semantics.PanProps.EvaluateResultInvariant
-import Flapjack.Pancake.Proofs.PanStructs.EvaluateStructsCodeInvariant
-import Flapjack.Pancake.Proofs.PanStructs.LookupCodeFields
-import Flapjack.Pancake.Proofs.PanStructs.ConvertCodeLocals
-import Flapjack.Pancake.Proofs.PanStructs.FlattenConversion
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
-import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
-import Flapjack.Pancake.PanStructs.CompileProgExact
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSupport
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
+public import Flapjack.Pancake.Semantics.PanProps.EvaluateResultInvariant
+public import Flapjack.Pancake.Proofs.PanStructs.EvaluateStructsCodeInvariant
+public import Flapjack.Pancake.Proofs.PanStructs.LookupCodeFields
+public import Flapjack.Pancake.Proofs.PanStructs.ConvertCodeLocals
+public import Flapjack.Pancake.Proofs.PanStructs.FlattenConversion
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
+public import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
+public import Flapjack.Pancake.PanStructs.CompileProgExact
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSupport
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDecCall
 open Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSupport
 open Flapjack

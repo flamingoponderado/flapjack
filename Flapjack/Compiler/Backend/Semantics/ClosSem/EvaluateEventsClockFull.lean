@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockApp
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockApp
+
+@[expose] public section
 
 /-! Clock-monotone event traces for the proof-side closure evaluator. The
 evaluator and its state carriers await HOL correspondence review. -/

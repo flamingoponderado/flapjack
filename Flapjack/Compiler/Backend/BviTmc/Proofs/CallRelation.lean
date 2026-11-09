@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
+
+@[expose] public section
 
 /-! Function lookup under the TMC code and value relations. -/
 namespace Flapjack.Compiler.Backend.BviTmc

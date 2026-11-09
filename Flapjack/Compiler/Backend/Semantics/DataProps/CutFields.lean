@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+
+@[expose] public section
 
 /-! Cut-state interaction with stack, clock, and locals-size updates. -/
 namespace Flapjack.Compiler.Backend.DataProps

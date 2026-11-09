@@ -1,5 +1,9 @@
-import Flapjack.Misc.Option.Rel
-import Batteries.Data.List.Basic
+module
+
+public import Flapjack.Misc.Option.Rel
+public import Batteries.Data.List.Basic
+
+@[expose] public section
 
 /-! Indexed lookup for pointwise-related lists. -/
 namespace Flapjack

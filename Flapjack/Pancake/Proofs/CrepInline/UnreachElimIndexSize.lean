@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
-import Mathlib.SetTheory.Cardinal.Finite
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
+public import Mathlib.SetTheory.Cardinal.Finite
+
+@[expose] public section
 
 namespace Flapjack.CrepInlineUnreachElimProgSize
 

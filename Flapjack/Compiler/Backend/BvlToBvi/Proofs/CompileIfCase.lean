@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileListCase
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileListCase
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Conditional case of BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateSequence
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MappedRefsUpdate
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateSequence
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MappedRefsUpdate
+
+@[expose] public section
 
 /-! Mapped memory update cases of the closure-to-BVL simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

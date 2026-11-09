@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileThunkAlloc
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileThunkAlloc
+
+@[expose] public section
 
 /-! FFI calls in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

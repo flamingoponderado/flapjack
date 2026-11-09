@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.LabFilter
-import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
-import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.FfiHOL
-import Flapjack.Misc.ListSubset
-import Flapjack.Misc.Sptree
-import Flapjack.Basis.Pure.MlString
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.LabFilter
+public import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.FfiHOL
+public import Flapjack.Misc.ListSubset
+public import Flapjack.Misc.Sptree
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 # Faithful Cake `compile_lab`/`compile` (`lab_to_targetScript.sml`)

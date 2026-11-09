@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Counterpart of the pinned HOL `src/n-bit/byteScript.sml` byte extraction
 and serialization definitions. Arbitrary positive word dimensions and byte

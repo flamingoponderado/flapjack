@@ -1,9 +1,13 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.TopLevel
-import Flapjack.Compiler.Backend.LinearScan.Proofs.LiveTree
-import Flapjack.Compiler.Backend.RegAlloc.Proofs
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
-import Flapjack.Misc.Sptree.Foldi
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.TopLevel
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.LiveTree
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
+public import Flapjack.Misc.Sptree.Foldi
+
+@[expose] public section
 
 /-!
 # linear_scanProof: register bijection invariants

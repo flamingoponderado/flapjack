@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.State
-import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
-import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyAux
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.State
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyAux
+
+@[expose] public section
 
 /-! Block observation simulations for BVI-to-data correctness. -/
 namespace Flapjack.Compiler.Backend.BviToData

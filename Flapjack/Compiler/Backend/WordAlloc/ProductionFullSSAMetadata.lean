@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSA
-import Flapjack.Compiler.Backend.WordAlloc.ProductionSSAStateRoute
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.EvenListDistinct
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSA
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionSSAStateRoute
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.EvenListDistinct
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

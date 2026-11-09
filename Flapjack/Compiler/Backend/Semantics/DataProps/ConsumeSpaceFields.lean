@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Heap
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Heap
+
+@[expose] public section
 
 /-! Space consumption commutes with independent state-field updates. -/
 namespace Flapjack.Compiler.Backend.DataProps

@@ -1,8 +1,12 @@
-import Flapjack.Basis.Pure.MlString
-import Flapjack.Compiler.Backend.StackLang
-import Flapjack.Compiler.Backend.StackLang.Prog
-import Flapjack.Compiler.Backend.StackCarrier
-import Flapjack.Compiler.Encoders.Asm
+module
+
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Compiler.Backend.StackLang
+public import Flapjack.Compiler.Backend.StackLang.Prog
+public import Flapjack.Compiler.Backend.StackCarrier
+public import Flapjack.Compiler.Encoders.Asm
+
+@[expose] public section
 
 /-!
 # `String` <-> `mlstring` bridge for the stack program carrier

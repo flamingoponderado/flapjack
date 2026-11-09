@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.BindingCount
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileGlobals
-import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalBounds
-import Flapjack.Compiler.Backend.FlatElim.Proofs.GlobalInvariants
-import Mathlib.Data.List.Count
-import Mathlib.Data.List.Nodup
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.BindingCount
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileGlobals
+public import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalBounds
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.GlobalInvariants
+public import Mathlib.Data.List.Count
+public import Mathlib.Data.List.Nodup
+
+@[expose] public section
 
 /-! Global-write bags produced by source declaration compilation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

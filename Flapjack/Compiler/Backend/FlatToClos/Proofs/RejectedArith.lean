@@ -1,5 +1,14 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.BooleanExpressions
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyArithmeticSource
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.BooleanExpressions
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyArithmeticSource
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Unsupported arithmetic cases in flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

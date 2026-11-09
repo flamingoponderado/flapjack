@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.AllocDefsLookup
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateException
-import Flapjack.NamespaceProps
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.AllocDefsLookup
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateException
+public import Flapjack.NamespaceProps
+
+@[expose] public section
 
 /-! Prerequisites for the datatype-declaration case of the preliminary
 factored source-to-flat simulation. These helpers do not claim the upstream

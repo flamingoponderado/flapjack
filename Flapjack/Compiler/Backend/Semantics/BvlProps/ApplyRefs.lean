@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BvlProps.BuildRefs
-import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyClock
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.BuildRefs
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyClock
+
+@[expose] public section
 
 /-! Reference-domain preservation for BVL primitives. -/
 namespace Flapjack.Compiler.Backend.BvlProps

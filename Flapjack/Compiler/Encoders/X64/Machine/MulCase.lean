@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.X64.Machine.ShiftCase
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.ShiftCase
+
+@[expose] public section
 
 /-!
 # The `longMul` case of `encoder_correct x64Target`

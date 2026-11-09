@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LinearScan.ProductionSorting
-import Flapjack.Compiler.Backend.LinearScan.Steps
+module
+
+public import Flapjack.Compiler.Backend.LinearScan.ProductionSorting
+public import Flapjack.Compiler.Backend.LinearScan.Steps
+
+@[expose] public section
 
 /-!
 Array-backed coloring and spilling operations. Their simulations are

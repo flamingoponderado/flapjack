@@ -1,8 +1,12 @@
-import Flapjack.Pancake.LoopToWord
-import Flapjack.Pancake.LoopToWord.MakeCtxtExact
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
-import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
-import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
+module
+
+public import Flapjack.Pancake.LoopToWord
+public import Flapjack.Pancake.LoopToWord.MakeCtxtExact
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
+public import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
+
+@[expose] public section
 
 /-!
 # Loop-to-word context-domain support

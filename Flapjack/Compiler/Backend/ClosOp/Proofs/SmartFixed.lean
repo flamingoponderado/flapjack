@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.ReductionInvariants
-import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.ReductionInvariants
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+
+@[expose] public section
 
 /-! Source smart-operation cases that retain the original expression. -/
 namespace Flapjack.Compiler.Backend.ClosOp

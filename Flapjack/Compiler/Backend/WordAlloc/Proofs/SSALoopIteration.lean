@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticControl
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSetup
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcile
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvLemma
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.PermuteSwap
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticControl
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSetup
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcile
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvLemma
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.PermuteSwap
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

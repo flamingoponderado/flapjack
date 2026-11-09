@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabFilter.Proofs.ControlCases
+module
+
+public import Flapjack.Compiler.Backend.LabFilter.Proofs.ControlCases
+
+@[expose] public section
 
 /-! Native buffer-write and terminal constructor cases of original
 filter_correct669. Full evaluator assembly and semantic lift remain open. -/

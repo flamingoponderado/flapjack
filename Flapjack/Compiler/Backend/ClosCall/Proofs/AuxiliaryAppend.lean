@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosCall
+module
+
+public import Flapjack.Compiler.Backend.ClosCall
+
+@[expose] public section
 
 /-! Appending pre-existing auxiliary code to the closure-call pass state.
 These lemmas concern Flapjack's fuel-bounded traversal and retry wrapper;

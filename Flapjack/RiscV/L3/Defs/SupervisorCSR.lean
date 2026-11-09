@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Defs.MachineCSRCodec
-import Flapjack.RiscV.L3.Defs.CSRAccess
+module
+
+public import Flapjack.RiscV.L3.Defs.MachineCSRCodec
+public import Flapjack.RiscV.L3.Defs.CSRAccess
+
+@[expose] public section
 namespace Flapjack.RiscV.L3
 
 /-! Complete literal supervisor CSR codecs and lift/lower section. Original

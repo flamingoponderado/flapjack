@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectArgs
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectArgs
+
+@[expose] public section
 
 /-! Source-shaped application collection invariants for the multi-argument pass. -/
 namespace Flapjack.Compiler.Backend.ClosMti

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallTail
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallReturnNone
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallReturnHandler
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallTail
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallReturnNone
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallReturnHandler
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.CallAssembly
 open Flapjack StackSemEvaluate StackSemStateOps Compiler.Backend.StackLang

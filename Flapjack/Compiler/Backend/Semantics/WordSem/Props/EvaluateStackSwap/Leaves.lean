@@ -1,7 +1,11 @@
-import Flapjack.Pancake.WordLang.MaxVarExp
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Motive
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
+module
+
+public import Flapjack.Pancake.WordLang.MaxVarExp
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Motive
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
+
+@[expose] public section
 
 /-!
 # `evaluate_stack_swap` stack-insensitive leaf cases

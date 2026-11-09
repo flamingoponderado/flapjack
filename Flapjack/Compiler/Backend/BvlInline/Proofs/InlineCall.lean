@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineStateRel
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineStateRel
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
+
+@[expose] public section
 
 /-! Call-lookup and clock prerequisites for the BVL inlining simulation. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

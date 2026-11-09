@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.LabSem.State
-import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
-import Flapjack.Compiler.Backend.Semantics.TargetProps.OracleEquality
-import Flapjack.Compiler.Backend.Semantics.TargetProps.ConstructedOracles
-import Flapjack.Compiler.Backend.Semantics.TargetProps.NextInterference
-import Flapjack.Compiler.Backend.Semantics.TargetProps.NextCases
-import Flapjack.Compiler.Backend.Semantics.TargetProps.Interference
-import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
+module
+
+public import Flapjack.Compiler.Backend.LabSem.State
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.OracleEquality
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.ConstructedOracles
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.NextInterference
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.NextCases
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.Interference
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
+
+@[expose] public section
 
 set_option autoImplicit false
 

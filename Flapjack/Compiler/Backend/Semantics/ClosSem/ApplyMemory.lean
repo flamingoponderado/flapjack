@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
-import Flapjack.Compiler.Backend.Semantics.NatListBounded
-import Flapjack.SemanticPrimitivesHOL.Array
-import Flapjack.SemanticPrimitivesHOL.Thunk
-import Flapjack.SemanticPrimitivesHOL.Compare
-import Mathlib.Data.Nat.Find
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
+public import Flapjack.Compiler.Backend.Semantics.NatListBounded
+public import Flapjack.SemanticPrimitivesHOL.Array
+public import Flapjack.SemanticPrimitivesHOL.Thunk
+public import Flapjack.SemanticPrimitivesHOL.Compare
+public import Mathlib.Data.Nat.Find
+
+@[expose] public section
 
 /-! Memory cases of the closure primitive dispatcher. -/
 namespace Flapjack.Compiler.Backend.ClosSem

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Shift
-import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Shift
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+
+@[expose] public section
 
 /-! Effects of closure annotation on code locations. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

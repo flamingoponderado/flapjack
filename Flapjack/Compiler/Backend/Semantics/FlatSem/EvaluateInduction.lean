@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+public import Flapjack.Misc.ClockWeightInduction
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.FlatSem
 /-- Mutual clock-and-weight induction for flat expression and declaration lists.
 This Flapjack infrastructure specializes the shared lexicographic induction;

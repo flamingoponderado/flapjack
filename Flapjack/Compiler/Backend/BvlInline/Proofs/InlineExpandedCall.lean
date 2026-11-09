@@ -1,5 +1,11 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineDirectCall
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateExpandEnv
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineDirectCall
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateExpandEnv
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! The inlined Call/Let case of BVL evaluation. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

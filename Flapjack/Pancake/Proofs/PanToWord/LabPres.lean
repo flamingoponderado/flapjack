@@ -1,6 +1,10 @@
-import Flapjack.Pancake.PanToWord
-import Flapjack.Pancake.LoopToWord.Proofs.LabPres
-import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
+module
+
+public import Flapjack.Pancake.PanToWord
+public import Flapjack.Pancake.LoopToWord.Proofs.LabPres
+public import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
+
+@[expose] public section
 
 /-!
 # `pan_to_wordProof`: good handlers, label preservation and label minimum

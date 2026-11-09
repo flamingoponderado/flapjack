@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.StackRemove.Comp
-import Flapjack.Compiler.Backend.StackRemove.Compile
-import Flapjack.Compiler.Backend.StackRemove.InitStubs
-import Flapjack.Compiler.Backend.StackRemove.InitCode
-import Flapjack.Compiler.Backend.StackProps.ProgramNames
-import Flapjack.Compiler.Backend.StackProps.RemoveNames
-import Flapjack.Misc.GoodDimindex
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Comp
+public import Flapjack.Compiler.Backend.StackRemove.Compile
+public import Flapjack.Compiler.Backend.StackRemove.InitStubs
+public import Flapjack.Compiler.Backend.StackRemove.InitCode
+public import Flapjack.Compiler.Backend.StackProps.ProgramNames
+public import Flapjack.Compiler.Backend.StackProps.RemoveNames
+public import Flapjack.Misc.GoodDimindex
+
+@[expose] public section
 
 /-! `stack_remove_comp_stack_asm_name` and `stack_remove_stack_asm_name`
 (`stack_removeProofScript.sml:4209-4300`): under the assembler-configuration

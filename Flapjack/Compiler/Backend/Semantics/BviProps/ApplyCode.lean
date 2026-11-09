@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyGlobal
-import Flapjack.Misc.Sptree.Subspt
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyGlobal
+public import Flapjack.Misc.Sptree.Subspt
+
+@[expose] public section
 
 /-! Code-tree growth during BVI primitive application. -/
 namespace Flapjack.Compiler.Backend.BviProps

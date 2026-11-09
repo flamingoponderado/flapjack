@@ -1,4 +1,8 @@
-import Flapjack.EvaluateProps.ClockIoApp
+module
+
+public import Flapjack.EvaluateProps.ClockIoApp
+
+@[expose] public section
 
 /-! Lexicographic induction for the source evaluator clock-and-I/O theorem.
 Evaluation inherits the rational-cut assumption (SOUNDNESS item 8). -/

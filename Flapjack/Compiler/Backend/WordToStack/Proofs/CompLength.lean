@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeCompile
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveLength
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveLength
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.Accessors
-import Flapjack.Compiler.Backend.RegAlloc.StatePartition
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Accessors
+public import Flapjack.Compiler.Backend.RegAlloc.StatePartition
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
+
+@[expose] public section
 
 /-!
 # reg_allocProof `st_ex_PARTITION move_related_sub`

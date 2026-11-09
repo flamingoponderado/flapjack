@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+module
+
+public import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+
+@[expose] public section
 
 /-! Complete original stack-occurrence predicate implications from wordConvs.
 These are mathematical prerequisites of native allocator post conventions. -/

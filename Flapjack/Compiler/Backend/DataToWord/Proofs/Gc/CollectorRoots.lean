@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveRoots
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveRoots
+
+@[expose] public section
 
 /-! Root correspondence for complete collector traversals. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

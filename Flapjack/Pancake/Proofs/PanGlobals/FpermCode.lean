@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+
+@[expose] public section
 
 /-! Code-map permutation prerequisites of the PanGlobals semantics proof.
 The code map is canonical finite-support; declaration and program payloads

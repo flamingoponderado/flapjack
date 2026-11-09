@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.PureApplication
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.PureApplication
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Control-flow induction steps for pure flat evaluation. -/
 namespace Flapjack.Compiler.Backend.FlatElim

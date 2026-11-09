@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem
-import Flapjack.Pancake.WordLang
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Misc.Sptree
-import Flapjack.FfiHOL
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Misc.Sptree
+public import Flapjack.FfiHOL
+
+@[expose] public section
 
 /-!
 # Exact HOL `wordSem` carriers

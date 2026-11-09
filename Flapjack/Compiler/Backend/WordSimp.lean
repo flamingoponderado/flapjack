@@ -1,7 +1,11 @@
-import Flapjack.Pancake.WordLang
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Misc.Sptree.InterEq
-import Flapjack.Misc.Sptree.FilterV
+module
+
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Misc.Sptree.InterEq
+public import Flapjack.Misc.Sptree.FilterV
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordSimp
 

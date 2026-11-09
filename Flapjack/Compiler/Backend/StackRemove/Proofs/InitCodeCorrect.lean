@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeThm
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitMake
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StateRelation
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitReadMemory
-import Mathlib.Data.BitVec
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeThm
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitMake
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitReadMemory
+public import Mathlib.Data.BitVec
+
+@[expose] public section
 
 /-! The StackRemove initializer correctness theorem `init_code_thm`
 (`stack_removeProofScript.sml` 3225-3837).

@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.CallFfi
-import Flapjack.Compiler.Backend.LabToTarget.OracleResidues
-import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
-import Flapjack.Compiler.Backend.LabToTarget.NavigationBounds
-import Flapjack.Compiler.Backend.LabToTarget.EncodingValidityClosure
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.CallFfi
+public import Flapjack.Compiler.Backend.LabToTarget.OracleResidues
+public import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
+public import Flapjack.Compiler.Backend.LabToTarget.NavigationBounds
+public import Flapjack.Compiler.Backend.LabToTarget.EncodingValidityClosure
+
+@[expose] public section
 
 /-! `LabAsm Install` case of the original `compile_correct`
 (lab_to_targetProofScript.sml:8756-9280): the target jumps to the

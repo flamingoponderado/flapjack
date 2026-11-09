@@ -1,4 +1,8 @@
-import Flapjack.FiniteMap.Toto
+module
+
+public import Flapjack.FiniteMap.Toto
+
+@[expose] public section
 
 namespace Flapjack.FiniteMap.Comparison
 

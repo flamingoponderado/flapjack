@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.CoalesceSuccess
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.CoalesceSuccess
+
+@[expose] public section
 
 /-!
 # reg_allocProof: success of the freeze and spill phases

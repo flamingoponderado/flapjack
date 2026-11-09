@@ -1,6 +1,10 @@
-import Mathlib.Tactic
-import Flapjack.Compiler.Encoders.X64.Machine.Bytes
-import Flapjack.Compiler.Encoders.AsmProps.Encoding
+module
+
+public import Mathlib.Tactic
+public import Flapjack.Compiler.Encoders.X64.Machine.Bytes
+public import Flapjack.Compiler.Encoders.AsmProps.Encoding
+
+@[expose] public section
 
 /-!
 # `enc_ok` for the x86-64 assembler configuration

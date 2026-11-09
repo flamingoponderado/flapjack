@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateList
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateList
+
+@[expose] public section
 
 /-! Environment management for let-bound expression lists. -/
 namespace Flapjack.Compiler.Backend.ClosCall

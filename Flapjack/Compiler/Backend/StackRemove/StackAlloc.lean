@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove
+module
+
+public import Flapjack.Compiler.Backend.StackRemove
+
+@[expose] public section
 
 /-! Literal native allocation builders from stack_removeScript.sml:65–86.
 The default Pancake and assembly modes initializedRuntimeLab? executes these native

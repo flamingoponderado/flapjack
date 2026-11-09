@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Compiler
-import Flapjack.Compiler.Backend.RiscVConfig.Proofs
+module
+
+public import Flapjack.Compiler.Compiler
+public import Flapjack.Compiler.Backend.RiscVConfig.Proofs
+
+@[expose] public section
 
 /-!
 # `backend_config_ok` for the executed Pancake RISC-V configuration

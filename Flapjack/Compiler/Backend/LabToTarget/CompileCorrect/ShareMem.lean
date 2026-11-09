@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Step
-import Flapjack.Compiler.Backend.LabToTarget.InstMem
-import Flapjack.Compiler.Backend.LabToTarget.CodeSafetyFacts
-import Flapjack.Compiler.Backend.Semantics.TargetProps.NextSharedMem
-import Flapjack.Misc.FindIndex.Bounds
-import Flapjack.Misc.FindIndex.SuccessfulMembership
-import Flapjack.Misc.BytesInMemory.Domain
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Step
+public import Flapjack.Compiler.Backend.LabToTarget.InstMem
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSafetyFacts
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.NextSharedMem
+public import Flapjack.Misc.FindIndex.Bounds
+public import Flapjack.Misc.FindIndex.SuccessfulMembership
+public import Flapjack.Misc.BytesInMemory.Domain
+
+@[expose] public section
 
 /-! `Asm (ShareMem m r a)` case of the original `compile_correct`
 (lab_to_targetProofScript.sml:7829-7965): the source shared-memory operation

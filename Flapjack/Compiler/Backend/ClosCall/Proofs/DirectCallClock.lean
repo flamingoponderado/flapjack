@@ -1,9 +1,16 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallLookup
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateApplication
-import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueWellformed
-import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallLookup
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateApplication
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueWellformed
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Clock and argument behavior of generated direct calls. -/
 namespace Flapjack.Compiler.Backend.ClosCall

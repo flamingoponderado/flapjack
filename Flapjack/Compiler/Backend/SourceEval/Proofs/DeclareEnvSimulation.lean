@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.StateRelation
-import Flapjack.SemanticPrimitivesHOL.EvalState
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.StateRelation
+public import Flapjack.SemanticPrimitivesHOL.EvalState
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Source declaration-environment recording simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

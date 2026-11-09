@@ -1,10 +1,17 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
-import Flapjack.Compiler.Backend.BackendProps.StateCompiler
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
-import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
+public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Closure-state relation for changing the compiler-oracle configuration. -/
 namespace Flapjack.Compiler.Backend.ClosProps.AdjustOracle

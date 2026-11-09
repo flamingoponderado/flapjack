@@ -1,5 +1,9 @@
-import Flapjack.RiscV.Model
-import Flapjack.RiscV.L3.Types
+module
+
+public import Flapjack.RiscV.Model
+public import Flapjack.RiscV.L3.Types
+
+@[expose] public section
 
 /-! Complete conversion of the executed RV64 instruction carrier into the native
 L3 carrier. This is Flapjack infrastructure, not a HOL datatype port: the

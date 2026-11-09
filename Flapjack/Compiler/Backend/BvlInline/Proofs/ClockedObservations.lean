@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
+
+@[expose] public section
 
 /-! Generic clocked-observation infrastructure for BVL pass correctness.
 These declarations do not port standalone HOL declarations. -/

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitAny
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitClock
-import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitAny
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitClock
+public import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
+
+@[expose] public section
 
 /-! FFI neutrality of the StackRemove initializer, `stack_removeProofScript.sml`
 (3893-3902, 4088-4098).

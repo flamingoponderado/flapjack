@@ -1,5 +1,9 @@
-import Flapjack.AstHOL.BackendOperators
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.AstHOL.BackendOperators
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-!
 # `astScript`: literals, primitive operators and name abbreviations

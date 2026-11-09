@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect
-import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
-import Flapjack.Misc.LprefixLub
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
+public import Flapjack.Misc.LprefixLub
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `compile_semantics`

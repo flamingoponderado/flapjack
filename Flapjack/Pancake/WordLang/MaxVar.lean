@@ -1,6 +1,10 @@
-import Flapjack.Pancake.WordLang.MaxVarInst
-import Flapjack.Pancake.WordLang.MaxVarExp
-import Flapjack.Pancake.WordLang.CutsetsMax
+module
+
+public import Flapjack.Pancake.WordLang.MaxVarInst
+public import Flapjack.Pancake.WordLang.MaxVarExp
+public import Flapjack.Pancake.WordLang.CutsetsMax
+
+@[expose] public section
 
 namespace Flapjack
 

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StackPointer
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackPointer
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.StackHeap
 open Flapjack Flapjack.Compiler.Backend.StackRemove
 /-- Flapjack proof factoring for the empty-prefix case of the append theorem;

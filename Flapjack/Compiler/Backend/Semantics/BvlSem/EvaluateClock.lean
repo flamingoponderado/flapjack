@@ -1,6 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
-import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyClock
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyClock
+public import Flapjack.Misc.ClockWeightInduction
+
+-- Proofs below unfold the private error helpers of `BvlSem.evaluate`.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Clock invariants for the source-shaped BVL evaluator. -/
 namespace Flapjack.Compiler.Backend.BvlSem

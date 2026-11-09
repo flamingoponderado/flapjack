@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.StackOnly
-import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
-import Flapjack.Compiler.Backend.WordAlloc.ClashTreeProg
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.StackOnly
+public import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
+public import Flapjack.Compiler.Backend.WordAlloc.ClashTreeProg
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

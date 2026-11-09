@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
-import Flapjack.Compiler.Backend.Bvl.Syntax
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
+public import Flapjack.Compiler.Backend.Bvl.Syntax
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! State carrier for the BVL evaluator. -/
 namespace Flapjack.Compiler.Backend.BvlSem

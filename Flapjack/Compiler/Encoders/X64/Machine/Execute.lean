@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.X64.Machine.Decode
-import Flapjack.Compiler.Encoders.AsmSem.Step
-import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.Decode
+public import Flapjack.Compiler.Encoders.AsmSem.Step
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+
+@[expose] public section
 
 /-!
 # Executing the decoded x86-64 subset

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFp
+module
+
+public import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFp
+
+@[expose] public section
 
 /-!
 # `word_simpProof`: `simp_duplicate_if`, `push_out_if` and `compile_exp_thm`

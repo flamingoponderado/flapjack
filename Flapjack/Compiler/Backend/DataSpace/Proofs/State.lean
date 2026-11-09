@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.DataSpace.Compile
-import Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
-import Flapjack.Misc.Sptree.Subspt
-import Flapjack.Misc.Sptree.Wf
+module
+
+public import Flapjack.Compiler.Backend.DataSpace.Compile
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+public import Flapjack.Misc.Sptree.Subspt
+public import Flapjack.Misc.Sptree.Wf
+
+@[expose] public section
 
 /-! State and variable lemmas for data-space reservation. -/
 namespace Flapjack.Compiler.Backend.DataSpace

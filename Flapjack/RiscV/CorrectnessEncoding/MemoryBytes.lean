@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Step.ByteMemory
-import Flapjack.RiscV.CorrectnessEncoding.MemoryRun
+module
+
+public import Flapjack.RiscV.L3.Step.ByteMemory
+public import Flapjack.RiscV.CorrectnessEncoding.MemoryRun
+
+@[expose] public section
 
 /-! Flapjack-specific byte consequences of the actual native memory definitions.
 The byte-level library lives in `L3.Step.ByteMemory` and is shared here; this

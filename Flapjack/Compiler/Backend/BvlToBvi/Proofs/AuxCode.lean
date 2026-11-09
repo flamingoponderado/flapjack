@@ -1,4 +1,8 @@
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Auxiliary-code installation for the BVL-to-BVI relation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

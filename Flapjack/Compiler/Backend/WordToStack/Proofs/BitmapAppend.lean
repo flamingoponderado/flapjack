@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack.StackSem

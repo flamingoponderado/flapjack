@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Leaves
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Leaves
+
+@[expose] public section
 
 /-!
 # `evaluate_stack_swap` `Alloc` case

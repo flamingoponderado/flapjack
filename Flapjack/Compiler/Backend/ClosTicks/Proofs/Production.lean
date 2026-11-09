@@ -1,7 +1,11 @@
-import Flapjack.Misc.Option.MapM
-import Flapjack.Compiler.Backend.ClosTicks.Source
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.Total
-import Mathlib.Tactic
+module
+
+public import Flapjack.Misc.Option.MapM
+public import Flapjack.Compiler.Backend.ClosTicks.Source
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Total
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-! Agreement of executable tick removal with the source-shaped traversal. -/
 namespace Flapjack.Compiler.Backend.ClosTicks

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultCall
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultCall
+public import Flapjack.Misc.ClockWeightInduction
+
+@[expose] public section
 
 /-! General result-sensitive control invariant for the data evaluator. -/
 namespace Flapjack.Compiler.Backend.DataSem

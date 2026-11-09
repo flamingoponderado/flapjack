@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.WordConvs.NotCreatedSSA
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Pancake.Proofs.WordConvs.NotCreatedSSA
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 /-!
 # `wordConvsProof`: `word_good_handlers` through SSA

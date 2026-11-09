@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.Timestamps
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.Timestamps
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+
+@[expose] public section
 
 /-! Reachability invariants for allocating a fresh nonempty constructor. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

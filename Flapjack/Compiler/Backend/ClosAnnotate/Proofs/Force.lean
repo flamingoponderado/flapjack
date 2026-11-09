@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ThunkOperations
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ThunkOperations
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Simulation of forcing thunks under closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

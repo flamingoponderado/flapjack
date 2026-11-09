@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
-import Flapjack.Compiler.Backend.FlatProps.Globals
-import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+public import Flapjack.Compiler.Backend.FlatProps.Globals
+public import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
+
+@[expose] public section
 
 /-! Closure-language global initialization bags and closure safety. -/
 namespace Flapjack.Compiler.Backend.ClosProps

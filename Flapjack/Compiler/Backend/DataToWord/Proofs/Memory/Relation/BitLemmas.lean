@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Kernel-checked bit-vector facts used by the data-to-word memory proofs. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

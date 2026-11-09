@@ -1,19 +1,23 @@
-import Flapjack.Compiler.Backend.LinearScan.Proofs.LiveTree
-import Flapjack.Compiler.Backend.LinearScan.Proofs.Intervals
-import Flapjack.Compiler.Backend.LinearScan.Proofs.CheckIntervals
-import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
-import Flapjack.Compiler.Backend.LinearScan.Proofs.GoodState
-import Flapjack.Compiler.Backend.LinearScan.Proofs.SpillRegister
-import Flapjack.Compiler.Backend.LinearScan.Proofs.EdgesToAdjlist
-import Flapjack.Compiler.Backend.LinearScan.Proofs.ColorRegister
-import Flapjack.Compiler.Backend.LinearScan.Proofs.PassInvariants
-import Flapjack.Compiler.Backend.LinearScan.Proofs.SortCorrect
-import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalsCorrect
-import Flapjack.Compiler.Backend.LinearScan.Proofs.WithoutRenaming
-import Flapjack.Compiler.Backend.LinearScan.Proofs.TopLevelCorrect
-import Flapjack.Compiler.Backend.LinearScan.Proofs.Bijection
-import Flapjack.Compiler.Backend.LinearScan.Proofs.ApplyBijection
-import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalMonad
+module
+
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.LiveTree
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.Intervals
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.CheckIntervals
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.GoodState
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.SpillRegister
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.EdgesToAdjlist
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.ColorRegister
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.PassInvariants
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.SortCorrect
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalsCorrect
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.WithoutRenaming
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.TopLevelCorrect
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.Bijection
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.ApplyBijection
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalMonad
+
+@[expose] public section
 
 /-!
 # linear_scan proofs

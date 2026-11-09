@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramBitmaps
-import Flapjack.Pancake.Semantics.PanProps
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramBitmaps
+public import Flapjack.Pancake.Semantics.PanProps
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang

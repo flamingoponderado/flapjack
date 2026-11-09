@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.LabToTarget.Compile
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Compile
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Located `lab_to_target` failure diagnostics

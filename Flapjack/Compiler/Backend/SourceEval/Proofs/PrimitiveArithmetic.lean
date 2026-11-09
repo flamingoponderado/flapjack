@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.SimulationPrerequisites
-import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
-import Flapjack.SemanticPrimitivesProps.ResultRelation
-import Flapjack.SemanticPrimitivesProps.Arithmetic
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.SimulationPrerequisites
+public import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+public import Flapjack.SemanticPrimitivesProps.Arithmetic
+
+@[expose] public section
 
 /-! Arithmetic operand preservation for source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

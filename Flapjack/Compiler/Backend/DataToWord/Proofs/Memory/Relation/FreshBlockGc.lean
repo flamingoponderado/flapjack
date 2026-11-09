@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorPartial
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapStore
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.FreshBlockRef
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorPartial
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapStore
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.FreshBlockRef
+
+@[expose] public section
 
 /-! Collector bookkeeping for allocating a constructor in free space. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

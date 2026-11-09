@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.LabToTarget.StateRel
-import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
-import Flapjack.Compiler.Backend.LabToTarget.InstMem
-import Flapjack.Compiler.Backend.LabToTarget.InstFrame
-import Flapjack.Compiler.Backend.LabToTarget.CodeAppend
-import Flapjack.Misc.FindIndex
-import Flapjack.Misc.FindIndex.Membership
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.StateRel
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
+public import Flapjack.Compiler.Backend.LabToTarget.InstMem
+public import Flapjack.Compiler.Backend.LabToTarget.InstFrame
+public import Flapjack.Compiler.Backend.LabToTarget.CodeAppend
+public import Flapjack.Misc.FindIndex
+public import Flapjack.Misc.FindIndex.Membership
+
+@[expose] public section
 
 /-! FFI bytearray and I/O-name helpers of the original `lab_to_targetProof`
 (lab_to_targetProofScript.sml:524-530, 1666-1785, 3027-3080), used by the

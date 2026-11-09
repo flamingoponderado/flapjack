@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Clocked execution of data-language programs. -/
 namespace Flapjack.Compiler.Backend.DataSem

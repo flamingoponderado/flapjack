@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BytePacking
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordCompare
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteArray
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueArray
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueEquality
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BytePacking
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordCompare
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteArray
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueArray
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueEquality
+
+@[expose] public section
 
 /-! Comparison of packed byte-array payloads. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

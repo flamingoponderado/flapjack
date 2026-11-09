@@ -1,12 +1,20 @@
-import Flapjack.Compiler.Backend.LabSem.Navigation
-import Flapjack.Compiler.Backend.LabSem.Updates
-import Flapjack.Compiler.Backend.StackToLab.Native
-import Flapjack.Compiler.Backend.Semantics.StackSem.Control
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
-import Flapjack.Compiler.Encoders.AsmSem
-import Flapjack.Misc.FiniteMapApply
-import Flapjack.HolArb
-import Mathlib.Tactic.SplitIfs
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Navigation
+public import Flapjack.Compiler.Backend.LabSem.Updates
+public import Flapjack.Compiler.Backend.StackToLab.Native
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+public import Flapjack.Compiler.Encoders.AsmSem
+public import Flapjack.Misc.FiniteMapApply
+public import Flapjack.HolArb
+public import Mathlib.Tactic.SplitIfs
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Opening lemmas of `stack_to_labProofScript.sml` (lines 32-99, its "TODO: move"

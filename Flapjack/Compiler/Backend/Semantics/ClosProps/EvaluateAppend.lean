@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Sequencing properties of the clocked closure evaluator. -/
 namespace Flapjack.Compiler.Backend.ClosProps

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionHandledColourReads
-import Flapjack.Compiler.Backend.RegAlloc.ProductionLookupFirst
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionHandledColourReads
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionLookupFirst
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc Translator.Monadic.MonadBase

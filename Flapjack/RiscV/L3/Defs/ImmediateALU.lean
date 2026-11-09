@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs
+module
+
+public import Flapjack.RiscV.L3.Defs
+
+@[expose] public section
 
 /-! Full immediate arithmetic/bitwise equations: the original signextends all
 word12 immediates to64, including bitwise operations; it does not query mode.

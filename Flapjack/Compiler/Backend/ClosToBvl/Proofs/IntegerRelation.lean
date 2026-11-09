@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Integer
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.StateRelation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Integer
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
+
+@[expose] public section
 
 /-! Integer primitive correspondence for the closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
+
+@[expose] public section
 
 /-! A source-shaped `evaluate_def` Alloc case fragment over the exact
 StackSem state/result carriers. It is deliberately untagged: this partial case

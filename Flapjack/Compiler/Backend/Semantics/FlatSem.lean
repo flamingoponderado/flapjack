@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatLang
-import Flapjack.SemanticPrimitivesHOL
+module
+
+public import Flapjack.Compiler.Backend.FlatLang
+public import Flapjack.SemanticPrimitivesHOL
+
+@[expose] public section
 
 /-! Value and state carriers for the original flat-language semantics.
 The evaluator and source-to-flat simulation are not yet ported here. -/

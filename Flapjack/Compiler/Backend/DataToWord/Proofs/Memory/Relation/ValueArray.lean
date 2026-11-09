@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteArray
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockElement
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteArray
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockElement
+
+@[expose] public section
 
 /-! Concrete value-array headers from the memory relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

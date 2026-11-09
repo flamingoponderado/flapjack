@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs
+module
+
+public import Flapjack.RiscV.L3.Defs
+
+@[expose] public section
 namespace Flapjack.RiscV.L3
 
 /-! Literal complete machine CSR codec section. Every fixed-width field and

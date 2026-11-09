@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.LabLang
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Basis.Pure.MlString
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.LabLang
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 # Faithful Cake `lab_filter` (`lab_filterScript.sml`)

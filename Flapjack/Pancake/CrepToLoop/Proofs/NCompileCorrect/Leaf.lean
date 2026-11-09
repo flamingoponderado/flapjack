@@ -1,10 +1,14 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.CrepToLoop.ContextExact
-import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Pancake.Semantics.LoopSemStateExact
-import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Property
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+public import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Property
+
+@[expose] public section
 
 /-!
 # Leaf cases of `crep_to_loop`'s `ncompile_correct`

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.OracleTie
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.OracleTie
+
+@[expose] public section
 
 /-! Original oracle-tie transport to a shifted machine configuration and the
 cache-flush register residues (lab_to_targetProofScript.sml:7453-7524). All

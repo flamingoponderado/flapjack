@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpNStruct
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpNStruct
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.CompileExpMmapHelper
 open Flapjack
 open Flapjack.Pancake.PanLang

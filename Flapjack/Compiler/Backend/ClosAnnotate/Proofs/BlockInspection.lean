@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.GlobalOperations
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.GlobalOperations
+
+@[expose] public section
 
 /-! Constructor inspection under the closure-annotation relation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

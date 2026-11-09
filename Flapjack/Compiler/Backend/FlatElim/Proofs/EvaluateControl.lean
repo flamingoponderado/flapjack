@@ -1,5 +1,9 @@
-import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
-import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateBasic
+module
+
+public import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateBasic
+
+@[expose] public section
 
 /-! Control-flow cases of the flat-elimination evaluation simulation. -/
 namespace Flapjack.Compiler.Backend.FlatElim

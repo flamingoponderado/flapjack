@@ -1,4 +1,8 @@
-import Flapjack.EvaluateProps.ClockIoCases
+module
+
+public import Flapjack.EvaluateProps.ClockIoCases
+
+@[expose] public section
 
 /-! Flapjack expression proof helpers for the clock-and-I/O evaluator theorem. -/
 namespace Flapjack.EvaluateProps

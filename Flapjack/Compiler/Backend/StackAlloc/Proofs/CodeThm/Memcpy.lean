@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackAlloc.GcCode
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
-import Flapjack.Compiler.Backend.WordGcFunctions
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.GcCode
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+public import Flapjack.Compiler.Backend.WordGcFunctions
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `memcpy_code_thm`

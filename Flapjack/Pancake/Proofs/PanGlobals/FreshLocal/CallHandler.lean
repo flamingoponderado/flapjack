@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.If
-import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Support
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.If
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Support
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsFreshLocalCallHandler
 open Flapjack.PanGlobalsFreshLocalSupport

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
+
+@[expose] public section
 
 /-! Literal performance instrumentation syntax. This does not verify the x64 instrumentation. -/
 namespace Flapjack.Compiler.Backend.WordToStack.Native

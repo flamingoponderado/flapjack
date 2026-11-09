@@ -1,4 +1,8 @@
-import Flapjack.Translator.Monadic.MonadBase
+module
+
+public import Flapjack.Translator.Monadic.MonadBase
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 

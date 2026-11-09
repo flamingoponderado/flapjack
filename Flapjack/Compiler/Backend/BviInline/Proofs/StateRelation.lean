@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviInline.Proofs.InlineCall
-import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+module
+
+public import Flapjack.Compiler.Backend.BviInline.Proofs.InlineCall
+public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+
+@[expose] public section
 
 /-! State relation for the BVI inlining pass. -/
 namespace Flapjack.Compiler.Backend.BviInline

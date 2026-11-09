@@ -1,5 +1,9 @@
-import Flapjack.Pancake.WordLang
-import Flapjack.Misc.GoodDimindex
+module
+
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Misc.GoodDimindex
+
+@[expose] public section
 
 namespace Flapjack.LoopToWord
 

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileInstallArgs
-import Mathlib.Data.List.Nodup
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileInstallArgs
+public import Mathlib.Data.List.Nodup
+
+@[expose] public section
 
 /-! Fresh auxiliary-name accounting for BVL-to-BVI compilation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

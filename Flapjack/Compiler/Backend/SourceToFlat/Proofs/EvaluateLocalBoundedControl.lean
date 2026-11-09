@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.FlatProps.ValueBasics
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.ValueBasics
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Clock-bounded local control-flow composition. These factored relations
 remain pending HOL correspondence review. -/

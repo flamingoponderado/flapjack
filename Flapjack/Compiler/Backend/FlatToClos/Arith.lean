@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatToClos.Helpers
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Helpers
+
+@[expose] public section
 
 /-! Arithmetic lowering, including the source division-by-zero checks. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

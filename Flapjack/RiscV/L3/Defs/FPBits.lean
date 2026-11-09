@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs
+module
+
+public import Flapjack.RiscV.L3.Defs
+
+@[expose] public section
 
 /-! Complete raw-bit sign injection and register moves. These instructions
 preserve sign/payload fields through literal FPRS/FPRD helpers, without

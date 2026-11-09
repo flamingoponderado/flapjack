@@ -1,15 +1,19 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.HeapWordList
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalInvariant
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PayloadSwap
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.HeapWordList
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalInvariant
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PayloadSwap
+
+@[expose] public section
 
 /-! Major collector reference-scan simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.WordGcFunctions
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 
-private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+instance generationalRefsInst1 {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
-private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
+instance generationalRefsInst2 {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
 
 /-- Expose the reference header and its pointer list from the represented heap.
 This local factoring of the reference-scan proof has no separate HOL original. -/

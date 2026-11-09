@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.State
-import Flapjack.Compiler.Backend.Semantics.StackSem.State
-import Flapjack.Misc.GoodDimindex
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+public import Flapjack.Compiler.Backend.Semantics.StackSem.State
+public import Flapjack.Misc.GoodDimindex
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CompCorrect
 

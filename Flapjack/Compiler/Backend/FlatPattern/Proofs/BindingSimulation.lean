@@ -1,7 +1,13 @@
-import Mathlib.Data.List.Forall2
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingFold
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternList
-import Flapjack.Compiler.Backend.FlatPattern.BindingsTotal
+module
+
+public import Mathlib.Data.List.Forall2
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingFold
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternList
+public import Flapjack.Compiler.Backend.FlatPattern.BindingsTotal
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Evaluation steps for compiled pattern bindings. These proofs use the
 unreviewed clocked evaluator and are not tagged as HOL theorem ports. -/

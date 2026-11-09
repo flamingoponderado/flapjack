@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.StackProps.CodeLabels
-import Flapjack.Compiler.Backend.WordToStack.NativeLive
-import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
-import Flapjack.Compiler.Backend.WordToStack.NativeReturn
+module
+
+public import Flapjack.Compiler.Backend.StackProps.CodeLabels
+public import Flapjack.Compiler.Backend.WordToStack.NativeLive
+public import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
+public import Flapjack.Compiler.Backend.WordToStack.NativeReturn
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang

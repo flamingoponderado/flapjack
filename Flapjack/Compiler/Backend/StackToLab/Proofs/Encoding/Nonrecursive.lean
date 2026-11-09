@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackToLab.Native
-import Flapjack.Compiler.Backend.LabProps.Native
-import Flapjack.Compiler.Backend.StackProps.ProgramValidity
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Native
+public import Flapjack.Compiler.Backend.LabProps.Native
+public import Flapjack.Compiler.Backend.StackProps.ProgramValidity
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackToLab.Proofs
 open Flapjack Flapjack.Compiler.Backend.StackToLab
 open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackProps

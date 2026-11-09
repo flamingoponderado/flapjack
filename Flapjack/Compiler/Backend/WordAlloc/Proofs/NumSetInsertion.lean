@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
-import Flapjack.Misc.Sptree.Wf
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
+public import Flapjack.Misc.Sptree.Wf
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

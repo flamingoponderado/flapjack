@@ -1,4 +1,8 @@
-import Flapjack.Byte.WordSliceAlt
+module
+
+public import Flapjack.Byte.WordSliceAlt
+
+@[expose] public section
 
 namespace Flapjack.HolByte
 

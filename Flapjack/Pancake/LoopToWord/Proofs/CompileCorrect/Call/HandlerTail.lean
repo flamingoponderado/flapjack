@@ -1,4 +1,8 @@
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.Support
+module
+
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.Support
+
+@[expose] public section
 
 /-!
 # Handler continuation tail for the `Call_SOMEhandler` piece

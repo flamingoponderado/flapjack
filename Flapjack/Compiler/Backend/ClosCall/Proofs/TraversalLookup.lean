@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
-import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelOrigins
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelOrigins
+
+@[expose] public section
 
 /-! Lookup of individual body traversals. These lemmas are Flapjack-specific
 infrastructure for the bounded direct-call adapter. -/

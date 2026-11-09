@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Proofs.PanGlobals
-import Flapjack.Pancake.PanGlobals.CompileExpExact
-import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
-import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
-import Flapjack.Pancake.Semantics.PanProps.LocalisedExpSimps
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals
+public import Flapjack.Pancake.PanGlobals.CompileExpExact
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
+public import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
+public import Flapjack.Pancake.Semantics.PanProps.LocalisedExpSimps
+
+@[expose] public section
 
 /-!
 The original pan_globals localisation lemmas (`pan_globalsProofScript.sml:3196-3275`):

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultForce
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultForce
+
+@[expose] public section
 
 /-! Result-sensitive control for calls and exception handlers. -/
 namespace Flapjack.Compiler.Backend.DataSem

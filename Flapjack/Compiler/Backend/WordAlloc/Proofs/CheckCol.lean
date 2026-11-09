@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.ClashTree
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
-import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ClashTree
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

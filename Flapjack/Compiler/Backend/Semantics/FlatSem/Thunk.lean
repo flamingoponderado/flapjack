@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem
+
+@[expose] public section
 
 /-! Thunk inspection and update helpers in the flat evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatSem

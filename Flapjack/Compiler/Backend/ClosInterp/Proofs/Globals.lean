@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosInterp.Optimise
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
-import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Optimise
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+public import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
+
+@[expose] public section
 
 /-! Global-write preservation for incremental interpreter insertion. -/
 namespace Flapjack.Compiler.Backend.ClosInterp

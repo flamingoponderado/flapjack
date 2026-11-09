@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.EvaluateApp
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.Production
+module
+
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.EvaluateApp
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Production
+
+@[expose] public section
 
 /-! Mutual evaluator simulation for closure free-variable removal. -/
 namespace Flapjack.Compiler.Backend.ClosFvs

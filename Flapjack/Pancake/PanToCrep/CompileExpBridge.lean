@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanToCrep.CompileExact
+module
+
+public import Flapjack.Pancake.PanToCrep.CompileExact
+
+@[expose] public section
 
 /-!
 Codec bridge between the tagged exact `compile_exp_def` port

@@ -1,5 +1,9 @@
-import Flapjack.SemanticPrimitivesHOL.NumericConversion
-import Flapjack.SemanticPrimitivesHOL.Primitives
+module
+
+public import Flapjack.SemanticPrimitivesHOL.NumericConversion
+public import Flapjack.SemanticPrimitivesHOL.Primitives
+
+@[expose] public section
 
 /-! Type preservation for the source primitive conversion. -/
 namespace Flapjack.SemanticPrimitivesProps

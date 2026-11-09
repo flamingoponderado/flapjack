@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Operations
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Operations
+
+@[expose] public section
 
 /-! Word primitives under the closure-annotation value relation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

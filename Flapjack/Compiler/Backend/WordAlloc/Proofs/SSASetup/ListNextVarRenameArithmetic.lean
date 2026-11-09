@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSASetup
-import Mathlib.Data.List.Nodup
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSASetup
+public import Mathlib.Data.List.Nodup
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

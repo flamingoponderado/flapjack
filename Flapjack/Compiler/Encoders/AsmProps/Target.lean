@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Compiler.Encoders.AsmSem.State
+module
+
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Compiler.Encoders.AsmSem.State
+
+@[expose] public section
 
 /-!
 # Exact asmProps target record and target-state relation

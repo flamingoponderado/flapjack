@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalForward
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveBlock
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalForward
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveBlock
+
+@[expose] public section
 
 /-! Non-reference object movement in the major collector. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

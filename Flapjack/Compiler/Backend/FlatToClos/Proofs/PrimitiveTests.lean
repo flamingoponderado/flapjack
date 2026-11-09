@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.ByteComparisons
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.FloatComparisons
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.StringComparisons
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.RejectedComparisons
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.ByteComparisons
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.FloatComparisons
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.StringComparisons
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.RejectedComparisons
+
+@[expose] public section
 
 /-! Combined simulation for source primitive tests. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

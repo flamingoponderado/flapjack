@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.EvaluateOk
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.EvaluateOk
+
+@[expose] public section
 
 /-! The complete clocked BVL evaluation well-formedness invariant. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

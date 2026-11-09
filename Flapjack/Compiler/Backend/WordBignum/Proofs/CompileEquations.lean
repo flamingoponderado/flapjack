@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordBignum.Proofs.FuelMonotone
+module
+
+public import Flapjack.Compiler.Backend.WordBignum.Proofs.FuelMonotone
+
+@[expose] public section
 
 /-! Source-shaped equations for the total executable mini compiler. These
 lemmas justify the executable implementation and are Flapjack infrastructure,

@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallDest
-import Flapjack.Compiler.Backend.WordToStack.NativeLive
-import Flapjack.Compiler.Backend.WordToStack.NativeReturn
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CopyLoop
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
-import Flapjack.Compiler.Backend.WordGcFunctions
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallDest
+public import Flapjack.Compiler.Backend.WordToStack.NativeLive
+public import Flapjack.Compiler.Backend.WordToStack.NativeReturn
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CopyLoop
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+public import Flapjack.Compiler.Backend.WordGcFunctions
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-!
 # Word-to-Stack returning-call evaluation lemmas

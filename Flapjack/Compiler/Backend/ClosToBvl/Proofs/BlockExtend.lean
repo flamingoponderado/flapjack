@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockCompare
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockCompare
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Block extension in the closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

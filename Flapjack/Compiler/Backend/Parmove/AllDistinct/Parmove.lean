@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Parmove.AllDistinct.Pmov
-import Mathlib.Data.List.Nodup
+module
+
+public import Flapjack.Compiler.Backend.Parmove.AllDistinct.Pmov
+public import Mathlib.Data.List.Nodup
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

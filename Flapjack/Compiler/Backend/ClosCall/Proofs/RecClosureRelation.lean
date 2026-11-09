@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosure
-import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeIncludes
-import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
-import Flapjack.Compiler.Backend.ClosCall.Proofs.FuelStability
-import Flapjack.Compiler.Backend.ClosCall.Proofs.TraversalLookup
-import Flapjack.Compiler.Backend.ClosCall.Stubs
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosure
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeIncludes
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.FuelStability
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.TraversalLookup
+public import Flapjack.Compiler.Backend.ClosCall.Stubs
+
+@[expose] public section
 
 /-! Fuel-aware recursive-closure relation for direct-call conversion. -/
 namespace Flapjack.Compiler.Backend.ClosCall

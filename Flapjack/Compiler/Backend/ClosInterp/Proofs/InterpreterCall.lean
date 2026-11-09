@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterCases
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterCases
+
+@[expose] public section
 
 /-! Invocation of the installed interpreter, used by its recursive expression
 cases. Evaluator and state carriers remain pending HOL correspondence review. -/

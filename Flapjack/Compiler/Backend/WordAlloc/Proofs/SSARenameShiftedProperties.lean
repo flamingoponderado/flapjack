@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterFlip
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapStep
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterFlip
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapStep
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

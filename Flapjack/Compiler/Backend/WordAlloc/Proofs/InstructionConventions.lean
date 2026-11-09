@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SelectRegAllocCorrect
-import Flapjack.Compiler.Backend.WordAlloc.WordAllocDef
-import Flapjack.Pancake.WordConvs.FullInstOkLess
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SelectRegAllocCorrect
+public import Flapjack.Compiler.Backend.WordAlloc.WordAllocDef
+public import Flapjack.Pancake.WordConvs.FullInstOkLess
+
+@[expose] public section
 
 /-! Original instruction-convention preservation section of word_allocProof.
 All instruction predicates use the reviewed exact assembler configuration.

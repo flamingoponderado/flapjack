@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.Labels
-import Flapjack.Compiler.Backend.LabProps.LabelSets
-import Mathlib.Data.Set.Insert
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Labels
+public import Flapjack.Compiler.Backend.LabProps.LabelSets
+public import Mathlib.Data.Set.Insert
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

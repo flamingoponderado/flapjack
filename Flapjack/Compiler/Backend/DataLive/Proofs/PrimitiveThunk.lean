@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveInstall
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveInstall
+
+@[expose] public section
 
 /-! Thunk primitive simulation for the liveness pass. -/
 namespace Flapjack.Compiler.Backend.DataLive

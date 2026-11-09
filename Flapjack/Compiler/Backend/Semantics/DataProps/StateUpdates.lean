@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.State
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.State
+
+@[expose] public section
 
 /-! Record-update identities for data-language states. -/
 namespace Flapjack.Compiler.Backend.DataProps

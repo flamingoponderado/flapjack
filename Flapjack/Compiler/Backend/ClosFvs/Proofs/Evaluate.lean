@@ -1,13 +1,20 @@
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.Relations
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.Primitive
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.Install
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.Force
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
-import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
+module
+
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Relations
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Primitive
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Install
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Force
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Evaluator cases for free-variable removal correctness. -/
 namespace Flapjack.Compiler.Backend.ClosFvs

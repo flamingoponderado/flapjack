@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeReturn
-import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeReturn
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack.Compiler.Backend.WordToStack.Native

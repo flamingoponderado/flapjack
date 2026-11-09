@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
-import Flapjack.Pancake.LoopLang.AssignedVars
+module
+
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+public import Flapjack.Pancake.LoopLang.AssignedVars
+
+@[expose] public section
 
 /-!
 # loopProps `unassigned_vars_evaluate_same` over the exact evaluator

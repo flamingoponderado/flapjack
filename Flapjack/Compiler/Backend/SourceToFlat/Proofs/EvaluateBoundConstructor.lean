@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundList
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundList
+
+@[expose] public section
 
 /-! Named constructor simulation under a local binding. The factored
 relations remain pending HOL correspondence review. -/

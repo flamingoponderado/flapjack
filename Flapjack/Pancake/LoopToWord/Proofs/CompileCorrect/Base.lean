@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
+
+@[expose] public section
 
 /-!
 # Base control cases of `loop_to_word`'s `compile_correct`

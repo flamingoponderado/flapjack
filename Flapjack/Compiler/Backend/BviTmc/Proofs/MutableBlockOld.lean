@@ -1,5 +1,16 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.MutableBlockRelation
-import Flapjack.Compiler.Backend.Semantics.BviSem.Finalise
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.MutableBlockRelation
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Finalise
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Weakening the old reference domain in the mutable-block relation. -/
 namespace Flapjack.Compiler.Backend.BviTmc.MutableBlockOld

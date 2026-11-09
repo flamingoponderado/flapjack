@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.TargetProps.NextInterference
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.NextInterference
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Classical

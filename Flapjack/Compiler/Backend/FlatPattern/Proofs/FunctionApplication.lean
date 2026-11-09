@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.ExpressionList
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ExpressionList
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Function application for the flat pattern compiler. The evaluator and
 proof-side value/state relations remain pending HOL correspondence review. -/

@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesProps.StoreRelation
+module
+
+public import Flapjack.SemanticPrimitivesProps.StoreRelation
+
+@[expose] public section
 
 /-! Store preservation in the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabFilter.Proofs.StateRelation
+module
+
+public import Flapjack.Compiler.Backend.LabFilter.Proofs.StateRelation
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabFilter.Proofs
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

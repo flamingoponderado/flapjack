@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileLetCase
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileLetCase
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Evaluation of variable-only argument lists for auxiliary calls. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

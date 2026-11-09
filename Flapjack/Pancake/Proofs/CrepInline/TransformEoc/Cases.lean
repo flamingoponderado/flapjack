@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Proofs.CrepInline.NestedSeqAssign
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Assembly
-import Flapjack.Pancake.Proofs.CrepInline.NotBranchReturn
-import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
-import Flapjack.Pancake.CrepInline.Pass
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.NestedSeqAssign
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Assembly
+public import Flapjack.Pancake.Proofs.CrepInline.NotBranchReturn
+public import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
+public import Flapjack.Pancake.CrepInline.Pass
+
+@[expose] public section
 
 /-!
 # crep_inline `transform_eoc_correct`: motive and non-suspended cases

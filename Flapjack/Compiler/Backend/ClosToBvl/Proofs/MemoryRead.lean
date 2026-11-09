@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockCompare
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockCompare
+
+@[expose] public section
 
 /-! Mutable reference lookup for the closure-to-BVL simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepInline.Pass
+module
+
+public import Flapjack.Pancake.CrepInline.Pass
+
+@[expose] public section
 
 namespace Flapjack.CrepInlineUnreachElimPredicates
 

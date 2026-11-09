@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.ClosToBvl.SourceExps
-import Flapjack.Compiler.Backend.ClosToBvl.Layout.Auxiliary
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Accumulator
-import Flapjack.Compiler.Backend.Semantics.ClosSem
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.SourceExps
+public import Flapjack.Compiler.Backend.ClosToBvl.Layout.Auxiliary
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Accumulator
+public import Flapjack.Compiler.Backend.Semantics.ClosSem
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Code installation conditions for the closure-to-BVL value relation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

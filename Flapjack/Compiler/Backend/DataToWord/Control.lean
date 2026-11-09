@@ -1,12 +1,20 @@
-import Flapjack.Compiler.Backend.DataLang.Syntax
-import Flapjack.Compiler.Backend.DataToWord.Config
-import Flapjack.Compiler.Backend.DataToWord.Numbers
-import Flapjack.Compiler.Backend.DataToWord.Header
-import Flapjack.Compiler.Backend.DataToWord.Build
-import Flapjack.Compiler.Backend.DataToWord.Locations
-import Flapjack.Compiler.Backend.DataToWord.Variables
-import Flapjack.Compiler.Backend.DataToWord.WordOp
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Compiler.Backend.DataLang.Syntax
+public import Flapjack.Compiler.Backend.DataToWord.Config
+public import Flapjack.Compiler.Backend.DataToWord.Numbers
+public import Flapjack.Compiler.Backend.DataToWord.Header
+public import Flapjack.Compiler.Backend.DataToWord.Build
+public import Flapjack.Compiler.Backend.DataToWord.Locations
+public import Flapjack.Compiler.Backend.DataToWord.Variables
+public import Flapjack.Compiler.Backend.DataToWord.WordOp
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Checked control-flow cases of data-to-word compilation. -/
 namespace Flapjack.Compiler.Backend.DataToWord

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordForwardBase
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordForwardBase
+
+@[expose] public section
 
 /-! Control and declaration cases of recording-state preservation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

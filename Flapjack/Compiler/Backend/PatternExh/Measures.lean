@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.PatternExh.Weights
+module
+
+public import Flapjack.Compiler.Backend.PatternExh.Weights
+
+@[expose] public section
 
 /-! Measure lemmas for the total exhaustiveness recursion, reviewed against
 the source statements and typed HOL proof replays. -/

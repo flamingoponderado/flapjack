@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.Machine.State
-import Flapjack.Compiler.Encoders.Arm8.Encode
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Machine.State
+public import Flapjack.Compiler.Encoders.Arm8.Encode
+
+@[expose] public section
 
 /-!
 # Decoding the ARMv8 machine-code subset

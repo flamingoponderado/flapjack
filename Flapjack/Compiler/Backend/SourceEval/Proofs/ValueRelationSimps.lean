@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelation
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelation
+
+@[expose] public section
 
 /-! Source-shaped simplifications for the recorded value relation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDeclarations
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentAppend
-import Flapjack.EvaluateHOL.ClockFull
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDeclarations
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentAppend
+public import Flapjack.EvaluateHOL.ClockFull
+
+@[expose] public section
 
 /-! Declaration-list sequencing in the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

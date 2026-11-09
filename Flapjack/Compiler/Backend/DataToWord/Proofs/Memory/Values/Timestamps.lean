@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.Stack
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.Stack
+
+@[expose] public section
 
 /-! Timestamp reachability through recursively nested data values. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

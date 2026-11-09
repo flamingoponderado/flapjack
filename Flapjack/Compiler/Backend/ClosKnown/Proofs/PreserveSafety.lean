@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
-import Flapjack.Compiler.Backend.ClosOp.Proofs.ReductionInvariants
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.ReductionInvariants
+
+@[expose] public section
 
 /-! Safety preservation for the known-function optimization. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.PreserveSafety

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.OracleTie
-import Flapjack.Compiler.Backend.LabToTarget.StateRel
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.OracleTie
+public import Flapjack.Compiler.Backend.LabToTarget.StateRel
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviToData.Assign
-import Flapjack.Compiler.Backend.Bvi.Budget
-import Flapjack.Compiler.Backend.BviToData.Optimise
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Assign
+public import Flapjack.Compiler.Backend.Bvi.Budget
+public import Flapjack.Compiler.Backend.BviToData.Optimise
+
+@[expose] public section
 
 /-! Checked expression traversal for BVI-to-data lowering. -/
 namespace Flapjack.Compiler.Backend.BviToData

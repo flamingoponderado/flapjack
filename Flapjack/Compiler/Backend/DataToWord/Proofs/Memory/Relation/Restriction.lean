@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Restriction
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.Timestamps
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Restriction
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.Timestamps
+
+@[expose] public section
 
 /-! Restriction of timestamp maps in reference-cell invariants. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

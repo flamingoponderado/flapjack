@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.SimpleRelations
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.SimpleRelations
+
+@[expose] public section
 
 /-! Generic list-value properties of simple closure relations. -/
 namespace Flapjack.Compiler.Backend.ClosProps

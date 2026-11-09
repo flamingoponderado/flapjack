@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.CrepProps
-import Flapjack.Pancake.PanCommon
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+module
+
+public import Flapjack.Pancake.Semantics.CrepProps
+public import Flapjack.Pancake.PanCommon
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+
+@[expose] public section
 
 /-!
 # `eval_distinct_lists_not_affect` family over the exact Crep evaluator

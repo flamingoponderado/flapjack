@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.PatternSemantics
-import Flapjack.Compiler.Backend.PatternExh.Weights
-import Flapjack.Compiler.Backend.PatternExh.Exhaustive
+module
+
+public import Flapjack.Compiler.Backend.PatternSemantics
+public import Flapjack.Compiler.Backend.PatternExh.Weights
+public import Flapjack.Compiler.Backend.PatternExh.Exhaustive
+
+@[expose] public section
 
 /-! Decision-tree construction in CakeML's pattern compiler. -/
 namespace Flapjack.Compiler.Backend.PatternComp

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
-import Flapjack.Pancake.Semantics.PanSem.EvalFinite
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
+public import Flapjack.Pancake.Semantics.PanSem.EvalFinite
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCompileExpRField
 

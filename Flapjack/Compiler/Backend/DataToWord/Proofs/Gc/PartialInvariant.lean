@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialAccumulator
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialSplit
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialAccumulator
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialSplit
+
+@[expose] public section
 
 /-! Length invariants for the partial generational collector. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

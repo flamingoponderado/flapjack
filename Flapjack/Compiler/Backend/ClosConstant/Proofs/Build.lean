@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem
-import Flapjack.Compiler.Backend.ClosToBvl.Constants
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem
+public import Flapjack.Compiler.Backend.ClosToBvl.Constants
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Source-shaped constant-part construction used by closure conversion. -/
 namespace Flapjack.Compiler.Backend.ClosConstant.Proofs

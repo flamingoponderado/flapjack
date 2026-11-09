@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsBounds
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapBounds
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvLemma
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsBounds
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapBounds
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvLemma
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
+
+@[expose] public section
 
 /-! Shared cut-environment and rename-move helpers for the SSA semantics cases.
 These are Flapjack proof infrastructure factored out of the original cases; no

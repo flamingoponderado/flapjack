@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.GeneratedNames
-import Flapjack.FiniteMap.AlistExact.LookupAgreement
-import Flapjack.Misc.Option.Rel
-import Batteries.Data.List.Basic
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.GeneratedNames
+public import Flapjack.FiniteMap.AlistExact.LookupAgreement
+public import Flapjack.Misc.Option.Rel
+public import Batteries.Data.List.Basic
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Association-list relations used by the pattern-binding simulation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

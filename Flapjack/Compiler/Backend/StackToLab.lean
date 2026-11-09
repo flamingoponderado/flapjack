@@ -1,7 +1,15 @@
-import Flapjack.Compiler.Backend.LabLang
-import Flapjack.Compiler.Backend.StackAlloc
-import Flapjack.Compiler.Backend.StackLang
-import Flapjack.Misc.AppList
+module
+
+public import Flapjack.Compiler.Backend.LabLang
+public import Flapjack.Compiler.Backend.StackAlloc
+public import Flapjack.Compiler.Backend.StackLang
+public import Flapjack.Misc.AppList
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Cake stack_to_lab flatten

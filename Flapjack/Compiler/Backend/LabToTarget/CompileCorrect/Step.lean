@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Common
-import Flapjack.Compiler.Backend.LabToTarget.BytesInMemoryFetch
-import Flapjack.Compiler.Backend.LabToTarget.FfiEntryDisjoint
-import Flapjack.Compiler.Backend.LabToTarget.InstFrame
-import Flapjack.Compiler.Backend.Semantics.TargetProps.AsmStepEvaluate
-import Flapjack.Compiler.Backend.LabToTarget.Interference
-import Flapjack.Compiler.Backend.LabToTarget.NopSteps
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Common
+public import Flapjack.Compiler.Backend.LabToTarget.BytesInMemoryFetch
+public import Flapjack.Compiler.Backend.LabToTarget.FfiEntryDisjoint
+public import Flapjack.Compiler.Backend.LabToTarget.InstFrame
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.AsmStepEvaluate
+public import Flapjack.Compiler.Backend.LabToTarget.Interference
+public import Flapjack.Compiler.Backend.LabToTarget.NopSteps
+
+@[expose] public section
 
 /-! Flapjack infrastructure shared by the `compile_correct` cases: the
 leading instruction of a fetched, validly encoded target line is simulated by

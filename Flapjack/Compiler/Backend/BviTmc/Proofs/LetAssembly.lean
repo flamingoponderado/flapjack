@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.LetWorker
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.LetWorker
+
+@[expose] public section
 
 /-! Assembly of the TMC let simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc.LetAssembly

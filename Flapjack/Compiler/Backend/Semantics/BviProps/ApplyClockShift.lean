@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BviProps.Clock
-import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyClock
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyClock
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviProps.Clock
+public import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyClock
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyClock
+
+@[expose] public section
 
 /-! Clock replacement for BVI primitive application. -/
 namespace Flapjack.Compiler.Backend.BviProps

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRoots
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRoots
+
+@[expose] public section
 
 /-! The data/word root pairing after decoding collected roots. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

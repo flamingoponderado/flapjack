@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Configuration
-import Flapjack.Compiler.Encoders.Arm8.Configuration
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Configuration
+public import Flapjack.Compiler.Encoders.Arm8.Configuration
+
+@[expose] public section
 
 /-!
 # Bridge infrastructure for the executed encoder

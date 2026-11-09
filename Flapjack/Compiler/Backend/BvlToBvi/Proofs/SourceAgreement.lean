@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxCompiler
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.FuelStable
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxCompiler
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.FuelStable
+
+@[expose] public section
 
 /-! Relating source auxiliary trees to the executable's flattened lists. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi

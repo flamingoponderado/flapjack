@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviLet.Helpers
-import Flapjack.Compiler.Backend.Bvi.Budget
+module
+
+public import Flapjack.Compiler.Backend.BviLet.Helpers
+public import Flapjack.Compiler.Backend.Bvi.Budget
+
+@[expose] public section
 
 /-! Checked BVI let optimization. -/
 namespace Flapjack.Compiler.Backend.BviLet

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.Install
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
-import Flapjack.Misc.Sptree.Map
-import Flapjack.HolArb
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Install
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
+public import Flapjack.Misc.Sptree.Map
+public import Flapjack.HolArb
+
+@[expose] public section
 
 /-! Source-shaped BVI primitive application. -/
 namespace Flapjack.Compiler.Backend.BviSem

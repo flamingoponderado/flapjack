@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.FindCode
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.FindCode
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.RawCall
 open Flapjack Compiler.Backend.StackLang StackSemEvaluate StackSemStateOps
 

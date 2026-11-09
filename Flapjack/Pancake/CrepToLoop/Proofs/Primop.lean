@@ -1,6 +1,10 @@
-import Flapjack.Pancake.CrepToLoop.StateRel
-import Flapjack.Pancake.Semantics.CrepSem.Primop
-import Flapjack.Pancake.Semantics.LoopSemStateExact
+module
+
+public import Flapjack.Pancake.CrepToLoop.StateRel
+public import Flapjack.Pancake.Semantics.CrepSem.Primop
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+
+@[expose] public section
 
 /-!
 # crep_to_loopProof primitive-operator preservation

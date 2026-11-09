@@ -1,21 +1,25 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.LeafTransfers
-import Flapjack.Compiler.Backend.Semantics.StackSem.RegisterTransfers
-import Flapjack.Compiler.Backend.Semantics.StackSem.LocValueCase
-import Flapjack.Compiler.Backend.Semantics.StackSem.FixedStackCases
-import Flapjack.Compiler.Backend.Semantics.StackSem.DynamicStackCases
-import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateAllocCase
-import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConstsCase
-import Flapjack.Compiler.Backend.Semantics.StackSem.ShMemOpCase
-import Flapjack.Compiler.Backend.Semantics.StackSem.Install
-import Flapjack.Compiler.Backend.Semantics.StackSem.BufferWrites
-import Flapjack.Compiler.Backend.Semantics.StackSem.Ffi
-import Flapjack.Compiler.Backend.Semantics.StackSem.InstCase
-import Flapjack.Compiler.Backend.Semantics.StackSem.JumpLower
-import Flapjack.Compiler.Backend.Semantics.StackSem.RawCall
-import Flapjack.Compiler.Backend.Semantics.StackSem.Call
-import Flapjack.Compiler.Backend.Semantics.StackSem.ControlCases
-import Flapjack.Compiler.Backend.Semantics.StackSem.Measure.CallSites
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.LeafTransfers
+public import Flapjack.Compiler.Backend.Semantics.StackSem.RegisterTransfers
+public import Flapjack.Compiler.Backend.Semantics.StackSem.LocValueCase
+public import Flapjack.Compiler.Backend.Semantics.StackSem.FixedStackCases
+public import Flapjack.Compiler.Backend.Semantics.StackSem.DynamicStackCases
+public import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateAllocCase
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConstsCase
+public import Flapjack.Compiler.Backend.Semantics.StackSem.ShMemOpCase
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Install
+public import Flapjack.Compiler.Backend.Semantics.StackSem.BufferWrites
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Ffi
+public import Flapjack.Compiler.Backend.Semantics.StackSem.InstCase
+public import Flapjack.Compiler.Backend.Semantics.StackSem.JumpLower
+public import Flapjack.Compiler.Backend.Semantics.StackSem.RawCall
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Call
+public import Flapjack.Compiler.Backend.Semantics.StackSem.ControlCases
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Measure.CallSites
+
+@[expose] public section
 
 /-! Total StackSem `evaluate` over the exact `HolProg`/`StackSemStateFiniteExact`
 carriers, assembled from the per-clause fragments of

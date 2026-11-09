@@ -1,8 +1,12 @@
-import Flapjack.Pancake.CrepToLoop.StateRel
-import Flapjack.FfiHOL
-import Flapjack.Misc.LprefixLub
-import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
-import Flapjack.Pancake.Semantics.CrepSem.CrepObservationalSemantics
+module
+
+public import Flapjack.Pancake.CrepToLoop.StateRel
+public import Flapjack.FfiHOL
+public import Flapjack.Misc.LprefixLub
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
+public import Flapjack.Pancake.Semantics.CrepSem.CrepObservationalSemantics
+
+@[expose] public section
 
 /-!
 # crep_to_loop `semantics_run_res` over the exact carrier

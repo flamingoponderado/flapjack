@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.State
-import Flapjack.Compiler.Backend.Semantics.NatListBounded
-import Mathlib.Data.Nat.Find
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.State
+public import Flapjack.Compiler.Backend.Semantics.NatListBounded
+public import Mathlib.Data.Nat.Find
+
+@[expose] public section
 
 /-! BVL constant construction with the original least-fresh allocation rule. -/
 namespace Flapjack.Compiler.Backend.BvlSem

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.State
-import Flapjack.Pancake.Proofs.PanToWord
-import Flapjack.Pancake.Proofs.PanSimp.StateRelImpSemantics
-import Flapjack.Pancake.Proofs.PanStructs.CompileTopSemanticsDeclsExact
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+public import Flapjack.Pancake.Proofs.PanToWord
+public import Flapjack.Pancake.Proofs.PanSimp.StateRelImpSemantics
+public import Flapjack.Pancake.Proofs.PanStructs.CompileTopSemanticsDeclsExact
+
+@[expose] public section
 set_option autoImplicit false
 namespace Flapjack.Pancake.Proofs.PanToWord.InitialComposition
 open Flapjack Flapjack.Pancake.PanLang

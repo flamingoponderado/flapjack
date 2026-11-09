@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+
+@[expose] public section
 
 /-! Closure-language syntax admitted before multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosProps

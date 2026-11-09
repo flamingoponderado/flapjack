@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.PartialApplication
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.PartialApplication
+
+@[expose] public section
 
 /-! Full and over-application of related closures. -/
 namespace Flapjack.Compiler.Backend.ClosCall

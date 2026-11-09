@@ -1,9 +1,13 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Property
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClock
-import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Property
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClock
+public import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+
+@[expose] public section
 
 /-!
 # The `Seq` case of `crep_to_loop`'s `ncompile_correct`

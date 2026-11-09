@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalImmediate
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Simulate
-import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
-import Mathlib.Data.List.GetD
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalImmediate
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Simulate
+public import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
+public import Mathlib.Data.List.GetD
+
+@[expose] public section
 
 set_option maxHeartbeats 4000000
 set_option maxRecDepth 10000

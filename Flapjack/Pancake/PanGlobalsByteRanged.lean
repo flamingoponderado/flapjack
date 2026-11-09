@@ -1,8 +1,12 @@
-import Flapjack.Pancake.PanGlobals
-import Flapjack.Pancake.PanGlobals.DeclarationProgramRoute
-import Flapjack.Pancake.PanGlobals.CompileTopExact
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.Pancake.PanLang.Prog
+module
+
+public import Flapjack.Pancake.PanGlobals
+public import Flapjack.Pancake.PanGlobals.DeclarationProgramRoute
+public import Flapjack.Pancake.PanGlobals.CompileTopExact
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.PanLang.Prog
+
+@[expose] public section
 
 /-!
 Byte-range preservation facts for the executed PanGlobals pass.

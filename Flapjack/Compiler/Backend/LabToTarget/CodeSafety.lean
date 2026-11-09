@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabProps.CodeSafety
-import Flapjack.FfiHOL
+module
+
+public import Flapjack.Compiler.Backend.LabProps.CodeSafety
+public import Flapjack.FfiHOL
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps

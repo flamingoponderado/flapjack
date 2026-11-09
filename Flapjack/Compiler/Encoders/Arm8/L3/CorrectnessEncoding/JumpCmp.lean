@@ -1,8 +1,14 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShiftedRegister
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Overflow
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.AddSubImmediate
-import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.BranchConditional
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShiftedRegister
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Overflow
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.AddSubImmediate
+public import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.BranchConditional
+
+-- Sum `==` must reduce by `rfl`/`decide`; core's derived instance is not exposed.
+import all Init.Data.Sum.Basic
+@[expose] public section
 
 set_option maxHeartbeats 4000000
 set_option maxRecDepth 10000

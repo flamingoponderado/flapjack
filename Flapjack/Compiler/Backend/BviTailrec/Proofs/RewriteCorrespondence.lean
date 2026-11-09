@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.ScanCorrespondence
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.Total
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.ScanCorrespondence
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.Total
+
+@[expose] public section
 
 /-! Correspondence between the executed accumulator rewrite and the
 source-shaped rewrite, using the source single-expression scan form. -/

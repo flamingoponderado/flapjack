@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL.Eval
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Eval
+
+@[expose] public section
 
 /-! Concrete values produced by the source evaluator's decoders. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

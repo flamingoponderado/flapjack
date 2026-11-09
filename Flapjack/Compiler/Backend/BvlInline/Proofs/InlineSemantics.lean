@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.InitialState
-import Flapjack.Compiler.Backend.BvlInline.Proofs.Semantics
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.InitialState
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.Semantics
+
+@[expose] public section
 
 /-! Whole-program observations for BVL tick inlining. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

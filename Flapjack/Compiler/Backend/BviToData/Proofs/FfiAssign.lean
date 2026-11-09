@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.Compare
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyFfi
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Compare
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyFfi
+
+@[expose] public section
 
 /-! Terminal FFI behavior of compiled data-language assignments. -/
 namespace Flapjack.Compiler.Backend.BviToData

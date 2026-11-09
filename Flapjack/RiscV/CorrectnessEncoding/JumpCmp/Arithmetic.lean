@@ -1,4 +1,8 @@
-import Flapjack.RiscV.CorrectnessEncoding.Immediate
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.Immediate
+
+@[expose] public section
 /-! Exact original JumpCmp shifted payload reconstruction. Untagged local
 composition infrastructure without a separately named HOL original. The
 original riscv_target176-257 subtracts two/four halfwords after narrowing

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.AssignedVars
-import Flapjack.Pancake.Semantics.LoopProps
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.AssignedVars
+public import Flapjack.Pancake.Semantics.LoopProps
+
+@[expose] public section
 
 namespace Flapjack
 

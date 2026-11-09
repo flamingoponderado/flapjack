@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.PatternComp.Proofs.GuardCompilation
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.PatternComp.Proofs.GuardCompilation
+public import Aesop
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Proof-side soundness infrastructure for CakeML's exhaustiveness matrix.
 The row and decision-tree evaluators remain pending HOL correspondence review. -/

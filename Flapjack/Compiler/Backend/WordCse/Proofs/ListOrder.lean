@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCse.ListOrder
-import Flapjack.FiniteMap.Comparison
+module
+
+public import Flapjack.Compiler.Backend.WordCse.ListOrder
+public import Flapjack.FiniteMap.Comparison
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 

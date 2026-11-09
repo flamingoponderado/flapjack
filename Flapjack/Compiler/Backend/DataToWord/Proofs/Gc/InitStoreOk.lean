@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.State
-import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
-import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
-import Flapjack.Misc.Alignment
-import Flapjack.Misc.WordList
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+public import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
+public import Flapjack.Misc.Alignment
+public import Flapjack.Misc.WordList
+
+@[expose] public section
 
 /-! `init_store_ok_def` (`data_to_word_gcProofScript.sml:4569-4598`): the store,
 memory and buffers of the initial word state, as established by the stack

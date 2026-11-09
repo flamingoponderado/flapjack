@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.MemStores
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.MemStores
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsInitGlobalsRanges
 open Flapjack.Compiler.Backend.StackRemove (addresses)

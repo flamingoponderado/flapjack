@@ -1,5 +1,9 @@
-import Flapjack.FiniteMap.MapKeys
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateSequence
+module
+
+public import Flapjack.FiniteMap.MapKeys
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateSequence
+
+@[expose] public section
 
 /-! Exception-declaration prerequisites for the factored source-to-flat
 simulation. -/

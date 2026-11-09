@@ -1,4 +1,8 @@
-import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
+
+@[expose] public section
 
 /-! Actual native MULHU/MUL Encode/DecodeAny composition, required by the original
 LongMul encoder correctness case. Original MULHU/MUL use opcode0110011, funct3=011/000

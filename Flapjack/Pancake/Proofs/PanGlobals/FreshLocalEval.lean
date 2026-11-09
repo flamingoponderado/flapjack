@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+module
+
+public import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsFreshLocalEval
 open Flapjack.Pancake.PanLang

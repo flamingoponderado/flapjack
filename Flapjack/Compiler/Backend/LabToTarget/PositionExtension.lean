@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.ProgramByteLengths
-import Flapjack.Compiler.Backend.LabToTarget.Fetch
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ProgramByteLengths
+public import Flapjack.Compiler.Backend.LabToTarget.Fetch
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Backend.LabSem

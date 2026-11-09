@@ -1,10 +1,14 @@
-import Flapjack.Misc.Words.Formatting
-import Flapjack.Misc.Words.Replicate
-import Flapjack.Misc.StateTransformer
-import Flapjack.RiscV.L3.Types
-import Flapjack.Misc.Option
-import Flapjack.Misc.Alignment
-import Flapjack.HolArb
+module
+
+public import Flapjack.Misc.Words.Formatting
+public import Flapjack.Misc.Words.Replicate
+public import Flapjack.Misc.StateTransformer
+public import Flapjack.RiscV.L3.Types
+public import Flapjack.Misc.Option
+public import Flapjack.Misc.Alignment
+public import Flapjack.HolArb
+
+@[expose] public section
 
 /-! Flapjack library-rendering infrastructure required by the complete L3 FP
 section and source-reviewed MMU primitives. These helpers implement UPDATE and the guarded in-range word operations

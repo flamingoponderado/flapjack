@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabSem.State
+module
+
+public import Flapjack.Compiler.Backend.LabSem.State
+
+@[expose] public section
 
 /-! Literal shared state primitives of `labSemScript.sml`. Registers and
 memory remain total functions; failure is sticky and does not undo updates.

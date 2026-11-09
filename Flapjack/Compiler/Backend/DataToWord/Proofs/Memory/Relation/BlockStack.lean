@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockElement
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackPermute
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockElement
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackPermute
+
+@[expose] public section
 
 /-! Stack-invariant facts for exposing a block's child. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

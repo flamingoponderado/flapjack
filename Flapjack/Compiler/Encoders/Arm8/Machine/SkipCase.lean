@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.Arm8.Machine.Simulate
-import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProof
-import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Machine.Simulate
+public import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProof
+public import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
+
+@[expose] public section
 
 /-!
 # The closed ARMv8 `skip` case of `encoder_correct`

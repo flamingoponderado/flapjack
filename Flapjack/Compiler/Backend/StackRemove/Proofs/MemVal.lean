@@ -1,5 +1,13 @@
-import Flapjack.Pancake.WordLang
-import Flapjack.Misc.FiniteMapApply
+module
+
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Misc.FiniteMapApply
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Initial-store value selector of `stack_removeProofScript.sml` (2631-2634)
 and its literal-word map law (2811-2815). The register map is the canonical

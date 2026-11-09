@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.HandlerTransition
-import Flapjack.FiniteMap.MapKeys
-import Flapjack.Compiler.Backend.WordToStack.NativeHandlers
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnEval
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnSupport
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.HandlerTransition
+public import Flapjack.FiniteMap.MapKeys
+public import Flapjack.Compiler.Backend.WordToStack.NativeHandlers
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnEval
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnSupport
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CallReturnHandler
 open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm

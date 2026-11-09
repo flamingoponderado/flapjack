@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.HasRecTotal
-import Flapjack.Compiler.Backend.BviTailrec.Rewrite
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.HasRecTotal
+public import Flapjack.Compiler.Backend.BviTailrec.Rewrite
+
+@[expose] public section
 
 /-! Source-shaped recursion detection and its production correspondence. -/
 namespace Flapjack.Compiler.Backend.BviTailrec

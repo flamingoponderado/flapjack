@@ -1,15 +1,23 @@
-import Flapjack.HolRef
-import Flapjack.FiniteMap.Basic
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Pancake.Semantics.PanSem.StateExactFinite
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
-import Flapjack.Pancake.Semantics.PanSem.EvalExact
-import Flapjack.Pancake.Semantics.PanSem.EvaluateDeclsExact
-import Flapjack.Pancake.Semantics.PanSem.DecCallExact
-import Flapjack.Pancake.Semantics.PanSem.FiniteSupportStep
-import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
-import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
-import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
+module
+
+public import Flapjack.HolRef
+public import Flapjack.FiniteMap.Basic
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFinite
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Pancake.Semantics.PanSem.EvalExact
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateDeclsExact
+public import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+public import Flapjack.Pancake.Semantics.PanSem.FiniteSupportStep
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Finite-map carrier and expression invariant for the HOL `eval_is_wf_shape_v`

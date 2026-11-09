@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockFrame
-import Flapjack.Compiler.Backend.BviTmc.Proofs.FinaliseRelation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockFrame
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.FinaliseRelation
+
+@[expose] public section
 
 /-! Mutable constructor allocation for call-block wrappers. -/
 namespace Flapjack.Compiler.Backend.BviTmc.CallBlockAllocation

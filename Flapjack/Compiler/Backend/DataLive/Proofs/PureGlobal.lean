@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.PureBlock
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.PureBlock
+
+@[expose] public section
 
 /-! Pure global reads and dead assignment elimination. -/
 namespace Flapjack.Compiler.Backend.DataLive

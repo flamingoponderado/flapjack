@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabFilter.Proofs.BufferTerminalCases
+module
+
+public import Flapjack.Compiler.Backend.LabFilter.Proofs.BufferTerminalCases
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabFilter.Proofs
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

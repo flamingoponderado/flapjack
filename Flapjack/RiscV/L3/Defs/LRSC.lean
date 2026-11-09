@@ -1,7 +1,11 @@
-import Flapjack.RiscV.L3.Defs.IntegerLoadMode
-import Flapjack.RiscV.L3.Defs.Reservation
-import Flapjack.RiscV.L3.Defs.AddressException
-import Flapjack.RiscV.L3.Defs.MMU.Translate
+module
+
+public import Flapjack.RiscV.L3.Defs.IntegerLoadMode
+public import Flapjack.RiscV.L3.Defs.Reservation
+public import Flapjack.RiscV.L3.Defs.AddressException
+public import Flapjack.RiscV.L3.Defs.MMU.Translate
+
+@[expose] public section
 namespace Flapjack.RiscV.L3
 
 /-- Literal source7463-7505: full word1 aq/rl and word5 rd/rs1 arguments,

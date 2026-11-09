@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateLength
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateLength
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Source-typed BVL evaluation and its clock invariants. -/
 namespace Flapjack.Compiler.Backend.BvlSem

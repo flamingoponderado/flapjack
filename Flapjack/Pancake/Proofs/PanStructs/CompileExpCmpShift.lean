@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanStructs.FieldsInOrderReorderNoop
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.FieldsInOrderReorderNoop
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.CompileExpCmpShift
 open Flapjack
 open Flapjack.Pancake.PanLang

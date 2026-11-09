@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.FlatPattern.BindingsTotal
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.BindingsTotal
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Total naive pattern matching, justified by the number of pattern nodes. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

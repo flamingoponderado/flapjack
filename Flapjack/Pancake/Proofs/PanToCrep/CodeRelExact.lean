@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.PanToCrep
-import Flapjack.Pancake.PanToCrep.CompileExact
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep
+public import Flapjack.Pancake.PanToCrep.CompileExact
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+
+@[expose] public section
 
 /-!
 Exact-carrier code relation for the HOL Pancake-to-Crep correctness boundary.

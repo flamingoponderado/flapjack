@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ValueGrowth
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ValueGrowth
+
+@[expose] public section
 
 /-! Target-only reference growth for mutual closure allocation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

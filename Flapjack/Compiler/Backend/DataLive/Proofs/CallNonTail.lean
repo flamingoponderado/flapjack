@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.ForceCall
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.ForceCall
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+@[expose] public section
 
 /-! Handler-free non-tail call simulation for data liveness. -/
 namespace Flapjack.Compiler.Backend.DataLive

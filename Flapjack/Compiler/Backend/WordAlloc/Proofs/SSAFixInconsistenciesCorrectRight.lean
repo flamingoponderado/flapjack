@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveLookups
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveLookups
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.GcShared
+module
+
+public import Flapjack.Compiler.Backend.GcShared
+
+@[expose] public section
 
 /-! Address renaming for abstract heap roots. -/
 namespace Flapjack.Compiler.Backend

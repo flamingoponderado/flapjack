@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Defs.SetLess
-import Flapjack.RiscV.L3.Step.ComparisonMode
+module
+
+public import Flapjack.RiscV.L3.Defs.SetLess
+public import Flapjack.RiscV.L3.Step.ComparisonMode
+
+@[expose] public section
 
 namespace Flapjack.RiscV.L3.Step
 open Flapjack.RiscV.L3

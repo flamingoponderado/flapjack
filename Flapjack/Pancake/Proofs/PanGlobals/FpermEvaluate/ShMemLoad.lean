@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
+
+@[expose] public section
 
 /-! ShMemLoad case of pan_globalsProofScript's evaluate_fperm.
 The address evaluation, keyed-variable validity guard, shared-memory read and

@@ -1,6 +1,10 @@
-import Flapjack.SemanticPrimitivesHOL
-import Flapjack.FiniteMap.AlistExact.Lookup
-import Flapjack.NamespaceProps
+module
+
+public import Flapjack.SemanticPrimitivesHOL
+public import Flapjack.FiniteMap.AlistExact.Lookup
+public import Flapjack.NamespaceProps
+
+@[expose] public section
 
 /-! Properties of recursive-function lookup. -/
 namespace Flapjack.SemanticPrimitivesProps

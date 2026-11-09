@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Target.State
-import Flapjack.Misc.BytesInMemory
-import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
-import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Target.State
+public import Flapjack.Misc.BytesInMemory
+public import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
+public import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+
+@[expose] public section
 
 /-!
 # Shared infrastructure for the L3 ARMv8 encoder-correctness cases

@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.Accessors
-import Flapjack.Compiler.Backend.RegAlloc.StateMap
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.Accessors
+public import Flapjack.Compiler.Backend.RegAlloc.StateMap
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-!
 # reg_allocProof accessor rewriting lemmas

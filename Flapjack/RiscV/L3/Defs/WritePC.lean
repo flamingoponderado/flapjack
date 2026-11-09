@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.ReadInst
+module
+
+public import Flapjack.RiscV.L3.Defs.ReadInst
+
+@[expose] public section
 
 /-! Complete original current-core PC writer. The state carrier is unchanged;
 no totalCore bound is imposed on the word8 function key. -/

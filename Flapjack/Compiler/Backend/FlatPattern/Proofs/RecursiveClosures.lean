@@ -1,6 +1,10 @@
-import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationCases
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationCases
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Recursive closure environment and application simulation infrastructure. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem
-import Flapjack.Compiler.Backend.BackendCommon.ConstructorTags
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem
+public import Flapjack.Compiler.Backend.BackendCommon.ConstructorTags
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-! List and string conversions used by the flat-language evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatSem

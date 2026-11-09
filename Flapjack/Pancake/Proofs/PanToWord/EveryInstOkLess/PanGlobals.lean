@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanToWord
-import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
+module
+
+public import Flapjack.Pancake.Proofs.PanToWord
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
+
+@[expose] public section
 
 /-!
 # `pan_to_wordProofScript.sml` 1299-1409: `every_inst_ok_less` for `pan_globals`

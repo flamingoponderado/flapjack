@@ -1,6 +1,10 @@
-import Mathlib.Tactic.IntervalCases
-import Flapjack.RiscV.L3.Defs.Encode
-import Flapjack.RiscV.L3.Step.DecodeAny
+module
+
+public import Mathlib.Tactic.IntervalCases
+public import Flapjack.RiscV.L3.Defs.Encode
+public import Flapjack.RiscV.L3.Step.DecodeAny
+
+@[expose] public section
 
 /-! Universal native Binop Encode/Decode compositions. All intrinsic word5
 register and word12 immediate operands are retained. These local compositions

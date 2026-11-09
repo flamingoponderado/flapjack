@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataSpace.Requirements
+module
+
+public import Flapjack.Compiler.Backend.DataSpace.Requirements
+
+@[expose] public section
 
 /-! Lower a BVI operation into a data-language assignment. -/
 namespace Flapjack.Compiler.Backend.BviToData

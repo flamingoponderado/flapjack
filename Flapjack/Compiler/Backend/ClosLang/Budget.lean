@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+
+@[expose] public section
 
 /-! Computable structural budgets for closure-language traversals. -/
 namespace Flapjack.Compiler.Backend.ClosLang

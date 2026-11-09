@@ -1,25 +1,29 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstCommon
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstConst
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstBinop
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstShift
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstDiv
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLongMul
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLongDiv
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstAddCarry
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstAddOverflow
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstSubOverflow
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLoad
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLoad8
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLoad32
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore8
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore32
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPCompare
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPUnary
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPArith
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPInt
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPMovToReg
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPMovFromReg
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstCommon
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstConst
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstBinop
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstShift
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstDiv
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLongMul
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLongDiv
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstAddCarry
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstAddOverflow
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstSubOverflow
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLoad
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLoad8
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLoad32
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore8
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore32
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPCompare
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPUnary
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPArith
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPInt
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPMovToReg
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPMovFromReg
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

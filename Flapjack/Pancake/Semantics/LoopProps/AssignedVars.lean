@@ -1,4 +1,8 @@
-import Flapjack.Pancake.LoopLang.AssignedVars
+module
+
+public import Flapjack.Pancake.LoopLang.AssignedVars
+
+@[expose] public section
 
 /-!
 Exact `loopPropsScript.sml` assigned-variable theorem ports over the faithful

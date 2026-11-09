@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Compiler.Backend.Semantics.WordSem.Env
-import Flapjack.Misc.Option
-import Mathlib.Tactic.SplitIfs
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+public import Flapjack.Misc.Option
+public import Mathlib.Tactic.SplitIfs
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack

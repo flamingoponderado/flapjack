@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Step
-import Flapjack.Compiler.Backend.LabToTarget.InstLemma
-import Flapjack.Compiler.Backend.LabToTarget.AlignedPosVal
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Step
+public import Flapjack.Compiler.Backend.LabToTarget.InstLemma
+public import Flapjack.Compiler.Backend.LabToTarget.AlignedPosVal
+
+@[expose] public section
 
 /-! `Asm` cases of the original `compile_correct`
 (lab_to_targetProofScript.sml:7560-7717): `Asmi (Inst i)` and

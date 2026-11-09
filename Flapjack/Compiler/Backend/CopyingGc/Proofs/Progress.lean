@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.CopyingGc
-import Flapjack.Compiler.Backend.GcShared.ForwardPtr
+module
+
+public import Flapjack.Compiler.Backend.CopyingGc
+public import Flapjack.Compiler.Backend.GcShared.ForwardPtr
+
+@[expose] public section
 
 /-! Progress and root-count invariants used by the word-level GC simulation. -/
 namespace Flapjack.Compiler.Backend.CopyingGc

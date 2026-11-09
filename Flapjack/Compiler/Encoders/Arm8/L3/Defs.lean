@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Types
-import Flapjack.Compiler.Encoders.Arm8.L3.Support
-import Flapjack.Compiler.Encoders.Arm8.Encode
-import Flapjack.Basis.Pure.MlString
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Types
+public import Flapjack.Compiler.Encoders.Arm8.L3.Support
+public import Flapjack.Compiler.Encoders.Arm8.Encode
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 # L3 ARMv8 model: the transition and encoding definitions

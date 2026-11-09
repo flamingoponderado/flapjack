@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.Backend
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
-import Flapjack.Compiler.Backend.StackNames.OperandNames
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
-import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
+module
+
+public import Flapjack.Compiler.Backend.Backend
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+public import Flapjack.Compiler.Backend.StackNames.OperandNames
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
+public import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
+
+@[expose] public section
 
 /-! backendProofScript.sml: `read_limits_def`, the stack/heap limits read from the
 initial machine state, used in the conclusion of the Pancake top-level theorem. -/

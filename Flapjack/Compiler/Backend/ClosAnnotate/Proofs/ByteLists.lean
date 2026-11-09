@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ByteReads
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockLists
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ByteReads
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockLists
+
+@[expose] public section
 
 /-! Byte-list conversions under closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

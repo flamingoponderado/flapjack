@@ -1,4 +1,8 @@
-import Flapjack.Misc.FiniteMapApply
+module
+
+public import Flapjack.Misc.FiniteMapApply
+
+@[expose] public section
 
 /-! Composition for canonical finite-support maps. -/
 namespace Flapjack.HolFiniteMapExact

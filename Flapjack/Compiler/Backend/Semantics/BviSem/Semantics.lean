@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateList
-import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
-import Flapjack.Misc.LprefixLub
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateList
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
+public import Flapjack.Misc.LprefixLub
+
+@[expose] public section
 
 /-! Whole-program observations of the BVI evaluator. -/
 namespace Flapjack.Compiler.Backend.BviSem

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitialStateRel
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Semantics
-import Flapjack.Compiler.Backend.Semantics.BviSem.Semantics
-import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitialStateRel
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Semantics
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Semantics
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
+
+@[expose] public section
 
 /-! Observable consequences of the BVL-to-BVI evaluation simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

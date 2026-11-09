@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Control
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.StateEffect
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Inst
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Call
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Control
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.StateEffect
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Inst
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Call
+
+@[expose] public section
 
 /-!
 # `evaluate_remove_dead`

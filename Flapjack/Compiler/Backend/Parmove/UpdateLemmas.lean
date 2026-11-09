@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.Semantics
+module
+
+public import Flapjack.Compiler.Backend.Parmove.Semantics
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

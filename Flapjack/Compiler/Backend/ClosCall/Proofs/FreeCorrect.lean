@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeTotal
-import Flapjack.Compiler.Backend.Semantics.ClosProps.FreeVars
-import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
-import Mathlib.Tactic
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeTotal
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.FreeVars
+public import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-! Free-variable agreement for the executable direct-call analysis. -/
 namespace Flapjack.Compiler.Backend.ClosCall

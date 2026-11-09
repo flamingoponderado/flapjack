@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect.Simple
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect.Simple
+
+@[expose] public section
 
 /-!
 # `word_cseProof` `comp_correct`: the store and shared-memory cases

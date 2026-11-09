@@ -1,17 +1,21 @@
-import Flapjack.Compiler.Backend.LabToTarget.WordLocValByte
-import Flapjack.Compiler.Backend.LabToTarget.GoodCode
-import Flapjack.Compiler.Backend.LabToTarget.ShareMemDomain
-import Flapjack.Compiler.Backend.LabToTarget.ShareMemState
-import Flapjack.Compiler.Backend.LabToTarget.CodeSafety
-import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
-import Flapjack.Compiler.Backend.LabSem.Navigation
-import Flapjack.Compiler.Backend.Semantics.TargetSem.FfiReads
-import Flapjack.Compiler.Encoders.AsmProps.Encoding
-import Flapjack.Compiler.Encoders.AsmProps.Interference
-import Flapjack.Misc.AsmWriteBytearray
-import Flapjack.Misc.BytesInMem
-import Flapjack.Misc.GoodDimindex
-import Flapjack.Misc.Option
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.WordLocValByte
+public import Flapjack.Compiler.Backend.LabToTarget.GoodCode
+public import Flapjack.Compiler.Backend.LabToTarget.ShareMemDomain
+public import Flapjack.Compiler.Backend.LabToTarget.ShareMemState
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSafety
+public import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
+public import Flapjack.Compiler.Backend.LabSem.Navigation
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.FfiReads
+public import Flapjack.Compiler.Encoders.AsmProps.Encoding
+public import Flapjack.Compiler.Encoders.AsmProps.Interference
+public import Flapjack.Misc.AsmWriteBytearray
+public import Flapjack.Misc.BytesInMem
+public import Flapjack.Misc.GoodDimindex
+public import Flapjack.Misc.Option
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.LabSem

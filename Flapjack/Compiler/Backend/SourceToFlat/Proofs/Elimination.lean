@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
+
+@[expose] public section
 
 /-! Source-to-flat allocation expressions survive flat elimination. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

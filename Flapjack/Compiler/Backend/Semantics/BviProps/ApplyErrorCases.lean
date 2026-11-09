@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyError
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyError
+
+@[expose] public section
 
 /-! Classification of BVI primitive errors. -/
 namespace Flapjack.Compiler.Backend.BviProps

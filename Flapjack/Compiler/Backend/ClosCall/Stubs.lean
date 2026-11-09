@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosCall
-import Mathlib.Tactic
+module
+
+public import Flapjack.Compiler.Backend.ClosCall
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-! Source-shaped direct-call stub generators and their executable forms. -/
 namespace Flapjack.Compiler.Backend.ClosCall

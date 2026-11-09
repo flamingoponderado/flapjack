@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeConstChain
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsBounds
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeConstChain
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsBounds
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Assembly
-import Flapjack.Pancake.Proofs.CrepInline.TransformBranch.Assembly
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Assembly
+public import Flapjack.Pancake.Proofs.CrepInline.TransformBranch.Assembly
+
+@[expose] public section
 
 /-!
 # crep_inline `wrapped_transform_if` and `var_prog` lemmas

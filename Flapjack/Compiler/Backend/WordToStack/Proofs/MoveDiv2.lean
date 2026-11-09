@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Parmove.MapInj
-import Flapjack.Compiler.Backend.Parmove.ParseSemMapInj
-import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveListSupport
+module
+
+public import Flapjack.Compiler.Backend.Parmove.MapInj
+public import Flapjack.Compiler.Backend.Parmove.ParseSemMapInj
+public import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveListSupport
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack
 open Flapjack.Compiler.Backend.Parmove

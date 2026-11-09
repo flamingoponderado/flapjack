@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect.Leaves
-import Flapjack.Compiler.Backend.StackProps.AllocationConstants
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect.Leaves
+public import Flapjack.Compiler.Backend.StackProps.AllocationConstants
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `comp_correct`: `Alloc` and `StoreConsts`

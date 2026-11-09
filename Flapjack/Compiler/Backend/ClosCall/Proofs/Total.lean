@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeTotal
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeTotal
+
+@[expose] public section
 
 /-! Structural sufficiency for direct-call conversion. These results are
 Flapjack infrastructure, not HOL pass-correctness ports. -/

@@ -1,10 +1,14 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.PhaseSuccess
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.EdgeInsertion
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.ConsideredVarFilter
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedForeach
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.NotCoalescedFilter
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedPartition
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.PhaseSuccess
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.EdgeInsertion
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.ConsideredVarFilter
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedForeach
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.NotCoalescedFilter
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedPartition
+
+@[expose] public section
 
 /-!
 # reg_allocProof: success of the coalesce phase

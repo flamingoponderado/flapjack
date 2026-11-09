@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviToData.CompileTotal
-import Flapjack.Compiler.Backend.BviToData.Proofs.Total
+module
+
+public import Flapjack.Compiler.Backend.BviToData.CompileTotal
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Total
+
+@[expose] public section
 
 /-! Agreement of the total traversal with the executed bounded traversal. -/
 namespace Flapjack.Compiler.Backend.BviToData

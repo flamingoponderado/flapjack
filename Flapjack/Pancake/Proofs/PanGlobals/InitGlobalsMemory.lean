@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Compiler.Backend.StackRemove
+module
+
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Compiler.Backend.StackRemove
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsInitGlobalsMemory
 

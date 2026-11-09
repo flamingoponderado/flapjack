@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.LoopSem
+module
+
+public import Flapjack.Pancake.Semantics.LoopSem
+
+@[expose] public section
 
 /-!
 # Properties of the Lean `loopSem` machine state

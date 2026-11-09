@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Relocation
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Relocation
+
+@[expose] public section
 
 /-! Relocation of abstract reference cells by a collector. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

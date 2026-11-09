@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Types
+module
+
+public import Flapjack.RiscV.L3.Types
+
+@[expose] public section
 
 /-! Complete fixed-width immediate assembly used by original Decode.
 These concatenate the encoded fields in literal source order; the encoded

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStackRegFormat
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.WordToStackRegFormat
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Exact Spt/cutsets bitmap boundary for the Word-to-Stack compiler.
 comp_correct and compile_semantics are ported separately (WordToStack/Proofs/

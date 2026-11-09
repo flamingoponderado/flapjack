@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileBoolTest
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileBoolTest
+
+@[expose] public section
 
 /-! Block bounds checks in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

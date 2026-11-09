@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Types
+module
+
+public import Flapjack.RiscV.L3.Types
+
+@[expose] public section
 
 /-! Complete original generated fixed-width bit tuples. Import.sml BL invokes
 bitstringLib.bitify_boolify; mk_boolify orders word_bit from width-1 down to 0

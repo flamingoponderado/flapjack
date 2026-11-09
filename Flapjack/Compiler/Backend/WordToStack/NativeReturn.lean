@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
+
+@[expose] public section
 
 /-! Native return-slot lowering for the literal Word-to-Stack compiler.
 The source list_Seq clauses (stackLangScript.sml:86-90) are reproduced by the

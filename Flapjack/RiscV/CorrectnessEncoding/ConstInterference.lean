@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CorrectnessEncoding.ConstNext
-import Flapjack.RiscV.CorrectnessEncoding.ConstRun
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.ConstNext
+public import Flapjack.RiscV.CorrectnessEncoding.ConstRun
+
+@[expose] public section
 
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 Compiler.Encoders.RiscV.Target

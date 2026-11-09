@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileOpError
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileOpError
+
+@[expose] public section
 
 /-! Integer-constant lowering for BVL-to-BVI. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

@@ -1,11 +1,15 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.PanToCrep.Compile
-import Flapjack.Pancake.CrepInline
-import Flapjack.Pancake.CrepLang.Prog
-import Flapjack.Basis.Pure.MlString
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
-import Std.Data.HashSet.Lemmas
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.PanToCrep.Compile
+public import Flapjack.Pancake.CrepInline
+public import Flapjack.Pancake.CrepLang.Prog
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Std.Data.HashSet.Lemmas
+
+@[expose] public section
 
 /-!
 The first executable call-substitution layer for Crepe.

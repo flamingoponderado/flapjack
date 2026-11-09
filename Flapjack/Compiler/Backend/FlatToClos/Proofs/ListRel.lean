@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Misc.ListEl
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.ListEl
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! List-relation prerequisite for flat-to-closure correctness. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

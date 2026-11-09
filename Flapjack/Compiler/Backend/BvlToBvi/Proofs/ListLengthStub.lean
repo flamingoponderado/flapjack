@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileConsExtend
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileConsExtend
+
+@[expose] public section
 
 /-! List-length runtime stub used by BVL-to-BVI lowering. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

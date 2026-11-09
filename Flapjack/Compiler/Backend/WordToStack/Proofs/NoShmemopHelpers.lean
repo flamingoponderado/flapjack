@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeMoves
-import Flapjack.Compiler.Backend.WordToStack.NativeLive
-import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
-import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeMoves
+public import Flapjack.Compiler.Backend.WordToStack.NativeLive
+public import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
+public import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang

@@ -1,7 +1,15 @@
-import Flapjack.Compiler.Backend.Bvi.Syntax
-import Flapjack.Compiler.Backend.Bvi.Budget
-import Flapjack.Misc.Sptree
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Bvi.Syntax
+public import Flapjack.Compiler.Backend.Bvi.Budget
+public import Flapjack.Misc.Sptree
+public import Flapjack.HolRef
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! BVI wrapper inlining and tick removal. -/
 namespace Flapjack.Compiler.Backend.BviInline

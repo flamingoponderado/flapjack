@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Defs
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
-import Flapjack.Compiler.Encoders.Arm8.Target
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Defs
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
+public import Flapjack.Compiler.Encoders.Arm8.Target
+
+@[expose] public section
 
 /-!
 # L3 ARMv8 byte encoding

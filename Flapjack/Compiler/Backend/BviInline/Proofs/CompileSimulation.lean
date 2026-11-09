@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviInline.Proofs.EvaluateInduction
+module
+
+public import Flapjack.Compiler.Backend.BviInline.Proofs.EvaluateInduction
+
+@[expose] public section
 
 /-! Initial-state and whole-program BVI inlining simulation. -/
 namespace Flapjack.Compiler.Backend.BviInline

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateCases
-import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveNumeric
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateCases
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveNumeric
+
+@[expose] public section
 
 /-! Ordinary primitive-operation cases of the closure introduction simulation. -/
 namespace Flapjack.Compiler.Backend.ClosMti

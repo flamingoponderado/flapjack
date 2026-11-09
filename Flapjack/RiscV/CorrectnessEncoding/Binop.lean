@@ -1,4 +1,8 @@
-import Flapjack.RiscV.CorrectnessEncoding.BinopImmediate
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.BinopImmediate
+
+@[expose] public section
 
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
+
+@[expose] public section
 
 /-! ShMemStore case of pan_globalsProofScript's evaluate_fperm.
 Expression evaluation, domain checks and FFI calls are independent of code.

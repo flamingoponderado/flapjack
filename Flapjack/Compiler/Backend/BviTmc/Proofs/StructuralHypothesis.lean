@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractionSafety
-import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationSimulation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.VariableSimulation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractionSafety
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationSimulation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.VariableSimulation
+
+@[expose] public section
 
 /-! Same-clock structural induction for TMC evaluation. -/
 namespace Flapjack.Compiler.Backend.BviTmc.StructuralHypothesis

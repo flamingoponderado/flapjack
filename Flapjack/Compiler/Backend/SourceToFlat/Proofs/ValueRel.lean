@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnv
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.BindLocals
-import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
-import Mathlib.Data.List.Forall2
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnv
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.BindLocals
+public import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
+public import Mathlib.Data.List.Forall2
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Source-to-flat value and environment relations. Nested HOL list and lookup
 premises are factored through mutual inductive helpers for Lean's positivity

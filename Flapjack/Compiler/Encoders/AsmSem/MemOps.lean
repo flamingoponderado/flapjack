@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.AsmSem.Memory
-import Flapjack.Misc.Alignment
+module
+
+public import Flapjack.Compiler.Encoders.AsmSem.Memory
+public import Flapjack.Misc.Alignment
+
+@[expose] public section
 
 /-!
 # asmSem generic memory wrappers

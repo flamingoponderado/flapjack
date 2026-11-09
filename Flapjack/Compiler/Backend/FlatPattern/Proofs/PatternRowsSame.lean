@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 local instance : Nonempty FlatLang.Pat := ⟨.pany⟩

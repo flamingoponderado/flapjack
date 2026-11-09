@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
-import Flapjack.NamespaceProps.Lift
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
+public import Flapjack.NamespaceProps.Lift
+
+@[expose] public section
 
 /-! Source evaluator environment relation under module lifting. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

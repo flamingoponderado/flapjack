@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileCases
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.ConstantComposition
-import Flapjack.Compiler.Backend.Semantics.BvlProps.VarBound
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileCases
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.ConstantComposition
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.VarBound
+
+@[expose] public section
 
 /-! Variable bounds for the handler compiler's generated expressions. -/
 namespace Flapjack.Compiler.Backend.BvlHandle.Proofs

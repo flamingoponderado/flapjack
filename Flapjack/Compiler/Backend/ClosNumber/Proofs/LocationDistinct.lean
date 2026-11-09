@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationBounds
-import Mathlib.Data.List.Nodup
+module
+
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationBounds
+public import Mathlib.Data.List.Nodup
+
+@[expose] public section
 
 /-! Distinctness of closure-code locations produced by numbering. -/
 namespace Flapjack.Compiler.Backend.ClosNumber

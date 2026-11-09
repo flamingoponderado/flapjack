@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Assembly
-import Flapjack.Pancake.Semantics.PanSem.Semantics
-import Flapjack.Pancake.Semantics.PanSem.TerminationWitness
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Assembly
+public import Flapjack.Pancake.Semantics.PanSem.Semantics
+public import Flapjack.Pancake.Semantics.PanSem.TerminationWitness
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsStateRelImpSemantics
 open Flapjack.Pancake.PanLang

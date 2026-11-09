@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+
+@[expose] public section
 
 /-!
 Flapjack-specific native section boundary, with no HOL declaration.

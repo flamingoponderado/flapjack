@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MoveStoreConsts
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAOptionLookupSubset
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.RemoveDead
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectRight
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MoveStoreConsts
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAOptionLookupSubset
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.RemoveDead
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectRight
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

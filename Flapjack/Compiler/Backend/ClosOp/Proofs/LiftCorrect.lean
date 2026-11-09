@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.Matchers
-import Flapjack.Compiler.Backend.ClosLang.Pure
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.Matchers
+public import Flapjack.Compiler.Backend.ClosLang.Pure
+
+@[expose] public section
 
 /-! Source lifting invariants from the corresponding HOL proof script. -/
 namespace Flapjack.Compiler.Backend.ClosOp

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotationCodeSemantics
-import Flapjack.FiniteMap.AlistExact
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotationCodeSemantics
+public import Flapjack.FiniteMap.AlistExact
+
+@[expose] public section
 
 /-! Annotation semantics with installed source code. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

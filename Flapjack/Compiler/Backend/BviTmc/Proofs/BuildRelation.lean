@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.HoleRelation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.HoleRelation
+
+@[expose] public section
 
 /-! Heap-level infrastructure for the TMC constant-construction simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc

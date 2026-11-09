@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
+
+@[expose] public section
 
 /-! Return and Raise cases of pan_globalsProofScript's evaluate_fperm.
 Expression evaluation is unchanged by code updates. The original value-size,

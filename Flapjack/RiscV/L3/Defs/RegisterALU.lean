@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs
+module
+
+public import Flapjack.RiscV.L3.Defs
+
+@[expose] public section
 
 /-! Full literal register arithmetic and bitwise equations. These original clauses
 use word64 operands irrespective of architecture; no mode check is added.

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.CrepInline.Pass
-import Flapjack.Pancake.Proofs.CrepInline
+module
+
+public import Flapjack.Pancake.CrepInline.Pass
+public import Flapjack.Pancake.Proofs.CrepInline
+
+@[expose] public section
 
 /-!
 # crep_inline: syntactic `unreach_elim` lemmas

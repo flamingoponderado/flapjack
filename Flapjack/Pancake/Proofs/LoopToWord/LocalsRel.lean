@@ -1,5 +1,9 @@
-import Flapjack.Pancake.LoopToWord
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Pancake.LoopToWord
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 /-!
 # Exact loop-to-word locals relation

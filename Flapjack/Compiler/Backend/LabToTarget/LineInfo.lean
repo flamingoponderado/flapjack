@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.PositionExtension
-import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.PositionExtension
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Backend.LabSem

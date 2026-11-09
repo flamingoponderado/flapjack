@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatProps.SimpleRelations
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.SimpleRelations
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
+
+@[expose] public section
 /-! Primitive type checks for simple flat value relations.
 The private single-value lemma supports the local HOL list theorem. -/
 namespace Flapjack.Compiler.Backend.FlatProps

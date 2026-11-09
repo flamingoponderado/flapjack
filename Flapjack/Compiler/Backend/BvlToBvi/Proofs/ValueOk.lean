@@ -1,6 +1,16 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Refs
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateRefs
-import Flapjack.Compiler.Backend.Semantics.BvlProps.FindCode
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Refs
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateRefs
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.FindCode
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Domain monotonicity and list values for BVL-to-BVI well-formedness. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

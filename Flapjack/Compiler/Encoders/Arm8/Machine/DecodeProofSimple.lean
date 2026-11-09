@@ -2,8 +2,12 @@
 Copyright (c) 2025 Flapjack contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.Tactic.IntervalCases
-import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProof
+module
+
+public import Mathlib.Tactic.IntervalCases
+public import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProof
+
+@[expose] public section
 
 /-!
 # ARMv8 decoder inverses: fixed-opcode forms

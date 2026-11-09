@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.DataBufferWrite
 open Flapjack Flapjack.Compiler.Backend.StackRemove

@@ -1,6 +1,14 @@
-import Flapjack.AstHOL.LitOp
-import Flapjack.NamespaceHOL
-import Flapjack.Misc.Location
+module
+
+public import Flapjack.AstHOL.LitOp
+public import Flapjack.NamespaceHOL
+public import Flapjack.Misc.Location
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # `astScript`: type annotations, patterns, expressions and declarations

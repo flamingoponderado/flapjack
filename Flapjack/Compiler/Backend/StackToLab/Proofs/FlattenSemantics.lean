@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCallCorrect
-import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
-import Flapjack.Compiler.Backend.LabSem.Semantics
-import Flapjack.Compiler.Backend.LabProps.EvaluateAddClock
-import Flapjack.Compiler.Backend.LabProps.EvaluateAddClockIoEventsMono
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
-import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCallCorrect
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
+public import Flapjack.Compiler.Backend.LabSem.Semantics
+public import Flapjack.Compiler.Backend.LabProps.EvaluateAddClock
+public import Flapjack.Compiler.Backend.LabProps.EvaluateAddClockIoEventsMono
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
+public import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
+
+@[expose] public section
 
 /-! `flatten_semantics`
 (`stack_to_labProofScript.sml:2827-3025`): under the halting assumption for

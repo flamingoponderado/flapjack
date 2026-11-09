@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Compiler.Backend.BackendCommon
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Compiler.Backend.BackendCommon
+
+@[expose] public section
 
 /-! Assembly infrastructure for the size/bitmap clauses at stackSemScript
 1010-1021. These are right-hand-side fragments, with no separate HOL original

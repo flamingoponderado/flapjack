@@ -1,6 +1,12 @@
-import Flapjack.Compiler.Backend.BvlConst.Proofs.Relations
-import Flapjack.Compiler.Backend.BvlConst.Extract
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+module
+
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.Relations
+public import Flapjack.Compiler.Backend.BvlConst.Extract
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Semantic prerequisites for deleting let-bound variable aliases. -/
 namespace Flapjack.Compiler.Backend.BvlConst.Proofs

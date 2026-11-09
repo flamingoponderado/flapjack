@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftCorrect
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftCorrect
+
+@[expose] public section
 
 /-! Simplicity of the source equality decomposition. -/
 namespace Flapjack.Compiler.Backend.ClosOp

@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.CutSets
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Inst
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.CutSets
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Inst
+
+@[expose] public section
 
 /-!
 # `clash_tree_colouring_ok` returning `Call` with handler

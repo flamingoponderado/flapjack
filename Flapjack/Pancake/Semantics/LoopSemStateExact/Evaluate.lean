@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Compiler.Encoders.Asm
+module
+
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Compiler.Encoders.Asm
+
+@[expose] public section
 
 namespace Flapjack
 

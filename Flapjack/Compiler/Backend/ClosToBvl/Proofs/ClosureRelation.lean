@@ -1,13 +1,21 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InstalledCode
-import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
-import Flapjack.Compiler.Backend.Semantics.BvlSem.State
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InstalledCode
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.State
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Closure representations for the closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.Compiler.Backend.ClosProps
 
-private instance : Nonempty BvlSem.Value := ⟨.number 0⟩
+instance closureRelationInst1 : Nonempty BvlSem.Value := ⟨.number 0⟩
 
 private def toBroad (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) := refs.lookup
 private def ofBroad (lookup : Nat → Option (BvlSem.Ref BvlSem.Value))

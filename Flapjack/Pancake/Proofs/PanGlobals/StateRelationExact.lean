@@ -1,12 +1,16 @@
-import Flapjack.HolRef
-import Flapjack.Misc.GoodDimindex
-import Flapjack.Compiler.Backend.StackRemove
-import Flapjack.Pancake.PanGlobals.CompileExpExact
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
-import Flapjack.Pancake.Semantics.PanSem.EvalFinite
-import Flapjack.Pancake.Semantics.PanSemStateEval
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.GoodDimindex
+public import Flapjack.Compiler.Backend.StackRemove
+public import Flapjack.Pancake.PanGlobals.CompileExpExact
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Pancake.Semantics.PanSem.EvalFinite
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+
+@[expose] public section
 
 /-!
 # Exact finite-carrier ports of the PanGlobals state relation

@@ -1,12 +1,19 @@
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateSequence
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
+module
+
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateSequence
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Conditional case of the tick-removal evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.ClosTicks
 open Flapjack.Compiler.Backend.ClosSem
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-private instance : Nonempty ClosLang.Exp := ⟨.var .none 0⟩
+instance evaluateIfInst1 : Nonempty ClosLang.Exp := ⟨.var .none 0⟩
 
 /-- A conditional produced by tick removal came from one under leading ticks. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_If_IMP_mk_Ticks"]

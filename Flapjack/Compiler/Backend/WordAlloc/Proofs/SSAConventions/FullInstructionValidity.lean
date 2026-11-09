@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ProgramInstructionValidity
-import Flapjack.Compiler.Backend.WordAlloc.FullSSA
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Properties
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ProgramInstructionValidity
+public import Flapjack.Compiler.Backend.WordAlloc.FullSSA
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Properties
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Flapjack Flapjack.Compiler.Backend.WordAlloc Flapjack.Compiler.Encoders.Asm

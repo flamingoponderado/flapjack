@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreHeapWrites
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreHeapWrites
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.StackHeapWrites
 open Flapjack Flapjack.Compiler.Backend.StackRemove
 /-- Flapjack source-local factoring: expose a bounded forward-list slot and

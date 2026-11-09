@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+
+@[expose] public section
 
 /-! Source-shaped total traversal for closure free-variable removal. -/
 namespace Flapjack.Compiler.Backend.ClosFvs

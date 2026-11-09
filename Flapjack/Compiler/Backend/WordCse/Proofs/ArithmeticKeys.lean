@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.KeyInjectivity
-import Flapjack.Compiler.Backend.WordCse.Proofs.InsertEquality
-import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.KeyInjectivity
+public import Flapjack.Compiler.Backend.WordCse.Proofs.InsertEquality
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack Compiler.Encoders.Asm WordSemStateFiniteExact

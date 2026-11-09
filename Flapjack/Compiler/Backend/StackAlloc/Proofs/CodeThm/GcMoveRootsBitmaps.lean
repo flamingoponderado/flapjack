@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveBitmaps
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveBitmaps
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `word_gc_move_roots_bitmaps_code_thm`

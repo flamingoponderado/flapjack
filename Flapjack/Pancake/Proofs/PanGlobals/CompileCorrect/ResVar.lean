@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCompileCorrectResVar
 

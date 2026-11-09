@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.Support
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.Support
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
+
+@[expose] public section
 
 /-!
 # `Call_TailCall` piece of `loop_to_word`'s `compile_correct`

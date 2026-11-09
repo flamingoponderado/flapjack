@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.WordAlloc.SelectRegAlloc
-import Flapjack.Compiler.Backend.LinearScan.Proofs.TopLevelCorrect
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoRegAllocCorrect
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.WordAlloc.SelectRegAlloc
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.TopLevelCorrect
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoRegAllocCorrect
+
+@[expose] public section
 
 /-!
 # word_allocProof: correctness of the register-allocator dispatch

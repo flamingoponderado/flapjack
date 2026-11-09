@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.WordConvs.SSAFlatProgram
-import Flapjack.Compiler.Backend.WordAlloc.FullSSA
+module
+
+public import Flapjack.Pancake.Proofs.WordConvs.SSAFlatProgram
+public import Flapjack.Compiler.Backend.WordAlloc.FullSSA
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Flapjack Flapjack.Compiler.Backend.WordAlloc

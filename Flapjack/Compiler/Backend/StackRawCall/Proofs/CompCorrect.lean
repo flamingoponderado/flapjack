@@ -1,14 +1,18 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.BasicLeaves
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.ControlLeaves
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.StackAccess
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.MemoryFfi
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.AllocationStore
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Install
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Seq
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Loop
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.JumpLower
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Call
-import Flapjack.Compiler.Backend.Semantics.StackSem.Measure.CallSites
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.BasicLeaves
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.ControlLeaves
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.StackAccess
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.MemoryFfi
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.AllocationStore
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Install
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Seq
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Loop
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.JumpLower
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Call
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Measure.CallSites
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRawCall.FullCompCorrect
 open Flapjack Flapjack.Compiler.Backend.StackLang

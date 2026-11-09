@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalRoots
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.ListSimulation
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalRoots
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.ListSimulation
+
+@[expose] public section
 
 /-! Major collector roots stored in word memory. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -8,9 +12,9 @@ open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 
 private theorem starEmptyRight {α : Type} (p : (α → Prop) → Prop) : SetSep.star p SetSep.emp = p := by
   rw [SetSep.starComm, StackRemove.StackHeap.starEmptyLeft]
-private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+instance generationalListInst1 {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
-private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
+instance generationalListInst2 {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
 
 private theorem wordGenList_zero {width : Nat} [NeZero width] (conf : Config)
     (a i pa ib pb old : BitVec width) (m : BitVec width → WordLocW width) (dm : BitVec width → Bool) :

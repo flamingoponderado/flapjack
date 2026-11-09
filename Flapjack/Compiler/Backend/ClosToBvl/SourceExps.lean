@@ -1,12 +1,20 @@
-import Flapjack.Compiler.Backend.ClosToBvl.SourceCompile
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.SourceCompile
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! The original list-valued closure-to-BVL expression conversion. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 noncomputable section
 
 private abbrev Aux := List (Nat × Nat × Bvl.Exp)
-private instance : Nonempty Bvl.Exp := ⟨.var 0⟩
+instance sourceExpsInst1 : Nonempty Bvl.Exp := ⟨.var 0⟩
 
 private theorem option_size_pos {α : Type} [SizeOf α] (x : Option α) : 0 < sizeOf x := by
   cases x <;> simp_wf <;> omega

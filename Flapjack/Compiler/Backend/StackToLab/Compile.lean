@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.StackToLab.Native
-import Flapjack.Compiler.Backend.StackRawCall
-import Flapjack.Compiler.Backend.StackAlloc.Compile
-import Flapjack.Compiler.Backend.StackRemove.Compile
-import Flapjack.Compiler.Backend.StackNames.ProgramNames
-import Flapjack.Compiler.Backend.BvlToBvi
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Native
+public import Flapjack.Compiler.Backend.StackRawCall
+public import Flapjack.Compiler.Backend.StackAlloc.Compile
+public import Flapjack.Compiler.Backend.StackRemove.Compile
+public import Flapjack.Compiler.Backend.StackNames.ProgramNames
+public import Flapjack.Compiler.Backend.BvlToBvi
+
+@[expose] public section
 
 /-! `is_gen_gc_def`, the `config` datatype, `compile_def` and
 `compile_no_stubs_def` (`stack_to_labScript.sml:138-167`): the stack-to-lab

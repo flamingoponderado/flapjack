@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateCallClockShift
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateCallClockShift
+public import Flapjack.Misc.ClockWeightInduction
+
+@[expose] public section
 
 /-! BVI evaluator clock extension. The evaluator and dispatcher remain pending source review. -/
 namespace Flapjack.Compiler.Backend.BviProps

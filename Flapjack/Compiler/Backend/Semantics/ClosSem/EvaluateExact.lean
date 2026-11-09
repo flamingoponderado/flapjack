@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Clocked closure evaluation without an external recursion bound. -/
 namespace Flapjack.Compiler.Backend.ClosSem

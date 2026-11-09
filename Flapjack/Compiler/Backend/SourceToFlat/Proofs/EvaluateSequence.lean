@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateEmptyDeclarations
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EnvironmentDomain
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDletrec
-import Flapjack.EvaluateHOL.ClockFull
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateEmptyDeclarations
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EnvironmentDomain
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDletrec
+public import Flapjack.EvaluateHOL.ClockFull
+
+@[expose] public section
 
 /-! Sequential declaration composition for the source-to-flat simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

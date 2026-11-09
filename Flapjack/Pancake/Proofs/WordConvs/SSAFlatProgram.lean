@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.WordConvs.SSAFlatInst
+module
+
+public import Flapjack.Pancake.Proofs.WordConvs.SSAFlatInst
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Flapjack Flapjack.Compiler.Backend.WordAlloc

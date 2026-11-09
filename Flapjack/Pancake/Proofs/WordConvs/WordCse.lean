@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.Conventions
-import Flapjack.Pancake.WordConvs
-import Flapjack.Pancake.WordConvs.NotCreated
-import Flapjack.Pancake.WordConvs.CodeLabels
-import Flapjack.Pancake.WordConvs.WfCutsets
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.Conventions
+public import Flapjack.Pancake.WordConvs
+public import Flapjack.Pancake.WordConvs.NotCreated
+public import Flapjack.Pancake.WordConvs.CodeLabels
+public import Flapjack.Pancake.WordConvs.WfCutsets
+
+@[expose] public section
 
 /-!
 # `wordConvsProof` `word_common_subexp_elim` group

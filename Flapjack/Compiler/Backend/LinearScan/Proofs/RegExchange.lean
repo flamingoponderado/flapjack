@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.Sorting
-import Flapjack.Compiler.Backend.RegAlloc
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.Sorting
+public import Flapjack.Compiler.Backend.RegAlloc
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-!
 # linear_scanProof: array equations and register exchange

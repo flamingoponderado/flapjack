@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.State
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.State
+
+@[expose] public section
 
 /-! Counterpart of StackSem's code lookup and clock-clamping prerequisites.
 The payload of the code tree and the result component of the clock pair retain

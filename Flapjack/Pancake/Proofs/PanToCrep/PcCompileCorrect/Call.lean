@@ -1,9 +1,13 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect
-import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
-import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
-import Flapjack.Pancake.Semantics.PanProps.ListRelFlatten
-import Flapjack.Pancake.Proofs.PanToCrep.EvalDistinctLists
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect
+public import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
+public import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
+public import Flapjack.Pancake.Semantics.PanProps.ListRelFlatten
+public import Flapjack.Pancake.Proofs.PanToCrep.EvalDistinctLists
+
+@[expose] public section
 
 /-!
 # `pc_compile_correct` Call case over the exact carriers

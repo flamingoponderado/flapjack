@@ -1,15 +1,19 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.WordToWord.Config
-import Flapjack.Compiler.Backend.WordSimp
-import Flapjack.Compiler.Backend.WordInst
-import Flapjack.Compiler.Backend.WordAlloc.FullSSA
-import Flapjack.Compiler.Backend.WordAlloc.RemoveDead
-import Flapjack.Compiler.Backend.WordCse.Transform
-import Flapjack.Compiler.Backend.WordCopy
-import Flapjack.Compiler.Backend.WordUnreach
-import Flapjack.Compiler.Backend.WordAlloc.WordAllocDef
-import Flapjack.Compiler.Backend.WordRemove
-import Flapjack.Pancake.WordLang.MaxVar
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.WordToWord.Config
+public import Flapjack.Compiler.Backend.WordSimp
+public import Flapjack.Compiler.Backend.WordInst
+public import Flapjack.Compiler.Backend.WordAlloc.FullSSA
+public import Flapjack.Compiler.Backend.WordAlloc.RemoveDead
+public import Flapjack.Compiler.Backend.WordCse.Transform
+public import Flapjack.Compiler.Backend.WordCopy
+public import Flapjack.Compiler.Backend.WordUnreach
+public import Flapjack.Compiler.Backend.WordAlloc.WordAllocDef
+public import Flapjack.Compiler.Backend.WordRemove
+public import Flapjack.Pancake.WordLang.MaxVar
+
+@[expose] public section
 
 /-!
 # `word_to_word` pass composition

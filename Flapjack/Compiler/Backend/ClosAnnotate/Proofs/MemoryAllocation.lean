@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ForeignCalls
-import Flapjack.Misc.RichList
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ForeignCalls
+public import Flapjack.Misc.RichList
+
+@[expose] public section
 
 /-! Reference allocation under the closure-annotation state relation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

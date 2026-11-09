@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.State
-import Flapjack.Compiler.Backend.Semantics.NatListBounded
-import Mathlib.Data.Nat.Find
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.State
+public import Flapjack.Compiler.Backend.Semantics.NatListBounded
+public import Mathlib.Data.Nat.Find
+
+@[expose] public section
 
 /-! Timestamped values and constant construction in the data semantics. -/
 namespace Flapjack.Compiler.Backend.DataSem

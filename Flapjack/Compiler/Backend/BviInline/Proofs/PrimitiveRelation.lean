@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviInline.Proofs.InstallRelation
-import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyRuntimeFrame
+module
+
+public import Flapjack.Compiler.Backend.BviInline.Proofs.InstallRelation
+public import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyRuntimeFrame
+
+@[expose] public section
 
 /-! Primitive application under the BVI inlining state relation. -/
 namespace Flapjack.Compiler.Backend.BviInline

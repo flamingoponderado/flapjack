@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Basis.Pure.MlList
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Basis.Pure.MlList
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 

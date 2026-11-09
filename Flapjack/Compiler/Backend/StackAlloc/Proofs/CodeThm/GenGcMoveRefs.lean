@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveData
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveRefList
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveData
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveRefList
+
+@[expose] public section
 
 /-!
 # Full generational reference-block simulation

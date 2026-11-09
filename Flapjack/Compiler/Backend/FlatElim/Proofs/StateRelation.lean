@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.FlatProps.StoreValues
-import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
-import Flapjack.Compiler.Backend.FlatElim.Proofs.Reachability
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.StoreValues
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.Reachability
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! State relation used by the flat dead-code elimination proof. -/
 namespace Flapjack.Compiler.Backend.FlatElim

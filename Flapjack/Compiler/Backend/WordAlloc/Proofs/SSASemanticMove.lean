@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticControl
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsForceRename
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVars
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileLookupProps
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MoveStoreConsts
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticControl
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsForceRename
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVars
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileLookupProps
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MoveStoreConsts
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

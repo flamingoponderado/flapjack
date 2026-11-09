@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
+
+@[expose] public section
 
 /-!
 # `source_to_flat$compile_decs` and `empty_config`

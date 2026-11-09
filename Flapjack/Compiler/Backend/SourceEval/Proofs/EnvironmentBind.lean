@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
-import Flapjack.NamespaceProps
-import Batteries.Data.List.Basic
-import Flapjack.Misc.Pair
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
+public import Flapjack.NamespaceProps
+public import Batteries.Data.List.Basic
+public import Flapjack.Misc.Pair
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL Flapjack.AstHOL

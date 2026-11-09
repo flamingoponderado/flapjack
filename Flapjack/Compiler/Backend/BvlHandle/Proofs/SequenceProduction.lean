@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileProduction
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyProduction
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.Total
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileProduction
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyProduction
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.Total
+
+@[expose] public section
 
 /-! Composition and sequence-splitting infrastructure. These declarations
 are Flapjack-specific: the sequence traversal abstracts over the still

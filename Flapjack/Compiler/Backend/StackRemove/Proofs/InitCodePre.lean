@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Compiler.Backend.StackRemove
-import Flapjack.Misc.Alignment
-import Flapjack.Misc.GoodDimindex
-import Flapjack.Misc.WordList
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Compiler.Backend.StackRemove
+public import Flapjack.Misc.Alignment
+public import Flapjack.Misc.GoodDimindex
+public import Flapjack.Misc.WordList
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodePre
 open Flapjack

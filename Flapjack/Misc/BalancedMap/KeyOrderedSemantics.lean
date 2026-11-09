@@ -1,5 +1,9 @@
-import Flapjack.Misc.BalancedMap.Invariants
-import Flapjack.Misc.BalancedMap.KeySetComparison
+module
+
+public import Flapjack.Misc.BalancedMap.Invariants
+public import Flapjack.Misc.BalancedMap.KeySetComparison
+
+@[expose] public section
 
 namespace Flapjack.Misc.BalancedMap
 open FiniteMap.Comparison

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Flat evaluator installation configuration used in backend composition. -/
 namespace Flapjack.Compiler.Backend.FlatProps

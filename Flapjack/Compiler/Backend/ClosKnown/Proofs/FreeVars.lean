@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartFreeVars
-import Flapjack.Compiler.Backend.ClosKnown.Fuel
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartFreeVars
+public import Flapjack.Compiler.Backend.ClosKnown.Fuel
+
+@[expose] public section
 
 /-! Free-variable bounds used in the known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

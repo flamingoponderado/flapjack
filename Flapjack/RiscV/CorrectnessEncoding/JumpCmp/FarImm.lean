@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.NearImm
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.FarNative
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.NearImm
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.FarNative
+
+@[expose] public section
 
 /-! Far immediate JumpCmp actual prefix and control steps. Untagged local
 assembly retains original source premises; the full constructor discharges far. -/

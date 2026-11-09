@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.ClashTreeInst
-import Flapjack.Compiler.Backend.WordAlloc.ReadsExp
-import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ClashTreeInst
+public import Flapjack.Compiler.Backend.WordAlloc.ReadsExp
+public import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

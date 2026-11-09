@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem
+
+@[expose] public section
 
 /-! Integer operations used by the closure-language evaluator. -/
 namespace Flapjack.Compiler.Backend.ClosSem

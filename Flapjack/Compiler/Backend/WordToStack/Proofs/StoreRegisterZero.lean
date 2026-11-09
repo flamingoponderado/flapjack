@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeAccessors
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeAccessors
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.StoreRegisterZero
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveAlloc
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveAlloc
+
+@[expose] public section
 
 /-! Thunk operations in the generic closure primitive simulation. -/
 namespace Flapjack.Compiler.Backend.ClosProps.PrimitiveThunk

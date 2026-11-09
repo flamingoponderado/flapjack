@@ -1,8 +1,12 @@
-import Flapjack.Misc.Option.MapM
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.Simplify
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.HelpersProduction
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyTotal
-import Aesop
+module
+
+public import Flapjack.Misc.Option.MapM
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.Simplify
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.HelpersProduction
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyTotal
+public import Aesop
+
+@[expose] public section
 
 /-! Executable correspondence for BVL handler simplification. -/
 namespace Flapjack.Compiler.Backend.BvlHandle

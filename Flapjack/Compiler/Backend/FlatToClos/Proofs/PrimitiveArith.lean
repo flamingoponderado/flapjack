@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.RejectedArith
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordExpressions
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.FloatExpressions
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.RejectedArith
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordExpressions
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.FloatExpressions
+
+@[expose] public section
 
 /-! Combined primitive arithmetic simulation for flat-to-closure lowering. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

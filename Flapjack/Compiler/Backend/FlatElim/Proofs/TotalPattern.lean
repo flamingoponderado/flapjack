@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateSpecialization
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateSpecialization
+
+@[expose] public section
 
 /-! Total-pattern properties used by the pure-declaration simulation. -/
 namespace Flapjack.Compiler.Backend.FlatElim

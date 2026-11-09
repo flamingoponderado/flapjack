@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.NonFfiResources
-import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateControl
-import Flapjack.Compiler.Backend.BackendProps
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.NonFfiResources
+public import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateControl
+public import Flapjack.Compiler.Backend.BackendProps
+
+@[expose] public section
 
 /-! Resource observations of data-language primitive applications. -/
 namespace Flapjack.Compiler.Backend.DataSem

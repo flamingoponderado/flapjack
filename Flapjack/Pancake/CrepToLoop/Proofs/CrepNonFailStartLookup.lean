@@ -1,5 +1,9 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
-import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
+public import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
+
+@[expose] public section
 
 /-!
 # Crep start-code lookup from non-`Fail` semantics

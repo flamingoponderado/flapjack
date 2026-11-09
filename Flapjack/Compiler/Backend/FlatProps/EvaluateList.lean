@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatProps.EvaluateLength
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateSource
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.EvaluateLength
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateSource
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.FlatProps
 open Flapjack.Compiler.Backend.FlatSem
 /-- Evaluating a cons evaluates its head and tail in sequence, propagating errors. -/

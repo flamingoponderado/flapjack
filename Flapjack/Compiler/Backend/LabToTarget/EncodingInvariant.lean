@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.SecondPass
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SecondPass
+
+@[expose] public section
 
 /-! Full original encd0 byte/length invariant, including the existential
 encoder word witnessing a LabAsm annotation, and its complete encoding/update

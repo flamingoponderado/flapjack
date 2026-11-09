@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
-import Flapjack.SemanticPrimitivesProps.MatchMap
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+public import Flapjack.SemanticPrimitivesProps.MatchMap
+
+@[expose] public section
 
 /-! Appending environments in flat pattern matching. -/
 namespace Flapjack.Compiler.Backend.FlatProps

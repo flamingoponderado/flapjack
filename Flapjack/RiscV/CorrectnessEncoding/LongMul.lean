@@ -1,9 +1,13 @@
-import Flapjack.RiscV.CorrectnessEncoding.Div
-import Flapjack.RiscV.CorrectnessEncoding.DecodeLongMul
-import Flapjack.RiscV.CorrectnessEncoding.InstructionStep
-import Flapjack.RiscV.CorrectnessEncoding.Arithmetic
-import Flapjack.RiscV.L3.Step.MulHStep
-import Flapjack.RiscV.L3.Step.MulDivStep
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.Div
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeLongMul
+public import Flapjack.RiscV.CorrectnessEncoding.InstructionStep
+public import Flapjack.RiscV.CorrectnessEncoding.Arithmetic
+public import Flapjack.RiscV.L3.Step.MulHStep
+public import Flapjack.RiscV.L3.Step.MulDivStep
+
+@[expose] public section
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target
   Compiler.Encoders.Asm Compiler.Encoders.AsmSem Compiler.Encoders.AsmProps

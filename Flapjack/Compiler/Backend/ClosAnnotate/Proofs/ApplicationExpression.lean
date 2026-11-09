@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ClosureApplication
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ClosureApplication
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Application-expression simulation for closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

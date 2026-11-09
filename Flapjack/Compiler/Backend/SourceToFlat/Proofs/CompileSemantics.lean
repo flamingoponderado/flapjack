@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocal
-import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
-import Flapjack.Compiler.Backend.FlatElim.Proofs.Removal
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.ProgramSimulation
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocal
+public import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.Removal
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ProgramSimulation
+
+@[expose] public section
 
 /-!
 Composition of the source-to-flat program simulation with flat elimination and

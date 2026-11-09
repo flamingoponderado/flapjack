@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
+
+@[expose] public section
 
 /-! Location offsets in the value invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs

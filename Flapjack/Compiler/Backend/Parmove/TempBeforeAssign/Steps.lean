@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Step
-import Flapjack.Compiler.Backend.Parmove.Invariants.Preservation
+module
+
+public import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Step
+public import Flapjack.Compiler.Backend.Parmove.Invariants.Preservation
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

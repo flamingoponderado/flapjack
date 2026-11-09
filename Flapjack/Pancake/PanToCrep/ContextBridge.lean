@@ -1,5 +1,13 @@
-import Flapjack.Pancake.PanToCrep.ContextExact
-import Flapjack.Pancake.PanLang.Prog
+module
+
+public import Flapjack.Pancake.PanToCrep.ContextExact
+public import Flapjack.Pancake.PanLang.Prog
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Production-to-exact context correspondence under the invariants the production

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompileSemantics
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompileSemantics
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `make_init_def`, `prog_comp_lambda` and `make_init_semantics`

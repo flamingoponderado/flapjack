@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
-import Flapjack.Compiler.Backend.StackRemove.Proofs.LabelPreservation
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.LabelPreservation
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.Locations
 open Flapjack Flapjack.Compiler.Backend.StackRemove Flapjack.Compiler.Backend.StackLang
 theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact

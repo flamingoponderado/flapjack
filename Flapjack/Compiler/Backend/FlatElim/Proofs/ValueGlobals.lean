@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatElim.Reachability
-import Flapjack.Compiler.Backend.Semantics.FlatSem
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Reachability
+public import Flapjack.Compiler.Backend.Semantics.FlatSem
+
+@[expose] public section
 
 /-! Global dependencies stored in flat-language values. -/
 namespace Flapjack.Compiler.Backend.FlatElim

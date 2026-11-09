@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+
+@[expose] public section
 
 /-! Exception-jump transport for states with the same control stack. -/
 namespace Flapjack.Compiler.Backend.DataSem

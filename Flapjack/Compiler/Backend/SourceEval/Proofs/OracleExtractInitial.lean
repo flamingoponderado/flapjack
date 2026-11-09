@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleExtractAgrees
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulation
-import Flapjack.Compiler.Backend.SourceEval.Proofs.SimulationPrerequisites
-import Flapjack.SemanticsHOL
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleExtractAgrees
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulation
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.SimulationPrerequisites
+public import Flapjack.SemanticsHOL
+
+@[expose] public section
 
 /-! Initial compiler state of the first extracted oracle event. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

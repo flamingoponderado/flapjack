@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxCall
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxCall
+
+@[expose] public section
 
 /-! Empty let-binding case of BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

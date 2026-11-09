@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
-import Mathlib.Tactic
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-! Relationships between the pre-MTI and closure syntax predicates. -/
 namespace Flapjack.Compiler.Backend.ClosProps

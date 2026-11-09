@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
-import Flapjack.Compiler.Encoders.AsmSem.State
-import Flapjack.Misc.AsmWriteBytearray
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+public import Flapjack.Compiler.Encoders.AsmSem.State
+public import Flapjack.Misc.AsmWriteBytearray
+
+@[expose] public section
 
 /-!
 # Exact targetSem post-FFI / post-cache-clear successor asm states

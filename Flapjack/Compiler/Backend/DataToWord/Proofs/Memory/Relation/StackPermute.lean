@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Restriction
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Restriction
+
+@[expose] public section
 
 /-! Rearrangement of roots and source values in the abstract heap invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

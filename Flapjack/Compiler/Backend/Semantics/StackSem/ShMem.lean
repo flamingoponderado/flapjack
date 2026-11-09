@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
+
+@[expose] public section
 
 /-!
 # Exact HOL StackSem shared-memory helpers

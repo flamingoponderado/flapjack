@@ -1,12 +1,20 @@
-import Flapjack.Compiler.Backend.RegAlloc.SafeDiv
-import Flapjack.Compiler.Backend.RegAlloc.SortMoves
-import Flapjack.Compiler.Backend.RegAlloc.SortedMem
-import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
-import Flapjack.Compiler.Backend.RegAlloc.TagColour
-import Flapjack.RiscV.CakeAllocatorCore
-import Flapjack.RiscV.Allocator
-import Flapjack.RiscV.SpillCosts
-import Flapjack.Pancake.CrepToLoop
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.SafeDiv
+public import Flapjack.Compiler.Backend.RegAlloc.SortMoves
+public import Flapjack.Compiler.Backend.RegAlloc.SortedMem
+public import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
+public import Flapjack.Compiler.Backend.RegAlloc.TagColour
+public import Flapjack.RiscV.CakeAllocatorCore
+public import Flapjack.RiscV.Allocator
+public import Flapjack.RiscV.SpillCosts
+public import Flapjack.Pancake.CrepToLoop
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Cake register-allocation driver slice: stack-only analysis

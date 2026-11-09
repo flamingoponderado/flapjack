@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalCodeBag
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalCodeBag
+
+@[expose] public section
 
 /-! Assembling optimizer annotation preservation over the complete traversal. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.TraversalCodeBag

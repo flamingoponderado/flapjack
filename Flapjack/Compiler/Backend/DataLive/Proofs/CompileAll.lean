@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.EvaluatorAll
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.EvaluatorAll
+
+@[expose] public section
 
 /-! Assembly of the data liveness simulation cases. -/
 namespace Flapjack.Compiler.Backend.DataLive

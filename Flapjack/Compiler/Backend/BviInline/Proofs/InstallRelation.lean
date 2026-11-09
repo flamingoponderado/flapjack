@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviInline.Proofs.StateRelation
-import Flapjack.Compiler.Backend.BviInline.Proofs.ProgramRelation
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
+module
+
+public import Flapjack.Compiler.Backend.BviInline.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.BviInline.Proofs.ProgramRelation
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
+
+@[expose] public section
 
 /-! State invariants for dynamically installed BVI code. -/
 namespace Flapjack.Compiler.Backend.BviInline

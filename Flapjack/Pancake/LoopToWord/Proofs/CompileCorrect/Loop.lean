@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.HandlerTail
-import Flapjack.Pancake.Proofs.LoopToWord.TickUnfold
-import Flapjack.Pancake.Proofs.LoopToWord.ContextSupport
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.HandlerTail
+public import Flapjack.Pancake.Proofs.LoopToWord.TickUnfold
+public import Flapjack.Pancake.Proofs.LoopToWord.ContextSupport
+
+@[expose] public section
 
 /-!
 # `Loop` case of `loop_to_word`'s `compile_correct`

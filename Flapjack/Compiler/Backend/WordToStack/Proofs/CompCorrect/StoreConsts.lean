@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsCorrect
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
-import Flapjack.Misc.SptreeLookup
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsCorrect
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
+public import Flapjack.Misc.SptreeLookup
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CompCorrect.StoreConsts
 open Flapjack.Compiler.Backend.WordToStack.Native

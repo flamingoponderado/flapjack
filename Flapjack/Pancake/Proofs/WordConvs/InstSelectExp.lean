@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordInst
-import Flapjack.Pancake.WordConvs.FullInstOkLess
+module
+
+public import Flapjack.Compiler.Backend.WordInst
+public import Flapjack.Pancake.WordConvs.FullInstOkLess
+
+@[expose] public section
 
 namespace Flapjack.WordConvs
 open Flapjack Flapjack.Compiler.Backend.WordInst Flapjack.Compiler.Encoders.Asm

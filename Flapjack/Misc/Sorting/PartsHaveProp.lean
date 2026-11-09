@@ -1,4 +1,8 @@
-import Flapjack.Misc.Sorting
+module
+
+public import Flapjack.Misc.Sorting
+
+@[expose] public section
 
 /-!
 # HOL sorting `PARTs_HAVE_PROP`

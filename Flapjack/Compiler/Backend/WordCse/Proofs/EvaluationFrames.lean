@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack Compiler.Encoders.Asm WordSemStateFiniteExact AssignmentResults LoadEvaluationSupport

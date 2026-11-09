@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove.InitStubs
-import Flapjack.Basis.Pure.MlString
-import Flapjack.Compiler.Backend.BackendCommon
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.InitStubs
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Compiler.Backend.BackendCommon
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove
 open Flapjack.Basis.Pure.MlString

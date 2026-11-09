@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListRev
-import Flapjack.Compiler.Backend.Semantics.StackSem.RegisterTransfers
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListRev
+public import Flapjack.Compiler.Backend.Semantics.StackSem.RegisterTransfers
+
+@[expose] public section
 
 /-! Full StackRemove store heap assertion, on the actual StackSem store map.
 Address words and stored word-location payloads retain independent dimensions.

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSASetup
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterClass
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSASetup
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterClass
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

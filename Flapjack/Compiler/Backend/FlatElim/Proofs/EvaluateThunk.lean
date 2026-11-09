@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateCall
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateCall
+
+@[expose] public section
 
 /-! Store invariants for the thunk-forcing evaluation case. -/
 namespace Flapjack.Compiler.Backend.FlatElim

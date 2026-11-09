@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.List
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockEquality
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockExplode
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.List
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockEquality
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockExplode
+
+@[expose] public section
 
 /-! Block case of the source word-equality simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

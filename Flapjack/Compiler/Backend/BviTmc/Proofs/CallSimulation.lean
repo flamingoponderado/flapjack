@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.StructuralHypothesis
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ForceSimulation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.StructuralHypothesis
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ForceSimulation
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Ordinary clocked calls in the TMC simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc.CallSimulation

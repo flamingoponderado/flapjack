@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviLet.Helpers
-import Flapjack.Compiler.Backend.Bvi.Budget
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.BviLet.Helpers
+public import Flapjack.Compiler.Backend.Bvi.Budget
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Total source-shaped BVI let propagation. -/
 namespace Flapjack.Compiler.Backend.BviLet

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsInsert
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapExtend
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsInsert
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapExtend
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

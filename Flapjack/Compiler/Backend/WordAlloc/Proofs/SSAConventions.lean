@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
-import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
-import Flapjack.Misc.Sptree.ToAList
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
+public import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
+public import Flapjack.Misc.Sptree.ToAList
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 /-! Original SSA reconciliation convention group from word_allocProof. -/
 namespace Flapjack.WordAlloc

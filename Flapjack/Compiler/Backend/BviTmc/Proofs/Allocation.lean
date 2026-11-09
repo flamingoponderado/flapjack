@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.HoleRelation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.HoleRelation
+
+@[expose] public section
 
 /-! Preservation of the TMC state relation under fresh allocation. -/
 namespace Flapjack.Compiler.Backend.BviTmc

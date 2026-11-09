@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordCopy.Proofs.Move
-import Flapjack.Compiler.Backend.WordUnreach.Proofs
-import Flapjack.Misc.SptreeLookup
+module
+
+public import Flapjack.Compiler.Backend.WordCopy.Proofs.Move
+public import Flapjack.Compiler.Backend.WordUnreach.Proofs
+public import Flapjack.Misc.SptreeLookup
+
+@[expose] public section
 
 /-!
 # word_copyProof: moves, store equivalences and expression congruences

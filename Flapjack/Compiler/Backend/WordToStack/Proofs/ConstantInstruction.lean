@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallDest
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallDest
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.ConstantInstruction
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Parmove.Invariants.Preservation
-import Flapjack.Compiler.Backend.Parmove.DStepStep
+module
+
+public import Flapjack.Compiler.Backend.Parmove.Invariants.Preservation
+public import Flapjack.Compiler.Backend.Parmove.DStepStep
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

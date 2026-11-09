@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.CompileCorrect
-import Flapjack.Compiler.Backend.BviToData.Proofs.FfiAssign
-import Flapjack.Compiler.Backend.BviToData.Proofs.OpFrame
-import Flapjack.Compiler.Backend.BviToData.Proofs.Install
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.CompileCorrect
+public import Flapjack.Compiler.Backend.BviToData.Proofs.FfiAssign
+public import Flapjack.Compiler.Backend.BviToData.Proofs.OpFrame
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Install
+
+@[expose] public section
 
 /-! Primitive-operation cases of the BVI-to-data compiler simulation. -/
 namespace Flapjack.Compiler.Backend.BviToData

@@ -1,10 +1,14 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Semantics.PanCommonProps
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Pancake.PanGlobals
-import Flapjack.PanProgramSemantics
-import Flapjack.Pancake.PanSimp
-import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Semantics.PanCommonProps
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Pancake.PanGlobals
+public import Flapjack.PanProgramSemantics
+public import Flapjack.Pancake.PanSimp
+public import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
+
+@[expose] public section
 
 /-!
 Counterpart of Cake's `decs_stcnames_compile_prog`

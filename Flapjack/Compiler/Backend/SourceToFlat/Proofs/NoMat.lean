@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.NoMat
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.NoMat
+
+@[expose] public section
 
 /-! Match-freedom at the source-to-flat pass boundary. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

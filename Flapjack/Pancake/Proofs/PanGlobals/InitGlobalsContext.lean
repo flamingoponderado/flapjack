@@ -1,7 +1,11 @@
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsAlignment
-import Flapjack.Pancake.Proofs.PanGlobals.GlobalBlockAlignment
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsAlignment
+public import Flapjack.Pancake.Proofs.PanGlobals.GlobalBlockAlignment
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsInitGlobalsContext
 open Flapjack.Pancake.PanLang

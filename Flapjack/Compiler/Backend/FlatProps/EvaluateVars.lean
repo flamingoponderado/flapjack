@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatProps.EvaluateList
-import Mathlib.Data.Set.Disjoint
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.EvaluateList
+public import Mathlib.Data.Set.Disjoint
+
+@[expose] public section
 /-! Local-variable evaluation properties for the faithful flat evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatProps
 open Flapjack.Compiler.Backend.FlatSem

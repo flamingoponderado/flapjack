@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 /-! Exact StackSem expression evaluation and assignment prerequisites.
 These definitions are proof-side ports; full evaluate and its production

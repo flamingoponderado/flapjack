@@ -1,5 +1,9 @@
-import Flapjack.Misc.BalancedMap.InvariantSemantics
-import Flapjack.Misc.BalancedMap.KeySets
+module
+
+public import Flapjack.Misc.BalancedMap.InvariantSemantics
+public import Flapjack.Misc.BalancedMap.KeySets
+
+@[expose] public section
 
 namespace Flapjack.Misc.BalancedMap
 open FiniteMap.Comparison

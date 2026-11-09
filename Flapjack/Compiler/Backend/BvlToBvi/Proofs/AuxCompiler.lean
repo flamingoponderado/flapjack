@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Compile
-import Flapjack.Compiler.Backend.BvlToBvi.SourceSing
-import Flapjack.Compiler.Backend.BviLet.Proofs.SourceAgreement
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Compile
+public import Flapjack.Compiler.Backend.BvlToBvi.SourceSing
+public import Flapjack.Compiler.Backend.BviLet.Proofs.SourceAgreement
+
+@[expose] public section
 
 /-! Agreement of auxiliary-code generation with the total let optimizer. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi

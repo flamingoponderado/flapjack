@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockWorkerSimulation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockWorkerSimulation
+
+@[expose] public section
 
 /-! Assembled call-block simulation conclusions. -/
 namespace Flapjack.Compiler.Backend.BviTmc.CallBlockSimulation

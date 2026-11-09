@@ -1,5 +1,9 @@
-import Flapjack.SemanticPrimitivesProps.Environment
-import Flapjack.EvaluateHOL.ClockFull
+module
+
+public import Flapjack.SemanticPrimitivesProps.Environment
+public import Flapjack.EvaluateHOL.ClockFull
+
+@[expose] public section
 
 /-! Composition of the original clocked declaration evaluator. -/
 namespace Flapjack.EvaluateProps

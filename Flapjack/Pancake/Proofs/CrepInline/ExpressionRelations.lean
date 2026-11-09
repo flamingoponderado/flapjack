@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.CrepInline.Expressions
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.Expressions
+
+@[expose] public section
 
 /-!
 # crep_inline: expression evaluation under `locals_rel` and `state_rel`

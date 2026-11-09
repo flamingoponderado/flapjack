@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlConst.Compile
-import Flapjack.Compiler.Backend.BvlConst.Proofs.Total
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.BvlConst.Compile
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.Total
+public import Aesop
+
+@[expose] public section
 
 /-! Correspondence between executable and total constant-propagation
 traversals. This is Flapjack infrastructure, not a HOL theorem. -/

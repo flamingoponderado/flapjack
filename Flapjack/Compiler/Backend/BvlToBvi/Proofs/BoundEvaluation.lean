@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.VarList
-import Flapjack.Compiler.Backend.Semantics.BvlProps.VarBound
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.VarList
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.VarBound
+
+@[expose] public section
 
 /-! Environment independence for bound BVL expressions. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

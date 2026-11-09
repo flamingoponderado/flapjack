@@ -1,19 +1,23 @@
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Assign
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Call
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Dec
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.If
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Return
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Seq
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Store
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.While
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectPrimitiveRaise
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectShMem
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStore32
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreByte
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreGlob
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectExtCall
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
+module
+
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Assign
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Call
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Dec
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.If
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Return
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Seq
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Store
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.While
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectPrimitiveRaise
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectShMem
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStore32
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreByte
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreGlob
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectExtCall
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
+
+@[expose] public section
 
 /-!
 # Assembly of HOL `crep_arith$simp_prog_correct`

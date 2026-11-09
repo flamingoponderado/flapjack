@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionCoalesce
-import Flapjack.Compiler.Backend.RegAlloc.ProductionSpill
-import Flapjack.Compiler.Backend.RegAlloc.ProductionFreeze
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoAlloc1Success
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionCoalesce
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionSpill
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionFreeze
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoAlloc1Success
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc Translator.Monadic.MonadBase

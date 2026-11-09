@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.Carriers
-import Flapjack.RiscV.CakeRegAlloc
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Carriers
+public import Flapjack.RiscV.CakeRegAlloc
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc

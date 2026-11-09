@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapDecode
-import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapDecode
+public import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack
 open Flapjack

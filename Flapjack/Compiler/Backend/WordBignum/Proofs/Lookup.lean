@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordBignum.Compile
-import Flapjack.Compiler.Backend.WordBignum.Proofs.Equality
+module
+
+public import Flapjack.Compiler.Backend.WordBignum.Compile
+public import Flapjack.Compiler.Backend.WordBignum.Proofs.Equality
+
+@[expose] public section
 
 /-! The executable code cache compares the complete syntax, including nested
 expressions. This is a Flapjack infrastructure fact, not a HOL theorem port. -/

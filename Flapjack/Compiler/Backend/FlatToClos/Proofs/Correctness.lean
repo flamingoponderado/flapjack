@@ -1,6 +1,15 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.OperatorInduction
-import Flapjack.Compiler.Backend.FlatToClos.Compile.SourceEquations
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.OperatorInduction
+public import Flapjack.Compiler.Backend.FlatToClos.Compile.SourceEquations
+public import Flapjack.Misc.ClockWeightInduction
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Clock-and-weight induction for the proof-side flat-to-closure evaluator.
 The semantic carriers and relations remain under HOL correspondence review;

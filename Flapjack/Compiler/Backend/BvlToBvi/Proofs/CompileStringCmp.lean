@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileXorByte
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileXorByte
+
+@[expose] public section
 
 /-! Byte-string comparison in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

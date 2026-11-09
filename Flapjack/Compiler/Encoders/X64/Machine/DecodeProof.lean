@@ -1,5 +1,9 @@
-import Mathlib.Tactic
-import Flapjack.Compiler.Encoders.X64.Machine.Bytes
+module
+
+public import Mathlib.Tactic
+public import Flapjack.Compiler.Encoders.X64.Machine.Bytes
+
+@[expose] public section
 
 /-!
 # Decoder inverses for the emitted x86-64 instruction forms

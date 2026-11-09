@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Memory
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.AddSubImmediate
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Compare
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Memory
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.AddSubImmediate
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Compare
+
+@[expose] public section
 
 /-!
 # Arithmetic immediates: bytes for the L3 bridge

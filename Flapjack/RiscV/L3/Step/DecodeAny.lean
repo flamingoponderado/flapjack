@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.Decode
+module
+
+public import Flapjack.RiscV.L3.Defs.Decode
+
+@[expose] public section
 
 /-! Complete original step raw-instruction selector, over both fixed-width
 constructors. No successful-decode or accepted-opcode premise is added. -/

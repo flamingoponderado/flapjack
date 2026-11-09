@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordDepthProof.Helpers
+module
+
+public import Flapjack.Compiler.Backend.WordDepthProof.Helpers
+
+@[expose] public section
 
 /-! Exact executable fusion of call-graph construction and maximum-depth
 evaluation. Original HOL declarations remain unchanged. The composed Option

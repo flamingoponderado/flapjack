@@ -1,6 +1,12 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ApplyAllOk
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyError
-import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ApplyAllOk
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyError
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Cases of BVL evaluation well-formedness. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

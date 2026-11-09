@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenSemantics
-import Flapjack.Compiler.Backend.StackRemove.Compile
-import Flapjack.Compiler.Backend.StackNames.ProgramNames
-import Flapjack.Misc.WordList
-import Flapjack.Misc.Alignment
-import Flapjack.HolArb
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenSemantics
+public import Flapjack.Compiler.Backend.StackRemove.Compile
+public import Flapjack.Compiler.Backend.StackNames.ProgramNames
+public import Flapjack.Misc.WordList
+public import Flapjack.Misc.Alignment
+public import Flapjack.HolArb
+
+@[expose] public section
 
 /-! `make_init_def`, `memory_assumption_def`, `halt_assum_lemma`,
 `FLOOKUP_regs` and `state_rel_make_init`
@@ -37,10 +41,10 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
   StackSemStateSupport.holFmapAsFiniteSupportWitness
 
 -- Inhabitedness of the original HOL field types, not chosen values.
-private instance {α β : Type} : Nonempty (HolFiniteMapExact α β) := ⟨HolFiniteMapExact.empty⟩
-private instance {width : Nat} [NeZero width] : Nonempty (WordSemBuffer width width) :=
+instance makeInitInst1 {α β : Type} : Nonempty (HolFiniteMapExact α β) := ⟨HolFiniteMapExact.empty⟩
+instance makeInitInst2 {width : Nat} [NeZero width] : Nonempty (WordSemBuffer width width) :=
   ⟨⟨0, [], 0⟩⟩
-private instance {width : Nat} [NeZero width] : Nonempty (WordSemGcFun width) :=
+instance makeInitInst3 {width : Nat} [NeZero width] : Nonempty (WordSemGcFun width) :=
   ⟨fun _ => none⟩
 
 /-- HOL `make_init_def`. The record literal `<| ... |>` leaves `store`,

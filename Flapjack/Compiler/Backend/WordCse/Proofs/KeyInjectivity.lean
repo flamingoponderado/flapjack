@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
+module
+
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+
+@[expose] public section
 
 /-! Full original encoding injectivity prerequisites. No register, word range
 or well-formedness guard is added. Arithmetic simulation remains separate. -/

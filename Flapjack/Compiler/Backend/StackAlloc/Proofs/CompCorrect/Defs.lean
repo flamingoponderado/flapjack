@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocCorrect
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.InstCorrect
-import Flapjack.Compiler.Backend.StackProps.AllocArg
-import Flapjack.Compiler.Backend.StackProps.ClockSupport
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps
-import Flapjack.Compiler.Backend.StackProps.EvaluateConsts
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocCorrect
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.InstCorrect
+public import Flapjack.Compiler.Backend.StackProps.AllocArg
+public import Flapjack.Compiler.Backend.StackProps.ClockSupport
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps
+public import Flapjack.Compiler.Backend.StackProps.EvaluateConsts
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `comp_correct`: statement infrastructure

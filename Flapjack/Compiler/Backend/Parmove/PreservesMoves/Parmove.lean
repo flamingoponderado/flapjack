@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Pmov
-import Flapjack.Compiler.Backend.Parmove.PmovFinal
+module
+
+public import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Pmov
+public import Flapjack.Compiler.Backend.Parmove.PmovFinal
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

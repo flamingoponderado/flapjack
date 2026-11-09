@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.WordLocation
-import Flapjack.Misc.Alignment
-import Flapjack.Byte
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.WordLocation
+public import Flapjack.Misc.Alignment
+public import Flapjack.Byte
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack

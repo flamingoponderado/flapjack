@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.WellFormedData
-import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.WellFormedData
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack WordSemStateFiniteExact

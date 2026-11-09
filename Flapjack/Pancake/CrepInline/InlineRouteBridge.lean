@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepInline.Canonical
+module
+
+public import Flapjack.Pancake.CrepInline.Canonical
+
+@[expose] public section
 
 /-!
 # Production inline pass vs. the exact tagged inline pass

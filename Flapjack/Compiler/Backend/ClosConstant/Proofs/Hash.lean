@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosConstant.Proofs.Flatten
+module
+
+public import Flapjack.Compiler.Backend.ClosConstant.Proofs.Flatten
+
+@[expose] public section
 
 /-! Correspondence between association-list and hash-consed constants. -/
 namespace Flapjack.Compiler.Backend.ClosConstant.Proofs

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsInsert
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCut
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsInsert
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCut
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.AsmSem.FpUpdates
+module
+
+public import Flapjack.Compiler.Encoders.AsmSem.FpUpdates
+
+@[expose] public section
 
 /-! Original native FP field preservation; inherits the IEEE real rendering
 of fpUpd (reals_as_rational_cuts, SOUNDNESS item 8). -/

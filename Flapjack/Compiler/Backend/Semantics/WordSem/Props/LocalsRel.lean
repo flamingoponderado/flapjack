@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMax
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Inst
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.RemoveDead
-import Flapjack.Pancake.WordLang.OccurrencesExact
-import Flapjack.Misc.Sptree.ToAList
-import Flapjack.Compiler.Backend.WordInst.Proofs.PullExp
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMax
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Inst
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.RemoveDead
+public import Flapjack.Pancake.WordLang.OccurrencesExact
+public import Flapjack.Misc.Sptree.ToAList
+public import Flapjack.Compiler.Backend.WordInst.Proofs.PullExp
+
+@[expose] public section
 
 /-!
 # `wordProps`: extra temporaries do not affect evaluation (`locals_rel`)

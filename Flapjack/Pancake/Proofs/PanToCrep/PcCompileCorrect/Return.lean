@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
+
+@[expose] public section
 
 /-!
 # `pc_compile_correct` Return case over the exact carriers

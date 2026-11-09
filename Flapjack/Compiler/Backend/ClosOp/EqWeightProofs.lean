@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosOp.EqBudget
-import Flapjack.Compiler.Backend.ClosOp.SourceHelpers
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.EqBudget
+public import Flapjack.Compiler.Backend.ClosOp.SourceHelpers
+
+@[expose] public section
 
 /-! Structural measure facts for the equality decomposition. -/
 namespace Flapjack.Compiler.Backend.ClosOp

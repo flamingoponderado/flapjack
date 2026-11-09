@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.CrepInline
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline
+
+@[expose] public section
 
 /-!
 # crep_inline finite-map lemmas used by `inline_prog_correct[Nontail]`

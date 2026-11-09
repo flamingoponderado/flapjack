@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.LabSem.State
-import Flapjack.Compiler.Backend.LabToTarget.SecondPass
-import Flapjack.Compiler.Backend.LabToTarget.Padding
-import Flapjack.Compiler.Backend.LabProps.Native
+module
+
+public import Flapjack.Compiler.Backend.LabSem.State
+public import Flapjack.Compiler.Backend.LabToTarget.SecondPass
+public import Flapjack.Compiler.Backend.LabToTarget.Padding
+public import Flapjack.Compiler.Backend.LabProps.Native
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabProps

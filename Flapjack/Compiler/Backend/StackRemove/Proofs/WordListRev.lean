@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove
-import Flapjack.Misc.SetSep
+module
+
+public import Flapjack.Compiler.Backend.StackRemove
+public import Flapjack.Misc.SetSep
+
+@[expose] public section
 
 /-! Reverse heap-list predicate from stack_removeProofScript.sml.
 The word dimension indexes addresses only. Payloads retain their independent

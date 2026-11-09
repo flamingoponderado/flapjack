@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateCases
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalOracleSimulation
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.FiniteMapGrowth
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
-import Flapjack.EvaluateHOL.ClockFull
-import Flapjack.EvaluateProps.Length
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateCases
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalOracleSimulation
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.FiniteMapGrowth
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
+public import Flapjack.EvaluateHOL.ClockFull
+public import Flapjack.EvaluateProps.Length
+
+@[expose] public section
 
 /-! Composition of expression simulations over the source-to-flat relations.
 The expression simulations remain untagged pending evaluator review. -/

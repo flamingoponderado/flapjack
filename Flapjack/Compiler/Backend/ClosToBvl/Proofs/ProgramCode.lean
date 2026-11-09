@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InitialState
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InitialState
+
+@[expose] public section
 
 /-! Connect installed compiled entries to the initial source code map. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

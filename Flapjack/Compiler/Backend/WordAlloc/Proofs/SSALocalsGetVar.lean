@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
-import Flapjack.Compiler.Backend.WordAlloc.SSASetup
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
+public import Flapjack.Compiler.Backend.WordAlloc.SSASetup
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

@@ -3,7 +3,7 @@
 from pathlib import Path
 import hashlib
 ROOT = Path(__file__).resolve().parents[2]
-CHECKS = {'Flapjack/RiscV/CorrectnessEncoding/ShiftRun.lean': 'af4ebadfcccf69c69823f874a92ccf6abd934ba2ca5f326b1d30856f1a675c9f', 'scripts/hol-probes/riscv_shift_run_probeScript.sml': 'd282acb6f6431aa3a6f7076ef9e0c9428a159ba259476e03e5dcc86bc2b3d438', 'scripts/hol-probes/riscv_shift_run_probe.out': '108e1acc0d64c31465661dc68b0552aa22de5162b5409853a01ba49899b13e66'}
+CHECKS = {'Flapjack/RiscV/CorrectnessEncoding/ShiftRun.lean': 'c266b3da864db55dced4f450878748a8d856195ee11f8233401b4df65ff96284', 'scripts/hol-probes/riscv_shift_run_probeScript.sml': 'd282acb6f6431aa3a6f7076ef9e0c9428a159ba259476e03e5dcc86bc2b3d438', 'scripts/hol-probes/riscv_shift_run_probe.out': '108e1acc0d64c31465661dc68b0552aa22de5162b5409853a01ba49899b13e66'}
 def check(root=ROOT):
     for name, digest in CHECKS.items():
         if hashlib.sha256((root / name).read_bytes()).hexdigest() != digest:

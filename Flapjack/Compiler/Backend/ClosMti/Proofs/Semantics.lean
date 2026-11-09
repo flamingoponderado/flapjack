@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateMutual
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
-import Flapjack.FiniteMap.EmptyExact
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateMutual
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
+public import Flapjack.FiniteMap.EmptyExact
+
+@[expose] public section
 
 /-! Observable consequences for the current Lean closure evaluator. -/
 namespace Flapjack.Compiler.Backend.ClosMti

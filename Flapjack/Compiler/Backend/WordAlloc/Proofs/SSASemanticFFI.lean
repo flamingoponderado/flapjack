@@ -1,16 +1,20 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticControl
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalStateUpdates
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsBounds
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapBounds
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvLemma
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterFlip
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCut
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticControl
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSACutEnvsDomain
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMoveDistinct
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalStateUpdates
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsBounds
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapBounds
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvLemma
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterFlip
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCut
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

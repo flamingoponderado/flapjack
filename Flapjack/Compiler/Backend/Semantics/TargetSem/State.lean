@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.AsmProps.Target
-import Flapjack.FfiHOL
+module
+
+public import Flapjack.Compiler.Encoders.AsmProps.Target
+public import Flapjack.FfiHOL
+
+@[expose] public section
 
 /-!
 # Exact targetSem carriers

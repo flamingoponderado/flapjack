@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.LabelLookup
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.LabelLookup
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack

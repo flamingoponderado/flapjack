@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalLoop
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalLoop
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
+
+@[expose] public section
 
 /-! Full major generational collector simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -27,9 +31,9 @@ theorem genFull_dataIndex {α β : Type} (conf : GenGc.Config β)
     simp [empty, heapLength] at second ⊢
     omega
 
-private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+instance generationalFullInst1 {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
-private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
+instance generationalFullInst2 {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
 
 /-- The byte count passed to the concrete collector decodes to the original
 heap word count when the original byte-size bound holds. -/

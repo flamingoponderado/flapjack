@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.SimpleEncoder
-import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
-import Flapjack.Compiler.Backend.LabToTarget.Padding
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SimpleEncoder
+public import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
+public import Flapjack.Compiler.Backend.LabToTarget.Padding
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Basis.Pure.MlString

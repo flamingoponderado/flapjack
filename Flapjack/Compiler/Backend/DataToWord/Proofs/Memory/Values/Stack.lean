@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values
+
+@[expose] public section
 
 /-! Stack membership and reachability facts for the memory invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

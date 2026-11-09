@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
-import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.FindCode
 open Flapjack Compiler.Backend.StackLang
 

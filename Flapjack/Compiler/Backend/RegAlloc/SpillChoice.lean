@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.Accessors
-import Flapjack.Compiler.Backend.RegAlloc.SafeDiv
-import Flapjack.Misc.LookupAny
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Accessors
+public import Flapjack.Compiler.Backend.RegAlloc.SafeDiv
+public import Flapjack.Misc.LookupAny
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 

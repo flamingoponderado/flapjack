@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.State
-import Flapjack.Compiler.Backend.WordToStack.NativePrograms
-import Flapjack.Misc.Sptree.Mapi
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.State
+public import Flapjack.Compiler.Backend.WordToStack.NativePrograms
+public import Flapjack.Misc.Sptree.Mapi
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native.Initialization
 open Flapjack Flapjack.Compiler.Encoders.Asm

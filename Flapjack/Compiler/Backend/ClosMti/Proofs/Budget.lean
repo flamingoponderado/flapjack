@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosMti
-import Flapjack.Compiler.Backend.ClosLang.Proofs.Budget
+module
+
+public import Flapjack.Compiler.Backend.ClosMti
+public import Flapjack.Compiler.Backend.ClosLang.Proofs.Budget
+
+@[expose] public section
 
 /-! Budget bounds for multi-argument collection. These are Flapjack
 infrastructure lemmas, not HOL theorem ports. -/

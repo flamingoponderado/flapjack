@@ -1,6 +1,14 @@
-import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Finite-support evaluator invariant support for HOL PanProps results. The

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Simple
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DoPartial
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GcConfig
-import Flapjack.Compiler.Backend.GcCombined.Collector
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Simple
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DoPartial
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GcConfig
+public import Flapjack.Compiler.Backend.GcCombined.Collector
+
+@[expose] public section
 
 /-! Simple-collector case of the combined GC simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

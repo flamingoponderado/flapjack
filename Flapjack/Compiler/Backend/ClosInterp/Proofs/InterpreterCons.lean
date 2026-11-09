@@ -1,4 +1,13 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterApp
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterApp
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Constructor-operation simulation for the proof-side interpreter. Its
 semantics and state carriers remain pending HOL correspondence review. -/

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Loop
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Store
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Loop
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Store
+
+@[expose] public section
 
 /-!
 # `evaluate_remove_dead` control cases

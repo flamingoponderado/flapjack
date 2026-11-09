@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateExpressions
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateExpressions
+
+@[expose] public section
 
 /-! Control-flow cases of source evaluator oracle adjustment. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

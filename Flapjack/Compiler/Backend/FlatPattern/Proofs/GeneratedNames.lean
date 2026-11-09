@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatPattern.Names
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Names
+
+@[expose] public section
 
 /-! Round-trip properties for pattern-compiler generated names. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

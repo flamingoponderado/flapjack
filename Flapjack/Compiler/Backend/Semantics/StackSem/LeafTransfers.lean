@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+
+@[expose] public section
 
 /-! Source-matched leaf clauses of stackSemScript.sml evaluate_def:774-823.
 This is a partial dispatch helper, not a second evaluator: the outer NONE

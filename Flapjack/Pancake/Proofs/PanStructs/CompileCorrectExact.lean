@@ -1,19 +1,23 @@
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAtomic
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDec
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAssign
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectPrimitive
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStore
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStoreWords
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectShMemLoad
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectShMemStore
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSeqIf
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectWhile
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectReturnRaise
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectTickAnnot
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectCall
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDecCall
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectExtCall
-import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAtomic
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDec
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAssign
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectPrimitive
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStore
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStoreWords
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectShMemLoad
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectShMemStore
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSeqIf
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectWhile
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectReturnRaise
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectTickAnnot
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectCall
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDecCall
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectExtCall
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.CompileCorrectExact
 open Flapjack
 open Flapjack.Pancake.PanLang

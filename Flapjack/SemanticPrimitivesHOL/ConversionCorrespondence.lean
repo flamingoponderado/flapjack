@@ -1,5 +1,9 @@
-import Flapjack.SemanticPrimitivesHOL.NumericConversion
-import Flapjack.SemanticPrimitivesHOL.ApplyNumericCore
+module
+
+public import Flapjack.SemanticPrimitivesHOL.NumericConversion
+public import Flapjack.SemanticPrimitivesHOL.ApplyNumericCore
+
+@[expose] public section
 
 /-! The computable numeric dispatcher agrees with HOL's guarded conversion. -/
 namespace Flapjack.SemanticPrimitivesHOL

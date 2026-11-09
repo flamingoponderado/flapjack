@@ -1,4 +1,8 @@
-import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
+
+@[expose] public section
 
 /-! Full intrinsic-domain native Shift decoding prerequisites for the original
 encoder Shift case560-620, including both Ror instruction sequences. SLLI is

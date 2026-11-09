@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeSafety
-import Flapjack.Compiler.Backend.LabToTarget.Fetch
-import Flapjack.Compiler.Backend.LabToTarget.PositionOrder
-import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
-import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
-import Flapjack.Misc.FindIndex
-import Flapjack.Misc.FindIndex.Membership
-import Flapjack.Compiler.Backend.LabToTarget.Positions
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSafety
+public import Flapjack.Compiler.Backend.LabToTarget.Fetch
+public import Flapjack.Compiler.Backend.LabToTarget.PositionOrder
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
+public import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
+public import Flapjack.Misc.FindIndex
+public import Flapjack.Misc.FindIndex.Membership
+public import Flapjack.Compiler.Backend.LabToTarget.Positions
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+
+@[expose] public section
 
 /-! Original shared-memory/Install exclusion facts used by `compile_correct`
 (lab_to_targetProofScript.sml:7159-7438): append closure, the Install/MMIO
@@ -58,7 +62,7 @@ theorem holEl_mem {α : Type} [Nonempty α] (l : List α) (i : Nat) (h : i < l.l
     | zero => simp [holEl, holHd]
     | succ i => simpa [holEl] using List.mem_cons_of_mem y (ih i (by simpa using h))
 
-private instance : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
+instance codeSafetyFactsInst1 : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
 
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "no_share_mem_lemma"
   (words_as_type_indexed_bitvec)]

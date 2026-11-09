@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.GenGc
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveData
+module
+
+public import Flapjack.Compiler.Backend.GenGc
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveData
+
+@[expose] public section
 
 /-! Invariants and immediate-root case of major generational collection. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

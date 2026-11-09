@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.Operation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
-import Flapjack.Compiler.Backend.Semantics.ClosProps.DestClosure
+module
+
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Operation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.DestClosure
+
+@[expose] public section
 
 /-! Mutual closure-application cases for let-operation cleanup. -/
 namespace Flapjack.Compiler.Backend.ClosLetop

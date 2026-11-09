@@ -1,12 +1,16 @@
-import Flapjack.Pancake.Proofs.WordConvs.NotCreatedPasses
-import Flapjack.Pancake.Proofs.WordConvs.NotCreatedSSA
-import Flapjack.Pancake.Proofs.WordConvs.Unreach
-import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
-import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
-import Flapjack.Pancake.Proofs.WordConvs.WordAlloc
-import Flapjack.Pancake.Proofs.WordConvs.WordCse
-import Flapjack.Pancake.Proofs.WordConvs.CopyProp
-import Flapjack.Compiler.Backend.WordToWord.Compile
+module
+
+public import Flapjack.Pancake.Proofs.WordConvs.NotCreatedPasses
+public import Flapjack.Pancake.Proofs.WordConvs.NotCreatedSSA
+public import Flapjack.Pancake.Proofs.WordConvs.Unreach
+public import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
+public import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
+public import Flapjack.Pancake.Proofs.WordConvs.WordAlloc
+public import Flapjack.Pancake.Proofs.WordConvs.WordCse
+public import Flapjack.Pancake.Proofs.WordConvs.CopyProp
+public import Flapjack.Compiler.Backend.WordToWord.Compile
+
+@[expose] public section
 
 /-!
 # `wordConvsProof`: `not_created_subprogs` through `compile_single`

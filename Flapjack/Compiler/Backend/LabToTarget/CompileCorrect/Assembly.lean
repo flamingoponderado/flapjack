@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Install
-import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Control
-import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Cbw
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Install
+public import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Control
+public import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Cbw
+
+@[expose] public section
 
 /-! The original `compile_correct` (lab_to_targetProofScript.sml:7528-7558),
 assembled from its cases by the source's `evaluate_ind` induction, which this

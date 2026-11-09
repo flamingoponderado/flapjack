@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Heap.SizeProperties
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeValues
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Heap.SizeProperties
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeValues
+
+@[expose] public section
 
 /-! Seen-timestamp monotonicity for the data-to-word assignment proof. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Assign

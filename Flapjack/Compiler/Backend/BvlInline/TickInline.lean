@@ -1,6 +1,10 @@
-import Flapjack.Misc.Option.MapM
-import Flapjack.Compiler.Backend.BvlInline.Proofs.TraversalTotal
-import Aesop
+module
+
+public import Flapjack.Misc.Option.MapM
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.TraversalTotal
+public import Aesop
+
+@[expose] public section
 
 /-! Total source-shaped BVL call inlining and executable correspondence. -/
 namespace Flapjack.Compiler.Backend.BvlInline

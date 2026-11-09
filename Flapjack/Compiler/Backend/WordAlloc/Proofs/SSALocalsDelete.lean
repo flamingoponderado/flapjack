@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
-import Flapjack.Misc.SptreeLookup
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
+public import Flapjack.Misc.SptreeLookup
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.LabSem.Inst
-import Flapjack.Compiler.Backend.LabToTarget.ShareMemState
-import Flapjack.Compiler.Backend.LabToTarget.WordLocation
-import Flapjack.Compiler.Encoders.AsmSem.Step
-import Mathlib.Tactic.SplitIfs
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Inst
+public import Flapjack.Compiler.Backend.LabToTarget.ShareMemState
+public import Flapjack.Compiler.Backend.LabToTarget.WordLocation
+public import Flapjack.Compiler.Encoders.AsmSem.Step
+public import Mathlib.Tactic.SplitIfs
+
+@[expose] public section
 
 /-! Original register-relation preservation for the integer and FP updates of
 `Inst_lemma` (lab_to_targetProofScript.sml:2005-2144). Source and target

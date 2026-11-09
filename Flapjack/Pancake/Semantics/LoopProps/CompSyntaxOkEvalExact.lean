@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
-import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
-import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+module
+
+public import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
+public import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
+public import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+
+@[expose] public section
 
 /-!
 # loopProps `comp_syntax_ok` evaluator lemmas

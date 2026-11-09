@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.MoveWide
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.MoveWide
+
+@[expose] public section
 
 set_option maxHeartbeats 4000000
 

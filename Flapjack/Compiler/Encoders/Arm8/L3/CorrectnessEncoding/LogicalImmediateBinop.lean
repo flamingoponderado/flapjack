@@ -1,6 +1,12 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Const
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalImmediate
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShiftedRegister
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Const
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalImmediate
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShiftedRegister
+
+-- Sum `==` must reduce by `rfl`/`decide`; core's derived instance is not exposed.
+import all Init.Data.Sum.Basic
+@[expose] public section
 
 set_option maxHeartbeats 12000000
 set_option maxRecDepth 10000

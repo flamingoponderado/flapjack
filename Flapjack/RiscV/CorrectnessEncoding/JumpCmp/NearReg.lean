@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Comparison
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Arithmetic
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Comparison
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Arithmetic
+
+@[expose] public section
 
 /-! Near Reg assembly for the six non-Test comparison forms. This helper
 retains the complete original existential/allenv/bothasserts conclusion, but

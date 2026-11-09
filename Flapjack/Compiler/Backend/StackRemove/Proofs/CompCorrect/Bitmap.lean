@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackMemoryAny
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackMemoryAny
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.Bitmap
 open Flapjack Flapjack.Compiler.Backend.StackRemove Flapjack.Compiler.Backend.StackLang
 theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact

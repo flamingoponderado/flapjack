@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Bvi.Syntax
-import Flapjack.Compiler.Backend.Bvi.Budget
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Bvi.Syntax
+public import Flapjack.Compiler.Backend.Bvi.Budget
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Recursive-call analysis for BVI's tail-recursion optimization. The
 type scan and accumulator rewrite are in `Analysis` and `Rewrite`. -/

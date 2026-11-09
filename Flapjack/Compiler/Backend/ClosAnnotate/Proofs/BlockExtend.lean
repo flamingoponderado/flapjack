@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockBoolean
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ValueEquality
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockBoolean
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ValueEquality
+
+@[expose] public section
 
 /-! Constructor extension and the assembled block primitive simulation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

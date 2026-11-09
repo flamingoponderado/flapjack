@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.Primitive
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
+module
+
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Primitive
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
+
+@[expose] public section
 
 /-! Reference-store prerequisites for thunk forcing. -/
 namespace Flapjack.Compiler.Backend.ClosTicks

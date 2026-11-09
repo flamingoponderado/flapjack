@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Simulation
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalStore
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorGenerational
+module
+
+public import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Simulation
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalStore
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorGenerational
+
+@[expose] public section
 
 /-! Partial collection and the abstract memory invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

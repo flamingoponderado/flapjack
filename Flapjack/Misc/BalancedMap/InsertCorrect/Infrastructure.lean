@@ -1,6 +1,10 @@
-import Flapjack.Misc.BalancedMap.Insert
-import Flapjack.Misc.BalancedMap.CardinalityCorrect
-import Flapjack.Misc.BalancedMap.AlmostBalanceCorrect
+module
+
+public import Flapjack.Misc.BalancedMap.Insert
+public import Flapjack.Misc.BalancedMap.CardinalityCorrect
+public import Flapjack.Misc.BalancedMap.AlmostBalanceCorrect
+
+@[expose] public section
 namespace Flapjack.Misc.BalancedMap
 open FiniteMap.Comparison
 /-- Insertion-induction infrastructure without a separate HOL declaration.

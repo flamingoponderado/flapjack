@@ -1,7 +1,11 @@
-import Flapjack.Pancake.Proofs.CrepInline.Call
-import Flapjack.Pancake.Proofs.CrepInline.UnreachElimEvaluate
-import Flapjack.Pancake.Proofs.CrepInline.ArgLoadStrong
-import Flapjack.Pancake.Proofs.CrepInline.ClockExpressions
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.Call
+public import Flapjack.Pancake.Proofs.CrepInline.UnreachElimEvaluate
+public import Flapjack.Pancake.Proofs.CrepInline.ArgLoadStrong
+public import Flapjack.Pancake.Proofs.CrepInline.ClockExpressions
+
+@[expose] public section
 
 /-!
 # `inline_prog_correct`: the `Call` case, `Tail` part

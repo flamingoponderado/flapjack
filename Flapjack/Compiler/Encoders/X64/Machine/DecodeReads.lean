@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.X64.Machine.Congruence
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.Congruence
+
+@[expose] public section
 
 /-!
 # The decoder reads only the bytes it reports

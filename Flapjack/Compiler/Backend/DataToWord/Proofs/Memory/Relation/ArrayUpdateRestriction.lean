@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateValue
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Restriction
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateRefInv
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapStore
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateValue
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Restriction
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateRefInv
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapStore
+
+@[expose] public section
 
 /-! Timestamp-map restriction after value-array updates. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

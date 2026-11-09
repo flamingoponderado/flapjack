@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 
 /-! Closure evaluator state with finite-support code and reference maps. -/
 namespace Flapjack.Compiler.Backend.ClosSem

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
+
+@[expose] public section
 
 /-! Tick and Annot cases of pan_globalsProofScript's evaluate_fperm (1721-1810).
 These retain the original premise and conclusion for clock/annotation leaves;

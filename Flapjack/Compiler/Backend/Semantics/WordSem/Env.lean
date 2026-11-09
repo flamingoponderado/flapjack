@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
-import Flapjack.Basis.Pure.MlList
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+public import Flapjack.Basis.Pure.MlList
+
+@[expose] public section
 
 /-!
 # Exact HOL `wordSem` environment and stack helpers

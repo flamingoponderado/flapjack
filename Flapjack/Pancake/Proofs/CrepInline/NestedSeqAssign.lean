@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.CrepInline
-import Flapjack.Pancake.Semantics.CrepProps
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline
+public import Flapjack.Pancake.Semantics.CrepProps
+
+@[expose] public section
 
 /-!
 # crep_inline: `OPT_MMAP` locals helpers and `evaluate_nested_seq_assign`

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveGlobal
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveGlobal
+
+@[expose] public section
 
 /-! Array operations for multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti

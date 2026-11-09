@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBoolean
-import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBoolean
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
+
+@[expose] public section
 
 /-! Reference inspection in the generic closure primitive simulation. -/
 namespace Flapjack.Compiler.Backend.ClosProps.PrimitiveMemory

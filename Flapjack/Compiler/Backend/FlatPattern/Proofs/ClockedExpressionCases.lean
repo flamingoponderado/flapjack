@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedExpressionList
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedExpressionList
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Clock-bounded expression cases for flat pattern compilation. The evaluator
 and proof-side relations remain pending HOL correspondence review. -/

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.RemoveTicksSimulation
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.RemoveTicksSimulation
+
+@[expose] public section
 
 /-! Initial-state consequence of the BVL tick-removal simulation. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

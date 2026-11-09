@@ -1,4 +1,8 @@
-import Flapjack.SemanticsProps.Implements
+module
+
+public import Flapjack.SemanticsProps.Implements
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.SemanticsPropsHOL

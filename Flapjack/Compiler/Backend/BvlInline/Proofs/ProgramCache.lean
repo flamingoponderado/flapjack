@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramProduction
-import Flapjack.Misc.Sptree.Subspt
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramProduction
+public import Flapjack.Misc.Sptree.Subspt
+
+@[expose] public section
 
 /-! Cache invariants for BVL program inlining. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
+
+@[expose] public section
 
 /-! Word primitive correspondence for the closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

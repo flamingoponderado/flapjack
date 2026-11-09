@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps
-import Flapjack.Misc.Sptree.Subspt
+module
+
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps
+public import Flapjack.Misc.Sptree.Subspt
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackProps.EvaluateMono
 open Flapjack Flapjack.Compiler.Backend.StackLang

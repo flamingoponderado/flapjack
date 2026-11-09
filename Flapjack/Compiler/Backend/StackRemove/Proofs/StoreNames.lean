@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.StoreAddress
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.StoreAddress
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.StoreNames
 open Flapjack.Compiler.Backend.StackLang

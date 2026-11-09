@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CorrectnessEncoding.AddOverflow.Post
-import Flapjack.RiscV.CorrectnessEncoding.ConstAssertions
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.AddOverflow.Post
+public import Flapjack.RiscV.CorrectnessEncoding.ConstAssertions
+
+@[expose] public section
 namespace Flapjack.RiscV.TargetProof
 open Flapjack.RiscV.TargetProof.ArithNative
 open Flapjack RiscV.L3 Compiler.Encoders.Asm Compiler.Encoders.AsmSem

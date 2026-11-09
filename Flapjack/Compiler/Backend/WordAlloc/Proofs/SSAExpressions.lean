@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSATransInst
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.Expressions
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSATransInst
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.Expressions
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

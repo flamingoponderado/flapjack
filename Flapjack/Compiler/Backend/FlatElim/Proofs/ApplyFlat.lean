@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyMemory
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyMemory
+
+@[expose] public section
 
 /-! Flat-specific primitive cases for the elimination simulation. -/
 namespace Flapjack.Compiler.Backend.FlatElim

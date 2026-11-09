@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlHandle
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle
+
+@[expose] public section
 
 /-! Total source-shaped singleton and list handler compilation. The executed
 bounded traversal is proved equal in `Proofs/CompileProduction`. -/

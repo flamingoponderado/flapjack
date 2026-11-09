@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateRelation
-import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRawCall
 open Flapjack StackSemStateOps StackSemExpressions

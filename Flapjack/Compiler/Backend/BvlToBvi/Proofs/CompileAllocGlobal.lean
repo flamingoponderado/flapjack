@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AllocGlobalRel
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileDynamicGlobal
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AllocGlobalRel
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileDynamicGlobal
+
+@[expose] public section
 
 /-! Global allocation lowering in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

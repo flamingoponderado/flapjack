@@ -1,4 +1,12 @@
-import Flapjack.Misc.BalancedMap.Core
+module
+
+public import Flapjack.Misc.BalancedMap.Core
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Misc.BalancedMap
 

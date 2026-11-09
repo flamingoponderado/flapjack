@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataSpace.Proofs.PrimitiveMemorySpace
+module
+
+public import Flapjack.Compiler.Backend.DataSpace.Proofs.PrimitiveMemorySpace
+
+@[expose] public section
 
 /-! Independence of block primitive results from reserved space. -/
 namespace Flapjack.Compiler.Backend.DataSpace

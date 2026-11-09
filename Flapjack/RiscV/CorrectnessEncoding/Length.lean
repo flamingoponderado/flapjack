@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.RiscV.Target
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Encoders.RiscV.Target
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Full original native encoder length and nonempty contracts. No validity,
 accepted-opcode, successful execution, or assembly subset premise is added. -/

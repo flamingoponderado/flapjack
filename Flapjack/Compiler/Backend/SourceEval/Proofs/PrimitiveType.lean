@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelation
-import Flapjack.SemanticPrimitivesHOL.Primitives
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelation
+public import Flapjack.SemanticPrimitivesHOL.Primitives
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.SemanticPrimitivesHOL Flapjack.AstHOL
 

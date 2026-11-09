@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.PanToCrep.CompileExact
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.PanToCrep.CompileExact
+
+@[expose] public section
 
 /-!
 The original pan_to_crep `first_compile_prog_all_distinct`

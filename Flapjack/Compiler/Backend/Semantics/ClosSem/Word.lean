@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem
-import Flapjack.SemanticPrimitivesHOL.Compare
-import Flapjack.FpSemHOL
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem
+public import Flapjack.SemanticPrimitivesHOL.Compare
+public import Flapjack.FpSemHOL
+
+@[expose] public section
 
 /-! Word and floating-point operations for closure semantics. -/
 namespace Flapjack.Compiler.Backend.ClosSem

@@ -1,7 +1,11 @@
-import Flapjack.RiscV.L3.Defs
-import Flapjack.RiscV.L3.Defs.CSRAccess
-import Flapjack.RiscV.L3.Defs.MMU.Primitives
-import Flapjack.RiscV.L3.Defs.AddressException
+module
+
+public import Flapjack.RiscV.L3.Defs
+public import Flapjack.RiscV.L3.Defs.CSRAccess
+public import Flapjack.RiscV.L3.Defs.MMU.Primitives
+public import Flapjack.RiscV.L3.Defs.AddressException
+
+@[expose] public section
 
 /-! Complete native supervisor transfer and instruction-fetch exception equations.
 The transfer copies machine cause, bad address and exception PC in source order,

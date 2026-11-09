@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.LimitVar
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Arithmetic
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
-import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.LimitVar
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Arithmetic
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
+public import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

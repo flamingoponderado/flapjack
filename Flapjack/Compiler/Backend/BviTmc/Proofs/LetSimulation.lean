@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ListSimulation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.WrapperCases
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ListSimulation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.WrapperCases
+
+@[expose] public section
 
 /-! Simulation of let bindings for the TMC proof. -/
 namespace Flapjack.Compiler.Backend.BviTmc.LetSimulation

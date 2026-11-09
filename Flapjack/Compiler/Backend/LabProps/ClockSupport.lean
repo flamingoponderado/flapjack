@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabSem.Inst
-import Flapjack.Compiler.Backend.LabSem.SharedMemory
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Inst
+public import Flapjack.Compiler.Backend.LabSem.SharedMemory
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.LabSem

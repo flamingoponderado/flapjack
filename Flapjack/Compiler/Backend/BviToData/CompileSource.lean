@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviToData.CompileTotal
-import Flapjack.Compiler.Backend.Bvi.Budget
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.BviToData.CompileTotal
+public import Flapjack.Compiler.Backend.Bvi.Budget
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! The original list-shaped BVI-to-data compiler. -/
 namespace Flapjack.Compiler.Backend.BviToData

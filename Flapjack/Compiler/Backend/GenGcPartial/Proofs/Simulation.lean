@@ -1,17 +1,21 @@
-import Flapjack.Compiler.Backend.GenGcPartial
-import Flapjack.Compiler.Backend.GenGc
-import Mathlib.Data.List.Basic
-import Flapjack.Compiler.Backend.GcShared.Slice
-import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
-import Flapjack.Compiler.Backend.GenGc.Proofs.Progress
-import Flapjack.Compiler.Backend.GenGc.Proofs.Invariant
-import Flapjack.Compiler.Backend.GenGc.Proofs.Correct
-import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Forward
-import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Conservation
-import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Accumulator
-import Flapjack.Compiler.Backend.GcShared.ForwardPtr
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialSplit
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialFull
+module
+
+public import Flapjack.Compiler.Backend.GenGcPartial
+public import Flapjack.Compiler.Backend.GenGc
+public import Mathlib.Data.List.Basic
+public import Flapjack.Compiler.Backend.GcShared.Slice
+public import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
+public import Flapjack.Compiler.Backend.GenGc.Proofs.Progress
+public import Flapjack.Compiler.Backend.GenGc.Proofs.Invariant
+public import Flapjack.Compiler.Backend.GenGc.Proofs.Correct
+public import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Forward
+public import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Conservation
+public import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Accumulator
+public import Flapjack.Compiler.Backend.GcShared.ForwardPtr
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialSplit
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialFull
+
+@[expose] public section
 
 /-! Translation from a partial collector state to a major collector state. -/
 namespace Flapjack.Compiler.Backend.GenGcPartial

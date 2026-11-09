@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove
-import Flapjack.Compiler.Backend.StackRemove.StoreListCode
+module
+
+public import Flapjack.Compiler.Backend.StackRemove
+public import Flapjack.Compiler.Backend.StackRemove.StoreListCode
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove
 open Flapjack.Compiler.Backend.StackLang

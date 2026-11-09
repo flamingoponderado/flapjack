@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyMemory
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Thunk
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyMemory
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Thunk
+
+@[expose] public section
 
 /-! Flat source-operation cases for strings, lists, vectors and thunks. The
 complete dispatcher is assembled in `FlatSem.Apply`. -/

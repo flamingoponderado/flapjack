@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordBignum.CompileExp
-import Flapjack.Compiler.Backend.WordBignum.Mini
+module
+
+public import Flapjack.Compiler.Backend.WordBignum.CompileExp
+public import Flapjack.Compiler.Backend.WordBignum.Mini
+
+@[expose] public section
 
 /-! Word-code construction helpers for the generic bignum generator. -/
 namespace Flapjack.Compiler.Backend.WordBignum

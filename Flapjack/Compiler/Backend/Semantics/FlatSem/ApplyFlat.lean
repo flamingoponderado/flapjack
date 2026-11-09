@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem
+
+@[expose] public section
 
 /-! Flat-specific primitive operations. The complete dispatcher also includes
 source operations and is assembled in `FlatSem.Apply`. -/

@@ -1,5 +1,9 @@
-import Flapjack.Misc.FindIndex
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Misc.FindIndex
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 namespace Flapjack.Misc
 
 /-- Full original distinct-list search equivalence, retaining an arbitrary

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ByteOps
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MappedRefsUpdate
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ByteOps
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MappedRefsUpdate
+
+@[expose] public section
 
 /-! Byte-copy correspondence for closure-to-BVL. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

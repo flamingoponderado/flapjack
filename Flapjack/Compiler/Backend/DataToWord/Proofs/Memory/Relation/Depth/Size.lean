@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.Limit
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockTests
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Linarith
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.Limit
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockTests
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Tactic.Linarith
+
+@[expose] public section
 
 /-! Resource bounds for related source values. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

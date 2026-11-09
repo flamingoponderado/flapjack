@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.BviLet.Proofs.LetLast
+module
+
+public import Flapjack.Compiler.Backend.BviLet.Proofs.LetLast
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+@[expose] public section
 
 /-! List, primitive, and control cases for BVI let propagation. -/
 namespace Flapjack.Compiler.Backend.BviLet.Proofs

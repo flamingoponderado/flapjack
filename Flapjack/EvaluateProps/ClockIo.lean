@@ -1,4 +1,8 @@
-import Flapjack.EvaluateProps.EvaluateFfiFull
+module
+
+public import Flapjack.EvaluateProps.EvaluateFfiFull
+
+@[expose] public section
 
 /-! Combined clock, state-growth and FFI-trace invariant. The mutual
 evaluator proof is assembled in ClockIoFull. -/

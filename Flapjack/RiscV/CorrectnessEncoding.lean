@@ -1,6 +1,10 @@
-import Flapjack.RiscV.CorrectnessEncoding.Length
-import Flapjack.RiscV.CorrectnessEncoding.BytesInMemory
-import Flapjack.RiscV.CorrectnessEncoding.Arithmetic
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.Length
+public import Flapjack.RiscV.CorrectnessEncoding.BytesInMemory
+public import Flapjack.RiscV.CorrectnessEncoding.Arithmetic
+
+@[expose] public section
 
 /-!
 Port of `riscv_targetProofScript.sml`, the correctness of the RISC-V encoder

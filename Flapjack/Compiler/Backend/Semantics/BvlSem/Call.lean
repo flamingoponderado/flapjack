@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.State
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.State
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! BVL code lookup for direct and indirect calls. -/
 namespace Flapjack.Compiler.Backend.BvlSem
 
-private instance : Nonempty Value := ⟨.number 0⟩
+instance callInst1 : Nonempty Value := ⟨.number 0⟩
 
 /-- Resolve a direct label or the code pointer at the end of an indirect
 call's argument list, checking the original arity convention. -/

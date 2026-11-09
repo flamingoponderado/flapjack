@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Proofs.PanStructs
-import Flapjack.Misc.ListEl
-import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs
+public import Flapjack.Misc.ListEl
+public import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+
+@[expose] public section
 
 /-! The proof-side `compile_shape_n` of pan_structsProofScript.sml:317-334 and
 its name-freedom lemmas `compile_shape_n_no_name` and `compile_shape_no_name`

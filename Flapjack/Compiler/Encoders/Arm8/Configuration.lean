@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.Arm8.Target
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Target
+
+@[expose] public section
 
 /-! The ARMv8 assembler configuration (`arm8_config` of
 `cakeml/compiler/encoders/arm8/arm8_targetScript.sml`), over the subset encoder in

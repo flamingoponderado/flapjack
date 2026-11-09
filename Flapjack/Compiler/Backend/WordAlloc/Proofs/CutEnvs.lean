@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

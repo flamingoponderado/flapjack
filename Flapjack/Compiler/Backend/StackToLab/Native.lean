@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackToLab
-import Flapjack.Compiler.Backend.StackLang.Prog
-import Flapjack.Compiler.Backend.LabSem.State
+module
+
+public import Flapjack.Compiler.Backend.StackToLab
+public import Flapjack.Compiler.Backend.StackLang.Prog
+public import Flapjack.Compiler.Backend.LabSem.State
+
+@[expose] public section
 
 /-!
 # Native Stack-to-Lab lowering

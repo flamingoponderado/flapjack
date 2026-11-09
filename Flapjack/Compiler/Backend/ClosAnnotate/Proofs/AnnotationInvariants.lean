@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Shift
-import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Shift
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
+
+@[expose] public section
 
 /-! Annotation invariants of closure-variable shifting. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

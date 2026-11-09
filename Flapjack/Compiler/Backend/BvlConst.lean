@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.Bvl.Syntax
-import Flapjack.Compiler.Backend.BvlToBvi.Budget
+module
+
+public import Flapjack.Compiler.Backend.Bvl.Syntax
+public import Flapjack.Compiler.Backend.BvlToBvi.Budget
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Executable helpers and fuel-bounded traversal for the BVL constant pass.
 The total traversal and its executable correspondence are in the `BvlConst`

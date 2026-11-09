@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Equality
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Equality
+
+@[expose] public section
 
 /-! General equality correspondence for closure-to-BVL values. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

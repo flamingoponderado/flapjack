@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.HiddenState
-import Flapjack.Basis.Pure.MlList
-import Flapjack.Misc.MiscThe
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.HiddenState
+public import Flapjack.Basis.Pure.MlList
+public import Flapjack.Misc.MiscThe
+
+@[expose] public section
 
 /-!
 # linear_scan register exchange, adjacency lists and in-array sorting

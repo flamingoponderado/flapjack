@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBoolean
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBoolean
+
+@[expose] public section
 
 /-! List and equality cases of the generic closure primitive simulation. -/
 namespace Flapjack.Compiler.Backend.ClosProps.PrimitiveLists

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.State
-import Batteries.Data.List.Basic
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.State
+public import Batteries.Data.List.Basic
+
+@[expose] public section
 
 /-! Variable correspondence for the data-language semantics. -/
 namespace Flapjack.Compiler.Backend.DataProps

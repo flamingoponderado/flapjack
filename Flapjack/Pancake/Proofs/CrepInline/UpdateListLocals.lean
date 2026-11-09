@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.CrepInline
-import Flapjack.Pancake.Semantics.CrepProps
-import Flapjack.Pancake.Semantics.PanCommonProps
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline
+public import Flapjack.Pancake.Semantics.CrepProps
+public import Flapjack.Pancake.Semantics.PanCommonProps
+
+@[expose] public section
 
 /-!
 # crep_inline: locals-update and `res_var` lookup lemmas of the Call case

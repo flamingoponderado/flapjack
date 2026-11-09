@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Alloc
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Loop
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Alloc
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Loop
+
+@[expose] public section
 
 /-!
 # `evaluate_stack_swap` `Call` case

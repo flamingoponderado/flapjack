@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockLists
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockLists
+
+@[expose] public section
 
 /-! Equality of values under closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

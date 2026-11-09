@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.StackRemove.Compile
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CodeRelation
-import Flapjack.Compiler.Backend.StackRemove.Proofs.ProgCompEta
-import Flapjack.Misc.Sptree.ToAList
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Compile
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CodeRelation
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.ProgCompEta
+public import Flapjack.Misc.Sptree.ToAList
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeRelation
 open Flapjack Flapjack.Compiler.Backend.StackLang

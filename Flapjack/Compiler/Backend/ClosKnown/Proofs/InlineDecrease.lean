@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosKnown.Inline
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Inline
+
+@[expose] public section
 
 /-! The following facts justify the recursive inlining decrease for the
 checked Flapjack implementation. The option-valued wrappers are infrastructure. -/

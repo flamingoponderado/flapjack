@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Compiler.Backend.Semantics.StackSem.RegisterTransfers
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
-import Flapjack.Compiler.Backend.StackRemove.ProgComp
-import Flapjack.Compiler.Backend.StackRemove.StoreInit
-import Flapjack.Misc.FiniteMapApply
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Compiler.Backend.Semantics.StackSem.RegisterTransfers
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+public import Flapjack.Compiler.Backend.StackRemove.ProgComp
+public import Flapjack.Compiler.Backend.StackRemove.StoreInit
+public import Flapjack.Misc.FiniteMapApply
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.Proofs.InitReduce
 open Flapjack Flapjack.Compiler.Backend.StackLang

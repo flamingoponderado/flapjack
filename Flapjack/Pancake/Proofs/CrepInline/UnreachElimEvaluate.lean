@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.CrepInline.UnreachElim
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.UnreachElim
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
+
+@[expose] public section
 
 /-!
 # crep_inline: `unreach_elim` evaluation lemmas

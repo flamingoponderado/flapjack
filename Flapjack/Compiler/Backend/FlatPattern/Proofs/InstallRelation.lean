@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.BackendProps.Pure
-import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
-import Flapjack.Compiler.Backend.Semantics.FlatSem
-import Flapjack.Misc.ShiftSeq
+module
+
+public import Flapjack.Compiler.Backend.BackendProps.Pure
+public import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
+public import Flapjack.Compiler.Backend.Semantics.FlatSem
+public import Flapjack.Misc.ShiftSeq
+
+@[expose] public section
 
 /-! FlatPattern's dynamic-compiler configuration relation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

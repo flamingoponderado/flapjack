@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.Accessors
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Accessors
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 

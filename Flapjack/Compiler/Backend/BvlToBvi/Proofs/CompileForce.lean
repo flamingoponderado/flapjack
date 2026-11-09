@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.FindCode
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.FindCode
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.BvlToBvi.SourceSing
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Thunk inspection and evaluated-force simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

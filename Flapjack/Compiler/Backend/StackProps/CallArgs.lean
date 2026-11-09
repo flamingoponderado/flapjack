@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackLang.Prog
+module
+
+public import Flapjack.Compiler.Backend.StackLang.Prog
+
+@[expose] public section
 
 /-! StackProps `call_args_def` (`stackPropsScript.sml:1107-1128`) on the faithful program
 carrier. -/

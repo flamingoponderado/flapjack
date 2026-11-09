@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
-import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
-import Flapjack.Misc.WordList
-import Flapjack.Misc.SetSep
-import Flapjack.Misc.Alignment
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
+public import Flapjack.Misc.WordList
+public import Flapjack.Misc.SetSep
+public import Flapjack.Misc.Alignment
+
+@[expose] public section
 
 /-!
 # HOL `targetSem` `installed_def`

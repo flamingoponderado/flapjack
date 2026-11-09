@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownGlobals
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownGlobals
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
+
+@[expose] public section
 
 /-! Structural global-tree preservation when there are no writes. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.KnownUnchanged

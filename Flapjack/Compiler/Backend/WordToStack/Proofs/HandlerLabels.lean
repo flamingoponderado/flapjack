@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramCodeLabels
-import Flapjack.Compiler.Backend.StackProps.LabelSafety
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramCodeLabels
+public import Flapjack.Compiler.Backend.StackProps.LabelSafety
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang

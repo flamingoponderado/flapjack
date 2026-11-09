@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.State
-import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+
+@[expose] public section
 
 /-! Exact target-stack abstraction used by Word-to-Stack stack_rel. -/
 namespace Flapjack.WordToStackProofs

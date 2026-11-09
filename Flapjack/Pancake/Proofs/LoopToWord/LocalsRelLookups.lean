@@ -1,7 +1,11 @@
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
-import Flapjack.Pancake.Semantics.LoopSemStateExact
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
-import Flapjack.HolRef
+module
+
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 # Exact lookup consequences of the Loop-to-Word locals relation

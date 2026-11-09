@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Defs.IntegerLoadMode
-import Flapjack.RiscV.L3.Defs.SystemSignals
+module
+
+public import Flapjack.RiscV.L3.Defs.IntegerLoadMode
+public import Flapjack.RiscV.L3.Defs.SystemSignals
+
+@[expose] public section
 
 /-! Complete native division/remainder equations, including explicit zero
 divisors, signed truncation, DIVU two mode checks and W sign extension. -/

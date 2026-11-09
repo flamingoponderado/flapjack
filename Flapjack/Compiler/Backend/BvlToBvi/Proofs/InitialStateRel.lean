@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitialNames
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ProgramAgreement
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitialNames
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ProgramAgreement
+
+@[expose] public section
 
 /-! Initial state relation for the BVL-to-BVI compiler. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

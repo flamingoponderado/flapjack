@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileArrayLength
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileArrayLength
+
+@[expose] public section
 
 /-! Indexed value reads in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

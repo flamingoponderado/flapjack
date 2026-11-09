@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
+
+@[expose] public section
 
 /-!
 # pan_globals `compile_correct`: goal and the leaf cases

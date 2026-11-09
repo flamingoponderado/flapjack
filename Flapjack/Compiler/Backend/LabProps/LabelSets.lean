@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabSem.Navigation
-import Mathlib.Data.Set.Basic
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Navigation
+public import Mathlib.Data.Set.Basic
+
+@[expose] public section
 
 /-! Literal original LabProps label extraction and label-set section.
 BIGUNION of IMAGE over a list set is written in its membership form:

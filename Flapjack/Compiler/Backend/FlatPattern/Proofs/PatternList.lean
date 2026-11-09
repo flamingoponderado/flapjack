@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatProps.PatternAppend
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.PatternAppend
+
+@[expose] public section
 
 /-! Successful pattern-list matches for the pattern-binding simulation.
 The untagged supporting statements are reviewed independently. -/

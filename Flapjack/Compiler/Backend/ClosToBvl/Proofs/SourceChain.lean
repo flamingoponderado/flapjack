@@ -1,10 +1,22 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ProgramCode
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainLocations
-import Flapjack.Compiler.Backend.Semantics.ClosSem.InstallGrowth
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
-import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtensionEvaluate
-import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ProgramCode
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainLocations
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.InstallGrowth
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtensionEvaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Source closure-code chains used by the top-level compiler. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

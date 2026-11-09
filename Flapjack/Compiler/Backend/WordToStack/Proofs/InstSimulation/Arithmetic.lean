@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Binary
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Shift
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Division
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.LongArithmetic
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Binary
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Shift
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Division
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.LongArithmetic
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.InstSimulation.Arithmetic
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

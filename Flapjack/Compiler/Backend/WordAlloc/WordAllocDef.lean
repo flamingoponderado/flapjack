@@ -1,9 +1,13 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.WordAlloc.SelectRegAlloc
-import Flapjack.Compiler.Backend.WordAlloc.OracleColour
-import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
-import Flapjack.Compiler.Backend.WordAlloc.GetStackOnly
-import Flapjack.Compiler.Backend.WordAlloc.GetForced
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.WordAlloc.SelectRegAlloc
+public import Flapjack.Compiler.Backend.WordAlloc.OracleColour
+public import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
+public import Flapjack.Compiler.Backend.WordAlloc.GetStackOnly
+public import Flapjack.Compiler.Backend.WordAlloc.GetForced
+
+@[expose] public section
 
 /-!
 # word_alloc

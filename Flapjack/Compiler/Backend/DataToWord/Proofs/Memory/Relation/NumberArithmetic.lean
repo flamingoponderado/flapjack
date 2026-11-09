@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberCompare
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberCompare
+
+@[expose] public section
 
 /-! Arithmetic on the immediate integer representation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

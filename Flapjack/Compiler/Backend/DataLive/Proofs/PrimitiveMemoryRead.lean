@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveMemoryAlloc
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveMemoryAlloc
+
+@[expose] public section
 
 /-! Read-only memory primitive simulation for the liveness pass. -/
 namespace Flapjack.Compiler.Backend.DataLive

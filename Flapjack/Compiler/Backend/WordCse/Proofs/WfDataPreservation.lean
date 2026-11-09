@@ -1,15 +1,19 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.WellFormedData
-import Flapjack.Compiler.Backend.WordCse.RegisterData
-import Flapjack.Compiler.Backend.WordCse.Proofs.KnowledgeLemmas
-import Flapjack.Compiler.Backend.WordCse.Proofs.ArithmeticKeys
-import Flapjack.Compiler.Backend.WordCse.FactProducers
-import Flapjack.Compiler.Backend.WordCse.Join
-import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionAccumulator
-import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionInvariant
-import Flapjack.Misc.LookupAny
-import Flapjack.Compiler.Backend.WordCse.CanonicalMove
-import Flapjack.Compiler.Backend.WordCse.CanonicalArith
-import Flapjack.Compiler.Backend.WordCse.Transform
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.WellFormedData
+public import Flapjack.Compiler.Backend.WordCse.RegisterData
+public import Flapjack.Compiler.Backend.WordCse.Proofs.KnowledgeLemmas
+public import Flapjack.Compiler.Backend.WordCse.Proofs.ArithmeticKeys
+public import Flapjack.Compiler.Backend.WordCse.FactProducers
+public import Flapjack.Compiler.Backend.WordCse.Join
+public import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionAccumulator
+public import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionInvariant
+public import Flapjack.Misc.LookupAny
+public import Flapjack.Compiler.Backend.WordCse.CanonicalMove
+public import Flapjack.Compiler.Backend.WordCse.CanonicalArith
+public import Flapjack.Compiler.Backend.WordCse.Transform
+
+@[expose] public section
 
 /-!
 # `word_cseProof`: preservation of the syntactic knowledge invariant

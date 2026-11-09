@@ -1,7 +1,11 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
-import Flapjack.Pancake.Proofs.PanGlobals.MemoryUpdate
-import Flapjack.Pancake.Semantics.PanSem.MemStore32Alt
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
+public import Flapjack.Pancake.Proofs.PanGlobals.MemoryUpdate
+public import Flapjack.Pancake.Semantics.PanSem.MemStore32Alt
+
+@[expose] public section
 
 /-! The Store32 case at pan_globalsProofScript.sml:715-724. The source proof
 uses expression correctness and the successful aligned memory update; no recursive program induction hypothesis is needed. -/

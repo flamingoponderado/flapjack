@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyClock
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyClock
+
+@[expose] public section
 
 /-! Clock changes commute with the complete flat primitive dispatcher. The
 private lemmas establish the result for its component dispatchers. -/

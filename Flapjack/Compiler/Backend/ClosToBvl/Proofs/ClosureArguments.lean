@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Argument accumulation for the closure-to-BVL value relation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -20,7 +24,7 @@ theorem addArgs_append (cl : ClosSem.Value) (argEnv : List ClosSem.Value)
   all_goals subst func
   all_goals simp [addArgs, List.append_assoc]
 
-private instance : Nonempty (Nat × ClosLang.Exp) := ⟨(0, .var .none 0)⟩
+instance closureArgumentsInst1 : Nonempty (Nat × ClosLang.Exp) := ⟨(0, .var .none 0)⟩
 
 /-- The arity of a closure, using HOL's total `EL` for recursive groups. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "get_num_args_def"]

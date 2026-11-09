@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.CallNonTail
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.CallNonTail
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+@[expose] public section
 
 /-! Exception-handler entry for data liveness. -/
 namespace Flapjack.Compiler.Backend.DataLive
