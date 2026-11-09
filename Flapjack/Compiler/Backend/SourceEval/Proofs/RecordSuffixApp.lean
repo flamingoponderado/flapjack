@@ -42,8 +42,12 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
       simp only [argsRun] at run
       cases run
       rcases firstSuffix with ⟨bound', equal⟩ | ⟨short, equal, forward⟩
-      · left; exact ⟨bound', by rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]⟩
-      · right; exact ⟨short, by rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal], forward⟩
+      · left
+        refine ⟨bound', ?_⟩
+        rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+      · right
+        refine ⟨short, ?_, forward⟩
+        rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
     | val values =>
       simp only [argsRun] at run
       cases opClass : getOpClass op with
@@ -54,17 +58,25 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
           simp [app, typeError] at run
           obtain ⟨rfl, rfl⟩ := run
           rcases firstSuffix with ⟨bound', equal⟩ | ⟨short, equal, forward⟩
-          · left; refine ⟨bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+          · left
+            refine ⟨bound', ?_⟩
+            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
             simp [opClass, app, typeError]
-          · right; refine ⟨short, ?_, forward⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+          · right
+            refine ⟨short, ?_, forward⟩
+            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
         | some output =>
           obtain ⟨⟨refs, ffi⟩, result⟩ := output
           simp only [app] at run
           cases run
           rcases firstSuffix with ⟨bound', equal⟩ | ⟨short, equal, forward⟩
-          · left; refine ⟨bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+          · left
+            refine ⟨bound', ?_⟩
+            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
             simp [opClass, app]
-          · right; refine ⟨short, ?_, forward⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+          · right
+            refine ⟨short, ?_, forward⟩
+            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
       | funApp =>
         rw [opClass] at run
         cases app : doOpApp values.reverse with
@@ -72,9 +84,13 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
           simp [app, typeError] at run
           obtain ⟨rfl, rfl⟩ := run
           rcases firstSuffix with ⟨bound', equal⟩ | ⟨short, equal, forward⟩
-          · left; refine ⟨bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+          · left
+            refine ⟨bound', ?_⟩
+            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
             simp [opClass, app, typeError]
-          · right; refine ⟨short, ?_, forward⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+          · right
+            refine ⟨short, ?_, forward⟩
+            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
         | some pair =>
           obtain ⟨callEnv, body⟩ := pair
           simp only [app] at run
@@ -82,9 +98,13 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
           · simp [zero, timeoutError] at run
             obtain ⟨rfl, rfl⟩ := run
             rcases firstSuffix with ⟨bound', equal⟩ | ⟨short, equal, forward⟩
-            · left; refine ⟨bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+            · left
+              refine ⟨bound', ?_⟩
+              rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
               simp [opClass, app, zero, timeoutError]
-            · right; refine ⟨short, ?_, forward⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+            · right
+              refine ⟨short, ?_, forward⟩
+              rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
           · simp only [zero, ↓reduceIte] at run
             have lastRecorded := (evaluate_is_record_forward ci).1 (decClock middle) callEnv [body] s' res
               ⟨run, by simpa [decClock] using firstRecorded.1⟩
@@ -96,11 +116,15 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                   ⟨run, by simpa [decClock] using firstRecorded.1, enough⟩
                 have nonzero : middle.clock - k ≠ 0 := by simp only [decClock] at enough; omega
                 rcases suffix with ⟨bound', equal⟩ | ⟨short, equal, laterForward⟩
-                · left; refine ⟨bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                · left
+                  refine ⟨bound', ?_⟩
+                  rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
                   simp only [opClass, app]
                   simp only [decClock] at equal
                   simpa [decClock, nonzero, Nat.sub_sub, Nat.add_comm] using equal
-                · right; refine ⟨short, ?_, laterForward⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                · right
+                  refine ⟨short, ?_, laterForward⟩
+                  rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
                   simp only [opClass, app]
                   simp only [decClock] at equal
                   simpa [decClock, nonzero, Nat.sub_sub, Nat.add_comm] using equal
@@ -109,7 +133,9 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                 refine ⟨{ middle with clock := middle.clock - k }, ?_, by simpa using forward⟩
                 rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
                 simp [opClass, app, exhausted, timeoutError]
-            · right; refine ⟨short, ?_, recordForward_trans _ _ _ ⟨firstForward, forward⟩⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+            · right
+              refine ⟨short, ?_, recordForward_trans _ _ _ ⟨firstForward, forward⟩⟩
+              rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
       | force =>
         rw [opClass] at run
         cases thunk : destThunk values.reverse middle.refs with
@@ -117,18 +143,26 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
           simp [thunk, typeError] at run
           obtain ⟨rfl, rfl⟩ := run
           rcases firstSuffix with ⟨bound', equal⟩ | ⟨short, equal, forward⟩
-          · left; refine ⟨bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+          · left
+            refine ⟨bound', ?_⟩
+            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
             simp [opClass, thunk, typeError]
-          · right; refine ⟨short, ?_, forward⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+          · right
+            refine ⟨short, ?_, forward⟩
+            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
         | isThunk mode value =>
           cases mode with
           | evaluated =>
             simp [thunk] at run
             obtain ⟨rfl, rfl⟩ := run
             rcases firstSuffix with ⟨bound', equal⟩ | ⟨short, equal, forward⟩
-            · left; refine ⟨bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+            · left
+              refine ⟨bound', ?_⟩
+              rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
               simp [opClass, thunk]
-            · right; refine ⟨short, ?_, forward⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+            · right
+              refine ⟨short, ?_, forward⟩
+              rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
           | notEvaluated =>
             simp only [thunk] at run
             cases app : doOpApp [value, .conv none []] with
@@ -136,9 +170,13 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
               simp [app, typeError] at run
               obtain ⟨rfl, rfl⟩ := run
               rcases firstSuffix with ⟨bound', equal⟩ | ⟨short, equal, forward⟩
-              · left; refine ⟨bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+              · left
+                refine ⟨bound', ?_⟩
+                rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
                 simp [opClass, thunk, app, typeError]
-              · right; refine ⟨short, ?_, forward⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+              · right
+                refine ⟨short, ?_, forward⟩
+                rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
             | some pair =>
               obtain ⟨callEnv, body⟩ := pair
               simp only [app] at run
@@ -146,9 +184,13 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
               · simp [zero, timeoutError] at run
                 obtain ⟨rfl, rfl⟩ := run
                 rcases firstSuffix with ⟨bound', equal⟩ | ⟨short, equal, forward⟩
-                · left; refine ⟨bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+                · left
+                  refine ⟨bound', ?_⟩
+                  rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
                   simp [opClass, thunk, app, zero, timeoutError]
-                · right; refine ⟨short, ?_, forward⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+                · right
+                  refine ⟨short, ?_, forward⟩
+                  rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
               · simp only [zero, ↓reduceIte] at run
                 cases callRun : evaluate (decClock middle) callEnv [body] with
                 | mk after result =>
@@ -166,14 +208,18 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                           ⟨callRun, by simpa [decClock] using firstRecorded.1, enough⟩
                         have nonzero : middle.clock - k ≠ 0 := by simp only [decClock] at enough; omega
                         rcases suffix with ⟨bound', equal⟩ | ⟨short, equal, laterForward⟩
-                        · left; refine ⟨bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                        · left
+                          refine ⟨bound', ?_⟩
+                          rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
                           simp only [opClass, thunk, app, nonzero, ↓reduceIte]
                           simp only [decClock] at equal
                           have equal' : evaluate (decClock { middle with clock := middle.clock - k }) callEnv [body] =
                               ({ s' with clock := s'.clock - k }, .err error) := by
                             simpa [decClock, Nat.sub_sub, Nat.add_comm] using equal
                           rw [equal']
-                        · right; refine ⟨short, ?_, laterForward⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                        · right
+                          refine ⟨short, ?_, laterForward⟩
+                          rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
                           simp only [opClass, thunk, app, nonzero, ↓reduceIte]
                           simp only [decClock] at equal
                           have equal' : evaluate (decClock { middle with clock := middle.clock - k }) callEnv [body] =
@@ -185,7 +231,9 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                         refine ⟨{ middle with clock := middle.clock - k }, ?_, by simpa using forward⟩
                         rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
                         simp [opClass, thunk, app, exhausted, timeoutError]
-                    · right; refine ⟨short, ?_, recordForward_trans _ _ _ ⟨firstForward, forward⟩⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                    · right
+                      refine ⟨short, ?_, recordForward_trans _ _ _ ⟨firstForward, forward⟩⟩
+                      rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
                   | val newValues =>
                     simp only [callRun] at run
                     cases updated : updateThunk values.reverse after.refs newValues <;>
@@ -199,14 +247,18 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                             ⟨callRun, by simpa [decClock] using firstRecorded.1, enough⟩
                           have nonzero : middle.clock - k ≠ 0 := by simp only [decClock] at enough; omega
                           rcases suffix with ⟨bound', equal⟩ | ⟨short, equal, laterForward⟩
-                          · left; refine ⟨bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                          · left
+                            refine ⟨bound', ?_⟩
+                            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
                             simp only [opClass, thunk, app, nonzero, ↓reduceIte]
                             have equal' : evaluate (decClock { middle with clock := middle.clock - k }) callEnv [body] =
                                 ({ after with clock := after.clock - k }, .val newValues) := by
                               simpa [decClock, Nat.sub_sub, Nat.add_comm] using equal
                             rw [equal']
                             simp [updated, typeError]
-                          · right; refine ⟨short, ?_, laterForward⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                          · right
+                            refine ⟨short, ?_, laterForward⟩
+                            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
                             simp only [opClass, thunk, app, nonzero, ↓reduceIte]
                             have equal' : evaluate (decClock { middle with clock := middle.clock - k }) callEnv [body] =
                                 (short, .err (.abort .timeoutError)) := by
@@ -217,7 +269,9 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                           refine ⟨{ middle with clock := middle.clock - k }, ?_, by simpa using forward⟩
                           rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
                           simp [opClass, thunk, app, exhausted, timeoutError]
-                      · right; refine ⟨short, ?_, recordForward_trans _ _ _ ⟨firstForward, forward⟩⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                      · right
+                        refine ⟨short, ?_, recordForward_trans _ _ _ ⟨firstForward, forward⟩⟩
+                        rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
       | evalOp =>
         rw [opClass, fixClockDoEvalRes] at run
         cases decoded : doEval values.reverse middle.evalState with
@@ -225,9 +279,15 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
           simp [doEvalRes, decoded] at run
           obtain ⟨rfl, rfl⟩ := run
           rcases firstSuffix with ⟨bound', equal⟩ | ⟨short, equal, forward⟩
-          · left; refine ⟨bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]; dsimp only; rw [opClass, fixClockDoEvalRes]
+          · left
+            refine ⟨bound', ?_⟩
+            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+            dsimp only
+            rw [opClass, fixClockDoEvalRes]
             simp [doEvalRes, decoded]
-          · right; refine ⟨short, ?_, forward⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+          · right
+            refine ⟨short, ?_, forward⟩
+            rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
         | some data =>
           obtain ⟨evalEnv, decs, evalState⟩ := data
           simp only [doEvalRes, decoded] at run
@@ -237,9 +297,15 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
           · simp [zero, timeoutError] at run
             obtain ⟨rfl, rfl⟩ := run
             rcases firstSuffix with ⟨bound', equal⟩ | ⟨short, equal, forward⟩
-            · left; refine ⟨by simpa [zero] using bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]; dsimp only; rw [opClass, fixClockDoEvalRes]
+            · left
+              refine ⟨by simpa [zero] using bound', ?_⟩
+              rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+              dsimp only
+              rw [opClass, fixClockDoEvalRes]
               simp [doEvalRes, decoded, zero, timeoutError]
-            · right; refine ⟨short, ?_, recordForward_trans _ _ _ ⟨forward, decodedFacts.2.1⟩⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
+            · right
+              refine ⟨short, ?_, recordForward_trans _ _ _ ⟨forward, decodedFacts.2.1⟩⟩
+              rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, equal]
           · simp only [zero, ↓reduceIte, (fixClockEvaluate _ _ [] _).2] at run
             have decIH := evalIH middle (.val values) values { middle with evalState := evalState }
               (.val (evalEnv, decs)) (evalEnv, decs) evalEnv decs
@@ -263,13 +329,21 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                         ⟨decRun, by simpa [decClock] using decodedFacts.1, enough⟩
                       have nonzero : middle.clock - k ≠ 0 := by simp only [decClock] at enough; omega
                       rcases suffix with ⟨bound', equal⟩ | ⟨short, equal, laterForward⟩
-                      · left; refine ⟨bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]; dsimp only; rw [opClass, fixClockDoEvalRes]
+                      · left
+                        refine ⟨bound', ?_⟩
+                        rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                        dsimp only
+                        rw [opClass, fixClockDoEvalRes]
                         simp only [doEvalRes, decoded, nonzero, ↓reduceIte, (fixClockEvaluate _ _ [] _).2]
                         have equal' : evaluateDecs (decClock { middle with clock := middle.clock - k, evalState := evalState }) evalEnv decs =
                             ({ s' with clock := s'.clock - k }, .err (.abort error)) := by
                           simpa [decClock, Nat.sub_sub, Nat.add_comm] using equal
                         rw [equal']
-                      · right; refine ⟨short, ?_, laterForward⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]; dsimp only; rw [opClass, fixClockDoEvalRes]
+                      · right
+                        refine ⟨short, ?_, laterForward⟩
+                        rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                        dsimp only
+                        rw [opClass, fixClockDoEvalRes]
                         simp only [doEvalRes, decoded, nonzero, ↓reduceIte, (fixClockEvaluate _ _ [] _).2]
                         have equal' : evaluateDecs (decClock { middle with clock := middle.clock - k, evalState := evalState }) evalEnv decs =
                             (short, .err (.abort .timeoutError)) := by
@@ -282,7 +356,9 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                       dsimp only
                       rw [opClass, fixClockDoEvalRes]
                       simp [doEvalRes, decoded, exhausted, timeoutError]
-                  · right; refine ⟨short, ?_, recordForward_trans _ _ _ ⟨firstForward, forwardMiddle⟩⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                  · right
+                    refine ⟨short, ?_, recordForward_trans _ _ _ ⟨firstForward, forwardMiddle⟩⟩
+                    rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
                 | raise value =>
                   simp only [decRun] at run
                   cases run
@@ -297,13 +373,21 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                         ⟨decRun, by simpa [decClock] using decodedFacts.1, enough⟩
                       have nonzero : middle.clock - k ≠ 0 := by simp only [decClock] at enough; omega
                       rcases suffix with ⟨bound', equal⟩ | ⟨short, equal, laterForward⟩
-                      · left; refine ⟨bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]; dsimp only; rw [opClass, fixClockDoEvalRes]
+                      · left
+                        refine ⟨bound', ?_⟩
+                        rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                        dsimp only
+                        rw [opClass, fixClockDoEvalRes]
                         simp only [doEvalRes, decoded, nonzero, ↓reduceIte, (fixClockEvaluate _ _ [] _).2]
                         have equal' : evaluateDecs (decClock { middle with clock := middle.clock - k, evalState := evalState }) evalEnv decs =
                             ({ after with clock := after.clock - k }, .err (.raise value)) := by
                           simpa [decClock, Nat.sub_sub, Nat.add_comm] using equal
                         rw [equal']
-                      · right; refine ⟨short, ?_, resetForward _ laterForward⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]; dsimp only; rw [opClass, fixClockDoEvalRes]
+                      · right
+                        refine ⟨short, ?_, resetForward _ laterForward⟩
+                        rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                        dsimp only
+                        rw [opClass, fixClockDoEvalRes]
                         simp only [doEvalRes, decoded, nonzero, ↓reduceIte, (fixClockEvaluate _ _ [] _).2]
                         have equal' : evaluateDecs (decClock { middle with clock := middle.clock - k, evalState := evalState }) evalEnv decs =
                             (short, .err (.abort .timeoutError)) := by
@@ -316,7 +400,9 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                       dsimp only
                       rw [opClass, fixClockDoEvalRes]
                       simp [doEvalRes, decoded, exhausted, timeoutError]
-                  · right; refine ⟨short, ?_, resetForward _ (recordForward_trans _ _ _ ⟨firstForward, forwardMiddle⟩)⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                  · right
+                    refine ⟨short, ?_, resetForward _ (recordForward_trans _ _ _ ⟨firstForward, forwardMiddle⟩)⟩
+                    rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
               | val newEnv =>
                 simp only [decRun] at run
                 cases declared : declareEnv after.evalState (extendDecEnv newEnv evalEnv) with
@@ -331,14 +417,22 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                         ⟨decRun, by simpa [decClock] using decodedFacts.1, enough⟩
                       have nonzero : middle.clock - k ≠ 0 := by simp only [decClock] at enough; omega
                       rcases suffix with ⟨bound', equal⟩ | ⟨short, equal, laterForward⟩
-                      · left; refine ⟨bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]; dsimp only; rw [opClass, fixClockDoEvalRes]
+                      · left
+                        refine ⟨bound', ?_⟩
+                        rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                        dsimp only
+                        rw [opClass, fixClockDoEvalRes]
                         simp only [doEvalRes, decoded, nonzero, ↓reduceIte, (fixClockEvaluate _ _ [] _).2]
                         have equal' : evaluateDecs (decClock { middle with clock := middle.clock - k, evalState := evalState }) evalEnv decs =
                             ({ after with clock := after.clock - k }, .val newEnv) := by
                           simpa [decClock, Nat.sub_sub, Nat.add_comm] using equal
                         rw [equal']
                         simp [declared, typeError]
-                      · right; refine ⟨short, ?_, laterForward⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]; dsimp only; rw [opClass, fixClockDoEvalRes]
+                      · right
+                        refine ⟨short, ?_, laterForward⟩
+                        rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                        dsimp only
+                        rw [opClass, fixClockDoEvalRes]
                         simp only [doEvalRes, decoded, nonzero, ↓reduceIte, (fixClockEvaluate _ _ [] _).2]
                         have equal' : evaluateDecs (decClock { middle with clock := middle.clock - k, evalState := evalState }) evalEnv decs =
                             (short, .err (.abort .timeoutError)) := by
@@ -351,7 +445,9 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                       dsimp only
                       rw [opClass, fixClockDoEvalRes]
                       simp [doEvalRes, decoded, exhausted, timeoutError]
-                  · right; refine ⟨short, ?_, recordForward_trans _ _ _ ⟨firstForward, forwardMiddle⟩⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                  · right
+                    refine ⟨short, ?_, recordForward_trans _ _ _ ⟨firstForward, forwardMiddle⟩⟩
+                    rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
                 | some declaration =>
                   obtain ⟨value, finalState⟩ := declaration
                   simp only [declared] at run
@@ -370,14 +466,22 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                         ⟨decRun, by simpa [decClock] using decodedFacts.1, enough⟩
                       have nonzero : middle.clock - k ≠ 0 := by simp only [decClock] at enough; omega
                       rcases suffix with ⟨bound', equal⟩ | ⟨short, equal, laterForward⟩
-                      · left; refine ⟨bound', ?_⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]; dsimp only; rw [opClass, fixClockDoEvalRes]
+                      · left
+                        refine ⟨bound', ?_⟩
+                        rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                        dsimp only
+                        rw [opClass, fixClockDoEvalRes]
                         simp only [doEvalRes, decoded, nonzero, ↓reduceIte, (fixClockEvaluate _ _ [] _).2]
                         have equal' : evaluateDecs (decClock { middle with clock := middle.clock - k, evalState := evalState }) evalEnv decs =
                             ({ after with clock := after.clock - k }, .val newEnv) := by
                           simpa [decClock, Nat.sub_sub, Nat.add_comm] using equal
                         rw [equal']
                         simp [declared]
-                      · right; refine ⟨short, ?_, finalForward _ laterForward⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]; dsimp only; rw [opClass, fixClockDoEvalRes]
+                      · right
+                        refine ⟨short, ?_, finalForward _ laterForward⟩
+                        rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                        dsimp only
+                        rw [opClass, fixClockDoEvalRes]
                         simp only [doEvalRes, decoded, nonzero, ↓reduceIte, (fixClockEvaluate _ _ [] _).2]
                         have equal' : evaluateDecs (decClock { middle with clock := middle.clock - k, evalState := evalState }) evalEnv decs =
                             (short, .err (.abort .timeoutError)) := by
@@ -390,5 +494,7 @@ theorem evaluateRecordSuffix_App {Config F : Type} (ci : CompilerInstance Config
                       dsimp only
                       rw [opClass, fixClockDoEvalRes]
                       simp [doEvalRes, decoded, exhausted, timeoutError]
-                  · right; refine ⟨short, ?_, finalForward _ (recordForward_trans _ _ _ ⟨firstForward, forwardMiddle⟩)⟩; rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
+                  · right
+                    refine ⟨short, ?_, finalForward _ (recordForward_trans _ _ _ ⟨firstForward, forwardMiddle⟩)⟩
+                    rw [evaluate, (fixClockEvaluate _ _ args.reverse []).1, firstEqual]
 end Flapjack.Compiler.Backend.SourceEval.Proofs
