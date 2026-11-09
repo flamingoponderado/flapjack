@@ -108,36 +108,28 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
     ∃ (_ref1 : β) (refs' : Store Value) (r' : Result Value Value) (es : EvalOracleState),
       es = oracleState t.evalState ∧ doApp (t.refs, t.ffi) op ys.reverse = some ((refs', ffi), r') ∧
       List.Forall₂ (storeValueRel (ValueRel es)) refs refs' ∧ resultRel (ValueRel es) (ValueRel es) r r' := by
+  obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
+  subst t
+  simp only [oracleState] at values ⊢
+  have reversed := (List.forall₂_reverse_iff).2 values
+  generalize hx : xs.reverse = xsr at run reversed
+  generalize hy : ys.reverse = ysr at reversed ⊢
   cases op with
   | arith action typ =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
     obtain ⟨refEq, ffiEq, targetRun, resultRel⟩ := arithmeticApp_transport oracle (s.refs, s.ffi)
-      (targetRefs, s.ffi) action typ xs.reverse ys.reverse refs ffi r run reversed
+      (targetRefs, s.ffi) action typ xsr ysr refs ffi r run reversed
     simp only at refEq ffiEq
     subst refs
     subst ffi
     exact ⟨Classical.choice inferInstance, targetRefs, r, oracle, rfl, targetRun, stores, resultRel⟩
   | fromTo sourceType targetType =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
     obtain ⟨refEq, ffiEq, targetRun, resultRel⟩ := conversionApp_transport oracle (s.refs, s.ffi)
-      (targetRefs, s.ffi) sourceType targetType xs.reverse ys.reverse refs ffi r run reversed
+      (targetRefs, s.ffi) sourceType targetType xsr ysr refs ffi r run reversed
     simp only at refEq ffiEq
     subst refs
     subst ffi
     exact ⟨Classical.choice inferInstance, targetRefs, r, oracle, rfl, targetRun, stores, resultRel⟩
   | shift size shift amount =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => cases size <;> simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -160,12 +152,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             · exact ValueRel.lit _
         | _ => cases size <;> simp [doApp, doAppNumericCore, doAppBasic] at run
   | equality =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -187,12 +173,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             · simp [doApp, doAppNumericCore, doAppBasic, targetCompare]
             · cases bit <;> exact .con .nil
   | test test typ =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp] at run
     | @cons x x' rest rest' first tail =>
@@ -213,14 +193,8 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             · simp [targetRun]
             · cases bit <;> exact .con .nil
   | opapp =>
-    simp [doApp, doAppNumericCore, doAppBasic] at premises
+    simp [doApp, doAppNumericCore, doAppBasic] at run
   | opassign =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -245,12 +219,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
               · exact .con .nil
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | opref =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | cons h tail =>
@@ -264,12 +232,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
         · simp [resultRel, List.Forall₂.length_eq stores]
           exact .loc true _
   | opderef =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -297,12 +259,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             | _ => simp [found] at run
         | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | aw8alloc =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons size size' rest rest' head tail =>
@@ -343,12 +299,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | aw8sub =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -391,12 +341,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | aw8length =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -427,12 +371,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             | _ => simp [found] at run
         | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | aw8update =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -485,12 +423,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
               | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | copyStrStr =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -538,12 +470,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
               | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | copyStrAw8 =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons a a' rest rest' first tail =>
@@ -623,12 +549,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                   | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
                 | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | copyAw8Str =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -685,12 +605,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                 | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | copyAw8Aw8 =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons a a' rest rest' first tail =>
@@ -779,12 +693,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                     | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
                 | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | xorAw8StrUnsafe =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -829,12 +737,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | implode =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -852,12 +754,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
           · simp [decodedTarget]
           · exact ValueRel.lit _
   | explode =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -880,12 +776,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
         | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | strsub =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -918,12 +808,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | strlen =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -943,12 +827,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
         | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | strcat =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -972,12 +850,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             · simp [decodedTarget, targetStrings]
             · exact ValueRel.lit _
   | vfromList =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -997,12 +869,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
           · simp [decodedTarget]
           · exact ValueRel.vector relatedParts
   | vsub =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -1031,12 +897,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | vlength =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -1053,12 +913,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             exact ValueRel.lit _
         | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | aalloc =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons size size' rest rest' head tail =>
@@ -1094,12 +948,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | aallocEmpty =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -1124,10 +972,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                 exact .loc true _
         | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | aallocFixed =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
     simp only [doApp, doAppNumericCore, doAppBasic, storeAlloc] at run ⊢
     cases run
     refine ⟨Classical.choice inferInstance, _, _, oracle, rfl, rfl, ?_, ?_⟩
@@ -1135,12 +979,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
     · simp [resultRel, List.Forall₂.length_eq stores]
       exact .loc true _
   | asub =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -1180,12 +1018,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | alength =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -1215,12 +1047,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             | _ => simp [found] at run
         | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | aupdate =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -1265,12 +1091,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
               | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | vsubUnsafe =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -1298,12 +1118,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | asubUnsafe =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -1343,12 +1157,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | aupdateUnsafe =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -1393,12 +1201,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
               | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | aw8subUnsafe =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -1441,12 +1243,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | aw8updateUnsafe =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -1499,12 +1295,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
               | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | thunkOp thunk =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases thunk with
     | allocThunk mode =>
       cases reversed with
@@ -1564,12 +1354,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
     | forceThunk =>
       cases xsr <;> simp [doApp, doAppNumericCore, doAppBasic, thunkOp] at run
   | listAppend =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -1595,12 +1379,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
               · simp [first', second']
               · exact (vRelListToValue oracle _ _).mpr (List.rel_append leftRel rightRel)
   | configGC =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -1629,12 +1407,6 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | ffi name =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
@@ -1685,14 +1457,8 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
   | eval =>
-    simp [doApp, doAppNumericCore, doAppBasic] at premises
+    simp [doApp, doAppNumericCore, doAppBasic] at run
   | envId =>
-    obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
-    subst t
-    simp only [oracleState] at values ⊢
-    have reversed := (List.forall₂_reverse_iff).2 values
-    generalize hx : xs.reverse = xsr at run reversed
-    generalize hy : ys.reverse = ysr at reversed ⊢
     cases reversed with
     | nil => simp [doApp, doAppNumericCore, doAppBasic] at run
     | @cons source target rest rest' head tail =>
