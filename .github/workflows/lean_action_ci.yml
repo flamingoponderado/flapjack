@@ -129,7 +129,8 @@ jobs:
           python3 scripts/check_hol_theorem_map.py
 
   # Read-only native-model gates. The RISC-V guards read original sources from
-  # the initialized CakeML submodule; the L3 gates read committed fixtures.
+  # the CakeML submodule and several L3 probes read the pinned HOL step theory,
+  # so both submodules are initialized here.
   native:
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: first-large
@@ -137,8 +138,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Check out pinned CakeML submodule
-        run: git submodule update --init --depth 1 -- cakeml
+      - name: Check out pinned CakeML and HOL submodules
+        run: git submodule update --init --depth 1 -- cakeml HOL
 
       - name: Check native RISC-V encoder regression guards
         run: python3 -m unittest discover -s scripts/tests -p 'test_riscv_*.py'
