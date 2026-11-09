@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.HolRef
+public import Mathlib.Data.Nat.Find
 
 @[expose] public section
 
@@ -810,6 +811,533 @@ list, not totality of prefix order on arbitrary lazy lists.
 theorem prefixesLprefixTotalHOL : ∀ c a b : HolLList α,
     lprefix a c ∧ lprefix b c → lprefix a b ∨ lprefix b a :=
   fun _ _ _ h => lprefix_total_of_common h.1 h.2
+
+/-! ## `LDROP`, `LAPPEND` and `LFLATTEN`
+
+Source: `hol4/src/coalgebras/llistScript.sml`. HOL defines `LAPPEND` and
+`LFLATTEN` by `new_specification` over the coinductive `llist`; here they are
+constructed from the representation function, and the specification equations
+are proved as theorems. -/
+
+open Classical in
+/-- The least index at which a lazy list's representation is `NONE`, if any.
+    Flapjack infrastructure: HOL specifies `LAPPEND` coinductively, not by this
+    scan. -/
+noncomputable def firstNone (ll : HolLList α) : Option Nat :=
+  if h : ∃ k, ll.rep k = none then some (Nat.find h) else none
+
+theorem firstNone_spec {ll : HolLList α} {k : Nat} (h : firstNone ll = some k) :
+    ll.rep k = none ∧ ∀ m, m < k → ll.rep m ≠ none := by
+  unfold firstNone at h
+  split at h
+  · rename_i hex
+    injection h with hk
+    subst hk
+    exact ⟨Nat.find_spec hex, fun m hm => Nat.find_min hex hm⟩
+  · exact absurd h (by simp)
+
+theorem firstNone_none {ll : HolLList α} (h : firstNone ll = none) :
+    ∀ k, ll.rep k ≠ none := by
+  unfold firstNone at h
+  split at h
+  · simp at h
+  · rename_i hno
+    exact fun k hk => hno ⟨k, hk⟩
+
+theorem firstNone_eq_some_of_rep {ll : HolLList α} {k : Nat}
+    (hk : ll.rep k = none) (hmin : ∀ m, m < k → ll.rep m ≠ none) :
+    firstNone ll = some k := by
+  have hex : ∃ j, ll.rep j = none := ⟨k, hk⟩
+  unfold firstNone
+  rw [dif_pos hex]
+  congr 1
+  exact (Nat.find_eq_iff hex).mpr ⟨hk, hmin⟩
+
+theorem firstNone_eq_none_of_rep {ll : HolLList α} (h : ∀ k, ll.rep k ≠ none) :
+    firstNone ll = none := by
+  unfold firstNone
+  rw [dif_neg]
+  · intro hex
+    obtain ⟨k, hk⟩ := hex
+    exact h k hk
+
+theorem firstNone_lnil : firstNone (lnil : HolLList α) = some 0 := by
+  apply firstNone_eq_some_of_rep (k := 0)
+  · rfl
+  · intro m hm
+    omega
+
+theorem firstNone_lcons (h : α) (t : HolLList α) :
+    firstNone (lcons h t) = (firstNone t).map (fun k => k + 1) := by
+  cases ht : firstNone t with
+  | none =>
+      have hno := firstNone_none ht
+      have hall : ∀ k, (lcons h t).rep k ≠ none := by
+        intro k
+        cases k with
+        | zero => simp [lcons]
+        | succ j => simpa [lcons] using hno j
+      rw [firstNone_eq_none_of_rep hall]
+      rfl
+  | some k =>
+      obtain ⟨hk, hmin⟩ := firstNone_spec ht
+      have hk1 : (lcons h t).rep (k + 1) = none := by
+        simpa [lcons] using hk
+      have hmin1 : ∀ m, m < k + 1 → (lcons h t).rep m ≠ none := by
+        intro m hm
+        cases m with
+        | zero => simp [lcons]
+        | succ j =>
+            have hj : j < k := by omega
+            simpa [lcons] using hmin j hj
+      rw [firstNone_eq_some_of_rep hk1 hmin1]
+      rfl
+
+/-- The representation of `LAPPEND l1 l2`: the elements of `l1` up to its first
+    `NONE`, then the elements of `l2`. Flapjack infrastructure; the source
+    equations are proved below as `lappendHOL_spec`. -/
+noncomputable def lappendRep (l1 l2 : HolLList α) : Nat → Option α :=
+  fun n =>
+    match firstNone l1 with
+    | some k => if n < k then l1.rep n else l2.rep (n - k)
+    | none => l1.rep n
+
+theorem lappendRep_ok (l1 l2 : HolLList α) : HolLrepOk (lappendRep l1 l2) := by
+  intro n hn
+  cases hf : firstNone l1 with
+  | none =>
+      have h1 : lappendRep l1 l2 n = l1.rep n := by simp [lappendRep, hf]
+      have h2 : lappendRep l1 l2 (n + 1) = l1.rep (n + 1) := by simp [lappendRep, hf]
+      rw [h2] at hn
+      rw [h1]
+      exact l1.ok n hn
+  | some k =>
+      obtain ⟨hk, hmin⟩ := firstNone_spec hf
+      have h2 : lappendRep l1 l2 (n + 1) =
+          if n + 1 < k then l1.rep (n + 1) else l2.rep (n + 1 - k) := by
+        simp [lappendRep, hf]
+      have h1 : lappendRep l1 l2 n =
+          if n < k then l1.rep n else l2.rep (n - k) := by
+        simp [lappendRep, hf]
+      rw [h2] at hn
+      rw [h1]
+      by_cases hlt : n + 1 < k
+      · rw [if_pos hlt] at hn
+        rw [if_pos (by omega)]
+        exact l1.ok n hn
+      · rw [if_neg hlt] at hn
+        by_cases hnk : n < k
+        · rw [if_pos hnk]
+          have hk1 : n = k - 1 := by omega
+          rw [hk1]
+          exact Option.isSome_iff_ne_none.mpr (hmin (k - 1) (by omega))
+        · rw [if_neg hnk]
+          have heq : n - k + 1 = n + 1 - k := by omega
+          rw [← heq] at hn
+          exact l2.ok (n - k) hn
+
+/-- `LAPPEND` over the representation carrier. -/
+noncomputable def lappendHOL (l1 l2 : HolLList α) : HolLList α :=
+  ⟨lappendRep l1 l2, lappendRep_ok l1 l2⟩
+
+theorem lappendRep_lcons_zero (h : α) (t x : HolLList α) :
+    lappendRep (lcons h t) x 0 = some h := by
+  cases ht : firstNone t with
+  | none =>
+      have hf : firstNone (lcons h t) = none := by rw [firstNone_lcons, ht]; rfl
+      have hlap : lappendRep (lcons h t) x 0 = (lcons h t).rep 0 := by
+        simp [lappendRep, hf]
+      have hrep : (lcons h t).rep 0 = some h := by simp [lcons]
+      rw [hlap, hrep]
+  | some k =>
+      have hf : firstNone (lcons h t) = some (k + 1) := by rw [firstNone_lcons, ht]; rfl
+      have hlap : lappendRep (lcons h t) x 0 = (lcons h t).rep 0 := by
+        simp [lappendRep, hf]
+      have hrep : (lcons h t).rep 0 = some h := by simp [lcons]
+      rw [hlap, hrep]
+
+theorem lappendRep_lcons_succ (h : α) (t x : HolLList α) (n : Nat) :
+    lappendRep (lcons h t) x (n + 1) = lappendRep t x n := by
+  cases ht : firstNone t with
+  | none =>
+      have hf : firstNone (lcons h t) = none := by rw [firstNone_lcons, ht]; rfl
+      have h2 : lappendRep (lcons h t) x (n + 1) = (lcons h t).rep (n + 1) := by
+        simp [lappendRep, hf]
+      have h1 : lappendRep t x n = t.rep n := by simp [lappendRep, ht]
+      have hrep : (lcons h t).rep (n + 1) = t.rep n := by simp [lcons]
+      rw [h2, h1, hrep]
+  | some k =>
+      have hf : firstNone (lcons h t) = some (k + 1) := by rw [firstNone_lcons, ht]; rfl
+      have h2 : lappendRep (lcons h t) x (n + 1) =
+          if n + 1 < k + 1 then (lcons h t).rep (n + 1) else x.rep (n + 1 - (k + 1)) := by
+        simp [lappendRep, hf]
+      have h1 : lappendRep t x n =
+          if n < k then t.rep n else x.rep (n - k) := by
+        simp [lappendRep, ht]
+      rw [h2, h1]
+      by_cases hn : n < k
+      · rw [if_pos (by omega), if_pos hn]
+        simp [lcons]
+      · rw [if_neg (by omega), if_neg hn]
+        congr 1
+        omega
+
+/-- HOL `LAPPEND` (`llistScript.sml:781-786`, `new_specification`): the two
+source equations for append. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LAPPEND"]
+theorem lappendHOL_spec :
+    (∀ x : HolLList α, lappendHOL lnil x = x) ∧
+      (∀ (h : α) (t x : HolLList α),
+        lappendHOL (lcons h t) x = lcons h (lappendHOL t x)) := by
+  constructor
+  · intro x
+    apply ext_of_rep
+    intro n
+    have h1 : lappendRep (lnil : HolLList α) x n =
+        if n < 0 then (lnil : HolLList α).rep n else x.rep (n - 0) := by
+      simp [lappendRep, firstNone_lnil]
+    simp only [lappendHOL]
+    rw [h1]
+    simp
+  · intro h t x
+    apply ext_of_rep
+    intro n
+    cases n with
+    | zero =>
+        simp only [lappendHOL]
+        rw [lappendRep_lcons_zero]
+        simp [lcons]
+    | succ n =>
+        simp only [lappendHOL]
+        rw [lappendRep_lcons_succ]
+        simp [lcons]
+
+/-- HOL `LAPPEND_NIL_2ND` (`llistScript.sml:873-874`): appending nothing on the
+right is the identity. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LAPPEND_NIL_2ND"]
+theorem lappendHOL_nil_2nd : ∀ ll : HolLList α, lappendHOL ll lnil = ll := by
+  intro ll
+  apply ext_of_rep
+  intro n
+  cases hf : firstNone ll with
+  | none =>
+      have h : lappendRep ll lnil n = ll.rep n := by simp [lappendRep, hf]
+      simpa [lappendHOL] using h
+  | some k =>
+      obtain ⟨hk, hmin⟩ := firstNone_spec hf
+      have h : lappendRep ll lnil n =
+          if n < k then ll.rep n else lnil.rep (n - k) := by
+        simp [lappendRep, hf]
+      simp only [lappendHOL]
+      rw [h]
+      by_cases hn : n < k
+      · rw [if_pos hn]
+      · rw [if_neg hn]
+        have hnone : ll.rep n = none := rep_none_of_le ll hk (by omega)
+        simp [lnil, hnone]
+
+/-- HOL `LAPPEND_EQ_LNIL` (`llistScript.sml:836-837`): append is empty exactly
+when both operands are. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LAPPEND_EQ_LNIL"]
+theorem lappendHOL_eq_lnil (l1 l2 : HolLList α) :
+    (lappendHOL l1 l2 = lnil) ↔ (l1 = lnil ∧ l2 = lnil) := by
+  constructor
+  · intro h
+    have hall : ∀ n, lappendRep l1 l2 n = none := by
+      intro n
+      have : (lappendHOL l1 l2).rep n = none := by rw [h]; rfl
+      simpa [lappendHOL] using this
+    have h1 : l1 = lnil := by
+      apply eq_lnil_of_rep_none
+      intro n
+      by_contra hne
+      cases hf : firstNone l1 with
+      | none =>
+          have hthis : lappendRep l1 l2 n = l1.rep n := by simp [lappendRep, hf]
+          have hn_none : lappendRep l1 l2 n = none := hall n
+          rw [hthis] at hn_none
+          exact hne hn_none
+      | some k =>
+          obtain ⟨hk, hmin⟩ := firstNone_spec hf
+          by_cases hn : n < k
+          · have hthis : lappendRep l1 l2 n = l1.rep n := by simp [lappendRep, hf, hn]
+            have hn_none : lappendRep l1 l2 n = none := hall n
+            rw [hthis] at hn_none
+            exact hne hn_none
+          · have hnone : l1.rep n = none := rep_none_of_le l1 hk (by omega)
+            exact hne hnone
+    subst h1
+    exact ⟨rfl, (lappendHOL_spec.1 l2).symm.trans h⟩
+  · rintro ⟨rfl, rfl⟩
+    exact lappendHOL_spec.1 lnil
+
+/-- HOL `LDROP` (`llistScript.sml:1275-1277`): drop `n` elements. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LDROP_def"]
+def ldropHOL : Nat → HolLList α → Option (HolLList α)
+  | 0, ll => some ll
+  | n + 1, ll => (ll.ltl.map (fun t => ldropHOL n t)).join
+
+theorem ldropHOL_succ (n : Nat) (ll : HolLList α) :
+    ldropHOL (n + 1) ll = (ll.ltl.map (fun t => ldropHOL n t)).join := rfl
+
+theorem ldropHOL_succ_lcons (n : Nat) (h : α) (t : HolLList α) :
+    ldropHOL (n + 1) (lcons h t) = ldropHOL n t := by
+  rw [ldropHOL_succ, ltl_lcons]
+  rfl
+
+theorem ldropHOL_one_lcons {γ : Type} (inner : γ) (rest : HolLList γ) :
+    ldropHOL 1 (lcons inner rest) = some rest := by
+  have h1 : ldropHOL 1 (lcons inner rest) = ldropHOL (0 + 1) (lcons inner rest) := rfl
+  rw [h1, ldropHOL_succ_lcons, show ldropHOL 0 rest = some rest from rfl]
+
+open Classical in
+/-- The index of the first nonempty member of a lazy list of lazy lists, if
+    any. Flapjack infrastructure: HOL defines `LFLATTEN` coinductively. -/
+noncomputable def firstNonempty (ll : HolLList (HolLList α)) : Option Nat :=
+  if h : ∃ k, ∃ inner : HolLList α, ll.rep k = some inner ∧ inner.rep 0 ≠ none then
+    some (Nat.find h)
+  else none
+
+theorem firstNonempty_spec {ll : HolLList (HolLList α)} {k : Nat}
+    (h : firstNonempty ll = some k) :
+    (∃ inner : HolLList α, ll.rep k = some inner ∧ inner.rep 0 ≠ none) ∧
+      ∀ m, m < k → ¬ ∃ inner : HolLList α, ll.rep m = some inner ∧ inner.rep 0 ≠ none := by
+  unfold firstNonempty at h
+  split at h
+  · rename_i hex
+    injection h with hk
+    subst hk
+    exact ⟨Nat.find_spec hex, fun m hm => Nat.find_min hex hm⟩
+  · exact absurd h (by simp)
+
+theorem firstNonempty_none {ll : HolLList (HolLList α)} (h : firstNonempty ll = none) :
+    ∀ (k : Nat) (inner : HolLList α), ll.rep k = some inner → inner.rep 0 = none := by
+  intro k inner hk
+  by_contra hne
+  have hex : ∃ j, ∃ inner : HolLList α, ll.rep j = some inner ∧ inner.rep 0 ≠ none :=
+    ⟨k, inner, hk, hne⟩
+  have hsome : firstNonempty ll = some (Nat.find hex) := by
+    unfold firstNonempty
+    rw [dif_pos hex]
+  rw [hsome] at h
+  exact Option.some_ne_none _ h
+
+theorem firstNonempty_eq_some_of_rep {ll : HolLList (HolLList α)} {k : Nat}
+    (hk : ∃ inner : HolLList α, ll.rep k = some inner ∧ inner.rep 0 ≠ none)
+    (hmin : ∀ m, m < k → ¬ ∃ inner : HolLList α, ll.rep m = some inner ∧ inner.rep 0 ≠ none) :
+    firstNonempty ll = some k := by
+  have hex : ∃ j, ∃ inner : HolLList α, ll.rep j = some inner ∧ inner.rep 0 ≠ none :=
+    ⟨k, hk⟩
+  unfold firstNonempty
+  rw [dif_pos hex]
+  congr 1
+  exact (Nat.find_eq_iff hex).mpr ⟨hk, hmin⟩
+
+theorem firstNonempty_eq_none_of {ll : HolLList (HolLList α)}
+    (h : ∀ (k : Nat) (inner : HolLList α), ll.rep k = some inner → inner.rep 0 = none) :
+    firstNonempty ll = none := by
+  unfold firstNonempty
+  rw [dif_neg]
+  · intro hex
+    obtain ⟨k, inner, hk, hne⟩ := hex
+    exact hne (h k inner hk)
+
+theorem firstNonempty_lnil : firstNonempty (lnil : HolLList (HolLList α)) = none :=
+  firstNonempty_eq_none_of (fun _ _ h => by simp [lnil] at h)
+
+theorem firstNonempty_lcons (inner : HolLList α) (rest : HolLList (HolLList α)) :
+    firstNonempty (lcons inner rest) =
+      if inner.rep 0 = none then (firstNonempty rest).map (fun k => k + 1) else some 0 := by
+  cases hinner : inner.rep 0 with
+  | some v =>
+      have hsome : ∃ i : HolLList α, (lcons inner rest).rep 0 = some i ∧ i.rep 0 ≠ none :=
+        ⟨inner, by simp [lcons], by simp [hinner]⟩
+      have hmin : ∀ m, m < 0 → ¬ ∃ i : HolLList α,
+          (lcons inner rest).rep m = some i ∧ i.rep 0 ≠ none := by
+        intro m hm
+        omega
+      rw [firstNonempty_eq_some_of_rep hsome hmin, if_neg (by simp)]
+  | none =>
+      rw [if_pos rfl]
+      cases hr : firstNonempty rest with
+      | none =>
+          apply firstNonempty_eq_none_of
+          intro k i hk
+          cases k with
+          | zero =>
+              simp [lcons] at hk
+              rw [← hk]
+              exact hinner
+          | succ j =>
+              have hk' : rest.rep j = some i := by simpa [lcons] using hk
+              exact firstNonempty_none hr j i hk'
+      | some k =>
+          obtain ⟨⟨i, hi, hne⟩, hmin⟩ := firstNonempty_spec hr
+          have hsome : ∃ i' : HolLList α,
+              (lcons inner rest).rep (k + 1) = some i' ∧ i'.rep 0 ≠ none :=
+            ⟨i, by simpa [lcons] using hi, hne⟩
+          have hmin' : ∀ m, m < k + 1 → ¬ ∃ i' : HolLList α,
+              (lcons inner rest).rep m = some i' ∧ i'.rep 0 ≠ none := by
+            intro m hm
+            cases m with
+            | zero =>
+                intro ⟨i', hi0, hnei⟩
+                simp [lcons] at hi0
+                exact hnei (by rw [← hi0]; exact hinner)
+            | succ j =>
+                intro ⟨i', hj, hnei⟩
+                have hj' : rest.rep j = some i' := by simpa [lcons] using hj
+                exact hmin j (by omega) ⟨i', hj', hnei⟩
+          rw [firstNonempty_eq_some_of_rep hsome hmin']
+          rfl
+
+/-- The representation of `LFLATTEN`: the elements of the first nonempty member,
+    then the flattening of the remainder. Flapjack infrastructure. -/
+noncomputable def lflattenRep (ll : HolLList (HolLList α)) : Nat → Option α
+  | 0 =>
+      match firstNonempty ll with
+      | none => none
+      | some k => ((ll.rep k).map (fun inner => inner.rep 0)).join
+  | n + 1 =>
+      match firstNonempty ll with
+      | none => none
+      | some k =>
+          match ll.rep k with
+          | none => none
+          | some inner =>
+              lflattenRep
+                (lcons (inner.ltl.getD lnil) ((ldropHOL (k + 1) ll).getD lnil)) n
+
+theorem lflattenRep_ok (ll : HolLList (HolLList α)) : HolLrepOk (lflattenRep ll) := by
+  intro n
+  induction n generalizing ll with
+  | zero =>
+      intro hn
+      cases hf : firstNonempty ll with
+      | none =>
+          have h1 : lflattenRep ll (0 + 1) = none := by simp [lflattenRep, hf]
+          rw [h1] at hn
+          simp at hn
+      | some k =>
+          obtain ⟨⟨inner, hrep, hne⟩, _⟩ := firstNonempty_spec hf
+          have h0 : lflattenRep ll 0 = inner.rep 0 := by
+            simp [lflattenRep, hf, hrep]
+          rw [h0]
+          exact Option.isSome_iff_ne_none.mpr hne
+  | succ n ih =>
+      intro hn
+      cases hf : firstNonempty ll with
+      | none =>
+          have h1 : lflattenRep ll (n + 1 + 1) = none := by simp [lflattenRep, hf]
+          rw [h1] at hn
+          simp at hn
+      | some k =>
+          obtain ⟨⟨inner, hrep, hne⟩, _⟩ := firstNonempty_spec hf
+          have h2 : lflattenRep ll (n + 2) =
+              lflattenRep
+                (lcons (inner.ltl.getD lnil) ((ldropHOL (k + 1) ll).getD lnil)) (n + 1) := by
+            simp [lflattenRep, hf, hrep]
+          have h1 : lflattenRep ll (n + 1) =
+              lflattenRep
+                (lcons (inner.ltl.getD lnil) ((ldropHOL (k + 1) ll).getD lnil)) n := by
+            simp [lflattenRep, hf, hrep]
+          rw [h2] at hn
+          rw [h1]
+          exact ih _ hn
+
+/-- `LFLATTEN` over the representation carrier. -/
+noncomputable def lflatten (ll : HolLList (HolLList α)) : HolLList α :=
+  ⟨lflattenRep ll, lflattenRep_ok ll⟩
+
+theorem lflattenRep_lcons_lnil (t : HolLList (HolLList α)) (n : Nat) :
+    lflattenRep (lcons (lnil : HolLList α) t) n = lflattenRep t n := by
+  have hfe : firstNonempty (lcons (lnil : HolLList α) t) =
+      (firstNonempty t).map (fun k => k + 1) := by
+    rw [firstNonempty_lcons]
+    simp [lnil]
+  cases ht : firstNonempty t with
+  | none =>
+      have hf : firstNonempty (lcons (lnil : HolLList α) t) = none := by
+        rw [hfe, ht]
+        rfl
+      cases n with
+      | zero => simp [lflattenRep, hf, ht]
+      | succ n => simp [lflattenRep, hf, ht]
+  | some k =>
+      have hf : firstNonempty (lcons (lnil : HolLList α) t) = some (k + 1) := by
+        rw [hfe, ht]
+        rfl
+      obtain ⟨⟨inner, hrep, hne⟩, _⟩ := firstNonempty_spec ht
+      have hrep' : (lcons (lnil : HolLList α) t).rep (k + 1) = some inner := by
+        simpa [lcons] using hrep
+      cases n with
+      | zero =>
+          simp [lflattenRep, hf, ht, hrep, hrep']
+      | succ n =>
+          have hX : lcons (inner.ltl.getD lnil)
+              ((ldropHOL ((k + 1) + 1) (lcons (lnil : HolLList α) t)).getD lnil) =
+              lcons (inner.ltl.getD lnil) ((ldropHOL (k + 1) t).getD lnil) := by
+            rw [ldropHOL_succ_lcons]
+          simp only [lflattenRep, hf, ht, hrep, hrep', hX]
+
+/-- HOL `LFLATTEN_THM` (`llistScript.sml:1967-1971`): the three flattening
+equations. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LFLATTEN_THM"]
+theorem lflattenHOL_THM :
+    lflatten (lnil : HolLList (HolLList α)) = lnil ∧
+      (∀ t : HolLList (HolLList α),
+        lflatten (lcons (lnil : HolLList α) t) = lflatten t) ∧
+      (∀ (h : α) (t : HolLList α) (tl : HolLList (HolLList α)),
+        lflatten (lcons (lcons h t) tl) = lcons h (lflatten (lcons t tl))) := by
+  refine ⟨?_, ?_, ?_⟩
+  · apply eq_lnil_of_rep_none
+    intro n
+    cases n with
+    | zero => simp [lflatten, lflattenRep, firstNonempty_lnil]
+    | succ n => simp [lflatten, lflattenRep, firstNonempty_lnil]
+  · intro t
+    apply ext_of_rep
+    intro n
+    simp only [lflatten]
+    exact lflattenRep_lcons_lnil t n
+  · intro h t tl
+    apply ext_of_rep
+    intro n
+    have hf : firstNonempty (lcons (lcons h t) tl) = some 0 := by
+      rw [firstNonempty_lcons]
+      simp [lcons]
+    cases n with
+    | zero =>
+        have h0 : lflattenRep (lcons (lcons h t) tl) 0 = some h := by
+          simp only [lflattenRep, hf]
+          simp [lcons]
+        simp only [lflatten]
+        rw [h0]
+        simp [lcons]
+    | succ n =>
+        have hdrop : ldropHOL (0 + 1) (lcons (lcons h t) tl) = some tl :=
+          ldropHOL_one_lcons (lcons h t) tl
+        have htl : (lcons h t).ltl.getD (lnil : HolLList α) = t := by
+          rw [ltl_lcons]
+          rfl
+        have hX : lcons ((lcons h t).ltl.getD lnil)
+            ((ldropHOL (0 + 1) (lcons (lcons h t) tl)).getD lnil) =
+            lcons t tl := by
+          rw [hdrop, htl]
+          rfl
+        have hstep : lflattenRep (lcons (lcons h t) tl) (n + 1) =
+            lflattenRep (lcons t tl) n := by
+          simp only [lflattenRep, hf]
+          have hrep : (lcons (lcons h t) tl).rep 0 = some (lcons h t) := by
+            simp [lcons]
+          rw [hrep]
+          show lflattenRep (lcons ((lcons h t).ltl.getD lnil)
+              ((ldropHOL (0 + 1) (lcons (lcons h t) tl)).getD lnil)) n =
+            lflattenRep (lcons t tl) n
+          rw [hX]
+        simp only [lflatten]
+        rw [hstep]
+        simp [lcons]
 
 end HolLList
 
