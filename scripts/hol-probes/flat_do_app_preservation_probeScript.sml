@@ -91,3 +91,5 @@ val flat_initial_state_with_clock = prove (
     initial_state ffi (k + ck) ec``,
   rw [initial_state_def]);
 val _ = show_thm "flat_initial_state_with_clock_typed=" flat_initial_state_with_clock;
+
+val _ = show_thm "flat_imp_semantics_eq_typed=" flatPropsTheory.IMP_semantics_eq;
