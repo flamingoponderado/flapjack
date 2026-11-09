@@ -1,22 +1,10 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Sequencing
+import Flapjack.Compiler.Backend.Semantics.FlatSem.MeasureMembers
 
 /-! The operator case of the proof-side evaluator induction. Its clock and
 weight hypotheses are induction hypotheses, not a reviewed HOL theorem. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL Flapjack.AstHOL Flapjack.Basis.Pure.MlString
-
-/-- Every member has smaller weight than the expression-list measure. -/
-theorem expWeight_lt_expsWeight (expressions : List FlatLang.Exp) (expression : FlatLang.Exp)
-    (member : expression ∈ expressions) : FlatSem.expWeight expression < FlatSem.expsWeight expressions := by
-  induction expressions with
-  | nil => simp at member
-  | cons first rest ih =>
-    simp only [List.mem_cons] at member
-    simp only [FlatSem.expsWeight]
-    rcases member with rfl | member
-    · omega
-    · have bound := ih member
-      omega
 
 /-- The no-match list predicate holds for every member. -/
 theorem noMat_member (expressions : List FlatLang.Exp) (expression : FlatLang.Exp)
@@ -53,7 +41,7 @@ theorem evaluate_operator_from_induction {C F : Type}
   have argWeight : ∀ expression, expression ∈ args →
       FlatSem.expWeight expression < FlatSem.expWeight (.app trace op args) := by
     intro expression member
-    have bound := expWeight_lt_expsWeight args expression member
+    have bound := FlatSem.expWeight_lt_expsWeight args expression member
     simp only [FlatSem.expWeight]
     omega
   apply evaluate_operator env names values source target trace op args states

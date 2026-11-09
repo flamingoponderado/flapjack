@@ -53,4 +53,54 @@ theorem pmatchLength {C F : Type} (state : FlatSem.State C F) (pattern : FlatLan
   have lengths := congrArg List.length names
   simpa using lengths
 
+
+private theorem pmatchExtend_core {C F : Type} :
+    (∀ (state : FlatSem.State C F) pattern value bindings result,
+      FlatSem.pmatch state pattern value bindings = .match result →
+        ∃ added, result = added ++ bindings ∧ added.map Prod.fst = FlatLang.patBindings pattern) ∧
+    (∀ (state : FlatSem.State C F) patterns values bindings result,
+      FlatSem.pmatchList state patterns values bindings = .match result →
+        ∃ added, result = added ++ bindings ∧ added.map Prod.fst = FlatLang.patsBindings patterns) := by
+  constructor
+  · intro state pattern
+    apply FlatSem.pmatch.induct state
+      (motive1 := fun pattern value bindings => ∀ result,
+        FlatSem.pmatch state pattern value bindings = .match result →
+          ∃ added, result = added ++ bindings ∧ added.map Prod.fst = FlatLang.patBindings pattern)
+      (motive2 := fun patterns values bindings => ∀ result,
+        FlatSem.pmatchList state patterns values bindings = .match result →
+          ∃ added, result = added ++ bindings ∧ added.map Prod.fst = FlatLang.patsBindings patterns)
+    all_goals intros; simp_all [FlatSem.pmatch, FlatSem.pmatchList, FlatLang.patBindings, FlatLang.patsBindings]; try grind
+    case case9 value bindings pattern name result ih run =>
+      obtain ⟨pre, eq, names⟩ := ih
+      refine ⟨pre ++ [(name, value)], ?_, ?_⟩ <;> simpa [List.append_assoc] using (by assumption)
+  · intro state patterns
+    apply FlatSem.pmatchList.induct state
+      (motive1 := fun pattern value bindings => ∀ result,
+        FlatSem.pmatch state pattern value bindings = .match result →
+          ∃ added, result = added ++ bindings ∧ added.map Prod.fst = FlatLang.patBindings pattern)
+      (motive2 := fun patterns values bindings => ∀ result,
+        FlatSem.pmatchList state patterns values bindings = .match result →
+          ∃ added, result = added ++ bindings ∧ added.map Prod.fst = FlatLang.patsBindings patterns)
+    all_goals intros; simp_all [FlatSem.pmatch, FlatSem.pmatchList, FlatLang.patBindings, FlatLang.patsBindings]; try grind
+    case case9 value bindings pattern name result ih run =>
+      obtain ⟨pre, eq, names⟩ := ih
+      refine ⟨pre ++ [(name, value)], ?_, ?_⟩ <;> simpa [List.append_assoc] using (by assumption)
+
+/-- Matching preserves the incoming binding list as a suffix and adds exactly
+    the names bound by the pattern, for patterns and pattern lists. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "pmatch_extend"]
+theorem pmatchExtend {C F α β : Type} :
+    (∀ (state : FlatSem.State C F) pattern value bindings result (_unused : α),
+      FlatSem.pmatch state pattern value bindings = .match result →
+        ∃ added, result = added ++ bindings ∧ added.map Prod.fst = FlatLang.patBindings pattern) ∧
+    (∀ (state : FlatSem.State C F) patterns values bindings result (_unused : β),
+      FlatSem.pmatchList state patterns values bindings = .match result →
+        ∃ added, result = added ++ bindings ∧ added.map Prod.fst = FlatLang.patsBindings patterns) := by
+  constructor
+  · intro state pattern value bindings result _ run
+    exact pmatchExtend_core.1 state pattern value bindings result run
+  · intro state patterns values bindings result _ run
+    exact pmatchExtend_core.2 state patterns values bindings result run
+
 end Flapjack.Compiler.Backend.FlatProps

@@ -36,25 +36,19 @@ theorem varCorr_lookup {α : Type} (values : List α) (names : List Nat) (env : 
       simp only [List.getElem?_cons_succ] at atIndex ⊢
       exact ih index atIndex
 
-/-- Reading concatenated name lists concatenates their successful reads. -/
-private theorem getVars_append_of_reads {α : Type} (first second : List Nat) (env : Spt α)
-    (left right : List α) (firstRead : DataSem.getVars first env = some left)
-    (secondRead : DataSem.getVars second env = some right) :
-    DataSem.getVars (first ++ second) env = some (left ++ right) := by
-  induction first generalizing left with
-  | nil => simp [DataSem.getVars] at firstRead; subst left; exact secondRead
+/-- Reading concatenated name lists sequences both reads and concatenates their results. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "get_vars_append"]
+theorem getVars_append {α : Type} (first second : List Nat) (env : Spt α) :
+    DataSem.getVars (first ++ second) env =
+      (DataSem.getVars first env).bind (fun left =>
+        (DataSem.getVars second env).bind (fun right => some (left ++ right))) := by
+  induction first with
+  | nil => simp [DataSem.getVars]
   | cons name names ih =>
-    simp only [DataSem.getVars] at firstRead
-    cases found : DataSem.getVar name env with
-    | none => simp [found] at firstRead
-    | some value =>
-      simp only [found] at firstRead
-      cases rest : DataSem.getVars names env with
-      | none => simp [rest] at firstRead
-      | some tail =>
-        simp [rest] at firstRead
-        subst left
-        simp [DataSem.getVars, found, ih tail rest]
+    simp only [List.cons_append, DataSem.getVars, ih]
+    cases DataSem.getVar name env <;> simp
+    cases DataSem.getVars names env <;> simp
+    cases DataSem.getVars second env <;> simp
 
 /-- Reversing a successful list of variable names reverses its values. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "get_vars_reverse"]
@@ -74,7 +68,41 @@ theorem getVars_reverse {α : Type} (names : List Nat) (env : Spt α) (values : 
       | some tail =>
         simp [rest] at read
         subst values
-        simpa only [List.reverse_cons] using
-          getVars_append_of_reads names.reverse [name] env tail.reverse [value] (ih tail rest) (by simp [DataSem.getVars, found])
+        simp [List.reverse_cons, getVars_append, ih tail rest, DataSem.getVars, found]
+
+/-- Every name read successfully belongs to the sparse environment domain. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "get_vars_IMP_domain"]
+theorem getVars_imp_domain {α : Type} (names : List Nat) (x : Nat) (env : Spt α) (values : List α)
+    (premise : x ∈ names ∧ DataSem.getVars names env = some values) :
+    sptDomain env x := by
+  obtain ⟨member, read⟩ := premise
+  induction names generalizing values with
+  | nil => simp at member
+  | cons name names ih =>
+    simp only [DataSem.getVars] at read
+    cases found : DataSem.getVar name env with
+    | none => simp [found] at read
+    | some value =>
+      simp only [found] at read
+      cases rest : DataSem.getVars names env with
+      | none => simp [rest] at read
+      | some tail =>
+        rcases List.mem_cons.mp member with rfl | member
+        · have lookup : sptLookup x env = some value := found
+          simp [sptDomain, lookup]
+        · exact ih tail member rest
+
+/-- Reads agree when every requested lookup agrees. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "EVERY_get_vars"]
+theorem every_getVars {α : Type} (names : List Nat) (first second : Spt α)
+    (agree : ∀ name ∈ names, sptLookup name first = sptLookup name second) :
+    DataSem.getVars names first = DataSem.getVars names second := by
+  induction names with
+  | nil => rfl
+  | cons name names ih =>
+    have head := agree name (by simp)
+    have tail : ∀ key ∈ names, sptLookup key first = sptLookup key second :=
+      fun key member => agree key (by simp [member])
+    simp [DataSem.getVars, DataSem.getVar, head, ih tail]
 
 end Flapjack.Compiler.Backend.DataProps

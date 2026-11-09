@@ -2,7 +2,6 @@ import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.BvlInline.Proofs.TraversalTotal
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Measure
 import Flapjack.HolRef
-import Flapjack.Misc.ListMapM
 import Aesop
 
 /-! Total source-shaped BVL tick removal and its executable correspondence. -/

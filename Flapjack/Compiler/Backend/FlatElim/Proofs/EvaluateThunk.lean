@@ -31,7 +31,8 @@ theorem destThunk_value_invariants (values : List FlatSem.Value) (refs : Store F
               have member : StoreValue.thunk entryMode entryValue ∈ refs := by
                 apply List.mem_of_getElem?
                 exact lookup
-              exact ⟨(findRefsGlobals_within_iff _ _).mp closed _ member, safe _ member⟩
+              exact ⟨(findRefsGlobals_within_iff _ _).mp closed _ member,
+                safe _ member entryValue (by simp [FlatProps.storeValueValues])⟩
 
 /-- Updating a thunk with a closed, Eval-free result preserves the relation
 between stores. This is a Flapjack-specific helper for thunk forcing. -/
@@ -79,7 +80,7 @@ theorem updateThunk_flatStateRel {C F : Type} (reachable : NumSet)
                 · simpa [FlatSem.updateThunk, ← refsEq, thunk] using updated
                 · apply flatStateRel_setRefs reachable source target index (.thunk .evaluated value) related
                   · exact valueClosed
-                  · simpa [storeHasNoEval] using valueSafe
+                  · simpa [storeHasNoEval, FlatProps.storeValueValues] using valueSafe
 
 /-- Thunk forcing simulation at a fixed initial state, assuming simulation
 of the generated application at the clamped state. This is a Flapjack
@@ -93,7 +94,7 @@ theorem evaluate_force_simulation_step {C F : Type} (env : FlatSem.Environment F
     evaluationSimulationAt env source [.app tra (.src (.thunkOp .forceThunk)) args] := by
   intro next result reachable target run lookupsClosed related envClosed envSafe expressionsSafe notTypeError
   have argsClosed : globalsWithin (findGlobalsList destGlobalVarLookup args.reverse) reachable := by
-    apply findLookupsList_reverse_within args reachable
+    rw [← findLookupsList_reverse args]
     have appClosed := (findLookupsList_within_iff _ _).mp lookupsClosed (.app tra (.src (.thunkOp .forceThunk)) args) (by simp)
     exact (findLookups_app_within tra (.src (.thunkOp .forceThunk)) args reachable appClosed).1
   have argsSafe : expressionsNoEval args.reverse := by

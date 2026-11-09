@@ -82,7 +82,7 @@ theorem bindingInputs_var_tail {C F : Type} (lower upper key : Nat) (used : NumS
       · intro env2 present related
         apply head env2 (sptInsert_preserves_presence used key item.2.1 present)
         apply ((aLookupRel_cons_false (fun n => lower < decNameToNum n ∧ decNameToNum n < upper)
-          Eq name value env2.v env.v).2 ?_).1 related
+          name Eq value env2.v env.v).2 ?_).1 related
         intro selected
         omega
       · exact ih
@@ -102,7 +102,7 @@ theorem bindingInputs_add_low_name {C F : Type} (lower upper : Nat) (used : NumS
     · intro env2 present related
       apply head env2 present
       apply ((aLookupRel_cons_false (fun n => lower < decNameToNum n ∧ decNameToNum n < upper)
-        Eq name value env2.v env.v).2 ?_).1 related
+        name Eq value env2.v env.v).2 ?_).1 related
       intro selected
       omega
     · exact ih
@@ -128,7 +128,7 @@ theorem bindingInputs_fresh_nested {C F : Type} (trace : BackendCommon.Tra) (low
       have inside : lower < decNameToNum generated ∧ decNameToNum generated < upper + 2 := by
         simp only [generated, decEnc]
         omega
-      have equalLookup := aLookupRel_eq_lookup _ _ _ generated related inside
+      have equalLookup := aLookupRel_eq_lookup _ _ _ generated ⟨related, inside⟩
       have found : env2.v.lookup generated = some freshValue := by
         rw [← holALookup_eq_lookup, equalLookup]
         simp [holALookup, generated]
@@ -145,7 +145,7 @@ theorem bindingInputs_fresh_nested {C F : Type} (trace : BackendCommon.Tra) (low
             intro n inside
             exact related n ⟨inside.1, by omega⟩
           apply ((aLookupRel_cons_false (fun n => lower < decNameToNum n ∧ decNameToNum n < upper)
-            Eq generated freshValue env2.v env.v).2 ?_).1 narrow
+            generated Eq freshValue env2.v env.v).2 ?_).1 narrow
           simp only [generated, decEnc]
           omega
         · exact ih
@@ -343,8 +343,9 @@ theorem bindingInputs_con_tail {C F : Type} (trace : BackendCommon.Tra) (lower u
             simpa [nonempty] using sptInsert_preserves_presence compiled.1 key item.2.1 present
         · have narrow : aLookupRel (fun name => lower < decNameToNum name ∧ decNameToNum name < upper)
               Eq env2.v (front ++ env.v) := by
-            apply aLookupRel_mono _ _ _ _ _ _ related
-            · intro name observed
+            apply aLookupRel_mono (D := Unit) (E := Unit) _ _ _ _ _ _
+            refine ⟨related, ?_, ?_⟩
+            · intro name _ _ observed
               exact ⟨observed.1, by omega⟩
             · intro _ _ _ h
               exact h.2
@@ -437,7 +438,7 @@ theorem compilePatBindings_con_selected_pure {C F : Type} (trace : BackendCommon
     rw [info.2.2, decEnc]
     omega
   have known := compilePatBindings_con_selected_lookup trace i patterns body rest env fields entry member
-  have equalLookup := aLookupRel_eq_lookup _ _ _ entry.1.2 related interval
+  have equalLookup := aLookupRel_eq_lookup _ _ _ entry.1.2 ⟨related, interval⟩
   have found : env2.v.lookup entry.1.2 = some ((fields[entry.1.1]?).getD FlatSem.unitValue) := by
     rw [← holALookup_eq_lookup, equalLookup]
     exact known
@@ -642,9 +643,9 @@ theorem compilePatBindings_as_step {C F : Type} (trace : BackendCommon.Tra) (i k
     aLookupRel (fun n => decNameToNum n < bound) Eq next.v (((name, value) :: pre) ++ base) := by
   constructor
   · exact compilePatBindings_as_evaluate trace i key pattern name expression body rest env state value pure
-  · have old := aLookupRel_cons (fun n => decNameToNum n < bound) Eq name value value env.v (pre ++ base)
-      (fun _ => rfl) related
-    apply ((aLookupRel_cons_false (fun n => decNameToNum n < bound) Eq (encNumToName (i + 1)) value
+  · have old := aLookupRel_cons (fun n => decNameToNum n < bound) name Eq value value env.v (pre ++ base)
+      ⟨fun _ => rfl, related⟩
+    apply ((aLookupRel_cons_false (fun n => decNameToNum n < bound) (encNumToName (i + 1)) Eq value
       ((name, value) :: env.v) (((name, value) :: pre) ++ base)).1 ?_).2 old
     simp only [decEnc]
     omega
@@ -672,7 +673,7 @@ theorem compilePatBindings_ref_step {C F : Type} (trace : BackendCommon.Tra) (i 
         ((pattern, i + 1, .varLocal trace (encNumToName (i + 1))) :: rest) body with
     | mk used result =>
       simp [compilePatBindings, compiled, FlatSem.evaluate, projected, FlatSem.fixClock]
-  · apply ((aLookupRel_cons_false (fun n => decNameToNum n < bound) Eq (encNumToName (i + 1)) value
+  · apply ((aLookupRel_cons_false (fun n => decNameToNum n < bound) (encNumToName (i + 1)) Eq value
       env.v (pre ++ base)).1 ?_).2 related
     simp only [decEnc]
     omega

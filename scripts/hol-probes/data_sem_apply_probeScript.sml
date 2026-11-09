@@ -31,6 +31,20 @@ val _ = show "build_sequence=" dataSemTheory.do_build_def;
 val _ = show "build_constant=" dataSemTheory.do_build_const_def;
 val _ = show "finalise_cons=" dataSemTheory.finalise_cons_def;
 val _ = show "do_app_aux=" dataSemTheory.do_app_aux_def;
+val _ = show "do_app_clock=" dataSemTheory.do_app_clock;
+val _ = show "arch_size=" dataSemTheory.arch_size_def;
+val _ = show "small_num=" dataSemTheory.small_num_def;
+val _ = show "check_res=" dataSemTheory.check_res_def;
+val _ = show "check_res_imp=" dataSemTheory.check_res_IMP;
+val _ = show "bignum_digits=" dataSemTheory.bignum_digits_def;
+val _ = show "bignum_size=" dataSemTheory.bignum_size_def;
+val _ = show "no_thunks_in_refs=" dataSemTheory.no_thunks_in_refs_def;
+val _ = show "consume_space=" dataSemTheory.consume_space_def;
+val _ = show "extract_stack=" dataSemTheory.extract_stack_def;
+val _ = show "global_to_vs=" dataSemTheory.global_to_vs_def;
+val _ = show "allowed_op=" dataSemTheory.allowed_op_def;
+val _ = show "size_of_stack_frame=" dataSemTheory.size_of_stack_frame_def;
+val _ = show "size_of_stack=" dataSemTheory.size_of_stack_def;
 val _ = show "nullary_cons=" (EVAL ``dataSem$do_app_aux (closLang$BlockOp (closLang$Cons 9)) []
   (s:('c,'ffi) dataSem$state)``);
 val _ = show "nonempty_cons=" (EVAL ``dataSem$do_app_aux (closLang$BlockOp (closLang$Cons 9))

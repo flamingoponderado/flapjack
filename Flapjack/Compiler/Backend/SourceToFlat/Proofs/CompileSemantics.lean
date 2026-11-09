@@ -27,8 +27,8 @@ theorem factoredCompileFlat_semantics {C F : Type}
   have elimSafe : FlatSem.semantics sourceConfig ffi (FlatElim.removeFlatProgTotal program) ≠ .fail := by
     rw [← elim]
     exact safe
-  have pattern := FlatPattern.compileDecs_semantics cfg cfg ffi
-    (FlatElim.removeFlatProgTotal program) sourceConfig targetConfig related elimSafe
+  have pattern := FlatPattern.compileDecs_semantics cfg sourceConfig targetConfig ffi
+    (FlatElim.removeFlatProgTotal program) cfg ⟨related, elimSafe⟩
   simpa [compileFlatTotal] using elim.trans pattern
 
 /-- Whole-pass precondition in the source's existential shape. The initial

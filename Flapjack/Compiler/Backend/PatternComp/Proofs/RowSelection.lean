@@ -228,11 +228,12 @@ theorem matchRows_filter_safe (refs : HolFiniteMapExact Nat Term) (value : Term)
 /-- A safe constant row fails on a value that is not a nullary term. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "is_const_row_lemma"
   (fmap_as_finite_support_parameters := [refs])]
-theorem isConstRow_failure {α : Type} (refs : HolFiniteMapExact Nat Term) (value : Term)
-    (pattern : Pat) (payload : α) (notNullary : ∀ tag, value ≠ .term tag [])
-    (constant : isConstRow (pattern, payload) = true)
-    (safe : pmatch refs pattern value ≠ .typeFailure) :
+theorem isConstRow_failure {α : Type} (value : Term) (pattern : Pat) (payload : α)
+    (refs : HolFiniteMapExact Nat Term)
+    (premises : (∀ tag, value ≠ .term tag []) ∧ isConstRow (pattern, payload) = true ∧
+      pmatch refs pattern value ≠ .typeFailure) :
     pmatch refs pattern value = .failure := by
+  obtain ⟨notNullary, constant, safe⟩ := premises
   have notSuccess : pmatch refs pattern value ≠ .success := by
     cases pattern with
     | cons tag patterns =>
@@ -291,7 +292,7 @@ theorem matchRows_all_fail (refs : HolFiniteMapExact Nat Term) (value : Term)
 
 /-- Moving nullary constructor rows forward preserves matching for values
 that are not nullary constructors, provided the original scan is safe. -/
-theorem matchRows_moveConstUp_nonNullary (refs : HolFiniteMapExact Nat Term) (value : Term)
+private theorem matchRows_moveConstUp_nonNullary (refs : HolFiniteMapExact Nat Term) (value : Term)
     (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none)
     (notNullary : ∀ tag, value ≠ .term tag []) :
     matchRows refs (moveConstUp rows) value = matchRows refs rows value := by
@@ -302,7 +303,7 @@ theorem matchRows_moveConstUp_nonNullary (refs : HolFiniteMapExact Nat Term) (va
   have failures : ∀ row ∈ truncated, isConstRow row = true → pmatch refs row.1 value = .failure := by
     intro row member constant
     have notTypeFailure := PatternExh.matchRows_member_safe refs value truncated truncSafe row member
-    exact isConstRow_failure refs value row.1 row.2 notNullary (by simpa using constant) notTypeFailure
+    exact isConstRow_failure value row.1 row.2 refs ⟨notNullary, by simpa using constant, notTypeFailure⟩
   have filteredFailures : ∀ row ∈ truncated.filter isConstRow, pmatch refs row.1 value = .failure := by
     intro row member
     have membership := List.mem_filter.mp member
@@ -321,11 +322,11 @@ theorem matchRows_moveConstUp_nonNullary (refs : HolFiniteMapExact Nat Term) (va
 nullary constructor. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "not_is_const_row"
   (fmap_as_finite_support_parameters := [refs])]
-theorem nonConstRow_not_success_nullary {α : Type} (refs : HolFiniteMapExact Nat Term)
-    (tag : Option Nat) (row : Pat × α)
-    (nonconstant : isConstRow row = false) (noOr : isOrRow row = false)
-    (noAny : isAny row.1 = false) : pmatch refs row.1 (.term tag []) ≠ .success := by
-  obtain ⟨pattern, index⟩ := row
+theorem nonConstRow_not_success_nullary {α : Type} (pattern : Pat) (index : α)
+    (refs : HolFiniteMapExact Nat Term) (tag : Option Nat)
+    (premises : isConstRow (pattern, index) = false ∧ isOrRow (pattern, index) = false ∧
+      isAny pattern = false) : pmatch refs pattern (.term tag []) ≠ .success := by
+  obtain ⟨nonconstant, noOr, noAny⟩ := premises
   cases pattern with
   | any => simp [isAny] at noAny
   | or _ _ => simp [isOrRow] at noOr
@@ -432,8 +433,8 @@ theorem matchRows_moveConstUp_nullary (refs : HolFiniteMapExact Nat Term) (tag :
       have failures : ∀ row ∈ preRows, isConstRow row = false → pmatch refs row.1 value = .failure := by
         intro row member nonconstant
         have inTruncated : row ∈ truncated := by rw [decomposition]; simp [member]
-        have notSuccess := nonConstRow_not_success_nullary refs tag row nonconstant
-          (noOrMember row inTruncated) (noAny row member)
+        have notSuccess := nonConstRow_not_success_nullary row.1 row.2 refs tag
+          ⟨nonconstant, noOrMember row inTruncated, noAny row member⟩
         have notTypeFailure := PatternExh.matchRows_member_safe refs value truncated truncSafe row inTruncated
         cases result : pmatch refs row.1 value with
         | success => exact (notSuccess result).elim

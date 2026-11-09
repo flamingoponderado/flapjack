@@ -4,29 +4,54 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem
 namespace Flapjack.Compiler.Backend.FlatProps
 open Flapjack.Compiler.Backend.FlatSem
 
+/-- Folding recursive closures over bindings is a mapped prefix followed by the initial list. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "build_rec_env_help_lem"]
+theorem buildRecEnv_help {α β : Type} (initial : List (Flapjack.AstHOL.VarN × FlatSem.Value)) :
+    ∀ (funs : List (Flapjack.AstHOL.VarN × α × β)) (env : FlatSem.Environment FlatSem.Value)
+      (closures : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp)),
+      funs.foldr (fun (name, _, _) acc => (name, FlatSem.Value.recclosure env closures name) :: acc) initial =
+        funs.map (fun f => (f.1, FlatSem.Value.recclosure env closures f.1)) ++ initial := by
+  intro funs env closures
+  induction funs with
+  | nil => rfl
+  | cons first rest ih =>
+    rcases first with ⟨name, arg, body⟩
+    simp [ih]
+
 /-- Building recursive bindings is an ordered prefix of closures. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "build_rec_env_eq_MAP"]
 theorem buildRecEnv_eq_map (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp))
     (env : FlatSem.Environment FlatSem.Value) (initial : List (Flapjack.AstHOL.VarN × FlatSem.Value)) :
     FlatSem.buildRecEnv funs env initial =
       funs.map (fun f => (f.1, FlatSem.Value.recclosure env funs f.1)) ++ initial := by
-  unfold FlatSem.buildRecEnv
-  have foldMap : ∀ xs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp),
-      xs.foldr (fun (f, _, _) acc => (f, FlatSem.Value.recclosure env funs f) :: acc) initial =
-        xs.map (fun f => (f.1, FlatSem.Value.recclosure env funs f.1)) ++ initial := by
-    intro xs
-    induction xs with
-    | nil => rfl
-    | cons first rest ih =>
-      rcases first with ⟨name, arg, body⟩
-      simp [ih]
-  exact foldMap funs
+  exact buildRecEnv_help initial funs env funs
+
+/-- Recursive bindings are the mapped closure list followed by the initial environment. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "build_rec_env_merge"]
+theorem buildRecEnv_merge {α : Type}
+    (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp)) (_unused : α)
+    (env : FlatSem.Environment FlatSem.Value) (initial : List (Flapjack.AstHOL.VarN × FlatSem.Value)) :
+    FlatSem.buildRecEnv funs env initial =
+      funs.map (fun f => (f.1, FlatSem.Value.recclosure env funs f.1)) ++ initial :=
+  buildRecEnv_eq_map funs env initial
 
 /-- A closure value is either a single or recursive closure. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "isClosure_def"]
 def isClosure (value : Value) : Prop :=
   (∃ env name body, value = .closure env name body) ∨
     ∃ env functions name, value = .recclosure env functions name
+
+/-- The six constructor-specific closure tests, with HOL's shared fields. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "isClosure_simps"]
+theorem isClosure_simps (lit : Flapjack.AstHOL.Lit)
+    (stamp : Option (FlatLang.CtorId × FlatLang.TypeId)) (values : List Value)
+    (env : Environment Value) (name : Flapjack.AstHOL.VarN) (body : FlatLang.Exp)
+    (functions : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp))
+    (flag : Bool) (index : Nat) :
+    ¬ isClosure (.litv lit) ∧ ¬ isClosure (.conv stamp values) ∧
+    isClosure (.closure env name body) ∧ isClosure (.recclosure env functions name) ∧
+    ¬ isClosure (.loc flag index) ∧ ¬ isClosure (.vectorv values) := by
+  simp [isClosure]
 
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_basic_val_rel_def"]
 def simpleBasicValRel : Value → Value → Prop

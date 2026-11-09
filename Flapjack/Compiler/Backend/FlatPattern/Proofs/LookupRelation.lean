@@ -11,28 +11,29 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 related values. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "LIST_REL_ALOOKUP_OPTREL"]
 theorem listRelALookupOptRel {K A B : Type} (relation : K × A → K × B → Prop)
-    (valueRelation : A → B → Prop) (left : List (K × A)) (right : List (K × B)) (key : K)
-    (related : List.Forall₂ relation left right)
-    (matching : ∀ x y, relation x y → x ∈ left → y ∈ right →
-      (key = x.1 ∨ key = y.1) → x.1 = y.1 ∧ valueRelation x.2 y.2) :
+    (key : K) (valueRelation : A → B → Prop) (left : List (K × A)) (right : List (K × B))
+    (premises : List.Forall₂ relation left right ∧
+      (∀ x y, relation x y ∧ x ∈ left ∧ y ∈ right ∧ (key = x.1 ∨ key = y.1) →
+        x.1 = y.1 ∧ valueRelation x.2 y.2)) :
     optionRel valueRelation (holALookup left key) (holALookup right key) := by
   classical
+  obtain ⟨related, matching⟩ := premises
   induction related with
   | nil => simp [holALookup, optionRel]
   | @cons x y xs ys head tail ih =>
-    have tailMatching : ∀ a b, relation a b → a ∈ xs → b ∈ ys →
+    have tailMatching : ∀ a b, relation a b ∧ a ∈ xs ∧ b ∈ ys ∧
         (key = a.1 ∨ key = b.1) → a.1 = b.1 ∧ valueRelation a.2 b.2 := by
-      intro a b hab ha hb hit
-      exact matching a b hab (List.mem_cons_of_mem _ ha) (List.mem_cons_of_mem _ hb) hit
+      intro a b ⟨hab, ha, hb, hit⟩
+      exact matching a b ⟨hab, List.mem_cons_of_mem _ ha, List.mem_cons_of_mem _ hb, hit⟩
     obtain ⟨kx, vx⟩ := x
     obtain ⟨ky, vy⟩ := y
     by_cases hx : key = kx
-    · have pair := matching (kx, vx) (ky, vy) head (by simp) (by simp) (Or.inl hx)
+    · have pair := matching (kx, vx) (ky, vy) ⟨head, by simp, by simp, Or.inl hx⟩
       have sameKeys : kx = ky := pair.1
       subst ky
       simpa [holALookup, hx, optionRel] using pair.2
     · by_cases hy : key = ky
-      · have pair := matching (kx, vx) (ky, vy) head (by simp) (by simp) (Or.inr hy)
+      · have pair := matching (kx, vx) (ky, vy) ⟨head, by simp, by simp, Or.inr hy⟩
         exact (hx (hy.trans pair.1.symm)).elim
       · simp only [holALookup, hx, hy, if_false]
         exact ih tailMatching
@@ -41,15 +42,16 @@ theorem listRelALookupOptRel {K A B : Type} (relation : K × A → K × B → Pr
 equal entries. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "LIST_REL_ALOOKUP"]
 theorem listRelALookup {K V : Type} (relation : K × V → K × V → Prop)
-    (left right : List (K × V)) (key : K) (related : List.Forall₂ relation left right)
-    (matching : ∀ x y, relation x y → x ∈ left → y ∈ right →
-      (key = x.1 ∨ key = y.1) → x = y) :
+    (key : K) (left right : List (K × V))
+    (premises : List.Forall₂ relation left right ∧
+      (∀ x y, relation x y ∧ x ∈ left ∧ y ∈ right ∧ (key = x.1 ∨ key = y.1) → x = y)) :
     holALookup left key = holALookup right key := by
-  have result := listRelALookupOptRel relation Eq left right key related (by
-    intro x y hxy hx hy hit
-    have same := matching x y hxy hx hy hit
+  obtain ⟨related, matching⟩ := premises
+  have result := listRelALookupOptRel relation key Eq left right ⟨related, by
+    intro x y h
+    have same := matching x y h
     subst y
-    exact ⟨rfl, rfl⟩)
+    exact ⟨rfl, rfl⟩⟩
   cases leftEq : holALookup left key <;> cases rightEq : holALookup right key <;>
     simp_all [optionRel]
 
@@ -86,17 +88,22 @@ private theorem forall₂_filter_of_members {A B : Type} (relation : A → B →
 the same way on related entries. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "LIST_REL_FILTER_MONO"]
 theorem listRelFilterMono {A B : Type} (relation : A → B → Prop)
-    (p1 p3 : A → Bool) (p2 p4 : B → Bool) (xs : List A) (ys : List B)
-    (related : List.Forall₂ relation (xs.filter p1) (ys.filter p2))
-    (leftNarrow : ∀ x ∈ xs, p3 x = true → p1 x = true)
-    (rightNarrow : ∀ y ∈ ys, p4 y = true → p2 y = true)
-    (agree : ∀ x ∈ xs, ∀ y ∈ ys, relation x y → p3 x = p4 y) :
+    (p1 : A → Bool) (p2 : B → Bool) (p3 : A → Bool) (p4 : B → Bool) (xs : List A) (ys : List B)
+    (premises : List.Forall₂ relation (xs.filter p1) (ys.filter p2) ∧
+      (∀ x, x ∈ xs ∧ p3 x = true → p1 x = true) ∧
+      (∀ y, y ∈ ys ∧ p4 y = true → p2 y = true) ∧
+      (∀ x y, x ∈ xs ∧ y ∈ ys ∧ relation x y → p3 x = p4 y)) :
     List.Forall₂ relation (xs.filter p3) (ys.filter p4) := by
+  obtain ⟨related, leftNarrow, rightNarrow, agree⟩ := premises
   have narrowed := forall₂_filter_of_members relation p3 p4 related (by
     intro x hx y hy hxy
-    exact agree x (List.mem_filter.mp hx).1 y (List.mem_filter.mp hy).1 hxy)
-  simpa [filter_filter_of_subsumed p1 p3 xs leftNarrow,
-    filter_filter_of_subsumed p2 p4 ys rightNarrow] using narrowed
+    exact agree x y ⟨(List.mem_filter.mp hx).1, (List.mem_filter.mp hy).1, hxy⟩)
+  have leftNarrow' : ∀ x ∈ xs, p3 x = true → p1 x = true := by
+    intro x member test; exact leftNarrow x ⟨member, test⟩
+  have rightNarrow' : ∀ y ∈ ys, p4 y = true → p2 y = true := by
+    intro y member test; exact rightNarrow y ⟨member, test⟩
+  simpa [filter_filter_of_subsumed p1 p3 xs leftNarrow',
+    filter_filter_of_subsumed p2 p4 ys rightNarrow'] using narrowed
 
 /-- A false condition selects the second branch. Lean Bool represents HOL bool. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "COND_false"]
@@ -113,39 +120,42 @@ theorem condTrue {A : Type} (condition : Bool) (yes no : A) (isTrue : condition 
 /-- Equal filtered lists remain equal after compatible narrowing. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "FILTER_EQ_MONO"]
 theorem filterEqMono {A : Type} (p1 p2 p3 p4 : A → Bool) (xs ys : List A)
-    (filtered : xs.filter p1 = ys.filter p2)
-    (leftNarrow : ∀ x ∈ xs, p3 x = true → p1 x = true)
-    (rightNarrow : ∀ y ∈ ys, p4 y = true → p2 y = true)
-    (agree : ∀ x ∈ xs, ∀ y ∈ ys, x = y → p3 x = p4 y) :
+    (premises : xs.filter p1 = ys.filter p2 ∧
+      (∀ x, x ∈ xs ∧ p3 x = true → p1 x = true) ∧
+      (∀ y, y ∈ ys ∧ p4 y = true → p2 y = true) ∧
+      (∀ x y, x ∈ xs ∧ y ∈ ys ∧ x = y → p3 x = p4 y)) :
     xs.filter p3 = ys.filter p4 := by
-  have related := listRelFilterMono Eq p1 p3 p2 p4 xs ys
-    (by simpa only [List.forall₂_eq_eq_eq] using filtered) leftNarrow rightNarrow agree
+  obtain ⟨filtered, leftNarrow, rightNarrow, agree⟩ := premises
+  have related := listRelFilterMono Eq p1 p2 p3 p4 xs ys ⟨
+    by simpa only [List.forall₂_eq_eq_eq] using filtered,
+    leftNarrow, rightNarrow, agree⟩
   simpa only [List.forall₂_eq_eq_eq] using related
 
 /-- Filtering a list and then narrowing agrees with narrowing its filtered
 result. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "FILTER_EQ_MONO_TRANS"]
 theorem filterEqMonoTrans {A : Type} (p1 p3 : A → Bool) (xs ys : List A)
-    (filtered : xs.filter p1 = ys)
-    (leftNarrow : ∀ x ∈ xs, p3 x = true → p1 x = true)
-    (agree : ∀ x ∈ xs, ∀ y ∈ ys, x = y → p3 x = p3 y) :
+    (premises : xs.filter p1 = ys ∧
+      (∀ x, x ∈ xs ∧ p3 x = true → p1 x = true) ∧
+      (∀ x y, x ∈ xs ∧ y ∈ ys ∧ x = y → p3 x = p3 y)) :
     xs.filter p3 = ys.filter p3 := by
+  obtain ⟨filtered, leftNarrow, agree⟩ := premises
   apply filterEqMono p1 (fun _ => true) p3 p3 xs ys
+  refine ⟨?_, leftNarrow, ?_, agree⟩
   · have all : ys.filter (fun _ => true) = ys := by
       induction ys with
       | nil => rfl
       | cons y ys ih => simp [List.filter]
     simpa only [all] using filtered
-  · exact leftNarrow
   · simp
-  · exact agree
 
 /-- Filtering preserves lookup when every entry for the queried key is kept. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "FILTER_EQ_ALOOKUP_EQ"]
 theorem filterEqALookupEq {K V : Type} (predicate : K × V → Bool)
-    (xs ys : List (K × V)) (key : K) (filtered : xs.filter predicate = ys)
-    (kept : ∀ value, predicate (key, value) = true) :
+    (key : K) (xs ys : List (K × V))
+    (premises : xs.filter predicate = ys ∧ ∀ value, predicate (key, value) = true) :
     holALookup xs key = holALookup ys key := by
+  obtain ⟨filtered, kept⟩ := premises
   classical
   subst ys
   induction xs with
@@ -161,9 +171,9 @@ theorem filterEqALookupEq {K V : Type} (predicate : K × V → Bool)
 /-- Looking up after such a filter gives the original lookup. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_FILTER_EQ"]
 theorem aLookupFilterEq {K V : Type} (predicate : K × V → Bool)
-    (xs : List (K × V)) (key : K) (kept : ∀ value, predicate (key, value) = true) :
+    (key : K) (xs : List (K × V)) (kept : ∀ value, predicate (key, value) = true) :
     holALookup (xs.filter predicate) key = holALookup xs key :=
-  (filterEqALookupEq predicate xs (xs.filter predicate) key rfl kept).symm
+  (filterEqALookupEq predicate key xs (xs.filter predicate) ⟨rfl, kept⟩).symm
 
 /-- Related lookups for the keys selected by a predicate. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_def"]
@@ -180,8 +190,8 @@ theorem aLookupRel_empty {K A B : Type} (predicate : K → Prop) (relation : A �
 /-- Adding a key outside the observed predicate to either side does not change
 the relation. The original theorem uses the same value type on both sides. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_cons_false"]
-theorem aLookupRel_cons_false {K V : Type} (predicate : K → Prop) (relation : V → V → Prop)
-    (key : K) (value : V) (left right : List (K × V)) :
+theorem aLookupRel_cons_false {K V : Type} (predicate : K → Prop) (key : K)
+    (relation : V → V → Prop) (value : V) (left right : List (K × V)) :
     (¬ predicate key → (aLookupRel predicate relation ((key, value) :: left) right ↔ aLookupRel predicate relation left right)) ∧
     (¬ predicate key → (aLookupRel predicate relation left ((key, value) :: right) ↔ aLookupRel predicate relation left right)) := by
   classical
@@ -203,10 +213,11 @@ theorem aLookupRel_refl {K V : Type} (predicate : K → Prop) (entries : List (K
 /-- Matching heads preserve the lookup relation when their values are related
 at observed keys. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_cons"]
-theorem aLookupRel_cons {K A B : Type} (predicate : K → Prop) (relation : A → B → Prop)
-    (key : K) (leftValue : A) (rightValue : B) (left : List (K × A)) (right : List (K × B))
-    (head : predicate key → relation leftValue rightValue) (tail : aLookupRel predicate relation left right) :
+theorem aLookupRel_cons {K A B : Type} (predicate : K → Prop) (key : K) (relation : A → B → Prop)
+    (leftValue : A) (rightValue : B) (left : List (K × A)) (right : List (K × B))
+    (premises : (predicate key → relation leftValue rightValue) ∧ aLookupRel predicate relation left right) :
     aLookupRel predicate relation ((key, leftValue) :: left) ((key, rightValue) :: right) := by
+  obtain ⟨head, tail⟩ := premises
   classical
   intro query selected
   by_cases same : query = key
@@ -215,18 +226,19 @@ theorem aLookupRel_cons {K A B : Type} (predicate : K → Prop) (relation : A �
   · simpa [holALookup, same] using tail query selected
 
 /-- Narrowing observed keys and weakening their value relation preserves
-related lookups. HOL's predicate premise quantifies two unused variables of
-independent inhabited types; these vacuous binders are omitted here. -/
+related lookups, including HOL's independently typed vacuous binders. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_mono"]
-theorem aLookupRel_mono {K A B : Type} (predicate predicate' : K → Prop)
-    (relation relation' : A → B → Prop) (left : List (K × A)) (right : List (K × B))
-    (related : aLookupRel predicate relation left right)
-    (narrow : ∀ key, predicate' key → predicate key)
-    (weaken : ∀ key leftValue rightValue,
-      predicate' key ∧ relation leftValue rightValue → relation' leftValue rightValue) :
+theorem aLookupRel_mono {K A B D E : Type} [Nonempty D] [Nonempty E]
+    (predicate : K → Prop) (relation : A → B → Prop) (left : List (K × A)) (right : List (K × B))
+    (predicate' : K → Prop) (relation' : A → B → Prop)
+    (premises : aLookupRel predicate relation left right ∧
+      (∀ key (_unusedLeft : D) (_unusedRight : E), predicate' key → predicate key) ∧
+      (∀ key leftValue rightValue,
+        predicate' key ∧ relation leftValue rightValue → relation' leftValue rightValue)) :
     aLookupRel predicate' relation' left right := by
+  obtain ⟨related, narrow, weaken⟩ := premises
   intro key selected
-  have old := related key (narrow key selected)
+  have old := related key (narrow key (Classical.choice ‹Nonempty D›) (Classical.choice ‹Nonempty E›) selected)
   cases leftLookup : holALookup left key <;> cases rightLookup : holALookup right key <;>
     simp [leftLookup, rightLookup, optionRel] at old ⊢
   exact weaken key _ _ ⟨selected, old⟩
@@ -240,8 +252,8 @@ theorem aLookup_map_keyPreserving {K A B : Type} (xs : List (K × A))
 
 /-- Pointwise related mapped bindings induce related association-list lookups. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_MAP_same"]
-theorem aLookupRel_map_same {X K A B : Type} (predicate : K → Prop) (relation : A → B → Prop)
-    (f : X → K × A) (g : X → K × B) (xs : List X)
+theorem aLookupRel_map_same {X K A B : Type} (xs : List X) (f : X → K × A) (g : X → K × B)
+    (predicate : K → Prop) (relation : A → B → Prop)
     (pointwise : ∀ x ∈ xs, (f x).1 = (g x).1 ∧
       (predicate (g x).1 → relation (f x).2 (g x).2)) :
     aLookupRel predicate relation (xs.map f) (xs.map g) := by
@@ -260,23 +272,24 @@ theorem aLookupRel_map_same {X K A B : Type} (predicate : K → Prop) (relation 
       simp only [fx, gx] at head
       simp only [List.map_cons, fx, gx]
       cases head.1
-      exact aLookupRel_cons predicate relation key leftValue rightValue (xs.map f) (xs.map g)
-        head.2 (ih tail)
+      exact aLookupRel_cons predicate key relation leftValue rightValue (xs.map f) (xs.map g)
+        ⟨head.2, ih tail⟩
 
 /-- Pointwise weakening of the payload relation preserves related lookups. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_mono_rel"]
-theorem aLookupRel_mono_rel {K A B : Type} (predicate : K → Prop) (relation relation' : A → B → Prop)
+theorem aLookupRel_mono_rel {K A B : Type} (relation relation' : A → B → Prop) (predicate : K → Prop)
     (left : List (K × A)) (right : List (K × B))
     (weaken : ∀ leftValue rightValue, relation leftValue rightValue → relation' leftValue rightValue)
     (related : aLookupRel predicate relation left right) : aLookupRel predicate relation' left right := by
-  exact aLookupRel_mono predicate predicate relation relation' left right related
-    (fun _ selected => selected) (fun _ _ _ h => weaken _ _ h.2)
+  exact aLookupRel_mono (D := Unit) (E := Unit) predicate relation left right predicate relation'
+    ⟨related, (fun _ _ _ selected => selected), (fun _ _ _ h => weaken _ _ h.2)⟩
 
 /-- Equality-related lookup results are equal at observed keys. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_EQ_ALOOKUP"]
 theorem aLookupRel_eq_lookup {K V : Type} (predicate : K → Prop) (left right : List (K × V))
-    (key : K) (related : aLookupRel predicate Eq left right) (selected : predicate key) :
+    (key : K) (premises : aLookupRel predicate Eq left right ∧ predicate key) :
     holALookup left key = holALookup right key := by
+  obtain ⟨related, selected⟩ := premises
   have h := related key selected
   cases leftLookup : holALookup left key <;> cases rightLookup : holALookup right key <;>
     simp [leftLookup, rightLookup, optionRel] at h ⊢
@@ -284,8 +297,8 @@ theorem aLookupRel_eq_lookup {K V : Type} (predicate : K → Prop) (left right :
 
 /-- An unobserved prefix on the left does not affect the lookup relation. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_APPEND_L_false"]
-theorem aLookupRel_append_left_false {K A B : Type} (predicate : K → Prop) (relation : A → B → Prop)
-    (front suffix : List (K × A)) (right : List (K × B))
+theorem aLookupRel_append_left_false {K A B : Type} (predicate : K → Prop) (front : List (K × A))
+    (relation : A → B → Prop) (suffix : List (K × A)) (right : List (K × B))
     (excluded : ∀ binding ∈ front, ¬ predicate binding.1) :
     aLookupRel predicate relation (front ++ suffix) right ↔ aLookupRel predicate relation suffix right := by
   have absent (key : K) (selected : predicate key) : holALookup front key = none := by
@@ -301,9 +314,10 @@ theorem aLookupRel_append_left_false {K A B : Type} (predicate : K → Prop) (re
 /-- Pairwise lookup relations on prefixes and suffixes compose across append. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_append_suff"]
 theorem aLookupRel_append {K A B : Type} (predicate : K → Prop) (relation : A → B → Prop)
-    (left₁ left₂ : List (K × A)) (right₁ right₂ : List (K × B))
-    (first : aLookupRel predicate relation left₁ right₁) (second : aLookupRel predicate relation left₂ right₂) :
+    (left₁ : List (K × A)) (right₁ : List (K × B)) (left₂ : List (K × A)) (right₂ : List (K × B))
+    (premises : aLookupRel predicate relation left₁ right₁ ∧ aLookupRel predicate relation left₂ right₂) :
     aLookupRel predicate relation (left₁ ++ left₂) (right₁ ++ right₂) := by
+  obtain ⟨first, second⟩ := premises
   intro key selected
   have h₁ := first key selected
   have h₂ := second key selected
@@ -328,6 +342,6 @@ theorem aLookupRel_of_forall₂ {K A B : Type} (predicate : K → Prop) (relatio
     simp only at head
     rcases head with ⟨same, headRelation⟩
     subst rightKey
-    exact aLookupRel_cons predicate relation leftKey leftValue rightValue leftTail rightTail headRelation ih
+    exact aLookupRel_cons predicate leftKey relation leftValue rightValue leftTail rightTail ⟨headRelation, ih⟩
 
 end Flapjack.Compiler.Backend.FlatPattern

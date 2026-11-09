@@ -461,7 +461,7 @@ theorem factoredInvariant_denv {C F : Type} [Nonempty C]
         source flat state env storedEnvs sourceState found valid newMap
       have newGenInv : envGenInv
           { gen with next := gen.next + 1, envs := Flapjack.sptInsert gen.next compMap gen.envs } := by
-        simpa [compileDecs] using (compileDecs_envGenInv trace n start compMap gen [.denv name] _ _ _ _ _ rfl genInv).1
+        simpa [compileDecs] using (compileDecs_envGenInv trace n start compMap gen [.denv name] _ _ _ _ _ ⟨rfl, genInv⟩).1
       have changed := factoredInvariant_changeGen interp transform _ _ genv (start, finish, other)
         _ flat afterDecl newGenInv
       have final := factoredInvariant_fillSlot interp transform _ genv start finish other _ flat

@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoApp
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
+import Flapjack.Compiler.Backend.FlatProps.DoAppState
 
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
@@ -78,7 +79,8 @@ theorem localEnvBounded_simpleApp {C F : Type} [Nonempty C]
         doApp_correct nextGenv (nextSource.refs, nextSource.ffi) (sourceRefs, sourceFfi) op
           sourceValues.reverse sourceResult nextFlat flatValues.reverse
           ⟨sourceApp, stores, nonempty, List.rel_reverse valuesRel, ffi, nextInvariant.1, notEmpty, notEnvId⟩
-      obtain ⟨flatClock, flatConfig⟩ := FlatSem.doApp_stable nextFlat flatLast _ _ _ flatApp
+      have flatClock := (FlatSem.doApp_const nextFlat _ _ flatLast _ flatApp).symm
+      have flatConfig := FlatProps.doApp_stateUnchanged () nextFlat _ _ flatLast _ flatApp
       have flatShape : flatLast = { nextFlat with refs := flatLast.refs, ffi := sourceFfi } := by
         cases nextFlat
         cases flatLast

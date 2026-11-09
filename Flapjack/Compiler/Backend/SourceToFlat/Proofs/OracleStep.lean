@@ -123,8 +123,9 @@ theorem compileDecs_envGenInv (t : List Flapjack.Basis.Pure.MlString.MlString)
     (n : Nat) (next : NextIndices) (env : Environment) (envs : EnvironmentGenerationStore)
     (decs : List Dec) (n' : Nat) (next' : NextIndices) (env' : Environment)
     (envs' : EnvironmentGenerationStore) (flatDecs : List FlatLang.Exp)
-    (compiled : compileDecs t n next env envs decs = (n', next', env', envs', flatDecs))
-    (valid : envGenInv envs) : envGenInv envs' ∧ Flapjack.sptSubspt envs.envs envs'.envs := by
+    (premises : compileDecs t n next env envs decs = (n', next', env', envs', flatDecs) ∧
+      envGenInv envs) : envGenInv envs' ∧ Flapjack.sptSubspt envs.envs envs'.envs := by
+  obtain ⟨compiled, valid⟩ := premises
   have core : envGenInv envs →
       envGenInv (compileDecs t n next env envs decs).2.2.2.1 ∧
       Flapjack.sptSubspt envs.envs (compileDecs t n next env envs decs).2.2.2.1.envs := by
@@ -138,11 +139,11 @@ theorem compileDecs_envGenInv (t : List Flapjack.Basis.Pure.MlString.MlString)
 /-- Incremental compilation adds a fresh environment generation and retains
 every previously stored generation. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "inc_compile_prog_env_submap"]
-theorem incCompileProg_envSubmap (envId : Nat × Nat) (config next : Config)
-    (decs : List Dec) (flatDecs : List FlatLang.Exp)
-    (compiled : incCompileProg envId config decs = (next, flatDecs))
-    (valid : envStoreInv config.envs) :
+theorem incCompileProg_envSubmap (envId : Nat × Nat) (config : Config)
+    (decs : List Dec) (next : Config) (flatDecs : List FlatLang.Exp)
+    (premises : incCompileProg envId config decs = (next, flatDecs) ∧ envStoreInv config.envs) :
     envStoreInv next.envs ∧ Flapjack.sptSubspt config.envs.envGens next.envs.envGens := by
+  obtain ⟨compiled, valid⟩ := premises
   generalize resultEq : compileDecs [] 1 config.next (lookupEnvId envId config.envs)
     ⟨0, config.envs.next, .ln⟩ decs = result at compiled
   rcases result with ⟨n, indices, env, gen, compiledDecs⟩
@@ -207,7 +208,7 @@ theorem incCompileProg_envGenFuture (envId : Nat × Nat) (config : Config) (decs
     have initial : envGenInv (⟨0, config.envs.next, .ln⟩ : EnvironmentGenerationStore) := by
       simp [envGenInv]
     exact (compileDecs_envGenInv [] 1 config.next (lookupEnvId envId config.envs)
-      ⟨0, config.envs.next, .ln⟩ decs n indices env gen flatDecs h initial).1
+      ⟨0, config.envs.next, .ln⟩ decs n indices env gen flatDecs ⟨h, initial⟩).1
   refine ⟨Flapjack.sptInsert gen.next (extendEnv env (lookupEnvId envId config.envs)) gen.envs, ?_, ?_⟩
   · simp [incCompileProg, h, generation, Flapjack.sptLookup_sptInsert_same]
   · exact (freshGenerationInsert _ _ valid).2
@@ -247,7 +248,7 @@ theorem compileDecs_futureRel {C : Type} (interp : Option (Value → Option (Con
     envGenFutureRel interp gen evalState := by
   obtain ⟨compiled, future, valid⟩ := premises
   have generation := compileDecs_generation trace n start env gen decs n' next nextEnv nextGen flatDecs compiled
-  have submap := (compileDecs_envGenInv trace n start env gen decs n' next nextEnv nextGen flatDecs compiled valid).2
+  have submap := (compileDecs_envGenInv trace n start env gen decs n' next nextEnv nextGen flatDecs ⟨compiled, valid⟩).2
   unfold envGenFutureRel at future ⊢
   cases configEq : srcOracNextCfg interp evalState with
   | none => trivial
@@ -462,7 +463,7 @@ theorem sourceOracle_envStoreAdvance {C : Type} [Nonempty C]
   obtain ⟨stored, storedCfg, valid, length, _⟩ := envs
   rw [currentCfg] at storedCfg
   cases storedCfg
-  obtain ⟨nextValid, submap⟩ := incCompileProg_envSubmap envId current next (transform decs) flatDecs compiled valid
+  obtain ⟨nextValid, submap⟩ := incCompileProg_envSubmap envId current (transform decs) next flatDecs ⟨compiled, valid⟩
   have nextLength := incCompileProg_envNext envId current (transform decs)
   rw [compiled] at nextLength
   refine ⟨current, next, currentCfg, ?_, length, nextLength, nextValid, submap⟩

@@ -49,7 +49,7 @@ theorem pureEvaluation_let {C F : Type} (env : FlatSem.Environment FlatSem.Value
       firstIH firstState firstResult reachable target firstEval (singletonPure first pure.1) envSafe
         (singletonExpression_noEval first safe.1) (singletonLocations first reachable disjoint.1) related firstNotTypeError
     subst firstResult
-    obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source firstState first values firstEval
+    obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source first firstState values firstEval
     have valueSafe : valueHasEval value = false := valuesSafe value (by simp)
     have clocks : source.clock = firstState.clock := related.1.trans firstRelated.1.symm
     simp only [clocks, Nat.min_self] at run
@@ -95,7 +95,7 @@ theorem pureEvaluation_if {C F : Type} (env : FlatSem.Environment FlatSem.Value)
       condIH condState condResult reachable target condEval (singletonPure cond pure.1.1) envSafe
         (singletonExpression_noEval cond safe.1.1) (singletonLocations cond reachable outer.1) related condNotTypeError
     subst condResult
-    obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source condState cond values condEval
+    obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source cond condState values condEval
     have clocks : source.clock = condState.clock := related.1.trans condRelated.1.symm
     simp only [clocks, Nat.min_self] at run
     split at run
@@ -271,7 +271,7 @@ theorem pureEvaluation_mat {C F : Type} (env : FlatSem.Environment FlatSem.Value
       bodyIH bodyState bodyResult reachable target bodyEval (singletonPure body pure.1.1) envSafe
         (singletonExpression_noEval body safe.1) (singletonLocations body reachable disjoint.1) related bodyNotTypeError
     subst bodyResult
-    obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source bodyState body values bodyEval
+    obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source body bodyState values bodyEval
     have valueSafe : valueHasEval value = false := valuesSafe value (by simp)
     have clocks : source.clock = bodyState.clock := related.1.trans bodyRelated.1.symm
     simp only [clocks, Nat.min_self] at run

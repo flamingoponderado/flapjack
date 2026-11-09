@@ -15,28 +15,28 @@ theorem globalsRel_set_unreachable (reachable : NumSet) (source target : List (O
   have sourceBound : index < source.length := (List.getElem?_eq_some_iff.mp sourceEmpty).choose
   obtain ⟨lengths, same, present, empty, contents⟩ := related
   have targetBound : index < target.length := by omega
-  have targetEmpty : target[index]?.getD none = none := by
-    apply empty index targetBound
-    simp [sourceEmpty]
+  have targetEmpty : Flapjack.holEl index target = none := by
+    apply empty index ⟨targetBound, ?_⟩
+    simp [holEl_eq_getD _ _ sourceBound, sourceEmpty]
   refine ⟨by simpa using lengths, ?_, ?_, ?_, contents⟩
-  · intro n inReachable bound
+  · intro n ⟨inReachable, bound⟩
     have ne : index ≠ n := by
       intro sameIndex
       subst n
       exact unreachable inReachable
-    simpa [List.getElem?_set_ne ne] using same n inReachable bound
-  · intro n v bound found
+    simpa [Flapjack.holEl_set, sourceBound, ne] using same n ⟨inReachable, bound⟩
+  · intro n v ⟨bound, found⟩
     by_cases eq : n = index
     · subst n
       rw [targetEmpty] at found
       contradiction
-    · simpa [List.getElem?_set_ne (Ne.symm eq)] using present n v bound found
-  · intro n bound isEmpty
+    · simpa [Flapjack.holEl_set, sourceBound, Ne.symm eq] using present n v ⟨bound, found⟩
+  · intro n ⟨bound, isEmpty⟩
     by_cases eq : n = index
     · subst n
-      simp [sourceBound] at isEmpty
-    · simp only [List.getElem?_set_ne (Ne.symm eq)] at isEmpty
-      exact empty n bound isEmpty
+      simp [Flapjack.holEl_set, sourceBound] at isEmpty
+    · simp only [Flapjack.holEl_set _ _ _ _ sourceBound, if_neg (Ne.symm eq)] at isEmpty
+      exact empty n ⟨bound, isEmpty⟩
 
 /-- Updating only an unreachable source global preserves the full flat state
 relation. This is a Flapjack helper for the pure-expression simulation. -/
@@ -204,7 +204,7 @@ theorem pureEvaluation_list {C F : Type} (env : FlatSem.Environment FlatSem.Valu
     obtain ⟨heads, headRelated, headResultEq, headsSafe⟩ :=
       headIH headState headResult reachable target headEval headPure envSafe headSafe headEmpty related headNotTypeError
     subst headResult
-    obtain ⟨head, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source headState first heads headEval
+    obtain ⟨head, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source first headState heads headEval
     have clocks : source.clock = headState.clock := related.1.trans headRelated.1.symm
     simp only [clocks, Nat.min_self] at run
     cases tailEval : FlatSem.evaluate env headState (second :: rest) with

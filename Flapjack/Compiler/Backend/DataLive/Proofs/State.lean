@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.DataLive
 import Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
 import Flapjack.Misc.SptreeLookup
+import Flapjack.Compiler.Backend.Semantics.DataProps.Variables
 
 /-! State relation and local-variable lemmas for data liveness. -/
 namespace Flapjack.Compiler.Backend.DataLive
@@ -104,12 +105,9 @@ including the same failure when a name is absent. -/
 theorem stateRel_getVars {C F : Type} (source target : State C F) (live : NumSet) (names : List Nat)
     (related : stateRel source target live) (members : ∀ key ∈ names, sptMem key live) :
     DataSem.getVars names source.locals = DataSem.getVars names target.locals := by
-  induction names with
-  | nil => rfl
-  | cons name names ih =>
-    have first := stateRel_getVar source target live name related (members name (by simp))
-    have rest := ih (by intro key member; exact members key (by simp [member]))
-    simp [DataSem.getVars, first, rest]
+  apply DataProps.every_getVars names source.locals target.locals
+  intro key member
+  exact related.2.2.2.2.2.2.2.2.2.2.2.2.2 key (members key member)
 
 /-- In particular, the liveness set built by `sptListInsert` covers every
 argument read by the instruction. -/

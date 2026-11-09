@@ -4,47 +4,16 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
-/-- Eight-bit shifts accept exactly one eight-bit word literal. -/
+/-- The shift clause delegates every word size and literal to `doShift`. -/
 @[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_def"]
-theorem doApp_shift8_source {C F : Type} (s : State C F) (shift : Shift) (n : Nat)
-    (vs : List Value) :
-    doApp s (.src (.shift .w8 shift n)) vs = match vs with
-      | [.litv (.word8 w)] => some (s, .val (.litv (.word8 (shift8Lookup shift w n))))
-      | _ => none := by
-  cases vs with
-  | nil => rfl
-  | cons x xs =>
-    cases xs with
-    | nil =>
-      cases x <;> simp [doApp, doAppNumeric, applyNumericProjection,
-        SemanticPrimitivesHOL.doApp, doAppNumericCore, doAppBasic, flatToValue, valueToFlat]
-      all_goals split <;> simp_all
-      all_goals repeat' first | split at * | simp_all [SemanticPrimitivesHOL.boolValue]
-    | cons y ys =>
-      cases x <;> simp [doApp, doAppNumeric, applyNumericProjection,
-        SemanticPrimitivesHOL.doApp, doAppNumericCore, doAppBasic, flatToValue]
-      all_goals repeat' first | split at * | simp_all [SemanticPrimitivesHOL.boolValue]
-
-/-- Sixty-four-bit shifts accept exactly one sixty-four-bit word literal. -/
-@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_def"]
-theorem doApp_shift64_source {C F : Type} (s : State C F) (shift : Shift) (n : Nat)
-    (vs : List Value) :
-    doApp s (.src (.shift .w64 shift n)) vs = match vs with
-      | [.litv (.word64 w)] => some (s, .val (.litv (.word64 (shift64Lookup shift w n))))
-      | _ => none := by
-  cases vs with
-  | nil => rfl
-  | cons x xs =>
-    cases xs with
-    | nil =>
-      cases x <;> simp [doApp, doAppNumeric, applyNumericProjection,
-        SemanticPrimitivesHOL.doApp, doAppNumericCore, doAppBasic, flatToValue, valueToFlat]
-      all_goals split <;> simp_all
-      all_goals repeat' first | split at * | simp_all [SemanticPrimitivesHOL.boolValue]
-    | cons y ys =>
-      cases x <;> simp [doApp, doAppNumeric, applyNumericProjection,
-        SemanticPrimitivesHOL.doApp, doAppNumericCore, doAppBasic, flatToValue]
-      all_goals repeat' first | split at * | simp_all [SemanticPrimitivesHOL.boolValue]
+theorem doApp_shift_source {C F : Type} (s : State C F) (width : WordSize)
+    (shift : Shift) (n : Nat) (lit : Lit) :
+    doApp s (.src (.shift width shift n)) [.litv lit] =
+      match Flapjack.SemanticPrimitivesProps.doShift shift n width lit with
+      | none => none
+      | some result => some (s, .val (.litv result)) := by
+  cases h : Flapjack.SemanticPrimitivesProps.doShift shift n width lit <;>
+    simp [doApp, doAppNumeric, h]
 
 /-- Equality accepts exactly two values and propagates comparison type errors. -/
 @[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_def"]

@@ -948,7 +948,7 @@ theorem localEnvBounded_forceThunk {C F : Type} [Nonempty C]
                     And.intro growth (And.intro nextInvariant (And.intro nextGeneration forward))
               | notEvaluated =>
                 obtain ⟨address, rfl⟩ := destThunk_isThunk_location operand nextSource.refs .notEvaluated value sourceThunk
-                have flatLocation := (valueRel_location_iff nextGenv false address flatOperand).mp operandRel
+                have flatLocation := ((valueRel_eqns_nonGlobal).2.2.1 flatOperand address nextGenv false).mp operandRel
                 subst flatOperand
                 have callSuccess : doOpApp [value, .conv none []] ≠ none := by
                   intro failed

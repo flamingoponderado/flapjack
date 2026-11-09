@@ -155,7 +155,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
         .assign 7 (shiftN .lsr (.var 2) 2), .assign 9 (shiftN .lsr (.var 6) 4),
         ptr, .call none (some fromList1Location) [0, 1, 4, 2, 3, 5] none]))
   else if location = refByteLocation then
-    let bytes := BitVec.ofNat width (width / 8)
+    let bytes := (wordSemBytesInWord : BitVec width)
     let h := WordLangExpHOL.op .add [shiftN .lsr (.var 2) 2, .const bytes]
     let x := if width - 63 = 0 then h else shiftN .lsr h (width - 63)
     let y := shiftN .lsl h (width - wordShiftAmount width - conf.lenSize)
@@ -199,7 +199,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
       .store (.var 1) 5,
       .call none (some replicateLocation) [0, 1, 4, 2, 3] none])
   else if location = fromList1Location then
-    let bytes := BitVec.ofNat width (width / 8)
+    let bytes := (wordSemBytesInWord : BitVec width)
     some (6, listSeq [
       .store (.var 2) 10,
       .assign 2 (.op .add [.var 2, .const bytes]),
@@ -212,7 +212,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
           .assign 6 (.op .sub [.var 6, .const 4]),
           .call none (some fromList1Location) [0, 2, 4, 6, 8, 10] none])])
   else if location = byteCopyLocation then
-    let bytes := BitVec.ofNat width (width / 8)
+    let bytes := (wordSemBytesInWord : BitVec width)
     some (6, listSeq [
       .assign 4 (shiftVar .lsr 4 2), .assign 6 (shiftVar .lsr 6 2),
       .assign 10 (shiftVar .lsr 10 2), .assign 1 (.const 2),
@@ -239,7 +239,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
           .set (.temp 2) (.var 7),
           .call none (some appendMainLoopLocation) [0, 1, 4, 3, 5, 7] none]))
   else if location = appendMainLoopLocation then
-    let bytes := BitVec.ofNat width (width / 8)
+    let bytes := (wordSemBytesInWord : BitVec width)
     some (6, listSeq [
       .assign 1 (realAddr conf 4),
       .assign 3 (.load (.op .add [.var 1, .const bytes])),
@@ -257,7 +257,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
       .store (.op .add [.var 2, .const (2 * bytes)]) 1,
       .set .nextFree (.op .add [.var 2, .const (3 * bytes)]), .return 0 [3]])
   else if location = appendLenLoopLocation then
-    let bytes := BitVec.ofNat width (width / 8)
+    let bytes := (wordSemBytesInWord : BitVec width)
     some (3, .ite .test 2 (.imm 1) (listSeq [
       .assign 1 (.op .sub [.lookup .triggerGC, .lookup .nextFree]),
       .assign 1 (.op .add [.var 4, shiftVar .lsr 1 (wordShiftAmount width - 2)]),
@@ -268,7 +268,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
         .assign 4 (.op .add [.var 4, .const 12]),
         .call none (some appendLenLoopLocation) [0, 2, 4] none]))
   else if location = anyArithLocation then
-    let bytes := BitVec.ofNat width (width / 8)
+    let bytes := (wordSemBytesInWord : BitVec width)
     let retSmall (value : WordLangExpHOL (BitVec width)) := WordLangProgHOL.seq (.assign 1 value) (.return 0 [1])
     some (4, listSeq [
       .assign 1 (.const 4), addNumSize conf 0, addNumSize conf 1, .set (.temp 29) (.var 1),
@@ -298,7 +298,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
       .set .nextFree (.op .add [.var 5, .const bytes, shiftVar .lsl 6 (wordShiftAmount width)]),
       .return 0 [1]])
   else if location = installCodeLocation then
-    let bytes := BitVec.ofNat width (width / 8)
+    let bytes := (wordSemBytesInWord : BitVec width)
     some (4, .ite .test 2 (.imm 1)
       (.seq (.assign 2 (.lookup .bitmapBuffer)) (.call none (some installDataLocation) [0, 2, 4, 6] none))
       (listSeq [.assign 3 (realAddr conf 2),
@@ -308,7 +308,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
         .assign 2 (.load (.op .add [.var 3, .const (2 * bytes)])),
         .call none (some installCodeLocation) [0, 2, 4, 6] none]))
   else if location = installDataLocation then
-    let bytes := BitVec.ofNat width (width / 8)
+    let bytes := (wordSemBytesInWord : BitVec width)
     some (4, .ite .test 4 (.imm 1)
       (.call none (some installLocation) [0, 2, 6] none)
       (listSeq [.assign 3 (realAddr conf 4),
@@ -336,7 +336,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
               (.ite .test 3 (.imm 16) (.ite .lower 6 (.reg 8) (result 0) (result 2)) (result 2))
               (.ite .test 3 (.imm 16) (result 0) (.ite .lower 6 (.reg 8) (result 2) (result 0))))])))
   else if location = equalLocation then
-    let bytes := BitVec.ofNat width (width / 8)
+    let bytes := (wordSemBytesInWord : BitVec width)
     let result (n : Nat) := WordLangProgHOL.seq (.assign 2 (.const (BitVec.ofNat width n))) (.return 0 [2])
     let tagMask := tagMask conf ||| 2
     some (3, listSeq [

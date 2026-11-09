@@ -37,7 +37,7 @@ theorem evaluate_call_simulation_step {C F : Type} (env : FlatSem.Environment Fl
     evaluationSimulationAt env source [.app tra (.src .opapp) args] := by
   intro next result reachable target run lookupsClosed related envClosed envSafe expressionsSafe notTypeError
   have argsClosed : globalsWithin (findGlobalsList destGlobalVarLookup args.reverse) reachable := by
-    apply findLookupsList_reverse_within args reachable
+    rw [← findLookupsList_reverse args]
     have appClosed := (findLookupsList_within_iff _ _).mp lookupsClosed (.app tra (.src .opapp) args) (by simp)
     exact (findLookups_app_within tra (.src .opapp) args reachable appClosed).1
   have argsSafe : expressionsNoEval args.reverse := by
@@ -67,7 +67,7 @@ theorem evaluate_call_simulation_step {C F : Type} (env : FlatSem.Environment Fl
     | val values =>
       simp only at run
       have valuesClosed : globalsWithin (findValuesGlobals values.reverse) reachable := by
-        apply findValuesGlobals_reverse_within
+        rw [← findValuesGlobals_reverse values]
         simpa [findPrimitiveResultGlobals] using argClosed
       have valuesSafe : valuesNoEval values.reverse := by
         apply valuesNoEval_reverse

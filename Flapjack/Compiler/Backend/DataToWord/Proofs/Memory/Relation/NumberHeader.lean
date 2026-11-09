@@ -90,12 +90,9 @@ private theorem wordHeap_bignumHeader {width : Nat} [NeZero width] (conf : Confi
     exact (iff_of_eq (congrFun split1.1 _)).mp (Or.inr e)
   · exact pureAssertion.2.2.2
 
-/-- The concrete header of a related bignum is valid and can be read at its
-    decoded address. This is a useful consequence of the HOL theorem
-    `memory_rel_Number_bignum_header`, but is not tagged as that theorem: the
-    HOL statement also existentially quantifies three unused values over
-    independent inhabited HOL types, whereas arbitrary Lean types may be empty. -/
-theorem memoryRel_bignumHeaderCore {width : Nat} [NeZero width] (conf : Config) (be : Bool)
+/-- The bignum header also lies in the concrete memory domain. This private
+    strengthening supplies the original theorem and the thunk proof. -/
+private theorem memoryRel_bignumHeaderCore {width : Nat} [NeZero width] (conf : Config) (be : Bool)
     (next : Nat) (refs : Spt (BvlSem.Ref Value)) (space : Nat)
     (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
     (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
@@ -107,7 +104,7 @@ theorem memoryRel_bignumHeaderCore {width : Nat} [NeZero width] (conf : Config) 
       let digits : List (BitVec width) := Misc.Multiword.n2mw value.natAbs
       let tag : BitVec width := ((if value < 0 then 1 else 0) <<< 2) ||| 3
       (encodeHeader (width := width) conf tag.toNat digits.length).isSome ∧
-      memory address = .word (makeHeader conf tag digits.length) := by
+      memory address = .word (makeHeader conf tag digits.length) ∧ domain address = true := by
   rintro ⟨⟨heap, limit, a, sp, sp1, gens, heapMem, wordInv, _, _⟩, large, good⟩
   obtain ⟨roots, inv, addresses⟩ := wordInv
   obtain ⟨_, _, _, _, stackInv⟩ := inv
@@ -131,9 +128,34 @@ theorem memoryRel_bignumHeaderCore {width : Nat} [NeZero width] (conf : Config) 
         have addr := (getRealAddr_getAddr conf store heap ptr _ curr (.word 0)
           ⟨heapMem.1, cell, stored, good⟩).2
         refine ⟨getAddr conf ptr (.word 0), curr + StackRemove.bytesInWord width * BitVec.ofNat width ptr,
-          ?_, ?_, encoded, facts.1⟩
+          ?_, ?_, encoded, facts.1, facts.2⟩
         · simpa [wordAddr] using projected.symm
         · simpa [BitVec.mul_comm] using addr
+
+/-- A related bignum has the original encoded header at its decoded address.
+    The three unused existential carriers are independently inhabited, as
+    are all HOL types. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_Number_bignum_header"
+  (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
+theorem memoryRel_bignumHeader {β γ δ : Type} [Nonempty β] [Nonempty γ] [Nonempty δ]
+    {width : Nat} [NeZero width] (conf : Config) (be : Bool)
+    (next : Nat) (refs : Spt (BvlSem.Ref Value)) (space : Nat)
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
+    (value : Int) (location : WordLocW width) (vars : List (Value × WordLocW width)) :
+    memoryRel conf be next refs space store memory domain ((.number value, location) :: vars) ∧
+      ¬ smallInt width value ∧ goodDimindex width →
+    ∃ (_ff : β) (w : BitVec width) (_x : γ) (address : BitVec width) (_y : δ),
+      location = .word w ∧ getRealAddr conf store w = some address ∧
+      let digits : List (BitVec width) := Misc.Multiword.n2mw value.natAbs
+      let tag : BitVec width := ((if value < 0 then 1 else 0) <<< 2) ||| 3
+      (encodeHeader (width := width) conf tag.toNat digits.length).isSome ∧
+      memory address = .word (makeHeader conf tag digits.length) := by
+  intro h
+  obtain ⟨w, address, locationEq, addressEq, encoded, headerEq, _⟩ :=
+    memoryRel_bignumHeaderCore conf be next refs space store memory domain value location vars h
+  exact ⟨Classical.choice inferInstance, w, Classical.choice inferInstance, address,
+    Classical.choice inferInstance, locationEq, addressEq, encoded, headerEq⟩
 
 /-- A related bignum exposes its complete separated multiword payload. This
     Flapjack helper is a consequence used toward the original bignum memory

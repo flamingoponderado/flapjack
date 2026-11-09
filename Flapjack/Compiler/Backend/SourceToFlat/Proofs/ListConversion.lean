@@ -65,8 +65,9 @@ theorem valueToList_related (genv : GlobalEnv) (ok : genvCOk genv.c)
   | case1 =>
     simp [SemanticPrimitivesHOL.valueToList] at decoded
     subst xs
-    obtain ⟨flats, ctor, hfields, rfl, flatCtor, rfl, lookup⟩ :=
-      (valueRel_conv_iff genv _ _ flat).mp rel
+    have shape := ((valueRel_eqns_nonGlobal).2.1 _ flat genv _).mp rel
+    simp only [Option.some.injEq, reduceCtorEq, false_and, exists_false, or_false] at shape
+    obtain ⟨_, flatCtor, flats, rfl, rfl, hfields, lookup⟩ := shape
     have hc := (genvLookupNil genv.c (flatCtor, 0) ok).mp lookup
     cases hc
     cases hfields
@@ -74,8 +75,9 @@ theorem valueToList_related (genv : GlobalEnv) (ok : genvCOk genv.c)
   | case2 stamp ne => simp [SemanticPrimitivesHOL.valueToList, ne] at decoded
   | case3 head tail ih =>
     simp only [SemanticPrimitivesHOL.valueToList, if_true] at decoded
-    obtain ⟨flats, ctor, hfields, rfl, flatCtor, rfl, lookup⟩ :=
-      (valueRel_conv_iff genv _ _ flat).mp rel
+    have shape := ((valueRel_eqns_nonGlobal).2.1 _ flat genv _).mp rel
+    simp only [Option.some.injEq, reduceCtorEq, false_and, exists_false, or_false] at shape
+    obtain ⟨_, flatCtor, flats, rfl, rfl, hfields, lookup⟩ := shape
     have hc := (genvLookupCons genv.c (flatCtor, 2) ok).mp lookup
     cases hc
     cases hfields with
@@ -108,8 +110,9 @@ theorem valueToCharList_related (genv : GlobalEnv) (ok : genvCOk genv.c)
   | case1 =>
     simp [SemanticPrimitivesHOL.valueToCharList] at decoded
     subst xs
-    obtain ⟨flats, ctor, hfields, rfl, flatCtor, rfl, lookup⟩ :=
-      (valueRel_conv_iff genv _ _ flat).mp rel
+    have shape := ((valueRel_eqns_nonGlobal).2.1 _ flat genv _).mp rel
+    simp only [Option.some.injEq, reduceCtorEq, false_and, exists_false, or_false] at shape
+    obtain ⟨_, flatCtor, flats, rfl, rfl, hfields, lookup⟩ := shape
     have hc := (genvLookupNil genv.c (flatCtor, 0) ok).mp lookup
     cases hc
     cases hfields
@@ -117,8 +120,9 @@ theorem valueToCharList_related (genv : GlobalEnv) (ok : genvCOk genv.c)
   | case2 stamp ne => simp [SemanticPrimitivesHOL.valueToCharList, ne] at decoded
   | case3 head tail ih =>
     simp only [SemanticPrimitivesHOL.valueToCharList, if_true] at decoded
-    obtain ⟨flats, ctor, hfields, rfl, flatCtor, rfl, lookup⟩ :=
-      (valueRel_conv_iff genv _ _ flat).mp rel
+    have shape := ((valueRel_eqns_nonGlobal).2.1 _ flat genv _).mp rel
+    simp only [Option.some.injEq, reduceCtorEq, false_and, exists_false, or_false] at shape
+    obtain ⟨_, flatCtor, flats, rfl, rfl, hfields, lookup⟩ := shape
     have hc := (genvLookupCons genv.c (flatCtor, 2) ok).mp lookup
     cases hc
     cases hfields with
@@ -126,7 +130,7 @@ theorem valueToCharList_related (genv : GlobalEnv) (ok : genvCOk genv.c)
       cases tailRel with
       | cons tailRel nilRel =>
         cases nilRel
-        have hhead := (valueRel_literal_iff genv (.char head) _).mp headRel
+        have hhead := ((valueRel_eqns_nonGlobal).1 _ (.char head) genv).mp headRel
         cases hhead
         cases hv : SemanticPrimitivesHOL.valueToCharList tail with
         | none => simp [hv] at decoded

@@ -6,6 +6,7 @@ fun show label th = if null (hyp th) then (print label; print_term (concl th); p
   else raise Fail (label ^ " has hypotheses");
 val _ = show "lim_safe_part=" dataSemTheory.lim_safe_part_def;
 val _ = show "lim_safe=" dataSemTheory.lim_safe_def;
+val _ = show "do_lim_safe=" dataSemTheory.do_lim_safe;
 val _ = show "ref_array_inside=" (EVAL ``dataSem$lim_safe
   ((l:dataSem$limits) with <|arch_64_bit := T; length_limit := 3|>)
   (closLang$MemOp closLang$RefArray) [dataSem$Number 7; dataSem$Number 0]``);

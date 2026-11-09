@@ -1,3 +1,8 @@
+`flat_do_app_preservation_probe.out` also captures the typed original flat
+primitive simulation and its semantic-primitives store-relation and arithmetic
+prerequisites. The local typed-list relation is replayed from its HOL proof.
+These captures support source review, not cross-language equivalence.
+
 `pattern_exh_steps_probe.out` captures the typed original step-count and
 worklist equations, concrete results, the exported row-checker equation, and
 typed replays of the local append and worklist-equivalence lemmas. It also
@@ -18,11 +23,16 @@ theorems, traversal definitions and theorems, and the source decision-tree
 evaluator equations, guard-correctness theorem, and pattern compiler
 correctness theorem.
 
-`data_resource_mono_probe.out` captures the six exported data-semantics
-primitive and evaluator monotonicity statements with inferred configuration,
-FFI, value, and result carriers. The combined Lean resource proof exists, but
-these captures alone do not review the evaluator and primitive dependencies or
-establish HOL-to-Lean equivalence.
+`data_resource_mono_probe.out` captures the exported data-semantics primitive
+and evaluator monotonicity statements, resource-field swap theorems, the
+heap-size safety-update theorem, evaluator-control definitions, and local
+cut-state swap replays, and the local evaluator resource-swap theorem replayed
+from its exported consequences. The latter exposes an independent type for an
+unused existential in its false branch. Captures include inferred configuration,
+FFI, value, and result carriers. The same probe records the polymorphic
+semantic result-mapping definitions and inversion lemmas used by the primitive
+swap proof. These captures alone do not review the evaluator and primitive
+dependencies or establish HOL-to-Lean equivalence.
 
 `data_to_word_gc_stack_probe.out` captures the exported `flat_PERM_extract_stack`,
 `soundness_size_of`, and `soundness_size_of_gen` statements with inferred types.
@@ -368,21 +378,53 @@ cases. Lean proves both decoder choice correspondences and checks installation
 success with an existing label. The capture is not a full installation proof.
 Regenerate with `HOL_PROBE_ONLY=data_sem_install_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-`data_sem_apply_probe.out` captures the typed data primitive dispatcher and
+`data_sem_apply_probe.out` captures the typed data primitive dispatcher, its
+`do_app_clock` and `check_res_IMP` theorems, the heap and stack accounting
+definitions, and the architecture-size and small-number definitions, alongside
 original observations for block construction, timestamp updates, invalid list
 lengths, integer arithmetic, and unsupported byte copying. Lean examples cover
 the same cases; these checks do not establish full dispatcher correspondence.
 Regenerate with `HOL_PROBE_ONLY=data_sem_apply_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-`data_sem_limits_probe.out` captures the typed operation-limit definitions and
-original array-length and nullary-tag boundary observations. Corresponding
+`sptree_delete_definition_probe.out` also captures the polymorphic sparse-tree
+size, union, association-list construction, intersection and well-formedness
+construction definitions used by data heap accounting and state cuts.
+Regenerate with `HOL_PROBE_ONLY=sptree_delete_definition_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`mlstring_length_probe.out` captures the typed `strlen` definition and the
+original length-of-explode theorem used by data-space accounting.
+Regenerate with `HOL_PROBE_ONLY=mlstring_length_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`data_space_req_probe.out` captures the typed number, constant-part, and
+operation space-requirement definitions.
+Regenerate with `HOL_PROBE_ONLY=data_space_req_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`integer_division_probe.out` captures HOL integer division and remainder's
+nonzero-divisor specifications; neither constrains the value at zero.
+Regenerate with `HOL_PROBE_ONLY=integer_division_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`data_sem_space_probe.out` captures the data-language heap and space
+definitions. It also replays the local growth-bound lemma and the complete
+original `size_of` equations, which HOL subsequently rebinds to a simplified theorem.
+Regenerate with `HOL_PROBE_ONLY=data_sem_space_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`data_sem_evaluate_original_probe.out` replays the original evaluator
+equations before HOL rebinds them to remove the clock clamps. Each equation
+is parsed and generalized separately to retain its independently typed
+pattern variables.
+Regenerate with `HOL_PROBE_ONLY=data_sem_evaluate_original_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`data_sem_limits_probe.out` captures the typed operation-limit definitions,
+their state-update wrapper, and original array-length and nullary-tag boundary
+observations. Corresponding
 Lean cases cover valid, invalid, and malformed inputs. The observations do not
 establish the complete evaluator correspondence. Regenerate with
 `HOL_PROBE_ONLY=data_sem_limits_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `data_sem_stack_probe.out` captures the typed computed arithmetic call tree,
-the data-language stack-consumption clauses, and the stack update. The tree
-was regenerated against the pinned CakeML and HOL revisions; run
+its data-to-word location constants, value-depth and stack-maximum helpers,
+the stack-consumption clauses, and the stack update. The tree was regenerated
+against the pinned CakeML and HOL revisions; run
 `python3 scripts/check-data-stack-call-tree.py` to compare it with the Lean
 tree. The capture and comparison do not establish whole-evaluator correctness.
 Regenerate with `HOL_PROBE_ONLY=data_sem_stack_probeScript.sml scripts/hol-probes/regenerate.sh`.
@@ -3601,7 +3643,24 @@ the executed allocator. Regenerate read-only with
 
 `word_alloc_get_forced_probeScript.sml` captures twenty-eight original `get_forced` rows over `c with ISA := _`: each forced `AddCarry`/`AddOverflow`/`SubOverflow`/`LongMul` ISA guard and its rejected ISA, omitted equal-register pairs, `FPMovToReg`/`FPMovFromReg` at 32 and 64 bits, an unforced instruction, `Seq`/`If`/`MustTerminate`/`Loop`, returning calls with and without a handler, a tail call with a handler, `Skip`, and registers above 2^64. `Flapjack/Test/GetForcedParity.lean` replays each row and instantiates `getForcedInGetClashTree`. These are proof-side ports; the executed RISC-V allocator still uses its own forced-edge traversal.
 
-`data_to_word_config_probeScript.sml` captures original pointer-layout rows, assignment fallbacks to `Skip`, and typed address, shift, allocation-failure, sequencing, consecutive-store, constant-comparison and diagnostic-FFI definitions. Representative 64-bit observations include each address branch, shift boundaries, nonempty stores and comparisons, and both FFI settings. `Flapjack/Test/DataToWordConfigParity.lean` replays the executable rows in the kernel.
+`data_to_word_config_probeScript.sml` captures original pointer-layout rows, assignment fallbacks to `Skip`, and typed address, shift, allocation-failure, sequencing, consecutive-store, constant-comparison and diagnostic-FFI definitions. It also captures the location-aware constant-building definitions, including the independently polymorphic `make_ptr` arguments and `getWords` annotations, and observations for a 48-bit Word64 split, locations in sparse memory and stores, and an 8-bit constant comparison. Representative 64-bit observations include each address branch, shift boundaries, nonempty stores and comparisons, and both FFI settings. `Flapjack/Test/DataToWordConfigParity.lean` and `Flapjack/Test/CakeBuildLoweringParity.lean` replay the executable rows in the kernel.
+
+`data_to_word_word_test_probeScript.sml` replays the two original local bit-mask proofs, the resulting thunk-header theorem, the exception-unwinding locals theorem, and the local value-invariant location lemma, capturing their inferred HOL statements. The corresponding Lean proofs are in `Flapjack/Compiler/Backend/DataToWord/Proofs/WordTest.lean`, `ThunkBits.lean`, `JumpExc.lean`, and `ValueLoc.lean`.
+
+`flat_do_app_preservation_probeScript.sml` captures the inferred HOL types of
+the flat primitive application's clock and evaluation-configuration
+preservation theorems, including the latter's independent unused binder, and
+the pattern matching state, clock, binding extension, append and outcome theorems,
+and the original match-result mapping definition.
+
+`flat_pattern_rows_same_probeScript.sml` captures the independently typed row
+payloads and indexed result in the pattern compiler's row-selection theorem.
+
+`flat_elim_value_globals_probeScript.sml` also captures the complete
+reference-store membership theorem, including its unused `reachable` binder,
+and replays the three local filter-invariant proofs.
+
+`data_to_word_memory_thunk_probeScript.sml` captures the inferred original statements of `blocks_unique_Thunk`, `blocks_unique_Thunk2`, and `blocks_unique_Word64`, including the independent type of the second pair component and the fixed 64-bit word type. Their Lean proofs are in `Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Values/Thunk.lean` and `Memory/Relation/SmallNumber.lean`. The probe also captures `memory_rel_Thunk_IMP` and `memory_rel_Thunk_inlined`, proved in `Memory/Relation/Thunk.lean`, and replays the local `thunk_tag_bits_lemma`, proved in `Memory/Relation/ThunkHeap.lean`.
 
 `word_gc_functions_probeScript.sml` captures original `word_gcFunctions` and `word_simp` GC-constant rows at 64 bits: `ptr_to_addr`, `update_addr`, `decode_length`, both `is_ref_header` outcomes, `memcpy` with its result memory and a failing domain check, `word_gc_move` on a zero and a non-zero `Loc`, a small word, a copied object and a forwarding pointer, `word_gen_gc_move` copying a data object and a reference object, `word_gen_gc_partial_move` outside and inside the young generation, `word_gc_move_roots`, `word_gc_move_list`, `glob_real` on a word and a `Loc`, the four `new_trig` branches, and `is_gc_const`/`is_gc_word_const` on an even and odd word and a `Loc` (twenty-eight rows in all). `Flapjack/Test/WordGcFunctionsParity.lean` replays every row in the kernel, comparing memories at the probed addresses.
 

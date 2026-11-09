@@ -9,6 +9,13 @@ fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print
 val _ = show_thm "pure_every_eta=" flat_elimProofTheory.is_pure_EVERY_aconv;
 val _ = show_thm "value_globals=" flat_elimProofTheory.find_v_globals_def;
 val _ = show_thm "refs_globals=" flat_elimProofTheory.find_refs_globals_def;
+val _ = show_thm "lookups_append=" flat_elimProofTheory.find_lookupsL_APPEND;
+val _ = show_thm "value_globals_append=" flat_elimProofTheory.find_v_globalsL_APPEND;
+val _ = show_thm "refs_globals_append=" flat_elimProofTheory.find_refs_globals_APPEND;
+val _ = show_thm "lookups_reverse=" flat_elimProofTheory.find_lookupsL_REVERSE;
+val _ = show_thm "value_globals_reverse=" flat_elimProofTheory.find_v_globalsL_REVERSE;
+val _ = show_thm "value_globals_el=" flat_elimProofTheory.find_v_globalsL_EL;
+val _ = show_thm "refs_globals_el=" flat_elimProofTheory.find_refs_globals_EL;
 val _ = show_thm "env_globals=" flat_elimProofTheory.find_env_globals_def;
 val _ = show_thm "result_globals=" flat_elimProofTheory.find_result_globals_def;
 val _ = show_thm "primitive_result_globals=" flat_elimProofTheory.find_sem_prim_res_globals_def;
@@ -57,3 +64,19 @@ val _ = show_thm "pmatch_no_eval=" flat_elimProofTheory.pmatch_not_has_Eval;
 val _ = show_eval "closure_lookup=" ``sptree$lookup 3 (flat_elimProof$find_v_globals (flatSem$Closure <|v := []|> «x» (flatLang$App backend_common$None (flatLang$GlobalVarLookup 3) [])))``;
 val _ = show_eval "tuple_lookup=" ``sptree$lookup 3 (flat_elimProof$find_v_globals (flatSem$Conv NONE [flatSem$Closure <|v := []|> «x» (flatLang$App backend_common$None (flatLang$GlobalVarLookup 3) [])]))``;
 val _ = show_eval "closure_eval=" ``flat_elimProof$v_has_Eval (flatSem$Closure <|v := []|> «x» (flatLang$App backend_common$None (flatLang$Src ast$Eval) []))``;
+val _ = show_thm "refs_globals_mem_typed=" flat_elimProofTheory.find_refs_globals_MEM;
+val _ = show_thm "lookups_list_mem_typed=" flat_elimProofTheory.find_lookupsL_MEM;
+(* This theorem is local in HOL, so replay its original proof. *)
+val filter_sub_bag_replay = prove (
+  ``flatProps$elist_globals (FILTER P ds) <= flatProps$elist_globals ds``,
+  Induct_on `ds` \\ rw [] \\ fs [bagTheory.SUB_BAG_UNION]);
+val _ = show_thm "filter_sub_bag_typed=" filter_sub_bag_replay;
+val filter_empty_replay = prove (
+  ``flatProps$elist_globals ds = {||} ==>
+    flatProps$elist_globals (FILTER P ds) = {||}``,
+  Induct_on `ds` \\ rw [] \\ fs [bagTheory.SUB_BAG_UNION]);
+val _ = show_thm "filter_empty_typed=" filter_empty_replay;
+val esgc_free_filter_replay = prove (
+  ``EVERY flatProps$esgc_free ds ==> EVERY flatProps$esgc_free (FILTER P ds)``,
+  Induct_on `ds` \\ rw []);
+val _ = show_thm "esgc_free_filter_typed=" esgc_free_filter_replay;

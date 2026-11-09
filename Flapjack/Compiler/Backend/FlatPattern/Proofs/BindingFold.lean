@@ -63,7 +63,7 @@ theorem evaluateBindingFold {A C F : Type} (f : A → Option MlString)
         apply fresh
         exact ⟨x, by simp, by simp [fx, Flapjack.holThe]⟩
       have nextRelated : aLookupRel (fun n => ¬ newNames n) Eq ((name, h x) :: env2.v) env.v :=
-        ((aLookupRel_cons_false (fun n => ¬ newNames n) Eq name (h x) env2.v env.v).1
+        ((aLookupRel_cons_false (fun n => ¬ newNames n) name Eq (h x) env2.v env.v).1
           (by simpa using freshName)).2 related
       have evaluated := evaluateValue x (by simp) env2 related
       have rest := ih (fun y hy => someName y (by simp [hy]))

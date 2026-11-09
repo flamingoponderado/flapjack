@@ -1,6 +1,5 @@
 import Flapjack.Compiler.Backend.BviInline.Proofs.Observation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Observation
-import Flapjack.Compiler.Backend.BviToData.Proofs.Semantics
 
 /-! Composition of the BVI TMC and inlining compiler passes. -/
 namespace Flapjack.Compiler.Backend.BviInline
@@ -112,54 +111,5 @@ theorem tailrec_tmc_inline_semantics {C F : Type} (fuel : Nat)
     tmcLast cache ffi (stateCo (BviTailrec.compileProgSource tailEnabled) oracle) compiler
     tmcCondition tmcOracleConditions tmcWorkerBound tmcRun inlineRun inlineOracleCache afterTailNotFail
   exact restSemantics.trans tailSemantics.symm
-
-/-- The executed tail-recursion, TMC, inlining, and BVI-to-data passes
-preserve the initial program's observation. The pass and future-oracle
-conditions are those required by the component proofs. This is Flapjack
-pipeline infrastructure pending HOL evaluator and carrier review. -/
-theorem tailrec_tmc_inline_toData_semantics {C F : Type} (fuel : Nat)
-    (tailEnabled tmcEnabled : Bool) (tailNext tmcNext start : Nat)
-    (program afterTail afterTmc output : List (Nat × Nat × Bvi.Exp)) (tailLast tmcLast : Nat)
-    (cache : Spt (Nat × Bvi.Exp)) (ffi : HolFfiState F)
-    (oracle : BviSem.CompileOracle (Nat × (Nat × (Spt (Nat × Bvi.Exp) × C))))
-    (compiler : DataSem.Compiler C) (limits : DataSem.Limits) (sizes : Spt Nat)
-    (tailCondition : BviTailrec.inputCondition tailNext program)
-    (tailOracleConditions : ∀ n, BviTailrec.inputCondition (oracle n).1.1 (oracle n).2)
-    (tailWorkerBound : ∀ n, n ∈ afterTail.map Prod.fst → BviTailrec.inWorkerNamespace n → n < (oracle 0).1.1)
-    (tailRun : BviTailrec.compileProgFuel fuel tailEnabled tailNext program = some (tailLast, afterTail))
-    (tmcCondition : BviTmc.inputCondition tmcNext afterTail)
-    (tmcOracleConditions : ∀ n, BviTmc.inputCondition
-      ((stateCo (BviTailrec.compileProgSource tailEnabled) oracle) n).1.1
-      ((stateCo (BviTailrec.compileProgSource tailEnabled) oracle) n).2)
-    (tmcWorkerBound : ∀ n, n ∈ afterTmc.map Prod.fst → BviTmc.inWorkerNamespace n →
-      n < ((stateCo (BviTailrec.compileProgSource tailEnabled) oracle) 0).1.1)
-    (tmcRun : BviTmc.compileProgFuel fuel tmcEnabled tmcNext afterTail = some (tmcLast, afterTmc))
-    (inlineRun : BviInline.compileProgFuel fuel afterTmc = some (cache, output))
-    (inlineOracleCache : ((stateCo (BviTmc.compileProgSource tmcEnabled)
-      (stateCo (BviTailrec.compileProgSource tailEnabled) oracle)) 0).1.1 = cache)
-    (notFail : BviSem.semantics ffi (sptFromAList program) oracle
-      (stateCc (BviTailrec.compileProgSource tailEnabled)
-        (stateCc (BviTmc.compileProgSource tmcEnabled)
-          (stateCc compileIncSource (fun cfg code => compiler cfg (BviToData.compileProg code))))) start ≠ .fail) :
-    DataSem.semantics ffi (sptFromAList (BviToData.compileProg output))
-      (fun n => let (cfg, code) := (stateCo compileIncSource (stateCo (BviTmc.compileProgSource tmcEnabled)
-        (stateCo (BviTailrec.compileProgSource tailEnabled) oracle))) n
-        (cfg, BviToData.compileProg code)) compiler limits sizes start =
-      BviSem.semantics ffi (sptFromAList program) oracle
-        (stateCc (BviTailrec.compileProgSource tailEnabled)
-          (stateCc (BviTmc.compileProgSource tmcEnabled)
-            (stateCc compileIncSource (fun cfg code => compiler cfg (BviToData.compileProg code))))) start := by
-  let bviCompiler : BviSem.Compiler C := fun cfg code => compiler cfg (BviToData.compileProg code)
-  let bviOracle := stateCo compileIncSource (stateCo (BviTmc.compileProgSource tmcEnabled)
-    (stateCo (BviTailrec.compileProgSource tailEnabled) oracle))
-  have optimizedSame := tailrec_tmc_inline_semantics fuel tailEnabled tmcEnabled tailNext tmcNext start
-    program afterTail afterTmc output tailLast tmcLast cache ffi oracle bviCompiler tailCondition
-    tailOracleConditions tailWorkerBound tailRun tmcCondition tmcOracleConditions tmcWorkerBound
-    tmcRun inlineRun inlineOracleCache notFail
-  have bviNonFail : BviSem.semantics ffi (sptFromAList output) bviOracle bviCompiler start ≠ .fail := by
-    rw [optimizedSame]
-    exact notFail
-  have dataSame := BviToData.compileProg_semantics ffi output bviOracle compiler limits sizes start bviNonFail
-  exact dataSame.trans optimizedSame
 
 end Flapjack.Compiler.Backend.BviInline

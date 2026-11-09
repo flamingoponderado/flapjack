@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyNumeric
+import Flapjack.Compiler.Backend.FlatElim.Proofs.GlobalLists
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 import Flapjack.Compiler.Backend.FlatProps.EvaluateLength
 
@@ -28,22 +29,6 @@ theorem findLookupsList_within_iff (expressions : List FlatLang.Exp) (reachable 
   | nil => simp [findGlobalsList, globalsWithin, sptMem, sptDomain]
   | cons expression rest ih =>
     simp only [findGlobalsList, globalsWithin_union, List.mem_cons, forall_eq_or_imp, ih, findLookups]
-
-/-- Reversing evaluation arguments does not change their global bound. -/
-theorem findLookupsList_reverse_within (expressions : List FlatLang.Exp) (reachable : NumSet)
-    (closed : globalsWithin (findGlobalsList destGlobalVarLookup expressions) reachable) :
-    globalsWithin (findGlobalsList destGlobalVarLookup expressions.reverse) reachable := by
-  apply (findLookupsList_within_iff _ _).mpr
-  intro expression member
-  exact (findLookupsList_within_iff _ _).mp closed expression (by simpa using member)
-
-/-- Reversing evaluation results preserves their global bound. -/
-theorem findValuesGlobals_reverse_within (values : List FlatSem.Value) (reachable : NumSet)
-    (closed : globalsWithin (findValuesGlobals values) reachable) :
-    globalsWithin (findValuesGlobals values.reverse) reachable := by
-  apply (findValuesGlobals_within_iff _ _).mpr
-  intro value member
-  exact (findValuesGlobals_within_iff _ _).mp closed value (by simpa using member)
 
 /-- Reversing an Eval-free list of expressions preserves that invariant. -/
 theorem expressionsNoEval_reverse (expressions : List FlatLang.Exp)
