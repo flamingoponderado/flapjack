@@ -3,7 +3,7 @@ import Flapjack.Basis.BasisProg
 import Flapjack.Compiler.Backend.SourceToFlat.ToRiscV
 import Flapjack.Compiler.Inference.Infer.Core
 
-/-! Experimental composition of the source parser with the restricted backend.
+/-! Experimental composition of the source parser with the configured backend.
 This bypasses CakeML's type inference and initial basis, and the backend still
 has unsupported cases. It is not the original `cake` compiler or a parity claim. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -15,7 +15,7 @@ inductive UntypedSourceResult where
   | backendRejected
   | success : List (BitVec 8) → List (BitVec 64) → Backend.Config → UntypedSourceResult
 
-/-- Connect byte-oriented parsing to the existing restricted RISC-V compiler.
+/-- Connect byte-oriented parsing to the configured RISC-V compiler.
 Type checking, basis initialization, diagnostics, and whole-compiler parity
 remain to be implemented before this can serve as the CakeML executable. -/
 def compileUntypedSourceFuel (lexerFuel parserFuel backendFuel : Nat)
@@ -36,7 +36,7 @@ inductive PrimitiveCheckedSourceResult where
   | success : List (BitVec 8) → List (BitVec 64) → Backend.Config → PrimitiveCheckedSourceResult
 
 /-- Parse and infer against CakeML's primitive type environment before using
-the restricted backend. This does not load the CakeML standard basis, reproduce
+the configured backend. This does not load the CakeML standard basis, reproduce
 original diagnostics, or establish whole-compiler output parity. -/
 def compilePrimitiveCheckedSourceFuel (lexerFuel parserFuel inferFuel unifFuel backendFuel : Nat)
     (config : Backend.Config) (source : List HolChar) : PrimitiveCheckedSourceResult :=
@@ -52,7 +52,7 @@ def compilePrimitiveCheckedSourceFuel (lexerFuel parserFuel inferFuel unifFuel b
 
 
 /-- Parse source and prepend the pinned CakeML basis before inference and the
-restricted backend. This composition does not yet reproduce CakeML's complete
+configured backend. This composition does not yet reproduce CakeML's complete
 backend, diagnostics, or output format; unsupported cases remain explicit. -/
 def compileBasisSourceFuel (lexerFuel parserFuel inferFuel unifFuel backendFuel : Nat)
     (config : Backend.Config) (source : List HolChar) : PrimitiveCheckedSourceResult :=

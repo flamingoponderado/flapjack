@@ -8,13 +8,13 @@ import Flapjack.Compiler.Backend.WordToStack.StubNames
 import Flapjack.Compiler.Backend.StackAlloc.StubNames
 import Flapjack.Compiler.Backend.StackRemove.StubNames
 
-/-! Restricted CakeML AST to RISC-V backend composition. -/
+/-! CakeML AST to RISC-V backend compositions. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 
 /-- Execute the existing RISC-V word optimizer and backend after the checked
-source-to-word route. The caller supplies the symbol-name map: source and
-stub name propagation and the default frontend optimizations are not supplied
-by this route. This partial Flapjack composition
+source-to-word route. The caller supplies the symbol-name map; this route omits
+the outer BVL/BVI optimizations and automatic source and stub name propagation.
+This partial Flapjack composition
 is not the original whole-compiler definition or a correctness theorem. -/
 def compileCakeToRiscVNoOptsFuel (fuel : Nat) (config : Backend.Config)
     (names : Spt Basis.Pure.MlString.MlString) (decls : List AstHOL.Dec) :
@@ -35,8 +35,8 @@ def backendNames (names : Spt Basis.Pure.MlString.MlString) : Spt Basis.Pure.MlS
   sptUnion (sptFromAList (DataToWord.stubNames () ++ WordToStack.stubNames () ++
     StackAlloc.stubNames () ++ StackRemove.stubNames ())) names
 
-/-- Execute the restricted source-to-RISC-V route with its propagated BVI and
-runtime symbol names. The default frontend optimizations are absent, and no
+/-- Execute the source-to-RISC-V route with its propagated BVI and runtime
+symbol names. The outer BVL/BVI optimizations are absent, and no
 whole-compiler correctness theorem is claimed. -/
 def compileCakeToRiscVNamedNoOptsFuel (fuel : Nat) (config : Backend.Config)
     (decls : List AstHOL.Dec) : Option (List (BitVec 8) × List (BitVec 64) × Backend.Config) := do
@@ -50,8 +50,8 @@ def compileCakeToRiscVNamedNoOptsFuel (fuel : Nat) (config : Backend.Config)
   let config := { config with wordToWordConf := { config.wordToWordConf with colOracle := col } }
   Backend.fromWord asmConf config (backendNames names) program
 
-/-- Execute the named RISC-V route after the checked multi-argument and BVI
-inlining passes. Other frontend optimizations remain missing; this is not the
+/-- Execute the named RISC-V route after the checked closure and BVI inlining
+passes. Some BVL/BVI optimizations remain missing; this is not the
 full original compiler or its correctness proof. -/
 def compileCakeToRiscVInlineFuel (fuel : Nat) (config : Backend.Config)
     (decls : List AstHOL.Dec) : Option (List (BitVec 8) × List (BitVec 64) × Backend.Config) := do
