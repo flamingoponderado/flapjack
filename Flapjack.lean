@@ -1560,7 +1560,6 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Thunk
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Force
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Equality
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockExpressions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Globals
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions

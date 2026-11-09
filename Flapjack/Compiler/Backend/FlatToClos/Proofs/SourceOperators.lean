@@ -204,7 +204,12 @@ theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.
   | aupdateUnsafe => exact evaluate_uncheckedArrayUpdate env names values source target trace args argsSim notTypeError
   | aw8subUnsafe => exact evaluate_uncheckedByteRead env names values source target trace args argsSim notTypeError
   | aw8updateUnsafe => exact evaluate_uncheckedByteUpdate env names values source target trace args argsSim notTypeError
-  | listAppend => exact evaluate_listAppend env names values source target trace args argsSim notTypeError
+  | listAppend =>
+    apply evalSim_app_of_op env names values source target trace (.src .listAppend) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opBlocks _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr rfl)) premises
   | configGC =>
     apply evalSim_app_of_op env names values source target trace (.src .configGC) args
       ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError

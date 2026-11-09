@@ -1,6 +1,5 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.SpecialOperators
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Globals
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockExpressions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
 
 /-! Flat-specific operator simulations. These use proof-side semantic
@@ -23,62 +22,6 @@ theorem flatOp_wrong_arity {C F : Type} (state : FlatSem.State C F)
   all_goals subst arity
   all_goals rcases args with _ | ⟨a, _ | ⟨b, rest⟩⟩
   all_goals simp_all [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat]
-
-/-- Flat primitives lowered as closure operations evaluate their argument
-lists before applying the operation. -/
-inductive FlatDirectOp : FlatLang.Op → ClosLang.Op → Prop where
-  | tagLenEq (tag length : Nat) : FlatDirectOp (.tagLenEq tag length) (.blockOp (.tagLenEq tag length))
-  | lenEq (length : Nat) : FlatDirectOp (.lenEq length) (.blockOp (.lenEq length))
-
-/-- Wrong-arity direct Flat operations preserve argument errors; a successful
-argument list would force a source type error. -/
-theorem evaluate_flatDirect_wrong {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (names : List (Option MlString)) (values : List ClosSem.Value)
-    (source : FlatSem.State C F) (target : ClosSem.State C F)
-    (trace : BackendCommon.Tra) (op : FlatLang.Op) (targetOp : ClosLang.Op)
-    (args : List FlatLang.Exp) (arity : Nat) (direct : FlatDirectOp op targetOp)
-    (expected : flatOpArity op = some arity) (wrong : args.length ≠ arity)
-    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
-      EvalSim env names values source target args.reverse)
-    (notTypeError : (FlatSem.evaluate env source [.app trace op args]).2 ≠ .err (.abort .typeError)) :
-    EvalSim env names values source target [.app trace op args] := by
-  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
-  have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
-  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
-    intro failure
-    apply notTypeError
-    rw [FlatSem.evaluate]
-    simp only [flatFix, failure]
-  have argsSim := argsSim argsNotTypeError
-  unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps_reverse] at argsSim
-  simp only [compile, compileExps] at ⊢
-  have compiled : compileExp names (.app trace op args) =
-      .op trace targetOp (compileExps names args).reverse := by
-    cases direct <;> simp [compileExp, destNop, compileOp]
-  rw [compiled, FlatSem.evaluate, ClosSem.evaluate, closFix]
-  simp only [flatFix]
-  cases flatRun : FlatSem.evaluate env source args.reverse with
-  | mk next flatResult =>
-    cases closRun : ClosSem.evaluate (compileExps names args).reverse values target with
-    | mk closResult nextTarget =>
-      simp only [flatRun, closRun] at argsSim ⊢
-      rcases argsSim with ⟨states, results⟩
-      cases results with
-      | abort error => exact ⟨states, .abort error⟩
-      | raise related => exact ⟨states, .raise related⟩
-      | value related =>
-        rename_i sourceArgs targetArgs
-        have resultLength := FlatSem.evaluate_length env source next args.reverse sourceArgs flatRun
-        simp only [List.length_reverse] at resultLength
-        have sourceWrong : sourceArgs.reverse.length ≠ arity := by simpa [resultLength] using wrong
-        have failure := flatOp_wrong_arity next op sourceArgs.reverse arity expected sourceWrong
-        have fixed := flatFix
-        rw [flatRun] at fixed
-        apply False.elim
-        apply notTypeError
-        rw [FlatSem.evaluate, flatRun, fixed]
-        cases direct <;> simpa using failure
 
 /-- The remaining Flat operators lower wrong-arity applications to a closure
 let that evaluates the same arguments before its body. -/
@@ -172,14 +115,24 @@ theorem evaluate_flatOp {C F : Type} (env : FlatSem.Environment FlatSem.Value)
       facts.1 facts.2.1 facts.2.2.1 facts.2.2.2 ?_ argsSim notTypeError
     intro s vs sNext result tNext xs db t ws tt premises
     exact opGlobals op s vs sNext result tNext xs db t ws tt category premises
+  have blockSim (category : (∃ tag n, op = .tagLenEq tag n) ∨
+      (∃ n, op = .lenEq n) ∨ op = .src .listAppend) :
+      EvalSim env names values source target [.app trace op args] := by
+    have facts : destNop op args = none ∧ op ≠ .src .opapp ∧ op ≠ .src .eval ∧
+        op ≠ .src (.thunkOp .forceThunk) := by
+      rcases category with ⟨_, _, rfl⟩ | ⟨_, rfl⟩ | rfl <;> simp [destNop]
+    apply evalSim_app_of_op env names values source target trace op args
+      facts.1 facts.2.1 facts.2.2.1 facts.2.2.2 ?_ argsSim notTypeError
+    intro s vs sNext result tNext xs db t ws tt premises
+    exact opBlocks op s vs sNext result tNext xs db t ws tt category premises
   by_cases wrong : args.length ≠ arity
   · cases op with
     | src _ => simp [flatOpArity] at expected
     | globalVarAlloc count => exact globalSim (Or.inr (Or.inr ⟨count, rfl⟩))
     | globalVarInit index => exact globalSim (Or.inr (Or.inl ⟨index, rfl⟩))
     | globalVarLookup index => exact globalSim (Or.inl ⟨index, rfl⟩)
-    | tagLenEq tag length => exact evaluate_flatDirect_wrong env names values source target trace _ _ args arity (.tagLenEq tag length) expected wrong argsSim notTypeError
-    | lenEq length => exact evaluate_flatDirect_wrong env names values source target trace _ _ args arity (.lenEq length) expected wrong argsSim notTypeError
+    | tagLenEq tag length => exact blockSim (Or.inl ⟨tag, length, rfl⟩)
+    | lenEq length => exact blockSim (Or.inr (Or.inl ⟨length, rfl⟩))
     | el index => exact evaluate_flatLet_wrong env names values source target trace _ args arity (.el index) expected wrong argsSim notTypeError
     | id =>
       apply evalSim_app_of_op env names values source target trace .id args
@@ -193,26 +146,8 @@ theorem evaluate_flatOp {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     | globalVarAlloc index => exact globalSim (Or.inr (Or.inr ⟨index, rfl⟩))
     | globalVarLookup index => exact globalSim (Or.inl ⟨index, rfl⟩)
     | globalVarInit index => exact globalSim (Or.inr (Or.inl ⟨index, rfl⟩))
-    | tagLenEq tag length =>
-      simp [flatOpArity] at expected
-      subst arity
-      cases args with
-      | nil => simp at expected
-      | cons argument rest =>
-        cases rest with
-        | cons extra rest => simp at expected
-        | nil =>
-          exact evaluate_tagLenEq env names values source target trace tag length argument (by simpa using argsSim) notTypeError
-    | lenEq length =>
-      simp [flatOpArity] at expected
-      subst arity
-      cases args with
-      | nil => simp at expected
-      | cons argument rest =>
-        cases rest with
-        | cons extra rest => simp at expected
-        | nil =>
-          exact evaluate_lenEq env names values source target trace length argument (by simpa using argsSim) notTypeError
+    | tagLenEq tag length => exact blockSim (Or.inl ⟨tag, length, rfl⟩)
+    | lenEq length => exact blockSim (Or.inr (Or.inl ⟨length, rfl⟩))
     | el index =>
       simp [flatOpArity] at expected
       subst arity
