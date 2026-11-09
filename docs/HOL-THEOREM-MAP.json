@@ -130929,5 +130929,13 @@
     "lean_name": "compileProgAsmFastChecked_ok_agrees",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only checked-pipeline agreement for the ordinary artifact compiler: the checked function returns exactly the reviewed compileProgAsmFast tuple on success. No separately named HOL declaration; the reviewed compileProgAsmFast definition is unchanged."
-  }
+  },
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "fvg_v_to_flat",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyNumeric.lean",
+  "lean_name": "valueToFlat_invariants",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared local fvg_v_to_flat with typed replay fvg_v_to_flat_typed: reachable has arbitrary HOL num_map payload and is retained as Spt α; domain inclusion is the lookup-based sptMem predicate per the Sptree.lean convention, and boolean negation is equality to false. Independently source-reviewed."
+}
 ]

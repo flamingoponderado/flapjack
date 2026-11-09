@@ -103,3 +103,16 @@ val has_eval_cases_replay = prove (
      (Induct >> fs [flat_elimTheory.has_Eval_def, pairTheory.FORALL_PROD]) >>
   rw [] >> simp [Once flat_elimTheory.has_Eval_def]);
 val _ = show_thm "has_eval_cases_typed=" has_eval_cases_replay;
+
+(* Replay the local fvg_v_to_flat theorem from flat_elimProofScript.sml. *)
+load "preamble";
+open preamble flatSemTheory flat_elimProofTheory;
+val fvg_v_to_flat_replay = prove (
+  ``sptree$domain (find_v_globals (v_to_flat v)) SUBSET sptree$domain reachable /\
+    ~v_has_Eval (v_to_flat v)``,
+  Cases_on `v`
+  >> simp [v_to_flat_def, find_v_globals_def, v_has_Eval_def,
+           semanticPrimitivesTheory.Boolv_def, Boolv_def]
+  >> every_case_tac
+  >> simp [find_v_globals_def, v_has_Eval_def, Boolv_def]);
+val _ = show_thm "fvg_v_to_flat_typed=" fvg_v_to_flat_replay;
