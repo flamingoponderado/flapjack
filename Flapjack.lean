@@ -1520,11 +1520,8 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.IntegerExpressions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ByteComparisons
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordOperations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ApplicationOperators
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Conversions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ByteConversion
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.CharConversion
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.RejectedConversions
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveConversions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.InstallDecoding
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Install
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.SmartCons

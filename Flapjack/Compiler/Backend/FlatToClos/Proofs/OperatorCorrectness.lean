@@ -9,6 +9,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.CopyUpdate
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Array
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ByteComparisons
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.CheckType
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.CharConversion
 import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyArithmeticSource
 import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyCompareSource
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
@@ -2402,5 +2403,215 @@ theorem opArith {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
             simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, fpSemFpTopComp, fpSemFpfma,
               Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
             exact ⟨states, ValueRel.float64 _⟩
+
+/-- The original primitive conversion operator case. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "op_from_to"
+  (fmap_as_finite_support := [refs, code])]
+theorem opFromTo {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
+    (vs : List FlatSem.Value) (sourceNext : FlatSem.State C F)
+    (result : Result FlatSem.Value FlatSem.Value) (targetNext : ClosSem.State C F)
+    (xs : List ClosLang.Exp) (db : List ClosSem.Value) (target : ClosSem.State C F)
+    (ws : List ClosSem.Value) (trace : BackendCommon.Tra) :
+    (∃ fromType toType, op = .src (.fromTo fromType toType)) →
+      FlatSem.doApp source op vs = some (sourceNext, result) ∧
+      StateRel source targetNext ∧ ClosSem.evaluate xs db target = (.val ws, targetNext) ∧
+      List.Forall₂ ValueRel vs ws.reverse ∧ xs.length = vs.length ∧
+      op ≠ .src .opapp ∧ op ≠ .src (.thunkOp .forceThunk) →
+    ∃ targetResult targetLast,
+      ClosSem.evaluate [compileOp trace op xs] db target = (targetResult, targetLast) ∧
+      StateRel sourceNext targetLast ∧
+      SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel
+        (Flapjack.EvaluateHOL.listResult result) targetResult := by
+  intro opCase premises
+  obtain ⟨fromType, toType, eq⟩ := opCase
+  subst op
+  obtain ⟨applied, states, evaluated, related, length, _, _⟩ := premises
+  have originalApplied := applied
+  rcases vs with _ | ⟨v, _ | ⟨z, zs⟩⟩ <;>
+    try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
+      SemanticPrimitivesHOL.doApp] at applied
+  have checked : SemanticPrimitivesHOL.checkType fromType (FlatSem.flatToValue v) = true := by
+    have run := originalApplied
+    rw [FlatSem.doApp_conversion_source] at run
+    dsimp only at run
+    by_cases h : SemanticPrimitivesHOL.checkType fromType (FlatSem.flatToValue v) = true
+    · exact h
+    · simp [h] at run
+  have wsLen : ws.length = 1 := by simpa using related.length_eq.symm
+  rcases ws with _ | ⟨w, _ | ⟨z, zs⟩⟩ <;> try simp at wsLen
+  simp only [List.reverse_singleton] at related
+  cases related with
+  | cons valueRel tail =>
+    cases fromType with
+    | intT =>
+      obtain ⟨value, rfl⟩ := checkTypeInt_flatToValue v checked
+      cases valueRel
+      cases toType with
+      | charT =>
+        have body := intToChar_body_related source targetNext trace db value states
+        have bodyExact : StateRel sourceNext (ClosSem.evaluate
+            [.ifThenElse trace (.op trace (.intOp .less) [.op .none (.intOp (.const 0)) [], .var trace 0])
+              (.raise trace (.op trace (.blockOp (.cons 1)) []))
+              (.ifThenElse trace (.op trace (.intOp .less) [.var trace 0, .op .none (.intOp (.const 255)) []])
+                (.raise trace (.op trace (.blockOp (.cons 1)) [])) (.var trace 0))]
+            (.number value :: db) targetNext).2 ∧
+            EvalResultRel (Flapjack.EvaluateHOL.listResult result) (ClosSem.evaluate
+            [.ifThenElse trace (.op trace (.intOp .less) [.op .none (.intOp (.const 0)) [], .var trace 0])
+              (.raise trace (.op trace (.blockOp (.cons 1)) []))
+              (.ifThenElse trace (.op trace (.intOp .less) [.var trace 0, .op .none (.intOp (.const 255)) []])
+                (.raise trace (.op trace (.blockOp (.cons 1)) [])) (.var trace 0))]
+            (.number value :: db) targetNext).1 := by
+          cases result <;> simpa [FlatSem.applyResult, originalApplied, Flapjack.EvaluateHOL.listResult] using body
+        simp only [compileOp]
+        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+        cases run : ClosSem.evaluate
+            [.ifThenElse trace (.op trace (.intOp .less) [.op .none (.intOp (.const 0)) [], .var trace 0])
+              (.raise trace (.op trace (.blockOp (.cons 1)) []))
+              (.ifThenElse trace (.op trace (.intOp .less) [.var trace 0, .op .none (.intOp (.const 255)) []])
+                (.raise trace (.op trace (.blockOp (.cons 1)) [])) (.var trace 0))]
+            (.number value :: db) targetNext with
+        | mk out last =>
+          simp only [run] at bodyExact
+          obtain ⟨stateRel, resultRel⟩ := bodyExact
+          refine ⟨out, last, ?_, stateRel, ?_⟩
+          · simpa using run
+          · cases result <;> simp only [Flapjack.EvaluateHOL.listResult] at resultRel ⊢ <;> cases resultRel <;> simp_all [SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+      | wordT width =>
+        cases width with
+        | w64 =>
+          simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion,
+            SemanticPrimitivesHOL.checkType, SemanticPrimitivesHOL.theLitvInt,
+            FlatSem.flatToValue, FlatSem.valueToFlat] at originalApplied
+          obtain ⟨rfl, rfl⟩ := originalApplied
+          simp only [compileOp]
+          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+          simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, ClosSem.doWordAppIntegral,
+            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          exact ⟨states, ValueRel.word64 _⟩
+        | w8 =>
+          simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion,
+            SemanticPrimitivesHOL.checkType, SemanticPrimitivesHOL.theLitvInt,
+            FlatSem.flatToValue, FlatSem.valueToFlat] at originalApplied
+          obtain ⟨rfl, rfl⟩ := originalApplied
+          cases xs with
+          | nil => simp at length
+          | cons x rest =>
+            cases rest with
+            | cons y ys => simp at length
+            | nil =>
+              have remainder := intToByte_remainder value
+              have rel := ValueRel.word8 (BitVec.ofInt 8 value)
+              simp only [compileOp, arg1]
+              rw [evaluate_mod256_argument, evaluated]
+              simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp,
+                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+              exact ⟨states, by simpa [remainder.1, Int.toNat_of_nonneg remainder.2] using rel⟩
+      | boolT | intT | strT | float64T =>
+        simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
+    | charT =>
+      obtain ⟨value, rfl⟩ := checkTypeChar_flatToValue v checked
+      cases valueRel
+      cases toType with
+      | intT =>
+        simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion,
+          SemanticPrimitivesHOL.checkType, SemanticPrimitivesHOL.theLitvChar,
+          FlatSem.flatToValue, FlatSem.valueToFlat] at originalApplied
+        obtain ⟨rfl, rfl⟩ := originalApplied
+        simp only [compileOp]
+        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+        simp [ClosSem.evaluate, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+        exact ⟨states, ValueRel.int _⟩
+      | wordT width =>
+        cases width with
+        | w8 =>
+          simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion,
+            SemanticPrimitivesHOL.checkType, SemanticPrimitivesHOL.theLitvChar,
+            FlatSem.flatToValue, FlatSem.valueToFlat, Flapjack.Basis.Pure.MlString.charToWord8] at originalApplied
+          obtain ⟨rfl, rfl⟩ := originalApplied
+          simp only [compileOp]
+          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+          simp [ClosSem.evaluate, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          exact ⟨states, ValueRel.word8 _⟩
+        | w64 => simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
+      | boolT | charT | strT | float64T =>
+        simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
+    | wordT width =>
+      cases width with
+      | w8 =>
+        obtain ⟨value, rfl⟩ := checkTypeWord8_flatToValue v checked
+        cases valueRel
+        cases toType with
+        | intT =>
+          simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion,
+            SemanticPrimitivesHOL.checkType, SemanticPrimitivesHOL.theLitvWord8,
+            FlatSem.flatToValue, FlatSem.valueToFlat] at originalApplied
+          obtain ⟨rfl, rfl⟩ := originalApplied
+          cases xs with
+          | nil => simp at length
+          | cons x rest =>
+            cases rest with
+            | cons y ys => simp at length
+            | nil =>
+              simp only [compileOp, arg1]
+              refine ⟨.val [.number value.toNat], targetNext, ?_, states, ?_⟩
+              · simpa using evaluated
+              · simp [Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                exact ValueRel.int _
+        | charT =>
+          simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion,
+            SemanticPrimitivesHOL.checkType, SemanticPrimitivesHOL.theLitvWord8,
+            FlatSem.flatToValue, FlatSem.valueToFlat, Flapjack.Basis.Pure.MlString.word8ToChar] at originalApplied
+          obtain ⟨rfl, rfl⟩ := originalApplied
+          simp only [compileOp]
+          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+          simp [ClosSem.evaluate, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          exact ⟨states, ValueRel.char _⟩
+        | wordT other => cases other <;> simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
+        | boolT | strT | float64T => simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
+      | w64 =>
+        obtain ⟨value, rfl⟩ := checkTypeWord64_flatToValue v checked
+        cases valueRel
+        cases toType with
+        | intT =>
+          simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion,
+            SemanticPrimitivesHOL.checkType, SemanticPrimitivesHOL.theLitvWord64,
+            FlatSem.flatToValue, FlatSem.valueToFlat] at originalApplied
+          obtain ⟨rfl, rfl⟩ := originalApplied
+          simp only [compileOp]
+          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+          simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, ClosSem.doWordAppIntegral,
+            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          exact ⟨states, ValueRel.int _⟩
+        | float64T =>
+          simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion,
+            SemanticPrimitivesHOL.checkType, SemanticPrimitivesHOL.theLitvWord64,
+            FlatSem.flatToValue, FlatSem.valueToFlat] at originalApplied
+          obtain ⟨rfl, rfl⟩ := originalApplied
+          simp only [compileOp]
+          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+          simp [ClosSem.evaluate, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          exact ⟨states, ValueRel.float64 _⟩
+        | wordT other => cases other <;> simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
+        | boolT | charT | strT => simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
+    | float64T =>
+      obtain ⟨value, rfl⟩ := checkTypeFloat64_flatToValue v checked
+      cases valueRel
+      cases toType with
+      | wordT width =>
+        cases width with
+        | w64 =>
+          simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion,
+            SemanticPrimitivesHOL.checkType, SemanticPrimitivesHOL.theLitvFloat64,
+            FlatSem.flatToValue, FlatSem.valueToFlat] at originalApplied
+          obtain ⟨rfl, rfl⟩ := originalApplied
+          simp only [compileOp]
+          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+          simp [ClosSem.evaluate, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          exact ⟨states, ValueRel.word64 _⟩
+        | w8 => simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
+      | boolT | intT | charT | strT | float64T =>
+        simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
+    | boolT | strT =>
+      cases toType <;> try simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
 
 end Flapjack.Compiler.Backend.FlatToClos
