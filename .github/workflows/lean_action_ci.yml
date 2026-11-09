@@ -13,6 +13,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # The only job that writes Lake artifacts. `lake build`, `lake test`,
+  # `check-warnings.sh`, `check_hol_ref_export.py`, the attribute syntax test
+  # and the executable builds all touch `.lake/build`, so they run here
+  # sequentially in one worktree. The two parity executables are uploaded for
+  # the read-only parity jobs below.
   build:
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: first-large
@@ -33,40 +38,134 @@ jobs:
           restore-keys: |
             lake-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
 
+      # The workspace declares FlapjackTest as its test driver, so lean-action
+      # runs `lake build` and `lake test` here.
       - uses: leanprover/lean-action@v1
         with:
           use-github-cache: false
           use-mathlib-cache: true
+
+      - name: Check non-test modules are warning-free
+        run: ./scripts/check-warnings.sh
+
+      # check_hol_ref_export.py invokes Lake: it rebuilds the tagged modules and
+      # exports their elaborated attributes, so it must not run concurrently
+      # with another Lake command in the same worktree.
+      - name: Check reviewed @[hol] rows match the elaborated attributes
+        run: python3 scripts/check_hol_ref_export.py
+
+      # The attribute checker is syntactic, but the test compiles throwaway
+      # declarations with `lake build`/`lake lean`, so it stays in this job.
+      - name: Check @[hol] attribute syntax
+        run: bash scripts/test-hol-ref-syntax.sh
+
+      - name: Build parity executables
+        run: |
+          lake build flapjack-compile
+          lake build cake
+
+      - name: Upload flapjack-compile
+        uses: actions/upload-artifact@v7
+        with:
+          name: flapjack-compile
+          path: .lake/build/bin/flapjack-compile
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 1
+
+      - name: Upload cake
+        uses: actions/upload-artifact@v7
+        with:
+          name: cake
+          path: .lake/build/bin/cake
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 1
+
+      - name: Save Lake build cache
+        if: >-
+          github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
+          && steps.lake-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5.1.0
+        with:
+          path: .lake/build
+          key: ${{ steps.lake-cache.outputs.cache-primary-key }}
+
+  # Read-only gates that need neither Lake nor a compiled executable. They run
+  # in parallel with the build job.
+  trust:
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: first-large
+
+    steps:
+      - uses: actions/checkout@v5
 
       - name: Check native proof and compiler trust mechanisms
         run: |
           python3 -m unittest discover -s scripts/tests -p 'test_check_native_trust.py'
           ./scripts/check-native-decide.sh
 
-      - name: Check non-test modules are warning-free
-        run: ./scripts/check-warnings.sh
+      - name: Check Pan-to-Crep intermediate fixture coverage
+        run: python3 scripts/pan-to-crep-coverage-report.py --check
+
+  # Read-only HOL reference checks. They read the pinned submodules but do not
+  # invoke Lake (the export gate and the attribute syntax test are in `build`).
+  hol:
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: first-large
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check out pinned CakeML and HOL submodules
+        run: git submodule update --init --depth 1 -- cakeml HOL
 
       - name: Check @[hol] cross-references point at existing HOL declarations
         run: |
           # Tagged HOL/ declarations are verified against the pinned gitlink
           # and tracked blobs, alongside the existing hol4 snapshots.
-          git submodule update --init --depth 1 -- cakeml HOL
           python3 -m unittest discover -s scripts/tests -p 'test*hol*.py'
-          bash scripts/test-hol-ref-syntax.sh
           python3 scripts/check-hol-refs.py
           python3 scripts/check_hol_theorem_map.py
-          python3 scripts/check_hol_ref_export.py
+
+  # Read-only native-model gates. The RISC-V guards read original sources from
+  # the initialized CakeML submodule; the L3 gates read committed fixtures.
+  native:
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: first-large
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check out pinned CakeML submodule
+        run: git submodule update --init --depth 1 -- cakeml
 
       - name: Check native RISC-V encoder regression guards
-        # These guards read original sources from the initialized CakeML submodule.
         run: python3 -m unittest discover -s scripts/tests -p 'test_riscv_*.py'
 
       - name: Check complete native L3 rendering and captured oracle gates
         run: python3 scripts/l3/check-native-model.py
 
+  # Pancake parity needs the flapjack-compile executable built by `build`.
+  pancake-parity:
+    needs: build
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: first-large
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Download flapjack-compile
+        uses: actions/download-artifact@v8
+        with:
+          name: flapjack-compile
+          path: .lake/build/bin
+
+      - name: Make flapjack-compile executable
+        run: chmod +x .lake/build/bin/flapjack-compile
+
       - name: Check exact Pancake RISC-V parity fixtures
         run: |
-          lake build flapjack-compile
           python3 scripts/check-parity-goldens.py
           python3 scripts/check-cli-no-depth.py
           python3 scripts/generate-cakeml-flat-oracle.py --check
@@ -75,27 +174,6 @@ jobs:
           python3 scripts/generate-cake-word-oracles.py --check
           python3 scripts/generate-bignum-word-snapshot.py --check
           python3 scripts/generate-bignum-mini.py --check
-
-      - name: Check CakeML source-to-RISC-V exploratory parity
-        # The captures identify their historical original revision; they do not
-        # replace the still-required comparison with a pinned cake executable.
-        run: |
-          lake build cake
-          python3 scripts/generate-cake-nonterminals.py --check
-          python3 scripts/generate-cake-peg-grammar.py --check
-          python3 scripts/generate-cake-basis.py --check
-          python3 scripts/generate-cake-export-oracle.py --check
-          python3 scripts/generate-cake-help.py --check
-          python3 scripts/check-cake-help.py
-          python3 scripts/generate-cake-features.py --check
-          python3 scripts/check-cake-features.py
-          python3 scripts/check-cake-cli-parity.py
-          python3 scripts/check-cake-pinned-parity.py
-          python3 scripts/check-cake-benchmark-parity.py
-          python3 scripts/check-cake-sexp-parity.py
-
-      - name: Check Pan-to-Crep intermediate fixture coverage
-        run: python3 scripts/pan-to-crep-coverage-report.py --check
 
       - name: Check both pinned guest builds against exact Pancake output
         run: |
@@ -121,11 +199,41 @@ jobs:
           python3 scripts/check-frame-occupancy-parity.py
           python3 scripts/check-allocator-parity.py
 
-      - name: Save Lake build cache
-        if: >-
-          github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
-          && steps.lake-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v5.1.0
+  # CakeML parity needs the cake executable built by `build` and reads the
+  # pinned CakeML submodule for its revision and source checks.
+  cakeml-parity:
+    needs: build
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: first-large
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check out pinned CakeML submodule
+        run: git submodule update --init --depth 1 -- cakeml
+
+      - name: Download cake
+        uses: actions/download-artifact@v8
         with:
-          path: .lake/build
-          key: ${{ steps.lake-cache.outputs.cache-primary-key }}
+          name: cake
+          path: .lake/build/bin
+
+      - name: Make cake executable
+        run: chmod +x .lake/build/bin/cake
+
+      - name: Check CakeML source-to-RISC-V exploratory parity
+        # The captures identify their historical original revision; they do not
+        # replace the still-required comparison with a pinned cake executable.
+        run: |
+          python3 scripts/generate-cake-nonterminals.py --check
+          python3 scripts/generate-cake-peg-grammar.py --check
+          python3 scripts/generate-cake-basis.py --check
+          python3 scripts/generate-cake-export-oracle.py --check
+          python3 scripts/generate-cake-help.py --check
+          python3 scripts/check-cake-help.py
+          python3 scripts/generate-cake-features.py --check
+          python3 scripts/check-cake-features.py
+          python3 scripts/check-cake-cli-parity.py
+          python3 scripts/check-cake-pinned-parity.py
+          python3 scripts/check-cake-benchmark-parity.py
+          python3 scripts/check-cake-sexp-parity.py
