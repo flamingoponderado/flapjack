@@ -242,6 +242,16 @@ theorem findValuesGlobals_within_iff (values : List FlatSem.Value) (reachable : 
   | cons value rest ih =>
     simp only [findValuesGlobals, globalsWithin_union, List.mem_cons, forall_eq_or_imp, ih]
 
+/-- Replication introduces no dependencies beyond those of the repeated value. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_v_globalsL_REPLICATE"]
+theorem findValuesGlobals_replicate {α : Type} (n : Nat) (value : FlatSem.Value) (_vs : α) :
+    globalsWithin (findValuesGlobals (List.replicate n value)) (findValueGlobals value) := by
+  induction n with
+  | zero => simp [findValuesGlobals, globalsWithin, sptMem, sptDomain]
+  | succ n ih =>
+    simp only [List.replicate_succ, findValuesGlobals, globalsWithin_union]
+    exact ⟨fun _ h => h, ih⟩
+
 /-- Replacing a list element with a reachable value preserves reachability. -/
 theorem findValuesGlobals_set_within (values : List FlatSem.Value) (index : Nat)
     (value : FlatSem.Value) (reachable : NumSet)

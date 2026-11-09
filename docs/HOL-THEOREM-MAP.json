@@ -131025,5 +131025,13 @@
   "lean_name": "findValuesGlobals_LUPDATE",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared exported find_v_globalsL_LUPDATE typed capture: binder order n, vs, reachable, v and the grouped three-conjunct premise agree; LUPDATE is List.set, and domain inclusion uses globalsWithin with the original num_set carrier. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "find_v_globalsL_REPLICATE",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
+  "lean_name": "findValuesGlobals_replicate",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared exported find_v_globalsL_REPLICATE typed capture: binder order n, v, vs is preserved, including the unused vs of arbitrary type without Nonempty; REPLICATE is List.replicate and domain inclusion uses globalsWithin over num_set. Independently source-reviewed."
 }
 ]
