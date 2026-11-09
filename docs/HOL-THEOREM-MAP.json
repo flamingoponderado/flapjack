@@ -130937,5 +130937,21 @@
   "lean_name": "valueToFlat_invariants",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared local fvg_v_to_flat with typed replay fvg_v_to_flat_typed: reachable has arbitrary HOL num_map payload and is retained as Spt α; domain inclusion is the lookup-based sptMem predicate per the Sptree.lean convention, and boolean negation is equality to false. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "pair_case_eq",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PairCases.lean",
+  "lean_name": "pairCase_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared local pair_case_eq with typed replay pair_case_eq_typed: independent type variables, binder order, pair_CASE as Prod.casesOn, iff and conjunction match. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "pair_lam_lem",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PairCases.lean",
+  "lean_name": "pairLet_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared local pair_lam_lem with typed replay pair_lam_lem_typed: independent type variables, quantifier order, paired let as Lean destructuring, iff and conjunction match. Independently source-reviewed."
 }
 ]

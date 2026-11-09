@@ -116,3 +116,13 @@ val fvg_v_to_flat_replay = prove (
   >> every_case_tac
   >> simp [find_v_globals_def, v_has_Eval_def, Boolv_def]);
 val _ = show_thm "fvg_v_to_flat_typed=" fvg_v_to_flat_replay;
+
+(* Replay the local pair lemmas used in the do_app_cases conversion. *)
+val pair_case_eq_replay = prove (
+  ``pair_CASE x f = v <=> ?x1 x2. x = (x1,x2) /\ f x1 x2 = v``,
+  Cases_on `x` >> srw_tac[][]);
+val _ = show_thm "pair_case_eq_typed=" pair_case_eq_replay;
+val pair_lam_lem_replay = prove (
+  ``!f v z. (let (x,y) = z in f x y) = v <=> ?x1 x2. z = (x1,x2) /\ f x1 x2 = v``,
+  srw_tac[][]);
+val _ = show_thm "pair_lam_lem_typed=" pair_lam_lem_replay;
