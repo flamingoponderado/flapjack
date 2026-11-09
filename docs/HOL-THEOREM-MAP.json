@@ -130977,5 +130977,21 @@
   "lean_name": "findValueGlobals_charList",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared local fvg_map_char_empty with typed replay fvg_map_char_empty_typed: printed isEmpty is the sptree overload for equality to LN, rendered as = .ln; HOL string is List HolChar with the reviewed character carrier. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "not_v_has_Eval_EVERY_EL",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PatternRelation.lean",
+  "lean_name": "notValueHasEval_every_el",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared local not_v_has_Eval_EVERY_EL with its typed replay: the grouped EVERY and bound premise is preserved, EVERY uses List.all and Bool negation, and HOL EL is holEl with an explicit proof-irrelevant Nonempty witness and no added hypothesis. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "EVERY_EL_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ListCases.lean",
+  "lean_name": "every_el_imp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared exported EVERY_EL_IMP typed capture: the predicate is α → Bool, EVERY is List.all = true, and HOL EL is holEl with a proof-irrelevant Nonempty witness obtained from the original bound, without an inhabitance hypothesis. Independently source-reviewed."
 }
 ]

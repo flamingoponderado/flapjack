@@ -145,3 +145,10 @@ val fvg_map_char_empty_replay = prove (
   ``find_v_globals (list_to_v (MAP (\c. Litv (Char c)) ss)) = LN``,
   Induct_on `ss` >> simp [find_v_globals_def, list_to_v_def]);
 val _ = show_thm "fvg_map_char_empty_typed=" fvg_map_char_empty_replay;
+
+(* Replay the local Eval-free list indexing theorem. *)
+val not_v_has_eval_every_el_replay = prove (
+  ``EVERY ($~ o v_has_Eval) xs /\ i < LENGTH xs ==> ~v_has_Eval (EL i xs)``,
+  simp [EVERY_EL]);
+val _ = show_thm "not_v_has_eval_every_el_typed=" not_v_has_eval_every_el_replay;
+val _ = show_thm "every_el_imp_typed=" flat_elimProofTheory.EVERY_EL_IMP;
