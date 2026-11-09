@@ -160,3 +160,11 @@ val _ = show_thm "v_has_eval_def_typed=" flat_elimProofTheory.v_has_Eval_def;
 val _ = show_thm "find_v_globals_list_update_typed=" flat_elimProofTheory.find_v_globalsL_LUPDATE;
 val _ = show_thm "find_v_globals_list_replicate_typed=" flat_elimProofTheory.find_v_globalsL_REPLICATE;
 val _ = show_thm "find_v_globals_map_recclosure_typed=" flat_elimProofTheory.find_v_globals_MAP_Recclosure;
+
+(* Replay the local transitive list-index dependency theorem. *)
+val find_v_globals_el_trans_replay = prove (
+  ``n < LENGTH vs /\ domain (find_v_globalsL vs) SUBSET R ==>
+    domain (find_v_globals (EL n vs)) SUBSET R``,
+  metis_tac [find_v_globalsL_EL, SUBSET_TRANS]);
+val _ = show_thm "find_v_globals_el_trans_typed=" find_v_globals_el_trans_replay;
+val _ = show_thm "find_v_globals_list_mem_typed=" flat_elimProofTheory.find_v_globalsL_MEM;

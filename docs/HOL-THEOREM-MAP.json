@@ -131041,5 +131041,21 @@
   "lean_name": "findValueGlobals_map_recclosure",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared exported find_v_globals_MAP_Recclosure typed capture: free env and f precede the original forall funs, v, l; independent types and the unused v binder are retained. Domain set equality is predicate equality, empty set and union are pointwise, and NULL is List.isEmpty. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "find_v_globalsL_EL_trans",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalLists.lean",
+  "lean_name": "findValuesGlobals_el_trans",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared local find_v_globalsL_EL_trans with typed replay: binders n, vs, R; R as a Nat → Prop set; grouped premise and pointwise subset implication over sptMem; HOL EL as holEl with an explicit proof-irrelevant witness. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "find_v_globalsL_MEM",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalLists.lean",
+  "lean_name": "findValuesGlobals_map_snd_mem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared exported find_v_globalsL_MEM typed capture: binders k, v, vs retain arbitrary key type α; MEM is list membership, MAP SND is map Prod.snd, and domain inclusion is pointwise implication over sptMem. Independently source-reviewed."
 }
 ]
