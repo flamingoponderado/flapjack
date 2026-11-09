@@ -8,6 +8,8 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.Thunk
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.CopyUpdate
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Array
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ByteComparisons
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.CheckType
+import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyArithmeticSource
 import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyCompareSource
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 import Flapjack.Compiler.Backend.FlatToClos.Op
@@ -2158,5 +2160,247 @@ theorem opTest {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
               simp [ClosSem.doApp, ClosSem.applyMemory,
                 Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
               exact ⟨states, (vRel_bool _ _).mpr rfl⟩
+
+/-- The original arithmetic operator case, including division exceptions and floating point. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "op_arith"
+  (fmap_as_finite_support := [refs, code])]
+theorem opArith {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
+    (vs : List FlatSem.Value) (sourceNext : FlatSem.State C F)
+    (result : Result FlatSem.Value FlatSem.Value) (targetNext : ClosSem.State C F)
+    (xs : List ClosLang.Exp) (db : List ClosSem.Value) (target : ClosSem.State C F)
+    (ws : List ClosSem.Value) (trace : BackendCommon.Tra) :
+    (∃ action typ, op = .src (.arith action typ)) →
+      FlatSem.doApp source op vs = some (sourceNext, result) ∧
+      StateRel source targetNext ∧ ClosSem.evaluate xs db target = (.val ws, targetNext) ∧
+      List.Forall₂ ValueRel vs ws.reverse ∧ xs.length = vs.length ∧
+      op ≠ .src .opapp ∧ op ≠ .src (.thunkOp .forceThunk) →
+    ∃ targetResult targetLast,
+      ClosSem.evaluate [compileOp trace op xs] db target = (targetResult, targetLast) ∧
+      StateRel sourceNext targetLast ∧
+      SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel
+        (Flapjack.EvaluateHOL.listResult result) targetResult := by
+  intro opCase premises
+  obtain ⟨action, typ, eq⟩ := opCase
+  subst op
+  obtain ⟨applied, states, evaluated, related, length, _, _⟩ := premises
+  have checked : (vs.map FlatSem.flatToValue).all (SemanticPrimitivesHOL.checkType typ) = true := by
+    have run := applied
+    rw [FlatSem.doApp_arith_source] at run
+    dsimp only at run
+    split at run <;> simp_all
+  cases typ with
+  | charT =>
+    simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
+      SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore] at applied
+  | strT =>
+    simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
+      SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore] at applied
+  | boolT =>
+    cases action <;> try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
+      SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore] at applied
+    case not =>
+      rcases vs with _ | ⟨v, _ | ⟨z, zs⟩⟩ <;>
+        try simp at applied
+      have wsLen : ws.length = 1 := by simpa using related.length_eq.symm
+      rcases ws with _ | ⟨w, _ | ⟨z, zs⟩⟩ <;> try simp at wsLen
+      simp only [List.reverse_singleton] at related
+      cases related with
+      | cons head tail =>
+        cases head <;> simp [FlatSem.flatToValue] at applied
+        case con rel =>
+          rename_i sourceFields targetFields tag typeId
+          cases rel with
+          | nil =>
+            cases typeId <;> simp_all [FlatSem.valueToFlat,
+              SemanticPrimitivesHOL.boolValue, SemanticPrimitivesHOL.checkType,
+              BackendCommon.trueTag, BackendCommon.falseTag, FlatLang.boolId]
+            all_goals split_ifs at applied <;> simp_all
+            all_goals simp_all [SemanticPrimitivesHOL.boolTypeNum, FlatSem.boolValue,
+              Flapjack.Basis.Pure.MlString.ofString, BackendCommon.boolToTag]
+            all_goals
+              obtain ⟨rfl, rfl⟩ := applied
+              simp only [compileOp, compileArith]
+              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+              simp [ClosSem.doApp, ClosSem.applyBlock, ClosSem.asBool, ClosSem.boolValue,
+                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel,
+                BackendCommon.trueTag, BackendCommon.falseTag, states]
+              exact ValueRel.con .nil
+          | cons _ _ => simp_all
+  | intT =>
+    have typed : ∀ v ∈ vs, ∃ i : Int, v = .litv (.intLit i) := by
+      intro v member
+      apply checkTypeInt_flatToValue
+      have all := List.all_eq_true.mp checked
+      apply all
+      exact List.mem_map.mpr ⟨v, member, rfl⟩
+    cases action <;>
+      rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
+      try simp [FlatSem.doApp_arith_source, SemanticPrimitivesHOL.doArith] at applied
+    all_goals
+      obtain ⟨left, rfl⟩ := typed v (by simp)
+      obtain ⟨right, rfl⟩ := typed u (by simp)
+      simp [FlatSem.flatToValue, SemanticPrimitivesHOL.checkType,
+        SemanticPrimitivesHOL.theLitvInt, FlatSem.valueToFlat] at applied
+      have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
+      rcases ws with _ | ⟨w, _ | ⟨t, _ | ⟨z, zs⟩⟩⟩ <;> try simp at wsLen
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
+      cases related with
+      | cons firstRel tail =>
+        cases tail with
+        | cons secondRel tail =>
+          cases firstRel; cases secondRel
+          all_goals try
+            obtain ⟨rfl, rfl⟩ := applied
+            simp only [compileOp, compileArith]
+            rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+            simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp,
+              Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+            exact ⟨states, ValueRel.int _⟩
+          all_goals
+            by_cases zero : right = 0 <;> simp [zero] at applied
+            all_goals
+              obtain ⟨rfl, rfl⟩ := applied
+              simp only [compileOp, compileArith]
+              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+              have flipped : (0 = right) ↔ right = 0 := eq_comm
+              simp [ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock,
+                ClosSem.applyNumeric, ClosSem.doIntApp, ClosSem.doEq, ClosSem.boolValue,
+                ClosSem.asBool, BackendCommon.trueTag, BackendCommon.falseTag, zero, flipped,
+                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel,
+                SemanticPrimitivesProps.excRel, states]
+              all_goals first | exact ValueRel.con .nil | exact ValueRel.int _
+  | wordT width =>
+    cases width with
+    | w8 =>
+      have typed : ∀ v ∈ vs, ∃ i : BitVec 8, v = .litv (.word8 i) := by
+        intro v member
+        apply checkTypeWord8_flatToValue
+        have all := List.all_eq_true.mp checked
+        apply all
+        exact List.mem_map.mpr ⟨v, member, rfl⟩
+      cases action <;>
+        rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
+        try simp [FlatSem.doApp_arith_source, SemanticPrimitivesHOL.doArith, SemanticPrimitivesHOL.wordArith] at applied
+      all_goals
+        obtain ⟨left, rfl⟩ := typed v (by simp)
+        obtain ⟨right, rfl⟩ := typed u (by simp)
+        simp [FlatSem.flatToValue, SemanticPrimitivesHOL.checkType,
+          SemanticPrimitivesHOL.theLitvWord8, FlatSem.valueToFlat] at applied
+        have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
+        rcases ws with _ | ⟨w, _ | ⟨t, _ | ⟨z, zs⟩⟩⟩ <;> try simp at wsLen
+        simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
+        cases related with
+        | cons firstRel tail =>
+          cases tail with
+          | cons secondRel tail =>
+            cases firstRel; cases secondRel
+            all_goals
+              obtain ⟨rfl, rfl⟩ := applied
+              simp only [compileOp, compileArith]
+              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+              simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
+                ClosSem.doWordAppIntegral, ClosSem.applyWordOp, ClosSem.intToByte_toNat,
+                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+              exact ⟨states, ValueRel.word8 _⟩
+    | w64 =>
+      have typed : ∀ v ∈ vs, ∃ i : BitVec 64, v = .litv (.word64 i) := by
+        intro v member
+        apply checkTypeWord64_flatToValue
+        have all := List.all_eq_true.mp checked
+        apply all
+        exact List.mem_map.mpr ⟨v, member, rfl⟩
+      cases action <;>
+        rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
+        try simp [FlatSem.doApp_arith_source, SemanticPrimitivesHOL.doArith, SemanticPrimitivesHOL.wordArith] at applied
+      all_goals
+        obtain ⟨left, rfl⟩ := typed v (by simp)
+        obtain ⟨right, rfl⟩ := typed u (by simp)
+        simp [FlatSem.flatToValue, SemanticPrimitivesHOL.checkType,
+          SemanticPrimitivesHOL.theLitvWord64, FlatSem.valueToFlat] at applied
+        have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
+        rcases ws with _ | ⟨w, _ | ⟨t, _ | ⟨z, zs⟩⟩⟩ <;> try simp at wsLen
+        simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
+        cases related with
+        | cons firstRel tail =>
+          cases tail with
+          | cons secondRel tail =>
+            cases firstRel; cases secondRel
+            all_goals
+              obtain ⟨rfl, rfl⟩ := applied
+              simp only [compileOp, compileArith]
+              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+              simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
+                ClosSem.doWordAppIntegral, ClosSem.applyWordOp,
+                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+              exact ⟨states, ValueRel.word64 _⟩
+  | float64T =>
+    have typed : ∀ v ∈ vs, ∃ i : BitVec 64, v = .litv (.float64 i) := by
+      intro v member
+      apply checkTypeFloat64_flatToValue
+      have all := List.all_eq_true.mp checked
+      apply all
+      exact List.mem_map.mpr ⟨v, member, rfl⟩
+    cases action <;>
+      rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩ <;>
+      try simp [FlatSem.doApp_arith_source, SemanticPrimitivesHOL.doArith] at applied
+    case add.cons.cons.nil | sub.cons.cons.nil | mul.cons.cons.nil | div.cons.cons.nil =>
+      obtain ⟨left, rfl⟩ := typed v (by simp)
+      obtain ⟨right, rfl⟩ := typed u (by simp)
+      simp [FlatSem.flatToValue, SemanticPrimitivesHOL.checkType,
+        SemanticPrimitivesHOL.theLitvFloat64, FlatSem.valueToFlat] at applied
+      obtain ⟨rfl, rfl⟩ := applied
+      have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
+      rcases ws with _ | ⟨w, _ | ⟨t, _ | ⟨z, zs⟩⟩⟩ <;> try simp at wsLen
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
+      cases related with
+      | cons firstRel tail =>
+        cases tail with
+        | cons secondRel tail =>
+          cases firstRel; cases secondRel
+          all_goals
+            simp only [compileOp, compileArith]
+            rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+            simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, fpSemFpBopComp,
+              Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+            exact ⟨states, ValueRel.float64 _⟩
+    case abs.cons.nil | neg.cons.nil | sqrt.cons.nil =>
+      obtain ⟨value, rfl⟩ := typed v (by simp)
+      simp [FlatSem.flatToValue, SemanticPrimitivesHOL.checkType,
+        SemanticPrimitivesHOL.theLitvFloat64, FlatSem.valueToFlat] at applied
+      obtain ⟨rfl, rfl⟩ := applied
+      have wsLen : ws.length = 1 := by simpa using related.length_eq.symm
+      rcases ws with _ | ⟨w, _ | ⟨z, zs⟩⟩ <;> try simp at wsLen
+      simp only [List.reverse_singleton] at related
+      cases related with
+      | cons firstRel tail =>
+        cases firstRel
+        all_goals
+          simp only [compileOp, compileArith]
+          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+          simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, fpSemFpUopComp,
+            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+          exact ⟨states, ValueRel.float64 _⟩
+    case fma.cons.cons.cons.nil =>
+      obtain ⟨a, rfl⟩ := typed v (by simp)
+      obtain ⟨b, rfl⟩ := typed u (by simp)
+      obtain ⟨c, rfl⟩ := typed q (by simp)
+      simp [FlatSem.flatToValue, SemanticPrimitivesHOL.checkType,
+        SemanticPrimitivesHOL.theLitvFloat64, FlatSem.valueToFlat] at applied
+      obtain ⟨rfl, rfl⟩ := applied
+      have wsLen : ws.length = 3 := by simpa using related.length_eq.symm
+      rcases ws with _ | ⟨w, _ | ⟨t, _ | ⟨r, _ | ⟨z, zs⟩⟩⟩⟩ <;> try simp at wsLen
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
+      cases related with
+      | cons firstRel tail =>
+        cases tail with
+        | cons secondRel tail =>
+          cases tail with
+          | cons thirdRel tail =>
+            cases firstRel; cases secondRel; cases thirdRel
+            simp only [compileOp, compileArith]
+            rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+            simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, fpSemFpTopComp, fpSemFpfma,
+              Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+            exact ⟨states, ValueRel.float64 _⟩
 
 end Flapjack.Compiler.Backend.FlatToClos

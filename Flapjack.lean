@@ -1518,11 +1518,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.IntegerOperations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.IntegerExpressions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ByteComparisons
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.FloatExpressions
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.BooleanExpressions
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveArith
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordOperations
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordExpressions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ApplicationOperators
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Conversions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ByteConversion
