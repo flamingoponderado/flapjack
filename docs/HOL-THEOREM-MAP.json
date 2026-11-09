@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "compile_common_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Common.lean", "lean_name": "compileCommon",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_common_def_typed: configuration and expression carriers and all eight ordered steps agree, including post-mti length for fresh-location reservation, even alignment, the original next_loc for chain_exps, and source annotation. Numbering, known-function and direct-call results and all four updated configuration fields agree. compileCallMtiFuel_eq_common proves the executed bounded pipeline reaches this result."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "shift_correct",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotateCorrect.lean", "lean_name": "shift_correct",
   "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
@@ -17400,7 +17406,7 @@
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "compile_exp_sing_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/SourceCompile.lean", "lean_name": "compileExpHOL",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared all singleton clauses at source lines 497-578 and inferred types in clos_to_bvl_recursive_types_probe.out. The closure and BVL expression, num and auxiliary triple-list carriers, accumulator order, all operator and recursive-group cases agree. compileExpFunsHOL_eq_map and compileExpFunsHOL_cases prove the factored arity/body traversal and MAP2 produce the original results; buildReccLetsHOL preserves the source total operation. compileExp_checked_eq proves the executed checked converter returns this result."
+    "reviewer": "Compared all singleton clauses at source lines 497-578 and inferred types in clos_to_bvl_recursive_types_probe.out. The closure and BVL expression, num and auxiliary triple-list carriers, accumulator order, all operator and recursive-group cases agree. compileExpFunsHOL_eq_map proves the factored arity/body traversal; buildReccLetsHOL preserves the source total operation. compileExp_checked_eq proves the executed checked converter returns this result."
   },
   {
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "compile_exp_sing_def",

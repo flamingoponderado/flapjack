@@ -19,27 +19,6 @@ def nthCode {C A : Type} (oracle : Nat → C × List (Nat × A)) : Nat → Spt A
   | 0 => .ln
   | n + 1 => sptUnion (sptFromAList (oracle 0).2) (nthCode (fun i => oracle (i + 1)) n)
 
-/-- Every location accumulated from the first `count` oracle entries came
-from an entry strictly before `count`. -/
-theorem nthCode_location_before {C A : Type} (oracle : Nat → C × List (Nat × A))
-    (count location : Nat) (member : sptMem location (nthCode oracle count)) :
-    ∃ index, index < count ∧ location ∈ ((oracle index).2.map Prod.fst) := by
-  induction count generalizing oracle with
-  | zero =>
-    obtain ⟨value, found⟩ := (sptMem_iff_lookup _ _).1 member
-    simp [nthCode] at found
-  | succ count ih =>
-    simp only [nthCode, sptMem_sptUnion] at member
-    cases member with
-    | inl first =>
-      obtain ⟨value, found⟩ := (sptMem_iff_lookup _ _).1 first
-      rw [sptLookup_sptFromAList] at found
-      have inList := sptAListLookup_mem location (oracle 0).2 value found
-      exact ⟨0, by omega, List.mem_map.mpr ⟨(location, value), inList, rfl⟩⟩
-    | inr later =>
-      obtain ⟨index, bound, found⟩ := ih (fun n => oracle (n + 1)) later
-      exact ⟨index + 1, by omega, found⟩
-
 /-- The compiler and oracle agree with incremental conversion, with fresh
 future labels and the source annotations required by closure conversion. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_oracle_inv_def" 1069]

@@ -9,6 +9,7 @@ fun show label th = if null (hyp th) then
 val _ = show "code_split_def_typed=" clos_to_bvlTheory.code_split_def;
 val _ = show "code_split_perm_typed=" clos_to_bvlProofTheory.code_split_IMP_PERM;
 val _ = show "chain_exps_def_typed=" clos_to_bvlTheory.chain_exps_def;
+val _ = show "compile_common_def_typed=" clos_to_bvlTheory.compile_common_def;
 val _ = show "chain_exps_code_locs_typed=" clos_to_bvlProofTheory.chain_exps_code_locs;
 val _ = show "chain_exps_vars_none_typed=" clos_to_bvlProofTheory.chain_exps_every_Fn_vs_NONE;
 val _ = show "state_rel_typed=" clos_to_bvlProofTheory.state_rel_def;
