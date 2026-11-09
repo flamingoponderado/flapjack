@@ -944,5 +944,43 @@ theorem encodeBitMask_eq (imm : BitVec 64) :
         simp only [BitVec.toNat_ofNat, Nat.reducePow, imms_toNat, Nat.mod_eq_of_lt hbnd]
       · simp only [if_neg hc, Option.map_none]
 
+/-- The L3 `EncodeBitMask` is the computable `encodeBitMask` mapped onto the
+`BitVec` carrier, including the failure case.  This is the direction the
+`logicalImmediate` bridge needs: it turns a computable-side `none`/`some` into
+the L3-side `none`/`some` without an extra hypothesis. -/
+theorem EncodeBitMask_eq_map (imm : BitVec 64) :
+    EncodeBitMask (TN := 64) imm =
+      (encodeBitMask imm).map
+        (fun p => (BitVec.ofNat 1 p.1, (BitVec.ofNat 6 p.2.1, BitVec.ofNat 6 p.2.2))) := by
+  have h := encodeBitMask_eq imm
+  cases hb : encodeBitMask imm with
+  | none =>
+    rw [hb] at h
+    simp only [Option.map_none] at h
+    cases he : EncodeBitMask (TN := 64) imm with
+    | none => simp
+    | some q => rw [he] at h; simp at h
+  | some p =>
+    obtain ⟨a, b, c⟩ := p
+    rw [hb] at h
+    simp only [Option.map_some] at h
+    cases he : EncodeBitMask (TN := 64) imm with
+    | none => rw [he] at h; simp at h
+    | some q =>
+      obtain ⟨N, imms, immr⟩ := q
+      rw [he] at h
+      simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq] at h
+      obtain ⟨hN, himms, himmr⟩ := h
+      have hN' : N = BitVec.ofNat 1 a := by
+        apply BitVec.eq_of_toNat_eq
+        simpa using hN.symm
+      have himms' : imms = BitVec.ofNat 6 b := by
+        apply BitVec.eq_of_toNat_eq
+        simpa using himms.symm
+      have himmr' : immr = BitVec.ofNat 6 c := by
+        apply BitVec.eq_of_toNat_eq
+        simpa using himmr.symm
+      simp only [Option.map_some]
+      rw [hN', himms', himmr']
 
 end Flapjack.Compiler.Encoders.Arm8.L3

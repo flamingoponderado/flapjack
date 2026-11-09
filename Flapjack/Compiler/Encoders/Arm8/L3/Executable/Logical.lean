@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Encoders.Arm8.L3.Executable.BitMask
 import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Encoder
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShiftedRegister
 
@@ -99,5 +100,91 @@ theorem encodeBytes_logicalShiftedRegister (op : Arm8.LogicalOp) (opL3 : Logical
   exact (arm8Encode_logicalShiftedRegister opL3 invert setFlags sh imm
     (BitVec.ofNat 5 rm) (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rd) (BitVec.ofNat 2 n)
     hopc himm).symm
+
+/-- `fields` builds the logical-immediate word. -/
+theorem fields_logicalImmediate (opc : Nat) (N imms immr rn rd : Nat) :
+    fields [(1, 1), (2, opc), (6, 0b100100), (1, N), (6, immr), (6, imms),
+      (5, rn), (5, rd)] =
+      arm8LogicalImmediateWord (BitVec.ofNat 2 opc) (BitVec.ofNat 1 N)
+        (BitVec.ofNat 6 imms) (BitVec.ofNat 6 immr)
+        (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rd) := by
+  simp only [fields, List.foldl_cons, List.foldl_nil, arm8LogicalImmediateWord]
+  rw [ofNat_mod_setWidth 1, ofNat_mod_setWidth 2, ofNat_mod_setWidth 6,
+    ofNat_mod_setWidth 1, ofNat_mod_setWidth 6, ofNat_mod_setWidth 6,
+    ofNat_mod_setWidth 5, ofNat_mod_setWidth 5]
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  simp only [BitVec.getLsbD_or, BitVec.getLsbD_shiftLeft, BitVec.getLsbD_ofNat,
+    BitVec.getLsbD_append, BitVec.getLsbD_setWidth]
+  interval_cases i <;> simp
+
+/-- The computable `encodeLogicalOp` and the L3 `EncodeLogicalOp` agree for
+`AND`, including the failure case. -/
+theorem EncodeLogicalOp_AND (setFlags : Bool) :
+    EncodeLogicalOp (.LogicalOp_AND, setFlags) =
+      (encodeLogicalOp .and setFlags).map (BitVec.ofNat 2) := by
+  cases setFlags <;> rfl
+
+/-- The computable `encodeLogicalOp` and the L3 `EncodeLogicalOp` agree for
+`ORR`, including the failure case. -/
+theorem EncodeLogicalOp_ORR (setFlags : Bool) :
+    EncodeLogicalOp (.LogicalOp_ORR, setFlags) =
+      (encodeLogicalOp .orr setFlags).map (BitVec.ofNat 2) := by
+  cases setFlags <;> rfl
+
+/-- The computable `encodeLogicalOp` and the L3 `EncodeLogicalOp` agree for
+`EOR`, including the failure case. -/
+theorem EncodeLogicalOp_EOR (setFlags : Bool) :
+    EncodeLogicalOp (.LogicalOp_EOR, setFlags) =
+      (encodeLogicalOp .eor setFlags).map (BitVec.ofNat 2) := by
+  cases setFlags <;> rfl
+
+/-- A `LogicalImmediate` encodes to the same four bytes on both sides whenever
+the two opcode encoders agree, including both failure branches. -/
+theorem encodeBytes_logicalImmediate (op : Arm8.LogicalOp) (opL3 : LogicalOp)
+    (setFlags : Bool) (imm : BitVec 64) (rn rd : Nat)
+    (hlog : EncodeLogicalOp (opL3, setFlags) =
+      (encodeLogicalOp op setFlags).map (BitVec.ofNat 2)) :
+    encodeBytes (.logicalImmediate op setFlags imm rn rd) =
+      arm8Encode (.Data (.«LogicalImmediate@64»
+        ((1 : BitVec 64), (opL3, (setFlags, (imm,
+          (BitVec.ofNat 5 rn, BitVec.ofNat 5 rd))))))) := by
+  have hbmL3 : EncodeBitMask (TN := 64) imm =
+      (encodeBitMask imm).map
+        (fun p => (BitVec.ofNat 1 p.1, (BitVec.ofNat 6 p.2.1, BitVec.ofNat 6 p.2.2))) :=
+    EncodeBitMask_eq_map imm
+  cases hbm : encodeBitMask imm with
+  | none =>
+    have hbmn : EncodeBitMask (TN := 64) imm = none := by rw [hbmL3, hbm]; rfl
+    have hw : encodeInsn32 (.logicalImmediate op setFlags imm rn rd) = none := by
+      simp only [encodeInsn32]
+      rw [hbm]
+    rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
+    simp only [arm8Encode, Encode, arm8EData_logicalImmediate, hbmn]
+  | some p =>
+    obtain ⟨bmN, bmS, bmR⟩ := p
+    have hbmL3s : EncodeBitMask (TN := 64) imm =
+        some (BitVec.ofNat 1 bmN, (BitVec.ofNat 6 bmS, BitVec.ofNat 6 bmR)) := by
+      rw [hbmL3, hbm]
+      rfl
+    cases hlg : encodeLogicalOp op setFlags with
+    | none =>
+      have hlgn : EncodeLogicalOp (opL3, setFlags) = none := by rw [hlog, hlg]; rfl
+      have hw : encodeInsn32 (.logicalImmediate op setFlags imm rn rd) = none := by
+        simp only [encodeInsn32]
+        rw [hbm, hlg]
+      rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
+      simp only [arm8Encode, Encode, arm8EData_logicalImmediate, hbmL3s, hlgn]
+    | some n =>
+      have hlgs : EncodeLogicalOp (opL3, setFlags) = some (BitVec.ofNat 2 n) := by
+        rw [hlog, hlg]
+        rfl
+      have hw : encodeInsn32 (.logicalImmediate op setFlags imm rn rd) =
+          some (fields [(1, 1), (2, n), (6, 0b100100), (1, bmN), (6, bmR), (6, bmS),
+            (5, rn), (5, rd)]) := by
+        simp only [encodeInsn32]
+        rw [hbm, hlg]
+      rw [encodeBytes_eq_of_encodeInsn32 _ _ hw, fields_logicalImmediate]
+      simp only [arm8Encode, Encode, arm8EData_logicalImmediate, hbmL3s, hlgs]
 
 end Flapjack.Compiler.Encoders.Arm8.L3
