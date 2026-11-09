@@ -25,4 +25,13 @@ noncomputable def doApp {C F : Type} (state : State C F) (op : FlatLang.Op) (val
         | none => (doAppCopy state sourceOp values).getD none
   | _ => (doAppFlat state op values).getD none
 
+/-- The original projected dispatcher and direct shift clause agree. This is
+Flapjack infrastructure for proofs that use the source primitive simulation. -/
+theorem doApp_shift_projection {C F : Type} (state : State C F)
+    (width : Flapjack.AstHOL.WordSize) (shift : Flapjack.Shift) (amount : Nat)
+    (values : List Value) :
+    doApp state (.src (.shift width shift amount)) values =
+      applyNumericProjection state (.shift width shift amount) values divExnV := by
+  exact shift_projection_eq state width shift amount values
+
 end Flapjack.Compiler.Backend.FlatSem

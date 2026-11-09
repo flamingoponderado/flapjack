@@ -130950,5 +130950,31 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared flat_evaluate_decs_io_events_mono_typed in flat_do_app_preservation_probe.out. The original declaration list, states, result order, successful-evaluation premise and event prefix agree. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "shift_lookup_def",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/Shift.lean",
+  "lean_name": "shiftLookup",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Compared semantic_shift_lookup_def_typed and HOL source: all four shift operators and argument order agree for every positive word width. Independent source review confirmed the type-indexed BitVec translation and shift behaviors."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "do_shift_def",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/Shift.lean",
+  "lean_name": "doShift",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared semantic_do_shift_def_typed and HOL source, including both fixed-width matches, all unmatched literal and word-size cases, and argument order. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+  "hol_name": "do_app_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyCompareSource.lean",
+  "lean_name": "doApp_shift_source",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete original shift clause and typed flat do_app_def, including every word size, shift, literal and independent state payload. It delegates directly to doShift, as in HOL. Independently source-reviewed; inherits the reals_as_rational_cuts assumption through doApp."
 }
 ]

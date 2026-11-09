@@ -88,8 +88,10 @@ theorem doApp_some_flatStateRel_shift {C F G : Type} (reachable : NumSet)
     applyNumericProjection_related reachable source target next (.shift width shift amount) values FlatSem.divExnV result related
       (by simp [FlatSem.divExnV, findValueGlobals, findValuesGlobals, globalsWithin, sptMem, sptDomain])
       (by simp [FlatSem.divExnV, valueHasEval, valuesHaveEval])
-      (by simpa [FlatSem.doApp, FlatSem.doAppNumeric] using run)
-  exact ⟨targetNext, stateRel, by simpa [FlatSem.doApp, FlatSem.doAppNumeric] using evaluated, closed, safe⟩
+      (by simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.shift_projection_eq] using run)
+  exact ⟨targetNext, stateRel,
+    by simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.shift_projection_eq] using evaluated,
+    closed, safe⟩
 
 /-- The arith case preserves the primitive simulation.
 This operation-specific proof helper has no separate HOL theorem. -/

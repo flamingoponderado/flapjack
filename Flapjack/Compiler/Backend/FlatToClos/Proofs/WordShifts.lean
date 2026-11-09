@@ -10,11 +10,11 @@ theorem word64Shift_wrong_arity {C F : Type} (state : FlatSem.State C F) (shift 
     (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
     (FlatSem.applyResult state (.src (.shift .w64 shift amount)) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore, SemanticPrimitivesHOL.doAppBasic]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp_shift_projection, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore, SemanticPrimitivesHOL.doAppBasic]
   | cons first rest =>
     cases rest with
     | nil => simp at wrong
-    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore, SemanticPrimitivesHOL.doAppBasic]
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp_shift_projection, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore, SemanticPrimitivesHOL.doAppBasic]
 
 /-- Shifting a 64-bit word gives related words on both sides,
 including the argument-evaluation error cases. -/
@@ -70,7 +70,7 @@ theorem evaluate_word64Shift {C F : Type} (env : FlatSem.Environment FlatSem.Val
           | cons _ _ => simp at length
           | nil =>
             simp only [List.reverse_singleton] at resultShape
-            cases head <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
+            cases head <;> simp [FlatSem.applyResult, FlatSem.doApp_shift_projection,
               FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp,
               SemanticPrimitivesHOL.doAppNumericCore, SemanticPrimitivesHOL.doAppBasic] at resultShape
             case con rel =>
@@ -78,7 +78,7 @@ theorem evaluate_word64Shift {C F : Type} (env : FlatSem.Environment FlatSem.Val
               cases sourceFields <;> cases typeId <;> simp_all [SemanticPrimitivesHOL.boolValue]
               split_ifs at resultShape <;> simp_all
             case word64 word =>
-              simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
+              simp [FlatSem.applyResult, FlatSem.doApp_shift_projection, FlatSem.applyNumericProjection,
                 FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp,
                 SemanticPrimitivesHOL.doAppNumericCore, SemanticPrimitivesHOL.doAppBasic,
                 ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, ClosSem.doWordAppIntegral,
@@ -89,11 +89,11 @@ theorem word8Shift_wrong_arity {C F : Type} (state : FlatSem.State C F) (shift :
     (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
     (FlatSem.applyResult state (.src (.shift .w8 shift amount)) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore, SemanticPrimitivesHOL.doAppBasic]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp_shift_projection, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore, SemanticPrimitivesHOL.doAppBasic]
   | cons first rest =>
     cases rest with
     | nil => simp at wrong
-    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore, SemanticPrimitivesHOL.doAppBasic]
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp_shift_projection, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore, SemanticPrimitivesHOL.doAppBasic]
 
 /-- Shifting a 8-bit word gives related words on both sides,
 including the argument-evaluation error cases. -/
@@ -149,7 +149,7 @@ theorem evaluate_word8Shift {C F : Type} (env : FlatSem.Environment FlatSem.Valu
           | cons _ _ => simp at length
           | nil =>
             simp only [List.reverse_singleton] at resultShape
-            cases head <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
+            cases head <;> simp [FlatSem.applyResult, FlatSem.doApp_shift_projection,
               FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp,
               SemanticPrimitivesHOL.doAppNumericCore, SemanticPrimitivesHOL.doAppBasic] at resultShape
             case con rel =>
@@ -157,7 +157,7 @@ theorem evaluate_word8Shift {C F : Type} (env : FlatSem.Environment FlatSem.Valu
               cases sourceFields <;> cases typeId <;> simp_all [SemanticPrimitivesHOL.boolValue]
               split_ifs at resultShape <;> simp_all
             case word8 word =>
-              simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
+              simp [FlatSem.applyResult, FlatSem.doApp_shift_projection, FlatSem.applyNumericProjection,
                 FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp,
                 SemanticPrimitivesHOL.doAppNumericCore, SemanticPrimitivesHOL.doAppBasic,
                 ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, ClosSem.doWordAppIntegral, ClosSem.intToByte_toNat,
