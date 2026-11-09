@@ -9,25 +9,19 @@ lemmas are infrastructure and have not been reviewed as HOL theorem ports. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL Flapjack.AstHOL Flapjack.Basis.Pure.MlString
 
-/-- Neither application nor assignment accepts a non-binary argument list. -/
-theorem binarySpecial_rejects {C F : Type} (state : FlatSem.State C F)
-    (op : AstHOL.Op) (args : List FlatSem.Value)
-    (special : op = .opapp ∨ op = .opassign) (wrong : args.length ≠ 2) :
-    (op = .opapp → FlatSem.doOpApp args = none) ∧
-    (op = .opassign → (FlatSem.applyResult state (.src op) args).2 = .err (.abort .typeError)) := by
-  rcases special with rfl | rfl
-  · rcases args with _ | ⟨a, _ | ⟨b, _ | ⟨c, rest⟩⟩⟩ <;> simp_all [FlatSem.doOpApp]
-  · rcases args with _ | ⟨a, _ | ⟨b, _ | ⟨c, rest⟩⟩⟩ <;>
-      simp_all [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+/-- Function application rejects a non-binary argument list. This supports
+the App case of `compile_correct` and has no separate HOL declaration. -/
+theorem application_rejects (args : List FlatSem.Value) (wrong : args.length ≠ 2) :
+    FlatSem.doOpApp args = none := by
+  rcases args with _ | ⟨a, _ | ⟨b, _ | ⟨c, rest⟩⟩⟩ <;> simp_all [FlatSem.doOpApp]
 
-/-- The wrong-arity lowering still evaluates arguments in the original order. -/
-theorem binarySpecial_compile_wrong (names : List (Option MlString)) (trace : BackendCommon.Tra)
-    (op : AstHOL.Op) (args : List FlatLang.Exp)
-    (special : op = .opapp ∨ op = .opassign) (wrong : args.length ≠ 2) :
-    compileExp names (.app trace (.src op) args) =
+/-- The wrong-arity lowering still evaluates arguments in the original order.
+This supports the App case of `compile_correct` and has no separate HOL declaration. -/
+theorem application_compile_wrong (names : List (Option MlString)) (trace : BackendCommon.Tra)
+    (args : List FlatLang.Exp) (wrong : args.length ≠ 2) :
+    compileExp names (.app trace (.src .opapp) args) =
       .let .none (compileExps names args).reverse (.var .none 0) := by
-  rcases special with rfl | rfl <;>
-    rcases args with _ | ⟨a, _ | ⟨b, _ | ⟨c, rest⟩⟩⟩ <;>
+  rcases args with _ | ⟨a, _ | ⟨b, _ | ⟨c, rest⟩⟩⟩ <;>
     simp_all [compileExp, destNop, compileOp, compileExps, arg2]
   all_goals
     split
@@ -36,18 +30,18 @@ theorem binarySpecial_compile_wrong (names : List (Option MlString)) (trace : Ba
       simp at lengths
     · rfl
 
-/-- Wrong-arity application and assignment preserve any argument error; a
-successful argument evaluation would contradict the source type-error exclusion. -/
-theorem evaluate_binarySpecial_wrong {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+/-- Wrong-arity application preserves any argument error; a successful
+argument evaluation contradicts the source type-error exclusion. This is
+support for the App case of `compile_correct`, not a separate HOL declaration. -/
+theorem evaluate_application_wrong {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (names : List (Option MlString)) (values : List ClosSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
-    (trace : BackendCommon.Tra) (op : AstHOL.Op) (args : List FlatLang.Exp)
-    (special : op = .opapp ∨ op = .opassign) (wrong : args.length ≠ 2)
+    (trace : BackendCommon.Tra) (args : List FlatLang.Exp) (wrong : args.length ≠ 2)
     (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
       EvalSim env names values source target args.reverse)
-    (notTypeError : (FlatSem.evaluate env source [.app trace (.src op) args]).2 ≠
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src .opapp) args]).2 ≠
       .err (.abort .typeError)) :
-    EvalSim env names values source target [.app trace (.src op) args] := by
+    EvalSim env names values source target [.app trace (.src .opapp) args] := by
   have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
   have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
   have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
@@ -59,7 +53,7 @@ theorem evaluate_binarySpecial_wrong {C F : Type} (env : FlatSem.Environment Fla
   unfold EvalSim at argsSim ⊢
   simp only [compile, compileExps_reverse] at argsSim
   simp only [compile, compileExps] at ⊢
-  rw [binarySpecial_compile_wrong names trace op args special wrong, FlatSem.evaluate,
+  rw [application_compile_wrong names trace args wrong, FlatSem.evaluate,
     ClosSem.evaluate, closFix]
   simp only [flatFix]
   cases flatRun : FlatSem.evaluate env source args.reverse with
@@ -76,18 +70,16 @@ theorem evaluate_binarySpecial_wrong {C F : Type} (env : FlatSem.Environment Fla
         have arity := FlatSem.evaluate_length env source next args.reverse sourceArgs flatRun
         simp only [List.length_reverse] at arity
         have sourceWrong : sourceArgs.reverse.length ≠ 2 := by simpa [arity] using wrong
-        have failure := binarySpecial_rejects next op sourceArgs.reverse special sourceWrong
+        have failure := application_rejects sourceArgs.reverse sourceWrong
         have fixed := flatFix
         rw [flatRun] at fixed
         apply False.elim
         apply notTypeError
         rw [FlatSem.evaluate, flatRun, fixed]
-        rcases special with rfl | rfl
-        · simp [failure.1 rfl]
-        · simpa using failure.2 rfl
+        simp [failure]
 
 /-- The second source argument is evaluated first, so a non-type-error
-binary application or assignment cannot have that argument fail with one. -/
+binary application cannot have that argument fail with one. -/
 theorem binarySpecial_argument_notTypeError {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (source : FlatSem.State C F) (trace : BackendCommon.Tra) (op : AstHOL.Op)
     (first second : FlatLang.Exp)
@@ -101,31 +93,6 @@ theorem binarySpecial_argument_notTypeError {C F : Type} (env : FlatSem.Environm
   rw [(FlatSem.fixClock_evaluations env source [second, first] second []).1, FlatSem.evaluate]
   rw [(FlatSem.fixClock_evaluations env source [second] second []).1]
   simp only [failure]
-
-/-- Assignment is simulated for any argument list, using the two operand
-induction hypotheses only when the source arity is two. -/
-theorem evaluate_assignment_any {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (names : List (Option MlString)) (values : List ClosSem.Value)
-    (source : FlatSem.State C F) (target : ClosSem.State C F)
-    (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
-    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
-      EvalSim env names values source target args.reverse)
-    (operandSim : ∀ (expression : FlatLang.Exp) (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
-      expression ∈ args → StateRel next nextTarget → next.clock ≤ source.clock →
-      (FlatSem.evaluate env next [expression]).2 ≠ .err (.abort .typeError) →
-      EvalSim env names values next nextTarget [expression])
-    (states : StateRel source target)
-    (notTypeError : (FlatSem.evaluate env source [.app trace (.src .opassign) args]).2 ≠
-      .err (.abort .typeError)) :
-    EvalSim env names values source target [.app trace (.src .opassign) args] := by
-  rcases args with _ | ⟨first, _ | ⟨second, _ | ⟨third, rest⟩⟩⟩
-  · exact evaluate_binarySpecial_wrong env names values source target trace .opassign [] (Or.inr rfl) (by simp) argsSim notTypeError
-  · exact evaluate_binarySpecial_wrong env names values source target trace .opassign [first] (Or.inr rfl) (by simp) argsSim notTypeError
-  · exact evaluate_assignment env names values source target trace first second
-      (operandSim second source target (by simp) states (le_refl _))
-      (fun next nextTarget related bound => operandSim first next nextTarget (by simp) related bound) notTypeError
-  · exact evaluate_binarySpecial_wrong env names values source target trace .opassign (first :: second :: third :: rest)
-      (Or.inr rfl) (by simp) argsSim notTypeError
 
 /-- Function application is simulated for any argument list using operand
 and selected function-body induction hypotheses. -/
@@ -151,15 +118,14 @@ theorem evaluate_application_any {C F : Type} (env : FlatSem.Environment FlatSem
       .err (.abort .typeError)) :
     EvalSim env names values source target [.app trace (.src .opapp) args] := by
   rcases args with _ | ⟨first, _ | ⟨second, _ | ⟨third, rest⟩⟩⟩
-  · exact evaluate_binarySpecial_wrong env names values source target trace .opapp [] (Or.inl rfl) (by simp) argsSim notTypeError
-  · exact evaluate_binarySpecial_wrong env names values source target trace .opapp [first] (Or.inl rfl) (by simp) argsSim notTypeError
+  · exact evaluate_application_wrong env names values source target trace [] (by simp) argsSim notTypeError
+  · exact evaluate_application_wrong env names values source target trace [first] (by simp) argsSim notTypeError
   · have secondNot := binarySpecial_argument_notTypeError env source trace .opapp first second notTypeError
     exact evaluate_application env names values source target trace first second
       (operandSim second source target (by simp) states (le_refl _) secondNot)
       (fun next nextTarget related bound => operandSim first next nextTarget (by simp) related bound)
       bodySim notTypeError
-  · exact evaluate_binarySpecial_wrong env names values source target trace .opapp (first :: second :: third :: rest)
-      (Or.inl rfl) (by simp) argsSim notTypeError
+  · exact evaluate_application_wrong env names values source target trace (first :: second :: third :: rest) (by simp) argsSim notTypeError
 
 /-- Every source operator is simulated under the induction hypotheses for
 its arguments, called bodies, thunk forcing, and installed declarations.
@@ -207,7 +173,11 @@ theorem evaluate_sourceOp {C F : Type} (env : FlatSem.Environment FlatSem.Value)
   rcases directSourceOp_or_special op with direct | rfl | rfl | rfl | rfl
   · exact evaluate_directSourceOp env names values source target trace op args direct argsSim charInnerSim wordInnerSim notTypeError
   · exact evaluate_application_any env names values source target trace args argsSim operandSim bodySim states notTypeError
-  · exact evaluate_assignment_any env names values source target trace args argsSim operandSim states notTypeError
+  · apply evalSim_app_of_op env names values source target trace (.src .opassign) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opRefs _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr rfl)) premises
   · exact evaluate_eval_related env names values source target trace args argsSim decsSim notTypeError
   · exact evaluate_force env names values source target trace args argsSim
       (fun sourceValue targetValue next nextTarget => forceSim sourceValue targetValue next nextTarget rfl) notTypeError

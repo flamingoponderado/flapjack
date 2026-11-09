@@ -176,7 +176,12 @@ theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.
     · simp [destNop]
     · intro s vs sNext result tNext xs db t ws tt premises
       exact opEqGc _ s vs sNext result tNext xs db t ws tt (Or.inr rfl) premises
-  | opref => exact evaluate_ref env names values source target trace args argsSim notTypeError
+  | opref =>
+    apply evalSim_app_of_op env names values source target trace (.src .opref) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opRefs _ s vs sNext result tNext xs db t ws tt (Or.inl rfl) premises
   | aw8alloc => exact evaluate_allocByteArray env names values source target trace args argsSim notTypeError
   | aw8sub => exact evaluate_checkedByteRead env names values source target trace args argsSim notTypeError
   | aw8length => exact evaluate_byteArrayLength env names values source target trace args argsSim notTypeError

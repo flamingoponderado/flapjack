@@ -2,6 +2,9 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Equality
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Ffi
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Globals
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 import Flapjack.Compiler.Backend.FlatToClos.Op
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
@@ -512,5 +515,174 @@ theorem opBlocks {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                         simp [ClosSem.doApp, ClosSem.applyBlock, targetLeftDecoded, targetRightDecoded,
                           Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
                         exact ⟨states, resultRel⟩
+
+/-- Reference allocation, field reads and assignment satisfy the original operator goal. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "op_refs"
+  (fmap_as_finite_support := [refs, code])]
+theorem opRefs {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
+    (vs : List FlatSem.Value) (sourceNext : FlatSem.State C F)
+    (result : Result FlatSem.Value FlatSem.Value) (targetNext : ClosSem.State C F)
+    (xs : List ClosLang.Exp) (db : List ClosSem.Value) (target : ClosSem.State C F)
+    (ws : List ClosSem.Value) (trace : BackendCommon.Tra) :
+    (op = .src .opref ∨ (∃ n, op = .el n) ∨ op = .src .opassign) →
+    FlatSem.doApp source op vs = some (sourceNext, result) ∧
+      StateRel source targetNext ∧ ClosSem.evaluate xs db target = (.val ws, targetNext) ∧
+      List.Forall₂ ValueRel vs ws.reverse ∧ xs.length = vs.length ∧
+      op ≠ .src .opapp ∧ op ≠ .src (.thunkOp .forceThunk) →
+    ∃ targetResult targetLast,
+      ClosSem.evaluate [compileOp trace op xs] db target = (targetResult, targetLast) ∧
+      StateRel sourceNext targetLast ∧
+      SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel
+        (Flapjack.EvaluateHOL.listResult result) targetResult := by
+  intro opCase premises
+  obtain ⟨applied, states, evaluated, related, length, _, _⟩ := premises
+  rcases opCase with rfl | ⟨n, rfl⟩ | rfl
+  case inl =>
+    cases vs with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+    | cons v rest =>
+      cases rest with
+      | cons z zs => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+      | nil =>
+        have wsLen : ws.length = 1 := by simpa using related.length_eq.symm
+        cases ws with
+        | nil => simp at wsLen
+        | cons w rest =>
+          cases rest with
+          | cons z zs => simp at wsLen
+          | nil =>
+            simp only [List.reverse_singleton] at related
+            cases related with
+            | cons valRel tail =>
+              simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, storeAlloc] at applied
+              obtain ⟨rfl, rfl⟩ := applied
+              have index := leastUnusedRef_eq_length source.refs targetNext.refs states.2.2.2.1
+              have updated := stateRel_allocRef source targetNext v w states valRel
+              simp only [compileOp]
+              rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+              simp [ClosSem.doApp, ClosSem.applyMemory, index,
+                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+              exact ⟨updated, ValueRel.loc true source.refs.length⟩
+  case inr.inl =>
+    cases vs with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppFlat] at applied
+    | cons v rest =>
+      cases rest with
+      | cons z zs => simp [FlatSem.doApp, FlatSem.doAppFlat] at applied
+      | nil =>
+        cases xs with
+        | nil => simp at length
+        | cons x rest =>
+          cases rest with
+          | cons z zs => simp at length
+          | nil =>
+            have wsLen : ws.length = 1 := by simpa using related.length_eq.symm
+            cases ws with
+            | nil => simp at wsLen
+            | cons w rest =>
+              cases rest with
+              | cons z zs => simp at wsLen
+              | nil =>
+                simp only [List.reverse_singleton] at related
+                cases related with
+                | cons valRel tail =>
+                  cases run : FlatSem.doAppFlat source (.el n) [v] with
+                  | none => simp [FlatSem.doAppFlat] at run
+                  | some output =>
+                    cases output with
+                    | none => simp [FlatSem.doApp, run] at applied
+                    | some pair =>
+                      obtain ⟨after, res⟩ := pair
+                      simp [FlatSem.doApp, run] at applied
+                      obtain ⟨rfl, rfl⟩ := applied
+                      cases res with
+                      | err error =>
+                        cases v <;> simp [FlatSem.doAppFlat] at run
+                        case loc flag pointer => split at run <;> simp_all
+                      | val value =>
+                        have afterEq : after = source := by
+                          cases v <;> simp [FlatSem.doAppFlat] at run
+                          case conv stamp fields => cases h : fields[n]? <;> simp_all
+                          case loc flag pointer => split at run <;> simp_all
+                        subst after
+                        obtain ⟨targetResult, targetRun, valueRel⟩ :=
+                          element_related source targetNext n v w value states valRel run
+                        simp only [compileOp, arg1]
+                        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate,
+                          evaluate_element_args, evaluated]
+                        simp only [Int.ofNat_eq_natCast] at targetRun
+                        simp [ClosSem.doApp, targetRun, Flapjack.EvaluateHOL.listResult,
+                          SemanticPrimitivesProps.resultRel]
+                        exact ⟨states, valueRel⟩
+  case inr.inr =>
+    cases vs with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+    | cons v vs =>
+      cases vs with
+      | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+      | cons u rest =>
+        cases rest with
+        | cons z zs => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+        | nil =>
+          cases xs with
+          | nil => simp at length
+          | cons x rest =>
+            cases rest with
+            | nil => simp at length
+            | cons y rest =>
+              cases rest with
+              | cons z zs => simp at length
+              | nil =>
+                have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
+                cases ws with
+                | nil => simp at wsLen
+                | cons w rest =>
+                  cases rest with
+                  | nil => simp at wsLen
+                  | cons t rest =>
+                    cases rest with
+                    | cons z zs => simp at wsLen
+                    | nil =>
+                      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
+                      cases related with
+                      | cons relV tail =>
+                        cases tail with
+                        | cons relU tail =>
+                          cases relV <;> simp [FlatSem.doApp, FlatSem.doAppNumeric,
+                            FlatSem.doAppMemory] at applied
+                          case loc flag pointer =>
+                            cases found : source.refs[pointer]? with
+                            | none => simp [storeAssign, found] at applied
+                            | some old =>
+                              cases old with
+                              | w8array | varray | thunk => simp [storeAssign, found, storeValueSameType] at applied
+                              | refv old =>
+                                obtain ⟨targetUpdated, sourceUpdate, targetUpdate, updatedStates⟩ :=
+                                  assignRef_related source targetNext flag pointer old u w states relU found
+                                simp [storeAssign, found, storeValueSameType] at applied
+                                obtain ⟨rfl, rfl⟩ := applied
+                                cases hx : ClosSem.evaluate [x] db target with
+                                | mk xr mid =>
+                                  cases xr with
+                                  | err error =>
+                                    rw [ClosProps.evaluate_cons_error _ _ _ _ _ _ hx] at evaluated
+                                    simp at evaluated
+                                  | val firsts =>
+                                    obtain ⟨first, rfl⟩ := ClosSem.evaluate_singleton_value x db target mid firsts hx
+                                    rw [ClosProps.evaluate_cons_value _ _ _ _ _ _ hx] at evaluated
+                                    cases hy : ClosSem.evaluate [y] db mid with
+                                    | mk yr last =>
+                                      cases yr with
+                                      | err error => simp [hy] at evaluated
+                                      | val seconds =>
+                                        obtain ⟨second, rfl⟩ := ClosSem.evaluate_singleton_value y db mid last seconds hy
+                                        simp [hy] at evaluated
+                                        obtain ⟨⟨rfl, rfl⟩, rfl⟩ := evaluated
+                                        simp only [compileOp, arg2]
+                                        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate,
+                                          evaluate_assignment_args _ _ _ _ _ _ hx, hy]
+                                        simp [ClosSem.doApp, targetUpdate,
+                                          Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                                        exact ⟨updatedStates, (vRel_unit _).mpr rfl⟩
 
 end Flapjack.Compiler.Backend.FlatToClos
