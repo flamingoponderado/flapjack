@@ -38,9 +38,11 @@ for every parsed input, including failure (Flapjack infrastructure). -/
 theorem nativeSourceCompileDeclarations_eq (parsed : List (Decl (BitVec 64))) :
     RiscV.NativeSource.compileDeclarations parsed =
       (compileProgMaxAsmExecutable pancakeRiscVBackendConfig riscvConfig
-        (mainFirstHOL (parsed.map declToHOL))).1 := by
+        (mainFirstHOL (parsed.map declToHOL))).1.map fun (bytes, bms, c) =>
+        (bytes, bms, { c with symbols :=
+          (compileProgSymbols riscvConfig (mainFirstHOL (parsed.map declToHOL)) c) }) := by
   unfold RiscV.NativeSource.compileDeclarations
-  exact compileProgAsmFast_eq_fst _ _ _
+  exact compileProgAsmFast_symbols_eq_fst _ _ _
 
 /-- A successful driver run comes from a successful parse and static check, records
 `mainFirstHOL` of the parsed declarations and the native artifact compiler's result on them
@@ -68,8 +70,9 @@ theorem nativeSourceCompile_ok {source : String} {out : RiscV.NativeSource.Outpu
         · exact (congrArg RiscV.NativeSource.Output.declarations compiled).symm
         · rw [← congrArg RiscV.NativeSource.Output.artifact compiled]
           unfold RiscV.NativeSource.compileDeclarations
-          exact (compileProgAsmFastChecked_ok_agrees pancakeRiscVBackendConfig riscvConfig
-            (mainFirstHOL (parsed.map declToHOL)) artifactEq).symm
+          exact (compileProgAsmFastChecked_ok_agrees
+            Flapjack.Compiler.Encoders.RiscV.riscvUnsupported pancakeRiscVBackendConfig
+            riscvConfig (mainFirstHOL (parsed.map declToHOL)) artifactEq).symm
 
 /-- Every successful artifact has the full logical compiler result with its logical
 bound. This links emitted bytes to the full compiler without evaluating depth in the
@@ -77,10 +80,18 @@ CLI (Flapjack infrastructure). -/
 theorem nativeSourceCompile_full_result {source : String} {out : RiscV.NativeSource.Output}
     (compiled : RiscV.NativeSource.compile source = .ok out) :
     compileProgMaxAsmExecutable pancakeRiscVBackendConfig riscvConfig out.declarations =
-      (out.artifact, nativeSourceLogicalBound out) := by
+      (out.artifact.map fun (bytes, bms, c) =>
+        (bytes, bms, { c with symbols := notFoundSymbols c }),
+       nativeSourceLogicalBound out) := by
   obtain ⟨parsed, _, declsEq, resultEq⟩ := nativeSourceCompile_ok compiled
+  unfold RiscV.NativeSource.compileDeclarations at resultEq
+  have h1 := compileProgAsmFast_eq_fst pancakeRiscVBackendConfig riscvConfig out.declarations
+  have hfast : compileProgAsmFast pancakeRiscVBackendConfig riscvConfig out.declarations =
+      out.artifact := by
+    rw [declsEq, ← resultEq]
+  rw [hfast] at h1
   apply Prod.ext
-  · rw [resultEq, nativeSourceCompileDeclarations_eq, declsEq]
+  · exact h1
   · rfl
 
 /-- Concrete RISC-V correctness of the parser-backed native compiler: if
@@ -150,14 +161,15 @@ theorem nativeSourceCompile_correct {σ : Type} {source : String}
   rw [parsedEq] at parsedEq'
   cases Except.ok.inj parsedEq'
   rw [declsEq] at rest
-  rw [resultEq, nativeSourceCompileDeclarations_eq] at hartifact
+  have hfull := nativeSourceCompile_full_result compiled
+  rw [declsEq, hartifact] at hfull
+  simp only [Option.map_some] at hfull
+  rw [← hbound] at hfull
   have hcomp : compileProgMaxAsmExecutable pancakeRiscVBackendConfig riscvConfig
-      (mainFirstHOL (parsed.map declToHOL)) = (some (bytes, bitmaps, c'), stack_max) := by
-    apply Prod.ext
-    · exact hartifact
-    · simpa only [nativeSourceLogicalBound, declsEq] using hbound.symm
-  exact panToTargetCompileSemanticsRiscVSource mc (parsed.map declToHOL) bytes bitmaps c'
-    stack_max s ms globals_size heap_len adj_ptr2 adj_ptr4 ffi cbspace data_sp start hmc hasMain
-    ⟨hcomp, rest⟩
+      (mainFirstHOL (parsed.map declToHOL)) =
+      (some (bytes, bitmaps, { c' with symbols := notFoundSymbols c' }), stack_max) := hfull
+  exact panToTargetCompileSemanticsRiscVSource mc (parsed.map declToHOL) bytes bitmaps
+    { c' with symbols := notFoundSymbols c' } stack_max s ms globals_size heap_len
+    adj_ptr2 adj_ptr4 ffi cbspace data_sp start hmc hasMain ⟨hcomp, rest⟩
 
 end Flapjack.Pancake.Proofs.PanToTarget

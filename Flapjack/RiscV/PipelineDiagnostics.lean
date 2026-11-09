@@ -26,7 +26,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAMetadata
 import Flapjack.Compiler.Backend.WordUnreach.Production
 import Flapjack.Compiler.Backend.WordCopy.Production
 import Flapjack.Compiler.Backend.LabToTarget.Diagnostics
-import Flapjack.Compiler.Backend.LabToTarget.RegisterGuard
+import Flapjack.Compiler.Backend.LabToTarget.EncodingGuard
 import Flapjack.Compiler.Backend.WordToStack.Guard
 
 /-!
@@ -85,7 +85,7 @@ inductive SourceRiscVImageError where
   | loweringInFunction (functionName : FunName) (error : PipelineRiscVLoweringError)
   | artifactFailure (failure : Flapjack.Compiler.Backend.LabToTarget.LabLoweringFailure)
   | wordStackGuard (failure : Flapjack.Compiler.Backend.WordToStack.WordStackGuardFailure)
-  | labRegisterGuard (failure : Flapjack.Compiler.Backend.LabToTarget.RegisterGuardFailure)
+  | labEncodingGuard (failure : Flapjack.Compiler.Backend.LabToTarget.EncodingGuardFailure)
   deriving Repr
 
 def pipelineLoweringSectionId : PipelineRiscVLoweringError → Option Nat
@@ -133,8 +133,8 @@ def sourceRiscVImageErrorDescription : SourceRiscVImageError → String
   | .wordStackGuard failure =>
       "native backend compilation failed: " ++
         Flapjack.Compiler.Backend.WordToStack.wordStackGuardFailureDescription failure
-  | .labRegisterGuard failure =>
+  | .labEncodingGuard failure =>
       "native backend compilation failed: " ++
-        Flapjack.Compiler.Backend.LabToTarget.registerGuardFailureDescription failure
+        Flapjack.Compiler.Backend.LabToTarget.encodingGuardFailureDescription failure
 
 end Flapjack

@@ -1508,13 +1508,13 @@ INFRASTRUCTURE_THEOREMS = {
     ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
      'fromStackChecked_ok_agrees'):
         "Flapjack-only checked-from_stack agreement: when the driver-side "
-        "register-range guard accepts the stack_to_lab output, the checked "
-        "sibling returns exactly the reviewed from_stack tuple. No separately "
-        "named HOL declaration.",
+        "encoding guard accepts the stack_to_lab output (register ranges and "
+        "unsupported instruction shapes), the checked sibling returns exactly "
+        "the reviewed from_stack tuple. No separately named HOL declaration.",
     ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
      'compileProgAsmWithChecked_ok_agrees'):
         "Flapjack-only checked-pipeline agreement: when the word-to-stack and "
-        "register guards accept, the checked allocator-parametric artifact "
+        "encoding guards accept, the checked allocator-parametric artifact "
         "pipeline returns exactly the reviewed compileProgAsmWith tuple. No "
         "separately named HOL declaration.",
     ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
@@ -1523,6 +1523,32 @@ INFRASTRUCTURE_THEOREMS = {
         "compiler: the checked function returns exactly the reviewed "
         "compileProgAsmFast tuple on success. No separately named HOL "
         "declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'fromStack_names_eq'):
+        "Flapjack-only names-table agreement for from_stack: the named call "
+        "differs from the empty-names call only in the recorded symbol table "
+        "(attach_bitmaps), so bytes, bitmaps and every other configuration "
+        "field agree. No separately named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'fromStack_ln_eq_names'):
+        "Flapjack-only reverse names-table agreement for from_stack: the "
+        "empty-names call is the named call with the symbol table reset to "
+        "NOTFOUND. No separately named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'compileProgAsmWith_names_eq_fst'):
+        "Flapjack-only artifact agreement: the named artifact pipeline is the "
+        "compile_prog_max mirror with the real symbol table recorded. No "
+        "separately named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'compileProgAsmWith_fst_names_eq'):
+        "Flapjack-only reverse artifact agreement: the compile_prog_max mirror "
+        "is the named artifact pipeline with the symbol table reset to "
+        "NOTFOUND. No separately named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsmWith.lean',
+     'compileProgAsmFast_symbols_eq_fst'):
+        "Flapjack-only artifact agreement for the executable allocator: the "
+        "named driver artifact is the compile_prog_max mirror with the real "
+        "symbol table recorded. No separately named HOL declaration.",
 }
 VALID_STATUSES = {
     "reviewed_exact",

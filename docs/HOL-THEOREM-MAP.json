@@ -114065,7 +114065,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Mips32NativeSourceCorrect.lean",
     "lean_name": "mips32NativeSourceCompile_full_result",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure: every Mips32.NativeSource.compile artifact equals the full logical compiler result with its logical stack bound mips32NativeSourceLogicalBound."
+    "reviewer": "Flapjack infrastructure: every `Mips32.NativeSource.compile` artifact relates to the full logical compiler result with its logical stack bound `mips32NativeSourceLogicalBound`, up to the recorded symbol table (the artifact records real `compile_prog` names; the full compiler mirror records NOTFOUND)."
   },
   {
     "hol_path": null,
@@ -114089,7 +114089,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Mips32NativeSourceCorrect.lean",
     "lean_name": "mips32NativeSourceCompileDeclarations_eq",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure: Mips32.NativeSource.compileDeclarations is the first projection of compileProgMaxAsmExecutable pancakeMips32BackendConfig mips32Config on mainFirstHOL of the parsed declarations."
+    "reviewer": "Flapjack infrastructure: `Mips32.NativeSource.compileDeclarations` is the first projection of `compileProgMaxAsmExecutable pancakeMips32BackendConfig mips32Config` on `mainFirstHOL` of the parsed declarations, with the recorded symbol table replaced by the real `compile_prog` name table. Bytes, bitmaps and every other configuration field agree."
   },
   {
     "hol_path": null,
@@ -114177,7 +114177,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/X64NativeSourceCorrect.lean",
     "lean_name": "x64NativeSourceCompileDeclarations_eq",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure: `X64.NativeSource.compileDeclarations` is the first projection of `compileProgMaxAsmExecutable pancakeX64BackendConfig x64Config` on `mainFirstHOL` of the parsed declarations."
+    "reviewer": "Flapjack infrastructure: `X64.NativeSource.compileDeclarations` is the first projection of `compileProgMaxAsmExecutable pancakeX64BackendConfig x64Config` on `mainFirstHOL` of the parsed declarations, with the recorded symbol table replaced by the real `compile_prog` name table. Bytes, bitmaps and every other configuration field agree."
   },
   {
     "hol_path": null,
@@ -114193,7 +114193,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/X64NativeSourceCorrect.lean",
     "lean_name": "x64NativeSourceCompile_full_result",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure: every `X64.NativeSource.compile` artifact equals the full logical compiler result with its logical stack bound `x64NativeSourceLogicalBound`."
+    "reviewer": "Flapjack infrastructure: every `X64.NativeSource.compile` artifact relates to the full logical compiler result with its logical stack bound `x64NativeSourceLogicalBound`, up to the recorded symbol table (the artifact records real `compile_prog` names; the full compiler mirror records NOTFOUND)."
   },
   {
     "hol_path": null,
@@ -114289,7 +114289,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsmWith.lean",
     "lean_name": "compileProgAsmFast_eq_fst",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure (flapjack-sol; bead flapjack-pr1215-depth-blocker): Unconditional equality of the no-depth artifact API to the first projection of the full logical compiler; allocator equality followed by definitional projection."
+    "reviewer": "Flapjack infrastructure (flapjack-sol; bead flapjack-pr1215-depth-blocker): unconditional agreement of the no-depth artifact API with the first projection of the full logical compiler, up to the recorded symbol table. The driver passes the real `compile_prog` name table, so the artifact config records real symbols; the `compile_prog_max` mirror passes LN and records NOTFOUND. Bytes, bitmaps and every other configuration field agree; allocator equality gives the executable form."
   },
   {
     "hol_path": null,
@@ -114297,7 +114297,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/NativeSourceCorrect.lean",
     "lean_name": "nativeSourceCompileDeclarations_eq",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure (flapjack-sol; bead flapjack-pr1215-depth-blocker): No-depth native source artifact equals the full logical compiler first projection on main-first parsed declarations, including failures."
+    "reviewer": "Flapjack infrastructure (flapjack-sol; bead flapjack-pr1215-depth-blocker): the no-depth native source artifact equals the full logical compiler first projection on main-first parsed declarations, with the recorded symbol table replaced by the real `compile_prog` name table. Bytes, bitmaps and every other configuration field agree; failures are preserved."
   },
   {
     "hol_path": null,
@@ -114305,7 +114305,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/NativeSourceCorrect.lean",
     "lean_name": "nativeSourceCompile_full_result",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure (flapjack-sol; bead flapjack-pr1215-depth-blocker): Every successful source driver run supplies the full logical compiler tuple (out.artifact, nativeSourceLogicalBound out); Prod.ext and artifact equality establish this without evaluating depth in the driver."
+    "reviewer": "Flapjack infrastructure (flapjack-sol; bead flapjack-pr1215-depth-blocker): every successful source driver run supplies the full logical compiler tuple with the recorded symbol table reset to NOTFOUND (the `compile_prog_max` names), together with nativeSourceLogicalBound out. The driver artifact itself records the real `compile_prog` names; bytes, bitmaps and every other configuration field agree. Prod.ext and artifact agreement establish this without evaluating depth in the driver."
   },
   {
     "hol_path": "cakeml/compiler/encoders/arm8/arm8_targetScript.sml",
@@ -129348,5 +129348,45 @@
     "lean_name": "compileProgAsmFastChecked_ok_agrees",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only checked-pipeline agreement for the ordinary artifact compiler: the checked function returns exactly the reviewed compileProgAsmFast tuple on success. No separately named HOL declaration; the reviewed compileProgAsmFast definition is unchanged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean",
+    "lean_name": "fromStack_names_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only names-table agreement for `from_stack`: the named call differs from the empty-names call only in the recorded symbol table (`attach_bitmaps`), so bytes, bitmaps and every other configuration field agree. No separately named HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean",
+    "lean_name": "fromStack_ln_eq_names",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only reverse names-table agreement for `from_stack`: the empty-names call is the named call with the symbol table reset to NOTFOUND. No separately named HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean",
+    "lean_name": "compileProgAsmWith_names_eq_fst",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only artifact agreement: the named artifact pipeline is the `compile_prog_max` mirror with the real symbol table recorded. No separately named HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean",
+    "lean_name": "compileProgAsmWith_fst_names_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only reverse artifact agreement: the `compile_prog_max` mirror is the named artifact pipeline with the symbol table reset to NOTFOUND. No separately named HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsmWith.lean",
+    "lean_name": "compileProgAsmFast_symbols_eq_fst",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only artifact agreement for the executable allocator: the named driver artifact is the `compile_prog_max` mirror with the real symbol table recorded. No separately named HOL declaration."
   }
 ]
