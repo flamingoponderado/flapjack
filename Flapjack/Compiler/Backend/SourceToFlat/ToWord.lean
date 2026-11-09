@@ -53,19 +53,6 @@ def compileCakeToWordWithStubs64NoOptsFuel
   let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
   pure (source, closure, start, fixed ++ bignum ++ code, next)
 
-/-- As above, retaining the BVI symbol-name map for the backend. -/
-def compileCakeToWordWithStubsAndNames64NoOptsFuel
-    (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
-    (word : DataToWord.Config) (decls : List AstHOL.Dec) :
-    Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × WordLangProgHOL (BitVec 64)) × Nat ×
-      Spt Basis.Pure.MlString.MlString) := do
-  let (source, closure, start, code, next, names) ←
-    compileCakeToWordWithNamesAndLabelsNoOptsFuel fuel source closure word decls
-  let fixed ← DataToWord.fixedStubs? word
-  let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
-  let code := code.map fun (name, args, body, _) => (name, args + 1, body)
-  pure (source, closure, start, fixed ++ bignum ++ code, next, names)
-
 /-- Continue the checked closure and BVI-inlining route to the 64-bit
 word stage. Unsupported upstream operations and exhausted fuel return `none`. -/
 def compileCakeToWordWithStubsAndNames64InlineFuel
