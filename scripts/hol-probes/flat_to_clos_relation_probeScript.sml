@@ -143,3 +143,34 @@ val _ = if null (hyp op_from_to) then () else raise Fail "hypotheses: op_from_to
 val _ = (print "op_from_to_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl op_from_to); print "\n");
 val _ = if null (hyp compile_op_correct) then () else raise Fail "hypotheses: compile_op_correct";
 val _ = (print "compile_op_correct_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_op_correct); print "\n");
+
+(* Replay the remaining literal cases used by op_from_to and op_arith. *)
+fun replay_flat_literal_check label tm =
+  let val th = prove (tm,
+    Cases_on `v` >>
+    simp [flatSemTheory.flat_to_v_def, semanticPrimitivesTheory.check_type_def,
+          flatSemTheory.Boolv_def, semanticPrimitivesTheory.Boolv_def] >> rw [])
+  in if null (hyp th) then
+       (print (label ^ "="); Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
+     else raise Fail ("hypotheses: " ^ label)
+  end;
+val _ = replay_flat_literal_check "check_type_Float64T_flat_to_v_typed"
+  ``semanticPrimitives$check_type ast$Float64T (flatSem$flat_to_v (v:flatSem$v)) ==>
+    ?w. v = flatSem$Litv (ast$Float64 w)``;
+val _ = replay_flat_literal_check "check_type_WordT_W8_flat_to_v_typed"
+  ``semanticPrimitives$check_type (ast$WordT ast$W8) (flatSem$flat_to_v (v:flatSem$v)) ==>
+    ?w. v = flatSem$Litv (ast$Word8 w)``;
+val _ = replay_flat_literal_check "check_type_WordT_W64_flat_to_v_typed"
+  ``semanticPrimitives$check_type (ast$WordT ast$W64) (flatSem$flat_to_v (v:flatSem$v)) ==>
+    ?w. v = flatSem$Litv (ast$Word64 w)``;
+val _ = replay_flat_literal_check "check_type_CharT_flat_to_v_typed"
+  ``semanticPrimitives$check_type ast$CharT (flatSem$flat_to_v (v:flatSem$v)) ==>
+    ?c. v = flatSem$Litv (ast$Char c)``;
+val check_type_BoolT_flat_to_v_replay = prove (
+  ``semanticPrimitives$check_type ast$BoolT (flatSem$flat_to_v (v:flatSem$v)) ==>
+    v = flatSem$Boolv F \/ v = flatSem$Boolv T``,
+  Cases_on `v` >>
+  simp [flatSemTheory.flat_to_v_def, semanticPrimitivesTheory.check_type_def,
+        flatSemTheory.Boolv_def, semanticPrimitivesTheory.Boolv_def] >> rw []);
+val _ = if null (hyp check_type_BoolT_flat_to_v_replay) then () else raise Fail "hypotheses: check_type_BoolT_flat_to_v";
+val _ = (print "check_type_BoolT_flat_to_v_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl check_type_BoolT_flat_to_v_replay); print "\n");

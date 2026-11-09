@@ -131113,5 +131113,45 @@
   "lean_name": "checkTypeInt_flatToValue",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the local check_type_IntT_flat_to_v with its typed HOL replay: the source semantic check_type is Bool = true on flatSem flat_to_v, HOL int is Lean Int, and the conclusion is the same existential equality v = Litv (IntLit i). Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "check_type_Float64T_flat_to_v",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CheckType.lean",
+  "lean_name": "checkTypeFloat64_flatToValue",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local HOL statement with its typed replay: semantic check_type after flat_to_v implies the same existential Float64 literal, with the fixed HOL word64 carrier represented by BitVec 64. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "check_type_WordT_W8_flat_to_v",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CheckType.lean",
+  "lean_name": "checkTypeWord8_flatToValue",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local HOL statement with its typed replay: semantic check_type after flat_to_v implies the same existential Word8 literal, with the fixed HOL word8 carrier represented by BitVec 8. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "check_type_WordT_W64_flat_to_v",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CheckType.lean",
+  "lean_name": "checkTypeWord64_flatToValue",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local HOL statement with its typed replay: semantic check_type after flat_to_v implies the same existential Word64 literal, with the fixed HOL word64 carrier represented by BitVec 64. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "check_type_CharT_flat_to_v",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CheckType.lean",
+  "lean_name": "checkTypeChar_flatToValue",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local HOL statement with its typed replay: semantic check_type after flat_to_v implies the same existential Char literal, using the reviewed HolChar carrier for HOL char. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "check_type_BoolT_flat_to_v",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CheckType.lean",
+  "lean_name": "checkTypeBool_flatToValue",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local HOL statement with its typed replay: source semantic check_type after flat_to_v is Bool = true, and the conclusion preserves the disjunction Boolv F or Boolv T in that order using the flat Boolean constructor. Independently source-reviewed."
 }
 ]
