@@ -33,6 +33,11 @@ def findBindingsGlobals : List (Flapjack.AstHOL.VarN × FlatSem.Value) → NumSe
 termination_by bindings => sizeOf bindings
 end
 
+/-- The unit value refers to no global slots. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_v_globals_Unitv"]
+theorem findValueGlobals_unit : findValueGlobals FlatSem.unitValue = .ln := by
+  simp [FlatSem.unitValue, findValueGlobals, findValuesGlobals]
+
 /-- Captured-binding traversal agrees with the original mapped value list. -/
 theorem findBindingsGlobals_eq_map (bindings : List (Flapjack.AstHOL.VarN × FlatSem.Value)) :
     findBindingsGlobals bindings = findValuesGlobals (bindings.map Prod.snd) := by
@@ -143,6 +148,11 @@ def bindingsHaveEval : List (Flapjack.AstHOL.VarN × FlatSem.Value) → Bool
 termination_by bindings => sizeOf bindings
 end
 
+/-- The unit value contains no dynamic Eval. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "v_has_Eval_Unitv"]
+theorem valueHasEval_unit : valueHasEval FlatSem.unitValue = false := by
+  simp [FlatSem.unitValue, valueHasEval, valuesHaveEval]
+
 /-- The binding helper is the original mapped existential value test. -/
 theorem bindingsHaveEval_eq_map (bindings : List (Flapjack.AstHOL.VarN × FlatSem.Value)) :
     bindingsHaveEval bindings = valuesHaveEval (bindings.map Prod.snd) := by
@@ -160,6 +170,42 @@ theorem hasEvalFuns_eq_map (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL
   | cons funSpec rest ih =>
     obtain ⟨_, _, _⟩ := funSpec
     simp [hasEvalFuns, ih]
+
+private theorem valuesHaveEval_eq_any (values : List FlatSem.Value) :
+    valuesHaveEval values = values.any valueHasEval := by
+  induction values with
+  | nil => simp [valuesHaveEval]
+  | cons value rest ih => simp [valuesHaveEval, ih]
+
+/-- The eta-reduced constructor equations for the value Eval test. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "v_has_Eval_def"]
+theorem valueHasEval_equations :
+    (∀ (name : Flapjack.AstHOL.VarN) (env : FlatSem.Environment FlatSem.Value) (e : FlatLang.Exp),
+      valueHasEval (.closure env name e) = (hasEval e || (env.v.map Prod.snd).any valueHasEval)) ∧
+    (∀ (vl : List FlatSem.Value) (stamp : Option (FlatLang.CtorId × FlatLang.TypeId)),
+      valueHasEval (.conv stamp vl) = vl.any valueHasEval) ∧
+    (∀ (name : Flapjack.AstHOL.VarN) (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp))
+        (env : FlatSem.Environment FlatSem.Value),
+      valueHasEval (.recclosure env funs name) =
+        ((env.v.map Prod.snd).any valueHasEval || (funs.map (fun (_, _, body) => body)).any hasEval)) ∧
+    (∀ vl : List FlatSem.Value, valueHasEval (.vectorv vl) = vl.any valueHasEval) ∧
+    (∀ lit : Flapjack.AstHOL.Lit, valueHasEval (.litv lit) = false) ∧
+    (∀ (address : Nat) (flag : Bool), valueHasEval (.loc flag address) = false) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro name env e
+    cases env
+    simp [valueHasEval, bindingsHaveEval_eq_map, valuesHaveEval_eq_any]
+  · intro vl stamp
+    simp [valueHasEval, valuesHaveEval_eq_any]
+  · intro name funs env
+    cases env
+    simp [valueHasEval, bindingsHaveEval_eq_map, valuesHaveEval_eq_any, hasEvalFuns_eq_map]
+  · intro vl
+    simp [valueHasEval, valuesHaveEval_eq_any]
+  · intro lit
+    simp [valueHasEval]
+  · intro address flag
+    simp [valueHasEval]
 
 /-- Flapjack-specific abbreviation of the HOL subset of sparse-tree domains;
 it has no separate HOL declaration. -/

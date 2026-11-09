@@ -130993,5 +130993,29 @@
   "lean_name": "every_el_imp",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared exported EVERY_EL_IMP typed capture: the predicate is α → Bool, EVERY is List.all = true, and HOL EL is holEl with a proof-irrelevant Nonempty witness obtained from the original bound, without an inhabitance hypothesis. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "find_v_globals_Unitv",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
+  "lean_name": "findValueGlobals_unit",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared exported find_v_globals_unit_typed: printed isEmpty is the sptree overload for equality to LN, rendered = .ln; Unitv is reviewed unitValue. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "v_has_Eval_Unitv",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
+  "lean_name": "valueHasEval_unit",
+  "statement_status": "reviewed_exact",
+  "reviewer": "The source ML binding is EVAL of v_has_Eval Unitv and is not exported; replay v_has_eval_unit_typed yields equivalence to F, rendered as Bool = false. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "v_has_Eval_def",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
+  "lean_name": "valueHasEval_equations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared exported v_has_Eval_def typed capture: six independent constructor clauses in HOL binder order, including Loc address then flag; EXISTS and MAP use List.any and List.map, and boolean equivalence is Bool equality. Independently source-reviewed."
 }
 ]

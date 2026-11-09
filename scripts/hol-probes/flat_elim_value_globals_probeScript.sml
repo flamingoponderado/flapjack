@@ -152,3 +152,8 @@ val not_v_has_eval_every_el_replay = prove (
   simp [EVERY_EL]);
 val _ = show_thm "not_v_has_eval_every_el_typed=" not_v_has_eval_every_el_replay;
 val _ = show_thm "every_el_imp_typed=" flat_elimProofTheory.EVERY_EL_IMP;
+val _ = show_thm "find_v_globals_unit_typed=" flat_elimProofTheory.find_v_globals_Unitv;
+(* The original ML binding is not exported, so replay its EVAL. *)
+val v_has_eval_unit_replay = EVAL ``v_has_Eval Unitv``;
+val _ = show_thm "v_has_eval_unit_typed=" v_has_eval_unit_replay;
+val _ = show_thm "v_has_eval_def_typed=" flat_elimProofTheory.v_has_Eval_def;
