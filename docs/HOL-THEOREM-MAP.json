@@ -129260,4 +129260,21 @@
   "fmap_as_finite_support": ["c", "tys"],
   "reviewer": "Compared initial_global_imp in source_to_flat_init_probe.out: the initial global-environment invariant premise and global invariant conclusion over the empty name set match. GlobalEnv.c and tys use the reviewed finite-support representation."
 }
+,
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean",
+  "lean_name": "compileProgAsmWithReason_toOption",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only located-failure sibling agreement for the allocator-parametric artifact compiler: the with-reason function succeeds exactly when the reviewed compileProgAsmWith succeeds, with the same tuple. No separately named HOL declaration; the reviewed compileProgAsmWith/from_stack definitions are unchanged."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean",
+  "lean_name": "compileProgAsmFastWithReason_toOption",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only located-failure sibling agreement for the ordinary artifact compiler: the with-reason function succeeds exactly when the reviewed compileProgAsmFast succeeds, with the same tuple. No separately named HOL declaration; the reviewed compileProgAsmFast definition is unchanged."
+}
 ]
