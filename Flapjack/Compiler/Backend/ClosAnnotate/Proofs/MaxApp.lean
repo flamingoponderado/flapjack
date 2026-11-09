@@ -6,6 +6,14 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic.LabelsAndArity
 namespace Flapjack.Compiler.Backend.ClosAnnotate
 open ClosLang ClosProps
 
+/-- A singleton shift satisfies EVERY exactly when its head does. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "EVERY_shift_sing"]
+theorem every_shiftSing (f : Exp → Prop) (expression : Exp) (m l : Nat) (i : Spt Nat) :
+    (∀ e ∈ shiftSource [expression] m l i, f e) ↔
+      f (@Flapjack.holHd Exp ⟨.var .none 0⟩ (shiftSource [expression] m l i)) := by
+  rw [shiftSource_sing_eq.1]
+  simp [Flapjack.holHd]
+
 mutual
 /-- Structural helper for the singleton shift case of arity preservation. -/
 theorem shiftSing_obeysMaxApp (bound : Nat) (expression : Exp) (m l : Nat) (i : Spt Nat)

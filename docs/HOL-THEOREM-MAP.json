@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "code_locs_REP_const_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations.lean", "lean_name": "codeLocations_replicate_const0",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_locs_REP_const_0_typed: the natural count and trace, replicated original const0 expressions, ordered codeLocations and empty result agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "EVERY_shift_sing",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/MaxApp.lean", "lean_name": "every_shiftSing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared EVERY_shift_sing_typed: arbitrary predicate, expression, natural and sparse-tree shift indices, source shift, HOL head and the full equivalence agree. Universal membership represents HOL EVERY."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "code_locs_shift",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations/Original.lean", "lean_name": "codeLocs_shift",
   "statement_status": "reviewed_exact",

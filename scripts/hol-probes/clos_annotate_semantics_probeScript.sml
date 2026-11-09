@@ -41,5 +41,7 @@ val _ = show "code_locs_shift_typed=" clos_annotateProofTheory.code_locs_shift;
 val _ = show "code_locs_alt_free_typed=" clos_annotateProofTheory.code_locs_alt_free;
 val _ = show "code_locs_annotate_typed=" clos_annotateProofTheory.code_locs_annotate;
 val _ = show "annotate_code_locs_typed=" clos_annotateProofTheory.annotate_code_locs;
+val _ = show "code_locs_REP_const_0_typed=" clos_annotateProofTheory.code_locs_REP_const_0;
+val _ = show "EVERY_shift_sing_typed=" clos_annotateProofTheory.EVERY_shift_sing;
 val _ = show "HD_annotate_SING_typed=" clos_annotateProofTheory.HD_annotate_SING;
 val _ = show "every_Fn_SOME_ann_typed=" clos_annotateProofTheory.every_Fn_SOME_ann;

@@ -69,6 +69,7 @@ theorem altFreeFuns_length (functions : List (Nat × Exp)) (count : Nat) :
   | cons first rest ih => cases first; simp [altFreeFuns, ih]
 
 /-- Replicated zero expressions carry no closure locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "code_locs_REP_const_0"]
 theorem codeLocations_replicate_const0 (count : Nat) (trace : BackendCommon.Tra) :
     codeLocations (List.replicate count (const0 trace)) = [] := by
   induction count with
