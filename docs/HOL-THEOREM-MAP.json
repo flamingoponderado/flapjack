@@ -1,11 +1,19 @@
 [
  {
   "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+  "hol_name": "shift_sing_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift/OriginalEquivalence.lean",
+  "lean_name": "shiftSource_sing_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared shift_sing_eq_typed: all three conjuncts preserve the expression, list, index and recursive-function binders, EVERY membership, source and optimized traversals, and the recursive-group MAP. The supporting induction proves the original source recursion agrees with the executable traversal."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
   "hol_name": "shift_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift/Original.lean",
   "lean_name": "shiftSource",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared shift_def_typed and all source clauses, including list traversal, closure binders, sparse-map lookups and HOL head operations. The attached recursive-group map supplies termination evidence; shiftSource_letrec proves the ordinary source MAP form. Agreement with the executed traversal remains to be proved."
+  "reviewer": "Compared shift_def_typed and all source clauses, including list traversal, closure binders, sparse-map lookups and HOL head operations. The attached recursive-group map supplies termination evidence; shiftSource_letrec proves the ordinary source MAP form. The executed traversal agrees by shiftSource_sing_eq."
  },
 {
   "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
