@@ -130499,5 +130499,21 @@
   "lean_name": "buildRecEnv_merge",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared flat_build_rec_env_merge_typed in flat_do_app_preservation_probe.out: the vacuous independent type and parameter, quantified order, recursive closure list, and final environment append are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_cons",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateList.lean",
+  "lean_name": "evaluate_cons",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared flat_evaluate_cons_typed in flat_do_app_preservation_probe.out: source variable order, sequencing, value append, and error propagation agree; complete evaluator and carrier correspondence remain pending review."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_append",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateList.lean",
+  "lean_name": "evaluate_append",
+  "statement_status": "pending_statement_review",
+  "reviewer": "Compared flat_evaluate_append_typed in flat_do_app_preservation_probe.out: source variable order, state threading, value append and error propagation agree; complete evaluator and carrier correspondence remain pending review."
 }
 ]

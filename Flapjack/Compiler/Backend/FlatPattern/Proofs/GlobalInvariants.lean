@@ -166,13 +166,18 @@ theorem esgcFree_projectionFold (trace : Tra) (value body : FlatLang.Exp)
     obtain ⟨⟨index, name⟩, work⟩ := entry
     simp [esgcFree, esgcFreeList, valueSafe, ih]
 
-/-- Pattern binding preserves global-initialization safety of its worklist and continuation. -/
-theorem esgcFree_compilePatBindings (trace : Tra) (base : Nat)
+/-- The source worklist condition preserves the continuation invariant. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "esgc_free_compile_pat_bindings"]
+theorem esgcFree_compilePatBindings_hol (trace : Tra) (base : Nat)
     (todo : List (FlatLang.Pat × Nat × FlatLang.Exp)) (body : FlatLang.Exp)
-    (bodySafe : esgcFree body)
-    (todoSafe : ∀ pattern index expression, (pattern, index, expression) ∈ todo →
-      esgcFree expression) :
+    (safe : esgcFree body ∧ ∀ binding ∈ todo, esgcFree binding.2.2) :
     esgcFree (compilePatBindings trace base todo body).2 := by
+  have bodySafe := safe.1
+  have todoSafe : ∀ pattern index expression, (pattern, index, expression) ∈ todo →
+      esgcFree expression := by
+    intro pattern index expression member
+    exact safe.2 (pattern, index, expression) member
+  clear safe
   revert todoSafe
   induction base, todo using compilePatBindings.induct trace body with
   | case1 i =>
@@ -568,10 +573,11 @@ theorem esgcFree_compilePatRhs (trace : Tra) (base : Nat) (value : FlatLang.Exp)
     (pattern : FlatLang.Pat) (body : FlatLang.Exp)
     (valueSafe : esgcFree value) (bodySafe : esgcFree body) :
     esgcFree (compilePatRhs trace base value (pattern, body)) := by
-  apply esgcFree_compilePatBindings trace (base + 1) [(pattern, base, value)] body bodySafe
-  intro p k e member
-  simp only [List.mem_singleton, Prod.mk.injEq] at member
-  obtain ⟨_, _, rfl⟩ := member
+  apply esgcFree_compilePatBindings_hol trace (base + 1) [(pattern, base, value)] body
+  refine ⟨bodySafe, ?_⟩
+  intro binding member
+  simp only [List.mem_singleton] at member
+  subst binding
   exact valueSafe
 
 
@@ -658,16 +664,6 @@ theorem esgcFree_compilePats (cfg : Config) (naive : Bool) (trace : Tra) (base :
     exact branchesSafe branch (List.of_mem_zip member).2
 
 
-
-/-- The source worklist condition preserves the continuation invariant. -/
-@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "esgc_free_compile_pat_bindings"]
-theorem esgcFree_compilePatBindings_hol (t : Tra) (i : Nat)
-    (bindings : List (FlatLang.Pat × Nat × FlatLang.Exp)) (exp : FlatLang.Exp)
-    (safe : esgcFree exp ∧ ∀ binding ∈ bindings, esgcFree binding.2.2) :
-    esgcFree (compilePatBindings t i bindings exp).2 := by
-  apply esgcFree_compilePatBindings t i bindings exp safe.1
-  intro pattern index value mem
-  exact safe.2 (pattern, index, value) mem
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "esgc_free_naive_pattern_match"]
 theorem esgcFree_naivePatternMatch_hol (t : Tra) (xs : List (FlatLang.Pat × FlatLang.Exp))

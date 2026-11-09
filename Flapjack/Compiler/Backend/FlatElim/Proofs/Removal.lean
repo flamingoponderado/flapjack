@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateSource
 import Flapjack.Compiler.Backend.FlatElim.Proofs.PureFull
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.FlatSem.SemanticsCongruence
@@ -60,24 +61,6 @@ theorem evaluateDec_notKept {C F : Type} (state next target : FlatSem.State C F)
     simp only [FlatSem.evaluateDec, evaluated] at run
     split at run <;> simp_all
 
-/-- Declaration-list evaluation factors through the single-declaration
-evaluator and the same clock clamp. This is a Flapjack evaluator helper. -/
-theorem evaluateDecs_cons {C F : Type} (state : FlatSem.State C F)
-    (declaration : FlatLang.Exp) (rest : List FlatLang.Exp) :
-    FlatSem.evaluateDecs state (declaration :: rest) =
-      (let next := FlatSem.fixClock state (FlatSem.evaluateDec state declaration)
-       match next.2 with
-       | some error => (next.1, some error)
-       | none => FlatSem.evaluateDecs next.1 rest) := by
-  rw [FlatSem.evaluateDecs, FlatSem.evaluateDec]
-  cases evaluated : FlatSem.evaluate ⟨[]⟩ state [declaration] with
-  | mk next result =>
-    cases result with
-    | err error => simp [FlatSem.fixClock]
-    | val values =>
-      simp only [FlatSem.fixClock]
-      split <;> rfl
-
 /-- Filtering closed, Eval-free declarations preserves evaluation and the
 flat state relation when the original result is not a type error. This
 Flapjack helper strengthens the original theorem with the final relation. -/
@@ -105,7 +88,7 @@ theorem evaluateDecs_removal_related {C F : Type} (declarations : List FlatLang.
     have tailClosed := decsClosed_tail reachable declaration rest closed
     cases headEval : FlatSem.evaluateDec state declaration with
     | mk headState headResult =>
-      rw [evaluateDecs_cons] at run
+      rw [FlatSem.evaluateDecs_cons_source] at run
       simp only [headEval, FlatSem.fixClock] at run
       have headNotTypeError : headResult ≠ some (.abort .typeError) := by
         intro bad
@@ -128,13 +111,13 @@ theorem evaluateDecs_removal_related {C F : Type} (declarations : List FlatLang.
           simp only at run
           rcases run with ⟨rfl, rfl⟩
           refine ⟨{ targetHeadState with clock := min target.clock targetHeadState.clock }, ?_, clampedRelated⟩
-          simp [removeUnreachable, kept, evaluateDecs_cons, targetHeadEval, FlatSem.fixClock]
+          simp [removeUnreachable, kept, FlatSem.evaluateDecs_cons_source, targetHeadEval, FlatSem.fixClock]
         | none =>
           simp only at run
           obtain ⟨targetNext, evaluated, nextRelated⟩ :=
             ih _ next result _ run notTypeError clampedRelated tailSafe tailClosed
           refine ⟨targetNext, ?_, nextRelated⟩
-          simpa [removeUnreachable, kept, evaluateDecs_cons, targetHeadEval, FlatSem.fixClock] using evaluated
+          simpa [removeUnreachable, kept, FlatSem.evaluateDecs_cons_source, targetHeadEval, FlatSem.fixClock] using evaluated
       | false =>
         obtain ⟨headNone, headRelated⟩ :=
           evaluateDec_notKept state headState target declaration headResult reachable headEval kept headSafe related headNotTypeError
