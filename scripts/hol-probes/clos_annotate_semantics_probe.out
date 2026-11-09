@@ -46,3 +46,4 @@ every_Fn_SOME_const_0_typed=every_Fn_SOME [const_0 (t :tra)]
 every_Fn_SOME_alt_free_typed=∀(es :closLang$exp list). every_Fn_SOME es ⇒ every_Fn_SOME (FST (alt_free es))
 every_Fn_SOME_annotate_typed=every_Fn_SOME (es :closLang$exp list) ⇒ every_Fn_SOME (annotate (n :num) es)
 every_Fn_SOME_ann_typed=∀(xs :(α # num # closLang$exp) list). every_Fn_SOME (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :α # num # closLang$exp -> num # closLang$exp)) xs) ⇒ every_Fn_SOME (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :α # num # closLang$exp -> num # closLang$exp)) (compile xs))
+env_set_default_local_typed=(x :num -> bool) ⊆ env_ok (0 :num) (0 :num) (LN :num sptree$num_map) ([] :v list) (env' :v list)

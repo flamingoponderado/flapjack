@@ -85,3 +85,9 @@ val _ = show "every_Fn_SOME_const_0_typed=" clos_annotateProofTheory.every_Fn_SO
 val _ = show "every_Fn_SOME_alt_free_typed=" clos_annotateProofTheory.every_Fn_SOME_alt_free;
 val _ = show "every_Fn_SOME_annotate_typed=" clos_annotateProofTheory.every_Fn_SOME_annotate;
 val _ = show "every_Fn_SOME_ann_typed=" clos_annotateProofTheory.every_Fn_SOME_ann;
+(* env_set_default is local to the original proof script. *)
+val env_set_default_replay = prove (
+  ``x SUBSET clos_annotateProof$env_ok 0 0 sptree$LN [] env'``,
+  full_simp_tac (srw_ss())
+    [SUBSET_DEF, IN_DEF, clos_annotateProofTheory.v_rel_cases |> CONJUNCT2]);
+val _ = show "env_set_default_local_typed=" env_set_default_replay;

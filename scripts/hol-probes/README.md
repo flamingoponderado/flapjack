@@ -238,7 +238,8 @@ definition and its cons and lookup equations, including first-entry behavior.
 statement, its annotation and shift traversals, and the source's optimized
 singleton/list equations, including arbitrary installed code. It also captures
 the inferred source statements for function-location and free-variable
-annotation invariants used to review their Lean ports.
+annotation invariants used to review their Lean ports, and replays the local
+default-environment proof with inferred types.
 
 `db_vars_definitions_probe.out` captures the typed De Bruijn variable-set
 operations used by closure annotation, including sparse-tree traversal order.

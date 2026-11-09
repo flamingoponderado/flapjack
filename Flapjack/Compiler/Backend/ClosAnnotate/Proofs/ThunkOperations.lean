@@ -18,7 +18,7 @@ theorem destThunk_related {C F : Type} (source target : State C F)
   | refPtr flag index =>
     have refsRel := states.2.2.2.2.2.2.1 index
     cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
-      simp_all [optionRel, RefRel, destThunk, DestThunkRel]
+      simp_all [optionRel, ClosProps.refRel, destThunk, DestThunkRel]
     rename_i leftRef rightRef
     cases leftRef <;> cases rightRef <;> simp_all
     cases flag <;> simp_all
@@ -82,7 +82,7 @@ theorem updateThunk_related {C F : Type} (source target : State C F)
                 simp_all [DestThunkRel, updateThunk]
               have refsRel := states.2.2.2.2.2.2.1 index
               cases leftRef : source.refs.lookup index <;> cases rightRef : target.refs.lookup index <;>
-                simp_all [optionRel, RefRel, storeThunk]
+                simp_all [optionRel, ClosProps.refRel, storeThunk]
               rename_i sourceRef targetRef
               cases sourceRef <;> cases targetRef <;> simp_all
               rename_i leftMode leftValue rightMode rightValue
@@ -160,20 +160,20 @@ theorem primitiveSimulation_thunkUpdate {C F : Type} (mode : AstHOL.ThunkMode) :
                 cases right : target.refs.lookup index with
                 | none => simp [left, right, optionRel] at refs
                 | some nextRef =>
-                  have refRel : RefRel ref nextRef := by simpa [left, right, optionRel] using refs
+                  have refRel : (ClosProps.refRel ValueRel) ref nextRef := by simpa [left, right, optionRel] using refs
                   cases ref with
                   | valueArray fields =>
-                    cases nextRef <;> simp [RefRel] at refRel
+                    cases nextRef <;> simp [ClosProps.refRel] at refRel
                     exact ⟨.err (.abort .typeError), by simp [doApp, nextBad, right], by
                       simp [doApp, bad, left, AppResultRel, ResultRel]⟩
                   | byteArray bytes =>
-                    cases nextRef <;> simp [RefRel] at refRel
+                    cases nextRef <;> simp [ClosProps.refRel] at refRel
                     exact ⟨.err (.abort .typeError), by simp [doApp, nextBad, right], by
                       simp [doApp, bad, left, AppResultRel, ResultRel]⟩
                   | thunk oldMode oldValue =>
                     cases nextRef with
-                    | valueArray fields => simp [RefRel] at refRel
-                    | byteArray bytes => simp [RefRel] at refRel
+                    | valueArray fields => simp [ClosProps.refRel] at refRel
+                    | byteArray bytes => simp [ClosProps.refRel] at refRel
                     | thunk nextMode nextOldValue =>
                       obtain ⟨modeEq, oldValuesRel⟩ := refRel
                       subst nextMode

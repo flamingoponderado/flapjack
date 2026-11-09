@@ -21,20 +21,20 @@ theorem xorByte_related {C F : Type} (source target : State C F) (states : State
     cases right : target.refs.lookup ptr with
     | none => simp [left, right, optionRel] at refs
     | some nextRef =>
-      have refRel : RefRel ref nextRef := by simpa [left, right, optionRel] using refs
+      have refRel : (ClosProps.refRel ValueRel) ref nextRef := by simpa [left, right, optionRel] using refs
       cases ref with
       | valueArray fields =>
-        cases nextRef <;> simp [RefRel] at refRel
+        cases nextRef <;> simp [ClosProps.refRel] at refRel
         exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory, right], by
           simp [doApp, applyMemory, left, AppResultRel, ResultRel]⟩
       | thunk mode value =>
-        cases nextRef <;> simp [RefRel] at refRel
+        cases nextRef <;> simp [ClosProps.refRel] at refRel
         exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory, right], by
           simp [doApp, applyMemory, left, AppResultRel, ResultRel]⟩
       | byteArray bytes =>
         cases nextRef with
-        | valueArray fields => simp [RefRel] at refRel
-        | thunk mode value => simp [RefRel] at refRel
+        | valueArray fields => simp [ClosProps.refRel] at refRel
+        | thunk mode value => simp [ClosProps.refRel] at refRel
         | byteArray nextBytes =>
           have same : bytes = nextBytes := refRel
           subst nextBytes

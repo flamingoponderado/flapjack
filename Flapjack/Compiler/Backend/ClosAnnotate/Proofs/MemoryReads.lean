@@ -12,7 +12,7 @@ def refLength (byte : Bool) : Option (Ref Value) → Option Value
 
 /-- Related reference payloads have identical valid length observations. -/
 theorem refLength_related (byte : Bool) (left right : Option (Ref Value))
-    (related : optionRel RefRel left right) : optionRel ValueRel (refLength byte left) (refLength byte right) := by
+    (related : optionRel (ClosProps.refRel ValueRel) left right) : optionRel ValueRel (refLength byte left) (refLength byte right) := by
   cases left with
   | none => cases right <;> simp_all [optionRel, refLength]
   | some leftRef =>
@@ -25,16 +25,16 @@ theorem refLength_related (byte : Bool) (left right : Option (Ref Value))
         | valueArray nextFields =>
           have len := related.length_eq
           cases byte <;> simp [refLength, optionRel, ← len, ValueRel.number]
-        | _ => simp [optionRel, RefRel] at related
+        | _ => simp [optionRel, ClosProps.refRel] at related
       | byteArray bytes =>
         cases rightRef with
         | byteArray nextBytes =>
           have same : bytes = nextBytes := related
           subst nextBytes
           cases byte <;> simp [refLength, optionRel, ValueRel.number]
-        | _ => simp [optionRel, RefRel] at related
+        | _ => simp [optionRel, ClosProps.refRel] at related
       | thunk mode value =>
-        cases rightRef <;> simp_all [optionRel, RefRel, refLength]
+        cases rightRef <;> simp_all [optionRel, ClosProps.refRel, refLength]
 
 /-- The length cases of the dispatcher expose the reference observation. -/
 theorem applyMemory_refLength {C F : Type} (byte flag : Bool) (index : Nat) (state : State C F) :
@@ -78,14 +78,14 @@ def refValueArray : Option (Ref Value) → Option (List Value)
   | _ => none
 
 /-- Related references contain related value arrays or both fail extraction. -/
-theorem refValueArray_related (left right : Option (Ref Value)) (related : optionRel RefRel left right) :
+theorem refValueArray_related (left right : Option (Ref Value)) (related : optionRel (ClosProps.refRel ValueRel) left right) :
     optionRel (List.Forall₂ ValueRel) (refValueArray left) (refValueArray right) := by
   cases left with
   | none => cases right <;> simp_all [optionRel, refValueArray]
   | some leftRef =>
     cases right with
     | none => simp [optionRel] at related
-    | some rightRef => cases leftRef <;> cases rightRef <;> simp_all [optionRel, RefRel, refValueArray]
+    | some rightRef => cases leftRef <;> cases rightRef <;> simp_all [optionRel, ClosProps.refRel, refValueArray]
 
 /-- An indexed value observation from a block or value-array reference. -/
 def valueAt (value : Value) (index : Int) (refs : HolFiniteMapExact Nat (Ref Value)) : Option Value :=

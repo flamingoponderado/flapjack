@@ -21,20 +21,20 @@ theorem updateArray_related {C F : Type} (source target : State C F) (states : S
     cases right : target.refs.lookup ptr with
     | none => simp [left, right, optionRel] at refs
     | some nextRef =>
-      have refRel : RefRel ref nextRef := by simpa [left, right, optionRel] using refs
+      have refRel : (ClosProps.refRel ValueRel) ref nextRef := by simpa [left, right, optionRel] using refs
       cases ref with
       | byteArray bytes =>
-        cases nextRef <;> simp [RefRel] at refRel
+        cases nextRef <;> simp [ClosProps.refRel] at refRel
         exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory, right], by
           simp [doApp, applyMemory, left, AppResultRel, ResultRel]⟩
       | thunk mode v =>
-        cases nextRef <;> simp [RefRel] at refRel
+        cases nextRef <;> simp [ClosProps.refRel] at refRel
         exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory, right], by
           simp [doApp, applyMemory, left, AppResultRel, ResultRel]⟩
       | valueArray fields =>
         cases nextRef with
-        | byteArray bytes => simp [RefRel] at refRel
-        | thunk mode v => simp [RefRel] at refRel
+        | byteArray bytes => simp [ClosProps.refRel] at refRel
+        | thunk mode v => simp [ClosProps.refRel] at refRel
         | valueArray nextFields =>
           have fieldsRel : List.Forall₂ ValueRel fields nextFields := refRel
           have sameLength := fieldsRel.length_eq
@@ -94,20 +94,20 @@ theorem updateByte_related {C F : Type} (source target : State C F) (states : St
     cases right : target.refs.lookup ptr with
     | none => simp [left, right, optionRel] at refs
     | some nextRef =>
-      have refRel : RefRel ref nextRef := by simpa [left, right, optionRel] using refs
+      have refRel : (ClosProps.refRel ValueRel) ref nextRef := by simpa [left, right, optionRel] using refs
       cases ref with
       | valueArray fields =>
-        cases nextRef <;> simp [RefRel] at refRel
+        cases nextRef <;> simp [ClosProps.refRel] at refRel
         exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory, right], by
           simp [doApp, applyMemory, left, AppResultRel, ResultRel]⟩
       | thunk mode v =>
-        cases nextRef <;> simp [RefRel] at refRel
+        cases nextRef <;> simp [ClosProps.refRel] at refRel
         exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory, right], by
           simp [doApp, applyMemory, left, AppResultRel, ResultRel]⟩
       | byteArray bytes =>
         cases nextRef with
-        | valueArray fields => simp [RefRel] at refRel
-        | thunk mode v => simp [RefRel] at refRel
+        | valueArray fields => simp [ClosProps.refRel] at refRel
+        | thunk mode v => simp [ClosProps.refRel] at refRel
         | byteArray nextBytes =>
           have equal : bytes = nextBytes := refRel
           subst nextBytes

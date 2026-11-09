@@ -9,7 +9,7 @@ def arrayBounds (index : Int) (ref : Option (Ref Value)) : Option Value :=
   (refValueArray ref).map (fun fields => boolValue (decide (0 ≤ index ∧ index < Int.ofNat fields.length)))
 
 /-- Related value-array references produce related bounds observations. -/
-theorem arrayBounds_related (index : Int) (left right : Option (Ref Value)) (related : optionRel RefRel left right) :
+theorem arrayBounds_related (index : Int) (left right : Option (Ref Value)) (related : optionRel (ClosProps.refRel ValueRel) left right) :
     optionRel ValueRel (arrayBounds index left) (arrayBounds index right) := by
   have arrays := refValueArray_related left right related
   cases leftRun : refValueArray left with

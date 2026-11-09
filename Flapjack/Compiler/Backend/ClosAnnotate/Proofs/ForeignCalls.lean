@@ -9,7 +9,7 @@ open Flapjack Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.ClosPr
 /-- Updating corresponding references and the shared FFI state preserves the
 candidate state relation. -/
 theorem stateRel_updateRefFfi {C F : Type} (source target : State C F) (states : StateRel source target)
-    (index : Nat) (left right : Ref Value) (refsRel : RefRel left right) (ffi : HolFfiState F) :
+    (index : Nat) (left right : Ref Value) (refsRel : (ClosProps.refRel ValueRel) left right) (ffi : HolFfiState F) :
     StateRel { source with refs := source.refs.updateEq (index, left), ffi := ffi }
       { target with refs := target.refs.updateEq (index, right), ffi := ffi } := by
   refine ⟨states.1, rfl, states.2.2.1, states.2.2.2.1, states.2.2.2.2.1,
@@ -51,20 +51,20 @@ theorem primitiveSimulation_ffi {C F : Type} (name : Basis.Pure.MlString.MlStrin
               cases targetRef : target.refs.lookup index with
               | none => simp [sourceRef, targetRef, optionRel] at refRel
               | some nextRef =>
-                have refs : RefRel ref nextRef := by simpa [sourceRef, targetRef, optionRel] using refRel
+                have refs : (ClosProps.refRel ValueRel) ref nextRef := by simpa [sourceRef, targetRef, optionRel] using refRel
                 cases ref with
                 | valueArray fields =>
-                  cases nextRef <;> simp [RefRel] at refs
+                  cases nextRef <;> simp [ClosProps.refRel] at refs
                   exact ⟨.err (.abort .typeError), by simp [doApp, targetRef], by
                     simp [doApp, sourceRef, AppResultRel, ResultRel]⟩
                 | thunk mode value =>
-                  cases nextRef <;> simp [RefRel] at refs
+                  cases nextRef <;> simp [ClosProps.refRel] at refs
                   exact ⟨.err (.abort .typeError), by simp [doApp, targetRef], by
                     simp [doApp, sourceRef, AppResultRel, ResultRel]⟩
                 | byteArray bytes =>
                   cases nextRef with
-                  | valueArray fields => simp [RefRel] at refs
-                  | thunk mode value => simp [RefRel] at refs
+                  | valueArray fields => simp [ClosProps.refRel] at refs
+                  | thunk mode value => simp [ClosProps.refRel] at refs
                   | byteArray nextBytes =>
                     have sameBytes : bytes = nextBytes := refs
                     subst nextBytes
