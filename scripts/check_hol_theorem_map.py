@@ -1543,6 +1543,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_existentials",
     "reviewed_fmap_as_finite_support_existentials_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_relation_existentials_words_as_type_indexed_bitvec",
+    "reviewed_fmap_as_finite_support_relation_existentials",
     "reviewed_fmap_as_finite_support_relation",
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_equalities",
@@ -2357,6 +2358,10 @@ def validate_inventory(
         combined_existential_words_status = (
             "reviewed_fmap_as_finite_support_existentials_words_as_type_indexed_bitvec"
         )
+        # Both map translations retain their separate witness and review rules.
+        combined_relation_existential_status = (
+            "reviewed_fmap_as_finite_support_relation_existentials"
+        )
         combined_relation_existential_words_status = (
             "reviewed_fmap_as_finite_support_relation_existentials_words_as_type_indexed_bitvec"
         )
@@ -2519,6 +2524,11 @@ def validate_inventory(
                 errors.append(
                     f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_parameters requires a source-comparison note"
                 )
+        if status == combined_relation_existential_status and not (fmap_relation and fmap_existentials):
+            errors.append(
+                f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_relation_existentials "
+                "needs both relation and existential qualifiers"
+            )
         if fmap_existentials and status == "reviewed_exact":
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_existentials @[hol] tag cannot have "
@@ -2527,6 +2537,7 @@ def validate_inventory(
         if fmap_existentials and status not in {
             "reviewed_fmap_as_finite_support_existentials",
             combined_existential_words_status,
+            combined_relation_existential_status,
             combined_relation_existential_words_status,
         }:
             errors.append(
@@ -2537,6 +2548,7 @@ def validate_inventory(
         if not fmap_existentials and status in {
             "reviewed_fmap_as_finite_support_existentials",
             combined_existential_words_status,
+            combined_relation_existential_status,
             combined_relation_existential_words_status,
         }:
             errors.append(
@@ -2546,7 +2558,7 @@ def validate_inventory(
         if fmap_existentials:
             reviewer_text = reviewer.lower() if isinstance(reviewer, str) else ""
             if "source" not in reviewer_text or any(
-                binder not in reviewer_text for binder in fmap_existentials
+                binder.lower() not in reviewer_text for binder in fmap_existentials
             ):
                 errors.append(
                     f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_existentials requires "
@@ -2560,6 +2572,7 @@ def validate_inventory(
         if fmap_relation and status not in {
             "reviewed_fmap_as_finite_support_relation",
             combined_relation_words_status,
+            combined_relation_existential_status,
             combined_relation_existential_words_status,
         }:
             errors.append(

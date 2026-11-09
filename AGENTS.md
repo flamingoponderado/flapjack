@@ -514,6 +514,19 @@ qualifier is mutually exclusive with `fmap_as_finite_support` and
 manifest status `reviewed_fmap_as_finite_support_relation` with a
 source-comparison note after the reviewer compares each HOL conjunct.
 
+**Qualify existential finite maps.** Use
+`(fmap_as_finite_support_existentials := [binder, ...])` for explicit HOL
+existential finite-map binders represented by `HolFiniteMapExact`. Each binder
+needs a same-module checked
+`holFmapAsFiniteSupportExistentialWitness_<declaration>_<binder>` establishing
+the lookup and finite-support roundtrip. Source review must preserve the
+quantifier's scope and role. Use manifest status
+`reviewed_fmap_as_finite_support_existentials` and a source-comparison note
+naming each binder. When a declaration also needs the multi-carrier relation
+qualifier, use `reviewed_fmap_as_finite_support_relation_existentials`; both
+sets of witnesses and reviews remain required. The supported word-translation
+combinations append `_words_as_type_indexed_bitvec` to the corresponding status.
+
 Unused HOL binders may be retained or omitted only when source review confirms
 that they are vacuous for the particular statement or case. Document any omission
 beside the declaration; never drop a guard, hypothesis, or conclusion dependency.

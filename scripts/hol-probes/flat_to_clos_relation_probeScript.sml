@@ -233,3 +233,32 @@ val _ = (print "op_arith_typed="; Lib.with_flag (Globals.show_types,true) print_
 
 val _ = if null (hyp compile_single_DEEP_INTRO) then () else raise Fail "hypotheses: compile_single_DEEP_INTRO";
 val _ = (print "compile_single_DEEP_INTRO_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_single_DEEP_INTRO); print "\n");
+
+(* Replay the original local rel_update_thunk proof with explicit state types. *)
+val rel_update_thunk_replay = Q.prove (
+  `state_rel (s1 : ('a,'b) flatSem$state) (s2 : ('a,'b) closSem$state) /\
+   LIST_REL v_rel vs ys ==>
+   (flatSem$update_thunk [flatSem$Loc v ptr] s1.refs vs = SOME refs1 ==>
+    ?refs2. closSem$update_thunk [closSem$RefPtr v ptr] s2.refs ys = SOME refs2 /\
+      state_rel (s1 with refs := refs1) (s2 with refs := refs2))`,
+  rw [] >>
+  gvs [oneline flatSemTheory.update_thunk_def, oneline closSemTheory.update_thunk_def,
+       AllCaseEqs()] >> rw [] >>
+  gvs [semanticPrimitivesTheory.store_assign_def, semanticPrimitivesTheory.store_v_same_type_def] >>
+  Cases_on `EL ptr s1.refs` >> gvs [] >>
+  Cases_on `t` >> gvs [] >>
+  `?b. FLOOKUP s2.refs ptr = SOME (closSem$Thunk NotEvaluated b)` by (
+    gvs [state_rel_def, store_rel_def] >>
+    last_x_assum $ qspec_then `ptr` assume_tac >> gvs []) >>
+  gvs [oneline flatSemTheory.dest_thunk_def, oneline closSemTheory.dest_thunk_def,
+       AllCaseEqs()] >>
+  gvs [Once v_rel_cases, closSemTheory.store_thunk_def, AllCaseEqs(), PULL_EXISTS] >>
+  (TRY (drule_all lookup_refv >> rw [] >> gvs []) >>
+   TRY (drule_all lookup_byte_array >> rw [] >> gvs []) >>
+   TRY (drule_all lookup_array >> rw [] >> gvs []) >>
+   gvs [state_rel_def, store_rel_def, finite_mapTheory.FLOOKUP_UPDATE, EL_LUPDATE] >> rw []
+   >- (rename1 `FLOOKUP s2.refs idx = _` >> last_x_assum (qspec_then `idx` assume_tac) >> gvs [])
+   >- (simp [Once v_rel_cases] >> metis_tac [])
+   >- (rename1 `EL idx s1.refs` >> last_x_assum (qspec_then `idx` assume_tac) >> gvs [])));
+val _ = if null (hyp rel_update_thunk_replay) then () else raise Fail "hypotheses: rel_update_thunk";
+val _ = (print "rel_update_thunk_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl rel_update_thunk_replay); print "\n");

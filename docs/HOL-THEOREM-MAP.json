@@ -1,5 +1,20 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "rel_update_thunk",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Thunk.lean",
+  "lean_name": "relUpdateThunk",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+  "fmap_as_finite_support_relation": [
+    "ClosSem.State.refs",
+    "ClosSem.State.code"
+  ],
+  "fmap_as_finite_support_existentials": [
+    "targetUpdated"
+  ],
+  "reviewer": "Compared the local HOL theorem and rel_update_thunk_typed proof replay: the source and target share the polymorphic compiler and FFI carriers; the value lists, pointer flag and index, source update premise, target update existential and resulting state relation agree. ClosSem.State.refs and ClosSem.State.code are canonical finite maps with a state roundtrip; the existential targetUpdated has a lookup and finite-support roundtrip. Both representation witnesses and the full statement were source-reviewed."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
   "hol_name": "intro_multi_preserves_esgc_free",
   "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/GlobalTraversal.lean",

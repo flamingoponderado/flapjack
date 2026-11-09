@@ -92,10 +92,18 @@ theorem evaluate_force {C F : Type} (env : FlatSem.Environment FlatSem.Value)
                       cases update : FlatSem.updateThunk sourceArgs after.refs sourceResults with
                       | none => simp [update] at notTypeError
                       | some updated =>
-                        obtain ⟨targetUpdated, targetUpdate, updatedStates⟩ :=
-                          stateRel_updateThunk after afterTarget sourceArgs targetArgs sourceResults targetResults updated
-                            bodyStates related relatedValues update
-                        simp [update, targetUpdate] at ⊢
-                        exact ⟨updatedStates, .value relatedValues⟩
+                        obtain ⟨index, _, _, argsEq, _, _, _, _⟩ :=
+                          updateThunk_success_parts sourceArgs after.refs updated sourceResults update
+                        subst sourceArgs
+                        cases related with
+                        | cons pointerRel tail =>
+                          cases tail
+                          cases pointerRel with
+                          | loc =>
+                            obtain ⟨targetUpdated, targetUpdate, updatedStates⟩ :=
+                              relUpdateThunk after afterTarget sourceResults targetResults false index updated
+                                ⟨bodyStates, relatedValues⟩ update
+                            simp [update, targetUpdate] at ⊢
+                            exact ⟨updatedStates, .value relatedValues⟩
 
 end Flapjack.Compiler.Backend.FlatToClos

@@ -1523,6 +1523,12 @@ class ExistentialFmapStatusTest(unittest.TestCase):
     def test_accepts_existential_map_status(self):
         self.assertEqual(self._errors(self._record(), self._tag()), [])
 
+    def test_accepts_camel_case_binder_in_source_note(self):
+        self.assertEqual(self._errors(
+            self._record(reviewer="source comparison of targetUpdated",
+                         fmap_as_finite_support_existentials=["targetUpdated"]),
+            self._tag(("targetUpdated",))), [])
+
     def test_rejects_status_without_qualifier(self):
         errors = self._errors(self._record(), self._tag(()))
         self.assertTrue(any("needs a fmap_as_finite_support_existentials" in e for e in errors))
@@ -1537,6 +1543,28 @@ class ExistentialFmapStatusTest(unittest.TestCase):
         errors = self._errors(
             self._record(fmap_as_finite_support_existentials=["other"]), self._tag())
         self.assertTrue(any("do not match its @[hol] tag" in e for e in errors))
+
+    def test_accepts_relation_and_existential_composition_without_words(self):
+        record = self._record(
+            statement_status="reviewed_fmap_as_finite_support_relation_existentials",
+            reviewer="source comparison of ClosSem.State maps and inl_bag",
+            fmap_as_finite_support_relation=["ClosSem.State.refs", "ClosSem.State.code"],
+        )
+        tagged = self._tag()
+        key = next(iter(tagged))
+        old = tagged[key]
+        tagged[key] = old[:7] + (
+            (("ClosSem.State", "refs"), ("ClosSem.State", "code")),
+            False, False, (), ("inl_bag",),
+        )
+        self.assertEqual(self._errors(record, tagged), [])
+        self.assertTrue(self._errors({**record, "fmap_as_finite_support_relation": []}, tagged))
+        self.assertTrue(self._errors({**record, "fmap_as_finite_support_existentials": []}, tagged))
+        self.assertTrue(self._errors({**record, "statement_status": "reviewed_exact"}, tagged))
+        without_relation = {key: tagged[key][:7] + ((),) + tagged[key][8:]}
+        without_existential = {key: tagged[key][:11] + ((),)}
+        self.assertTrue(self._errors({**record, "fmap_as_finite_support_relation": []}, without_relation))
+        self.assertTrue(self._errors({**record, "fmap_as_finite_support_existentials": []}, without_existential))
 
     def test_accepts_relation_existential_and_word_carrier_composition(self):
         record = self._record(
