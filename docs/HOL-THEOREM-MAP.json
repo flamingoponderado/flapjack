@@ -1,5 +1,29 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "code_locs_shift",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations/Original.lean", "lean_name": "codeLocs_shift",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_locs_shift_typed: all expression, natural and sparse-tree indices, original shift and ordered location-list equality agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "code_locs_alt_free",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations/Original.lean", "lean_name": "codeLocs_altFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_locs_alt_free_typed: both result components and the source free-variable equality premise are retained; list membership subset represents subset of the HOL location sets."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "code_locs_annotate",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations/Original.lean", "lean_name": "codeLocs_annotate",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_locs_annotate_typed: source annotation arity, expression list and location-set containment agree; list membership subset denotes HOL set containment."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "annotate_code_locs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations/Original.lean", "lean_name": "annotate_codeLocs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared annotate_code_locs_typed: source annotation and location-set containment and the original ALL_DISTINCT implication are both retained; Nodup denotes HOL ALL_DISTINCT."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "app_call_dests_def", "hol_line": 3590,
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AppCallDests.lean", "lean_name": "appCallDests",
   "statement_status": "reviewed_exact",
