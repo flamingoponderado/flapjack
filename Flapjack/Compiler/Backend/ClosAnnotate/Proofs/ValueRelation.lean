@@ -67,6 +67,19 @@ inductive EnvOk : Nat → Nat → Spt Nat → List Value → List Value → Nat 
       EnvOk m l index env nextEnv n
 end
 
+/-- Primitive numeric and byte-vector values relate only to themselves. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel_Number"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem valueRel_primitive (x : Value) (i : Int) (ws : List (BitVec 8)) (w : BitVec 64) :
+    (ValueRel x (.number i) ↔ x = .number i) ∧
+    (ValueRel (.number i) x ↔ x = .number i) ∧
+    (ValueRel (.byteVector ws) x ↔ x = .byteVector ws) ∧
+    (ValueRel x (.word64 w) ↔ x = .word64 w) ∧
+    (ValueRel (.word64 w) x ↔ x = .word64 w) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> constructor
+  all_goals intro h
+  all_goals first | (cases h; rfl) | (subst x; constructor)
+
 /-- Every set of variables is valid in an empty source environment. -/
 @[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "env_set_default"
   (nested_list_rel_as_mutual := [FunctionsRel])]

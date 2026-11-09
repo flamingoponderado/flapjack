@@ -5,6 +5,8 @@ namespace Flapjack.Compiler.Backend.ClosAnnotate
 open Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.ClosProps
 
 /-- Related lists encode to related closure-language list values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "list_to_v_v_rel"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
 theorem listToValue_related (left right : List Value) (related : List.Forall₂ ValueRel left right) :
     ValueRel (listToValue left) (listToValue right) := by
   induction related with

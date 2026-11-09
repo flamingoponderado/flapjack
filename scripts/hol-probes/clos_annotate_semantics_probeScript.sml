@@ -208,3 +208,13 @@ val env_ok_EXTEND_replay = prove (
   >> `l + LENGTH env2 + v - LENGTH env2 = l + v` by DECIDE_TAC >> full_simp_tac(srw_ss())[]
   >> DECIDE_TAC);
 val _ = show "env_ok_EXTEND_local_typed=" env_ok_EXTEND_replay;
+val _ = show "list_to_v_v_rel_typed=" clos_annotateProofTheory.list_to_v_v_rel;
+(* Replay the local inversion theorem for primitive closure values. *)
+val v_rel_Number_replay = prove (
+  ``(clos_annotateProof$v_rel x (Number i) <=> (x = Number i)) /\
+    (clos_annotateProof$v_rel (Number i) x <=> (x = Number i)) /\
+    (clos_annotateProof$v_rel (ByteVector ws) x <=> (x = ByteVector ws)) /\
+    (clos_annotateProof$v_rel x (Word64 w) <=> (x = Word64 w)) /\
+    (clos_annotateProof$v_rel (Word64 w) x <=> (x = Word64 w))``,
+  once_rewrite_tac [clos_annotateProofTheory.v_rel_cases] >> fs []);
+val _ = show "v_rel_Number_local_typed=" v_rel_Number_replay;

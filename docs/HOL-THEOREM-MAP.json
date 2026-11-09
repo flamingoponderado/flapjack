@@ -152,6 +152,20 @@
   "reviewer": "Compared FOLDR_mk_Union_local_typed, replayed with the original HOL proof: the list payload type is polymorphic, and the pair fold, seed, projections, append and variable-set fold have the same order and no premises."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "list_to_v_v_rel",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/BlockLists.lean", "lean_name": "listToValue_related",
+  "statement_status": "reviewed_nested_list_rel_as_mutual",
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "reviewer": "Source comparison with list_to_v_v_rel_typed: both unrestricted value lists, their pointwise relation premise and the related list-encoding conclusion agree. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "v_rel_Number",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ValueRelation.lean", "lean_name": "valueRel_primitive",
+  "statement_status": "reviewed_nested_list_rel_as_mutual",
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "reviewer": "Source comparison with v_rel_Number_local_typed, replayed from the original HOL proof: the unrestricted value, integer, byte list and 64-bit word retain their types and order, and all five primitive-value equivalences match. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "env_ok_EXTEND_IGNORE",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/EnvironmentExtension.lean", "lean_name": "envOk_extend_ignore",
   "statement_status": "reviewed_nested_list_rel_as_mutual",

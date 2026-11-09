@@ -243,7 +243,8 @@ replication and source-component theorems,
 and the mutual value and
 environment relation rules with inferred types. It also replays the local
 default-environment, pair-fold, no-overlap bound, shifted-environment lookup,
-elementwise shift, environment-compaction and environment-extension proofs, and the zero-replacement
+elementwise shift, environment-compaction, environment-extension and primitive-value inversion proofs,
+the related list-encoding statement, and the zero-replacement
 evaluation theorem with inferred types. These captures support review;
 the factored Lean mutual relation records its representation with a qualifier.
 
