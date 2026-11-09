@@ -3,6 +3,7 @@ Copyright (c) 2025 Flapjack contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import Flapjack.Compiler.Encoders.Arm8.Machine.ShiftCaseFull
+import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
 
 /-!
 # The ARM8 `longMul`, carry/overflow and unavailable-operation cases
@@ -407,57 +408,6 @@ theorem addWithCarry_val (x y : BitVec 64) (cin : Bool) :
   | true =>
     rw [arith_addWithCarry_true]
     simp only [↓reduceIte]
-
-/-- The flags `addWithCarry` produces, in terms of its own result. -/
-theorem addWithCarry_flags (x y : BitVec 64) (cin : Bool) :
-    (addWithCarry x y cin).2 =
-      ((addWithCarry x y cin).1.getLsbD 63, decide ((addWithCarry x y cin).1 = 0),
-       decide ((addWithCarry x y cin).1.toNat ≠ x.toNat + y.toNat + (if cin then 1 else 0)),
-       decide ((addWithCarry x y cin).1.toInt ≠ x.toInt + y.toInt + (if cin then 1 else 0))) :=
-  rfl
-
-/-- The flags of a flag-setting addition without carry. -/
-def addFlags (x y : BitVec 64) : Arm8Flags :=
-  let r := x + y
-  (r.getLsbD 63, decide (r = 0), decide (r.toNat ≠ x.toNat + y.toNat),
-    decide (r.toInt ≠ x.toInt + y.toInt))
-
-/-- The flags of a flag-setting subtraction. -/
-def subFlags (x y : BitVec 64) : Arm8Flags :=
-  let r := x - y
-  (r.getLsbD 63, decide (r = 0), decide (r.toNat ≠ x.toNat + (~~~y).toNat + 1),
-    decide (r.toInt ≠ x.toInt + (~~~y).toInt + 1))
-
-/-- `addWithCarry` on an uncomplemented second operand, without carry. -/
-theorem addWithCarry_addFlags (x y : BitVec 64) :
-    addWithCarry x y false = (x + y, addFlags x y) := by
-  refine Prod.ext ?_ ?_
-  · show (addWithCarry x y false).1 = x + y
-    rw [arith_addWithCarry_false]
-  · show (addWithCarry x y false).2 = addFlags x y
-    rw [addWithCarry_flags, arith_addWithCarry_false]
-    simp only [Bool.false_eq_true, ↓reduceIte, Int.add_zero, Nat.add_zero, addFlags]
-
-/-- `addWithCarry` on a complemented second operand, with carry. -/
-theorem addWithCarry_subFlags (x y : BitVec 64) :
-    addWithCarry x (~~~y) true = (x - y, subFlags x y) := by
-  refine Prod.ext ?_ ?_
-  · show (addWithCarry x (~~~y) true).1 = x - y
-    rw [arith_addWithCarry_true, arith_add_not_add_one]
-  · show (addWithCarry x (~~~y) true).2 = subFlags x y
-    rw [addWithCarry_flags, arith_addWithCarry_true, arith_add_not_add_one]
-    simp only [↓reduceIte, subFlags]
-
-/-- The overflow flag of a flag-setting addition. -/
-theorem addFlags_v (x y : BitVec 64) :
-    (addFlags x y).2.2.2 = decide ((x + y).toInt ≠ x.toInt + y.toInt) := rfl
-
-/-- The overflow flag of a flag-setting subtraction. -/
-theorem subFlags_v (x y : BitVec 64) :
-    (subFlags x y).2.2.2 = decide ((x - y).toInt ≠ x.toInt - y.toInt) := by
-  have h : x.toInt + (~~~y).toInt + 1 = x.toInt - y.toInt := by
-    rw [jumpCmp_toInt_not]; omega
-  rw [subFlags, h]
 
 /-- Executing the flag-setting addition of the `addOverflow` lowering. -/
 theorem execInsn_overflowAdd (s : Arm8State) (sl c d : Nat) :

@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Encoders.Arm8.Machine.Decode
+import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
 
 /-!
 # Execution of the closed ARMv8 instruction subset
@@ -24,17 +25,6 @@ def shiftValue (value : BitVec 64) (ty : ShiftType) (amount : Nat) : BitVec 64 :
 /-- ARM `ROR` of a 64-bit value. -/
 def ror64 (value : BitVec 64) (amount : Nat) : BitVec 64 :=
   value.rotateRight (amount % 64)
-
-/-- `AddWithCarry` of the L3 ARM8 model, at 64 bits. -/
-def addWithCarry (x y : BitVec 64) (carryIn : Bool) : BitVec 64 × Arm8Flags :=
-  let unsignedSum : Nat := x.toNat + y.toNat + (if carryIn then 1 else 0)
-  let result : BitVec 64 := BitVec.ofNat 64 unsignedSum
-  let n := result.getLsbD 63
-  let z := result = 0
-  let c := result.toNat ≠ unsignedSum
-  let v := result.toInt ≠ x.toInt + y.toInt + (if carryIn then 1 else 0)
-  (result, (n, z, c, v))
-
 /-- Condition-code test. -/
 def conditionHolds (s : Arm8State) (cond : Nat) : Bool :=
   match cond with
