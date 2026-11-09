@@ -130601,6 +130601,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "ctor_same_type_OPTREL",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternStructure.lean",
+  "lean_name": "ctorSameType_optionRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_ctor_same_type_optrel_typed in flat_do_app_preservation_probe.out, including the shared polymorphic pair type and the inverse-image option relation. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pats_bindings_FLAT_MAP",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternStructure.lean",
+  "lean_name": "patsBindings_flat_reverse_map",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_pats_bindings_flat_map_typed in flat_do_app_preservation_probe.out, including the order of map, reverse, and flatten and the pattern and name carriers. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
   "hol_name": "evaluate_Mat",
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateMatch.lean",
   "lean_name": "evaluate_mat",

@@ -130,3 +130,5 @@ val _ = show_thm "flat_evaluate_match_cons_typed=" flatPropsTheory.evaluate_matc
 val _ = show_thm "flat_evaluate_def_typed=" flatPropsTheory.flat_evaluate_def;
 val _ = show_thm "flat_store_v_vs_def_typed=" flatPropsTheory.store_v_vs_def;
 val _ = show_thm "flat_v_size_aux_typed=" flatPropsTheory.v_size_aux;
+val _ = show_thm "flat_ctor_same_type_optrel_typed=" flatPropsTheory.ctor_same_type_OPTREL;
+val _ = show_thm "flat_pats_bindings_flat_map_typed=" flatPropsTheory.pats_bindings_FLAT_MAP;
