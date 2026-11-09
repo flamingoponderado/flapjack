@@ -120,6 +120,12 @@
   "reviewer": "Compared shift_obeys_max_app_typed: the bound and all expression-list, natural and sparse-tree index variables are unrestricted. Both occurrences of EVERY are membership quantification over the reviewed obeysMaxApp predicate, and the conclusion uses original shiftSource."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "FOLDR_mk_Union",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "foldr_mkUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared FOLDR_mk_Union_local_typed, replayed with the original HOL proof: the list payload type is polymorphic, and the pair fold, seed, projections, append and variable-set fold have the same order and no premises."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "env_set_default",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ValueRelation.lean", "lean_name": "envSetDefault",
   "statement_status": "reviewed_nested_list_rel_as_mutual",
@@ -117966,7 +117972,7 @@
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "alt_free_sing_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared every typed alt_free_sing clause, including traversal order, union order, closure binder shifts, optional variable annotations, unused pure lets, and call and exception cases. pureList_eq_all proves the original EVERY pure test; altFreeSing_letrec_source checks that the body shift uses the original recursive-function count. The expression and DbVarSet carriers are reviewed exact. Source review and Lean checking do not establish cross-language equivalence."
+    "reviewer": "Compared every typed alt_free_sing clause, including traversal order, union order, closure binder shifts, optional variable annotations, unused pure lets, and call and exception cases. pureList_eq_all proves the original EVERY pure test; altFreeFuns_length proves that the transformed function count equals the original count used in the body shift. The expression and DbVarSet carriers are reviewed exact. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Free.lean",

@@ -98,3 +98,10 @@ val env_set_default_replay = prove (
   full_simp_tac (srw_ss())
     [SUBSET_DEF, IN_DEF, clos_annotateProofTheory.v_rel_cases |> CONJUNCT2]);
 val _ = show "env_set_default_local_typed=" env_set_default_replay;
+(* Replay the local fold lemma using the original proof. *)
+val foldr_mk_union_replay = prove (
+  ``!ys aux l.
+      FOLDR (\(x,l) (ts,alt_frees). (x::ts,db_vars$mk_Union l alt_frees)) (aux,l) ys =
+      (MAP FST ys ++ aux, FOLDR db_vars$mk_Union l (MAP SND ys))``,
+  Induct >> fs [FORALL_PROD]);
+val _ = show "FOLDR_mk_Union_local_typed=" foldr_mk_union_replay;

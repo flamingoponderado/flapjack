@@ -110,27 +110,4 @@ theorem semantics_eq_of_related {C F : Type} (ffi : HolFfiState F) (maxApp : Nat
   simp only [failureEq]
   rw [terminatingEq, tracesEq]
 
-/-- Closure annotation preserves the proof-side observable behavior for a
-safe program and oracle when the source semantics does not fail. The
-evaluation model is not yet reviewed as a HOL port. -/
-theorem annotate_semantics_correct {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
-    (oracle : CompileOracle C) (compiler : Compiler C) (program : List ClosLang.Exp)
-    (safe : everyFnVarsNone program)
-    (oracleSafe : ∀ n, everyFnVarsNone (oracle n).2.1 ∧
-      everyFnVarsNone ((oracle n).2.2.map (fun (_, _, body) => body)))
-    (notFail : semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) program ≠ .fail) :
-    semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) program =
-      semantics ffi maxApp HolFiniteMapExact.empty (pureCo compileInc ∘ oracle) compiler (annotateList 0 program) := by
-  apply semantics_eq_of_related
-  intro clock
-  let source := initialState ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) clock
-  let outcome := evaluate program [] source
-  have noType : outcome.1 ≠ .err (.abort .typeError) := by
-    exact (semantics_ne_fail_iff ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) program).mp notFail clock
-  obtain ⟨targetResult, targetNext, targetRun, results, nextRel⟩ :=
-    initial_evaluate_annotated ffi maxApp clock oracle compiler program outcome.1 outcome.2
-      (by exact Prod.eta _) noType safe oracleSafe
-  rw [targetRun]
-  exact ⟨results, nextRel.2.1⟩
-
 end Flapjack.Compiler.Backend.ClosAnnotate

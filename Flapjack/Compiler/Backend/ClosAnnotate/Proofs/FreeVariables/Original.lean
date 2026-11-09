@@ -5,6 +5,18 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Free.OriginalEquivalence
 namespace Flapjack.Compiler.Backend.ClosAnnotate
 open ClosLang DbVars
 
+/-- Folding paired values separates the payload list from the variable-set fold. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "FOLDR_mk_Union"]
+theorem foldr_mkUnion {α : Type} (ys : List (α × DbVarSet))
+    (aux : List α) (live : DbVarSet) :
+    ys.foldr (fun (x, vars) (tail, frees) => (x :: tail, mkUnion vars frees)) (aux, live) =
+      (ys.map Prod.fst ++ aux, (ys.map Prod.snd).foldr mkUnion live) := by
+  induction ys with
+  | nil => rfl
+  | cons head tail ih =>
+    rcases head with ⟨x, vars⟩
+    simp only [List.foldr_cons, List.map_cons, List.cons_append, ih]
+
 /-- The source free-variable observation uses the original free-variable pass. -/
 @[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "alt_fv_def"]
 noncomputable def altFvSource (index : Nat) (expressions : List Exp) : Bool :=

@@ -80,27 +80,4 @@ theorem pureList_eq_all (expressions : List Exp) : pureList expressions = expres
   | nil => rfl
   | cons first rest ih => simp [pureList, ih]
 
-/-- Free-variable annotation retains every recursive function. This helper has
-no separate HOL declaration. -/
-theorem altFreeFuns_length_source (count : Nat) (functions : List (Nat × Exp)) :
-    (altFreeFuns count functions).length = functions.length := by
-  induction functions with
-  | nil => rfl
-  | cons function rest ih =>
-    obtain ⟨arity, body⟩ := function
-    simp [altFreeFuns, ih]
-
-/-- The recursive-binding free-variable clause retains the original function
-count when shifting the body's free variables. This is supporting
-infrastructure rather than a separate HOL declaration. -/
-theorem altFreeSing_letrec_source (names : List Flapjack.Basis.Pure.MlString.MlString) (location : Option Nat)
-    (selected : Option (List Nat)) (functions : List (Nat × Exp)) (body : Exp) :
-    altFreeSing (.letrec names location selected functions body) =
-      let (nextBody, bodyLive) := altFreeSing body
-      let result := altFreeFuns functions.length functions
-      let live := listMkUnion (result.map Prod.snd)
-      (.letrec names location (some (varsToList live)) (result.map Prod.fst) nextBody,
-        mkUnion live (.shift functions.length bodyLive)) := by
-  simp [altFreeSing, altFreeFuns_length_source]
-
 end Flapjack.Compiler.Backend.ClosAnnotate

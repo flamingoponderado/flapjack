@@ -24,24 +24,4 @@ theorem annotate_correct {C F : Type} (program : List ClosLang.Exp) (source targ
       vars safe code oracle states
   exact ⟨targetResult, targetNext, by simpa [annotateList, altFree] using targetRun, resultRel, nextRel⟩
 
-/-- At every clock, successful or non-type-error evaluation from the empty
-code store is simulated by the annotation pass with its adapted compiler and
-oracle. This is a proof-side consequence, not a whole-compiler theorem. -/
-theorem initial_evaluate_annotated {C F : Type} (ffi : HolFfiState F) (maxApp clock : Nat)
-    (oracle : CompileOracle C) (compiler : Compiler C) (program : List ClosLang.Exp)
-    (result : Result (List Value) Value) (next : State C F)
-    (run : evaluate program [] (initialState ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) clock) =
-      (result, next))
-    (noType : result ≠ .err (.abort .typeError)) (safe : everyFnVarsNone program)
-    (oracleSafe : ∀ n, everyFnVarsNone (oracle n).2.1 ∧
-      everyFnVarsNone ((oracle n).2.2.map (fun (_, _, body) => body))) :
-    ∃ targetResult targetNext,
-      evaluate (annotateList 0 program) []
-        (initialState ffi maxApp HolFiniteMapExact.empty (pureCo compileInc ∘ oracle) compiler clock) =
-          (targetResult, targetNext) ∧ ResultRel result targetResult ∧ StateRel next targetNext := by
-  apply annotate_correct program _ _ [] result next run noType safe
-  · simp [CodeSafe, initialState, HolFiniteMapExact.empty]
-  · exact oracleSafe
-  · exact initialState_related ffi maxApp clock oracle compiler
-
 end Flapjack.Compiler.Backend.ClosAnnotate

@@ -18,12 +18,6 @@ theorem altFree_singleton (expression : Exp) :
     altFree [expression] = ([(altFreeSing expression).1], (altFreeSing expression).2) := by
   simp [altFree, altFreeList, mkUnion_empty_right]
 
-/-- The head of a singleton transformation is its transformed expression;
-the unspecified empty-list case of HOL `HD` is never reached. -/
-theorem altFree_singleton_hd (expression : Exp) :
-    @Flapjack.holHd Exp ⟨.var .none 0⟩ (altFree [expression]).1 = (altFreeSing expression).1 := by
-  simp [altFree_singleton, Flapjack.holHd]
-
 /-- The source's non-singleton list equation. -/
 theorem altFree_cons_cons (first second : Exp) (rest : List Exp) :
     altFree (first :: second :: rest) =
