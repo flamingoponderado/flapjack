@@ -131218,6 +131218,19 @@
   "reviewer": "Compared op_shifts_typed: the existential word size, shift and amount category and the full op_goal agree. Both W8 and W64 cases are proved from the original successful application and value relations. Closure state uses canonical refs and code maps with a re-exported witness; FlatSem.doApp and ClosSem.evaluate inherit the reals_as_rational_cuts assumption (SOUNDNESS item 8). Independently source-reviewed."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "op_eq_gc",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/OperatorCorrectness.lean",
+  "lean_name": "opEqGc",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared op_eq_gc_typed and op_goal: the ConfigGC/Equality disjunction, seven grouped premises, shared compiler and FFI carriers, and existential result, evaluation and relations agree. Closure state uses canonical refs and code maps with a re-exported witness. FlatSem.doApp and ClosSem.evaluate inherit the reals_as_rational_cuts assumption (SOUNDNESS item 8). Independently source-reviewed."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "do_eval_thm",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DynamicEvaluation.lean",

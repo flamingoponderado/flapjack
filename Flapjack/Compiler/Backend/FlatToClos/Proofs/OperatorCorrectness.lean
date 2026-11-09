@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Equality
 import Flapjack.Compiler.Backend.FlatToClos.Op
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
@@ -144,5 +145,76 @@ theorem opShifts {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                 | exact .word64 _
       | conv _ _ | closure _ _ _ | recclosure _ _ _ | loc _ _ | vectorv _ =>
         simp [FlatSem.doApp, FlatSem.doAppNumeric] at applied
+
+/-- Equality and GC configuration satisfy the original value-level operator correctness goal. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "op_eq_gc"
+  (fmap_as_finite_support := [refs, code])]
+theorem opEqGc {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
+    (vs : List FlatSem.Value) (sourceNext : FlatSem.State C F)
+    (result : Result FlatSem.Value FlatSem.Value) (targetNext : ClosSem.State C F)
+    (xs : List ClosLang.Exp) (db : List ClosSem.Value) (target : ClosSem.State C F)
+    (ws : List ClosSem.Value) (trace : BackendCommon.Tra) :
+    (op = .src .configGC ∨ op = .src .equality) →
+    FlatSem.doApp source op vs = some (sourceNext, result) ∧
+      StateRel source targetNext ∧ ClosSem.evaluate xs db target = (.val ws, targetNext) ∧
+      List.Forall₂ ValueRel vs ws.reverse ∧ xs.length = vs.length ∧
+      op ≠ .src .opapp ∧ op ≠ .src (.thunkOp .forceThunk) →
+    ∃ targetResult targetLast,
+      ClosSem.evaluate [compileOp trace op xs] db target = (targetResult, targetLast) ∧
+      StateRel sourceNext targetLast ∧
+      SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel
+        (Flapjack.EvaluateHOL.listResult result) targetResult := by
+  intro opCase premises
+  obtain ⟨applied, states, evaluated, related, length, _, _⟩ := premises
+  rcases opCase with opEq | opEq <;> subst op
+  all_goals cases vs with
+  | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+  | cons v vs =>
+    cases vs with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+    | cons u rest =>
+      cases rest with
+      | cons z zs => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+      | nil =>
+        have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
+        cases ws with
+        | nil => simp at wsLen
+        | cons w rest =>
+          cases rest with
+          | nil => simp at wsLen
+          | cons t rest =>
+            cases rest with
+            | cons z zs => simp at wsLen
+            | nil =>
+              simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
+              cases related with
+              | cons relV tail =>
+                cases tail with
+                | cons relU tail =>
+                  simp only [compileOp]
+                  rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+                  first
+                  | have gc : FlatSem.doApp source (.src .configGC) [v,u] = some (sourceNext,result) := applied
+                    cases v <;> cases u <;> simp [FlatSem.doApp, FlatSem.doAppNumeric,
+                      FlatSem.doAppMemory, FlatSem.doAppData] at gc
+                    rename_i lit1 lit2
+                    cases lit1 <;> cases lit2 <;> simp at gc
+                    obtain ⟨rfl, rfl⟩ := gc
+                    cases relV
+                    cases relU
+                    simp [ClosSem.doApp, ClosSem.applyMemory,
+                      Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                    exact ⟨states, (vRel_unit _).mpr rfl⟩
+                  | have eq : FlatSem.doApp source (.src .equality) [v,u] = some (sourceNext,result) := applied
+                    simp only [FlatSem.doApp, FlatSem.doAppNumeric] at eq
+                    cases h : FlatSem.doEq v u with
+                    | typeError => simp [h] at eq
+                    | val b =>
+                      simp [h] at eq
+                      obtain ⟨rfl, rfl⟩ := eq
+                      have targetEq := doEq_simulation.1 v u t w b relV relU h
+                      simp [ClosSem.doApp, ClosSem.applyBlock, targetEq,
+                        Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                      exact ⟨states, (vRel_bool _ _).mpr rfl⟩
 
 end Flapjack.Compiler.Backend.FlatToClos

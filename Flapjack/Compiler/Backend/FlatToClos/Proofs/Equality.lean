@@ -264,7 +264,8 @@ theorem listComparisonSim_cons_error {s₁ s₂ : FlatSem.Value} {xs ys : List F
   simp [FlatSem.doEqList, h] at result
 
 /-- Successful polymorphic equality comparisons are preserved for related
-values and lists. This proof-side statement awaits HOL correspondence review. -/
+values and lists. This is the unnamed equality subgoal in HOL's `op_eq_gc`
+proof, so it has no separate HOL declaration. -/
 theorem doEq_simulation :
     (∀ a b, ValueComparisonSim a b) ∧ (∀ xs ys, ListComparisonSim xs ys) := by
   refine FlatSem.doEq.mutual_induct ValueComparisonSim ListComparisonSim ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
