@@ -1,4 +1,5 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 
 /-! Scalar assignment in the proof-side flat-to-closure simulation. -/

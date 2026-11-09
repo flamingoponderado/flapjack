@@ -221,3 +221,6 @@ val _ = (print "op_byte_copy_typed="; Lib.with_flag (Globals.show_types,true) pr
 
 val _ = if null (hyp op_byte_arrays) then () else raise Fail "hypotheses: op_byte_arrays";
 val _ = (print "op_byte_arrays_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl op_byte_arrays); print "\n");
+
+val _ = if null (hyp op_arrays) then () else raise Fail "hypotheses: op_arrays";
+val _ = (print "op_arrays_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl op_arrays); print "\n");

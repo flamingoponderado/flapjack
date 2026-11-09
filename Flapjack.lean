@@ -1562,7 +1562,6 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.Force
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Equality
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Globals
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Array
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ArrayRead
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ArrayUpdate

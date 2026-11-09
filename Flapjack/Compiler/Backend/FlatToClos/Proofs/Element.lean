@@ -1,4 +1,5 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 import Mathlib.Data.List.Forall2
 import Flapjack.Misc.ListLookupRel

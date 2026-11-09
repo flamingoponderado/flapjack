@@ -1686,4 +1686,254 @@ theorem opByteArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F
                       · simpa using run
                       · cases result <;> simp only [Flapjack.EvaluateHOL.listResult] at resultRel ⊢ <;> cases resultRel <;> simp_all [SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
 
+/-- The original value-array operator case, including arbitrary fixed allocation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "op_arrays"
+  (fmap_as_finite_support := [refs, code])]
+theorem opArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
+    (vs : List FlatSem.Value) (sourceNext : FlatSem.State C F)
+    (result : Result FlatSem.Value FlatSem.Value) (targetNext : ClosSem.State C F)
+    (xs : List ClosLang.Exp) (db : List ClosSem.Value) (target : ClosSem.State C F)
+    (ws : List ClosSem.Value) (trace : BackendCommon.Tra) :
+    (op = .src .aalloc ∨ op = .src .aallocFixed ∨ op = .src .asubUnsafe ∨
+      op = .src .asub ∨ op = .src .alength ∨ op = .src .aupdateUnsafe ∨ op = .src .aupdate) →
+      FlatSem.doApp source op vs = some (sourceNext, result) ∧
+      StateRel source targetNext ∧ ClosSem.evaluate xs db target = (.val ws, targetNext) ∧
+      List.Forall₂ ValueRel vs ws.reverse ∧ xs.length = vs.length ∧
+      op ≠ .src .opapp ∧ op ≠ .src (.thunkOp .forceThunk) →
+    ∃ targetResult targetLast,
+      ClosSem.evaluate [compileOp trace op xs] db target = (targetResult, targetLast) ∧
+      StateRel sourceNext targetLast ∧
+      SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel
+        (Flapjack.EvaluateHOL.listResult result) targetResult := by
+  intro opCase premises
+  obtain ⟨applied, states, evaluated, related, length, _, _⟩ := premises
+  rcases opCase with rfl | rfl | rfl | rfl | rfl | rfl | rfl
+  case inr.inl =>
+    simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, storeAlloc] at applied
+    obtain ⟨rfl, rfl⟩ := applied
+    have index := leastUnusedRef_eq_length source.refs targetNext.refs states.2.2.2.1
+    have updated := stateRel_allocArray source targetNext vs ws.reverse states related
+    simp only [compileOp]
+    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+    simp [ClosSem.doApp, ClosSem.applyMemory, index, updated,
+      Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+    exact ValueRel.loc true source.refs.length
+  case inr.inr.inr.inr.inl =>
+    rcases vs with _ | ⟨v, _ | ⟨z, zs⟩⟩ <;>
+      try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+    have wsLen : ws.length = 1 := by simpa using related.length_eq.symm
+    rcases ws with _ | ⟨w, _ | ⟨z, zs⟩⟩ <;> try simp at wsLen
+    simp only [List.reverse_singleton] at related
+    cases related with
+    | cons ptrRel tail =>
+      cases ptrRel <;> try simp at applied
+      case loc flag pointer =>
+        cases found : storeLookup pointer source.refs with
+        | none => simp [found] at applied
+        | some entry =>
+          cases entry <;> simp [found] at applied
+          case varray items =>
+            obtain ⟨rfl, rfl⟩ := applied
+            obtain ⟨targetItems, targetFound, itemRel⟩ := lookup_array states found
+            have sameLength := itemRel.length_eq
+            simp only [compileOp]
+            rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+            simp [ClosSem.doApp, ClosSem.applyMemory, targetFound, ← sameLength,
+              Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+            exact ⟨states, ValueRel.int _⟩
+  case inr.inr.inr.inl =>
+    have originalApplied := applied
+    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
+      try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+    have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
+    rcases ws with _ | ⟨w, _ | ⟨t, _ | ⟨z, zs⟩⟩⟩ <;> try simp at wsLen
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
+    cases related with
+    | cons ptrRel tail =>
+      cases tail with
+      | cons idxRel tail =>
+        cases ptrRel <;> try simp at applied
+        case loc flag pointer =>
+          cases idxRel <;> try simp at applied
+          case int index =>
+            cases found : storeLookup pointer source.refs with
+            | none => simp [found] at applied
+            | some entry =>
+              cases entry <;> simp [found] at applied
+              case varray items =>
+                have body := checkedArrayRead_body_related source targetNext trace db pointer flag items index states found
+                have bodyExact : StateRel sourceNext (ClosSem.evaluate [.ifThenElse trace
+                  (.op trace (.memOp .boundsCheckArray) [.var trace 0, .var trace 1])
+                  (.op trace (.memOp .el) [.var trace 0, .var trace 1])
+                  (.raise trace (.op trace (.blockOp (.cons 3)) []))] (.number index :: .refPtr flag pointer :: db) targetNext).2 ∧
+                    EvalResultRel (Flapjack.EvaluateHOL.listResult result) (ClosSem.evaluate [.ifThenElse trace
+                  (.op trace (.memOp .boundsCheckArray) [.var trace 0, .var trace 1])
+                  (.op trace (.memOp .el) [.var trace 0, .var trace 1])
+                  (.raise trace (.op trace (.blockOp (.cons 3)) []))] (.number index :: .refPtr flag pointer :: db) targetNext).1 := by
+                  cases result <;> simpa [FlatSem.applyResult, originalApplied, Flapjack.EvaluateHOL.listResult] using body
+                simp only [compileOp]
+                rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+                cases run : ClosSem.evaluate [.ifThenElse trace
+                  (.op trace (.memOp .boundsCheckArray) [.var trace 0, .var trace 1])
+                  (.op trace (.memOp .el) [.var trace 0, .var trace 1])
+                  (.raise trace (.op trace (.blockOp (.cons 3)) []))] (.number index :: .refPtr flag pointer :: db) targetNext with
+                | mk out last =>
+                  simp only [run] at bodyExact
+                  obtain ⟨stateRel, resultRel⟩ := bodyExact
+                  refine ⟨out, last, ?_, stateRel, ?_⟩
+                  · simpa using run
+                  · cases result <;> simp only [Flapjack.EvaluateHOL.listResult] at resultRel ⊢ <;> cases resultRel <;> simp_all [SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+  case inr.inr.inl =>
+    have originalApplied := applied
+    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
+      try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+    have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
+    rcases ws with _ | ⟨w, _ | ⟨t, _ | ⟨z, zs⟩⟩⟩ <;> try simp at wsLen
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
+    cases related with
+    | cons ptrRel tail =>
+      cases tail with
+      | cons idxRel tail =>
+        cases ptrRel <;> try simp at applied
+        case loc flag pointer =>
+          cases idxRel <;> try simp at applied
+          case int index =>
+            cases found : storeLookup pointer source.refs with
+            | none => simp [found] at applied
+            | some entry =>
+              cases entry <;> simp [found] at applied
+              case varray items =>
+                by_cases negative : index < 0
+                · simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative] at applied
+                · cases element : items[index.toNat]? with
+                  | none => simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, element] at applied
+                  | some value =>
+                    obtain ⟨targetValue, _, _, targetRead, valueRel⟩ :=
+                      arrayRead_related source targetNext pointer flag items index value states found negative element
+                    simp [FlatSem.readIndexed, negative, element] at applied
+                    obtain ⟨rfl, rfl⟩ := applied
+                    simp only [compileOp]
+                    rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+                    simp [ClosSem.doApp, targetRead, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                    exact ⟨states, valueRel⟩
+  case inl =>
+    have originalApplied := applied
+    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨z, zs⟩⟩⟩ <;>
+      try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+    have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
+    rcases ws with _ | ⟨w, _ | ⟨t, _ | ⟨z, zs⟩⟩⟩ <;> try simp at wsLen
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
+    cases related with
+    | cons sizeRel tail =>
+      cases tail with
+      | cons valRel tail =>
+        cases sizeRel <;> try simp at applied
+        case int size =>
+          have body := allocArray_body_related source targetNext trace db size u w states valRel
+          simp only [compileOp]
+          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+          have bodyExact : StateRel sourceNext (ClosSem.evaluate [.ifThenElse trace
+              (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
+              (.raise trace (.op trace (.blockOp (.cons 3)) []))
+              (.op trace (.memOp .refArray) [.var trace 0, .var trace 1])] (w :: .number size :: db) targetNext).2 ∧
+              EvalResultRel (Flapjack.EvaluateHOL.listResult result) (ClosSem.evaluate [.ifThenElse trace
+              (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
+              (.raise trace (.op trace (.blockOp (.cons 3)) []))
+              (.op trace (.memOp .refArray) [.var trace 0, .var trace 1])] (w :: .number size :: db) targetNext).1 := by
+            cases result <;> simpa [FlatSem.applyResult, originalApplied, Flapjack.EvaluateHOL.listResult] using body
+          cases run : ClosSem.evaluate [.ifThenElse trace
+              (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
+              (.raise trace (.op trace (.blockOp (.cons 3)) []))
+              (.op trace (.memOp .refArray) [.var trace 0, .var trace 1])] (w :: .number size :: db) targetNext with
+          | mk out last =>
+            simp only [run] at bodyExact
+            obtain ⟨stateRel, resultRel⟩ := bodyExact
+            refine ⟨out, last, ?_, stateRel, ?_⟩
+            · simpa using run
+            · cases result <;> simp only [Flapjack.EvaluateHOL.listResult] at resultRel ⊢ <;> cases resultRel <;> simp_all [SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+  case inr.inr.inr.inr.inr.inr =>
+    have originalApplied := applied
+    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩ <;>
+      try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+    have wsLen : ws.length = 3 := by simpa using related.length_eq.symm
+    rcases ws with _ | ⟨w, _ | ⟨t, _ | ⟨r, _ | ⟨z, zs⟩⟩⟩⟩ <;> try simp at wsLen
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
+    cases related with
+    | cons ptrRel tail =>
+      cases tail with
+      | cons idxRel tail =>
+        cases tail with
+        | cons valRel tail =>
+          cases ptrRel <;> try simp at applied
+          case loc flag pointer =>
+            cases idxRel <;> try simp at applied
+            case int index =>
+              cases found : storeLookup pointer source.refs with
+              | none => simp [found] at applied
+              | some entry =>
+                cases entry <;> simp [found] at applied
+                case varray items =>
+                  have foundList : source.refs[pointer]? = some (.varray items) := by simpa [storeLookup] using found
+                  have body := checkedArrayUpdate_body_related source targetNext trace db pointer flag items index q w states foundList valRel
+                  have bodyExact : StateRel sourceNext (ClosSem.evaluate [.ifThenElse trace
+                (.op trace (.memOp .boundsCheckArray) [.var trace 1, .var trace 2])
+                (.op trace (.memOp .update) [.var trace 0, .var trace 1, .var trace 2])
+                (.raise trace (.op trace (.blockOp (.cons 3)) []))] (w :: .number index :: .refPtr flag pointer :: db) targetNext).2 ∧
+                      EvalResultRel (Flapjack.EvaluateHOL.listResult result) (ClosSem.evaluate [.ifThenElse trace
+                (.op trace (.memOp .boundsCheckArray) [.var trace 1, .var trace 2])
+                (.op trace (.memOp .update) [.var trace 0, .var trace 1, .var trace 2])
+                (.raise trace (.op trace (.blockOp (.cons 3)) []))] (w :: .number index :: .refPtr flag pointer :: db) targetNext).1 := by
+                    cases result <;> simpa [FlatSem.applyResult, originalApplied, Flapjack.EvaluateHOL.listResult] using body
+                  simp only [compileOp]
+                  rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+                  cases run : ClosSem.evaluate [.ifThenElse trace
+                (.op trace (.memOp .boundsCheckArray) [.var trace 1, .var trace 2])
+                (.op trace (.memOp .update) [.var trace 0, .var trace 1, .var trace 2])
+                (.raise trace (.op trace (.blockOp (.cons 3)) []))] (w :: .number index :: .refPtr flag pointer :: db) targetNext with
+                  | mk out last =>
+                    simp only [run] at bodyExact
+                    obtain ⟨stateRel, resultRel⟩ := bodyExact
+                    refine ⟨out, last, ?_, stateRel, ?_⟩
+                    · simpa using run
+                    · cases result <;> simp only [Flapjack.EvaluateHOL.listResult] at resultRel ⊢ <;> cases resultRel <;> simp_all [SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+  case inr.inr.inr.inr.inr.inl =>
+    have originalApplied := applied
+    rcases vs with _ | ⟨v, _ | ⟨u, _ | ⟨q, _ | ⟨z, zs⟩⟩⟩⟩ <;>
+      try simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at applied
+    have wsLen : ws.length = 3 := by simpa using related.length_eq.symm
+    rcases ws with _ | ⟨w, _ | ⟨t, _ | ⟨r, _ | ⟨z, zs⟩⟩⟩⟩ <;> try simp at wsLen
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
+    cases related with
+    | cons ptrRel tail =>
+      cases tail with
+      | cons idxRel tail =>
+        cases tail with
+        | cons valRel tail =>
+          cases ptrRel <;> try simp at applied
+          case loc flag pointer =>
+            cases idxRel <;> try simp at applied
+            case int index =>
+              cases found : storeLookup pointer source.refs with
+              | none => simp [found] at applied
+              | some entry =>
+                cases entry <;> simp [found] at applied
+                case varray items =>
+                  have foundList : source.refs[pointer]? = some (.varray items) := by simpa [storeLookup] using found
+                  have nonnegative : ¬index < 0 := by
+                    intro negative
+                    simp [FlatSem.updateIndexed, FlatSem.boundsFailure, negative] at applied
+                  have bound : index.toNat < items.length := by
+                    by_contra bad
+                    have outside : items.length ≤ index.toNat := by omega
+                    simp [FlatSem.updateIndexed, FlatSem.boundsFailure, nonnegative, outside] at applied
+                  obtain ⟨targetLast, _, flatUpdate, targetUpdate, updated⟩ :=
+                    arrayUpdate_related source targetNext pointer flag items index q w states foundList nonnegative bound valRel
+                  simp [FlatSem.doApp, FlatSem.doAppNumeric, flatUpdate] at originalApplied
+                  obtain ⟨rfl, rfl⟩ := originalApplied
+                  simp only [compileOp]
+                  rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+                  simp [ClosSem.doApp, targetUpdate, FlatSem.unitValue, ClosSem.unitValue,
+                    Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                  exact ⟨updated, ValueRel.tuple .nil⟩
+
 end Flapjack.Compiler.Backend.FlatToClos

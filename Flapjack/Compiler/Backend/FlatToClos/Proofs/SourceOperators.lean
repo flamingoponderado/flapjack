@@ -3,7 +3,8 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveArith
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveConversions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ApplicationOperators
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Array
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
 
 /-! Dispatcher for ordinary source operators in the proof-side simulation.
 The special application, assignment, dynamic installation, and thunk forcing cases
@@ -293,19 +294,54 @@ theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.
     · simp [destNop]
     · intro s vs sNext result tNext xs db t ws tt premises
       exact opVectors _ s vs sNext result tNext xs db t ws tt (Or.inl rfl) premises
-  | aalloc => exact evaluate_allocArray env names values source target trace args argsSim notTypeError
-  | aallocFixed => exact evaluate_allocFixed env names values source target trace args argsSim notTypeError
-  | asub => exact evaluate_checkedArrayRead env names values source target trace args argsSim notTypeError
-  | alength => exact evaluate_arrayLength env names values source target trace args argsSim notTypeError
-  | aupdate => exact evaluate_checkedArrayUpdate env names values source target trace args argsSim notTypeError
+  | aalloc =>
+    apply evalSim_app_of_op env names values source target trace (.src .aalloc) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opArrays _ s vs sNext result tNext xs db t ws tt (Or.inl rfl) premises
+  | aallocFixed =>
+    apply evalSim_app_of_op env names values source target trace (.src .aallocFixed) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inl rfl)) premises
+  | asub =>
+    apply evalSim_app_of_op env names values source target trace (.src .asub) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inl rfl)))) premises
+  | alength =>
+    apply evalSim_app_of_op env names values source target trace (.src .alength) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl))))) premises
+  | aupdate =>
+    apply evalSim_app_of_op env names values source target trace (.src .aupdate) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (rfl))))))) premises
   | vsubUnsafe =>
     apply evalSim_app_of_op env names values source target trace (.src .vsubUnsafe) args
       ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
     · simp [destNop]
     · intro s vs sNext result tNext xs db t ws tt premises
       exact opVectors _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inl rfl))) premises
-  | asubUnsafe => exact evaluate_uncheckedArrayRead env names values source target trace args argsSim notTypeError
-  | aupdateUnsafe => exact evaluate_uncheckedArrayUpdate env names values source target trace args argsSim notTypeError
+  | asubUnsafe =>
+    apply evalSim_app_of_op env names values source target trace (.src .asubUnsafe) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inl rfl))) premises
+  | aupdateUnsafe =>
+    apply evalSim_app_of_op env names values source target trace (.src .aupdateUnsafe) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl)))))) premises
   | aw8subUnsafe =>
     apply evalSim_app_of_op env names values source target trace (.src .aw8subUnsafe) args
       ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
