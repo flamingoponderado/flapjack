@@ -13,6 +13,8 @@ val _ = show "alt_free_def_typed=" clos_annotateTheory.alt_free_def;
 val _ = show "alt_free_sing_eq_typed=" clos_annotateTheory.alt_free_sing_eq;
 val _ = show "get_var_typed=" clos_annotateTheory.get_var_def;
 val _ = show "shifted_env_typed=" clos_annotateTheory.shifted_env_def;
+val _ = show "shift_def_typed=" clos_annotateTheory.shift_def;
+val _ = show "shift_sing_eq_typed=" clos_annotateTheory.shift_sing_eq;
 val _ = show "shift_sing_typed=" clos_annotateTheory.shift_sing_def;
 val _ = show "annotate_sing_typed=" clos_annotateTheory.annotate_sing_def;
 val _ = show "annotate_list_typed=" clos_annotateTheory.annotate_list_def;
