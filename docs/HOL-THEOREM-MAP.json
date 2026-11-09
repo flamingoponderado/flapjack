@@ -1,5 +1,47 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "chain_exps_every_Fn_SOME",
+  "hol_line": 8596,
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainSyntactic.lean",
+  "lean_name": "chainExps_fnLocationSome_iff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared chain_exps_every_Fn_SOME_8596_replay with inferred types: arbitrary start label and expression list, source body projection, closure annotation predicate and both directions of the equivalence agree. The earlier location theorem was replayed using its original HOL proof; chainExps and closure predicates are source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "chain_exps_every_Fn_vs_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainSyntactic.lean",
+  "lean_name": "chainExps_fnVarsSome_iff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared chain_exps_every_Fn_vs_SOME_typed with inferred types: arbitrary start label and expression list, source body projection, closure annotation predicate and both directions of the equivalence agree. The earlier location theorem was replayed using its original HOL proof; chainExps and closure predicates are source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "chain_exps_every_Fn_SOME",
+  "hol_line": 9248,
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainSyntactic.lean",
+  "lean_name": "chainExps_everyFnSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared chain_exps_every_Fn_SOME_typed with inferred types and the original source: the expression-list and label binders, function-location predicate and body projection agree, including the full implication. The source EVERY predicate is expressed by list membership; chainExps and the closure predicates are source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "chain_exps_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainSyntactic.lean",
+  "lean_name": "chainExps_obeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared chain_exps_obeys_max_app_typed with inferred types and the original source: the arbitrary maximum, expression-list and label binders, EVERY arity predicate and body projection agree, including the full implication. The source EVERY predicate is expressed by list membership; chainExps and the closure predicates are source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "chain_exps_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainSyntactic.lean",
+  "lean_name": "chainExps_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared chain_exps_no_Labels_typed with inferred types and the original source: the expression-list and label binders, EVERY no-label predicate and body projection agree, including the full implication. The source EVERY predicate is expressed by list membership; chainExps and the closure predicates are source-reviewed."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "every_Fn_vs_NONE_SmartCons",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
@@ -128144,8 +128186,8 @@
   "hol_name": "every_Fn_vs_SOME_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/FnAnnotations.lean",
   "lean_name": "everyFnVarsSome",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_Fn_vs_SOME_def_typed and every source clause: function and recursive-group variable options, all expression cases, body and list ordering, and native identifier carriers match. fnVarsSomeFuns_eq_map proves the recursive-body helper corresponds to MAP SND; IS_SOME agrees with the Boolean option test coerced to a proposition."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",

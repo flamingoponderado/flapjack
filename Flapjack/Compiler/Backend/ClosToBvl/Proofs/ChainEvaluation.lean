@@ -5,25 +5,6 @@ import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
-/-- Both closure annotation checks are preserved in either direction by
-building the installed expression chain. This conjunction is Flapjack proof
-infrastructure used to combine the location and variable checks. -/
-theorem chainExps_annotations (start : Nat) (expressions : List ClosLang.Exp) :
-    (ClosProps.everyFnLocationSome ((chainExps start expressions).map (fun (_, _, exp) => exp)) ↔
-      ClosProps.everyFnLocationSome expressions) ∧
-    (ClosProps.everyFnVarsSome ((chainExps start expressions).map (fun (_, _, exp) => exp)) ↔
-      ClosProps.everyFnVarsSome expressions) := by
-  induction expressions generalizing start with
-  | nil => simp [chainExps, ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp,
-      ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp]
-  | cons first rest ih =>
-    cases rest with
-    | nil => simp [chainExps, ClosProps.everyFnLocationSome, ClosProps.everyFnVarsSome]
-    | cons second tail =>
-      have step := ih (start + 1)
-      simp [chainExps, ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp,
-        ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp, step.1, step.2]
-
 /-- Target code for a nonempty sequence: each intermediate result is discarded
 and the next zero-argument code entry is called. -/
 def bvlChain (start : Nat) : List Bvl.Exp → List (Nat × Nat × Bvl.Exp)

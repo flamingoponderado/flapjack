@@ -138,28 +138,4 @@ theorem compileProgHOL_label_origins (maxApp : Nat) (program : List (Nat × Nat 
   simp only [compileProgHOL, List.map_append]
   rw [zip_entry_labels (numStubs maxApp) program _ lengthEq]
 
-/-- The same label decomposition holds for the checked converter actually
-used by preprocessing. -/
-theorem compileProg_checked_label_origins (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp))
-    (compiled : Aux) (run : compileProg? maxApp program = some compiled) :
-    compiled.map Prod.fst =
-      program.map (fun entry => entry.1 + numStubs maxApp) ++
-        ((compileExpListHOL maxApp (program.map (fun (_, _, body) => body)) []).2.map Prod.fst) := by
-  have exactRun := compileProg_checked_eq maxApp program
-  have equal : compiled = compileProgHOL maxApp program := Option.some.inj (run.symm.trans exactRun)
-  rw [equal]
-  exact compileProgHOL_label_origins maxApp program
-
-/-- The executed checked converter's complete label list consists of shifted
-entry labels followed by shifted, reversed source closure locations. This is
-source-shaped proof infrastructure pending HOL carrier and statement review. -/
-theorem compileProg_checked_codeLocations (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp))
-    (compiled : Aux) (run : compileProg? maxApp program = some compiled) :
-    compiled.map Prod.fst =
-      program.map (fun entry => entry.1 + numStubs maxApp) ++
-        ((ClosProps.codeLocations (program.map (fun (_, _, body) => body))).reverse.map
-          (fun location => location + numStubs maxApp)) := by
-  rw [compileProg_checked_label_origins maxApp program compiled run]
-  simp [compileExpList_aux_labels]
-
 end Flapjack.Compiler.Backend.ClosToBvl

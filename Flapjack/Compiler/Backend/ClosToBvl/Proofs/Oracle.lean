@@ -9,18 +9,6 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ExpsEquivalence
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.Compiler.Backend.ClosProps Flapjack.Compiler.Backend.BackendProps
 
-/-- The checked program converter produces the same incremental result as the
-source-shaped definition. This is Flapjack infrastructure connecting the two
-compilation interfaces. -/
-theorem compileInc_checked_eq (maxApp : Nat) (program : ClosSem.Program) :
-    (let (start, expressions) := extractName program.1
-     compileProg? maxApp (chainExps start expressions ++ program.2)) =
-      some (compileInc maxApp program) := by
-  cases h : extractName program.1 with
-  | mk start expressions =>
-      simpa [compileInc, h] using
-        compileProg_checked_eq_original maxApp (chainExps start expressions ++ program.2)
-
 /-- Accumulate the code installed by the first `n` future oracle entries. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "nth_code_def"]
 def nthCode {C A : Type} (oracle : Nat → C × List (Nat × A)) : Nat → Spt A

@@ -10,3 +10,17 @@ val _ = show_thm "chain_installed_cons=" clos_to_bvlProofTheory.chain_installed_
 val _ = show_thm "chain_installed_SUBMAP=" clos_to_bvlProofTheory.chain_installed_SUBMAP;
 val _ = show_thm "chain_installed_thm=" clos_to_bvlProofTheory.chain_installed_thm;
 val _ = show_thm "chain_installed_chain_exps=" clos_to_bvlProofTheory.chain_installed_chain_exps;
+val _ = show_thm "every_Fn_vs_SOME_def_typed=" closPropsTheory.every_Fn_vs_SOME_def;
+val _ = show_thm "chain_exps_every_Fn_SOME_typed=" clos_to_bvlProofTheory.chain_exps_every_Fn_SOME;
+(* The earlier theorem shares a HOL name with the later implication. *)
+val chain_exps_every_Fn_SOME_8596_replay = Q.prove (
+  `!x y. closProps$every_Fn_SOME (MAP (SND o SND) (clos_to_bvl$chain_exps x y)) <=> closProps$every_Fn_SOME y`,
+  recInduct clos_to_bvlTheory.chain_exps_ind
+  >> rw [clos_to_bvlTheory.chain_exps_def]
+  >> pop_assum mp_tac
+  >> once_rewrite_tac [rich_listTheory.CONS_APPEND]
+  >> fs [closPropsTheory.every_Fn_SOME_APPEND]);
+val _ = show_thm "chain_exps_every_Fn_SOME_8596_replay=" chain_exps_every_Fn_SOME_8596_replay;
+val _ = show_thm "chain_exps_every_Fn_vs_SOME_typed=" clos_to_bvlProofTheory.chain_exps_every_Fn_vs_SOME;
+val _ = show_thm "chain_exps_obeys_max_app_typed=" clos_to_bvlProofTheory.chain_exps_obeys_max_app;
+val _ = show_thm "chain_exps_no_Labels_typed=" clos_to_bvlProofTheory.chain_exps_no_Labels;
