@@ -1,5 +1,4 @@
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTop
-import Flapjack.Compiler.Backend.Arm8Config.BackendProof
 import Flapjack.Compiler.Backend.Arm8Config.BackendProofL3
 import Flapjack.Compiler.Backend.Arm8Config.ProofsL3
 

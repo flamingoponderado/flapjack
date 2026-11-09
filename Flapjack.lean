@@ -4216,6 +4216,7 @@ import Flapjack.Compiler.Encoders.Arm8.Machine.TargetProof
 import Flapjack.Compiler.Encoders.Arm8.Machine.L3Link
 import Flapjack.Compiler.Encoders.Arm8.Machine.ExecuteProof
 import Flapjack.Compiler.Backend.Arm8Config.Names
+import Flapjack.Compiler.Backend.Arm8Config.NameLemmas
 import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
 import Flapjack.Compiler.Backend.Arm8Config.Proofs
 import Flapjack.Compiler.Backend.Arm8Config.ProofsL3

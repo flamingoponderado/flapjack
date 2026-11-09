@@ -30,9 +30,10 @@ emitted instruction subset.  The same target also proves
 `panToTargetCompileSemanticsArm8L3` in
 `Flapjack/Pancake/Proofs/PanToTarget/Arm8L3Instance.lean` instantiates the
 Pancake-to-target theorem at that L3 configuration.  Those L3 theorems are about
-the logical `compile_prog_max`; the executed `--target=arm8` driver still runs
-the closed `arm8Config`, and no theorem yet connects its output to the L3
-result.
+the logical `compile_prog_max`; the executed `--target=arm8` driver runs the
+computable `arm8Config` (the encoder-only configuration in
+`Arm8/Configuration.lean`, not the closed machine model), and no theorem yet
+connects its output to the L3 result.
 -/
 
 namespace Flapjack
