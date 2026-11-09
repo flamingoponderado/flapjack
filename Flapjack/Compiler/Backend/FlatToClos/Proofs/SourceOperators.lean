@@ -191,10 +191,30 @@ theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.
     · simp [destNop]
     · intro s vs sNext result tNext xs db t ws tt premises
       exact opRefs _ s vs sNext result tNext xs db t ws tt (Or.inl rfl) premises
-  | aw8alloc => exact evaluate_allocByteArray env names values source target trace args argsSim notTypeError
-  | aw8sub => exact evaluate_checkedByteRead env names values source target trace args argsSim notTypeError
-  | aw8length => exact evaluate_byteArrayLength env names values source target trace args argsSim notTypeError
-  | aw8update => exact evaluate_checkedByteUpdate env names values source target trace args argsSim notTypeError
+  | aw8alloc =>
+    apply evalSim_app_of_op env names values source target trace (.src .aw8alloc) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opByteArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inl rfl)) premises
+  | aw8sub =>
+    apply evalSim_app_of_op env names values source target trace (.src .aw8sub) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opByteArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inl rfl)))) premises
+  | aw8length =>
+    apply evalSim_app_of_op env names values source target trace (.src .aw8length) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opByteArrays _ s vs sNext result tNext xs db t ws tt (Or.inl rfl) premises
+  | aw8update =>
+    apply evalSim_app_of_op env names values source target trace (.src .aw8update) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opByteArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr rfl))))) premises
   | copyStrStr =>
     apply evalSim_app_of_op env names values source target trace (.src .copyStrStr) args
       ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
@@ -286,8 +306,18 @@ theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.
       exact opVectors _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inl rfl))) premises
   | asubUnsafe => exact evaluate_uncheckedArrayRead env names values source target trace args argsSim notTypeError
   | aupdateUnsafe => exact evaluate_uncheckedArrayUpdate env names values source target trace args argsSim notTypeError
-  | aw8subUnsafe => exact evaluate_uncheckedByteRead env names values source target trace args argsSim notTypeError
-  | aw8updateUnsafe => exact evaluate_uncheckedByteUpdate env names values source target trace args argsSim notTypeError
+  | aw8subUnsafe =>
+    apply evalSim_app_of_op env names values source target trace (.src .aw8subUnsafe) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opByteArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inl rfl))) premises
+  | aw8updateUnsafe =>
+    apply evalSim_app_of_op env names values source target trace (.src .aw8updateUnsafe) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opByteArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl))))) premises
   | listAppend =>
     apply evalSim_app_of_op env names values source target trace (.src .listAppend) args
       ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
