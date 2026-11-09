@@ -218,3 +218,19 @@ val v_rel_Number_replay = prove (
     (clos_annotateProof$v_rel (Word64 w) x <=> (x = Word64 w))``,
   once_rewrite_tac [clos_annotateProofTheory.v_rel_cases] >> fs []);
 val _ = show "v_rel_Number_local_typed=" v_rel_Number_replay;
+(* Replay the local paired list-decoding theorem. *)
+val v_to_list_replay = prove (
+  ``!h h'. clos_annotateProof$v_rel h h' ==>
+      (v_to_list h = NONE /\ v_to_list h' = NONE) \/
+      ?x x'. (v_to_list h = SOME x) /\ (v_to_list h' = SOME x') /\
+             EVERY2 clos_annotateProof$v_rel x x'``,
+  HO_MATCH_MP_TAC v_to_list_ind
+  >> full_simp_tac(srw_ss())[clos_annotateProofTheory.v_rel_simp]
+  >> full_simp_tac(srw_ss())[v_to_list_def]
+  >> REPEAT STRIP_TAC >> SRW_TAC [] []
+  >> full_simp_tac(srw_ss())[v_to_list_def]
+  >> Cases_on `v_to_list h'` >> full_simp_tac(srw_ss())[]
+  >> Cases_on `v_to_list y'` >> full_simp_tac(srw_ss())[]
+  >> CCONTR_TAC >> RES_TAC >> full_simp_tac(srw_ss())[]
+  >> RES_TAC >> full_simp_tac(srw_ss())[] >> SRW_TAC [] [] >> fs[]);
+val _ = show "v_to_list_local_typed=" v_to_list_replay;

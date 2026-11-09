@@ -13,9 +13,8 @@ theorem listToValue_related (left right : List Value) (related : List.Forall₂ 
   | nil => exact .block _ [] [] .nil
   | cons head tail ih => exact .block _ _ _ (.cons head (.cons ih .nil))
 
-/-- Decoding related values either fails on both sides or returns lists with
-pointwise-related elements. This remains a candidate until the HOL value and
-evaluator carriers are reviewed. -/
+/-- This option-relation reformulation is Flapjack infrastructure for the
+recursive proof and its consumers; the HOL disjunction is stated below. -/
 theorem valueToList_related (left right : Value) (related : ValueRel left right) :
     optionRel (List.Forall₂ ValueRel) (valueToList left) (valueToList right) := by
   cases related with
@@ -48,6 +47,20 @@ theorem valueToList_related (left right : Value) (related : ValueRel left right)
   | _ => simp [valueToList, optionRel]
 termination_by sizeOf left
 decreasing_by simp_wf; omega
+
+/-- Related values decode either to two failures or to related lists. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_to_list"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem valueToList_relation (left right : Value) (related : ValueRel left right) :
+    (valueToList left = none ∧ valueToList right = none) ∨
+      ∃ xs ys, valueToList left = some xs ∧ valueToList right = some ys ∧
+        List.Forall₂ ValueRel xs ys := by
+  have decoded := valueToList_related left right related
+  cases leftRun : valueToList left with
+  | none =>
+    cases rightRun : valueToList right <;> simp_all [optionRel]
+  | some xs =>
+    cases rightRun : valueToList right <;> simp_all [optionRel]
 
 /-- Converting a closure-language list into a tagged block preserves its
 fields and agrees on malformed inputs. -/
