@@ -20,14 +20,4 @@ independent HOL declaration to tag for this extracted operation. -/
 namespace Flapjack.Pancake.PanToTarget
 open Flapjack Pancake.PanLang Basis.Pure.MlString
 
-private theorem mainName_codec (name : String) (ranged : NameRanged name) :
-    ofString name = ofString "main" ↔ name = "main" := by
-  constructor
-  · intro encoded
-    have decoded := congrArg toStringOfBytes encoded
-    rw [toStringOfBytes_ofString_of_bytes name ranged] at decoded
-    exact decoded
-  · intro same
-    rw [same]
-
 end Flapjack.Pancake.PanToTarget

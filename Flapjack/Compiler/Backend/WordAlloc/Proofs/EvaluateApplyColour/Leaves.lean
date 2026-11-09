@@ -70,6 +70,28 @@ theorem slrMono {α : Type} {f : Nat → Nat} {A B : Nat → Prop} {s t : Spt α
     (h : strongLocalsRel f A s t) (hAB : ∀ k, B k → A k) : strongLocalsRel f B s t :=
   fun k v hk => h k v ⟨hAB k hk.1, hk.2⟩
 
+/-- Ordered two-register updates preserve the live-scoped locals relation when
+the map is injective on the two written names and the final live set. Aliases
+are allowed. Flapjack proof infrastructure; not a separate HOL declaration. -/
+theorem twoWritesLocals {α : Type} (f : Nat → Nat) (a b : Nat)
+    (live : Nat → Prop) (source target : Spt α) (x y : α)
+    (hinj : ∀ k l, (k = a ∨ k = b ∨ live k) →
+      (l = a ∨ l = b ∨ live l) → f k = f l → k = l)
+    (hrel : strongLocalsRel f (fun k => live k ∧ k ≠ a ∧ k ≠ b) source target) :
+    strongLocalsRel f live (sptInsert b y (sptInsert a x source))
+      (sptInsert (f b) y (sptInsert (f a) x target)) := by
+  apply strongLocalsRelInsert f b live _ _ y
+  constructor
+  · intro k l hk hl he
+    exact hinj k l (hk.elim (fun h => Or.inr (Or.inl h)) (fun h => Or.inr (Or.inr h)))
+      (hl.elim (fun h => Or.inr (Or.inl h)) (fun h => Or.inr (Or.inr h))) he
+  · apply strongLocalsRelInsert f a (fun k => live k ∧ k ≠ b) source target x
+    constructor
+    · intro k l hk hl he
+      exact hinj k l (hk.elim Or.inl (fun h => Or.inr (Or.inr h.1)))
+        (hl.elim Or.inl (fun h => Or.inr (Or.inr h.1))) he
+    · exact slrMono hrel (fun _ hk => ⟨hk.1.1, hk.2, hk.1.2⟩)
+
 theorem wsrClock {width : Nat} [NeZero width] {C F : Type}
     {s t : WordSemStateFiniteExact width C F} (h : wordStateEqRel s t) : t.clock = s.clock := by
   unfold wordStateEqRel at h; exact h.2.2.2.2.2.2.2.2.2.2.2.2.1

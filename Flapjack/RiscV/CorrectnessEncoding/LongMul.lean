@@ -51,29 +51,6 @@ private theorem longMulLowRun (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   change «dfn'MUL» (rd, rs1, rs2) s = _
   have step := dfnMUL rd rs1 rs2 s nz
   simpa [«write'GPR», «write'gpr», nz, GPR, gpr] using step
-private theorem reg_nonzero (r : Nat) (guard : asmRegOkExact r riscvConfig = true) :
-    BitVec.ofNat 5 r ≠ 0#5 := by
-  have g : r < 32 ∧ r ≠ 0 := by
-    have g := guard
-    simp [asmRegOkExact, riscvConfig] at g
-    exact ⟨of_decide_eq_true g.1, g.2.1⟩
-  intro eq
-  have n := congrArg BitVec.toNat eq
-  simp only [BitVec.toNat_ofNat] at n
-  norm_num at n
-  rw [Nat.mod_eq_of_lt g.1] at n
-  exact g.2 n
-
-private theorem reg_read (r : Nat) (s : AsmState 64) (ms : riscv_state)
-    (guard : asmRegOkExact r riscvConfig = true)
-    (rel : targetStateRel riscvTarget s ms) :
-    GPR (BitVec.ofNat 5 r) ms = readReg r s := by
-  have g : r < riscvConfig.regCount ∧ riscvConfig.avoidRegs.contains r = false := by
-    simpa [asmRegOkExact] using guard
-  have before := rel.2.2.2.1 r g
-  change ms.c_gpr ms.procID (BitVec.ofNat 5 r) = s.regs r at before
-  simpa [GPR, gpr, reg_nonzero r guard, readReg] using before
-
 private def longMulInstruction (high : Bool) (rd rs1 rs2 : BitVec 5) : instruction :=
   if high then .MulDiv (.MULHU (rd, rs1, rs2)) else .MulDiv (.MUL (rd, rs1, rs2))
 

@@ -9,7 +9,7 @@ open Classical
 noncomputable section
 
 /-- Reduce equality to the comparison loop for a matching word header (Flapjack helper). -/
-private theorem eqStep {width : Nat} [NeZero width] (conf : DataToWord.Config)
+theorem eqStep {width : Nat} [NeZero width] (conf : DataToWord.Config)
     (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (domain : BitVec width → Bool)
     (memory : BitVec width → WordLocW width) (limit clock : Nat) (w1 w2 a1 a2 h r : BitVec width)
     (diff : w1 ≠ w2) (low1 : w1.getLsbD 0 = true) (low2 : w2.getLsbD 0 = true)

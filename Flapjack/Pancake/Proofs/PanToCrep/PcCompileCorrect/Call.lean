@@ -938,7 +938,7 @@ theorem mapM_lookup_updateListEq {α β : Type} [DecidableEq α]
     funext key
     simp only [HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL_eq_FUPDATE_LIST, FLOOKUP]
   rw [hfun]
-  exact optMmapSomeEqZipFlookup xs m.lookup ys hnodup hlen
+  exact opt_mmap_some_eq_zip_flookup xs m.lookup ys hnodup hlen
 
 /-- Target run of the standalone Ret arm when the callee returns `retvs` of the
     context return size. The values are installed into the fresh slots, and the
@@ -1051,7 +1051,7 @@ theorem panToCrepLocalsRelFiniteExact_setVar {width : Nat} [NeZero width]
     subst hk
     refine ⟨ns, flattenHOL v, hvar, ?_, rfl, hwf⟩
     rw [hfun]
-    exact optMmapSomeEqZipFlookup ns tl.lookup (flattenHOL v) (hno.1 _ _ _ hvar) hlen
+    exact opt_mmap_some_eq_zip_flookup ns tl.lookup (flattenHOL v) (hno.1 _ _ _ hvar) hlen
   · have hk' : sl.lookup k = some w := by
       simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, hkn] using hk
     obtain ⟨slots, words, hvk, hmm, hfl, hwfk⟩ := hlk k w hk'
@@ -1059,7 +1059,7 @@ theorem panToCrepLocalsRelFiniteExact_setVar {width : Nat} [NeZero width]
     have hdisj : ListDisjoint ns slots := by
       intro x hx hy
       exact hkn (hno.2 k name _ _ slots ns hvk hvar ⟨x, hy, hx⟩)
-    have := optMmapDisjZipFlookup ns tl.lookup slots (flattenHOL v) hdisj hlen
+    have := opt_mmap_disj_zip_flookup ns tl.lookup slots (flattenHOL v) hdisj hlen
     rw [hfun, this]
     simpa [FLOOKUP] using hmm
 

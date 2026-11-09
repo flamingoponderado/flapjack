@@ -1,11 +1,63 @@
 import Flapjack.RiscV.CorrectnessEncoding.Length
 import Flapjack.Compiler.Encoders.RiscV.Target.State
 import Flapjack.Compiler.Encoders.AsmProps.Encoding
+import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
 
 /-! Full native target validity. Local range arithmetic establishes the original
 positive and negative offset-length implications without assuming a target run. -/
 namespace Flapjack.RiscV.TargetProof
-open Flapjack RiscV.L3 Compiler.Encoders.Asm Compiler.Encoders.RiscV.Target
+open Flapjack RiscV.L3 Compiler.Encoders.Asm Compiler.Encoders.AsmSem Compiler.Encoders.RiscV.Target
+
+/-- Flapjack target-register guard infrastructure: a register accepted by
+`asmRegOkExact` is not the zero register. Shared by the register-operand
+encoder cases; no separately named HOL original. -/
+theorem reg_nonzero (r : Nat) (guard : asmRegOkExact r riscvConfig = true) :
+    BitVec.ofNat 5 r ≠ 0#5 := by
+  have g : r < 32 ∧ r ≠ 0 := by
+    have g := guard
+    simp [asmRegOkExact, riscvConfig] at g
+    exact ⟨of_decide_eq_true g.1, g.2.1⟩
+  intro eq
+  have n := congrArg BitVec.toNat eq
+  simp only [BitVec.toNat_ofNat] at n
+  rw [show 2 ^ 5 = 32 by decide, Nat.zero_mod] at n
+  rw [Nat.mod_eq_of_lt g.1] at n
+  exact g.2 n
+
+/-- Flapjack target-register guard infrastructure: the register guard yields
+the width bound, non-zeroness and the excluded scratch register. Shared by the
+overflow encoders; no separately named HOL original. -/
+theorem guard (r : Nat) (g : asmRegOkExact r riscvConfig = true) :
+    r < 32 ∧ BitVec.ofNat 5 r ≠ 0#5 ∧ BitVec.ofNat 5 r ≠ 31#5 := by
+  have facts : r < 32 ∧ r ≠ 0 ∧ r ≠ 31 := by
+    simp [asmRegOkExact, riscvConfig] at g
+    exact ⟨of_decide_eq_true g.1, g.2.1, g.2.2.2.2.2⟩
+  refine ⟨facts.1, ?_, ?_⟩
+  · intro eq
+    have n := congrArg BitVec.toNat eq
+    simp only [BitVec.toNat_ofNat] at n
+    rw [show 2 ^ 5 = 32 by decide, Nat.zero_mod] at n
+    rw [Nat.mod_eq_of_lt facts.1] at n
+    exact facts.2.1 n
+  · intro eq
+    have n := congrArg BitVec.toNat eq
+    simp only [BitVec.toNat_ofNat] at n
+    rw [show 2 ^ 5 = 32 by decide, show 31 % 32 = 31 by decide] at n
+    rw [Nat.mod_eq_of_lt facts.1] at n
+    exact facts.2.2 n
+
+/-- Flapjack target-register infrastructure: a guarded register reads the same
+value in the native state and the assembly state. Shared by the register-operand
+encoder cases; no separately named HOL original. -/
+theorem reg_read (r : Nat) (s : AsmState 64) (ms : riscv_state)
+    (guard : asmRegOkExact r riscvConfig = true)
+    (rel : targetStateRel riscvTarget s ms) :
+    GPR (BitVec.ofNat 5 r) ms = readReg r s := by
+  have g : r < riscvConfig.regCount ∧ riscvConfig.avoidRegs.contains r = false := by
+    simpa [asmRegOkExact] using guard
+  have before := rel.2.2.2.1 r g
+  change ms.c_gpr ms.procID (BitVec.ofNat 5 r) = s.regs r at before
+  simpa [GPR, gpr, reg_nonzero r guard, readReg] using before
 
 /-- Flapjack signed-interval infrastructure: the nearer-to-zero word remains
 in a signed interval containing zero, for both original monotonic directions. -/

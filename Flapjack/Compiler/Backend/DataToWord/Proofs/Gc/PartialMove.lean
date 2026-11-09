@@ -18,41 +18,6 @@ private theorem partialClearLowBit {width : Nat} (value : BitVec width) :
 private theorem partialStarEmptyRight {α : Type} (p : (α → Prop) → Prop) : SetSep.star p SetSep.emp = p := by
   rw [SetSep.starComm, StackRemove.StackHeap.starEmptyLeft]
 
-private theorem partialShiftedForward_isForward {width : Nat} [NeZero width] (value : BitVec width) :
-    wordSemIsFwdPtr (.word (value <<< (2 : Nat))) = true := by
-  simp only [wordSemIsFwdPtr, decide_eq_true_eq]
-  apply BitVec.eq_of_getLsbD_eq
-  intro i hi
-  simp only [BitVec.getLsbD_and, BitVec.getLsbD_shiftLeft]
-  by_cases h : i < 2
-  · simp [h]
-  · have h' : 2 ≤ i := by omega
-    have pow : 2 ^ 2 ≤ 2 ^ i := Nat.pow_le_pow_right (by decide : 0 < (2 : Nat)) h'
-    have bit : (3 : Nat).testBit i = false := Nat.testBit_lt_two_pow (by omega)
-    simp [h, BitVec.getLsbD_ofNat, bit]
-
-private theorem partialUpdateAddr_data {width : Nat} [NeZero width] (conf : Config)
-    (index forwarded : Nat) (value : WordLocW width) :
-    updateAddr conf (BitVec.ofNat width forwarded) (getAddr conf index value) =
-      getAddr conf forwarded value := by
-  have shiftTwo : 2 ≤ shiftLength conf := by simp [shiftLength]; omega
-  have shiftEq : ((BitVec.ofNat width forwarded <<< (2 : Nat)) >>> (2 : Nat)) <<< shiftLength conf =
-      BitVec.ofNat width forwarded <<< shiftLength conf := by
-    apply BitVec.eq_of_getLsbD_eq
-    intro i hi
-    simp only [BitVec.getLsbD_shiftLeft, BitVec.getLsbD_ushiftRight]
-    by_cases h : i < shiftLength conf
-    · simp [h]
-    · have h1 : 2 + (i - shiftLength conf) < width := by omega
-      have h2 : i - shiftLength conf < width := by omega
-      have h3 : ¬2 + (i - shiftLength conf) < 2 := by omega
-      simp [h, h1, h2, h3]
-  calc
-    updateAddr conf (BitVec.ofNat width forwarded) (getAddr conf index value) =
-        updateAddr conf ((BitVec.ofNat width forwarded <<< (2 : Nat)) >>> (2 : Nat))
-          (getAddr conf index value) := by simp only [updateAddr, shiftEq]
-    _ = getAddr conf forwarded value := updateAddr_forward conf index forwarded value
-
 /-- Byte-scaled offsets preserve ordering within a heap whose byte length fits
 in a machine word. This is arithmetic used by the partial collector proof. -/
 theorem partialByteOffsets_order {width : Nat} [NeZero width] (a b limit : Nat)
@@ -312,7 +277,7 @@ theorem wordGenGcPartialMove_forward {width : Nat} [NeZero width] (conf : Config
     simpa only [BitVec.mul_comm] using address
   simp only [wordAddr, wordGenGcPartialMove, low', if_false, inWord] at wordRun
   simp only [addr', read.1, read.2,
-    partialShiftedForward_isForward, if_true, wordSemTheWord, Prod.mk.injEq] at wordRun
+    shiftedForward_isForward, if_true, wordSemTheWord, Prod.mk.injEq] at wordRun
   obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := wordRun
   refine ⟨xs, current, ?_, ?_, rfl, segment, rfl, rfl, length.symm, ?_, ?_⟩
   · simpa [h2Empty, wordHeap, partialStarEmptyRight] using separated
@@ -494,7 +459,7 @@ theorem wordGenGcPartialMove_copy {width : Nat} [NeZero width] (conf : Config)
   refine ⟨remaining, before ++ .forwardPointer state.a value len :: after, ?_, ?_, ?_, newSegment,
     ok, indexEq, remainingLen, ?_, ?_⟩
   · simpa [h2Empty] using copiedSep
-  · simp only [wordAddr, partialUpdateAddr_data]
+  · simp only [wordAddr, updateAddr_data]
   · rw [wholeEq]
     simp [heapLength, elLength, List.map_append, List.sum_append, Nat.add_assoc]
   · simp only [h2Empty, r4Empty, List.nil_append, heapLength, List.map_cons, List.map_nil,

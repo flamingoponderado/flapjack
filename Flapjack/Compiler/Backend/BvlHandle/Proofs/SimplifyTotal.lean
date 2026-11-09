@@ -1,21 +1,11 @@
 import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.HelpersTotal
+import Flapjack.Compiler.Backend.ListFoldTotal
 
 /-! Structural sufficiency for handler simplification. These results are
 Flapjack infrastructure, not HOL pass-correctness ports. -/
 namespace Flapjack.Compiler.Backend.BvlHandle
 open Bvl BvlToBvi
-
-private theorem member_budget_lt (xs : List Exp) (e : Exp) (h : e ∈ xs) :
-    expBudget e < listBudget xs := by
-  induction xs with
-  | nil => simp at h
-  | cons x xs ih =>
-    simp only [List.mem_cons] at h
-    simp only [listBudget]
-    rcases h with rfl | h
-    · omega
-    · have := ih h; omega
 
 private theorem foldRaise_succeeds (xs : List Exp) (fuel : Nat) (init : Bool) :
     ∃ result, xs.foldlM (fun found e => if found then pure true else canRaiseBounded fuel e) init = some result := by

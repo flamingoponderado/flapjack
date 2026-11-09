@@ -2484,6 +2484,47 @@ theorem evaluate_partialComplete_ordinary_entry {C F : Type} (s : BvlSem.State C
         evaluate_closure_entry (BvlSem.decClock (newArgs.length + 1) s) (newArgs ++ saved) fields 30
           (.codePtr (ptr + numStubs maxApp)) (.number (Int.ofNat (arity - 1))) _
 
+/-- Length and stub bookkeeping shared by the partial-application completion
+cases: the target argument groups have the source lengths and positivity, both
+are nonempty, and the completion stub is installed. Flapjack infrastructure;
+no separately named HOL original. -/
+private theorem partialAppEntryFacts {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
+    (f : HolFiniteMapExact Nat Nat) (arity : Nat)
+    (oldArgs newArgs : List ClosSem.Value) (oldTargets newTargets : List BvlSem.Value)
+    (states : stateRel f s t) (arityBound : arity ≤ s.maxApp)
+    (oldRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) oldArgs oldTargets)
+    (newRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) newArgs newTargets)
+    (oldNonempty : oldArgs ≠ []) (nonempty : newArgs ≠ [])
+    (length : newArgs.length + oldArgs.length = arity) :
+    oldTargets.length = oldArgs.length ∧ newTargets.length = newArgs.length ∧
+      0 < oldArgs.length ∧ 0 < newArgs.length ∧
+      newTargets.length + oldTargets.length = arity ∧
+      newTargets ≠ [] ∧ oldTargets ≠ [] ∧
+      sptLookup (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) t.code =
+        some (newTargets.length + 1,
+          generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) := by
+  have oldLength : oldTargets.length = oldArgs.length := oldRel.length_eq.symm
+  have newLength : newTargets.length = newArgs.length := newRel.length_eq.symm
+  have oldPositive : 0 < oldArgs.length := List.length_pos_iff.mpr oldNonempty
+  have newPositive : 0 < newArgs.length := List.length_pos_iff.mpr nonempty
+  have targetLength : newTargets.length + oldTargets.length = arity := by omega
+  have targetNewNonempty : newTargets ≠ [] := by
+    simp only [← List.length_pos_iff, newLength]; exact newPositive
+  have targetOldNonempty : oldTargets ≠ [] := by
+    simp only [← List.length_pos_iff, oldLength]; exact oldPositive
+  have totalBound : arity - 1 < s.maxApp := by omega
+  have prevBound : oldTargets.length - 1 < arity - 1 := by omega
+  have stubLookup :
+      sptLookup (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) t.code =
+        some (newTargets.length + 1,
+          generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) := by
+    have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (oldTargets.length - 1)
+      ⟨totalBound, prevBound⟩
+    have count : arity - 1 - (oldTargets.length - 1) + 1 = newTargets.length + 1 := by omega
+    simpa [count] using installed
+  exact ⟨oldLength, newLength, oldPositive, newPositive, targetLength, targetNewNonempty,
+    targetOldNonempty, stubLookup⟩
+
 /-- When the source has enough clock, completing an ordinary partial closure
 simulates its body using the target completion stub and closure entry. -/
 theorem evaluatePost_ordinary_partial_exact {C F : Type}
@@ -2509,20 +2550,10 @@ theorem evaluatePost_ordinary_partial_exact {C F : Type}
   have info : arity ≤ s.maxApp ∧ ClosProps.everyFnLocationSome [body] ∧ ClosProps.everyFnVarsSome [body] := by
     cases related with | closure bound _ locations vars _ _ _ => exact ⟨bound, locations, vars⟩
   obtain ⟨arityBound, locations, vars⟩ := info
-  have oldLength : oldTargets.length = oldArgs.length := oldRel.length_eq.symm
-  have newLength : newTargets.length = newArgs.length := newRel.length_eq.symm
-  have oldPositive : 0 < oldArgs.length := List.length_pos_iff.mpr oldNonempty
-  have newPositive : 0 < newArgs.length := List.length_pos_iff.mpr nonempty
-  have targetLength : newTargets.length + oldTargets.length = arity := by omega
-  have targetNewNonempty : newTargets ≠ [] := by simp only [← List.length_pos_iff, newLength]; exact newPositive
-  have targetOldNonempty : oldTargets ≠ [] := by simp only [← List.length_pos_iff, oldLength]; exact oldPositive
-  have totalBound : arity - 1 < s.maxApp := by omega
-  have prevBound : oldTargets.length - 1 < arity - 1 := by omega
-  have stubLookup : sptLookup (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) t.code =
-      some (newTargets.length + 1, generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) := by
-    have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (oldTargets.length - 1) ⟨totalBound, prevBound⟩
-    have count : arity - 1 - (oldTargets.length - 1) + 1 = newTargets.length + 1 := by omega
-    simpa [count] using installed
+  obtain ⟨oldLength, newLength, oldPositive, newPositive, targetLength, targetNewNonempty,
+    targetOldNonempty, stubLookup⟩ :=
+    partialAppEntryFacts s t f arity oldArgs newArgs oldTargets newTargets states arityBound
+      oldRel newRel oldNonempty nonempty length
   obtain ⟨aux, targetBody, finalAux, compiled, installed, sourceLookup, _⟩ :=
     evaluate_partialComplete_ordinary_entry t s.maxApp ptr arity _ captured fields newTargets oldTargets rest
       body original related envRel'.length_eq.symm targetNewNonempty targetOldNonempty targetLength stubLookup
@@ -2654,7 +2685,8 @@ theorem evaluateApp_ordinary_partial_exact_timeout {C F : Type}
   let start : BvlSem.State C F := { t with clock := s.clock }
   have stubLookup : sptLookup (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) start.code =
       some (newTargets.length + 1, generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) := by
-    have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (oldTargets.length - 1) ⟨totalBound, prevBound⟩
+    have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (oldTargets.length - 1)
+      ⟨totalBound, prevBound⟩
     have count : arity - 1 - (oldTargets.length - 1) + 1 = newTargets.length + 1 := by omega
     simpa [start, count] using installed
   have targetRun := evaluate_mkClCall_direct_env start newTargets rest 31
@@ -2813,20 +2845,10 @@ theorem evaluatePost_singletonRec_partial_exact {C F : Type}
     | singletonRec bound _ locations vars _ _ _ => exact ⟨bound, locations, vars⟩
     | mutualRec _ _ _ _ _ _ impossible _ _ _ _ => simp at impossible
   obtain ⟨arityBound, locations, vars⟩ := info
-  have oldLength : oldTargets.length = oldArgs.length := oldRel.length_eq.symm
-  have newLength : newTargets.length = newArgs.length := newRel.length_eq.symm
-  have oldPositive : 0 < oldArgs.length := List.length_pos_iff.mpr oldNonempty
-  have newPositive : 0 < newArgs.length := List.length_pos_iff.mpr nonempty
-  have targetLength : newTargets.length + oldTargets.length = arity := by omega
-  have targetNewNonempty : newTargets ≠ [] := by simp only [← List.length_pos_iff, newLength]; exact newPositive
-  have targetOldNonempty : oldTargets ≠ [] := by simp only [← List.length_pos_iff, oldLength]; exact oldPositive
-  have totalBound : arity - 1 < s.maxApp := by omega
-  have prevBound : oldTargets.length - 1 < arity - 1 := by omega
-  have stubLookup : sptLookup (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) t.code =
-      some (newTargets.length + 1, generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) := by
-    have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (oldTargets.length - 1) ⟨totalBound, prevBound⟩
-    have count : arity - 1 - (oldTargets.length - 1) + 1 = newTargets.length + 1 := by omega
-    simpa [count] using installed
+  obtain ⟨oldLength, newLength, oldPositive, newPositive, targetLength, targetNewNonempty,
+    targetOldNonempty, stubLookup⟩ :=
+    partialAppEntryFacts s t f arity oldArgs newArgs oldTargets newTargets states arityBound
+      oldRel newRel oldNonempty nonempty length
   obtain ⟨aux, targetBody, finalAux, compiled, installed, sourceLookup, _⟩ :=
     evaluate_partialComplete_singletonRec_entry t s.maxApp ptr arity _ captured fields newTargets oldTargets rest
       body original related envRel'.length_eq.symm targetNewNonempty targetOldNonempty targetLength stubLookup
@@ -2970,7 +2992,8 @@ theorem evaluateApp_singletonRec_partial_exact_timeout {C F : Type}
   let start : BvlSem.State C F := { t with clock := s.clock }
   have stubLookup : sptLookup (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) start.code =
       some (newTargets.length + 1, generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) := by
-    have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (oldTargets.length - 1) ⟨totalBound, prevBound⟩
+    have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (oldTargets.length - 1)
+      ⟨totalBound, prevBound⟩
     have count : arity - 1 - (oldTargets.length - 1) + 1 = newTargets.length + 1 := by omega
     simpa [start, count] using installed
   have targetRun := evaluate_mkClCall_direct_env start newTargets rest 31
@@ -3977,20 +4000,10 @@ theorem evaluatePost_mutualRec_partial_exact {C F : Type}
       [mkClCall (.var newTargets.length) ((List.range newTargets.length).map Bvl.Exp.var)] := by
   have arityBound : arity ≤ s.maxApp := (clRel_recclosure_arity related found).1
   have ⟨locations, vars⟩ := clRel_recclosure_annotations related found
-  have oldLength : oldTargets.length = oldArgs.length := oldRel.length_eq.symm
-  have newLength : newTargets.length = newArgs.length := newRel.length_eq.symm
-  have oldPositive : 0 < oldArgs.length := List.length_pos_iff.mpr oldNonempty
-  have newPositive : 0 < newArgs.length := List.length_pos_iff.mpr nonempty
-  have targetLength : newTargets.length + oldTargets.length = arity := by omega
-  have targetNewNonempty : newTargets ≠ [] := by simp only [← List.length_pos_iff, newLength]; exact newPositive
-  have targetOldNonempty : oldTargets ≠ [] := by simp only [← List.length_pos_iff, oldLength]; exact oldPositive
-  have totalBound : arity - 1 < s.maxApp := by omega
-  have prevBound : oldTargets.length - 1 < arity - 1 := by omega
-  have stubLookup : sptLookup (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) t.code =
-      some (newTargets.length + 1, generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) := by
-    have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (oldTargets.length - 1) ⟨totalBound, prevBound⟩
-    have count : arity - 1 - (oldTargets.length - 1) + 1 = newTargets.length + 1 := by omega
-    simpa [count] using installed
+  obtain ⟨oldLength, newLength, oldPositive, newPositive, targetLength, targetNewNonempty,
+    targetOldNonempty, stubLookup⟩ :=
+    partialAppEntryFacts s t f arity oldArgs newArgs oldTargets newTargets states arityBound
+      oldRel newRel oldNonempty nonempty length
   obtain ⟨address, shared, targets, aux, targetBody, finalAux, targetEq, stored, groupRel, compiled, installed, sourceLookup, _⟩ :=
     evaluate_partialComplete_mutualRec_entry t s.maxApp ptr index arity f captured fields newTargets oldTargets rest
       functions body original related envRel' many found targetNewNonempty targetOldNonempty targetLength stubLookup
@@ -4142,7 +4155,8 @@ theorem evaluateApp_mutualRec_partial_exact_timeout {C F : Type}
   let start : BvlSem.State C F := { t with clock := s.clock }
   have stubLookup : sptLookup (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) start.code =
       some (newTargets.length + 1, generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) := by
-    have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (oldTargets.length - 1) ⟨totalBound, prevBound⟩
+    have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (oldTargets.length - 1)
+      ⟨totalBound, prevBound⟩
     have count : arity - 1 - (oldTargets.length - 1) + 1 = newTargets.length + 1 := by omega
     simpa [start, count] using installed
   have targetRun := evaluate_mkClCall_direct_env start newTargets rest 31
@@ -4547,6 +4561,40 @@ theorem overApp_related_split {α β : Type} (r : α → β → Prop)
   have splitEq : source.length - (arity - saved) = n - total := by omega
   have ⟨takeRel, dropRel⟩ := forall₂_take_drop r source target related (n - total)
   exact ⟨splitEq, by simpa [splitEq] using takeRel, by simpa [splitEq] using dropRel⟩
+
+/-- Overapplication suffix facts shared by the partial-completion cases: the
+saved group has the source length and is nonempty, the dropped suffix groups
+are related, and both suffix groups have the remaining arity. Flapjack
+infrastructure; no separately named HOL original. -/
+private theorem overAppSuffixFacts {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
+    (f : HolFiniteMapExact Nat Nat) (arity n total : Nat)
+    (saved args : List ClosSem.Value) (oldTargets targetArgs : List BvlSem.Value)
+    (sourceSuffix : List ClosSem.Value) (targetSuffix : List BvlSem.Value)
+    (savedRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) saved oldTargets)
+    (argsRel : List.Forall₂ (vRel s.maxApp f t.refs t.code) args targetArgs)
+    (length : targetArgs.length = n + 1) (savedNonempty : saved ≠ [])
+    (savedBound : saved.length < arity) (storedArity : total = arity - saved.length - 1)
+    (over : arity < args.length + saved.length)
+    (sourceEq : sourceSuffix = args.drop (args.length - (arity - saved.length)))
+    (targetEq : targetSuffix = targetArgs.drop (n - total)) :
+    oldTargets.length = saved.length ∧ 0 < saved.length ∧
+      List.Forall₂ (vRel s.maxApp f t.refs t.code) sourceSuffix targetSuffix ∧
+      sourceSuffix.length = arity - saved.length ∧
+      targetSuffix.length = arity - saved.length := by
+  have savedLength : oldTargets.length = saved.length := savedRel.length_eq.symm
+  have savedPositive : 0 < saved.length := List.length_pos_iff.mpr savedNonempty
+  have ⟨_, _, suffixRel⟩ := overApp_related_split (vRel s.maxApp f t.refs t.code) args targetArgs
+    arity saved.length n total argsRel length savedBound storedArity over
+  have relatedSuffix : List.Forall₂ (vRel s.maxApp f t.refs t.code) sourceSuffix targetSuffix := by
+    simpa [sourceEq, targetEq] using suffixRel
+  have sourceLength : sourceSuffix.length = arity - saved.length := by
+    rw [sourceEq]
+    simp only [List.length_drop]
+    omega
+  have targetLength : targetSuffix.length = arity - saved.length := by
+    rw [← sourceLength]
+    exact relatedSuffix.length_eq.symm
+  exact ⟨savedLength, savedPositive, relatedSuffix, sourceLength, targetLength⟩
 
 /-- The generated closure call and generic overapplication stub execute the
 first saturated call, charging the outer call tick and the closure arity. -/
@@ -5461,19 +5509,9 @@ theorem evaluatePost_ordinary_partial_over_body {C F : Type}
   let targetSuffix := targetArgs.drop (n - total)
   have ⟨arityBound, positive⟩ : arity ≤ s.maxApp ∧ arity ≠ 0 := by
     cases closure with | closure bound positive _ _ _ _ _ => exact ⟨bound, positive⟩
-  have savedLength : oldTargets.length = saved.length := savedRel.length_eq.symm
-  have savedPositive : 0 < saved.length := List.length_pos_iff.mpr savedNonempty
-  have ⟨_, _, suffixRel⟩ := overApp_related_split (vRel s.maxApp f t.refs t.code) args targetArgs
-    arity saved.length n total argsRel length savedBound rfl over
-  have relatedSuffix : List.Forall₂ (vRel s.maxApp f t.refs t.code) sourceSuffix targetSuffix := by
-    simpa [sourceSuffix, targetSuffix] using suffixRel
-  have sourceLength : sourceSuffix.length = arity - saved.length := by
-    dsimp [sourceSuffix]
-    simp only [List.length_drop]
-    omega
-  have targetLength : targetSuffix.length = arity - saved.length := by
-    rw [← sourceLength]
-    exact relatedSuffix.length_eq.symm
+  obtain ⟨savedLength, savedPositive, relatedSuffix, sourceLength, targetLength⟩ :=
+    overAppSuffixFacts s t f arity n total saved args oldTargets targetArgs sourceSuffix
+      targetSuffix savedRel argsRel length savedNonempty savedBound rfl over rfl rfl
   have sourceNonempty : sourceSuffix ≠ [] := by
     intro empty
     simp [empty] at sourceLength
@@ -5894,19 +5932,9 @@ theorem evaluatePost_recclosure_partial_over_body {C F : Type}
   let sourceSuffix := args.drop (args.length - (arity - saved.length))
   let targetSuffix := targetArgs.drop (n - total)
   have ⟨arityBound, positive⟩ := clRel_recclosure_arity closure found
-  have savedLength : oldTargets.length = saved.length := savedRel.length_eq.symm
-  have savedPositive : 0 < saved.length := List.length_pos_iff.mpr savedNonempty
-  have ⟨_, _, suffixRel⟩ := overApp_related_split (vRel s.maxApp f t.refs t.code) args targetArgs
-    arity saved.length n total argsRel length savedBound rfl over
-  have relatedSuffix : List.Forall₂ (vRel s.maxApp f t.refs t.code) sourceSuffix targetSuffix := by
-    simpa [sourceSuffix, targetSuffix] using suffixRel
-  have sourceLength : sourceSuffix.length = arity - saved.length := by
-    dsimp [sourceSuffix]
-    simp only [List.length_drop]
-    omega
-  have targetLength : targetSuffix.length = arity - saved.length := by
-    rw [← sourceLength]
-    exact relatedSuffix.length_eq.symm
+  obtain ⟨savedLength, savedPositive, relatedSuffix, sourceLength, targetLength⟩ :=
+    overAppSuffixFacts s t f arity n total saved args oldTargets targetArgs sourceSuffix
+      targetSuffix savedRel argsRel length savedNonempty savedBound rfl over rfl rfl
   have sourceNonempty : sourceSuffix ≠ [] := by
     intro empty
     simp [empty] at sourceLength
@@ -6487,20 +6515,10 @@ theorem evaluatePost_ordinary_partial_exact_below {C F : Type}
   have info : arity ≤ s.maxApp ∧ ClosProps.everyFnLocationSome [body] ∧ ClosProps.everyFnVarsSome [body] := by
     cases related with | closure bound _ locations vars _ _ _ => exact ⟨bound, locations, vars⟩
   obtain ⟨arityBound, locations, vars⟩ := info
-  have oldLength : oldTargets.length = oldArgs.length := oldRel.length_eq.symm
-  have newLength : newTargets.length = newArgs.length := newRel.length_eq.symm
-  have oldPositive : 0 < oldArgs.length := List.length_pos_iff.mpr oldNonempty
-  have newPositive : 0 < newArgs.length := List.length_pos_iff.mpr nonempty
-  have targetLength : newTargets.length + oldTargets.length = arity := by omega
-  have targetNewNonempty : newTargets ≠ [] := by simp only [← List.length_pos_iff, newLength]; exact newPositive
-  have targetOldNonempty : oldTargets ≠ [] := by simp only [← List.length_pos_iff, oldLength]; exact oldPositive
-  have totalBound : arity - 1 < s.maxApp := by omega
-  have prevBound : oldTargets.length - 1 < arity - 1 := by omega
-  have stubLookup : sptLookup (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) t.code =
-      some (newTargets.length + 1, generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) := by
-    have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (oldTargets.length - 1) ⟨totalBound, prevBound⟩
-    have count : arity - 1 - (oldTargets.length - 1) + 1 = newTargets.length + 1 := by omega
-    simpa [count] using installed
+  obtain ⟨oldLength, newLength, oldPositive, newPositive, targetLength, targetNewNonempty,
+    targetOldNonempty, stubLookup⟩ :=
+    partialAppEntryFacts s t f arity oldArgs newArgs oldTargets newTargets states arityBound
+      oldRel newRel oldNonempty nonempty length
   obtain ⟨aux, targetBody, finalAux, compiled, installed, sourceLookup, _⟩ :=
     evaluate_partialComplete_ordinary_entry t s.maxApp ptr arity _ captured fields newTargets oldTargets rest
       body original related envRel'.length_eq.symm targetNewNonempty targetOldNonempty targetLength stubLookup
@@ -6644,19 +6662,9 @@ theorem evaluatePost_ordinary_partial_over_body_below {C F : Type}
   let targetSuffix := targetArgs.drop (n - total)
   have ⟨arityBound, positive⟩ : arity ≤ s.maxApp ∧ arity ≠ 0 := by
     cases closure with | closure bound positive _ _ _ _ _ => exact ⟨bound, positive⟩
-  have savedLength : oldTargets.length = saved.length := savedRel.length_eq.symm
-  have savedPositive : 0 < saved.length := List.length_pos_iff.mpr savedNonempty
-  have ⟨_, _, suffixRel⟩ := overApp_related_split (vRel s.maxApp f t.refs t.code) args targetArgs
-    arity saved.length n total argsRel length savedBound rfl over
-  have relatedSuffix : List.Forall₂ (vRel s.maxApp f t.refs t.code) sourceSuffix targetSuffix := by
-    simpa [sourceSuffix, targetSuffix] using suffixRel
-  have sourceLength : sourceSuffix.length = arity - saved.length := by
-    dsimp [sourceSuffix]
-    simp only [List.length_drop]
-    omega
-  have targetLength : targetSuffix.length = arity - saved.length := by
-    rw [← sourceLength]
-    exact relatedSuffix.length_eq.symm
+  obtain ⟨savedLength, savedPositive, relatedSuffix, sourceLength, targetLength⟩ :=
+    overAppSuffixFacts s t f arity n total saved args oldTargets targetArgs sourceSuffix
+      targetSuffix savedRel argsRel length savedNonempty savedBound rfl over rfl rfl
   have sourceNonempty : sourceSuffix ≠ [] := by
     intro empty
     simp [empty] at sourceLength
@@ -7261,20 +7269,10 @@ theorem evaluatePost_singletonRec_partial_exact_below {C F : Type}
     | singletonRec bound _ locations vars _ _ _ => exact ⟨bound, locations, vars⟩
     | mutualRec _ _ _ _ _ _ impossible _ _ _ _ => simp at impossible
   obtain ⟨arityBound, locations, vars⟩ := info
-  have oldLength : oldTargets.length = oldArgs.length := oldRel.length_eq.symm
-  have newLength : newTargets.length = newArgs.length := newRel.length_eq.symm
-  have oldPositive : 0 < oldArgs.length := List.length_pos_iff.mpr oldNonempty
-  have newPositive : 0 < newArgs.length := List.length_pos_iff.mpr nonempty
-  have targetLength : newTargets.length + oldTargets.length = arity := by omega
-  have targetNewNonempty : newTargets ≠ [] := by simp only [← List.length_pos_iff, newLength]; exact newPositive
-  have targetOldNonempty : oldTargets ≠ [] := by simp only [← List.length_pos_iff, oldLength]; exact oldPositive
-  have totalBound : arity - 1 < s.maxApp := by omega
-  have prevBound : oldTargets.length - 1 < arity - 1 := by omega
-  have stubLookup : sptLookup (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) t.code =
-      some (newTargets.length + 1, generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) := by
-    have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (oldTargets.length - 1) ⟨totalBound, prevBound⟩
-    have count : arity - 1 - (oldTargets.length - 1) + 1 = newTargets.length + 1 := by omega
-    simpa [count] using installed
+  obtain ⟨oldLength, newLength, oldPositive, newPositive, targetLength, targetNewNonempty,
+    targetOldNonempty, stubLookup⟩ :=
+    partialAppEntryFacts s t f arity oldArgs newArgs oldTargets newTargets states arityBound
+      oldRel newRel oldNonempty nonempty length
   obtain ⟨aux, targetBody, finalAux, compiled, installed, sourceLookup, _⟩ :=
     evaluate_partialComplete_singletonRec_entry t s.maxApp ptr arity _ captured fields newTargets oldTargets rest
       body original related envRel'.length_eq.symm targetNewNonempty targetOldNonempty targetLength stubLookup
@@ -7427,20 +7425,10 @@ theorem evaluatePost_mutualRec_partial_exact_below {C F : Type}
       [mkClCall (.var newTargets.length) ((List.range newTargets.length).map Bvl.Exp.var)] := by
   have arityBound : arity ≤ s.maxApp := (clRel_recclosure_arity related found).1
   have ⟨locations, vars⟩ := clRel_recclosure_annotations related found
-  have oldLength : oldTargets.length = oldArgs.length := oldRel.length_eq.symm
-  have newLength : newTargets.length = newArgs.length := newRel.length_eq.symm
-  have oldPositive : 0 < oldArgs.length := List.length_pos_iff.mpr oldNonempty
-  have newPositive : 0 < newArgs.length := List.length_pos_iff.mpr nonempty
-  have targetLength : newTargets.length + oldTargets.length = arity := by omega
-  have targetNewNonempty : newTargets ≠ [] := by simp only [← List.length_pos_iff, newLength]; exact newPositive
-  have targetOldNonempty : oldTargets ≠ [] := by simp only [← List.length_pos_iff, oldLength]; exact oldPositive
-  have totalBound : arity - 1 < s.maxApp := by omega
-  have prevBound : oldTargets.length - 1 < arity - 1 := by omega
-  have stubLookup : sptLookup (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) t.code =
-      some (newTargets.length + 1, generatePartialAppClosureFn (arity - 1) (oldTargets.length - 1)) := by
-    have installed := states.2.2.2.2.2.2.2.2.2.1 (arity - 1) (oldTargets.length - 1) ⟨totalBound, prevBound⟩
-    have count : arity - 1 - (oldTargets.length - 1) + 1 = newTargets.length + 1 := by omega
-    simpa [count] using installed
+  obtain ⟨oldLength, newLength, oldPositive, newPositive, targetLength, targetNewNonempty,
+    targetOldNonempty, stubLookup⟩ :=
+    partialAppEntryFacts s t f arity oldArgs newArgs oldTargets newTargets states arityBound
+      oldRel newRel oldNonempty nonempty length
   obtain ⟨address, shared, targets, aux, targetBody, finalAux, targetEq, stored, groupRel, compiled, installed, sourceLookup, _⟩ :=
     evaluate_partialComplete_mutualRec_entry t s.maxApp ptr index arity f captured fields newTargets oldTargets rest
       functions body original related envRel' many found targetNewNonempty targetOldNonempty targetLength stubLookup
@@ -7878,19 +7866,9 @@ theorem evaluatePost_recclosure_partial_over_body_below {C F : Type}
   let sourceSuffix := args.drop (args.length - (arity - saved.length))
   let targetSuffix := targetArgs.drop (n - total)
   have ⟨arityBound, positive⟩ := clRel_recclosure_arity closure found
-  have savedLength : oldTargets.length = saved.length := savedRel.length_eq.symm
-  have savedPositive : 0 < saved.length := List.length_pos_iff.mpr savedNonempty
-  have ⟨_, _, suffixRel⟩ := overApp_related_split (vRel s.maxApp f t.refs t.code) args targetArgs
-    arity saved.length n total argsRel length savedBound rfl over
-  have relatedSuffix : List.Forall₂ (vRel s.maxApp f t.refs t.code) sourceSuffix targetSuffix := by
-    simpa [sourceSuffix, targetSuffix] using suffixRel
-  have sourceLength : sourceSuffix.length = arity - saved.length := by
-    dsimp [sourceSuffix]
-    simp only [List.length_drop]
-    omega
-  have targetLength : targetSuffix.length = arity - saved.length := by
-    rw [← sourceLength]
-    exact relatedSuffix.length_eq.symm
+  obtain ⟨savedLength, savedPositive, relatedSuffix, sourceLength, targetLength⟩ :=
+    overAppSuffixFacts s t f arity n total saved args oldTargets targetArgs sourceSuffix
+      targetSuffix savedRel argsRel length savedNonempty savedBound rfl over rfl rfl
   have sourceNonempty : sourceSuffix ≠ [] := by
     intro empty
     simp [empty] at sourceLength

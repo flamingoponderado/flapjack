@@ -132,27 +132,6 @@ theorem ofString_injective_on_ranged_names_bridge {left right : String}
     at hdecoded
   exact hdecoded
 
-theorem compileParamVars_entries_nameRanged_bridge
-    (params : List (VarName × Shape)) (offset : Nat)
-    (hparams : ∀ p ∈ params, Flapjack.Pancake.PanLang.NameRanged p.1) :
-    ∀ entry ∈ (compileParamVars params offset).1,
-      Flapjack.Pancake.PanLang.NameRanged entry.1 := by
-  induction params generalizing offset with
-  | nil => simp [compileParamVars]
-  | cons parameter params ih =>
-      obtain ⟨name, shape⟩ := parameter
-      have hname := hparams (name, shape) (by simp)
-      have htail : ∀ p ∈ params, Flapjack.Pancake.PanLang.NameRanged p.1 := by
-        intro p hp
-        exact hparams p (by simp [hp])
-      simp only [compileParamVars]
-      intro entry hentry
-      simp only [List.mem_cons] at hentry
-      rcases hentry with hhead | htailMem
-      · cases hhead
-        exact hname
-      · exact ih (offset + Shape.shapeSize shape) htail entry htailMem
-
 theorem fupdateList_ofString_bridge {β γ : Type}
     (decode : β → γ) (entries : List (String × β))
     (hranged : ∀ entry ∈ entries, Flapjack.Pancake.PanLang.NameRanged entry.1)
@@ -299,7 +278,7 @@ theorem panToCrepMakeVmapHOLExactOfProductionParams_bridge
       Flapjack.Pancake.PanLang.shapeToHOL shape)
   have hranged : ∀ entry ∈ (compileParamVars params 0).1,
       Flapjack.Pancake.PanLang.NameRanged entry.1 :=
-    compileParamVars_entries_nameRanged_bridge params 0 (fun p hp => (hparams p hp).1)
+    compileParamVars_entries_nameRanged params 0 (fun p hp => (hparams p hp).1)
   have hentries :
       ((compileParamVars params 0).1.map fun entry =>
         (Flapjack.Basis.Pure.MlString.ofString entry.1,

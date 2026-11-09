@@ -245,17 +245,6 @@ private theorem cutState_ioEvents_eq {width : Nat} [NeZero width]
     cases h
     rfl
 
-private theorem memStore_ioEvents_eq {width : Nat} [NeZero width] {C F : Type}
-    (address : BitVec width) (value : WordLocW width)
-    (state : WordSemStateFiniteExact width C F) :
-    (memStore address value state).map (fun next => next.ffi.ioEvents) =
-      (memStore address value state).map (fun _ => state.ffi.ioEvents) := by
-  unfold memStore
-  split <;> rfl
-
-/-- Flapjack-specific projection lemma: successful exact instructions preserve
-    the FFI field. This supplies the Inst leaf of the event-prefix induction;
-    it is not a separate HOL declaration port. -/
 private theorem inst_ffi_of_some {width : Nat} [NeZero width] {C F : Type}
     (i : WordLangInst (BitVec width)) (state next : WordSemStateFiniteExact width C F)
     (h : inst i state = some next) : next.ffi = state.ffi := by

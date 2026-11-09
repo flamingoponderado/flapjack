@@ -12,9 +12,10 @@ Call hypotheses to the exact tagged wrapper internally. Its callee clock is
 strictly decremented; its matching handler clock is bounded by the callee
 poststate clock. The public theorem has no additional induction hypothesis.
 
-The untagged equations `callGuard_args_eq`, `callGuard_lookup_eq` and
-`callGuard_nodup_iff` in `EvaluateLocals/Assembly.lean` relate the normalized
-argument, lookup and nodup guards to the literal faithful `evaluate_ind` guards.
+The untagged equations `callGuard_args_eq` and `callGuard_nodup_iff` in
+`EvaluateLocals/Assembly.lean` relate the normalized argument and nodup guards to
+the literal faithful `evaluate_ind` guards; the code lookup is the shared
+`lookupCodeFinite_eq_HOLFinite` of `CrepProps`.
 -/
 
 namespace Flapjack

@@ -31,23 +31,6 @@ private theorem getVarImmTransport {width : Nat} [NeZero width]
   | imm word =>
     simpa only [WordSemStateFiniteExact.getVarImm, renameConditionalImm] using success
 
-/-- Flapjack proof factoring of the native Seq clause after the original
-fix_clock_evaluate theorem discharges clock normalization. This has no
-independent HOL declaration; the full semantic Seq case uses this equation
-without assuming a target execution or successful first result. -/
-private theorem evaluateSeqNative {width : Nat} [NeZero width] {C F : Type}
-    (first second : WordLangProgHOL (BitVec width))
-    (state : WordSemStateFiniteExact width C F) :
-    WordSemStateFiniteExact.evaluate (.seq first second) state =
-      match WordSemStateFiniteExact.evaluate first state with
-      | (none, after) => WordSemStateFiniteExact.evaluate second after
-      | (some result, after) => (some result, after) := by
-  simp only [WordSemStateFiniteExact.evaluate,
-    WordSemStateFiniteExact.fix_clock_evaluate]
-  cases WordSemStateFiniteExact.evaluate first state with
-  | mk result after => cases result <;> rfl
-
-
 /-- Flapjack-only factoring of a chosen If branch followed by native
 reconciliation. It is an internal conclusion, not an added premise of the
 public original case, and has no independent HOL declaration. -/

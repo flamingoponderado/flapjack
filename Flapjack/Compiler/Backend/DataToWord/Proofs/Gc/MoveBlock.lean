@@ -48,7 +48,7 @@ private theorem starMono {α : Type} {p p' q q' : (α → Prop) → Prop}
 private theorem starEmptyRight {α : Type} (p : (α → Prop) → Prop) : SetSep.star p SetSep.emp = p := by
   rw [SetSep.starComm, StackRemove.StackHeap.starEmptyLeft]
 
-private theorem updateAddr_data {width : Nat} [NeZero width] (conf : Config)
+theorem updateAddr_data {width : Nat} [NeZero width] (conf : Config)
     (index forwarded : Nat) (value : WordLocW width) :
     updateAddr conf (BitVec.ofNat width forwarded) (getAddr conf index value) =
       getAddr conf forwarded value := by

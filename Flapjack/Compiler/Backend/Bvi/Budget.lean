@@ -25,4 +25,17 @@ termination_by xs => sizeOf xs
 decreasing_by all_goals simp_wf <;> omega
 end
 
+/-- Flapjack infrastructure: an element's budget is below the list budget.
+Shared by the BVI passes; no separately named HOL original. -/
+theorem member_budget_lt (xs : List Bvi.Exp) (e : Bvi.Exp) (h : e ∈ xs) :
+    expBudget e < listBudget xs := by
+  induction xs with
+  | nil => simp at h
+  | cons x xs ih =>
+    simp only [List.mem_cons] at h
+    simp only [listBudget]
+    rcases h with rfl | h
+    · omega
+    · have := ih h; omega
+
 end Flapjack.Compiler.Backend.Bvi

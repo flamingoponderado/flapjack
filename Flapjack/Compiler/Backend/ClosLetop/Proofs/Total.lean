@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosLetop
 import Flapjack.Compiler.Backend.ClosLang.Proofs.Budget
+import Flapjack.Misc.Option.MapM
 
 /-! Structural sufficiency for closure let-operation cleanup. These results are
 Flapjack infrastructure, not HOL pass-correctness ports. -/

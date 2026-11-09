@@ -1784,7 +1784,7 @@ private theorem mapM_lookup_updateListEq_crep {β : Type}
     funext key
     simp only [HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL_eq_FUPDATE_LIST, FLOOKUP]
   rw [hfun]
-  exact optMmapSomeEqZipFlookup xs m.lookup ys hnodup hlen
+  exact opt_mmap_some_eq_zip_flookup xs m.lookup ys hnodup hlen
 
 /-- Exact port of HOL `crepProps$evaluate_seq_stores_mem_state_rel`
     (`crepPropsScript.sml:498-515`): `!es vs ad a s res t addr m.

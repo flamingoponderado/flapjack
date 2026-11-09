@@ -1736,13 +1736,6 @@ theorem doApp_op_rel_fromList {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag 
                 change count ≠ (fields.length : Int) at countOk
                 simp [countOk] at run
 
-private theorem related_append (f : HolFiniteMapExact Nat Nat) {xs ys xs' ys' : List Value}
-    (first : List.Forall₂ (valueRel f) xs ys) (second : List.Forall₂ (valueRel f) xs' ys') :
-    List.Forall₂ (valueRel f) (xs ++ xs') (ys ++ ys') := by
-  induction first with
-  | nil => exact second
-  | cons head tail ih => exact .cons head ih
-
 /-- Appending related list values produces related lists.
 
 Intended HOL counterpart, pending statement and finite-map carrier source review.
@@ -1786,7 +1779,8 @@ theorem doApp_op_rel_listAppend {C F : Type} (f : HolFiniteMapExact Nat Nat)
                   BviSem.fromBvl_toBvl, decodedFirst, decodedSecond] at run
                 obtain ⟨rfl, rfl⟩ := run
                 refine ⟨f, listToValue (targetFieldsFirst ++ targetFieldsSecond), target, ?_,
-                  listToValue_rel f _ _ (related_append f firstFieldsRel secondFieldsRel), statesRelated, ?_,
+                  listToValue_rel f _ _
+                    (List.rel_append firstFieldsRel secondFieldsRel), statesRelated, ?_,
                   onlyFresh_refl f target.refs, holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
                 · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
                     BviSem.fromBvl_toBvl, targetDecodedFirst, targetDecodedSecond]
@@ -2240,7 +2234,8 @@ theorem doApp_op_rel_consExtend {C F : Type} (f : HolFiniteMapExact Nat Nat) (ta
                       have fieldsRelated : List.Forall₂ (valueRel f)
                           (initial ++ (fields.drop lower.toNat).take len.toNat)
                           (targetInitial ++ (targetFields.drop lower.toNat).take len.toNat) :=
-                        related_append f initialRel (List.forall₂_take _ (List.forall₂_drop _ fieldsRel))
+                        List.rel_append initialRel
+                          (List.forall₂_take _ (List.forall₂_drop _ fieldsRel))
                       refine ⟨f, .block tag _, target, ?_, .block _ _ _ fieldsRelated, statesRelated, ?_,
                         onlyFresh_refl f target.refs, holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
                       · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,

@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.RegAlloc.ProductionPrefreeze
+import Flapjack.Compiler.Backend.RegAlloc.ProductionLookupFirst
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc Translator.Monadic.MonadBase
@@ -8,18 +9,6 @@ costs. This is actual/native carrier infrastructure, not a HOL declaration. -/
 def ProductionCostRel (native : Spt Nat) (production : CakeNodeMap Nat) : Prop :=
   ∀ key, production.get key = sptLookup key native
 
-private theorem costLookup_first (key : Nat) (entries : NatInfoMap Nat) :
-    lookupNatInfo key entries = sptAListLookup key entries := by
-  induction entries with
-  | nil => rfl
-  | cons entry rest ih =>
-    obtain ⟨other, value⟩ := entry
-    simp only [lookupNatInfo, sptAListLookup, Bool.beq_eq_decide_eq]
-    by_cases equal : key = other
-    · subst other
-      simp
-    · simp [equal, Ne.symm equal, ih]
-
 /-- The executed spill-cost embedding represents the native tree built from
 the same associations, unconditionally. First bindings win at duplicate keys;
 keys outside the dense allocation remain observable. This constructs the
@@ -28,7 +17,7 @@ theorem cakeSpillCostMap_production (dimension : Nat) (entries : NatInfoMap Nat)
     ProductionCostRel (sptFromAList entries) (cakeSpillCostMap dimension entries) := by
   intro key
   rw [cakeSpillCostMap, CakeNodeMap.get_ofNatInfoMap, sptLookup_sptFromAList]
-  exact costLookup_first key entries
+  exact lookup_first key entries
 
 /-- Actual maximum-degree selection preserves the native result pair and
 unchanged state, including skipped candidates, ties, and replaced candidates.

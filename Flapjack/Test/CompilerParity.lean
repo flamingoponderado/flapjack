@@ -7,6 +7,8 @@ import Flapjack.Test.DataToWordWordMemoryEqualityParity
 import Flapjack.Test.DataToWordMultiwordCompareParity
 import Flapjack.Test.CakeProgramSemanticsParity
 import Flapjack.Test.BackendConfigDecidableEq
+import Flapjack.Test.BackendFailureDiagnostic
+import Flapjack.Test.WordStackGuard
 import Flapjack.Test.RiscVBackendConfigExecutable
 import Flapjack.Test.Mips32Encoding
 import Flapjack.Test.Arm8Parity
@@ -1040,6 +1042,7 @@ import Flapjack.Test.PanSemMemByteAssemblyParity
 import Flapjack.Test.PanSemMemLoad32AltParity
 import Flapjack.Test.PanSemMemStore32AltParity
 import Flapjack.Test.PanSemCallErrorExactParity
+import Flapjack.Test.PanPayloadSizeBridgeParity
 import Flapjack.Test.PanSemDecErrorExactParity
 import Flapjack.Test.PanSemPrimitiveErrorExactParity
 import Flapjack.Test.PanSemAssignErrorExactParity
@@ -1533,6 +1536,7 @@ Flapjack.Test.PanSemReturnRaiseMemoryParity.runChecks,
   Flapjack.Test.PanSemMemLoad32AltParity.runChecks,
 Flapjack.Test.PanSemMemStore32AltParity.runChecks,
 Flapjack.Test.PanSemCallErrorExactParity.runChecks,
+Flapjack.Test.PanPayloadSizeBridgeParity.runChecks,
 Flapjack.Test.PanSemDecErrorExactParity.runChecks,
 Flapjack.Test.PanSemPrimitiveErrorExactParity.runChecks,
 Flapjack.Test.PanSemAssignErrorExactParity.runChecks,

@@ -13,8 +13,9 @@ and While premises are discharged internally. No public induction hypothesis rem
 
 See `EvaluateLocals/Assembly.lean` ("Induction principle and guard spellings")
 for the equivalent well-founded induction underlying this assembly, and for the equations (`callGuard_args_eq`,
-`callGuard_lookup_eq`, `callGuard_nodup_iff`) relating the Call handler
-premise's guards to `evaluate_ind`'s.
+`callGuard_nodup_iff`) relating the Call handler premise's argument and nodup
+guards to `evaluate_ind`'s; the code lookup is the shared
+`lookupCodeFinite_eq_HOLFinite` of `CrepProps`.
 -/
 
 namespace Flapjack

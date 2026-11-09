@@ -10,7 +10,7 @@ namespace Flapjack.Compiler.Backend.WordAlloc
 fix_clock_evaluate theorem discharges clock normalization. This has no
 independent HOL declaration; the full semantic Seq case uses this equation
 without assuming a target execution or successful first result. -/
-private theorem evaluateSeqNative {width : Nat} [NeZero width] {C F : Type}
+theorem evaluateSeqNative {width : Nat} [NeZero width] {C F : Type}
     (first second : WordLangProgHOL (BitVec width))
     (state : WordSemStateFiniteExact width C F) :
     WordSemStateFiniteExact.evaluate (.seq first second) state =
