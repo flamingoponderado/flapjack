@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LinearScan.ProductionState
+module
+
+public import Flapjack.Compiler.Backend.LinearScan.ProductionState
+
+@[expose] public section
 
 /-!
 Array-backed interval construction for the linear-scan allocator. These

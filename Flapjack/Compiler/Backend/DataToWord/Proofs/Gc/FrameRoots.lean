@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeSoundness
-import Flapjack.Misc.Sptree.ToList
-import Flapjack.Misc.Sptree.ToAList
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeSoundness
+public import Flapjack.Misc.Sptree.ToList
+public import Flapjack.Misc.Sptree.ToAList
+
+@[expose] public section
 
 /-! Relating paired stack-frame roots to source environment traversal. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

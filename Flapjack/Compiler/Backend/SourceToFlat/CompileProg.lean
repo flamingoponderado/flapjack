@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
-import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
+public import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
+
+@[expose] public section
 
 /-! Program and incremental compilation before flat elimination and pattern compilation.
 These definitions do not yet constitute the complete `source_to_flat$compile` pass. -/

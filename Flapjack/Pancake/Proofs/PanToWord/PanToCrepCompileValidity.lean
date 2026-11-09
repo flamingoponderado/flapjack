@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanToWord.PanToCrepCompileExpValidity
-import Flapjack.Pancake.Proofs.PanToWord.LoadGlobalsValidity
+module
+
+public import Flapjack.Pancake.Proofs.PanToWord.PanToCrepCompileExpValidity
+public import Flapjack.Pancake.Proofs.PanToWord.LoadGlobalsValidity
+
+@[expose] public section
 namespace Flapjack.PanToCrepCompileValidity
 open Pancake.PanLang
 /-- Internal membership rendering of the source expression-list guard; no separate HOL declaration. -/

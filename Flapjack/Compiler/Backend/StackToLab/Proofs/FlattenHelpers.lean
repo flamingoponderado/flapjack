@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.Labels
-import Flapjack.Compiler.Backend.Semantics.StackSem.Control
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
-import Flapjack.Compiler.Backend.StackToLab.Proofs.Prelude
-import Flapjack.Compiler.Backend.LabSem.Evaluate
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.Labels
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.Prelude
+public import Flapjack.Compiler.Backend.LabSem.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+
+@[expose] public section
 
 /-! Flatten helper lemmas and result views of `stack_to_labProofScript.sml`
 (lines 890-1206), used by `flatten_correct`. -/

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRel
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadContinuations
-import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
-import Flapjack.Misc.Sptree.Subspt
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRel
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadContinuations
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
+public import Flapjack.Misc.Sptree.Subspt
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.LocationLabels
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

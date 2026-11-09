@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateIf
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateIf
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
+
+@[expose] public section
 
 /-! Boolean block primitives in the closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

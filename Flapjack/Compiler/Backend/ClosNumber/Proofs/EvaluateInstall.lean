@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.Install
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.EvaluateCases
-import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
+module
+
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.Install
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.EvaluateCases
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
+
+@[expose] public section
 
 /-! Dynamic installation in the closure-numbering evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.ClosNumber

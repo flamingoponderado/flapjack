@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+module
+
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

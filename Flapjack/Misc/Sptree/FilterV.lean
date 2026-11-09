@@ -1,5 +1,9 @@
-import Flapjack.Misc.Sptree
-import Flapjack.Misc.Sptree.Wf
+module
+
+public import Flapjack.Misc.Sptree
+public import Flapjack.Misc.Sptree.Wf
+
+@[expose] public section
 
 namespace Flapjack
 

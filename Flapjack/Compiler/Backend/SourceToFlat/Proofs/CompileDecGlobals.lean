@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileGlobals
-import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileGlobals
+public import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
+
+@[expose] public section
 
 /-! Declaration-level global-initialization invariants for source-to-flat. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

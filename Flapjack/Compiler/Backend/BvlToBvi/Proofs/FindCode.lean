@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileHandle
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileHandle
+
+@[expose] public section
 
 /-! Code lookup correspondence for BVL-to-BVI calls. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

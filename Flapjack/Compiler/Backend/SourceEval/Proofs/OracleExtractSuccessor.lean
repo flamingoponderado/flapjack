@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleExtractInitial
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleExtractInitial
+
+@[expose] public section
 
 /-! Consecutive extracted compiler events. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

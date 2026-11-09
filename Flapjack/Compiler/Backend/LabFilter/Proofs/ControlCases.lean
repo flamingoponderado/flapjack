@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabFilter.Proofs.InstructionCases
+module
+
+public import Flapjack.Compiler.Backend.LabFilter.Proofs.InstructionCases
+
+@[expose] public section
 
 /-! Complete native control-case family of original filter_correct669:
 Jump, JumpReg, LocValue, JumpCmp and Call, including all error paths.

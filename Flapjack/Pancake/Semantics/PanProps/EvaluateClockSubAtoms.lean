@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
-import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockEq
-import Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+public import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockEq
+public import Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
+
+@[expose] public section
 
 /-!
 # panProps `evaluate_clock_sub`: non-recursive atom cases

@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialSplit
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Generational
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PointerAddress
-import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveForward
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveBlock
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialSplit
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Generational
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PointerAddress
+public import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveForward
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveBlock
+
+@[expose] public section
 
 /-! Partial generational collector root-move simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

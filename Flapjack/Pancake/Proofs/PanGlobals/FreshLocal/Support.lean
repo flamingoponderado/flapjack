@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals
-import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals
+public import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+
+@[expose] public section
 
 /-!
 # Shared finite-map and expression helpers for the `evaluate_fresh_local` cases

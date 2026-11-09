@@ -1,10 +1,14 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.MkGraphCheckClashTree
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoAlloc1Success
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.AtempAssignment
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.StempAssignment
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.ColourExtraction
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.MkBij
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.MkGraphCheckClashTree
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoAlloc1Success
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.AtempAssignment
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.StempAssignment
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.ColourExtraction
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.MkBij
+
+@[expose] public section
 
 /-!
 # reg_allocProof: correctness of `do_reg_alloc`

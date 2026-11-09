@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect.Simple
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect.Simple
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
+
+@[expose] public section
 
 /-!
 # `word_cseProof` `comp_correct`: the control-flow cases

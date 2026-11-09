@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.EncodeFormats
+module
+
+public import Flapjack.RiscV.L3.Defs.EncodeFormats
+
+@[expose] public section
 
 /-! Whole original native Encode over the accepted complete instruction AST.
 No opcode subset or successful-decode premise is imposed. UnknownInstruction

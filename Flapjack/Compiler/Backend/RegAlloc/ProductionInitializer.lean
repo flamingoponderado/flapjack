@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionInitDomain
-import Flapjack.Compiler.Backend.RegAlloc.ProductionInitialSeed
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.CliqueSuccess
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionInitDomain
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionInitialSeed
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.CliqueSuccess
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc

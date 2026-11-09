@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.HandleOk
-import Flapjack.Compiler.Backend.BvlToBvi.Config
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.HandleOk
+public import Flapjack.Compiler.Backend.BvlToBvi.Config
+
+@[expose] public section
 
 /-! Code-name and oracle invariants for the BVL-to-BVI state relation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
-import Flapjack.Misc.ShiftSeq
-import Flapjack.Misc.Option
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
+public import Flapjack.Misc.ShiftSeq
+public import Flapjack.Misc.Option
+
+@[expose] public section
 
 /-! Clock and dynamic-compilation helpers for the flat evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatSem

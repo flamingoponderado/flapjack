@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
-import Flapjack.Compiler.Backend.BackendCommon.ClosTags
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+public import Flapjack.Compiler.Backend.BackendCommon.ClosTags
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Constant flattening and operator translation for closure conversion. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

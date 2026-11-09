@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundConstructor
-import Flapjack.NamespaceProps
-import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundConstructor
+public import Flapjack.NamespaceProps
+public import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
+
+@[expose] public section
 
 /-! Growing expression simulation infrastructure for related local environments. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

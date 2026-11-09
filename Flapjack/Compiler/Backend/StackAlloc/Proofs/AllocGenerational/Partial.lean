@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcGenerational
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocSimple
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveRootsBitmaps
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveRefList
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveData
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.SetNewTrigger
-import Flapjack.FiniteMap.MapKeys
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcGenerational
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocSimple
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveRootsBitmaps
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveRefList
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveData
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.SetNewTrigger
+public import Flapjack.FiniteMap.MapKeys
+
+@[expose] public section
 
 /-!
 # Generational allocation: partial collector case

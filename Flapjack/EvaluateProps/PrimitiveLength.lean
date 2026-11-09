@@ -1,5 +1,9 @@
-import Flapjack.EvaluateProps.DoApp
-import Flapjack.EvaluateProps.ClockIo
+module
+
+public import Flapjack.EvaluateProps.DoApp
+public import Flapjack.EvaluateProps.ClockIo
+
+@[expose] public section
 
 /-! Store-length prerequisites for source primitive monotonicity. -/
 namespace Flapjack.EvaluateProps

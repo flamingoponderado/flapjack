@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
-import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
-import Flapjack.Compiler.Backend.Semantics.ClosProps.SimpleRelations
-import Flapjack.Compiler.Backend.ClosMti.Proofs.StateRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.SimpleRelations
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.StateRelation
+
+@[expose] public section
 
 /-! Fuel-aware closure-state relation for direct-call conversion. -/
 namespace Flapjack.Compiler.Backend.ClosCall

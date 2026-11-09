@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.LabToTarget.LabelLookup
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
-import Flapjack.Compiler.Backend.LabProps.LabelSets
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.LabelLookup
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
+public import Flapjack.Compiler.Backend.LabProps.LabelSets
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Misc Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveBlockAlloc
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveBlockAlloc
+
+@[expose] public section
 
 /-! Allocation primitive simulation for the liveness pass. -/
 namespace Flapjack.Compiler.Backend.DataLive

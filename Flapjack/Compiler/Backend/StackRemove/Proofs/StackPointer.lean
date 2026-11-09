@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.StackPointer
 open Flapjack.Compiler.Backend.StackRemove
 open Flapjack

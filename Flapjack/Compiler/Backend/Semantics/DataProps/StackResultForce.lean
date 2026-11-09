@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultPrimitive
-import Flapjack.Compiler.Backend.Semantics.DataProps.JumpPush
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultPrimitive
+public import Flapjack.Compiler.Backend.Semantics.DataProps.JumpPush
+
+@[expose] public section
 
 /-! Result-sensitive control for forced thunk execution. -/
 namespace Flapjack.Compiler.Backend.DataSem

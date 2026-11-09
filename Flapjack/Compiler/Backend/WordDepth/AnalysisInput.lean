@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordDepth.Executable
-import Flapjack.Misc.Sptree.Map
+module
+
+public import Flapjack.Compiler.Backend.WordDepth.Executable
+public import Flapjack.Misc.Sptree.Map
+
+@[expose] public section
 
 /-! Exact analysis-only input compression. Instructions ignored by callGraph
 are discarded from this separate input, while the executed backend retains the

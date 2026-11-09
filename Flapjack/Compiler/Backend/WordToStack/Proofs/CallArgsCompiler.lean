@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnCallArgs
-import Flapjack.Compiler.Backend.WordToStack.NativeCompile
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnCallArgs
+public import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CallArgsCompiler
 open Flapjack Flapjack.Compiler.Backend.WordToStack.Native

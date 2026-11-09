@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosInterp.Interpreter
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Interpreter
+
+@[expose] public section
 
 /-! Interpreter insertion for incremental closure compilation. -/
 namespace Flapjack.Compiler.Backend.ClosInterp

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
+
+@[expose] public section
 
 /-! Source-shaped LocValue evaluator fragment. This is untagged assembly
 infrastructure until the total HOL evaluator is assembled. The canonical

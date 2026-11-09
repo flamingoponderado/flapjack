@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.UpperJump
+module
+
+public import Flapjack.RiscV.L3.Defs.UpperJump
+
+@[expose] public section
 
 /-! Evaluated upper-immediate instruction equations (HOL `riscv_step` upper group).
 

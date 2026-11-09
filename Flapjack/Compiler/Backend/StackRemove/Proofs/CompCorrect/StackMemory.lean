@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackSpace
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeapWrites
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordAddressArithmetic
-import Flapjack.Compiler.Backend.StackRemove.Proofs.ShiftSimulation
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackSpace
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeapWrites
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordAddressArithmetic
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.ShiftSimulation
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.StackMemory
 open Flapjack Flapjack.Compiler.Backend.StackRemove Flapjack.Compiler.Backend.StackLang
 theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact

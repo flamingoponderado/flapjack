@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.PanSimp.RetToTailCorrect
-import Flapjack.Pancake.Proofs.PanSimp.SeqAssocAssembly
-import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
+module
+
+public import Flapjack.Pancake.Proofs.PanSimp.RetToTailCorrect
+public import Flapjack.Pancake.Proofs.PanSimp.SeqAssocAssembly
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
+
+@[expose] public section
 
 /-!
 The recursive cases and the assembly of the original `ret_to_tail_correct`

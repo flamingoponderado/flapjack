@@ -1,4 +1,8 @@
-import Flapjack.Byte.SetByte
+module
+
+public import Flapjack.Byte.SetByte
+
+@[expose] public section
 
 namespace Flapjack.HolByte
 

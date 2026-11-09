@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatLang
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.FlatLang
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Analyses used by CakeML flatLang dead-code elimination. These preserve the
 original conservative treatment of handlers, calls, and pattern matches. -/

@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Defs.IntegerLoadMode
-import Flapjack.RiscV.L3.Defs.SystemSignals
+module
+
+public import Flapjack.RiscV.L3.Defs.IntegerLoadMode
+public import Flapjack.RiscV.L3.Defs.SystemSignals
+
+@[expose] public section
 
 /-! Full multiplication equations. High products preserve three mode queries,
 128-bit intermediate widths and the literal per-operand signedness. MUL uses

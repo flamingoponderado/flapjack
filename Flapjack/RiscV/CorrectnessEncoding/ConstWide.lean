@@ -1,5 +1,9 @@
-import Mathlib.Tactic.IntervalCases
-import Flapjack.RiscV.L3.Support
+module
+
+public import Mathlib.Tactic.IntervalCases
+public import Flapjack.RiscV.L3.Support
+
+@[expose] public section
 
 namespace Flapjack.RiscV.TargetProof
 set_option maxRecDepth 200000

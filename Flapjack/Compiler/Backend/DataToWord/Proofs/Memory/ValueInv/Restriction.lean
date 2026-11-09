@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.Stack
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.Stack
+
+@[expose] public section
 
 /-! Timestamp-map restriction for the data-to-word value invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

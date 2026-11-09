@@ -1,15 +1,19 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeapLimitOk
-import Flapjack.Misc.Alignment
-import Flapjack.Misc.ListEl
-import Flapjack.Misc.WordList
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeapLimitOk
+public import Flapjack.Misc.Alignment
+public import Flapjack.Misc.ListEl
+public import Flapjack.Misc.WordList
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.Proofs.InitProp
 open Flapjack
 
 -- Inhabitedness of the original word_loc type, not a chosen undefined value.
 -- The shared holLast's independent opaque nil identity is retained.
-private instance {width : Nat} [NeZero width] : Nonempty (WordLocW width) :=
+instance initPropNonemptyInst {width : Nat} [NeZero width] : Nonempty (WordLocW width) :=
   ⟨.word 0⟩
 
 /-- Genuine canonical roundtrip for the imported actual state carrier. -/

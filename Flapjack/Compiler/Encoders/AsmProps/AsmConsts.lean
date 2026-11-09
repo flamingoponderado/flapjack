@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Encoders.AsmSem.Step
-import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
-import Flapjack.Compiler.Encoders.AsmProps.FpPreservation
-import Flapjack.Compiler.Encoders.AsmProps.Memory
+module
+
+public import Flapjack.Compiler.Encoders.AsmSem.Step
+public import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
+public import Flapjack.Compiler.Encoders.AsmProps.FpPreservation
+public import Flapjack.Compiler.Encoders.AsmProps.Memory
+
+@[expose] public section
 
 /-! Original whole-assembly-step field preservation and new-PC independence
 (asmPropsScript.sml:325-408). The statements keep every original field

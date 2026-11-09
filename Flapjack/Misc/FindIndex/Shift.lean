@@ -1,4 +1,8 @@
-import Flapjack.Misc.FindIndex.ShiftZero
+module
+
+public import Flapjack.Misc.FindIndex.ShiftZero
+
+@[expose] public section
 namespace Flapjack.Misc
 
 /-- Full original successful-search shift statement. All offsets and both conclusion families remain generic. -/

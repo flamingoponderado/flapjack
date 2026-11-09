@@ -1,10 +1,14 @@
-import Flapjack.RiscV.CorrectnessEncoding.Skip
-import Flapjack.RiscV.CorrectnessEncoding.DecodeControl
-import Flapjack.RiscV.L3.Step.JumpStep
-import Flapjack.RiscV.CorrectnessEncoding.Immediate
-import Flapjack.RiscV.CorrectnessEncoding.DecodeAddi
-import Flapjack.RiscV.CorrectnessEncoding.DecodeUpperImmediates
-import Flapjack.RiscV.L3.Defs.UpperJump
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.Skip
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeControl
+public import Flapjack.RiscV.L3.Step.JumpStep
+public import Flapjack.RiscV.CorrectnessEncoding.Immediate
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeAddi
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeUpperImmediates
+public import Flapjack.RiscV.L3.Defs.UpperJump
+
+@[expose] public section
 
 /-! Native execution infrastructure for the full original Jump case.
 These local compositions have no separately named HOL originals and remain

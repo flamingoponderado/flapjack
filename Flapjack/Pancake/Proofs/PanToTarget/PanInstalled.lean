@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.Installed
-import Flapjack.Pancake.Proofs.PanToTarget
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.Installed
+public import Flapjack.Pancake.Proofs.PanToTarget
+
+@[expose] public section
 
 /-!
 # `pan_to_targetProof`: `pan_installed`

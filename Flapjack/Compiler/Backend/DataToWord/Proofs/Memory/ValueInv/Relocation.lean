@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
-import Flapjack.Compiler.Backend.GcShared.Related
-import Flapjack.FiniteMap.Composition
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
+public import Flapjack.Compiler.Backend.GcShared.Related
+public import Flapjack.FiniteMap.Composition
+
+@[expose] public section
 
 /-! Finite-map relocation facts used by the collector value invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

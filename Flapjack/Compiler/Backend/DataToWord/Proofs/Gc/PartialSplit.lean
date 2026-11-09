@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.GcShared.Slice
-import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Forward
-import Flapjack.Compiler.Backend.GenGcPartial
+module
+
+public import Flapjack.Compiler.Backend.GcShared.Slice
+public import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Forward
+public import Flapjack.Compiler.Backend.GenGcPartial
+
+@[expose] public section
 
 /-! Heap splitting facts used by the partial generational collector. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

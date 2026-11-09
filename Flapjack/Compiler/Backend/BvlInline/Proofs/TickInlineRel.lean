@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.ExpRel
-import Flapjack.Compiler.Backend.BvlInline.TickInline
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.ExpRel
+public import Flapjack.Compiler.Backend.BvlInline.TickInline
+
+@[expose] public section
 
 /-! Inlining produces expressions related to their source expressions. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs
+
+@[expose] public section
 
 /-! Source evaluator oracle adjustment: environment bookkeeping lemmas. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

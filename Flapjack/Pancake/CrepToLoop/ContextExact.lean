@@ -1,10 +1,18 @@
-import Flapjack.Pancake.CrepToLoop
-import Flapjack.Pancake.CrepLang.Exp
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.CrepArith
-import Flapjack.Pancake.LoopLive
-import Flapjack.Basis.Pure.MlString
-import Flapjack.Compiler.Encoders.Asm
+module
+
+public import Flapjack.Pancake.CrepToLoop
+public import Flapjack.Pancake.CrepLang.Exp
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.CrepArith
+public import Flapjack.Pancake.LoopLive
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Compiler.Encoders.Asm
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Exact finite-map carrier and context helpers for `crep_to_loopScript.sml`.

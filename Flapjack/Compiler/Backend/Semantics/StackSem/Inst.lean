@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.IntegerInstructions
-import Flapjack.Compiler.Backend.Semantics.StackSem.FpInstructions
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.IntegerInstructions
+public import Flapjack.Compiler.Backend.Semantics.StackSem.FpInstructions
+
+@[expose] public section
 
 /-! Native StackSem primitive instruction operation. All five outer constructors
 and sixteen FP opcodes are covered using the original source clause bodies.

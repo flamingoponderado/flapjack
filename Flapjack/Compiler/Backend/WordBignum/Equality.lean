@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordBignum.Mini
+module
+
+public import Flapjack.Compiler.Backend.WordBignum.Mini
+
+@[expose] public section
 
 /-! Structural equality for bignum generator syntax. These Flapjack helper
 definitions support the source generator's lookup; correspondence remains to

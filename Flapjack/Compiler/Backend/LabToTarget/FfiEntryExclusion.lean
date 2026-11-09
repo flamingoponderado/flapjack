@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
-import Flapjack.Compiler.Backend.LabToTarget.FetchSuccessor
-import Flapjack.Compiler.Backend.LabToTarget.PositionOrder
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
-import Flapjack.Compiler.Encoders.AsmSem.State
-import Flapjack.Misc.BytesInMem.Imp
-import Flapjack.Misc.BytesInMemory.Domain
-import Flapjack.Misc.FindIndex.Membership
-import Flapjack.Misc.FindIndex.SuccessfulMembership
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
+public import Flapjack.Compiler.Backend.LabToTarget.FetchSuccessor
+public import Flapjack.Compiler.Backend.LabToTarget.PositionOrder
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+public import Flapjack.Compiler.Encoders.AsmSem.State
+public import Flapjack.Misc.BytesInMem.Imp
+public import Flapjack.Misc.BytesInMemory.Domain
+public import Flapjack.Misc.FindIndex.Membership
+public import Flapjack.Misc.FindIndex.SuccessfulMembership
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem

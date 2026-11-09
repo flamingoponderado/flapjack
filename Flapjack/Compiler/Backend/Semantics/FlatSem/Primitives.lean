@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem
-import Flapjack.Compiler.Backend.BackendCommon.BoolTags
-import Flapjack.Compiler.Backend.BackendCommon.ConstructorTags
-import Flapjack.SemanticPrimitivesHOL.Primitives
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem
+public import Flapjack.Compiler.Backend.BackendCommon.BoolTags
+public import Flapjack.Compiler.Backend.BackendCommon.ConstructorTags
+public import Flapjack.SemanticPrimitivesHOL.Primitives
+
+@[expose] public section
 
 /-! Primitive type checks and literal projection in the flat evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatSem

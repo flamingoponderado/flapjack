@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.CharConversion
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.RejectedConversions
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.CharConversion
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.RejectedConversions
+
+@[expose] public section
 
 /-! Combined primitive conversion simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

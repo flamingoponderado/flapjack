@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
-import Flapjack.Compiler.Backend.LabToTarget.SecondPass
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
+public import Flapjack.Compiler.Backend.LabToTarget.SecondPass
+
+@[expose] public section
 
 /-! Full original accumulator equality and label-update similarity laws.
 Only label annotations change; arbitrary input positions, cached bytes,

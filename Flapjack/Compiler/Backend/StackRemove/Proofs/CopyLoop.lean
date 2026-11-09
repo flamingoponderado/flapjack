@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CopyEach
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CopyEach
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.CopyLoopProof
 open Flapjack StackSemEvaluate StackSemStateOps Compiler.Backend.StackLang

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LocMerge
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRel
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LocMerge
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRel
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Preservation of the data-to-word stack relation by stack decoding. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

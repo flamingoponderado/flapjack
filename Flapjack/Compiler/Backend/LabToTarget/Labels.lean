@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabLang
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.LabLang
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-!
 # Faithful Cake label computation (`lab_to_target`)

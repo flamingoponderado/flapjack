@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitGlobalsStub
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitGlobalsStub
+
+@[expose] public section
 
 /-! Initial code-name invariants for BVL-to-BVI compilation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

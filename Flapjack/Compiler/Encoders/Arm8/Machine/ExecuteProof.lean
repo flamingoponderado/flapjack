@@ -1,6 +1,10 @@
-import Mathlib.Tactic.IntervalCases
-import Flapjack.Compiler.Encoders.Arm8.Machine.Execute
-import Flapjack.Misc.BytesInMemory
+module
+
+public import Mathlib.Tactic.IntervalCases
+public import Flapjack.Compiler.Encoders.Arm8.Machine.Execute
+public import Flapjack.Misc.BytesInMemory
+
+@[expose] public section
 
 /-!
 # Fetching and decoding emitted ARMv8 bytes

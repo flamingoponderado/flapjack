@@ -1,7 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceSwap
-import Flapjack.Compiler.Backend.Semantics.DataProps.CutSwap
-import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceSwap
+public import Flapjack.Compiler.Backend.Semantics.DataProps.CutSwap
+public import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
+public import Flapjack.Misc.ClockWeightInduction
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+@[expose] public section
 
 /-! Resource-field variation for data-language evaluation. -/
 namespace Flapjack.Compiler.Backend.DataProps

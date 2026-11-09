@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BytePacking
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BytePacking
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Byte updates in packed word payloads. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

@@ -1,6 +1,10 @@
-import Flapjack.RiscV.CorrectnessEncoding.Jump.Near
-import Flapjack.RiscV.CorrectnessEncoding.InstructionStep
-import Flapjack.RiscV.CorrectnessEncoding.DecodeUpperImmediates
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.Jump.Near
+public import Flapjack.RiscV.CorrectnessEncoding.InstructionStep
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeUpperImmediates
+
+@[expose] public section
 
 /-! Far Jump assembly infrastructure. Literal low/high splitting and AUIPC
 execution use the shared composition helpers in `InstructionStep`; those have

@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Step.BitRewrites
+module
+
+public import Flapjack.RiscV.L3.Step.BitRewrites
+
+@[expose] public section
 /-! Exact full word64 rewrites used by the original target encoder proof. -/
 namespace Flapjack.RiscV.TargetProof
 /-- The eight original word64 PC increments preserve bit zero. -/

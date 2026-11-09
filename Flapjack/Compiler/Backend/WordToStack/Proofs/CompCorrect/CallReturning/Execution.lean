@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningHandler
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningHandler
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CompCorrect.CallReturning
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

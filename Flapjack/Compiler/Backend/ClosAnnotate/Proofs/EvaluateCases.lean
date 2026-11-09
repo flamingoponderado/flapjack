@@ -1,7 +1,14 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Initial cases of closure-annotation evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyQuery
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.PhaseSuccess
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyQuery
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.PhaseSuccess
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc Translator.Monadic.MonadBase

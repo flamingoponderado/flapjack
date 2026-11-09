@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosCall
+module
+
+public import Flapjack.Compiler.Backend.ClosCall
+
+@[expose] public section
 
 /-! Source-shaped insertion of successive closure code locations. -/
 namespace Flapjack.Compiler.Backend.ClosCall

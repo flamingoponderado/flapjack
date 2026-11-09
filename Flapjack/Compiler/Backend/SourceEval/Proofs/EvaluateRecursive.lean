@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateDeclarations
-import Flapjack.EvaluateProps.Declarations
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateDeclarations
+public import Flapjack.EvaluateProps.Declarations
+
+@[expose] public section
 
 /-! Recursive declaration cases of source evaluator oracle adjustment. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

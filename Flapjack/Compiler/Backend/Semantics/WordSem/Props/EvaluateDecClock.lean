@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
+
+@[expose] public section
 
 /-!
 # `wordProps$evaluate_dec_clock`

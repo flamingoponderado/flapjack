@@ -1,14 +1,18 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalWeakening
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalWeakening
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Evaluation of the generated global initialization expression. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend.BackendCommon
 
-private instance : Nonempty VarN := ⟨Flapjack.Basis.Pure.MlString.ofString ""⟩
-private instance : Nonempty FlatSem.Value := ⟨.conv none []⟩
+instance makeVarlsInst1 : Nonempty VarN := ⟨Flapjack.Basis.Pure.MlString.ofString ""⟩
+instance makeVarlsInst2 : Nonempty FlatSem.Value := ⟨.conv none []⟩
 
 /-- The generated initializer writes each looked-up value into its reserved
 slot, preserving the prefix and suffix. The lookup relation is the pointwise

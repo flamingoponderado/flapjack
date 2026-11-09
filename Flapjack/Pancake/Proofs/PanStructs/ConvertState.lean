@@ -1,7 +1,11 @@
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
-import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
-import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
+public import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
+public import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.ConvertState
 open Flapjack
 open Flapjack.Pancake.PanStructs.CompileShapeExact

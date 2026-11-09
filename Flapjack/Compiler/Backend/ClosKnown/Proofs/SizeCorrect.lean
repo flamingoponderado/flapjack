@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosKnown.Inline
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Inline
+
+@[expose] public section
 
 /-! Agreement of the executable inliner size analysis with the source. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

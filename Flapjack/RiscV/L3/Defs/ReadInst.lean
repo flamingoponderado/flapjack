@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Defs.DecodeBits
-import Flapjack.RiscV.L3.Defs.MMU.Primitives
+module
+
+public import Flapjack.RiscV.L3.Defs.DecodeBits
+public import Flapjack.RiscV.L3.Defs.MMU.Primitives
+
+@[expose] public section
 namespace Flapjack.RiscV.L3
 
 /-- Source review: riscvScript1260-1263 literal current-core c_PC read, fixed core word8/result word64 and entire native state. No procID/totalCore bound. -/

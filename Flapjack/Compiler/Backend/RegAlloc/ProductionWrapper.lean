@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionInitializer
-import Flapjack.Compiler.Backend.RegAlloc.ProductionMovePreparation
-import Flapjack.Compiler.Backend.RegAlloc.ProductionAllocLoop
-import Flapjack.Compiler.Backend.RegAlloc.ProductionExtraction
-import Flapjack.Compiler.Backend.RegAlloc.Allocator
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionInitializer
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionMovePreparation
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionAllocLoop
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionExtraction
+public import Flapjack.Compiler.Backend.RegAlloc.Allocator
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV RiscV.CakeRegAlloc Translator.Monadic.MonadBase

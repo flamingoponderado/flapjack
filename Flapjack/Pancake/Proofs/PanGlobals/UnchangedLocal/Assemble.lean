@@ -1,18 +1,22 @@
-import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
-import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Leaves
-import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Dec
-import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.AssignPrimitive
-import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.ShMemLoad
-import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.ShMemStore
-import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Seq
-import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.If
-import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.While
-import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Results
-import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.TailCall
-import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.CallNoHandler
-import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.CallHandler
-import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.DecCall
-import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.ExtCall
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
+public import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Leaves
+public import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Dec
+public import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.AssignPrimitive
+public import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.ShMemLoad
+public import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.ShMemStore
+public import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Seq
+public import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.If
+public import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.While
+public import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Results
+public import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.TailCall
+public import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.CallNoHandler
+public import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.CallHandler
+public import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.DecCall
+public import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.ExtCall
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsUnchangedLocal
 open Flapjack.Pancake.PanLang

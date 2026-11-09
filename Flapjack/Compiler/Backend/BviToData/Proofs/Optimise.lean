@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.BviToData.Optimise
-import Flapjack.Compiler.Backend.BviToData.Proofs.CompileCorrect
-import Flapjack.Compiler.Backend.DataLive.Proofs.CompileCorrect
-import Flapjack.Compiler.Backend.DataSimp.Proofs.Correct
-import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Optimise
+public import Flapjack.Compiler.Backend.BviToData.Proofs.CompileCorrect
+public import Flapjack.Compiler.Backend.DataLive.Proofs.CompileCorrect
+public import Flapjack.Compiler.Backend.DataSimp.Proofs.Correct
+public import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
+
+@[expose] public section
 
 /-! Composition of the established data optimization steps. -/
 namespace Flapjack.Compiler.Backend.BviToData

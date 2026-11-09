@@ -1,5 +1,9 @@
-import Flapjack.Misc.BalancedMap.RotationCorrect.SingleL
-import Flapjack.Misc.BalancedMap.RotationCorrect.DoubleL
+module
+
+public import Flapjack.Misc.BalancedMap.RotationCorrect.SingleL
+public import Flapjack.Misc.BalancedMap.RotationCorrect.DoubleL
+
+@[expose] public section
 
 namespace Flapjack.Misc.BalancedMap
 open FiniteMap.Comparison

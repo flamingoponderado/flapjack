@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+
+@[expose] public section
 namespace Flapjack.StackSemClockControl
 open Flapjack Compiler.Backend.StackLang Compiler.Encoders.Asm
 open StackSemEvaluate StackSemControl StackSemStateOps

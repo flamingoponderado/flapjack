@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
-import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundCompiler
-import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocArgs.Compiler
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallArgsCompiler
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundCompiler
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocArgs.Compiler
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallArgsCompiler
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.StackConventions
 open Flapjack Flapjack.Compiler.Backend.StackLang

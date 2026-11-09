@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshMappedRefs
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MemoryRead
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshMappedRefs
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MemoryRead
+
+@[expose] public section
 
 /-! Updates to mapped mutable reference cells. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.DontLiftEvaluate
-import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateAppend
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.DontLiftEvaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateAppend
+
+@[expose] public section
 
 /-! Cases of the source expression-lifting evaluation theorem. -/
 namespace Flapjack.Compiler.Backend.ClosOp

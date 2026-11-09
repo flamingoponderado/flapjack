@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.Production
-import Flapjack.Compiler.Backend.ClosMti.Proofs.StateRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Production
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.StateRelation
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Relations used by closure let-operation cleanup correctness. -/
 namespace Flapjack.Compiler.Backend.ClosLetop

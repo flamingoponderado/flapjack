@@ -1,4 +1,8 @@
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Sequential construction of the original sparse-tree carrier. -/
 namespace Flapjack

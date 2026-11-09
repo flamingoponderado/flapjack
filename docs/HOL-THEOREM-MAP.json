@@ -131137,5 +131137,61 @@
     "lean_name": "compileProgAsmFast_symbols_eq_fst",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only artifact agreement for the executable allocator: the named driver artifact is the `compile_prog_max` mirror with the real symbol table recorded. No separately named HOL declaration."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LUNFOLD_def",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lunfold",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:367-369 Definition LUNFOLD_def[nocompute]: LUNFOLD f z = llist_abs (\\n. OPTION_MAP SND (FUNPOW (\\m. OPTION_BIND m (UNCURRY (K o f))) n (f z))). The Lean definition has the same f : beta -> (beta * alpha) option and z : beta binders, and its representation function is exactly OPTION_MAP SND of the FUNPOW iterate: lunfoldStep is FUNPOW of OPTION_BIND (UNCURRY (K o f)) (UNCURRY (K o f) (b,a) = f b), so step 0 is f z and step n+1 is step n bound into f on the first component, matching FUNPOW's definition; llist_abs is the HolLList rep carrier, the same Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64), and the proof obligation is exactly lrep_ok of that function. No clause, hypothesis or side condition is added."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LUNFOLD",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lunfoldHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:377-381 Theorem LUNFOLD: !f x. LUNFOLD f x = case f x of NONE => [||] | SOME (v1,v2) => v2 ::: LUNFOLD f v1. The Lean statement is the same universal equation over the same f and x, with [||] read as lnil, ::: as lcons and the pair case as the match on f x; the cons argument order v2 ::: LUNFOLD f v1 is preserved (head is the second component, recursive call on the first). The proof compares the reps index by index as the source does via llist_rep_LCONS/llist_rep_LNIL and the FUNPOW iterate; no hypothesis is added."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LUNFOLD_UNIQUE",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lunfold_unique",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:394-401 Theorem LUNFOLD_UNIQUE: !f g. (!x. g x = case f x of NONE => [||] | SOME (v1,v2) => v2 ::: g v1) ==> (!y. g y = LUNFOLD f y). The Lean statement keeps the same f : beta -> (beta * alpha) option and g : beta -> alpha llist binders, the same universally quantified case equation as the single premise (same lnil/lcons branches and v2 ::: g v1 order), and the same conclusion forall y. The proof is the source's LNTH_EQ + Induct_on n + once-rewrite of LUNFOLD, i.e. rep-index induction with the same case split; no premise or side condition is added."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LUNFOLD_BISIMULATION",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lunfold_bisimulation",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:525-534 Theorem LUNFOLD_BISIMULATION: !f1 f2 x1 x2. (LUNFOLD f1 x1 = LUNFOLD f2 x2) = ?R. R x1 x2 /\\ !y1 y2. R y1 y2 ==> (f1 y1 = NONE) /\\ (f2 y2 = NONE) \\/ ?h t1 t2. (f1 y1 = SOME (t1, h)) /\\ (f2 y2 = SOME (t2, h)) /\\ R t1 t2. The Lean statement is the same iff between the same unfolded-list equality and the same existential over the same R with the same conjunction order, the same two generator binders f1 : beta1 -> (beta1 * alpha) option / f2 : beta2 -> (beta2 * alpha) option and the same starts x1, x2; NONE is none, SOME the same pair with head h second and states t1, t2 first, and the boolean = is rendered as iff because both sides are propositions (this file's convention for HOL boolean predicates). The forward direction uses R = fun a b => lunfold f1 a = lunfold f2 b exactly as the source, and the reverse direction is the source's LNTH_EQ + Induct_on n induction; no hypothesis is added."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LLIST_BISIMULATION0",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "llist_bisimulation0",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:549-561 Theorem LLIST_BISIMULATION0: !ll1 ll2. (ll1 = ll2) = ?R. R ll1 ll2 /\\ !ll3 ll4. R ll3 ll4 ==> (ll3 = LNIL) /\\ (ll4 = LNIL) \\/ ?h t1 t2. (ll3 = h:::t1) /\\ (ll4 = h:::t2) /\\ R t1 t2. The Lean statement is the same iff over the same two HolLList binders, the same existential R with the same conjunct order, the same LNIL pair disjunct and the same LCONS disjunct with the same head h and tails t1, t2 order; the boolean = is rendered as iff as elsewhere in this file. The proof follows the source's LUNFOLD_LTL_HD rewrite in spirit, but since LTL_HD is not needed it uses the representation directly: reflexivity gives R = (=) with lcons_lhd_ltail in the cons case, and the reverse direction is the rep-index induction with the same disjunctive case split. No premise is added."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LLIST_STRONG_BISIMULATION",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "llist_strong_bisimulation",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:589-597 Theorem LLIST_STRONG_BISIMULATION: !ll1 ll2. (ll1 = ll2) = ?R. R ll1 ll2 /\\ !ll3 ll4. R ll3 ll4 ==> (ll3 = ll4) \\/ ?h t1 t2. (ll3 = h:::t1) /\\ (ll4 = h:::t2) /\\ R t1 t2. The Lean statement is the same iff with the same binders, existential and conjunct order, the same equality disjunct and the same two-conses disjunct sharing one head h; the boolean = is rendered as iff as in the companion theorems. The proof is the source's reflexive R in the forward direction and the rep-index induction in the reverse direction; no hypothesis is added."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "every_coind",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "every_coind",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1596-1600 Theorem every_coind: !P Q. (!h t. Q (h:::t) ==> P h /\\ Q t) ==> !ll. Q ll ==> every P ll. The Lean statement is the same two-step implication with P : alpha -> Prop and Q : HolLList alpha -> Prop (HOL bool predicates read as Prop as throughout this file), the same forall h t premise with the same conjunction order P h /\\ Q t, and the same forall ll conclusion with every P ll the tagged llistEvery of every_def (llistScript:1591, ported in the previous batch). The proof is the source's exists_ind coinduction translated to the rep-index induction used by llistExists_iff/llistEvery_iff, with the same lcons hd (ltail ll) case step; no hypothesis or finiteness premise is added."
   }
 ]

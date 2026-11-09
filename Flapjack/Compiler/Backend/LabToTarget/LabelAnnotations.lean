@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.SimpleEncoder
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SimpleEncoder
+
+@[expose] public section
 
 /-! Full original 0/1 label-annotation establishment and preservation.
 The label update establishes the invariant for unrestricted input lines;

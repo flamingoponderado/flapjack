@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.RegisterNames
+module
+
+public import Flapjack.Compiler.Backend.StackProps.RegisterNames
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackProps
 open Flapjack.Compiler.Encoders.Asm

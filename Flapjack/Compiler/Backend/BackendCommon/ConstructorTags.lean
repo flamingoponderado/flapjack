@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Constructor tags used by source-to-flat and flat semantics. -/
 namespace Flapjack.Compiler.Backend.BackendCommon

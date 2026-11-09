@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.WritePC
+module
+
+public import Flapjack.RiscV.L3.Defs.WritePC
+
+@[expose] public section
 
 /-! Literal original step PC update over the entire native state and word64 target. -/
 namespace Flapjack.RiscV.L3.Step

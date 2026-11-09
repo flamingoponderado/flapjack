@@ -1,14 +1,18 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalForward
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveBlock
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalForward
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveBlock
+
+@[expose] public section
 
 /-! Reference object movement in the major collector. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.WordGcFunctions
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 
-private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+instance generationalRefInst1 {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
-private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
+instance generationalRefInst2 {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
 
 private theorem starEmptyRight {α : Type} (p : (α → Prop) → Prop) : SetSep.star p SetSep.emp = p := by
   rw [SetSep.starComm, StackRemove.StackHeap.starEmptyLeft]

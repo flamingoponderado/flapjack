@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.ClosNumber
-import Flapjack.Compiler.Backend.Semantics.ClosSem
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.ClosNumber
+public import Flapjack.Compiler.Backend.Semantics.ClosSem
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Proof-side value relation for closure location numbering. -/
 namespace Flapjack.Compiler.Backend.ClosNumber

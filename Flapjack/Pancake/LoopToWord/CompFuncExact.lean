@@ -1,6 +1,10 @@
-import Flapjack.Pancake.LoopToWord
-import Flapjack.Pancake.LoopToWord.MakeCtxtExact
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Pancake.LoopToWord
+public import Flapjack.Pancake.LoopToWord.MakeCtxtExact
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-!
 # Exact `loop_to_word` `comp_func` / `compile_prog` / `compile` ports

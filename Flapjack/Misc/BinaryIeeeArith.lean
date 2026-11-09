@@ -1,4 +1,8 @@
-import Flapjack.Misc.BinaryIeeeRound
+module
+
+public import Flapjack.Misc.BinaryIeeeRound
+
+@[expose] public section
 
 /-!
 # HOL `binary_ieee` arithmetic

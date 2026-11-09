@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalBounds
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalBounds
+
+@[expose] public section
 
 /-! Global-initialization safety for the pattern compilation traversal. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

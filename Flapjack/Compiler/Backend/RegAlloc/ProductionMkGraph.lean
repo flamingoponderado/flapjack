@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionForcedGraph
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionForcedGraph
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV RiscV.CakeRegAlloc

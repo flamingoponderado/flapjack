@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Bvl.Syntax
-import Flapjack.Compiler.Backend.Bvi.Syntax
+module
+
+public import Flapjack.Compiler.Backend.Bvl.Syntax
+public import Flapjack.Compiler.Backend.Bvi.Syntax
+
+@[expose] public section
 
 /-! BVL analyses and literal lowering used by the BVL-to-BVI pass. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi

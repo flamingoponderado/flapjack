@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ClockHypothesis
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ClockHypothesis
+
+@[expose] public section
 
 /-! Safety of bindings produced by recursive-call extraction. -/
 namespace Flapjack.Compiler.Backend.BviTmc.ExtractionSafety

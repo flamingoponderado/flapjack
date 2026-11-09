@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.X64.Encode
-import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Encoders.X64.Encode
+public import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 # x86-64 target lowering

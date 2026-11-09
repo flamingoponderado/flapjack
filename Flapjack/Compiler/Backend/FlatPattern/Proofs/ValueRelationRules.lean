@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
+
+@[expose] public section
 
 /-! Source-shaped introduction rules for the flat-pattern value relation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

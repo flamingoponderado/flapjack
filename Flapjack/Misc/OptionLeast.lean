@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Mathlib.Data.Nat.Find
+module
+
+public import Flapjack.HolRef
+public import Mathlib.Data.Nat.Find
+
+@[expose] public section
 
 /-! HOL's optional least natural satisfying a predicate. -/
 namespace Flapjack

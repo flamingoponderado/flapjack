@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.PatternComp.Proofs.RowSelection
+module
+
+public import Flapjack.Compiler.Backend.PatternComp.Proofs.RowSelection
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Proof-side traversal and guard lemmas for the pattern compiler. The
 remaining untagged traversal and guard declarations await HOL review. -/

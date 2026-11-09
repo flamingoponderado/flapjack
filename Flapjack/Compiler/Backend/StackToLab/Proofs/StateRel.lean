@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Compiler.Backend.LabSem.Updates
-import Flapjack.Compiler.Backend.StackProps.CallArgs
-import Flapjack.Compiler.Backend.StackProps.OrderedLabels
-import Flapjack.Misc.GoodDimindex
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Compiler.Backend.LabSem.Updates
+public import Flapjack.Compiler.Backend.StackProps.CallArgs
+public import Flapjack.Compiler.Backend.StackProps.OrderedLabels
+public import Flapjack.Misc.GoodDimindex
+
+@[expose] public section
 
 /-! The simulation relation `state_rel` of `stack_to_labProofScript.sml`
 (lines 600-645) and its state-update lemmas (lines 647-736), between the

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Results
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRel
-import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Results
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRel
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CompCorrect
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

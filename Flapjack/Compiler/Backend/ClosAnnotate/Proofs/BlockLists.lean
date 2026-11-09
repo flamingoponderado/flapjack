@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockInspection
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockInspection
+
+@[expose] public section
 
 /-! List-valued block operations under closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

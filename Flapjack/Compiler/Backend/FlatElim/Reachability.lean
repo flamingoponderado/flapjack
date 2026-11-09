@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.FlatElim.Analysis
-import Flapjack.Misc.Sptree.Map
-import Flapjack.Misc.Sptree.Wf
-import Flapjack.Misc.Sptree.Subspt
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Analysis
+public import Flapjack.Misc.Sptree.Map
+public import Flapjack.Misc.Sptree.Wf
+public import Flapjack.Misc.Sptree.Subspt
+
+@[expose] public section
 
 /-! Reachability inputs and removal criterion for flatLang elimination.
 The bounded closure exposes exhaustion until its bound is proved sufficient. -/

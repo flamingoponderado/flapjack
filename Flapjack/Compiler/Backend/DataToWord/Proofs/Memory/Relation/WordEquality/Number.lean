@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BignumCompare
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Word64
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BignumCompare
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Word64
+
+@[expose] public section
 
 /-! Number case of the source word-equality simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

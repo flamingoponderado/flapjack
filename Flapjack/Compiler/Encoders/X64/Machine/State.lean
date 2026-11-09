@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.X64.Target
-import Flapjack.Compiler.Encoders.AsmProps.Target
-import Flapjack.Misc.SetSep
+module
+
+public import Flapjack.Compiler.Encoders.X64.Target
+public import Flapjack.Compiler.Encoders.AsmProps.Target
+public import Flapjack.Misc.SetSep
+
+@[expose] public section
 
 /-!
 # A closed x86-64 machine state for the emitted instruction subset

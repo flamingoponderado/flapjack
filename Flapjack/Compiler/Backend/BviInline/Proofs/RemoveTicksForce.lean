@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.BviInline.Proofs.RemoveTicksCases
+module
+
+public import Flapjack.Compiler.Backend.BviInline.Proofs.RemoveTicksCases
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Thunk forcing for the BVI tick-removal simulation. -/
 namespace Flapjack.Compiler.Backend.BviInline.RemoveTicksCases

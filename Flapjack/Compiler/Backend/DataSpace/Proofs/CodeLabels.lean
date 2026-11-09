@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataSpace.Compile
-import Flapjack.Compiler.Backend.Semantics.DataProps.CodeLabels
+module
+
+public import Flapjack.Compiler.Backend.DataSpace.Compile
+public import Flapjack.Compiler.Backend.Semantics.DataProps.CodeLabels
+
+@[expose] public section
 
 /-! Code-reference preservation by the reservation pass. -/
 namespace Flapjack.Compiler.Backend.DataSpace

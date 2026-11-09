@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabSem.Updates
-import Flapjack.Compiler.Backend.Semantics.WordSem
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Updates
+public import Flapjack.Compiler.Backend.Semantics.WordSem
+
+@[expose] public section
 
 /-! Literal ordinary LabSem memory operations. Full-word Load/Store perform
 writes before checking the original alignment and domain assertion, including

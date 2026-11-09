@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.LabSem.State
-import Flapjack.Compiler.Backend.LabSem.Classifier
+module
+
+public import Flapjack.Compiler.Backend.LabSem.State
+public import Flapjack.Compiler.Backend.LabSem.Classifier
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Native source navigation. PC counts non-label instructions rather than encoded
 lengths. A section entry (label id zero) resolves even for an empty section;

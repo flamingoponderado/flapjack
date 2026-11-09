@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileRefArray
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileRefArray
+
+@[expose] public section
 
 /-! Replicated byte-array allocation in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

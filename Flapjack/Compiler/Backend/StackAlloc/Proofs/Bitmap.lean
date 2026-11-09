@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
-import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` bitmap list lemmas

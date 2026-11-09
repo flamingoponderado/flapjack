@@ -1,26 +1,30 @@
-import Flapjack.RiscV.L3.Defs
-import Flapjack.RiscV.L3.Defs.AMOArithmetic
-import Flapjack.RiscV.L3.Defs.AMOMinMax
-import Flapjack.RiscV.L3.Defs.AMOSwap
-import Flapjack.RiscV.L3.Defs.CSRInstructions
-import Flapjack.RiscV.L3.Defs.ConditionalBranch
-import Flapjack.RiscV.L3.Defs.ControlFetch
-import Flapjack.RiscV.L3.Defs.Divide
-import Flapjack.RiscV.L3.Defs.FPBits
-import Flapjack.RiscV.L3.Defs.FPMemory
-import Flapjack.RiscV.L3.Defs.ImmediateALU
-import Flapjack.RiscV.L3.Defs.ImmediateShift
-import Flapjack.RiscV.L3.Defs.IntegerLoad
-import Flapjack.RiscV.L3.Defs.IntegerStore
-import Flapjack.RiscV.L3.Defs.LRSC
-import Flapjack.RiscV.L3.Defs.MMU.Flush
-import Flapjack.RiscV.L3.Defs.Multiply
-import Flapjack.RiscV.L3.Defs.RegisterALU
-import Flapjack.RiscV.L3.Defs.RegisterShift
-import Flapjack.RiscV.L3.Defs.SetLess
-import Flapjack.RiscV.L3.Defs.SystemSignals
-import Flapjack.RiscV.L3.Defs.UpperJump
-import Flapjack.RiscV.L3.Defs.WordArithmetic
+module
+
+public import Flapjack.RiscV.L3.Defs
+public import Flapjack.RiscV.L3.Defs.AMOArithmetic
+public import Flapjack.RiscV.L3.Defs.AMOMinMax
+public import Flapjack.RiscV.L3.Defs.AMOSwap
+public import Flapjack.RiscV.L3.Defs.CSRInstructions
+public import Flapjack.RiscV.L3.Defs.ConditionalBranch
+public import Flapjack.RiscV.L3.Defs.ControlFetch
+public import Flapjack.RiscV.L3.Defs.Divide
+public import Flapjack.RiscV.L3.Defs.FPBits
+public import Flapjack.RiscV.L3.Defs.FPMemory
+public import Flapjack.RiscV.L3.Defs.ImmediateALU
+public import Flapjack.RiscV.L3.Defs.ImmediateShift
+public import Flapjack.RiscV.L3.Defs.IntegerLoad
+public import Flapjack.RiscV.L3.Defs.IntegerStore
+public import Flapjack.RiscV.L3.Defs.LRSC
+public import Flapjack.RiscV.L3.Defs.MMU.Flush
+public import Flapjack.RiscV.L3.Defs.Multiply
+public import Flapjack.RiscV.L3.Defs.RegisterALU
+public import Flapjack.RiscV.L3.Defs.RegisterShift
+public import Flapjack.RiscV.L3.Defs.SetLess
+public import Flapjack.RiscV.L3.Defs.SystemSignals
+public import Flapjack.RiscV.L3.Defs.UpperJump
+public import Flapjack.RiscV.L3.Defs.WordArithmetic
+
+@[expose] public section
 
 /-! Complete native Run dispatcher from original riscvScript10755.
 All original instruction constructors retain their exact handler and payload.

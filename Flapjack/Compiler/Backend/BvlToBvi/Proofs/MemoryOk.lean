@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.BlockOk
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.BlockOk
+
+@[expose] public section
 
 /-! Memory-operation well-formedness for BVL primitive application. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning.Execution
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningHandler.Execution
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning.Execution
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningHandler.Execution
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CompCorrect.CallReturningFull
 open Flapjack.Compiler.Encoders.Asm

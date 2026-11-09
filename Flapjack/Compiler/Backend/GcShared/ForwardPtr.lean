@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.GcShared
+module
+
+public import Flapjack.Compiler.Backend.GcShared
+
+@[expose] public section
 
 /-! Status preservation for abstract forwarding-pointer updates. -/
 namespace Flapjack.Compiler.Backend

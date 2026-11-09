@@ -1,4 +1,8 @@
-import Flapjack.EvaluateProps.ClockIoBind
+module
+
+public import Flapjack.EvaluateProps.ClockIoBind
+
+@[expose] public section
 
 /-! Clock-independent branching prerequisites for the source evaluator
 clock-and-I/O proof. -/

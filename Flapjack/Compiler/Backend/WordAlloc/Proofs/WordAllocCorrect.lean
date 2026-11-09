@@ -1,10 +1,14 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.WordAlloc.WordAllocDef
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SelectRegAllocCorrect
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvenStartingLocals
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.WordAlloc.WordAllocDef
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SelectRegAllocCorrect
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvenStartingLocals
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
+
+@[expose] public section
 
 /-!
 # `word_alloc_correct`

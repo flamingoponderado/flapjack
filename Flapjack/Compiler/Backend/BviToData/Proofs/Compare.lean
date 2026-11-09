@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.Space
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Space
+
+@[expose] public section
 
 /-! Comparison rewrites used by BVI-to-data assignment compilation. -/
 namespace Flapjack.Compiler.Backend.BviToData

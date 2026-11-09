@@ -1,8 +1,12 @@
-import Flapjack.NamespaceHOL
-import Flapjack.Basis.Pure.MlString
-import Flapjack.Misc.Sptree
-import Flapjack.Compiler.Backend.BackendCommon.Trace
-import Flapjack.Compiler.Backend.FlatPattern.Config
+module
+
+public import Flapjack.NamespaceHOL
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Misc.Sptree
+public import Flapjack.Compiler.Backend.BackendCommon.Trace
+public import Flapjack.Compiler.Backend.FlatPattern.Config
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.SourceToFlat
 

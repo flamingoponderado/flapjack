@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordSimp
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateConsts
+module
+
+public import Flapjack.Compiler.Backend.WordSimp
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateConsts
+
+@[expose] public section
 
 /-!
 # `word_simpProof`: verification of `Seq_assoc`

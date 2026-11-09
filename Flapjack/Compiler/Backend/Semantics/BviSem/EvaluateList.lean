@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateLength
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateLength
+
+@[expose] public section
 
 /-! List evaluation facts for the source-shaped BVI evaluator. -/
 namespace Flapjack.Compiler.Backend.BviSem

@@ -1,7 +1,11 @@
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Near
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.FarReg
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.FarRegTest
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.FarImm
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Near
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.FarReg
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.FarRegTest
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.FarImm
+
+@[expose] public section
 
 /-! Full original native JumpCmp encoder correctness constructor. Native target
 statements inherit the reviewed reals_as_rational_cuts assurance limit

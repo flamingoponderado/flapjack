@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.FlatToClos.Compile
-import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoMti
-import Mathlib.Tactic.Tauto
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Compile
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoMti
+public import Mathlib.Tactic.Tauto
+
+@[expose] public section
 
 /-! Pre-multi-argument syntax preserved by flat-to-closure compilation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

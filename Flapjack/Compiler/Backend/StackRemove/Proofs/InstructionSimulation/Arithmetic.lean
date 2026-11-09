@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Atoms
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Atoms
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.InstructionSimulation.Arithmetic
 open Flapjack Compiler.Encoders.Asm

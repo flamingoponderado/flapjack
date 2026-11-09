@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Statement
-import Flapjack.Compiler.Backend.LabProps.LabelSets
-import Flapjack.Compiler.Backend.StackProps.CodeLabels
-import Flapjack.Compiler.Backend.StackProps.LabelSafety
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Statement
+public import Flapjack.Compiler.Backend.LabProps.LabelSets
+public import Flapjack.Compiler.Backend.StackProps.CodeLabels
+public import Flapjack.Compiler.Backend.StackProps.LabelSafety
+
+@[expose] public section
 
 /-! The label-set group of `stack_to_labProofScript.sml:3800-4089`: the labels
 referenced by flattened code are its own code labels, the enclosing loop

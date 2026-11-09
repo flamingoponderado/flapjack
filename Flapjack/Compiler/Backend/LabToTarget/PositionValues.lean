@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabProps.LineLength
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
+module
+
+public import Flapjack.Compiler.Backend.LabProps.LineLength
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

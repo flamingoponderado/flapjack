@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.HolRef
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Deterministic parallel-move scheduling, counterpart of
 `compiler/backend/reg_alloc/parmoveScript.sml`. `none` is the temporary register.

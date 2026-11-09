@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.Stack
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.Stack
+
+@[expose] public section
 
 /-! Block uniqueness when a thunk's contents are added to the stack. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

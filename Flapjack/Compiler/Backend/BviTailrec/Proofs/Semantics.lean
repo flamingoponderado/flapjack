@@ -1,7 +1,14 @@
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteCorrespondence
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ListLengthStub
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteCorrespondence
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ListLengthStub
+public import Mathlib.Data.List.Forall2
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Value and environment relations used by the source tail-recursion proof. -/
 namespace Flapjack.Compiler.Backend.BviTailrec

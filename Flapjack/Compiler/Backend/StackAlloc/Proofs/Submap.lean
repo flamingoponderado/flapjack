@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Proofs.CrepInline
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Proofs.CrepInline
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` finite-map `SUBMAP` lemmas

@@ -1,6 +1,10 @@
-import Flapjack.Pancake.CrepToLoop.ContextExact
-import Flapjack.Pancake.LoopLive
-import Flapjack.Pancake.LoopLive.Fixedpoint
+module
+
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+public import Flapjack.Pancake.LoopLive
+public import Flapjack.Pancake.LoopLive.Fixedpoint
+
+@[expose] public section
 
 /-!
 Flapjack-only structural facts for the runtime-only `HolLoopProg.locValue`

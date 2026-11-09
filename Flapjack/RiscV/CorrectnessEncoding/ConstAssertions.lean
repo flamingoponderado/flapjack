@@ -1,6 +1,10 @@
-import Flapjack.RiscV.CorrectnessEncoding.TargetOk
-import Flapjack.RiscV.CorrectnessEncoding.ConstRelation
-import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.TargetOk
+public import Flapjack.RiscV.CorrectnessEncoding.ConstRelation
+public import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
+
+@[expose] public section
 
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 Compiler.Encoders.Asm Compiler.Encoders.AsmSem

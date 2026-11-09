@@ -1,8 +1,12 @@
-import Flapjack.Misc.Option.MapM
-import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
-import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic.LabelsAndArity
+module
+
+public import Flapjack.Misc.Option.MapM
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic.LabelsAndArity
+
+@[expose] public section
 
 /-! Syntactic invariants needed by the pass after multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti

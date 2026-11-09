@@ -1,7 +1,11 @@
-import Flapjack.Misc.BalancedMap.InsertCorrect.Tip
-import Flapjack.Misc.BalancedMap.InsertCorrect.Equal
-import Flapjack.Misc.BalancedMap.InsertCorrect.Less
-import Flapjack.Misc.BalancedMap.InsertCorrect.Greater
+module
+
+public import Flapjack.Misc.BalancedMap.InsertCorrect.Tip
+public import Flapjack.Misc.BalancedMap.InsertCorrect.Equal
+public import Flapjack.Misc.BalancedMap.InsertCorrect.Less
+public import Flapjack.Misc.BalancedMap.InsertCorrect.Greater
+
+@[expose] public section
 namespace Flapjack.Misc.BalancedMap
 open FiniteMap.Comparison
 /-- Full original insertion correctness, retaining arbitrary comparator,

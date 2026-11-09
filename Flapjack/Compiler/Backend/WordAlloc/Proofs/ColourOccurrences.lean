@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.WordAlloc.Colour
-import Flapjack.Compiler.Backend.WordAlloc.TotalColour
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
-import Flapjack.Pancake.WordConvs.ProgramMonotonicity
-import Flapjack.Misc.Sptree.ToAList
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Colour
+public import Flapjack.Compiler.Backend.WordAlloc.TotalColour
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
+public import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+public import Flapjack.Misc.Sptree.ToAList
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
+
+@[expose] public section
 
 /-! Original occurrence transport under arbitrary colouring in word_allocProof.
 Renaming need not be injective, and the Spt inputs need not be well formed. -/

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.TargetProps.AsmStepEvaluate
-import Flapjack.Compiler.Encoders.AsmProps.Assertions.Iteration
-import Mathlib.Logic.Relation
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.AsmStepEvaluate
+public import Flapjack.Compiler.Encoders.AsmProps.Assertions.Iteration
+public import Mathlib.Logic.Relation
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem

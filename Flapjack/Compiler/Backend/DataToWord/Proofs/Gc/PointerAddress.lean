@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Address
-import Flapjack.Compiler.Backend.WordGcFunctions
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Address
+public import Flapjack.Compiler.Backend.WordGcFunctions
+
+@[expose] public section
 
 /-! Address facts needed for pointer cases of the collector simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

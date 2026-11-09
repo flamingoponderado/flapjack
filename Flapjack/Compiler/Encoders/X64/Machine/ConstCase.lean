@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.X64.Machine.JumpRegCase
-import Flapjack.Compiler.Encoders.X64.Machine.MemDecodeProof
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.JumpRegCase
+public import Flapjack.Compiler.Encoders.X64.Machine.MemDecodeProof
+
+@[expose] public section
 
 /-!
 # The `const` case of `encoder_correct x64Target`

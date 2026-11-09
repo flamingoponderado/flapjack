@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordInst
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
-import Flapjack.Misc.ListEl
-import Flapjack.Misc.PermPartition
-import Flapjack.Misc.Sorting.PartsHaveProp
+module
+
+public import Flapjack.Compiler.Backend.WordInst
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+public import Flapjack.Misc.ListEl
+public import Flapjack.Misc.PermPartition
+public import Flapjack.Misc.Sorting.PartsHaveProp
+
+@[expose] public section
 
 /-!
 # `word_instProof`: `pull_exp` and `flatten_exp` correctness

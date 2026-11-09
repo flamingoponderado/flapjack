@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalNonRef
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalRef
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalNonRef
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalRef
+
+@[expose] public section
 
 /-! Full single-root major-collector simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToWord.Compile
-import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
-import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
-import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Compile
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+
+@[expose] public section
 
 /-!
 # `word_to_wordProof`: the code relation

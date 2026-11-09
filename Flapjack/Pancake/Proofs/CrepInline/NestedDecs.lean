@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.CrepInline
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline
+
+@[expose] public section
 
 namespace Flapjack.CrepInlineExact
 namespace NestedDecsSupport

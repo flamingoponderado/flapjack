@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Executable.BitMask
-import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Encoder
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShiftedRegister
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Executable.BitMask
+public import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Encoder
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShiftedRegister
+
+@[expose] public section
 
 /-!
 # Logical instructions: bytes for the L3 bridge

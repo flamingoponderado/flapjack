@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.WordSimp.Proofs.SeqAssoc
-import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
-import Flapjack.Compiler.Backend.Semantics.WordSem
-import Flapjack.Misc.SptreeLookup
-import Mathlib.Data.List.Forall2
-import Flapjack.Misc.Sptree.FilterV
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.MemStoreConst
+module
+
+public import Flapjack.Compiler.Backend.WordSimp.Proofs.SeqAssoc
+public import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
+public import Flapjack.Compiler.Backend.Semantics.WordSem
+public import Flapjack.Misc.SptreeLookup
+public import Mathlib.Data.List.Forall2
+public import Flapjack.Misc.Sptree.FilterV
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.MemStoreConst
+
+@[expose] public section
 
 /-!
 # `word_simpProof`: `const_fp` support lemmas

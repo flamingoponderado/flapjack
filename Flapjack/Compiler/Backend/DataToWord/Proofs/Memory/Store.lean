@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
-import Flapjack.Compiler.Backend.GcCombined
-import Flapjack.Misc.Alignment
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
+public import Flapjack.Compiler.Backend.GcCombined
+public import Flapjack.Misc.Alignment
+
+@[expose] public section
 
 /-! The data-to-word heap assertion tied to the word-machine store. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveInstalled
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ValueRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveInstalled
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ValueRelation
+
+@[expose] public section
 
 /-! Value relations for constructed mutually recursive closure groups. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -14,7 +18,7 @@ def recursiveValues (entries : List ((Nat × ClosLang.Exp) × Nat)) (ptr : Nat) 
   entries.map (fun ((arity, _), label) =>
     .block 30 [.codePtr label, .number (Int.ofNat (arity - 1)), .refPtr true ptr])
 
-private instance : Nonempty BvlSem.Value := ⟨.number 0⟩
+instance recursiveValuesInst1 : Nonempty BvlSem.Value := ⟨.number 0⟩
 
 /-- Once the shared array and generated code are installed, each source
 recursive closure is related to its corresponding target closure block.

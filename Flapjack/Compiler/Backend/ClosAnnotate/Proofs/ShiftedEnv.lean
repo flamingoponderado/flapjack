@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Shift
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Shift
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Lookup properties for the compact closure environment. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

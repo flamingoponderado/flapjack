@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabLang
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.LabLang
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 # Generic LabLang classification utility

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosLang.Pure
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Pure
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
+public import Aesop
+
+@[expose] public section
 
 /-! Purity properties of proof-side closure primitives. -/
 namespace Flapjack.Compiler.Backend.ClosProps

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDeclarations
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDeclarations
+
+@[expose] public section
 
 /-! Type and exception stamp cases of the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

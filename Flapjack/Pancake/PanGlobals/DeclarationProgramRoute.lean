@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanGlobals.CallHandlerExact
+module
+
+public import Flapjack.Pancake.PanGlobals.CallHandlerExact
+
+@[expose] public section
 
 namespace Flapjack
 

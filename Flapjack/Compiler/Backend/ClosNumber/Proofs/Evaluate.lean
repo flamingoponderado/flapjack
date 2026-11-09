@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.EvaluateInstall
+module
+
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.EvaluateInstall
+
+@[expose] public section
 
 /-! Mutual evaluator simulation for closure numbering. -/
 namespace Flapjack.Compiler.Backend.ClosNumber

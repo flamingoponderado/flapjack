@@ -1,8 +1,12 @@
-import Flapjack.Stack
-import Flapjack.RiscV.Allocator
-import Flapjack.RiscV.RegAlloc
-import Flapjack.RiscV.CakeAllocatorCore
-import Flapjack.Compiler.Backend.WordToStack
+module
+
+public import Flapjack.Stack
+public import Flapjack.RiscV.Allocator
+public import Flapjack.RiscV.RegAlloc
+public import Flapjack.RiscV.CakeAllocatorCore
+public import Flapjack.Compiler.Backend.WordToStack
+
+@[expose] public section
 
 /-!
 # Word-to-Stack spill moves

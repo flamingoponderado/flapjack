@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.IndexInvariant
-import Flapjack.Misc.Sptree.Subspt
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.IndexInvariant
+public import Flapjack.Misc.Sptree.Subspt
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Source-oracle configuration and index-range conditions. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

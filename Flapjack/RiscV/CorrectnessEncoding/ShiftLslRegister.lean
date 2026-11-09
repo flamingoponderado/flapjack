@@ -1,6 +1,10 @@
-import Flapjack.RiscV.CorrectnessEncoding.BinopRegister
-import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
-import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.BinopRegister
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
+public import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
+
+@[expose] public section
 
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm

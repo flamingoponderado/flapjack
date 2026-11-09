@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL
+module
+
+public import Flapjack.SemanticPrimitivesHOL
+
+@[expose] public section
 
 /-! Maps over semantic results and their exception payloads. -/
 namespace Flapjack.SemanticPrimitivesProps

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanGlobals.CompileExpExact
-import Flapjack.Pancake.PanLang.Exp
+module
+
+public import Flapjack.Pancake.PanGlobals.CompileExpExact
+public import Flapjack.Pancake.PanLang.Exp
+
+@[expose] public section
 
 /-!
 Finite-support adapter between the production PanGlobals pass context and the

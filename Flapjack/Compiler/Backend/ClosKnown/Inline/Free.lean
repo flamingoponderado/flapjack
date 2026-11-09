@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosCall
+module
+
+public import Flapjack.Compiler.Backend.ClosCall
+
+@[expose] public section
 
 /-! The original known-function free-variable traversal. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

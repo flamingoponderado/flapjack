@@ -1,7 +1,11 @@
-import Flapjack.Misc.Option.Rel
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.EnvironmentExtension
-import Flapjack.Compiler.Backend.Semantics.ClosSem.State
-import Flapjack.Compiler.Backend.BackendProps.Pure
+module
+
+public import Flapjack.Misc.Option.Rel
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.EnvironmentExtension
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+public import Flapjack.Compiler.Backend.BackendProps.Pure
+
+@[expose] public section
 
 /-! Candidate state relation for closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

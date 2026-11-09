@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Evaluate
+
+@[expose] public section
 
 /-! HOL `stackSem$evaluate` and its defining equations `evaluate_def`
 (`cakeml/compiler/backend/semantics/stackSemScript.sml:773-1027`) over the exact

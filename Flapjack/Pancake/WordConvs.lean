@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.WordLang
-import Flapjack.Pancake.WordLang.OccurrencesExact
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Compiler.Backend.RegAlloc
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Pancake.WordLang.OccurrencesExact
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Compiler.Backend.RegAlloc
+
+@[expose] public section
 
 /-!
 # CakeML backend `wordConvs` syntactic conventions

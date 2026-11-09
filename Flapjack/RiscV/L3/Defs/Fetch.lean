@@ -1,6 +1,10 @@
-import Flapjack.RiscV.L3.Defs
-import Flapjack.RiscV.L3.Defs.MMU.Translate
-import Flapjack.RiscV.L3.Defs.ReadInst
+module
+
+public import Flapjack.RiscV.L3.Defs
+public import Flapjack.RiscV.L3.Defs.MMU.Translate
+public import Flapjack.RiscV.L3.Defs.ReadInst
+
+@[expose] public section
 
 namespace Flapjack.RiscV.L3
 

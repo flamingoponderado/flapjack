@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviInline.Proofs.SourceCorrespondence
-import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.BviInline.Proofs.SourceCorrespondence
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Expression relation for BVI wrapper inlining. -/
 namespace Flapjack.Compiler.Backend.BviInline

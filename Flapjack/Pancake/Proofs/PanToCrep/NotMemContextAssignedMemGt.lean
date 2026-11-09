@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
-import Flapjack.Pancake.PanToCrep.CompileExact
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+public import Flapjack.Pancake.PanToCrep.CompileExact
+
+@[expose] public section
 
 /-!
 # `not_mem_context_assigned_mem_gt` over the exact compiler

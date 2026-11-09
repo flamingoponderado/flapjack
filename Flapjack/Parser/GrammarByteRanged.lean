@@ -1,4 +1,8 @@
-import Flapjack.Parser.ConversionByteRanged
+module
+
+public import Flapjack.Parser.ConversionByteRanged
+
+@[expose] public section
 
 /-!
 Byte-rangedness invariants for the PEG parser in `Flapjack/Parser/Grammar.lean`.

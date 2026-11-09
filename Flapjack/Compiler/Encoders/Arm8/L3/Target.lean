@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Types
-import Flapjack.Compiler.Encoders.Arm8.L3.Defs
-import Flapjack.Misc.Alignment
-import Flapjack.Misc.SetSep
-import Flapjack.Misc.Option
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Types
+public import Flapjack.Compiler.Encoders.Arm8.L3.Defs
+public import Flapjack.Misc.Alignment
+public import Flapjack.Misc.SetSep
+public import Flapjack.Misc.Option
+
+@[expose] public section
 
 /-!
 # L3 ARMv8 target: projection, validity gate, and the closed-model link

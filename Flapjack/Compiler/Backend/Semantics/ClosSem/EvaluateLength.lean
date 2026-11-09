@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Successful-result length for the proof-side closure evaluator. The
 evaluator and state carriers remain pending HOL correspondence review. -/

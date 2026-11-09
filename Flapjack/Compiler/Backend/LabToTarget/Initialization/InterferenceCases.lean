@@ -1,15 +1,19 @@
-import Flapjack.Compiler.Backend.LabToTarget.Initialization
-import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
-import Flapjack.Compiler.Backend.LabToTarget.StateRel
-import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
-import Flapjack.Compiler.Backend.Semantics.TargetProps.PostInterferenceState
-import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
-import Flapjack.Misc.FindIndex.Membership
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization
+public import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
+public import Flapjack.Compiler.Backend.LabToTarget.StateRel
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.PostInterferenceState
+public import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
+public import Flapjack.Misc.FindIndex.Membership
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm Flapjack.Misc
 open Flapjack.Compiler.Backend.Semantics.TargetProps
-private instance : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
+instance interferenceCasesInst1 : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
 -- Flapjack infrastructure: both Nat-key list lookups retain first-match
 -- behavior, including duplicate keys; this is not a new HOL declaration.
 private theorem initializer_alookup_eq_lookup {α : Type} (key : Nat) (entries : List (Nat × α)) :

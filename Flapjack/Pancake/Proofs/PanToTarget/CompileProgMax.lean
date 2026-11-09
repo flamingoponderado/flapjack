@@ -1,10 +1,14 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.PanToWord
-import Flapjack.Compiler.Backend.WordToWord.Compile
-import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
-import Flapjack.Compiler.Backend.WordDepth
-import Flapjack.Compiler.Backend.Backend
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.PanToWord
+public import Flapjack.Compiler.Backend.WordToWord.Compile
+public import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
+public import Flapjack.Compiler.Backend.WordDepth
+public import Flapjack.Compiler.Backend.Backend
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+
+@[expose] public section
 
 /-! Exact source definition used by the final Pancake-to-target theorem.
 This module assembles the native pass definitions and the original static

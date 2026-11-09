@@ -1,5 +1,11 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.MatchSimulation
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.RecursiveClosures
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.MatchSimulation
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.RecursiveClosures
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Expression cases for the flat pattern compiler's forward simulation.
 The evaluator and proof-side relations remain pending HOL review. -/

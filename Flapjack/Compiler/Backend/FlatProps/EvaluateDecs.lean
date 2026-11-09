@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Composition of the flat declaration evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatSem

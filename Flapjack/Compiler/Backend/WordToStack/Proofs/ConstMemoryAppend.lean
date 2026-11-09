@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack

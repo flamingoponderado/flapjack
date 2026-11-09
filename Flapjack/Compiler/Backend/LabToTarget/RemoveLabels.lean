@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.LabToTarget.Encoding
-import Flapjack.Compiler.Backend.LabToTarget.Padding
-import Flapjack.Compiler.Backend.LabToTarget.SecondPass
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.FfiHOL
-import Flapjack.Misc.Sptree
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Encoding
+public import Flapjack.Compiler.Backend.LabToTarget.Padding
+public import Flapjack.Compiler.Backend.LabToTarget.SecondPass
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.FfiHOL
+public import Flapjack.Misc.Sptree
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-!
 # Faithful Cake zero-label accumulation and label-removal loop (`lab_to_target`)

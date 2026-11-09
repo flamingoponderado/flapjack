@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyFallbackFrame
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyFallbackFrame
+public import Aesop
+
+@[expose] public section
 
 /-! Runtime-field transfer for BVI primitive application. -/
 namespace Flapjack.Compiler.Backend.BviSem

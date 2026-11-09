@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlConst.SourceCompile
-import Flapjack.Compiler.Backend.BvlConst.Proofs.CompileProduction
+module
+
+public import Flapjack.Compiler.Backend.BvlConst.SourceCompile
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.CompileProduction
+
+@[expose] public section
 
 /-! Executable correspondence for the source constant-propagation entry point. -/
 namespace Flapjack.Compiler.Backend.BvlConst

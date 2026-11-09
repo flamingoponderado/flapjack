@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.Proofs.ColorRegister
-import Flapjack.Misc.Sptree.ToAList
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.ColorRegister
+public import Flapjack.Misc.Sptree.ToAList
+
+@[expose] public section
 
 /-!
 # linear_scanProof: the two allocation passes

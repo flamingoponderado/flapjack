@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveMemory
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveMemory
+
+@[expose] public section
 
 /-! Reference allocation in the generic closure primitive simulation. -/
 namespace Flapjack.Compiler.Backend.ClosProps.PrimitiveAlloc

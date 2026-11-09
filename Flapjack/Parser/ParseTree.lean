@@ -1,4 +1,8 @@
-import Flapjack.Parser.Basic
+module
+
+public import Flapjack.Parser.Basic
+
+@[expose] public section
 
 /-!
 The concrete parse tree.

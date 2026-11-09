@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Assembly
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Assembly
+
+@[expose] public section
 
 namespace Flapjack
 open Pancake.PanLang PanSemStateFiniteExact

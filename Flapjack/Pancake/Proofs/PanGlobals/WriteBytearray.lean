@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.ByteStore
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.ByteStore
+
+@[expose] public section
 
 /-!
 # pan_globals `state_rel_write_bytearray`

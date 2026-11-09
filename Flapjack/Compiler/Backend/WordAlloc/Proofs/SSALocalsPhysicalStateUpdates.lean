@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalInsert
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalInsert
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

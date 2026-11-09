@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosLetop.Source
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+module
+
+public import Flapjack.Compiler.Backend.ClosLetop.Source
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+
+@[expose] public section
 
 /-! Consecutive variables in closure let-operation cleanup. -/
 namespace Flapjack.Compiler.Backend.ClosLetop.Proofs

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluatePrimitive
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluatePrimitive
+
+@[expose] public section
 
 /-! Reference allocation for multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti

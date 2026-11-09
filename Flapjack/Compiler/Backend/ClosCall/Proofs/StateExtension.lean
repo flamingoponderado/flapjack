@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.KnownOrigins
-import Flapjack.Compiler.Backend.ClosCall.Proofs.AuxiliaryAppend
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.KnownOrigins
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.AuxiliaryAppend
+
+@[expose] public section
 
 /-! Extension of direct-call compiler states and their auxiliary code. -/
 namespace Flapjack.Compiler.Backend.ClosCall

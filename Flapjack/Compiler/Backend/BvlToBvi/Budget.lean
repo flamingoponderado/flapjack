@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Bvl.Syntax
+module
+
+public import Flapjack.Compiler.Backend.Bvl.Syntax
+
+@[expose] public section
 
 /-! Computable structural budgets for BVL-to-BVI lowering. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi

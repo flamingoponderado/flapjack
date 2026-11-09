@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnLabels
-import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
-import Flapjack.Compiler.Backend.StackProps.EvaluateConsts
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnHandler
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallTail
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnStackMoveClock
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnLabels
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
+public import Flapjack.Compiler.Backend.StackProps.EvaluateConsts
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnHandler
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallTail
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnStackMoveClock
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CompCorrect.CallReturningHandler
 open Flapjack.Compiler.Encoders.Asm

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.Wellformed
-import Flapjack.Compiler.Backend.ClosCall.Proofs.Length
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.Wellformed
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.Length
+
+@[expose] public section
 
 /-! Domain accounting for the executable direct-call state. -/
 namespace Flapjack.Compiler.Backend.ClosCall

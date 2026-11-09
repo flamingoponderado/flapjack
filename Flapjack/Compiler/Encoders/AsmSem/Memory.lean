@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
+module
+
+public import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
+
+@[expose] public section
 
 /-!
 # Exact asmSem memory accessors

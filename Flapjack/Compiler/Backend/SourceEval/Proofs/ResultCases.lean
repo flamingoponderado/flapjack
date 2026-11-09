@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesProps.ResultRelation
+module
+
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+
+@[expose] public section
 
 /-! Result-shape prerequisite for source evaluator oracle semantics. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

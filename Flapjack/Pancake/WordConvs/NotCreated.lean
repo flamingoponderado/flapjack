@@ -1,5 +1,9 @@
-import Flapjack.Pancake.WordConvs
-import Flapjack.HolArb
+module
+
+public import Flapjack.Pancake.WordConvs
+public import Flapjack.HolArb
+
+@[expose] public section
 
 /-! Boolean structural conventions on the exact WordLang syntax.
 The general checker exposes HOL's unspecified `ARB : memop` as a parameter.

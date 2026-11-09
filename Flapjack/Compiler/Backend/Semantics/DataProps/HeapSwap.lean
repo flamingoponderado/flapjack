@@ -1,6 +1,10 @@
-import Aesop
-import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
-import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyFrame
+module
+
+public import Aesop
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyFrame
+
+@[expose] public section
 
 /-! Heap-size invariance for resource-field updates. -/
 namespace Flapjack.Compiler.Backend.DataProps

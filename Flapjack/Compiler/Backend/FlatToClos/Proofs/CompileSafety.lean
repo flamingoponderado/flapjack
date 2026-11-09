@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.CompileGlobals
-import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.Globals
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.CompileGlobals
+public import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.Globals
+
+@[expose] public section
 
 /-! Closure-safety preservation during flat-to-closure lowering. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

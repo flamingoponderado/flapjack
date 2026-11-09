@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality
-import Flapjack.Compiler.Backend.Semantics.DataSem.Stack
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Stack
+
+@[expose] public section
 
 /-! Source-value equality with the resource count used by the word proof. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

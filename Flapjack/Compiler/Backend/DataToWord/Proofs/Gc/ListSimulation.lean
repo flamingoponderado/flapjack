@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.RootsSimulation
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.RootsSimulation
+
+@[expose] public section
 
 /-! Simulation of copying collector roots stored in word memory. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

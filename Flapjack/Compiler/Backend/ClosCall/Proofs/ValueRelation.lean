@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
-import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
-import Flapjack.Compiler.Backend.Semantics.ClosSem
-import Flapjack.Compiler.Backend.Semantics.ClosProps.SimpleRelations
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
+public import Flapjack.Compiler.Backend.Semantics.ClosSem
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.SimpleRelations
+
+@[expose] public section
 
 /-! Fuel-aware value relation for direct-call conversion. -/
 namespace Flapjack.Compiler.Backend.ClosCall

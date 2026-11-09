@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
-import Flapjack.Compiler.Backend.WordAlloc.SSASetup
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
+public import Flapjack.Compiler.Backend.WordAlloc.SSASetup
+
+@[expose] public section
 
 /-!
 # word_alloc SSA renaming helpers

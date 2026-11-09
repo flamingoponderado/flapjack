@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.StateRelation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
-import Flapjack.SemanticPrimitivesProps.ResultRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+
+@[expose] public section
 
 /-! Numeric primitive cases for multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti

@@ -1,8 +1,16 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.StateRel
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.StateOk
-import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
-import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateList
-import Flapjack.Compiler.Backend.Semantics.BviProps.Clock
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.StateRel
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.StateOk
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
+public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateList
+public import Flapjack.Compiler.Backend.Semantics.BviProps.Clock
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.BvlToBvi.SourceSing
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Cases of the BVL-to-BVI evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

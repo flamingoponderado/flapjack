@@ -1,4 +1,8 @@
-import Flapjack.Misc.Alignment
+module
+
+public import Flapjack.Misc.Alignment
+
+@[expose] public section
 
 /-! Counterpart of the pinned wordsScript word-replication group. -/
 namespace Flapjack

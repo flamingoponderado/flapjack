@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.Simulation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
-import Flapjack.FiniteMap.EmptyExact
-import Flapjack.Compiler.Backend.Semantics.ClosProps.ResultObservations
+module
+
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Simulation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
+public import Flapjack.FiniteMap.EmptyExact
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.ResultObservations
+
+@[expose] public section
 
 /-! Whole-program observations of free-variable removal. -/
 namespace Flapjack.Compiler.Backend.ClosFvs

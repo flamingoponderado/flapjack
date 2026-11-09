@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Support
+module
+
+public import Flapjack.RiscV.L3.Support
+
+@[expose] public section
 
 /-! Complete fixed-width original instruction encoding formats. All argument
 positions, slices and concatenations are retained from the pinned HOL definitions. -/

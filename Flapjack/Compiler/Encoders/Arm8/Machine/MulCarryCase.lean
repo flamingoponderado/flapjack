@@ -2,8 +2,12 @@
 Copyright (c) 2025 Flapjack contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Flapjack.Compiler.Encoders.Arm8.Machine.ShiftCaseFull
-import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Machine.ShiftCaseFull
+public import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
+
+@[expose] public section
 
 /-!
 # The ARM8 `longMul`, carry/overflow and unavailable-operation cases

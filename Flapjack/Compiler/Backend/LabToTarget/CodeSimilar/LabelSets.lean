@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
-import Flapjack.Compiler.Backend.LabProps.LabelSets
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
+public import Flapjack.Compiler.Backend.LabProps.LabelSets
+
+@[expose] public section
 
 /-! Full source code-similarity preservation laws for section numbers,
 ordered extracted labels, label references and defined code labels. -/

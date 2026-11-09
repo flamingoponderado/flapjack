@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
-import Flapjack.FfiHOL
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+public import Flapjack.FfiHOL
+public import Aesop
+
+@[expose] public section
 
 /-! Event preservation for proof-side closure primitives. The evaluator and
 its carriers await HOL correspondence review. -/

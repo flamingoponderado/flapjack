@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
-import Flapjack.HolRef
-import Mathlib.Data.List.Infix
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
+public import Flapjack.HolRef
+public import Mathlib.Data.List.Infix
+public import Aesop
+
+@[expose] public section
 
 /-! Properties of BVL call-code lookup. -/
 namespace Flapjack.Compiler.Backend.BvlProps

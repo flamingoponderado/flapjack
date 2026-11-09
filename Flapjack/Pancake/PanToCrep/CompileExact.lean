@@ -1,10 +1,14 @@
-import Flapjack.Pancake.CrepInline.Canonical
-import Flapjack.Pancake.PanToCrep.Compile
-import Flapjack.Pancake.PanToCrep.ContextExact
-import Flapjack.Pancake.PanToCrep.MakeVmapHOL
-import Flapjack.Pancake.PanToCrep.ExpHdlExact
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.PanCommon
+module
+
+public import Flapjack.Pancake.CrepInline.Canonical
+public import Flapjack.Pancake.PanToCrep.Compile
+public import Flapjack.Pancake.PanToCrep.ContextExact
+public import Flapjack.Pancake.PanToCrep.MakeVmapHOL
+public import Flapjack.Pancake.PanToCrep.ExpHdlExact
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.PanCommon
+
+@[expose] public section
 
 /-!
 Exact-carrier expression lowering from HOL `PanLang.ExpHOL` to `CrepExpHOL`.

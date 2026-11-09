@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+module
+
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+
+@[expose] public section
 
 /-! Preservation of absent capture annotations by closure numbering. -/
 namespace Flapjack.Compiler.Backend.ClosNumber

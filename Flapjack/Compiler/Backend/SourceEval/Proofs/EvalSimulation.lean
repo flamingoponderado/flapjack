@@ -1,22 +1,26 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationApp
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationBase
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationCons
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationConstructors
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDeclarations
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDecsCons
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDenv
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDlet
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationExpressions
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationHandle
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationIf
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationLet
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationLetrec
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationLog
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationMat
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationMatchCons
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationModules
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationStamps
-import Flapjack.EvaluateHOL.Induction
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationApp
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationBase
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationCons
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationConstructors
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDeclarations
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDecsCons
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDenv
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDlet
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationExpressions
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationHandle
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationIf
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationLet
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationLetrec
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationLog
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationMat
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationMatchCons
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationModules
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationStamps
+public import Flapjack.EvaluateHOL.Induction
+
+@[expose] public section
 
 /-! Mutual induction and complete source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
-import Flapjack.Pancake.PanGlobals.CompileExpExact
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
+public import Flapjack.Pancake.PanGlobals.CompileExpExact
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCallHandlerFreshNames
 open Flapjack.Pancake.PanLang

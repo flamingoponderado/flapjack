@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.PointerEquality
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.PointerEquality
+
+@[expose] public section
 
 /-! Immediate-word comparisons for the data-to-word memory relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

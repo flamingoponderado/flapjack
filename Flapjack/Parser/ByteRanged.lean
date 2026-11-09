@@ -1,5 +1,9 @@
-import Flapjack.Parser.Lexer
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Parser.Lexer
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-!
 Byte-rangedness foundation for the Pancake parser (bead

@@ -1,5 +1,9 @@
-import Flapjack.RiscV.Calls
-import Flapjack.RiscV.Backend
+module
+
+public import Flapjack.RiscV.Calls
+public import Flapjack.RiscV.Backend
+
+@[expose] public section
 
 /-!
 FFI service tables for Word programs: each foreign function name maps to its

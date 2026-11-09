@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Compiler.Backend.RegAlloc.ClashTree
+module
+
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Compiler.Backend.RegAlloc.ClashTree
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

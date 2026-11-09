@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabFilter.Proofs.PcAdjustment
-import Flapjack.Compiler.Backend.LabProps.ClockSupport
+module
+
+public import Flapjack.Compiler.Backend.LabFilter.Proofs.PcAdjustment
+public import Flapjack.Compiler.Backend.LabProps.ClockSupport
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabFilter.Proofs
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

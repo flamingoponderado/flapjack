@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticReturn
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Call
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticReturn
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Call
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

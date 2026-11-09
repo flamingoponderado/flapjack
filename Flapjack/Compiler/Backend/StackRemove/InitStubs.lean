@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.InitCode
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.InitCode
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove
 open Flapjack.Compiler.Backend.StackLang

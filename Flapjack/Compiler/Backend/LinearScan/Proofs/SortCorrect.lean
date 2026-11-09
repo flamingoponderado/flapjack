@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.Proofs.PassInvariants
-import Flapjack.Misc.Sorting
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.PassInvariants
+public import Flapjack.Misc.Sorting
+
+@[expose] public section
 
 /-!
 # linear_scanProof: in-array quicksort of registers and moves

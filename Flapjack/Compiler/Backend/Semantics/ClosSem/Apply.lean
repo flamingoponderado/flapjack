@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyMemory
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyMemory
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
+
+@[expose] public section
 
 /-! Assembled closure primitive dispatcher. -/
 namespace Flapjack.Compiler.Backend.ClosSem

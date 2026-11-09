@@ -1,7 +1,11 @@
-import Flapjack.Pancake.Proofs.WordConvs.SSALabelHelpers
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
-import Flapjack.Compiler.Backend.WordAlloc.ProductionSSAMemoryGuard
-import Flapjack.Compiler.Backend.WordAlloc.FullSSA
+module
+
+public import Flapjack.Pancake.Proofs.WordConvs.SSALabelHelpers
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionSSAMemoryGuard
+public import Flapjack.Compiler.Backend.WordAlloc.FullSSA
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Flapjack Flapjack.Compiler.Backend.WordAlloc

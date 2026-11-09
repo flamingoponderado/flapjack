@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileArrayUpdate
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileArrayUpdate
+
+@[expose] public section
 
 /-! Byte-array updates in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

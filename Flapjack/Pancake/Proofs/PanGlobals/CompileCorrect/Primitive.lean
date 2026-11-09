@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.OptMmapEvalCorrect
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.OptMmapEvalCorrect
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCompileCorrectPrimitive
 open Flapjack.Pancake.PanLang

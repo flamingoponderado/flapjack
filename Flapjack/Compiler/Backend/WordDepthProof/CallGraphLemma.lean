@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.Leaves
-import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.Alloc
-import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.If
-import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.Loop
-import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.Call
+module
+
+public import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.Leaves
+public import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.Alloc
+public import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.If
+public import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.Loop
+public import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.Call
+
+@[expose] public section
 
 /-!
 # `max_depth_call_graph_lemma`

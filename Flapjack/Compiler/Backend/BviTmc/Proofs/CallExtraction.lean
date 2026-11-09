@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.PureExtraction
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.PureExtraction
+
+@[expose] public section
 
 /-! Recursive-call case of TMC constructor extraction. -/
 namespace Flapjack.Compiler.Backend.BviTmc.CallExtraction

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Bitmap
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CopyLoop
-import Flapjack.Compiler.Backend.StackRemove.Proofs.MemorySubset
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Bitmap
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CopyLoop
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.MemorySubset
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.StoreConsts
 open Flapjack Compiler.Backend.StackLang StackSemEvaluate StackSemStateOps
 /-- Flapjack-only native macro-prefix equation. The reads and load are local

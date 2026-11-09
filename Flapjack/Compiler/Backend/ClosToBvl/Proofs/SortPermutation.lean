@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Sort
-import Mathlib.Data.List.Permutation
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Sort
+public import Mathlib.Data.List.Permutation
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.ClosToBvl
 

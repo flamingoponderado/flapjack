@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
-import Flapjack.SemanticPrimitivesHOL.Test
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
+public import Flapjack.SemanticPrimitivesHOL.Test
+
+@[expose] public section
 
 /-! Primitive comparison in the flat evaluator. Floating-point operations use
 `FpSemHOL` and retain its documented rational-cut assumption. -/

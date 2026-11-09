@@ -1,5 +1,9 @@
-import Flapjack.AstHOL.Syntax
-import Flapjack.FfiHOL
+module
+
+public import Flapjack.AstHOL.Syntax
+public import Flapjack.FfiHOL
+
+@[expose] public section
 
 /-! CakeML source-semantics value and store carriers. Individual declarations
 are classified in the theorem map; this module does not establish evaluator or

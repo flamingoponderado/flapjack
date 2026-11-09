@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! The source evaluator's recording callback and its input decoders. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

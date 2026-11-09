@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Parmove.StepSem.StartExtend
-import Flapjack.Compiler.Backend.Parmove.StepSem.RemoveSelfEmitLast
-import Flapjack.Compiler.Backend.Parmove.StepSem.Save
-import Flapjack.Compiler.Backend.Parmove.StepSem.EmitHead
+module
+
+public import Flapjack.Compiler.Backend.Parmove.StepSem.StartExtend
+public import Flapjack.Compiler.Backend.Parmove.StepSem.RemoveSelfEmitLast
+public import Flapjack.Compiler.Backend.Parmove.StepSem.Save
+public import Flapjack.Compiler.Backend.Parmove.StepSem.EmitHead
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

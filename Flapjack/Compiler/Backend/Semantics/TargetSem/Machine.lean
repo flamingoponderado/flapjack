@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
-import Flapjack.Compiler.Encoders.AsmSem.State
-import Flapjack.Pancake.Semantics.LoopSem
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+public import Flapjack.Compiler.Encoders.AsmSem.State
+public import Flapjack.Pancake.Semantics.LoopSem
+
+@[expose] public section
 
 /-!
 # Exact targetSem machine predicates

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyClock
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyClock
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+
+@[expose] public section
 
 /-! Clock-extension prerequisites for the proof-side closure evaluator.
 The dispatcher and finite-map carriers remain pending HOL correspondence review. -/

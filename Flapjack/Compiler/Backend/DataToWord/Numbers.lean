@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Config
-import Flapjack.Misc.Alignment
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Config
+public import Flapjack.Misc.Alignment
+
+@[expose] public section
 
 /-! Source-shaped numeric and pointer encodings for data-to-word correctness. -/
 namespace Flapjack.Compiler.Backend.DataToWord

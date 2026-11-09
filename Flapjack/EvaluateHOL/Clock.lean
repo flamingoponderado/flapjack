@@ -1,4 +1,8 @@
-import Flapjack.EvaluateHOL.Definition
+module
+
+public import Flapjack.EvaluateHOL.Definition
+
+@[expose] public section
 
 /-! Flapjack proof cases used by the assembled source evaluator clock theorem. -/
 namespace Flapjack.EvaluateHOL

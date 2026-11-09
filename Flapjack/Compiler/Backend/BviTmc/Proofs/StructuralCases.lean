@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.StructuralHypothesis
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ReturnSimulation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.RaiseSimulation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.TickSimulation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.IfAssembly
-import Flapjack.Compiler.Backend.BviTmc.Proofs.LetAssembly
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.StructuralHypothesis
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ReturnSimulation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.RaiseSimulation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.TickSimulation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.IfAssembly
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.LetAssembly
+
+@[expose] public section
 
 /-! Singleton expression cases for the TMC structural induction. -/
 namespace Flapjack.Compiler.Backend.BviTmc.StructuralCases

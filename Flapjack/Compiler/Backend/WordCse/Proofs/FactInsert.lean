@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.DataInvUpdates
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.DataInvUpdates
+
+@[expose] public section
 
 /-!
 # `word_cseProof`: correctness of the CSE fact producers

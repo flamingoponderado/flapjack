@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.State
-import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
-import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
-import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultAll
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.State
+public import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
+public import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
+public import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultAll
+
+@[expose] public section
 
 /-! Compositional simulation cases for data liveness. -/
 namespace Flapjack.Compiler.Backend.DataLive

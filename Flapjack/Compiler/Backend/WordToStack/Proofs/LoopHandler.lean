@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
+
+@[expose] public section
 namespace Flapjack.WordToStackProofs.LoopHandler
 /-- Genuine canonical imported source carrier roundtrip. -/
 theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :

@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateOp
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.Force
+module
+
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateOp
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Force
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Thunk-forcing case of closure let-operation correctness. -/
 namespace Flapjack.Compiler.Backend.ClosLetop

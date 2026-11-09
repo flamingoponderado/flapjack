@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+module
+
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+
+@[expose] public section
 
 /-!
 # loopProps clock lemmas over the exact loopSem evaluator

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopEmpty
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopEmpty
+
+@[expose] public section
 
 /-! Address and fuel facts for the nonempty collector scan. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreUpdate
-import Flapjack.Misc.RichList
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyMemory
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyData
-import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreUpdate
+public import Flapjack.Misc.RichList
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyMemory
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyData
+public import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
+
+@[expose] public section
 
 /-! Reference and array simulation over the factored source-to-flat relations.
 The complete primitive-application theorem remains open. -/

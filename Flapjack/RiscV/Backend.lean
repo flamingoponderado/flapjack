@@ -1,6 +1,10 @@
-import Flapjack.Word
-import Flapjack.RiscV.Model
-import Flapjack.RiscV.RegisterMap
+module
+
+public import Flapjack.Word
+public import Flapjack.RiscV.Model
+public import Flapjack.RiscV.RegisterMap
+
+@[expose] public section
 
 /-!
 The first executable Word-to-RISC-V instruction-selection slice.

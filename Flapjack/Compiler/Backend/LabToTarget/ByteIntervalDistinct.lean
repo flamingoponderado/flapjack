@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.PositionOrder
-import Flapjack.Compiler.Backend.LabToTarget.FetchSuccessor
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.PositionOrder
+public import Flapjack.Compiler.Backend.LabToTarget.FetchSuccessor
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Backend.LabSem

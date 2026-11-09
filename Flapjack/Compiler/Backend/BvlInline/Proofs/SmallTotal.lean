@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlInline
+module
+
+public import Flapjack.Compiler.Backend.BvlInline
+
+@[expose] public section
 
 /-! Structural sufficiency for the BVL inliner's size analysis. These are
 Flapjack infrastructure lemmas, not HOL pass-correctness ports. -/

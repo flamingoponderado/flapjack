@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove.InitMemory
-import Flapjack.Compiler.Backend.StackRemove.StoreInit
-import Flapjack.Compiler.Backend.BackendCommon
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.InitMemory
+public import Flapjack.Compiler.Backend.StackRemove.StoreInit
+public import Flapjack.Compiler.Backend.BackendCommon
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove
 open Flapjack Flapjack.Compiler.Backend.StackLang

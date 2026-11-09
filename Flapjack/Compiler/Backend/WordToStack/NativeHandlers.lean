@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
+
+@[expose] public section
 
 /-! Native handler-frame lowering for the literal Word-to-Stack compiler.
 The source perf branch is retained as syntax, including the original x64

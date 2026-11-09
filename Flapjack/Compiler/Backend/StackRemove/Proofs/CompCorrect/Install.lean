@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
-import Flapjack.Compiler.Backend.StackRemove.Proofs.ProgCompEta
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.ProgCompEta
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.Install
 open Flapjack Compiler.Backend.StackLang StackSemEvaluate StackSemStateOps
 /-- Flapjack-only first-match lookup transport for Install; no independent HOL declaration. -/

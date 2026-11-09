@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.If
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.If
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRawCall.LoopCase
 open Flapjack Flapjack.Compiler.Backend.StackLang StackSemStateOps StackSemControl

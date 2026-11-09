@@ -1,14 +1,18 @@
-import Flapjack.Compiler.Backend.LabToTarget.Compile
-import Flapjack.Compiler.Backend.LabSem.State
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
-import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
-import Flapjack.Compiler.Backend.Semantics.TargetSem.MappedMemory
-import Flapjack.Compiler.Encoders.AsmProps.Target
-import Flapjack.EvaluateProps
-import Flapjack.Byte
-import Flapjack.Byte.WordOfBytes
-import Flapjack.Misc.ListEl
-import Mathlib.Logic.Relation
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Compile
+public import Flapjack.Compiler.Backend.LabSem.State
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.MappedMemory
+public import Flapjack.Compiler.Encoders.AsmProps.Target
+public import Flapjack.EvaluateProps
+public import Flapjack.Byte
+public import Flapjack.Byte.WordOfBytes
+public import Flapjack.Misc.ListEl
+public import Mathlib.Logic.Relation
+
+@[expose] public section
 
 /-!
 # lab_to_targetProof: `share_mem_state_rel`
@@ -26,7 +30,7 @@ namespace Flapjack.Compiler.Backend.LabToTarget
 
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.HolByte
 
-private instance : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
+instance shareMemStateInst1 : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
 
 /-- Exact HOL `share_mem_state_rel_def` (`lab_to_targetProofScript.sml:720-774`), with the
 original binders `ms2 k index new_bytes t1 nb ad offs re pc' ad' st new_st i` and `index i`. -/

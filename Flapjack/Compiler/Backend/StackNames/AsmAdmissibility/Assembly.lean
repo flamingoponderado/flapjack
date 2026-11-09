@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Inst
-import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.RegisterLeaves
-import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Recursive
-import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Defaults
+module
+
+public import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Inst
+public import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.RegisterLeaves
+public import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Recursive
+public import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Defaults
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackNames
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackProps

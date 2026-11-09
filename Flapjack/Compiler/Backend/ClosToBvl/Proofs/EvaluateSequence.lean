@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluatePost
-import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallConst
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
-import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateLength
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluatePost
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallConst
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateLength
+
+@[expose] public section
 
 /-! Sequential composition for the closure-to-BVL simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

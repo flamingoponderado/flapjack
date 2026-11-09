@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeader
-import Mathlib.Tactic.NormNum
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeader
+public import Mathlib.Tactic.NormNum
+
+@[expose] public section
 
 /-! Constructor-tag tests in the data-to-word memory relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

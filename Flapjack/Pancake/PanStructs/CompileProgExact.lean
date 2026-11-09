@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanStructs.CompileExpExact
-import Flapjack.Pancake.PanLang.Prog
+module
+
+public import Flapjack.Pancake.PanStructs.CompileExpExact
+public import Flapjack.Pancake.PanLang.Prog
+
+@[expose] public section
 
 /-! Exact source program compilation. Executed routing remains a separate
 obligation. Declaration bodies bind the original source shape in the context;

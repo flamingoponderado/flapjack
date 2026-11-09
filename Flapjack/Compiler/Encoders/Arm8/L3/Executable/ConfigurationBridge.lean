@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Configuration
-import Flapjack.Compiler.Encoders.Arm8.Configuration
-import Flapjack.Compiler.Encoders.Arm8.L3.Executable.BitMask
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Configuration
+public import Flapjack.Compiler.Encoders.Arm8.Configuration
+public import Flapjack.Compiler.Encoders.Arm8.L3.Executable.BitMask
+
+@[expose] public section
 
 /-!
 # `valid_immediate` on the two carriers

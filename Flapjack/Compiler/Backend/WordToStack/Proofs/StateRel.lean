@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.State
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRel
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
-import Flapjack.Compiler.Backend.WordToStack.NativePrograms
-import Flapjack.Compiler.Backend.WordToStack.NativeStubs
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.GcFunOk
-import Flapjack.Misc.GoodDimindex
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.State
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRel
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
+public import Flapjack.Compiler.Backend.WordToStack.NativePrograms
+public import Flapjack.Compiler.Backend.WordToStack.NativeStubs
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.GcFunOk
+public import Flapjack.Misc.GoodDimindex
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.WordToStack.Native

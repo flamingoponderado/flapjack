@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordDepth
+module
+
+public import Flapjack.Compiler.Backend.WordDepth
+
+@[expose] public section
 
 /-! The arithmetic runtime's computed call tree. -/
 namespace Flapjack.Compiler.Backend.DataToWord

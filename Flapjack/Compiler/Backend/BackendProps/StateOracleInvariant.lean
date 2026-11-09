@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+module
+
+public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+
+@[expose] public section
 
 /-! Invariants of the incremental compiler's oracle-state sequence. -/
 namespace Flapjack.Compiler.Backend.BackendProps

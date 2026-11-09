@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocNone
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocSimple
-import Flapjack.Compiler.Backend.StackProps.AllocationConstants
-import Flapjack.Compiler.Backend.StackProps.StackLengths
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocNone
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocSimple
+public import Flapjack.Compiler.Backend.StackProps.AllocationConstants
+public import Flapjack.Compiler.Backend.StackProps.StackLengths
+
+@[expose] public section
 
 /-! Original allocation correctness theorem, assembled along HOL's
 garbage collector kind split. All branches evaluate the actual wordGcCode. -/

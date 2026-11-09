@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.GenGc
-import Flapjack.Compiler.Backend.GcShared.ForwardPtr
+module
+
+public import Flapjack.Compiler.Backend.GenGc
+public import Flapjack.Compiler.Backend.GcShared.ForwardPtr
+
+@[expose] public section
 
 /-! Success preservation for the major collector. -/
 namespace Flapjack.Compiler.Backend.GenGc

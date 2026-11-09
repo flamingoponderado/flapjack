@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.BoundEvaluation
-import Flapjack.Compiler.Backend.BviLet.Proofs.Simulation
-import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.BoundEvaluation
+public import Flapjack.Compiler.Backend.BviLet.Proofs.Simulation
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
+
+@[expose] public section
 
 /-! Execution of the auxiliary call emitted for empty BVL lets. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

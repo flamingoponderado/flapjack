@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.DirectEvaluate
-import Flapjack.Compiler.Backend.ClosOp.Proofs.PureEvaluate
-import Flapjack.Compiler.Backend.Semantics.ClosProps.EqualitySym
-import Flapjack.Compiler.Backend.ClosOp.Proofs.EqPureSimple
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.DirectEvaluate
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.PureEvaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.EqualitySym
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.EqPureSimple
+
+@[expose] public section
 
 /-! Semantic cases for the source pure-equality optimization. -/
 namespace Flapjack.Compiler.Backend.ClosOp

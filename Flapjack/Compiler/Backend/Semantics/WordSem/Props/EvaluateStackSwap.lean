@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.MustTerminate
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.If
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Call
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.MustTerminate
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.If
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Call
+
+@[expose] public section
 
 /-!
 # `evaluate_stack_swap`

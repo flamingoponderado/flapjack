@@ -1,7 +1,11 @@
-import Flapjack.Misc.Option.MapM
-import Flapjack.Compiler.Backend.ClosFvs.Source
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.Total
-import Mathlib.Tactic
+module
+
+public import Flapjack.Misc.Option.MapM
+public import Flapjack.Compiler.Backend.ClosFvs.Source
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Total
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-! Agreement of the executed retry with source-shaped free-variable removal. -/
 namespace Flapjack.Compiler.Backend.ClosFvs

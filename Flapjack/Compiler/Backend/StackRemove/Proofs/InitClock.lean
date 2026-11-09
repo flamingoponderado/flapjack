@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.InitCode
-import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.InitCode
+public import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.Proofs.InitClock
 open Flapjack Flapjack.Compiler.Backend.StackLang

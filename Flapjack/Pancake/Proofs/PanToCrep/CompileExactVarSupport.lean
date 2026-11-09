@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanToCrep.CompileExact
+module
+
+public import Flapjack.Pancake.PanToCrep.CompileExact
+
+@[expose] public section
 
 /-!
 Compiler-only support facts for the exact Pan-to-Crep expression compiler.

@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
-import Flapjack.SemanticPrimitivesHOL.Operations
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
+public import Flapjack.SemanticPrimitivesHOL.Operations
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Reference-aware equality for BVL runtime values. -/
 namespace Flapjack.Compiler.Backend.BvlSem

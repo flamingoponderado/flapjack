@@ -1,4 +1,13 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Conversions
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Conversions
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Unsupported primitive conversions in the flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

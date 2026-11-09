@@ -1,7 +1,14 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftCorrect
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
-import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateAppend
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftCorrect
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateAppend
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Pure-expression evaluation facts used by closure smart operations. -/
 namespace Flapjack.Compiler.Backend.ClosOp

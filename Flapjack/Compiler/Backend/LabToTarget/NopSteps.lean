@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
-import Flapjack.Compiler.Backend.LabToTarget.Interference
-import Flapjack.Compiler.Backend.Semantics.TargetProps.AsmStepEvaluate
-import Flapjack.Compiler.Encoders.AsmProps.AsmConsts
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
+public import Flapjack.Compiler.Backend.LabToTarget.Interference
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.AsmStepEvaluate
+public import Flapjack.Compiler.Encoders.AsmProps.AsmConsts
+
+@[expose] public section
 
 /-! Original NOP-padded assembly-step simulation (lab_to_targetProofScript.sml
 115-345). All original encoder, domain, FFI-entry disjointness, interference,

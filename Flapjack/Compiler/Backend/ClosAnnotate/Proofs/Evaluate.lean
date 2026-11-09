@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.LocalSteps
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.LocalSteps
+
+@[expose] public section
 
 /-! Mutual evaluator simulation for closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

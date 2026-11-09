@@ -1,6 +1,10 @@
-import Flapjack.NamespaceProps.Append
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDenv
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalDeclarations
+module
+
+public import Flapjack.NamespaceProps.Append
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDenv
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalDeclarations
+
+@[expose] public section
 
 /-! Namespace-domain facts needed by sequential declaration simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

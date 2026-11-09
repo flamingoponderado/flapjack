@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CorrectnessEncoding.Call.Native
-import Flapjack.RiscV.CorrectnessEncoding.Jump.Near
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.Call.Native
+public import Flapjack.RiscV.CorrectnessEncoding.Jump.Near
+
+@[expose] public section
 
 /-! Near-path assembly infrastructure for the full Call constructor. The branch
 condition selects the actual source encoder path; only the assembling theorem

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Loop
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapExpand
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Loop
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapExpand
+
+@[expose] public section
 
 /-! Simulation of the full copying collector. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -7,9 +11,9 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.WordGcFunction
 open Flapjack.Compiler.Backend.CopyingGc
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 
-private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+instance fullInst1 {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
-private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
+instance fullInst2 {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
 
 private theorem extractFree {width : Nat} [NeZero width] {β : Type}
     (p f : ((BitVec width × β) → Prop) → Prop) (address : BitVec width) (n : Nat)

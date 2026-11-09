@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.BindingGlobals
-import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.BindingGlobals
+public import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
+
+@[expose] public section
 
 /-! Monotonicity of global slots across stateful incremental compilation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

@@ -1,9 +1,16 @@
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.StateRelation
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.ClosureApplication
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
-import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallConst
+module
+
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.ClosureApplication
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallConst
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Initial cases of the closure-numbering evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.ClosNumber

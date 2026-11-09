@@ -1,12 +1,16 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.CrepInline.Pass
-import Flapjack.Pancake.PanToCrep.Compile
-import Flapjack.Pancake.PanToCrep.CompileExact
-import Flapjack.Pancake.PanToCrep.CompileExpBridge
-import Flapjack.FiniteMap
-import Flapjack.Pancake.PanToCrep.ContextBridge
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.Pancake.PanLang.ProgHOLInduction
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.CrepInline.Pass
+public import Flapjack.Pancake.PanToCrep.Compile
+public import Flapjack.Pancake.PanToCrep.CompileExact
+public import Flapjack.Pancake.PanToCrep.CompileExpBridge
+public import Flapjack.FiniteMap
+public import Flapjack.Pancake.PanToCrep.ContextBridge
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.PanLang.ProgHOLInduction
+
+@[expose] public section
 
 /-!
 HOL-shaped top-level Pancake-to-Crep compiler boundary. The per-function

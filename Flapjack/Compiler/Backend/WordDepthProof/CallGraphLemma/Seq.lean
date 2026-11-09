@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.Motive
+module
+
+public import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.Motive
+
+@[expose] public section
 
 /-!
 # `max_depth_call_graph_lemma`: `Seq` case

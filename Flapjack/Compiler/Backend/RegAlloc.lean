@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Exact source counterpart of the CakeML register-allocation partition
 predicates and their partition lemma

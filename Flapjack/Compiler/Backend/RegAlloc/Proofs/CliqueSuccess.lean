@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.EdgeInsertion
-import Flapjack.Compiler.Backend.RegAlloc.Proofs
-import Flapjack.Misc.Sptree.ToAList
-import Flapjack.Compiler.Backend.RegAlloc
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.EdgeInsertion
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs
+public import Flapjack.Misc.Sptree.ToAList
+public import Flapjack.Compiler.Backend.RegAlloc
+
+@[expose] public section
 
 /-!
 # reg_allocProof: clique insertion and graph construction success

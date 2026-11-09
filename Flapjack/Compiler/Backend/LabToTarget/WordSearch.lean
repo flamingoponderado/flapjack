@@ -1,4 +1,8 @@
-import Flapjack.Misc.FindIndex
+module
+
+public import Flapjack.Misc.FindIndex
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Misc
 

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
-import Flapjack.Compiler.Backend.WordAlloc.InstructionWrites
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
+public import Flapjack.Compiler.Backend.WordAlloc.InstructionWrites
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

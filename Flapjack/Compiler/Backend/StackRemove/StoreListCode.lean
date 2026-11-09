@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackLang.Overloads
+module
+
+public import Flapjack.Compiler.Backend.StackLang.Overloads
+
+@[expose] public section
 
 /-! Literal stack_removeScript.sml:231–241 initialization list compiler.
 The full original initialization/compile route remains tracked on

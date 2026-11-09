@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileInt
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileInt
+
+@[expose] public section
 
 /-! Integer-operation relocation for BVL-to-BVI. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

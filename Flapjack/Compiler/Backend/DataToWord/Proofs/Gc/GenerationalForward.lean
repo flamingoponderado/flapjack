@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Generational
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveForward
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Generational
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveForward
+
+@[expose] public section
 
 /-! Forwarding-pointer case of the major collector simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

@@ -1,5 +1,9 @@
-import Flapjack.Misc.BinaryIeeeSqrt
-import Flapjack.Misc.RealSqrtBridge
+module
+
+public import Flapjack.Misc.BinaryIeeeSqrt
+public import Flapjack.Misc.RealSqrtBridge
+
+@[expose] public section
 
 /-!
 # Agreement between the current rational cuts and real square-root comparisons

@@ -1,4 +1,8 @@
-import Flapjack.EvaluateHOL.ClockFull
+module
+
+public import Flapjack.EvaluateHOL.ClockFull
+
+@[expose] public section
 
 /-! Base cases for evaluation without an Eval state. -/
 namespace Flapjack.EvaluateProps

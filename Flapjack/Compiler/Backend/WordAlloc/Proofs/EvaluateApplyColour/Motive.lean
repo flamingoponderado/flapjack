@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.Colour
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ColouringOk
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
-import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Colour
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ColouringOk
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+
+@[expose] public section
 
 /-!
 # `evaluate_apply_colour` statement

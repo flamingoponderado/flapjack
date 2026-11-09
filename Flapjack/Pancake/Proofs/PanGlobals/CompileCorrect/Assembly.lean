@@ -1,21 +1,25 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Dec
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.AssignLocal
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.AssignGlobal
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Primitive
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Store
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Store32
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.StoreByte
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ShMemGlobal
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Seq
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.If
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.While
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Return
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Raise
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Call
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.DecCall
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ExtCall
-import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Dec
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.AssignLocal
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.AssignGlobal
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Primitive
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Store
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Store32
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.StoreByte
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ShMemGlobal
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Seq
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.If
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.While
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Return
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Raise
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Call
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.DecCall
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ExtCall
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCompileCorrectAssembly
 open Flapjack.Pancake.PanLang

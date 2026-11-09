@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem
+
+@[expose] public section
 
 /-! Pattern matching for the flat-language evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatSem

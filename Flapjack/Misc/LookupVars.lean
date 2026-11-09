@@ -1,4 +1,8 @@
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Indexed environment lookup from CakeML's general-purpose list utilities. -/
 namespace Flapjack.Compiler.Backend.ClosSem

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
+
+@[expose] public section
 
 /-!
 # Call-entry projection from exact `code_rel2`

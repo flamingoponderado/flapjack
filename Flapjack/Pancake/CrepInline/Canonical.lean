@@ -1,4 +1,14 @@
-import Flapjack.Pancake.CrepInline.Pass
+module
+
+public import Flapjack.Pancake.CrepInline.Pass
+-- The `#guard` oracles below run compiled code from these modules.
+meta import Flapjack.Pancake.CrepInline.Pass
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # HOL `inline_prog` over the canonical `HolFiniteMapExact`

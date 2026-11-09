@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.EvaluateOp
-import Flapjack.Compiler.Backend.Semantics.ClosProps.DestClosure
+module
+
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.EvaluateOp
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.DestClosure
+
+@[expose] public section
 
 /-! Mutual closure-application cases for free-variable removal. -/
 namespace Flapjack.Compiler.Backend.ClosFvs

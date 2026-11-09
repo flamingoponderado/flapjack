@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocalEval
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Support
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocalEval
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Support
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsFreshLocalDec
 open Flapjack.PanGlobalsFreshLocalSupport

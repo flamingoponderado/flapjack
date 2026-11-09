@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyClock
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyClock
+
+@[expose] public section
 
 /-! State preservation by flat primitive application. -/
 namespace Flapjack.Compiler.Backend.FlatProps

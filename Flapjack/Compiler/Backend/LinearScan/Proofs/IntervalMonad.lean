@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.Proofs.Intervals
-import Flapjack.Compiler.Backend.RegAlloc.Proofs
-import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
-import Flapjack.Compiler.Backend.LinearScan.Proofs.CheckIntervals
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.Intervals
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.CheckIntervals
+
+@[expose] public section
 
 /-!
 # linear_scanProof: live-tree registers and interval bounds

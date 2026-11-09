@@ -1,7 +1,11 @@
-import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
-import Flapjack.Misc.GoodDimindex
+module
+
+public import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+public import Flapjack.Misc.GoodDimindex
+
+@[expose] public section
 
 /-!
 # `loop_to_wordProof` `comp_exp_preserves_eval`

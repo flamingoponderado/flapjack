@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
-import Mathlib.Data.List.Nodup
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+public import Mathlib.Data.List.Nodup
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

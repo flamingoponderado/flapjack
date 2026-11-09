@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Symmetry of the source closure-value equality. -/
 namespace Flapjack.Compiler.Backend.ClosProps

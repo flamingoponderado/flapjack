@@ -1,7 +1,11 @@
-import Mathlib.Logic.Basic
-import Mathlib.Tactic.SplitIfs
-import Mathlib.Tactic.CasesM
-import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
+module
+
+public import Mathlib.Logic.Basic
+public import Mathlib.Tactic.SplitIfs
+public import Mathlib.Tactic.CasesM
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
+
+@[expose] public section
 
 namespace Flapjack
 

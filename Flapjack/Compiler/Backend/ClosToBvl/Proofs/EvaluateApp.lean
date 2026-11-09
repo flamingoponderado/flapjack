@@ -1,7 +1,16 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.DirectApplication
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateCall
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
-import Flapjack.Compiler.Backend.BvlJump.Proofs
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.DirectApplication
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateCall
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+public import Flapjack.Compiler.Backend.BvlJump.Proofs
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.ClosToBvl.Stubs
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Application cases of the closure-to-BVL simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

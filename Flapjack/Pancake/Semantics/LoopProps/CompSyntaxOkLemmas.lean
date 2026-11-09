@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOk
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpLeTmpDomain
+module
+
+public import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOk
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+public import Flapjack.Pancake.CrepToLoop.Proofs.CompExpLeTmpDomain
+
+@[expose] public section
 
 /-!
 # loopProps `comp_syntax_ok` lemmas

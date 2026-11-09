@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.LabSem.Navigation
-import Flapjack.Compiler.Backend.LabProps.Labels
-import Flapjack.Compiler.Backend.LabProps.LabelSets
-import Flapjack.Compiler.Backend.StackToLab.Native
-import Mathlib.Tactic.SplitIfs
-import Mathlib.Tactic.Tauto
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
-import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
-import Flapjack.Compiler.Backend.StackAlloc.Compile
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Navigation
+public import Flapjack.Compiler.Backend.LabProps.Labels
+public import Flapjack.Compiler.Backend.LabProps.LabelSets
+public import Flapjack.Compiler.Backend.StackToLab.Native
+public import Mathlib.Tactic.SplitIfs
+public import Mathlib.Tactic.Tauto
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
+public import Flapjack.Compiler.Backend.StackAlloc.Compile
+
+@[expose] public section
 
 /-! Code-installation lemmas of `stack_to_labProofScript.sml` (lines 102-600):
 `code_installed`, `code_installed'`, `labs_correct` and the `asm_fetch_aux` /

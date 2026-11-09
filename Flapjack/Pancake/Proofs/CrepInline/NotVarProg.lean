@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Assembly
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Assembly
+
+@[expose] public section
 
 /-!
 # crep_inline `not_var_prog_flookup_eqn`

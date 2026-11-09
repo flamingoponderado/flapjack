@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateRecursiveApplication
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateRecursiveApplication
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Evaluation of collected application expressions. -/
 namespace Flapjack.Compiler.Backend.ClosMti

@@ -1,7 +1,11 @@
-import Flapjack.Misc.BalancedMap.Insert
-import Flapjack.Misc.BalancedMap.InvariantSemantics
-import Flapjack.Misc.BalancedMap.KeySets
-import Flapjack.FiniteMap.MapKeys
+module
+
+public import Flapjack.Misc.BalancedMap.Insert
+public import Flapjack.Misc.BalancedMap.InvariantSemantics
+public import Flapjack.Misc.BalancedMap.KeySets
+public import Flapjack.FiniteMap.MapKeys
+
+@[expose] public section
 namespace Flapjack.Misc.BalancedMap
 open FiniteMap.Comparison
 /-- Comparator-equivalence transport infrastructure; no separate HOL original. -/

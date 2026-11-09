@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCopy
-import Flapjack.Misc.Sptree.InterEq
+module
+
+public import Flapjack.Compiler.Backend.WordCopy
+public import Flapjack.Misc.Sptree.InterEq
+
+@[expose] public section
 
 /-!
 # word_copyProof: the `copy_state` invariant

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateBasic
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.Primitive
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
+module
+
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateBasic
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Primitive
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
+
+@[expose] public section
 
 /-! Ordinary-operation case of closure let-operation correctness. -/
 namespace Flapjack.Compiler.Backend.ClosLetop

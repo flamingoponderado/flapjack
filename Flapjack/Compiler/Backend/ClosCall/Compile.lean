@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.ClosCall.Calls
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Calls
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Total direct-call compiler entry points. -/
 namespace Flapjack.Compiler.Backend.ClosCall
 open ClosLang
-private instance : Nonempty Exp := ⟨.var .none 0⟩
+instance compileInst1 : Nonempty Exp := ⟨.var .none 0⟩
 
 /-- The list traversal is the single-list form proved equivalent to HOL's
 `calls` by `calls_sing_eq`. -/

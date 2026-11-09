@@ -1,11 +1,15 @@
-import Flapjack.RiscV.CorrectnessEncoding.ShiftLslRegister
-import Flapjack.RiscV.CorrectnessEncoding.ShiftLslImmediate
-import Flapjack.RiscV.CorrectnessEncoding.ShiftLsrRegister
-import Flapjack.RiscV.CorrectnessEncoding.ShiftLsrImmediate
-import Flapjack.RiscV.CorrectnessEncoding.ShiftAsrRegister
-import Flapjack.RiscV.CorrectnessEncoding.ShiftAsrImmediate
-import Flapjack.RiscV.CorrectnessEncoding.ShiftRorRegister
-import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.ShiftLslRegister
+public import Flapjack.RiscV.CorrectnessEncoding.ShiftLslImmediate
+public import Flapjack.RiscV.CorrectnessEncoding.ShiftLsrRegister
+public import Flapjack.RiscV.CorrectnessEncoding.ShiftLsrImmediate
+public import Flapjack.RiscV.CorrectnessEncoding.ShiftAsrRegister
+public import Flapjack.RiscV.CorrectnessEncoding.ShiftAsrImmediate
+public import Flapjack.RiscV.CorrectnessEncoding.ShiftRorRegister
+public import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
+
+@[expose] public section
 
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm

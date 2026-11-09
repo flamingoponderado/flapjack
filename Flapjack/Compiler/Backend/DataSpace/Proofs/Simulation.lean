@@ -1,9 +1,16 @@
-import Flapjack.Compiler.Backend.DataSpace.Proofs.State
-import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
-import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
-import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveAll
-import Flapjack.Compiler.Backend.DataLive.Proofs.CompileCorrect
-import Flapjack.Compiler.Backend.DataSpace.Proofs.Cuts
+module
+
+public import Flapjack.Compiler.Backend.DataSpace.Proofs.State
+public import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
+public import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
+public import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveAll
+public import Flapjack.Compiler.Backend.DataLive.Proofs.CompileCorrect
+public import Flapjack.Compiler.Backend.DataSpace.Proofs.Cuts
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+@[expose] public section
 
 /-! Basic cases of data-space reservation simulation. -/
 namespace Flapjack.Compiler.Backend.DataSpace

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsRanges
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsRanges
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsInitGlobalsMapDisjoint
 open Flapjack.Pancake.PanLang

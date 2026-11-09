@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.ListSimulation
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.ListSimulation
+
+@[expose] public section
 
 /-! Empty-pending-heap case of the collector scan simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

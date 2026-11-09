@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationCons
-import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelationSimps
-import Flapjack.EvaluateProps.Length
-import Flapjack.SemanticPrimitivesHOL.Control
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationCons
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelationSimps
+public import Flapjack.EvaluateProps.Length
+public import Flapjack.SemanticPrimitivesHOL.Control
+
+@[expose] public section
 
 /-! Conditional-expression case of the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

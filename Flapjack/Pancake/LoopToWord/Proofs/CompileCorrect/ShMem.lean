@@ -1,10 +1,14 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Arith
-import Flapjack.Pancake.Proofs.LoopToWord.CompExpPreservesEval
-import Flapjack.Pancake.Proofs.LoopToWord.WordToBytes
-import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
-import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Arith
+public import Flapjack.Pancake.Proofs.LoopToWord.CompExpPreservesEval
+public import Flapjack.Pancake.Proofs.LoopToWord.WordToBytes
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
+public import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
+
+@[expose] public section
 
 /-!
 # `ShMem` case of `loop_to_word`'s `compile_correct`

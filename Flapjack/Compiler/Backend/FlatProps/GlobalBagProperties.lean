@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatProps.Globals
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.Globals
+
+@[expose] public section
 
 /-! Properties of the flat global-initialization bag. -/
 namespace Flapjack.Compiler.Backend.FlatProps

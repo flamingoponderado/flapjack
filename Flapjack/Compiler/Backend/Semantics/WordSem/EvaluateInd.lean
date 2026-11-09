@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
+
+@[expose] public section
 
 /-!
 # HOL `wordSem` rebound `evaluate_ind` and `evaluate_def`

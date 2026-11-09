@@ -1,6 +1,10 @@
-import Flapjack.RiscV.CorrectnessEncoding.MemoryBytes
-import Flapjack.RiscV.CorrectnessEncoding.ConstNext
-import Flapjack.RiscV.CorrectnessEncoding.DecodeMemory
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.MemoryBytes
+public import Flapjack.RiscV.CorrectnessEncoding.ConstNext
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeMemory
+
+@[expose] public section
 
 /-! Native memory Next infrastructure for the original Mem constructor.
 These compositions have no separately named HOL originals and remain untagged.

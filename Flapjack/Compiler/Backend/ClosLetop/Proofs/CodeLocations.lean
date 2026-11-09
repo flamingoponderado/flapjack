@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosLetop.Source
-import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+module
+
+public import Flapjack.Compiler.Backend.ClosLetop.Source
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+
+@[expose] public section
 
 /-! Code-location preservation by let-operation cleanup. -/
 namespace Flapjack.Compiler.Backend.ClosLetop

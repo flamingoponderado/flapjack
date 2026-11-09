@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.Evaluate
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
-import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
+module
+
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
+
+@[expose] public section
 
 /-! Sequencing case of the tick-removal evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.ClosTicks

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
+
+@[expose] public section
 
 /-! Native shared-memory instruction lowering for the literal compiler.
 This implements the source compiler helper, not memory evaluation or a production

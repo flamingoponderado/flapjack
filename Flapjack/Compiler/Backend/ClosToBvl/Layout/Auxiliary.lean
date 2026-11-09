@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Layout
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Layout
+
+@[expose] public section
 
 /-! Accumulator properties of recursive closure code layout. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

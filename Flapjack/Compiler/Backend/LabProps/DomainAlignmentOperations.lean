@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabProps.DomainAlignmentPrimitives
-import Flapjack.Compiler.Backend.LabSem.FpUpdates
-import Flapjack.Compiler.Backend.LabSem.Memory
+module
+
+public import Flapjack.Compiler.Backend.LabProps.DomainAlignmentPrimitives
+public import Flapjack.Compiler.Backend.LabSem.FpUpdates
+public import Flapjack.Compiler.Backend.LabSem.Memory
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm

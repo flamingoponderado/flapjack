@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatProps.SimpleRelations
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.SimpleRelations
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Equality preservation for simple flat value relations. -/
 namespace Flapjack.Compiler.Backend.FlatProps

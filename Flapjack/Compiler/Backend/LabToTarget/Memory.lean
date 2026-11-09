@@ -1,4 +1,8 @@
-import Flapjack.Misc.BytesInMem
+module
+
+public import Flapjack.Misc.BytesInMem
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 

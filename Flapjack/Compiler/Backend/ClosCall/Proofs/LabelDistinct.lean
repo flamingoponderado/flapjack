@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelOrigins
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationDistinct
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelOrigins
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationDistinct
+
+@[expose] public section
 
 /-! Distinctness of direct-call auxiliary labels. -/
 namespace Flapjack.Compiler.Backend.ClosCall

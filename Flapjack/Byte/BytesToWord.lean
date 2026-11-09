@@ -1,4 +1,8 @@
-import Flapjack.Byte.SetByte
+module
+
+public import Flapjack.Byte.SetByte
+
+@[expose] public section
 
 /-! Bounded byte updates to a word, following the HOL byte library. -/
 namespace Flapjack.HolByte

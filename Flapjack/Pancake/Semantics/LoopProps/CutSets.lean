@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.LoopProps
+module
+
+public import Flapjack.Pancake.Semantics.LoopProps
+
+@[expose] public section
 
 namespace Flapjack
 

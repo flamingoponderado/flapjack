@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordRemove.Proofs.CompileState
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateConsts
+module
+
+public import Flapjack.Compiler.Backend.WordRemove.Proofs.CompileState
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateConsts
+
+@[expose] public section
 
 /-!
 # `word_removeProof`: `word_remove_correct`

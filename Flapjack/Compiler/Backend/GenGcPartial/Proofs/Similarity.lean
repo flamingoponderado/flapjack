@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Accumulator
-import Batteries.Data.List.Basic
+module
+
+public import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Accumulator
+public import Batteries.Data.List.Basic
+
+@[expose] public section
 
 /-! Shape preservation of partial-collector reference traversals. -/
 namespace Flapjack.Compiler.Backend.GenGcPartial

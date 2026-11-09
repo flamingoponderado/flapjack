@@ -1,9 +1,13 @@
-import Flapjack.HolRef
-import Flapjack.Misc.GoodDimindex
-import Flapjack.Misc.ListEl
-import Flapjack.Compiler.Backend.BackendCommon
-import Flapjack.Compiler.Backend.WordGcFunctions
-import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.GoodDimindex
+public import Flapjack.Misc.ListEl
+public import Flapjack.Compiler.Backend.BackendCommon
+public import Flapjack.Compiler.Backend.WordGcFunctions
+public import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` word and bit lemmas

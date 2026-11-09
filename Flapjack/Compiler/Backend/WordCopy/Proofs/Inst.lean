@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCopy.Proofs.Store
+module
+
+public import Flapjack.Compiler.Backend.WordCopy.Proofs.Store
+
+@[expose] public section
 
 /-!
 # word_copyProof: `copy_prop_inst` semantics

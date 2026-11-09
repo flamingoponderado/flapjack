@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.FlatElim.Reachability
-import Flapjack.Misc.Sptree.ToAList
-import Flapjack.Misc.Sptree.UnionAlgebra
-import Mathlib.Data.Finset.Card
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Reachability
+public import Flapjack.Misc.Sptree.ToAList
+public import Flapjack.Misc.Sptree.UnionAlgebra
+public import Mathlib.Data.Finset.Card
+public import Aesop
+
+@[expose] public section
 
 /-! Dependency bounds for flat elimination closure. -/
 namespace Flapjack.Compiler.Backend.FlatElim

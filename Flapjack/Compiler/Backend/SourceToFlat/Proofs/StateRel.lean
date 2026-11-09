@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRel
-import Flapjack.Misc.ListLookupRel
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRel
+public import Flapjack.Misc.ListLookupRel
+
+@[expose] public section
 
 /-! Source-to-flat store and state relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

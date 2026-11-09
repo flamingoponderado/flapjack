@@ -1,6 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyCode
-import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateClockFull
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyCode
+public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateClockFull
+public import Flapjack.Misc.ClockWeightInduction
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+@[expose] public section
 
 /-! Code and global-pointer preservation during BVI evaluation. -/
 namespace Flapjack.Compiler.Backend.BviProps

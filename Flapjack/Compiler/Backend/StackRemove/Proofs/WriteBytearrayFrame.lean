@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearray
-import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearray
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove
 open Flapjack

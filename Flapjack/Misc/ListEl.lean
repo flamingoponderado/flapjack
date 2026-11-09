@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.HolArb
+module
+
+public import Flapjack.HolRef
+public import Flapjack.HolArb
+
+@[expose] public section
 
 /-!
 # HOL list `HD` and `EL`

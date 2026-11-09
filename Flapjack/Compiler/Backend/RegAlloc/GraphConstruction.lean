@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.RegAlloc.Accessors
-import Flapjack.Compiler.Backend.RegAlloc.ClashTree
-import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
-import Flapjack.Compiler.Backend.RegAlloc.SpDefault
-import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Accessors
+public import Flapjack.Compiler.Backend.RegAlloc.ClashTree
+public import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
+public import Flapjack.Compiler.Backend.RegAlloc.SpDefault
+public import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+
+@[expose] public section
 
 /-!
 # reg_alloc interference-graph construction

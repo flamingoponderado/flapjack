@@ -1,7 +1,11 @@
-import Flapjack.Pancake.LoopToWord
-import Flapjack.Pancake.LoopToWord.CompFuncExact
-import Flapjack.Pancake.Semantics.LoopSemStateExact
-import Flapjack.Compiler.Backend.Semantics.WordSem.State
+module
+
+public import Flapjack.Pancake.LoopToWord
+public import Flapjack.Pancake.LoopToWord.CompFuncExact
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+
+@[expose] public section
 
 /-!
 # `loop_to_wordProof` globals relation over the exact finite-map carriers

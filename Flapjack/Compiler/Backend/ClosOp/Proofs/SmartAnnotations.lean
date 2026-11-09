@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartReduction
-import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic.LabelsAndArity
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartReduction
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic.LabelsAndArity
+
+@[expose] public section
 
 /-! Source smart-operation annotation and syntactic invariants. -/
 namespace Flapjack.Compiler.Backend.ClosOp

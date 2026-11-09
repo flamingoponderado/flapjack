@@ -1,11 +1,15 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.PanGlobals
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.Pancake.Proofs.PanGlobals.ShapeInfrastructure
-import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Pancake.Semantics.PanSem.DecExact
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
-import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockEq
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.PanGlobals
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.Proofs.PanGlobals.ShapeInfrastructure
+public import Flapjack.Pancake.Semantics.PanSem
+public import Flapjack.Pancake.Semantics.PanSem.DecExact
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockEq
+
+@[expose] public section
 
 namespace Flapjack
 

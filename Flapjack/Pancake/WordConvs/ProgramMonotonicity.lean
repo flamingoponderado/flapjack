@@ -1,7 +1,11 @@
-import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
-import Flapjack.Pancake.WordConvs.EveryVarInstMono
-import Flapjack.Pancake.WordConvs.NameMonotonicity
-import Aesop
+module
+
+public import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
+public import Flapjack.Pancake.WordConvs.EveryVarInstMono
+public import Flapjack.Pancake.WordConvs.NameMonotonicity
+public import Aesop
+
+@[expose] public section
 
 namespace Flapjack
 

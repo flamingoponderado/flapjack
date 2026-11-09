@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.PanStructs.CompileShapeN
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
-import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.CompileShapeN
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
+public import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
+
+@[expose] public section
 
 /-!
 The original pan_structs `mem_load_conversion` (`pan_structsProofScript.sml:609-677`)

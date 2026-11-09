@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+
+@[expose] public section
 
 /-! Flat pattern-matching properties. -/
 namespace Flapjack.Compiler.Backend.FlatProps

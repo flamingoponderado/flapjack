@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
-import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
+public import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
+
+@[expose] public section
 
 /-! Global-write metadata used by the pattern compiler. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

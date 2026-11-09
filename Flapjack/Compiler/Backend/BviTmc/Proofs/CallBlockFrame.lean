@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockEnvironment
-import Flapjack.Compiler.Backend.BviTmc.Proofs.VariableEvaluation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ListSimulation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockEnvironment
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.VariableEvaluation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ListSimulation
+
+@[expose] public section
 
 /-! Ordinary simulation of constructor frames in call blocks. -/
 namespace Flapjack.Compiler.Backend.BviTmc.CallBlockFrame

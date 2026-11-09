@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.Navigation
-import Flapjack.Compiler.Backend.LabToTarget.CodeSafety
-import Flapjack.Compiler.Backend.LabSem.State
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Navigation
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSafety
+public import Flapjack.Compiler.Backend.LabSem.State
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps

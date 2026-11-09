@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyFlat
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyMemory
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyData
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyCopy
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyNumeric
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyFlat
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyMemory
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyData
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyCopy
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyNumeric
+
+@[expose] public section
 
 /-! Flat primitive application. Floating-point operations inherit the
 rational-cut assumptions of the source numeric model. -/

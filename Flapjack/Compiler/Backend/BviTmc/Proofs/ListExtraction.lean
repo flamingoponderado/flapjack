@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.CallExtraction
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractionWellFormed
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallExtraction
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractionWellFormed
+
+@[expose] public section
 
 /-! Multi-argument TMC extraction simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc.ListExtraction

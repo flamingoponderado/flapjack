@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.Colouring
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
-import Flapjack.Compiler.Backend.RegAlloc.Allocator
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.Colouring
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
+public import Flapjack.Compiler.Backend.RegAlloc.Allocator
+
+@[expose] public section
 
 /-!
 # reg_allocProof: colour removal and `Atemp` assignment

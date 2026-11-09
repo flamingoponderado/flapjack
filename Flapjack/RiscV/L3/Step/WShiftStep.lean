@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Step.RegisterShiftStep
+module
+
+public import Flapjack.RiscV.L3.Step.RegisterShiftStep
+
+@[expose] public section
 
 /-! Evaluated original `riscv_stepScript.sml` word-shift instruction theorems
 (immediate `SLLIW`/`SRLIW`/`SRAIW`, lines 847-849, and register `SLLW`/`SRLW`/

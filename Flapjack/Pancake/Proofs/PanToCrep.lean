@@ -1,27 +1,31 @@
-import Flapjack.FiniteMap
-import Flapjack.HolRef
-import Flapjack.PanBst
-import Flapjack.PanEmptyLocals
-import Flapjack.PanLocalised
-import Flapjack.PanValueFlatten
-import Flapjack.Pancake.PanToCrep
-import Flapjack.Pancake.Semantics.CrepProps
-import Flapjack.Pancake.Semantics.CrepSem
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.Semantics.CrepRuntimeTarget
-import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
-import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Pancake.Semantics.PanCommonProps
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Pancake.Semantics.PanSem.ValueHOL
-import Flapjack.Pancake.PanToCrep.Compile
-import Flapjack.Pancake.PanToCrep.CompileProg
-import Flapjack.Pancake.PanToCrep.CompileExact
-import Flapjack.Pancake.PanToCrep.ContextExact
-import Flapjack.Pancake.Proofs.PanToCrep.CompileExactVarSupport
-import Flapjack.CrepeCompileExpVariables
-import Flapjack.PanToCrepMaxList
+module
+
+public import Flapjack.FiniteMap
+public import Flapjack.HolRef
+public import Flapjack.PanBst
+public import Flapjack.PanEmptyLocals
+public import Flapjack.PanLocalised
+public import Flapjack.PanValueFlatten
+public import Flapjack.Pancake.PanToCrep
+public import Flapjack.Pancake.Semantics.CrepProps
+public import Flapjack.Pancake.Semantics.CrepSem
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.Semantics.CrepRuntimeTarget
+public import Flapjack.Pancake.Semantics.PanSem
+public import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Pancake.Semantics.PanCommonProps
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+public import Flapjack.Pancake.PanToCrep.Compile
+public import Flapjack.Pancake.PanToCrep.CompileProg
+public import Flapjack.Pancake.PanToCrep.CompileExact
+public import Flapjack.Pancake.PanToCrep.ContextExact
+public import Flapjack.Pancake.Proofs.PanToCrep.CompileExactVarSupport
+public import Flapjack.CrepeCompileExpVariables
+public import Flapjack.PanToCrepMaxList
+
+@[expose] public section
 
 /-!
 Faithful HOL-facing relations and contexts for the Pancake `pan_to_crep`

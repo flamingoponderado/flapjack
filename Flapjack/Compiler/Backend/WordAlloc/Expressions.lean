@@ -1,5 +1,9 @@
-import Flapjack.Pancake.WordLang
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

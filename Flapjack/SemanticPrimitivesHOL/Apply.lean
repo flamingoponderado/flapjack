@@ -1,8 +1,12 @@
-import Flapjack.SemanticPrimitivesHOL.Primitives
-import Flapjack.SemanticPrimitivesHOL.Conversions
-import Flapjack.SemanticPrimitivesHOL.Operations
-import Flapjack.SemanticPrimitivesHOL.Array
-import Flapjack.SemanticPrimitivesHOL.Thunk
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Primitives
+public import Flapjack.SemanticPrimitivesHOL.Conversions
+public import Flapjack.SemanticPrimitivesHOL.Operations
+public import Flapjack.SemanticPrimitivesHOL.Array
+public import Flapjack.SemanticPrimitivesHOL.Thunk
+
+@[expose] public section
 
 /-! Initial source primitive application cases. This is Flapjack infrastructure
 for assembling the source evaluator, not a port of the complete HOL `do_app`:

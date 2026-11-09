@@ -1,9 +1,13 @@
-import Flapjack.RiscV.L3.Support
-import Flapjack.Misc.BinaryIeeeRound
-import Flapjack.Misc.MachineIeee.ConvertInt
-import Flapjack.Misc.MachineIeee.Arith
-import Flapjack.Misc.BinaryIeeeSqrt
-import Flapjack.Misc.MachineIeee.Convert
+module
+
+public import Flapjack.RiscV.L3.Support
+public import Flapjack.Misc.BinaryIeeeRound
+public import Flapjack.Misc.MachineIeee.ConvertInt
+public import Flapjack.Misc.MachineIeee.Arith
+public import Flapjack.Misc.BinaryIeeeSqrt
+public import Flapjack.Misc.MachineIeee.Convert
+
+@[expose] public section
 
 /-!
 # Complete original L3 floating-point comparison, conversion and arithmetic equations

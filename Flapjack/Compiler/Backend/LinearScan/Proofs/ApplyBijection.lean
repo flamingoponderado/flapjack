@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.Proofs.Bijection
-import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.Bijection
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
+
+@[expose] public section
 
 /-!
 # linear_scanProof: checking a renamed clash tree

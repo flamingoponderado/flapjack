@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
+
+@[expose] public section
 
 /-! Reference-domain growth during BVL constant construction. -/
 namespace Flapjack.Compiler.Backend.BvlProps

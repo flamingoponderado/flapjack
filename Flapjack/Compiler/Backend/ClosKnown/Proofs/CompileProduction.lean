@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosKnown.Compile
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.Production
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.Production
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.Production
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Compile
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Production
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Production
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Production
+
+@[expose] public section
 
 /-! Executable agreement for the source closure optimizer. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

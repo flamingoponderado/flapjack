@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabProps.Labels
-import Flapjack.Compiler.Backend.LabProps.LabelSets
+module
+
+public import Flapjack.Compiler.Backend.LabProps.Labels
+public import Flapjack.Compiler.Backend.LabProps.LabelSets
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

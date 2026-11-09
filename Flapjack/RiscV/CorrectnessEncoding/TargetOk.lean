@@ -1,7 +1,11 @@
-import Flapjack.RiscV.CorrectnessEncoding.Length
-import Flapjack.Compiler.Encoders.RiscV.Target.State
-import Flapjack.Compiler.Encoders.AsmProps.Encoding
-import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.Length
+public import Flapjack.Compiler.Encoders.RiscV.Target.State
+public import Flapjack.Compiler.Encoders.AsmProps.Encoding
+public import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
+
+@[expose] public section
 
 /-! Full native target validity. Local range arithmetic establishes the original
 positive and negative offset-length implications without assuming a target run. -/

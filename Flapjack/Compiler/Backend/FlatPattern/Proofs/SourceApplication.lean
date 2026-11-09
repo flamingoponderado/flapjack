@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.FunctionApplication
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternRelation
-import Flapjack.Compiler.Backend.FlatProps.SimpleDoApp
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.FunctionApplication
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternRelation
+public import Flapjack.Compiler.Backend.FlatProps.SimpleDoApp
+
+@[expose] public section
 
 /-! Source-primitive applications in the flat pattern simulation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ValueRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ValueRelation
+
+@[expose] public section
 
 /-! Extending related closure environments with newly bound values. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

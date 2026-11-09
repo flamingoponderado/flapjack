@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.State
-import Flapjack.Misc.Sptree
-import Flapjack.Compiler.Backend.StackLang.Prog
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.State
+public import Flapjack.Misc.Sptree
+public import Flapjack.Compiler.Backend.StackLang.Prog
+
+@[expose] public section
 
 /-!
 # StackSem label collection and location checking

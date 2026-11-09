@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
-import Flapjack.Misc.LprefixLub
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+public import Flapjack.Misc.LprefixLub
+
+@[expose] public section
 
 /-! Initial state and observational semantics for the flat evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatSem

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviLet.Proofs.Calls
-import Flapjack.Compiler.Backend.BviLet.Proofs.SourceAgreement
+module
+
+public import Flapjack.Compiler.Backend.BviLet.Proofs.Calls
+public import Flapjack.Compiler.Backend.BviLet.Proofs.SourceAgreement
+
+@[expose] public section
 
 /-! Simulation of the source-shaped BVI let optimizer. -/
 namespace Flapjack.Compiler.Backend.BviLet.Proofs

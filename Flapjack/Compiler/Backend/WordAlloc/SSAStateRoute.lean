@@ -1,7 +1,11 @@
-import Flapjack.Misc.Sptree.Enumeration
-import Flapjack.Compiler.Backend.WordAlloc.SSASetup
-import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
+module
+
+public import Flapjack.Misc.Sptree.Enumeration
+public import Flapjack.Compiler.Backend.WordAlloc.SSASetup
+public import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

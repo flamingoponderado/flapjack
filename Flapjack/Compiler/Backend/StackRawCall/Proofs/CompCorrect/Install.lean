@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.AllocationStore
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.AllocationStore
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRawCall.InstallCase
 open Flapjack Flapjack.Compiler.Backend.StackLang StackSemStateOps

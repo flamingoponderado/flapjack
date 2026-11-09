@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.RiscV.Target.State
-import Flapjack.Misc.BytesInMemory
-import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
+module
+
+public import Flapjack.Compiler.Encoders.RiscV.Target.State
+public import Flapjack.Misc.BytesInMemory
+public import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
+
+@[expose] public section
 
 /-! Full literal native target-state byte lemmas. The first original theorem
 has an unused polymorphic `w : α`; it is retained explicitly. The second uses

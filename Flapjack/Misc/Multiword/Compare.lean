@@ -1,6 +1,10 @@
-import Flapjack.Misc.Multiword
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
+module
+
+public import Flapjack.Misc.Multiword
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
+
+@[expose] public section
 
 /-! Comparison of HOL multiword magnitudes. -/
 namespace Flapjack.Misc.Multiword

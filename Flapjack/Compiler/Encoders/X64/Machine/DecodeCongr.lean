@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.X64.Machine.DecodeReads
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.DecodeReads
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Encoders.X64
 

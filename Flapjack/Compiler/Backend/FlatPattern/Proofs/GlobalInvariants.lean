@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.NoMat
-import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
-import Flapjack.Misc.Sptree.ToList
-import Mathlib.Tactic.SplitIfs
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.NoMat
+public import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
+public import Flapjack.Misc.Sptree.ToList
+public import Mathlib.Tactic.SplitIfs
+
+@[expose] public section
 
 /-! Global-initialization safety of generated pattern decision expressions. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

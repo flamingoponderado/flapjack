@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsSimulation
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsState
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsRecursiveDisjoint
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsSimulation
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsState
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsRecursiveDisjoint
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsInitGlobalsAssembly
 open Flapjack.PanGlobalsInitGlobalsSimulation

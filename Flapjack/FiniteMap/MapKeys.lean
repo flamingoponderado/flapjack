@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 
 /-!
 # HOL `finite_map` `MAP_KEYS` on the finite-support carrier

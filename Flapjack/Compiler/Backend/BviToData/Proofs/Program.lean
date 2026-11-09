@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.Call
-import Flapjack.Compiler.Backend.BviToData.Proofs.Install
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Call
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Install
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+@[expose] public section
 
 /-! Entry-call consequences of the BVI-to-data simulation. The evaluator and
 state carriers remain pending correspondence review. -/

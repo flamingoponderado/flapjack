@@ -1,5 +1,9 @@
-import Flapjack.Parser.Conversion
-import Flapjack.Parser.Localise
+module
+
+public import Flapjack.Parser.Conversion
+public import Flapjack.Parser.Localise
+
+@[expose] public section
 
 /-!
 The public parser API.

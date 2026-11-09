@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CollectorRoots
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CollectorRoots
+
+@[expose] public section
 
 /-! Filtering code locations from a successful collector run. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

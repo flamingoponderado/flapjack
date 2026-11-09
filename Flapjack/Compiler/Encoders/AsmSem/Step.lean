@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.AsmSem.MemOps
-import Flapjack.Compiler.Encoders.AsmSem.FpUpdates
-import Flapjack.Misc.BytesInMemory
+module
+
+public import Flapjack.Compiler.Encoders.AsmSem.MemOps
+public import Flapjack.Compiler.Encoders.AsmSem.FpUpdates
+public import Flapjack.Misc.BytesInMemory
+
+@[expose] public section
 
 /-!
 # asmSem instruction and assembly transitions

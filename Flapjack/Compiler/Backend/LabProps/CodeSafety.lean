@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabSem.Navigation
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Navigation
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabLang

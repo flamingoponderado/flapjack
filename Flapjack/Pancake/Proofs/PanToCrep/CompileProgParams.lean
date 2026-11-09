@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.PanToCrep.CompileProg
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.PanToCrep.CompileProg
+
+@[expose] public section
 
 /-!
 Exact HOL `compile_prog_distinct_params`.

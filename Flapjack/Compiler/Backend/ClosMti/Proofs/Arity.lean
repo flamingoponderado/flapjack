@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.Syntactic
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.Syntactic
+
+@[expose] public section
 
 /-! Application-arity preservation for multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti

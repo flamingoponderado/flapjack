@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabFilter.Proofs.ReturnLabels
-import Flapjack.Compiler.Backend.LabFilter.Proofs.SharedMemory
+module
+
+public import Flapjack.Compiler.Backend.LabFilter.Proofs.ReturnLabels
+public import Flapjack.Compiler.Backend.LabFilter.Proofs.SharedMemory
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabFilter.Proofs
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

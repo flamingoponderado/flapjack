@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreHeapWrites
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStoreLaws
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreNames
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreHeapWrites
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStoreLaws
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreNames
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.StoreTransfers
 open Flapjack Flapjack.Compiler.Backend.StackRemove

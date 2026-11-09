@@ -1,9 +1,13 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.Sorting
-import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
-import Flapjack.Misc.ListEl
-import Flapjack.Misc.MiscThe
-import Flapjack.Misc.Pair
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.Sorting
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
+public import Flapjack.Misc.ListEl
+public import Flapjack.Misc.MiscThe
+public import Flapjack.Misc.Pair
+
+@[expose] public section
 
 /-!
 # linear_scanProof: forced-edge adjacency lists

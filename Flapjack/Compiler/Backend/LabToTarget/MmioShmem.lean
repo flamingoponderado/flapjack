@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.LabToTarget.ShmemNames
-import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
-import Flapjack.Compiler.Encoders.AsmProps.Encoding
-import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemNames
+public import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
+public import Flapjack.Compiler.Encoders.AsmProps.Encoding
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
-private instance : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
+instance mmioShmemInst1 : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
 
 /-- Flapjack infrastructure eliminating every EL from the original MMIO
 boundary using its own source bounds. The result contains only checked list

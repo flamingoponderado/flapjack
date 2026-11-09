@@ -1,4 +1,8 @@
-import Flapjack.Basis.Pure.MlList
+module
+
+public import Flapjack.Basis.Pure.MlList
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

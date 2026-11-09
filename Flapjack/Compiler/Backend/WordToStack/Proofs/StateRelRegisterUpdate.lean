@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallDest
-import Flapjack.Misc.Sptree.Wf
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallDest
+public import Flapjack.Misc.Sptree.Wf
+
+@[expose] public section
 namespace Flapjack.WordToStackProofs.StateRelRegisterUpdate
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
 /-- Genuine canonical source codec re-export for the relation qualifier. -/

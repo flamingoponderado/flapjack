@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
-import Flapjack.Compiler.Backend.Semantics.DataSem.Value
-import Flapjack.Misc.Sptree
-import Flapjack.Misc.Multiword
-import Flapjack.Compiler.Backend.DataToWord.Numbers
-import Flapjack.Compiler.Backend.DataToWord.Bytes
-import Mathlib.Logic.Relation
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Value
+public import Flapjack.Misc.Sptree
+public import Flapjack.Misc.Multiword
+public import Flapjack.Compiler.Backend.DataToWord.Numbers
+public import Flapjack.Compiler.Backend.DataToWord.Bytes
+public import Mathlib.Logic.Relation
+
+@[expose] public section
 
 /-! Value and reference traversals used by the abstract memory invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

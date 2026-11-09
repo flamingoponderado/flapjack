@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CodeRelation
-import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStore
-import Flapjack.Compiler.Backend.StackRemove.ProgComp
-import Flapjack.Compiler.Backend.Semantics.StackSem.State
-import Flapjack.Misc.WordList
-import Flapjack.Misc.GoodDimindex
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CodeRelation
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStore
+public import Flapjack.Compiler.Backend.StackRemove.ProgComp
+public import Flapjack.Compiler.Backend.Semantics.StackSem.State
+public import Flapjack.Misc.WordList
+public import Flapjack.Misc.GoodDimindex
+
+@[expose] public section
 
 /-! Complete native StackRemove state relation. Both states use the evaluator's
 existing StackSem carrier, including canonical finite maps and Spt code. HOL

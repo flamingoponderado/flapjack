@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.ClashTree
-import Flapjack.Misc.SptreeLookup
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.ClashTree
+public import Flapjack.Misc.SptreeLookup
+
+@[expose] public section
 
 /-!
 # reg_alloc proofs

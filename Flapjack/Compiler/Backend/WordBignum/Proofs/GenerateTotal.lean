@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordBignum.Generate
-import Flapjack.Compiler.Backend.WordBignum.Proofs.FuelMonotone
+module
+
+public import Flapjack.Compiler.Backend.WordBignum.Generate
+public import Flapjack.Compiler.Backend.WordBignum.Proofs.FuelMonotone
+
+@[expose] public section
 
 /-! Totality of the captured-mini-program generator. This is a Flapjack
 infrastructure fact and does not assert correspondence with HOL. -/

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Expressions
-import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Expressions
+public import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

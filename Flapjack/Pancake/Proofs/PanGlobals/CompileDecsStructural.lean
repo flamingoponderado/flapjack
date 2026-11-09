@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
-import Flapjack.Pancake.PanGlobals.CompileTopExact
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
+public import Flapjack.Pancake.PanGlobals.CompileTopExact
+
+@[expose] public section
 
 /-!
 # pan_globals `compile_decs`/`compile_top` structural lemmas (exact carriers)

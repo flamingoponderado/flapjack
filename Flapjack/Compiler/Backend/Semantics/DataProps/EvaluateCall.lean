@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateForce
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateForce
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+@[expose] public section
 
 /-! Control restoration for calls and their handlers. -/
 namespace Flapjack.Compiler.Backend.DataSem

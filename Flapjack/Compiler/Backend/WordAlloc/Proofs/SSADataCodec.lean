@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
-import Flapjack.Pancake.LoopToWord
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
+public import Flapjack.Pancake.LoopToWord
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

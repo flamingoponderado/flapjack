@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.ShMemOp
-import Flapjack.Compiler.Backend.StackRemove.Proofs.BytearrayReads
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearrayFrame
-import Flapjack.Compiler.Backend.StackRemove
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.ShMemOp
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.BytearrayReads
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearrayFrame
+public import Flapjack.Compiler.Backend.StackRemove
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.FFI
 open Flapjack Compiler.Backend.StackLang StackSemEvaluate StackSemStateOps

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectRight
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectRight
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.PatternExh.Matrix
+module
+
+public import Flapjack.Compiler.Backend.PatternExh.Matrix
+
+@[expose] public section
 
 /-! Measures used by CakeML to justify exhaustiveness recursion. -/
 namespace Flapjack.Compiler.Backend.PatternExh

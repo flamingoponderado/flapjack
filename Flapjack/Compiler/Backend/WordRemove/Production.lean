@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordRemove
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+module
+
+public import Flapjack.Compiler.Backend.WordRemove
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+
+@[expose] public section
 
 /-!
 # Executed `remove_must_terminate` through the reviewed definition

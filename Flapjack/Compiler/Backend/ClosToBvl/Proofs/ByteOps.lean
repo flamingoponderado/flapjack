@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockList
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockCompare
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockList
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockCompare
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
+
+@[expose] public section
 
 /-! Byte-vector list conversion and comparison. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

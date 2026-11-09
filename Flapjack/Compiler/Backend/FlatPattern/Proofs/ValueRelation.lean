@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.InstallRelation
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.LookupRelation
-import Flapjack.Compiler.Backend.FlatProps.ValueBasics
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.InstallRelation
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.LookupRelation
+public import Flapjack.Compiler.Backend.FlatProps.ValueBasics
+
+@[expose] public section
 
 /-! Value and environment relations for the flat pattern compiler. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosKnown.Total
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Total
+
+@[expose] public section
 
 /-! Source-shaped equations for the executed known-function traversal. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

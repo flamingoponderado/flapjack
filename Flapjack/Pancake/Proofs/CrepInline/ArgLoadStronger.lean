@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.CrepInline.ArgLoadCorrect
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.ArgLoadCorrect
+
+@[expose] public section
 
 namespace Flapjack.CrepInlineExact
 

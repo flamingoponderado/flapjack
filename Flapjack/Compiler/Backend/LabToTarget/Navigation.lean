@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
-import Flapjack.Compiler.Backend.LabSem.Navigation
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
+public import Flapjack.Compiler.Backend.LabSem.Navigation
+
+@[expose] public section
 
 /-! Navigation preservation uses the executed native navigation definitions.
 Encoding bytes, lengths and resolved positions do not affect either search. -/

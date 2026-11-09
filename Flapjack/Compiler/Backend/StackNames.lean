@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.StackLang
-import Flapjack.Compiler.Backend.StackLang.Prog
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Pancake.WordLang
-import Flapjack.FiniteMap.Basic
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.StackLang
+public import Flapjack.Compiler.Backend.StackLang.Prog
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Pancake.WordLang
+public import Flapjack.FiniteMap.Basic
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 # StackNames compatibility helpers

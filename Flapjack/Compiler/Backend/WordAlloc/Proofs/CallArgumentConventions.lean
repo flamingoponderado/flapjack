@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ColourOccurrences
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ColourOccurrences
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 /-! Original call argument convention preservation under occurrence-local
 fixation of physical registers. -/

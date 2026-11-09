@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Encoders.Arm8.Machine.SkipCase
-import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofControl
-import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofSimple2
-import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Machine.SkipCase
+public import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofControl
+public import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofSimple2
+public import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
+
+@[expose] public section
 
 /-!
 # The ARMv8 control-flow cases of `encoder_correct`

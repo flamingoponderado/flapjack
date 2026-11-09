@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Leaves
-import Flapjack.Compiler.Backend.Semantics.StackSem.ShMem
-import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
-import Flapjack.Pancake.Semantics.ByteAlignBridge
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Leaves
+public import Flapjack.Compiler.Backend.Semantics.StackSem.ShMem
+public import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
+public import Flapjack.Pancake.Semantics.ByteAlignBridge
+
+@[expose] public section
 
 /-! `flatten_correct` case `ShMemOp` (`stack_to_labProofScript.sml:2520-2643`):
 a StackSem shared-memory operation is simulated by the LabSem shared-memory

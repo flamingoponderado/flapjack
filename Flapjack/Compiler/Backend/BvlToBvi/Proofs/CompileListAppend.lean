@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileEqualConst
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileEqualConst
+
+@[expose] public section
 
 /-! Encoded list append in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

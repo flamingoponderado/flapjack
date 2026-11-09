@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnEval
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnEval
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CallReturnStackMoveClock
 open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.WordToStack.Native

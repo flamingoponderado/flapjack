@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
-import Flapjack.HolRef
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
+public import Flapjack.HolRef
+public import Aesop
+
+@[expose] public section
 
 /-! Error cases for BVL primitive application. -/
 namespace Flapjack.Compiler.Backend.BvlProps

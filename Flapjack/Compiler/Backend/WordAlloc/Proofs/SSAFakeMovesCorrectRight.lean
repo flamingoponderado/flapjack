@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

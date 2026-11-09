@@ -1,8 +1,12 @@
-import Flapjack.RiscV.CorrectnessEncoding.InstructionStep
-import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
-import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
-import Flapjack.RiscV.CorrectnessEncoding.BinopRun
-import Flapjack.RiscV.CorrectnessEncoding.TargetOk
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.InstructionStep
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
+public import Flapjack.RiscV.CorrectnessEncoding.BinopRun
+public import Flapjack.RiscV.CorrectnessEncoding.TargetOk
+
+@[expose] public section
 
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm

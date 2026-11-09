@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.AsmProps.Encoding
+module
+
+public import Flapjack.Compiler.Encoders.AsmProps.Encoding
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Flapjack.Compiler.Encoders.Asm

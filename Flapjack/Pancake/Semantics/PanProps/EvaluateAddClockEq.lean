@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.ClockTimeout
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.ClockTimeout
+
+@[expose] public section
 
 /-! Exact counterpart of `panPropsScript.sml:698-701` `evaluate_add_clock_eq`
 (bead `flapjack-pxn.18.4.4.3`). -/

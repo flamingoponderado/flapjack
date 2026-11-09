@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionSimplify
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionSimplify
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc Translator.Monadic.MonadBase

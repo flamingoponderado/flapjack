@@ -1,6 +1,14 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
-import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
-import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
+public import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.PanGlobalsFreshLocalWhile
 open Flapjack.Pancake.PanLang

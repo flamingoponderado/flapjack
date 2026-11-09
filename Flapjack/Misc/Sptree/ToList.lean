@@ -1,5 +1,9 @@
-import Flapjack.Misc.Sptree
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Misc.Sptree
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Traversal of the literal sparse-tree representation. -/
 namespace Flapjack

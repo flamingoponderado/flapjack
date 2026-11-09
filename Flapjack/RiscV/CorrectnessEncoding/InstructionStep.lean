@@ -1,8 +1,12 @@
-import Flapjack.RiscV.CorrectnessEncoding.Skip
-import Flapjack.RiscV.CorrectnessEncoding.Immediate
-import Flapjack.RiscV.CorrectnessEncoding.DecodeAddi
-import Flapjack.RiscV.CorrectnessEncoding.DecodeUpperImmediates
-import Flapjack.RiscV.L3.Defs.UpperJump
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.Skip
+public import Flapjack.RiscV.CorrectnessEncoding.Immediate
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeAddi
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeUpperImmediates
+public import Flapjack.RiscV.L3.Defs.UpperJump
+
+@[expose] public section
 
 /-! Flapjack native instruction-step infrastructure. No separately named HOL
 originals exist for these compositions. The internal write_next interface is

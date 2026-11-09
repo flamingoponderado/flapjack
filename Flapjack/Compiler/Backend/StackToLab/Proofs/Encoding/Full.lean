@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
-import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Recursive
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Recursive
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackToLab.Proofs
 open Flapjack Flapjack.Compiler.Backend.StackToLab
 open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackProps

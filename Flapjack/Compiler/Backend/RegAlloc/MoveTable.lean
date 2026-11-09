@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.SortMoves
-import Flapjack.Misc.Sptree.Map
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.SortMoves
+public import Flapjack.Misc.Sptree.Map
+
+@[expose] public section
 
 /-!
 # reg_alloc move-partner table

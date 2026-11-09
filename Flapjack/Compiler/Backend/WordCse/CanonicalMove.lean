@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.ProductionRegisterData
+module
+
+public import Flapjack.Compiler.Backend.WordCse.ProductionRegisterData
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack RiscV

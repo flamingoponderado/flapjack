@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeSoundness
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordGcCorrect
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeSoundness
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordGcCorrect
+
+@[expose] public section
 
 /-! Source heap-size consequences of executing word-level collection. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

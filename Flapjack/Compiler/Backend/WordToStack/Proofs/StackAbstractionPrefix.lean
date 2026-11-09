@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
-import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 

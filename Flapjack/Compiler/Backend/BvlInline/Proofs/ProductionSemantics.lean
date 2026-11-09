@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineSemantics
-import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramProduction
-import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineSemantics
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramProduction
+public import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
+
+@[expose] public section
 
 /-! Whole-program behavior of the executed inlining and tick-removal stages. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Association-list code included in a canonical finite map. -/
 namespace Flapjack.Compiler.Backend.ClosCall

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordInst
+module
+
+public import Flapjack.Compiler.Backend.WordInst
+
+@[expose] public section
 
 /-! Flapjack execution infrastructure for the exact native instruction selector.
 The source `pull_exp` handles subtraction before `optimize_consts`; all remaining

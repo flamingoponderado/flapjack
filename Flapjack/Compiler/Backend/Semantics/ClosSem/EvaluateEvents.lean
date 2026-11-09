@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Events
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Events
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+
+@[expose] public section
 
 /-! Event-prefix steps for the proof-side closure evaluator. The evaluator
 and its carriers await HOL correspondence review. -/

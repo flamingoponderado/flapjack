@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.EvaluateBasic
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.EvaluateBasic
+
+@[expose] public section
 
 /-! Clock-bounded induction hypothesis used by the interpreter-insertion
 correctness proof. The evaluator and state relation are proof-side and await

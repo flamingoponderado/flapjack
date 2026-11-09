@@ -1,9 +1,13 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
-import Flapjack.Pancake.Proofs.PanGlobals.ShMemLoadLemmas
-import Flapjack.Pancake.Proofs.PanGlobals.MemoryUpdate
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
-import Flapjack.Pancake.Semantics.PanSem.FiniteSupportStep
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
+public import Flapjack.Pancake.Proofs.PanGlobals.ShMemLoadLemmas
+public import Flapjack.Pancake.Proofs.PanGlobals.MemoryUpdate
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
+public import Flapjack.Pancake.Semantics.PanSem.FiniteSupportStep
+
+@[expose] public section
 
 /-!
 # pan_globals `compile_correct`: the `ShMemLoad` and `ShMemStore` cases

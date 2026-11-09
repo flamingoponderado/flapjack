@@ -1,7 +1,11 @@
-import Flapjack.Pancake.PanToCrep
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.Semantics.PanCommonProps
-import Flapjack.Pancake.PanLang.Decl
+module
+
+public import Flapjack.Pancake.PanToCrep
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.Semantics.PanCommonProps
+public import Flapjack.Pancake.PanLang.Decl
+
+@[expose] public section
 
 /-!
 The exact finite-map carrier for `pan_to_crep$context`.

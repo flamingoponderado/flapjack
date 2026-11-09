@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanStructs.CompileProgExact
-import Flapjack.Pancake.PanLang.Decl
+module
+
+public import Flapjack.Pancake.PanStructs.CompileProgExact
+public import Flapjack.Pancake.PanLang.Decl
+
+@[expose] public section
 
 /-! Exact source declaration/top compilation. `compileTopExact` is the
     executed pan-structs stage of `panToWordCompileProgHOL`. -/

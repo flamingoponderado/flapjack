@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.LabToTarget.SectionLabelExtraction
-import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
-import Flapjack.Misc.Sptree.ToAList
-import Mathlib.Data.Set.Lattice
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SectionLabelExtraction
+public import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
+public import Flapjack.Misc.Sptree.ToAList
+public import Mathlib.Data.Set.Lattice
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Misc Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopIteration
-import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopIteration
+public import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

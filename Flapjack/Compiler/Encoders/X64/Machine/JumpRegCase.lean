@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.X64.Machine.VacuousCase
-import Flapjack.Compiler.Encoders.X64.Machine.MemDecodeProof
-import Flapjack.Misc.Alignment
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.VacuousCase
+public import Flapjack.Compiler.Encoders.X64.Machine.MemDecodeProof
+public import Flapjack.Misc.Alignment
+
+@[expose] public section
 
 /-!
 # The `jumpReg` case of `encoder_correct x64Target`

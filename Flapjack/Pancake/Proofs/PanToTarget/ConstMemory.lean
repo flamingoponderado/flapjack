@@ -1,10 +1,14 @@
-import Flapjack.Misc.SetSep
-import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
-import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
-import Flapjack.Compiler.Backend.Semantics.WordSem.Env
-import Flapjack.Misc.Option
-import Flapjack.HolArb
-import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+module
+
+public import Flapjack.Misc.SetSep
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+public import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+public import Flapjack.Misc.Option
+public import Flapjack.HolArb
+public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+
+@[expose] public section
 
 /-! pan_to_targetProofScript.sml 336-606: WordSem operations only observe
 memory through its graph `fun2set (memory, mdomain)`. HOL's memory domain is a

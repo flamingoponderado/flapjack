@@ -1,5 +1,11 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedControl
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalMatch
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedControl
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalMatch
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Clock-bounded pattern matching over preliminary source-to-flat relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

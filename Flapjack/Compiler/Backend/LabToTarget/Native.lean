@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabSem.State
+module
+
+public import Flapjack.Compiler.Backend.LabSem.State
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.LabLang
 /-- HOL conversion of native assembler/shared-memory/code-buffer instructions. -/

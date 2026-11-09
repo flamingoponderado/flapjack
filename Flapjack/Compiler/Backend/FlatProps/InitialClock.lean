@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatProps.EvaluateClockEvents
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.EvaluateClockEvents
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
+
+@[expose] public section
 /-! Initial-state clock corollaries for flat declaration evaluation. -/
 namespace Flapjack.Compiler.Backend.FlatProps
 open Flapjack.Compiler.Backend.FlatSem

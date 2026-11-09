@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.StackRemove.StackFree
-import Flapjack.Compiler.Backend.StackRemove.StackAddress
-import Flapjack.Compiler.Backend.StackRemove.StackAlloc
-import Flapjack.Compiler.Backend.StackRemove.StoreAddress
-import Flapjack.Compiler.Backend.StackRemove.CopyLoop
-import Flapjack.Compiler.Backend.BackendCommon
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.StackFree
+public import Flapjack.Compiler.Backend.StackRemove.StackAddress
+public import Flapjack.Compiler.Backend.StackRemove.StackAlloc
+public import Flapjack.Compiler.Backend.StackRemove.StoreAddress
+public import Flapjack.Compiler.Backend.StackRemove.CopyLoop
+public import Flapjack.Compiler.Backend.BackendCommon
+
+@[expose] public section
 
 /-! Full native stack_removeScript.sml:161–222 compiler definition.
 The default Pancake and assembly modes initializedRuntimeLab? executes these native

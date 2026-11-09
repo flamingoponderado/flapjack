@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Misc.GoodDimindex
-import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Pancake.Semantics.PanSem.ByteRoundtrip
-import Flapjack.Pancake.Semantics.LoopSem
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.GoodDimindex
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Pancake.Semantics.PanSem.ByteRoundtrip
+public import Flapjack.Pancake.Semantics.LoopSem
+
+@[expose] public section
 
 /-!
 # PanProps byte-array memory invariants

@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.PrimitiveResources
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.PrimitiveResources
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+@[expose] public section
 
 /-! Compositional source event and resource monotonicity. -/
 namespace Flapjack.Compiler.Backend.DataSem

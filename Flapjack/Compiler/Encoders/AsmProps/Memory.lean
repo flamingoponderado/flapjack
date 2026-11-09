@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.AsmSem.Memory
+module
+
+public import Flapjack.Compiler.Encoders.AsmSem.Memory
+
+@[expose] public section
 
 /-!
 # Exact asmProps memory-word invariants

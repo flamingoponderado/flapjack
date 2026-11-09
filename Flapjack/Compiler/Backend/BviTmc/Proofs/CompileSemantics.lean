@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.Induction
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.Induction
+
+@[expose] public section
 
 /-! Initial-state consequences of the TMC evaluation simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc.CompileSemantics

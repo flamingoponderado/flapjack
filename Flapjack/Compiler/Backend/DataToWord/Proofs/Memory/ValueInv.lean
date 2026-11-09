@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values
-import Flapjack.Compiler.Backend.Semantics.DataSem.Control
-import Flapjack.Misc.FiniteMapApply
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+public import Flapjack.Misc.FiniteMapApply
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Clock-indexed value relation for the data-to-word memory invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

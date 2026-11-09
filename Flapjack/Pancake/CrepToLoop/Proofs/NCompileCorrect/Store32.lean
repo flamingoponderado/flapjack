@@ -1,13 +1,17 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval
-import Flapjack.Pancake.CrepToLoop.Proofs.CrepEvalHelpers
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Property
-import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
-import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Pancake.Semantics.LoopProps.EvalExact
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
-import Flapjack.Pancake.Semantics.PanSem.MemStore32Alt
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval
+public import Flapjack.Pancake.CrepToLoop.Proofs.CrepEvalHelpers
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Property
+public import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+public import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+public import Flapjack.Pancake.Semantics.PanSem.MemStore32Alt
+
+@[expose] public section
 
 /-!
 # The `Store32` case of `crep_to_loop`'s `ncompile_correct`

@@ -1,6 +1,10 @@
-import Flapjack.SemanticPrimitivesHOL.Eval
-import Flapjack.Misc.ShiftSeq
-import Flapjack.Misc.Option
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Eval
+public import Flapjack.Misc.ShiftSeq
+public import Flapjack.Misc.Option
+
+@[expose] public section
 
 /-! Counterpart of the source evaluator proof script's Eval oracle callback. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

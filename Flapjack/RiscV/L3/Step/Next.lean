@@ -1,7 +1,11 @@
-import Flapjack.RiscV.L3.Step.Fetch
-import Flapjack.RiscV.L3.Step.DecodeAny
-import Flapjack.RiscV.L3.Step.UpdatePC
-import Flapjack.RiscV.L3.Defs.Run
+module
+
+public import Flapjack.RiscV.L3.Step.Fetch
+public import Flapjack.RiscV.L3.Step.DecodeAny
+public import Flapjack.RiscV.L3.Step.UpdatePC
+public import Flapjack.RiscV.L3.Defs.Run
+
+@[expose] public section
 
 /-! Complete literal original riscv_step Next equation. This is the step theory's
 NextRISCV, not a replacement for the model's stronger trap/interrupt dispatcher

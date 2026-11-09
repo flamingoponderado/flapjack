@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Evaluate
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.LabSem

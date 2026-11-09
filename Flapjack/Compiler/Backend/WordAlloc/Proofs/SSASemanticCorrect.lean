@@ -1,24 +1,28 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticPrimitives
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMove
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInst
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRegisterWrites
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStateWrites
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticAllocCase
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStoreConsts
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRaise
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticReturn
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticControl
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticHeap
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstallCase
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticBufferWrites
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticShareInst
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticIf
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticLoop
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallTail
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallCase
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticPrimitives
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMove
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInst
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRegisterWrites
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStateWrites
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticAllocCase
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticStoreConsts
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRaise
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticReturn
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticControl
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticHeap
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstallCase
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticBufferWrites
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticShareInst
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticIf
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticLoop
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallTail
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallCase
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

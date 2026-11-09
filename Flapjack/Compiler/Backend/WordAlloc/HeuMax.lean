@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.HeuCounters
-import Flapjack.Misc.Sptree.Mapi
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.HeuCounters
+public import Flapjack.Misc.Sptree.Mapi
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

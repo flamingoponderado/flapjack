@@ -1,4 +1,8 @@
-import Flapjack.Word
+module
+
+public import Flapjack.Word
+
+@[expose] public section
 
 /-!
 # StackLang

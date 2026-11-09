@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.EnvRel
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.LetLet
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.EnvRel
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.LetLet
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+
+@[expose] public section
 
 /-! Evaluation of the handler compiler's environment-packing bindings. -/
 namespace Flapjack.Compiler.Backend.BvlHandle.Proofs

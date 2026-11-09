@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Leaves
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Leaves
+
+@[expose] public section
 
 /-! `flatten_correct` case `FFI` (`stack_to_labProofScript.sml:2660-2727`):
 the flattened `LocValue` of the return label followed by `CallFFI` simulates a

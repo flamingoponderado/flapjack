@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.State
-import Flapjack.Misc.LookupVars
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+public import Flapjack.Misc.LookupVars
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Closure application and code lookup for the closure evaluator. -/
 namespace Flapjack.Compiler.Backend.ClosSem

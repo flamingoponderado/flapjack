@@ -1,5 +1,9 @@
-import Flapjack.EvaluateHOL.ClockFull
-import Flapjack.Misc.LprefixLub
+module
+
+public import Flapjack.EvaluateHOL.ClockFull
+public import Flapjack.Misc.LprefixLub
+
+@[expose] public section
 
 /-! CakeML program observations over the clocked source evaluator. Their
 connection to the complete compiler remains a separate correctness obligation. -/

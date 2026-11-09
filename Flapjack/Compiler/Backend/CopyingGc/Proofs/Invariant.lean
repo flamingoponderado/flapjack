@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.CopyingGc
-import Flapjack.Compiler.Backend.GcShared.HeapSimilarity
-import Flapjack.Compiler.Backend.GcShared.Reachability
-import Flapjack.Compiler.Backend.GcShared.Related
-import Flapjack.Compiler.Backend.GcShared.Filter
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Reachability
-import Flapjack.Compiler.Backend.GcShared.ForwardPtr
-import Flapjack.Compiler.Backend.CopyingGc.Proofs.Append
+module
+
+public import Flapjack.Compiler.Backend.CopyingGc
+public import Flapjack.Compiler.Backend.GcShared.HeapSimilarity
+public import Flapjack.Compiler.Backend.GcShared.Reachability
+public import Flapjack.Compiler.Backend.GcShared.Related
+public import Flapjack.Compiler.Backend.GcShared.Filter
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Reachability
+public import Flapjack.Compiler.Backend.GcShared.ForwardPtr
+public import Flapjack.Compiler.Backend.CopyingGc.Proofs.Append
+
+@[expose] public section
 
 /-! Abstract invariant for the copying collector. -/
 namespace Flapjack.Compiler.Backend.CopyingGc

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyCode
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyEvents
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyCode
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyEvents
+
+@[expose] public section
 
 /-! Event-prefix preservation for BVI primitives. -/
 namespace Flapjack.Compiler.Backend.BviProps

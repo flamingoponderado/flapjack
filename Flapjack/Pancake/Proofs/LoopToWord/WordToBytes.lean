@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
-import Flapjack.Misc.GoodDimindex
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
+public import Flapjack.Misc.GoodDimindex
+
+@[expose] public section
 
 /-!
 # Exact `TAKE_1_word_to_bytes` byte-codec support

@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
-import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListInjective
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListReverse
-import Flapjack.Misc.GoodDimindex
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListInjective
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListReverse
+public import Flapjack.Misc.GoodDimindex
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Word-list heap lemmas of `stack_removeProofScript.sml` (lines 2827-3222)
 used by the initializer proof. HOL sets are predicates; `set (GENLIST f n)` is
@@ -370,10 +374,10 @@ theorem wordListExistsAdd {width : Nat} [NeZero width] {β : Type} :
     rw [StackHeap.wordListAppend, ylen]
     exact ⟨left, right, partition, leftHeap, rightHeap⟩
 
-private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+instance wordListMemoryInst1 {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
 
-private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) :=
+instance wordListMemoryInst2 {α : Type} : Std.Commutative (SetSep.star (α := α)) :=
   ⟨SetSep.starComm⟩
 
 /-- Complete original separation rearrangement over arbitrary assertions on

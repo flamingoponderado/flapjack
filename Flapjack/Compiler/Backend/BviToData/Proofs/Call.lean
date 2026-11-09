@@ -1,13 +1,20 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.CompileCorrect
-import Flapjack.Compiler.Backend.BviToData.Proofs.Optimise
-import Flapjack.Compiler.Backend.BviToData.Proofs.FindCode
-import Flapjack.Compiler.Backend.BviToData.Proofs.CutEnv
-import Flapjack.Compiler.Backend.BviToData.Proofs.Compare
-import Flapjack.Compiler.Backend.Semantics.DataProps.Ticks
-import Flapjack.Compiler.Backend.Semantics.DataProps.JumpPush
-import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateForce
-import Flapjack.Misc.Sptree.UnionAlgebra
-import Mathlib.Data.List.Induction
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.CompileCorrect
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Optimise
+public import Flapjack.Compiler.Backend.BviToData.Proofs.FindCode
+public import Flapjack.Compiler.Backend.BviToData.Proofs.CutEnv
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Compare
+public import Flapjack.Compiler.Backend.Semantics.DataProps.Ticks
+public import Flapjack.Compiler.Backend.Semantics.DataProps.JumpPush
+public import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateForce
+public import Flapjack.Misc.Sptree.UnionAlgebra
+public import Mathlib.Data.List.Induction
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+@[expose] public section
 
 /-! Call argument cases for the BVI-to-data simulation. -/
 namespace Flapjack.Compiler.Backend.BviToData

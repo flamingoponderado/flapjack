@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabLang
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Compiler.Backend.Semantics.WordSem.State
+module
+
+public import Flapjack.Compiler.Backend.LabLang
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+
+@[expose] public section
 
 /-!
 Faithful carriers for `labSemScript.sml:10-44`. The source state has 23 fields.

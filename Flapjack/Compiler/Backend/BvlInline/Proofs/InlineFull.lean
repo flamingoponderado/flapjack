@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineExpandedCall
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineExpandedCall
+public import Flapjack.Misc.ClockWeightInduction
+
+@[expose] public section
 
 /-! Assembly of the BVL inlining evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

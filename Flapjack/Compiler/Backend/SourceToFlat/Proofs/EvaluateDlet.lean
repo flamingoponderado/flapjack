@@ -1,9 +1,15 @@
-import Flapjack.FiniteMap.AlistExact.Lookup
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDenv
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.AllocDefsLookup
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateEmptyDeclarations
+module
+
+public import Flapjack.FiniteMap.AlistExact.Lookup
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDenv
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.AllocDefsLookup
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateEmptyDeclarations
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Declaration simulation for simple source aliases. The factored value and
 state relations remain subject to HOL correspondence review. -/

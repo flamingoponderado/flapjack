@@ -1,7 +1,11 @@
-import Flapjack.Pancake.Proofs.PanGlobals
-import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
-import Flapjack.Pancake.Proofs.PanGlobals.CompileTopShapeWf
-import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileTopShapeWf
+public import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+
+@[expose] public section
 
 namespace Flapjack
 

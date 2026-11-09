@@ -1,4 +1,10 @@
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Native
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Native
+
+-- Sum `==` must reduce by `rfl`/`decide`; core's derived instance is not exposed.
+import all Init.Data.Sum.Basic
+@[expose] public section
 
 /-! Local original JumpCmp source guard/read/post-state compositions.
 No separate HOL declaration is claimed; assembling correctness derives all

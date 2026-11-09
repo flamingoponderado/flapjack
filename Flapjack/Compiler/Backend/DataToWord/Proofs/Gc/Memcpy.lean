@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteStore
-import Flapjack.Compiler.Backend.WordGcFunctions
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteStore
+public import Flapjack.Compiler.Backend.WordGcFunctions
+
+@[expose] public section
 
 /-! Separation-logic correctness of the collector's word copying loop. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

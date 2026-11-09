@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyTotal
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileTotal
-import Flapjack.Compiler.Backend.BvlConst.Proofs.Total
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyTotal
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileTotal
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.Total
+
+@[expose] public section
 
 /-! Structural sufficiency of the executable BVL handler pipeline. These
 proofs do not establish HOL correspondence or pass correctness. -/

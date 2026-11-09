@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.FarNative
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Arithmetic
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.FarNative
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Arithmetic
+
+@[expose] public section
 
 /-! Far register JumpCmp assembly for the six simple comparisons.
 Untagged local cases retain the original source premises and native semantics. -/

@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.IntegerStore
+module
+
+public import Flapjack.RiscV.L3.Defs.IntegerStore
+
+@[expose] public section
 namespace Flapjack.RiscV.L3
 
 /-- Literal original AMOSWAP equation over the full native state. Virtual

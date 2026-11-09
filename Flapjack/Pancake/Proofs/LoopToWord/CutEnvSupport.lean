@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
+
+@[expose] public section
 
 namespace Flapjack.LoopToWord
 

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Bvl.Syntax
-import Flapjack.Misc.Sptree
-import Flapjack.Compiler.Backend.BvlHandle
-import Flapjack.Compiler.Backend.BvlToBvi.Budget
+module
+
+public import Flapjack.Compiler.Backend.Bvl.Syntax
+public import Flapjack.Misc.Sptree
+public import Flapjack.Compiler.Backend.BvlHandle
+public import Flapjack.Compiler.Backend.BvlToBvi.Budget
+
+@[expose] public section
 
 /-! Fuel-bounded executable pieces of CakeML's BVL inlining pass. These are
 Flapjack infrastructure until the original total definitions and termination

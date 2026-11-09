@@ -1,6 +1,10 @@
-import Flapjack.Misc.MachineIeee
-import Flapjack.HolRef
-import Flapjack.Misc.BinaryIeeeConvert
+module
+
+public import Flapjack.Misc.MachineIeee
+public import Flapjack.HolRef
+public import Flapjack.Misc.BinaryIeeeConvert
+
+@[expose] public section
 
 /-!
 # Cross-format machine IEEE conversions

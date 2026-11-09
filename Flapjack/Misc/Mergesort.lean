@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Misc.Sorting
-import Flapjack.Basis.Pure.MlList
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.Sorting
+public import Flapjack.Basis.Pure.MlList
+
+@[expose] public section
 
 /-!
 # HOL `mergesort`: sortedness and tail-recursive correctness

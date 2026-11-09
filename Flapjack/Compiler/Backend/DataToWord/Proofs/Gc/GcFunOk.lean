@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordGcFunctions.Roots
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.GcFunOk
-import Flapjack.FiniteMap.MapKeys
+module
+
+public import Flapjack.Compiler.Backend.WordGcFunctions.Roots
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.GcFunOk
+public import Flapjack.FiniteMap.MapKeys
+
+@[expose] public section
 
 /-! `gc_fun_ok_word_gc_fun` (`data_to_word_gcProofScript.sml:6419-6437`): the word
 garbage collector satisfies the GC callback contract. The collector reads the

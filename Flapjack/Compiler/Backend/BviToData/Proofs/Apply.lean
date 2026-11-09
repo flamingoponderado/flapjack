@@ -1,25 +1,29 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyEquality
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyBuild
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyWord
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyInt
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyGlobals
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyLabel
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyFinalise
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyRef
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyMutCons
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyThunk
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyArrayUpdate
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyFfi
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyList
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyBlockExtend
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyElemAt
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyByteRead
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyBool
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyBlockObserve
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyEqualConst
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyConfigGC
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyBounds
-import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyByteOps
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyEquality
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyBuild
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyWord
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyInt
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyGlobals
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyLabel
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyFinalise
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyRef
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyMutCons
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyThunk
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyArrayUpdate
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyFfi
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyList
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyBlockExtend
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyElemAt
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyByteRead
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyBool
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyBlockObserve
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyEqualConst
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyConfigGC
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyBounds
+public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyByteOps
+
+@[expose] public section
 
 /-! Primitive application simulation for BVI-to-data correctness. -/
 namespace Flapjack.Compiler.Backend.BviToData

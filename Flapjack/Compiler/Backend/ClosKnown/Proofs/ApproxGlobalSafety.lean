@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.ClosKnown.KnownOp
-import Flapjack.Compiler.Backend.ClosKnown.Fuel
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
-import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.KnownOp
+public import Flapjack.Compiler.Backend.ClosKnown.Fuel
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+public import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Global-write safety of known-function approximations. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

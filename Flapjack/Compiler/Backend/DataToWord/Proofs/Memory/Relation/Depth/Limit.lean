@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.Elements
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockStack
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordCardinality
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.Elements
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockStack
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordCardinality
+
+@[expose] public section
 
 /-! Constructing ancestor chains from source value depth. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 Literal core of the pinned HOL balanced-map script. The cached size is a

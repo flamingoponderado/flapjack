@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyCode
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyCode
+
+@[expose] public section
 
 /-! Transfer fallback primitives while retaining the target globals. -/
 namespace Flapjack.Compiler.Backend.BvlProps

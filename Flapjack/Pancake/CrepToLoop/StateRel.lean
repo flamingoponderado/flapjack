@@ -1,15 +1,23 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.CrepToLoop
-import Flapjack.Pancake.CrepToLoop.ContextExact
-import Flapjack.Pancake.Semantics.CrepSem
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.Semantics.LoopSemStateExact
-import Flapjack.LoopStateResult
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Misc.Sptree
-import Flapjack.Pancake.PanLang.Shape
-import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClockIoEventsMono
-import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.CrepToLoop
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+public import Flapjack.Pancake.Semantics.CrepSem
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+public import Flapjack.LoopStateResult
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Misc.Sptree
+public import Flapjack.Pancake.PanLang.Shape
+public import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClockIoEventsMono
+public import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 State relation analogue for the Crepe-to-Loop lowering, based on

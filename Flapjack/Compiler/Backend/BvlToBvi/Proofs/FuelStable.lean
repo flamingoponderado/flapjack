@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Compile
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Compile
+
+@[expose] public section
 
 /-! Stability of successful BVL-to-BVI traversals under additional fuel. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi

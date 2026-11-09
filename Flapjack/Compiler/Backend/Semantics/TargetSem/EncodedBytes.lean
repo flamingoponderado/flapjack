@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
-import Flapjack.Misc.BytesInMemory
-import Flapjack.Misc.ShiftSeq
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
+public import Flapjack.Misc.BytesInMemory
+public import Flapjack.Misc.ShiftSeq
+
+@[expose] public section
 
 /-!
 Exact targetSem prerequisites that validate encoded machine code against the

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.CrepInline.ArgLoad
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.ArgLoad
+
+@[expose] public section
 
 /-!
 # crep_inline `nested_decs_evaluate_sublocals_strong`

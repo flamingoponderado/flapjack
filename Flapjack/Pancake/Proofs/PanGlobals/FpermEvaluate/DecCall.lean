@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.CallEntry
-import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.CallEntry
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+
+@[expose] public section
 
 namespace Flapjack
 open Pancake.PanLang PanSemStateFiniteExact

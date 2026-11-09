@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.BviToData.CompileTotal
-import Flapjack.Compiler.Backend.BviToData.Proofs.Value
-import Flapjack.Compiler.Backend.Semantics.BviSem.State
-import Flapjack.Compiler.Backend.Semantics.DataSem.State
-import Flapjack.Misc.Sptree.Map
+module
+
+public import Flapjack.Compiler.Backend.BviToData.CompileTotal
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Value
+public import Flapjack.Compiler.Backend.Semantics.BviSem.State
+public import Flapjack.Compiler.Backend.Semantics.DataSem.State
+public import Flapjack.Misc.Sptree.Map
+
+@[expose] public section
 
 /-! Code and state relations for BVI-to-data correctness. -/
 namespace Flapjack.Compiler.Backend.BviToData

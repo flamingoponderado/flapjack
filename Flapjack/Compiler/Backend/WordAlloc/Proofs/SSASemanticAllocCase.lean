@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticAlloc
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSemanticHelpers
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticAlloc
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSemanticHelpers
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalEnvironment
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalMatch
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalCall
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedControl
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedMatch
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedPrimitive
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveArray
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalEnvironment
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalMatch
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalCall
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedControl
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedMatch
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedPrimitive
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveArray
+
+@[expose] public section
 
 /-! Clock-bounded array simulation over preliminary source-to-flat relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

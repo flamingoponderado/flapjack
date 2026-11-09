@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanToCrep.CompileExact
-import Flapjack.Pancake.PanToCrep.CompileProg
+module
+
+public import Flapjack.Pancake.PanToCrep.CompileExact
+public import Flapjack.Pancake.PanToCrep.CompileProg
+
+@[expose] public section
 
 /-!
 Byte-ranged bridge between the production declaration-only compiler

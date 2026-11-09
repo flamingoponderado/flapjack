@@ -1,5 +1,9 @@
-import Flapjack.Misc.GetByteSetByte
-import Mathlib.Tactic.IntervalCases
+module
+
+public import Flapjack.Misc.GetByteSetByte
+public import Mathlib.Tactic.IntervalCases
+
+@[expose] public section
 
 /-! Original word-alignment and byte-reassembly helpers used by `Inst_lemma`
 (lab_to_targetProofScript.sml:1786-2003, 2146-2168). The HOL hypotheses

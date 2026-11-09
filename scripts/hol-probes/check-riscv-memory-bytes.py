@@ -3,7 +3,7 @@
 from pathlib import Path
 import hashlib
 ROOT = Path(__file__).resolve().parents[2]
-CHECKS = {'Flapjack/RiscV/CorrectnessEncoding/MemoryBytes.lean': '4ef7cdfafbb3f71d0eeb3c5b37a5fdff9944cf8a773d7b8e61fd5569dbcf81c6', 'Flapjack/RiscV/L3/Step/ByteMemory.lean': 'b0ef02011e4bc53f39733af233327b9b835233eae104b627eb9870789171796c', 'scripts/hol-probes/riscv_memory_bytes_probeScript.sml': 'a51ec7d6555c659004ec820ac041bc24e575fbbc5cf444d8038dbaec6b64e12a', 'scripts/hol-probes/riscv_memory_bytes_probe.out': 'c3759b1a64fdcfad261b92c2c0473e4800f49264f37ca6a121bf830e882c9a16'}
+CHECKS = {'Flapjack/RiscV/CorrectnessEncoding/MemoryBytes.lean': '8e6a9b2ba720e70d24be9ab700dd415e6e719fd859c60f998a68ee385965bc7d', 'Flapjack/RiscV/L3/Step/ByteMemory.lean': 'd762a023828542206abb688481ff58c494b986d836fa4b5c174080aa11a02721', 'scripts/hol-probes/riscv_memory_bytes_probeScript.sml': 'a51ec7d6555c659004ec820ac041bc24e575fbbc5cf444d8038dbaec6b64e12a', 'scripts/hol-probes/riscv_memory_bytes_probe.out': 'c3759b1a64fdcfad261b92c2c0473e4800f49264f37ca6a121bf830e882c9a16'}
 def check(root=ROOT):
     for name, digest in CHECKS.items():
         if hashlib.sha256((root / name).read_bytes()).hexdigest() != digest:

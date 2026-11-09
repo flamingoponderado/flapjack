@@ -1,4 +1,8 @@
-import Flapjack.RiscV.Allocator
+module
+
+public import Flapjack.RiscV.Allocator
+
+@[expose] public section
 
 namespace Flapjack.RiscV
 

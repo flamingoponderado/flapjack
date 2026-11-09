@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL
+module
+
+public import Flapjack.SemanticPrimitivesHOL
+
+@[expose] public section
 
 /-! Source equality and function application. -/
 namespace Flapjack.SemanticPrimitivesHOL

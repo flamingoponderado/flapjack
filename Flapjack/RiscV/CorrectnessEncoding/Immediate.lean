@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Support
-import Init.Data.BitVec.Bitblast
+module
+
+public import Flapjack.RiscV.L3.Support
+public import Init.Data.BitVec.Bitblast
+
+@[expose] public section
 
 /-! Full signed immediate reconstruction from the original target proof. -/
 namespace Flapjack.RiscV.TargetProof

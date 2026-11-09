@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BackendProps.OracleMonotonicInit
+module
+
+public import Flapjack.Compiler.Backend.BackendProps.OracleMonotonicInit
+
+@[expose] public section
 
 /-! Oracle monotonicity when no state invariant is needed. -/
 namespace Flapjack.Compiler.Backend.BackendProps

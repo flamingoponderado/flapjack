@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ByteCopy
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ByteLists
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.MemoryBounds
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ByteCopy
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ByteLists
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.MemoryBounds
+
+@[expose] public section
 
 /-! Assembled memory-operation simulation for closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

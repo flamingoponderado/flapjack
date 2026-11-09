@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionStateRelation
-import Flapjack.Compiler.Backend.RegAlloc.Worklists
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionStateRelation
+public import Flapjack.Compiler.Backend.RegAlloc.Worklists
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc Translator.Monadic.MonadBase

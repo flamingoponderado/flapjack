@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateCodeGrowth
-import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateCodeGrowth
+public import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
+
+@[expose] public section
 
 /-! Safe extensions of proof-side closure code maps. -/
 namespace Flapjack.Compiler.Backend.ClosSem

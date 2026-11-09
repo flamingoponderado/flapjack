@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.X64.Machine.Target
-import Flapjack.Misc.SetSep
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.Target
+public import Flapjack.Misc.SetSep
+
+@[expose] public section
 
 /-!
 # Agreement on the projection of the closed x86-64 machine

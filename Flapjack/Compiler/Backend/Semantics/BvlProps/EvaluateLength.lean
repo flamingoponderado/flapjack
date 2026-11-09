@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Successful-result length properties of BVL evaluation. -/
 namespace Flapjack.Compiler.Backend.BvlProps

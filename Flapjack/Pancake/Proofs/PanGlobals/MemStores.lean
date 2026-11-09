@@ -1,10 +1,14 @@
-import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Compiler.Backend.StackRemove
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsMemory
-import Flapjack.Pancake.Proofs.PanGlobals.MemStoresAppend
-import Flapjack.Misc.GoodDimindex
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Compiler.Backend.StackRemove
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsMemory
+public import Flapjack.Pancake.Proofs.PanGlobals.MemStoresAppend
+public import Flapjack.Misc.GoodDimindex
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
+
+@[expose] public section
 
 /-!
 # pan_globals `mem_stores` memory lemmas

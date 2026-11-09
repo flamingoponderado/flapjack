@@ -1,9 +1,13 @@
-import Flapjack.HolRef
-import Flapjack.HolArb
-import Flapjack.Compiler.Backend.WordGcFunctions
-import Flapjack.Compiler.Backend.WordGcFunctions.Roots
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.Bitmap
+module
+
+public import Flapjack.HolRef
+public import Flapjack.HolArb
+public import Flapjack.Compiler.Backend.WordGcFunctions
+public import Flapjack.Compiler.Backend.WordGcFunctions.Roots
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.Bitmap
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` proof-side GC definitions

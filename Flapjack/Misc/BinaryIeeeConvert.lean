@@ -1,4 +1,8 @@
-import Flapjack.Misc.BinaryIeeeRoundFp64
+module
+
+public import Flapjack.Misc.BinaryIeeeRoundFp64
+
+@[expose] public section
 
 /-!
 # HOL `binary_ieee` integer conversions

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateRefInv
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.RefEquality
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateRefInv
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.RefEquality
+
+@[expose] public section
 
 /-! Preservation of the stack/reference invariant across byte-array updates. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

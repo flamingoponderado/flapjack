@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
-import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack WordSemStackEq

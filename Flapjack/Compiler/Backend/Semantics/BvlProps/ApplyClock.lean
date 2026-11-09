@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyClock
-import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyCode
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyClock
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyCode
+
+@[expose] public section
 
 /-! Clock replacement for BVL primitive application. -/
 namespace Flapjack.Compiler.Backend.BvlProps

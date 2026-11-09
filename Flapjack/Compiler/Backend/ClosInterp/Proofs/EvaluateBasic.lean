@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.StateRelation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+
+@[expose] public section
 
 /-! Elementary closure evaluations used by the interpreter-insertion proof.
 These are proof-side lemmas pending review of the evaluator carriers. -/

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Space
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Space
+
+@[expose] public section
 
 /-! Space-accounting prerequisites for data-to-word correctness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs

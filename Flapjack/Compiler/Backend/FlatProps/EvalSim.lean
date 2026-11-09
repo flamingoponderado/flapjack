@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
+
+@[expose] public section
 
 /-! Evaluation simulation relation for flat programs. -/
 namespace Flapjack.Compiler.Backend.FlatProps

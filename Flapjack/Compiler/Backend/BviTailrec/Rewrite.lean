@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTailrec.Analysis
-import Flapjack.Compiler.Backend.BackendCommon.BvlStubs
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec.Analysis
+public import Flapjack.Compiler.Backend.BackendCommon.BvlStubs
+
+@[expose] public section
 
 /-! Accumulator rewrite for the BVI tail-recursion pass. `Proofs.Total` proves
 sufficient traversal bounds; HOL correspondence and correctness remain open. -/

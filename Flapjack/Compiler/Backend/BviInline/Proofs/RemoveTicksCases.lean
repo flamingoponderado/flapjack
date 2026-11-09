@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.BviInline.Proofs.RemoveTicksRelation
-import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
+module
+
+public import Flapjack.Compiler.Backend.BviInline.Proofs.RemoveTicksRelation
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Evaluator cases for BVI tick removal. -/
 namespace Flapjack.Compiler.Backend.BviInline.RemoveTicksCases

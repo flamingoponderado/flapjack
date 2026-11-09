@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
-import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
+public import Aesop
+
+@[expose] public section
 
 /-! Global-write safety at closure application. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

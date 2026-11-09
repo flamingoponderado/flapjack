@@ -1,10 +1,14 @@
-import Flapjack.Misc.RichList
-import Flapjack.Compiler.Backend.FlatProps.SimpleType
-import Flapjack.Compiler.Backend.FlatProps.SimpleStore
-import Flapjack.Compiler.Backend.FlatProps.SimpleConversions
-import Flapjack.Compiler.Backend.FlatProps.SimpleEquality
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
-import Flapjack.SemanticPrimitivesProps.ResultRelation
+module
+
+public import Flapjack.Misc.RichList
+public import Flapjack.Compiler.Backend.FlatProps.SimpleType
+public import Flapjack.Compiler.Backend.FlatProps.SimpleStore
+public import Flapjack.Compiler.Backend.FlatProps.SimpleConversions
+public import Flapjack.Compiler.Backend.FlatProps.SimpleEquality
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+
+@[expose] public section
 /-! General primitive simulation for simple flat value and state relations.
 Private case lemmas follow the operation split in the original HOL proof. -/
 namespace Flapjack.Compiler.Backend.FlatProps

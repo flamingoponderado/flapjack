@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
+
+@[expose] public section
 
 /-! Source-matched Get/Set/OpCurrHeap clauses of stackSemScript.sml
  evaluate_def:793-807. Outer NONE means unsupported constructor. This extra

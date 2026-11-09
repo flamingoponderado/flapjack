@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalMove
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalAccumulator
-import Flapjack.Compiler.Backend.GenGc.Proofs.Progress
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalMove
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalAccumulator
+public import Flapjack.Compiler.Backend.GenGc.Proofs.Progress
+
+@[expose] public section
 
 /-! Root-list simulation for major generational collection. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -10,9 +14,9 @@ open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 private theorem starEmptyRight {α : Type} (p : (α → Prop) → Prop) : SetSep.star p SetSep.emp = p := by
   rw [SetSep.starComm, StackRemove.StackHeap.starEmptyLeft]
 
-private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+instance generationalRootsInst1 {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
-private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
+instance generationalRootsInst2 {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
 
 /-- Full root-list simulation for the major collector. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_gen_gc_move_roots_thm"

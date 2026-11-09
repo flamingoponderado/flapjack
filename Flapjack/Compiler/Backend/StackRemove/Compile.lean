@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.InitStubs
-import Flapjack.Compiler.Backend.StackRemove.ProgComp
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.InitStubs
+public import Flapjack.Compiler.Backend.StackRemove.ProgComp
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove
 open Flapjack.Compiler.Backend.StackLang

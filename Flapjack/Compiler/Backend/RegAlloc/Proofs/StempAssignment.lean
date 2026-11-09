@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.StempColouring
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.AtempAssignment
-import Flapjack.Basis.Pure.MlList.SortPerm
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.StempColouring
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.AtempAssignment
+public import Flapjack.Basis.Pure.MlList.SortPerm
+
+@[expose] public section
 
 /-!
 # reg_allocProof: `Stemp` assignment and negative preferences

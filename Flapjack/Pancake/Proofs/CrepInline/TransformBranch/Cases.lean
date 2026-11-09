@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Cases
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Cases
+
+@[expose] public section
 
 /-!
 # crep_inline `transform_branch_correct`: motive and non-suspended cases

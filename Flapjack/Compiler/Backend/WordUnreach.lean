@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.WordLang
-import Flapjack.Misc.Anub
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Misc.Anub
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-!
 # `word_unreach`: removing trivially unreachable code

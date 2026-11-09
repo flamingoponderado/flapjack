@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.StackLang.Overloads
-import Flapjack.Compiler.Backend.StackRemove
-import Flapjack.Compiler.Backend.BackendCommon
-import Flapjack.Compiler.Backend.DataToWord.Config
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.StackLang.Overloads
+public import Flapjack.Compiler.Backend.StackRemove
+public import Flapjack.Compiler.Backend.BackendCommon
+public import Flapjack.Compiler.Backend.DataToWord.Config
+
+@[expose] public section
 
 /-!
 # `stack_alloc` garbage-collector code

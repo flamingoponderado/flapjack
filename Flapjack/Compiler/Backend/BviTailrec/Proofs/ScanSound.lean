@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.Semantics
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.Semantics
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Cases of the tail-recursion scan type-soundness invariant. The BVI
 evaluator is not yet source-reviewed, so these supporting results are untagged. -/

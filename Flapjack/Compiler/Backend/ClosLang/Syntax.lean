@@ -1,8 +1,16 @@
-import Flapjack.AstHOL.BackendOperators
-import Flapjack.Basis.Pure.MlString
-import Flapjack.Compiler.Backend.BackendCommon.Trace
-import Flapjack.Compiler.Backend.BackendCommon.Operators
-import Flapjack.FpSemHOL
+module
+
+public import Flapjack.AstHOL.BackendOperators
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Compiler.Backend.BackendCommon.Trace
+public import Flapjack.Compiler.Backend.BackendCommon.Operators
+public import Flapjack.FpSemHOL
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Compiler.Backend.ClosLang
 

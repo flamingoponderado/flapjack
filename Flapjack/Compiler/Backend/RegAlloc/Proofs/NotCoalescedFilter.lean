@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
-import Flapjack.Compiler.Backend.RegAlloc.StateFilter
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
+public import Flapjack.Compiler.Backend.RegAlloc.StateFilter
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 

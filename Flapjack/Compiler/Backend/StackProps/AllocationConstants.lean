@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
-import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
+
+@[expose] public section
 
 /-! Full original allocation and bitmap-copy state preservation and clock
 commutation. No successful-GC or memory-domain hypothesis is introduced. -/

@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.TagColour
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.TagColour
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
+
+@[expose] public section
 
 /-!
 # reg_allocProof: colouring transport

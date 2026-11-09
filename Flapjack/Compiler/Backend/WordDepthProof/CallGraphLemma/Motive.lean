@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordDepthProof.Helpers
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.CodeOnlyGrows
+module
+
+public import Flapjack.Compiler.Backend.WordDepthProof.Helpers
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.CodeOnlyGrows
+
+@[expose] public section
 
 /-!
 # `max_depth_call_graph_lemma` statement

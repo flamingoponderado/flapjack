@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosCall
-import Mathlib.Tactic
+module
+
+public import Flapjack.Compiler.Backend.ClosCall
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-! Label accounting for direct-call auxiliary functions. -/
 namespace Flapjack.Compiler.Backend.ClosCall

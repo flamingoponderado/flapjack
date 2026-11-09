@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.Proofs.SortCorrect
-import Flapjack.Compiler.Backend.LinearScan.TopLevel
-import Flapjack.Misc.Sptree.Map
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.SortCorrect
+public import Flapjack.Compiler.Backend.LinearScan.TopLevel
+public import Flapjack.Misc.Sptree.Map
+
+@[expose] public section
 
 /-!
 # linear_scanProof: `linear_reg_alloc_intervals_correct`

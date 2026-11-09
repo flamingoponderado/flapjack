@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleReset
-import Flapjack.EvaluateHOL.Definition
-import Flapjack.EvaluateHOL.ClockFull
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleReset
+public import Flapjack.EvaluateHOL.Definition
+public import Flapjack.EvaluateHOL.ClockFull
+
+@[expose] public section
 
 /-! Base cases of the source evaluator recording-state preservation proof. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.LabToTarget.FilterSkip
-import Flapjack.Compiler.Backend.LabSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.FilterSkip
+public import Flapjack.Compiler.Backend.LabSem.Evaluate
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Original skip-filter PC adjustment and finite skipped-instruction runs.
 These use the executed filter and the full native source fetch/evaluator.

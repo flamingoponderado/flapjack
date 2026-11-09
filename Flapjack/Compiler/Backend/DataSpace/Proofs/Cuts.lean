@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataSpace.Proofs.State
-import Flapjack.Compiler.Backend.DataLive.Proofs.State
-import Flapjack.Compiler.Backend.BviToData.Proofs.CutEnv
+module
+
+public import Flapjack.Compiler.Backend.DataSpace.Proofs.State
+public import Flapjack.Compiler.Backend.DataLive.Proofs.State
+public import Flapjack.Compiler.Backend.BviToData.Proofs.CutEnv
+
+@[expose] public section
 
 /-! Sparse-tree cuts used when reservations are combined. -/
 namespace Flapjack.Compiler.Backend.DataSpace

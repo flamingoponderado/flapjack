@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 /-! Expression translation used by the word-level bignum generator. The
 original shallow-to-deep generator and full correctness remain open. -/

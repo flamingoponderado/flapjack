@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.Encode
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Encode
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 # ARMv8 target lowering

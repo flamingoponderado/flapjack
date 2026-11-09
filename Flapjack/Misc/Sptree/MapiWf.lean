@@ -1,4 +1,8 @@
-import Flapjack.Misc.Sptree.Mapi
+module
+
+public import Flapjack.Misc.Sptree.Mapi
+
+@[expose] public section
 
 namespace Flapjack
 

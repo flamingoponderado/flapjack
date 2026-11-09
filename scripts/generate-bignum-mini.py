@@ -107,7 +107,15 @@ def render():
         for name, value in fragments
     )
     return f'''-- Generated from the pinned HOL mini-program capture; do not edit.
-import Flapjack.Compiler.Backend.WordBignum.Mini
+module
+
+public import Flapjack.Compiler.Backend.WordBignum.Mini
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Compiler.Backend.WordBignum
 

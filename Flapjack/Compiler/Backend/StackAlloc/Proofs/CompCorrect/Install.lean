@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect.Leaves
-import Flapjack.Misc.Sptree.Wf
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect.Leaves
+public import Flapjack.Misc.Sptree.Wf
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `comp_correct`: `Install`

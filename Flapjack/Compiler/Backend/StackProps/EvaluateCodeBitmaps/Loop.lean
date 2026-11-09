@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Seq
+module
+
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Seq
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps
 open Flapjack Flapjack.Compiler.Backend.StackLang

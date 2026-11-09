@@ -1,5 +1,9 @@
-import Mathlib.Tactic
-import Flapjack.Compiler.Encoders.X64.Machine.TargetProof
+module
+
+public import Mathlib.Tactic
+public import Flapjack.Compiler.Encoders.X64.Machine.TargetProof
+
+@[expose] public section
 
 /-!
 # Reader congruence for the closed x86-64 decoder

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationHandle
-import Flapjack.EvaluateProps.Length
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationHandle
+public import Flapjack.EvaluateProps.Length
+
+@[expose] public section
 
 /-! Match-expression case of the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import Flapjack.Misc.LprefixLub
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+public import Flapjack.Misc.LprefixLub
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Observations of the clocked closure evaluator. -/
 namespace Flapjack.Compiler.Backend.ClosSem

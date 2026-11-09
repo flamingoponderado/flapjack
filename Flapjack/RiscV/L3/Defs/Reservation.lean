@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Support
+module
+
+public import Flapjack.RiscV.L3.Support
+
+@[expose] public section
 namespace Flapjack.RiscV.L3
 
 /-! Complete original reservation primitives for load-reserved/store-conditional.

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordConvs.NotCreated
+module
+
+public import Flapjack.Pancake.WordConvs.NotCreated
+
+@[expose] public section
 
 namespace Flapjack
 

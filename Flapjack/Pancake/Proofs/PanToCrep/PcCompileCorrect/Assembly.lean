@@ -1,26 +1,30 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Annot
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Assign
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Break
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Continue
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Dec
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.DecCall
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ExtCall
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.If
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Primitive
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Raise
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Return
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Seq
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ShMemLoad
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ShMemStore
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Skip
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Store
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Store32
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.StoreByte
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Tick
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.While
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Annot
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Assign
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Break
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Continue
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Dec
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.DecCall
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ExtCall
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.If
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Primitive
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Raise
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Return
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Seq
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ShMemLoad
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ShMemStore
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Skip
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Store
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Store32
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.StoreByte
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Tick
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.While
+
+@[expose] public section
 
 /-!
 # `pc_compile_correct` over the exact carriers

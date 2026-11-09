@@ -1,4 +1,12 @@
-import Flapjack.SemanticPrimitivesHOL.Primitives
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Primitives
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Source numeric and byte-string comparisons. -/
 namespace Flapjack.SemanticPrimitivesHOL

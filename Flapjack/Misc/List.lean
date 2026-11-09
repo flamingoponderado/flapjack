@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Batteries.Data.List.Basic
+module
+
+public import Flapjack.HolRef
+public import Batteries.Data.List.Basic
+
+@[expose] public section
 
 /-! List relation results from HOL list. -/
 namespace Flapjack

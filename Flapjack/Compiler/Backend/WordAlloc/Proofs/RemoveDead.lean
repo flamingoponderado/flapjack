@@ -1,10 +1,14 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.WordAlloc.RemoveDead
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
-import Flapjack.Compiler.Backend.Semantics.WordSem.Env
-import Flapjack.Misc.Option
-import Flapjack.Misc.Sptree.Wf
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.WordAlloc.RemoveDead
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+public import Flapjack.Misc.Option
+public import Flapjack.Misc.Sptree.Wf
+
+@[expose] public section
 
 /-!
 # word_alloc dead-code removal correctness

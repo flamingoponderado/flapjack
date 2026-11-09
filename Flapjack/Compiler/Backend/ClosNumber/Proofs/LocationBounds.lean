@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
+module
+
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
+
+@[expose] public section
 
 /-! Bounds on code locations produced by closure numbering. -/
 namespace Flapjack.Compiler.Backend.ClosNumber

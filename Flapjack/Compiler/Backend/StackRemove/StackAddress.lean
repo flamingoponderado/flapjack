@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove
+module
+
+public import Flapjack.Compiler.Backend.StackRemove
+
+@[expose] public section
 
 /-! Native address builders from stack_removeScript.sml:104–137.
 The default Pancake and assembly modes initializedRuntimeLab? executes these native

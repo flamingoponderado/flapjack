@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Call.Return
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Call.Return
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRawCall.CallAssembly
 open Flapjack Flapjack.Compiler.Backend.StackLang

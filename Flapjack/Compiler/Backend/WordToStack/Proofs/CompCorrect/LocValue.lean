@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
-import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterWrite
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterWrite
+
+@[expose] public section
 namespace Flapjack.WordToStackProofs.CompCorrect.LocValue
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Backend.WordToStack.Native

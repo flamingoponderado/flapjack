@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.StackLang
-import Flapjack.Compiler.Backend.StackLang.Prog
-import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
-import Flapjack.Compiler.Backend.BackendCommon
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.StackLang
+public import Flapjack.Compiler.Backend.StackLang.Prog
+public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+public import Flapjack.Compiler.Backend.BackendCommon
+
+@[expose] public section
 
 /-!
 # `stackLang` program overloads over the exact carrier

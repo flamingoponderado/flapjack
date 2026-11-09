@@ -1,8 +1,12 @@
-import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
-import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
-import Flapjack.Misc.GoodDimindex
+module
+
+public import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+public import Flapjack.Misc.GoodDimindex
+
+@[expose] public section
 
 /-!
 # Shared statement for exact `loop_to_word` `compile_correct` case ports

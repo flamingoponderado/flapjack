@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateAppExpression
-import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateInstall
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateAppExpression
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateInstall
+
+@[expose] public section
 
 /-! Clock and expression-weight induction for multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti

@@ -1,13 +1,17 @@
-import Flapjack.Pancake.Proofs.PanToCrep
-import Flapjack.Pancake.Semantics.CrepSem.TotalEval
-import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Pancake.PanToCrep.CompileProg
-import Flapjack.Pancake.Semantics.PanSem.DecCallExact
-import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
-import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
-import Flapjack.Pancake.Proofs.PanToCrep.CompileExactVarSupport
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep
+public import Flapjack.Pancake.Semantics.CrepSem.TotalEval
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Pancake.PanToCrep.CompileProg
+public import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+public import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
+public import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Pancake.Proofs.PanToCrep.CompileExactVarSupport
+
+@[expose] public section
 
 /-!
 # Total evaluator cases for Pan-to-Crep correctness

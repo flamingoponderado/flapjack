@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Conversions
-import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyAux
-import Flapjack.Compiler.Backend.Semantics.DataSem.Stack
-import Flapjack.Misc.Sptree.FromList
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Conversions
+public import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyAux
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Stack
+public import Flapjack.Misc.Sptree.FromList
+
+@[expose] public section
 
 /-! Data-language installation and the full primitive entry point. -/
 namespace Flapjack.Compiler.Backend.DataSem

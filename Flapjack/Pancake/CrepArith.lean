@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.PanToCrep.Compile
-import Flapjack.Pancake.CrepLang.Exp
-import Flapjack.Pancake.CrepLang.Prog
-import Flapjack.RiscV.Model
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.PanToCrep.Compile
+public import Flapjack.Pancake.CrepLang.Exp
+public import Flapjack.Pancake.CrepLang.Prog
+public import Flapjack.RiscV.Model
+
+@[expose] public section
 
 /-!
 Executable arithmetic simplification for Crepe.

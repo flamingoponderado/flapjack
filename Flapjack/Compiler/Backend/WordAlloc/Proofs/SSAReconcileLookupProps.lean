@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileListProps
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileListProps
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

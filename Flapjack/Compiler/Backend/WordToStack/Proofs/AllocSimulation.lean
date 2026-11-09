@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
-import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
-import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
+
+@[expose] public section
 
 /-!
 # Word-to-Stack allocation simulation

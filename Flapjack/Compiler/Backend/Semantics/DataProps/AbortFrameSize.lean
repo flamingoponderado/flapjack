@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.ValueLocals
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.ValueLocals
+
+@[expose] public section
 
 /-! Frame-size invariant for non-type-error aborts. -/
 namespace Flapjack.Compiler.Backend.DataSem

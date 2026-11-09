@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational.Partial
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMove
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveRootsBitmaps
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveLoop
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational.Partial
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMove
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveRootsBitmaps
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveLoop
+
+@[expose] public section
 
 /-!
 # Generational allocation: full collector case

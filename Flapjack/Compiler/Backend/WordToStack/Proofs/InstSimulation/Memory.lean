@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryLoad
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryStore
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryLoad
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryStore
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.InstSimulation.Memory
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

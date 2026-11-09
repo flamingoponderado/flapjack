@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppConfigGC
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppConfigGC
+
+@[expose] public section
 
 /-! The shift case of the source-to-flat primitive simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

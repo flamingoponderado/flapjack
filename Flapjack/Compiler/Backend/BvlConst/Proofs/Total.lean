@@ -1,6 +1,10 @@
-import Flapjack.Misc.Option.MapM
-import Flapjack.Compiler.Backend.BvlConst
-import Flapjack.Compiler.Backend.ListFoldTotal
+module
+
+public import Flapjack.Misc.Option.MapM
+public import Flapjack.Compiler.Backend.BvlConst
+public import Flapjack.Compiler.Backend.ListFoldTotal
+
+@[expose] public section
 
 /-! Structural sufficiency for BVL constant propagation. These are Flapjack
 infrastructure lemmas, not HOL correctness theorem ports. -/

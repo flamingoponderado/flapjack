@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.Accessors
-import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Accessors
+public import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+
+@[expose] public section
 
 /-!
 # reg_alloc degree, worklist and stack updates

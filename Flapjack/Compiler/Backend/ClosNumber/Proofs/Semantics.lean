@@ -1,6 +1,17 @@
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.Evaluate
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
-import Flapjack.FiniteMap.EmptyExact
+module
+
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
+public import Flapjack.FiniteMap.EmptyExact
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Observational consequence of the proof-side numbering simulation. -/
 namespace Flapjack.Compiler.Backend.ClosNumber

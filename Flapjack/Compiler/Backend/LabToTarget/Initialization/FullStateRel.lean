@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.LabToTarget.Initialization.BasicCases
-import Flapjack.Compiler.Backend.LabToTarget.Initialization.InterferenceCases
-import Flapjack.Compiler.Backend.LabToTarget.Initialization.MemorySeparationCases
-import Flapjack.Compiler.Backend.LabToTarget.Initialization.DomainCodeCase
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization.BasicCases
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization.InterferenceCases
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization.MemorySeparationCases
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization.DomainCodeCase
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm Flapjack.Misc

@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordCse.Knowledge
-import Flapjack.Compiler.Backend.WordCse.ListOrder
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
-import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
-import Std.Data.TreeMap
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Knowledge
+public import Flapjack.Compiler.Backend.WordCse.ListOrder
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+public import Std.Data.TreeMap
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack RiscV

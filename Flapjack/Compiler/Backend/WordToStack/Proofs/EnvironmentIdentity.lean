@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.KeyValueOrder
-import Flapjack.Basis.Pure.MlList.SortPerm
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwapStack
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.KeyValueOrder
+public import Flapjack.Basis.Pure.MlList.SortPerm
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwapStack
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 

@@ -1,4 +1,8 @@
-import Flapjack.Translator.Monadic.MonadBase.ListPrimitives
+module
+
+public import Flapjack.Translator.Monadic.MonadBase.ListPrimitives
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 

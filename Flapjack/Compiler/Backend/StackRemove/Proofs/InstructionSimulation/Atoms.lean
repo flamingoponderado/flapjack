@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
-import Flapjack.Compiler.Backend.StackRemove.Proofs.ExpressionSimulation
-import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.ExpressionSimulation
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.InstructionSimulation.Atoms
 open Flapjack

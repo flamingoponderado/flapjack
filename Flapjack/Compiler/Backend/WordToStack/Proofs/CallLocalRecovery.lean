@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Env
-import Flapjack.Misc.Sptree.FromList2
-import Mathlib.Data.List.Induction
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+public import Flapjack.Misc.Sptree.FromList2
+public import Mathlib.Data.List.Induction
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack Flapjack.WordSemStateFiniteExact

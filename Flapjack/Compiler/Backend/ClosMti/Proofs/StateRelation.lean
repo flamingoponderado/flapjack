@@ -1,7 +1,15 @@
-import Flapjack.Misc.Option.Rel
-import Flapjack.Compiler.Backend.ClosMti.Proofs.Relations
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
-import Flapjack.Compiler.Backend.BackendProps.Pure
+module
+
+public import Flapjack.Misc.Option.Rel
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.Relations
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
+public import Flapjack.Compiler.Backend.BackendProps.Pure
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! State relation for multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti

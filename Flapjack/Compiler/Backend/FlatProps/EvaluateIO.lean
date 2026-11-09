@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateSource
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateSource
+
+@[expose] public section
 
 /-! I/O-event monotonicity for the faithful flat evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatProps

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Word
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Word
+
+@[expose] public section
 
 /-! BVL word and floating-point primitives. -/
 namespace Flapjack.Compiler.Backend.BvlSem

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.ByteLengths
-import Flapjack.Compiler.Backend.LabToTarget.ValidityNop
-import Flapjack.Compiler.Backend.LabToTarget.LengthCorrectness
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ByteLengths
+public import Flapjack.Compiler.Backend.LabToTarget.ValidityNop
+public import Flapjack.Compiler.Backend.LabToTarget.LengthCorrectness
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

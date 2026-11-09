@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
-import Flapjack.Compiler.Encoders.AsmProps.Target
-import Flapjack.RiscV.L3.Step.Next
-import Flapjack.Misc.Alignment
-import Flapjack.Misc.SetSep
+module
+
+public import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+public import Flapjack.Compiler.Encoders.AsmProps.Target
+public import Flapjack.RiscV.L3.Step.Next
+public import Flapjack.Misc.Alignment
+public import Flapjack.Misc.SetSep
+
+@[expose] public section
 
 /-! Full native target state definitions. Failed `THE` uses the reviewed
 canonical unspecified value. HOL omits `get_fp_reg` in the record constructor;

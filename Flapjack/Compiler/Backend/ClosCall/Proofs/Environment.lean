@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.FreeVars
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.FreeVars
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Environment relation for direct-call closure conversion. -/
 namespace Flapjack.Compiler.Backend.ClosCall

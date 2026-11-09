@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMax
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
-import Flapjack.Misc.Sptree.Subspt
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMax
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+public import Flapjack.Misc.Sptree.Subspt
+
+@[expose] public section
 
 /-!
 # `wordPropsScript.sml` 4589-4634: code growth and stack-size constancy

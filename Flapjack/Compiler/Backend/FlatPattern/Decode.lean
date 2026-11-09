@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatPattern.Names
-import Flapjack.Compiler.Backend.PatternSemantics
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Names
+public import Flapjack.Compiler.Backend.PatternSemantics
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Decode pattern-compiler decision trees back into flat expressions. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

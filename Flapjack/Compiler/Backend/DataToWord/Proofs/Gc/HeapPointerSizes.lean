@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Reachability
-import Mathlib.Data.List.Nodup
-import Mathlib.Data.List.Perm.Subperm
-import Mathlib.Algebra.Order.BigOperators.Group.List
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Reachability
+public import Mathlib.Data.List.Nodup
+public import Mathlib.Data.List.Perm.Subperm
+public import Mathlib.Algebra.Order.BigOperators.Group.List
+
+@[expose] public section
 
 /-! Heap pointer enumeration and its size bound. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.WordCopy.ProductionDecoderDomain
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramCodec
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
-import Flapjack.RiscV.Allocator
-import Flapjack.Compiler.Backend.WordCse.ListOrder
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
-import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
-import Std.Data.TreeMap
+module
+
+public import Flapjack.Compiler.Backend.WordCopy.ProductionDecoderDomain
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramCodec
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+public import Flapjack.RiscV.Allocator
+public import Flapjack.Compiler.Backend.WordCse.ListOrder
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+public import Std.Data.TreeMap
+
+@[expose] public section
 
 namespace Flapjack.RiscV
 open Compiler.Backend

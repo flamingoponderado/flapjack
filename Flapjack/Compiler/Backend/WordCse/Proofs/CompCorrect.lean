@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect.Simple
-import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect.Control
-import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect.Inst
-import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect.Store
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect.Simple
+public import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect.Control
+public import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect.Inst
+public import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect.Store
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+
+@[expose] public section
 
 /-!
 # `word_cseProof` `comp_correct`

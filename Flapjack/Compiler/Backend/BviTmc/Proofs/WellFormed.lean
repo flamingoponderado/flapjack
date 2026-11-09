@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractCorrespondence
-import Flapjack.Compiler.Backend.BackendCommon.SmallInt
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractCorrespondence
+public import Flapjack.Compiler.Backend.BackendCommon.SmallInt
+
+@[expose] public section
 
 /-! Well-formedness of TMC constructor call skeletons. -/
 namespace Flapjack.Compiler.Backend.BviTmc

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordSuffixLog
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordSuffixLog
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL
 /-- The full application case of recording-oracle clock suffix. -/

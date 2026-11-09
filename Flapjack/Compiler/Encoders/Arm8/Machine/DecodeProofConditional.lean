@@ -2,10 +2,14 @@
 Copyright (c) 2025 Flapjack contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.Tactic.IntervalCases
-import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
-import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofSimple2
-import Flapjack.Compiler.Encoders.Arm8.TargetProof
+module
+
+public import Mathlib.Tactic.IntervalCases
+public import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
+public import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofSimple2
+public import Flapjack.Compiler.Encoders.Arm8.TargetProof
+
+@[expose] public section
 
 /-!
 # ARMv8 decoder inverses: conditional encoders

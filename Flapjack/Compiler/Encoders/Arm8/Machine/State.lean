@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Encoders.Arm8.Target
-import Flapjack.Compiler.Encoders.AsmProps.Target
-import Flapjack.Misc.Alignment
-import Flapjack.Misc.SetSep
-import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Target
+public import Flapjack.Compiler.Encoders.AsmProps.Target
+public import Flapjack.Misc.Alignment
+public import Flapjack.Misc.SetSep
+public import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
+
+@[expose] public section
 
 /-!
 # A closed ARMv8 machine state for the Pancake instruction subset

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InstallStateRel
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileFfi
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InstallStateRel
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileFfi
+
+@[expose] public section
 
 /-! Code-installation simulation for BVL-to-BVI lowering. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

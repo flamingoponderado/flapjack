@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.StateRelation
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleReset
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleCallback
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleRecording
-import Flapjack.Compiler.Backend.SourceEval.Proofs.Concrete
-import Flapjack.Compiler.Backend.SourceEval.Proofs.SimulationPrerequisites
-import Flapjack.SemanticPrimitivesHOL.Eval
-import Mathlib.Data.List.Forall2
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleReset
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleCallback
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleRecording
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.Concrete
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.SimulationPrerequisites
+public import Flapjack.SemanticPrimitivesHOL.Eval
+public import Mathlib.Data.List.Forall2
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Dynamic evaluation and environment-generation simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

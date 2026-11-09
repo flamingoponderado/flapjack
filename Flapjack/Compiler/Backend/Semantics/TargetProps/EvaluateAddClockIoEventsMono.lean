@@ -1,6 +1,10 @@
-import Mathlib.Logic.Basic
-import Mathlib.Tactic.CasesM
-import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateIoEventsMono
+module
+
+public import Mathlib.Logic.Basic
+public import Mathlib.Tactic.CasesM
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateIoEventsMono
+
+@[expose] public section
 
 namespace Flapjack
 

@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Arith
-import Flapjack.Pancake.Proofs.LoopToWord.CompExpPreservesEval
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Arith
+public import Flapjack.Pancake.Proofs.LoopToWord.CompExpPreservesEval
+
+@[expose] public section
 
 /-!
 # Memory-access cases of `loop_to_word`'s `compile_correct`

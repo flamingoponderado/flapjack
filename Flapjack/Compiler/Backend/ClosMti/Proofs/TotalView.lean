@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.FuelStable
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.FuelStable
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! A total proof-side view of the executed multi-argument traversal. -/
 namespace Flapjack.Compiler.Backend.ClosMti
 open ClosLang
-private instance : Nonempty Exp := ⟨.var .none 0⟩
+instance totalViewInst1 : Nonempty Exp := ⟨.var .none 0⟩
 
 /-- Extract the unique result of the executed retrying traversal for one
 expression. This helper has no separate HOL declaration. -/

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.HeapPointerSizes
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.HeapPointerSizes
+
+@[expose] public section
 
 /-! Heap traversal and the collector reachability graph. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

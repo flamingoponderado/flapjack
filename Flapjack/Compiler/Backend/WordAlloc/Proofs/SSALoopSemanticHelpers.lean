@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
-import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

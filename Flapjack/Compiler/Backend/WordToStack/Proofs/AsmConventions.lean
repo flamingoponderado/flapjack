@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameCompiler
-import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmRemoveCompiler
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackConventions
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameCompiler
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmRemoveCompiler
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackConventions
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.AsmConventions
 open Flapjack Flapjack.Compiler.Backend.StackLang

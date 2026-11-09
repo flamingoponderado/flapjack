@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
+
+@[expose] public section
 
 /-! BVL integer primitives. -/
 namespace Flapjack.Compiler.Backend.BvlSem

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockSimulation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.LetSimulation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractionWellFormed
-import Flapjack.Compiler.Backend.BviTmc.Proofs.LetWorkerBlock
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockSimulation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.LetSimulation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractionWellFormed
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.LetWorkerBlock
+
+@[expose] public section
 
 /-! Simulation of expressions with extracted call blocks. -/
 namespace Flapjack.Compiler.Backend.BviTmc.ExtractedSimulation

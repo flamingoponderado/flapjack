@@ -1,7 +1,11 @@
-import Mathlib.Tactic.IntervalCases
-import Flapjack.Misc.Alignment
-import Flapjack.RiscV.L3.Defs.Encode
-import Flapjack.RiscV.L3.Step.DecodeAny
+module
+
+public import Mathlib.Tactic.IntervalCases
+public import Flapjack.Misc.Alignment
+public import Flapjack.RiscV.L3.Defs.Encode
+public import Flapjack.RiscV.L3.Step.DecodeAny
+
+@[expose] public section
 
 /-! Source audit: pinned riscvScript.sml Itype_def (18997) concatenates
 imm[11:0], rs[4:0], funct3=000, rd[4:0], opcode=0010011.

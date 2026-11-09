@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Equality
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Int
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
-import Flapjack.Compiler.Backend.ClosToBvl.Constants
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Equality
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Int
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
+public import Flapjack.Compiler.Backend.ClosToBvl.Constants
+
+@[expose] public section
 
 /-! Global, block, integer, and word branches of the BVL primitive dispatcher. -/
 namespace Flapjack.Compiler.Backend.BvlSem

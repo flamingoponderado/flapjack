@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.RefArrayElement
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.RefArrayElement
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
+
+@[expose] public section
 
 /-! Updating the global-pointer store entries. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

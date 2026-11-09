@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.EvaluatorForce
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.EvaluatorForce
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+@[expose] public section
 
 /-! Same-program call simulation across related call stacks. -/
 namespace Flapjack.Compiler.Backend.DataLive

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.X64.Machine.Execute
-import Flapjack.Compiler.Encoders.AsmProps.Target
-import Flapjack.HolArb
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.Execute
+public import Flapjack.Compiler.Encoders.AsmProps.Target
+public import Flapjack.HolArb
+
+@[expose] public section
 
 /-!
 # The closed x86-64 `target` record

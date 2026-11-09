@@ -1,5 +1,9 @@
-import Flapjack.FiniteMap.UnionExact
-import Mathlib.Data.Set.Finite.Basic
+module
+
+public import Flapjack.FiniteMap.UnionExact
+public import Mathlib.Data.Set.Finite.Basic
+
+@[expose] public section
 
 namespace Flapjack.HolFiniteMapExact
 /-- Defined lookup domain of the canonical carrier. Flapjack infrastructure;

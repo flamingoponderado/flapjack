@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Motive
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ReadsLiveExpressions
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Motive
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ReadsLiveExpressions
+
+@[expose] public section
 
 /-!
 # `clash_tree_colouring_ok` statement cases

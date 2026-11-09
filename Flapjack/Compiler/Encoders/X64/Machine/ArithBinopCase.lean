@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Encoders.X64.Machine.ConstCase
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.ConstCase
+
+-- Sum `==` must reduce by `rfl`/`decide`; core's derived instance is not exposed.
+import all Init.Data.Sum.Basic
+@[expose] public section
 
 /-!
 # The `binop` register and immediate cases of `encoder_correct x64Target`

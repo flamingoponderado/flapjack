@@ -1,6 +1,13 @@
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateLet
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
+module
+
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateLet
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Basic cases of closure let-operation correctness. -/
 namespace Flapjack.Compiler.Backend.ClosLetop

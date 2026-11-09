@@ -1,9 +1,13 @@
-import Flapjack.Parser.ByteRanged
-import Flapjack.Parser.Conversion
-import Flapjack.Pancake.PanLang.Shape
-import Flapjack.Pancake.PanLang.Exp
-import Flapjack.Pancake.PanLang.Prog
-import Flapjack.Pancake.PanLang.Decl
+module
+
+public import Flapjack.Parser.ByteRanged
+public import Flapjack.Parser.Conversion
+public import Flapjack.Pancake.PanLang.Shape
+public import Flapjack.Pancake.PanLang.Exp
+public import Flapjack.Pancake.PanLang.Prog
+public import Flapjack.Pancake.PanLang.Decl
+
+@[expose] public section
 
 /-!
 Byte-rangedness of the concrete parse tree and of the first conversion step.

@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
-import Flapjack.Pancake.Semantics.CrepProps
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
+public import Flapjack.Pancake.Semantics.CrepProps
+
+@[expose] public section
 
 /-!
 Exact port of HOL `crepPropsScript.sml:886 evaluate_add_clock_eq` over the exact

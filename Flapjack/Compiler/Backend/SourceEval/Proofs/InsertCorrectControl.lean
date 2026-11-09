@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.InsertCorrectBase
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.InsertCorrectBase
+
+@[expose] public section
 
 /-! Branching-expression cases of source oracle insertion correctness. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Refs
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Refs
+
+@[expose] public section
 
 /-! Source-value well-formedness for BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

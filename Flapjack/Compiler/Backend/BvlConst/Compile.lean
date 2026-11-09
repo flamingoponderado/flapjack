@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlConst
+module
+
+public import Flapjack.Compiler.Backend.BvlConst
+
+@[expose] public section
 
 /-! Total singleton and list traversal for BVL constant propagation. The
 executed traversal agrees by `Proofs/CompileProduction`. -/

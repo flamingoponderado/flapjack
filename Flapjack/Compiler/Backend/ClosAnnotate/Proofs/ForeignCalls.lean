@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockExtend
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.IntegerOperations
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.WordOperations
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockExtend
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.IntegerOperations
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.WordOperations
+
+@[expose] public section
 
 /-! Foreign-call primitives under the closure-annotation state relation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

@@ -1,4 +1,8 @@
-import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
+
+@[expose] public section
 
 /-! Actual native SLTU Encode/DecodeAny composition, required by the original
 AddCarry encoder correctness case. Original SLTU uses opcode0110011, funct3=011

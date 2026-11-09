@@ -1,4 +1,8 @@
-import Flapjack.NamespaceProps.LiftDomains
+module
+
+public import Flapjack.NamespaceProps.LiftDomains
+
+@[expose] public section
 
 /-! Namespace-lifting infrastructure shared by frontend simulation proofs. -/
 namespace Flapjack.NamespaceHOL

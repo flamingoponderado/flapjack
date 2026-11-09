@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AdjustedSet
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRel
-import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.AdjustedSet
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRel
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+
+@[expose] public section
 
 /-! Environment-cut properties needed by data-to-word correctness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs

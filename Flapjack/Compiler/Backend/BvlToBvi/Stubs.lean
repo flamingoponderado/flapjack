@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Runtime stubs inserted by BVL-to-BVI compilation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi

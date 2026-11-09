@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.StackToLab.Compile
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenHelpers
-import Flapjack.Compiler.Backend.StackRemove.Proofs.LabPres
-import Flapjack.Compiler.Backend.StackRemove.StoreListCode
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.ExtractLabels
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.Labels
-import Flapjack.Compiler.Backend.StackNames.Proofs.LabelsCallArgs
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Compile
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenHelpers
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.LabPres
+public import Flapjack.Compiler.Backend.StackRemove.StoreListCode
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.ExtractLabels
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.Labels
+public import Flapjack.Compiler.Backend.StackNames.Proofs.LabelsCallArgs
+
+@[expose] public section
 
 /-! `stack_to_labProofScript.sml:3194-3347`: `MAP_FST_compile_compile`, the
 rebound `next_lab_non_zero` and `MAP_prog_to_section_FST`,

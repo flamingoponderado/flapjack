@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordGcFunctions
+module
+
+public import Flapjack.Compiler.Backend.WordGcFunctions
+
+@[expose] public section
 
 /-! The `has_fp_ops` lemmas of `word_gcFunctionsScript.sml:598-792`: every GC
 function ignores the floating-point capability flags of the data configuration.

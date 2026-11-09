@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.Backend
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
-import Flapjack.Compiler.Backend.StackNames.OperandNames
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListMemory
-import Flapjack.Misc.Alignment
-import Flapjack.Misc.Bit
-import Flapjack.Misc.GoodDimindex
-import Flapjack.Misc.WordList
-import Flapjack.Misc.SetSep
+module
+
+public import Flapjack.Compiler.Backend.Backend
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+public import Flapjack.Compiler.Backend.StackNames.OperandNames
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListMemory
+public import Flapjack.Misc.Alignment
+public import Flapjack.Misc.Bit
+public import Flapjack.Misc.GoodDimindex
+public import Flapjack.Misc.WordList
+public import Flapjack.Misc.SetSep
+
+@[expose] public section
 
 /-! backendProofScript.sml: the machine-initialisation predicates and small
 word lemmas used by the Pancake top-level correctness theorem

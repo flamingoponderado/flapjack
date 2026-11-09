@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Inst
-import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Inst
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
+
+@[expose] public section
 
 /-!
 # `clash_tree_colouring_ok` `Seq`, `If` and `MustTerminate` cases

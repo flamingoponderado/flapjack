@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.Allocator
-import Flapjack.Compiler.Backend.LinearScan.TopLevel
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.Allocator
+public import Flapjack.Compiler.Backend.LinearScan.TopLevel
+
+@[expose] public section
 
 /-!
 # word_alloc register-allocator dispatcher

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack
 open Flapjack.StackSem

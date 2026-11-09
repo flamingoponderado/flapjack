@@ -1,8 +1,16 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCases
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.EvaluateAllOk
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.RelocationOk
-import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
-import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCases
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.EvaluateAllOk
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.RelocationOk
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.BvlToBvi.SourceSing
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Non-singleton expression-list case of BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

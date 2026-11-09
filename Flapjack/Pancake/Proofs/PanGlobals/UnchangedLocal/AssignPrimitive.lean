@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsUnchangedLocalAssignPrimitive
 open Flapjack.Pancake.PanLang

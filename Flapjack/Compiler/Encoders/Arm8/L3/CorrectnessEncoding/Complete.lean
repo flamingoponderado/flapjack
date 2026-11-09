@@ -1,25 +1,31 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Mem
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Skip
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Const
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Arith
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShiftedRegister
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalImmediateBinop
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.AddSubImmediate
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Shift
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftImmediate
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftBitfieldCase
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Division
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LongMul
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LongDiv
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.AddCarry
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Overflow
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Loc
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LocBig
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Branch
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.JumpCmp
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Call
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.JumpReg
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Fp
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Mem
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Skip
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Const
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Arith
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShiftedRegister
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalImmediateBinop
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.AddSubImmediate
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Shift
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftImmediate
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftBitfieldCase
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Division
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LongMul
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LongDiv
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.AddCarry
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Overflow
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Loc
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LocBig
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Branch
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.JumpCmp
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Call
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.JumpReg
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Fp
+
+-- Sum `==` must reduce by `rfl`/`decide`; core's derived instance is not exposed.
+import all Init.Data.Sum.Basic
+@[expose] public section
 
 /-! # `encoder_correct arm8TargetL3`
 

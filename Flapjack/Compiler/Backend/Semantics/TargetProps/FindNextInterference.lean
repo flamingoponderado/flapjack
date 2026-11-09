@@ -1,18 +1,22 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.EncodedBytes
-import Flapjack.Compiler.Backend.Semantics.TargetSem.FfiReads
-import Flapjack.Compiler.Backend.Semantics.TargetSem.MappedMemory
-import Flapjack.Misc.FindIndex
-import Flapjack.Misc.ListEl
-import Flapjack.Misc.Sptree
-import Flapjack.Byte
+module
 
-import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceApp
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.EncodedBytes
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.FfiReads
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.MappedMemory
+public import Flapjack.Misc.FindIndex
+public import Flapjack.Misc.ListEl
+public import Flapjack.Misc.Sptree
+public import Flapjack.Byte
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceApp
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Flapjack.Compiler.Encoders.Asm Classical
 
 -- Inhabitation only; out-of-range EL remains the shared opaque HOL ARB.
-private instance : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
+instance findNextInterferenceNonemptyInst : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
 
 /-- Literal HOL clocked first-interference search (targetPropsScript.sml:112-211). All normal/cache/MMIO/external-FFI guards are retained; the first
 interference returns its pre/post application and updated configuration/FFI.

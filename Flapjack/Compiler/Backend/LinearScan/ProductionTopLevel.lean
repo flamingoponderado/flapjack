@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LinearScan.ProductionSteps
-import Flapjack.Compiler.Backend.LinearScan.TopLevel
+module
+
+public import Flapjack.Compiler.Backend.LinearScan.ProductionSteps
+public import Flapjack.Compiler.Backend.LinearScan.TopLevel
+
+@[expose] public section
 
 /-!
 Array-backed allocator orchestration with a simulation against the

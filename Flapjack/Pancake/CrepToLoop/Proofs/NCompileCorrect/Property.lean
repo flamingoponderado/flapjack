@@ -1,6 +1,10 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
-import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
-import Flapjack.Pancake.Semantics.LoopSemStateExact
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+
+@[expose] public section
 
 /-!
 # Shared statement for exact `ncompile_correct` case ports

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.Helpers
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.Helpers
+
+@[expose] public section
 
 /-! Total source-shaped BVL handler simplification. The executed compiler's
 `simplifyBounded` traversal is proved equal in `Proofs/SimplifyProduction`. -/

@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Proofs.PanStructs.ConvertState
-import Flapjack.Pancake.Proofs.PanStructs.ShapeMap
-import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
-import Flapjack.Pancake.PanStructs.CompileExpExact
-import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.ConvertState
+public import Flapjack.Pancake.Proofs.PanStructs.ShapeMap
+public import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
+public import Flapjack.Pancake.PanStructs.CompileExpExact
+public import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.CompileExpAtomic
 open Flapjack
 open Flapjack.Pancake.PanLang

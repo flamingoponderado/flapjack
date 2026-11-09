@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.WordSimp
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.WordSimp
+
+@[expose] public section
 
 /-!
 # `word_simpProof` `is_gc_word_const`

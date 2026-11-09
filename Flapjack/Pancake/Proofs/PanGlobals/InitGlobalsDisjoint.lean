@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsAlignment
-import Flapjack.Compiler.Backend.StackRemove
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsAlignment
+public import Flapjack.Compiler.Backend.StackRemove
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsInitGlobalsDisjoint
 

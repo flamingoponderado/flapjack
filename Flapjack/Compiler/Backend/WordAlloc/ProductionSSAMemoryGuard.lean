@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionMemoryGuard
-import Flapjack.Compiler.Backend.WordAlloc.SSATransInst
-import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionMemoryGuard
+public import Flapjack.Compiler.Backend.WordAlloc.SSATransInst
+public import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Compiler.Backend.WordAlloc

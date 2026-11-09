@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Measure
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Measure
+
+@[expose] public section
 
 /-! Variable-bound predicates used by the BVL lowering proofs. -/
 namespace Flapjack.Compiler.Backend.BvlProps

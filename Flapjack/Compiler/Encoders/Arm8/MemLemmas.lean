@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
-import Flapjack.Compiler.Encoders.MemBytes
-import Flapjack.Compiler.Encoders.AsmSem
-import Flapjack.Compiler.Encoders.AsmSem.Step
-import Mathlib.Tactic.IntervalCases
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
+public import Flapjack.Compiler.Encoders.MemBytes
+public import Flapjack.Compiler.Encoders.AsmSem
+public import Flapjack.Compiler.Encoders.AsmSem.Step
+public import Mathlib.Tactic.IntervalCases
+
+@[expose] public section
 
 /-!
 # Shared ARMv8 memory lemmas

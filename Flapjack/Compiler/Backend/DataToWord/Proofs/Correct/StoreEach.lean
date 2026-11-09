@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Control
-import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Control
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
+
+@[expose] public section
 
 /-! Execution of the constructor's consecutive word stores. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct

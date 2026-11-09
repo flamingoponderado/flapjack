@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordLang.MaxVarExp
+module
+
+public import Flapjack.Pancake.WordLang.MaxVarExp
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

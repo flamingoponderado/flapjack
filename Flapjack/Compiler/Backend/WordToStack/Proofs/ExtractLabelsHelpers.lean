@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackProps.ExtractLabels
-import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
-import Flapjack.Compiler.Backend.WordToStack.NativeReturn
+module
+
+public import Flapjack.Compiler.Backend.StackProps.ExtractLabels
+public import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
+public import Flapjack.Compiler.Backend.WordToStack.NativeReturn
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native.ExtractLabelsHelpers
 open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackProps

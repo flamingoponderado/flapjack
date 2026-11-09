@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Number
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Block
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Reference
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Number
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Block
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Reference
+
+@[expose] public section
 
 /-! Simultaneous word-equality simulation for values and value lists. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

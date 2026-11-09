@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackNames
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Compiler.Backend.StackNames
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackProps
 open Flapjack.Compiler.Encoders.Asm

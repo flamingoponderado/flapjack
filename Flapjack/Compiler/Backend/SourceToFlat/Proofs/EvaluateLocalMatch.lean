@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalEnvironment
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateMatch
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalEnvironment
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateMatch
+
+@[expose] public section
 
 /-! Pattern row evaluation with growing global environments. These are
 preliminary simulations over relations pending HOL correspondence review. -/

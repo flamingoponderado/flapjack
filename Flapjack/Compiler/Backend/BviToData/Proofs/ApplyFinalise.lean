@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.Finalise
-import Flapjack.Compiler.Backend.BviToData.Proofs.State
-import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
-import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyAux
-import Flapjack.Misc.Sptree.Map
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Finalise
+public import Flapjack.Compiler.Backend.BviToData.Proofs.State
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyAux
+public import Flapjack.Misc.Sptree.Map
+
+@[expose] public section
 
 /-! Mutable-constructor finalization simulation for BVI-to-data correctness. -/
 namespace Flapjack.Compiler.Backend.BviToData

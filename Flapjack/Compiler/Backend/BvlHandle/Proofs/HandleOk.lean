@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.BvlProps.VarBound
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.VarBound
+
+@[expose] public section
 
 /-! Structural preconditions for BVL exception-handler lowering. -/
 namespace Flapjack.Compiler.Backend.BvlHandle.Proofs

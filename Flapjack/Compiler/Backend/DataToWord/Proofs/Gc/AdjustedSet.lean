@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Variables
-import Flapjack.Misc.Sptree.ToAList
-import Mathlib.Tactic
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Variables
+public import Flapjack.Misc.Sptree.ToAList
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-! Lookup properties of the data-to-word live-set translation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

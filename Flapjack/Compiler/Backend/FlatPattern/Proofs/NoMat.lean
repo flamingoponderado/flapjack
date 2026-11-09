@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.CompiledMatch
-import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
-import Flapjack.Compiler.Backend.FlatProps.NoMat
-import Flapjack.Misc.Sptree.ToList
-import Mathlib.Tactic.SplitIfs
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.CompiledMatch
+public import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
+public import Flapjack.Compiler.Backend.FlatProps.NoMat
+public import Flapjack.Misc.Sptree.ToList
+public import Mathlib.Tactic.SplitIfs
+
+@[expose] public section
 
 /-! Match-freedom facts for generated pattern tests. The compositional helper lemmas are Flapjack proof infrastructure. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

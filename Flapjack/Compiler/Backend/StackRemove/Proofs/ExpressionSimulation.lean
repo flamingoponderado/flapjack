@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
-import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
-import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
+
+@[expose] public section
 
 /-! Full six-constructor StackRemove expression simulation. The operand-list
 induction covers every Op argument; no successful target expression is supplied

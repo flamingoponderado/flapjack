@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.EncodingInvariant
-import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.EncodingInvariant
+public import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
+
+@[expose] public section
 
 /-! Complete original positional encoding invariants and byte-length bounds.
 Position advances through recorded line annotations, including labels; section

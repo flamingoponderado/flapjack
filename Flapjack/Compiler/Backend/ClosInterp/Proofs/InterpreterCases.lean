@@ -1,5 +1,15 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.EvaluateRev
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.Simulation
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.EvaluateRev
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.Simulation
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.ClosInterp.Interpreter
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Base cases of the interpreter expression simulation. The evaluator and
 state carriers are proof-side and await cross-language review. -/

@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.LabProps.EvaluateIoEventsMono
-import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
-import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmControl
-import Flapjack.Compiler.Backend.LabSem.Semantics
-import Flapjack.SemanticsProps.Implements
+module
+
+public import Flapjack.Compiler.Backend.LabProps.EvaluateIoEventsMono
+public import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
+public import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmControl
+public import Flapjack.Compiler.Backend.LabSem.Semantics
+public import Flapjack.SemanticsProps.Implements
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm

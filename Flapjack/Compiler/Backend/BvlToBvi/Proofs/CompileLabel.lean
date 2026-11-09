@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileWord
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileWord
+
+@[expose] public section
 
 /-! Label-operation simulation for BVL-to-BVI. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

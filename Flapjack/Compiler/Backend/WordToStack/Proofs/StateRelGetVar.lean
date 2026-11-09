@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRel
-import Flapjack.Compiler.Backend.WordGcFunctions
-import Flapjack.Misc.ListEl
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRel
+public import Flapjack.Compiler.Backend.WordGcFunctions
+public import Flapjack.Misc.ListEl
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+
+@[expose] public section
 
 /-!
 # `state_rel` variable lookup: `state_rel_get_var_imp` family

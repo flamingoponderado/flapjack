@@ -1,6 +1,10 @@
-import Flapjack.RiscV.L3.Defs.AddressException
+module
 
-import Flapjack.RiscV.L3.Defs.Fetch
+public import Flapjack.RiscV.L3.Defs.AddressException
+
+public import Flapjack.RiscV.L3.Defs.Fetch
+
+@[expose] public section
 
 
 /-! Complete upper-immediate and jump equations. Original JAL checks target bit0,

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Statement
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Statement
+
+@[expose] public section
 
 /-! `flatten_correct` cases whose StackSem clause fails under `state_rel`:
 `state_rel` forces `¬use_alloc`, `¬use_store` and `¬use_stack`, so `Alloc`,

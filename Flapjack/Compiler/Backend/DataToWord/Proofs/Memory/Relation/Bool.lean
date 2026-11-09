@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Unit
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Unit
+
+@[expose] public section
 
 /-! Boolean values in the data-to-word memory relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

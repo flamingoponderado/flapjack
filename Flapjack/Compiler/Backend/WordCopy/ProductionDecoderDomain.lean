@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCopy
-import Flapjack.Compiler.Backend.WordUnreach.ProductionDecoderDomain
+module
+
+public import Flapjack.Compiler.Backend.WordCopy
+public import Flapjack.Compiler.Backend.WordUnreach.ProductionDecoderDomain
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCopy
 open Flapjack WordUnreach

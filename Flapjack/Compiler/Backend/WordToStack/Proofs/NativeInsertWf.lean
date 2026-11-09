@@ -1,5 +1,9 @@
-import Flapjack.Misc.Sptree.Wf
-import Flapjack.Pancake.Semantics.LoopSemStateExact
+module
+
+public import Flapjack.Misc.Sptree.Wf
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.Arm8.Machine.Target
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Machine.Target
+
+@[expose] public section
 
 /-!
 # Agreement on a memory domain for the closed ARMv8 model

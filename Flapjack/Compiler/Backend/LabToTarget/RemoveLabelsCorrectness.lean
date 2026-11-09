@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
-import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
-import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingNavigation
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
+public import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingPreconditions
+public import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingNavigation
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabProps.LabelSets

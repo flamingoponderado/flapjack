@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.CrepInline
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
-import Flapjack.Pancake.Semantics.CrepProps
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
+public import Flapjack.Pancake.Semantics.CrepProps
+
+@[expose] public section
 
 /-!
 # `inline_prog_correct`: the `Call` case

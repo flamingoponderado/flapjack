@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ListConversion
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
-import Flapjack.Misc.PredSet
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ListConversion
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
+public import Flapjack.Misc.PredSet
+
+@[expose] public section
 
 /-! Byte and word list decoding across the source-to-flat value relation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

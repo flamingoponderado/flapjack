@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackNames.ProgramNames
-import Flapjack.Compiler.Backend.StackProps.OrderedLabels
-import Flapjack.Compiler.Backend.StackProps.CallArgs
+module
+
+public import Flapjack.Compiler.Backend.StackNames.ProgramNames
+public import Flapjack.Compiler.Backend.StackProps.OrderedLabels
+public import Flapjack.Compiler.Backend.StackProps.CallArgs
+
+@[expose] public section
 
 /-!
 # stack_namesProof: `stack_names_lab_pres` and `stack_names_call_args`

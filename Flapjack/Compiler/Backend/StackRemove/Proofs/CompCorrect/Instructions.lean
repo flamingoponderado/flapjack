@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.Instructions
 open Flapjack Flapjack.Compiler.Backend.StackRemove

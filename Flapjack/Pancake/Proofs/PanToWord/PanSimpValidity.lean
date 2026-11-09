@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanToWord
+module
+
+public import Flapjack.Pancake.Proofs.PanToWord
+
+@[expose] public section
 
 namespace Flapjack
 open Flapjack.Pancake.PanLang

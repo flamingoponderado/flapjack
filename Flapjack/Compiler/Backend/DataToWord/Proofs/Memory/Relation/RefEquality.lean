@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
+
+@[expose] public section
 
 /-! Equality of comparison references in the abstract heap invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

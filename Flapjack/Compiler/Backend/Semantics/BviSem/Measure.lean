@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Structural weights for the clocked BVI evaluator. -/
 namespace Flapjack.Compiler.Backend.BviSem

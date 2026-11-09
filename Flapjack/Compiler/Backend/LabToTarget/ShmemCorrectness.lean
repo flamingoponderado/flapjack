@@ -1,17 +1,25 @@
-import Mathlib.Data.Set.Lattice
-import Flapjack.Compiler.Backend.LabToTarget.ShmemMembership
-import Flapjack.Compiler.Backend.LabToTarget.ByteIntervalDistinct
-import Flapjack.Compiler.Backend.LabToTarget.MmioShmem
-import Flapjack.Compiler.Backend.LabToTarget.ShmemDistinct
-import Flapjack.Misc.FindIndex.Distinct
-import Flapjack.Compiler.Backend.LabToTarget.FetchValidity
+module
+
+public import Mathlib.Data.Set.Lattice
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemMembership
+public import Flapjack.Compiler.Backend.LabToTarget.ByteIntervalDistinct
+public import Flapjack.Compiler.Backend.LabToTarget.MmioShmem
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemDistinct
+public import Flapjack.Misc.FindIndex.Distinct
+public import Flapjack.Compiler.Backend.LabToTarget.FetchValidity
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
-private instance : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
-private instance : Nonempty ShmemInfoNum := ⟨⟨0,0,0,0,0,0⟩⟩
+instance shmemCorrectnessInst1 : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
+instance shmemCorrectnessInst2 : Nonempty ShmemInfoNum := ⟨⟨0,0,0,0,0,0⟩⟩
 
 /-- Flapjack bounded paired-list infrastructure. An actual ZIP member yields
 its shared index and a successful search of the record projection. Every EL

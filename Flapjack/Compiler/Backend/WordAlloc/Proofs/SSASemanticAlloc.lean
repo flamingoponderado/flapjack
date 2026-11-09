@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Alloc
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Alloc
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.PureMemory
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.PureMemory
+
+@[expose] public section
 
 /-! Resource-accounting relations for retained data-language assignments. -/
 namespace Flapjack.Compiler.Backend.DataLive

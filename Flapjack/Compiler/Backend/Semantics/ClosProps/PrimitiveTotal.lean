@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBlock
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveLists
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveNumeric
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveGlobal
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBytes
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveCopy
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveFfi
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveThunk
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBlock
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveLists
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveNumeric
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveGlobal
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBytes
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveCopy
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveFfi
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveThunk
+
+@[expose] public section
 
 /-! Complete generic closure primitive simulation. -/
 namespace Flapjack.Compiler.Backend.ClosProps.PrimitiveTotal

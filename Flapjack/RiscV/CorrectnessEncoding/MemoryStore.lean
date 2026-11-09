@@ -1,6 +1,14 @@
-import Flapjack.RiscV.CorrectnessEncoding.MemorySource
-import Flapjack.RiscV.CorrectnessEncoding.MemoryBytes
-import Flapjack.Compiler.Backend.LabToTarget.InstMem
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.MemorySource
+public import Flapjack.RiscV.CorrectnessEncoding.MemoryBytes
+public import Flapjack.Compiler.Backend.LabToTarget.InstMem
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Source/native store post-memory consequences for the original Mem case.
 These compositions have no separately named HOL originals and remain untagged.

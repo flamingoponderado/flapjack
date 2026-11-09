@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect.Control
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect.Control
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `comp_correct`: `JumpLower`, `RawCall` and `Call`

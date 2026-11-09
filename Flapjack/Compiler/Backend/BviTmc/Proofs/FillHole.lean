@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ResultRelation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.MutableBlockRelation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ListExtraction
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ResultRelation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.MutableBlockRelation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ListExtraction
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
+
+@[expose] public section
 
 /-! Evaluation of the TMC hole-filling operation. -/
 namespace Flapjack.Compiler.Backend.BviTmc.FillHole

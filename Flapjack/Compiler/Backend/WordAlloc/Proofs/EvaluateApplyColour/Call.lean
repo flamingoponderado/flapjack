@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Alloc
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.PermuteSwap
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.Updates
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EnvFrame
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Alloc
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.PermuteSwap
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.Updates
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EnvFrame
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+
+@[expose] public section
 
 /-!
 # `evaluate_apply_colour` `Call` case

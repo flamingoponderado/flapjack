@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.Motive
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
+module
+
+public import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.Motive
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
+
+@[expose] public section
 
 /-!
 # `max_depth_call_graph_lemma`: `Alloc` case

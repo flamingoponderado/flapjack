@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvLemma
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Leaves
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvLemma
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Leaves
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

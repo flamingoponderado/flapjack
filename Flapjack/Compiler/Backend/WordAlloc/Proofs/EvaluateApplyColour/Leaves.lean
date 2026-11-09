@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Motive
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.Expressions
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
-import Flapjack.Misc.SptreeLookup
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Motive
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.Expressions
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
+public import Flapjack.Misc.SptreeLookup
+
+@[expose] public section
 
 /-!
 # `evaluate_apply_colour` leaf cases

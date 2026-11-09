@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.IntegerLoadMode
+module
+
+public import Flapjack.RiscV.L3.Defs.IntegerLoadMode
+
+@[expose] public section
 
 /-! Full original set-less-than equations. RV32 SLTU zeroextends low32;
 RV32 SLTIU signextends low32, preserving the literal source asymmetry.

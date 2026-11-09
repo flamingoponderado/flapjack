@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CorrectnessEncoding.Arithmetic
-import Mathlib.Tactic.NormNum
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.Arithmetic
+public import Mathlib.Tactic.NormNum
+
+@[expose] public section
 namespace Flapjack.RiscV.TargetProof.AddCarry
 open Flapjack RiscV.L3
 set_option autoImplicit false

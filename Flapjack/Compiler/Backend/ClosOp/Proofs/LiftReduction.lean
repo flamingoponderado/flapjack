@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.Reduction
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.Reduction
+
+@[expose] public section
 
 /-! Source lifting preserves the reduction relation. -/
 namespace Flapjack.Compiler.Backend.ClosOp

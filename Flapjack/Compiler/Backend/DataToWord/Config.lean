@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+
+@[expose] public section
 
 /-!
 # `data_to_word` configuration

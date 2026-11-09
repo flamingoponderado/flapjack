@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordDepth
-import Flapjack.Compiler.Backend.BackendProps.OptionArithmetic
-import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
-import Flapjack.Compiler.Backend.LinearScan.Proofs.ApplyBijection
+module
+
+public import Flapjack.Compiler.Backend.WordDepth
+public import Flapjack.Compiler.Backend.BackendProps.OptionArithmetic
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.ApplyBijection
+
+@[expose] public section
 
 /-!
 # `word_depthProofScript.sml` helper lemmas (lines 12-146)

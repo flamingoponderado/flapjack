@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabSem.State
-import Flapjack.Compiler.Encoders.AsmSem.State
-import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
+module
+
+public import Flapjack.Compiler.Backend.LabSem.State
+public import Flapjack.Compiler.Encoders.AsmSem.State
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabSem

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionInitialSeed
-import Flapjack.Compiler.Backend.RegAlloc.ProductionSimplify
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.CoalesceSuccess
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionInitialSeed
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionSimplify
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.CoalesceSuccess
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc Translator.Monadic.MonadBase

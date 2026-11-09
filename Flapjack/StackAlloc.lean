@@ -1,4 +1,8 @@
-import Flapjack.Stack
+module
+
+public import Flapjack.Stack
+
+@[expose] public section
 
 /-!
 # StackLang allocation insertion

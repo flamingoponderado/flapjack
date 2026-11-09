@@ -1,6 +1,10 @@
-import Flapjack.Pancake.LoopToWord.Proofs.LabelHandlers
-import Flapjack.Pancake.LoopToWord.Proofs.NoInstallCode
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Pancake.LoopToWord.Proofs.LabelHandlers
+public import Flapjack.Pancake.LoopToWord.Proofs.NoInstallCode
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 /-!
 # `loop_to_wordProof`: lab_pres for loop_to_word

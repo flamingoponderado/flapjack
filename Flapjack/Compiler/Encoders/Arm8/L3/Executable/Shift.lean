@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Arith
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftBitfield
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Arith
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftBitfield
+
+@[expose] public section
 
 /-!
 # Bitfield move: bytes for the L3 bridge

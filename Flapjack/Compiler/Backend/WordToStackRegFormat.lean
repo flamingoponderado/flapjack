@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.Parmove
-import Flapjack.Compiler.Backend.StackCarrier
-import Flapjack.Compiler.Backend.StackLang.Prog
-import Flapjack.Compiler.Backend.WordToStack
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.Parmove
+public import Flapjack.Compiler.Backend.StackCarrier
+public import Flapjack.Compiler.Backend.StackLang.Prog
+public import Flapjack.Compiler.Backend.WordToStack
+
+@[expose] public section
 
 /-!
 # Faithful Cake Word-to-Stack register-format helpers

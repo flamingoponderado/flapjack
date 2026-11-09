@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Defs
-import Mathlib.Data.Nat.Bitwise
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Defs
+public import Mathlib.Data.Nat.Bitwise
+
+@[expose] public section
 
 /-!
 # Bitmask encoding: counting and rotation

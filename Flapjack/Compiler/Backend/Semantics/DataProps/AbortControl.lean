@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.ValueLocals
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.ValueLocals
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+@[expose] public section
 
 /-! Control-state invariant for non-type-error aborts. -/
 namespace Flapjack.Compiler.Backend.DataSem

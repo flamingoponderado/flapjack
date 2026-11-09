@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.PatternExh.Measures
+module
+
+public import Flapjack.Compiler.Backend.PatternExh.Measures
+
+@[expose] public section
 
 /-! Total exhaustiveness analysis using CakeML's lexicographic measure. -/
 namespace Flapjack.Compiler.Backend.PatternExh

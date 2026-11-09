@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.GcShared
-import Flapjack.Compiler.Backend.DataToWord.Header
-import Flapjack.AstHOL.BackendOperators
-import Flapjack.Misc.GoodDimindex
+module
+
+public import Flapjack.Compiler.Backend.GcShared
+public import Flapjack.Compiler.Backend.DataToWord.Header
+public import Flapjack.AstHOL.BackendOperators
+public import Flapjack.Misc.GoodDimindex
+
+@[expose] public section
 
 /-! Abstract heap representation used by data-to-word memory correctness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

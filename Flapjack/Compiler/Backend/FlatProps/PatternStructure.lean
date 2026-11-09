@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem
-import Flapjack.Misc.Option.Rel
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem
+public import Flapjack.Misc.Option.Rel
+
+@[expose] public section
 
 /-! Structural properties of flat constructors and pattern bindings. -/
 namespace Flapjack.Compiler.Backend.FlatProps

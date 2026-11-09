@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
-import Flapjack.Compiler.Backend.StackProps.ClockSupport
+module
+
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+public import Flapjack.Compiler.Backend.StackProps.ClockSupport
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm

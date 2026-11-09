@@ -1,10 +1,14 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan
-import Flapjack.Compiler.Backend.LinearScan.Steps
-import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
-import Flapjack.Misc.ListEl
-import Flapjack.Misc.Relation
-import Flapjack.Misc.Sorting
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan
+public import Flapjack.Compiler.Backend.LinearScan.Steps
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
+public import Flapjack.Misc.ListEl
+public import Flapjack.Misc.Relation
+public import Flapjack.Misc.Sorting
+
+@[expose] public section
 
 /-!
 # linear_scanProof: `good_linear_scan_state` and colour search

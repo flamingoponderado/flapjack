@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConst
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
-import Flapjack.FfiHOL
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConst
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+public import Flapjack.FfiHOL
+
+@[expose] public section
 
 /-!
 # WordSem FFI event-prefix support

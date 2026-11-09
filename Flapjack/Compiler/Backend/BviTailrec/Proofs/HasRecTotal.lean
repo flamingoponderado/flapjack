@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTailrec
-import Flapjack.Compiler.Backend.ListFoldTotal
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec
+public import Flapjack.Compiler.Backend.ListFoldTotal
+
+@[expose] public section
 
 /-! Structural sufficiency for tail-recursion detection. These lemmas are
 Flapjack infrastructure, not HOL pass-correctness ports. -/

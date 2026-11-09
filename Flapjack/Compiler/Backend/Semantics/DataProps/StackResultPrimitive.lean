@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.StackResult
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.StackResult
+
+@[expose] public section
 
 /-! Primitive cases of the result-sensitive evaluator control invariant. -/
 namespace Flapjack.Compiler.Backend.DataSem

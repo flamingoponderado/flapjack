@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.WordAlloc.HeuProg
-import Flapjack.Compiler.Backend.WordAlloc.GetPrefs
-import Flapjack.Compiler.Backend.WordAlloc.Heuristics
-import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost
-import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
-import Flapjack.Misc.Sptree.Mapi
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.HeuProg
+public import Flapjack.Compiler.Backend.WordAlloc.GetPrefs
+public import Flapjack.Compiler.Backend.WordAlloc.Heuristics
+public import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost
+public import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
+public import Flapjack.Misc.Sptree.Mapi
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

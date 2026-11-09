@@ -1,4 +1,8 @@
-import Flapjack.EvaluateProps.NoEvalBase
+module
+
+public import Flapjack.EvaluateProps.NoEvalBase
+
+@[expose] public section
 
 /-! Branching cases for evaluation without an Eval state. -/
 namespace Flapjack.EvaluateProps

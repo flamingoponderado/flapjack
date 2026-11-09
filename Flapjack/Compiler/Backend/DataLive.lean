@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataLang.Syntax
-import Flapjack.Compiler.Backend.BviToData.Assign
+module
+
+public import Flapjack.Compiler.Backend.DataLang.Syntax
+public import Flapjack.Compiler.Backend.BviToData.Assign
+
+@[expose] public section
 
 /-! Backward liveness for the data-language optimizer. -/
 namespace Flapjack.Compiler.Backend.DataLive

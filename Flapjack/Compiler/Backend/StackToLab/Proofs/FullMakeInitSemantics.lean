@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInit
-import Flapjack.Compiler.Backend.StackToLab.Proofs.CompileLabPres
-import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCode
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitSemantics
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CallArgs
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.Conventions
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompileSemantics
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.Conventions
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInit
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.CompileLabPres
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCode
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitSemantics
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CallArgs
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.Conventions
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompileSemantics
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.Conventions
+
+@[expose] public section
 
 /-! `full_make_init_semantics` (`stack_to_labProofScript.sml:3365-3618`):
 the LabSem semantics of the whole stack-to-lab compilation, from a LabSem state

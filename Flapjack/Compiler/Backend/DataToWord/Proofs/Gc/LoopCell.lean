@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopArithmetic
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveBlock
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopArithmetic
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveBlock
+
+@[expose] public section
 
 /-! Expose the next copied heap element for the collector scan. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

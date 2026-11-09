@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Helpers
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Helpers
+
+@[expose] public section
 
 /-!
 # `source_to_flat$compile_exp`

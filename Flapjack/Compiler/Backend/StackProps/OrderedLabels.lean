@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
-import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+
+@[expose] public section
 
 /-! Ordered continuation-label extraction from the original StackProps script.
 This proof-script helper preserves order and duplicates; it does not evaluate

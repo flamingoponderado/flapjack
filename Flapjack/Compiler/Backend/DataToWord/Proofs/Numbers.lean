@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.DataToWord.Numbers
-import Flapjack.Misc.Multiword
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Numbers
+public import Flapjack.Misc.Multiword
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Agreement with Flapjack's former executable immediate-integer encoding. -/
 namespace Flapjack.Compiler.Backend.DataToWord

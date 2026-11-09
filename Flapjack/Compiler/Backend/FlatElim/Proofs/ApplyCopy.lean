@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyData
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyData
+
+@[expose] public section
 
 /-! String and byte-array copy cases for the flat-elimination simulation. -/
 namespace Flapjack.Compiler.Backend.FlatElim

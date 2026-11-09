@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanStructs.MemLoadConversion
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.MemLoadConversion
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
 open Flapjack Flapjack.Pancake.PanLang
 open Flapjack.Pancake.PanStructs.CompileShapeExact

@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.LabToTarget.Encoding
-import Flapjack.Compiler.Backend.LabToTarget.Positions
-import Flapjack.Compiler.Backend.LabLang
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Misc.Sptree
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Encoding
+public import Flapjack.Compiler.Backend.LabToTarget.Positions
+public import Flapjack.Compiler.Backend.LabLang
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Misc.Sptree
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-!
 # Faithful Cake second-pass assembly rewriting (`lab_to_target`)

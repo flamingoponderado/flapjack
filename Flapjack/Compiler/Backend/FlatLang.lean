@@ -1,6 +1,10 @@
-import Flapjack.AstHOL.LitOp
-import Flapjack.Compiler.Backend.BackendCommon.Trace
-import Flapjack.Compiler.Backend.BackendCommon.BoolTags
+module
+
+public import Flapjack.AstHOL.LitOp
+public import Flapjack.Compiler.Backend.BackendCommon.Trace
+public import Flapjack.Compiler.Backend.BackendCommon.BoolTags
+
+@[expose] public section
 
 /-!
 # `flatLangScript`: the flatLang abstract syntax

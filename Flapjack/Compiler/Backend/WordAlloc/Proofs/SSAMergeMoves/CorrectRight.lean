@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveFrame
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.MoveHead
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveFrame
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.MoveHead
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.FlatOperators
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.FlatOperators
+
+@[expose] public section
 
 /-! Bounded-clock sequencing for the proof-side evaluator induction. These
 lemmas are Flapjack infrastructure, not reviewed HOL theorem ports. -/

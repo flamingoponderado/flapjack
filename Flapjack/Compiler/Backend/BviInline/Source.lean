@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviInline
+module
+
+public import Flapjack.Compiler.Backend.BviInline
+
+@[expose] public section
 
 /-! Total source-shaped BVI inline pass traversals. -/
 namespace Flapjack.Compiler.Backend.BviInline

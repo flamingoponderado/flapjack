@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpArith
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister2
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpArith
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister2
+
+@[expose] public section
 
 /-! Original evaluate_wInst FP branch (word_to_stackProofScript.sml 5025-5130):
 the FP/integer register transfer cases FPMovToReg (single write at width 64,

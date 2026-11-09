@@ -1,10 +1,14 @@
-import Flapjack.Pancake.PanToWord
-import Flapjack.Compiler.Backend.Backend
-import Flapjack.Compiler.Backend.WordToWord.Compile
-import Flapjack.Compiler.Backend.WordToStack.StubNames
-import Flapjack.Compiler.Backend.StackAlloc.StubNames
-import Flapjack.Compiler.Backend.StackRemove.StubNames
-import Flapjack.Basis.Pure.MlList
+module
+
+public import Flapjack.Pancake.PanToWord
+public import Flapjack.Compiler.Backend.Backend
+public import Flapjack.Compiler.Backend.WordToWord.Compile
+public import Flapjack.Compiler.Backend.WordToStack.StubNames
+public import Flapjack.Compiler.Backend.StackAlloc.StubNames
+public import Flapjack.Compiler.Backend.StackRemove.StubNames
+public import Flapjack.Basis.Pure.MlList
+
+@[expose] public section
 set_option autoImplicit false
 namespace Flapjack.Pancake.PanToTarget
 open Flapjack Flapjack.Pancake.PanLang

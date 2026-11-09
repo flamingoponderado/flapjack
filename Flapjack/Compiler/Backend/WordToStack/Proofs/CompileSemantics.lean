@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelSemantics
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InitializationStateRel
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
-import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
-import Flapjack.Misc.Sptree.ToAList
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelSemantics
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InitializationStateRel
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
+public import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
+public import Flapjack.Misc.Sptree.ToAList
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CompileSemantics
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

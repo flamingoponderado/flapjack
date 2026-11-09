@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DbVars
+module
+
+public import Flapjack.Compiler.Backend.DbVars
+
+@[expose] public section
 
 /-! Lookup properties of the handler compiler's variable sets. -/
 namespace Flapjack.Compiler.Backend.DbVars

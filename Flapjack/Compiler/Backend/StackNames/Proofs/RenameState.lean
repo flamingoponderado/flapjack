@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackNames.ProgramNames
-import Flapjack.Compiler.Backend.Semantics.StackSem.Evaluate
-import Flapjack.FiniteMap.MapKeys
+module
+
+public import Flapjack.Compiler.Backend.StackNames.ProgramNames
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Evaluate
+public import Flapjack.FiniteMap.MapKeys
+
+@[expose] public section
 
 /-!
 # stack_namesProof: `rename_state` and its state-operation lemmas

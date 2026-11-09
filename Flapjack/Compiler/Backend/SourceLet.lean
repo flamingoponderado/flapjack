@@ -1,4 +1,8 @@
-import Flapjack.AstHOL.Syntax
+module
+
+public import Flapjack.AstHOL.Syntax
+
+@[expose] public section
 
 /-! Lift top-level source `Let` and `Letrec` expressions into declarations. -/
 namespace Flapjack.Compiler.Backend.SourceLet

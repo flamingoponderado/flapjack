@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyFields
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyFields
+
+@[expose] public section
 
 /-! HOL field-commutation properties of auxiliary primitive application. -/
 namespace Flapjack.Compiler.Backend.DataProps

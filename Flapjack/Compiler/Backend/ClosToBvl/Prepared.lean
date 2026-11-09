@@ -1,13 +1,17 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Config
-import Flapjack.Compiler.Backend.ClosToBvl.Compile
-import Flapjack.Compiler.Backend.ClosToBvl.Names
-import Flapjack.Compiler.Backend.ClosToBvl.Sort
-import Flapjack.Compiler.Backend.ClosToBvl.Stubs
-import Flapjack.Compiler.Backend.ClosAnnotate.Shift
-import Flapjack.Compiler.Backend.ClosNumber
-import Flapjack.Compiler.Backend.ClosMti
-import Flapjack.Compiler.Backend.ClosCall
-import Flapjack.Compiler.Backend.ClosKnown.Compile
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Config
+public import Flapjack.Compiler.Backend.ClosToBvl.Compile
+public import Flapjack.Compiler.Backend.ClosToBvl.Names
+public import Flapjack.Compiler.Backend.ClosToBvl.Sort
+public import Flapjack.Compiler.Backend.ClosToBvl.Stubs
+public import Flapjack.Compiler.Backend.ClosAnnotate.Shift
+public import Flapjack.Compiler.Backend.ClosNumber
+public import Flapjack.Compiler.Backend.ClosMti
+public import Flapjack.Compiler.Backend.ClosCall
+public import Flapjack.Compiler.Backend.ClosKnown.Compile
+
+@[expose] public section
 
 /-! Checked closure-to-BVL assembly after closure preprocessing. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

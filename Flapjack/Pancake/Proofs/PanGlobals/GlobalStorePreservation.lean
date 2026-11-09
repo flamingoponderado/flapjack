@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.MemStores
-import Flapjack.Pancake.Proofs.PanGlobals.MemoryLookup
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.MemStores
+public import Flapjack.Pancake.Proofs.PanGlobals.MemoryLookup
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsGlobalStorePreservation
 

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.GcShared
-import Flapjack.Compiler.Backend.GcShared.HeapMap
+module
+
+public import Flapjack.Compiler.Backend.GcShared
+public import Flapjack.Compiler.Backend.GcShared.HeapMap
+
+@[expose] public section
 
 /-! Heap lookup over concatenation in the generational collector. -/
 namespace Flapjack.Compiler.Backend.GenGc

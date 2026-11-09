@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveFfi
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveFfi
+
+@[expose] public section
 
 /-! Code installation simulation for the liveness pass. -/
 namespace Flapjack.Compiler.Backend.DataLive

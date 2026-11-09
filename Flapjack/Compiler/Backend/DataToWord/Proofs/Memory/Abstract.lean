@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
-import Flapjack.Compiler.Backend.GcCombined
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
+public import Flapjack.Compiler.Backend.GcCombined
+
+@[expose] public section
 
 /-! Abstract heap and generation conditions used by data-to-word correctness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

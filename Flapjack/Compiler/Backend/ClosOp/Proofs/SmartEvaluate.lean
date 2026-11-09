@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.PureEquality
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.PureEquality
+
+@[expose] public section
 
 /-! Evaluation correctness of source smart-operation cases. -/
 namespace Flapjack.Compiler.Backend.ClosOp

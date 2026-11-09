@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.CrepProps.EveryExpHOL
+module
+
+public import Flapjack.Pancake.Semantics.CrepProps.EveryExpHOL
+
+@[expose] public section
 
 namespace Flapjack
 

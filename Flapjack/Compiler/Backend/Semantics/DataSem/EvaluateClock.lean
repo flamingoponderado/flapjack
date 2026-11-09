@@ -1,5 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyClock
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyClock
+public import Flapjack.Misc.ClockWeightInduction
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+@[expose] public section
 
 /-! Clock-bound building blocks for data-language evaluation. -/
 namespace Flapjack.Compiler.Backend.DataSem

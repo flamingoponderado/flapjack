@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateLetrec
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
-import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
-import Flapjack.Compiler.Backend.Semantics.ClosProps.DestClosure
+module
+
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateLetrec
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.DestClosure
+
+@[expose] public section
 
 /-! Closure-application relations for tick-removal correctness. -/
 namespace Flapjack.Compiler.Backend.ClosTicks

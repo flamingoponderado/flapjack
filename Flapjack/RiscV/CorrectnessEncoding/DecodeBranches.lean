@@ -1,6 +1,10 @@
-import Mathlib.Tactic.IntervalCases
-import Flapjack.RiscV.L3.Defs.Encode
-import Flapjack.RiscV.L3.Step.DecodeAny
+module
+
+public import Mathlib.Tactic.IntervalCases
+public import Flapjack.RiscV.L3.Defs.Encode
+public import Flapjack.RiscV.L3.Step.DecodeAny
+
+@[expose] public section
 
 /-! Unrestricted conditional-branch Encode/DecodeAny compositions. Local
 composition infrastructure without separately named HOL original theorems.

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordSuffixApp
-import Flapjack.EvaluateHOL.Induction
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordSuffixApp
+public import Flapjack.EvaluateHOL.Induction
+
+@[expose] public section
 
 /-! Complete mutual recording-oracle clock suffix for the source evaluator. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

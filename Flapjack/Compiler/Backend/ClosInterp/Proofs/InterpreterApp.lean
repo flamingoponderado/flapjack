@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterHandle
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterHandle
+
+@[expose] public section
 
 /-! Application-expression simulation for the proof-side interpreter. Its
 semantics and state carriers remain pending HOL correspondence review. -/

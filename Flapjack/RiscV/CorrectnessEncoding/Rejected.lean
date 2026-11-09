@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.RiscV.CorrectnessEncoding.Skip
-import Flapjack.Compiler.Encoders.RiscV.Target.AsmOkRewrites
+module
+
+public import Flapjack.HolRef
+public import Flapjack.RiscV.CorrectnessEncoding.Skip
+public import Flapjack.Compiler.Encoders.RiscV.Target.AsmOkRewrites
+
+@[expose] public section
 /-! Complete original LongDiv and FP encoder-correctness cases. The original
 RISC-V configuration rejects LongDiv and every FP constructor in asm_ok.
 The contradiction is derived from the actual source asmStep seventh conjunct;

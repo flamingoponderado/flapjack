@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.StackToLab.Compile
-import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Statement
-import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
-import Flapjack.Compiler.Backend.LabProps.CodeSafety
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
-import Flapjack.Compiler.Backend.StackRemove.Comp
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Compile
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Statement
+public import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
+public import Flapjack.Compiler.Backend.LabProps.CodeSafety
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
+public import Flapjack.Compiler.Backend.StackRemove.Comp
+
+@[expose] public section
 
 /-! The `no_install` chain of `stack_to_labProofScript.sml:4987-5209`: every
 stack-to-lab pass preserves the absence of `Install`, and the flattened and

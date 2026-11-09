@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SourceChain
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainEvaluation
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.SemanticsCorrect
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SourceChain
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainEvaluation
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.SemanticsCorrect
+
+@[expose] public section
 
 /-! Annotation of installed closure programs and their observable behavior. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

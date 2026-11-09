@@ -1,4 +1,8 @@
-import Flapjack.Parser.ParseTree
+module
+
+public import Flapjack.Parser.ParseTree
+
+@[expose] public section
 
 /-!
 The `panPEG` grammar, producing parse trees.

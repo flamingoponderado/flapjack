@@ -1,8 +1,12 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.CodeRelEvaluateCallCorrect
-import Flapjack.Pancake.CrepToLoop.Proofs.CrepNonFailStartLookup
-import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
-import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClock
-import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.CodeRelEvaluateCallCorrect
+public import Flapjack.Pancake.CrepToLoop.Proofs.CrepNonFailStartLookup
+public import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
+public import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClock
+public import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
+
+@[expose] public section
 
 /-!
 # crep_to_loop `state_rel_imp_semantics`

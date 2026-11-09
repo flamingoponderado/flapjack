@@ -1,6 +1,13 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Fuel-aware well-formed values and related-value witnesses. -/
 namespace Flapjack.Compiler.Backend.ClosCall

@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreListCodeThm
-import Flapjack.Compiler.Backend.StackRemove.InitCode
-import Flapjack.Misc.GoodDimindex
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListMemory
-import Flapjack.Misc.Alignment
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreListCodeThm
+public import Flapjack.Compiler.Backend.StackRemove.InitCode
+public import Flapjack.Misc.GoodDimindex
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListMemory
+public import Flapjack.Misc.Alignment
+
+@[expose] public section
 
 /-! Native execution of the StackRemove initializer, towards
 `init_code_thm` (`stack_removeProofScript.sml` 3225-3837). The lemmas here

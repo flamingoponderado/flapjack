@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordLang.OccurrencesExact
+module
+
+public import Flapjack.Pancake.WordLang.OccurrencesExact
+
+@[expose] public section
 
 namespace Flapjack
 

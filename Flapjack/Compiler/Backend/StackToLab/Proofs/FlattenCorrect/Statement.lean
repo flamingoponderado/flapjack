@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.StateRel
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenHelpers
-import Flapjack.Compiler.Backend.StackToLab.Proofs.InstCorrect
-import Flapjack.Compiler.Backend.LabProps.EvaluateAddClock
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.StateRel
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenHelpers
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.InstCorrect
+public import Flapjack.Compiler.Backend.LabProps.EvaluateAddClock
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+
+@[expose] public section
 
 /-! Statement of `flatten_correct` (`stack_to_labProofScript.sml:1207-2740`)
 split by evaluator constructor, proved using well-founded induction on clock

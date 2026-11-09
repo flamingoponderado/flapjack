@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.LabToTarget.PositionValues
-import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
-import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
-import Flapjack.Compiler.Backend.LabSem.Navigation
-import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
-import Flapjack.Misc.FindIndex
-import Flapjack.Misc.ListEl
-import Flapjack.Misc.Alignment
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.PositionValues
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
+public import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
+public import Flapjack.Compiler.Backend.LabSem.Navigation
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+public import Flapjack.Misc.FindIndex
+public import Flapjack.Misc.ListEl
+public import Flapjack.Misc.Alignment
+
+@[expose] public section
 
 /-!
 # lab_to_targetProof: `share_mem_domain_code_rel`
@@ -25,7 +29,7 @@ namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm
 
-private instance : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
+instance shareMemDomainInst1 : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
 
 /-- Exact HOL `share_mem_domain_code_rel_def` (`lab_to_targetProofScript.sml:688-717`): the
 four conjuncts with the original binders `pc op re a inst len i` and `pc line`. -/

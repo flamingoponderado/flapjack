@@ -1,7 +1,11 @@
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Assembly
-import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
-import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
-import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Call
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Assembly
+public import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
+public import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
+public import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Call
+
+@[expose] public section
 
 /-!
 # crep_inline `general_simulate_arg_load_correct`

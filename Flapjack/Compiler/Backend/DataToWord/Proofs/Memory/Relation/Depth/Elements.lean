@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeader
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.BlockPointer
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
-import Flapjack.Misc.Sorting
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeader
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.BlockPointer
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+public import Flapjack.Misc.Sorting
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Ancestor-chain consequences of the data-to-word memory relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
@@ -12,7 +16,7 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataSem
 open Classical
 noncomputable section
 
-private instance : Nonempty Value := ⟨.number 0⟩
+instance elementsInst1 : Nonempty Value := ⟨.number 0⟩
 
 /-- A value has strictly smaller structural size than any block containing it. -/
 private theorem valueBlockSize_child (v : Value) (stamp tag : Nat) (before after : List Value) :

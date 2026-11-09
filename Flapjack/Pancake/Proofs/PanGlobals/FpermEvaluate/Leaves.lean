@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
+
+@[expose] public section
 
 /-! Atomic cases of pan_globalsProofScript's evaluate_fperm (1721-1810).
 These specialize the original premise and conclusion to the three atoms;

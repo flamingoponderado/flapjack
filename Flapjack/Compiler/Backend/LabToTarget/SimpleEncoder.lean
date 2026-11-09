@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.SecondPass
-import Flapjack.Compiler.Backend.LabToTarget.SectionLength
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SecondPass
+public import Flapjack.Compiler.Backend.LabToTarget.SectionLength
+
+@[expose] public section
 
 /-! Original proof-side simple repeated encoding, full accumulator agreement,
 and recorded-length preservation with the original successful-result guard.

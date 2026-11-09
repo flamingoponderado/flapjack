@@ -1,11 +1,18 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateSequence
-import Flapjack.EvaluateHOL.EvalDispatch
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalCall
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EnvironmentDomain
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalPattern
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateSequence
+public import Flapjack.EvaluateHOL.EvalDispatch
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalCall
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EnvironmentDomain
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalPattern
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Execution of the flat expression generated for source Eval. The
 proof-side evaluators and factored relations remain under HOL review. -/

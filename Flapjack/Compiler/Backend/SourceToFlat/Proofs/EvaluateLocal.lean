@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateModule
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateException
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDatatype
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingConstructors
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedArrayTree
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Initialization
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
-import Flapjack.SemanticsProps.Clock
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateModule
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateException
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDatatype
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingConstructors
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedArrayTree
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Initialization
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
+public import Flapjack.SemanticsProps.Clock
+
+@[expose] public section
 
 /-! Local declaration simulation over the preliminary factored relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

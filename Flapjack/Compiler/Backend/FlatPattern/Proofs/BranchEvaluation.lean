@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingRecursive
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingRecursive
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
+
+@[expose] public section
 
 /-! Evaluation of a compiled pattern branch. The clocked evaluator and
 proof-side value relation are not yet reviewed as HOL ports. -/

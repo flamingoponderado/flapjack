@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDenv
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDenv
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
+
+@[expose] public section
 
 /-! Empty and type-abbreviation declaration cases over the preliminary
 factored source-to-flat relations. -/

@@ -1,13 +1,17 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialData
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialData
+
+@[expose] public section
 
 /-! Remembered-reference scan for partial generational collection. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.WordGcFunctions
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 
-private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+instance partialRefsInst1 {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
-private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
+instance partialRefsInst2 {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
 
 /-- Expose the first remembered reference's header and roots for the partial
 root-list simulation. This is local factoring of the reference-scan proof. -/

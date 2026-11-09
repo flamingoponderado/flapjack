@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviInline.Proofs.StateRelation
-import Flapjack.Misc.Sptree.Subspt
+module
+
+public import Flapjack.Compiler.Backend.BviInline.Proofs.StateRelation
+public import Flapjack.Misc.Sptree.Subspt
+
+@[expose] public section
 
 /-! Cache invariants for BVI program inlining. -/
 namespace Flapjack.Compiler.Backend.BviInline

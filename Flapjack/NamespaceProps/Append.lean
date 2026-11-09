@@ -1,4 +1,8 @@
-import Flapjack.NamespaceHOL
+module
+
+public import Flapjack.NamespaceHOL
+
+@[expose] public section
 
 /-! Namespace append infrastructure for compiler simulation proofs. -/
 namespace Flapjack.NamespaceHOL

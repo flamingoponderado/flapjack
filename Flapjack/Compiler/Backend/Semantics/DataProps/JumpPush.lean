@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
+
+@[expose] public section
 
 /-! Exception jumps across a saved non-handler call frame. -/
 namespace Flapjack.Compiler.Backend.DataSem

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.RecursiveTotal
-import Flapjack.Compiler.Backend.BvlInline.Small
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.RecursiveTotal
+public import Flapjack.Compiler.Backend.BvlInline.Small
+
+@[expose] public section
 
 /-! Total source-shaped recursion and inlining eligibility checks. -/
 namespace Flapjack.Compiler.Backend.BvlInline

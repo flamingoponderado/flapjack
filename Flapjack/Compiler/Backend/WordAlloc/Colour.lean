@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.Expressions
-import Flapjack.Compiler.Backend.WordAlloc.Instructions
-import Flapjack.Compiler.Backend.WordAlloc.KeyMaps
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Expressions
+public import Flapjack.Compiler.Backend.WordAlloc.Instructions
+public import Flapjack.Compiler.Backend.WordAlloc.KeyMaps
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

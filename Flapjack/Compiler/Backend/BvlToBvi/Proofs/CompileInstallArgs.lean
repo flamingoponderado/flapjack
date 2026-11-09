@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileAllocGlobal
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileAllocGlobal
+
+@[expose] public section
 
 /-! Operand preparation for BVL-to-BVI code installation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

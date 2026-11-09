@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Env
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack
 

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
-import Flapjack.Pancake.Semantics.PanSem.ShMemExact
-import Flapjack.Pancake.Semantics.LoopSem
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+public import Flapjack.Pancake.Semantics.PanSem.ShMemExact
+public import Flapjack.Pancake.Semantics.LoopSem
+
+@[expose] public section
 
 /-!
 # Exact HOL `wordSem` shared-memory helpers

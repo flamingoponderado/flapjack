@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

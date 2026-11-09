@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Step.Next
+module
+
+public import Flapjack.RiscV.L3.Step.Next
+
+@[expose] public section
 
 /-! Exact original step evaluation rules. Their Fetch/DecodeAny/Run premises
 are the original HOL premises; no Next result or pass simulation is assumed.

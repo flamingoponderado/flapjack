@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBits
-import Flapjack.Misc.GoodDimindex
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBits
+public import Flapjack.Misc.GoodDimindex
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack
 

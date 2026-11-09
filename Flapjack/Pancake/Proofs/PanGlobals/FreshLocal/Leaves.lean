@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals
+
+@[expose] public section
 
 /-! Genuine leaf cases of `evaluate_fresh_local` (pan_globalsProofScript:1045).
 The original existential post-locals and conditional update are retained.

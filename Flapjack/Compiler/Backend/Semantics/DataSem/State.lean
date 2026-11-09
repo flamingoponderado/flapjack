@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Value
-import Flapjack.Compiler.Backend.DataLang.Syntax
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Value
+public import Flapjack.Compiler.Backend.DataLang.Syntax
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 
 /-! Source-shaped data-language state and elementary state operations. -/
 namespace Flapjack.Compiler.Backend.DataSem

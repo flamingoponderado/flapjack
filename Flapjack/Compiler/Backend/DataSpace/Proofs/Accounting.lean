@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataSpace.Proofs.Cuts
-import Flapjack.Compiler.Backend.Semantics.DataSem.Space
+module
+
+public import Flapjack.Compiler.Backend.DataSpace.Proofs.Cuts
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Space
+
+@[expose] public section
 
 /-! Reservation accounting used when moving space checks across assignments. -/
 namespace Flapjack.Compiler.Backend.DataSpace

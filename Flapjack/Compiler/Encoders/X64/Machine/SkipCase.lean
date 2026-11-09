@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.X64.Machine.CaseBase
-import Flapjack.Compiler.Encoders.X64.Machine.Simulate
-import Flapjack.Compiler.Encoders.X64.Machine.DecodeProof
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.CaseBase
+public import Flapjack.Compiler.Encoders.X64.Machine.Simulate
+public import Flapjack.Compiler.Encoders.X64.Machine.DecodeProof
+
+@[expose] public section
 
 /-!
 # The `skip` case of `encoder_correct x64Target`

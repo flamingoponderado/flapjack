@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockInspection
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Control
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockInspection
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Control
+
+@[expose] public section
 
 /-! Boolean and bounds operations under closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateRecursive
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateRecursive
+
+@[expose] public section
 
 /-! Expression cases of the source evaluator's oracle-adjustment induction. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

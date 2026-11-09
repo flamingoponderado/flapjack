@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveSourceState
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveSourceState
+
+@[expose] public section
 namespace Flapjack.WordToStackProofs.CompCorrect.MoveFull
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Backend.WordToStack.Native

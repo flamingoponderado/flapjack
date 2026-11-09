@@ -1,17 +1,21 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallTail
-import Flapjack.Compiler.Backend.StackProps.EvaluateMono
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnEval
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnSupport
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnStackMoveClock
-import Flapjack.Compiler.Backend.WordToStack.Proofs.EvaluateWLive
-import Flapjack.Pancake.WordConvs.MaxVarIntro
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
-import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
-import Flapjack.Compiler.Backend.WordToStack.Proofs.FilterBitmap
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeInsertWf
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveLength
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnLabels
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallTail
+public import Flapjack.Compiler.Backend.StackProps.EvaluateMono
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnEval
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnSupport
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnStackMoveClock
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.EvaluateWLive
+public import Flapjack.Pancake.WordConvs.MaxVarIntro
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.FilterBitmap
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeInsertWf
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveLength
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnLabels
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CompCorrect.CallReturning
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

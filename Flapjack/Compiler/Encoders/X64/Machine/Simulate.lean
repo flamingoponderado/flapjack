@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.X64.Machine.StepAgree
-import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.StepAgree
+public import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+
+@[expose] public section
 
 /-!
 # From an interference-free run to `encoder_correct` for the closed x86-64 target

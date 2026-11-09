@@ -1,5 +1,14 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.IntegerExpressions
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordOperations
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.IntegerExpressions
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordOperations
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Word shift expression simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

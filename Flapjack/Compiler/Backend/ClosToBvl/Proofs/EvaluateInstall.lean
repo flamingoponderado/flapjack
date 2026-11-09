@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainEvaluation
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyClock
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainEvaluation
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyClock
+
+@[expose] public section
 
 /-! Installation expression cases of the closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
-private instance : Nonempty ClosSem.Value := ⟨ClosSem.unitValue⟩
+instance evaluateInstallInst1 : Nonempty ClosSem.Value := ⟨ClosSem.unitValue⟩
 
 /-- Errors from the installation argument list propagate through the target
 installation operation and its generated indirect call. -/

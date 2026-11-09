@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.ClosToBvl.FullIncremental
-import Flapjack.Compiler.Backend.ClosToBvl.Incremental
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ExpsEquivalence
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CompileProduction
-import Flapjack.Compiler.Backend.ClosCall.Proofs.TotalCorrespondence
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.FullIncremental
+public import Flapjack.Compiler.Backend.ClosToBvl.Incremental
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ExpsEquivalence
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CompileProduction
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.TotalCorrespondence
+
+@[expose] public section
 
 /-! Executable correspondence for the full incremental closure-to-BVL pass. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

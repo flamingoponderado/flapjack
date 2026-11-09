@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
-import Flapjack.Misc.List
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
+public import Flapjack.Misc.List
+
+@[expose] public section
 
 /-! Shared observable consequences of the standard result relation used by the
 Clos pass simulations. Flapjack proof infrastructure; no separately named HOL

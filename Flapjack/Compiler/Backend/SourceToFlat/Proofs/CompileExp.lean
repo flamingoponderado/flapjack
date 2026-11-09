@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
-import Flapjack.Misc.List.Size
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
+public import Flapjack.Misc.List.Size
+
+@[expose] public section
 
 /-! List-shape prerequisite for the source-to-flat pass correctness proof. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

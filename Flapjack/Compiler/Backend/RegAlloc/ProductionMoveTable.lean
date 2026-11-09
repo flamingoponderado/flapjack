@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionPreferences
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionPreferences
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc

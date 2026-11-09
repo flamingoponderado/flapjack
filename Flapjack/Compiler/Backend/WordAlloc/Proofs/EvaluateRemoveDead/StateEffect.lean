@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Store
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Store
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
+
+@[expose] public section
 
 /-!
 # `evaluate_remove_dead` state-effect cases

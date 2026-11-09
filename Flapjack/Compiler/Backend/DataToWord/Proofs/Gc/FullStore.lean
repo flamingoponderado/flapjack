@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Full
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
-import Flapjack.FiniteMap.MapKeys
-import Flapjack.Compiler.Backend.WordGcFunctions.Roots
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Full
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
+public import Flapjack.FiniteMap.MapKeys
+public import Flapjack.Compiler.Backend.WordGcFunctions.Roots
+
+@[expose] public section
 
 /-! Full copying collection under the heap/store invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

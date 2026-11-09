@@ -1,10 +1,14 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobal
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerNoDestination
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerArguments
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFlag
-import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Assemble
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.TwoLocals
-import Flapjack.Pancake.Proofs.PanGlobals.ShapeValueEval
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobal
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerNoDestination
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerArguments
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFlag
+public import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Assemble
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.TwoLocals
+public import Flapjack.Pancake.Proofs.PanGlobals.ShapeValueEval
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCompileCorrectCallGlobalHandler
 open Flapjack.Pancake.PanLang

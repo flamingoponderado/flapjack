@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Pure
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Pure
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Purity of proof-side closure expression evaluation. -/
 namespace Flapjack.Compiler.Backend.ClosProps

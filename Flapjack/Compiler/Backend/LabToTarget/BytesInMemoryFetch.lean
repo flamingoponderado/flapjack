@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
-import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
-import Flapjack.Compiler.Backend.LabToTarget.FetchSuccessor
-import Flapjack.Compiler.Backend.LabToTarget.FetchValidity
-import Flapjack.Compiler.Backend.LabToTarget.Memory
-import Flapjack.Compiler.Backend.LabToTarget.Navigation
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
-import Flapjack.Misc.BytesInMem.Imp
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
+public import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
+public import Flapjack.Compiler.Backend.LabToTarget.FetchSuccessor
+public import Flapjack.Compiler.Backend.LabToTarget.FetchValidity
+public import Flapjack.Compiler.Backend.LabToTarget.Memory
+public import Flapjack.Compiler.Backend.LabToTarget.Navigation
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+public import Flapjack.Misc.BytesInMem.Imp
+
+@[expose] public section
 
 /-! Original fetched-instruction byte placement (lab_to_targetProofScript.sml
 1155-1258): a fetched source line has a similar, encoding-valid target line

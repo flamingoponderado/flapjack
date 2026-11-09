@@ -1,6 +1,14 @@
-import Flapjack.Pancake.PanGlobals
-import Flapjack.Pancake.PanLang.Prog
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Pancake.PanGlobals
+public import Flapjack.Pancake.PanLang.Prog
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Exact-carrier port of `pan_globals$compile_exp_def`. HOL

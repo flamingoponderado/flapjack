@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.FlatToClos.Helpers
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
-import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Helpers
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Closure expressions for checked byte-copy operations. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

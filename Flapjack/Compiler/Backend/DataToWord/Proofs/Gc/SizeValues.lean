@@ -1,14 +1,18 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Heap.SizeProperties
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.HeapTraversal
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRel
-import Flapjack.Misc.Multiword.Length
-import Flapjack.Misc.GoodDimindex
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
-import Flapjack.Misc.Sptree.Subspt
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BytePacking
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Heap.SizeProperties
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.HeapTraversal
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRel
+public import Flapjack.Misc.Multiword.Length
+public import Flapjack.Misc.GoodDimindex
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
+public import Flapjack.Misc.Sptree.Subspt
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BytePacking
+
+@[expose] public section
 
 /-! Source heap sizing facts used by collector soundness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosMti
-import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
+module
+
+public import Flapjack.Compiler.Backend.ClosMti
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
+
+@[expose] public section
 
 /-! Source-shaped function collection relations for the multi-argument pass. -/
 namespace Flapjack.Compiler.Backend.ClosMti

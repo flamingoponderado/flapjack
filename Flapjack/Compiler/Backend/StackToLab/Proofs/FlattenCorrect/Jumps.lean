@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Loop
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Loop
+
+@[expose] public section
 
 /-! `flatten_correct` cases `JumpLower` and `RawCall`
 (`stack_to_labProofScript.sml:1881-2010`): both jump into a procedure that

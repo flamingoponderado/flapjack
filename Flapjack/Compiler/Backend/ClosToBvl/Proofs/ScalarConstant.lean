@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateSequence
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateSequence
+
+@[expose] public section
 
 /-! Scalar and empty-block constants for closure-to-BVL. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

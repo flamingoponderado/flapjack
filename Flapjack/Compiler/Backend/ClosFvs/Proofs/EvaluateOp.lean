@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Evaluate
+
+@[expose] public section
 
 /-! The complete operation case of the closure free-variable simulation. -/
 namespace Flapjack.Compiler.Backend.ClosFvs

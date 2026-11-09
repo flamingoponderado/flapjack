@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.AsmProps.Memory
-import Flapjack.Compiler.Encoders.AsmSem.MemOps
-import Flapjack.RiscV.CorrectnessEncoding.MemoryStep
+module
+
+public import Flapjack.Compiler.Encoders.AsmProps.Memory
+public import Flapjack.Compiler.Encoders.AsmSem.MemOps
+public import Flapjack.RiscV.CorrectnessEncoding.MemoryStep
+
+@[expose] public section
 
 /-! Source traversal assertions needed by original native Mem correctness.
 No separately named HOL theorem is claimed: these are local consequences of

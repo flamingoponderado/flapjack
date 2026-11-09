@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordForward
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordForward
+
+@[expose] public section
 
 /-! Cases of the source evaluator recording-oracle clock suffix theorem. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

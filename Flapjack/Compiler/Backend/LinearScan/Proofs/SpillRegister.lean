@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.Proofs.GoodState
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.GoodState
+
+@[expose] public section
 
 /-!
 # linear_scanProof: sparse sublists and `spill_register`

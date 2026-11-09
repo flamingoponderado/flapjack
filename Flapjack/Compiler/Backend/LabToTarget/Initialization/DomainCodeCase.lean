@@ -1,17 +1,21 @@
-import Flapjack.Compiler.Backend.LabToTarget.Initialization
-import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
-import Flapjack.Compiler.Backend.LabToTarget.StateRel
-import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
-import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
-import Flapjack.Compiler.Backend.LabToTarget.ShmemOffset
-import Flapjack.Compiler.Backend.LabToTarget.ShmemPrefix
-import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
-import Flapjack.Compiler.Backend.LabToTarget.FfiEntryExclusion
-import Flapjack.Compiler.Backend.LabToTarget.WordSearch
-import Flapjack.Misc.FindIndex.Shift
-import Flapjack.Misc.FindIndex.Append
-import Flapjack.Misc.FindIndex.Bounds
-import Mathlib.Data.List.Nodup
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization
+public import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
+public import Flapjack.Compiler.Backend.LabToTarget.StateRel
+public import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemOffset
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemPrefix
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
+public import Flapjack.Compiler.Backend.LabToTarget.FfiEntryExclusion
+public import Flapjack.Compiler.Backend.LabToTarget.WordSearch
+public import Flapjack.Misc.FindIndex.Shift
+public import Flapjack.Misc.FindIndex.Append
+public import Flapjack.Misc.FindIndex.Bounds
+public import Mathlib.Data.List.Nodup
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm Flapjack.Misc

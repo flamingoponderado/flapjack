@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlConst.Proofs.CompileProduction
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.SequenceProduction
+module
+
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.CompileProduction
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SequenceProduction
+
+@[expose] public section
 
 /-! Compose constant propagation with the handler traversal and sequence
 splitting. These are Flapjack-specific executable correspondence theorems. -/

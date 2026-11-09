@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Encoders.Arm8.Machine.Execute
-import Flapjack.Compiler.Encoders.Arm8.Configuration
-import Flapjack.Compiler.Encoders.AsmProps.Target
-import Flapjack.HolArb
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Machine.Execute
+public import Flapjack.Compiler.Encoders.Arm8.Configuration
+public import Flapjack.Compiler.Encoders.AsmProps.Target
+public import Flapjack.HolArb
+
+@[expose] public section
 
 /-!
 # The closed ARMv8 `target` record

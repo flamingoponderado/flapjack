@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.FlattenConversion
 open Flapjack Flapjack.Pancake.PanLang
 /-- Full unconditional original flatten preservation, including arbitrary

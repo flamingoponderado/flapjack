@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
-import Flapjack.Misc.ListEl
-import Flapjack.Misc.IndexedLists
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
+public import Flapjack.Misc.ListEl
+public import Flapjack.Misc.IndexedLists
+
+@[expose] public section
 
 /-! Induction through the mutually recursive flat-to-closure relations. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
