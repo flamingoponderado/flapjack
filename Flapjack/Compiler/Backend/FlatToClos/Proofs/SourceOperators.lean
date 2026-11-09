@@ -1,11 +1,9 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Ffi
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveTests
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveArith
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveConversions
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordShifts
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.ApplicationOperators
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Array
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.EqualityExpressions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ThunkOperations
 
 /-! Dispatcher for ordinary source operators in the proof-side simulation.
@@ -194,15 +192,30 @@ theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.
   cases direct with
   | arith action typ => exact evaluate_primitiveArith env names values source target trace action typ args argsSim notTypeError
   | fromTo a b => exact evaluate_primitiveConversion env names values source target trace a b args argsSim charInnerSim wordInnerSim notTypeError
-  | shift width shift amount => exact evaluate_wordShift env names values source target trace width shift amount args argsSim notTypeError
+  | shift width shift amount =>
+    apply evalSim_app_of_op env names values source target trace (.src (.shift width shift amount)) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opShifts _ s vs sNext result tNext xs db t ws tt ⟨width, shift, amount, rfl⟩ premises
   | test test typ => exact evaluate_primitiveTest env names values source target trace test typ args argsSim notTypeError
-  | ffi name => exact evaluate_ffi env names values source target trace name args argsSim notTypeError
+  | ffi name =>
+    apply evalSim_app_of_op env names values source target trace (.src (.ffi name)) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opFfi _ s vs sNext result tNext xs db t ws tt (⟨name, rfl⟩) premises
   | allocThunk mode => exact evaluate_allocThunk env names values source target trace mode args argsSim notTypeError
   | updateThunk mode => exact evaluate_updateThunk env names values source target trace mode args argsSim notTypeError
   | opderef => exact evaluate_rejectedSourceOp env names values source target trace .opderef args (Or.inl rfl) argsSim notTypeError
   | aallocEmpty => exact evaluate_rejectedSourceOp env names values source target trace .aallocEmpty args (Or.inr (Or.inl rfl)) argsSim notTypeError
   | envId => exact evaluate_rejectedSourceOp env names values source target trace .envId args (Or.inr (Or.inr rfl)) argsSim notTypeError
-  | equality => exact evaluate_polymorphicEquality env names values source target trace args argsSim notTypeError
+  | equality =>
+    apply evalSim_app_of_op env names values source target trace (.src .equality) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opEqGc _ s vs sNext result tNext xs db t ws tt (Or.inr rfl) premises
   | opref => exact evaluate_ref env names values source target trace args argsSim notTypeError
   | aw8alloc => exact evaluate_allocByteArray env names values source target trace args argsSim notTypeError
   | aw8sub => exact evaluate_checkedByteRead env names values source target trace args argsSim notTypeError
@@ -232,6 +245,11 @@ theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.
   | aw8subUnsafe => exact evaluate_uncheckedByteRead env names values source target trace args argsSim notTypeError
   | aw8updateUnsafe => exact evaluate_uncheckedByteUpdate env names values source target trace args argsSim notTypeError
   | listAppend => exact evaluate_listAppend env names values source target trace args argsSim notTypeError
-  | configGC => exact evaluate_configGC env names values source target trace args argsSim notTypeError
+  | configGC =>
+    apply evalSim_app_of_op env names values source target trace (.src .configGC) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opEqGc _ s vs sNext result tNext xs db t ws tt (Or.inl rfl) premises
 
 end Flapjack.Compiler.Backend.FlatToClos

@@ -188,7 +188,12 @@ theorem evaluate_flatOp {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     | tagLenEq tag length => exact evaluate_flatDirect_wrong env names values source target trace _ _ args arity (.tagLenEq tag length) expected wrong argsSim notTypeError
     | lenEq length => exact evaluate_flatDirect_wrong env names values source target trace _ _ args arity (.lenEq length) expected wrong argsSim notTypeError
     | el index => exact evaluate_flatLet_wrong env names values source target trace _ args arity (.el index) expected wrong argsSim notTypeError
-    | id => exact evaluate_flatLet_wrong env names values source target trace _ args arity .id expected wrong argsSim notTypeError
+    | id =>
+      apply evalSim_app_of_op env names values source target trace .id args
+        ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+      · simp [destNop]
+      · intro s vs sNext result tNext xs db t ws tt premises
+        exact opId _ s vs sNext result tNext xs db t ws tt rfl premises
   · have right : args.length = arity := by omega
     cases op with
     | src _ => simp [flatOpArity] at expected
@@ -245,21 +250,11 @@ theorem evaluate_flatOp {C F : Type} (env : FlatSem.Environment FlatSem.Value)
         | nil =>
           exact evaluate_element env names values source target trace index argument (by simpa using argsSim) notTypeError
     | id =>
-      simp [flatOpArity] at expected
-      subst arity
-      cases args with
-      | nil => simp at expected
-      | cons argument rest =>
-        cases rest with
-        | cons extra rest => simp at expected
-        | nil =>
-          have argNot : (FlatSem.evaluate env source [argument]).2 ≠ .err (.abort .typeError) := by
-            intro failure
-            apply notTypeError
-            rw [FlatSem.evaluate]
-            simp only [List.reverse_singleton,
-              (FlatSem.fixClock_evaluations env source [argument] argument []).1, failure]
-          exact evaluate_id env names values source target trace argument (by simpa using argsSim argNot)
+      apply evalSim_app_of_op env names values source target trace .id args
+        ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+      · simp [destNop]
+      · intro s vs sNext result tNext xs db t ws tt premises
+        exact opId _ s vs sNext result tNext xs db t ws tt rfl premises
 
 
 /-- All Flat operators simulate under the stated expression and declaration

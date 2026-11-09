@@ -1526,7 +1526,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.StringComparisons
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveTests
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordOperations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordExpressions
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordShifts
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.ApplicationOperators
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Conversions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ByteConversion
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.CharConversion
@@ -1560,7 +1560,6 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Thunk
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Force
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Equality
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.EqualityExpressions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockExpressions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Globals
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
