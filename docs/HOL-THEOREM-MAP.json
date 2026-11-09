@@ -70,10 +70,10 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml",
   "hol_name": "MAP_FST_compile",
-  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations.lean",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations/Original.lean",
   "lean_name": "mapFst_compile",
-  "statement_status": "documented_mismatch",
-  "reviewer": "This theorem uses the optimized compile rather than the separate source compile in HOL MAP_FST_compile. The source definition agrees by compileSource_eq_compile."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared MAP_FST_compile_typed: the program retains its polymorphic label carrier and the source compile is used on the left; both sides map first projections."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
@@ -10267,8 +10267,10 @@
   "hol_name": "semantics_annotate",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/InstalledSemantics.lean",
   "lean_name": "semanticsAnnotate_sourceShape",
-  "statement_status": "documented_mismatch",
-  "reviewer": "This theorem uses optimized annotateList, compile and compileInc where HOL semantics_annotate uses separate source definitions. The source entry points agree by the annotation and compilation equivalence theorems."
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.alistToFmap"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared semantics_annotate_typed: independent compiler and FFI carriers, source non-failure premise, safety assumptions for program, installed code and every oracle entry, and complete semantics equality use the original source annotation, compile and incremental compile. The imported reviewed alistToFmap producer represents HOL's finite-map result. Semantics inherits reals_as_rational_cuts and its HOL agreement assumption in SOUNDNESS item 8."
 },
   {
   "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",

@@ -5,13 +5,6 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
 namespace Flapjack.Compiler.Backend.ClosAnnotate
 open ClosLang ClosProps
 
-/-- The optimized annotation preserves each entry's label. HOL's analogous
-theorem uses the separate source `compile`, which agrees with this traversal
-by `compileSource_eq_compile`. -/
-theorem mapFst_compile {α : Type} (program : List (α × Nat × Exp)) :
-    (compile program).map Prod.fst = program.map Prod.fst := by
-  simp [compile, List.map_map]
-
 /-- Variable shifting preserves the length of a recursive function group. -/
 theorem shiftFuns_length (functions : List (Nat × Exp)) (count k : Nat) (index : Spt Nat) :
     (shiftFuns count k index functions).length = functions.length := by

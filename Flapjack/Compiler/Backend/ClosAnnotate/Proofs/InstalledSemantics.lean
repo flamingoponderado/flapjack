@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotationCodeSemantics
 import Flapjack.FiniteMap.AlistExact
+import Flapjack.Compiler.Backend.ClosAnnotate.Original
 
 /-! Annotation semantics with installed source code. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate
@@ -28,23 +29,27 @@ theorem everyFnVarsNone_member (expressions : List ClosLang.Exp)
     · simpa [everyFnVarsNone] using safe.1
     · exact ih safe.2 member
 
-/-- Optimized annotation preserves whole-program observations with installed
-code. The HOL theorem uses the separate source `annotate`, `compile`, and
-`compile_inc` definitions, related to these traversals by the equivalences in
-`ClosAnnotate.Original`. -/
+/-- Annotation preserves whole-program observations with installed code. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "semantics_annotate"
+  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.alistToFmap])]
 theorem semanticsAnnotate_sourceShape {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
     (code : List (Nat × Nat × ClosLang.Exp)) (oracle : CompileOracle C) (compiler : Compiler C)
     (program : List ClosLang.Exp)
     (notFail : semantics ffi maxApp (Flapjack.HolFiniteMapExact.alistToFmap code)
-      oracle (pureCc compileInc compiler) program ≠ .fail)
+      oracle (pureCc compileIncSource compiler) program ≠ .fail)
     (safe : everyFnVarsNone program ∧
       everyFnVarsNone (code.map (fun (_, _, body) => body)) ∧
       ∀ n, everyFnVarsNone (oracle n).2.1 ∧
         everyFnVarsNone ((oracle n).2.2.map (fun (_, _, body) => body))) :
-    semantics ffi maxApp (Flapjack.HolFiniteMapExact.alistToFmap (compile code))
-      (pureCo compileInc ∘ oracle) compiler (annotateList 0 program) =
+    semantics ffi maxApp (Flapjack.HolFiniteMapExact.alistToFmap (compileSource code))
+      (pureCo compileIncSource ∘ oracle) compiler (annotateSource 0 program) =
     semantics ffi maxApp (Flapjack.HolFiniteMapExact.alistToFmap code)
-      oracle (pureCc compileInc compiler) program := by
+      oracle (pureCc compileIncSource compiler) program := by
+  have incEq : @compileIncSource Nat = @compileInc Nat := by
+    funext p
+    exact compileIncSource_eq_compileInc p
+  rw [incEq] at notFail ⊢
+  rw [compileSource_eq_compile, (annotateSource_sing_eq 0 (.var .none 0) program).2]
   have codeSafe : ∀ name arity body, (name, arity, body) ∈ code → everyFnVarsNone [body] := by
     intro name arity body member
     apply everyFnVarsNone_member _ safe.2.1 body
