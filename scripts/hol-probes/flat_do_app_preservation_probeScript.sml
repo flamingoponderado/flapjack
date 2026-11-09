@@ -67,3 +67,27 @@ val _ = show_thm "flat_bind_locals_list_def_typed=" flatPropsTheory.bind_locals_
 val _ = show_thm "flat_evaluate_vars_typed=" flatPropsTheory.evaluate_vars;
 
 val _ = show_thm "flat_pmatch_list_map_pvar_typed=" flatPropsTheory.pmatch_list_MAP_Pvar;
+
+val flat_evaluate_decs_add_clock_initial = prove (
+  ``r ≠ SOME (Rabort Rtimeout_error) ∧
+    evaluate_decs (initial_state ffi k ec) decs = (s',r) ⇒
+    evaluate_decs (initial_state ffi (ck + k) ec) decs =
+      (s' with clock := s'.clock + ck,r)``,
+  rw [initial_state_def] >> imp_res_tac flatPropsTheory.evaluate_decs_add_to_clock >> fs []);
+val _ = show_thm "flat_evaluate_decs_add_clock_initial_typed=" flat_evaluate_decs_add_clock_initial;
+
+val flat_evaluate_decs_add_clock_initial_events = prove (
+  ``evaluate_decs (initial_state ffi k ec) prog = (s',r) ==>
+    s'.ffi.io_events ≼
+    (FST (evaluate_decs (initial_state ffi (k+ck) ec) prog)).ffi.io_events``,
+  rw [initial_state_def]
+  >> qmatch_assum_abbrev_tac `evaluate_decs s1 _ = _`
+  >> qispl_then [`prog`,`s1`,`ck`] mp_tac flatPropsTheory.evaluate_decs_add_to_clock_io_events_mono
+  >> fs [Abbr`s1`]);
+val _ = show_thm "flat_evaluate_decs_add_clock_initial_events_typed=" flat_evaluate_decs_add_clock_initial_events;
+
+val flat_initial_state_with_clock = prove (
+  ``(initial_state ffi k ec with clock := (initial_state ffi k ec).clock + ck) =
+    initial_state ffi (k + ck) ec``,
+  rw [initial_state_def]);
+val _ = show_thm "flat_initial_state_with_clock_typed=" flat_initial_state_with_clock;

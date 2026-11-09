@@ -130583,6 +130583,32 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_decs_add_to_clock_initial_state",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/InitialClock.lean",
+  "lean_name": "evaluateDecs_addToClock_initialState",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_decs_add_clock_initial_typed, replayed from the local HOL proof in flat_do_app_preservation_probe.out. The non-timeout and run conjunction, ck + k input and clock-added output match. The evaluator inherits the reals_as_rational_cuts assumption. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_decs_add_to_clock_initial_state_io_events_mono",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/InitialClock.lean",
+  "lean_name": "evaluateDecs_addToClock_initialState_ioEventsMono",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_decs_add_clock_initial_events_typed, replayed from the local HOL proof in flat_do_app_preservation_probe.out. The run premise and event prefix at k + ck match. The evaluator inherits the reals_as_rational_cuts assumption. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "initial_state_with_clock",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/InitialClock.lean",
+  "lean_name": "initialState_withClock",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_initial_state_with_clock_typed, replayed from the local HOL proof in flat_do_app_preservation_probe.out. The initial-state clock update and k + ck result match. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
   "hol_name": "pmatch_list_MAP_Pvar",
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternList.lean",
   "lean_name": "pmatchList_mapPvar",
