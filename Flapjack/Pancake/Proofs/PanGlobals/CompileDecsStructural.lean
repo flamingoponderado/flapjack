@@ -127,42 +127,21 @@ theorem compile_decs_EVERY_is_functionHOL {width : Nat} [NeZero width] :
       compileDecsExactHOL ctxt decs = (decls, funs, exns, ctxt') →
       ∀ d ∈ funs, isFunctionHOL d = true := by
   intro ctxt decs
-  induction decs generalizing ctxt with
-  | nil =>
-      intro decls funs exns ctxt' h
-      simp only [compileDecsExactHOL, Prod.mk.injEq] at h
-      obtain ⟨_, rfl, _, _⟩ := h
-      simp
-  | cons d ds ih =>
-      intro decls funs exns ctxt' h
-      cases d with
-      | function fi =>
-          simp only [compileDecsExactHOL] at h
-          generalize hr : compileDecsExactHOL (width := width) _ ds = r at h
-          obtain ⟨a, b, c, e⟩ := r
-          simp only [Prod.mk.injEq] at h
-          obtain ⟨_, rfl, _, _⟩ := h
-          intro x hx
-          rcases List.mem_cons.mp hx with rfl | hx
-          · simp
-          · exact ih _ a b c e hr x hx
-      | decl shape name value =>
-          simp only [compileDecsExactHOL] at h
-          generalize hr : compileDecsExactHOL (width := width) _ ds = r at h
-          obtain ⟨a, b, c, e⟩ := r
-          simp only [Prod.mk.injEq] at h
-          obtain ⟨_, rfl, _, _⟩ := h
-          exact ih _ a b c e hr
-      | exnDecl name shape =>
-          simp only [compileDecsExactHOL] at h
-          generalize hr : compileDecsExactHOL (width := width) _ ds = r at h
-          obtain ⟨a, b, c, e⟩ := r
-          simp only [Prod.mk.injEq] at h
-          obtain ⟨_, rfl, _, _⟩ := h
-          exact ih _ a b c e hr
-      | name name fields =>
-          simp only [compileDecsExactHOL] at h
-          exact ih _ _ _ _ _ h
+  fun_induction compileDecsExactHOL ctxt decs with
+  | case1 => simp_all [isFunctionHOL]
+  | case2 => simp_all [isFunctionHOL]
+  | case3 =>
+    rename_i xh ih
+    intro decls funs exns ctxt' h1 d hd
+    simp only [Prod.mk.injEq] at h1
+    obtain ⟨_, rfl, _, _⟩ := h1
+    rcases List.mem_cons.mp hd with rfl | hd
+    · simp [isFunctionHOL]
+    · exact ih _ _ _ _ xh d hd
+  | case4 => simp_all [isFunctionHOL]
+  | case5 =>
+    rename_i ih
+    exact ih
 
 /-- Exact HOL `compile_decs_EVERY` (`pan_globalsProofScript.sml:1986-1991`).
     HOL's free predicate `P : 'a decl -> bool` is a Prop-valued predicate,
