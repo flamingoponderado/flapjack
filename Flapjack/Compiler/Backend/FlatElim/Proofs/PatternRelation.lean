@@ -191,7 +191,8 @@ theorem pmatch_Match_reachable {C F : Type} :
   · intro state patterns values bindings result reachable ⟨matched, valuesClosed, bindingsClosed, refsClosed⟩
     exact (pmatchReachable_aux state reachable).2 patterns values bindings result matched valuesClosed bindingsClosed refsClosed
 
-/-- Every value in a list is free of dynamic evaluation. -/
+/-- Flapjack-specific abbreviation for every value being Eval-free; HOL uses
+the corresponding `EVERY` expression and has no separate declaration. -/
 def valuesNoEval (values : List FlatSem.Value) : Prop :=
   ∀ value ∈ values, valueHasEval value = false
 
@@ -204,7 +205,8 @@ theorem valuesNoEval_set (values : List FlatSem.Value) (index : Nat) (value : Fl
   · exact old item oldMember
   · exact new
 
-/-- Every value in a pattern environment is free of dynamic evaluation. -/
+/-- Flapjack-specific abbreviation for Eval-free bindings; HOL uses an `EVERY`
+expression over the mapped values and has no separate declaration. -/
 def bindingsNoEval (bindings : List (VarN × FlatSem.Value)) : Prop :=
   ∀ binding ∈ bindings, valueHasEval binding.2 = false
 
@@ -271,7 +273,7 @@ theorem pmatchNoEval_aux {C F : Type} (state : FlatSem.State C F) :
           cases ref <;> simp [lookup] at matched
           case refv v =>
             apply ih v bindings result matched
-            · exact store _ (List.mem_of_getElem? (by simpa [storeLookup] using lookup))
+            · exact store _ (List.mem_of_getElem? (by simpa [storeLookup] using lookup)) v (by simp [FlatProps.storeValueValues])
             · exact store
             · exact env
     case pas =>

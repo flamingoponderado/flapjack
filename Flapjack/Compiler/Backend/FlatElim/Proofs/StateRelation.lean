@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.FlatProps.StoreValues
 import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
 import Flapjack.Compiler.Backend.FlatElim.Proofs.Reachability
 
@@ -184,13 +185,10 @@ theorem globalsRel_append_empty (reachable : NumSet) (source target : List (Opti
     · rw [targetExtra n (by omega)] at found
       contradiction
 
-/-- Stores contain no dynamic Eval values, including in reference and thunk
-payloads. This helper expands the original store-value list traversal. -/
+/-- Flapjack-specific abbreviation of HOL's nested `EVERY` expression for
+Eval-free store payloads; it has no separate HOL declaration. -/
 def storeHasNoEval (refs : List (Flapjack.SemanticPrimitivesHOL.StoreValue FlatSem.Value)) : Prop :=
-  ∀ ref ∈ refs, match ref with
-    | .refv value | .thunk _ value => valueHasEval value = false
-    | .varray values => ∀ value ∈ values, valueHasEval value = false
-    | .w8array _ => True
+  ∀ ref ∈ refs, ∀ value ∈ FlatProps.storeValueValues ref, valueHasEval value = false
 
 /-- Updating a store with an Eval-free entry preserves the store invariant.
 This is a Flapjack helper for the evaluator simulation. -/

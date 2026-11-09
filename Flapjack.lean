@@ -98,6 +98,7 @@ import Flapjack.Compiler.Backend.FlatProps.EvaluateIO
 import Flapjack.Compiler.Backend.FlatProps.EvaluateVars
 import Flapjack.Compiler.Backend.FlatProps.InitialClock
 import Flapjack.Compiler.Backend.FlatProps.SemanticsSimulation
+import Flapjack.Compiler.Backend.FlatProps.StoreValues
 import Flapjack.Compiler.Backend.FlatProps.SimpleType
 import Flapjack.Compiler.Backend.FlatProps.SimpleDoApp
 import Flapjack.Compiler.Backend.FlatProps.NoMat

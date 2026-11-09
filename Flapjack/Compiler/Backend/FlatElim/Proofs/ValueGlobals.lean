@@ -128,13 +128,15 @@ def valueHasEval : FlatSem.Value → Bool
   | _ => false
 termination_by value => sizeOf value
 
-/-- Existential value-list traversal used by `valueHasEval`. -/
+/-- Flapjack-specific recursive implementation of the existential list traversal
+in `valueHasEval`; it has no separate HOL declaration. -/
 def valuesHaveEval : List FlatSem.Value → Bool
   | [] => false
   | value :: rest => valueHasEval value || valuesHaveEval rest
 termination_by values => sizeOf values
 
-/-- Existential captured-binding traversal used by `valueHasEval`. -/
+/-- Flapjack-specific recursive implementation of the mapped existential
+binding traversal in `valueHasEval`; it has no separate HOL declaration. -/
 def bindingsHaveEval : List (Flapjack.AstHOL.VarN × FlatSem.Value) → Bool
   | [] => false
   | (_, value) :: rest => valueHasEval value || bindingsHaveEval rest

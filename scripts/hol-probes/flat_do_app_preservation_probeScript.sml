@@ -126,3 +126,7 @@ val _ = show_thm "flat_evaluate_mat_typed=" flatPropsTheory.evaluate_Mat;
 val _ = show_thm "flat_evaluate_handle_typed=" flatPropsTheory.evaluate_Handle;
 val _ = show_thm "flat_evaluate_match_nil_typed=" flatPropsTheory.evaluate_match_NIL;
 val _ = show_thm "flat_evaluate_match_cons_typed=" flatPropsTheory.evaluate_match_CONS;
+
+val _ = show_thm "flat_evaluate_def_typed=" flatPropsTheory.flat_evaluate_def;
+val _ = show_thm "flat_store_v_vs_def_typed=" flatPropsTheory.store_v_vs_def;
+val _ = show_thm "flat_v_size_aux_typed=" flatPropsTheory.v_size_aux;

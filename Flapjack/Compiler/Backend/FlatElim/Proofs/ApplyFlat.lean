@@ -63,7 +63,8 @@ theorem doApp_some_flatStateRel_el {C F G : Type} (reachable : NumSet)
                 List.mem_of_getElem? (by simpa [storeLookup] using lookup)
               have valueReachable : globalsWithin (findValueGlobals value) reachable := by
                 exact (findRefsGlobals_within_iff _ _).mp related.2.2.2.2.1 (.refv value) member
-              have valueSafe : valueHasEval value = false := related.2.2.2.2.2 (.refv value) member
+              have valueSafe : valueHasEval value = false :=
+                related.2.2.2.2.2 (.refv value) member value (by simp [FlatProps.storeValueValues])
               refine ⟨target, related, ?_, (primitiveResult_value_invariants reachable value valueReachable valueSafe).1,
                 (primitiveResult_value_invariants reachable value valueReachable valueSafe).2⟩
               simp [FlatSem.doApp, FlatSem.doAppFlat, zero, ← related.2.1, lookup]
