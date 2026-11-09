@@ -130543,5 +130543,13 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Replayed the original local proof and compared flat_do_app_add_clock_none_typed in flat_do_app_preservation_probe.out: the original failure premise and clock-shifted failure conclusion retain the same state, operation and values. The dispatcher inherits the reviewed reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "with_clock_ffi",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/DoAppClock.lean",
+  "lean_name": "withClock_ffi",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_with_clock_ffi_typed in flat_do_app_preservation_probe.out: the state and clock retain their source order and independent state payload types, and the clock update preserves exactly the FFI field."
 }
 ]

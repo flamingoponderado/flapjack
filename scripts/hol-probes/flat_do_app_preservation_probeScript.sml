@@ -47,3 +47,5 @@ val flat_do_app_add_clock_none = prove (
   >> rw [] >> gvs []
   >> fs [IS_SOME_EXISTS,CaseEq"option",CaseEq"store_v"]);
 val _ = show_thm "flat_do_app_add_clock_none_typed=" flat_do_app_add_clock_none;
+
+val _ = show_thm "flat_with_clock_ffi_typed=" flatPropsTheory.with_clock_ffi;

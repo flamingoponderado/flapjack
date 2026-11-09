@@ -21,3 +21,4 @@ flat_evaluate_append_typed=(evaluate (env :v environment) (s :(α, β) state) ((
 flat_build_rec_env_help_typed=∀(funs :(mlstring # α # β) list) (env :v environment) (funs' :(mlstring # mlstring # exp) list). FOLDR (λ((f :mlstring),(x :α),(e :β)) (env' :(mlstring # v) list). (f,(Recclosure env funs' f :v))::env') (env' :(mlstring # v) list) funs = MAP (λ((fn :mlstring),(n :α),(e :β)). (fn,(Recclosure env funs' fn :v))) funs ++ env'
 flat_do_app_add_clock_typed=do_app (s :(α, 'ffi) state) (op :op) (es :v list) = SOME ((t :(α, 'ffi) state),(r :(v, v) result)) ⇒ do_app (s with clock := s.clock + (k :num)) op es = SOME (t with clock := t.clock + k,r)
 flat_do_app_add_clock_none_typed=do_app (s :(α, 'ffi) state) (op :op) (es :v list) = (NONE :((α, 'ffi) state # (v, v) result) option) ⇒ do_app (s with clock := s.clock + (k :num)) op es = (NONE :((α, 'ffi) state # (v, v) result) option)
+flat_with_clock_ffi_typed=((s :(β, α) state) with clock := (k :num)).ffi = s.ffi

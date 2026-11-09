@@ -141,4 +141,10 @@ theorem doApp_addToClock_none {C F : Type} (state : State C F) (op : FlatLang.Op
     (run : doApp state op values = none) :
     doApp { state with clock := state.clock + extra } op values = none := by
   simpa [clockOption, run] using doAppSetClock state op values (state.clock + extra)
+
+/-- Updating a flat state clock leaves its FFI state unchanged. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "with_clock_ffi"]
+theorem withClock_ffi {C F : Type} (state : State C F) (clock : Nat) :
+    ({ state with clock := clock }).ffi = state.ffi := rfl
+
 end Flapjack.Compiler.Backend.FlatProps
