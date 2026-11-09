@@ -926,133 +926,51 @@ decreasing_by
     | (have := List.sizeOf_lt_of_mem ‹_ ∈ _›; omega)
     | omega
 
-theorem binaryBranchExp_sub {width : Nat} [NeZero width] (ls : List (WordLangExpHOL (BitVec width)))
-    (ih : ∀ e ∈ ls, binaryBranchExp (flattenExp e) = true) :
-    binaryBranchExp (flattenExp (.op .sub ls)) = true := by
-  flatten_exp_rw
-  rw [binaryBranchExp]
-  simp only [List.all_eq_true]
-  intro x _
-  obtain ⟨e, he⟩ := x
-  obtain ⟨e', _, rfl⟩ := List.mem_map.mp he
-  exact ih e'.1 e'.2
-
-theorem binaryBranchExp_pair {width : Nat} [NeZero width] (op : BinOp) (hsub : op ≠ .sub)
-    (a b : WordLangExpHOL (BitVec width)) (ha : binaryBranchExp a = true)
-    (hb : binaryBranchExp b = true) : binaryBranchExp (.op op [a, b]) = true := by
-  rw [binaryBranchExp]
-  · simp only [List.length_cons, List.length_nil, decide_true, Bool.true_and,
-      List.all_eq_true, List.mem_attach, true_implies]
-    intro ⟨e, he⟩
-    simp only [List.mem_cons, List.not_mem_nil, or_false] at he
-    rcases he with rfl | rfl
-    · exact ha
-    · exact hb
-  · intro h; exact hsub h
-
+set_option linter.unusedSimpArgs false in
 /-- Exact HOL local `flatten_exp_binary_branch_exp` (`word_instProofScript.sml:412-417`). -/
 @[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "flatten_exp_binary_branch_exp"
   (words_as_type_indexed_bitvec)]
 theorem flatten_exp_binary_branch_exp {width : Nat} [NeZero width] :
-    ∀ exp : WordLangExpHOL (BitVec width), binaryBranchExp (flattenExp exp) = true
-  | .op op [] => by
-      by_cases hsub : op = .sub
-      · subst hsub
-        exact binaryBranchExp_sub [] (fun e he => by simp at he)
-      · flatten_exp_rw
-        all_goals (cases op <;> simp [opConsts, binaryBranchExp])
-  | .op op [a] => by
-      by_cases hsub : op = .sub
-      · subst hsub
-        exact binaryBranchExp_sub [a] (fun e _ => flatten_exp_binary_branch_exp e)
-      · flatten_exp_rw
-        all_goals exact flatten_exp_binary_branch_exp a
-  | .op op (a :: b :: rest) => by
-      by_cases hsub : op = .sub
-      · subst hsub
-        exact binaryBranchExp_sub _ (fun e _ => flatten_exp_binary_branch_exp e)
-      · flatten_exp_rw
-        exact binaryBranchExp_pair op hsub _ _ (flatten_exp_binary_branch_exp (.op op (b :: rest)))
-          (flatten_exp_binary_branch_exp a)
-  | .load e => by
-      flatten_exp_rw
-      rw [binaryBranchExp]
-      exact flatten_exp_binary_branch_exp e
-  | .shift sh e1 e2 => by
-      flatten_exp_rw
-      rw [binaryBranchExp]
-      simp only [Bool.and_eq_true]
-      exact ⟨flatten_exp_binary_branch_exp e1, flatten_exp_binary_branch_exp e2⟩
-  | .const _ | .var _ | .lookup _ => by flatten_exp_rw; all_goals simp [binaryBranchExp]
-termination_by exp => sizeOf exp
-decreasing_by
-  all_goals simp_wf
-  all_goals first
-    | (have := List.sizeOf_lt_of_mem ‹_ ∈ _›; simp_all; omega)
-    | omega
+    ∀ exp : WordLangExpHOL (BitVec width), binaryBranchExp (flattenExp exp) = true := by
+  intro exp
+  fun_induction flattenExp exp with
+  | case2 op hsub => cases op <;> simp_all [binaryBranchExp, opConsts]
+  | case7 e h1 h2 h3 h4 h5 =>
+    cases e with
+    | op operator args => cases args <;> simp_all [binaryBranchExp]
+    | _ => simp_all [binaryBranchExp]
+  | _ => simp_all [binaryBranchExp]
 
-theorem flatten_exp_every_var_exp_sub {width : Nat} [NeZero width] (P : Nat → Bool)
-    (ls : List (WordLangExpHOL (BitVec width)))
-    (ih : ∀ e ∈ ls, everyVarExpHOL P e = true → everyVarExpHOL P (flattenExp e) = true)
-    (h : everyVarExpHOL P (.op .sub ls) = true) :
-    everyVarExpHOL P (flattenExp (.op .sub ls)) = true := by
-  have hl := (everyVarExpHOL_op P _ ls).mp h
-  flatten_exp_rw
-  rw [everyVarExpHOL_op]
-  intro y hy
-  obtain ⟨e, _, rfl⟩ := List.mem_map.mp hy
-  exact ih e.1 e.2 (hl e.1 e.2)
-
+set_option linter.unusedSimpArgs false in
 /-- Exact HOL local `flatten_exp_every_var_exp` (`word_instProofScript.sml:419-425`);
     HOL's free `P` is the outer binder. -/
 @[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "flatten_exp_every_var_exp"
   (words_as_type_indexed_bitvec)]
 theorem flatten_exp_every_var_exp {width : Nat} [NeZero width] (P : Nat → Bool) :
     ∀ exp : WordLangExpHOL (BitVec width),
-      everyVarExpHOL P exp = true → everyVarExpHOL P (flattenExp exp) = true
-  | .op op [], h => by
-      by_cases hsub : op = .sub
-      · subst hsub
-        exact flatten_exp_every_var_exp_sub P [] (fun e he => by simp at he) h
-      · flatten_exp_rw
-        all_goals (cases op <;> simp [opConsts, everyVarExpHOL])
-  | .op op [a], h => by
-      by_cases hsub : op = .sub
-      · subst hsub
-        exact flatten_exp_every_var_exp_sub P [a] (fun e _ he => flatten_exp_every_var_exp P e he) h
-      · have hl := (everyVarExpHOL_op P op _).mp h
-        flatten_exp_rw
-        all_goals exact flatten_exp_every_var_exp P a (hl a (List.mem_cons_self ..))
-  | .op op (a :: b :: rest), h => by
-      by_cases hsub : op = .sub
-      · subst hsub
-        exact flatten_exp_every_var_exp_sub P _ (fun e _ he => flatten_exp_every_var_exp P e he) h
-      · have hl := (everyVarExpHOL_op P op _).mp h
-        have h1 := flatten_exp_every_var_exp P (.op op (b :: rest))
-          ((everyVarExpHOL_op P _ _).mpr (fun z hz => hl z (List.mem_cons_of_mem _ hz)))
-        have h2 := flatten_exp_every_var_exp P a (hl a (List.mem_cons_self ..))
-        flatten_exp_rw
-        rw [everyVarExpHOL_op]
-        intro y hy
-        simp only [List.mem_cons, List.not_mem_nil, or_false] at hy
-        rcases hy with rfl | rfl
-        · exact h1
-        · exact h2
-  | .load e, h => by
-      flatten_exp_rw
-      simp only [everyVarExpHOL] at h ⊢
-      exact flatten_exp_every_var_exp P e h
-  | .shift sh e1 e2, h => by
-      flatten_exp_rw
-      simp only [everyVarExpHOL, Bool.and_eq_true] at h ⊢
-      exact ⟨flatten_exp_every_var_exp P e1 h.1, flatten_exp_every_var_exp P e2 h.2⟩
-  | .const _, h | .var _, h | .lookup _, h => by flatten_exp_rw
-termination_by exp => sizeOf exp
-decreasing_by
-  all_goals simp_wf
-  all_goals first
-    | (have := List.sizeOf_lt_of_mem ‹_ ∈ _›; simp_all; omega)
-    | omega
+      everyVarExpHOL P exp = true → everyVarExpHOL P (flattenExp exp) = true := by
+  intro exp h
+  fun_induction flattenExp exp with
+  | case1 exps ih =>
+    simp only [everyVarExpHOL] at h ⊢
+    rw [everyVarExpsHOL_iff]
+    intro y hy
+    obtain ⟨e, he, rfl⟩ := List.mem_map.mp hy
+    exact ih e.1 e.2 ((everyVarExpsHOL_iff P exps).mp h e.1 e.2)
+  | case2 op hsub => cases op <;> simp_all [everyVarExpHOL, opConsts]
+  | case3 operator x hsub ih =>
+    simp only [everyVarExpHOL] at h
+    exact ih ((everyVarExpsHOL_iff P [x]).mp h x (List.mem_cons_self ..))
+  | case4 op x xs hsub hne ih2 ih1 =>
+    simp only [everyVarExpHOL] at h ⊢
+    rw [everyVarExpsHOL_iff]
+    intro y hy
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hy
+    rcases hy with rfl | rfl
+    · exact ih2 ((everyVarExpsHOL_iff P xs).mpr (fun z hz =>
+        (everyVarExpsHOL_iff P (x :: xs)).mp h z (List.mem_cons_of_mem _ hz)))
+    · exact ih1 ((everyVarExpsHOL_iff P (x :: xs)).mp h x (List.mem_cons_self ..))
+  | _ => simp_all [everyVarExpHOL, opConsts]
 
 end Compiler.Backend.WordInst
 
