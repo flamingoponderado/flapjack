@@ -70,32 +70,42 @@ theorem doApp_ioEvents_prefix {C F : Type} (op : ClosLang.Op) (args : List BvlSe
     cases found : applyGlobal operation args state with
     | none => simp [doApp, found] at run
     | some pair =>
-      simp [doApp, found] at run; subst pair
-      rw [applyGlobal_ffi operation args state next value found]; exact List.prefix_refl _
+      have equal : pair = (value, next) := by simpa [doApp, found] using run
+      subst pair
+      rw [applyGlobal_ffi operation args state next value found]
+      exact List.prefix_refl _
   | blockOp operation =>
     cases found : applyBlock operation args state with
     | none => simp [doApp, found] at run
     | some pair =>
-      simp [doApp, found] at run; subst pair
-      rw [applyBlock_ffi operation args state next value found]; exact List.prefix_refl _
+      have equal : pair = (value, next) := by simpa [doApp, found] using run
+      subst pair
+      rw [applyBlock_ffi operation args state next value found]
+      exact List.prefix_refl _
   | memOp operation =>
     cases found : applyMemory operation args state with
     | none => simp [doApp, found] at run
     | some pair =>
-      simp [doApp, found] at run; subst pair
-      rw [applyMemory_ffi operation args state next value found]; exact List.prefix_refl _
+      have equal : pair = (value, next) := by simpa [doApp, found] using run
+      subst pair
+      rw [applyMemory_ffi operation args state next value found]
+      exact List.prefix_refl _
   | intOp operation =>
     cases found : applyNumeric (.intOp operation) args state with
     | none => simp [doApp, found] at run
     | some pair =>
-      simp [doApp, found] at run; subst pair
-      rw [applyNumeric_ffi (.intOp operation) args state next value found]; exact List.prefix_refl _
+      have equal : pair = (value, next) := by simpa [doApp, found] using run
+      subst pair
+      rw [applyNumeric_ffi (.intOp operation) args state next value found]
+      exact List.prefix_refl _
   | wordOp operation =>
     cases found : applyNumeric (.wordOp operation) args state with
     | none => simp [doApp, found] at run
     | some pair =>
-      simp [doApp, found] at run; subst pair
-      rw [applyNumeric_ffi (.wordOp operation) args state next value found]; exact List.prefix_refl _
+      have equal : pair = (value, next) := by simpa [doApp, found] using run
+      subst pair
+      rw [applyNumeric_ffi (.wordOp operation) args state next value found]
+      exact List.prefix_refl _
   | ffi | thunkOp =>
     simp only [doApp] at run
     repeat' split at run
@@ -104,7 +114,9 @@ theorem doApp_ioEvents_prefix {C F : Type} (op : ClosLang.Op) (args : List BvlSe
     all_goals rcases run with ⟨_, rfl⟩
     all_goals apply callFFIHOL_return_ioEvents_prefix <;> assumption
   | label =>
-    simp only [doApp] at run; repeat' split at run; all_goals simp_all
+    simp only [doApp] at run
+    repeat' split at run
+    all_goals simp_all
   | install =>
     simp only [doApp] at run
     unfold doInstall at run
