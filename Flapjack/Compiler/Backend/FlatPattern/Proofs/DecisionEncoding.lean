@@ -1,7 +1,7 @@
 import Flapjack.Compiler.Backend.PatternSemantics.Semantics
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.NaiveMatch
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingSimulation
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.DecisionEncoding.Encoding
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.DecisionEncoding.Lookup
 
 /-! Encoding of flat values and references for decision-tree simulation.
 The source evaluator and carriers remain pending HOL correspondence review. -/
@@ -129,7 +129,16 @@ theorem encodePmatch_simulation {C F : Type} (state : FlatSem.State C F)
         | refv contents =>
           have nestedSafe : FlatSem.pmatch state pattern contents bindings ≠ .typeError := by
             simpa [FlatSem.pmatch, found] using safe
-          simpa [encodePat, encodeValue, PatternSemantics.pmatch, encodeRefs_lookup, FlatSem.pmatch, found] using
+          have bound : index < state.refs.length :=
+            (List.getElem?_eq_some_iff.mp (by simpa [storeLookup] using found)).1
+          have item : state.refs[index]'bound = .refv contents := by
+            apply Option.some.inj
+            simpa [storeLookup, List.getElem?_eq_getElem bound] using found
+          have lookup : (encodeRefs state).lookup index = some (encodeValue contents) := by
+            rw [flookup_encodeRefs]
+            let : Nonempty (Flapjack.SemanticPrimitivesHOL.StoreValue FlatSem.Value) := ⟨.w8array []⟩
+            simp [bound, Flapjack.holEl_eq_getElem index state.refs bound, item]
+          simpa [encodePat, encodeValue, PatternSemantics.pmatch, lookup, FlatSem.pmatch, found] using
             encodePmatch_simulation state pattern contents bindings nestedSafe
   | pcon stamp patterns =>
     cases value with
@@ -295,14 +304,33 @@ theorem decodePos_simulation {C F : Type} (state : FlatSem.State C F)
       | succ _ => simp [encodeValue, PatternSemantics.appPos] at selected
       | zero =>
         cases found : storeLookup address state.refs with
-        | none => simp [encodeValue, PatternSemantics.appPos, encodeRefs_lookup, found] at selected
+        | none =>
+          have outside : state.refs.length ≤ address :=
+            List.getElem?_eq_none_iff.mp (by simpa [storeLookup] using found)
+          have lookup : (encodeRefs state).lookup address = none := by
+            simp [flookup_encodeRefs, Nat.not_lt.mpr outside]
+          simp [encodeValue, PatternSemantics.appPos, lookup] at selected
         | some entry =>
+          have bound : address < state.refs.length :=
+            (List.getElem?_eq_some_iff.mp (by simpa [storeLookup] using found)).1
+          have item : state.refs[address]'bound = entry := by
+            apply Option.some.inj
+            simpa [storeLookup, List.getElem?_eq_getElem bound] using found
+          have lookup : (encodeRefs state).lookup address = match entry with
+              | .refv value => some (encodeValue value)
+              | .w8array _ => none
+              | .varray _ => none
+              | .thunk _ _ => none := by
+            rw [flookup_encodeRefs]
+            let : Nonempty (Flapjack.SemanticPrimitivesHOL.StoreValue FlatSem.Value) := ⟨.w8array []⟩
+            simp [bound, Flapjack.holEl_eq_getElem address state.refs bound, item]
+            cases entry <;> rfl
           cases entry with
           | w8array _ | varray _ | thunk _ _ =>
-            simp [encodeValue, PatternSemantics.appPos, encodeRefs_lookup, found] at selected
+            simp [encodeValue, PatternSemantics.appPos, lookup] at selected
           | refv contents =>
             have next : PatternSemantics.appPos (encodeRefs state) rest (encodeValue contents) = some encoded := by
-              simpa [encodeValue, PatternSemantics.appPos, encodeRefs_lookup, found] using selected
+              simpa [encodeValue, PatternSemantics.appPos, lookup] using selected
             have projected := evaluate_ref_projection trace expression env state flag address contents pure found
             simpa [decodePos] using ih (.app trace (.el 0) [expression]) contents next projected
 

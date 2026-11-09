@@ -131233,5 +131233,16 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared the exported naive_pattern_match_correct typed capture: the state and environment, ordered binders, grouped four-conjunct premise, exact match result and generated expression, and pure evaluation of Boolv (res ≠ No_match) agree. HOL's Boolean inequality is rendered by decide using classical decidability. Evaluation inherits the reals_as_rational_cuts assumption (SOUNDNESS item 8). The proof uses private induction-case infrastructure and replaces the public naiveList_all variant. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "FLOOKUP_encode_refs",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding/Lookup.lean",
+  "lean_name": "flookup_encodeRefs",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": [
+    "encodeRefs"
+  ],
+  "reviewer": "Compared the exported FLOOKUP_encode_refs typed capture: FLOOKUP is lookup on the reviewed encodeRefs producer, and bounded HOL EL is holEl with a proof-irrelevant witness. The bound, reference case and out-of-range result agree. This replaces the alternate encodeRefs_lookup formulation. Independently source-reviewed."
 }
 ]
