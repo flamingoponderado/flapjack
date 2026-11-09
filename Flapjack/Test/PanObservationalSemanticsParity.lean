@@ -1,4 +1,5 @@
 import Flapjack.PanObservationalSemantics
+import Flapjack.Pancake.Semantics.PanSemStateEval
 import Flapjack.Test.PanValueFfiCore
 
 /-!
@@ -9,7 +10,7 @@ The source reference is `panSemScript.sml:785-809`.  The direct HOL
 used by the source semantics (`Return`, conditional, call, memory, and FFI).
 These checks exercise the observation wrapper's fail, successful return,
 successful final-FFI, and divergence/LUB branches, while `sourceClockParity`
-executes the source-shaped entry call through `panSemEvaluate`.
+executes the source-shaped entry call through the code-map runner.
 -/
 
 namespace Flapjack.Test.PanObservationalSemanticsParity
@@ -20,28 +21,28 @@ open Flapjack.RiscV
 def emptyLocals : VarName → Option (PanValue (Word 64)) := fun _ => none
 def emptyMemory : Word 64 → Option (PanValue (Word 64)) := fun _ => none
 
-def sourceFunctions : List (FunName × List VarName × Prog (Word 64)) :=
-  [("main", [], .return (.const (BitVec.ofNat 64 41)))]
+def sourceMainCode : PanSemCodeMap (Word 64) :=
+  [("main", ([], .return (.const (BitVec.ofNat 64 41)), .one))]
 
-def sourceContracts : PanValueCallContracts :=
-  PanValueCallContracts.mk [("main", .one)] [] [("main", [])]
-
-def sourceState (clock : Nat) : PanSemEvaluateState (Word 64) Unit :=
-  { structs := []
-    functions := sourceFunctions
-    locals := emptyLocals
+def sourceState (clock : Nat) : PanSemState (Word 64) (FfiState Unit) :=
+  { locals := emptyLocals
     globals := fun _ => none
+    structs := []
+    code := sourceMainCode
+    exceptionShapes := fun _ => none
     memory := emptyMemory
-    ffi := statefulTestFfiState
+    memaddrs := fun _ => false
+    sharedMemaddrs := fun _ => false
     clock := clock
+    be := false
+    ffi := statefulTestFfiState
     baseAddress := BitVec.ofNat 64 0
-    topAddress := BitVec.ofNat 64 100
-    bytesInWord := BitVec.ofNat 64 8
-    contracts := some sourceContracts }
+    topAddress := BitVec.ofNat 64 100 }
 
 def sourceEvaluate (clock : Nat) :=
-  panSemEvaluate statefulTestContext statefulTestPrimitive statefulTestHandler
-    (sourceState clock) (.call none "main" [] : Prog (Word 64))
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive
+    statefulTestHandler (sourceState clock)
+    (.call none "main" [] : Prog (Word 64))
 
 def sourceClockParity : Bool :=
   match sourceEvaluate 0, sourceEvaluate 1 with

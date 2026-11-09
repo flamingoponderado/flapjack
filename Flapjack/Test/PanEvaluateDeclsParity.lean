@@ -45,7 +45,6 @@ def noFfi : FfiState Unit :=
 
 def initialRuntime : PanSemEvaluateState Nat Unit :=
   { structs := []
-    functions := []
     locals := fun _ => none
     globals := fun _ => none
     memory := fun _ => none

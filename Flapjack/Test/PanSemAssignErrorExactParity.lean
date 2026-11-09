@@ -2,7 +2,7 @@ import Flapjack.Pancake.Semantics.PanSemStateEval
 import Flapjack.Test.PanValueFfiCore
 
 /-!
-Direct regression for the exact source `PanSemExactState` `Assign` error
+Direct regression for the source `PanSemState` code-map `Assign` error
 equations.  HOL `panSemScript.sml:566-574` rejects an `Assign` whose source
 expression fails to evaluate and one whose destination fails `is_valid_value`,
 both with `SOME Error` over the unchanged state.
@@ -32,37 +32,32 @@ private abbrev Word64 := Word 64
 private def exactDomain : Word64 → Bool :=
   fun address => address == 8
 
-private def exactAccess : PanValueMemoryAccess Word64 :=
-  panValueMemoryAccessOfModel panSemBitVec64WordModel exactDomain
-    (fun _ => false) false
-
 private def exactMemory : Word64 → Option (PanValue Word64) :=
   fun _ => some (.word 0)
-
-private def exactLegacy (locals : VarName → Option (PanValue Word64)) :
-    PanSemEvaluateState Word64 Unit :=
-  { structs := []
-    functions := []
-    locals := locals
-    globals := fun _ => none
-    memory := exactMemory
-    ffi := statefulTestFfiState
-    clock := 5
-    baseAddress := 0
-    topAddress := 100
-    bytesInWord := 8
-    memoryAccess := none }
-
-private def exactState (locals : VarName → Option (PanValue Word64)) :
-    PanSemExactState Word64 Unit :=
-  { legacy := exactLegacy locals, memoryAccess := exactAccess }
 
 private def localsWordX : VarName → Option (PanValue Word64) :=
   fun name => if name == "x" then some (.word 3) else none
 
-private def evaluate (state : PanSemExactState Word64 Unit) (program : Prog Word64) :
+/-- State-owned source state used by the `Assign` guards: local `x` holds a
+    word, the store domain contains address `8`, and the clock is 5. -/
+private def sourceState : PanSemState Word64 (FfiState Unit) :=
+  { locals := localsWordX
+    globals := fun _ => none
+    structs := []
+    code := []
+    exceptionShapes := fun _ => none
+    memory := exactMemory
+    memaddrs := exactDomain
+    sharedMemaddrs := fun _ => false
+    clock := 5
+    be := false
+    ffi := statefulTestFfiState
+    baseAddress := BitVec.ofNat 64 0
+    topAddress := BitVec.ofNat 64 100 }
+
+private def evaluate (state : PanSemState Word64 (FfiState Unit)) (program : Prog Word64) :
     Option (PanValueFfiClockResult Word64 Unit) :=
-  panSemEvaluateExactState statefulTestContext statefulTestPrimitive
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive
     statefulTestHandler state program
 
 /-- Error at `clock` whose preserved `"x"` local is the given word and whose
@@ -94,16 +89,16 @@ private def assignFreshGlobalProgram : Prog Word64 :=
   .assign .global "y" (.const 9)
 
 private def assignLocalEvalFailGuard : Bool :=
-  isErrorKeepingX 5 3 (evaluate (exactState localsWordX) assignLocalEvalFailProgram)
+  isErrorKeepingX 5 3 (evaluate sourceState assignLocalEvalFailProgram)
 
 private def assignGlobalEvalFailGuard : Bool :=
-  isErrorKeepingX 5 3 (evaluate (exactState localsWordX) assignGlobalEvalFailProgram)
+  isErrorKeepingX 5 3 (evaluate sourceState assignGlobalEvalFailProgram)
 
 private def assignFreshLocalGuard : Bool :=
-  isErrorKeepingX 5 3 (evaluate (exactState localsWordX) assignFreshLocalProgram)
+  isErrorKeepingX 5 3 (evaluate sourceState assignFreshLocalProgram)
 
 private def assignFreshGlobalGuard : Bool :=
-  isErrorKeepingX 5 3 (evaluate (exactState localsWordX) assignFreshGlobalProgram)
+  isErrorKeepingX 5 3 (evaluate sourceState assignFreshGlobalProgram)
 
 private def assignErrorGuard : Bool :=
   assignLocalEvalFailGuard && assignGlobalEvalFailGuard &&
@@ -113,21 +108,21 @@ private def assignErrorGuard : Bool :=
 
 def runChecks : IO Bool := do
   if assignLocalEvalFailGuard then
-    IO.println "PASS exact-state Assign failing local source keeps state and clock"
+    IO.println "PASS source Assign failing local source keeps state and clock"
   else
-    IO.println "FAIL exact-state Assign failing local source"
+    IO.println "FAIL source Assign failing local source"
   if assignGlobalEvalFailGuard then
-    IO.println "PASS exact-state Assign failing global source keeps state and clock"
+    IO.println "PASS source Assign failing global source keeps state and clock"
   else
-    IO.println "FAIL exact-state Assign failing global source"
+    IO.println "FAIL source Assign failing global source"
   if assignFreshLocalGuard then
-    IO.println "PASS exact-state Assign invalid local destination keeps state and clock"
+    IO.println "PASS source Assign invalid local destination keeps state and clock"
   else
-    IO.println "FAIL exact-state Assign invalid local destination"
+    IO.println "FAIL source Assign invalid local destination"
   if assignFreshGlobalGuard then
-    IO.println "PASS exact-state Assign invalid global destination keeps state and clock"
+    IO.println "PASS source Assign invalid global destination keeps state and clock"
   else
-    IO.println "FAIL exact-state Assign invalid global destination"
+    IO.println "FAIL source Assign invalid global destination"
   pure assignErrorGuard
 
 end Flapjack.Test.PanSemAssignErrorExactParity

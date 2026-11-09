@@ -30,13 +30,10 @@ def clockedMemoryFfiDecliningFinalResult := do
       { name := "main", inline := false, exported := true, params := [],
         body := memoryFfiFinalMain, returnShape := .one }]
     (memoryAccess := some memoryFfiTestMemoryAccess)
-  evalPanValueFfiClockCall memoryFfiTestContext (fun _ _ => none)
-    memoryFfiTestHandler state.structs state.functions state.baseAddress
-    state.topAddress state.bytesInWord 20 (fun _ => none) state.globals state.memory
-    memoryFfiFinalState 20 none "main" []
+  evalPanValueFfiClockProgramCodeCall memoryFfiTestContext (fun _ _ => none)
+    memoryFfiTestHandler state 20 state.globals state.memory memoryFfiFinalState 20
+    "main" []
     (memoryAccess := some memoryFfiTestMemoryAccess)
-    (contracts := some (PanValueCallContracts.mk state.returnShapes state.exceptions
-      state.parameterShapes))
     (memoryHandler := some memoryFfiDecliningHandler)
 
 def clockedMemoryFfiDecliningFinalIsReachable : Bool :=
