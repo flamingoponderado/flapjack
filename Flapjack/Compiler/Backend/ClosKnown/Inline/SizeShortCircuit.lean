@@ -1,12 +1,23 @@
 module
 
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SizeCorrect
+public import Flapjack.Compiler.Backend.ClosKnown.Inline
+public import Lean.Elab.Tactic.Omega
 
 @[expose] public section
 
 /-! The source short-circuit size traversal and its full-size specification. -/
 namespace Flapjack.Compiler.Backend.ClosKnown
 open ClosLang
+
+/-- The recursive-function size helper is HOL's mapped-body traversal.
+This Flapjack-specific equation supports the source comparison. -/
+theorem getSizeFunsHOL_eq_map (fs : List (Nat × Exp)) :
+    getSizeFunsHOL fs = getSizeAuxHOL (fs.map Prod.snd) := by
+  induction fs with
+  | nil => simp [getSizeFunsHOL, getSizeAuxHOL]
+  | cons f fs ih =>
+    cases f
+    simp [getSizeFunsHOL, getSizeAuxHOL, ih]
 
 mutual
 
@@ -94,19 +105,5 @@ theorem getSizeScSome (e : Exp) (limit n : Nat) (h : getSizeScHOL limit e = some
   rw [getSizeScAux_correct] at h
   simp only [getSizeHOL] at *
   split at h <;> simp_all <;> omega
-
-/-- The source short-circuit test returns the full size exactly when it fits. -/
-theorem getSizeSc_eq (limit : Nat) (e : Exp) :
-    getSizeScHOL limit e = if getSizeHOL e ≤ limit then some (getSizeHOL e) else none := by
-  unfold getSizeScHOL
-  rw [getSizeScAux_correct]
-  change (if limit + 1 - getSizeHOL e = 0 then none else
-    some (limit + 1 - (limit + 1 - getSizeHOL e))) = _
-  by_cases bound : getSizeHOL e ≤ limit
-  · have positive : limit + 1 - getSizeHOL e ≠ 0 := by omega
-    simp only [if_neg positive, if_pos bound, Option.some.injEq]
-    omega
-  · have zero : limit + 1 - getSizeHOL e = 0 := by omega
-    simp [zero, bound]
 
 end Flapjack.Compiler.Backend.ClosKnown

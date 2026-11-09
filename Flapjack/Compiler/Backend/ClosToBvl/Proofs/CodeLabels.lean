@@ -3,6 +3,9 @@ module
 public import Flapjack.Compiler.Backend.ClosToBvl.Constants
 public import Flapjack.Compiler.Backend.ClosLang.CodeLabels
 public import Flapjack.Misc.Option
+public import Flapjack.Compiler.Backend.ClosToBvl.Layout
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.CodeLabels
+public import Lean.Elab.Tactic.Omega
 
 @[expose] public section
 
@@ -41,5 +44,38 @@ theorem assignGetCodeLabel_compileOp (op : Op) :
           split <;> rfl
     case globOp g => cases g <;> rfl
     case memOp m => cases m <;> rfl
+
+/-- Recursive closure setup references its generated labels and the labels
+already present in the continuation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "recc_Lets_code_labels"]
+theorem reccLets_codeLabels (n : Nat) (nargs : List Nat) (k : Nat) (rest : Bvl.Exp) :
+    BvlProps.getCodeLabels (reccLetsHOL n nargs k rest) =
+      (fun j => n + 2 * j) '' Set.Iio k ∪ BvlProps.getCodeLabels rest := by
+  have reccLabel (loc arity index : Nat) :
+      BvlProps.getCodeLabels (reccLet loc arity index) = {loc} := by
+    change BvlProps.getCodeLabels
+      (.let [.op (.blockOp (.elemAt 2)) [.var 0]]
+        (.let [.op (.blockOp (.cons 30)) [.var 0, mkConst (arity - 1), mkLabel loc]]
+          (.let [.op (.memOp .update) [.var 0, mkConst index, .var 1]] (.var 1)))) = {loc}
+    simp [BvlProps.getCodeLabels, BvlProps.getCodeLabelsList, mkConst, mkLabel, assignGetCodeLabel]
+  induction k generalizing nargs rest with
+  | zero =>
+    ext x
+    simp [reccLetsHOL]
+  | succ k ih =>
+    rw [reccLetsHOL, BvlProps.getCodeLabels, BvlProps.getCodeLabelsList, ih]
+    simp only [reccLabel, BvlProps.getCodeLabelsList, Set.union_empty]
+    ext x
+    simp only [Set.mem_union, Set.mem_singleton_iff, Set.mem_image, Set.mem_Iio]
+    constructor
+    · rintro (rfl | ⟨j, hj, rfl⟩ | h)
+      · exact Or.inl ⟨k, by omega, rfl⟩
+      · exact Or.inl ⟨j, by omega, rfl⟩
+      · exact Or.inr h
+    · rintro (⟨j, hj, rfl⟩ | h)
+      · by_cases eq : j = k
+        · subst j; exact Or.inl rfl
+        · exact Or.inr (Or.inl ⟨j, by omega, rfl⟩)
+      · exact Or.inr (Or.inr h)
 
 end Flapjack.Compiler.Backend.ClosToBvl

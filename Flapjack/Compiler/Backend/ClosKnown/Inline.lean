@@ -7,7 +7,7 @@ public import Flapjack.Compiler.Backend.ClosLang.Budget
 
 @[expose] public section
 
-/-! Bounded infrastructure for the known-closure inlining decision. -/
+/-! Source-shaped size and closure checks for the inlining decision. -/
 namespace Flapjack.Compiler.Backend.ClosKnown
 open ClosLang
 
@@ -138,52 +138,6 @@ def closApproxHOL (maxSize loc arity : Nat) (body : Exp) : ValApprox :=
   match getSizeScHOL maxSize body with
   | none => .closNoInline loc arity
   | some size => .clos loc arity body size
-
-/-- Compute the source size metric; ticks contribute no node. -/
-def sizeFuel : Nat → Exp → Option Nat
-  | 0, _ => none
-  | fuel + 1, e => do
-      let visit := sizeFuel fuel
-      let sum := fun xs => xs.foldlM (fun n x => do pure (n + (← visit x))) 0
-      match e with
-      | .var _ _ => pure 1
-      | .tick _ x => visit x
-      | .ifThenElse _ x y z => pure (1 + (← visit x) + (← visit y) + (← visit z))
-      | .let _ xs body => pure (1 + (← sum xs) + (← visit body))
-      | .raise _ x | .fn _ _ _ _ x => pure (1 + (← visit x))
-      | .handle _ x y => pure (1 + (← visit x) + (← visit y))
-      | .op _ _ xs | .call _ _ _ xs => pure (1 + (← sum xs))
-      | .letrec _ _ _ fs body => pure (1 + (← sum (fs.map Prod.snd)) + (← visit body))
-      | .app _ _ x xs => pure (1 + (← visit x) + (← sum xs))
-
-/-- Detect closure-producing expressions in source traversal order. -/
-def containsClosuresFuel : Nat → Exp → Option Bool
-  | 0, _ => none
-  | fuel + 1, e => do
-      let visit := containsClosuresFuel fuel
-      let any := fun xs => xs.foldlM (fun b x => if b then pure true else visit x) false
-      match e with
-      | .fn _ _ _ _ _ | .letrec _ _ _ _ _ => pure true
-      | .var _ _ => pure false
-      | .ifThenElse _ x y z => any [x, y, z]
-      | .let _ xs body => any (xs ++ [body])
-      | .raise _ x | .tick _ x => visit x
-      | .handle _ x y => any [x, y]
-      | .op _ _ xs | .call _ _ _ xs => any xs
-      | .app _ _ x xs => any (x :: xs)
-
-/-- The executed size analysis uses the total source traversal. The fuel
-argument is retained for the surrounding checked optimizer interface. -/
-def sizeBounded (_fuel : Nat) (e : Exp) : Option Nat := some (getSizeHOL e)
-
-/-- The executed closure check uses the total source traversal. The fuel
-argument is retained for the surrounding checked optimizer interface. -/
-def containsClosuresBounded (_fuel : Nat) (e : Exp) : Option Bool :=
-  some (containsClosuresHOL [e])
-
-/-- The checked optimizer uses the source closure-approximation definition. -/
-def closApproxFuel (_fuel maxSize loc arity : Nat) (body : Exp) : Option ValApprox :=
-  some (closApproxHOL maxSize loc arity body)
 
 /-- The original inlining decision, including closure and closedness checks. -/
 @[hol "cakeml/compiler/backend/clos_knownScript.sml" "decide_inline_def"]

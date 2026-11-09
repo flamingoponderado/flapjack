@@ -474,7 +474,6 @@ import Flapjack.Compiler.Backend.Bvi.Syntax
 import Flapjack.Compiler.Backend.Bvl.Syntax
 import Flapjack.Compiler.Backend.ClosToBvl.Config
 import Flapjack.Compiler.Backend.ClosKnown.Config
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SyntaxOracle
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxSyntax
@@ -1149,6 +1148,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FullIncremental
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Common
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CommonCompiler
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WholeProgram
+import Flapjack.Compiler.Backend.ClosKnown.Inline.SizeShortCircuit
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.BvlConst.SourceCompile
 import Flapjack.Compiler.Backend.BvlConst.Proofs.SourceCompile
@@ -1266,7 +1266,6 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Evaluate
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotateCorrect
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.SemanticsCorrect
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstalledSemantics
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.VarsNone
 import Flapjack.Compiler.Backend.Semantics.ClosSem.InstallGrowth
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateCodeGrowth
 import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtension

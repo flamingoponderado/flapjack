@@ -26,7 +26,7 @@ theorem evaluate_reccLet0 {C F : Type} (state : BvlSem.State C F)
   obtain ⟨entry, labelLookup⟩ := labelInstalled
   have inBounds : ¬ values.length ≤ index := by omega
   have nonnegative : ¬ ((index : Int) < 0) := by omega
-  simp [reccLet0, mkConst, mkLabel, BvlSem.evaluate, BvlSem.fixClock,
+  simp [reccLet0, BackendCommon.closureTag, mkConst, mkLabel, BvlSem.evaluate, BvlSem.fixClock,
     BvlSem.doApp, BvlSem.applyBlock, BvlSem.applyNumeric, BvlSem.doIntApp,
     BvlSem.applyMemory, labelLookup, lookup, inBounds, nonnegative]
 

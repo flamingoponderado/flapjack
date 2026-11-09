@@ -27,8 +27,8 @@ open Flapjack.Basis.Pure.MlString
 
 private def body : ClosLang.Exp := .op .none (.intOp .add) [.var .none 0, .var .none 0]
 private def config : ClosKnown.Config := ClosKnown.mkConfig 8 2
-#guard match ClosKnown.closApproxFuel 100 3 4 1 body, ClosKnown.closApproxFuel 100 2 4 1 body with
-  | some (.clos 4 1 _ 3), some (.closNoInline 4 1) => true
+#guard match ClosKnown.closApproxHOL 3 4 1 body, ClosKnown.closApproxHOL 2 4 1 body with
+  | .clos 4 1 _ 3, .closNoInline 4 1 => true
   | _, _ => false
 #guard match [
     (ClosKnown.ValApprox.clos 4 1 body 3, none), (.clos 4 1 body 4, none),
