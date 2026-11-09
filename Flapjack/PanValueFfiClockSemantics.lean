@@ -1508,6 +1508,117 @@ theorem evalPanValueFfiClockCodeCall_callee_returnedShapeMismatch_error
   simp [evalPanValueFfiClockCodeCall, panValueCallArgumentsValue, Option.elim_some,
     harguments, hlookup, hclock, hbody, hmismatch, decPanClock]
 
+/-- State-owned code-map Call step for a callee whose own evaluation finished
+    with `Error`.  Cake's catch-all `(res,st) => (res, empty_locals st)`
+    (`panSemScript.sml:690`) clears the callee locals, so this is the one
+    `Error` origin whose call result carries `fun _ => none`; the callee
+    globals, memory and FFI state are kept and the clock is HOL's `fix_clock`
+    clamp `min (decPanClock clock) calleeClock`.  The fall-through,
+    `break`, `continue`, return-shape rejection and handler-invalid steps
+    deliberately preserve the callee locals instead.  Untagged because the
+    result is the reduced structured pair, not HOL's `result option × state`
+    pair. -/
+theorem evalPanValueFfiClockCodeCall_callee_error_error
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α)
+    (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ)
+    (structs : StructContext) (code : PanSemCodeMap α)
+    (exceptionShapes : ExceptionId → Option Shape)
+    (baseAddress topAddress bytesInWord : α)
+    (fuel : Nat)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (clock : Nat)
+    (info : Option (Option (VarKind × VarName) ×
+      Option (ExceptionId × VarName × Prog α)))
+    (function : FunName) (arguments : List (Exp α))
+    (values : List (PanValue α)) (calleeBody : Prog α) (returnShape : Shape)
+    (calleeLocals finalLocals finalGlobals : VarName → Option (PanValue α))
+    (finalMemory : α → Option (PanValue α)) (finalFfi : FfiState σ)
+    (calleeClock : Nat)
+    (access : Option (PanValueMemoryAccess α) := none)
+    (contracts : Option PanValueCallContracts := none)
+    (mh : Option (PanValueMemoryFfiHandler α σ) := none)
+    (preserveReturnLocals : Bool := false)
+    (evaluator : Option (PanExprEvaluator α) := none)
+    (harguments : panValueCallArgumentsValue structs baseAddress topAddress bytesInWord
+      locals globals memory arguments access evaluator = some values)
+    (hlookup : lookupPanSemCodeCall structs code function values =
+      some (calleeBody, returnShape, calleeLocals))
+    (hclock : clock ≠ 0)
+    (hbody : evalPanValueFfiClockCodeProg context primitive handler structs code
+      exceptionShapes baseAddress topAddress bytesInWord fuel calleeLocals globals memory ffi
+      (decPanClock clock) calleeBody
+      (memoryAccess := access) (contracts := contracts) (memoryHandler := mh)
+      (evaluator := evaluator) =
+        some (.control (.error finalLocals finalGlobals finalMemory finalFfi), calleeClock)) :
+    evalPanValueFfiClockCodeCall context primitive handler structs code exceptionShapes
+      baseAddress topAddress bytesInWord (fuel + 1) locals globals memory ffi clock info
+      function arguments (memoryAccess := access) (contracts := contracts)
+      (memoryHandler := mh) (preserveReturnLocals := preserveReturnLocals)
+      (evaluator := evaluator) =
+        some (.control (.error (fun _ => none) finalGlobals finalMemory finalFfi),
+          min (decPanClock clock) calleeClock) := by
+  simp [evalPanValueFfiClockCodeCall, Option.elim_some, harguments, hlookup, hclock, hbody,
+    decPanClock]
+
+/-- State-owned `DecCall` forwards a callee-side `Error` as Cake's catch-all
+    `(res,st) => (res, empty_locals st)` (`panSemScript.sml:713`): the code-map
+    call helper already replaces the callee locals with `fun _ => none` (see
+    `evalPanValueFfiClockCodeCall_callee_error_error`), and `DecCall`'s
+    `.error` branch preserves that map unchanged, so the forwarded error is
+    HOL's cleared-locals catch-all state.  The continuation body is not run on
+    this path.  `DecCall` consumes one fuel step before dispatching the inner
+    call, hence the `fuel + 2` entry point for a callee evaluated at `fuel`.
+    This is the syntactic form of the extensional equality noted in the #1250
+    review (report item 6). -/
+theorem evalPanValueFfiClockCodeDecCall_callee_error_error
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α)
+    (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ)
+    (structs : StructContext) (code : PanSemCodeMap α)
+    (exceptionShapes : ExceptionId → Option Shape)
+    (baseAddress topAddress bytesInWord : α)
+    (fuel : Nat)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (clock : Nat)
+    (name : VarName) (shape : Shape) (function : FunName)
+    (arguments : List (Exp α)) (body : Prog α)
+    (values : List (PanValue α)) (calleeBody : Prog α) (returnShape : Shape)
+    (calleeLocals finalLocals finalGlobals : VarName → Option (PanValue α))
+    (finalMemory : α → Option (PanValue α)) (finalFfi : FfiState σ)
+    (calleeClock : Nat)
+    (access : Option (PanValueMemoryAccess α) := none)
+    (contracts : Option PanValueCallContracts := none)
+    (mh : Option (PanValueMemoryFfiHandler α σ) := none)
+    (evaluator : Option (PanExprEvaluator α) := none)
+    (harguments : panValueCallArgumentsValue structs baseAddress topAddress bytesInWord
+      locals globals memory arguments access evaluator = some values)
+    (hlookup : lookupPanSemCodeCall structs code function values =
+      some (calleeBody, returnShape, calleeLocals))
+    (hclock : clock ≠ 0)
+    (hbody : evalPanValueFfiClockCodeProg context primitive handler structs code
+      exceptionShapes baseAddress topAddress bytesInWord fuel calleeLocals globals memory ffi
+      (decPanClock clock) calleeBody
+      (memoryAccess := access) (contracts := contracts) (memoryHandler := mh)
+      (evaluator := evaluator) =
+        some (.control (.error finalLocals finalGlobals finalMemory finalFfi), calleeClock)) :
+    evalPanValueFfiClockCodeDecCall context primitive handler structs code exceptionShapes
+      baseAddress topAddress bytesInWord (fuel + 2) locals globals memory ffi clock
+      name shape function arguments body (memoryAccess := access) (contracts := contracts)
+      (memoryHandler := mh) (evaluator := evaluator) =
+        some (.control (.error (fun _ => none) finalGlobals finalMemory finalFfi),
+          min (decPanClock clock) calleeClock) := by
+  simp [evalPanValueFfiClockCodeDecCall, evalPanValueFfiClockCodeCall, Option.elim_some,
+    harguments, hlookup, hclock, hbody, decPanClock]
+
 /-! This declaration-boundary adapter exposes the executed source-owned call
     after declaration evaluation. It shares the exact code-map conversion,
     exception-shape lookup, and return-contract path used by the public
