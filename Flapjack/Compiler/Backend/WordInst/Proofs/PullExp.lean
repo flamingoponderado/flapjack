@@ -484,6 +484,28 @@ theorem all_consts_simp {width : Nat} [NeZero width] {C : Type} {F : Type}
   rw [wordExp_op_fold s hop, hw, wordOpHOL_fold hop]
   rfl
 
+/-- `word_exp` of an `Op` whose head operand is the constant `0`, for an operator
+whose fold unit is `0` (`Add`, `Or`, `Xor`): the head operand contributes nothing. -/
+private theorem wordExp_op_const_zero {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (s : WordSemStateFiniteExact width C F) {op : BinOp} (hns : op ≠ .sub)
+    (hu : opUnit op = (0 : BitVec width)) (rest : List (WordLangExpHOL (BitVec width))) :
+    wordExp s (.op op (.const 0 :: rest)) =
+      ((theWords (rest.map (fun a => wordExp s a))).map
+        (List.foldr (opFold op) (opUnit op))).map WordLocW.word := by
+  have hfold0 : ∀ ws : List (BitVec width),
+      (0 :: ws).foldr (opFold op) (opUnit op) = ws.foldr (opFold op) (opUnit op) := by
+    intro ws
+    simp only [List.foldr_cons]
+    rw [← hu]
+    exact opFold_unit op _
+  rw [wordExp_op_fold s hns]
+  simp only [List.map_cons, wordExp, theWords_cons, Option.map_map]
+  cases ht : theWords (rest.map (fun a => wordExp s a)) with
+  | none => rfl
+  | some ws =>
+      simp only [Option.map_some, Function.comp]
+      rw [hfold0 ws]
+
 /-- Exact HOL local `word_exp_reduce_const` (`word_instProofScript.sml:234-241`);
     HOL's free variables are explicit binders. -/
 @[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "word_exp_reduce_const"
@@ -501,48 +523,34 @@ theorem word_exp_reduce_const {width : Nat} [NeZero width] {C : Type} {F : Type}
     by_cases hop : op = .add ∨ op = .or ∨ op = .xor
     · rw [if_pos hop]
       have hns : op ≠ .sub := by rcases hop with rfl | rfl | rfl <;> decide
-      rw [wordExp_op_fold s hns] at h
-      simp only [List.map_cons, theWords_cons, wordExp, Option.map_map] at h
-      have hu : opUnit op = (0 : BitVec width) := by
-        rcases hop with rfl | rfl | rfl <;> rfl
+      have hu : opUnit op = (0 : BitVec width) := by rcases hop with rfl | rfl | rfl <;> rfl
+      rw [wordExp_op_const_zero s hns hu] at h
       match rest, h with
-      | [], h =>
-          simp only [List.map_nil, theWords, Option.map_some, Function.comp, List.foldr_cons,
-            List.foldr_nil, Option.some.injEq] at h
-          rw [← h, hu]
-          simp only [wordExp, Option.some.injEq, WordLocW.word.injEq]
-          rw [← hu, opFold_unit]
+      | [], h => simpa [wordExp, theWords, hu] using h
       | [y], h =>
-          simp only [List.map_cons, List.map_nil, theWords_cons] at h
-          rcases hy : wordExp s y with _ | (a | _) <;> rw [hy] at h
-          · simp at h
-          · simp only [theWords, Option.map_some, Function.comp, List.foldr_cons, List.foldr_nil,
-              Option.some.injEq] at h
-            rw [← h, ← hu, opFold_unit, opFold_comm, opFold_unit]
-          · simp at h
-      | y :: z :: rest', h =>
-          rw [wordExp_op_fold s hns]
-          cases ht : theWords ((y :: z :: rest').map (fun a => wordExp s a)) with
-          | none => rw [ht] at h; simp at h
-          | some ws =>
-              rw [ht] at h
-              simp only [Option.map_some, Function.comp, List.foldr_cons, Option.some.injEq] at h ⊢
-              rw [← h, ← hu, opFold_unit]
+          rcases hy : wordExp s y with _ | (a | _)
+          · simp [hy, theWords] at h
+          · simpa [hy, theWords, opFold_unit_right] using h
+          · simp [hy, theWords] at h
+      | y :: z :: rest', h => simpa [wordExp_op_fold s hns] using h
     · rw [if_neg hop]
       by_cases hand : op = .and
       · rw [if_pos hand]
         subst hand
+        have hfold : ∀ ws : List (BitVec width),
+            (0 :: ws).foldr (opFold .and) (opUnit .and) = (0 : BitVec width) := by
+          intro ws
+          simp only [List.foldr_cons, opFold, opUnit]
+          exact BitVec.zero_and
         rw [wordExp_op_fold s (by decide)] at h
-        simp only [List.map_cons, theWords_cons, wordExp, Option.map_map] at h
+        simp only [List.map_cons, wordExp, theWords_cons, Option.map_map] at h
         cases ht : theWords (rest.map (fun a => wordExp s a)) with
         | none => rw [ht] at h; simp at h
         | some ws =>
             rw [ht] at h
-            simp only [Option.map_some, Function.comp, List.foldr_cons, Option.some.injEq] at h
-            rw [← h]
-            simp only [wordExp, Option.some.injEq, WordLocW.word.injEq]
-            show (0 : BitVec width) = 0 &&& _
-            simp
+            simp only [Option.map_some, Function.comp, hfold ws] at h
+            simp only [wordExp]
+            exact h
       · rw [if_neg hand]
         exact h
   · rw [if_neg hw]
