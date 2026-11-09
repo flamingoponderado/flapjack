@@ -419,7 +419,8 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     throwError "@[hol]: fmap_as_finite_support_result_observations is mutually exclusive with other finite-map qualifiers"
   if !nestedListRelAsMutual.isEmpty then
     unless nestedListRelAsMutual == #["FunctionsRel"] &&
-        path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" && name == "v_rel" do
+        path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" &&
+        (name == "v_rel" || name == "env_set_default") do
       throwError "@[hol]: nested_list_rel_as_mutual is restricted to the reviewed closure relation"
     if !listAsArray.isEmpty || !namesAsString.isEmpty || !namesAsStringBoundary.isEmpty ||
         !fmapAsFiniteSupport.isEmpty || fmapAsFiniteSupportResult ||
@@ -704,9 +705,22 @@ initialize holRefAttribute : ParametricAttribute HolRef ←
     getParam := fun _ stx => parseHolRefAttribute stx
     afterSet := fun decl ref => do
       if !ref.nestedListRelAsMutual.isEmpty then
-        unless decl == `Flapjack.Compiler.Backend.ClosAnnotate.ValueRel ||
-            decl == `Flapjack.Compiler.Backend.ClosAnnotate.EnvOk do
+        let isRelation := ref.name == "v_rel" &&
+          (decl == `Flapjack.Compiler.Backend.ClosAnnotate.ValueRel ||
+           decl == `Flapjack.Compiler.Backend.ClosAnnotate.EnvOk)
+        let isDefault := ref.name == "env_set_default" &&
+          decl == `Flapjack.Compiler.Backend.ClosAnnotate.envSetDefault
+        unless isRelation || isDefault do
           logError m!"{decl}: nested_list_rel_as_mutual is restricted to the reviewed relation members"
+        if isDefault then
+          let env ← getEnv
+          match env.find? decl with
+          | some info =>
+            let used := info.type.getUsedConstants
+            unless used.contains `Flapjack.Compiler.Backend.ClosAnnotate.EnvOk &&
+                !used.contains `Flapjack.Compiler.Backend.ClosAnnotate.FunctionsRel do
+              logError m!"{decl}: nested-list observer must use EnvOk without exposing FunctionsRel"
+          | none => logError m!"{decl}: missing nested-list observer declaration"
       if !ref.fmapAsFiniteSupportResultObservations.isEmpty then
         let env ← getEnv
         match env.find? decl with

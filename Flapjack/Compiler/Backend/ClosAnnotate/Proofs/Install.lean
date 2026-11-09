@@ -250,8 +250,7 @@ theorem runInstalled_related {C F : Type} (source target : State C F) (values ne
             simp [runInstalled, installRun, programRun] at run
             exact noType run.1.symm
           have vars : ∀ n, altFv n program = true → EnvOk 0 0 .ln [] [] n := by
-            intro n _
-            exact .outside 0 0 .ln [] [] n (by omega)
+            exact envSetDefault {n | altFv n program = true} []
           obtain ⟨targetProgramResult, targetLast, targetProgramRun, programRel, lastRel⟩ :=
             programIH program installed smaller [] [] targetInstalled programResult last 0 0 .ln
               programRun programNoType (by simp) vars (by simpa [oracleEntry] using (oracle 0).1)

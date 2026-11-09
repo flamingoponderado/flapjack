@@ -491,8 +491,10 @@ review of both the producer and observer remains required.
 `(nested_list_rel_as_mutual := [FunctionsRel])` qualifier records the
 recursive-closure `LIST_REL` factoring in `clos_annotateProof$v_rel` into the
 mutually inductive `FunctionsRel`. It is only valid on the `ValueRel` and
-`EnvOk` members in `ClosAnnotate/Proofs/ValueRelation.lean`, and both members
-must carry it. It cannot combine with other qualifiers. Use manifest status
+`EnvOk` members and the `envSetDefault` observer in
+`ClosAnnotate/Proofs/ValueRelation.lean`; both relation members must carry it.
+The observer must mention `EnvOk` and must not expose `FunctionsRel`. It cannot
+combine with other qualifiers. Use manifest status
 `reviewed_nested_list_rel_as_mutual` after comparing every source rule and the
 `functionsRel_iff` witness with the typed HOL capture. The elaborated audit
 checks the mutual block, constructor and witness types, and witness axioms; it

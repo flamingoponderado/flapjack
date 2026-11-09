@@ -120,6 +120,13 @@
   "reviewer": "Compared shift_obeys_max_app_typed: the bound and all expression-list, natural and sparse-tree index variables are unrestricted. Both occurrences of EVERY are membership quantification over the reviewed obeysMaxApp predicate, and the conclusion uses original shiftSource."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "env_set_default",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ValueRelation.lean", "lean_name": "envSetDefault",
+  "statement_status": "reviewed_nested_list_rel_as_mutual",
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "reviewer": "Source comparison with env_set_default_local_typed, replayed from the local HOL proof, retains the unrestricted natural set and target value list, empty source environment and zero lengths. nested_list_rel_as_mutual records the imported environment-relation factoring witnessed by functionsRel_iff."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "v_rel",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ValueRelation.lean", "lean_name": "ValueRel",
   "statement_status": "reviewed_nested_list_rel_as_mutual",

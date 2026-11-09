@@ -67,6 +67,14 @@ inductive EnvOk : Nat → Nat → Spt Nat → List Value → List Value → Nat 
       EnvOk m l index env nextEnv n
 end
 
+/-- Every set of variables is valid in an empty source environment. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "env_set_default"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem envSetDefault (vars : Set Nat) (targetEnv : List Value) :
+    vars ⊆ {n | EnvOk 0 0 .ln [] targetEnv n} := by
+  intro n _
+  exact .outside 0 0 .ln [] targetEnv n (Nat.zero_le n)
+
 /-- The inductive recursive-bundle relation is exactly the pointwise list
 relation used in the source definition. -/
 theorem functionsRel_iff (env nextEnv : List Value) (count : Nat)

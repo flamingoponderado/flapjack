@@ -33,6 +33,18 @@ class NestedListQualifierTest(unittest.TestCase):
             site = next(CHECK["hol_attribute_sites"](lines, include_nested_list_rel=True))
             self.assertTrue(CHECK["nested_list_rel_errors"](lines, LEAN, 1, PATH, "v_rel", site[-1]))
 
+    def test_default_observer_requires_envok_and_relation_peers(self):
+        observer_attr = f'@[hol "{PATH}" "env_set_default" (nested_list_rel_as_mutual := [FunctionsRel])]'
+        lines = [ATTRIBUTE, "inductive ValueRel : Prop", ATTRIBUTE, "inductive EnvOk : Prop",
+                 observer_attr, "theorem envSetDefault : EnvOk 0 := by trivial"]
+        validate = CHECK["nested_list_rel_errors"]
+        self.assertEqual(validate(lines, LEAN, 5, PATH, "env_set_default", ("FunctionsRel",)), [])
+        for bad in ("theorem envSetDefault : True := by trivial",
+                    "theorem envSetDefault : EnvOk (FunctionsRel 0) := by trivial"):
+            changed = [*lines[:-1], bad]
+            self.assertTrue(validate(changed, LEAN, 5, PATH, "env_set_default", ("FunctionsRel",)))
+        self.assertTrue(validate(lines[4:], LEAN, 1, PATH, "env_set_default", ("FunctionsRel",)))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -18,8 +18,7 @@ theorem annotate_correct {C F : Type} (program : List ClosLang.Exp) (source targ
     ∃ targetResult targetNext, evaluate (annotateList 0 program) targetEnv target = (targetResult, targetNext) ∧
       ResultRel result targetResult ∧ StateRel next targetNext := by
   have vars : ∀ n, altFv n program = true → EnvOk 0 0 .ln [] targetEnv n := by
-    intro n _
-    exact .outside 0 0 .ln [] targetEnv n (by omega)
+    exact envSetDefault {n | altFv n program = true} targetEnv
   obtain ⟨targetResult, targetNext, targetRun, resultRel, nextRel⟩ :=
     evaluate_simulation.1 program [] source targetEnv target result next 0 0 .ln run noType (by simp)
       vars safe code oracle states
