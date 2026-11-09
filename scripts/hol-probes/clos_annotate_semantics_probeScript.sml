@@ -167,3 +167,44 @@ val env_ok_shifted_env_replay = prove (
   >> SRW_TAC [] [] >> full_simp_tac(srw_ss())[lookup_EL_shifted_env]
   >> IMP_RES_TAC lookup_vars_SOME >> full_simp_tac(srw_ss())[]);
 val _ = show "env_ok_shifted_env_local_typed=" env_ok_shifted_env_replay;
+(* Replay the source-local extension lemma without relating the new prefixes. *)
+val env_ok_EXTEND_IGNORE_replay = prove (
+  ``(LENGTH env2 = LENGTH env1) /\ LENGTH env1 <= n /\ l1 = LENGTH env1 /\
+    clos_annotateProof$env_ok m l i env1' env2' (n - l1) ==>
+    clos_annotateProof$env_ok m (l + l1) i (env1 ++ env1') (env2 ++ env2') n``,
+  SRW_TAC [] [] >> SIMP_TAC std_ss [env_ok_def] >> fs []
+  >> Cases_on `n < LENGTH env1` >> fs []
+  >> full_simp_tac(srw_ss())[NOT_LESS]
+  >> full_simp_tac(srw_ss())[env_ok_def]
+  >> fs [rich_listTheory.EL_APPEND2]);
+val _ = show "env_ok_EXTEND_IGNORE_local_typed=" env_ok_EXTEND_IGNORE_replay;
+(* Replay the corresponding extension proof for related prefixes. *)
+val EVERY2_EL_local = LIST_REL_EL_EQN |> SPEC_ALL |> EQ_IMP_RULE |> fst
+                      |> UNDISCH |> CONJUNCT2 |> DISCH_ALL;
+val env_ok_EXTEND_replay = prove (
+  ``EVERY2 clos_annotateProof$v_rel env1 env2 /\ (l1 = LENGTH env1) /\
+    (l1 <= n ==> clos_annotateProof$env_ok m l i env1' env2' (n - l1)) ==>
+    clos_annotateProof$env_ok m (l + l1) i (env1 ++ env1') (env2 ++ env2') n``,
+  SRW_TAC [] [] >> SIMP_TAC std_ss [env_ok_def]
+  >> Cases_on `n < LENGTH env1` >> full_simp_tac(srw_ss())[] THEN1
+   (DISJ2_TAC >> DISJ1_TAC >> REPEAT STRIP_TAC
+    >> IMP_RES_TAC EVERY2_LENGTH
+    >> full_simp_tac(srw_ss())[rich_listTheory.EL_APPEND1]
+    >> IMP_RES_TAC EVERY2_EL_local >> full_simp_tac(srw_ss())[] >> DECIDE_TAC)
+  >> full_simp_tac(srw_ss())[NOT_LESS]
+  >> full_simp_tac(srw_ss())[env_ok_def]
+  THEN1 (DISJ1_TAC >> DECIDE_TAC)
+  THEN1
+   (DISJ2_TAC >> DISJ1_TAC
+    >> IMP_RES_TAC EVERY2_LENGTH
+    >> full_simp_tac(srw_ss())[rich_listTheory.EL_APPEND2]
+    >> DECIDE_TAC)
+  >> DISJ2_TAC >> DISJ2_TAC >> Q.EXISTS_TAC `v` >> full_simp_tac(srw_ss())[]
+  >> IMP_RES_TAC EVERY2_LENGTH
+  >> full_simp_tac(srw_ss())[rich_listTheory.EL_APPEND2]
+  >> `n - (l + LENGTH env2) = n - LENGTH env2 - l` by DECIDE_TAC >> full_simp_tac(srw_ss())[]
+  >> `LENGTH env2 <= l + LENGTH env2 + v` by DECIDE_TAC
+  >> full_simp_tac(srw_ss())[rich_listTheory.EL_APPEND2]
+  >> `l + LENGTH env2 + v - LENGTH env2 = l + v` by DECIDE_TAC >> full_simp_tac(srw_ss())[]
+  >> DECIDE_TAC);
+val _ = show "env_ok_EXTEND_local_typed=" env_ok_EXTEND_replay;

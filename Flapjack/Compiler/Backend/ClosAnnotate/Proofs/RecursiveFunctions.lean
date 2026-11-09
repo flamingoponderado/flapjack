@@ -57,14 +57,14 @@ theorem envOk_recursive_body (names : List Flapjack.Basis.Pure.MlString.MlString
       (((List.range functions.length).map (fun i => Value.recclosure location [] env functions i)) ++ env)
       (((List.range functions.length).map (fun i => Value.recclosure location [] captured nextFunctions i)) ++ nextEnv) n := by
   have frontRel := recursiveValues_related location env captured functions nextFunctions related
-  have extended := envOk_extend m l index _ _ env nextEnv n frontRel (by
+  have extended := envOk_extend _ _ _ n m l index env nextEnv ⟨frontRel, rfl, by
     intro lower
     have lower' : functions.length ≤ n := by simpa using lower
     simp only [List.length_map, List.length_range]
     apply vars (n - functions.length)
     rw [altFv_letrec]
     have shifted : n - functions.length + functions.length = n := by omega
-    simp [shifted, present])
+    simp [shifted, present]⟩
   simpa using extended
 
 /-- The recursive group's live-variable set can be selected from the target

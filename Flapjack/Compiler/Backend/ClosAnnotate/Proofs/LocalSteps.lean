@@ -283,13 +283,13 @@ theorem evaluate_handle_step {C F : Type} (trace : BackendCommon.Tra) (body hand
                 EnvOk m (l + 1) index (value :: env) (targetValue :: nextEnv) n := by
               intro n present
               have headRel : List.Forall₂ ValueRel [value] [targetValue] := .cons valueRel .nil
-              have extended := envOk_extend m l index [value] [targetValue] env nextEnv n headRel
-                (by
+              have extended := envOk_extend [value] [targetValue] 1 n m l index env nextEnv
+                ⟨headRel, rfl, by
                   intro lower
                   apply vars (n - 1)
                   rw [altFv_handle]
-                  have equal : n - 1 + 1 = n := by simp at lower; omega
-                  simp [equal, present])
+                  have equal : n - 1 + 1 = n := by omega
+                  simp [equal, present]⟩
               simpa using extended
             have handlerLength : (value :: env).length = m + (l + 1) := by simp; omega
             have middleSafety := (evaluate_preserves_safe.1 [body]) env source (.err (.raise value)) middle
@@ -481,13 +481,13 @@ theorem evaluate_let_step {C F : Type} (trace : BackendCommon.Tra)
           have bodyVars : ∀ n, altFv n [body] = true →
               EnvOk m (l + bindings.length) index (values ++ env) (targetValues ++ nextEnv) n := by
             intro n present
-            have extended := envOk_extend m l index values targetValues env nextEnv n resultRel (by
+            have extended := envOk_extend values targetValues values.length n m l index env nextEnv ⟨resultRel, rfl, by
               intro lower
               apply vars (n - values.length)
               rw [altFv_let]
               have shifted : n - values.length + bindings.length = n := by omega
               have noOpt : (noOverlap bindings.length (altFreeList [body]).2 && pureList bindings) ≠ true := optimized
-              simp [noOpt, shifted, present])
+              simp [noOpt, shifted, present]⟩
             simpa [valuesLength] using extended
           have bodyLength : (values ++ env).length = m + (l + bindings.length) := by
             simp only [List.length_append, valuesLength, length]; omega

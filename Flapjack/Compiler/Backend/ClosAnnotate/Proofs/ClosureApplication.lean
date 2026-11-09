@@ -53,9 +53,9 @@ theorem envOk_application_body (body : ClosLang.Exp) (m localCount : Nat) (index
       EnvOk m 0 index env nextEnv (n - localCount)) :
     ∀ n, altFv n [body] = true → EnvOk m localCount index (front ++ env) (nextFront ++ nextEnv) n := by
   intro n present
-  have extended := envOk_extend m 0 index front nextFront env nextEnv n frontRel (by
+  have extended := envOk_extend front nextFront front.length n m 0 index env nextEnv ⟨frontRel, rfl, by
     intro bound
-    simpa [frontLength] using live n present (by simpa [frontLength] using bound))
+    simpa [frontLength] using live n present (by simpa [frontLength] using bound)⟩
   simpa [frontLength] using extended
 
 /-- Full applications expose an annotated body together with matching

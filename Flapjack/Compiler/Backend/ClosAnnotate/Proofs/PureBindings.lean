@@ -77,8 +77,8 @@ theorem envOk_unused_bindings (trace : BackendCommon.Tra) (bindings : List ClosL
     rw [altFv_let]
     have shifted : n - bindings.length + bindings.length = n := by omega
     simp [pure, shifted, present]
-  have result := envOk_extend_ignore m l index values (List.replicate bindings.length (.number 0))
-    env nextEnv n (by simpa using valueLength.symm) (by omega) (by simpa [valueLength] using tailRel)
+  have result := envOk_extend_ignore (List.replicate bindings.length (.number 0)) values n values.length
+    m l index env nextEnv ⟨by simpa using valueLength.symm, by omega, rfl, by simpa [valueLength] using tailRel⟩
   simpa [valueLength] using result
 
 end Flapjack.Compiler.Backend.ClosAnnotate
