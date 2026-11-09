@@ -1,6 +1,30 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "chain_exps_GT",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainLocations.lean",
+  "lean_name": "chainExps_gt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared chain_exps_GT_typed and the original source: natural start, expression-list carrier, map of first triple components, and the nonempty expression-list premise and strict upper bound start + length agree. HOL EVERY is rendered as membership quantification. The source chainExps definition is reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "chain_exps_LE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainLocations.lean",
+  "lean_name": "chainExps_le",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared chain_exps_LE_typed and the original source: natural start, expression-list carrier, map of first triple components, and the non-strict lower bound given by the starting label agree. HOL EVERY is rendered as membership quantification. The source chainExps definition is reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "chain_exps_ALL_DISTINCT",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainLocations.lean",
+  "lean_name": "chainExps_labels_nodup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared chain_exps_ALL_DISTINCT_typed and the original source: natural start, expression-list carrier, map of first triple components, and ALL_DISTINCT as List.Nodup agree. HOL EVERY is rendered as membership quantification. The source chainExps definition is reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "compile_exps_code_locs",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/LabelOrigins.lean",
   "lean_name": "compileExps_codeLocs",

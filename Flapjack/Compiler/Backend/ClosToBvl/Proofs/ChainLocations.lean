@@ -45,7 +45,26 @@ theorem chainExps_label_bounds (start : Nat) (expressions : List ClosLang.Exp)
         simp only [List.length_cons] at bounds ⊢
         omega
 
+/-- Every generated entry label is at least the starting label. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_exps_LE"]
+theorem chainExps_le (start : Nat) (expressions : List ClosLang.Exp) :
+    ∀ label ∈ (chainExps start expressions).map Prod.fst, start ≤ label := by
+  intro label member
+  exact (chainExps_label_bounds start expressions label member).1
+
+/-- A nonempty chain stays below its starting label plus its length. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_exps_GT"]
+theorem chainExps_gt (start : Nat) (expressions : List ClosLang.Exp) :
+    expressions ≠ [] →
+    ∀ label ∈ (chainExps start expressions).map Prod.fst, label < start + expressions.length := by
+  intro nonempty label member
+  have bound := (chainExps_label_bounds start expressions label member).2
+  cases expressions with
+  | nil => exact (nonempty rfl).elim
+  | cons first rest => simpa using bound
+
 /-- Chained top-level expressions have pairwise distinct entry labels. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_exps_ALL_DISTINCT"]
 theorem chainExps_labels_nodup (start : Nat) (expressions : List ClosLang.Exp) :
     ((chainExps start expressions).map Prod.fst).Nodup := by
   induction expressions generalizing start with
@@ -57,7 +76,7 @@ theorem chainExps_labels_nodup (start : Nat) (expressions : List ClosLang.Exp) :
       simp only [chainExps, List.map_cons, List.nodup_cons]
       constructor
       · intro member
-        have bounds := chainExps_label_bounds (start + 1) (second :: tail) start member
+        have bounds := chainExps_le (start + 1) (second :: tail) start member
         omega
       · exact ih (start + 1)
 
