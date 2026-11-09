@@ -934,21 +934,27 @@ theorem word_cse_wf_data {width : Nat} [NeZero width] :
       have w1 := wfData_invalidate data r h
       have r1 := lookup_invalidateData_self data r
       split
-      · rename_i hn; split
+      · rename_i hn
+        split
         · exact w1
-        · rename_i hev; exact wfData_insert_gets _ x r ⟨w1, r1, by omega, hn⟩
-      · rename_i k hk; split
+        · rename_i hev
+          exact wfData_insert_gets _ x r ⟨w1, r1, by omega, hn⟩
+      · rename_i k hk
+        split
         · exact w1
-        · rename_i hev; exact wfData_repoint _ r k w1 r1 (by omega) (w1.2.2.2.2.2.1 x k hk)
+        · rename_i hev
+          exact wfData_repoint _ r k w1 r1 (by omega) (w1.2.2.2.2.2.1 x k hk)
   | .set x e, data, h => by
       simp only [wordCse, setClause]
       split
       · exact wfData_empty
       · split
         · exact wfData_filter_gets data x h
-        · rename_i v hv; split
+        · rename_i v hv
+          split
           · exact wfData_filter_gets data x h
-          · rename_i hev; have w1 := wfData_filter_gets data x h
+          · rename_i hev
+            have w1 := wfData_filter_gets data x h
             have w2 := wfData_reinsert_canonical _ v ⟨w1, by omega⟩
             have e : (sptLookup v data.toCanonical).getD v = lookupAny v data.toCanonical v := by
               unfold lookupAny; cases sptLookup v data.toCanonical <;> rfl
@@ -959,23 +965,31 @@ theorem word_cse_wf_data {width : Nat} [NeZero width] :
               have := (List.mem_filter.mp hp).2
               simp only [decide_eq_true_eq] at this
               simpa [bne_iff_ne] using (Ne.symm this)
-            · simp only [canonicalRegs, lookupAny]
+            · show sptLookup (canonicalRegs data v)
+                (sptInsert v (lookupAny v data.toCanonical v) data.toCanonical) = _
+              unfold canonicalRegs lookupAny
               cases hl : sptLookup v data.toCanonical with
               | none => simp [sptLookup_sptInsert_same]
               | some c =>
-                simp only [Option.getD_some]; by_cases hcv : c = v
+                simp only [Option.getD_some]
+                by_cases hcv : c = v
                 · subst hcv; exact sptLookup_sptInsert_same _ _ _
                 · rw [sptLookup_sptInsert_ne _ _ _ _ hcv]; exact (h.1 v c hl).1
-  | .mustTerminate p, data, h => by simp only [wordCse]; exact word_cse_wf_data p data h
+  | .mustTerminate p, data, h => by
+      simp only [wordCse]; exact word_cse_wf_data p data h
   | .call _ _ _ _, _, _ => by simp only [wordCse]; exact wfData_empty
-  | .seq p1 p2, data, h => by simp only [wordCse]; exact word_cse_wf_data p2 _ (word_cse_wf_data p1 data h)
+  | .seq p1 p2, data, h => by
+      simp only [wordCse]
+      exact word_cse_wf_data p2 _ (word_cse_wf_data p1 data h)
   | .ite _ _ _ p1 p2, data, h => by
-      simp only [wordCse]; exact wfData_merge _ _ ⟨word_cse_wf_data p1 data h, word_cse_wf_data p2 data h⟩
+      simp only [wordCse]
+      exact wfData_merge _ _ ⟨word_cse_wf_data p1 data h, word_cse_wf_data p2 data h⟩
   | .opCurrHeap b r1 r2, data, h => by
       simp only [wordCse]
       split
       · exact wfData_invalidate data r1 h
-      · rename_i hev; simp only [not_or] at hev
+      · rename_i hev
+        simp only [not_or] at hev
         obtain ⟨hr2, hne2⟩ := hev
         set d1 := invalidateData data r1
         have w1 : wfData width d1 := wfData_invalidate data r1 h
@@ -993,7 +1007,8 @@ theorem word_cse_wf_data {width : Nat} [NeZero width] :
         simp only [opCurrHeapToNumList, List.cons.injEq, Nat.add_right_cancel_iff, and_true] at hk
         rw [hk.2.2]; exact self_insert_fresh r2n self2
   | .locValue r l, data, h => by
-      simp only [wordCse]; have w1 := wfData_invalidate data r h
+      simp only [wordCse]
+      have w1 := wfData_invalidate data r h
       have r1 := lookup_invalidateData_self data r
       refine wf_add_to_data_aux _ _ _ _ _ _ ⟨w1, r1, rfl, fun hev => ?_⟩
       exact wfData_fresh_instrs _ _ _ w1 r1 (by omega)
@@ -1012,7 +1027,10 @@ theorem word_cse_wf_data {width : Nat} [NeZero width] :
   | .storeConsts r1 r2 r3 r4 _, data, h => by
       simp only [wordCse]; exact wfData_invalidateRegs_loads data _ h
   | .shareInst op r _, data, h => by
-      simp only [wordCse]; split <;> [exact h; exact wfData_invalidate data r h]
+      simp only [wordCse]
+      split
+      · exact h
+      · exact wfData_invalidate data r h
   | .loop _ _ _, _, _ => by simp only [wordCse]; exact wfData_empty
   | .break _, _, h => h
   | .continue _, _, h => h
