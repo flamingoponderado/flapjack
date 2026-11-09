@@ -101,3 +101,18 @@ val _ = show_thm "flat_initial_state_clock_typed=" flatPropsTheory.initial_state
 val _ = show_thm "flat_evaluate_decs_add_clock_io_events_mono_alt_typed=" flatPropsTheory.evaluate_decs_add_to_clock_io_events_mono_alt;
 
 val _ = show_thm "flat_isClosure_simps_typed=" flatPropsTheory.isClosure_simps;
+
+val flat_check_type_list_rel_same = prove (
+  ``LIST_REL vr vs1 vs2 ∧
+    EVERY (semanticPrimitives$check_type ty) (MAP flatSem$flat_to_v vs1) ∧
+    flatProps$simple_val_rel vr ⇒ vs2 = vs1``,
+  rw[LIST_REL_EL_EQN, EVERY_MAP, EVERY_EL]
+  >> rw[LIST_EQ_REWRITE]
+  >> gs[] >> first_x_assum drule
+  >> first_x_assum drule
+  >> Cases_on `ty` using semanticPrimitivesPropsTheory.prim_type_cases
+  >> rw[semanticPrimitivesTheory.check_type_def]
+  >> Cases_on `EL x vs1`
+  >> gvs[flat_to_v_def,CaseEq"bool",semanticPrimitivesTheory.Boolv_def]
+  >> gvs[flatSemTheory.Boolv_def]);
+val _ = show_thm "flat_check_type_list_rel_same_typed=" flat_check_type_list_rel_same;

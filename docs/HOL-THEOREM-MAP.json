@@ -130585,6 +130585,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "check_type_LIST_REL_same",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleType.lean",
+  "lean_name": "checkType_listRel_same",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_check_type_list_rel_same_typed, replayed from the local HOL proof in flat_do_app_preservation_probe.out. The original grouped premises, source primitive check, list relation and equality orientation match. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
   "hol_name": "isClosure_simps",
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/ValueBasics.lean",
   "lean_name": "isClosure_simps",
