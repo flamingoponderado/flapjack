@@ -68323,6 +68323,14 @@
   },
   {
     "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "fromList_11",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "fromList_inj",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:3520-3522 Theorem fromList_11[simp]: !xs ys. fromList xs = fromList ys <=> xs = ys. The Lean statement is the same iff over the same two List binders in HOL order, fromList read as fromList. The proof splits on the two lists: the empty/cons cases use lcons_ne_lnil and the cons/cons case lcons_inj plus the induction hypothesis. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
     "hol_name": "LAPPEND_ASSOC",
     "lean_path": "Flapjack/Misc/LList.lean",
     "lean_name": "lappendHOL_assoc",
@@ -68336,6 +68344,14 @@
     "lean_name": "lappendHOL_eq_lnil",
     "statement_status": "reviewed_exact",
     "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:836-837 Theorem LAPPEND_EQ_LNIL[simp]: (LAPPEND l1 l2 = [||]) <=> (l1 = [||]) /\\ (l2 = [||]). The Lean statement is the same biconditional (lappendHOL l1 l2 = lnil) <-> (l1 = lnil /\\ l2 = lnil) with the same two operands in HOL order and the same two conjuncts on the right; [||] is lnil and LAPPEND is the tagged lappendHOL (LAPPEND row). HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise. The proof splits on whether each operand's rep reaches a NONE (the rep-level counterpart of HOL's llist_CASES split) and uses only the tagged append equations."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LAPPEND_fromList",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lappendHOL_fromList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:2206-2208 Theorem LAPPEND_fromList: !l1 l2. LAPPEND (fromList l1) (fromList l2) = fromList (l1 ++ l2). The Lean statement is the same equation over the same two List binders in HOL order, with LAPPEND read as lappendHOL and fromList as fromList. The proof is the source's list induction using the tagged LAPPEND equations. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
   },
   {
     "hol_path": "hol4/src/coalgebras/llistScript.sml",
@@ -68371,6 +68387,14 @@
   },
   {
     "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LFINITE_fromList",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lfinite_fromList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1176-1178 Theorem LFINITE_fromList[simp]: !l. LFINITE (fromList l). The Lean statement is the same universal fact over the same List binder, LFINITE read as LFinite and fromList as fromList. The Lean declaration is the source's list recursion (the lnil and lcons rules). HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
     "hol_name": "LFINITE_APPEND",
     "lean_path": "Flapjack/Misc/LList.lean",
     "lean_name": "lfinite_lappendHOL",
@@ -68392,6 +68416,14 @@
     "lean_name": "not_lfinite_lappendHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1081-1082 Theorem NOT_LFINITE_APPEND: !ll1 ll2. ~LFINITE ll1 ==> (LAPPEND ll1 ll2 = ll1). The Lean statement is the same implication with the same two operands and no extra premise: an infinite left operand makes the append equal to it. The proof shows firstNone ll1 = none from the negated finiteness and reads the append pointwise. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LFLATTEN",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lflatten_spec",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1895-1907 val LFLATTEN = new_specification (\"LFLATTEN\", [\"LFLATTEN\"], prove(`?LFLATTEN. !ll. LFLATTEN ll = if LL_ALL ($= LNIL) ll then LNIL else if THE (LHD ll) = LNIL then LFLATTEN (THE (LTL ll)) else LCONS (THE (LHD (THE (LHD ll)))) (LFLATTEN (LCONS (THE (LTL (THE (LHD ll)))) (THE (LTL ll))))`)), statement at :1899-1907. The Lean theorem states the same equation over the same carrier: lflatten ll = if llistEvery (fun x => x = lnil) ll then lnil else if (lhd ll).get p = lnil then lflatten ((ltl ll).get q) else lcons ((lhd ((lhd ll).get p)).get r) (lflatten (lcons ((ltl ((lhd ll).get p)).get s) ((ltl ll).get q))). HOL's THE is Lean's Option.get: the get proofs p q r s are exactly the guards HOL leaves implicit (the negated preceding branch condition makes each Option defined) and proof irrelevance keeps them out of the value, so the equation itself is unchanged. LNIL is lnil, LCONS is lcons, LL_ALL ($= LNIL) is the tagged llistEvery (fun x => x = lnil), and LHD/LTL are the file's untagged lhd/ltl renderings (docstring-cited). HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
   },
   {
     "hol_path": "hol4/src/coalgebras/llistScript.sml",
@@ -68443,6 +68475,14 @@
   },
   {
     "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "to_fromList",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "fromList_toList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1214-1216 Theorem to_fromList: !ll. LFINITE ll ==> (fromList (THE (toList ll)) = ll). The Lean statement keeps HOL's binder order (ll, then the LFINITE hypothesis) and the same conclusion, with THE read as Option.get: the get proof obligation toList ll != none is exactly what LFINITE supplies, and proof irrelevance keeps it out of the value. The proof uses toList_eq_some_rep and fromList_rep. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
     "hol_name": "LPREFIX_NTH",
     "lean_path": "Flapjack/Misc/LList.lean",
     "lean_name": "lprefix_lnth_iff",
@@ -68472,6 +68512,14 @@
     "lean_name": "prefixesLprefixTotalHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-b rc27.3 source comparison pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae llistScript:2744-2747: universal common upper bound c then lists a,b; conjunction of prefixes of c implies their disjunctive comparability; no finite-list/index/chain or evaluator premise. HolLList is the original Nat-to-Option invariant subtype, using source lrep_ok_alt:36-57 and llist_tydef:64; LPREFIX case split matches source2655-2662 with ordinary List/Option carriers, equality and isPREFIX. toList getD0 is guarded by LFinite and llength_spec proves SOME length, so the fallback cannot be selected there. Curried convenience APIs remain untagged; these separate exact statements preserve HOL conjunction and quantifier order. Source-reviewed this declaration individually, not blanket lazy-list library approval; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "from_toList",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "toList_fromList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1194-1196 Theorem from_toList: !l. toList (fromList l) = SOME l. The Lean statement is the same universal equation over the same List binder, toList read as toList and fromList as fromList. The proof unfolds toList, uses lfinite_fromList and llength_fromList, then ltake_fromList, as the source does. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
   },
   {
     "hol_path": "HOL/src/list/src/listScript.sml",
