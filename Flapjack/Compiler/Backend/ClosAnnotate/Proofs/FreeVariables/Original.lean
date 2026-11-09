@@ -1,9 +1,36 @@
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables
 import Flapjack.Compiler.Backend.ClosAnnotate.Free.OriginalEquivalence
+import Flapjack.Compiler.Backend.ClosAnnotate.Shift.OriginalEquivalence
 
 /-! Source-shaped free-variable observation for closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate
 open ClosLang DbVars
+
+/-- Free-variable traversal and shifting preserve the position of each expression. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "EL_shift_alt_free"]
+theorem el_shift_altFree (l m : Nat) (i : Spt Nat) (expressions : List Exp) (index : Nat)
+    (bound : index < expressions.length) :
+    [@Flapjack.holEl Exp ⟨.var .none 0⟩ index (shiftSource (altFreeSource expressions).1 l m i)] =
+      shiftSource (altFreeSource [@Flapjack.holEl Exp ⟨.var .none 0⟩ index expressions]).1 l m i := by
+  let : Nonempty Exp := ⟨.var .none 0⟩
+  have freeMap : ∀ xs : List Exp, (altFree xs).1 = xs.map (fun x => (altFreeSing x).1) := by
+    intro xs
+    induction xs with
+    | nil => rfl
+    | cons x xs ih =>
+      change (altFreeList xs).1 = _ at ih
+      simp [altFree, altFreeList, ih]
+  have shiftMap : ∀ xs : List Exp, shiftList xs l m i = xs.map (fun x => shiftSing x l m i) := by
+    intro xs
+    induction xs with
+    | nil => rfl
+    | cons x xs ih => simp [shiftList, ih]
+  rw [altFreeSource_eq_altFree, altFreeSource_eq_altFree, shiftSource_eq_shiftList,
+    shiftSource_eq_shiftList, freeMap, freeMap, shiftMap, shiftMap]
+  simp only [List.map_cons, List.map_nil, Flapjack.holEl_eq_getElem index expressions bound]
+  rw [Flapjack.holEl_eq_getElem]
+  · simp
+  · simpa using bound
 
 /-- Folding paired values separates the payload list from the variable-set fold. -/
 @[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "FOLDR_mk_Union"]

@@ -121,3 +121,16 @@ val lookup_EL_shifted_env_replay = prove (
   >> SRW_TAC [] [ADD1,AC ADD_COMM ADD_ASSOC]
   >> full_simp_tac(srw_ss())[MEM_EL] >> METIS_TAC []);
 val _ = show "lookup_EL_shifted_env_local_typed=" lookup_EL_shifted_env_replay;
+(* Replay the local elementwise shift/free-variable theorem. *)
+val EL_shift_alt_free_replay = prove (
+  ``!fns index. index < LENGTH fns ==>
+      ([EL index (shift (FST (alt_free fns)) l m i)] =
+       shift (FST (alt_free [EL index fns])) l m i)``,
+  Induct >> full_simp_tac(srw_ss())[] >> REPEAT STRIP_TAC
+  >> ONCE_REWRITE_TAC [alt_free_CONS]
+  >> SIMP_TAC std_ss [Once shift_CONS]
+  >> Cases_on `index` >> full_simp_tac(srw_ss())[]
+  >> full_simp_tac(srw_ss())[LET_DEF,alt_free_def]
+  >> REPEAT (AP_TERM_TAC ORELSE AP_THM_TAC)
+  >> full_simp_tac(srw_ss())[SING_HD,LENGTH_FST_alt_free]);
+val _ = show "EL_shift_alt_free_local_typed=" EL_shift_alt_free_replay;

@@ -58,3 +58,4 @@ FOLDR_mk_Union_local_typed=∀(ys :(α # db_var_set) list) (aux :α list) (l :db
 no_overlap_has_var_IMP_local_typed=∀(n :num) (l2 :db_var_set) (x :num). no_overlap n l2 ∧ has_var x l2 ⇒ n ≤ x
 evaluate_shift_REPLICATE_const_0_typed=evaluate (shift (REPLICATE (n :num) (const_0 (v8 :tra))) (m :num) (l :num) (i :num sptree$num_map),(env :v list),(t1 :(α, β) state)) = ((Rval (REPLICATE n (Number (0 :int))) :(v list, v) result),t1)
 lookup_EL_shifted_env_local_typed=∀(y :num list) (n :num) (k :num). n < LENGTH y ∧ ALL_DISTINCT y ⇒ lookup y❲n❳ (shifted_env k y) = SOME (k + n)
+EL_shift_alt_free_local_typed=∀(fns :closLang$exp list) (index :num). index < LENGTH fns ⇒ [(shift (FST (alt_free fns)) (l :num) (m :num) (i :num sptree$num_map))❲index❳] = shift (FST (alt_free [fns❲index❳])) l m i
