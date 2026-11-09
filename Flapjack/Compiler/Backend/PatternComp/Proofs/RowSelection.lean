@@ -292,7 +292,7 @@ theorem matchRows_all_fail (refs : HolFiniteMapExact Nat Term) (value : Term)
 
 /-- Moving nullary constructor rows forward preserves matching for values
 that are not nullary constructors, provided the original scan is safe. -/
-theorem matchRows_moveConstUp_nonNullary (refs : HolFiniteMapExact Nat Term) (value : Term)
+private theorem matchRows_moveConstUp_nonNullary (refs : HolFiniteMapExact Nat Term) (value : Term)
     (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none)
     (notNullary : ∀ tag, value ≠ .term tag []) :
     matchRows refs (moveConstUp rows) value = matchRows refs rows value := by

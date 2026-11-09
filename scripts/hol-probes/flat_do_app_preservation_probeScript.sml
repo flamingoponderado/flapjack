@@ -24,3 +24,10 @@ val _ = show_thm "pmatch_nil_typed=" flatPropsTheory.pmatch_nil;
 val _ = show_thm "flat_build_rec_env_merge_typed=" flatPropsTheory.build_rec_env_merge;
 val _ = show_thm "flat_evaluate_cons_typed=" flatPropsTheory.evaluate_cons;
 val _ = show_thm "flat_evaluate_append_typed=" flatPropsTheory.evaluate_append;
+
+val flat_build_rec_env_help = prove (
+  ``∀funs env funs'.
+      FOLDR (λ(f,x,e) env'. (f, flatSem$Recclosure env funs' f)::env') env' funs =
+      MAP (λ(fn,n,e). (fn, flatSem$Recclosure env funs' fn)) funs ++ env'``,
+  Induct >> srw_tac[][] >> PairCases_on `h` >> srw_tac[][]);
+val _ = show_thm "flat_build_rec_env_help_typed=" flat_build_rec_env_help;

@@ -130515,5 +130515,13 @@
   "lean_name": "evaluate_append",
   "statement_status": "pending_statement_review",
   "reviewer": "Compared flat_evaluate_append_typed in flat_do_app_preservation_probe.out: source variable order, state threading, value append and error propagation agree; complete evaluator and carrier correspondence remain pending review."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "build_rec_env_help_lem",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/ValueBasics.lean",
+  "lean_name": "buildRecEnv_help",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Replayed the original local proof with inferred types in flat_build_rec_env_help_typed, flat_do_app_preservation_probe.out: the free initial environment precedes the quantified bindings, environment and closure definitions; the second and third binding fields have independent types and are not identified with the closure fields."
 }
 ]
