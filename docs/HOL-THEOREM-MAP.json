@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "shift_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/MaxApp.lean", "lean_name": "shiftSource_obeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared shift_obeys_max_app_typed: the bound and all expression-list, natural and sparse-tree index variables are unrestricted. Both occurrences of EVERY are membership quantification over the reviewed obeysMaxApp predicate, and the conclusion uses original shiftSource."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "HD_annotate_SING",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotationInvariants/Original.lean", "lean_name": "hdAnnotate_sing",
   "statement_status": "reviewed_exact",
