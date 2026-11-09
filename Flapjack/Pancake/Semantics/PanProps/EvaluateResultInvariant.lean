@@ -3930,30 +3930,30 @@ theorem evalPanSemRecursiveCallFiniteContext_shapeInvariant
     exact hInvariant
 end PanSemStateFiniteExact
 
-/-- Exact finite-support port of HOL `evaluate_structs_invariant`
-    (`panPropsScript.sml:1210-1212`). The premise is the HOL result-pair
-    equation for `evaluate`; the conclusion preserves the structural context.
-    Its proof uses the same finite-support recursive evaluator as the exact
-    PanSem `evaluate_def` port. Only the four named finite-map fields and the
-    positive width-indexed words use reviewed representation translations. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_structs_invariant" 1210
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
-theorem evaluateStructsInvariantFiniteExact {width : Nat} {σ : Type}
-    [NeZero width] (program : ProgHOL width)
-    (source : PanPropsEvalStateFiniteExact width σ)
-    (result : Option (PanSemResultExact width))
-    (postState : PanPropsEvalStateFiniteExact width σ)
+/-- The pair-shaped finite evaluator's successful run, unwrapped: a recursive-call
+output `pair` with its result and state projections, and the source structural
+context. Shared by the two `evaluateHOLFinitePair` consumers below. The two
+`DecidablePred` binders are explicit so that the recursive context is the same
+term on both sides of the `evaluateHOLFiniteResult` bridge. -/
+private theorem evaluateHOLFinitePair_recursiveCall {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (source : PanPropsEvalStateFiniteExact width σ)
+    (result : Option (PanSemResultExact width)) (postState : PanPropsEvalStateFiniteExact width σ)
     (heval : PanPropsEvalStateFiniteExact.evaluateHOLFinitePair source program =
-      (result, postState)) :
-    postState.structs = source.structs := by
+      (result, postState))
+    [hmemaddrs : DecidablePred source.toPanSemFinite.memaddrs]
+    [hshMemaddrs : DecidablePred source.toPanSemFinite.shMemaddrs] :
+    ∃ pair : Option (PanSemResultExact width) × PanSemStateFiniteExact.FiniteEvalContext width σ,
+      PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext program
+          ⟨source.toPanSemFinite, hmemaddrs, hshMemaddrs⟩ = some pair ∧
+        pair.1 = result ∧ pair.2.state = postState.toPanSemFinite ∧
+        postState.structs = source.structs := by
   classical
   let panSource := source.toPanSemFinite
   have hevalPan : PanSemStateFiniteExact.evaluateHOLFiniteState panSource program =
       (result, postState.toPanSemFinite) := by
     let actual := PanSemStateFiniteExact.evaluateHOLFiniteState panSource program
-    have hlocalEval :
-        (actual.1, PanPropsEvalStateFiniteExact.ofPanSemFinite actual.2) =
+    have hlocalEval : (actual.1,
+        PanPropsEvalStateFiniteExact.ofPanSemFinite actual.2) =
           (result, postState) := by
       simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, actual,
         panSource] using heval
@@ -3964,10 +3964,20 @@ theorem evaluateStructsInvariantFiniteExact {width : Nat} {σ : Type}
     apply Prod.ext
     · simpa [actual] using congrArg Prod.fst hlocalEval
     · simpa [PanPropsEvalStateFiniteExact.toPanSemFinite_ofPanSemFinite] using hpostFinite
-  have hevalMarked := (PanSemStateFiniteExact.evaluateHOLFiniteResult_eq_iff
-    panSource program (result, postState.toPanSemFinite)).2 hevalPan
+  have hevalWithDeciders :
+      PanSemStateFiniteExact.evaluateHOLFiniteStateWithDeciders
+        (h := hmemaddrs) (hshared := hshMemaddrs) panSource program =
+          (result, postState.toPanSemFinite) := by
+    rw [← PanSemStateFiniteExact.evaluateHOLFiniteState_eq_withDeciders
+      (hmem := hmemaddrs) (hshared := hshMemaddrs)]
+    exact hevalPan
+  have hevalMarked : PanSemStateFiniteExact.evaluateHOLFinite panSource program =
+      some (result, postState.toPanSemFinite) :=
+    (PanSemStateFiniteExact.evaluateHOLFiniteResult_eq_iff
+      (h := hmemaddrs) (hshared := hshMemaddrs) panSource program
+      (result, postState.toPanSemFinite)).2 hevalWithDeciders
   let evaluationContext : PanSemStateFiniteExact.FiniteEvalContext width σ :=
-    ⟨panSource, inferInstance, inferInstance⟩
+    ⟨panSource, hmemaddrs, hshMemaddrs⟩
   have hevalProjection :
       (PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
         program evaluationContext).map
@@ -3989,6 +3999,8 @@ theorem evaluateStructsInvariantFiniteExact {width : Nat} {σ : Type}
         simp
       have hstructs := PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext_structs_eq
         program evaluationContext output.1 output.2 (by simp [hcontextEval])
+      refine ⟨output, by simp, congrArg Prod.fst hprojectPair,
+        hpostFinite, ?_⟩
       calc
         postState.structs =
             (PanPropsEvalStateFiniteExact.ofPanSemFinite output.2.state).structs := by
@@ -3996,6 +4008,60 @@ theorem evaluateStructsInvariantFiniteExact {width : Nat} {σ : Type}
         _ = output.2.state.structs := rfl
         _ = evaluationContext.state.structs := hstructs
         _ = source.structs := rfl
+
+/-- The recursive-call shape invariant at the post-state, with the source
+structural context made explicit. Shared by `evaluateIsWfShapeInvariantFiniteExact`. -/
+private theorem evaluateHOLFinitePair_postFacts {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (source : PanPropsEvalStateFiniteExact width σ)
+    (result : Option (PanSemResultExact width)) (postState : PanPropsEvalStateFiniteExact width σ)
+    (heval : PanPropsEvalStateFiniteExact.evaluateHOLFinitePair source program =
+      (result, postState))
+    (hvars : panSemStateVarsHOLWf source.toPanSemFinite.structs source.toPanSemFinite)
+    [hmemaddrs : DecidablePred source.toPanSemFinite.memaddrs]
+    [hshMemaddrs : DecidablePred source.toPanSemFinite.shMemaddrs] :
+    postState.toPanSemFinite.structs = source.toPanSemFinite.structs ∧
+      panSemStateVarsHOLWf source.toPanSemFinite.structs postState.toPanSemFinite ∧
+      panSemResultHOLWf source.toPanSemFinite.structs result := by
+  classical
+  obtain ⟨pair, hcontextEval, hresult, hstate, -⟩ :=
+    evaluateHOLFinitePair_recursiveCall program source result postState heval
+  have hcontextSuccess :
+      PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext program
+        ⟨source.toPanSemFinite, hmemaddrs, hshMemaddrs⟩ =
+          some (result, pair.2) := by
+    rw [hcontextEval]
+    cases pair with
+    | mk evalResult evalContext => simp_all
+  have hinvariant :=
+    PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext_shapeInvariant
+      program ⟨source.toPanSemFinite, hmemaddrs, hshMemaddrs⟩ hvars result pair.2
+      hcontextSuccess
+  have hpostVars : panSemStateVarsHOLWf source.toPanSemFinite.structs
+      postState.toPanSemFinite := by
+    simpa [hstate] using hinvariant.2.1
+  exact ⟨by simpa [hstate] using hinvariant.1, hpostVars, hinvariant.2.2⟩
+
+/-- Exact finite-support port of HOL `evaluate_structs_invariant`
+    (`panPropsScript.sml:1210-1212`). The premise is the HOL result-pair
+    equation for `evaluate`; the conclusion preserves the structural context.
+    Its proof uses the same finite-support recursive evaluator as the exact
+    PanSem `evaluate_def` port. Only the four named finite-map fields and the
+    positive width-indexed words use reviewed representation translations. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_structs_invariant" 1210
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateStructsInvariantFiniteExact {width : Nat} {σ : Type}
+    [NeZero width] (program : ProgHOL width)
+    (source : PanPropsEvalStateFiniteExact width σ)
+    (result : Option (PanSemResultExact width))
+    (postState : PanPropsEvalStateFiniteExact width σ)
+    (heval : PanPropsEvalStateFiniteExact.evaluateHOLFinitePair source program =
+      (result, postState)) :
+    postState.structs = source.structs := by
+  classical
+  obtain ⟨_, _, _, _, hstructs⟩ :=
+    evaluateHOLFinitePair_recursiveCall program source result postState heval
+  exact hstructs
 
 /-- Exact finite-support port of HOL `evaluate_is_wf_shape_invariant`
     (`cakeml/pancake/semantics/panPropsScript.sml:1250-1264`). The two input
@@ -4036,57 +4102,8 @@ theorem evaluateIsWfShapeInvariantFiniteExact {width : Nat} {σ : Type}
         simpa [panSource, PanPropsEvalStateFiniteExact.toPanSemFinite,
           PanPropsEvalStateFiniteExact.toExact,
           PanSemStateFiniteExact.ofExact] using hlookup)
-  have hevalPan : PanSemStateFiniteExact.evaluateHOLFiniteState panSource program =
-      (result, postState.toPanSemFinite) := by
-    let actual := PanSemStateFiniteExact.evaluateHOLFiniteState panSource program
-    have hlocalEval : (actual.1,
-        PanPropsEvalStateFiniteExact.ofPanSemFinite actual.2) =
-          (result, postState) := by
-      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, actual,
-        panSource] using heval
-    have hpostCustom : PanPropsEvalStateFiniteExact.ofPanSemFinite actual.2 =
-        postState := by
-      simpa using congrArg Prod.snd hlocalEval
-    have hpostFinite := congrArg PanPropsEvalStateFiniteExact.toPanSemFinite hpostCustom
-    apply Prod.ext
-    · simpa [actual] using congrArg Prod.fst hlocalEval
-    · simpa [PanPropsEvalStateFiniteExact.toPanSemFinite_ofPanSemFinite] using hpostFinite
-  have hevalMarked := (PanSemStateFiniteExact.evaluateHOLFiniteResult_eq_iff
-    panSource program (result, postState.toPanSemFinite)).2 hevalPan
-  let evaluationContext : PanSemStateFiniteExact.FiniteEvalContext width σ :=
-    ⟨panSource, inferInstance, inferInstance⟩
-  have hevalProjection :
-      (PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
-        program evaluationContext).map
-        (fun pair => (pair.1, pair.2.state)) =
-        some (result, postState.toPanSemFinite) := by
-    simpa [PanSemStateFiniteExact.evaluateHOLFinite, evaluationContext] using hevalMarked
-  have hpostAndResult :
-      postState.toPanSemFinite.structs = panSource.structs ∧
-      panSemStateVarsHOLWf panSource.structs postState.toPanSemFinite ∧
-      panSemResultHOLWf panSource.structs result := by
-    cases hcontextEval : PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
-        program evaluationContext with
-    | none => simp [hcontextEval] at hevalProjection
-    | some pair =>
-        have hprojectPair : (pair.1, pair.2.state) = (result, postState.toPanSemFinite) := by
-          simpa [hcontextEval] using hevalProjection
-        have hresult : pair.1 = result := congrArg Prod.fst hprojectPair
-        have hstate : pair.2.state = postState.toPanSemFinite :=
-          congrArg Prod.snd hprojectPair
-        have hcontextSuccess :
-            PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
-              program evaluationContext = some (result, pair.2) := by
-          rw [hcontextEval]
-          cases pair with
-          | mk evalResult evalContext => simp_all
-        have hinvariant :=
-          PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext_shapeInvariant
-            program evaluationContext hvars result pair.2 hcontextSuccess
-        have hpostVars : panSemStateVarsHOLWf panSource.structs
-            postState.toPanSemFinite := by
-          simpa [hstate] using hinvariant.2.1
-        exact ⟨by simpa [hstate] using hinvariant.1, hpostVars, hinvariant.2.2⟩
+  have hpostAndResult :=
+    evaluateHOLFinitePair_postFacts program source result postState heval hvars
   have hstructs : postState.structs = source.structs := by
     simpa [PanPropsEvalStateFiniteExact.toPanSemFinite, panSource,
       PanSemStateFiniteExact.ofExact, PanPropsEvalStateFiniteExact.toExact] using
