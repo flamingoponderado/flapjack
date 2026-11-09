@@ -2,8 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineEvaluation
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! The thunk-force case of BVL inlining simulation. -/

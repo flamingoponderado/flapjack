@@ -10,11 +10,6 @@ public import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.EqualityExpressions
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.ThunkOperations
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Dispatcher for ordinary source operators in the proof-side simulation.

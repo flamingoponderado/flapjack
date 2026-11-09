@@ -2,8 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateEventsClock
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
 @[expose] public section
 
 /-! Call and continuation trace facts for BVI clock comparisons. -/

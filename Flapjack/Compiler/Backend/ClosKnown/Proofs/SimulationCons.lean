@@ -1,6 +1,11 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.Simulation
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SubsptComposition
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxCons
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Simulation
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SubsptComposition
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxCons
+
+@[expose] public section
+
 
 /-! Sequential-list case of the known-function semantic simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Cons

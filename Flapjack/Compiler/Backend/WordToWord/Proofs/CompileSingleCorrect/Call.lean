@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Control
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingle
-import Flapjack.Misc.Sptree.FromList2
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Control
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingle
+public import Flapjack.Misc.Sptree.FromList2
+
+@[expose] public section
 
 /-!
 # `word_to_wordProof` `compile_single_correct`: the `Call` case
@@ -385,6 +389,7 @@ theorem compileSingleCorrect_callRet {width : Nat} [NeZero width] {C F : Type}
     rw [if_neg hnm, show wordSemCutEnvs names st.locals = some envs from hce]
     dsimp only
     rw [if_neg hz, h]
+    rfl
   have tgtRun : ∀ (r : Option (WordSemResult width)) (s' : WordSemStateFiniteExact width C F),
       evaluate prog' (WordSemStateFiniteExact.callEnv args1 ss (pushEnv envs handler (decClock T))) =
         (r, s') →
@@ -400,6 +405,7 @@ theorem compileSingleCorrect_callRet {width : Nat} [NeZero width] {C F : Type}
     rw [if_neg hnm, show wordSemCutEnvs names T.locals = some envs from hce]
     dsimp only
     rw [if_neg hz, h]
+    rfl
   by_cases hz : st.clock = 0
   · refine ⟨st.permute, ?_⟩
     rw [evaluate_call_eq, hxs, evaluate_call_eq, show WordSemStateFiniteExact.getVars args T = some xs

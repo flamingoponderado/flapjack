@@ -3,8 +3,6 @@ module
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.LetLetEvaluate
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CanRaise
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! Compositional cases of the BVL handler compiler simulation. -/

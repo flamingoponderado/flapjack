@@ -6,9 +6,6 @@ public import Flapjack.Compiler.Backend.BviToData.Proofs.FindCode
 public import Flapjack.Compiler.Backend.BviToData.Proofs.Call
 public import Flapjack.Compiler.Backend.Semantics.DataProps.JumpPush
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
 @[expose] public section
 
 /-! Thunk forcing cases for the BVI-to-data simulation. -/

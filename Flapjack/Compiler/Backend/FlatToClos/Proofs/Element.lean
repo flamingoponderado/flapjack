@@ -5,11 +5,6 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 public import Mathlib.Data.List.Forall2
 public import Flapjack.Misc.ListLookupRel
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Constructor and reference reads for the proof-side pass simulation. -/

@@ -1,8 +1,13 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationDecode
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateRelation
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
-import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartEvaluate
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationDecode
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartEvaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
+
+@[expose] public section
+
 
 /-! Primitive-operation infrastructure for the known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Relations.StateRelation

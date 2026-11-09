@@ -1,6 +1,11 @@
-import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
-import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileDefinitions
-import Flapjack.Pancake.Proofs.PanToTarget.RiscVInstanceExecutable
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
+public import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileDefinitions
+public import Flapjack.Pancake.Proofs.PanToTarget.RiscVInstanceExecutable
+
+@[expose] public section
+
 
 /-! Assembler-only callable compiler interface.
 

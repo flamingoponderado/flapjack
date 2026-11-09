@@ -1,9 +1,17 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SyntaxOracle
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.Semantics
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.Semantics
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.Semantics
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
-import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracleSimulation
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SyntaxOracle
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Semantics
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Semantics
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Semantics
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracleSimulation
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Whole-pass observational composition for the known-function optimizer. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

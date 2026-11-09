@@ -1,6 +1,11 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxOp
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxInstall
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxForce
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxOp
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxInstall
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxForce
+
+@[expose] public section
+
 
 /-! Complete primitive-operation case of approximation correctness. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.CorrectApprox.OpTotal

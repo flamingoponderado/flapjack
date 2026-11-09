@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppInline
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppNonInline
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppInline
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppNonInline
+
+@[expose] public section
+
 
 /-! Application expression case of the known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.App

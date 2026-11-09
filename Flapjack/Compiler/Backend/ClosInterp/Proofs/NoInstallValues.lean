@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.InitRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.InitRelation
+
+@[expose] public section
+
 
 /-! Values and states used for the no-install interpreter-insertion case.
 These proof-side definitions await HOL carrier and statement review. -/

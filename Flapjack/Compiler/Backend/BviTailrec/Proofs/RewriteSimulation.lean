@@ -1,10 +1,15 @@
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteScan
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermExtension
-import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
-import Flapjack.Compiler.Backend.Semantics.BviSem.Semantics
-import Flapjack.Compiler.Backend.BackendProps.StateCompiler
-import Flapjack.Compiler.Backend.Semantics.BviProps.AdjustOracleEval
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteScan
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermExtension
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Semantics
+public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+public import Flapjack.Compiler.Backend.Semantics.BviProps.AdjustOracleEval
+
+@[expose] public section
+
 
 /-! Cases of the source tail-recursion rewrite simulation. The evaluator,
 source scan and compilation carriers remain subject to HOL review. -/

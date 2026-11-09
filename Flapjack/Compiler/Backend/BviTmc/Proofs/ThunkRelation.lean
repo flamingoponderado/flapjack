@@ -5,9 +5,6 @@ public import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
 public import Flapjack.Compiler.Backend.Semantics.BviSem.Thunk
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 -- Public declarations below use private helpers.

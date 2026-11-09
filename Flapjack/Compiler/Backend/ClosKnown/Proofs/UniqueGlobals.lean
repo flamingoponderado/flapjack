@@ -1,5 +1,10 @@
-import Mathlib.Data.Set.Disjoint
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.EvaluateGlobalsTotal
+module
+
+public import Mathlib.Data.Set.Disjoint
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.EvaluateGlobalsTotal
+
+@[expose] public section
+
 
 /-! Uniqueness and preservation of global writes across oracle programs. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.UniqueGlobalsPort

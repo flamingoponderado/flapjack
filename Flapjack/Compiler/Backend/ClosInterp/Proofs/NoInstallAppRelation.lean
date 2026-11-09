@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallSimulation
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallSimulation
+
+@[expose] public section
+
 
 /-! Equal-clock closure application simulation for the proof-side evaluator.
 The evaluator and state carriers await HOL correspondence review. -/

@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApplyPartial
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLetrec
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApplyPartial
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLetrec
+
+@[expose] public section
+
 
 /-! Full closure application in the known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.ApplyFull

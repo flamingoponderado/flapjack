@@ -5,8 +5,6 @@ public import Flapjack.Compiler.Backend.FlatProps.PatternMatch
 public import Flapjack.Compiler.Backend.FlatPattern.Proofs.CompiledMatch
 public import Flapjack.Compiler.Backend.FlatPattern.Proofs.MatchRows
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Selected-row simulation for flat pattern compilation. The evaluator and

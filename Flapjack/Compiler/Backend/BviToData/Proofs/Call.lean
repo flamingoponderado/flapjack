@@ -11,9 +11,6 @@ public import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateForce
 public import Flapjack.Misc.Sptree.UnionAlgebra
 public import Mathlib.Data.List.Induction
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
 @[expose] public section
 
 /-! Call argument cases for the BVI-to-data simulation. -/

@@ -2,10 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateSequence
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 /-! Tick case of the closure-to-BVL expression simulation candidate. -/

@@ -135,62 +135,13 @@ theorem setEqInv {cs : CopyState} {t s : Nat} :
   split
   case isFalse => exact ⟨h1, h2, h3, h4⟩
   case isTrue =>
-  cases hcl : liveClass cs s with
-  | none =>
-      unfold cpStateInv; dsimp only
-      refine ⟨?_, ?_, ?_, ?_⟩
-      · intro v c hv
-        simp only [sptLookupInsert] at hv
-        split at hv
-        · cases hv; omega
-        split at hv
-        · cases hv; omega
-        · have := h1 v c hv; omega
-      · intro c hc
-        simp only [sptMem, sptDomain, sptLookupInsert] at hc
-        split at hc
-        · omega
-        · have := h2 c hc; omega
-      · intro s' c hc
-        have := h3 s' c hc; omega
-      · intro c v hc
-        simp only [sptLookupInsert] at hc ⊢
-        split at hc
-        · cases hc; simp_all
-        · have hv := h4 c v hc
-          have hlt := h1 v c hv
-          have hct : c ≠ cs.next := by omega
-          by_cases hvt : v = t
-          · subst hvt; rw [ht] at hv; cases hv
-          · rw [if_neg hvt]
-            by_cases hvs : v = s
-            · subst hvs
-              exact absurd (liveClass_some.mpr ⟨hv, by rw [hc]; simp⟩) (by rw [hcl]; simp)
-            · rw [if_neg hvs]; exact hv
-  | some c0 =>
-      unfold cpStateInv; dsimp only
-      obtain ⟨hs, hfrom⟩ := liveClass_some.mp hcl
-      have hc0 := h1 s c0 hs
-      refine ⟨?_, ?_, ?_, ?_⟩
-      · intro v c hv
-        simp only [sptLookupInsert] at hv
-        split at hv
-        · cases hv; exact hc0
-        · exact h1 v c hv
-      · intro c hc
-        simp only [sptMem, sptDomain, sptLookupInsert] at hc
-        split at hc
-        · subst_vars; exact hc0
-        · exact h2 c hc
-      · exact h3
-      · intro c v hc
-        simp only [sptLookupInsert] at hc ⊢
-        split at hc
-        · cases hc; simp_all
-        · have hv := h4 c v hc
-          by_cases hvt : v = t
-          · subst hvt; rw [ht] at hv; cases hv
-          · rw [if_neg hvt]; exact hv
+    cases hcl : liveClass cs s with
+    | none =>
+      simp only [cpStateInv, sptLookupInsert, sptMem, sptDomain, liveClass] at *
+      grind
+    | some c0 =>
+      simp only [cpStateInv, sptLookupInsert, sptMem, sptDomain, liveClass] at *
+      grind
 
 /-- `ALOOKUP_MEM` for `List.lookup` (Flapjack infrastructure). -/
 theorem listMemOfLookup {α β : Type} [DecidableEq α] {l : List (α × β)} {a : α} {b : β} :

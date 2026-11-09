@@ -2,11 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.ClosInterp.Proofs.EvaluateEl
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Correctness of the interpreter's list reversal helper. The evaluator and

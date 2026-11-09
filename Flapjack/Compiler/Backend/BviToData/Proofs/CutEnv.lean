@@ -4,9 +4,6 @@ public import Flapjack.Compiler.Backend.BviToData.Proofs.Variables
 public import Flapjack.Compiler.Backend.BviToData.Assign
 public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
 @[expose] public section
 
 /-! Live-name environment cuts used by BVI-to-data assignments. -/

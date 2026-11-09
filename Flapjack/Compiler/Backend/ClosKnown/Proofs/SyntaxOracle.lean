@@ -1,11 +1,16 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracle
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
-import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
-import Flapjack.Compiler.Backend.BackendProps.Pure
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.Syntax
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleGlobals
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownSubspt
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleMonotonic
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracle
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
+public import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
+public import Flapjack.Compiler.Backend.BackendProps.Pure
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Syntax
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleGlobals
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownSubspt
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleMonotonic
+
+@[expose] public section
+
 
 /-! Source syntax and oracle preconditions for the known-function pass. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

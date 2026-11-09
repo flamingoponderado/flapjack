@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.SimulationFull
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.SimulationFull
+
+@[expose] public section
+
 
 /-! Initialization and interpreter insertion for the proof-side evaluator.
 The evaluator and state carriers remain pending HOL correspondence review. -/

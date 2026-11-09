@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxCall
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownUnchanged
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxCall
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownUnchanged
+
+@[expose] public section
+
 
 /-! Application case infrastructure for known-function approximation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.CorrectApprox.App

@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.ApplicationRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.ApplicationRelation
+
+@[expose] public section
+
 
 /-! Control-flow simulation for the proof-side evaluator. The evaluator and
 state carriers remain pending HOL correspondence review. -/

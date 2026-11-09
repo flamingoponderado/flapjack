@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.ValueRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ValueRelation
+
+@[expose] public section
+
 
 /-! Boolean values in the known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Relations

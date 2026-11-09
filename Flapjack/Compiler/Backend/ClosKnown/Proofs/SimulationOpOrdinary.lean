@@ -1,6 +1,11 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpForce
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationGlobal
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpForce
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationGlobal
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
+
+@[expose] public section
+
 
 /-! Ordinary operation cases of known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Ordinary

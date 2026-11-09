@@ -5,8 +5,6 @@ public import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingFold
 public import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternList
 public import Flapjack.Compiler.Backend.FlatPattern.BindingsTotal
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Evaluation steps for compiled pattern bindings. These proofs use the

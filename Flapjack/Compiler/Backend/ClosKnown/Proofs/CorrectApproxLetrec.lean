@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxFn
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownUnchanged
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxFn
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownUnchanged
+
+@[expose] public section
+
 namespace Flapjack.Compiler.Backend.ClosKnown.CorrectApprox.Letrec
 open ClosSem ClosProps ClosProps.StateGlobalSafety UniqueGlobalsPort OracleGlobals
 open Flapjack.SemanticPrimitivesHOL

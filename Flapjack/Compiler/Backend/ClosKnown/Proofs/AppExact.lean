@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.Relations
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Relations
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+
+@[expose] public section
+
 
 /-! Exact closure-application equations for the known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Relations.AppExact

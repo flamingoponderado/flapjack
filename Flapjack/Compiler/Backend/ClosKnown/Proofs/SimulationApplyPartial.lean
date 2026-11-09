@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.Simulation
-import Flapjack.Compiler.Backend.Semantics.ClosProps.ClosureLocation
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Simulation
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.ClosureLocation
+
+@[expose] public section
+
 
 /-! Partial closure applications in known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.ApplyPartial

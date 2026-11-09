@@ -3,11 +3,6 @@ module
 public import Flapjack.Misc.List
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Global lookup cases for the proof-side flat-to-closure simulation. -/

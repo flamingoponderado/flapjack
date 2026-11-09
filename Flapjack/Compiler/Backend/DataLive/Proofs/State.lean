@@ -5,8 +5,6 @@ public import Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
 public import Flapjack.Misc.SptreeLookup
 public import Flapjack.Compiler.Backend.Semantics.DataProps.Variables
 
--- Proofs below unfold the private error helpers of `DataSem.evaluate`.
-import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
 @[expose] public section
 
 /-! State relation and local-variable lemmas for data liveness. -/

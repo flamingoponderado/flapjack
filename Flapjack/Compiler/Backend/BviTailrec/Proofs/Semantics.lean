@@ -5,9 +5,6 @@ public import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ListLengthStub
 public import Mathlib.Data.List.Forall2
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! Value and environment relations used by the source tail-recursion proof. -/

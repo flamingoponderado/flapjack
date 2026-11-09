@@ -1,5 +1,10 @@
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyLabChain
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyResourceStage
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyLabChain
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyResourceStage
+
+@[expose] public section
+
 
 /-!
 # `pan_to_target_compile_semantics` assembly, lab chain with the resource limit

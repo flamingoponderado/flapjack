@@ -1,7 +1,12 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpCases
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.SequenceCorrect
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.GeneratedShape
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpCases
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SequenceCorrect
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.GeneratedShape
+public import Flapjack.Misc.ClockWeightInduction
+
+@[expose] public section
+
 
 /-! Call and force cases for the combined let-operation and handler pass. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

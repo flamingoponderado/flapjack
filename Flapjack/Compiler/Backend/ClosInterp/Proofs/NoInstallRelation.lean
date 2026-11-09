@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallInit
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallInit
+
+@[expose] public section
+
 
 /-! Primitive simulation for the no-install interpreter-insertion relation.
 The proof-side evaluator and carriers await HOL correspondence review. -/

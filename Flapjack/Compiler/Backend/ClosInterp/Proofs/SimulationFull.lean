@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.ControlRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.ControlRelation
+
+@[expose] public section
+
 
 /-! Clocked evaluator simulation for interpreter insertion. The evaluator and
 state carriers remain pending HOL correspondence review. -/

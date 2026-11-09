@@ -1,6 +1,11 @@
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitCode
-import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
-import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitCode
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
+public import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
+
+@[expose] public section
+
 
 /-!
 # `pan_to_target_compile_semantics` assembly, stage E2 (word initial state)

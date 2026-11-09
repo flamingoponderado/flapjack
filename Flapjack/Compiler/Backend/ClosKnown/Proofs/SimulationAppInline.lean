@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineClosureRelation
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineLetEvaluation
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineClosureRelation
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineLetEvaluation
+
+@[expose] public section
+
 
 /-! Inlining branch of known-function application simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.AppInline

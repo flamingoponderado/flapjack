@@ -5,8 +5,6 @@ public import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.State
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! Environment agreement on the handler compiler's live variables. -/

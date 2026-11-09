@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationPrimitive
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationPrimitive
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
+
+@[expose] public section
+
 
 /-! Thunk-state simulation for known-function optimization. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Force

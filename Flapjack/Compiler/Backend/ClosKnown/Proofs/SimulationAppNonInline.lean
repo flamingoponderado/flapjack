@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppPrefix
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppPrefix
+
+@[expose] public section
+
 
 /-! Unchanged and annotated application branches of known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.AppNonInline

@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallControl
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallControl
+
+@[expose] public section
+
 
 /-! Mutual no-install preservation for the proof-side closure evaluator.
 The evaluator and its carriers await HOL correspondence review. -/

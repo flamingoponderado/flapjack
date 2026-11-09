@@ -1,10 +1,15 @@
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitCode
-import Flapjack.Compiler.Backend.BackendProof.ReadLimits
-import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
-import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
-import Flapjack.Pancake.Proofs.PanToWord
-import Flapjack.Compiler.Backend.LabToTarget.Initialization
-import Flapjack.SemanticsProps.Implements
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitCode
+public import Flapjack.Compiler.Backend.BackendProof.ReadLimits
+public import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
+public import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
+public import Flapjack.Pancake.Proofs.PanToWord
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization
+public import Flapjack.SemanticsProps.Implements
+
+@[expose] public section
+
 
 /-!
 # `pan_to_target_compile_semantics` assembly, stage G (resource-limit implication)

@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.BvlConst.Proofs.Let
+module
+
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.Let
+
+@[expose] public section
+
 /-! Full constant-propagation simulation and production corollary. -/
 namespace Flapjack.Compiler.Backend.BvlConst.Proofs
 open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BvlProps

@@ -1,9 +1,14 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.MappedGlobals
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallPrimitives
-import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.MappedGlobals
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallPrimitives
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
+public import Aesop
+
+@[expose] public section
+
 
 /-! Runtime global changes made by closure primitives. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

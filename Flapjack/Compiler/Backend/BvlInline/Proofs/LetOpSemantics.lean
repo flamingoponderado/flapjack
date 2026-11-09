@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpCalls
-import Flapjack.Compiler.Backend.BvlInline.Proofs.Semantics
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpCalls
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.Semantics
+
+@[expose] public section
+
 
 /-! Whole-program observations of the let-operation and handler pipeline. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

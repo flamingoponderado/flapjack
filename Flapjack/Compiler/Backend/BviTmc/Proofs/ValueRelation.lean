@@ -5,9 +5,6 @@ public import Flapjack.Compiler.Backend.BackendCommon.SmallInt
 public import Flapjack.Misc.ListEl
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 -- Public declarations below use private helpers.

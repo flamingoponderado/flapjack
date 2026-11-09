@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteCorrespondence
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteCorrespondence
+
+@[expose] public section
 
 /-! Relationships between scan results and tail-rewrite flags. The source
 carriers remain subject to HOL review. -/
@@ -86,14 +90,22 @@ theorem rewriteSingle_scan (e : Exp) (ctx : List ValueType) (loc next acc : Nat)
   | «let» bindings body =>
     let scans := scanList ctx loc bindings
     let types := scans.map fun (_, ty, _, _) => ty
-    let last := match scans.getLast? with | some (cs, _, _, _) => cs | none => ctx
-    have ih := rewriteSingle_scan body (types ++ last) loc next (acc + bindings.length) assoc notNoop
     rw [scanSing.eq_def, rewriteSingle.eq_def]
     dsimp only
-    cases scan : scanSing (types ++ last) loc body with
-    | mk first rest =>
-      cases rewritten : rewriteSingle loc next assoc (acc + bindings.length) (types ++ last) body with
-      | mk flag out => simpa [scan, rewritten] using ih
+    cases hlast : (scanList ctx loc bindings).getLast? with
+    | none =>
+      have ih := rewriteSingle_scan body (types ++ ctx) loc next (acc + bindings.length) assoc notNoop
+      cases scan : scanSing (types ++ ctx) loc body with
+      | mk first rest =>
+        cases rewritten : rewriteSingle loc next assoc (acc + bindings.length) (types ++ ctx) body with
+        | mk flag out => simpa [scan, rewritten] using ih
+    | some entry =>
+      obtain ⟨cs, entryTy, entryFlag, entryOp⟩ := entry
+      have ih := rewriteSingle_scan body (types ++ cs) loc next (acc + bindings.length) assoc notNoop
+      cases scan : scanSing (types ++ cs) loc body with
+      | mk first rest =>
+        cases rewritten : rewriteSingle loc next assoc (acc + bindings.length) (types ++ cs) body with
+        | mk flag out => simpa [scan, rewritten] using ih
   | ifThenElse cond yes no =>
     let context := (scanSing ctx loc cond).1
     have iy := rewriteSingle_scan yes context loc next acc assoc notNoop
@@ -140,12 +152,18 @@ theorem scanSing_choice_type (e : Exp) (ctx : List ValueType) (loc : Nat) :
   | «let» bindings body =>
     let scans := scanList ctx loc bindings
     let types := scans.map fun (_, ty, _, _) => ty
-    let last := match scans.getLast? with | some (cs, _, _, _) => cs | none => ctx
-    have ih := scanSing_choice_type body (types ++ last) loc
     rw [scanSing.eq_def]
     dsimp only
-    cases h : scanSing (types ++ last) loc body with
-    | mk first rest => simpa [h] using ih
+    cases hlast : (scanList ctx loc bindings).getLast? with
+    | none =>
+      have ih := scanSing_choice_type body (types ++ ctx) loc
+      cases h : scanSing (types ++ ctx) loc body with
+      | mk first rest => simpa [h] using ih
+    | some entry =>
+      obtain ⟨cs, entryTy, entryFlag, entryOp⟩ := entry
+      have ih := scanSing_choice_type body (types ++ cs) loc
+      cases h : scanSing (types ++ cs) loc body with
+      | mk first rest => simpa [h] using ih
   | ifThenElse cond yes no =>
     rw [scanSing.eq_def]
     dsimp only

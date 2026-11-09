@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallValues
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallValues
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
+
+@[expose] public section
+
 
 /-! Primitive preservation of the no-install invariant. The evaluator and
 state carriers remain pending HOL correspondence review. -/

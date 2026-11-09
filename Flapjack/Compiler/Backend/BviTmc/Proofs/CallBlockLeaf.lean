@@ -3,9 +3,6 @@ module
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockFrame
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallRelation
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! Recursive-call leaf of ordinary TMC call-block simulation. -/

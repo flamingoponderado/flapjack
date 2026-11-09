@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleGlobals
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleGlobals
+
+@[expose] public section
+
 
 /-! Global approximation across runtime closure execution. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.ApproxRuntime

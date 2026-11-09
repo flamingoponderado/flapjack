@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleGlobals
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.Relations
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleGlobals
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Relations
+
+@[expose] public section
+
 
 /-! Monotonic approximation trees carried by compiler oracles. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.OracleMonotonic

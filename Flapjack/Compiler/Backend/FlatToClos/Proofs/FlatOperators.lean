@@ -5,11 +5,6 @@ public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Globals
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockExpressions
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Flat-specific operator simulations. These use proof-side semantic

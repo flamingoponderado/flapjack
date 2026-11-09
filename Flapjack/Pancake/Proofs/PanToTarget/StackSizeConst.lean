@@ -1,8 +1,13 @@
-import Flapjack.Pancake.Proofs.PanToTarget
-import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConstFull
-import Flapjack.Pancake.Proofs.PanToWord
-import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget
+public import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConstFull
+public import Flapjack.Pancake.Proofs.PanToWord
+public import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
+
+@[expose] public section
+
 
 /-!
 # `pan_to_targetProof`: panLang stack-size constancy group

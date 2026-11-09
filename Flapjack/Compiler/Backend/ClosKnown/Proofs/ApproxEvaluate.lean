@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownGlobals
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.OpEvaluateGlobals
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownGlobals
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.OpEvaluateGlobals
+
+@[expose] public section
+
 
 /-! Global approximation preservation for the executed known traversal. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.ApproxEvaluate

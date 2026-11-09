@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxCons
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxCons
+
+@[expose] public section
+
 
 /-! Let-binding case of known-function approximation correctness. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.CorrectApprox.Let

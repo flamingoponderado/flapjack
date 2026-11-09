@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpSetGlobal
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpSetGlobal
+
+@[expose] public section
+
 
 /-! Global-read replacement in known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Global

@@ -2,9 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.BviInline.Proofs.RemoveTicksCalls
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! Assembly of the BVI tick-removal evaluation simulation. -/

@@ -1,7 +1,12 @@
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileWordToWord
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoMtCode
-import Flapjack.Pancake.Proofs.WordConvs.NotCreatedTail
-import Flapjack.Pancake.Proofs.WordConvs.RemoveMustTerminate
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileWordToWord
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoMtCode
+public import Flapjack.Pancake.Proofs.WordConvs.NotCreatedTail
+public import Flapjack.Pancake.Proofs.WordConvs.RemoveMustTerminate
+
+@[expose] public section
+
 
 /-!
 # `word_to_wordProof`: syntactic preservation group

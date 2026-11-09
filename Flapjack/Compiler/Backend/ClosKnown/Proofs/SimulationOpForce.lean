@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationForceArgs
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationForceArgs
+
+@[expose] public section
+
 
 /-! Force-operation dispatch in the known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Force

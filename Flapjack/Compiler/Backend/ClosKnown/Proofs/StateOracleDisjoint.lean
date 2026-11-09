@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleMonotonic
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.EvaluateGlobalsTotal
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleMonotonic
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.EvaluateGlobalsTotal
+
+@[expose] public section
+
 
 /-! Disjointness of initialized globals and future oracle writes. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.StateOracleDisjoint

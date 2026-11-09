@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitialStateRel
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteSimulation
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitialStateRel
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteSimulation
+
+@[expose] public section
+
 
 /-! Namespace conditions at the BVL-to-BVI and tail-recursion boundary. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

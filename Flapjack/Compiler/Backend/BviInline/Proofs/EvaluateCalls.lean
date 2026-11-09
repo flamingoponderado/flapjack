@@ -2,9 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.BviInline.Proofs.EvaluateCases
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! Call cases for the BVI inliner evaluation simulation. -/

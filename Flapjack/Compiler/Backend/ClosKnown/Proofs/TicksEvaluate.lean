@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.AppExact
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.AppExact
+
+@[expose] public section
+
 
 /-! Evaluation of the tick sequence emitted by closure inlining. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.TicksEvaluate

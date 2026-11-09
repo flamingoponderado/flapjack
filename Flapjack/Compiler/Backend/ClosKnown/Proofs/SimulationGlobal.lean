@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationPrimitive
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownOpCorrect
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationPrimitive
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownOpCorrect
+
+@[expose] public section
+
 
 /-! Known-global replacement in the optimizer operation simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Global
