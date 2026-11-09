@@ -28,7 +28,10 @@ def compileDeclarations (declarations : List (Decl (BitVec 64))) : Artifact :=
     (Pancake.PanToTarget.mainFirstHOL (declarations.map declToHOL))
 
 /-- The same native Pancake route with a caller-supplied backend configuration.
-This is driver infrastructure rather than an additional HOL declaration. -/
+This is driver infrastructure rather than an additional HOL declaration.  The
+checked pipeline rejects word programs that `compileNative` would silently
+lower to `Skip`, and lab programs whose `Asm` registers the target cannot
+encode, before any bytes are produced. -/
 def compileWithConfig (config : Compiler.Backend.Backend.Config) (source : String) :
     Except SourceRiscVImageError Output :=
   match Parser.parseTopDecs (fun value => BitVec.ofInt 64 value) source with
@@ -39,8 +42,10 @@ def compileWithConfig (config : Compiler.Backend.Backend.Config) (source : Strin
       | .error error => .error (.static error)
       | .ok _ =>
           let declarations := Pancake.PanToTarget.mainFirstHOL (declarations.map declToHOL)
-          match compileProgAsmFastWithReason config riscvConfig declarations with
-          | .error failure => .error (.artifactFailure failure)
+          match compileProgAsmFastChecked config riscvConfig declarations with
+          | .error (.wordToStack failure) => .error (.wordStackGuard failure)
+          | .error (.labRegister failure) => .error (.labRegisterGuard failure)
+          | .error (.labToTarget failure) => .error (.artifactFailure failure)
           | .ok artifact =>
               .ok { declarations := declarations
                     artifact := some artifact

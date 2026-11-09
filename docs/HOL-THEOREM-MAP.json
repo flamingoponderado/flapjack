@@ -129276,5 +129276,29 @@
   "lean_name": "compileProgAsmFastWithReason_toOption",
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only located-failure sibling agreement for the ordinary artifact compiler: the with-reason function succeeds exactly when the reviewed compileProgAsmFast succeeds, with the same tuple. No separately named HOL declaration; the reviewed compileProgAsmFast definition is unchanged."
-}
+},
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean",
+    "lean_name": "fromStackChecked_ok_agrees",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only checked-from_stack agreement: when the driver-side register-range guard accepts the stack_to_lab output, the checked sibling returns exactly the reviewed from_stack tuple. No separately named HOL declaration; the reviewed from_stack/from_lab definitions are unchanged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean",
+    "lean_name": "compileProgAsmWithChecked_ok_agrees",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only checked-pipeline agreement: when the word-to-stack and register guards accept, the checked allocator-parametric artifact pipeline returns exactly the reviewed compileProgAsmWith tuple. No separately named HOL declaration; the reviewed compileProgAsmWith/from_stack definitions are unchanged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean",
+    "lean_name": "compileProgAsmFastChecked_ok_agrees",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only checked-pipeline agreement for the ordinary artifact compiler: the checked function returns exactly the reviewed compileProgAsmFast tuple on success. No separately named HOL declaration; the reviewed compileProgAsmFast definition is unchanged."
+  }
 ]

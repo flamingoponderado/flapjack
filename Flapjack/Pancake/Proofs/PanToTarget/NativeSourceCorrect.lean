@@ -60,15 +60,16 @@ theorem nativeSourceCompile_ok {source : String} {out : RiscV.NativeSource.Outpu
     · simp at compiled
     · split at compiled
       · simp at compiled
+      · simp at compiled
+      · simp at compiled
       · rename_i artifact artifactEq
         simp only [Except.ok.injEq] at compiled
         refine ⟨parsed, parsedEq, ?_, ?_⟩
         · exact (congrArg RiscV.NativeSource.Output.declarations compiled).symm
         · rw [← congrArg RiscV.NativeSource.Output.artifact compiled]
           unfold RiscV.NativeSource.compileDeclarations
-          rw [← compileProgAsmFastWithReason_toOption]
-          rw [artifactEq]
-          rfl
+          exact (compileProgAsmFastChecked_ok_agrees pancakeRiscVBackendConfig riscvConfig
+            (mainFirstHOL (parsed.map declToHOL)) artifactEq).symm
 
 /-- Every successful artifact has the full logical compiler result with its logical
 bound. This links emitted bytes to the full compiler without evaluating depth in the
