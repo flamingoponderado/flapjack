@@ -1,6 +1,30 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "evaluate_compile_prog_initial_state",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Executable.lean",
+  "lean_name": "evaluateCompileProgInitialState",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": [
+    "Flapjack.HolFiniteMapExact.holEmpty"
+  ],
+  "reviewer": "Compared evaluate_compile_prog_initial_state_typed with inferred types: shared independent compiler and FFI carriers, declaration list, empty initial environment, clock, positive maximum, oracle and compiler agree, as does the complete evaluation equality, including the unit prefix on successful results and unchanged error and final state. The FEMPTY code map is represented by the imported reviewed canonical holEmpty producer; its lookup witness covers this representation only. ClosSem.evaluate inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "evaluate_compile_prog_initial_state_FST_Err",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Executable.lean",
+  "lean_name": "evaluateCompileProgInitialState_fstErr",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": [
+    "Flapjack.HolFiniteMapExact.holEmpty"
+  ],
+  "reviewer": "Compared evaluate_compile_prog_initial_state_FST_Err_typed with inferred types: shared independent compiler and FFI carriers, declaration list, empty initial environment, clock, positive maximum, oracle and compiler agree, as does the equivalence of error-result projections for every error. The FEMPTY code map is represented by the imported reviewed canonical holEmpty producer; its lookup witness covers this representation only. ClosSem.evaluate inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "state_rel_LEAST",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Memory.lean",
   "lean_name": "stateRel_least",
