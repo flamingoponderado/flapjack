@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.Labels
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Labels
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

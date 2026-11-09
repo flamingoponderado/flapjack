@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem
+
+@[expose] public section
 
 /-! Basic flat values and their recursively contained values. -/
 namespace Flapjack.Compiler.Backend.FlatProps

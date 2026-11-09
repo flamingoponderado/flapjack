@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedArray
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ListConversion
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveData
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedArray
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ListConversion
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveData
+
+@[expose] public section
 
 /-! Bounded vector and string primitive simulation over preliminary relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

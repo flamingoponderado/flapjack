@@ -1,7 +1,13 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.InstallApply
-import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineCall
-import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateCodeFull
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.InstallApply
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineCall
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateCodeFull
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Structural cases of the BVL inlining evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

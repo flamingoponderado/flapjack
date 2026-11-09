@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
+
+@[expose] public section
 
 /-!
 # wordProps `evaluate_add_clock_io_events_mono` over the exact wordSem evaluator

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.SourceCompile
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Total
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.SourceCompile
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Total
+
+@[expose] public section
 
 /-! Correspondence between total source-shaped conversion and the executed
 checked closure-to-BVL converter. -/

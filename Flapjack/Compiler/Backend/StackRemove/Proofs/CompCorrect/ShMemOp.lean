@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
-import Flapjack.Compiler.Backend.StackRemove.Proofs.ExpressionSimulation
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.ExpressionSimulation
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.ShMemOp
 open Flapjack Compiler.Backend.StackLang StackSemEvaluate StackSemStateOps StackSemShMem

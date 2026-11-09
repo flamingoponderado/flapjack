@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
-import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
-import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
+
+@[expose] public section
 
 /-!
 # wordProps stack-swap lemmas

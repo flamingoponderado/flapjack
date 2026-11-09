@@ -1,7 +1,11 @@
-import Flapjack.RiscV.Allocator
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
-import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
-import Flapjack.Pancake.WordLang.CutsetsMax
+module
+
+public import Flapjack.RiscV.Allocator
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+public import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+public import Flapjack.Pancake.WordLang.CutsetsMax
+
+@[expose] public section
 
 namespace Flapjack
 

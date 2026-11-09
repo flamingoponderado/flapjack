@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

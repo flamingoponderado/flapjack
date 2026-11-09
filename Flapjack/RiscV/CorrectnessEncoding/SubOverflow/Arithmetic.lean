@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CorrectnessEncoding.Arithmetic
-import Mathlib.Tactic.NormNum
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.Arithmetic
+public import Mathlib.Tactic.NormNum
+
+@[expose] public section
 namespace Flapjack.RiscV.TargetProof.SubOverflow
 set_option autoImplicit false
 /-- The literal final SRLI63 extracts the word64 sign bit. This is local

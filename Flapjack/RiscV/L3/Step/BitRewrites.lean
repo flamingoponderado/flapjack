@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Support
-import Init.Data.BitVec.Bitblast
+module
+
+public import Flapjack.RiscV.L3.Support
+public import Init.Data.BitVec.Bitblast
+
+@[expose] public section
 
 /-! Complete named word-bit rewrites from the original symbolic step theory.
 HOL Boolean negation is rendered as equality to false; no input domain is restricted. -/

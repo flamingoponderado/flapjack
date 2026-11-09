@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LinearScan.ProductionIntervals
-import Flapjack.Compiler.Backend.LinearScan.Sorting
+module
+
+public import Flapjack.Compiler.Backend.LinearScan.ProductionIntervals
+public import Flapjack.Compiler.Backend.LinearScan.Sorting
+
+@[expose] public section
 
 /-!
 Array-backed linear-scan sorting and exchange operations. These are

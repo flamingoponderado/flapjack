@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BackendCommon.Operators
-import Flapjack.Pancake.PanLang
+module
+
+public import Flapjack.Compiler.Backend.BackendCommon.Operators
+public import Flapjack.Pancake.PanLang
+
+@[expose] public section
 
 /-! Classify word arithmetic operations for data-to-word lowering. -/
 namespace Flapjack.Compiler.Backend.DataToWord

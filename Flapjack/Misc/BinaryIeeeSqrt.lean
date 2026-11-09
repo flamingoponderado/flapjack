@@ -1,5 +1,9 @@
-import Flapjack.Misc.BinaryIeeeRound
-import Flapjack.Misc.MachineIeee
+module
+
+public import Flapjack.Misc.BinaryIeeeRound
+public import Flapjack.Misc.MachineIeee
+
+@[expose] public section
 
 /-!
 # HOL `binary_ieee` square root, rendered with rational cuts

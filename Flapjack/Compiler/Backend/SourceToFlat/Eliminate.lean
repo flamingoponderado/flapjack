@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
-import Flapjack.Compiler.Backend.FlatElim.Reachability
-import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
+public import Flapjack.Compiler.Backend.FlatElim.Reachability
+public import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
+
+@[expose] public section
 
 /-! The source-to-flat program stage followed by elimination and pattern compilation. -/
 

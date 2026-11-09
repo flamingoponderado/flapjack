@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateFunction
-import Flapjack.Compiler.Backend.ClosCall.Proofs.KnownOrigins
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateFunction
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.KnownOrigins
+
+@[expose] public section
 
 /-! Connecting function extraction to the direct-call closure invariant. -/
 namespace Flapjack.Compiler.Backend.ClosCall

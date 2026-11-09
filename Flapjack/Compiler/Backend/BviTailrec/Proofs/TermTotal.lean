@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTailrec.Analysis
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec.Analysis
+
+@[expose] public section
 
 /-! Structural sufficiency for the tail-recursion type tests. These are
 Flapjack infrastructure lemmas, not HOL correctness theorem ports. -/

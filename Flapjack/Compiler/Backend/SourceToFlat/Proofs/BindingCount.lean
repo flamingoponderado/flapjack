@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
+
+@[expose] public section
 
 /-! Counts of globally allocated source bindings. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

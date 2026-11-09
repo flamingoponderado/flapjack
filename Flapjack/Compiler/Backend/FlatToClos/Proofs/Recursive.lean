@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.FlatProps.ValueBasics
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
-import Mathlib.Data.List.Forall2
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.ValueBasics
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
+public import Mathlib.Data.List.Forall2
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Recursive-environment prerequisites for flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

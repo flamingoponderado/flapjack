@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+module
+
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+
+@[expose] public section
 
 /-! StackProps `evaluate_consts` (`stackPropsScript.sml:400-418`) over the tagged exact StackSem
 `evaluate` (`EvaluateDef.lean`). HOL proves it by `recInduct evaluate_ind` with the

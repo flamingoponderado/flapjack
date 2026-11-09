@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
-import Flapjack.Compiler.Backend.WordToStack.Proofs.HandlerTransition
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAuxStackSize
-import Flapjack.Compiler.Backend.WordToStack.Proofs.Stubs
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateLaws
-import Flapjack.FiniteMap.MapKeys
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.HandlerTransition
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAuxStackSize
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.Stubs
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateLaws
+public import Flapjack.FiniteMap.MapKeys
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CompCorrect.Raise
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

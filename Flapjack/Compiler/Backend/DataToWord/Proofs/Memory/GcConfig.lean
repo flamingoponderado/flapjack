@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
-import Flapjack.Compiler.Backend.GenGc
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
+public import Flapjack.Compiler.Backend.GenGc
+
+@[expose] public section
 
 /-! Source configuration for the abstract collector. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

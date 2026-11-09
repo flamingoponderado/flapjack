@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Number
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
-import Mathlib.Tactic.NormNum
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Number
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
+public import Mathlib.Tactic.NormNum
+
+@[expose] public section
 
 /-! Signed comparisons of data-language small integers. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

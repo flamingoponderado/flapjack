@@ -1,9 +1,13 @@
-import Flapjack.HolRef
-import Flapjack.RiscV.L3.Support
-import Flapjack.Misc.Words.Log2
-import Flapjack.HolArb
-import Mathlib.Data.BitVec
-import Mathlib.Data.List.Basic
+module
+
+public import Flapjack.HolRef
+public import Flapjack.RiscV.L3.Support
+public import Flapjack.Misc.Words.Log2
+public import Flapjack.HolArb
+public import Mathlib.Data.BitVec
+public import Mathlib.Data.List.Basic
+
+@[expose] public section
 
 /-!
 # Library renderings for the L3 ARMv8 model

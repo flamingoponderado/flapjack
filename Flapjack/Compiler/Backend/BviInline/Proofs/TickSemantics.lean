@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.BviInline.Proofs.ExpRelation
+module
+
+public import Flapjack.Compiler.Backend.BviInline.Proofs.ExpRelation
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+@[expose] public section
 
 /-! Clock behavior of ticks inserted by the BVI inliner. -/
 namespace Flapjack.Compiler.Backend.BviInline

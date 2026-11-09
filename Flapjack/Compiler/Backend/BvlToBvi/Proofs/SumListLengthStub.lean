@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileToListByte
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileToListByte
+
+@[expose] public section
 
 /-! The byte-array list length-summing runtime stub. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxLocations
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
-import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartAnnotations
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxLocations
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartAnnotations
+
+@[expose] public section
 
 /-! Annotation preservation cases for the known-function traversal. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.TraversalLocations

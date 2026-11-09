@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MappedRefsUpdate
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MappedRefsUpdate
+
+@[expose] public section
 
 /-! Thunk restrictions and reference correspondence for closure-to-BVL. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

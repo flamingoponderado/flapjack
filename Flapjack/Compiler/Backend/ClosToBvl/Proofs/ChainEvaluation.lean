@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Install
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Install
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+
+@[expose] public section
 
 /-! Compiled chains used to execute an installed expression list. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -393,7 +397,7 @@ theorem install_evaluate_compiled_main {C F : Type} (s : ClosSem.State C F) (t f
   refine ⟨start, body, tail, extra, extracted, program, ?_, chainRun⟩
   simp [BvlSem.findCode, Flapjack.holLast, lookup]
 
-private instance : Nonempty ClosSem.Value := ⟨ClosSem.unitValue⟩
+instance chainEvaluationInst1 : Nonempty ClosSem.Value := ⟨ClosSem.unitValue⟩
 
 /-- Related nonempty lists have related last values. -/
 theorem forall₂_last_related {α β : Type} [Nonempty α] {R : α → β → Prop}

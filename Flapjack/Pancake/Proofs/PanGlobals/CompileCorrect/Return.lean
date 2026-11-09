@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCompileCorrectReturn
 open Flapjack.Pancake.PanLang

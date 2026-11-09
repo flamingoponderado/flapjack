@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

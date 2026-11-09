@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.Proofs.WithoutRenaming
-import Flapjack.Compiler.Backend.LinearScan.Proofs.Bijection
-import Flapjack.Compiler.Backend.LinearScan.Proofs.ApplyBijection
-import Flapjack.Compiler.Backend.RegAlloc.SpDefault
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.WithoutRenaming
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.Bijection
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.ApplyBijection
+public import Flapjack.Compiler.Backend.RegAlloc.SpDefault
+
+@[expose] public section
 
 /-!
 # linear_scanProof: `linear_scan_reg_alloc_correct`

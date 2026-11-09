@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Value
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Value
+
+@[expose] public section
 
 /-! Value and reference projection used by the BVI-to-data simulation. -/
 namespace Flapjack.Compiler.Backend.BviToData

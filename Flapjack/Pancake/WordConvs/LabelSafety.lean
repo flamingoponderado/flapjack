@@ -1,6 +1,10 @@
-import Flapjack.Pancake.WordConvs
-import Flapjack.Pancake.WordConvs.CodeLabels
-import Mathlib.Data.Set.Lattice
+module
+
+public import Flapjack.Pancake.WordConvs
+public import Flapjack.Pancake.WordConvs.CodeLabels
+public import Mathlib.Data.Set.Lattice
+
+@[expose] public section
 
 namespace Flapjack
 

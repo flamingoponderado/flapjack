@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosCall.Compile
-import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
-import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
-import Flapjack.Compiler.Backend.ClosKnown.Inline.Free.Correct
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Compile
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
+public import Flapjack.Compiler.Backend.ClosKnown.Inline.Free.Correct
+
+@[expose] public section
 
 /-! Connecting the bounded executable traversal to the total HOL traversal. -/
 namespace Flapjack.Compiler.Backend.ClosCall

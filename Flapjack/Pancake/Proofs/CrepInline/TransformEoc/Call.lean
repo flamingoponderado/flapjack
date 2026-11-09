@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Cases
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Call
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Cases
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Call
+
+@[expose] public section
 
 /-!
 # crep_inline `transform_eoc_correct`: the `Call` case

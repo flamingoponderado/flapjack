@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepInline.InlineRouteBridge
+module
+
+public import Flapjack.Pancake.CrepInline.InlineRouteBridge
+
+@[expose] public section
 
 /-! Byte-name preservation for the executed recursive inliner. These are
 Flapjack codec obligations, with no separate HOL declaration, needed to turn

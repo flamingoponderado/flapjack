@@ -1,7 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
-import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyClock
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyClock
+public import Flapjack.Misc.ClockWeightInduction
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Proof factoring for BVL evaluation clock extension; these helpers have no standalone HOL declarations. -/
 namespace Flapjack.Compiler.Backend.BvlProps

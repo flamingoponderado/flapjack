@@ -2,9 +2,13 @@
 Copyright (c) 2025 Flapjack contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.Tactic.IntervalCases
-import Mathlib.Tactic.Ring
-import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofConditional
+module
+
+public import Mathlib.Tactic.IntervalCases
+public import Mathlib.Tactic.Ring
+public import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofConditional
+
+@[expose] public section
 
 /-!
 # ARMv8 decoder inverses: control transfer and memory forms

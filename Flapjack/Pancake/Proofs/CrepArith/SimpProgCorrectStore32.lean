@@ -1,8 +1,12 @@
-import Flapjack.Pancake.CrepArith
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect
-import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Pancake.CrepArith
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect
+public import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 
 /-!
 # `Store32` case of HOL `crep_arith$simp_prog_correct`

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingConstructors
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingConstructors
+
+@[expose] public section
 
 /-! Growing expression simulation infrastructure for source-to-flat correctness. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

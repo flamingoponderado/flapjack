@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.LabToTarget.PositionalEncoding
-import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
-import Flapjack.Compiler.Backend.LabToTarget.LengthCorrectness
-import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.PositionalEncoding
+public import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
+public import Flapjack.Compiler.Backend.LabToTarget.LengthCorrectness
+public import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

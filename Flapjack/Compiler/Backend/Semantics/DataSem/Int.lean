@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Value
-import Flapjack.Compiler.Backend.BackendCommon.SmallInt
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Value
+public import Flapjack.Compiler.Backend.BackendCommon.SmallInt
+
+@[expose] public section
 
 /-! Integer primitives of the data-language semantics. -/
 namespace Flapjack.Compiler.Backend.DataSem

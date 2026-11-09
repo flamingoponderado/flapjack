@@ -1,14 +1,18 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMax
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
-import Flapjack.Compiler.Backend.StackProps.EvaluateMono
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LocationLabels
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompLength
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompilePrefix
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMax
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
+public import Flapjack.Compiler.Backend.StackProps.EvaluateMono
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LocationLabels
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompLength
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompilePrefix
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CompCorrect.Seq
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

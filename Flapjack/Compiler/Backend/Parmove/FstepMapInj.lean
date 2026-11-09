@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Parmove.InjOnState
-import Flapjack.Compiler.Backend.Parmove.MapState
+module
+
+public import Flapjack.Compiler.Backend.Parmove.InjOnState
+public import Flapjack.Compiler.Backend.Parmove.MapState
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

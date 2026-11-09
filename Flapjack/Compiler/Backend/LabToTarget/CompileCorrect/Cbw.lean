@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Step
-import Flapjack.Compiler.Backend.LabToTarget.InstMem
-import Flapjack.Compiler.Backend.LabToTarget.Memory
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Step
+public import Flapjack.Compiler.Backend.LabToTarget.InstMem
+public import Flapjack.Compiler.Backend.LabToTarget.Memory
+
+@[expose] public section
 
 /-! `Asm (Cbw r1 r2)` case of the original `compile_correct`
 (lab_to_targetProofScript.sml:7719-7827): the code-buffer write is simulated

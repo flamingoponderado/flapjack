@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackLang.Prog
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Compiler.Backend.StackLang.Prog
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackProps
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm

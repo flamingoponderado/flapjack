@@ -1,4 +1,8 @@
-import Flapjack.Misc.ASCIInumbers
+module
+
+public import Flapjack.Misc.ASCIInumbers
+
+@[expose] public section
 
 /-! Counterpart of pinned wordsScript word-to-character conversion. -/
 namespace Flapjack

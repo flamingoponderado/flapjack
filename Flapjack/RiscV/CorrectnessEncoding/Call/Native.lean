@@ -1,6 +1,10 @@
-import Flapjack.RiscV.CorrectnessEncoding.Jump.Native
-import Flapjack.RiscV.CorrectnessEncoding.InstructionStep
-import Flapjack.RiscV.L3.Step.JumpStep
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.Jump.Native
+public import Flapjack.RiscV.CorrectnessEncoding.InstructionStep
+public import Flapjack.RiscV.L3.Step.JumpStep
+
+@[expose] public section
 
 /-! Literal native link-writing transitions used by full Call assembly.
 Local infrastructure without separately named HOL originals. The instruction

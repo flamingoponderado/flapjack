@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
-import Flapjack.Pancake.Semantics.LoopSem
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
+public import Flapjack.Pancake.Semantics.LoopSem
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsReadBytearray
 open Flapjack

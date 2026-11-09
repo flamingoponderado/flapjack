@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Defs
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Defs
+
+@[expose] public section
 
 /-!
 # Guards of the computable ARMv8 encoder

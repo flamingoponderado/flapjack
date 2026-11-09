@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Seq
-import Flapjack.Compiler.Backend.StackProps.AllocationConstants
+module
+
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Seq
+public import Flapjack.Compiler.Backend.StackProps.AllocationConstants
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps
 open Flapjack Flapjack.Compiler.Backend.StackLang

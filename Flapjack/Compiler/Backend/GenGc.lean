@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.GcShared.State
+module
+
+public import Flapjack.Compiler.Backend.GcShared.State
+
+@[expose] public section
 
 /-! Abstract major generational collector. -/
 namespace Flapjack.Compiler.Backend.GenGc

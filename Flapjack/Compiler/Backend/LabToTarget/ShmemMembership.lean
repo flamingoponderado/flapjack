@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.ShmemExtraction
-import Flapjack.Compiler.Backend.LabToTarget.PositionOrder
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemExtraction
+public import Flapjack.Compiler.Backend.LabToTarget.PositionOrder
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Backend.LabSem

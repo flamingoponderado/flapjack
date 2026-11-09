@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileFfi
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileFfi
+
+@[expose] public section
 
 /-! Reference-aware equality under BVL-to-BVI relocation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StackFreeSimulation
-import Flapjack.Compiler.Backend.StackRemove.Proofs.AllocationArithmetic
-import Flapjack.Compiler.Backend.StackRemove.StackAlloc
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackFreeSimulation
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.AllocationArithmetic
+public import Flapjack.Compiler.Backend.StackRemove.StackAlloc
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.StackAllocSimulation
 open Flapjack.Compiler.Backend.StackRemove
 open Flapjack
@@ -223,7 +227,9 @@ theorem runAlloc {width : Nat} [NeZero width] {C F : Type}
           source target relation available (Nat.le_refl _)
         have presented : StackSemEvaluate.evaluate (singleStackAlloc jump pointer maxStackAlloc,
           {target with clock := clock + target.clock}) = (none, {nextTarget with clock := clock + nextTarget.clock}) := by
-          simpa only [nextTarget, StackSemStateOps.setVar] using firstRun
+          -- `exact` matches the statement's and this proof's `match` up to defeq.
+          simp only [nextTarget, StackSemStateOps.setVar] at firstRun ⊢
+          exact firstRun
         rw [presented]
         have clamp : StackSemControl.fixClock {target with clock := clock + target.clock}
             ((none : Option (StackSemResult width)), {nextTarget with clock := clock + nextTarget.clock}) =

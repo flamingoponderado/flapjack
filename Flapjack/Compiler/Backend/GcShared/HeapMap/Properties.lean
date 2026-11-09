@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.GcShared.HeapMap
-import Flapjack.FiniteMap.MapKeys
+module
+
+public import Flapjack.Compiler.Backend.GcShared.HeapMap
+public import Flapjack.FiniteMap.MapKeys
+
+@[expose] public section
 
 /-! Lookup and domain properties of the collector forwarding map. -/
 namespace Flapjack.Compiler.Backend

@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.LabToTarget.EncodingInvariant
-import Flapjack.Compiler.Backend.LabToTarget.SimpleEncoder
-import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
-import Flapjack.Compiler.Backend.LabToTarget.LineLength
-import Flapjack.Compiler.Backend.LabProps.LineLength
-import Flapjack.Compiler.Encoders.AsmProps.Encoding
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.EncodingInvariant
+public import Flapjack.Compiler.Backend.LabToTarget.SimpleEncoder
+public import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
+public import Flapjack.Compiler.Backend.LabToTarget.LineLength
+public import Flapjack.Compiler.Backend.LabProps.LineLength
+public import Flapjack.Compiler.Encoders.AsmProps.Encoding
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

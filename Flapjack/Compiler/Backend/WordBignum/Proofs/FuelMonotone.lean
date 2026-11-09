@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileTotal
+module
+
+public import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileTotal
+
+@[expose] public section
 
 /-! Successful bounded mini-compilation does not change when given more fuel.
 This is a Flapjack infrastructure fact, not a HOL compiler correctness theorem. -/

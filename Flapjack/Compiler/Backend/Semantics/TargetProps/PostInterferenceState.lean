@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.InterferenceContracts
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.InterferenceContracts
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Flapjack.Compiler.Encoders.Asm

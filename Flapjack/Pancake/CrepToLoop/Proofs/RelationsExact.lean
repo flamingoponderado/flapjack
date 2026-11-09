@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepToLoop.StateRel
+module
+
+public import Flapjack.Pancake.CrepToLoop.StateRel
+
+@[expose] public section
 
 /-!
 # crep_to_loop `wlab_wloc`, `mem_rel` and `globals_rel` over the exact carriers

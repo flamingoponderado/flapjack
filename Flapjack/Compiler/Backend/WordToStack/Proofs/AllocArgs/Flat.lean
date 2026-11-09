@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocArgs.Instructions
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocArgs.Instructions
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.AllocArgs
 open Flapjack Flapjack.Compiler.Backend.WordToStack.Native

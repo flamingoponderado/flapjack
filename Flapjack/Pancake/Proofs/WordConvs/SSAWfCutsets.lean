@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.WordConvs.SSAFlatFull
-import Flapjack.Pancake.WordConvs.WfCutsets
-import Flapjack.Misc.Sptree.Wf
+module
+
+public import Flapjack.Pancake.Proofs.WordConvs.SSAFlatFull
+public import Flapjack.Pancake.WordConvs.WfCutsets
+public import Flapjack.Misc.Sptree.Wf
+
+@[expose] public section
 
 /-!
 # `wordConvsProof` SSA well-formed cut sets

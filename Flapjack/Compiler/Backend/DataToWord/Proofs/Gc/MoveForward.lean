@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PointerAddress
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveData
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeader
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PointerAddress
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveData
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeader
+
+@[expose] public section
 
 /-! Forwarding-pointer case of the copying collector simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

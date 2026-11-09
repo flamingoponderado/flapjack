@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Layout
-import Flapjack.Compiler.Backend.BvlJump
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Layout
+public import Flapjack.Compiler.Backend.BvlJump
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Runtime application and initialization stubs for closure-to-BVL. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

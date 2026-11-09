@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Parmove.Steps
-import Mathlib.Tactic.SplitIfs
+module
+
+public import Flapjack.Compiler.Backend.Parmove.Steps
+public import Mathlib.Tactic.SplitIfs
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

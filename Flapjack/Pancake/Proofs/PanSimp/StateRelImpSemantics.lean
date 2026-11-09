@@ -1,7 +1,11 @@
-import Flapjack.Pancake.Proofs.PanSimp.CompileCorrect
-import Flapjack.Pancake.Semantics.PanSem.Semantics
-import Flapjack.Pancake.Proofs.PanSimp
-import Flapjack.Pancake.Semantics.PanSem.TerminationWitness
+module
+
+public import Flapjack.Pancake.Proofs.PanSimp.CompileCorrect
+public import Flapjack.Pancake.Semantics.PanSem.Semantics
+public import Flapjack.Pancake.Proofs.PanSimp
+public import Flapjack.Pancake.Semantics.PanSem.TerminationWitness
+
+@[expose] public section
 
 /-!
 The original pan_simp `state_rel_imp_semantics`

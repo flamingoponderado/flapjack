@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTailrec.Rewrite
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.ScanTotal
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec.Rewrite
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.ScanTotal
+
+@[expose] public section
 
 /-! Structural sufficiency for the tail-recursion rewrite. These proofs do
 not establish HOL correspondence or pass correctness. -/

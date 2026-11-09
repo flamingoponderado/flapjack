@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.GcCombined
-import Flapjack.Compiler.Backend.GenGc
-import Flapjack.Compiler.Backend.GenGcPartial
-import Flapjack.Compiler.Backend.DataToWord.Config
-import Flapjack.Compiler.Backend.CopyingGc
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.GcCombined
+public import Flapjack.Compiler.Backend.GenGc
+public import Flapjack.Compiler.Backend.GenGcPartial
+public import Flapjack.Compiler.Backend.DataToWord.Config
+public import Flapjack.Compiler.Backend.CopyingGc
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! The combined abstract collector. -/
 namespace Flapjack.Compiler.Backend.GcCombined

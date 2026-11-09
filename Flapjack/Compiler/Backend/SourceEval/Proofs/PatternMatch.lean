@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.StateRelation
-import Flapjack.SemanticPrimitivesHOL.PatternMatch
-import Flapjack.Misc.Pair
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.StateRelation
+public import Flapjack.SemanticPrimitivesHOL.PatternMatch
+public import Flapjack.Misc.Pair
+
+@[expose] public section
 
 /-! Pattern matching under the source evaluator's recording relation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

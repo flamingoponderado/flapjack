@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyCode
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyCode
+
+@[expose] public section
 
 /-! Runtime-field transfer across independently typed BVL compiler states. -/
 namespace Flapjack.Compiler.Backend.BvlProps

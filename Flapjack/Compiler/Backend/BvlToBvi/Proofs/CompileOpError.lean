@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCall
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCall
+
+@[expose] public section
 
 /-! Argument-failure propagation through BVL-to-BVI operation lowering. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

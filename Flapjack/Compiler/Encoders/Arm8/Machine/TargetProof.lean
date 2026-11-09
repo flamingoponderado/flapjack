@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.Arm8.Machine.Target
-import Flapjack.Compiler.Encoders.Arm8.TargetProof
-import Flapjack.Compiler.Encoders.AsmProps.Encoding
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Machine.Target
+public import Flapjack.Compiler.Encoders.Arm8.TargetProof
+public import Flapjack.Compiler.Encoders.AsmProps.Encoding
+
+@[expose] public section
 
 /-!
 # Structural facts about the closed ARMv8 target

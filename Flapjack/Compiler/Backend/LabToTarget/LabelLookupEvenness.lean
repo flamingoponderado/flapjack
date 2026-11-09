@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.ValidityNop
-import Flapjack.Compiler.Backend.LabToTarget.SectionLength
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ValidityNop
+public import Flapjack.Compiler.Backend.LabToTarget.SectionLength
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Misc Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

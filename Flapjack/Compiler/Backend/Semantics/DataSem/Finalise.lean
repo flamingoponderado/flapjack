@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Control
-import Flapjack.Misc.Sptree.SizeDelete
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+public import Flapjack.Misc.Sptree.SizeDelete
+
+@[expose] public section
 
 /-! Timestamped mutable-constructor finalization. -/
 namespace Flapjack.Compiler.Backend.DataSem

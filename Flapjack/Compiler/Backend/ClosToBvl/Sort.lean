@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! The source's alternating split and merge sort for generated code. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

@@ -1,10 +1,14 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.Carriers
-import Flapjack.Translator.Monadic.MonadBase
-import Flapjack.Misc.Sptree
-import Flapjack.Misc.ListEl
-import Flapjack.Misc.Sorting
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.Carriers
+public import Flapjack.Translator.Monadic.MonadBase
+public import Flapjack.Misc.Sptree
+public import Flapjack.Misc.ListEl
+public import Flapjack.Misc.Sorting
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
+
+@[expose] public section
 
 /-!
 # reg_alloc graph and state invariants

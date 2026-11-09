@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateSource
-import Flapjack.Compiler.Backend.FlatElim.Proofs.PureFull
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
-import Flapjack.Compiler.Backend.FlatProps.SemanticsSimulation
-import Flapjack.Compiler.Backend.FlatProps.EvalSim
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateSource
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.PureFull
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
+public import Flapjack.Compiler.Backend.FlatProps.SemanticsSimulation
+public import Flapjack.Compiler.Backend.FlatProps.EvalSim
+
+@[expose] public section
 
 /-! Declaration-removal simulation for flat elimination. -/
 namespace Flapjack.Compiler.Backend.FlatElim

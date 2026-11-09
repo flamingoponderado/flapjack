@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpOperators
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpOperators
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.CompileExpLoadByte
 open Flapjack
 open Flapjack.Pancake.PanLang

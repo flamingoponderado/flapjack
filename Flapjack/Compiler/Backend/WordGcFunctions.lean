@@ -1,13 +1,17 @@
-import Flapjack.HolRef
-import Flapjack.Misc.Alignment
-import Flapjack.Misc.ListEl
-import Flapjack.Misc.GoodDimindex
-import Flapjack.Misc.FiniteMapApply
-import Flapjack.Compiler.Backend.BackendCommon
-import Flapjack.Compiler.Backend.DataToWord.Config
-import Flapjack.Compiler.Backend.GcShared
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
-import Flapjack.Pancake.Semantics.PanSemStateEval
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.Alignment
+public import Flapjack.Misc.ListEl
+public import Flapjack.Misc.GoodDimindex
+public import Flapjack.Misc.FiniteMapApply
+public import Flapjack.Compiler.Backend.BackendCommon
+public import Flapjack.Compiler.Backend.DataToWord.Config
+public import Flapjack.Compiler.Backend.GcShared
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+
+@[expose] public section
 
 /-!
 # `word_gcFunctions`: shallow embedding of the word-level garbage collectors

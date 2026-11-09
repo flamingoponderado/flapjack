@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.GenGc.Proofs.Correct
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GcConfig
+module
+
+public import Flapjack.Compiler.Backend.GenGc.Proofs.Correct
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GcConfig
+
+@[expose] public section
 
 /-! Abstract memory conditions for major generational collection. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

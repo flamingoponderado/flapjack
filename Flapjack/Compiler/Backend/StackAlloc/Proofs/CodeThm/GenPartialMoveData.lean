@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveData
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveList
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveData
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveList
+
+@[expose] public section
 
 /-!
 # Partial generational data simulation

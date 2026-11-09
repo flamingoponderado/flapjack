@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateForce
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateInstall
+module
+
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateForce
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateInstall
+
+@[expose] public section
 
 /-! The complete operation case of the closure let-operation simulation. -/
 namespace Flapjack.Compiler.Backend.ClosLetop

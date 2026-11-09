@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.RegAlloc.Executable
-import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileDefinitions
-import Flapjack.Pancake.PanToTarget
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
-import Flapjack.Compiler.Encoders.RiscV.Unsupported
-import Flapjack.RiscV.PipelineDiagnostics
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Executable
+public import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileDefinitions
+public import Flapjack.Pancake.PanToTarget
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+public import Flapjack.Compiler.Encoders.RiscV.Unsupported
+public import Flapjack.RiscV.PipelineDiagnostics
+
+@[expose] public section
 
 /-! Parser-backed native artifact interface. The artifact retains failure and final
 configuration; the stack bound is kept on the separate logical correctness API.

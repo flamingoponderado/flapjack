@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.LabToTarget.InstFrame
-import Flapjack.Compiler.Backend.LabToTarget.InstAlignment
-import Flapjack.Compiler.Backend.Semantics.WordSem
-import Mathlib.Data.BitVec
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.LinearCombination
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.InstFrame
+public import Flapjack.Compiler.Backend.LabToTarget.InstAlignment
+public import Flapjack.Compiler.Backend.Semantics.WordSem
+public import Mathlib.Data.BitVec
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic.LinearCombination
+
+@[expose] public section
 
 /-! Memory-instruction case of the original `Inst_lemma`
 (lab_to_targetProofScript.sml:2242-2878). The source side uses the reviewed

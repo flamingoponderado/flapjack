@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
+
+@[expose] public section
 namespace Flapjack.WordToStackProofs.StateRelCutState
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
 /-- Genuine canonical source codec re-export for the relation qualifier. -/

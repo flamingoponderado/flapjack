@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

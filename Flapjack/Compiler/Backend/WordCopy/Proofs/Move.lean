@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCopy.Proofs.Models
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+module
+
+public import Flapjack.Compiler.Backend.WordCopy.Proofs.Models
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+
+@[expose] public section
 
 /-!
 # word_copyProof: `copy_prop_move` and the invariant through `copy_prop_prog`

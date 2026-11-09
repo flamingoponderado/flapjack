@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternStamps
-import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
-import Flapjack.SemanticPrimitivesHOL.PatternMatch
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternStamps
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+public import Flapjack.SemanticPrimitivesHOL.PatternMatch
+
+@[expose] public section
 
 /-! Match-result relation and pattern simulation infrastructure. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

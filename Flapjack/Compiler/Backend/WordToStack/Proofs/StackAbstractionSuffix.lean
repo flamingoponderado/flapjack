@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.FrameOffsets
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSuffix
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.FrameOffsets
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSuffix
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 

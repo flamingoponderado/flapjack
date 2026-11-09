@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CorrectnessEncoding.MemoryInputs
-import Flapjack.RiscV.CorrectnessEncoding.MemorySource
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.MemoryInputs
+public import Flapjack.RiscV.CorrectnessEncoding.MemorySource
+
+@[expose] public section
 
 /-! Outside-source-domain frames needed by the original Mem assertions.
 These are untagged local compositions with no separately named HOL originals.

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+
+@[expose] public section
 
 /-! Full original StackProps bitmap reconstruction and stack length chain.
 Generic reconstruction payloads are unchanged; stack decoding retains the

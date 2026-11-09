@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Defs.IntegerLoadMode
-import Flapjack.RiscV.L3.Defs.MMU.Primitives
+module
+
+public import Flapjack.RiscV.L3.Defs.IntegerLoadMode
+public import Flapjack.RiscV.L3.Defs.MMU.Primitives
+
+@[expose] public section
 namespace Flapjack.RiscV.L3
 
 /-! Complete literal CSR access section. CSR ranges use HOL signed word12

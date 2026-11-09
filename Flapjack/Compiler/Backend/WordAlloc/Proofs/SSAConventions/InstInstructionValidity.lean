@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.InstructionValidity
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
-import Flapjack.Compiler.Backend.WordAlloc.ProductionSSAMemoryGuard
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.InstructionValidity
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionSSAMemoryGuard
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Flapjack Flapjack.Compiler.Backend.WordAlloc Flapjack.Compiler.Encoders.Asm

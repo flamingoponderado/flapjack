@@ -1,13 +1,17 @@
-import Flapjack.Pancake.Proofs.PanToTarget
-import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
-import Flapjack.Compiler.Backend.BackendProof.ConfigOk
-import Flapjack.Compiler.Backend.BackendProof.MachineInit
-import Flapjack.Compiler.Backend.BackendProof.ReadLimits
-import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
-import Flapjack.Compiler.Backend.Semantics.TargetSem.MachineSem
-import Flapjack.SemanticsProps.Implements
-import Flapjack.Pancake.Semantics.PanSem.Semantics
-import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget
+public import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
+public import Flapjack.Compiler.Backend.BackendProof.ConfigOk
+public import Flapjack.Compiler.Backend.BackendProof.MachineInit
+public import Flapjack.Compiler.Backend.BackendProof.ReadLimits
+public import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.MachineSem
+public import Flapjack.SemanticsProps.Implements
+public import Flapjack.Pancake.Semantics.PanSem.Semantics
+public import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+
+@[expose] public section
 
 /-!
 # The `pan_to_target_compile_semantics` statement (draft interface)

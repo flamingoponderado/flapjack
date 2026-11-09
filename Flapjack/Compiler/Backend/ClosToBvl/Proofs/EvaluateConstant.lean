@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ScalarConstant
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ConstantBuild
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ScalarConstant
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ConstantBuild
+
+@[expose] public section
 
 /-! Constant operation cases of the closure-to-BVL simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

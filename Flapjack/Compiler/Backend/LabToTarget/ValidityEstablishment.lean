@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.LabToTarget.NopInvariant
-import Mathlib.Data.Set.Insert
-import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
-import Flapjack.Compiler.Backend.LabToTarget.OffsetInvariant
-import Flapjack.Compiler.Backend.LabToTarget.LabelExistence
-import Flapjack.Compiler.Backend.LabToTarget.StrongEvenLabels
-import Flapjack.Compiler.Backend.LabProps.Native
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.NopInvariant
+public import Mathlib.Data.Set.Insert
+public import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
+public import Flapjack.Compiler.Backend.LabToTarget.OffsetInvariant
+public import Flapjack.Compiler.Backend.LabToTarget.LabelExistence
+public import Flapjack.Compiler.Backend.LabToTarget.StrongEvenLabels
+public import Flapjack.Compiler.Backend.LabProps.Native
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Misc Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabProps.LabelSets

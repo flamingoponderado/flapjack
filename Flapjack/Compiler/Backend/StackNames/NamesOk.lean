@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackNames
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Compiler.Backend.StackProps.RegisterNames
+module
+
+public import Flapjack.Compiler.Backend.StackNames
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Compiler.Backend.StackProps.RegisterNames
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackNames
 

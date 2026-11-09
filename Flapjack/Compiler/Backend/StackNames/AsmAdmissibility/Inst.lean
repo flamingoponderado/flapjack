@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.StackNames.ProgramNames
-import Flapjack.Compiler.Backend.StackNames.NamesOk
-import Flapjack.Compiler.Backend.StackProps.FixedNames
-import Flapjack.Compiler.Backend.StackProps.ProgramNames
-import Flapjack.Compiler.Backend.StackProps.ProgramValidity
+module
+
+public import Flapjack.Compiler.Backend.StackNames.ProgramNames
+public import Flapjack.Compiler.Backend.StackNames.NamesOk
+public import Flapjack.Compiler.Backend.StackProps.FixedNames
+public import Flapjack.Compiler.Backend.StackProps.ProgramNames
+public import Flapjack.Compiler.Backend.StackProps.ProgramValidity
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackNames
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackProps

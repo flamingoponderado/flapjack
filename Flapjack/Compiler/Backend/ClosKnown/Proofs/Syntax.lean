@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+
+@[expose] public section
 
 /-! Source syntax precondition for known-function optimization. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

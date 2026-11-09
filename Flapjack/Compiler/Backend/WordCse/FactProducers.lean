@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordCse.RegisterData
-import Flapjack.Compiler.Backend.WordCse.InstructionKeys
-import Flapjack.Compiler.Backend.WordCse.ListOrder
-import Flapjack.Misc.BalancedMap.Insert
+module
+
+public import Flapjack.Compiler.Backend.WordCse.RegisterData
+public import Flapjack.Compiler.Backend.WordCse.InstructionKeys
+public import Flapjack.Compiler.Backend.WordCse.ListOrder
+public import Flapjack.Misc.BalancedMap.Insert
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack

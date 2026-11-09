@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviToData.CompileSource
-import Flapjack.Compiler.Backend.BviToData.Proofs.CompileAgreement
-import Mathlib.Tactic
+module
+
+public import Flapjack.Compiler.Backend.BviToData.CompileSource
+public import Flapjack.Compiler.Backend.BviToData.Proofs.CompileAgreement
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-! Structural properties of the original list-shaped BVI compiler. -/
 namespace Flapjack.Compiler.Backend.BviToData

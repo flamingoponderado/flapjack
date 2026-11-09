@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordSimp
-import Flapjack.Compiler.Backend.WordInst
-import Flapjack.Pancake.Proofs.WordConvs.InstSelectExp
-import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
-import Flapjack.Pancake.WordConvs.NotCreated
+module
+
+public import Flapjack.Compiler.Backend.WordSimp
+public import Flapjack.Compiler.Backend.WordInst
+public import Flapjack.Pancake.Proofs.WordConvs.InstSelectExp
+public import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
+public import Flapjack.Pancake.WordConvs.NotCreated
+
+@[expose] public section
 
 /-!
 # `wordConvsProof`: `not_created_subprogs` through the `word_to_word` passes

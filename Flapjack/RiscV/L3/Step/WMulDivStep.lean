@@ -1,6 +1,10 @@
-import Flapjack.RiscV.L3.Step.LoadStep
-import Flapjack.RiscV.L3.Defs.Multiply
-import Flapjack.RiscV.L3.Defs.Divide
+module
+
+public import Flapjack.RiscV.L3.Step.LoadStep
+public import Flapjack.RiscV.L3.Defs.Multiply
+public import Flapjack.RiscV.L3.Defs.Divide
+
+@[expose] public section
 
 /-! Evaluated original `riscv_stepScript.sml` W-multiply/divide step theorems
 (`MULW`/`DIVW`/`DIVUW`/`REMW`/`REMUW`, lines 874-886).  Each keeps the original

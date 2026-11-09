@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+
+@[expose] public section
 
 /-!
 # HOL `wordSem` clock lemmas

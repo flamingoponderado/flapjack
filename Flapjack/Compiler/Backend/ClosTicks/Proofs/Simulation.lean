@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.Operation
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateRaise
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateHandle
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateLet
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateIf
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateLetrec
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateApp
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateCall
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateTick
+module
+
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Operation
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateRaise
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateHandle
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateLet
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateIf
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateLetrec
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateApp
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateCall
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateTick
+
+@[expose] public section
 
 /-! Mutual evaluator simulation for closure tick removal. -/
 namespace Flapjack.Compiler.Backend.ClosTicks

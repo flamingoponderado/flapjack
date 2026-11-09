@@ -1,6 +1,10 @@
-import Mathlib.Data.List.Defs
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLength
-import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+module
+
+public import Mathlib.Data.List.Defs
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLength
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack

@@ -1,7 +1,11 @@
-import Flapjack.Pancake.WordLang
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Misc.Option
-import Flapjack.Misc.Sorting
+module
+
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Misc.Option
+public import Flapjack.Misc.Sorting
+
+@[expose] public section
 
 /-!
 # `word_inst`: instruction selection and three-to-two register conversion

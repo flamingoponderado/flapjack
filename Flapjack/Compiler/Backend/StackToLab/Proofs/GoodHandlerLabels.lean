@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCodeLabels
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCodeLabels
+
+@[expose] public section
 
 /-! The `stack_good_handler_labels` chain of `stack_to_labProofScript.sml:4537-4731`:
 every stack-to-lab pass preserves `stack_good_handler_labels`, so every

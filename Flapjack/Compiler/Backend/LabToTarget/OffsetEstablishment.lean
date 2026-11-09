@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.OffsetInvariant
-import Flapjack.Compiler.Backend.LabToTarget.SimpleEncoder
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.OffsetInvariant
+public import Flapjack.Compiler.Backend.LabToTarget.SimpleEncoder
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

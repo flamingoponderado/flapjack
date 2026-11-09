@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
-import Flapjack.PrimTypesHOL
-import Flapjack.HolArb
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
+public import Flapjack.PrimTypesHOL
+public import Flapjack.HolArb
+
+@[expose] public section
 
 /-!
 # `backend$prim_src_config`

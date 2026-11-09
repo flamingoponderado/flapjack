@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataSpace.Proofs.Accounting
-import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
+module
+
+public import Flapjack.Compiler.Backend.DataSpace.Proofs.Accounting
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
+
+@[expose] public section
 
 /-! Independence of primitive results from the reserved-space field. -/
 namespace Flapjack.Compiler.Backend.DataSpace

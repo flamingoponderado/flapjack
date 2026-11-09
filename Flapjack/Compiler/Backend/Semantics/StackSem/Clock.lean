@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackProps.AllocationConstants
-import Flapjack.Compiler.Backend.StackProps.InstructionConstants
-import Flapjack.Compiler.Backend.StackProps.SharedMemoryClock
+module
+
+public import Flapjack.Compiler.Backend.StackProps.AllocationConstants
+public import Flapjack.Compiler.Backend.StackProps.InstructionConstants
+public import Flapjack.Compiler.Backend.StackProps.SharedMemoryClock
+
+@[expose] public section
 namespace Flapjack.StackSemClock
 open Flapjack StackSemAllocation StackSemStoreConsts StackSemInst StackSemShMem
 /-- Canonical imported state roundtrip; Flapjack representation infrastructure. -/

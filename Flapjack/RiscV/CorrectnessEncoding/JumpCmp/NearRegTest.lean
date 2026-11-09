@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Prefix
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Arithmetic
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Prefix
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Arithmetic
+
+@[expose] public section
 
 /-! Near register Test JumpCmp execution, derived from original source asmStep.
 Untagged local assembly; the complete constructor also covers Reg and far. -/

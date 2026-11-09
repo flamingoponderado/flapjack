@@ -1,7 +1,11 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Assembly
-import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
-import Flapjack.Pancake.CrepToLoop.Proofs.LoopEvaluateHelpers
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Assembly
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Assembly
+public import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
+public import Flapjack.Pancake.CrepToLoop.Proofs.LoopEvaluateHelpers
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Assembly
+
+@[expose] public section
 
 /-!
 # crep_to_loop `code_rel_evaluate_call_correct`

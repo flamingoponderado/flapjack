@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
-import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+module
+
+public import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+
+@[expose] public section
 
 /-! Native asmSem floating-point transition. IEEE primitives use the reviewed
 reals_as_rational_cuts translation and SOUNDNESS item 8. Raw machine words,

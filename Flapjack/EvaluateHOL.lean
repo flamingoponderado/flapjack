@@ -1,5 +1,9 @@
-import Flapjack.SemanticPrimitivesHOL.Eval
-import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Eval
+public import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
+
+@[expose] public section
 
 /-! Initial definitions from the CakeML source evaluator. Its mutually recursive
 definition is in `EvaluateHOL.Definition` and remains pending source review;

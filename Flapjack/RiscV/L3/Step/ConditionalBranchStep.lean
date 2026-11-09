@@ -1,5 +1,13 @@
-import Flapjack.RiscV.L3.Step.LoadStep
-import Flapjack.RiscV.L3.Defs.ConditionalBranch
+module
+
+public import Flapjack.RiscV.L3.Step.LoadStep
+public import Flapjack.RiscV.L3.Defs.ConditionalBranch
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Full original evaluated `riscv_stepScript.sml` conditional-branch equations
 (`BEQ`/`BNE`/`BLT`/`BLTU`/`BGE`/`BGEU`, source `class (rs1,rs2,offs)` at

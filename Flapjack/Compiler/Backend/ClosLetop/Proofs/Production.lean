@@ -1,7 +1,11 @@
-import Flapjack.Misc.Option.MapM
-import Flapjack.Compiler.Backend.ClosLetop.Source
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.Total
-import Mathlib.Tactic
+module
+
+public import Flapjack.Misc.Option.MapM
+public import Flapjack.Compiler.Backend.ClosLetop.Source
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Total
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-! Agreement of executable let-operation cleanup with the source traversal. -/
 namespace Flapjack.Compiler.Backend.ClosLetop

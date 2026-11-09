@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.NativePrograms
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativePrograms
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! backendProofScript.sml `compile_word_to_stack_sfs_aux` (2788-2809): the
 frame sizes returned by `compile_word_to_stack` agree with those of compiling

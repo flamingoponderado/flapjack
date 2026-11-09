@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
-import Flapjack.Compiler.Backend.LabSem.Navigation
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
+public import Flapjack.Compiler.Backend.LabSem.Navigation
+
+@[expose] public section
 
 /-! Original section-local lookup and decomposition of native label navigation.
 Section label validity supplies exactly the ownership and nonzero-label facts
@@ -20,7 +24,7 @@ open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps
 
 /-- Constructive decision procedure for a label constructor test; local Lean
 infrastructure, not an independent HOL declaration. -/
-private instance labelTestDecidable {width : Nat} [NeZero width]
+instance labelTestDecidable {width : Nat} [NeZero width]
     (line : LabLineHOL width) (labelId : Nat) :
     Decidable (∃ sid position, line = .label sid labelId position) := by
   cases line with

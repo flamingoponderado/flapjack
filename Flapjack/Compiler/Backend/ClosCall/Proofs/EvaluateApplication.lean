@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.FullApplication
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.FullApplication
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Evaluation of direct-call-related closure applications. -/
 namespace Flapjack.Compiler.Backend.ClosCall

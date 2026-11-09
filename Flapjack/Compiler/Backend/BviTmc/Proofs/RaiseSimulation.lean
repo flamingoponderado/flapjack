@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.FillHole
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.FillHole
+
+@[expose] public section
 
 /-! The raise case of the TMC evaluation simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc.RaiseSimulation

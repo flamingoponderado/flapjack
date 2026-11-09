@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToWord.Compile
-import Flapjack.Compiler.Backend.WordInst.ExecutableInstSelect
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Compile
+public import Flapjack.Compiler.Backend.WordInst.ExecutableInstSelect
+
+@[expose] public section
 
 /-! Flapjack executable computation infrastructure. Only the instruction selector
 is replaced by its proved counterpart; tagged source types and bodies are unchanged. -/

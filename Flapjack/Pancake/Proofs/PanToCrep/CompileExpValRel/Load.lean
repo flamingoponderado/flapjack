@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
+
+@[expose] public section
 
 /-!
 # Production RV64 `Load` bridge for `compile_exp_val_rel`

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.Arm8.Target
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Target
+
+@[expose] public section
 
 /-! Structural facts about the ARMv8 encoder.
 

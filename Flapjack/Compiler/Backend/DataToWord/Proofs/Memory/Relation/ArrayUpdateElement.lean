@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateStack
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateStack
+
+@[expose] public section
 
 /-! Single-element reference-array updates. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

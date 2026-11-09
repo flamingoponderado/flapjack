@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Termination infrastructure for an unbounded flat evaluator. This measure
 ignores names, traces and literal sizes, and is therefore not HOL's

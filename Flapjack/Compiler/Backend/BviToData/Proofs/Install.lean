@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.State
-import Flapjack.Compiler.Backend.BviToData.Proofs.Conversions
-import Flapjack.Compiler.Backend.BviToData.Proofs.OpFrame
-import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
-import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
-import Flapjack.Misc.Sptree.Map
-import Flapjack.Misc.Sptree.Wf
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.State
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Conversions
+public import Flapjack.Compiler.Backend.BviToData.Proofs.OpFrame
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
+public import Flapjack.Misc.Sptree.Map
+public import Flapjack.Misc.Sptree.Wf
+
+@[expose] public section
 
 /-! Installation cases for the BVI-to-data simulation. -/
 namespace Flapjack.Compiler.Backend.BviToData

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 

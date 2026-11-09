@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpProduction
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpProduction
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+
+@[expose] public section
 
 /-! Evaluation of consecutive variable expressions for BVL let optimization. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

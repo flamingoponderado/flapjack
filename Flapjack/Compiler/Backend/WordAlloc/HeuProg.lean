@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.HeuInst
-import Flapjack.Compiler.Backend.WordAlloc.HeuMax
-import Flapjack.Compiler.Backend.WordAlloc.HeuCall
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.HeuInst
+public import Flapjack.Compiler.Backend.WordAlloc.HeuMax
+public import Flapjack.Compiler.Backend.WordAlloc.HeuCall
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

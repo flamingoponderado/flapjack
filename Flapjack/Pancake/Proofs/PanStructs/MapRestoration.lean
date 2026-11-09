@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+module
+
+public import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 open Flapjack
 /-- Full original restoration/map2 commutation, with HOL equality internally

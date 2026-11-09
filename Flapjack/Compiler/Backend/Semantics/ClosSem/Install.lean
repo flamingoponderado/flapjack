@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.State
-import Flapjack.Misc.ShiftSeq
-import Flapjack.Misc.Option
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+public import Flapjack.Misc.ShiftSeq
+public import Flapjack.Misc.Option
+
+@[expose] public section
 
 /-! Dynamic installation in the proof-side closure semantics. -/
 namespace Flapjack.Compiler.Backend.ClosSem

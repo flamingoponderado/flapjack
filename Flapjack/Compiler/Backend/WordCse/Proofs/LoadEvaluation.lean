@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.AssignmentResults
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.AssignmentResults
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack Compiler.Encoders.Asm WordSemStateFiniteExact AssignmentResults

@@ -1,9 +1,13 @@
-import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
-import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
-import Flapjack.Pancake.Proofs.PanStructs.EvaluateStructsCodeInvariant
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
-import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
-import Flapjack.Pancake.PanStructs.CompileProgExact
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
+public import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
+public import Flapjack.Pancake.Proofs.PanStructs.EvaluateStructsCodeInvariant
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
+public import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
+public import Flapjack.Pancake.PanStructs.CompileProgExact
+
+@[expose] public section
 
 /-!
 # Shared finite-map helpers for the `pan_structs` `compile_correct` cases

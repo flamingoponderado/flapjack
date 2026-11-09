@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListRev
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
-import Mathlib.Data.List.Induction
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListRev
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
+public import Mathlib.Data.List.Induction
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.Proofs.WordListReverse
 

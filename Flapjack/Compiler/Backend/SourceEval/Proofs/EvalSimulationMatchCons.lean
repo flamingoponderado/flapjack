@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationHandle
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentBind
-import Flapjack.NamespaceProps
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationHandle
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentBind
+public import Flapjack.NamespaceProps
+
+@[expose] public section
 
 /-! Pattern-match row case of the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

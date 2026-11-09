@@ -1,7 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateLength
-import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyEvents
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateLength
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyEvents
+public import Flapjack.Misc.ClockWeightInduction
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! BVL event-prefix proof cases; these helpers have no standalone HOL declarations. -/
 namespace Flapjack.Compiler.Backend.BvlProps

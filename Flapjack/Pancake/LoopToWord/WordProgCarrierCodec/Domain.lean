@@ -1,5 +1,9 @@
-import Flapjack.RiscV.Allocator
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+module
+
+public import Flapjack.RiscV.Allocator
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+
+@[expose] public section
 
 /-! Flapjack-only support for the actual partial production carrier encoder.
 The structural domain is proved equal to the real encoder for every program.

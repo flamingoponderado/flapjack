@@ -1,7 +1,11 @@
-import Flapjack.Pancake.WordLang.MaxVarExp
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
-import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConstFull
+module
+
+public import Flapjack.Pancake.WordLang.MaxVarExp
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
+public import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConstFull
+
+@[expose] public section
 
 /-!
 # `wordProps`: state-constancy lemmas (`*_const`, `*_with_const`)

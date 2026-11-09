@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ALookupMap
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeInsertWf
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeAccessors
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ALookupMap
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeInsertWf
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeAccessors
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack Flapjack.WordAlloc Flapjack.WordSemStateFiniteExact

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.GcShared.Reachability
-import Flapjack.Compiler.Backend.GcShared.Related
-import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
+module
+
+public import Flapjack.Compiler.Backend.GcShared.Reachability
+public import Flapjack.Compiler.Backend.GcShared.Related
+public import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
+
+@[expose] public section
 
 /-! Abstract collector reachability conditions. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

@@ -1,18 +1,22 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.LoopEvaluateHelpers
-import Flapjack.Pancake.CrepToLoop.Proofs.CrepEvalHelpers
-import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
-import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
-import Flapjack.Pancake.Semantics.LoopProps.EvalExact
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
-import Flapjack.Pancake.Semantics.ByteAlignBridge
-import Flapjack.Pancake.Semantics.PanSem.MemLoad32Alt
-import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
-import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkEvalExact
-import Flapjack.Pancake.Semantics.CrepProps.EvalSomeVarCexp
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpTmpBound
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpLeTmpDomain
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpOutRel
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Load
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.LoopEvaluateHelpers
+public import Flapjack.Pancake.CrepToLoop.Proofs.CrepEvalHelpers
+public import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+public import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+public import Flapjack.Pancake.Semantics.ByteAlignBridge
+public import Flapjack.Pancake.Semantics.PanSem.MemLoad32Alt
+public import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
+public import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkEvalExact
+public import Flapjack.Pancake.Semantics.CrepProps.EvalSomeVarCexp
+public import Flapjack.Pancake.CrepToLoop.Proofs.CompExpTmpBound
+public import Flapjack.Pancake.CrepToLoop.Proofs.CompExpLeTmpDomain
+public import Flapjack.Pancake.CrepToLoop.Proofs.CompExpOutRel
+public import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Load
+
+@[expose] public section
 
 /-!
 # crep_to_loop `comp_exp_preserves_eval`, split by HOL's `eval_ind` cases

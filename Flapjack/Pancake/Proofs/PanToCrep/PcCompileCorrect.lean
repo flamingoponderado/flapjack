@@ -1,9 +1,13 @@
-import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
-import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
-import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Pancake.PanToCrep.CompileExact
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+public import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
+public import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Pancake.PanToCrep.CompileExact
+
+@[expose] public section
 
 /-!
 # The `pc_compile_correct` statement over the exact carriers

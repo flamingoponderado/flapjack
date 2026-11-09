@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpAtomic
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpAtomic
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.CompileExpVar
 open Flapjack
 open Flapjack.Pancake.PanLang

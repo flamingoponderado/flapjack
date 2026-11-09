@@ -2,7 +2,11 @@
 Copyright (c) 2025 Flapjack contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Flapjack.Compiler.Encoders.Arm8.Machine.MemCase
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Machine.MemCase
+
+@[expose] public section
 
 /-!
 # The remaining ARM8 memory instruction cases of `encoder_correct`

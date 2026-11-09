@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.WordAlloc.ClashTreeProg
-import Flapjack.Compiler.Backend.WordAlloc.ProgramWrites
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ColouringOk
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CheckPartialCol
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CheckCol
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetDeletion
-import Flapjack.Compiler.Backend.RegAlloc.Proofs
-import Flapjack.Pancake.WordConvs.WfCutsets
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ClashTreeProg
+public import Flapjack.Compiler.Backend.WordAlloc.ProgramWrites
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ColouringOk
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CheckPartialCol
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CheckCol
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetDeletion
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs
+public import Flapjack.Pancake.WordConvs.WfCutsets
+
+@[expose] public section
 
 /-!
 # `clash_tree_colouring_ok` statement

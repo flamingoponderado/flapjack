@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.Proofs
-import Flapjack.Misc.Sptree.ToAList
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs
+public import Flapjack.Misc.Sptree.ToAList
+
+@[expose] public section
 
 /-!
 # reg_allocProof clash-tree domain and congruence lemmas

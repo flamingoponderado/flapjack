@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.X64.Machine.DecodeCongr
-import Flapjack.Misc.BytesInMemory
-import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.DecodeCongr
+public import Flapjack.Misc.BytesInMemory
+public import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
+
+@[expose] public section
 
 /-!
 # Bridging encoded bytes in memory to the decoder

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationBase
-import Flapjack.EvaluateHOL.ClockFull
-import Flapjack.EvaluateProps.Length
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationBase
+public import Flapjack.EvaluateHOL.ClockFull
+public import Flapjack.EvaluateProps.Length
+
+@[expose] public section
 
 /-! Expression-list sequencing in the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

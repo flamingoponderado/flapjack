@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateVar
-import Flapjack.SemanticPrimitivesProps.ResultRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateVar
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+
+@[expose] public section
 
 /-! Source-shaped postconditions for closure-to-BVL evaluation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

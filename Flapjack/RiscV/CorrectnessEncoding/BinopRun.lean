@@ -1,7 +1,11 @@
-import Flapjack.RiscV.CorrectnessEncoding.Length
-import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
-import Flapjack.Compiler.Encoders.AsmSem.Step
-import Flapjack.RiscV.L3.Defs.Run
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.Length
+public import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+public import Flapjack.Compiler.Encoders.AsmSem.Step
+public import Flapjack.RiscV.L3.Defs.Run
+
+@[expose] public section
 
 /-! Literal source and native register Binop compositions used to assemble the
 full original encoder case at riscv_targetProofScript.sml:550-559. These local

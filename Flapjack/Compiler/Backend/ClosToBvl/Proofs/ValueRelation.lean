@@ -1,7 +1,15 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureRelation
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
-import Flapjack.Compiler.Backend.BackendCommon.ClosTags
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureRelation
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
+public import Flapjack.Compiler.Backend.BackendCommon.ClosTags
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Value and environment relations for closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

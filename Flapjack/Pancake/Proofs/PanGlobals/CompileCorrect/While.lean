@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
-import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCompileCorrectWhile
 open Flapjack.Pancake.PanLang

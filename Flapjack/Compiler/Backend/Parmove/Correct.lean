@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.Parmove.PmovFinal
-import Flapjack.Compiler.Backend.Parmove.PmovDsteps
-import Flapjack.Compiler.Backend.Parmove.DStepsSteps
-import Flapjack.Compiler.Backend.Parmove.StepsCorrect
-import Flapjack.Compiler.Backend.Parmove.UpdateLemmas
+module
+
+public import Flapjack.Compiler.Backend.Parmove.PmovFinal
+public import Flapjack.Compiler.Backend.Parmove.PmovDsteps
+public import Flapjack.Compiler.Backend.Parmove.DStepsSteps
+public import Flapjack.Compiler.Backend.Parmove.StepsCorrect
+public import Flapjack.Compiler.Backend.Parmove.UpdateLemmas
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

@@ -1,14 +1,18 @@
-import Flapjack.Pancake.PanToWord
-import Flapjack.Compiler.Backend.WordToWord.FastCompile
-import Flapjack.Compiler.Backend.RegAlloc.Executable
-import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
-import Flapjack.Compiler.Backend.WordToStack.Guard
-import Flapjack.Compiler.Backend.WordToStack.StubNames
-import Flapjack.Compiler.Backend.StackAlloc.StubNames
-import Flapjack.Compiler.Backend.StackRemove.StubNames
-import Flapjack.Compiler.Backend.LabToTarget.EncodingGuard
-import Flapjack.Compiler.Backend.WordDepth
-import Flapjack.Compiler.Backend.Backend
+module
+
+public import Flapjack.Pancake.PanToWord
+public import Flapjack.Compiler.Backend.WordToWord.FastCompile
+public import Flapjack.Compiler.Backend.RegAlloc.Executable
+public import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
+public import Flapjack.Compiler.Backend.WordToStack.Guard
+public import Flapjack.Compiler.Backend.WordToStack.StubNames
+public import Flapjack.Compiler.Backend.StackAlloc.StubNames
+public import Flapjack.Compiler.Backend.StackRemove.StubNames
+public import Flapjack.Compiler.Backend.LabToTarget.EncodingGuard
+public import Flapjack.Compiler.Backend.WordDepth
+public import Flapjack.Compiler.Backend.Backend
+
+@[expose] public section
 
 /-! Callable compiler definitions without the end-to-end correctness imports.
 The ordinary artifact API deliberately performs no stack-depth analysis. Its relation

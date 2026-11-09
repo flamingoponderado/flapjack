@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.X64Config.BackendConfig
-import Flapjack.Compiler.Backend.X64Config.BackendProof
-import Flapjack.Compiler.Encoders.X64.Machine.Complete
-import Flapjack.Compiler.Backend.BackendProof.MachineInit
-import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
-import Mathlib.Tactic.IntervalCases
+module
+
+public import Flapjack.Compiler.Backend.X64Config.BackendConfig
+public import Flapjack.Compiler.Backend.X64Config.BackendProof
+public import Flapjack.Compiler.Encoders.X64.Machine.Complete
+public import Flapjack.Compiler.Backend.BackendProof.MachineInit
+public import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
+public import Mathlib.Tactic.IntervalCases
+
+@[expose] public section
 
 /-!
 # x86-64 machine-configuration facts

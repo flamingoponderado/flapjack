@@ -1,4 +1,12 @@
-import Flapjack.Pancake.PanGlobals.CompileExpExact
+module
+
+public import Flapjack.Pancake.PanGlobals.CompileExpExact
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack
 

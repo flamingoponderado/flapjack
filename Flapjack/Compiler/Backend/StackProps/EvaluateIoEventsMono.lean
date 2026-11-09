@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
-import Flapjack.Compiler.Backend.StackProps.InstructionConstants
-import Flapjack.Compiler.Backend.StackProps.AllocationConstants
-import Flapjack.Compiler.Backend.StackProps.SharedMemoryClock
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+public import Flapjack.Compiler.Backend.StackProps.InstructionConstants
+public import Flapjack.Compiler.Backend.StackProps.AllocationConstants
+public import Flapjack.Compiler.Backend.StackProps.SharedMemoryClock
+
+@[expose] public section
 
 /-! Work toward the full original StackProps `evaluate_io_events_mono`
 (stackPropsScript.sml:454–475), a genuine prerequisite of the extra-clock

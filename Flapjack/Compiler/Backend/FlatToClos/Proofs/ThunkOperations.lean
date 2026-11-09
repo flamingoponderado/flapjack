@@ -1,5 +1,14 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Thunk
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Thunk
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Thunk primitive simulations using the proof-side state and value relations.
 These are infrastructure lemmas, not reviewed HOL theorem ports. -/

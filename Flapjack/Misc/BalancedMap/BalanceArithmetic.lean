@@ -1,6 +1,10 @@
-import Flapjack.Misc.BalancedMap.Invariants
-import Lean.Elab.Tactic.Omega
-import Mathlib.Tactic.SplitIfs
+module
+
+public import Flapjack.Misc.BalancedMap.Invariants
+public import Lean.Elab.Tactic.Omega
+public import Mathlib.Tactic.SplitIfs
+
+@[expose] public section
 
 namespace Flapjack.Misc.BalancedMap
 

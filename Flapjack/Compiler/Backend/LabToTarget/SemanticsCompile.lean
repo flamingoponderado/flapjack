@@ -1,13 +1,17 @@
-import Flapjack.Compiler.Backend.LabToTarget.FilterSkipSafety
-import Flapjack.Compiler.Backend.LabToTarget.ImplementsIntro
-import Flapjack.Compiler.Backend.LabToTarget.Initialization.Semantics
-import Flapjack.Compiler.Backend.LabToTarget.FilterSkip
-import Flapjack.Compiler.Backend.LabToTarget.SkipFilterPreconditions
-import Flapjack.Compiler.Backend.LabToTarget.FindFfiNamesEvery
-import Flapjack.Compiler.Backend.LabToTarget.ListSubset
-import Flapjack.Compiler.Backend.LabToTarget.MmioShmem
-import Flapjack.Compiler.Backend.LabFilter.Proofs.SectionEnd
-import Flapjack.Compiler.Backend.LabFilter.Map
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.FilterSkipSafety
+public import Flapjack.Compiler.Backend.LabToTarget.ImplementsIntro
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization.Semantics
+public import Flapjack.Compiler.Backend.LabToTarget.FilterSkip
+public import Flapjack.Compiler.Backend.LabToTarget.SkipFilterPreconditions
+public import Flapjack.Compiler.Backend.LabToTarget.FindFfiNamesEvery
+public import Flapjack.Compiler.Backend.LabToTarget.ListSubset
+public import Flapjack.Compiler.Backend.LabToTarget.MmioShmem
+public import Flapjack.Compiler.Backend.LabFilter.Proofs.SectionEnd
+public import Flapjack.Compiler.Backend.LabFilter.Map
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabLang

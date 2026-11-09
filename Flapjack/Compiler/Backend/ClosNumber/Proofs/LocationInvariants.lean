@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosNumber
-import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
-import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+module
+
+public import Flapjack.Compiler.Backend.ClosNumber
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+
+@[expose] public section
 
 /-! Function-location invariants of closure numbering. -/
 namespace Flapjack.Compiler.Backend.ClosNumber

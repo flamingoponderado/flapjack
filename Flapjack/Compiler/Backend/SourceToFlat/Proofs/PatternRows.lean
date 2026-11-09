@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternSimulation
-import Flapjack.Compiler.Backend.FlatProps.PatternBindings
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternSimulation
+public import Flapjack.Compiler.Backend.FlatProps.PatternBindings
+
+@[expose] public section
 
 /-! Pattern-row prerequisites over the preliminary source-to-flat relations.
 Full correspondence of these relations with HOL remains open. -/

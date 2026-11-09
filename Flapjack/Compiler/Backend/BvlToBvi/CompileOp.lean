@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.BvlToBvi
-import Flapjack.Compiler.Backend.BvlToBvi.Analysis
-import Flapjack.Compiler.Backend.BackendCommon.BvlStubs
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi
+public import Flapjack.Compiler.Backend.BvlToBvi.Analysis
+public import Flapjack.Compiler.Backend.BackendCommon.BvlStubs
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Operation lowering for BVL-to-BVI. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
-import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
+public import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 

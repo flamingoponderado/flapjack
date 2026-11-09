@@ -1,7 +1,11 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpTmpBound
-import Flapjack.Pancake.CrepToLoop.StateRel
-import Flapjack.Pancake.CrepLang.Exp
-import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.CompExpTmpBound
+public import Flapjack.Pancake.CrepToLoop.StateRel
+public import Flapjack.Pancake.CrepLang.Exp
+public import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+
+@[expose] public section
 
 /-!
 # crep_to_loop `compile_exp_le_tmp_domain`

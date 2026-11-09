@@ -1,10 +1,14 @@
-import Flapjack.Pancake.LoopCall
-import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
-import Flapjack.Pancake.Semantics.LoopProps.EvalExact
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
-import Flapjack.Misc.SptreeLookup
-import Flapjack.Pancake.LoopCall.IsLoad
+module
+
+public import Flapjack.Pancake.LoopCall
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+public import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+public import Flapjack.Misc.SptreeLookup
+public import Flapjack.Pancake.LoopCall.IsLoad
+
+@[expose] public section
 
 /-!
 # loop_call `compile_correct`

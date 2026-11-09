@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Thunk
-import Flapjack.Compiler.Backend.DataToWord.Proofs.WordTest
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Thunk
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.WordTest
+
+@[expose] public section
 
 /-! Concrete thunk-header tests used by data-to-word correctness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs

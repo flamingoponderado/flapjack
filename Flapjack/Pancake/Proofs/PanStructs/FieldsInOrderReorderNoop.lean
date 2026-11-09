@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpNField
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpNField
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.FieldsInOrderReorderNoop
 open Flapjack
 open Flapjack.Pancake.PanLang

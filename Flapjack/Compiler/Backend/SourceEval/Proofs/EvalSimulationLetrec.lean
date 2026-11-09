@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationCons
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentRecursive
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationCons
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentRecursive
+
+@[expose] public section
 
 /-! Recursive-binding case of the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

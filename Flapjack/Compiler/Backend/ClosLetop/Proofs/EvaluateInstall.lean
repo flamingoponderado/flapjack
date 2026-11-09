@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateOp
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.Install
-import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
+module
+
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateOp
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Install
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
+
+@[expose] public section
 
 /-! Installation case of closure let-operation correctness. -/
 namespace Flapjack.Compiler.Backend.ClosLetop

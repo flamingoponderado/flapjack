@@ -1,8 +1,14 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.AllocDefsLookup
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalOracleSimulation
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MakeVarls
-import Flapjack.EvaluateHOL.Definition
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.AllocDefsLookup
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalOracleSimulation
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MakeVarls
+public import Flapjack.EvaluateHOL.Definition
+public import Flapjack.HolRef
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Source-to-flat execution of the environment declaration. The flat
 evaluator and factored relations still require HOL correspondence review. -/

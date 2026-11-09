@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.AllocDefsLookup
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.AllocDefsLookup
+
+@[expose] public section
 
 /-! Extract a reserved global slot block and use it in the declaration step.
 The source oracle and its complete index invariant are not yet represented here;

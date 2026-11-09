@@ -1,12 +1,16 @@
-import Flapjack.Misc.ListLookup
-import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsExact
-import Flapjack.Pancake.Proofs.PanGlobals.SemanticsInitCall
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsCons
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsAlignment
-import Flapjack.Pancake.Proofs.PanGlobals.FpermSemantics
-import Flapjack.Pancake.Proofs.PanGlobals.SemanticsEmptyLocals
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelImpSemantics
-import Flapjack.Pancake.Semantics.PanProps.HasMain
+module
+
+public import Flapjack.Misc.ListLookup
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsExact
+public import Flapjack.Pancake.Proofs.PanGlobals.SemanticsInitCall
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsCons
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsAlignment
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermSemantics
+public import Flapjack.Pancake.Proofs.PanGlobals.SemanticsEmptyLocals
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelImpSemantics
+public import Flapjack.Pancake.Semantics.PanProps.HasMain
+
+@[expose] public section
 
 namespace Flapjack
 

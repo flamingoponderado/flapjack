@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Defs.MMU.Walk
-import Flapjack.RiscV.L3.Defs.MMU.Insert
+module
+
+public import Flapjack.RiscV.L3.Defs.MMU.Walk
+public import Flapjack.RiscV.L3.Defs.MMU.Insert
+
+@[expose] public section
 namespace Flapjack.RiscV.L3
 
 /-- Source review: riscvScript5491-5623 complete hit/miss equation. Current

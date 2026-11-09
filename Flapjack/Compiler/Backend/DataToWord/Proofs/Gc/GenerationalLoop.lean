@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalData
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalData
+
+@[expose] public section
 
 /-! Major collector loop simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

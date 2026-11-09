@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.Value
-import Flapjack.Compiler.Backend.Semantics.DataSem.Int
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Int
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Value
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Int
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Int
+
+@[expose] public section
 
 /-! Integer operations under the BVI-to-data value projection. -/
 namespace Flapjack.Compiler.Backend.BviToData

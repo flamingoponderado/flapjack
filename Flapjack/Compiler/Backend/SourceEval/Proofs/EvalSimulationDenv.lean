@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDeclarations
-import Flapjack.Compiler.Backend.SourceEval.Proofs.DeclareEnvSimulation
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDeclarations
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.DeclareEnvSimulation
+
+@[expose] public section
 
 /-! Environment-declaration case of the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

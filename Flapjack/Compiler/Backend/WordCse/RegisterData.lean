@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.Knowledge
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Knowledge
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack

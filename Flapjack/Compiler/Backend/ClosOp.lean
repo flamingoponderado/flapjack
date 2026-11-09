@@ -1,7 +1,15 @@
-import Flapjack.Compiler.Backend.ClosLang.Budget
-import Flapjack.Compiler.Backend.ClosOp.EqBudget
-import Flapjack.Compiler.Backend.ClosOp.EqWeightProofs
-import Flapjack.Misc.AppList
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Budget
+public import Flapjack.Compiler.Backend.ClosOp.EqBudget
+public import Flapjack.Compiler.Backend.ClosOp.EqWeightProofs
+public import Flapjack.Misc.AppList
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Bounded infrastructure for the closure smart-operation pass. -/
 namespace Flapjack.Compiler.Backend.ClosOp

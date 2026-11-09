@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackProps.SharedMemoryClock
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
-import Flapjack.Misc.ShiftSeq
+module
+
+public import Flapjack.Compiler.Backend.StackProps.SharedMemoryClock
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+public import Flapjack.Misc.ShiftSeq
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Nonrecursive
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm

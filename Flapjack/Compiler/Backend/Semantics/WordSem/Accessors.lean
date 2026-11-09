@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.State
-import Flapjack.HolArb
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Pancake.Semantics.LoopSemStateExact
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+public import Flapjack.HolArb
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+
+@[expose] public section
 
 /-!
 # Exact HOL `wordSem` state accessors

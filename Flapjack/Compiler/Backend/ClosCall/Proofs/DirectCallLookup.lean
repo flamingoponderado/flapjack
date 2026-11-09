@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateAppExpression
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateAppExpression
+
+@[expose] public section
 
 /-! Generated-code lookup for known direct calls. -/
 namespace Flapjack.Compiler.Backend.ClosCall

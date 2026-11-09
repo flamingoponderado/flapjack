@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+
+@[expose] public section
 
 /-! Closure-language application and free-variable annotation properties. -/
 namespace Flapjack.Compiler.Backend.ClosProps

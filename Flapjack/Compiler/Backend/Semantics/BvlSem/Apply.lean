@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! BVL installation and primitive application. -/
 namespace Flapjack.Compiler.Backend.BvlSem

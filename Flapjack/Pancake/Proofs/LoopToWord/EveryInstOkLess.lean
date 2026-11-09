@@ -1,13 +1,17 @@
-import Flapjack.Pancake.LoopToWord.CompFuncExact
-import Flapjack.Pancake.Semantics.LoopProps.EveryProg
-import Flapjack.Pancake.Semantics.LoopProps.AccVars
-import Flapjack.Pancake.Proofs.LoopToWord.FindVar
-import Flapjack.Pancake.WordConvs
-import Flapjack.Pancake.Proofs.LoopToWord.ContextSupport
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelIntro
-import Flapjack.Misc.Sptree.ToAList
+module
+
+public import Flapjack.Pancake.LoopToWord.CompFuncExact
+public import Flapjack.Pancake.Semantics.LoopProps.EveryProg
+public import Flapjack.Pancake.Semantics.LoopProps.AccVars
+public import Flapjack.Pancake.Proofs.LoopToWord.FindVar
+public import Flapjack.Pancake.WordConvs
+public import Flapjack.Pancake.Proofs.LoopToWord.ContextSupport
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelIntro
+public import Flapjack.Misc.Sptree.ToAList
 -- Shares the generated `compHOL` match-congruence auxiliaries (avoids a duplicate declaration).
-import Flapjack.Pancake.LoopToWord.Proofs.NoFP
+public import Flapjack.Pancake.LoopToWord.Proofs.NoFP
+
+@[expose] public section
 
 /-!
 # `loop_to_wordProof`: instruction well-formedness (`every_inst_ok_less`)

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateSequence
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ByteCopy
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateSequence
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ByteCopy
+
+@[expose] public section
 
 /-! Byte copy-to-vector case of the closure-to-BVL simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

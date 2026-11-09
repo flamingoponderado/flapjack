@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.Globals
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.Globals
+
+@[expose] public section
 
 /-! Global-write bag preservation through multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti

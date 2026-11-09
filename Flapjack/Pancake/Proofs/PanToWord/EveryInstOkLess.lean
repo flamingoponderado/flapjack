@@ -1,9 +1,13 @@
-import Flapjack.Pancake.Proofs.LoopToWord.EveryInstOkLess
-import Flapjack.Pancake.LoopCall
-import Flapjack.Pancake.LoopLive
-import Flapjack.Pancake.CrepToLoop.ContextExact
-import Flapjack.Pancake.Semantics.CrepProps.EveryExpHOL
-import Flapjack.Pancake.CrepArith
+module
+
+public import Flapjack.Pancake.Proofs.LoopToWord.EveryInstOkLess
+public import Flapjack.Pancake.LoopCall
+public import Flapjack.Pancake.LoopLive
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+public import Flapjack.Pancake.Semantics.CrepProps.EveryExpHOL
+public import Flapjack.Pancake.CrepArith
+
+@[expose] public section
 
 /-!
 # `pan_to_wordProof`: `loop_inst_ok` preservation through the loop optimisations

@@ -1,5 +1,9 @@
-import Mathlib.Tactic
-import Flapjack.Compiler.Encoders.AsmSem.Memory
+module
+
+public import Mathlib.Tactic
+public import Flapjack.Compiler.Encoders.AsmSem.Memory
+
+@[expose] public section
 
 /-!
 # The little-endian byte bridge shared by the X64 and ARM8 memory cases

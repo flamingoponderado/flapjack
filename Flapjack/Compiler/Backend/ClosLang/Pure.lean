@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+
+@[expose] public section
 
 /-! Purity classification used by closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosLang

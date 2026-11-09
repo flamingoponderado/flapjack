@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.RiscVConfig.Names
-import Flapjack.Compiler.Backend.Backend
-import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
-import Flapjack.Compiler.Backend.ClosToBvl.Config
-import Flapjack.Compiler.Backend.BvlToBvi.Config
-import Flapjack.Compiler.Backend.PresLang.Config
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.RiscVConfig.Names
+public import Flapjack.Compiler.Backend.Backend
+public import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
+public import Flapjack.Compiler.Backend.ClosToBvl.Config
+public import Flapjack.Compiler.Backend.BvlToBvi.Config
+public import Flapjack.Compiler.Backend.PresLang.Config
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 # `riscv_configScript.sml`: `riscv_backend_config`

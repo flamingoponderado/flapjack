@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL.Primitives
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Primitives
+
+@[expose] public section
 
 /-! Shift definitions shared by the flat semantics and semantic primitive proofs. -/
 namespace Flapjack.SemanticPrimitivesProps

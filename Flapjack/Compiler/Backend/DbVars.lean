@@ -1,4 +1,8 @@
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! De Bruijn variable sets used for closure annotations. -/
 namespace Flapjack.Compiler.Backend.DbVars

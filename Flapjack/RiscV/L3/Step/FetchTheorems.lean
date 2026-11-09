@@ -1,6 +1,10 @@
-import Flapjack.RiscV.L3.Step.Fetch
-import Flapjack.RiscV.L3.Step.BitRewrites
-import Mathlib.Tactic.IntervalCases
+module
+
+public import Flapjack.RiscV.L3.Step.Fetch
+public import Flapjack.RiscV.L3.Step.BitRewrites
+public import Mathlib.Tactic.IntervalCases
+
+@[expose] public section
 
 namespace Flapjack.RiscV.L3.Step
 open Flapjack.RiscV.L3

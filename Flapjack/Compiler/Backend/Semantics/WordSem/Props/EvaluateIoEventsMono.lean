@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.EventsMono
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EventsMono
+
+@[expose] public section
 
 /-! Exact counterpart of wordPropsScript.sml's evaluate_io_events_mono. -/
 

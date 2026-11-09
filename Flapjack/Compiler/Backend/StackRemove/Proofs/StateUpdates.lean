@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+
+@[expose] public section
 
 /-! Native register relation laws from stack_removeProofScript.sml. Updates
 use the evaluator's canonical finite maps and preserve the complete relation,

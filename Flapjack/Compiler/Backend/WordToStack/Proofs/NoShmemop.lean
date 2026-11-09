@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopInstructions
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopFlatEffects
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopRecursive
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCalls
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopInstructions
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopFlatEffects
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopRecursive
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCalls
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang

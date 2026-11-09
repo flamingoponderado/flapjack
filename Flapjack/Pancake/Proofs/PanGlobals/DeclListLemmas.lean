@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals
-import Flapjack.Pancake.Semantics.PanProps
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals
+public import Flapjack.Pancake.Semantics.PanProps
+
+@[expose] public section
 
 /-!
 # pan_globals declaration-list lemmas over the exact `DeclHOL` carrier

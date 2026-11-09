@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
+
+@[expose] public section
 
 /-! Source-matched `Inst` clause of `stackSemScript.sml` `evaluate_def`
 (lines 789-792): a successful primitive `inst i s = SOME s1` continues with

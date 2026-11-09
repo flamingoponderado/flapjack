@@ -1,5 +1,9 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpSurvives
-import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.CompExpSurvives
+public import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
+
+@[expose] public section
 
 /-!
 # crep_to_loop `compile_exp_out_rel`

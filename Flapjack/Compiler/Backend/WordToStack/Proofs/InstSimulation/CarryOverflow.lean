@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterTwo
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadContinuations
-import Flapjack.Pancake.WordLang.MaxVarInst
-import Flapjack.Compiler.Backend.RegAlloc
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterTwo
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadContinuations
+public import Flapjack.Pancake.WordLang.MaxVarInst
+public import Flapjack.Compiler.Backend.RegAlloc
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.InstSimulation.CarryOverflow
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

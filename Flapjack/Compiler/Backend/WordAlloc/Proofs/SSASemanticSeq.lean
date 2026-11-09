@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticControl
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsBounds
-import Flapjack.Pancake.WordConvs.ProgramMonotonicity
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticControl
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsBounds
+public import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.StateRel
-import Flapjack.Compiler.Backend.LabToTarget.InstUpdates
-import Flapjack.Compiler.Encoders.AsmProps.AsmConsts
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.StateRel
+public import Flapjack.Compiler.Backend.LabToTarget.InstUpdates
+public import Flapjack.Compiler.Encoders.AsmProps.AsmConsts
+
+@[expose] public section
 
 /-! Flapjack frame infrastructure for the original `Inst_lemma`
 (lab_to_targetProofScript.sml:2170-2932). HOL re-establishes each conjunct of

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EnvFrame
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EnvFrame
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
+
+@[expose] public section
 
 /-!
 # Word allocation `push_env`/`pop_env` frame lemmas

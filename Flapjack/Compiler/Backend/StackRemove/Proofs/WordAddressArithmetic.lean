@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
+module
+
+public import Flapjack.Compiler.Backend.StackRemove
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.WordAddressArithmetic
 open Flapjack Flapjack.Compiler.Backend.StackRemove
 /-- Original inverse byte-scaling shift, retaining the good-dimension and no-wrap bound. -/

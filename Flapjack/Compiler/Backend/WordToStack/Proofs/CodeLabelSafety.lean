@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramCodeLabels
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
-import Flapjack.Compiler.Backend.StackProps.LabelSafety
-import Flapjack.Pancake.WordConvs.LabelSafety
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramCodeLabels
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
+public import Flapjack.Compiler.Backend.StackProps.LabelSafety
+public import Flapjack.Pancake.WordConvs.LabelSafety
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang

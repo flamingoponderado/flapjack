@@ -1,4 +1,8 @@
-import Flapjack.Misc.BinaryIeeeRound
+module
+
+public import Flapjack.Misc.BinaryIeeeRound
+
+@[expose] public section
 
 /-!
 # Computable binary64 round-to-nearest-even, proved equal to HOL `float_round`

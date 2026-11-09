@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Address
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.CodePointer
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Address
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.CodePointer
+
+@[expose] public section
 
 /-! Reading a concrete block header from the separated heap assertion. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

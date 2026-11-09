@@ -1,8 +1,12 @@
-import Flapjack.FiniteMap.AlistExact.LookupAgreement
-import Flapjack.Misc.ListEl
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MakeVarls
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateCases
+module
+
+public import Flapjack.FiniteMap.AlistExact.LookupAgreement
+public import Flapjack.Misc.ListEl
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MakeVarls
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateCases
+
+@[expose] public section
 
 /-! Linking allocated global names to the corresponding initialized slots. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

@@ -1,4 +1,8 @@
-import Flapjack.RiscV.WordToStack
+module
+
+public import Flapjack.RiscV.WordToStack
+
+@[expose] public section
 
 /-!
 # Checked Word-to-Stack diagnostics

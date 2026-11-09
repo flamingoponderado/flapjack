@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.Thunk
-import Flapjack.FiniteMap.CardinalityExact
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Thunk
+public import Flapjack.FiniteMap.CardinalityExact
+
+@[expose] public section
 /-! Finite-map recursion for BVI mutable-constructor finalisation. -/
 namespace Flapjack.Compiler.Backend.BviSem
 open Flapjack.Compiler.Backend.BvlSem

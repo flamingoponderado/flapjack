@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
+
+@[expose] public section
 
 /-! Array operation simulation for the source-to-flat primitive proof. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

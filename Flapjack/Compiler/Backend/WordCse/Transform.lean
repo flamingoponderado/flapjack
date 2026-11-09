@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordCse.ProductionSet
-import Flapjack.Compiler.Backend.WordCse.CanonicalArith
-import Flapjack.Compiler.Backend.WordCse.CanonicalMove
-import Flapjack.Compiler.Backend.WordCse.FactProducers
-import Flapjack.Compiler.Backend.WordCse.Join
+module
+
+public import Flapjack.Compiler.Backend.WordCse.ProductionSet
+public import Flapjack.Compiler.Backend.WordCse.CanonicalArith
+public import Flapjack.Compiler.Backend.WordCse.CanonicalMove
+public import Flapjack.Compiler.Backend.WordCse.FactProducers
+public import Flapjack.Compiler.Backend.WordCse.Join
+
+@[expose] public section
 
 /-!
 # `word_cse`: the common-subexpression transformation

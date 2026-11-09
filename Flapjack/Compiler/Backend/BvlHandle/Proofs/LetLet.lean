@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlHandle
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle
+
+@[expose] public section
 
 /-! The production environment packer uses a zip with a range for the
 source's indexed map. This proof connects the two formulations. -/

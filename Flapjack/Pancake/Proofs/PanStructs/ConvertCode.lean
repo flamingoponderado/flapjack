@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanStructs.CompileProgExact
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Pancake.PanStructs.CompileProgExact
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 namespace Flapjack.Pancake.PanStructs.CompileShapeExact
 open Flapjack.Pancake.PanLang
 open Flapjack.Basis.Pure.MlString

@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Prime
-import Flapjack.Pancake.Semantics.PanSem.Semantics
-import Flapjack.Pancake.Semantics.PanSem.TerminationWitness
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Prime
+public import Flapjack.Pancake.Semantics.PanSem.Semantics
+public import Flapjack.Pancake.Semantics.PanSem.TerminationWitness
+
+@[expose] public section
 
 namespace Flapjack
 open Pancake.PanLang PanSemStateFiniteExact

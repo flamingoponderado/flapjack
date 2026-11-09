@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyBasic
-import Flapjack.SemanticPrimitivesHOL.Array
-import Flapjack.SemanticPrimitivesHOL.Compare
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyBasic
+public import Flapjack.SemanticPrimitivesHOL.Array
+public import Flapjack.SemanticPrimitivesHOL.Compare
+
+@[expose] public section
 
 /-! Memory branches of the BVL primitive dispatcher. -/
 namespace Flapjack.Compiler.Backend.BvlSem

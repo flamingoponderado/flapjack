@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileFromListByte
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileFromListByte
+
+@[expose] public section
 
 /-! Byte-array to list runtime stub in BVL-to-BVI lowering. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

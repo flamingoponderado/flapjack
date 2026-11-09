@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeader
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeader
+
+@[expose] public section
 
 /-! Concrete heap elements needed by the block-indexing simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

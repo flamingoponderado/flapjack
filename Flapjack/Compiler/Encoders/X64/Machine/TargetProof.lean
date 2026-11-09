@@ -1,7 +1,13 @@
-import Mathlib.Tactic
-import Flapjack.Compiler.Encoders.X64.Machine.EncodingProof
-import Flapjack.Compiler.Encoders.X64.Machine.Target
-import Flapjack.Compiler.Encoders.AsmProps.Encoding
+module
+
+public import Mathlib.Tactic
+public import Flapjack.Compiler.Encoders.X64.Machine.EncodingProof
+public import Flapjack.Compiler.Encoders.X64.Machine.Target
+public import Flapjack.Compiler.Encoders.AsmProps.Encoding
+
+-- Sum `==` must reduce by `rfl`/`decide`; core's derived instance is not exposed.
+import all Init.Data.Sum.Basic
+@[expose] public section
 
 /-!
 # Structural facts about the closed x86-64 target

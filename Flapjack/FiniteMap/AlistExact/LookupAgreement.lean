@@ -1,5 +1,9 @@
-import Flapjack.FiniteMap.AlistExact.Lookup
-import Batteries.Data.List.Basic
+module
+
+public import Flapjack.FiniteMap.AlistExact.Lookup
+public import Batteries.Data.List.Basic
+
+@[expose] public section
 
 /-! Agreement between HOL association-list and Lean list lookup. -/
 namespace Flapjack

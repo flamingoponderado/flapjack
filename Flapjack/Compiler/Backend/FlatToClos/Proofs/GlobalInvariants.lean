@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatToClos.Helpers
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
-import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Helpers
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+public import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
+
+@[expose] public section
 
 /-! Global-write properties of flat-to-closure generated constructors. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Measure
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Measure
+
+@[expose] public section
 
 /-! Concrete termination facts for the recursive sites of
 `stackSemScript.sml:811-892,1022-1027`. These are untagged Lean infrastructure:

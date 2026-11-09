@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.StateRel
-import Flapjack.Compiler.Backend.LabToTarget.InstUpdates
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.StateRel
+public import Flapjack.Compiler.Backend.LabToTarget.InstUpdates
+
+@[expose] public section
 
 /-! Original comparison transport for `JumpCmp` (lab_to_targetProofScript.sml
 2983-3025): an even label offset from an even base stays even, so the source

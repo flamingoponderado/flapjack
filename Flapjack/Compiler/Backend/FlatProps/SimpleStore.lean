@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatProps.SimpleRelations
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.SimpleRelations
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Store operations under simple flat state relations. -/
 namespace Flapjack.Compiler.Backend.FlatProps

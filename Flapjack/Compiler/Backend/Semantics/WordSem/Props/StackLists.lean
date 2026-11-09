@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
+
+@[expose] public section
 
 /-!
 # wordProps stack list lemmas

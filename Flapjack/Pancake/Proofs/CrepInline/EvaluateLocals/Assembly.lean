@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.While
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Call
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.ExtCall
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Primitive
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.ShMem
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.While
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Call
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.ExtCall
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Primitive
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.ShMem
+
+@[expose] public section
 
 /-!
 # crep_inline: assembled `evaluate_locals_same_fdom`

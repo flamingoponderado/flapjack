@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline.Program
-import Flapjack.Compiler.Backend.BvlInline.Proofs.RecursionProduction
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Program
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.RecursionProduction
+
+@[expose] public section
 
 /-! The production and original-shaped BVL program inliners agree. -/
 namespace Flapjack.Compiler.Backend.BvlInline

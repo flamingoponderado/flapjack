@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.BackendProof.MachineInit
-import Flapjack.Misc.Alignment
-import Flapjack.Misc.GoodDimindex
-import Flapjack.Misc.Fun2SetUnion
-import Flapjack.Compiler.Backend.LabToTarget.Initialization
-import Flapjack.Compiler.Backend.StackToLab.Proofs.MakeInit
+module
+
+public import Flapjack.Compiler.Backend.BackendProof.MachineInit
+public import Flapjack.Misc.Alignment
+public import Flapjack.Misc.GoodDimindex
+public import Flapjack.Misc.Fun2SetUnion
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.MakeInit
+
+@[expose] public section
 
 /-!
 # `pan_to_target_compile_semantics` assembly, stage A3b arithmetic

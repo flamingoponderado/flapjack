@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Basis.Pure.MlString

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCompileCorrectAssignLocal
 open Flapjack.Pancake.PanLang

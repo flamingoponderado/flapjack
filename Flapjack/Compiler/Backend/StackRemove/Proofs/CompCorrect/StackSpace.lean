@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StackFreeSimulation
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StackAllocSimulation
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackFreeSimulation
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackAllocSimulation
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.StackSpace
 open Flapjack Flapjack.Compiler.Backend.StackRemove Flapjack.Compiler.Backend.StackLang
 theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact

@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Defs.IntegerLoadMode
-import Flapjack.RiscV.L3.Defs.SystemSignals
+module
+
+public import Flapjack.RiscV.L3.Defs.IntegerLoadMode
+public import Flapjack.RiscV.L3.Defs.SystemSignals
+
+@[expose] public section
 
 /-! Full immediate-shift equations: regular word6 immediates reject bit5 in
 RV32; W word5 immediates trap in RV32. SRLI/SRAI thread a second mode check

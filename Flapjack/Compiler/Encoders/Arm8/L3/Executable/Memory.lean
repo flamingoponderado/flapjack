@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Guards
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Mem
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Guards
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Mem
+
+@[expose] public section
 
 /-!
 # Load/store fields, words and guards for the L3 byte bridge

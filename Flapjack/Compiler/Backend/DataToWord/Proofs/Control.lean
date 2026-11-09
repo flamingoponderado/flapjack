@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+
+@[expose] public section
 
 /-! Local-environment prerequisites for data-to-word correctness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs

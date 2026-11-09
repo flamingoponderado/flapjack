@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.LetSimulation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.IfWorker
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.LetSimulation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.IfWorker
+
+@[expose] public section
 
 /-! Optimized let simulation for an extracted call block. -/
 namespace Flapjack.Compiler.Backend.BviTmc.LetWorkerBlock

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.GetOracleProps
-import Flapjack.Compiler.Backend.SourceEval.Proofs.InsertCorrect
-import Flapjack.EvaluateProps.NoEval
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.GetOracleProps
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.InsertCorrect
+public import Flapjack.EvaluateProps.NoEval
+
+@[expose] public section
 
 /-! Clocked program evaluation with the extracted compiler oracle installed. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

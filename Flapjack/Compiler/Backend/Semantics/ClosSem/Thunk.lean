@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Thunk inspection and updates in the closure semantics. -/
 namespace Flapjack.Compiler.Backend.ClosSem

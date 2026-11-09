@@ -1,5 +1,11 @@
-import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
-import Mathlib.Tactic.Tauto
+module
+
+public import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+public import Mathlib.Tactic.Tauto
+
+-- Sum `==` must reduce by `rfl`/`decide`; core's derived instance is not exposed.
+import all Init.Data.Sum.Basic
+@[expose] public section
 namespace Flapjack.Compiler.Encoders.RiscV.Target
 open Flapjack Compiler.Encoders.Asm
 set_option autoImplicit false

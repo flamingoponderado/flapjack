@@ -1,6 +1,10 @@
-import Flapjack.RiscV.CorrectnessEncoding.InstructionStep
-import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
-import Flapjack.RiscV.L3.Defs.Run
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.InstructionStep
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
+public import Flapjack.RiscV.L3.Defs.Run
+
+@[expose] public section
 
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target

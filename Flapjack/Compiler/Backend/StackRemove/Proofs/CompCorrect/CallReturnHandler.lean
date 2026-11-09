@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallReturnNone
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallReturnNone
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.CallReturnHandler
 open Flapjack Compiler.Backend.StackLang StackSemEvaluate StackSemStateOps
 open CallReturnNone

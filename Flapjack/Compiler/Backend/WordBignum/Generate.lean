@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordBignum.GeneratedMini
-import Flapjack.Compiler.Backend.WordBignum.Compile
+module
+
+public import Flapjack.Compiler.Backend.WordBignum.GeneratedMini
+public import Flapjack.Compiler.Backend.WordBignum.Compile
+
+@[expose] public section
 
 /-! Generate word stubs from the captured mini-program and executable
 mini-compiler. This is not yet the original shallow-to-deep generator. -/

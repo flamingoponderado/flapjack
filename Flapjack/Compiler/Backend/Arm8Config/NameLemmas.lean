@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Arm8Config.Names
-import Flapjack.Compiler.Backend.StackNames.OperandNames
+module
+
+public import Flapjack.Compiler.Backend.Arm8Config.Names
+public import Flapjack.Compiler.Backend.StackNames.OperandNames
+
+@[expose] public section
 
 /-!
 # `findNameSpt` at `arm8Names`

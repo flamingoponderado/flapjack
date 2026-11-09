@@ -1,5 +1,9 @@
-import Flapjack.X64.NativeSource
-import Flapjack.RiscV.NativeCLIAdapter
+module
+
+public import Flapjack.X64.NativeSource
+public import Flapjack.RiscV.NativeCLIAdapter
+
+@[expose] public section
 
 /-! # Rendering the x86-64 compiler result
 

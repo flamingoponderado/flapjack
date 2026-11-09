@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviLet.Proofs.Let
+module
+
+public import Flapjack.Compiler.Backend.BviLet.Proofs.Let
+
+@[expose] public section
 
 /-! The final-variable shortcut of BVI let propagation. -/
 namespace Flapjack.Compiler.Backend.BviLet.Proofs

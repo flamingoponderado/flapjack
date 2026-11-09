@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.MemoryOk
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.GlobalOk
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ThunkOk
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.MemoryOk
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.GlobalOk
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ThunkOk
+
+@[expose] public section
 
 /-! Complete BVL primitive-application well-formedness. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

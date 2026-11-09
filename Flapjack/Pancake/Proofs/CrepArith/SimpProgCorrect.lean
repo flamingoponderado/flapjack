@@ -1,6 +1,10 @@
-import Flapjack.Pancake.CrepArith
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Pancake.CrepArith
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 
 /-!
 # Leaf cases of HOL `crep_arith$simp_prog_correct`

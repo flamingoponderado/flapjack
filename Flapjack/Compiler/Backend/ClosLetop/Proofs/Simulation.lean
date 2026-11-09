@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.Apply
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateLetrec
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.Production
+module
+
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Apply
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateLetrec
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Production
+
+@[expose] public section
 
 /-! Mutual evaluator simulation for closure let-operation cleanup. -/
 namespace Flapjack.Compiler.Backend.ClosLetop

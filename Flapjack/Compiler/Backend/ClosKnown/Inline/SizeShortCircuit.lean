@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SizeCorrect
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SizeCorrect
+
+@[expose] public section
 
 /-! The source short-circuit size traversal and its full-size specification. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

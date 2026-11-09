@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.PanToTarget.CompileProgMax
-import Flapjack.HolRef
-import Flapjack.Pancake.Proofs.PanToWord
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.CompileProgMax
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Proofs.PanToWord
+
+@[expose] public section
 
 /-!
 # CakeML Pancake `pan_to_targetProof`

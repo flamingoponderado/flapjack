@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.DataLang.Syntax
-import Flapjack.Compiler.Backend.DataToWord.Header
-import Flapjack.Compiler.Backend.DataToWord.Numbers
-import Flapjack.Compiler.Backend.DataToWord.Bytes
-import Flapjack.Misc.Multiword
-import Flapjack.Compiler.Backend.BackendCommon
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.DataLang.Syntax
+public import Flapjack.Compiler.Backend.DataToWord.Header
+public import Flapjack.Compiler.Backend.DataToWord.Numbers
+public import Flapjack.Compiler.Backend.DataToWord.Bytes
+public import Flapjack.Misc.Multiword
+public import Flapjack.Compiler.Backend.BackendCommon
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Word and location layouts for closure constant parts. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Build

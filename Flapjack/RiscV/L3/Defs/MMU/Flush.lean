@@ -1,6 +1,10 @@
-import Flapjack.RiscV.L3.Defs.MMU.Access
-import Flapjack.RiscV.L3.Defs
-import Flapjack.RiscV.L3.Defs.MMU.Insert
+module
+
+public import Flapjack.RiscV.L3.Defs.MMU.Access
+public import Flapjack.RiscV.L3.Defs
+public import Flapjack.RiscV.L3.Defs.MMU.Insert
+
+@[expose] public section
 namespace Flapjack.RiscV.L3
 
 /-- Literal complete original TLB flush/fence equation. The flush traverses

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractedSimulation
-import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateClockFull
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractedSimulation
+public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateClockFull
+
+@[expose] public section
 
 /-! Smaller-clock induction hypotheses for TMC singleton simulations. -/
 namespace Flapjack.Compiler.Backend.BviTmc.ClockHypothesis

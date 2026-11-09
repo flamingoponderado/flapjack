@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Header
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Header
+
+@[expose] public section
 
 /-! Agreement between pointer-tag extraction and the executable mask. -/
 namespace Flapjack.Compiler.Backend.DataToWord

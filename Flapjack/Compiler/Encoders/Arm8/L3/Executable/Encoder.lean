@@ -1,14 +1,18 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Defs
-import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Guards
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.MoveWide
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Arith
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Shift
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Division
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Multiply
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ConditionalSelect
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Carry
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftImmediate
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.JumpReg
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Defs
+public import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Guards
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.MoveWide
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Arith
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Shift
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Division
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Multiply
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ConditionalSelect
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Carry
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftImmediate
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.JumpReg
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 set_option maxHeartbeats 4000000

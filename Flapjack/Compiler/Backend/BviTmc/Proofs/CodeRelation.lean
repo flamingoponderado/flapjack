@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.RewriteCorrespondence
-import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeNames
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.RewriteCorrespondence
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeNames
+
+@[expose] public section
 
 /-! Source code and namespace invariants for the TMC simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc

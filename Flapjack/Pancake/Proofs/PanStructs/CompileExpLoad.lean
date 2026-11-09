@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpAtomic
-import Flapjack.Pancake.Proofs.PanStructs.MemLoadConversion
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpAtomic
+public import Flapjack.Pancake.Proofs.PanStructs.MemLoadConversion
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad
 open Flapjack
 open Flapjack.Pancake.PanLang

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.PreserveSafety
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.PreserveSafety
+
+@[expose] public section
 
 /-! Assembling optimizer safety over the complete traversal. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.PreserveSafety

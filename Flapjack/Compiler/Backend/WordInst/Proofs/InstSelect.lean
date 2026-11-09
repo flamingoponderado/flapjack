@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordInst.Proofs.PullExp
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.LocalsRel
+module
+
+public import Flapjack.Compiler.Backend.WordInst.Proofs.PullExp
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.LocalsRel
+
+@[expose] public section
 
 /-!
 # `word_instProof`: correctness of instruction selection

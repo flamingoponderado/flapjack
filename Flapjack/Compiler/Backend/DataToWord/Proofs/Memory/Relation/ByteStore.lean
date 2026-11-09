@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdate
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockElement
-import Flapjack.Compiler.Backend.LabToTarget.InstMem
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateStack
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdate
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockElement
+public import Flapjack.Compiler.Backend.LabToTarget.InstMem
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateStack
+
+@[expose] public section
 
 /-! Concrete writes to a separated packed byte payload. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

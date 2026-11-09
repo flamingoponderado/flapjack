@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline.TickInline
-import Flapjack.Compiler.Backend.BvlInline.Recursion
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.TickInline
+public import Flapjack.Compiler.Backend.BvlInline.Recursion
+
+@[expose] public section
 
 /-! Total source-shaped BVL program inlining. -/
 namespace Flapjack.Compiler.Backend.BvlInline

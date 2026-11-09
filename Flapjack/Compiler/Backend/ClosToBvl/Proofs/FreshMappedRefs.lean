@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
+
+@[expose] public section
 
 /-! Simultaneous source and target reference allocation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Translator.Monadic.MonadBase
-import Flapjack.Translator.Monadic.MonadBase.ListPrimitives
-import Flapjack.Translator.Monadic.MonadBase.ArrayLength
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Translator.Monadic.MonadBase
+public import Flapjack.Translator.Monadic.MonadBase.ListPrimitives
+public import Flapjack.Translator.Monadic.MonadBase.ArrayLength
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-!
 # ml_monadBase fixed-array primitives

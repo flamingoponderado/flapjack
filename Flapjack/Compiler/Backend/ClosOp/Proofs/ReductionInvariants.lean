@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartReduction
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartReduction
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+
+@[expose] public section
 
 /-! Invariants of the source reduction relation and smart operation. -/
 namespace Flapjack.Compiler.Backend.ClosOp

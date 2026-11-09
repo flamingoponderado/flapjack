@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Encoders.AsmProps.Assertions
-import Flapjack.Compiler.Encoders.AsmProps.Interference
-import Flapjack.Compiler.Encoders.AsmProps.Encoding
-import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
-import Flapjack.Compiler.Encoders.AsmProps.Target
-import Flapjack.Compiler.Encoders.AsmSem.Step
+module
+
+public import Flapjack.Compiler.Encoders.AsmProps.Assertions
+public import Flapjack.Compiler.Encoders.AsmProps.Interference
+public import Flapjack.Compiler.Encoders.AsmProps.Encoding
+public import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
+public import Flapjack.Compiler.Encoders.AsmProps.Target
+public import Flapjack.Compiler.Encoders.AsmSem.Step
+
+@[expose] public section
 
 /-!
 # asmProps `encoder_correct`

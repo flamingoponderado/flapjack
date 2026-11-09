@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
-import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
-import Flapjack.Pancake.Semantics.PanSem.EvalFinite
-import Flapjack.Pancake.Semantics.PanProps.LocalisedExpSimps
-import Flapjack.Pancake.Semantics.CrepProps.MemLoadFlatRel
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+public import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
+public import Flapjack.Pancake.Semantics.PanSem.EvalFinite
+public import Flapjack.Pancake.Semantics.PanProps.LocalisedExpSimps
+public import Flapjack.Pancake.Semantics.CrepProps.MemLoadFlatRel
+
+@[expose] public section
 
 /-!
 Exact-carrier statement of HOL `compile_exp_val_rel`

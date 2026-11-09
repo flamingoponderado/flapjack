@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
+
+@[expose] public section
 
 /-! Global-variable correspondence for the closure-to-BVL simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

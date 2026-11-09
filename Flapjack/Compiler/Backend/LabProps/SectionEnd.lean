@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabSem.Classifier
-import Flapjack.Compiler.Backend.LabProps
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Classifier
+public import Flapjack.Compiler.Backend.LabProps
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabProps
 

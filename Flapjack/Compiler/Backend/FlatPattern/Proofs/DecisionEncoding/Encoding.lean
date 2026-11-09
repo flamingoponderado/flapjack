@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.PatternSemantics.Semantics
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.NaiveMatch
-import Flapjack.HolArb
+module
+
+public import Flapjack.Compiler.Backend.PatternSemantics.Semantics
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.NaiveMatch
+public import Flapjack.HolArb
+
+@[expose] public section
 
 /-! Flat-pattern value and reference encoding. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

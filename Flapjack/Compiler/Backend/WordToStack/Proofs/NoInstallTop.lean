@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallPrograms
-import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallCode
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallPrograms
+public import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallCode
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Backend.StackProps

@@ -1,6 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateCode
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateEvents
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateCode
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateEvents
+public import Flapjack.Misc.ClockWeightInduction
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Code-growth induction for BVL evaluation. The private cases factor the
 induction and have no standalone HOL declarations. -/

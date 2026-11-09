@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.TargetProps.NextMapped
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.NextMapped
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Classical

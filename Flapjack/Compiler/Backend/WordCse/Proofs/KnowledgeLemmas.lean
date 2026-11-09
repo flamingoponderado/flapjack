@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordCse.CanonicalArith
-import Flapjack.Compiler.Backend.WordCse.RegisterData
-import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
-import Flapjack.Misc.BalancedMap.InsertCorrect
-import Flapjack.Misc.BalancedMap.LookupSemantics
+module
+
+public import Flapjack.Compiler.Backend.WordCse.CanonicalArith
+public import Flapjack.Compiler.Backend.WordCse.RegisterData
+public import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
+public import Flapjack.Misc.BalancedMap.InsertCorrect
+public import Flapjack.Misc.BalancedMap.LookupSemantics
+
+@[expose] public section
 
 /-! `word_cseProof` knowledge lemmas that need no `wf_data`: the arithmetic
 destination, the empty and inserted `listCmp` balanced maps, and the

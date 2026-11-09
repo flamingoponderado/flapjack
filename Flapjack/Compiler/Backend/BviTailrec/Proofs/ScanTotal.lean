@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermTotal
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.HasRecTotal
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermTotal
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.HasRecTotal
+
+@[expose] public section
 
 /-! Structural sufficiency of the tail-recursion scan. These are Flapjack
 infrastructure lemmas; HOL correspondence is a separate obligation. -/

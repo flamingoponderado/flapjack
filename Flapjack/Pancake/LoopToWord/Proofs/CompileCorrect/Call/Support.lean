@@ -1,6 +1,10 @@
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
-import Flapjack.Pancake.Proofs.LoopToWord.ContextSupport
-import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
+module
+
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
+public import Flapjack.Pancake.Proofs.LoopToWord.ContextSupport
+public import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
+
+@[expose] public section
 
 /-!
 # Shared support for the `Call` case of `loop_to_word`'s `compile_correct`

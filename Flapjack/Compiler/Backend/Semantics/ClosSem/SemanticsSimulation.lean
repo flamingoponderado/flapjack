@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
-import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.AppClockShift
+
+@[expose] public section
 
 /-! Clocked simulation consequences for the proof-side observational semantics.
 The evaluator and state carriers await HOL correspondence review. -/

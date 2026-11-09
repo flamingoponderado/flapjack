@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Comp
-import Flapjack.Compiler.Backend.StackProps.OrderedLabels
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Comp
+public import Flapjack.Compiler.Backend.StackProps.OrderedLabels
+
+@[expose] public section
 
 /-! `stack_remove_lab_pres` (`stack_removeProofScript.sml:4176-4200`):
 `stack_remove$comp` preserves the extracted labels. -/

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
+
+@[expose] public section
 
 /-!
 # crep_to_loop `code_rel2_def` and `mk_ctxt_code_imp_code_rel2`

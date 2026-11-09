@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockElement
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockElement
+
+@[expose] public section
 
 /-! Word-memory comparison used for byte arrays and bignums. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

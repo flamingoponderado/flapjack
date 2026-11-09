@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+
+@[expose] public section
 
 /-!
 # `loop_to_wordProof` `Tick` unfolding lemmas

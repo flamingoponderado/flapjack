@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
+
+@[expose] public section
 
 /-! Garbage-collector configuration operation correspondence. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

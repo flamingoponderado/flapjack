@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

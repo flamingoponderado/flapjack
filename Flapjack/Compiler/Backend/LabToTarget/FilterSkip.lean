@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeAppend
-import Flapjack.Compiler.Backend.LabFilter
-import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
-import Flapjack.Compiler.Backend.LabProps.LabelSets
-import Flapjack.Compiler.Backend.LabProps.CodeSafety
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeAppend
+public import Flapjack.Compiler.Backend.LabFilter
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
+public import Flapjack.Compiler.Backend.LabProps.LabelSets
+public import Flapjack.Compiler.Backend.LabProps.CodeSafety
+
+@[expose] public section
 
 /-! Native skip-filter observations from the original lab-to-target proof.
 The original full types use the single word-indexed labLang line/sec family;

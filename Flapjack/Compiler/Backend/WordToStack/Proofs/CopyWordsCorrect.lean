@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstMemoryAppend
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstMemoryAppend
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack
 

@@ -1,13 +1,17 @@
-import Mathlib.Logic.Function.Defs
-import Flapjack.Compiler.Backend.Backend
-import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
-import Flapjack.Compiler.Backend.DataToWord.ConfOk
-import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
-import Flapjack.Compiler.Backend.BackendCommon.BvlStubs
-import Flapjack.Compiler.Backend.StackNames.NamesOk
-import Flapjack.Compiler.Backend.StackNames.OperandNames
-import Flapjack.Compiler.Backend.StackProps.FixedNames
-import Flapjack.Compiler.Backend.StackRemove.StoreAddress
+module
+
+public import Mathlib.Logic.Function.Defs
+public import Flapjack.Compiler.Backend.Backend
+public import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
+public import Flapjack.Compiler.Backend.DataToWord.ConfOk
+public import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
+public import Flapjack.Compiler.Backend.BackendCommon.BvlStubs
+public import Flapjack.Compiler.Backend.StackNames.NamesOk
+public import Flapjack.Compiler.Backend.StackNames.OperandNames
+public import Flapjack.Compiler.Backend.StackProps.FixedNames
+public import Flapjack.Compiler.Backend.StackRemove.StoreAddress
+
+@[expose] public section
 
 /-! backendProofScript.sml: `backend_config_ok_def`, the backend-configuration
 hypothesis of the Pancake top-level correctness theorem

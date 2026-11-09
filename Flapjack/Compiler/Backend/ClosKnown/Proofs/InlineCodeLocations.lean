@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosKnown.Inline
-import Flapjack.Compiler.Backend.ClosKnown.Fuel
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
-import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Inline
+public import Flapjack.Compiler.Backend.ClosKnown.Fuel
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+
+@[expose] public section
 
 /-! Code-location facts required for known-function inlining. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

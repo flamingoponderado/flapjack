@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapSentinelLength
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapSentinelLength
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack
 

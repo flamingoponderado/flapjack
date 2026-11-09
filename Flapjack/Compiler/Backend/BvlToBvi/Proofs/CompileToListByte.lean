@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ToListByteStub
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ToListByteStub
+
+@[expose] public section
 
 /-! Byte-array to byte-list lowering in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordSimp
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Compiler.Backend.WordSimp
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 namespace Flapjack.WordConvs
 open Flapjack.Compiler.Backend.WordSimp

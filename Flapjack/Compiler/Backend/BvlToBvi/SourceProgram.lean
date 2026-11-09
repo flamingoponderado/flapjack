@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.SourceSing
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.SourceSing
+
+@[expose] public section
 
 /-! Source-shaped labeled and incremental BVL-to-BVI compilation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi

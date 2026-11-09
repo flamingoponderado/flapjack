@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateIf
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateIf
+
+@[expose] public section
 
 /-! Exception handlers for the direct-call simulation. -/
 namespace Flapjack.Compiler.Backend.ClosCall

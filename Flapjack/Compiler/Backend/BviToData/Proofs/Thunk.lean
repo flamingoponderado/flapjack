@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.Value
-import Flapjack.Compiler.Backend.Semantics.DataSem.Control
-import Flapjack.Compiler.Backend.Semantics.BviSem.Thunk
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Value
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Thunk
+
+@[expose] public section
 
 /-! Thunk inspection under the BVI-to-data value projection. -/
 namespace Flapjack.Compiler.Backend.BviToData

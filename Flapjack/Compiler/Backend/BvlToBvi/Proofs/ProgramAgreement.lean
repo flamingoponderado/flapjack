@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlToBvi.SourceProgram
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.SourceAgreement
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.SourceProgram
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.SourceAgreement
+
+@[expose] public section
 
 /-! Agreement of incremental compilation with the source auxiliary tree. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi

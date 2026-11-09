@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.ClashTree
-import Flapjack.Misc.Option
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.ClashTree
+public import Flapjack.Misc.Option
+
+@[expose] public section
 
 /-!
 # linear_scan definitions

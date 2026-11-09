@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.SmallTotal
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.SmallTotal
+
+@[expose] public section
 
 /-! Total source-shaped size check for BVL inlining. The production bounded
 traversal is proved equal in `Proofs.SmallProduction`. -/

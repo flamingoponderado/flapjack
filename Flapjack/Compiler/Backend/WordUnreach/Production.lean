@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordUnreach
-import Flapjack.Compiler.Backend.WordUnreach.ProductionMemoryDomain
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+module
+
+public import Flapjack.Compiler.Backend.WordUnreach
+public import Flapjack.Compiler.Backend.WordUnreach.ProductionMemoryDomain
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+
+@[expose] public section
 
 /-!
 # Executed unreachable-code removal through the reviewed `remove_unreach`

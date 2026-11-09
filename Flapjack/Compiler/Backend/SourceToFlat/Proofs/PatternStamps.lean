@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
-import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Constructor-map prerequisites for source-to-flat pattern matching. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

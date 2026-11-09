@@ -1,5 +1,9 @@
-import Flapjack.Pancake.WordLang.OccurrencesExact
-import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocArgs.RecursiveCalls
+module
+
+public import Flapjack.Pancake.WordLang.OccurrencesExact
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocArgs.RecursiveCalls
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.AllocArgs
 open Flapjack Flapjack.Compiler.Backend.WordToStack.Native

@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Defs.IntegerLoadMode
-import Flapjack.RiscV.L3.Defs.SystemSignals
+module
+
+public import Flapjack.RiscV.L3.Defs.IntegerLoadMode
+public import Flapjack.RiscV.L3.Defs.SystemSignals
+
+@[expose] public section
 
 /-! Full literal register-shift equations. RV32 SLL retains full64 source;
 SRL/SRA use low32 with unsigned/signed extension. Counts use low5 in RV32

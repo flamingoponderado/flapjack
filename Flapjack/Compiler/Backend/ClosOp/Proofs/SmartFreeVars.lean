@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftFreeVars
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftFreeVars
+
+@[expose] public section
 
 /-! Free-variable preservation for the source smart operation. -/
 namespace Flapjack.Compiler.Backend.ClosOp

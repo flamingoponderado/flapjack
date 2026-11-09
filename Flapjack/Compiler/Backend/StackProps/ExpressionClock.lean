@@ -1,6 +1,10 @@
-import Flapjack.Pancake.WordLang.MaxVarExp
-import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
-import Flapjack.Compiler.Backend.StackProps.StateConstants
+module
+
+public import Flapjack.Pancake.WordLang.MaxVarExp
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
+public import Flapjack.Compiler.Backend.StackProps.StateConstants
+
+@[expose] public section
 
 /-! Full original memory/expression/assignment clock-commutation statements.
 The misleading source name mem_load_with_const is retained in its HOL tag:

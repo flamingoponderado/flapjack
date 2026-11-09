@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveDomains
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveDomains
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

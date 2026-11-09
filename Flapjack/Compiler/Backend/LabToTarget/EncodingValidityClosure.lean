@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.ByteLengths
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ByteLengths
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm

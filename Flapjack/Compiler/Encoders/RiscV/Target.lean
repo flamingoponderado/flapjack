@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.RiscV.L3.Defs.Encode
+module
+
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.RiscV.L3.Defs.Encode
+
+@[expose] public section
 
 /-! Native encoder section of `riscv_targetScript.sml`. The complete source
 ASM carrier is retained at width64. Unspecified opcode helper cases use the

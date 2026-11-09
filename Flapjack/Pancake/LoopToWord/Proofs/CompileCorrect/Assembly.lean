@@ -1,16 +1,20 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Base
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ReturnRaise
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Assign
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Arith
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Memory
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ShMem
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.FFI
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.If
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Loop
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Seq
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call
-import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateInd
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Base
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ReturnRaise
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Assign
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Arith
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Memory
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ShMem
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.FFI
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.If
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Loop
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Seq
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateInd
+
+@[expose] public section
 
 /-!
 # `loop_to_word` `compile_correct`: assembly of the `evaluate_ind` cases

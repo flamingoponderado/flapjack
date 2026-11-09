@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.WellFormed
-import Flapjack.Compiler.Backend.BviTmc.Proofs.PureExtraction
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.WellFormed
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.PureExtraction
+
+@[expose] public section
 
 /-! Well-formedness of recursive-call extraction results. -/
 namespace Flapjack.Compiler.Backend.BviTmc

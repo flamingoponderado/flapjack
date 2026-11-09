@@ -1,6 +1,10 @@
-import Flapjack.Word
-import Flapjack.Misc.Sptree
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Word
+public import Flapjack.Misc.Sptree
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 /-!
 # Loop-to-word context lookup

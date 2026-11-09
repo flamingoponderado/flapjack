@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.CutState
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.CutState
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

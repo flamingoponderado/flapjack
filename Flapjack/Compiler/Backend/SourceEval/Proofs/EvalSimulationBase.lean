@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.StateRelation
-import Flapjack.Compiler.Backend.SourceEval.Proofs.Abort
-import Flapjack.EvaluateHOL.Definition
-import Flapjack.SemanticPrimitivesProps.ResultRelation
-import Flapjack.NamespaceProps.EmptyLookup
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.Abort
+public import Flapjack.EvaluateHOL.Definition
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+public import Flapjack.NamespaceProps.EmptyLookup
+
+@[expose] public section
 
 /-! Empty-list cases of source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

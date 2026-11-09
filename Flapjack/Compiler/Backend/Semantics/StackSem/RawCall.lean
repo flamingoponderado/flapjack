@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Control
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+
+@[expose] public section
 
 /-! A source-shaped `evaluate_def` RawCall case fragment over the exact
 StackSem state/result carriers. It is deliberately untagged: this partial case

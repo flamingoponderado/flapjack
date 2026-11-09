@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockAuxFrame
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockAuxFrame
+
+@[expose] public section
 
 /-! Auxiliary simulation of complete call blocks. -/
 namespace Flapjack.Compiler.Backend.BviTmc.CallBlockAuxSimulation

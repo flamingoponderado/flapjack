@@ -1,8 +1,12 @@
-import Flapjack.Misc.BalancedMap.RotationAux
-import Flapjack.Misc.BalancedMap.BalanceArithmetic
-import Flapjack.Misc.BalancedMap.InvariantSemantics
-import Flapjack.Misc.BalancedMap.StructuralSize
-import Flapjack.Misc.BalancedMap.KeySets
+module
+
+public import Flapjack.Misc.BalancedMap.RotationAux
+public import Flapjack.Misc.BalancedMap.BalanceArithmetic
+public import Flapjack.Misc.BalancedMap.InvariantSemantics
+public import Flapjack.Misc.BalancedMap.StructuralSize
+public import Flapjack.Misc.BalancedMap.KeySets
+
+@[expose] public section
 
 namespace Flapjack.Misc.BalancedMap
 open FiniteMap.Comparison

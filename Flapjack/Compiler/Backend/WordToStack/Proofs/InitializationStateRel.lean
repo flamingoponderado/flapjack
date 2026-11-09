@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRel
-import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
-import Flapjack.Misc.Sptree.MapiLookup
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRel
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
+public import Flapjack.Misc.Sptree.MapiLookup
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.InitializationStateRel
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.WordToStack.Native

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.State
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.State
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Clock extension for BVI evaluation. -/
 namespace Flapjack.Compiler.Backend.BviProps

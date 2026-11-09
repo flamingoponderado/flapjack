@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Atoms
-import Flapjack.Pancake.Proofs.CrepInline.ExpressionRelations
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Assembly
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Atoms
+public import Flapjack.Pancake.Proofs.CrepInline.ExpressionRelations
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Assembly
+
+@[expose] public section
 
 /-!
 # crep_inline `evaluate_state_locals_rel_strong`: Dec, Seq and If cases

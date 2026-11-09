@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.Encoding
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Encoding
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-!
 # Faithful Cake label checking, padding and symbol collection (`lab_to_target`)

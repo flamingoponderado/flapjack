@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.Arm8.Machine.MulCarryCase
-import Flapjack.Compiler.Encoders.Arm8.MemLemmas
-import Flapjack.Compiler.Encoders.MemBytes
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Machine.MulCarryCase
+public import Flapjack.Compiler.Encoders.Arm8.MemLemmas
+public import Flapjack.Compiler.Encoders.MemBytes
+
+@[expose] public section
 
 /-!
 # The ARMv8 memory instruction cases of `encoder_correct`

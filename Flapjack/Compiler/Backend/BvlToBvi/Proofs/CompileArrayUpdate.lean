@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.RefUpdate
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.RefUpdate
+
+@[expose] public section
 
 /-! Array updates in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

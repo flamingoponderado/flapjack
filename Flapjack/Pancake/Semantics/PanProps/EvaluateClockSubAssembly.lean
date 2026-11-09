@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubDecCall
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubDecCall
+
+@[expose] public section
 
 /-!
 # Assembled HOL `evaluate_clock_sub`

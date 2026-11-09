@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Misc.MachineIeee
-import Flapjack.Misc.MachineIeee.Arith
-import Flapjack.Misc.BinaryIeeeSqrt
-import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
-import Flapjack.Misc.MachineIeee.ConvertInt
-import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Misc.MachineIeee
+public import Flapjack.Misc.MachineIeee.Arith
+public import Flapjack.Misc.BinaryIeeeSqrt
+public import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
+public import Flapjack.Misc.MachineIeee.ConvertInt
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+
+@[expose] public section
 
 /-! StackSem inst_def FP movement/sign, FP comparison/arithmetic and FP real
 conversion case fragment. Outer NONE means an unhandled constructor; inner NONE

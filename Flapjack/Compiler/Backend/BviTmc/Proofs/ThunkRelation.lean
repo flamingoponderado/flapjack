@@ -1,7 +1,18 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.HeapRelation
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
-import Flapjack.Compiler.Backend.Semantics.BviSem.Thunk
-import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.HeapRelation
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Thunk
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Thunk inspection under the TMC heap relation. -/
 namespace Flapjack.Compiler.Backend.BviTmc

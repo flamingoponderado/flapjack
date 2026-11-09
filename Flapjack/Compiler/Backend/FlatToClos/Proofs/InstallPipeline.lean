@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.StateRelation
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.StateRelation
+
+@[expose] public section
 
 /-! Composition of flat-to-closure compilation with interpreter insertion.
 These identities connect the actual compiler callbacks; the semantic

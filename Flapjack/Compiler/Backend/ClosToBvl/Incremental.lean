@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Prepared
-import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
-import Flapjack.Compiler.Backend.Semantics.BvlSem.State
-import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Prepared
+public import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.State
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+
+@[expose] public section
 
 /-! Checked incremental closure-to-BVL compilation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.WordLang
-import Flapjack.Pancake.Semantics.LoopSem
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Pancake.Semantics.LoopSem
+
+@[expose] public section
 
 /-!
 # `wordSem` helpers shared by the Loop semantics

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.CompileAll
-import Flapjack.Compiler.Backend.Semantics.DataProps.AbortControl
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.CompileAll
+public import Flapjack.Compiler.Backend.Semantics.DataProps.AbortControl
+
+@[expose] public section
 
 /-! Observable consequences of the data liveness simulation. -/
 namespace Flapjack.Compiler.Backend.DataLive

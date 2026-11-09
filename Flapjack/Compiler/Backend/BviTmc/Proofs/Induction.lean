@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.StructuralCases
-import Flapjack.Compiler.Backend.BviTmc.Proofs.LetCallSimulation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.StructuralCases
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.LetCallSimulation
+
+@[expose] public section
 
 /-! Assembly of the structural and clock induction cases for TMC. -/
 namespace Flapjack.Compiler.Backend.BviTmc.Induction

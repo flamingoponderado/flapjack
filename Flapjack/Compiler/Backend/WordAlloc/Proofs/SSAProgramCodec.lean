@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.FullSSA
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAControlCodec
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSADataCodec
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.FullSSA
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAControlCodec
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSADataCodec
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

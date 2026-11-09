@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.Steps
-import Flapjack.Compiler.Backend.LinearScan.Sorting
-import Flapjack.Misc.Sptree.Map
-import Flapjack.Misc.Sptree.Foldi
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.Steps
+public import Flapjack.Compiler.Backend.LinearScan.Sorting
+public import Flapjack.Misc.Sptree.Map
+public import Flapjack.Misc.Sptree.Foldi
+
+@[expose] public section
 
 /-!
 # linear_scan top-level allocator

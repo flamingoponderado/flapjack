@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftReduction
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftReduction
+
+@[expose] public section
 
 /-! Direct-equality reduction correspondence. -/
 namespace Flapjack.Compiler.Backend.ClosOp

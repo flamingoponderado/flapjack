@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateCall
-import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateCall
+public import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
+
+@[expose] public section
 
 /-! Result-sensitive control invariant for data-language evaluation. -/
 namespace Flapjack.Compiler.Backend.DataSem

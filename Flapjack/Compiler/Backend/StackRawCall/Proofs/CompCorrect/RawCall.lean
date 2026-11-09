@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Loop
-import Flapjack.Compiler.Backend.StackProps.EvaluateMono
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Loop
+public import Flapjack.Compiler.Backend.StackProps.EvaluateMono
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRawCall.RawCallCase
 open Flapjack Flapjack.Compiler.Backend.StackLang StackSemStateOps StackSemControl

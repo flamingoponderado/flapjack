@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopClaim
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PayloadSwap
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopClaim
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PayloadSwap
+
+@[expose] public section
 
 /-! Pointer-payload branch of the copying-collector scan induction. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -7,10 +11,10 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.WordGcFunction
 open Flapjack.Compiler.Backend.CopyingGc
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 
-private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+instance loopPointerInst1 {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
 
-private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) :=
+instance loopPointerInst2 {α : Type} : Std.Commutative (SetSep.star (α := α)) :=
   ⟨SetSep.starComm⟩
 
 private theorem exposeFields {α : Type} (old frame scanned pending head fields free : (α → Prop) → Prop) :

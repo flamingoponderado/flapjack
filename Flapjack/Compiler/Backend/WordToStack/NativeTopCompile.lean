@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeConfig
-import Flapjack.Compiler.Backend.WordToStack.NativePrograms
-import Flapjack.Compiler.Backend.WordToStack.NativeStubs
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeConfig
+public import Flapjack.Compiler.Backend.WordToStack.NativePrograms
+public import Flapjack.Compiler.Backend.WordToStack.NativeStubs
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang

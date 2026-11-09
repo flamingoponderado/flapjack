@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.SetLess
+module
+
+public import Flapjack.RiscV.L3.Defs.SetLess
+
+@[expose] public section
 
 /-! Shared mode rewrite of the original SLT/SLTU/SLTI/SLTIU step evaluators.
 The ArchBase exclusion is an original hypothesis, propagated by HOL's not1 and

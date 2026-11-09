@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosTicks
-import Flapjack.Compiler.Backend.ClosLang.Proofs.Budget
-import Flapjack.Misc.Option.MapM
+module
+
+public import Flapjack.Compiler.Backend.ClosTicks
+public import Flapjack.Compiler.Backend.ClosLang.Proofs.Budget
+public import Flapjack.Misc.Option.MapM
+
+@[expose] public section
 
 /-! Structural sufficiency for closure tick removal. These results are
 Flapjack infrastructure, not HOL pass-correctness ports. -/

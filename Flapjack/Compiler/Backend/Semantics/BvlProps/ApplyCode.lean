@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyCode
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyCode
+
+@[expose] public section
 
 /-! Code replacement for BVL primitive application. -/
 namespace Flapjack.Compiler.Backend.BvlProps

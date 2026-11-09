@@ -1,5 +1,9 @@
-import Flapjack.Misc.SetSep
-import Flapjack.Compiler.Backend.StackRemove
+module
+
+public import Flapjack.Misc.SetSep
+public import Flapjack.Compiler.Backend.StackRemove
+
+@[expose] public section
 
 /-! Heap-list predicates from miscScript.sml, distinct from the bitmap-word
 chunking helper in WordToStack. Address words and payload types are independent;

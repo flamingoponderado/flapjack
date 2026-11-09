@@ -1,9 +1,17 @@
-import Flapjack.Compiler.Backend.LabLang
-import Flapjack.Compiler.Backend.LabSem
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Pancake.WordLang
-import Flapjack.Compiler.Backend.StackToLab
-import Flapjack.Compiler.Backend.StackProps
+module
+
+public import Flapjack.Compiler.Backend.LabLang
+public import Flapjack.Compiler.Backend.LabSem
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Compiler.Backend.StackToLab
+public import Flapjack.Compiler.Backend.StackProps
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Cake labProps pre-encoding predicates

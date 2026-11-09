@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Helpers
-import Flapjack.NamespaceProps
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Helpers
+public import Flapjack.NamespaceProps
+
+@[expose] public section
 
 /-! Binding source variable names and traces in the source-to-flat proof. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

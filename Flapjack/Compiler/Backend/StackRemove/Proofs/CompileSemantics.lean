@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect
-import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
+
+@[expose] public section
 
 /-! Full original StackRemove compile_semantics (2418–2615), over the
 faithful native evaluator and observational semantics. Local clock-family

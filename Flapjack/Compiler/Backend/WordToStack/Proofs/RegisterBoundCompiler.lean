@@ -1,6 +1,10 @@
-import Flapjack.Pancake.WordLang.MaxVar
-import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundRecursive
-import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundInstructions
+module
+
+public import Flapjack.Pancake.WordLang.MaxVar
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundRecursive
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundInstructions
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.RegisterBoundCompiler
 open Flapjack Flapjack.Compiler.Backend.WordToStack.Native

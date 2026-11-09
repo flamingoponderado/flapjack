@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.ShMem
-import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.ShMem
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
+
+@[expose] public section
 
 /-! Untagged, source-shaped fragment of the HOL `evaluate_def` `ShMemOp` clause
 (`cakeml/compiler/backend/semantics/stackSemScript.sml:922-927`; the bead's

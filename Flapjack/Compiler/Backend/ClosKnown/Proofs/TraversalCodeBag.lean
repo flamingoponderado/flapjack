@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineCodeLocations
-import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartFixed
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineCodeLocations
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartFixed
+
+@[expose] public section
 
 /-! Cases of the source optimizer's closure-label multiset bound. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.TraversalCodeBag

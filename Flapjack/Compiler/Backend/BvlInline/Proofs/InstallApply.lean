@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.InstallCode
-import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineApply
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.InstallCode
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineApply
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
+
+@[expose] public section
 
 /-! Relating actual dynamic installation runs. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

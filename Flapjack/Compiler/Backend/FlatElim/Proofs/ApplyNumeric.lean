@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyCopy
-import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyFlat
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyCopy
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyFlat
+
+@[expose] public section
 
 /-! Numeric and comparison primitive cases for the elimination simulation. -/
 namespace Flapjack.Compiler.Backend.FlatElim

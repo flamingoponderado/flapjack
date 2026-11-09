@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.ImmediateALU
+module
+
+public import Flapjack.RiscV.L3.Defs.ImmediateALU
+
+@[expose] public section
 
 /-! Evaluated immediate-ALU instruction equations (HOL `riscv_step` immediate group).
 

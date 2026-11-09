@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.PatternCommon
-import Flapjack.AstHOL.LitOp
+module
+
+public import Flapjack.Compiler.Backend.PatternCommon
+public import Flapjack.AstHOL.LitOp
+
+@[expose] public section
 
 /-! Input and output syntax of the CakeML pattern-match compiler. -/
 namespace Flapjack.Compiler.Backend.PatternSemantics

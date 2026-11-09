@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Misc.Alignment
-import Flapjack.RiscV.L3.Support
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.Alignment
+public import Flapjack.RiscV.L3.Support
+
+@[expose] public section
 
 /-! Fixed-width arithmetic prerequisites from `riscv_targetProofScript.sml`.
 The original `lem5` and `lem8` use free word/Boolean variables, bound explicitly

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
-import Flapjack.NamespaceProps.EmptyLookup
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
+public import Flapjack.NamespaceProps.EmptyLookup
+
+@[expose] public section
 
 /-! Empty namespaces in the source evaluator environment relation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

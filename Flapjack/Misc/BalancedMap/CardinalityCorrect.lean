@@ -1,6 +1,10 @@
-import Flapjack.Misc.BalancedMap.InvariantSemantics
-import Flapjack.Misc.BalancedMap.StructuralSize
-import Flapjack.FiniteMap.CardinalityExact
+module
+
+public import Flapjack.Misc.BalancedMap.InvariantSemantics
+public import Flapjack.Misc.BalancedMap.StructuralSize
+public import Flapjack.FiniteMap.CardinalityExact
+
+@[expose] public section
 
 namespace Flapjack.Misc.BalancedMap
 open FiniteMap.Comparison

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Branch
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Loc
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Branch
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Loc
+
+@[expose] public section
 
 /-!
 # Address: bytes for the L3 bridge

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticControl
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAExpressions
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsInsert
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticControl
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAExpressions
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsInsert
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

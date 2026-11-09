@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.FreezeSpillSuccess
-import Flapjack.Basis.Pure.MlList.SortPerm
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.FreezeSpillSuccess
+public import Flapjack.Basis.Pure.MlList.SortPerm
+
+@[expose] public section
 
 /-!
 # reg_allocProof: success of the allocation step loop

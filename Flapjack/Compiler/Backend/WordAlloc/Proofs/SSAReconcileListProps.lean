@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
-import Flapjack.Misc.Sptree.ToAList
-import Flapjack.Misc.Option
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
+public import Flapjack.Misc.Sptree.ToAList
+public import Flapjack.Misc.Option
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

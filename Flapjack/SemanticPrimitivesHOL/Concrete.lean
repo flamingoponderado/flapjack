@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL
+module
+
+public import Flapjack.SemanticPrimitivesHOL
+
+@[expose] public section
 
 /-! First-order source values used by dynamic compilation. -/
 namespace Flapjack.SemanticPrimitivesHOL

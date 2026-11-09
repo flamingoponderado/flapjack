@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.DecCall
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.DecCall
+
+@[expose] public section
 
 /-!
 # `pc_compile_correct` Dec case over the exact carriers

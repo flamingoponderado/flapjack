@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Structural
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Structural
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
+
+@[expose] public section
 
 namespace Flapjack.CrepInlineExact
 

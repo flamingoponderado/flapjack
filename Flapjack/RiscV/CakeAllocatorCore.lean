@@ -1,5 +1,9 @@
-import Flapjack.RiscV.RegisterMap
-import Flapjack.NatDedup
+module
+
+public import Flapjack.RiscV.RegisterMap
+public import Flapjack.NatDedup
+
+@[expose] public section
 
 /-!
 # CakeML IRC allocator core for frame occupancy (analysis slice)

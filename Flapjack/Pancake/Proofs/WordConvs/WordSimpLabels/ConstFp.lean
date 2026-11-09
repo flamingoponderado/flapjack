@@ -1,8 +1,12 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
 -- Reuse the accepted native matcher providers.
-import Flapjack.Pancake.Proofs.WordConvs.NotCreatedPasses
-import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.Sequence
-import Mathlib.Tactic
+public import Flapjack.Pancake.Proofs.WordConvs.NotCreatedPasses
+public import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.Sequence
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-!
 Label preservation of the exact native constant-folding loop and its wrapper.

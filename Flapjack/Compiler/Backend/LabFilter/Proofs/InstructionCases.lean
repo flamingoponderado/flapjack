@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabFilter.Proofs.Simulation
+module
+
+public import Flapjack.Compiler.Backend.LabFilter.Proofs.Simulation
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabFilter.Proofs
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.NoMti
-import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.NoMti
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
+
+@[expose] public section
 
 /-! Closure syntax properties established by flat-to-closure compilation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
-import Flapjack.Pancake.Semantics.ShMemBytesBridge
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
+public import Flapjack.Pancake.Semantics.ShMemBytesBridge
+
+@[expose] public section
 
 /-!
 # `pc_compile_correct` ShMemStore case over the exact carriers

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.Accounting
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.Accounting
+
+@[expose] public section
 
 /-! Global primitive simulation for the liveness pass. -/
 namespace Flapjack.Compiler.Backend.DataLive

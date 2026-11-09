@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackProps.ArithmeticNames
-import Flapjack.Compiler.Backend.StackProps.AddressNames
-import Flapjack.Compiler.Backend.StackProps.FloatNames
+module
+
+public import Flapjack.Compiler.Backend.StackProps.ArithmeticNames
+public import Flapjack.Compiler.Backend.StackProps.AddressNames
+public import Flapjack.Compiler.Backend.StackProps.FloatNames
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackProps
 open Flapjack.Compiler.Encoders.Asm

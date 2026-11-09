@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtensionSteps
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateCodeGrowth
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtensionSteps
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateCodeGrowth
+
+@[expose] public section
 
 /-! Simulation of closure evaluation under safe extensions of installed code. -/
 namespace Flapjack.Compiler.Backend.ClosSem

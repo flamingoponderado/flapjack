@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackLists
-import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackLists
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+
+@[expose] public section
 
 /-!
 # `evaluate_stack_swap` statement

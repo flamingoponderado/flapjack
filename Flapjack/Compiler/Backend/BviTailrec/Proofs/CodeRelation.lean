@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.ScanSound
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.ScanSound
+
+@[expose] public section
 
 /-! Source-shaped code and state relations for the tail-recursion simulation.
 The compilation and evaluator carriers still require HOL source review. -/

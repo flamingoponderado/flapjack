@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceLet
+module
+
+public import Flapjack.Compiler.Backend.SourceLet
+
+@[expose] public section
 
 /-! CakeML's source-to-source pass driver. -/
 namespace Flapjack.Compiler.Backend.SourceToSource

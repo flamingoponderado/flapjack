@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+
+@[expose] public section
 
 /-! Detect runtime installation in closure-language expressions. -/
 namespace Flapjack.Compiler.Backend.ClosLang

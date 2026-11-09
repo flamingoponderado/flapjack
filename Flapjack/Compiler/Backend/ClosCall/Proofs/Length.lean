@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeList
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeList
+
+@[expose] public section
 
 /-! Length preservation for the executable direct-call list traversal. -/
 namespace Flapjack.Compiler.Backend.ClosCall

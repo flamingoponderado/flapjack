@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

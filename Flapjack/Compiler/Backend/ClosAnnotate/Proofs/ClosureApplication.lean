@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.RecursiveFunctions
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Force
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.RecursiveFunctions
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Force
+
+@[expose] public section
 
 /-! Closure application prerequisites for annotation simulation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

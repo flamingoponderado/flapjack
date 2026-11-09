@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatProps.PatternOutcome
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.PatternOutcome
+
+@[expose] public section
 
 /-! Pattern list matching over appended lists. -/
 namespace Flapjack.Compiler.Backend.FlatProps

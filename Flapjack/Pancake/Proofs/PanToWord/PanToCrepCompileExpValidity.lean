@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanToWord.PanToCrepValidity
+module
+
+public import Flapjack.Pancake.Proofs.PanToWord.PanToCrepValidity
+
+@[expose] public section
 namespace Flapjack.PanToCrepCompileExpValidity
 open Pancake.PanLang
 /-- Internal list-length fact for the complete native compiler; no separate HOL declaration. -/

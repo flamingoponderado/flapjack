@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.State
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+
+@[expose] public section
 
 /-! Literal frame predicates used by the Word-to-Stack stack relation. -/
 namespace Flapjack.WordToStackProofs

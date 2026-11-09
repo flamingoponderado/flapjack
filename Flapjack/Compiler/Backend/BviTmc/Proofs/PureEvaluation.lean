@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.VariableEvaluation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.VariableEvaluation
+
+@[expose] public section
 
 /-! Evaluation of the expressions accepted by TMC's purity test. -/
 namespace Flapjack.Compiler.Backend.BviTmc

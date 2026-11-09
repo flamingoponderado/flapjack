@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordForward
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordForward
+
+@[expose] public section
 
 /-! Base cases of source evaluator oracle insertion correctness. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

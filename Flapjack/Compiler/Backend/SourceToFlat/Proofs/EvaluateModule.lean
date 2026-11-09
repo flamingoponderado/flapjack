@@ -1,5 +1,9 @@
-import Flapjack.NamespaceProps.Lift
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateSequence
+module
+
+public import Flapjack.NamespaceProps.Lift
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateSequence
+
+@[expose] public section
 
 /-! Module declaration simulation over the preliminary factored relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

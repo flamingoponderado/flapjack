@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs
-import Flapjack.NamespaceProps
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs
+public import Flapjack.NamespaceProps
+
+@[expose] public section
 
 /-! Environment relation used by the source evaluator proof. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

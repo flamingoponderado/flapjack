@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.GcConst
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PopEnvConst
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.GcConst
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PopEnvConst
+
+@[expose] public section
 
 namespace Flapjack.WordSemAllocConstSupport
 

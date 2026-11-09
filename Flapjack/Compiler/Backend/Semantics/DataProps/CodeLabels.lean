@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosLang.CodeLabels
-import Flapjack.Compiler.Backend.DataLang.Syntax
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.CodeLabels
+public import Flapjack.Compiler.Backend.DataLang.Syntax
+
+@[expose] public section
 
 /-! Code labels referenced by data-language programs. -/
 namespace Flapjack.Compiler.Backend.DataSem

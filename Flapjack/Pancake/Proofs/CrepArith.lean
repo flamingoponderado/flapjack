@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.CrepArith
-import Flapjack.Pancake.Semantics.CrepRuntimeTarget
-import Flapjack.Pancake.Semantics.CrepSem.Eval
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.CrepArith
+public import Flapjack.Pancake.Semantics.CrepRuntimeTarget
+public import Flapjack.Pancake.Semantics.CrepSem.Eval
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect
+
+@[expose] public section
 
 /-! Theorem counterparts and Flapjack support for CakeML's
     `crep_arithProofScript.sml`. The tagged `dest_const_thm` uses the exact

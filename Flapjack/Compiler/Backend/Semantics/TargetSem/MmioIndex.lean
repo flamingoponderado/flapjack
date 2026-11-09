@@ -1,9 +1,13 @@
-import Flapjack.FfiHOL
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.FfiHOL
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 namespace Flapjack
 
-private instance : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
+instance mmioIndexNonemptyInst : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
 
 /-- Flapjack infrastructure naming the literal predicate in HOL's optional
 selection. Every EL use is guarded by the original prefix/suffix bounds. -/

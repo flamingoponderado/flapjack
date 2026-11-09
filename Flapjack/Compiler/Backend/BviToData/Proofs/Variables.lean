@@ -1,10 +1,16 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.Variables
-import Flapjack.Compiler.Backend.BviToData.Proofs.Value
-import Flapjack.Misc.Sptree.Map
-import Flapjack.Misc.Sptree.MkWf
-import Flapjack.Compiler.Backend.BviToData.Proofs.State
-import Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
-import Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.Variables
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Value
+public import Flapjack.Misc.Sptree.Map
+public import Flapjack.Misc.Sptree.MkWf
+public import Flapjack.Compiler.Backend.BviToData.Proofs.State
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+
+-- Proofs below unfold the private error helpers of `BviSem.evaluate`.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+@[expose] public section
 
 /-! Variable correspondence under BVI-to-data value projection. -/
 namespace Flapjack.Compiler.Backend.BviToData

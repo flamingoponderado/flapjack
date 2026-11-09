@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyEvaluate
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyProduction
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyEvaluate
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyProduction
+
+@[expose] public section
 
 /-! Evaluation correctness of the complete BVL handler simplifier. -/
 namespace Flapjack.Compiler.Backend.BvlHandle.Proofs

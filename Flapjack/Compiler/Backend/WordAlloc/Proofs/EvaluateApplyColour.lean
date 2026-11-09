@@ -1,15 +1,19 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Leaves
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Alloc
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Call
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.FFI
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Inst
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Install
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Loop
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MoveStoreConsts
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MustTerminate
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Seq
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.ShareInst
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Leaves
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Alloc
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Call
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.FFI
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Inst
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Install
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Loop
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MoveStoreConsts
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MustTerminate
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Seq
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.ShareInst
+
+@[expose] public section
 
 /-!
 # `evaluate_apply_colour`

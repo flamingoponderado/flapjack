@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractTotal
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractTotal
+
+@[expose] public section
 
 /-! Structural sufficiency for executable TMC rewriting. These proofs do not
 establish correspondence with the HOL pass or its correctness theorem. -/

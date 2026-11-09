@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabSem.Updates
-import Flapjack.Compiler.Encoders.AsmSem
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Updates
+public import Flapjack.Compiler.Encoders.AsmSem
+
+@[expose] public section
 
 /-! Literal native LabSem integer arithmetic. Destination writes precede the
 source assertions, so failure does not roll back a shift/division result.

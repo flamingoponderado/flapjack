@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.NonFfiResources
-import Flapjack.Compiler.Backend.Semantics.DataProps.HeapSwap
-import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyAuxFields
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.NonFfiResources
+public import Flapjack.Compiler.Backend.Semantics.DataProps.HeapSwap
+public import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyAuxFields
+
+@[expose] public section
 
 /-! Primitive success under resource-field updates. -/
 namespace Flapjack.Compiler.Backend.DataProps

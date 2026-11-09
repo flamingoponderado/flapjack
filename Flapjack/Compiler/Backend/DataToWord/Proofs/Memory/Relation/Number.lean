@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.SmallNumber
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.SmallNumber
+
+@[expose] public section
 
 /-! Consequences of the data-to-word memory relation for numeric values. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

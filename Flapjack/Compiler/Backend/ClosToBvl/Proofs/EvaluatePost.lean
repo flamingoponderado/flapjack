@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ValueGrowth
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateCodeFull
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateClockShift
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ValueGrowth
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateCodeFull
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateClockShift
+
+@[expose] public section
 
 /-! Consequences of the closure-to-BVL expression simulation postcondition. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
+module
+
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
+
+@[expose] public section
 
 /-!
 # Exact Loop-to-Word distinctness of mapped context variables

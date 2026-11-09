@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFpLemmas
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwapStack
-import Flapjack.Misc.ListEl
-import Flapjack.HolArb
+module
+
+public import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFpLemmas
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwapStack
+public import Flapjack.Misc.ListEl
+public import Flapjack.HolArb
+
+@[expose] public section
 
 /-!
 # `word_simpProof`: GC-constant preservation of the stack

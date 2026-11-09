@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterTwo
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterClock
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadContinuations
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstantInstruction
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterTwo
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterClock
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadContinuations
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstantInstruction
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CompCorrect.If
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

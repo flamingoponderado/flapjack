@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.LabSem.Inst
-import Flapjack.Compiler.Backend.LabSem.SharedMemory
-import Flapjack.Compiler.Backend.LabSem.Navigation
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
-import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
-import Flapjack.Misc.ShiftSeq
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Inst
+public import Flapjack.Compiler.Backend.LabSem.SharedMemory
+public import Flapjack.Compiler.Backend.LabSem.Navigation
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
+public import Flapjack.Misc.ShiftSeq
+
+@[expose] public section
 
 /-! Full native LabSem evaluator, following labSemScript490–617. Recursion
 decreases the actual source clock. Instruction failure returns the original

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline.LetOp
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.LetOp
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Structural properties of the BVL let-operation traversal. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

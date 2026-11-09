@@ -1,4 +1,13 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Call
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Call
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Application-expression simulation for the flat-to-closure pass. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

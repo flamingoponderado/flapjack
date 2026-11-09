@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileConcatByte
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileUnsupported
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileConcatByte
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileUnsupported
+
+@[expose] public section
 
 /-! Assembly of memory-operation cases for BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

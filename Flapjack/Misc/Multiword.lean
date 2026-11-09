@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Multiword integer encodings from the HOL multiword library. -/
 namespace Flapjack.Misc.Multiword

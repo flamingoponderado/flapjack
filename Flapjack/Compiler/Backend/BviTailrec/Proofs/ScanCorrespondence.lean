@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.ScanTotal
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermCorrespondence
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.HasRecCorrespondence
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.ScanTotal
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermCorrespondence
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.HasRecCorrespondence
+
+@[expose] public section
 
 /-! Correspondence between source-shaped and executed tail-recursion scans. -/
 namespace Flapjack.Compiler.Backend.BviTailrec

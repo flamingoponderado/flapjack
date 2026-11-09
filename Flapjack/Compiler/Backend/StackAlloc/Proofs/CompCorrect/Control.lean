@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect.Defs
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect.Defs
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `comp_correct`: `Seq`, `If` and `Loop`

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CollectorRoots
-import Flapjack.FiniteMap.MapKeys
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CollectorRoots
+public import Flapjack.FiniteMap.MapKeys
+
+@[expose] public section
 
 /-! Store fields preserved by the actual garbage collector. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

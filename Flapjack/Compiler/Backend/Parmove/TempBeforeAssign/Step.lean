@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Parmove.Steps
-import Flapjack.Compiler.Backend.Parmove.Invariants
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Append
+module
+
+public import Flapjack.Compiler.Backend.Parmove.Steps
+public import Flapjack.Compiler.Backend.Parmove.Invariants
+public import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Append
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

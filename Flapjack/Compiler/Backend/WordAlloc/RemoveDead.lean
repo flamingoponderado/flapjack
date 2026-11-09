@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
-import Flapjack.Compiler.Backend.WordAlloc.Instructions
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
+public import Flapjack.Compiler.Backend.WordAlloc.Instructions
+
+@[expose] public section
 
 /-!
 # word_alloc dead-code removal

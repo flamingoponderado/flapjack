@@ -1,8 +1,12 @@
-import Flapjack.Pancake.WordLang.MaxVar
-import Flapjack.Pancake.WordConvs.ProgramMonotonicity
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarInst
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.Max3
+module
+
+public import Flapjack.Pancake.WordLang.MaxVar
+public import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarInst
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.Max3
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

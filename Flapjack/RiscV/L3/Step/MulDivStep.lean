@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Defs.Multiply
-import Flapjack.RiscV.L3.Defs.Divide
+module
+
+public import Flapjack.RiscV.L3.Defs.Multiply
+public import Flapjack.RiscV.L3.Defs.Divide
+
+@[expose] public section
 
 /-! Evaluated original `riscv_stepScript.sml` integer multiply/divide instruction
 theorems for four full-width forms (`MUL`, `DIV`, `REM`, `REMU`, lines

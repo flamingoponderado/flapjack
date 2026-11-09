@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.ResourceLimit
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Complete
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.ResourceLimit
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.Complete
+
+@[expose] public section
 
 /-! Terminating word equality for related values. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

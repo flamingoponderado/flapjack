@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalList
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalList
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
+
+@[expose] public section
 
 /-! Relating encoded heap elements to their concrete word lists. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

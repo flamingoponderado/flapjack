@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorCombined
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedStore
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorCombined
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedStore
+
+@[expose] public section
 
 /-! Relating the combined abstract collector to the executed word collector. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

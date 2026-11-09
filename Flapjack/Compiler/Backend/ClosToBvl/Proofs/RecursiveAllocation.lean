@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveValues
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveValues
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
+
+@[expose] public section
 
 /-! State and value relations for a completed recursive closure array. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

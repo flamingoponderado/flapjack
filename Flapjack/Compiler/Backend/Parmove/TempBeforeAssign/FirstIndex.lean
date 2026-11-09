@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
-import Flapjack.Misc.FindIndex.ShiftZero
-import Flapjack.Misc.FindIndex.Append
-import Flapjack.Misc.FindIndex.Bounds
+module
+
+public import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
+public import Flapjack.Misc.FindIndex.ShiftZero
+public import Flapjack.Misc.FindIndex.Append
+public import Flapjack.Misc.FindIndex.Bounds
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 open Flapjack.Misc

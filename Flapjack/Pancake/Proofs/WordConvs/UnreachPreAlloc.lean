@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.WordConvs.Unreach
+module
+
+public import Flapjack.Pancake.Proofs.WordConvs.Unreach
+
+@[expose] public section
 
 namespace Flapjack.WordConvs
 open Flapjack Flapjack.Compiler.Backend.WordUnreach

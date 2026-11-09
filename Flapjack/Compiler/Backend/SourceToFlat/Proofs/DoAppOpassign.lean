@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppConfigGC
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveData
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppConfigGC
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveData
+
+@[expose] public section
 
 /-! Assignment, reference, byte-array, and string-copy cases of the primitive simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

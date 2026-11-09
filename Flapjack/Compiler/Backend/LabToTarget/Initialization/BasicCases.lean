@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.LabToTarget.Initialization
-import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
-import Flapjack.Compiler.Backend.LabToTarget.StateRel
-import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
-import Flapjack.Compiler.Backend.LabToTarget.ByteLengths
-import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
-import Flapjack.Compiler.Backend.Semantics.TargetProps.PostInterferenceState
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization
+public import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
+public import Flapjack.Compiler.Backend.LabToTarget.StateRel
+public import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
+public import Flapjack.Compiler.Backend.LabToTarget.ByteLengths
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.PostInterferenceState
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm Flapjack.Misc

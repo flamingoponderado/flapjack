@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Misc.Relation
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.Relation
+
+@[expose] public section
 
 /-!
 # HOL sorting `SORTED`, `PART` and `PARTITION`

@@ -1,6 +1,10 @@
-import Flapjack.SemanticPrimitivesHOL.Compare
-import Flapjack.SemanticPrimitivesHOL.Operations
-import Flapjack.FpSemHOL
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Compare
+public import Flapjack.SemanticPrimitivesHOL.Operations
+public import Flapjack.FpSemHOL
+
+@[expose] public section
 
 /-! Source primitive comparisons. Floating-point operations inherit the
 reviewed rational-cut assumption of `FpSemHOL`. -/

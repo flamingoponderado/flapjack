@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanStructs.CompileShapeN
-import Flapjack.Pancake.Proofs.PanStructs.CompileShapeExact
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.CompileShapeN
+public import Flapjack.Pancake.Proofs.PanStructs.CompileShapeExact
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.CompiledShapesWf
 open Flapjack.Pancake.PanLang
 open Flapjack.Basis.Pure.MlString

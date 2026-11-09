@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionInitTags
-import Flapjack.NumSet
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionInitTags
+public import Flapjack.NumSet
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 

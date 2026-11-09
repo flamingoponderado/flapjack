@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosOp
-import Flapjack.Compiler.Backend.ClosOp.EqBudget
-import Flapjack.Compiler.Backend.ClosLang.Proofs.Budget
+module
+
+public import Flapjack.Compiler.Backend.ClosOp
+public import Flapjack.Compiler.Backend.ClosOp.EqBudget
+public import Flapjack.Compiler.Backend.ClosLang.Proofs.Budget
+
+@[expose] public section
 
 /-! Executable smart-operation totality, independent of HOL correctness. -/
 namespace Flapjack.Compiler.Backend.ClosOp

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.LoopProps.EvalExact
-import Flapjack.Pancake.PanCommon
+module
+
+public import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+public import Flapjack.Pancake.PanCommon
+
+@[expose] public section
 
 /-!
 # loopProps `nested_seq` evaluation lemmas over the exact evaluator

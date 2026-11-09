@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackPermute
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackPermute
+
+@[expose] public section
 
 /-! Stack operations preserving the data-to-word abstract heap invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

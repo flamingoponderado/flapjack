@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.X64.Machine.DivCase
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.DivCase
+
+@[expose] public section
 
 /-!
 # The `addOverflow`, `subOverflow` and `addCarry` cases of `encoder_correct x64Target`

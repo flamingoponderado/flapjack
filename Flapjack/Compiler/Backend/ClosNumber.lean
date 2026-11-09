@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+
+@[expose] public section
 
 /-! Assign fresh code locations to closure expressions. -/
 namespace Flapjack.Compiler.Backend.ClosNumber

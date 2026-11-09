@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
+
+@[expose] public section
 
 /-! Native call destination and argument-frame helpers for Word-to-Stack.
 The source Call compiler clauses require native HolProg results. These literal

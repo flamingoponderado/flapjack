@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Defs.MMU.Translate
-import Flapjack.RiscV.L3.Defs.AddressException
+module
+
+public import Flapjack.RiscV.L3.Defs.MMU.Translate
+public import Flapjack.RiscV.L3.Defs.AddressException
+
+@[expose] public section
 
 /-! Full native FP loads and stores. Addresses signextend the word12 offset;
 all success/failure paths retain the translation-returned state. Loads use direct

@@ -1,4 +1,8 @@
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Variable and live-set layout for the data-to-word pass. -/
 namespace Flapjack.Compiler.Backend.DataToWord

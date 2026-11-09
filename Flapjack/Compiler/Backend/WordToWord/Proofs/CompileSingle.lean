@@ -1,23 +1,27 @@
-import Flapjack.Compiler.Backend.WordToWord.Compile
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.WordAllocCorrect
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.FullSSACorrect
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.DistinctTarReg
-import Flapjack.Compiler.Backend.WordSimp.Proofs.CompileExp
-import Flapjack.Compiler.Backend.WordInst.Proofs.InstSelect
-import Flapjack.Compiler.Backend.WordInst.Proofs.ThreeToTwo
-import Flapjack.Compiler.Backend.WordCopy.Proofs.Correct
-import Flapjack.Compiler.Backend.WordUnreach.Proofs
-import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect
-import Flapjack.Compiler.Backend.WordCse.Proofs.Conventions
-import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
-import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
-import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
-import Flapjack.Pancake.Proofs.WordConvs.Unreach
-import Flapjack.Pancake.Proofs.WordConvs.WordCse
-import Flapjack.Pancake.Proofs.WordConvs.CopyProp
-import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Compile
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.WordAllocCorrect
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.FullSSACorrect
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.DistinctTarReg
+public import Flapjack.Compiler.Backend.WordSimp.Proofs.CompileExp
+public import Flapjack.Compiler.Backend.WordInst.Proofs.InstSelect
+public import Flapjack.Compiler.Backend.WordInst.Proofs.ThreeToTwo
+public import Flapjack.Compiler.Backend.WordCopy.Proofs.Correct
+public import Flapjack.Compiler.Backend.WordUnreach.Proofs
+public import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect
+public import Flapjack.Compiler.Backend.WordCse.Proofs.Conventions
+public import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
+public import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
+public import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
+public import Flapjack.Pancake.Proofs.WordConvs.Unreach
+public import Flapjack.Pancake.Proofs.WordConvs.WordCse
+public import Flapjack.Pancake.Proofs.WordConvs.CopyProp
+public import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets
+
+@[expose] public section
 
 /-!
 # `word_to_wordProof`: one function through the wordLang passes

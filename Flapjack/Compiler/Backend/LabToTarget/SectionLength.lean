@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.Labels
-import Flapjack.Compiler.Backend.LabToTarget.Padding
-import Flapjack.Compiler.Backend.LabToTarget.LineLength
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Labels
+public import Flapjack.Compiler.Backend.LabToTarget.Padding
+public import Flapjack.Compiler.Backend.LabToTarget.LineLength
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

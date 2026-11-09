@@ -1,6 +1,10 @@
-import Flapjack.RiscV.NativeSource
-import Flapjack.RiscV.ArtifactFormat
-import Flapjack.RiscV.LabToTargetRoute
+module
+
+public import Flapjack.RiscV.NativeSource
+public import Flapjack.RiscV.ArtifactFormat
+public import Flapjack.RiscV.LabToTargetRoute
+
+@[expose] public section
 
 /-! Rendering the parser-backed native whole compiler result as CLI output.
 

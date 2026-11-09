@@ -1,28 +1,32 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.PanLang.Prog
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Pancake.PanToWord
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
-import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.Semantics.LoopSemStateExact
-import Flapjack.Compiler.Backend.StackRemove
-import Flapjack.Misc.Option
-import Flapjack.Misc.Sptree
-import Flapjack.HolArb
-import Flapjack.Pancake.Proofs.PanSimp
-import Flapjack.Pancake.LoopToWord.Proofs.ProgramNames
-import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
-import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
-import Flapjack.Pancake.Semantics.PanProps.HasMain
-import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsDecls
-import Flapjack.Pancake.PanGlobals.CompileExpExact
-import Flapjack.Pancake.PanStructs.CompileDeclsExact
-import Flapjack.Pancake.Proofs.PanStructs.CompileShapeN
-import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesNames
-import Flapjack.Pancake.PanToCrep.ContextExact
-import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.PanLang.Prog
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Pancake.PanToWord
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+public import Flapjack.Compiler.Backend.StackRemove
+public import Flapjack.Misc.Option
+public import Flapjack.Misc.Sptree
+public import Flapjack.HolArb
+public import Flapjack.Pancake.Proofs.PanSimp
+public import Flapjack.Pancake.LoopToWord.Proofs.ProgramNames
+public import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
+public import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+public import Flapjack.Pancake.Semantics.PanProps.HasMain
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsDecls
+public import Flapjack.Pancake.PanGlobals.CompileExpExact
+public import Flapjack.Pancake.PanStructs.CompileDeclsExact
+public import Flapjack.Pancake.Proofs.PanStructs.CompileShapeN
+public import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesNames
+public import Flapjack.Pancake.PanToCrep.ContextExact
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
+
+@[expose] public section
 
 /-!
 The source-level lemmas from CakeML's `pan_to_wordProofScript.sml`.

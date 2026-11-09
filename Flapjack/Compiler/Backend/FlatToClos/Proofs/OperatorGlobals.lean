@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatToClos.Op
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
-import Mathlib.Tactic.Tauto
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Op
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+public import Mathlib.Tactic.Tauto
+
+@[expose] public section
 
 /-! Global-write safety of generated primitive operations. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

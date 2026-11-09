@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabProps.EvaluateIoEventsMono
-import Flapjack.Compiler.Backend.LabProps.ClockSupport
+module
+
+public import Flapjack.Compiler.Backend.LabProps.EvaluateIoEventsMono
+public import Flapjack.Compiler.Backend.LabProps.ClockSupport
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.LabSem

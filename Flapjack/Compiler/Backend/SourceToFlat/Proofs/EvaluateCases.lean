@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
-import Flapjack.EvaluateHOL.Definition
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+public import Flapjack.EvaluateHOL.Definition
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Source-to-flat lookup and variable helpers, including the HOL
 `env_rel_lookup` port. The untagged helpers are Flapjack-specific infrastructure

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.PrimitiveArithmetic
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.PrimitiveArithmetic
+
+@[expose] public section
 /-! Source primitive conversion transport for evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps Flapjack.AstHOL

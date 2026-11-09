@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.LabelSets
-import Flapjack.Compiler.Backend.StackToLab.Compile
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.HandlerLabels
-import Flapjack.Compiler.Backend.StackRemove.Comp
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.LabelSets
+public import Flapjack.Compiler.Backend.StackToLab.Compile
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.HandlerLabels
+public import Flapjack.Compiler.Backend.StackRemove.Comp
+
+@[expose] public section
 
 /-! The `stack_good_code_labels` chain of `stack_to_labProofScript.sml:4090-4536`:
 every stack-to-lab pass preserves `stack_good_code_labels`, so the labels the

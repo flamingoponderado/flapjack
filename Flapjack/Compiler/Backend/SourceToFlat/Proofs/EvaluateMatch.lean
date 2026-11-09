@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
-import Flapjack.Compiler.Backend.FlatProps.EvaluateMatch
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
+public import Flapjack.Compiler.Backend.FlatProps.EvaluateMatch
+
+@[expose] public section
 
 /-! Connecting source row selection to source evaluation. These Flapjack
 helpers use the full clocked evaluator but are not HOL theorem ports. -/

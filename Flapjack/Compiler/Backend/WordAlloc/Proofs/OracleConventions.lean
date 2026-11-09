@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.OracleColour
-import Flapjack.Compiler.Backend.WordAlloc.ClashTreeProg
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.OracleColour
+public import Flapjack.Compiler.Backend.WordAlloc.ClashTreeProg
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Flapjack

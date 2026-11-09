@@ -1,6 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.WordAlloc.GetForced
-import Flapjack.Compiler.Backend.RegAlloc.Proofs
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.WordAlloc.GetForced
+-- `getForced.induct` needs the private termination proof of `getForced`.
+import all Flapjack.Compiler.Backend.WordAlloc.GetForced
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs
+
+@[expose] public section
 
 /-!
 # `get_forced` accumulator lemmas

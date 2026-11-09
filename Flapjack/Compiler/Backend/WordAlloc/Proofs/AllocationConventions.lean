@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.WordAlloc.WordAllocDef
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SelectRegAllocCorrect
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
-import Flapjack.Pancake.WordConvs.StackOccurrences
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.WordAllocDef
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SelectRegAllocCorrect
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
+public import Flapjack.Pancake.WordConvs.StackOccurrences
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Flapjack Flapjack.RegAlloc Flapjack.Compiler.Encoders.Asm

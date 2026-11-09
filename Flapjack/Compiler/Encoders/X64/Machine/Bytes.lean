@@ -1,5 +1,9 @@
-import Mathlib.Tactic
-import Flapjack.Compiler.Encoders.X64.Machine.Decode
+module
+
+public import Mathlib.Tactic
+public import Flapjack.Compiler.Encoders.X64.Machine.Decode
+
+@[expose] public section
 
 /-!
 # Byte-level facts for the x86-64 decoder

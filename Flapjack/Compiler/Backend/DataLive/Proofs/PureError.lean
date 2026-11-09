@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.Simulation
-import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyErrors
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.Simulation
+public import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyErrors
+
+@[expose] public section
 
 /-! Error behavior of pure data-language primitive applications. -/
 namespace Flapjack.Compiler.Backend.DataLive

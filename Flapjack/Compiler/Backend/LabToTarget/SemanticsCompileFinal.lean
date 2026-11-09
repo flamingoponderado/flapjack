@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.SemanticsCompile
-import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
-import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmEvaluate
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SemanticsCompile
+public import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
+public import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmEvaluate
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps

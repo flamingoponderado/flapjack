@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem
-import Flapjack.Misc.Option
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem
+public import Flapjack.Misc.Option
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack

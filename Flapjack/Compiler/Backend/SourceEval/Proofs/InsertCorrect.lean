@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.InsertCorrectApp
-import Flapjack.EvaluateHOL.Induction
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.InsertCorrectApp
+public import Flapjack.EvaluateHOL.Induction
+
+@[expose] public section
 
 /-! Complete mutual oracle insertion correctness for the source evaluator. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

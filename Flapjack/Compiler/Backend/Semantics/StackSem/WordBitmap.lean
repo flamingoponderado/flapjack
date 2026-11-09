@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Std.Tactic
+module
+
+public import Flapjack.HolRef
+public import Std.Tactic
+
+@[expose] public section
 
 namespace Flapjack.StackSem
 

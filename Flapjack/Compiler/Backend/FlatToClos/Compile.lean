@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatToClos.Op
-import Flapjack.Compiler.Backend.ClosInterp.Interpreter
-import Flapjack.Compiler.Backend.ClosInterp.Optimise
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Op
+public import Flapjack.Compiler.Backend.ClosInterp.Interpreter
+public import Flapjack.Compiler.Backend.ClosInterp.Optimise
+
+@[expose] public section
 
 /-! Flat expressions to closure expressions, before interpreter attachment. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

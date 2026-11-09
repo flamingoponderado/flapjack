@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionMoveAdmission
-import Flapjack.Compiler.Backend.RegAlloc.ProductionInitDomain
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionMoveAdmission
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionInitDomain
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV RiscV.CakeRegAlloc

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Leaves
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MoveStoreConsts
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Leaves
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MoveStoreConsts
+
+@[expose] public section
 
 /-!
 # `evaluate_remove_dead` Move case

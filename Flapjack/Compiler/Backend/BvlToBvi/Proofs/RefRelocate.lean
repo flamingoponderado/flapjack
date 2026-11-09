@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileByteRead
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileByteRead
+
+@[expose] public section
 
 /-! Changing the relocation outside the allocated source reference domain. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

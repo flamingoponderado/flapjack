@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveFrame
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveFrame
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

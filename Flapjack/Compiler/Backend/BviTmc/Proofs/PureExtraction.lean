@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.PureEvaluation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.PureEvaluation
+
+@[expose] public section
 
 /-! Correctness of TMC's pure-expression extraction. -/
 namespace Flapjack.Compiler.Backend.BviTmc

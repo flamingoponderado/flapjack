@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
-import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConstsGuard
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConstsGuard
+
+@[expose] public section
 
 /-! Untagged, source-shaped fragment of the HOL `evaluate_def` `StoreConsts`
 clause (`cakeml/compiler/backend/semantics/stackSemScript.sml:784-788`):

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorSimple
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedStore
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorSimple
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedStore
+
+@[expose] public section
 
 /-! Word-level memory correctness for simple copying collection. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

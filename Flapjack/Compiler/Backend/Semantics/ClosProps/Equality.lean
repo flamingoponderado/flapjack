@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.ListRelations
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.ListRelations
+
+@[expose] public section
 
 /-! Structural equality under simple closure-value relations. -/
 namespace Flapjack.Compiler.Backend.ClosProps

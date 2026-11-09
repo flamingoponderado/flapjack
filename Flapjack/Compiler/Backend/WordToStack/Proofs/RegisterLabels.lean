@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
-import Flapjack.Compiler.Backend.StackProps.CodeLabels
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
+public import Flapjack.Compiler.Backend.StackProps.CodeLabels
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack.Compiler.Backend.StackLang

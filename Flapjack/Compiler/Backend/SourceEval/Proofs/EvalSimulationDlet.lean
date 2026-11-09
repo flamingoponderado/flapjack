@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDeclarations
-import Flapjack.Compiler.Backend.SourceEval.Proofs.PatternMatchSafety
-import Flapjack.EvaluateProps.Length
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDeclarations
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.PatternMatchSafety
+public import Flapjack.EvaluateProps.Length
+
+@[expose] public section
 
 /-! Value-declaration case of the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

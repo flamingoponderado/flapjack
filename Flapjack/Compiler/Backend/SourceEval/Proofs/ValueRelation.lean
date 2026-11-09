@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleCallback
-import Flapjack.SemanticPrimitivesHOL.Concrete
-import Batteries.Data.List.Basic
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleCallback
+public import Flapjack.SemanticPrimitivesHOL.Concrete
+public import Batteries.Data.List.Basic
+
+@[expose] public section
 
 /-! Relate source values before and after environment recording. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

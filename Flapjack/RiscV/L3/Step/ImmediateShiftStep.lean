@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.ImmediateShift
+module
+
+public import Flapjack.RiscV.L3.Defs.ImmediateShift
+
+@[expose] public section
 
 /-! Evaluated immediate-shift instruction equations (HOL `riscv_step` shift group).
 

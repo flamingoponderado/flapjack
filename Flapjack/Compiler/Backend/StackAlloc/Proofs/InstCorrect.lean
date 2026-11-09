@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.ProgComp
-import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.ProgComp
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `inst_correct`

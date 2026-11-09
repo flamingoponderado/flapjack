@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosKnown.Total
-import Flapjack.Compiler.Backend.ClosFvs.Source
-import Flapjack.Compiler.Backend.ClosTicks.Source
-import Flapjack.Compiler.Backend.ClosLetop.Source
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Total
+public import Flapjack.Compiler.Backend.ClosFvs.Source
+public import Flapjack.Compiler.Backend.ClosTicks.Source
+public import Flapjack.Compiler.Backend.ClosLetop.Source
+
+@[expose] public section
 
 /-! Executable known-function pass. The whole-pass correctness proof remains
 unported. -/

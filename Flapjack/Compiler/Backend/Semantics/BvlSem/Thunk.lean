@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.State
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.State
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! BVL thunk inspection and update restrictions. -/
 namespace Flapjack.Compiler.Backend.BvlSem

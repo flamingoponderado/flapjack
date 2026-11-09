@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.DataToWord.Config
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
-import Flapjack.Misc.FiniteMapApply
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Config
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+public import Flapjack.Misc.FiniteMapApply
+
+@[expose] public section
 
 /-! Limit extraction for the data-to-word observational correctness theorem. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs

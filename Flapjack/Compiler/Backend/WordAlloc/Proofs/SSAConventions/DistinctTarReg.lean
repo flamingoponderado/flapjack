@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.FullInstructionValidity
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.FullInstructionValidity
+
+@[expose] public section
 
 /-!
 # `word_allocProof`: SSA output has distinct target registers

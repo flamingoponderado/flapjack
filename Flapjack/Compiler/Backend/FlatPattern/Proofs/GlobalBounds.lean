@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalInvariants
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalFlag
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalInvariants
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalFlag
+
+@[expose] public section
 
 /-! Global-write bounds for pattern compilation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

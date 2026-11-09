@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+
+@[expose] public section
 
 /-! Structural bounds for the smart-operation equality traversal. -/
 namespace Flapjack.Compiler.Backend.ClosOp

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
-import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+
+@[expose] public section
 
 /-! Source syntax condition for closure-call correctness. -/
 namespace Flapjack.Compiler.Backend.ClosCall

@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.LabFilter.Proofs.CallFfiCases
-import Flapjack.Compiler.Backend.LabFilter.Map
+module
+
+public import Flapjack.Compiler.Backend.LabFilter.Proofs.CallFfiCases
+public import Flapjack.Compiler.Backend.LabFilter.Map
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Compiler.Backend.LabFilter.Proofs
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

@@ -1,4 +1,8 @@
-import Flapjack.FfiHOL
+module
+
+public import Flapjack.FfiHOL
+
+@[expose] public section
 
 /-! Literal CakeML behavior refinement for the Lab-to-target correctness chain.
 The canonical FfiHOL behavior/outcome/event carriers and HolLList are reviewed

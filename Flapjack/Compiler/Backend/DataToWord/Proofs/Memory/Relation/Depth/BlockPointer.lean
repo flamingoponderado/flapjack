@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockEquality
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.RefEquality
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockEquality
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.RefEquality
+
+@[expose] public section
 
 /-! Uniqueness of source blocks sharing a target word. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

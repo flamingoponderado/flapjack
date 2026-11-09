@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.CodeLocations
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.CodeLocations
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Source-shaped equations for closure free-variable discovery. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

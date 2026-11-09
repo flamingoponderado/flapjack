@@ -1,7 +1,11 @@
-import Flapjack.Pancake.Proofs.PanGlobals
-import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
-import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
-import Flapjack.Pancake.Semantics.PanProps
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
+public import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
+public import Flapjack.Pancake.Semantics.PanProps
+
+@[expose] public section
 
 /-!
 The original pan_globals `ALL_DISTINCT_compile_top`

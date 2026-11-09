@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.CodeBufferWrite
 open Flapjack Compiler.Backend.StackLang StackSemEvaluate StackSemStateOps
 

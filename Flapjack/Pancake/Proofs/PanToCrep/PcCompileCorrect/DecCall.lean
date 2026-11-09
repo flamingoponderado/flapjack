@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
-import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
-import Flapjack.Pancake.Semantics.PanProps.ResVar
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
+public import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
+public import Flapjack.Pancake.Semantics.PanProps.ResVar
+
+@[expose] public section
 
 /-!
 # `pc_compile_correct` DecCall case over the exact carriers

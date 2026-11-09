@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
+module
+
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
+
+@[expose] public section
 
 /-!
 # Loop-to-word cutset domain fact

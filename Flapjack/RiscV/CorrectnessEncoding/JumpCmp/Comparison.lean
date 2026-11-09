@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Source
-import Flapjack.RiscV.CorrectnessEncoding.ConstNext
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Source
+public import Flapjack.RiscV.CorrectnessEncoding.ConstNext
+
+@[expose] public section
 
 /-! Source word_cmp/native branch correspondence for the six simple
 comparison forms. Test/NotTest require their actual AND/ANDI prefix and remain

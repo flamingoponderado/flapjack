@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.ClosKnown.Inline
-import Flapjack.Compiler.Backend.ClosKnown.KnownOp
-import Flapjack.Compiler.Backend.ClosFvs
-import Flapjack.Compiler.Backend.ClosTicks
-import Flapjack.Compiler.Backend.ClosLetop
-import Flapjack.Compiler.Backend.ClosOp
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Inline
+public import Flapjack.Compiler.Backend.ClosKnown.KnownOp
+public import Flapjack.Compiler.Backend.ClosFvs
+public import Flapjack.Compiler.Backend.ClosTicks
+public import Flapjack.Compiler.Backend.ClosLetop
+public import Flapjack.Compiler.Backend.ClosOp
+
+@[expose] public section
 
 /-! Helpers shared by the total known-function traversal. Full HOL
 correctness remains unproved. -/

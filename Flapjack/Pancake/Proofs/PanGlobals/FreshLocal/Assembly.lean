@@ -1,21 +1,25 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Dec
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Assign
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Primitive
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Memory
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.ShMemLoad
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.ShMemStore
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Seq
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.If
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.While
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Results
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.TailCall
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.CallNoHandler
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.CallHandler
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.DecCall
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.ExtCall
-import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Support
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Dec
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Assign
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Primitive
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Memory
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.ShMemLoad
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.ShMemStore
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Seq
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.If
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.While
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Results
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.TailCall
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.CallNoHandler
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.CallHandler
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.DecCall
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.ExtCall
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Support
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsFreshLocalAssembly
 open Flapjack.PanGlobalsFreshLocalSupport

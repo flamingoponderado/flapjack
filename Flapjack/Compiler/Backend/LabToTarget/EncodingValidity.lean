@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.LabToTarget.LabelLookup
-import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
-import Flapjack.Compiler.Backend.LabProps.LineLength
-import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
-import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.LabelLookup
+public import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
+public import Flapjack.Compiler.Backend.LabProps.LineLength
+public import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
+public import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

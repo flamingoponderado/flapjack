@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Measure
-import Flapjack.Misc.ListEl
-import Flapjack.Misc.OptBind
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Measure
+public import Flapjack.Misc.ListEl
+public import Flapjack.Misc.OptBind
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Clocked flat evaluation without an extra fuel parameter. Lean currently
 fails to derive the generated functional induction principle for this mutual

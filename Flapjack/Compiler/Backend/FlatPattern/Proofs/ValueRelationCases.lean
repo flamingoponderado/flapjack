@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.StateRelation
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
+
+@[expose] public section
 
 /-! Elimination and monotonicity for the proof-side pattern relations. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

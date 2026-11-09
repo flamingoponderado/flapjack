@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackProps.CodeLabels
-import Flapjack.Compiler.Backend.BackendProps
+module
+
+public import Flapjack.Compiler.Backend.StackProps.CodeLabels
+public import Flapjack.Compiler.Backend.BackendProps
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackProps
 open StackLang

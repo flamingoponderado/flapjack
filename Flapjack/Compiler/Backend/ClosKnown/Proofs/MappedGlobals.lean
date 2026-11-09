@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem
-import Mathlib.Data.Set.Basic
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem
+public import Mathlib.Data.Set.Basic
+
+@[expose] public section
 
 /-! Initialization and controlled extension of closure globals. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

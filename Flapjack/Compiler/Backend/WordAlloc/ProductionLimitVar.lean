@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
-import Flapjack.Compiler.Backend.WordAlloc.LimitVar
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
+public import Flapjack.Compiler.Backend.WordAlloc.LimitVar
+
+@[expose] public section
 
 namespace Flapjack
 

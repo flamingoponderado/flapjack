@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
-import Flapjack.Compiler.Backend.BackendCommon
-import Flapjack.Misc.MachineIeee.Arith
-import Flapjack.Misc.MachineIeee.ConvertInt
-import Flapjack.Misc.BinaryIeeeSqrt
-import Flapjack.FpSemHOL
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+public import Flapjack.Compiler.Backend.BackendCommon
+public import Flapjack.Misc.MachineIeee.Arith
+public import Flapjack.Misc.MachineIeee.ConvertInt
+public import Flapjack.Misc.BinaryIeeeSqrt
+public import Flapjack.FpSemHOL
+
+@[expose] public section
 
 /-!
 # Exact HOL `wordSem$inst_def`

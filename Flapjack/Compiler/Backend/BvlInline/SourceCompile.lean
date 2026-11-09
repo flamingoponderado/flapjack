@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramProduction
-import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpProduction
-import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
-import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramProduction
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpProduction
+public import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
+public import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Source-shaped composition of the BVL inlining and handler passes. -/
 namespace Flapjack.Compiler.Backend.BvlInline

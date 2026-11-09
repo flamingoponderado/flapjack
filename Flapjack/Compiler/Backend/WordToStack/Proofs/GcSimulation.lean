@@ -1,18 +1,22 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
-import Flapjack.Compiler.Backend.WordToStack.Proofs.FilterBitmap
-import Flapjack.Compiler.Backend.WordToStack.Proofs.MapFst
-import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
-import Flapjack.Compiler.Backend.WordToStack.Proofs.MapBitmap
-import Flapjack.Compiler.Backend.StackProps.StackLengths
-import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
-import Flapjack.Compiler.Backend.WordToStack.Proofs.FrameOffsets
-import Flapjack.Compiler.Backend.WordToStack.Proofs.DecodedFrameShape
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
-import Mathlib.Data.List.Forall2
-import Flapjack.Compiler.Backend.WordToStack.Proofs.SourceFrameSize
-import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocSimulation
-import Flapjack.Misc.FiniteMapApply
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.FilterBitmap
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.MapFst
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.MapBitmap
+public import Flapjack.Compiler.Backend.StackProps.StackLengths
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.FrameOffsets
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.DecodedFrameShape
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
+public import Mathlib.Data.List.Forall2
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.SourceFrameSize
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocSimulation
+public import Flapjack.Misc.FiniteMapApply
+
+@[expose] public section
 
 /-!
 # Word-to-Stack garbage-collection simulation

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordSimp.Proofs.GcConsts
-import Flapjack.Misc.Sptree.InsertUnchanged
+module
+
+public import Flapjack.Compiler.Backend.WordSimp.Proofs.GcConsts
+public import Flapjack.Misc.Sptree.InsertUnchanged
+
+@[expose] public section
 
 /-!
 # `word_simpProof`: verification of `const_fp`

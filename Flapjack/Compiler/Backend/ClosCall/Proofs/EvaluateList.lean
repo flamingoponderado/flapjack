@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateHandle
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateHandle
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+
+@[expose] public section
 
 /-! Sequential expression-list evaluation for direct-call conversion. -/
 namespace Flapjack.Compiler.Backend.ClosCall

@@ -1,7 +1,15 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
-import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
-import Flapjack.Misc.OptBind
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+public import Flapjack.Misc.OptBind
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! A fuel-bounded version of the original flat evaluator. Fuel exhaustion is
 represented separately from the original clock timeout. The unbounded HOL

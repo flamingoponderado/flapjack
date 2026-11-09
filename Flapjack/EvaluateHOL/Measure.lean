@@ -1,5 +1,9 @@
-import Flapjack.EvaluateHOL
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.EvaluateHOL
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Termination support for the source evaluator. These Lean-specific lemmas
 have no separate HOL declaration: the original termination proof uses a

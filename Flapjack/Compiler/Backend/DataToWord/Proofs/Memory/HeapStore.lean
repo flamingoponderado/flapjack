@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateValue
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateValue
+
+@[expose] public section
 
 /-! The abstract heap-store operation used by data-to-word memory proofs. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

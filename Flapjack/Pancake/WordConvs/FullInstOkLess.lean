@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 namespace Flapjack
 open Flapjack.Compiler.Encoders.Asm

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.MemoryWrites
 open Flapjack

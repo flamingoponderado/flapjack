@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingNamedLet
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Equality
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveTest
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveArith
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingNamedLet
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Equality
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveTest
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveArith
+
+@[expose] public section
 
 /-! Growing argument lists in local environments. The factored relations
 remain pending HOL correspondence review. -/

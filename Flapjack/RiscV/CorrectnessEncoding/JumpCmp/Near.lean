@@ -1,6 +1,10 @@
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.NearReg
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.NearRegTest
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.NearImm
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.NearReg
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.NearRegTest
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.NearImm
+
+@[expose] public section
 
 /-! All near JumpCmp lowering cases with the full original conclusion.
 The original near guard is discharged by the final near/far constructor split.

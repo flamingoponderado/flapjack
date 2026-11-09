@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileElemAt
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileElemAt
+
+@[expose] public section
 
 /-! In-place byte-array copying in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveCopy
-import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveFfi
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveCopy
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveFfi
+
+@[expose] public section
 
 /-! Ordinary thunk operations for multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti

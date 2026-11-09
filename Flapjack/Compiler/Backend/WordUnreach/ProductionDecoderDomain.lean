@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordUnreach
-import Flapjack.Pancake.LoopToWord
+module
+
+public import Flapjack.Compiler.Backend.WordUnreach
+public import Flapjack.Pancake.LoopToWord
+
+@[expose] public section
 
 /-! Flapjack-only representation infrastructure for the executed Word decoder.
 The native unreachable-code pass retains instruction leaves, so it cannot

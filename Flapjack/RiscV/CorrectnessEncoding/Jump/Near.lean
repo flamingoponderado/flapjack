@@ -1,4 +1,8 @@
-import Flapjack.RiscV.CorrectnessEncoding.Jump.Native
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.Jump.Native
+
+@[expose] public section
 
 /-! Near-path assembly infrastructure for the full Jump constructor. The branch
 condition selects the actual source encoder path; only the assembling theorem

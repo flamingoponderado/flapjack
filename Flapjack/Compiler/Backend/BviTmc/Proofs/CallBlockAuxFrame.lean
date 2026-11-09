@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockAllocation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockWorkerLeaf
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockAllocation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockWorkerLeaf
+
+@[expose] public section
 
 /-! Nested mutable frames in auxiliary call-block simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc.CallBlockAuxFrame

@@ -1,4 +1,8 @@
-import Flapjack.Misc.BalancedMap.Semantics
+module
+
+public import Flapjack.Misc.BalancedMap.Semantics
+
+@[expose] public section
 
 namespace Flapjack.Misc.BalancedMap
 

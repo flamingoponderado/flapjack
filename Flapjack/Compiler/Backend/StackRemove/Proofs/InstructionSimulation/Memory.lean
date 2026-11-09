@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryStores
-import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryLoads
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Atoms
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryStores
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryLoads
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Atoms
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.InstructionSimulation.Memory
 open Flapjack Compiler.Encoders.Asm

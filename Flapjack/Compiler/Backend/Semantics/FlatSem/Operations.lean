@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem
-import Flapjack.SemanticPrimitivesHOL.Operations
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem
+public import Flapjack.SemanticPrimitivesHOL.Operations
+
+@[expose] public section
 
 /-! Equality and function application in the original flat-language semantics.
 The full flat evaluator and source-to-flat simulation remain open. -/

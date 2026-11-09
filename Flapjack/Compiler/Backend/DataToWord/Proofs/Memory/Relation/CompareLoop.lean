@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberCompare
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberCompare
+
+@[expose] public section
 
 /-! Word-level big-integer comparison used by the memory relation proof. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

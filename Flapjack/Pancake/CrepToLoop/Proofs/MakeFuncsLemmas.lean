@@ -1,6 +1,14 @@
-import Flapjack.Pancake.CrepToLoop.ContextExact
-import Flapjack.Pancake.CrepToLoop.StateRel
-import Flapjack.Pancake.CrepToLoop.Proofs.LocalListHelpers
+module
+
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+public import Flapjack.Pancake.CrepToLoop.StateRel
+public import Flapjack.Pancake.CrepToLoop.Proofs.LocalListHelpers
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # crep_to_loop `crep_to_loop_compile_prog_lab_min`

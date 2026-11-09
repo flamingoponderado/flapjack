@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
-import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
-import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexList
-import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexList
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack.StackSem

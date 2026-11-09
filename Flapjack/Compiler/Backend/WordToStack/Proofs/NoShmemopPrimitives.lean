@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
-import Flapjack.Compiler.Backend.WordToStack.NativeCompile
-import Flapjack.Pancake.WordConvs.NotCreated
+module
+
+public import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
+public import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+public import Flapjack.Pancake.WordConvs.NotCreated
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang

@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.ClosLang.HasInstall
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.HasInstall
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! The closure-language interpreter attached to programs using `Install`. -/
 namespace Flapjack.Compiler.Backend.ClosInterp

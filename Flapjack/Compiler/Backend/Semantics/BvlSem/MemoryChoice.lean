@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
+public import Aesop
+
+@[expose] public section
 
 /-! Choice predicates for BVL byte-vector primitives. -/
 namespace Flapjack.Compiler.Backend.BvlSem

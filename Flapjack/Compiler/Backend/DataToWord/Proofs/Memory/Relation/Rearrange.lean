@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackPermute
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackPermute
+
+@[expose] public section
 
 /-! Rearrangement of values in the full data-to-word memory relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

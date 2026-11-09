@@ -1,5 +1,9 @@
-import Flapjack.EvaluateHOL.ClockFull
-import Flapjack.HolRef
+module
+
+public import Flapjack.EvaluateHOL.ClockFull
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! The shared induction principle for source evaluation. -/
 namespace Flapjack.EvaluateHOL

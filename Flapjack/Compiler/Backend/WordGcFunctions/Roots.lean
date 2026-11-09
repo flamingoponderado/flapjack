@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordGcFunctions
-import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
-import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+module
+
+public import Flapjack.Compiler.Backend.WordGcFunctions
+public import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
+public import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+
+@[expose] public section
 
 /-!
 # `word_gcFunctions` root theorems

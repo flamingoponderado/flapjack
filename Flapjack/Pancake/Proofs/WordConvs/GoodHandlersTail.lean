@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Proofs.WordConvs.HandlerPasses
-import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersPasses
-import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersSSA
-import Flapjack.Pancake.Proofs.WordConvs.NotCreatedTail
-import Flapjack.Pancake.Proofs.WordConvs.RemoveMustTerminate
+module
+
+public import Flapjack.Pancake.Proofs.WordConvs.HandlerPasses
+public import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersPasses
+public import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersSSA
+public import Flapjack.Pancake.Proofs.WordConvs.NotCreatedTail
+public import Flapjack.Pancake.Proofs.WordConvs.RemoveMustTerminate
+
+@[expose] public section
 
 /-!
 # `wordConvsProof`: `word_good_handlers` through `word_to_word`

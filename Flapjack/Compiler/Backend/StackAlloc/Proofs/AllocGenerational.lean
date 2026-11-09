@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational.Full
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational.Full
+
+@[expose] public section
 
 /-! Whole original generational allocation theorem, assembled along HOL's
 partial/full selector split. Both branches evaluate the actual wordGcCode. -/

@@ -1,7 +1,11 @@
-import Mathlib.Tactic
-import Flapjack.Compiler.Encoders.X64.Machine.Agree
-import Flapjack.Compiler.Encoders.X64.Machine.Congruence
-import Flapjack.Compiler.Encoders.X64.Machine.DecodeCongr
+module
+
+public import Mathlib.Tactic
+public import Flapjack.Compiler.Encoders.X64.Machine.Agree
+public import Flapjack.Compiler.Encoders.X64.Machine.Congruence
+public import Flapjack.Compiler.Encoders.X64.Machine.DecodeCongr
+
+@[expose] public section
 
 /-!
 # Step agreement and framing for the closed x86-64 model

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.EqPureSimple
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.EqPureSimple
+
+@[expose] public section
 
 /-! Source reduction relation and its simple-expression consequences. -/
 namespace Flapjack.Compiler.Backend.ClosOp

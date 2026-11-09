@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
-import Flapjack.Compiler.Backend.WordAlloc.SSATransInst
-import Flapjack.Compiler.Backend.WordAlloc.KeyMaps
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
+public import Flapjack.Compiler.Backend.WordAlloc.SSATransInst
+public import Flapjack.Compiler.Backend.WordAlloc.KeyMaps
+
+@[expose] public section
 
 /-!
 # word_alloc SSA renaming of programs

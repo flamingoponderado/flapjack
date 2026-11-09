@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosConstant.Proofs.Build
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
+module
+
+public import Flapjack.Compiler.Backend.ClosConstant.Proofs.Build
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
+
+@[expose] public section
 
 /-! Naive constant flattening and reconstruction from the HOL proof. -/
 namespace Flapjack.Compiler.Backend.ClosConstant.Proofs

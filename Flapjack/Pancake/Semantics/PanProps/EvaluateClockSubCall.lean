@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubAtoms
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubAtoms
+
+@[expose] public section
 
 /-!
 # panProps `evaluate_clock_sub`: the `Call` case

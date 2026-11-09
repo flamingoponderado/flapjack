@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
-import Flapjack.Compiler.Backend.RegAlloc.SortedMem
-import Flapjack.Compiler.Backend.RegAlloc.StateMap
-import Flapjack.Compiler.Backend.RegAlloc.TagColour
-import Flapjack.Misc.Sptree.ToAList
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
+public import Flapjack.Compiler.Backend.RegAlloc.SortedMem
+public import Flapjack.Compiler.Backend.RegAlloc.StateMap
+public import Flapjack.Compiler.Backend.RegAlloc.TagColour
+public import Flapjack.Misc.Sptree.ToAList
+
+@[expose] public section
 
 /-!
 # reg_alloc colour extraction and move preprocessing

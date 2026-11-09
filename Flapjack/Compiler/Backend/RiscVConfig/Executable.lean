@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.RiscVConfig.BackendConfig
-import Flapjack.Compiler.Backend.Backend.PrimSrcConfig.Executable
-import Flapjack.Compiler.Compiler
+module
+
+public import Flapjack.Compiler.Backend.RiscVConfig.BackendConfig
+public import Flapjack.Compiler.Backend.Backend.PrimSrcConfig.Executable
+public import Flapjack.Compiler.Compiler
+
+@[expose] public section
 
 /-! Executable realization of the reviewed native backend configuration.
 The existing tagged primitive-source equality eliminates its unused HOL ARB

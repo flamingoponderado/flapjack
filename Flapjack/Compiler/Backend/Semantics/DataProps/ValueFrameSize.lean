@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultAll
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultAll
+
+@[expose] public section
 
 /-! Local-frame-size invariant for value-returning data evaluations. -/
 namespace Flapjack.Compiler.Backend.DataSem

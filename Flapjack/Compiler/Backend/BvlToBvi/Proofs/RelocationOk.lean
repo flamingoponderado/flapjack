@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ValueOk
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ValueOk
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Relocation agreement on well-formed source values. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

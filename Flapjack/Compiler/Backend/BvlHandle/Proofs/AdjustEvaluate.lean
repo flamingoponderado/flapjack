@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.HelpersProduction
-import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateLength
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.HelpersProduction
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateLength
+
+@[expose] public section
 
 /-! Evaluation under the handler pass's inserted environment segment. -/
 namespace Flapjack.Compiler.Backend.BvlHandle.Proofs

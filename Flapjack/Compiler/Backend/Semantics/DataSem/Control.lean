@@ -1,14 +1,18 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.State
-import Flapjack.Misc.Sptree.FromList
-import Flapjack.Misc.Sptree.MkWf
-import Flapjack.Misc.ListEl
-import Mathlib.Data.Option.NAry
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.State
+public import Flapjack.Misc.Sptree.FromList
+public import Flapjack.Misc.Sptree.MkWf
+public import Flapjack.Misc.ListEl
+public import Mathlib.Data.Option.NAry
+
+@[expose] public section
 
 /-! Stack, call and thunk operations used by the data-language evaluator. -/
 namespace Flapjack.Compiler.Backend.DataSem
 open Flapjack Flapjack.Compiler.Backend.BackendCommon
 
-private instance : Nonempty Value := ⟨.number 0⟩
+instance controlInst1 : Nonempty Value := ⟨.number 0⟩
 
 /-- The accounted size of an environment or exception frame. -/
 @[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "size_of_stack_frame_def"]

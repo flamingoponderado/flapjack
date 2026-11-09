@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.LabToTarget.Encoding
-import Flapjack.Compiler.Encoders.RiscV.Unsupported
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Encoding
+public import Flapjack.Compiler.Encoders.RiscV.Unsupported
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Encoding guard before native encoding

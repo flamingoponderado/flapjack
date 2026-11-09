@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
+public import Flapjack.Misc.ClockWeightInduction
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Clock-extension cases for proof-side closure application. Evaluator and
 state carriers remain pending HOL correspondence review. -/

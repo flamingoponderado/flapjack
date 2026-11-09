@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanToCrep.Compile
+module
+
+public import Flapjack.Pancake.PanToCrep.Compile
+
+@[expose] public section
 
 /-!
 # Function-name invariants for the Pancake-to-Crep compiler

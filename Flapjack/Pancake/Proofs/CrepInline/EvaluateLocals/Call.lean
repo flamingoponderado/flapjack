@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Primitive
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.While
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Primitive
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.While
+
+@[expose] public section
 
 namespace Flapjack.CrepInlineExact
 

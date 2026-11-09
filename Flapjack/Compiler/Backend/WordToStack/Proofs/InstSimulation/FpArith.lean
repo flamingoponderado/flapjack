@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelFp
-import Flapjack.Pancake.WordLang.MaxVarInst
-import Flapjack.Compiler.Backend.RegAlloc
-import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelFp
+public import Flapjack.Pancake.WordLang.MaxVarInst
+public import Flapjack.Compiler.Backend.RegAlloc
+public import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
+
+@[expose] public section
 
 /-! Original evaluate_wInst FP branch (word_to_stackProofScript.sml 5025-5130):
 the FP comparison cases FPLess/FPLessEqual/FPEqual, which write an integer

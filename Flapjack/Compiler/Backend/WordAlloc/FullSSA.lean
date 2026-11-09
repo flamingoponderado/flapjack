@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
-import Flapjack.Compiler.Backend.WordAlloc.LimitVar
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
+public import Flapjack.Compiler.Backend.WordAlloc.LimitVar
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

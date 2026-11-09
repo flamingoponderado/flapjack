@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeCompile
-import Flapjack.Compiler.Backend.StackProps.AllocArg
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+public import Flapjack.Compiler.Backend.StackProps.AllocArg
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.AllocArgs
 open Flapjack Flapjack.Compiler.Backend.WordToStack.Native

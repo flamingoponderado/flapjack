@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.MatchBranch
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.MatchBranch
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Exception-handler cases of the flat pattern compiler simulation. The
 proof-side evaluator and relations remain pending HOL correspondence review. -/

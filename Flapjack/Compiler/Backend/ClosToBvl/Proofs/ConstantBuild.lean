@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosConstant.Proofs.Reconstruct
-import Flapjack.Compiler.Backend.ClosConstant.Proofs.HashParts
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
+module
+
+public import Flapjack.Compiler.Backend.ClosConstant.Proofs.Reconstruct
+public import Flapjack.Compiler.Backend.ClosConstant.Proofs.HashParts
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
+
+@[expose] public section
 
 /-! Correspondence of source and BVL constant-part builders. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

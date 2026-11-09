@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove
+module
+
+public import Flapjack.Compiler.Backend.StackRemove
+
+@[expose] public section
 
 /-! Literal stack_removeScript.sml:89–102 stack-free instruction builders.
 Both use the faithful native StackLang/Asm carriers. The default Pancake and assembly modes initializedRuntimeLab? executes these native

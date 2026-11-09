@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
-import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
+
+@[expose] public section
 
 /-! Stability of the bounded direct-call traversal. These are
 Flapjack-specific adapter lemmas, not HOL theorem ports. -/

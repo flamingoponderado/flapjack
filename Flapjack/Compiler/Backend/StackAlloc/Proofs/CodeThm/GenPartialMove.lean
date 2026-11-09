@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMove
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMove
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `word_gen_gc_partial_move_code_thm`

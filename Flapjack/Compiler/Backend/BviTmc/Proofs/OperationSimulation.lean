@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.IfWorker
-import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationError
-import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyErrorCases
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.IfWorker
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationError
+public import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyErrorCases
+
+@[expose] public section
 
 /-! TMC simulation for non-extracted primitive operations. -/
 namespace Flapjack.Compiler.Backend.BviTmc.OperationSimulation

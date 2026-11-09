@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedInduction
-import Flapjack.Compiler.Backend.FlatProps.SemanticsSimulation
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedInduction
+public import Flapjack.Compiler.Backend.FlatProps.SemanticsSimulation
+
+@[expose] public section
 
 /-! Program-level simulation for the flat pattern compiler. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

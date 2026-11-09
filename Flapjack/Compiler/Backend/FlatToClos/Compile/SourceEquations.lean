@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelInduction
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelInduction
+
+@[expose] public section
 
 /-! Source equations for the executed list-valued flat-to-closure compiler. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

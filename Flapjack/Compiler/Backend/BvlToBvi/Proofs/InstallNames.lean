@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxNameRange
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxNameRange
+
+@[expose] public section
 
 /-! Code-name invariant after BVL-to-BVI installation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

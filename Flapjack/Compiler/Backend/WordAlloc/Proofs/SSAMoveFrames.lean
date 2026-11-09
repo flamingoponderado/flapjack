@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
-import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapExtend
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapPreservation
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveDomains
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
+public import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapExtend
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapPreservation
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveDomains
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+
+@[expose] public section
 
 /-!
 # word_allocProof merge/fake-move frames and `force_rename` lemmas

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.WordLang
-import Flapjack.Misc.Max3
+module
+
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Misc.Max3
+
+@[expose] public section
 
 namespace Flapjack
 

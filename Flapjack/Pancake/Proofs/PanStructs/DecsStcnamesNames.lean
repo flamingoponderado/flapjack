@@ -1,6 +1,10 @@
-import Flapjack.Pancake.PanStructs.CompileDeclsExact
-import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
-import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
+module
+
+public import Flapjack.Pancake.PanStructs.CompileDeclsExact
+public import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
+public import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
+
+@[expose] public section
 
 /-! Original pan_structsProof `decs_stcnames_to_get_names` and
 `decs_stcnames_infos_ok` (pan_structsProofScript.sml:1446-1471): the struct

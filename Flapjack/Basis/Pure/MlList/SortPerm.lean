@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Basis.Pure.MlList
-import Flapjack.Misc.Sorting
-import Flapjack.Misc.Mergesort
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Basis.Pure.MlList
+public import Flapjack.Misc.Sorting
+public import Flapjack.Misc.Mergesort
+
+@[expose] public section
 
 /-!
 # `mllist$sort` sorts and is a permutation

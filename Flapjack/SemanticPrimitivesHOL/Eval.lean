@@ -1,6 +1,10 @@
-import Flapjack.SemanticPrimitivesHOL.Concrete
-import Flapjack.SemanticPrimitivesHOL.Conversions
-import Flapjack.SemanticPrimitivesHOL.EvalState
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Concrete
+public import Flapjack.SemanticPrimitivesHOL.Conversions
+public import Flapjack.SemanticPrimitivesHOL.EvalState
+
+@[expose] public section
 
 /-! Proof-side dynamic compilation semantics. The equality of arbitrary source
 values uses Lean's classical decision procedure, so `doEval` is noncomputable;

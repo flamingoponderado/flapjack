@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSemanticHelpers
-import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSemanticHelpers
+public import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

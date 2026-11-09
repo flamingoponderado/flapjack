@@ -1,5 +1,13 @@
-import Flapjack.RiscV.L3.Step.LoadStep
-import Flapjack.RiscV.L3.Defs.Multiply
+module
+
+public import Flapjack.RiscV.L3.Step.LoadStep
+public import Flapjack.RiscV.L3.Defs.Multiply
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Evaluated original `riscv_stepScript.sml` high-multiply step theorems
 (`MULH`/`MULHU`/`MULHSU`, lines 874-886).  Each keeps the original

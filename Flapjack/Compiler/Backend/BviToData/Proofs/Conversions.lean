@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.Value
-import Flapjack.Compiler.Backend.Semantics.DataSem.Conversions
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Value
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Conversions
+
+@[expose] public section
 
 /-! Installation decoder preservation under timestamp erasure. -/
 namespace Flapjack.Compiler.Backend.BviToData

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.CallRet
+module
+
+public import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma.CallRet
+
+@[expose] public section
 
 /-!
 # `max_depth_call_graph_lemma`: `Call` case

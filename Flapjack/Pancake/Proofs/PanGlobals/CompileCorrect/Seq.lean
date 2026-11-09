@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
-import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+
+@[expose] public section
 
 /-!
 # pan_globals `compile_correct`: the `Seq` case

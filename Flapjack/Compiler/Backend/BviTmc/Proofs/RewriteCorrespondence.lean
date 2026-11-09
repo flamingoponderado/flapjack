@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractCorrespondence
-import Flapjack.Compiler.Backend.BviTmc.Proofs.Total
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractCorrespondence
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.Total
+
+@[expose] public section
 
 /-! Source-shaped TMC rewriting and correspondence with the executed pass. -/
 namespace Flapjack.Compiler.Backend.BviTmc

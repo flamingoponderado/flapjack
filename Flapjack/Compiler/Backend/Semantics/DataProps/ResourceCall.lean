@@ -1,5 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceMonotonicity
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceMonotonicity
+public import Flapjack.Misc.ClockWeightInduction
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+@[expose] public section
 
 /-! Resource observations of data-language call setup and restoration. -/
 namespace Flapjack.Compiler.Backend.DataSem

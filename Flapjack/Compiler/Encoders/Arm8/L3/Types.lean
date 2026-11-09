@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Basis.Pure.MlString
-import Flapjack.Compiler.Encoders.Arm8.Encode
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Compiler.Encoders.Arm8.Encode
+
+@[expose] public section
 
 /-!
 # L3 ARMv8 model: datatypes and the machine-state carrier

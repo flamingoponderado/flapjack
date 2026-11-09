@@ -1,16 +1,20 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInit
-import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
-import Flapjack.Compiler.Backend.LabProps.SectionEnd
-import Flapjack.Compiler.Backend.WordGcFunctions.HasFpOps
-import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
-import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Assembly
-import Flapjack.Compiler.Backend.StackRemove.Proofs.AsmName
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.AsmNames
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.Conventions
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InitStoreOk
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListMemory
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunOk
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InitializationStateRel
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInit
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
+public import Flapjack.Compiler.Backend.LabProps.SectionEnd
+public import Flapjack.Compiler.Backend.WordGcFunctions.HasFpOps
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
+public import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Assembly
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.AsmName
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.AsmNames
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.Conventions
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InitStoreOk
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListMemory
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunOk
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InitializationStateRel
+
+@[expose] public section
 
 /-! The encoding and initial-state group of `stack_to_labProofScript.sml:3620-3799`.
 `flatten_line_ok_pre` and `compile_all_enc_ok_pre` live in

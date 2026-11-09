@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallDest
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallDest
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.LoadRegister
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

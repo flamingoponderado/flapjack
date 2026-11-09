@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL
+module
+
+public import Flapjack.SemanticPrimitivesHOL
+
+@[expose] public section
 
 /-! Source value encodings used by evaluator primitives. -/
 namespace Flapjack.SemanticPrimitivesHOL

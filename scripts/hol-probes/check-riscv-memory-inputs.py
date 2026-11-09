@@ -3,7 +3,7 @@
 from pathlib import Path
 import hashlib
 ROOT=Path(__file__).resolve().parents[2]
-CHECKS={'Flapjack/RiscV/CorrectnessEncoding/MemoryInputs.lean': '07f6abc95c1d5e61af16914f2cd6f264e15c2c1109424887a332e27f8ed71797', 'scripts/hol-probes/riscv_memory_inputs_probeScript.sml': 'e07d72987d532741624a82afd3a999fd87a5f7a8c98049d19022cab48e9522b3', 'scripts/hol-probes/riscv_memory_inputs_probe.out': '13191be1c38c03cc0bc2cd0fe0177193bf01f7a76d3f2fc2772b13c979003632'}
+CHECKS={'Flapjack/RiscV/CorrectnessEncoding/MemoryInputs.lean': 'e46ffeb671b6dc7a8b681664090bd4ddce99f502a4c099f7c48c32c611bf9f6c', 'scripts/hol-probes/riscv_memory_inputs_probeScript.sml': 'e07d72987d532741624a82afd3a999fd87a5f7a8c98049d19022cab48e9522b3', 'scripts/hol-probes/riscv_memory_inputs_probe.out': '13191be1c38c03cc0bc2cd0fe0177193bf01f7a76d3f2fc2772b13c979003632'}
 LABELS=('load_endpoints', 'load_registers', 'load_offsets', 'load8_endpoints', 'load8_registers', 'load8_offsets', 'load16_endpoints', 'load16_registers', 'load16_offsets', 'load32_endpoints', 'load32_registers', 'load32_offsets', 'store_endpoints', 'store_registers', 'store_offsets', 'store8_endpoints', 'store8_registers', 'store8_offsets', 'store16_endpoints', 'store16_registers', 'store16_offsets', 'store32_endpoints', 'store32_registers', 'store32_offsets', 'alias_wrap', 'source_clause', 'source_hypotheses', 'source_types', 'native_clause', 'native_hypotheses', 'native_types')
 def check(root=ROOT):
  for name,digest in CHECKS.items():

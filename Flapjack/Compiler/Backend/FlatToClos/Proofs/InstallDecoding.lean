@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
+
+@[expose] public section
 
 /-! Installation payload decoding across the proof-side value relation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.SecondPass
-import Flapjack.Compiler.Backend.LabToTarget.LineLength
-import Flapjack.Compiler.Backend.LabToTarget.EndingLabels
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SecondPass
+public import Flapjack.Compiler.Backend.LabToTarget.LineLength
+public import Flapjack.Compiler.Backend.LabToTarget.EndingLabels
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm

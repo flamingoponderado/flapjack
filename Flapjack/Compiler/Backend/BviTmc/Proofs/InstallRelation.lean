@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
+
+@[expose] public section
 
 /-! Dynamic installation under the TMC state relation. -/
 namespace Flapjack.Compiler.Backend.BviTmc

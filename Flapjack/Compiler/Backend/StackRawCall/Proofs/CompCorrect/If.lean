@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.InstructionSimulation
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.InstructionSimulation
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRawCall.IfCase
 open Flapjack Flapjack.Compiler.Backend.StackLang

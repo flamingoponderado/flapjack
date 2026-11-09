@@ -1,11 +1,15 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ResVar
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationCode
-import Flapjack.Pancake.Proofs.PanGlobals.OptMmapEvalCorrect
-import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ResVar
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationCode
+public import Flapjack.Pancake.Proofs.PanGlobals.OptMmapEvalCorrect
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCompileCorrectDecCall
 open Flapjack.Pancake.PanLang

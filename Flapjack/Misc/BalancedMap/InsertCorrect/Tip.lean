@@ -1,7 +1,11 @@
-import Flapjack.Misc.BalancedMap.Insert
-import Flapjack.Misc.BalancedMap.Invariants
-import Flapjack.Misc.BalancedMap.Semantics
-import Flapjack.FiniteMap.MapKeys
+module
+
+public import Flapjack.Misc.BalancedMap.Insert
+public import Flapjack.Misc.BalancedMap.Invariants
+public import Flapjack.Misc.BalancedMap.Semantics
+public import Flapjack.FiniteMap.MapKeys
+
+@[expose] public section
 namespace Flapjack.Misc.BalancedMap
 /-- Full Tip branch of insertion correctness, untagged during implementation. -/
 theorem insertCorrectTip {κ ν : Type} (cmp : κ → κ → Ordering)

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockCompare
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockCompare
+
+@[expose] public section
 
 /-! Reference and constructor equality in the closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

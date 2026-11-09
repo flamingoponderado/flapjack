@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.NcompileCorrect
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.NcompileCorrect
+
+@[expose] public section
 
 /-!
 # crep_to_loop `ncompile_correct`, case `While`

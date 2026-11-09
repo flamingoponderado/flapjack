@@ -1,16 +1,20 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialRefs
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalFull
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapExpand
-import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Conservation
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialRefs
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalFull
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapExpand
+public import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Conservation
+
+@[expose] public section
 
 /-! Partial generational collector simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.WordGcFunctions
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 
-private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+instance partialFullInst1 {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
-private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
+instance partialFullInst2 {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
 
 /-- A heap ends in mutable references at the stated boundary. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "ends_with_refs_def"]

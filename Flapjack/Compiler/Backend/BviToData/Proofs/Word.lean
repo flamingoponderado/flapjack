@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.Value
-import Flapjack.Compiler.Backend.Semantics.DataSem.Word
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
-import Mathlib.Tactic.CasesM
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Value
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Word
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
+public import Mathlib.Tactic.CasesM
+
+@[expose] public section
 
 /-! Word operations under the BVI-to-data value projection. -/
 namespace Flapjack.Compiler.Backend.BviToData

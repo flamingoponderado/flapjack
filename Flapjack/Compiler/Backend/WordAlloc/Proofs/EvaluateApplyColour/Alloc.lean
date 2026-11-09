@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Leaves
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.PushPopEnv
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ScopedInjection
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Leaves
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.PushPopEnv
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ScopedInjection
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
+
+@[expose] public section
 
 /-!
 # `evaluate_apply_colour` Alloc case

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileDecGlobals
-import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
-import Flapjack.Compiler.Backend.FlatElim.Proofs.GlobalInvariants
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalSafety
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileDecGlobals
+public import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.GlobalInvariants
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalSafety
+
+@[expose] public section
 
 /-! Global-initialization safety through the complete source-to-flat pass. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

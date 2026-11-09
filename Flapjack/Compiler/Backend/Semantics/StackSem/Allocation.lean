@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+
+@[expose] public section
 
 namespace Flapjack.StackSemAllocation
 

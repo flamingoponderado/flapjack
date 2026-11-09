@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialRoots
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialRoots
+
+@[expose] public section
 
 /-! In-memory root-list simulation for partial collection. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
@@ -7,9 +11,9 @@ open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 
 private theorem partialListStarEmptyRight {α : Type} (p : (α → Prop) → Prop) : SetSep.star p SetSep.emp = p := by
   rw [SetSep.starComm, StackRemove.StackHeap.starEmptyLeft]
-private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+instance partialListInst1 {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
-private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
+instance partialListInst2 {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
 
 private theorem partialList_zero {width : Nat} [NeZero width] (conf : Config)
     (a i pa old : BitVec width) (m : BitVec width → WordLocW width) (dm : BitVec width → Bool)

@@ -1,10 +1,14 @@
-import Flapjack.Pancake.Semantics.LoopSemState
-import Flapjack.Pancake.Semantics.LoopProps
-import Flapjack.Pancake.LoopLang
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Misc.Sptree.FromList
-import Flapjack.FfiBridge
-import Flapjack.Compiler.Backend.Semantics.WordSem
+module
+
+public import Flapjack.Pancake.Semantics.LoopSemState
+public import Flapjack.Pancake.Semantics.LoopProps
+public import Flapjack.Pancake.LoopLang
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Misc.Sptree.FromList
+public import Flapjack.FfiBridge
+public import Flapjack.Compiler.Backend.Semantics.WordSem
+
+@[expose] public section
 
 /-!
 # Exact finite-support HOL `loopSem$state` carrier

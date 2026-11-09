@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameShiftedProperties
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapPreservation
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameShiftedProperties
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapPreservation
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

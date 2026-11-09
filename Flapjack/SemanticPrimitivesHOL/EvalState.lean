@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL.Conversions
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Conversions
+
+@[expose] public section
 
 /-! Source Eval environment-generation bookkeeping. -/
 namespace Flapjack.SemanticPrimitivesHOL

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Value
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Word
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Value
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Word
+
+@[expose] public section
 
 /-! Word and floating-point primitives of the data-language semantics. -/
 namespace Flapjack.Compiler.Backend.DataSem

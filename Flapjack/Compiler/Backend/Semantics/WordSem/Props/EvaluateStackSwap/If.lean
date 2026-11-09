@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Leaves
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Leaves
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+
+@[expose] public section
 
 /-!
 # `evaluate_stack_swap` `If` case

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.StateRel
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyCode
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.StateRel
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyCode
+
+@[expose] public section
 
 /-! Primitive simulation for the BVL tick-removal relation. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

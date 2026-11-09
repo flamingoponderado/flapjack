@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+module
+
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+
+@[expose] public section
 
 /-!
 # crep_to_loopProof loop-evaluator helper lemmas

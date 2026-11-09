@@ -1,7 +1,11 @@
-import Flapjack.Pancake.CrepToLoop.ContextExact
-import Flapjack.Pancake.CrepToLoop.StateRel
-import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+module
+
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+public import Flapjack.Pancake.CrepToLoop.StateRel
+public import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+
+@[expose] public section
 
 /-!
 # `crep_to_loop` expression simulation: constant leaf

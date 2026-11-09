@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.PureGlobal
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.PureGlobal
+
+@[expose] public section
 
 /-! Pure memory operations and dead assignment elimination. -/
 namespace Flapjack.Compiler.Backend.DataLive

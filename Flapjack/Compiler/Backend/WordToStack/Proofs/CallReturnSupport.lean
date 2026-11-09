@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRel
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRel
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-!
 # Word-to-Stack returning-call support lemmas

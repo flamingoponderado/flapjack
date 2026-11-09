@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordRemove
-import Flapjack.Pancake.WordConvs
-import Flapjack.Pancake.WordConvs.FullInstOkLess
-import Flapjack.Pancake.WordConvs.CodeLabels
+module
+
+public import Flapjack.Compiler.Backend.WordRemove
+public import Flapjack.Pancake.WordConvs
+public import Flapjack.Pancake.WordConvs.FullInstOkLess
+public import Flapjack.Pancake.WordConvs.CodeLabels
+
+@[expose] public section
 
 /-!
 # `wordConvsProof` `remove_must_terminate` group

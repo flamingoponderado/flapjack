@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateInstall
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateForce
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.Apply
+module
+
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateInstall
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateForce
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Apply
+
+@[expose] public section
 
 /-! Complete operation case of the tick-removal evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.ClosTicks

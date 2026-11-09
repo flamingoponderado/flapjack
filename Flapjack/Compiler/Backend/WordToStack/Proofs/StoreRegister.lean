@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeStackStore
-import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterWrite
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeStackStore
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterWrite
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.StoreRegister
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

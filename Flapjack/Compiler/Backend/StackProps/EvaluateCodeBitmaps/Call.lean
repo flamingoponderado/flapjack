@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.CallTail
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.CallReturn
+module
+
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.CallTail
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.CallReturn
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm

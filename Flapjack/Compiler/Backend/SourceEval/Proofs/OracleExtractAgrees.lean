@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleCommonPrefix
-import Flapjack.Compiler.Backend.SourceEval.Proofs.StateRelation
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleCommonPrefix
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.StateRelation
+
+@[expose] public section
 
 /-! Agreement of an extracted oracle with a recorded declaration evaluation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

@@ -1,7 +1,15 @@
-import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
-import Flapjack.Compiler.Backend.BvlToBvi.Stubs
-import Flapjack.Compiler.Backend.BviLet.Compile
-import Flapjack.Compiler.Backend.BvlToBvi.Budget
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
+public import Flapjack.Compiler.Backend.BvlToBvi.Stubs
+public import Flapjack.Compiler.Backend.BviLet.Compile
+public import Flapjack.Compiler.Backend.BvlToBvi.Budget
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Checked BVL-to-BVI expression conversion. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi

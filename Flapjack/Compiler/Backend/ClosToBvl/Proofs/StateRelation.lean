@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ValueRelation
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Oracle
-import Flapjack.Compiler.Backend.ClosToBvl.Stubs
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Oracle
+public import Flapjack.Compiler.Backend.ClosToBvl.Stubs
+
+@[expose] public section
 
 /-! Reference cells and initialization data for the closure-to-BVL state relation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

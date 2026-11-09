@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.ShMem
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.ShMem
+
+@[expose] public section
 
 /-! Full original StackProps shared-memory clock commutation. Every result
 and state is retained, including errors, terminal FFI and successful loads.

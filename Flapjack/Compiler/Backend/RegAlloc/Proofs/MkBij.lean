@@ -1,9 +1,13 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.Remap
-import Flapjack.Compiler.Backend.RegAlloc.Proofs
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
-import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
-import Flapjack.Misc.Sptree.Wf
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.Remap
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
+public import Flapjack.Misc.Sptree.Wf
+
+@[expose] public section
 
 /-!
 # reg_alloc `mk_bij` domain, bijection and well-formedness

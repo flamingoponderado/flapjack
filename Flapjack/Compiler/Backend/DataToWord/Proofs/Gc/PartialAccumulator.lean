@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Accumulator
-import Flapjack.Compiler.Backend.GcShared.ForwardPtr
+module
+
+public import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Accumulator
+public import Flapjack.Compiler.Backend.GcShared.ForwardPtr
+
+@[expose] public section
 
 /-! Success and accumulator laws for partial collection. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

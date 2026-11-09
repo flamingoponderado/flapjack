@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
-import Flapjack.Compiler.Backend.LabToTarget.Encoding
-import Flapjack.Misc.FindIndex
-import Flapjack.Compiler.Backend.Semantics.TargetSem.InterferenceContracts
-import Flapjack.Misc.BytesInMem
-import Flapjack.Byte
-import Flapjack.Compiler.Encoders.AsmProps.Interference
-import Mathlib.Data.Set.Lattice
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+public import Flapjack.Compiler.Backend.LabToTarget.Encoding
+public import Flapjack.Misc.FindIndex
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.InterferenceContracts
+public import Flapjack.Misc.BytesInMem
+public import Flapjack.Byte
+public import Flapjack.Compiler.Encoders.AsmProps.Interference
+public import Mathlib.Data.Set.Lattice
+
+@[expose] public section
 
 namespace Flapjack
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Misc

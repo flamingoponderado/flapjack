@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateElement
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteStore
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.RefArrayElement
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateElement
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteStore
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.RefArrayElement
+
+@[expose] public section
 
 /-! Concrete stores to value-array reference blocks. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

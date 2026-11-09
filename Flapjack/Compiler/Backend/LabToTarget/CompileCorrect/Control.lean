@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Step
-import Flapjack.Compiler.Backend.LabToTarget.WordCmp
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Step
+public import Flapjack.Compiler.Backend.LabToTarget.WordCmp
+
+@[expose] public section
 
 /-! Control-transfer cases of the original `compile_correct`
 (lab_to_targetProofScript.sml:7967-8290, 9282-9351): `Jump`, `JumpCmp`,

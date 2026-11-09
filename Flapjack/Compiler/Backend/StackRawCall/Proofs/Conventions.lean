@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
-import Flapjack.Compiler.Backend.StackProps.RegisterBounds
-import Flapjack.Compiler.Backend.StackProps.CallArgs
-import Flapjack.Compiler.Backend.StackProps.AllocArg
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
+public import Flapjack.Compiler.Backend.StackProps.RegisterBounds
+public import Flapjack.Compiler.Backend.StackProps.CallArgs
+public import Flapjack.Compiler.Backend.StackProps.AllocArg
+
+@[expose] public section
 
 /-! `stack_rawcallProofScript.sml:872-941`: raw-call compilation preserves
 `reg_bound`, `call_args` and `alloc_arg`, per program and over whole compiled

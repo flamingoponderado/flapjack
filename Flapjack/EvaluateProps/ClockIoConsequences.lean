@@ -1,4 +1,9 @@
-import Flapjack.EvaluateProps.ClockIoFull
+module
+
+public import Flapjack.EvaluateProps.ClockIoFull
+
+import Batteries.Tactic.Init
+@[expose] public section
 
 /-! Consequences of the assembled clock-and-I/O evaluator invariant.
 The source evaluator and its carriers remain pending review. -/

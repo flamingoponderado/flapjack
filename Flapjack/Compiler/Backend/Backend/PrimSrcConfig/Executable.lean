@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
+module
+
+public import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
+
+@[expose] public section
 
 /-! Compiler realization of the existing primitive-source configuration.
 The original tagged closed-form equality eliminates the unused HOL ARB store;

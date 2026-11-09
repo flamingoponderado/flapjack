@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatProps.PatternMatch
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternRelation
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.PatternMatch
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternRelation
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Simulations for ordered match rows. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

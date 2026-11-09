@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Compiler.Backend.Semantics.WordSem.State
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+
+@[expose] public section
 
 /-! Source-matched CodeBufferWrite/DataBufferWrite clauses of
 stackSemScript.sml evaluate_def:928-944. This is a partial dispatch helper, not

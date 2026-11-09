@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteArray
-import Flapjack.Byte.GetSetByte
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteArray
+public import Flapjack.Byte.GetSetByte
+
+@[expose] public section
 
 /-! Byte extraction and injectivity of the source word-packing operation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

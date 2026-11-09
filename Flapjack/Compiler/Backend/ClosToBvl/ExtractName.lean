@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+
+@[expose] public section
 
 /-! Extract the incremental compilation entry location from the first expression. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

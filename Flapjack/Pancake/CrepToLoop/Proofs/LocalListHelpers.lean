@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+module
+
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+
+@[expose] public section
 
 /-!
 # crep_to_loopProof small generic `[local]` helpers

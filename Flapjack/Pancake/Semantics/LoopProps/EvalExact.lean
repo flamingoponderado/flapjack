@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
+module
+
+public import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
+
+@[expose] public section
 
 namespace Flapjack
 

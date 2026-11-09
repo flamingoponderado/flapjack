@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Move
-import Flapjack.Misc.Sptree.AlistInsertReverse
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Move
+public import Flapjack.Misc.Sptree.AlistInsertReverse
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CompCorrect.Move
 open Flapjack.Compiler.Backend.Parmove

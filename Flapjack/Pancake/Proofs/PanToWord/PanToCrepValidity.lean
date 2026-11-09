@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Proofs.PanToWord
-import Flapjack.Pancake.Semantics.CrepProps
-import Flapjack.Pancake.PanToCrep.CompileExact
-import Flapjack.Pancake.Semantics.CrepProps.EveryExpCodec
-import Flapjack.Pancake.CrepArith
+module
+
+public import Flapjack.Pancake.Proofs.PanToWord
+public import Flapjack.Pancake.Semantics.CrepProps
+public import Flapjack.Pancake.PanToCrep.CompileExact
+public import Flapjack.Pancake.Semantics.CrepProps.EveryExpCodec
+public import Flapjack.Pancake.CrepArith
+
+@[expose] public section
 
 /-! The tagged statements use the shared native Prop-valued every_exp and
 membership form of EVERY. Earlier Boolean recursion is retained privately as

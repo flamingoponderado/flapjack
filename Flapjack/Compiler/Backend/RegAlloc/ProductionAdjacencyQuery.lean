@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyCache
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.EdgeInsertion
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyCache
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.EdgeInsertion
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc

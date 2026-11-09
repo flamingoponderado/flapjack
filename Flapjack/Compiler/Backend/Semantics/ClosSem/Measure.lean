@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
-import Flapjack.Misc.ListEl
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+public import Flapjack.Misc.ListEl
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Expression weights for well-founded closure evaluation. -/
 namespace Flapjack.Compiler.Backend.ClosSem

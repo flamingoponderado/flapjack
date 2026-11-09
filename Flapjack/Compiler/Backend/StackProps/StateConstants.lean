@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+
+@[expose] public section
 
 /-! Full state-operation preservation and update-commutation statements from
 stackPropsScript.sml20-168. Generic width, configuration and FFI parameters

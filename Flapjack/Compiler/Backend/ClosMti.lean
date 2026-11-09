@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
-import Flapjack.Compiler.Backend.ClosLang.Budget
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+public import Flapjack.Compiler.Backend.ClosLang.Budget
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Multi-argument closure introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti

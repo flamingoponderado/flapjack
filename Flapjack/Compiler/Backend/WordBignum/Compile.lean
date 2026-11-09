@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordBignum.Helpers
-import Flapjack.Compiler.Backend.WordBignum.Equality
+module
+
+public import Flapjack.Compiler.Backend.WordBignum.Helpers
+public import Flapjack.Compiler.Backend.WordBignum.Equality
+
+@[expose] public section
 
 /-! Mini-language compilation. The fuelled helpers are Flapjack infrastructure;
 the total entry point has the source carrier and source-shaped equations. The

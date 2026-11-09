@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Free
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Free
+
+@[expose] public section
 
 /-! Re-index variables after closure free-variable discovery. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

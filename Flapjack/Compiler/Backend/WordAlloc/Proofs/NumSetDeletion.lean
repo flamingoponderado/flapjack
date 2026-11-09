@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ScopedInjection
-import Flapjack.Compiler.Backend.WordAlloc.Expressions
-import Flapjack.Compiler.Backend.RegAlloc.ClashTree
-import Flapjack.Misc.Sptree.Wf
-import Flapjack.Misc.SptreeLookup
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ScopedInjection
+public import Flapjack.Compiler.Backend.WordAlloc.Expressions
+public import Flapjack.Compiler.Backend.RegAlloc.ClashTree
+public import Flapjack.Misc.Sptree.Wf
+public import Flapjack.Misc.SptreeLookup
+
+@[expose] public section
 
 /-!
 # Word allocation numeric-set union and deletion lemmas

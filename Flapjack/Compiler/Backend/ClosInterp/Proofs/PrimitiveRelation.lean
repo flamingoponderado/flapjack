@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.InsertionCorrect
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.InsertionCorrect
+
+@[expose] public section
 
 /-! Primitive noninterference for the proof-side interpreter simulation.
 The evaluator and state carriers remain pending HOL correspondence review. -/

@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.Arm8Config.Names
-import Flapjack.Compiler.Backend.Arm8Config.NameLemmas
-import Flapjack.Compiler.Backend.Arm8Config.ProofsL3
-import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
-import Flapjack.Compiler.Backend.BackendProof.ConfigOk
-import Mathlib.Tactic.IntervalCases
+module
+
+public import Flapjack.Compiler.Backend.Arm8Config.Names
+public import Flapjack.Compiler.Backend.Arm8Config.NameLemmas
+public import Flapjack.Compiler.Backend.Arm8Config.ProofsL3
+public import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
+public import Flapjack.Compiler.Backend.BackendProof.ConfigOk
+public import Mathlib.Tactic.IntervalCases
+
+@[expose] public section
 
 /-!
 # `backend_config_ok` at the L3 ARMv8 configuration

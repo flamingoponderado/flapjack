@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.LoopSemStateExact
+module
+
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+
+@[expose] public section
 
 /-!
 # Decidable renderings of HOL `sptree$domain` set conditions

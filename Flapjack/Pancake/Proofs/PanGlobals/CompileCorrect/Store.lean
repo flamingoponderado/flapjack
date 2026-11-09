@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
-import Flapjack.Pancake.Proofs.PanGlobals.MemoryUpdate
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
+public import Flapjack.Pancake.Proofs.PanGlobals.MemoryUpdate
+
+@[expose] public section
 
 /-! The Store case at pan_globalsProofScript.sml:692-714. The source proof
 uses expression correctness and induction over the flattened value's memory

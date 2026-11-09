@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxHandle
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxHandle
+
+@[expose] public section
 
 /-! Exception-handler case of BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

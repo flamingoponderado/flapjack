@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationCons
-import Flapjack.Compiler.Backend.SourceEval.Proofs.PatternMatchSafety
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationCons
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.PatternMatchSafety
+
+@[expose] public section
 
 /-! Exception-handler case of the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

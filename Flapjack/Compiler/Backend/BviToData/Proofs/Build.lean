@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.Value
-import Flapjack.Compiler.Backend.Semantics.DataSem.Build
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Value
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Build
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
+
+@[expose] public section
 
 /-! Timestamped list and constant construction under value projection. -/
 namespace Flapjack.Compiler.Backend.BviToData

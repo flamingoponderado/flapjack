@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 
 /-! HOL association-list maps in the canonical finite-support carrier. -/
 namespace Flapjack.HolFiniteMapExact

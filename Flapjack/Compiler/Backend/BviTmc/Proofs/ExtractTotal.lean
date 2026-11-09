@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal
+
+@[expose] public section
 
 /-! Structural sufficiency for TMC constructor extraction. These are
 Flapjack infrastructure lemmas, not HOL pass-correctness ports. -/

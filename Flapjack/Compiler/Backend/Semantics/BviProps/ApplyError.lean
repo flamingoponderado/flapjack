@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyError
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyError
+
+@[expose] public section
 
 /-! Error behavior of BVI primitive operations. -/
 namespace Flapjack.Compiler.Backend.BviProps

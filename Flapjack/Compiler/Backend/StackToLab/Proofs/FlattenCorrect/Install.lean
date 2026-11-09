@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Call
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenHelpers
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Guarded
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Call
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenHelpers
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Guarded
+
+@[expose] public section
 
 /-! `flatten_correct` case `Install` (`stack_to_labProofScript.sml:2398-2519`):
 installing the oracle's next programs extends the LabSem code with their

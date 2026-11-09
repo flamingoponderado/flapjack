@@ -1,10 +1,14 @@
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.Semantics.CrepSem.LookupCode
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Pancake.Proofs.CrepArith
-import Flapjack.Pancake.Proofs.CrepArith.MulConst
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.Semantics.CrepSem.LookupCode
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Pancake.Proofs.CrepArith
+public import Flapjack.Pancake.Proofs.CrepArith.MulConst
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect
+
+@[expose] public section
 
 /-!
 # Crep arithmetic proof-script state updates

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.LabToTarget.StateTransport
-import Flapjack.Compiler.Backend.LabSem.Evaluate
-import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
-import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.StateTransport
+public import Flapjack.Compiler.Backend.LabSem.Evaluate
+public import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
+
+@[expose] public section
 
 /-! Shared statement shape of the original `compile_correct`
 (lab_to_targetProofScript.sml:7528-7558) and the composition step used by

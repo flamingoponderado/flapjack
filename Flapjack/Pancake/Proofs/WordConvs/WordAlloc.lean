@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.WordConvs.ApplyColour
-import Flapjack.Compiler.Backend.WordAlloc.WordAllocDef
+module
+
+public import Flapjack.Pancake.Proofs.WordConvs.ApplyColour
+public import Flapjack.Compiler.Backend.WordAlloc.WordAllocDef
+
+@[expose] public section
 
 /-! Native structural preservation for the `word_alloc` section of wordConvsProof.
 The existing native allocator and colouring carriers retain the original source branches.

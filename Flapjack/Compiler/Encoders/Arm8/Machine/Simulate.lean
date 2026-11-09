@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.Machine.StepAgree
-import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Machine.StepAgree
+public import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+
+@[expose] public section
 
 /-! # From an interference-free run to `encoder_correct` for the closed ARMv8 target
 

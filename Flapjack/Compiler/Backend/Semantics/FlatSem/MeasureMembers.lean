@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Measure
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Measure
+
+@[expose] public section
 
 /-! Membership bounds for Flapjack's flat-evaluator termination measure. -/
 namespace Flapjack.Compiler.Backend.FlatSem

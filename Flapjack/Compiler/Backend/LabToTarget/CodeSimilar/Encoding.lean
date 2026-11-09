@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
-import Flapjack.Compiler.Backend.LabToTarget.SecondPass
-import Flapjack.FfiHOL
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
+public import Flapjack.Compiler.Backend.LabToTarget.SecondPass
+public import Flapjack.FfiHOL
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Full original initial/repeated encoding similarity chain. All accumulator,
 position and flag binders are retained; no target relation is assumed. -/

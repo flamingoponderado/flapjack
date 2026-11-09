@@ -1,9 +1,13 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.MovePrep
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
-import Flapjack.Misc.Sptree.Wf
-import Flapjack.Misc.Sptree.Map
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.MovePrep
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
+public import Flapjack.Misc.Sptree.Wf
+public import Flapjack.Misc.Sptree.Map
+
+@[expose] public section
 
 /-!
 # reg_allocProof: colour extraction

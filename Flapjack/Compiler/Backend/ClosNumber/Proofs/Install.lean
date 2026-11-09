@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.StateRelation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+module
+
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+
+@[expose] public section
 
 /-! Decoder prerequisites for the closure-numbering installation case. -/
 namespace Flapjack.Compiler.Backend.ClosNumber

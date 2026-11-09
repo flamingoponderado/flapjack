@@ -1,4 +1,8 @@
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Canonicalize the structure of a sparse tree. -/
 namespace Flapjack

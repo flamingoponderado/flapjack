@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPositions
-import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPreservation
-import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
-import Flapjack.Compiler.Backend.LabToTarget.ValidityNop
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPositions
+public import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPreservation
+public import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
+public import Flapjack.Compiler.Backend.LabToTarget.ValidityNop
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

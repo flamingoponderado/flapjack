@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Compile
-import Flapjack.Compiler.Backend.BviLet.Proofs.Total
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Compile
+public import Flapjack.Compiler.Backend.BviLet.Proofs.Total
+
+@[expose] public section
 
 /-! Structural sufficiency for the checked BVL-to-BVI traversal. These are
 Flapjack infrastructure lemmas, not HOL pass-correctness ports. -/

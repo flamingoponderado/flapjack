@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.AsmProps.Target
-import Flapjack.Misc.BytesInMemory
+module
+
+public import Flapjack.Compiler.Encoders.AsmProps.Target
+public import Flapjack.Misc.BytesInMemory
+
+@[expose] public section
 
 namespace Flapjack
 open Flapjack.Compiler.Encoders.Asm

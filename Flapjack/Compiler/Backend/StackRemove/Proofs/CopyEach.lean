@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
-import Flapjack.FiniteMap.MapKeys
-import Flapjack.Compiler.Backend.StackRemove.CopyLoop
-import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
-import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryWrites
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
+public import Flapjack.FiniteMap.MapKeys
+public import Flapjack.Compiler.Backend.StackRemove.CopyLoop
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryWrites
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.CopyEachProof
 open Flapjack StackSemStoreConsts
 

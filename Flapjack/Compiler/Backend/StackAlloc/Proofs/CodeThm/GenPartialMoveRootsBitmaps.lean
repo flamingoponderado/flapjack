@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveRootsBitmaps
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveBitmaps
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveRootsBitmaps
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveBitmaps
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `word_gen_gc_partial_move_roots_bitmaps_code_thm`

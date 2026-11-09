@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelation
-import Flapjack.SemanticPrimitivesHOL.Operations
-import Lean.Elab.Tactic.Omega
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelation
+public import Flapjack.SemanticPrimitivesHOL.Operations
+public import Lean.Elab.Tactic.Omega
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Equality facts for the source evaluator's recording simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatProps.InitialClock
-import Flapjack.Compiler.Backend.FlatProps.EvalSim
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.InitialClock
+public import Flapjack.Compiler.Backend.FlatProps.EvalSim
+
+@[expose] public section
 /-! Observational semantics preservation from flat evaluation simulation.
 Private helper lemmas structure the original proof and have no separate HOL declarations. -/
 namespace Flapjack.Compiler.Backend.FlatProps

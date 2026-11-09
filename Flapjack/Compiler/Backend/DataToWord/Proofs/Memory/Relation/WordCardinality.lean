@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
-import Mathlib.Data.List.Nodup
-import Mathlib.Data.Fintype.Card
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+public import Mathlib.Data.List.Nodup
+public import Mathlib.Data.Fintype.Card
+
+@[expose] public section
 
 /-! Cardinality of lists of concrete machine words. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

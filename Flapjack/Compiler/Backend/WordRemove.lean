@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 /-!
 # `word_remove`: removing `MustTerminate`

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRawCall
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRawCall
 open Flapjack Flapjack.Compiler.Backend.StackLang

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockCons
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockCons
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! List encodings in the closure-to-BVL value relation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

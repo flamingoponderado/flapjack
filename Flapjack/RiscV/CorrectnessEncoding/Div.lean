@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CorrectnessEncoding.BinopRegister
-import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.BinopRegister
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
+
+@[expose] public section
 
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm

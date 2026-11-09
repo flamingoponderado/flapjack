@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocal
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocal
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows
+
+@[expose] public section
 
 /-! Pattern-row safety under the complete source-to-flat invariant. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.IfWorker
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.IfWorker
+
+@[expose] public section
 
 /-! Assembly of the conditional TMC simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc.IfAssembly

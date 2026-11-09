@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateFull
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateFull
+
+@[expose] public section
 
 /-! Singleton and declaration specializations of the flat evaluation
 simulation. -/

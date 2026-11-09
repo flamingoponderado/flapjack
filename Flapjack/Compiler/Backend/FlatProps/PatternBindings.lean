@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Binding order for the flat pattern matcher. -/
 namespace Flapjack.Compiler.Backend.FlatProps

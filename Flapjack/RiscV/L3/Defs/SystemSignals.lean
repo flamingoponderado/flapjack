@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Defs
-import Flapjack.RiscV.L3.Defs.MMU.Primitives
+module
+
+public import Flapjack.RiscV.L3.Defs
+public import Flapjack.RiscV.L3.Defs.MMU.Primitives
+
+@[expose] public section
 namespace Flapjack.RiscV.L3
 
 /-- Literal original complete native control/exception equation. Environment

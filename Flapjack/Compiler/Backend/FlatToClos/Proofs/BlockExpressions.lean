@@ -1,8 +1,17 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyFlat
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyFlat
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Block-test expression cases for the proof-side pass simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

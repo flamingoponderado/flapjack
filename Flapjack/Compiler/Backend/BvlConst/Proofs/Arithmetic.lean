@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlConst.Proofs.SmartOp
+module
+
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.SmartOp
+
+@[expose] public section
 
 /-! Evaluation identities used by the arithmetic constant-folding cases. -/
 namespace Flapjack.Compiler.Backend.BvlConst.Proofs

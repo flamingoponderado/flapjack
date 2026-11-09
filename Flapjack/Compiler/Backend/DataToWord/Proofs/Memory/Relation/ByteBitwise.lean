@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberArithmetic
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberArithmetic
+
+@[expose] public section
 
 /-! Bitwise operations on source byte-valued integers. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

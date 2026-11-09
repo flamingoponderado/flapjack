@@ -1,4 +1,8 @@
-import Flapjack.Misc.MachineIeee
+module
+
+public import Flapjack.Misc.MachineIeee
+
+@[expose] public section
 
 /-!
 # Sign-bit computation lemmas for the `fp64` encoding

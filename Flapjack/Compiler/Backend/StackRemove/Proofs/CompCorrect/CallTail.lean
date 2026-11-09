@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.FindCode
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.FindCode
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.CallTail
 open Flapjack Compiler.Backend.StackLang StackSemEvaluate StackSemStateOps
 

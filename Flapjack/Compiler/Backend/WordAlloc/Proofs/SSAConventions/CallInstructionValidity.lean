@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ControlInstructionValidity
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameShiftedProperties
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ControlInstructionValidity
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameShiftedProperties
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Flapjack Flapjack.Compiler.Backend.WordAlloc Flapjack.Compiler.Encoders.Asm

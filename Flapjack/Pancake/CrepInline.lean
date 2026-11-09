@@ -1,5 +1,9 @@
-import Flapjack.Pancake.CrepLang
-import Flapjack.Pancake.CrepLang.Prog
+module
+
+public import Flapjack.Pancake.CrepLang
+public import Flapjack.Pancake.CrepLang.Prog
+
+@[expose] public section
 
 /-!
 Executable support for the Crepe inlining pass.

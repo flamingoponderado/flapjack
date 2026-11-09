@@ -1,11 +1,18 @@
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateFn
+module
+
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateFn
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Recursive-closure case of the tick-removal evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.ClosTicks
 open Flapjack.Compiler.Backend.ClosSem
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-private instance : Nonempty ClosLang.Exp := ⟨.var .none 0⟩
+instance evaluateLetrecInst1 : Nonempty ClosLang.Exp := ⟨.var .none 0⟩
 
 /-- A recursive binding produced by tick removal came from one under ticks. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_Letrec_IMP_mk_Ticks"]

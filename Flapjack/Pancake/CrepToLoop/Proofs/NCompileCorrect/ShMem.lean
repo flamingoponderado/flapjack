@@ -1,5 +1,9 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.NcompileCorrect
-import Flapjack.Pancake.Semantics.ShMemBytesBridge
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.NcompileCorrect
+public import Flapjack.Pancake.Semantics.ShMemBytesBridge
+
+@[expose] public section
 
 /-!
 # crep_to_loop `ncompile_correct`, case `ShMem`

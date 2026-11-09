@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Control
-import Batteries.Data.List.Basic
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+public import Batteries.Data.List.Basic
+
+@[expose] public section
 
 /-! Data-language stack frame size relations. -/
 namespace Flapjack.Compiler.Backend.DataProps

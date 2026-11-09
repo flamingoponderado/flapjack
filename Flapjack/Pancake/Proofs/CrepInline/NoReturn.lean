@@ -1,5 +1,9 @@
-import Flapjack.Pancake.CrepInline.Pass
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+module
+
+public import Flapjack.Pancake.CrepInline.Pass
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+
+@[expose] public section
 
 /-! Exact-evaluator no-return proof infrastructure for the crep_inline
 counterpart. The core lemma exposes domain deciders only inside the proof;

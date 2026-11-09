@@ -1,6 +1,10 @@
-import Flapjack.RiscV.L3.Defs.UpperJump
+module
 
-import Flapjack.RiscV.L3.Defs.IntegerLoadMode
+public import Flapjack.RiscV.L3.Defs.UpperJump
+
+public import Flapjack.RiscV.L3.Defs.IntegerLoadMode
+
+@[expose] public section
 
 
 /-! Complete literal six conditional branch equations, source6879-7083.

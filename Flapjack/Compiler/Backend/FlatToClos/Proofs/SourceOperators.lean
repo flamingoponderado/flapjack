@@ -1,12 +1,21 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Ffi
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveTests
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveArith
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveConversions
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordShifts
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Array
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.EqualityExpressions
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.ThunkOperations
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Ffi
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveTests
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveArith
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveConversions
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordShifts
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Array
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.EqualityExpressions
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.ThunkOperations
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Dispatcher for ordinary source operators in the proof-side simulation.
 The special application, assignment, dynamic installation, and thunk forcing cases

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileLookupProps
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileLookupProps
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

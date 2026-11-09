@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.FreeVars
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
-import Flapjack.Compiler.Backend.ClosKnown.Inline.Free.Correct
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.FreeVars
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
+public import Flapjack.Compiler.Backend.ClosKnown.Inline.Free.Correct
+
+@[expose] public section
 
 /-! Free-variable bounds of closure bodies selected for inlining. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.InlineFreeVars

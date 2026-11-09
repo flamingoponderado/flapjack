@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepToLoop.StateRel
+module
+
+public import Flapjack.Pancake.CrepToLoop.StateRel
+
+@[expose] public section
 
 /-!
 # crep_to_loop `OPT_MMAP` lookups under `locals_rel` over the exact carriers

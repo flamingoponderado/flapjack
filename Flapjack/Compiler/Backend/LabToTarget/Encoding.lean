@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.LabLang
-import Flapjack.Compiler.Backend.LabSem.State
-import Flapjack.Compiler.Backend.LabToTarget.Native
-import Flapjack.Compiler.Encoders.Asm
+module
+
+public import Flapjack.Compiler.Backend.LabLang
+public import Flapjack.Compiler.Backend.LabSem.State
+public import Flapjack.Compiler.Backend.LabToTarget.Native
+public import Flapjack.Compiler.Encoders.Asm
+
+@[expose] public section
 
 /-!
 # Faithful Cake assembly encoding (`lab_to_target`)

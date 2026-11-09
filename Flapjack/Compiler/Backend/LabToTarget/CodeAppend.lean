@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
-import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
-import Flapjack.Misc.FindIndex
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
+public import Flapjack.Misc.FindIndex
+
+@[expose] public section
 
 /-! Original appended-code navigation and FFI-name laws used by the `Install`
 case of `compile_correct` (lab_to_targetProofScript.sml:3027-3051,

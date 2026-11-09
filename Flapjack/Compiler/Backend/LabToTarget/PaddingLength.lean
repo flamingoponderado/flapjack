@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.Padding
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Padding
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 

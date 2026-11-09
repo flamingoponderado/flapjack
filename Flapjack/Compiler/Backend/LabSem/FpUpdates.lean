@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabSem.Updates
-import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Updates
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabSem
 

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVars
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalStateUpdates
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVars
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalStateUpdates
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

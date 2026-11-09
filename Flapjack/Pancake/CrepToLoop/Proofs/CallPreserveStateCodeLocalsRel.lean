@@ -1,9 +1,13 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
-import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
-import Flapjack.Pancake.CrepToLoop.ContextExact
-import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
-import Flapjack.Pancake.Semantics.PanCommonProps
-import Flapjack.HolRef
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+public import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+public import Flapjack.Pancake.Semantics.PanCommonProps
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 # crep_to_loop `call_preserve_state_code_locals_rel`

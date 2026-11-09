@@ -1,5 +1,9 @@
-import Mathlib.Data.List.Nodup
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CodeLocations
+module
+
+public import Mathlib.Data.List.Nodup
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CodeLocations
+
+@[expose] public section
 
 /-! Label accounting for the incremental known-function optimizer. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

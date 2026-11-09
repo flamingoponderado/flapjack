@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
-import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
-import Mathlib.Data.Set.Disjoint
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
+public import Mathlib.Data.Set.Disjoint
+
+@[expose] public section
 
 /-! Well-formed recursive closures for the direct-call simulation. -/
 namespace Flapjack.Compiler.Backend.ClosCall

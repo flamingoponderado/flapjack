@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordUnreach.ProductionDecoderDomain
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.Domain
+module
+
+public import Flapjack.Compiler.Backend.WordUnreach.ProductionDecoderDomain
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.Domain
+
+@[expose] public section
 
 /-! Flapjack-only allocator-domain infrastructure for routing the executed
 unreachable-code pass. The native pass retains instruction leaves, so it cannot

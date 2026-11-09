@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.SemanticInvariant
-import Flapjack.Compiler.Backend.WordCse.Proofs.CanonicalRegs
-import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
-import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation
-import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
-import Flapjack.Compiler.Backend.WordCse.Proofs.WfDataPreservation
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateConst
-import Flapjack.Compiler.Backend.WordInst.Proofs.ThreeToTwo
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.SemanticInvariant
+public import Flapjack.Compiler.Backend.WordCse.Proofs.CanonicalRegs
+public import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
+public import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation
+public import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
+public import Flapjack.Compiler.Backend.WordCse.Proofs.WfDataPreservation
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateConst
+public import Flapjack.Compiler.Backend.WordInst.Proofs.ThreeToTwo
+
+@[expose] public section
 
 /-!
 # `word_cseProof`: transport of the knowledge invariant

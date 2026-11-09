@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Heap
-import Flapjack.Compiler.Backend.DataSpace.Requirements
-import Flapjack.Misc.Integer
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Heap
+public import Flapjack.Compiler.Backend.DataSpace.Requirements
+public import Flapjack.Misc.Integer
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Data-language operation space requirements and accounting. -/
 namespace Flapjack.Compiler.Backend.DataSem

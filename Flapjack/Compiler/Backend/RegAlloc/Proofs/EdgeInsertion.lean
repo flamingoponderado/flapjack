@@ -1,10 +1,14 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.GraphConstruction
-import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
-import Flapjack.Compiler.Backend.RegAlloc.SortedMem
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
-import Flapjack.Misc.Sorting
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.GraphConstruction
+public import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
+public import Flapjack.Compiler.Backend.RegAlloc.SortedMem
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
+public import Flapjack.Misc.Sorting
+
+@[expose] public section
 
 /-!
 # reg_allocProof: sorted adjacency lists and edge insertion

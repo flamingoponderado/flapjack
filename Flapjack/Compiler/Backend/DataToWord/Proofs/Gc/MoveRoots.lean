@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LocMerge
-import Flapjack.Compiler.Backend.WordGcFunctions.Roots
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LocMerge
+public import Flapjack.Compiler.Backend.WordGcFunctions.Roots
+
+@[expose] public section
 
 /-! Collector traversal of location roots and word roots. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

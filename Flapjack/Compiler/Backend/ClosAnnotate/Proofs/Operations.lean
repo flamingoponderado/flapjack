@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Safety
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.ErrorPropagation
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Safety
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.ErrorPropagation
+
+@[expose] public section
 
 /-! Ordinary primitive-operation cases of closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

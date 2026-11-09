@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ApplyOk
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ApplyOk
+
+@[expose] public section
 
 /-! Global-operation cases of BVL well-formedness preservation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

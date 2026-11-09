@@ -1,7 +1,11 @@
-import Flapjack.RiscV.CorrectnessEncoding.ConstStep
-import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
-import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
-import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.ConstStep
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
+public import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
+
+@[expose] public section
 
 /-! Case-local native execution support for the original Shift Ror paths.
 These compositions have no separately named HOL originals and remain untagged.

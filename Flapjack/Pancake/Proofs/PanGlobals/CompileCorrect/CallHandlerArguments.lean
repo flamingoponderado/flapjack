@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFreshNames
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocalEval
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFreshNames
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocalEval
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCallHandlerArguments
 open Flapjack.Pancake.PanLang

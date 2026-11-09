@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.WordConvs.InstSelectExp
-import Aesop
+module
+
+public import Flapjack.Pancake.Proofs.WordConvs.InstSelectExp
+public import Aesop
+
+@[expose] public section
 
 namespace Flapjack.WordConvs
 open Flapjack Flapjack.Compiler.Backend.WordInst Flapjack.Compiler.Encoders.Asm

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationRelation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationRelation
+
+@[expose] public section
 
 /-! FFI error simulation for the TMC operation case. -/
 namespace Flapjack.Compiler.Backend.BviTmc.OperationError

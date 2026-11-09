@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackProps.StateConstants
-import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+module
+
+public import Flapjack.Compiler.Backend.StackProps.StateConstants
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+
+@[expose] public section
 
 /-! Full original StackProps clock-proof prerequisites. No evaluator or
 instruction callback is introduced. The word/configuration/FFI parameters of

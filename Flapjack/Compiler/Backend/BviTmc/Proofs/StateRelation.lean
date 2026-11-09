@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.HeapRelation
-import Flapjack.Compiler.Backend.Semantics.BviSem.State
-import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.HeapRelation
+public import Flapjack.Compiler.Backend.Semantics.BviSem.State
+public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+
+@[expose] public section
 
 /-! State relation for TMC evaluation and compiler callbacks. -/
 namespace Flapjack.Compiler.Backend.BviTmc

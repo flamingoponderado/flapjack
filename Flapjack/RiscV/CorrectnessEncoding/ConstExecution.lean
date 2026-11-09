@@ -1,6 +1,10 @@
-import Flapjack.RiscV.CorrectnessEncoding.ConstStep
-import Flapjack.Misc.BytesInMemory
-import Flapjack.Compiler.Encoders.AsmProps.Assertions
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.ConstStep
+public import Flapjack.Misc.BytesInMemory
+public import Flapjack.Compiler.Encoders.AsmProps.Assertions
+
+@[expose] public section
 
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target

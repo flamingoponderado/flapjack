@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineForce
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineForce
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! The non-inlined Call case of BVL inlining simulation. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

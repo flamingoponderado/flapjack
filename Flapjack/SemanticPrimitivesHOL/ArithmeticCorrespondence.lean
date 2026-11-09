@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL.Arithmetic
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Arithmetic
+
+@[expose] public section
 
 /-! Agreement of computable arithmetic with HOL's guard. -/
 namespace Flapjack.SemanticPrimitivesHOL

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceLet.Proofs.Evaluate
-import Flapjack.EvaluateProps.Declarations
+module
+
+public import Flapjack.Compiler.Backend.SourceLet.Proofs.Evaluate
+public import Flapjack.EvaluateProps.Declarations
+
+@[expose] public section
 
 /-! Repeated source let-lifting and declaration evaluation. -/
 namespace Flapjack.Compiler.Backend.SourceLet

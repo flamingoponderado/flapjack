@@ -1,6 +1,10 @@
-import Flapjack.RiscV.L3.Defs.IntegerLoad
-import Flapjack.Misc.Alignment
-import Flapjack.RiscV.L3.Step.ByteMemory
+module
+
+public import Flapjack.RiscV.L3.Defs.IntegerLoad
+public import Flapjack.Misc.Alignment
+public import Flapjack.RiscV.L3.Step.ByteMemory
+
+@[expose] public section
 namespace Flapjack.RiscV.L3.Step
 open Flapjack.RiscV.L3
 

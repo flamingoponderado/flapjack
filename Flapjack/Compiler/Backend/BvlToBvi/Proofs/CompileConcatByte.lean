@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ConcatByteStub
-import Flapjack.Compiler.Backend.Semantics.BvlSem.MemoryChoice
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ConcatByteStub
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.MemoryChoice
+
+@[expose] public section
 
 /-! Byte-vector concatenation lowering in BVL-to-BVI. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

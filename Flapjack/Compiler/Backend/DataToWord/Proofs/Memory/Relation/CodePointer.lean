@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackOperations
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackOperations
+
+@[expose] public section
 
 /-! Code pointers and target locations in the data-to-word memory relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

@@ -1,5 +1,9 @@
-import Flapjack.Misc.List
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Operations
+module
+
+public import Flapjack.Misc.List
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Operations
+
+@[expose] public section
 
 /-! Global-store primitives under the annotation state relation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

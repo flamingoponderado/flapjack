@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockInspect
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WordRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockInspect
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WordRelation
+
+@[expose] public section
 
 /-! Constant and block bounds comparisons for closure-to-BVL. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

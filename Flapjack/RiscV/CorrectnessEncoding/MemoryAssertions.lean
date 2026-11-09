@@ -1,8 +1,12 @@
-import Flapjack.RiscV.CorrectnessEncoding.MemoryFetch
-import Flapjack.RiscV.CorrectnessEncoding.MemoryRelation
-import Flapjack.RiscV.CorrectnessEncoding.MemoryFrame
-import Flapjack.RiscV.CorrectnessEncoding.TargetOk
-import Flapjack.Compiler.Encoders.AsmProps.Assertions
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.MemoryFetch
+public import Flapjack.RiscV.CorrectnessEncoding.MemoryRelation
+public import Flapjack.RiscV.CorrectnessEncoding.MemoryFrame
+public import Flapjack.RiscV.CorrectnessEncoding.TargetOk
+public import Flapjack.Compiler.Encoders.AsmProps.Assertions
+
+@[expose] public section
 
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm

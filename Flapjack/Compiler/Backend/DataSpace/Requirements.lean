@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataLang.Syntax
-import Flapjack.Basis.Pure.MlString.Length
+module
+
+public import Flapjack.Compiler.Backend.DataLang.Syntax
+public import Flapjack.Basis.Pure.MlString.Length
+
+@[expose] public section
 
 /-! Allocation-space requirements for data-language operations. -/
 namespace Flapjack.Compiler.Backend.DataSpace

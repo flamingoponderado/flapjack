@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
-import Flapjack.Misc.SptreeLookup
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
+public import Flapjack.Misc.SptreeLookup
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack Compiler.Encoders.Asm WordSemStateFiniteExact AssignmentResults LoadEvaluationSupport

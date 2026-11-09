@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramCache
-import Flapjack.Compiler.Backend.BvlInline.Proofs.TickInlineRel
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramCache
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.TickInlineRel
+
+@[expose] public section
 
 /-! Expression relations preserved by BVL program inlining. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

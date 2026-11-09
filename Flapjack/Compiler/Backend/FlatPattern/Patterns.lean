@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.FlatPattern.BindingsTotal
-import Flapjack.Compiler.Backend.FlatPattern.NaiveTotal
-import Flapjack.Compiler.Backend.FlatPattern.Encode
-import Flapjack.Compiler.Backend.FlatPattern.Decode
-import Flapjack.Compiler.Backend.PatternComp.Decision
-import Flapjack.Misc.Sptree.FromList
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.BindingsTotal
+public import Flapjack.Compiler.Backend.FlatPattern.NaiveTotal
+public import Flapjack.Compiler.Backend.FlatPattern.Encode
+public import Flapjack.Compiler.Backend.FlatPattern.Decode
+public import Flapjack.Compiler.Backend.PatternComp.Decision
+public import Flapjack.Misc.Sptree.FromList
+
+@[expose] public section
 
 /-! Branch lowering for the flat pattern compiler. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

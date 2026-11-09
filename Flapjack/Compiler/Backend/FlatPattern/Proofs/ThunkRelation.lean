@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternRelation
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Thunk
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternRelation
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Thunk
+
+@[expose] public section
 
 /-! Store and thunk relations used by the flat pattern pass. These results use
 the proof-side value relation, which remains pending comparison with HOL. -/

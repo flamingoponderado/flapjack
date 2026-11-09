@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Proofs.PanToCrep.StateRelImpSemantics
-import Flapjack.Pancake.Proofs.CrepInline.StateRelImpSemantics
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Proofs.PanToCrep.StateRelImpSemantics
+public import Flapjack.Pancake.Proofs.CrepInline.StateRelImpSemantics
+
+@[expose] public section
 
 /-!
 # pan_to_crep: the final `state_rel_imp_semantics`

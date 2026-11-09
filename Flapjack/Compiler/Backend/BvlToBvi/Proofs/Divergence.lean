@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Observations
-import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateEventsClockFull
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateEventsClock
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Observations
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateEventsClockFull
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateEventsClock
+
+@[expose] public section
 
 /-! Clock-indexed event chains for BVL-to-BVI divergence. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

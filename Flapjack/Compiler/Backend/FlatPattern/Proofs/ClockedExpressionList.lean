@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.ExpressionList
-import Flapjack.Compiler.Backend.FlatProps.EvaluateLength
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ExpressionList
+public import Flapjack.Compiler.Backend.FlatProps.EvaluateLength
+
+@[expose] public section
 
 /-! Clock-bounded expression-list simulation for the flat pattern pass. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

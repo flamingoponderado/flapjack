@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
+
+@[expose] public section
 
 /-! Integer/memory cases of stackSemScript.sml inst_def:408-522.
 This partial helper returns outer NONE only for FP (not handled here).

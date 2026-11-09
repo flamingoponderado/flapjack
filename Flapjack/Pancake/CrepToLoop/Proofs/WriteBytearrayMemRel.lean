@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem
-import Flapjack.Pancake.Semantics.ByteAlignBridge
-import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem
+public import Flapjack.Pancake.Semantics.ByteAlignBridge
+public import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+
+@[expose] public section
 
 /-!
 # crep_to_loop `write_bytearray_mem_rel` over the exact carriers

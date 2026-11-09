@@ -1,12 +1,16 @@
-import Flapjack.Pancake.Proofs.PanToWord.InitialComposition
-import Flapjack.Pancake.Proofs.PanToCrep.StateRelImpSemanticsTop
-import Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
-import Flapjack.Pancake.Proofs.PanToCrep.FirstCompileProgAllDistinct
-import Flapjack.Pancake.Proofs.PanGlobals.CompileLocalised
-import Flapjack.Pancake.Proofs.PanGlobals.CompileTopNames
-import Flapjack.Pancake.CrepToLoop.Proofs.StateRelImpSemantics
-import Flapjack.Pancake.CrepToLoop.StateRel
-import Flapjack.Pancake.LoopToWord.Proofs.StateRelImpSemantics
+module
+
+public import Flapjack.Pancake.Proofs.PanToWord.InitialComposition
+public import Flapjack.Pancake.Proofs.PanToCrep.StateRelImpSemanticsTop
+public import Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
+public import Flapjack.Pancake.Proofs.PanToCrep.FirstCompileProgAllDistinct
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileLocalised
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileTopNames
+public import Flapjack.Pancake.CrepToLoop.Proofs.StateRelImpSemantics
+public import Flapjack.Pancake.CrepToLoop.StateRel
+public import Flapjack.Pancake.LoopToWord.Proofs.StateRelImpSemantics
+
+@[expose] public section
 set_option autoImplicit false
 namespace Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
 open Flapjack Flapjack.Pancake.PanLang

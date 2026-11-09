@@ -1,7 +1,11 @@
-import Flapjack.Pancake.WordLang.MaxVar
-import Flapjack.Pancake.WordLang.OccurrencesExact
-import Aesop
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.Max3
+module
+
+public import Flapjack.Pancake.WordLang.MaxVar
+public import Flapjack.Pancake.WordLang.OccurrencesExact
+public import Aesop
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.Max3
+
+@[expose] public section
 
 namespace Flapjack.WordConvs
 

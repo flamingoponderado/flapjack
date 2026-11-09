@@ -1,20 +1,24 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Dec
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Assign
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Primitive
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Store
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.FixedStores
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ShMemLoad
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ShMemStore
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Seq
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.If
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.While
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ReturnRaise
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ClockAnnot
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Call
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.DecCall
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ExtCall
-import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Dec
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Assign
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Primitive
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Store
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.FixedStores
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ShMemLoad
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ShMemStore
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Seq
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.If
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.While
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ReturnRaise
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ClockAnnot
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Call
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.DecCall
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ExtCall
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
+
+@[expose] public section
 
 namespace Flapjack
 open Pancake.PanLang PanSemStateFiniteExact

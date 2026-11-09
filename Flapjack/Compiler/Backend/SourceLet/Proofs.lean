@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceLet
+module
+
+public import Flapjack.Compiler.Backend.SourceLet
+
+@[expose] public section
 
 /-! Proof prerequisites for the source let-lifting pass. -/
 namespace Flapjack.Compiler.Backend.SourceLet

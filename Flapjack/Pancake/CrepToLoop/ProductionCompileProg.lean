@@ -1,5 +1,9 @@
-import Flapjack.Pancake.CrepToLoop.ContextExact
-import Flapjack.Pancake.PanToCrep.Compile
+module
+
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+public import Flapjack.Pancake.PanToCrep.Compile
+
+@[expose] public section
 
 namespace Flapjack.CrepToLoopProduction
 open Basis.Pure.MlString

@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.WordCopy.Proofs.Invariant
-import Flapjack.Pancake.WordConvs
-import Flapjack.Pancake.WordConvs.FullInstOkLess
-import Flapjack.Pancake.WordConvs.NotCreated
-import Flapjack.Pancake.WordConvs.CodeLabels
-import Flapjack.Pancake.WordConvs.WfCutsets
-import Mathlib.Tactic.Tauto
+module
+
+public import Flapjack.Compiler.Backend.WordCopy.Proofs.Invariant
+public import Flapjack.Pancake.WordConvs
+public import Flapjack.Pancake.WordConvs.FullInstOkLess
+public import Flapjack.Pancake.WordConvs.NotCreated
+public import Flapjack.Pancake.WordConvs.CodeLabels
+public import Flapjack.Pancake.WordConvs.WfCutsets
+public import Mathlib.Tactic.Tauto
+
+@[expose] public section
 
 /-!
 # `wordConvsProof` `copy_prop` group

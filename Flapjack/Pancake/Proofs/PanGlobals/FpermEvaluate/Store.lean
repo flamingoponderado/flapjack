@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
+
+@[expose] public section
 
 /-! Store case of pan_globalsProofScript's evaluate_fperm.
 Both operand evaluations and memory stores are unchanged by code updates.

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordForwardApp
-import Flapjack.EvaluateHOL.Induction
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordForwardApp
+public import Flapjack.EvaluateHOL.Induction
+
+@[expose] public section
 
 /-! Complete mutual recording-state preservation for the source evaluator. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

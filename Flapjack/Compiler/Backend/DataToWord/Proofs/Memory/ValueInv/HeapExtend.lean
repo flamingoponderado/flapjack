@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
-import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
-import Flapjack.Compiler.Backend.GcShared.HeapSimilarity
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
+public import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
+public import Flapjack.Compiler.Backend.GcShared.HeapSimilarity
+
+@[expose] public section
 
 /-! Preservation of value representations when the abstract heap grows. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

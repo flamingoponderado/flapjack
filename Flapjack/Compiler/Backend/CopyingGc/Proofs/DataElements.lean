@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.CopyingGc.Proofs.Progress
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.CopyingGc.Proofs.Progress
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Copied and scanned heaps contain only data elements. -/
 namespace Flapjack.Compiler.Backend.CopyingGc

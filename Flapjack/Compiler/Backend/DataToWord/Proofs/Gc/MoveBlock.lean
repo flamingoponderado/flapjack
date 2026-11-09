@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Memcpy
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PointerAddress
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveForward
-import Flapjack.Compiler.Backend.GcShared.ForwardPtr
-import Flapjack.Compiler.Backend.CopyingGc
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Memcpy
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PointerAddress
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveForward
+public import Flapjack.Compiler.Backend.GcShared.ForwardPtr
+public import Flapjack.Compiler.Backend.CopyingGc
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
+
+@[expose] public section
 
 /-! Concrete data-element copying for the copying-collector simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.LabToTarget.SimpleEncoder
-import Flapjack.Compiler.Backend.LabToTarget.SectionLength
-import Flapjack.Compiler.Backend.LabToTarget.LabelLookup
-import Flapjack.Compiler.Backend.LabSem.State
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SimpleEncoder
+public import Flapjack.Compiler.Backend.LabToTarget.SectionLength
+public import Flapjack.Compiler.Backend.LabToTarget.LabelLookup
+public import Flapjack.Compiler.Backend.LabSem.State
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem

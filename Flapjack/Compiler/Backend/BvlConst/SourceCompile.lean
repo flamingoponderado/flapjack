@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.BvlConst.Compile
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.BvlConst.Compile
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Source entry points for total BVL constant propagation. -/
 namespace Flapjack.Compiler.Backend.BvlConst
 open Bvl
-private instance : Nonempty Exp := ⟨.var 0⟩
+instance sourceCompileInst1 : Nonempty Exp := ⟨.var 0⟩
 
 /-- HOL's list traversal, using its equivalent singleton-list formulation. -/
 @[hol "cakeml/compiler/backend/bvl_constScript.sml" "compile_def"]

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.DataInvTransport
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.DataInvTransport
+
+@[expose] public section
 
 /-!
 # `word_cseProof`: knowledge updates preserve the invariant

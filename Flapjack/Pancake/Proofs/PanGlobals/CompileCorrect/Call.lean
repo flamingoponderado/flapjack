@@ -1,10 +1,14 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.TailCall
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallNoDestination
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallLocal
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerNoDestination
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallLocalHandler
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobal
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobalHandler
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.TailCall
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallNoDestination
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallLocal
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerNoDestination
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallLocalHandler
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobal
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobalHandler
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCompileCorrectCall
 open Flapjack.Pancake.PanLang

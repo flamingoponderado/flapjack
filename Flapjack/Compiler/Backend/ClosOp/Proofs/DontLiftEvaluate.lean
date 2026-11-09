@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftCorrect
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftCorrect
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
+
+@[expose] public section
 
 /-! Original constant evaluation lemmas for closure lifting. -/
 namespace Flapjack.Compiler.Backend.ClosOp

@@ -1,4 +1,8 @@
-import Flapjack.Misc.Bit
+module
+
+public import Flapjack.Misc.Bit
+
+@[expose] public section
 
 /-!
 # HOL `alignment` and `words` `word_slice`

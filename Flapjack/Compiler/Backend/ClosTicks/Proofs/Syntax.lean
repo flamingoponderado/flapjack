@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosTicks.Source
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
-import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
+module
+
+public import Flapjack.Compiler.Backend.ClosTicks.Source
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
+
+@[expose] public section
 
 /-! Closure annotation invariance for tick removal. -/
 namespace Flapjack.Compiler.Backend.ClosTicks

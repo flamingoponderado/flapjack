@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateEq
-import Flapjack.Compiler.Backend.Semantics.TargetProps.EncodingNonempty
-import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateEq
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.EncodingNonempty
+public import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem

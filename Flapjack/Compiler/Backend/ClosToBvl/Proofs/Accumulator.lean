@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ExpsEquivalence
-import Flapjack.Compiler.Backend.ClosToBvl.Layout.Auxiliary
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ExpsEquivalence
+public import Flapjack.Compiler.Backend.ClosToBvl.Layout.Auxiliary
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Auxiliary-code accumulator properties of closure expression compilation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

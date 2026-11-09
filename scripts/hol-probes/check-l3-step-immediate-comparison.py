@@ -9,9 +9,9 @@ import hashlib
 ROOT = Path(__file__).resolve().parents[2]
 CHECKS = {
     'Flapjack/RiscV/L3/Step/ComparisonMode.lean':
-        '876ac81140173498028f17b3e55557f9673519dd51ada71f7d8889f0d93c5993',
+        '75d979b591d56b7b2d12e0285eda1a51ecdac99190cdb6fb8cfd00907e6d2a7c',
     'Flapjack/RiscV/L3/Step/ImmediateComparison.lean':
-        'dc70b215dc8551d24547d0db20f3ca38ec8e0c5cf31f67be899953a0722835b1',
+        '9106bae8f1179c7342cbb299c40c593697287e58e9db069a121ef3f99308bbff',
     'HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml':
         '40efdb718c87d4c87be4c377e6650cfffa11cd84be52518c8c90044219f97dac',
     'scripts/hol-probes/l3_step_immediate_comparison_probeScript.sml':

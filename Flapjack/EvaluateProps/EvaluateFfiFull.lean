@@ -1,4 +1,8 @@
-import Flapjack.EvaluateProps.EvaluateFfi
+module
+
+public import Flapjack.EvaluateProps.EvaluateFfi
+
+@[expose] public section
 
 /-! Lexicographic induction for the source evaluator FFI theorems.
 The tagged theorems inherit the rational-cut assumption (SOUNDNESS item 8). -/

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+
+@[expose] public section
 
 /-! Reconstructing stack roots after collection. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

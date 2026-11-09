@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Accumulator
-import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveInstalled
-import Mathlib.Data.List.Nodup
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Accumulator
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveInstalled
+public import Mathlib.Data.List.Nodup
+
+@[expose] public section
 
 /-! Origins of labels in closure-to-BVL program conversion. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

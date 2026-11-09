@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorHeap
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Address
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorHeap
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Address
+
+@[expose] public section
 
 /-! Generated scratch-register setup for constructor allocation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct

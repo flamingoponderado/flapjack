@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.RiscV.CorrectnessEncoding.Call.Far
+module
+
+public import Flapjack.HolRef
+public import Flapjack.RiscV.CorrectnessEncoding.Call.Far
+
+@[expose] public section
 
 /-! Full original Call constructor case. Both source-selected near JALrd1
 and far AUIPCrd1/JALRrd1=rs1 execute from literal bytes, preserving source

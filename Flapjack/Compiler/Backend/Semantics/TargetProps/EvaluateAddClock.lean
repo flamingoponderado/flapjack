@@ -1,5 +1,9 @@
-import Mathlib.Tactic.SplitIfs
-import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
+module
+
+public import Mathlib.Tactic.SplitIfs
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
+
+@[expose] public section
 
 namespace Flapjack
 

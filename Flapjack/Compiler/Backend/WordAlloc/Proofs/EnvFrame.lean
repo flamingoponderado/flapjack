@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.KeyMaps
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
-import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
-import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
-import Flapjack.Misc.Sptree.ToAList
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.KeyMaps
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
+public import Flapjack.Misc.Sptree.ToAList
+
+@[expose] public section
 
 /-!
 # Word allocation environment-list and GC frame lemmas

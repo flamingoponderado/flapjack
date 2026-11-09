@@ -1,5 +1,9 @@
-import Flapjack.Basis.Pure.MlString
-import Flapjack.Compiler.Encoders.Asm
+module
+
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Compiler.Encoders.Asm
+
+@[expose] public section
 
 /-!
 # Exact width-indexed `stackLang$prog` carrier

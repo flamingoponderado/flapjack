@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.CallTail
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.CallTail
+
+@[expose] public section
 
 /-! Non-tail call-frame relations for the data liveness proof. -/
 namespace Flapjack.Compiler.Backend.DataLive

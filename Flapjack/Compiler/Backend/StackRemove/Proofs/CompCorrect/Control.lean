@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+
+@[expose] public section
 
 /-! Genuine Tick and control-transfer cases of full comp_correct. These cases
 retain the original source run, non-Error, full state relation and register

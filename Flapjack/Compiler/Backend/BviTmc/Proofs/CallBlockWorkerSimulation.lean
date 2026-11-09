@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockWorkerFrame
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockWorkerFrame
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Optimized worker simulation for recursive-call leaves. -/
 namespace Flapjack.Compiler.Backend.BviTmc.CallBlockWorkerSimulation

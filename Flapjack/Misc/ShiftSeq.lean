@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 Exact port of HOL `misc$shift_seq_def` (`cakeml/misc/miscScript.sml:132-134`),

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRegisterWrites
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticRegisterWrites
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

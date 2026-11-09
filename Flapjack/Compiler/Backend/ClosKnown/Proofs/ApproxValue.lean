@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.ClosKnown.Merge
-import Flapjack.Compiler.Backend.ClosKnownProps.Merge
-import Flapjack.Compiler.Backend.Semantics.ClosSem
-import Flapjack.Misc.ListEl
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Merge
+public import Flapjack.Compiler.Backend.ClosKnownProps.Merge
+public import Flapjack.Compiler.Backend.Semantics.ClosSem
+public import Flapjack.Misc.ListEl
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! The source approximation-to-value relation for known closures. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

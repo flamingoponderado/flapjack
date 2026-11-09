@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.RemoveDead
-import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.RemoveDead
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 /-!
 # `evaluate_remove_dead` statement

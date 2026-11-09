@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviLet.Proofs.Cases
+module
+
+public import Flapjack.Compiler.Backend.BviLet.Proofs.Cases
+
+@[expose] public section
 
 /-! Call cases of the BVI let-propagation simulation. -/
 namespace Flapjack.Compiler.Backend.BviLet.Proofs

@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveAll
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveAll
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+@[expose] public section
 
 /-! Assignment case for evaluator simulation across related stacks. -/
 namespace Flapjack.Compiler.Backend.DataLive

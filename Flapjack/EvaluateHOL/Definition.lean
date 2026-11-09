@@ -1,6 +1,14 @@
-import Flapjack.EvaluateHOL.Measure
-import Flapjack.SemanticPrimitivesHOL.PatternMatch
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.EvaluateHOL.Measure
+public import Flapjack.SemanticPrimitivesHOL.PatternMatch
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Clocked CakeML source evaluator. The three mutually recursive functions
 follow the original expression, pattern-match and declaration clauses;

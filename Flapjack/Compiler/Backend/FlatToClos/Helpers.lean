@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatLang
-import Flapjack.Compiler.Backend.ClosLang.Syntax
+module
+
+public import Flapjack.Compiler.Backend.FlatLang
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+
+@[expose] public section
 
 /-! Literal conversion and constructor helpers for flat-to-closure lowering. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

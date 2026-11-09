@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Compiler.Backend.StackRemove
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Compiler.Backend.StackRemove
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeapLimitOk
 open Flapjack

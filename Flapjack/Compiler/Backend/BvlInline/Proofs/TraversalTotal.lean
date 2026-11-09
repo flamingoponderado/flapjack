@@ -1,6 +1,10 @@
-import Flapjack.Misc.Option.MapM
-import Flapjack.Compiler.Backend.BvlInline
-import Flapjack.Compiler.Backend.ListFoldTotal
+module
+
+public import Flapjack.Misc.Option.MapM
+public import Flapjack.Compiler.Backend.BvlInline
+public import Flapjack.Compiler.Backend.ListFoldTotal
+
+@[expose] public section
 
 /-! Structural sufficiency for BVL expression traversals. These lemmas are
 Flapjack infrastructure, not HOL pass-correctness ports. -/

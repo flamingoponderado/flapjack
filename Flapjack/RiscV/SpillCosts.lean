@@ -1,5 +1,9 @@
-import Flapjack.RiscV.Heuristics
-import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
+module
+
+public import Flapjack.RiscV.Heuristics
+public import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
+
+@[expose] public section
 
 /-!
 # Spill costs and canonical move priorities

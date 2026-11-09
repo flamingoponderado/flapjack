@@ -1,5 +1,9 @@
-import Flapjack.AstHOL.Syntax
-import Flapjack.EvaluateHOL.Definition
+module
+
+public import Flapjack.AstHOL.Syntax
+public import Flapjack.EvaluateHOL.Definition
+
+@[expose] public section
 
 /-!
 # `primTypesScript`: the primitive-types program

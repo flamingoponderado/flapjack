@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
-import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyClock
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyClock
+public import Aesop
+
+@[expose] public section
 /-! Clock preservation for the BVI primitive dispatcher. -/
 namespace Flapjack.Compiler.Backend.BviSem
 open Flapjack.Compiler.Backend.BvlSem (Value)

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.Relations
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.VarListEvaluate
+module
+
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Relations
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.VarListEvaluate
+
+@[expose] public section
 
 /-! Let case of closure let-operation correctness. -/
 namespace Flapjack.Compiler.Backend.ClosLetop

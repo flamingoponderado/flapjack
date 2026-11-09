@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
-import Flapjack.Compiler.Backend.WordToStack.NativeCompile
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopHelpers
-import Flapjack.Pancake.WordConvs.PredicateEquations
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopReturn
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
+public import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopHelpers
+public import Flapjack.Pancake.WordConvs.PredicateEquations
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopReturn
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang

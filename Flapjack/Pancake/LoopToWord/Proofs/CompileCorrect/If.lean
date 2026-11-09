@@ -1,8 +1,12 @@
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.HandlerTail
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
-import Flapjack.Pancake.Proofs.LoopToWord.AccVarsAcc
+module
+
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.HandlerTail
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
+public import Flapjack.Pancake.Proofs.LoopToWord.AccVarsAcc
+
+@[expose] public section
 
 namespace Flapjack.LoopToWord.CompileCorrect
 

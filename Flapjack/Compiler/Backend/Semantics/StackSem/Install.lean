@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Compiler.Backend.Semantics.WordSem.State
-import Flapjack.Misc.ShiftSeq
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+public import Flapjack.Misc.ShiftSeq
+
+@[expose] public section
 
 /-! Source-matched `evaluate_def` Install clause fragment over the exact
 StackSem state/result carriers. It is deliberately untagged: this partial

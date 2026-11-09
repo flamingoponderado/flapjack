@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueArray
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockElement
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueArray
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockElement
+
+@[expose] public section
 
 /-! Concrete representation of source Word64 values. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

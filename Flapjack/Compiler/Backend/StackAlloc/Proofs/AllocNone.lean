@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocSimple
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.Bitmap
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocSimple
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.Bitmap
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `alloc_correct_lemma_None`

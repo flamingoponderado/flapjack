@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackLang.Overloads
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Compiler.Backend.StackLang.Overloads
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackAlloc
 open Flapjack.Basis.Pure.MlString
 /-- Original GC runtime symbol at the reviewed StackLang stub location.

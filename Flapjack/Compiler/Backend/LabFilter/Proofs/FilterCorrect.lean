@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabFilter.Proofs.InstallCases
-import Flapjack.Compiler.Backend.LabFilter.Proofs.PlainAsmErrorCases
+module
+
+public import Flapjack.Compiler.Backend.LabFilter.Proofs.InstallCases
+public import Flapjack.Compiler.Backend.LabFilter.Proofs.PlainAsmErrorCases
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabFilter.Proofs
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

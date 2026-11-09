@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.PanGlobals
-import Flapjack.Parser.Localise
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.PanGlobals
+public import Flapjack.Parser.Localise
+
+@[expose] public section
 
 namespace Flapjack
 

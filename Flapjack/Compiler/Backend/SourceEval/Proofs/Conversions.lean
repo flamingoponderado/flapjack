@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelationSimps
-import Flapjack.SemanticPrimitivesHOL.Conversions
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelationSimps
+public import Flapjack.SemanticPrimitivesHOL.Conversions
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.SemanticPrimitivesHOL Flapjack.AstHOL
 

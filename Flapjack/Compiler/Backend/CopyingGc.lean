@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.GcShared
-import Flapjack.HolArb
+module
+
+public import Flapjack.Compiler.Backend.GcShared
+public import Flapjack.HolArb
+
+@[expose] public section
 
 /-! The abstract copying collector from `copying_gcScript.sml`. -/
 namespace Flapjack.Compiler.Backend.CopyingGc

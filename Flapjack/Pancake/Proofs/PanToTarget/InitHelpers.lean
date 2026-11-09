@@ -1,14 +1,22 @@
-import Flapjack.Pancake.Proofs.PanToTarget
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
-import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInit
-import Flapjack.Compiler.Backend.StackProps.EvaluateConsts
-import Flapjack.Misc.GoodDimindex
-import Flapjack.Misc.Alignment
-import Flapjack.Pancake.CrepToLoop
-import Flapjack.Compiler.Backend.BvlToBvi
-import Flapjack.FiniteMap.MapKeys
-import Flapjack.Misc.PredSet
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
+public import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInit
+public import Flapjack.Compiler.Backend.StackProps.EvaluateConsts
+public import Flapjack.Misc.GoodDimindex
+public import Flapjack.Misc.Alignment
+public import Flapjack.Pancake.CrepToLoop
+public import Flapjack.Compiler.Backend.BvlToBvi
+public import Flapjack.FiniteMap.MapKeys
+public import Flapjack.Misc.PredSet
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # `pan_to_targetProof`: arithmetic and initialization helpers

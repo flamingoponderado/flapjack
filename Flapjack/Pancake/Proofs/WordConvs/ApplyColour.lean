@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.Colour
-import Flapjack.Pancake.WordConvs
-import Flapjack.Pancake.WordConvs.NotCreated
-import Flapjack.Pancake.WordConvs.CodeLabels
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Colour
+public import Flapjack.Pancake.WordConvs
+public import Flapjack.Pancake.WordConvs.NotCreated
+public import Flapjack.Pancake.WordConvs.CodeLabels
+
+@[expose] public section
 
 /-!
 # `wordConvsProof` `apply_colour` preservation group

@@ -1,7 +1,11 @@
-import Flapjack.RiscV.CorrectnessEncoding.RorExecution
-import Flapjack.RiscV.CorrectnessEncoding.ConstAssertions
-import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
-import Flapjack.RiscV.CorrectnessEncoding.Arithmetic
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.RorExecution
+public import Flapjack.RiscV.CorrectnessEncoding.ConstAssertions
+public import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
+public import Flapjack.RiscV.CorrectnessEncoding.Arithmetic
+
+@[expose] public section
 
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm

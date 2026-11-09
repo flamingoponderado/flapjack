@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
+public import Aesop
+
+@[expose] public section
 
 /-! Clock preservation for the proof-side BVL primitive dispatcher. -/
 namespace Flapjack.Compiler.Backend.BvlSem

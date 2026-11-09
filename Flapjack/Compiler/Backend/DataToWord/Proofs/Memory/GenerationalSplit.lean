@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
-import Flapjack.Compiler.Backend.GenGc
-import Mathlib.Data.List.Basic
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
+public import Flapjack.Compiler.Backend.GenGc
+public import Mathlib.Data.List.Basic
+
+@[expose] public section
 
 /-! Data and reference partition invariants for major collection. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

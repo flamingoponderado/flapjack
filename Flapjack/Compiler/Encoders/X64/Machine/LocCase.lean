@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.X64.Machine.VacuousCase
-import Flapjack.Compiler.Encoders.X64.Machine.MemDecodeProof
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.VacuousCase
+public import Flapjack.Compiler.Encoders.X64.Machine.MemDecodeProof
+
+@[expose] public section
 
 /-!
 # The `loc` case of `encoder_correct x64Target`

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocal
-import Flapjack.Compiler.Backend.SourceEval.Proofs.Abort
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocal
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.Abort
+
+@[expose] public section
 
 /-! Source-to-flat simulations and their assembly into the original
 expression, match-row, and declaration correctness theorem. -/

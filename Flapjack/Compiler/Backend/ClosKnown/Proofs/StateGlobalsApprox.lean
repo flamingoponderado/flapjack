@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxValue
-import Flapjack.Compiler.Backend.Semantics.ClosSem.State
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxValue
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Global approximation invariant for closure known-function optimization. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

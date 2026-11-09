@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.Comp
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Comp
+
+@[expose] public section
 
 /-! Literal stack_removeScript.sml:224–226 section wrapper. HOL's section-name
 carrier is independent beta, retained without specializing to numeric labels.

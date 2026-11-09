@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.Carriers
-import Flapjack.Compiler.Backend.RegAlloc.Exceptions
-import Flapjack.Translator.Monadic.MonadBase.Arrays
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.Carriers
+public import Flapjack.Compiler.Backend.RegAlloc.Exceptions
+public import Flapjack.Translator.Monadic.MonadBase.Arrays
+
+@[expose] public section
 
 /-!
 # reg_alloc generated state accessors

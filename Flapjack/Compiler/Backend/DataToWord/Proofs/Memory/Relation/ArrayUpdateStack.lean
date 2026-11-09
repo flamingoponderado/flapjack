@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateRestriction
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ArrayUpdateRestriction
+
+@[expose] public section
 
 /-! Abstract value-array updates in the data-to-word memory invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

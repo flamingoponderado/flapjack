@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Evaluate
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Closure-construction case of the tick-removal evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.ClosTicks

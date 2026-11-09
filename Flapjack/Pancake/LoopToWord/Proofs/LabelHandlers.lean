@@ -1,5 +1,9 @@
-import Flapjack.Pancake.LoopToWord.Proofs.NoFP
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Pancake.LoopToWord.Proofs.NoFP
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 namespace Flapjack
 

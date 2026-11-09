@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.MemStores
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.MemStores
+
+@[expose] public section
 
 /-!
 # pan_globals single-address memory updates

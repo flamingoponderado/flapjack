@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.State
-import Flapjack.Misc.Option.Rel
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+public import Flapjack.Misc.Option.Rel
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Generic value conditions for closure-language simulations. -/
 namespace Flapjack.Compiler.Backend.ClosProps

@@ -1,10 +1,14 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.WordSimp
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.WordSimp
+public import Flapjack.Pancake.WordConvs
 -- Reuse matcher congruence helpers from the accepted proof modules.
-import Flapjack.Pancake.Proofs.WordConvs.NotCreatedPasses
-import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.Sequence
-import Mathlib.Tactic
+public import Flapjack.Pancake.Proofs.WordConvs.NotCreatedPasses
+public import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.Sequence
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-!
 Instruction-predicate preservation for the exact native WordSimp pipeline.

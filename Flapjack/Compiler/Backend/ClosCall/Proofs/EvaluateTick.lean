@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateVariable
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.EvaluateVariable
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Structural evaluation cases for direct-call conversion. -/
 namespace Flapjack.Compiler.Backend.ClosCall

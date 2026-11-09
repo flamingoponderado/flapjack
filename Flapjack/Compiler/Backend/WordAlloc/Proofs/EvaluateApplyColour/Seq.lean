@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Leaves
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Leaves
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

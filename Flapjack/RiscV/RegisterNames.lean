@@ -1,4 +1,8 @@
-import Flapjack.RiscV.RegisterMap
+module
+
+public import Flapjack.RiscV.RegisterMap
+
+@[expose] public section
 
 /-!
 # CakeML RISC-V register names

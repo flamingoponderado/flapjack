@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
-import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
-import Flapjack.Pancake.Proofs.WordConvs.Unreach
+module
+
+public import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
+public import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
+public import Flapjack.Pancake.Proofs.WordConvs.Unreach
+
+@[expose] public section
 
 /-! Original native instruction-selection, three-to-two and unreachable-code
 handler laws. WordSimp, SSA and whole-program composition are separate groups. -/

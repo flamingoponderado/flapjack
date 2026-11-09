@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.X64.Machine.ControlCase
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.ControlCase
+
+@[expose] public section
 
 /-!
 # The vacuous x64 cases of `encoder_correct x64Target`

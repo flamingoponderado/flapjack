@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.InsertEquality
-import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.InsertEquality
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse.AssignmentResults
 open Flapjack WordSemStateFiniteExact

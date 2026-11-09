@@ -1,13 +1,17 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Leaves
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallEvaluate
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateLaws
-import Flapjack.Misc.Sorting
-import Flapjack.Misc.Sptree.Wf
-import Flapjack.Misc.Sptree.ToAList
-import Flapjack.Basis.Pure.MlList.SortPerm
-import Mathlib.Data.List.Perm.Basic
-import Mathlib.Data.List.Nodup
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Leaves
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallEvaluate
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateLaws
+public import Flapjack.Misc.Sorting
+public import Flapjack.Misc.Sptree.Wf
+public import Flapjack.Misc.Sptree.ToAList
+public import Flapjack.Basis.Pure.MlList.SortPerm
+public import Mathlib.Data.List.Perm.Basic
+public import Mathlib.Data.List.Nodup
+
+@[expose] public section
 
 /-!
 # wordProps `permute_swap_lemma2`/`permute_swap_lemma3` family

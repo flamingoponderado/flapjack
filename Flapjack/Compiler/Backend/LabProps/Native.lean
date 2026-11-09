@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.Native
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Native
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.LabLang

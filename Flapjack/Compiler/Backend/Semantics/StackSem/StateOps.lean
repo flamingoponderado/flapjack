@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.State
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.State
+
+@[expose] public section
 
 /-! HOL StackSem state primitives. All operations use the accepted owning state
 carrier; finite-support maps have canonical lookup/update semantics. No local

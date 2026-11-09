@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
-import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
-import Flapjack.Compiler.Backend.LabProps.LabelSets
-import Flapjack.Compiler.Backend.BackendProps
-import Flapjack.Misc.Sptree.ToAList
-import Mathlib.Data.Set.Insert
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
+public import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
+public import Flapjack.Compiler.Backend.LabProps.LabelSets
+public import Flapjack.Compiler.Backend.BackendProps
+public import Flapjack.Misc.Sptree.ToAList
+public import Mathlib.Data.Set.Insert
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Basis.Pure.MlString Flapjack.Compiler.Backend.LabProps.LabelSets

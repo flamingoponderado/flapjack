@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
+
+@[expose] public section
 
 /-! Facts connecting the factored Boolean decoder to the original closure
 primitive tests. These helper theorems have no separate HOL declaration. -/

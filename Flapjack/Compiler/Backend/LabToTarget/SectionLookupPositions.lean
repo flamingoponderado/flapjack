@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPreservation
-import Flapjack.Compiler.Backend.LabProps.LabelExtractionValidity
-import Flapjack.Compiler.Backend.LabToTarget.PositionValues.ZeroLabels
-import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
-import Flapjack.Compiler.Backend.LabToTarget.LengthCorrectness
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPreservation
+public import Flapjack.Compiler.Backend.LabProps.LabelExtractionValidity
+public import Flapjack.Compiler.Backend.LabToTarget.PositionValues.ZeroLabels
+public import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
+public import Flapjack.Compiler.Backend.LabToTarget.LengthCorrectness
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

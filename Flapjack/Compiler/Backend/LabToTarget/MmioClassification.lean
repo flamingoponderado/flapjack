@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.LabToTarget.MmioShmem
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.MmioShmem
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack
-private instance : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
+instance mmioClassificationInst1 : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
 
 /-- Full original successful optional-boundary classification. The original
 length bound makes every prefix EL in range; each suffix EL retains its own

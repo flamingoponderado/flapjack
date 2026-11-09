@@ -1,5 +1,9 @@
-import Mathlib.Tactic.IntervalCases
-import Flapjack.Compiler.Encoders.Arm8.Machine.Agree
+module
+
+public import Mathlib.Tactic.IntervalCases
+public import Flapjack.Compiler.Encoders.Arm8.Machine.Agree
+
+@[expose] public section
 
 /-!
 # Step agreement and framing for the closed ARMv8 model

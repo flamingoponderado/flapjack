@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.AstHOL
-import Flapjack.Misc.MachineIeee.Arith
-import Flapjack.Misc.BinaryIeeeSqrt
+module
+
+public import Flapjack.HolRef
+public import Flapjack.AstHOL
+public import Flapjack.Misc.MachineIeee.Arith
+public import Flapjack.Misc.BinaryIeeeSqrt
+
+@[expose] public section
 
 /-!
 # CakeML `fpSem` operations used by wordSem

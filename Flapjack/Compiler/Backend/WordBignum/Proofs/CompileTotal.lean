@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordBignum.Compile
+module
+
+public import Flapjack.Compiler.Backend.WordBignum.Compile
+
+@[expose] public section
 
 /-! Fuel sufficiency for the executable mini-language compiler. This is a
 Flapjack infrastructure fact, not a HOL compiler correctness theorem. -/

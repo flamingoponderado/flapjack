@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
-import Flapjack.Compiler.Backend.WordGcFunctions
-import Flapjack.Misc.WordList
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
+public import Flapjack.Compiler.Backend.WordGcFunctions
+public import Flapjack.Misc.WordList
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
+
+@[expose] public section
 
 /-! Separation assertions for the data-to-word abstract heap. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

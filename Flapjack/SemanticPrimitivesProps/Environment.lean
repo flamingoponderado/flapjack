@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.SemanticPrimitivesHOL.Control
+module
+
+public import Flapjack.HolRef
+public import Flapjack.SemanticPrimitivesHOL.Control
+
+@[expose] public section
 
 /-! Properties of source declaration environments. -/
 namespace Flapjack.SemanticPrimitivesProps

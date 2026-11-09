@@ -1,4 +1,8 @@
-import Flapjack.Misc.BalancedMap.Invariants
+module
+
+public import Flapjack.Misc.BalancedMap.Invariants
+
+@[expose] public section
 
 namespace Flapjack.Misc.BalancedMap
 

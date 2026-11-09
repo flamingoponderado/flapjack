@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
-import Flapjack.Compiler.Backend.StackProps.InstructionConstants
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+public import Flapjack.Compiler.Backend.StackProps.InstructionConstants
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm

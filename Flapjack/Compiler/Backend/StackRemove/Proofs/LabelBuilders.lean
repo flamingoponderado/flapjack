@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.StackRemove.StackFree
-import Flapjack.Compiler.Backend.StackRemove.StackAlloc
-import Flapjack.Compiler.Backend.StackRemove.StackAddress
-import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.StackFree
+public import Flapjack.Compiler.Backend.StackRemove.StackAlloc
+public import Flapjack.Compiler.Backend.StackRemove.StackAddress
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
+
+@[expose] public section
 /-! Exact local label-emptiness prerequisites of StackRemove correctness.
 HOL sets use predicate equality. Every count, register and positive word width
 is unrestricted; chunk recursion and both allocation branches are retained. -/

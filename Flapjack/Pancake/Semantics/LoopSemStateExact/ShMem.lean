@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.LoopSemStateExact
-import Flapjack.Pancake.Semantics.LoopSem
-import Flapjack.Pancake.Semantics.PanSem.ShMemExact
+module
+
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+public import Flapjack.Pancake.Semantics.LoopSem
+public import Flapjack.Pancake.Semantics.PanSem.ShMemExact
+
+@[expose] public section
 
 /-!
 # Exact loopSem shared-memory helpers

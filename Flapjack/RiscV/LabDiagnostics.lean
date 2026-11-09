@@ -1,7 +1,11 @@
-import Flapjack.RiscV.Lab
-import Flapjack.Compiler.Backend.StackToLab.RuntimeLabels
-import Flapjack.Compiler.Encoders.RiscV.Target
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
+module
+
+public import Flapjack.RiscV.Lab
+public import Flapjack.Compiler.Backend.StackToLab.RuntimeLabels
+public import Flapjack.Compiler.Encoders.RiscV.Target
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+
+@[expose] public section
 
 /-!
 # Checked Lab-to-RISC-V diagnostics

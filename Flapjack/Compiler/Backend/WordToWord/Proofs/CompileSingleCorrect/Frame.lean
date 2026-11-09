@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CodeRel
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateConst
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateConsts
-import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFpLemmas
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CodeRel
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateConst
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateConsts
+public import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFpLemmas
+
+@[expose] public section
 
 /-!
 # `word_to_wordProof` `compile_single_correct`: the replaced-code frame

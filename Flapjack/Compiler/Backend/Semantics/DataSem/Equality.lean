@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Value
-import Flapjack.Misc.Sptree
-import Flapjack.SemanticPrimitivesHOL.Operations
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Value
+public import Flapjack.Misc.Sptree
+public import Flapjack.SemanticPrimitivesHOL.Operations
+
+@[expose] public section
 
 /-! Reference-aware equality for timestamped data-language values. -/
 namespace Flapjack.Compiler.Backend.DataSem

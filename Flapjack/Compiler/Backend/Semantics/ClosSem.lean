@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
-import Flapjack.Compiler.Backend.BackendCommon.BoolTags
-import Flapjack.Compiler.Backend.BackendCommon.ConstructorTags
-import Flapjack.SemanticPrimitivesHOL.Operations
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+public import Flapjack.Compiler.Backend.BackendCommon.BoolTags
+public import Flapjack.Compiler.Backend.BackendCommon.ConstructorTags
+public import Flapjack.SemanticPrimitivesHOL.Operations
+
+@[expose] public section
 
 /-! Value-level operations of the closure-language semantics. Evaluation,
 state, and installation are not yet ported in this module. -/

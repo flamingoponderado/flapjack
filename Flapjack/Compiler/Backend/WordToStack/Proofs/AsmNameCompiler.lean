@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameFlat
-import Mathlib.Tactic.Tauto
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameFlat
+public import Mathlib.Tactic.Tauto
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.AsmNameCompiler
 open Flapjack Flapjack.Compiler.Backend.WordToStack.Native

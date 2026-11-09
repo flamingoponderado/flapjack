@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
-import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
-import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
-import Flapjack.Pancake.WordLang.MaxVarInst
-import Flapjack.Compiler.Backend.RegAlloc
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelFp
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+public import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
+public import Flapjack.Pancake.WordLang.MaxVarInst
+public import Flapjack.Compiler.Backend.RegAlloc
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelFp
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.InstSimulation.FpConversions
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

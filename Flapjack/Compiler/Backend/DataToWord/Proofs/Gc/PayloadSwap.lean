@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Representation
+
+@[expose] public section
 
 /-! Payload replacement used by the copying collector's scan loop. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

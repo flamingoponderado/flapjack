@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Logical
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Branch
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.BranchConditional
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Executable.Logical
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Branch
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.BranchConditional
+
+@[expose] public section
 
 /-!
 # Branch instructions: bytes for the L3 bridge

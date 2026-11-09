@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.MemoryUpdates
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.MemoryUpdates
+
+@[expose] public section
 
 /-! Array bounds and configuration observations under closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

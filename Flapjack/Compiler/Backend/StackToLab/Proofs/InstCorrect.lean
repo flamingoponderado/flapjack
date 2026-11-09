@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.StateRel
-import Flapjack.Compiler.Backend.StackToLab.Proofs.Prelude
-import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
-import Flapjack.Compiler.Backend.LabSem.Inst
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.StateRel
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.Prelude
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
+public import Flapjack.Compiler.Backend.LabSem.Inst
+
+@[expose] public section
 
 /-! Instruction simulation `inst_correct` of `stack_to_labProofScript.sml`
 (lines 736-889): a successful StackSem primitive instruction is simulated by

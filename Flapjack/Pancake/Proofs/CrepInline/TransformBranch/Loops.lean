@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.CrepInline.TransformBranch.Cases
-import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Call
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.TransformBranch.Cases
+public import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Call
+
+@[expose] public section
 
 /-!
 # crep_inline `transform_branch_correct`: `While` and `Call` cases

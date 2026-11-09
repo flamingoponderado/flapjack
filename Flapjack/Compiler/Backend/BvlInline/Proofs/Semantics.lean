@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.CompileProg
-import Flapjack.Compiler.Backend.BvlInline.Proofs.ClockedObservations
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateEventsClock
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Semantics
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.CompileProg
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.ClockedObservations
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateEventsClock
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Semantics
+
+@[expose] public section
 
 /-! Whole-program observations for BVL tick removal. These declarations are
 Flapjack infrastructure; the HOL semantics theorem is not yet classified as a

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveLoop
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveLoop
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
+
+@[expose] public section
 
 /-! Counterpart of the original trigger-update simulation at
 `stack_allocProofScript.sml:4553-4590`. The helpers expose the actual native

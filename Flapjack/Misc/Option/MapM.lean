@@ -1,4 +1,8 @@
-import Batteries.Data.List.Basic
+module
+
+public import Batteries.Data.List.Basic
+
+@[expose] public section
 
 /-! Flapjack infrastructure for successful option-valued list traversals. -/
 namespace Flapjack

@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.State
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.State
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! BVI thunk inspection. -/
 namespace Flapjack.Compiler.Backend.BviSem

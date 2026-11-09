@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyAuxFields
-import Flapjack.Compiler.Backend.Semantics.DataProps.PrimitiveLocals
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyAuxFields
+public import Flapjack.Compiler.Backend.Semantics.DataProps.PrimitiveLocals
+
+@[expose] public section
 /-! Compiler-field preservation for data primitive applications. -/
 namespace Flapjack.Compiler.Backend.DataProps
 open Flapjack Flapjack.Compiler.Backend.DataSem Flapjack.SemanticPrimitivesHOL

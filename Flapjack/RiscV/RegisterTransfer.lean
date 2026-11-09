@@ -1,4 +1,8 @@
-import Flapjack.RiscV.RegisterNames
+module
+
+public import Flapjack.RiscV.RegisterNames
+
+@[expose] public section
 
 /-!
 # The inverse of the `riscv_names` map

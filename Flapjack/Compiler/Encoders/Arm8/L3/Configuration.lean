@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Ast
-import Flapjack.Compiler.Encoders.Arm8.TargetProof
-import Flapjack.Compiler.Encoders.AsmProps.Encoding
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Ast
+public import Flapjack.Compiler.Encoders.Arm8.TargetProof
+public import Flapjack.Compiler.Encoders.AsmProps.Encoding
+
+@[expose] public section
 
 /-!
 # The L3 ARMv8 assembler configuration

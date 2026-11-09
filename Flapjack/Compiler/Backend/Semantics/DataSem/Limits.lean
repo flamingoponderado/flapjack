@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Space
-import Flapjack.Basis.Pure.MlString.Length
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Space
+public import Flapjack.Basis.Pure.MlString.Length
+
+@[expose] public section
 
 /-! Architecture and representation limits for data-language operations. -/
 namespace Flapjack.Compiler.Backend.DataSem

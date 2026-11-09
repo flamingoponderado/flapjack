@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.MappedApply
-import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpProduction
-import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.MappedApply
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpProduction
+public import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
+
+@[expose] public section
 
 /-! Runtime state relation for the combined let-operation and handler pass. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

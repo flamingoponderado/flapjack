@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.LabToTarget.BytesInMemoryFetch
-import Flapjack.Compiler.Backend.LabToTarget.OddInstructionAlignment
-import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
-import Flapjack.Compiler.Backend.LabToTarget.InstAlignment
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.BytesInMemoryFetch
+public import Flapjack.Compiler.Backend.LabToTarget.OddInstructionAlignment
+public import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+public import Flapjack.Compiler.Backend.LabToTarget.InstAlignment
+
+@[expose] public section
 
 /-! Original code-alignment of instruction positions
 (lab_to_targetProofScript.sml:2934-2981, 6541-6548): every valid line has a

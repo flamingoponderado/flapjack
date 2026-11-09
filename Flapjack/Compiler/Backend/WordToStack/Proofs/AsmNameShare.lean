@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeCompile
-import Flapjack.Compiler.Backend.StackProps.ProgramNames
-import Flapjack.Pancake.WordConvs.FullInstOkLess
-import Flapjack.Pancake.WordConvs.NotCreated
-import Mathlib.Tactic.SplitIfs
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+public import Flapjack.Compiler.Backend.StackProps.ProgramNames
+public import Flapjack.Pancake.WordConvs.FullInstOkLess
+public import Flapjack.Pancake.WordConvs.NotCreated
+public import Mathlib.Tactic.SplitIfs
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.AsmNameShare
 open Flapjack Flapjack.Compiler.Backend.StackLang

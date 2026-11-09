@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsStore
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsReload
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsOldLoads
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsContext
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsMapDisjoint
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsStore
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsReload
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsOldLoads
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsContext
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsMapDisjoint
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsInitGlobalsState
 open Flapjack.Pancake.PanLang

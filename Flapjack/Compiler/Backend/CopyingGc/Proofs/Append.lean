@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.CopyingGc
+module
+
+public import Flapjack.Compiler.Backend.CopyingGc
+
+@[expose] public section
 
 /-! Prefix independence of the abstract collector's copied heap. -/
 namespace Flapjack.Compiler.Backend.CopyingGc

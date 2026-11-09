@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMax
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMax
+
+@[expose] public section
 
 /-!
 # wordProps `evaluate_consts` evaluator constancy family

@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.StackProps.AllocArg
-import Flapjack.Compiler.Backend.StackProps.RegisterBounds
-import Flapjack.Compiler.Backend.StackProps.CallArgs
-import Flapjack.Compiler.Backend.StackProps.OrderedLabels
-import Flapjack.Compiler.Backend.BackendCommon
+module
+
+public import Flapjack.Compiler.Backend.StackProps.AllocArg
+public import Flapjack.Compiler.Backend.StackProps.RegisterBounds
+public import Flapjack.Compiler.Backend.StackProps.CallArgs
+public import Flapjack.Compiler.Backend.StackProps.OrderedLabels
+public import Flapjack.Compiler.Backend.BackendCommon
+
+@[expose] public section
 
 /-! `good_code_def` and `contain_def` (`stack_to_labProofScript.sml:3349-3363`):
 the syntactic conditions on the input procedures of `full_make_init_semantics`,
