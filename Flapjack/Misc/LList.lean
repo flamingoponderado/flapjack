@@ -2190,6 +2190,174 @@ theorem lunfold_unique {f : β → Option (β × α)} {g : β → HolLList α}
           exact ih p.1
 
 
+/-- HOL `every_coind` (`llistScript.sml:1596-1600`): the coinduction principle
+    for `every`/`LL_ALL`. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "every_coind"]
+theorem every_coind {P : α → Prop} {Q : HolLList α → Prop}
+    (h : ∀ (hd : α) (t : HolLList α), Q (lcons hd t) → P hd ∧ Q t) :
+    ∀ ll, Q ll → llistEvery P ll := by
+  intro ll hQ
+  rw [llistEvery_iff]
+  intro n
+  induction n generalizing ll with
+  | zero =>
+      intro x hx
+      have hxne : ll.rep 0 ≠ none := by rw [hx]; simp
+      obtain ⟨hd, hhd⟩ := Option.ne_none_iff_exists'.mp hxne
+      have hQ' : Q (lcons hd (ltail ll)) := by rwa [lcons_lhd_ltail hhd] at hQ
+      have hxd : x = hd := by
+        have h2 : (some x : Option α) = some hd := by
+          rw [← hx]
+          exact hhd
+        exact Option.some.inj h2
+      rw [hxd]
+      exact (h hd (ltail ll) hQ').1
+  | succ n ih =>
+      intro x hx
+      have hxne : ll.rep 0 ≠ none := by
+        intro h0
+        rw [rep_none_of_le ll h0 (Nat.zero_le (n + 1))] at hx
+        exact absurd hx (by simp)
+      obtain ⟨hd, hhd⟩ := Option.ne_none_iff_exists'.mp hxne
+      have hQ' : Q (lcons hd (ltail ll)) := by rwa [lcons_lhd_ltail hhd] at hQ
+      exact ih (ltail ll) (h hd (ltail ll) hQ').2 x hx
+
+/-- HOL `LLIST_BISIMULATION0` (`llistScript.sml:549-561`): equality of lazy
+    lists via a bisimulation stated with `LCONS`. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LLIST_BISIMULATION0"]
+theorem llist_bisimulation0 (ll1 ll2 : HolLList α) :
+    (ll1 = ll2) ↔ ∃ R : HolLList α → HolLList α → Prop, R ll1 ll2 ∧
+      ∀ ll3 ll4, R ll3 ll4 →
+        (ll3 = lnil ∧ ll4 = lnil) ∨
+        ∃ h t1 t2, ll3 = lcons h t1 ∧ ll4 = lcons h t2 ∧ R t1 t2 := by
+  constructor
+  · intro heq
+    refine ⟨fun a b => a = b, heq, ?_⟩
+    intro ll3 ll4 h
+    subst h
+    by_cases hnil : ll3 = lnil
+    · exact Or.inl ⟨hnil, hnil⟩
+    · right
+      have h0 : ll3.rep 0 ≠ none := rep_zero_ne_none_of_ne_lnil hnil
+      obtain ⟨hd, hhd⟩ := Option.ne_none_iff_exists'.mp h0
+      exact ⟨hd, ltail ll3, ltail ll3, lcons_lhd_ltail hhd, lcons_lhd_ltail hhd, rfl⟩
+  · rintro ⟨R, hR, hstep⟩
+    apply ext_of_rep
+    intro n
+    induction n generalizing ll1 ll2 with
+    | zero =>
+        rcases hstep ll1 ll2 hR with ⟨h1, h2⟩ | ⟨hd, t1, t2, h1, h2, _⟩
+        · rw [h1, h2]
+        · rw [h1, h2]
+          rfl
+    | succ n ih =>
+        rcases hstep ll1 ll2 hR with ⟨h1, h2⟩ | ⟨hd, t1, t2, h1, h2, hR'⟩
+        · rw [h1, h2]
+        · rw [h1, h2]
+          simp only [lcons]
+          exact ih t1 t2 hR'
+
+/-- HOL `LLIST_STRONG_BISIMULATION` (`llistScript.sml:589-597`): the strong
+    bisimulation principle (each related pair is equal or two conses). -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LLIST_STRONG_BISIMULATION"]
+theorem llist_strong_bisimulation (ll1 ll2 : HolLList α) :
+    (ll1 = ll2) ↔ ∃ R : HolLList α → HolLList α → Prop, R ll1 ll2 ∧
+      ∀ ll3 ll4, R ll3 ll4 →
+        (ll3 = ll4) ∨
+        ∃ h t1 t2, ll3 = lcons h t1 ∧ ll4 = lcons h t2 ∧ R t1 t2 := by
+  constructor
+  · intro heq
+    refine ⟨fun a b => a = b, heq, ?_⟩
+    intro ll3 ll4 h
+    subst h
+    exact Or.inl rfl
+  · rintro ⟨R, hR, hstep⟩
+    apply ext_of_rep
+    intro n
+    induction n generalizing ll1 ll2 with
+    | zero =>
+        rcases hstep ll1 ll2 hR with heq | ⟨hd, t1, t2, h1, h2, _⟩
+        · rw [heq]
+        · rw [h1, h2]
+          rfl
+    | succ n ih =>
+        rcases hstep ll1 ll2 hR with heq | ⟨hd, t1, t2, h1, h2, hR'⟩
+        · rw [heq]
+        · rw [h1, h2]
+          simp only [lcons]
+          exact ih t1 t2 hR'
+
+/-- HOL `LUNFOLD_BISIMULATION` (`llistScript.sml:525-534`): when two unfolded
+    lists are equal, a bisimulation on the two generators' states relates their
+    starts, and conversely. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LUNFOLD_BISIMULATION"]
+theorem lunfold_bisimulation {β₁ β₂ : Type}
+    (f1 : β₁ → Option (β₁ × α)) (f2 : β₂ → Option (β₂ × α))
+    (x1 : β₁) (x2 : β₂) :
+    (lunfold f1 x1 = lunfold f2 x2) ↔
+      ∃ R : β₁ → β₂ → Prop, R x1 x2 ∧
+        ∀ y1 y2, R y1 y2 →
+          (f1 y1 = none ∧ f2 y2 = none) ∨
+          ∃ h t1 t2, f1 y1 = some (t1, h) ∧ f2 y2 = some (t2, h) ∧ R t1 t2 := by
+  constructor
+  · intro heq
+    refine ⟨fun a b => lunfold f1 a = lunfold f2 b, heq, ?_⟩
+    intro y1 y2 hR
+    cases h1 : f1 y1 with
+    | none =>
+        left
+        have hl : lunfold f1 y1 = lnil := by
+          rw [lunfoldHOL, h1]
+        have h2 : lunfold f2 y2 = lnil := by rw [← hR, hl]
+        have hrep : (lunfold f2 y2).rep 0 = none := by rw [h2]; rfl
+        simp only [lunfold, lunfoldStep] at hrep
+        exact ⟨rfl, Option.map_eq_none_iff.mp hrep⟩
+    | some p =>
+        right
+        have hl : lunfold f1 y1 = lcons p.2 (lunfold f1 p.1) := by
+          rw [lunfoldHOL, h1]
+        have h2 : lunfold f2 y2 = lcons p.2 (lunfold f1 p.1) := by rw [← hR, hl]
+        have hrep : (lunfold f2 y2).rep 0 = some p.2 := by rw [h2]; rfl
+        simp only [lunfold, lunfoldStep] at hrep
+        obtain ⟨a, ha, ha2⟩ := Option.map_eq_some_iff.mp hrep
+        have h2eq : f2 y2 = some (a.1, p.2) := by
+          have ha' : f2 y2 = some a := ha
+          rw [ha']
+          rw [show a = (a.1, a.2) from rfl, ha2]
+        refine ⟨p.2, p.1, a.1, ?_, ?_, ?_⟩
+        · rfl
+        · exact h2eq
+        · apply ext_of_rep
+          intro n
+          have hleft : (lunfold f1 p.1).rep n = (lunfold f2 y2).rep (n + 1) := by
+            have e := congrArg (fun ll => ll.rep (n + 1)) h2
+            simp only [lcons] at e
+            exact e.symm
+          rw [hleft]
+          show (lunfoldStep f2 y2 (n + 1)).map Prod.snd =
+            (lunfoldStep f2 a.1 n).map Prod.snd
+          rw [lunfoldStep_succ (z := y2) (p := (a.1, p.2)) h2eq n]
+  · rintro ⟨R, hR, hstep⟩
+    have key : ∀ n (y1 : β₁) (y2 : β₂), R y1 y2 →
+        (lunfold f1 y1).rep n = (lunfold f2 y2).rep n := by
+      intro n
+      induction n with
+      | zero =>
+          intro y1 y2 hR
+          rcases hstep y1 y2 hR with ⟨h1, h2⟩ | ⟨h, t1, t2, h1, h2, _⟩
+          · simp [lunfold, lunfoldStep, h1, h2]
+          · simp [lunfold, lunfoldStep, h1, h2]
+      | succ n ih =>
+          intro y1 y2 hR
+          rcases hstep y1 y2 hR with ⟨h1, h2⟩ | ⟨h, t1, t2, h1, h2, hR'⟩
+          · simp [lunfold, lunfoldStep_none h1 (n + 1), lunfoldStep_none h2 (n + 1)]
+          · simp only [lunfold, lunfoldStep_succ h1 n, lunfoldStep_succ h2 n]
+            exact ih t1 t2 hR'
+    apply ext_of_rep
+    intro n
+    exact key n x1 x2 hR
+
+
 end HolLList
 
 end Flapjack
