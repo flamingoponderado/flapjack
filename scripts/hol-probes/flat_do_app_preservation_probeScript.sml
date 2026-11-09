@@ -121,3 +121,8 @@ val _ = show_thm "flat_simple_do_app_typed=" flatPropsTheory.simple_do_app_thm;
 
 val _ = show_thm "semantic_sv_rel_cases_typed=" semanticPrimitivesPropsTheory.sv_rel_cases;
 val _ = show_thm "semantic_do_arith_check_type_typed=" semanticPrimitivesPropsTheory.do_arith_check_type;
+
+val _ = show_thm "flat_evaluate_mat_typed=" flatPropsTheory.evaluate_Mat;
+val _ = show_thm "flat_evaluate_handle_typed=" flatPropsTheory.evaluate_Handle;
+val _ = show_thm "flat_evaluate_match_nil_typed=" flatPropsTheory.evaluate_match_NIL;
+val _ = show_thm "flat_evaluate_match_cons_typed=" flatPropsTheory.evaluate_match_CONS;

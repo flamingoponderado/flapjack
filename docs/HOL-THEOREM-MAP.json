@@ -130593,6 +130593,42 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_Mat",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateMatch.lean",
+  "lean_name": "evaluate_mat",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_mat_typed in flat_do_app_preservation_probe.out. The successful value and error cases, row-error test and match delegation match. The evaluator inherits the reals_as_rational_cuts assumption. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_Handle",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateMatch.lean",
+  "lean_name": "evaluate_handle",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_handle_typed in flat_do_app_preservation_probe.out. The raised-value case, row-error test and other-result propagation match. The evaluator inherits the reals_as_rational_cuts assumption. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_match_NIL",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateMatch.lean",
+  "lean_name": "evaluateMatch_nil",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_match_nil_typed in flat_do_app_preservation_probe.out. The empty match raises the supplied error value in the original state. The evaluator inherits the reals_as_rational_cuts assumption. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_match_CONS",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateMatch.lean",
+  "lean_name": "evaluateMatch_cons",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_match_cons_typed in flat_do_app_preservation_probe.out. The pattern outcomes and grouped distinctness/row-error condition match. The evaluator inherits the reals_as_rational_cuts assumption. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
   "hol_name": "simple_do_app_thm",
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleDoApp.lean",
   "lean_name": "simpleDoApp",
