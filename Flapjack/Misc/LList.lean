@@ -936,7 +936,11 @@ theorem lappendRep_ok (l1 l2 : HolLList α) : HolLrepOk (lappendRep l1 l2) := by
           rw [← heq] at hn
           exact l2.ok (n - k) hn
 
-/-- `LAPPEND` over the representation carrier. -/
+/-- `LAPPEND` over the representation carrier. Carries no `@[hol]` tag:
+    HOL declares `LAPPEND` by `new_specification` (`llistScript.sml:781`), and
+    its specification statement is ported as the tagged `lappendHOL_spec`; this
+    definition is the rep-level witness, the analogue of the `llist_Axiom`
+    witness in HOL's own existence proof. -/
 noncomputable def lappendHOL (l1 l2 : HolLList α) : HolLList α :=
   ⟨lappendRep l1 l2, lappendRep_ok l1 l2⟩
 
@@ -982,8 +986,8 @@ theorem lappendRep_lcons_succ (h : α) (t x : HolLList α) (n : Nat) :
         congr 1
         omega
 
-/-- HOL `LAPPEND` (`llistScript.sml:781-786`, `new_specification`): the two
-source equations for append. -/
+/-- HOL `LAPPEND` (`llistScript.sml:781-785`, `new_specification`): the two
+source equations for append (`:784-785`). -/
 @[hol "hol4/src/coalgebras/llistScript.sml" "LAPPEND"]
 theorem lappendHOL_spec :
     (∀ x : HolLList α, lappendHOL lnil x = x) ∧
@@ -1072,7 +1076,7 @@ theorem lappendHOL_eq_lnil (l1 l2 : HolLList α) :
     exact lappendHOL_spec.1 lnil
 
 /-- HOL `LDROP` (`llistScript.sml:1275-1277`): drop `n` elements. -/
-@[hol "hol4/src/coalgebras/llistScript.sml" "LDROP_def"]
+@[hol "hol4/src/coalgebras/llistScript.sml" "LDROP"]
 def ldropHOL : Nat → HolLList α → Option (HolLList α)
   | 0, ll => some ll
   | n + 1, ll => (ll.ltl.map (fun t => ldropHOL n t)).join
@@ -1245,7 +1249,12 @@ theorem lflattenRep_ok (ll : HolLList (HolLList α)) : HolLrepOk (lflattenRep ll
           rw [h1]
           exact ih _ hn
 
-/-- `LFLATTEN` over the representation carrier. -/
+/-- `LFLATTEN` over the representation carrier. Carries no `@[hol]` tag: HOL
+    declares `LFLATTEN` by `new_specification` (`llistScript.sml:1895`), whose
+    stated equation inspects `LL_ALL ($= LNIL) ll`; that raw specification is
+    not ported yet (it needs `LL_ALL`). The construction here is the rep-level
+    `LEAST`-index flattening that HOL's existence proof uses, and the HOL
+    characterising theorem `LFLATTEN_THM` is ported as `lflattenHOL_THM`. -/
 noncomputable def lflatten (ll : HolLList (HolLList α)) : HolLList α :=
   ⟨lflattenRep ll, lflattenRep_ok ll⟩
 

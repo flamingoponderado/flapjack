@@ -68255,6 +68255,46 @@
   },
   {
     "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LAPPEND_EQ_LNIL",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lappendHOL_eq_lnil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:836-837 Theorem LAPPEND_EQ_LNIL[simp]: (LAPPEND l1 l2 = [||]) <=> (l1 = [||]) /\\ (l2 = [||]). The Lean statement is the same biconditional (lappendHOL l1 l2 = lnil) <-> (l1 = lnil /\\ l2 = lnil) with the same two operands in HOL order and the same two conjuncts on the right; [||] is lnil and LAPPEND is the tagged lappendHOL (LAPPEND row). HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise. The proof splits on whether each operand's rep reaches a NONE (the rep-level counterpart of HOL's llist_CASES split) and uses only the tagged append equations."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LAPPEND_NIL_2ND",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lappendHOL_nil_2nd",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:873-874 Theorem LAPPEND_NIL_2ND: !ll. LAPPEND ll LNIL = ll. The Lean statement is forall ll : HolLList alpha, lappendHOL ll lnil = ll: one universally quantified lazy list, the same equation, LNIL read as lnil. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise. The proof is rep extensionality, the Lean counterpart of HOL's LLIST_BISIMULATION argument."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LAPPEND",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lappendHOL_spec",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:781-785 val LAPPEND = new_specification (\"LAPPEND\", [\"LAPPEND\"], prove(`?LAPPEND. (!x. LAPPEND LNIL x = x) /\\ (!h t x. LAPPEND (LCONS h t) x = LCONS h (LAPPEND t x))`)) with the statement at :784-785. The Lean theorem states the same conjunction in HOL's order: (forall x : HolLList alpha, lappendHOL lnil x = x) /\\ (forall h t x : HolLList alpha, lappendHOL (lcons h t) x = lcons h (lappendHOL t x)), with lnil/lcons standing for LNIL/LCONS. The untagged constant lappendHOL is the rep-level append lappendRep (the elements of l1 up to its first NONE, then l2), the analogue of the llist_Axiom witness in HOL's own existence proof (:787-833); its behaviour is pinned by this tagged specification theorem, which is why the constant itself carries no separate tag. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finite-list premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LDROP",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "ldropHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1275-1277 Definition LDROP[nocompute]: (LDROP 0 ll = SOME ll) /\\ (LDROP (SUC n) ll = OPTION_JOIN (OPTION_MAP (LDROP n) (LTL ll))). The Lean definition ldropHOL : Nat -> HolLList alpha -> Option (HolLList alpha) has exactly these two equations: ldropHOL 0 ll = some ll and ldropHOL (n + 1) ll = (ll.ltl.map (ldropHOL n)).join, with SUC n the n+1 pattern, OPTION_MAP/OPTION_JOIN the Option.map/Option.join and LTL the tagged ltl (an Option-valued partial function, as in HOL). HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra clause, premise or side condition. The declaration is supporting infrastructure for LFLATTEN (HOL's flattening witness uses LDROP (SUC n) ll); HOL's LDROP_THM (:1295-1298) is not ported, so only the two defining equations are claimed."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LFLATTEN_THM",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lflattenHOL_THM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1967-1971 Theorem LFLATTEN_THM[simp]: (LFLATTEN LNIL = LNIL) /\\ (!tl. LFLATTEN (LCONS LNIL t) = LFLATTEN t) /\\ (!h t tl. LFLATTEN (LCONS (LCONS h t) tl) = LCONS h (LFLATTEN (LCONS t tl))). The Lean theorem states the same three conjuncts in HOL's order over HolLList (a lazy list of lazy lists of alpha), with lnil/lcons standing for LNIL/LCONS and the same quantified shapes (none, one list, then element plus tail plus rest). The untagged definition lflatten is the rep-level LEAST-index flattening, the analogue of the llist_Axiom witness in HOL's own new_specification (:1895-1965); the raw LFLATTEN specification statement (whose guard uses LL_ALL) is not ported, so this row covers the characterising theorem only and claims no tag for the constant. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
     "hol_name": "LPREFIX_ANTISYM",
     "lean_path": "Flapjack/Misc/LList.lean",
     "lean_name": "lprefixAntisymHOL",
