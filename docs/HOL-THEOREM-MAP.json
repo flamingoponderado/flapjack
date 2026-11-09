@@ -1,12 +1,24 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "state_rel_LEAST",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Memory.lean",
+  "lean_name": "stateRel_least",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "ClosSem.State.refs",
+    "ClosSem.State.code"
+  ],
+  "reviewer": "Compared state_rel_LEAST_typed: the source and target states share independently polymorphic compiler and FFI carriers, and the state relation implies equality of the least unused target reference and the source list-store length. ClosSem.leastUnusedRef uses the least index with lookup none, corresponding to absence from FDOM. The target refs and code fields use canonical finite-support maps with the state roundtrip witness. This source comparison does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "contains_App_SOME_compile_init",
   "hol_line": 2549,
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
   "lean_name": "containsAppSome_compileInit",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the second local HOL declaration and its contains_App_SOME_compile_init_2549_replay with inferred types: the natural maximum, Boolean initializer flag, 1 <= maximum premise, and false application-predicate conclusion agree. Compared the initializer and closure syntax predicate with their HOL definitions; equality of propositions represents HOL Boolean equivalence."
+  "reviewer": "Compared the second local HOL declaration and its contains_App_SOME_compile_init_2549_replay with inferred types: the natural maximum, Boolean initializer flag, 1 <= maximum premise, and equivalence to false agree. Compared the initializer and closure syntax predicate with their HOL definitions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",

@@ -564,7 +564,7 @@ theorem opRefs {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
             | cons valRel tail =>
               simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, storeAlloc] at applied
               obtain ⟨rfl, rfl⟩ := applied
-              have index := leastUnusedRef_eq_length source.refs targetNext.refs states.2.2.2.1
+              have index := stateRel_least source targetNext states
               have updated := stateRel_allocRef source targetNext v w states valRel
               simp only [compileOp]
               rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
@@ -1128,7 +1128,7 @@ theorem opThunk {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
               | false =>
                 have targetSafe := badThunkUpdate_related mode v w source.refs targetNext.refs valRel states.2.2.2.1
                 rw [safe] at targetSafe
-                have index := leastUnusedRef_eq_length source.refs targetNext.refs states.2.2.2.1
+                have index := stateRel_least source targetNext states
                 have stores := storeRel_allocThunk source.refs targetNext.refs mode v w states.2.2.2.1 valRel
                 have updated : StateRel { source with refs := source.refs ++ [.thunk mode v] }
                     { targetNext with refs := targetNext.refs.updateEq (source.refs.length, .thunk mode w) } := by
@@ -1716,7 +1716,7 @@ theorem opArrays {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
   case inr.inl =>
     simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, storeAlloc] at applied
     obtain ⟨rfl, rfl⟩ := applied
-    have index := leastUnusedRef_eq_length source.refs targetNext.refs states.2.2.2.1
+    have index := stateRel_least source targetNext states
     have updated := stateRel_allocArray source targetNext vs ws.reverse states related
     simp only [compileOp]
     rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]

@@ -127,7 +127,7 @@ theorem allocArray_body_related {C F : Type} (source : FlatSem.State C F)
   · simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
       FlatSem.boundsFailure, negative, evaluate_allocArray_body_negative target trace env size targetValue negative,
       states, EvalResultRel.raise (allocArray_negative source size value negative).2]
-  · have index := leastUnusedRef_eq_length source.refs target.refs states.2.2.2.1
+  · have index := stateRel_least source target states
     have updated := stateRel_allocArray source target (List.replicate size.toNat value)
       (List.replicate size.toNat targetValue) states ((Flapjack.forall₂_replicate_iff ValueRel _ value targetValue).mpr (fun _ => related))
     simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
@@ -153,7 +153,7 @@ theorem allocByteArray_body_related {C F : Type} (source : FlatSem.State C F)
       FlatSem.boundsFailure, ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyNumeric,
       ClosSem.doIntApp, ClosSem.boolValue, ClosSem.asBool, ClosSem.applyBlock, BackendCommon.trueTag,
       negative, states, EvalResultRel.raise exception]
-  · have index := leastUnusedRef_eq_length source.refs target.refs states.2.2.2.1
+  · have index := stateRel_least source target states
     have updated := stateRel_allocByteArray source target (List.replicate size.toNat byte) states
     simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, storeAlloc,
       ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp,

@@ -89,6 +89,7 @@ val state_clock_replay = prove
    simp [state_rel_def, flatSemTheory.dec_clock_def, closSemTheory.dec_clock_def]);
 val _ = (print "state_rel_dec_clock_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl state_clock_replay); print "\n");
 val _ = (print "state_rel_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl state_rel_def); print "\n");
+val _ = (print "state_rel_LEAST_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl state_rel_LEAST); print "\n");
 val _ = (print "lookup_refv_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl lookup_refv); print "\n");
 val _ = (print "lookup_byte_array_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl lookup_byte_array); print "\n");
 val _ = (print "lookup_array_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl lookup_array); print "\n");

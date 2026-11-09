@@ -21,10 +21,24 @@ theorem storeRel_occupied (refs : Store FlatSem.Value)
   case varray values => obtain ⟨_, h, _⟩ := slot; simp [h]
   case thunk mode value => obtain ⟨_, h, _⟩ := slot; simp [h]
 
-/-- The least unused target reference is the next source list index. -/
-theorem leastUnusedRef_eq_length (refs : Store FlatSem.Value)
-    (targetRefs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value)) (stores : StoreRel refs targetRefs) :
-    ClosSem.leastUnusedRef targetRefs = refs.length := by
+namespace LeastPort
+/-- The closure state roundtrips through its finite-map carrier. -/
+theorem holFmapAsFiniteSupportRelationWitness_ClosSem.State {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  Flapjack.Compiler.Backend.FlatToClos.holFmapAsFiniteSupportRelationWitness_State
+end LeastPort
+
+/-- Related states allocate the next source index as the least unused target reference. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "state_rel_LEAST"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code])]
+theorem stateRel_least {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F) :
+    StateRel source target → ClosSem.leastUnusedRef target.refs = source.refs.length := by
+  intro states
+  let refs := source.refs
+  let targetRefs := target.refs
+  have stores : StoreRel refs targetRefs := states.2.2.2.1
+  change ClosSem.leastUnusedRef targetRefs = refs.length
   have free : targetRefs.lookup refs.length = none := by
     have slot := stores refs.length
     simpa using slot
