@@ -1689,14 +1689,95 @@ theorem lappendHOL_left_cancel {l1 l2 l3 : HolLList α} (hfin : LFinite l1) :
     rw [h]
 
 
+/-- HOL `exists` (`llistScript.sml:1495-1498`, `Inductive exists`): some element
+    satisfies `P`. Like `LFinite` it carries no `@[hol]` tag: HOL's relation is
+    bool-valued (`exists P : 'a llist -> bool`) while the Lean rendering is a
+    Prop-valued inductive over the same `HolLList` carrier, with HOL's two rules
+    as the two constructors. The tagged `llistExists_iff` is HOL's `exists_LNTH`
+    characterization. -/
+inductive LExists (P : α → Prop) : HolLList α → Prop
+  | head (h : α) (t : HolLList α) : P h → LExists P (lcons h t)
+  | tail (h : α) (t : HolLList α) : LExists P t → LExists P (lcons h t)
+
+/-- The tail of a lazy list at the representation level. Flapjack infrastructure
+    for the `exists` induction; HOL takes `THE (LTL ll)`. -/
+def ltail (ll : HolLList α) : HolLList α :=
+  ⟨fun k => ll.rep (k + 1), fun k hk => ll.ok (k + 1) hk⟩
+
+/-- A lazy list with a value at index zero is its head consed onto its tail. -/
+theorem lcons_lhd_ltail {ll : HolLList α} {hd : α} (h : ll.rep 0 = some hd) :
+    ll = lcons hd (ltail ll) := by
+  apply ext_of_rep
+  intro m
+  cases m with
+  | zero => simp [lcons, h]
+  | succ k => simp [lcons, ltail]
+
+/-- The induction step of the representation reading of `exists`. -/
+theorem llistExists_of_lnth {P : α → Prop} :
+    ∀ (n : Nat) (ll : HolLList α) (x : α), lnth n ll = some x → P x → LExists P ll := by
+  intro n
+  induction n with
+  | zero =>
+      intro ll x hx hP
+      rw [lnth_eq_rep] at hx
+      rw [lcons_lhd_ltail hx]
+      exact LExists.head x (ltail ll) hP
+  | succ n ih =>
+      intro ll x hx hP
+      rw [lnth_eq_rep] at hx
+      have h0 : ll.rep 0 ≠ none := by
+        intro h0
+        rw [rep_none_of_le ll h0 (Nat.zero_le _)] at hx
+        exact absurd hx (by simp)
+      obtain ⟨hd, hhd⟩ := Option.ne_none_iff_exists'.mp h0
+      rw [lcons_lhd_ltail hhd]
+      have hx' : lnth n (ltail ll) = some x := by
+        rw [lnth_eq_rep]
+        exact hx
+      exact LExists.tail hd (ltail ll) (ih (ltail ll) x hx' hP)
+
+/-- HOL `exists_LNTH` (`llistScript.sml:1509-1510`): `exists` holds exactly at
+    some index. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "exists_LNTH"]
+theorem llistExists_iff (P : α → Prop) (ll : HolLList α) :
+    LExists P ll ↔ ∃ n x, lnth n ll = some x ∧ P x := by
+  constructor
+  · intro h
+    induction h with
+    | head h t hP =>
+        exact ⟨0, h, by simp [lnth_eq_rep, lcons], hP⟩
+    | tail h t _ ih =>
+        obtain ⟨n, x, hx, hP⟩ := ih
+        have hx' : t.rep n = some x := by
+          rw [lnth_eq_rep] at hx
+          exact hx
+        exact ⟨n + 1, x, by simp [lnth_eq_rep, lcons, hx'], hP⟩
+  · rintro ⟨n, x, hx, hP⟩
+    exact llistExists_of_lnth n ll x hx hP
+
 /-- HOL `every`/`LL_ALL` (`llistScript.sml:1591`, `Definition every_def`): every
-    element satisfies `P`. Carries no `@[hol]` tag: HOL defines `every P ll` as
-    `~exists ((~) o P) ll`, and `exists` is not ported, so the body here is the
-    equivalent representation quantification (HOL's `exists_LNTH` reading) over
-    the same `HolLList` carrier. Like `LFinite`, it is infrastructure for the
-    tagged theorems below (`every_thm`, `LFLATTEN_EQ_NIL`). -/
+    element satisfies `P`. The body is HOL's `~exists ((~) o P) ll`, with `exists`
+    rendered by the untagged `LExists` inductive. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "every_def"]
 def llistEvery (P : α → Prop) (ll : HolLList α) : Prop :=
-  ∀ n x, ll.rep n = some x → P x
+  ¬ LExists (fun x => ¬ P x) ll
+
+/-- The representation characterization of `llistEvery`. Flapjack infrastructure:
+    it is `llistExists_iff` complemented. -/
+theorem llistEvery_iff (P : α → Prop) (ll : HolLList α) :
+    llistEvery P ll ↔ ∀ n x, ll.rep n = some x → P x := by
+  unfold llistEvery
+  rw [llistExists_iff]
+  constructor
+  · intro h n x hx
+    by_cases hP : P x
+    · exact hP
+    · exact absurd ⟨n, x, by rw [lnth_eq_rep]; exact hx, hP⟩ h
+  · intro h hex
+    obtain ⟨n, x, hx, hnP⟩ := hex
+    rw [lnth_eq_rep] at hx
+    exact hnP (h n x hx)
 
 /-- HOL `every_thm` (`llistScript.sml:1608-1612`), also exported as `LL_ALL_THM`:
     the empty and cons equations. -/
@@ -1705,16 +1786,15 @@ theorem llistEvery_thm (P : α → Prop) (h : α) (t : HolLList α) :
     llistEvery P (lnil : HolLList α) ∧
       (llistEvery P (lcons h t) ↔ P h ∧ llistEvery P t) := by
   constructor
-  · intro n x hx
+  · rw [llistEvery_iff]
+    intro n x hx
     simp [lnil] at hx
-  · constructor
+  · rw [llistEvery_iff, llistEvery_iff]
+    constructor
     · intro hP
-      refine ⟨?_, ?_⟩
-      · have := hP 0 h (by simp [lcons])
-        exact this
-      · intro n x hx
-        have h2 : (lcons h t).rep (n + 1) = some x := by simp [lcons, hx]
-        exact hP (n + 1) x h2
+      refine ⟨hP 0 h (by simp [lcons]), ?_⟩
+      intro n x hx
+      exact hP (n + 1) x (by simp [lcons, hx])
     · rintro ⟨hh, ht⟩ n x hx
       cases n with
       | zero =>
@@ -1722,8 +1802,7 @@ theorem llistEvery_thm (P : α → Prop) (h : α) (t : HolLList α) :
           rw [← hx]
           exact hh
       | succ n =>
-          have h2 : t.rep n = some x := by simpa [lcons] using hx
-          exact ht n x h2
+          exact ht n x (by simpa [lcons] using hx)
 
 /-- HOL `LFLATTEN_EQ_NIL` (`llistScript.sml:1999-2006`): flattening is empty
     exactly when every member is empty. -/
@@ -1732,30 +1811,32 @@ theorem lflatten_eq_lnil (ll : HolLList (HolLList α)) :
     (lflatten ll = lnil) ↔ llistEvery (fun x => x = lnil) ll := by
   constructor
   · intro h
-    intro k inner hk
-    by_cases hnil : inner = lnil
-    · exact hnil
-    · exfalso
-      have h0 : inner.rep 0 ≠ none := rep_zero_ne_none_of_ne_lnil hnil
-      have hex : ∃ j, ∃ inner' : HolLList α, ll.rep j = some inner' ∧
-          inner'.rep 0 ≠ none := ⟨k, inner, hk, h0⟩
-      obtain ⟨k', hfe⟩ : ∃ k', firstNonempty ll = some k' := by
-        cases hf : firstNonempty ll with
-        | none => exact absurd (firstNonempty_none hf k inner hk) h0
-        | some k' => exact ⟨k', rfl⟩
-      obtain ⟨⟨inner', hrep', hne'⟩, -⟩ := firstNonempty_spec hfe
-      have hl0 : (lflatten ll).rep 0 ≠ none := by
-        simp only [lflatten, lflattenRep, hfe, hrep']
-        exact hne'
-      rw [h] at hl0
-      exact hl0 rfl
+    unfold llistEvery
+    intro hex
+    obtain ⟨k, inner, hk, hne⟩ :=
+      (llistExists_iff (P := fun x : HolLList α => ¬ x = lnil) ll).mp hex
+    rw [lnth_eq_rep] at hk
+    have h0 : inner.rep 0 ≠ none := rep_zero_ne_none_of_ne_lnil hne
+    have hex : ∃ j, ∃ inner' : HolLList α, ll.rep j = some inner' ∧
+        inner'.rep 0 ≠ none := ⟨k, inner, hk, h0⟩
+    obtain ⟨k', hfe⟩ : ∃ k', firstNonempty ll = some k' := by
+      cases hf : firstNonempty ll with
+      | none => exact absurd (firstNonempty_none hf k inner hk) h0
+      | some k' => exact ⟨k', rfl⟩
+    obtain ⟨⟨inner', hrep', hne'⟩, -⟩ := firstNonempty_spec hfe
+    have hl0 : (lflatten ll).rep 0 ≠ none := by
+      simp only [lflatten, lflattenRep, hfe, hrep']
+      exact hne'
+    rw [h] at hl0
+    exact hl0 rfl
   · intro h
+    have hrep := (llistEvery_iff (P := fun x : HolLList α => x = lnil) ll).mp h
     apply eq_lnil_of_rep_none
     intro n
     have hfe : firstNonempty ll = none := by
       apply firstNonempty_eq_none_of
       intro k inner hk
-      rw [h k inner hk]
+      rw [hrep k inner hk]
       rfl
     cases n with
     | zero => simp [lflatten, lflattenRep, hfe]

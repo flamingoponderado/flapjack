@@ -68399,7 +68399,7 @@
     "lean_path": "Flapjack/Misc/LList.lean",
     "lean_name": "lflatten_eq_lnil",
     "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1999-2006 Theorem LFLATTEN_EQ_NIL: !ll. (LFLATTEN ll = LNIL) = LL_ALL ($= LNIL) ll. The Lean statement is the same equivalence for the same universally quantified lazy list of lazy lists: lflatten ll = lnil iff every member is lnil, with LL_ALL/every rendered by the rep quantification llistEvery (untagged infrastructure, since HOL's ~exists body needs the unported exists) and HOL's boolean = rendered as an iff, as this file already renders LPREFIX's boolean predicates. The proof shows that a nonempty member forces a value at flattening index 0 and conversely that no nonempty member forces firstNonempty to none. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1999-2006 Theorem LFLATTEN_EQ_NIL: !ll. (LFLATTEN ll = LNIL) = LL_ALL ($= LNIL) ll. The Lean statement is the same equivalence for the same universally quantified lazy list of lazy lists: lflatten ll = lnil iff every member is lnil, with LL_ALL/every read as the tagged llistEvery (HOL's every_def body over the untagged LExists inductive) and HOL's boolean = rendered as an iff, as this file already renders LPREFIX's boolean predicates. The proof shows that a nonempty member forces a value at flattening index 0 and conversely that no nonempty member forces firstNonempty to none. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
   },
   {
     "hol_path": "hol4/src/coalgebras/llistScript.sml",
@@ -68411,11 +68411,27 @@
   },
   {
     "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "every_def",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "llistEvery",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1591 Definition every_def: every P ll = ~exists ((~) o P) ll, with Overload LL_ALL = every at :1593. The Lean definition llistEvery P ll := \u00ac LExists (fun x => \u00ac P x) ll has exactly that body: (~) o P is fun x => \u00ac P x, and exists is the LExists inductive, HOL's Inductive exists (:1495-1498) rendered constructor-for-constructor as an untagged Prop-valued inductive over HolLList (HOL's relation is bool-valued), the same treatment this file gives LFinite (HOL Hol_reln); its tagged characterization is llistExists_iff (exists_LNTH). HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
     "hol_name": "every_thm",
     "lean_path": "Flapjack/Misc/LList.lean",
     "lean_name": "llistEvery_thm",
     "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1608-1612 Theorem every_thm[simp] (also exported as LL_ALL_THM): (every P [||] = T) /\\ (every P (h:::t) <=> P h /\\ every P t), with P, h, t free. The Lean statement has the same three parameters in the same order and the same conjunction of the empty case and the cons equivalence; every is llistEvery (untagged infrastructure rendering every/LL_ALL by the rep quantification, as HOL's ~exists body needs the unported exists), [||] is lnil and ::: is lcons, with HOL's boolean = T and <=> rendered as the conjunction and iff this file already uses for LPREFIX. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1608-1612 Theorem every_thm[simp] (also exported as LL_ALL_THM): (every P [||] = T) /\\ (every P (h:::t) <=> P h /\\ every P t), with P, h, t free. The Lean statement has the same three parameters in the same order and the same conjunction of the empty case and the cons equivalence; every is the tagged llistEvery (HOL's every_def body), [||] is lnil and ::: is lcons, with HOL's boolean = T and <=> rendered as the conjunction and iff this file already uses for LPREFIX. The proof goes through the untagged characterization llistEvery_iff (the forall-rep form), which is llistExists_iff complemented. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "exists_LNTH",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "llistExists_iff",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1509-1510 Theorem exists_LNTH: !l. exists P l = ?n e. (SOME e = LNTH n l) /\\ P e. The Lean statement is the same equivalence over the same lazy list and predicate: LExists P ll <-> \u2203 n x, lnth n ll = some x \u2227 P x, with exists read as the untagged LExists inductive (HOL Inductive exists :1495-1498, its two rules as its two constructors) and LNTH as lnth (lnth_eq_rep). HOL's boolean = is rendered as an iff, as this file already renders LPREFIX's boolean predicates. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
   },
   {
     "hol_path": "hol4/src/coalgebras/llistScript.sml",
