@@ -120,6 +120,42 @@
   "reviewer": "Compared shift_obeys_max_app_typed: the bound and all expression-list, natural and sparse-tree index variables are unrestricted. Both occurrences of EVERY are membership quantification over the reviewed obeysMaxApp predicate, and the conclusion uses original shiftSource."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "every_Fn_vs_SOME_shift",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotationInvariants/Original.lean", "lean_name": "everyFnVarsSome_shift",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_Fn_vs_SOME_shift_typed: the universally quantified expression list, two naturals and natural sparse map are unrestricted, and the conclusion applies the reviewed predicate to the source shift."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "every_Fn_vs_SOME_annotate",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotationInvariants/Original.lean", "lean_name": "everyFnVarsSome_annotate",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_Fn_vs_SOME_annotate_typed: the natural arity and expression list are unrestricted and the predicate applies to source annotation."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "every_Fn_SOME_shift",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotationInvariants/Original.lean", "lean_name": "everyFnSome_shift",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_Fn_SOME_shift_typed: all four binders and both directions of the invariant equivalence over source shift agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "every_Fn_SOME_const_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotationInvariants/Original.lean", "lean_name": "everyFnSome_const0",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_Fn_SOME_const_0_typed: the unrestricted trace and singleton padding constant agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "every_Fn_SOME_alt_free",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotationInvariants/Original.lean", "lean_name": "everyFnSome_altFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_Fn_SOME_alt_free_typed: the expression-list quantifier, invariant premise and invariant over the first source free-pass result agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "every_Fn_SOME_annotate",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotationInvariants/Original.lean", "lean_name": "everyFnSome_annotate",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_Fn_SOME_annotate_typed: the unrestricted expression list and natural arity, invariant premise and invariant over source annotation agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "HD_annotate_SING",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotationInvariants/Original.lean", "lean_name": "hdAnnotate_sing",
   "statement_status": "reviewed_exact",

@@ -5,6 +5,48 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants
 namespace Flapjack.Compiler.Backend.ClosAnnotate
 open ClosLang ClosProps
 
+/-- Shifting supplies the free-variable annotation of each function. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "every_Fn_vs_SOME_shift"]
+theorem everyFnVarsSome_shift (expressions : List Exp) (m l : Nat) (index : Spt Nat) :
+    everyFnVarsSome (shiftSource expressions m l index) := by
+  rw [shiftSource_eq_shiftList]
+  exact shiftList_varsSome expressions m l index
+
+/-- Annotation supplies the free-variable annotation of each function. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "every_Fn_vs_SOME_annotate"]
+theorem everyFnVarsSome_annotate (arity : Nat) (expressions : List Exp) :
+    everyFnVarsSome (annotateSource arity expressions) := by
+  unfold annotateSource
+  exact everyFnVarsSome_shift _ 0 arity .ln
+
+/-- Shifting preserves precisely the function-location invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "every_Fn_SOME_shift"]
+theorem everyFnSome_shift (expressions : List Exp) (m l : Nat) (index : Spt Nat) :
+    everyFnLocationSome (shiftSource expressions m l index) ↔ everyFnLocationSome expressions := by
+  rw [shiftSource_eq_shiftList]
+  exact shiftList_locations expressions m l index
+
+/-- The padding constant contains no unlocated functions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "every_Fn_SOME_const_0"]
+theorem everyFnSome_const0 (trace : BackendCommon.Tra) :
+    everyFnLocationSome [const0 trace] := by
+  simp [const0, everyFnLocationSome, fnLocationSomeExp]
+
+/-- Free-variable rewriting preserves function locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "every_Fn_SOME_alt_free"]
+theorem everyFnSome_altFree (expressions : List Exp) :
+    everyFnLocationSome expressions → everyFnLocationSome (altFreeSource expressions).1 := by
+  rw [altFreeSource_sing_eq.2.1]
+  exact altFreeList_locations expressions
+
+/-- Annotation preserves function locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "every_Fn_SOME_annotate"]
+theorem everyFnSome_annotate (expressions : List Exp) (arity : Nat) :
+    everyFnLocationSome expressions → everyFnLocationSome (annotateSource arity expressions) := by
+  intro locations
+  unfold annotateSource
+  exact (everyFnSome_shift _ 0 arity .ln).2 (everyFnSome_altFree expressions locations)
+
 /-- Annotating a singleton yields the singleton containing its head. -/
 @[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "HD_annotate_SING"]
 theorem hdAnnotate_sing (arity : Nat) (expression : Exp) :
@@ -25,6 +67,8 @@ theorem everyFnSome_ann {α : Type} (program : List (α × Nat × Exp)) :
     obtain ⟨name, arity, body⟩ := entry
     simp only [compile, List.map_cons, everyFnLocationSome] at *
     intro locations
-    exact ⟨annotateSing_locations arity body locations.1, ih locations.2⟩
+    have annotated := everyFnSome_annotate [body] arity (by simpa [everyFnLocationSome] using locations.1)
+    rw [(annotateSource_sing_eq arity body []).1] at annotated
+    exact ⟨by simpa [everyFnLocationSome] using annotated, ih locations.2⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate

@@ -39,4 +39,10 @@ alt_free_code_locs_distinct_local_typed=∀(xs :closLang$exp list). ALL_DISTINCT
 code_locs_REP_const_0_typed=code_locs (REPLICATE (n :num) (const_0 (t :tra))) = ([] :num list)
 EVERY_shift_sing_typed=EVERY (f :closLang$exp -> bool) (shift [(y :closLang$exp)] (x1 :num) (x2 :num) (x3 :num sptree$num_map)) ⇔ f (HD (shift [y] x1 x2 x3))
 HD_annotate_SING_typed=[HD (annotate (x :num) [(y :closLang$exp)])] = annotate x [y]
+every_Fn_vs_SOME_shift_typed=∀(a :closLang$exp list) (b :num) (c :num) (d :num sptree$num_map). every_Fn_vs_SOME (shift a b c d)
+every_Fn_vs_SOME_annotate_typed=every_Fn_vs_SOME (annotate (n :num) (es :closLang$exp list))
+every_Fn_SOME_shift_typed=∀(a :closLang$exp list) (b :num) (c :num) (d :num sptree$num_map). every_Fn_SOME (shift a b c d) ⇔ every_Fn_SOME a
+every_Fn_SOME_const_0_typed=every_Fn_SOME [const_0 (t :tra)]
+every_Fn_SOME_alt_free_typed=∀(es :closLang$exp list). every_Fn_SOME es ⇒ every_Fn_SOME (FST (alt_free es))
+every_Fn_SOME_annotate_typed=every_Fn_SOME (es :closLang$exp list) ⇒ every_Fn_SOME (annotate (n :num) es)
 every_Fn_SOME_ann_typed=∀(xs :(α # num # closLang$exp) list). every_Fn_SOME (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :α # num # closLang$exp -> num # closLang$exp)) xs) ⇒ every_Fn_SOME (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :α # num # closLang$exp -> num # closLang$exp)) (compile xs))

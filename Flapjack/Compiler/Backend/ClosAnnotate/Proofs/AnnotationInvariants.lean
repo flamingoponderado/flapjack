@@ -186,16 +186,4 @@ termination_by sizeOf functions
 
 end
 
-/-- Annotating an expression preserves its existing function locations. -/
-theorem annotateSing_locations (arity : Nat) (expression : Exp)
-    (locations : fnLocationSomeExp expression) : fnLocationSomeExp (annotateSing arity expression) := by
-  apply (shiftSing_locations (altFreeSing expression).1 0 arity .ln).2
-  exact altFreeSing_locations expression locations
-
-/-- Annotating a list preserves its existing function locations. -/
-theorem annotateList_locations (arity : Nat) (expressions : List Exp)
-    (locations : everyFnLocationSome expressions) : everyFnLocationSome (annotateList arity expressions) := by
-  apply (shiftList_locations (altFreeList expressions).1 0 arity .ln).2
-  exact altFreeList_locations expressions locations
-
 end Flapjack.Compiler.Backend.ClosAnnotate

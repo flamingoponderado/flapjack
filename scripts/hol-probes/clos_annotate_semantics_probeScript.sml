@@ -78,4 +78,10 @@ val _ = show "alt_free_code_locs_distinct_local_typed=" alt_free_code_locs_disti
 val _ = show "code_locs_REP_const_0_typed=" clos_annotateProofTheory.code_locs_REP_const_0;
 val _ = show "EVERY_shift_sing_typed=" clos_annotateProofTheory.EVERY_shift_sing;
 val _ = show "HD_annotate_SING_typed=" clos_annotateProofTheory.HD_annotate_SING;
+val _ = show "every_Fn_vs_SOME_shift_typed=" clos_annotateProofTheory.every_Fn_vs_SOME_shift;
+val _ = show "every_Fn_vs_SOME_annotate_typed=" clos_annotateProofTheory.every_Fn_vs_SOME_annotate;
+val _ = show "every_Fn_SOME_shift_typed=" clos_annotateProofTheory.every_Fn_SOME_shift;
+val _ = show "every_Fn_SOME_const_0_typed=" clos_annotateProofTheory.every_Fn_SOME_const_0;
+val _ = show "every_Fn_SOME_alt_free_typed=" clos_annotateProofTheory.every_Fn_SOME_alt_free;
+val _ = show "every_Fn_SOME_annotate_typed=" clos_annotateProofTheory.every_Fn_SOME_annotate;
 val _ = show "every_Fn_SOME_ann_typed=" clos_annotateProofTheory.every_Fn_SOME_ann;
