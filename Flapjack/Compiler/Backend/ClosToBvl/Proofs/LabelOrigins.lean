@@ -111,6 +111,20 @@ decreasing_by all_goals (simp_wf; omega)
 
 end
 
+/-- The newly emitted auxiliary labels are the shifted, reversed source
+closure locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_exps_code_locs"]
+theorem compileExps_codeLocs (maxApp : Nat) (expressions : List ClosLang.Exp)
+    (aux : Aux) (compiled : List Bvl.Exp) (emitted : Aux) :
+    compileExpsHOL maxApp expressions aux = (compiled, emitted ++ aux) →
+      emitted.map Prod.fst =
+        (ClosProps.codeLocations expressions).reverse.map (fun location => numStubs maxApp + location) := by
+  intro run
+  have labels := compileExpList_aux_labels maxApp expressions aux
+  rw [← compileExps_eq_list, run, List.map_append] at labels
+  simp only [List.append_cancel_right_eq] at labels
+  simpa [Nat.add_comm] using labels
+
 /-- Zipping one compiled expression per source entry retains exactly the
 source entry labels, shifted by the runtime-stub prefix. -/
 private theorem zip_entry_labels (offset : Nat) (program : List (Nat × Nat × ClosLang.Exp))
@@ -127,15 +141,22 @@ private theorem zip_entry_labels (offset : Nat) (program : List (Nat × Nat × C
       simp only [List.length_cons, Nat.succ.injEq] at lengthEq
       simp [ih remaining lengthEq]
 
-/-- Program conversion's entry labels are precisely its shifted input labels;
-all other labels are those generated in its auxiliary accumulator. -/
-theorem compileProgHOL_label_origins (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp)) :
-    (compileProgHOL maxApp program).map Prod.fst =
-      program.map (fun entry => entry.1 + numStubs maxApp) ++
-        ((compileExpListHOL maxApp (program.map (fun (_, _, body) => body)) []).2.map Prod.fst) := by
-  have lengthEq := compileExpList_length maxApp (program.map (fun (_, _, body) => body)) []
-  simp only [List.length_map] at lengthEq
-  simp only [compileProgHOL, List.map_append]
-  rw [zip_entry_labels (numStubs maxApp) program _ lengthEq]
+/-- Program conversion emits shifted entry labels followed by the shifted,
+reversed closure locations of the source bodies. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_prog_code_locs"]
+theorem compileProg_codeLocs (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp)) :
+    (compileProgExpsHOL maxApp program).map Prod.fst =
+      program.map (fun entry => numStubs maxApp + entry.1) ++
+        ((ClosProps.codeLocations (program.map (fun (_, _, body) => body))).reverse.map
+          (fun location => numStubs maxApp + location)) := by
+  cases run : compileExpsHOL maxApp (program.map (fun (_, _, body) => body)) [] with
+  | mk compiled emitted =>
+    have lengthEq := compileExps_length maxApp (program.map (fun (_, _, body) => body)) [] compiled emitted run
+    have labels := compileExps_codeLocs maxApp (program.map (fun (_, _, body) => body)) [] compiled emitted
+      (by simpa using run)
+    simp only [List.length_map] at lengthEq
+    simp only [compileProgExpsHOL, run, List.map_append]
+    rw [zip_entry_labels (numStubs maxApp) program compiled lengthEq, labels]
+    simp [Nat.add_comm]
 
 end Flapjack.Compiler.Backend.ClosToBvl

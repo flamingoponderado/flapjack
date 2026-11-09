@@ -11,6 +11,9 @@ val _ = show_thm "chain_installed_SUBMAP=" clos_to_bvlProofTheory.chain_installe
 val _ = show_thm "chain_installed_thm=" clos_to_bvlProofTheory.chain_installed_thm;
 val _ = show_thm "chain_installed_chain_exps=" clos_to_bvlProofTheory.chain_installed_chain_exps;
 val _ = show_thm "every_Fn_vs_SOME_def_typed=" closPropsTheory.every_Fn_vs_SOME_def;
+val _ = show_thm "num_stubs_def_typed=" clos_to_bvlTheory.num_stubs_def;
+val _ = show_thm "compile_prog_code_locs_typed=" clos_to_bvlProofTheory.compile_prog_code_locs;
+val _ = show_thm "compile_exps_code_locs_typed=" clos_to_bvlProofTheory.compile_exps_code_locs;
 val _ = show_thm "chain_exps_every_Fn_SOME_typed=" clos_to_bvlProofTheory.chain_exps_every_Fn_SOME;
 (* The earlier theorem shares a HOL name with the later implication. *)
 val chain_exps_every_Fn_SOME_8596_replay = Q.prove (

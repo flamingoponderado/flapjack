@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "compile_exps_code_locs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/LabelOrigins.lean",
+  "lean_name": "compileExps_codeLocs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_exps_code_locs_typed and original theorem: quantified max_app, closure expressions, initial auxiliary list, BVL expressions and emitted auxiliary list retain their independent types and original order. The compilation equality premise, accumulator append, left-sided stub offset and reversed source code-location conclusion agree. The proof cancels the shared accumulator suffix from the source-shaped label invariant."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "compile_prog_code_locs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/LabelOrigins.lean",
+  "lean_name": "compileProg_codeLocs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_prog_code_locs_typed and original source: arbitrary max_app and labeled expression list, ordered source and target triple carriers, source body projection, reversed code locations, left-sided stub offset and exact label list equality agree. compileProgExpsHOL, numStubs and codeLocations are reviewed against their original definitions; the proof uses the original expression-label theorem and expression-count theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "chain_exps_every_Fn_SOME",
   "hol_line": 8596,
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainSyntactic.lean",
@@ -16903,7 +16919,7 @@
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "compile_prog_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/SourceExps.lean", "lean_name": "compileProgExpsHOL",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared source lines 603-607 and inferred types in clos_to_bvl_recursive_types_probe.out. The list-valued compiler, original labeled closure and BVL triple carriers, label shifts and appended auxiliaries match. compileProgExps_map2 establishes that the zip-and-map helper implements the original MAP2; compileProg_checked_eq_original proves the executed checked program converter returns this result."
+    "reviewer": "Compared source lines 603-607 and inferred types in clos_to_bvl_recursive_types_probe.out. The list-valued compiler, original labeled closure and BVL triple carriers, label shifts and appended auxiliaries match. The zip-and-map helper implements the original MAP2; compileProg_checked_eq_original proves the executed checked program converter returns this result."
   },
   {
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "compile_exp_sing_def",
@@ -115668,8 +115684,8 @@
     "lean_name": "numStubs",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "num_stubs_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared num_stubs_def_typed and the original definition: the natural argument, truncated subtraction, multiplication, division and left-associated additions match exactly."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
