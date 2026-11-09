@@ -1,0 +1,3 @@
+do_log_typed=∀(l :lop) (v :semanticPrimitives$v) (e :ast$exp). do_log l v e = if l = Andalso ∧ v = (Boolv T :semanticPrimitives$v) ∨ l = Orelse ∧ v = (Boolv F :semanticPrimitives$v) then SOME (Exp e) else if l = Andalso ∧ v = (Boolv F :semanticPrimitives$v) ∨ l = Orelse ∧ v = (Boolv T :semanticPrimitives$v) then SOME (Val v) else (NONE :exp_or_val option)
+log_boolean=[SOME (Exp (Lit (IntLit 7))); SOME (Val (Conv (SOME (TypeStamp «False» 0)) [])); SOME (Val (Conv (SOME (TypeStamp «True» 0)) [])); SOME (Exp (Lit (IntLit 7)))]
+log_non_boolean=NONE

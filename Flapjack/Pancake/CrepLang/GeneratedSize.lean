@@ -62,7 +62,7 @@ and is kept for HOL's exact shape.  These are Flapjack transcriptions with no
 
 namespace Flapjack
 
-open Flapjack.Pancake.PanLang (binopSizeHOL cmpSizeHOL shiftSizeHOL listSizeHOL
+open Flapjack.Pancake.PanLang (binopSizeHOL cmpSizeHOL shiftSizeHOL
   mlstringSizeHOL)
 
 namespace CrepLangGeneratedSize

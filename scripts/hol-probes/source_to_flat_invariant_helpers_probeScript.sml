@@ -1,0 +1,11 @@
+load "source_to_flatProofTheory";
+open HolKernel Parse boolLib bossLib;
+open source_to_flatProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = set_trace "Unicode" 0;
+val _ = (print "globals_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl invariant_globals); print "\n");
+val _ = (print "constructors_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl invariant_genv_c_ok); print "\n");
+val _ = (print "shrink_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl invariant_idx_range_shrink); print "\n");
+val _ = (print "shrink_gen_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl invariant_idx_range_shrink_gen); print "\n");
+val _ = (print "eval_ref_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl invariant_change_eval_ref); print "\n");
+val _ = (print "end_eval_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl invariant_end_eval); print "\n");

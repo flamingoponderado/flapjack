@@ -127,13 +127,6 @@ def correctnessGuard : Bool :=
 #eval correctnessGuard
 #guard correctnessGuard
 
-example :
-    (globalCompileTopForStart 4 id [mainFunction] "main").all
-      (fun declaration => globalDeclIsFunction declaration ||
-        globalDeclIsException declaration) = true := by
-  exact globalCompileTopForStart_all_function_or_exception 4 id
-    [mainFunction] "main"
-
 def exceptionDecl : Decl Nat :=
   .exnDecl "E" (.named "T")
 

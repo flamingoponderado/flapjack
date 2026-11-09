@@ -1,0 +1,13 @@
+load "closSemTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = set_trace "Unicode" 0;
+val _ = (print "find_code_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl closSemTheory.find_code_def); print "\n");
+val _ = (print "check_loc_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl closSemTheory.check_loc_def); print "\n");
+val _ = (print "partial_type="; print_type (type_of ``closSem$Partial_app``); print "\n");
+val _ = (print "full_type="; print_type (type_of ``closSem$Full_app``); print "\n");
+val _ = (print "dest_closure_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl closSemTheory.dest_closure_def); print "\n");
+val _ = (print "lookup_vars_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl miscTheory.lookup_vars_def); print "\n");
+val _ = (print "clos_env_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl closSemTheory.clos_env_def); print "\n");
+val _ = (print "build_recc_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl closSemTheory.build_recc_def); print "\n");
+val _ = (print "dest_closure_length_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl closSemTheory.dest_closure_length); print "\n");

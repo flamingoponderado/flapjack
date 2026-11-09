@@ -1,0 +1,5 @@
+type=:(exp -> bool) -> exp -> bool
+nested=F
+clauses=F
+funs=F
+all_good=T

@@ -11,31 +11,27 @@ Counterpart of the HOL `spt` data structure (`HOL/src/finite_maps/sptreeScript.s
 and of the CakeML abbreviation `num_set = unit spt`
 (`cakeml/misc/miscScript.sml:787`).
 
-HOL's `spt` is defined outside the CakeML submodule, so the datatype itself cannot
-carry an `@[hol]` reference into `cakeml/`.  The carrier below mirrors the HOL
-constructors exactly:
+The carrier below mirrors the pinned HOL constructors exactly:
 
 ```
 Datatype: spt = LN | LS 'a | BN spt spt | BS spt 'a spt
 ```
 
-The taggable `cakeml` declaration is the abbreviation `num_set = unit spt`, which
-`Misc.Sptree.NumSet` matches by construction.
+The CakeML abbreviation `num_set = unit spt` is matched by `NumSet`.
 
 `Misc.Sptree.sptLookup`, `Misc.Sptree.sptInsert`, `Misc.Sptree.sptIsEmpty` and
 `Misc.Sptree.sptWf` mirror the HOL `lookup`, `insert`, `isEmpty` (i.e. `t = LN`)
 and `wf` definitions, including the recursive key arithmetic
-`(k - 1) DIV 2` and the `EVEN k` branch selection.  `EVEN` is rendered as
-`k % 2 = 0` in Lean.  The recursion is written so that the recursive call sits in
-each parity branch on a direct subterm, which makes the equations hold
-definitionally (as Lean structural recursion rather than HOL's
-well-founded recursion).
+`(k - 1) DIV 2` and the `EVEN k` branch selection. `EVEN` is rendered as
+`k % 2 = 0` in Lean. Lookup recurses structurally on the tree; insertion uses
+well-founded recursion on the key, including when it inserts into `LN`.
 -/
 
 namespace Flapjack
 
 /-- Exact Lean rendering of the HOL `spt` datatype
 `spt = LN | LS 'a | BN spt spt | BS spt 'a spt`. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "spt"]
 inductive Spt (α : Type) : Type where
   /-- `LN`: the leaf holding no value. -/
   | ln : Spt α
@@ -68,7 +64,10 @@ def sptWf {α : Type} : Spt α → Bool
   | .bn left right => sptWf left && sptWf right && !(sptIsEmpty left && sptIsEmpty right)
   | .bs left _ right => sptWf left && sptWf right && !(sptIsEmpty left && sptIsEmpty right)
 
-/-- HOL `sptree$lookup` with the recursive key arithmetic `(k - 1) DIV 2`. -/
+/-- HOL `sptree$lookup` with the recursive key arithmetic `(k - 1) DIV 2`.
+The parity conditional is distributed over the recursive call; the typed
+`sptree_lookup_distributed` HOL replay proves these equations from `lookup_def`. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "lookup_def"]
 def sptLookup {α : Type} (key : Nat) : Spt α → Option α
   | .ln => none
   | .ls value => if key = 0 then some value else none
@@ -82,6 +81,7 @@ def sptLookup {α : Type} (key : Nat) : Spt α → Option α
       else sptLookup ((key - 1) / 2) right
 
 /-- HOL `sptree$insert` with the recursive key arithmetic `(k - 1) DIV 2`. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "insert_def"]
 def sptInsert {α : Type} (key : Nat) (value : α) : Spt α → Spt α
   | .ln =>
       if key = 0 then .ls value
@@ -128,14 +128,16 @@ theorem sptLookup_sptInsert_zero_overwrite {α : Type} (first second : α) (tree
 
 HOL `sptree$domain` (`HOL/src/finite_maps/sptreeScript.sml:473`) and its
 membership characterisation `domain_lookup` (`:620`,
-`k IN domain t <=> ?v. lookup k t = SOME v`) live in the HOL standard library
-outside the `cakeml/` submodule, so the rendering below is untagged Flapjack
-infrastructure.  HOL sets are rendered as predicates, matching the
+`k IN domain t <=> ?v. lookup k t = SOME v`) live in the pinned HOL standard
+library. HOL sets are rendered as predicates, matching the
 `memaddrs`/`sh_memaddrs` rendering: `sptDomain t` is the predicate
 `fun key => (lookup key t).isSome`, so `k IN domain t` is `sptMem k t` and
 `domain t1 SUBSET domain t2` is `forall k, sptMem k t1 -> sptMem k t2`. -/
 
-/-- Predicate rendering of HOL `domain` on the exact spt carrier. -/
+/-- Lookup-based predicate for the tree domain. HOL defines `domain` by
+recursive set clauses; a reviewed representation of sets and a source-shaped
+definition are still needed before this can be tagged as `domain_def`. The
+membership clauses `sptMem_*` below establish this predicate's behavior. -/
 def sptDomain {α : Type} (tree : Spt α) : Nat → Prop :=
   fun key => (sptLookup key tree).isSome
 
@@ -145,10 +147,9 @@ def sptMem {α : Type} (key : Nat) (tree : Spt α) : Prop :=
 
 /-- Exact port of HOL sptree `domain_lookup`
 (`HOL/src/finite_maps/sptreeScript.sml:620`): `k IN domain t` holds iff
-`lookup k t` returns some value.  The proof is constructor-independent
-(`Option.isSome` decomposes as an existential for every tree), so it covers all
-four spt constructors.  Untagged Flapjack infrastructure (source outside
-`cakeml/`). -/
+`lookup k t` returns some value. The result follows from the lookup-based
+definition of `sptDomain` for every tree. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "domain_lookup"]
 theorem sptMem_iff_lookup {α : Type} (key : Nat) (tree : Spt α) :
     sptMem key tree ↔ ∃ v, sptLookup key tree = some v := by
   unfold sptMem sptDomain
@@ -946,25 +947,22 @@ def sptListInsert : List Nat → NumSet → NumSet
   | [], tree => tree
   | key :: keys, tree => sptListInsert keys (sptInsert key () tree)
 
-/-- HOL `sptree$mk_BN` (`HOL/src/finite_maps/sptreeScript.sml:88-92`): collapse
-two empty children back to `LN`. This helper remains untagged pending its own
-source review; external HOL sources can be tagged using `hol4/` references. -/
+/-- Collapse two empty children back to `LN`. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "mk_BN_def"]
 def sptMkBN {α : Type} (left right : Spt α) : Spt α :=
   match left, right with
   | .ln, .ln => .ln
   | _, _ => .bn left right
 
-/-- HOL `sptree$mk_BS` (`HOL/src/finite_maps/sptreeScript.sml:94-98`): collapse
-the two empty children around a value to `LS`. This helper remains untagged
-pending its own source review, as for `sptMkBN`. -/
+/-- Collapse two empty children around a value to `LS`. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "mk_BS_def"]
 def sptMkBS {α : Type} (left : Spt α) (value : α) (right : Spt α) : Spt α :=
   match left, right with
   | .ln, .ln => .ls value
   | _, _ => .bs left value right
 
-/-- HOL `sptree$delete` (`HOL/src/finite_maps/sptreeScript.sml:99-113`) with the
-recursive key arithmetic `(k - 1) DIV 2` and the `mk_BN`/`mk_BS` collapsing.
-Untagged Flapjack infrastructure (source outside `cakeml/`). -/
+/-- Delete a key while collapsing empty child nodes. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "delete_def"]
 def sptDelete {α : Type} (key : Nat) : Spt α → Spt α
   | .ln => .ln
   | .ls value => if key = 0 then .ln else .ls value

@@ -386,6 +386,18 @@ def lookupCodeHOLFiniteExact
             [],
         )
 
+    def test_accepts_same_canonical_input_and_result_map_type(self):
+        source = self.SOURCE.replace("HolFiniteMapExact MlS CodeEntry",
+                                     "HolFiniteMapExact MlS Value")
+        witness = self.WITNESS.replace("HolFiniteMapExact MlS CodeEntry",
+                                       "HolFiniteMapExact MlS Value")
+        self.assertEqual(self.CHECK(self.module(source, witness).splitlines(),
+                                    source, "lookupCodeHOLFiniteExact", self.POSITIONS), [])
+        bad = witness.replace("lookupCodeHOLExact code.lookup fname arguments",
+                              "lookupCodeHOLFiniteExact code fname arguments")
+        self.assertTrue(self.CHECK(self.module(source, bad).splitlines(), source,
+                                   "lookupCodeHOLFiniteExact", self.POSITIONS))
+
     def test_rejects_extra_implicit_proof_and_instance_binders(self):
         equality = self.WITNESS.split(" :\n", 1)[1].split(" :=", 1)[0]
         for binder in ("{h : True}", "[h : Inhabited Value]",
@@ -982,6 +994,49 @@ End
               "state_rel_def", None, (), (), (), (), False,
               (("PanSemStateFiniteExact", "globals"), ("CrepSemHOLState", "locals")), False, False, ())],
         )
+
+    def test_fmap_relation_qualified_carriers_disambiguate_imports(self):
+        module = "Flapjack.Compiler.Backend.ClosToBvl.Proofs.StateRelation"
+        lines = [
+            "theorem holFmapAsFiniteSupportRelationWitness_ClosSem.State (s : ClosSem.State C F) :",
+            "    ClosSem.State.toBroad (ClosSem.State.ofBroad s) = s := rfl",
+            "theorem holFmapAsFiniteSupportRelationWitness_BvlSem.State (t : BvlSem.State C F) :",
+            "    BvlSem.State.toBroad (BvlSem.State.ofBroad t) = t := rfl",
+        ]
+        signature = ("def stateRel (f : HolFiniteMapExact Nat Nat) "
+                     "(s : ClosSem.State C F) (t : BvlSem.State C F) : Prop")
+        entries = (("ClosSem.State", "refs"), ("ClosSem.State", "code"),
+                   ("BvlSem.State", "refs"), ("f", ""))
+        self.assertEqual(CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, entries, module, signature), [])
+        site = list(SITES([
+            '@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "state_rel_def"',
+            ' (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code, BvlSem.State.refs, f])]'
+        ]))[0]
+        self.assertEqual(site[9], entries)
+        self.assertTrue(CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("State", "refs"),), module, signature))
+        self.assertTrue(CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("Wrong.State", "refs"),), module, signature))
+        self.assertTrue(CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("BvlSem.State", "code"),), module, signature))
+        self.assertTrue(CHECKER["fmap_as_finite_support_relation_errors"](
+            lines[:2], entries, module, signature))
+        self.assertTrue(CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, entries, module, signature.replace("ClosSem.State", "Wrong.ClosSem.State")))
+        forged = [line.replace("ClosSem.State.toBroad", "Wrong.ClosSem.State.toBroad")
+                  .replace("ClosSem.State.ofBroad", "Wrong.ClosSem.State.ofBroad")
+                  .replace("(s : ClosSem.State", "(s : Wrong.ClosSem.State")
+                  for line in lines]
+        self.assertTrue(CHECKER["fmap_as_finite_support_relation_errors"](
+            forged, entries, module, signature))
+        forged_name = [line.replace("Witness_ClosSem.State (", "Witness_ClosSem.State.extra (")
+                       for line in lines]
+        self.assertTrue(CHECKER["fmap_as_finite_support_relation_errors"](
+            forged_name, entries, module, signature))
+        shadowed = ["structure State where", "  refs : HolFiniteMapExact Nat Nat", ""] + lines
+        self.assertTrue(CHECKER["fmap_as_finite_support_relation_errors"](
+            shadowed, entries, module, signature))
 
     def test_fmap_as_finite_support_relation_accepts_two_carriers(self):
         lines = [
@@ -1714,6 +1769,43 @@ End
             finally:
                 checker_globals["ROOT"] = original_root
 
+    def test_fmap_as_finite_support_qualified_same_named_imports(self):
+        checker_globals = CHECKER["fmap_as_finite_support_errors"].__globals__
+        original_root = checker_globals["ROOT"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            folder = root / "Flapjack" / "Demo"
+            folder.mkdir(parents=True)
+            (folder / "First.lean").write_text(
+                "namespace Demo.First\nstructure State where\n  refs : HolFiniteMapExact Nat Nat\nend Demo.First\n",
+                encoding="utf-8")
+            (folder / "Second.lean").write_text(
+                "namespace Demo.Second\nstructure State where\n  refs : Nat → Option Nat\nend Demo.Second\n",
+                encoding="utf-8")
+            consumer = folder / "Consumer.lean"
+            consumer.write_text("import Flapjack.Demo.First\nimport Flapjack.Demo.Second\n", encoding="utf-8")
+            checker_globals["ROOT"] = root
+            try:
+                lines = [
+                    "theorem holFmapAsFiniteSupportWitness (s : Demo.First.State) :",
+                    "    Demo.First.State.ofBroad (Demo.First.State.toBroad s) = s := by rfl",
+                ]
+                check = lambda signature: CHECKER["fmap_as_finite_support_errors"](
+                    lines, ("refs",), "Flapjack/Demo/Consumer.lean", signature)
+                self.assertEqual(check("def f (s : Demo.First.State) := s"), [])
+                self.assertTrue(check("def f (s : State) := s"))
+                self.assertTrue(check("def f (s : Demo.Second.State) := s"))
+                self.assertTrue(check("def f (s : Fake.Demo.First.State) := s"))
+                shadow = ["structure State where", "  refs : HolFiniteMapExact Nat Nat", *lines]
+                self.assertTrue(CHECKER["fmap_as_finite_support_errors"](
+                    shadow, ("refs",), "Flapjack/Demo/Consumer.lean", "def f (s : Demo.First.State) := s"))
+                with (folder / "First.lean").open("a", encoding="utf-8") as first:
+                    first.write("namespace Other\nstructure State where\n  refs : Nat → Option Nat\nend Other\n")
+                CHECKER["imported_structure_field_types"].cache_clear()
+                self.assertTrue(check("def f (s : Demo.First.State) := s"))
+            finally:
+                checker_globals["ROOT"] = original_root
+
     def test_combined_fmap_words_qualifiers_with_imported_owner(self):
         """A real imported-owner + evaluator-local witness + both qualifiers.
 
@@ -2200,6 +2292,21 @@ class HolDatatypeDeclarationsTest(unittest.TestCase):
             "End\n"
         )
         self.assertEqual(DECL(path, {})["shmem_info_num"], [2])
+
+    def test_datatype_name_after_inline_comment_is_indexed(self):
+        path = self._write_sml(
+            "Datatype:\n  (* 'v *) environment = <| v : 'v list |>\nEnd\n"
+            "Datatype:\n  (* fake = Bad *)\n  actual = Good\nEnd\n"
+        )
+        names = DECL(path, {})
+        self.assertEqual(names["environment"], [2])
+        self.assertEqual(names["actual"], [6])
+        self.assertNotIn("fake", names)
+
+    def test_flat_sem_environment_is_resolvable(self):
+        path = (Path(__file__).resolve().parents[2] /
+                "cakeml/compiler/backend/semantics/flatSemScript.sml")
+        self.assertIsNone(REF_ERROR(path, "environment", None, {}))
 
     def test_lab_to_target_shmem_info_num_is_resolvable(self):
         path = (

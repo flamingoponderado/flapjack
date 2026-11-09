@@ -353,92 +353,6 @@ theorem loopInsertAll_mem (added : List Nat) (names : List Nat) (x : Nat) :
         · exact Or.inr (Or.inr h)
 
 set_option linter.unusedSimpArgs false in
-private theorem loopAccVars_mem_aux : ∀ (program : LoopProg α) (_acc : List Nat)
-    (names : List Nat) (x : Nat),
-    x ∈ loopAccVars program names ↔ x ∈ names ∨ x ∈ loopAccVars program [] := by
-  apply loopAccVars.induct (motive := fun program _ =>
-    ∀ names x, x ∈ loopAccVars program names ↔ x ∈ names ∨ x ∈ loopAccVars program [])
-  · intro first second names ihSecond ihFirst names' x
-    simp only [loopAccVars]
-    rw [ihFirst (loopAccVars second names') x, ihFirst (loopAccVars second []) x,
-      ihSecond names' x, ihSecond [] x]
-    simp only [List.not_mem_nil, or_false]
-    simp only [or_comm, or_left_comm]
-  · intro label names names' x; simp [loopAccVars]
-  · intro label names names' x; simp [loopAccVars]
-  · intro liveIn body liveOut names ih names' x
-    simp only [loopAccVars]; exact ih names' x
-  · intro operator condition right thenBranch elseBranch live names ihElse ihThen names' x
-    simp only [loopAccVars]
-    rw [ihThen (loopAccVars elseBranch names') x, ihThen (loopAccVars elseBranch []) x,
-      ihElse names' x, ihElse [] x]
-    simp only [List.not_mem_nil, or_false]
-    simp only [or_comm, or_left_comm]
-  · intro names left right sourceLeft sourceRight names' x
-    simp only [loopAccVars, loopInsertAll_mem, List.not_mem_nil, or_false, List.mem_cons]
-    simp only [or_comm, or_left_comm]
-  · intro names left right sourceLeft sourceRight quotient names' x
-    simp only [loopAccVars, loopInsertAll_mem, List.not_mem_nil, or_false, List.mem_cons]
-    simp only [or_comm, or_left_comm]
-  · intro names destination dividend divisor names' x
-    simp only [loopAccVars, loopInsert_mem, List.not_mem_nil, or_false, List.mem_cons]
-    simp only [or_comm, or_left_comm]
-  · intro body names ih names' x
-    simp only [loopAccVars]; exact ih names' x
-  · intro names names' x; simp [loopAccVars]
-  · intro names names' x; simp [loopAccVars]
-  · intro names names' x; simp [loopAccVars]
-  · intro exception names names' x; simp [loopAccVars]
-  · intro values names names' x; simp [loopAccVars]
-  · intro target arguments handler names names' x; simp [loopAccVars]
-  · intro returns snd target arguments names names' x
-    simp only [loopAccVars, loopInsertAll_mem, List.not_mem_nil, or_false]
-    simp only [or_comm, or_left_comm]
-  · intro returns snd target arguments exception handler normal snd_1 names ihNormal ihHandler names' x
-    simp only [loopAccVars, loopInsert_mem, loopInsertAll_mem]
-    rw [ihHandler (loopAccVars normal names') x, ihHandler (loopAccVars normal []) x,
-      ihNormal names' x, ihNormal [] x]
-    simp only [List.not_mem_nil, or_false, false_or]
-    simp only [or_comm, or_left_comm]
-  · intro destination _label names names' x
-    simp only [loopAccVars, loopInsert_mem, List.not_mem_nil, or_false, List.mem_cons]
-    simp only [or_comm, or_left_comm]
-  · intro destination value names names' x
-    simp only [loopAccVars, loopInsert_mem, List.not_mem_nil, or_false, List.mem_cons]
-    simp only [or_comm, or_left_comm]
-  · intro destinations operator arguments names names' x
-    simp only [loopAccVars, loopInsertAll_mem, List.not_mem_nil, or_false]
-    simp only [or_comm, or_left_comm]
-  · intro operator destination address names names' x
-    simp only [loopAccVars, loopInsert_mem, List.not_mem_nil, or_false, List.mem_cons]
-    simp only [or_comm, or_left_comm]
-  · intro address value names names' x; simp [loopAccVars]
-  · intro address value names names' x; simp [loopAccVars]
-  · intro address destination names names' x
-    simp only [loopAccVars, loopInsert_mem, List.not_mem_nil, or_false, List.mem_cons]
-    simp only [or_comm, or_left_comm]
-  · intro address destination names names' x
-    simp only [loopAccVars, loopInsert_mem, List.not_mem_nil, or_false, List.mem_cons]
-    simp only [or_comm, or_left_comm]
-  · intro address value names names' x; simp [loopAccVars]
-  · intro address value names names' x; simp [loopAccVars]
-  · intro function configuration configurationLength array arrayLength live names names' x
-    simp [loopAccVars]
-
-/-! ## Exact `loop_live` shrink/fixedpoint over the faithful carrier
-
-Source-shaped port of the single HOL declaration `loop_live$shrink_def`
-(`cakeml/pancake/loop_liveScript.sml:62-160`), over the faithful
-`HolLoopProg`/`NumSet` carrier.  HOL declares BOTH `shrink` and `fixedpoint`
-inside that one mutual block (there is no separate `fixedpoint_def`), with the
-lexicographic termination measure `(prog_size (K 0) body, 0/1,
-size live_in - size l1)`; the Lean definitions keep that mutual shape and
-measure (`sizeOf` in place of `prog_size`, and `sptSize_inter_le` in place of
-`size_inter`).  `shrinkHOL` is the tagged half carrying
-`@[hol ... "shrink_def"]`, while `fixedpointHOL` is the untagged mutual half,
-analogous to `varsOfExpListHOL`/`vars_of_exp_list`. -/
-
-/-- Exact port of HOL `loop_liveScript.sml:28-31 size_mk_BN`. -/
 @[hol "cakeml/pancake/loop_liveScript.sml" "size_mk_BN"]
 theorem sptSize_mkBN {α : Type} (t1 t2 : Spt α) :
     sptSize (sptMkBN t1 t2) = sptSize (.bn t1 t2) := by
@@ -455,37 +369,8 @@ theorem sptSize_mkBS {α : Type} (t1 t2 : Spt α) (x : α) :
 @[hol "cakeml/pancake/loop_liveScript.sml" "size_inter"]
 theorem sptSize_inter_le {α β : Type} (l1 : Spt α) (l2 : Spt β) :
     sptSize (sptInter l1 l2) <= sptSize l1 := by
-  induction l1 generalizing l2 with
-  | ln => simp [sptInter]
-  | ls value => cases l2 <;> simp [sptInter]
-  | bn first second ihFirst ihSecond =>
-      cases l2 with
-      | ln => simp [sptInter]
-      | ls value => simp [sptInter]
-      | bn f s =>
-          simp only [sptInter, sptSize_bn, sptSize_mkBN]
-          have h1 := ihFirst f
-          have h2 := ihSecond s
-          omega
-      | bs f value s =>
-          simp only [sptInter, sptSize_bn, sptSize_mkBN]
-          have h1 := ihFirst f
-          have h2 := ihSecond s
-          omega
-  | bs first value second ihFirst ihSecond =>
-      cases l2 with
-      | ln => simp [sptInter]
-      | ls v => simp [sptInter]
-      | bn f s =>
-          simp only [sptInter, sptSize_bs, sptSize_bn, sptSize_mkBN]
-          have h1 := ihFirst f
-          have h2 := ihSecond s
-          omega
-      | bs f v s =>
-          simp only [sptInter, sptSize_bs, sptSize_mkBS]
-          have h1 := ihFirst f
-          have h2 := ihSecond s
-          omega
+  induction l1 generalizing l2 <;> cases l2 <;>
+    simp [sptInter, sptSize_bn, sptSize_bs, sptSize_mkBN, sptSize_mkBS] <;> grind
 mutual
   /-- The `fixedpoint` half of HOL's single `loop_live$shrink_def` mutual block
       (`cakeml/pancake/loop_liveScript.sml:142-150`): iterate `shrink` on the

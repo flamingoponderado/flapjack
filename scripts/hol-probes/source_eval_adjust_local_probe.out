@@ -1,0 +1,20 @@
+neq_imp_to_cases_replay=∀(y :α). ((x :α) ≠ y ⇒ (P :bool)) ⇒ x = y ∨ x ≠ y
+pair_case_eq_pairarg_replay=(pair_CASE (p :β # γ) (f :β -> γ -> α) :α) = (λ((x :β),(y :γ)). f x y) p
+alist_to_ns_to_bind2_replay=∀(l :(α # β) list). (alist_to_ns l :(γ, α, β) namespace) = nsBindList l (nsEmpty :(γ, α, β) namespace)
+nsSing_eq_bind_replay=∀(n :β) (x :γ). (nsSing n x :(α, β, γ) namespace) = nsBind n x (nsEmpty :(α, β, γ) namespace)
+env_rel_nsLookup_c_replay=env_rel (R :v -> α -> bool) (env :v sem_env) (env' :α sem_env) ∧ nsLookup env.c (id :(mlstring, mlstring) id) = (r :(num # stamp) option) ⇒ env'.c = env.c
+less_sub_1_cases_replay=(k :num) ≤ (clock :num) ∧ (k ≤ clock − (1 :num) ⇒ (P :bool)) ⇒ k = clock ∨ k ≤ clock − (1 :num)
+env_rel_imp_c_replay=env_rel (x :v -> α -> bool) (env :v sem_env) (env' :α sem_env) ⇒ env'.c = env.c
+s_rel_clock2_replay=∀(k :num). s_rel (ci :α compiler_instance) (s :β semanticPrimitives$state) (t :β semanticPrimitives$state) ⇒ s_rel ci (s with clock := k) (t with clock := k)
+extract_oracle_some_suc_replay=IS_SOME (extract_oracle (s :α semanticPrimitives$state) (env :v sem_env) (decs :dec list) (SUC (i :num))) ⇒ IS_SOME (extract_oracle s env decs i)
+orac_agrees_s_rel_imp_replay=orac_agrees (orac :num -> (num # num) # v # dec list) (t :α semanticPrimitives$state).eval_state ⇒ s_rel (ci :β compiler_instance) (s :α semanticPrimitives$state) t ⇒ (i :num) < FST (FST ((orac_s t.eval_state).oracle (0 :num) :(num # num) # v # dec list)) ⇒ orac i = ((orac_s t.eval_state).oracle (i + (1 :num)) :(num # num) # v # dec list)
+recorded_orac_wf_defined_replay=recorded_orac_wf (compiler :(num # num) # v # dec list -> (v # α) option) (orac :num -> (num # num) # v # dec list) ∧ (i :num) ≤ FST (FST (orac (0 :num))) ∧ (0 :num) < i ⇒ compiler (orac i) ≠ (NONE :(v # α) option)
+is_insert_decs=is_insert_oracle (ci :α compiler_instance) (f :dec list -> dec list) (SOME (EvalDecs (eds :eval_decs_state)))
+declare_env_adjust=declare_env (adjust_oracle (ci :α compiler_instance) (f :dec list -> dec list) (es :eval_state option)) (env :v sem_env) = case declare_env es env of (NONE :(v # eval_state option) option) => (NONE :(v # eval_state option) option) | SOME (x,es2) => SOME (x,adjust_oracle ci f es2)
+adjust_oracle_reset=adjust_oracle (ci :α compiler_instance) (f :dec list -> dec list) (reset_env_generation (es1 :eval_state option) (es2 :eval_state option)) = reset_env_generation (adjust_oracle ci f es1) (adjust_oracle ci f es2)
+is_insert_related=is_insert_oracle (ci :α compiler_instance) (f :dec list -> dec list) (SOME (EvalOracle (es :eval_oracle_state))) ⇒ (es2 :eval_oracle_state).custom_do_eval = es.custom_do_eval ∧ es2.oracle = es.oracle ⇒ is_insert_oracle ci f (SOME (EvalOracle es2))
+is_insert_reset=is_insert_oracle (ci :α compiler_instance) (f :dec list -> dec list) (reset_env_generation (es1 :eval_state option) (es2 :eval_state option)) ⇔ is_insert_oracle ci f es2
+declare_env_is_insert=declare_env (es :eval_state option) (env :v sem_env) = SOME ((x :v),(es2 :eval_state option)) ∧ is_insert_oracle (ci :α compiler_instance) (f :dec list -> dec list) es ⇒ is_insert_oracle ci f es2
+do_eval_adjust=do_eval (vs :v list) (es :eval_state option) = SOME ((env1 :v sem_env),(decs :dec list),(es1 :eval_state option)) ∧ is_insert_oracle (ci :α compiler_instance) (f :dec list -> dec list) es ⇒ (do_eval vs (adjust_oracle ci ((g :dec list -> dec list) ∘ f) es) = SOME (env1,g decs,adjust_oracle ci (g ∘ f) es1) ∨ do_eval vs (adjust_oracle ci (g ∘ f) es) = SOME (env1,decs,adjust_oracle ci (g ∘ f) es1)) ∧ is_insert_oracle ci f es1
+declare_env_adjust_replay=declare_env (adjust_oracle (ci :α compiler_instance) (f :dec list -> dec list) (es :eval_state option)) (env :v sem_env) = case declare_env es env of (NONE :(v # eval_state option) option) => (NONE :(v # eval_state option) option) | SOME (x,es2) => SOME (x,adjust_oracle ci f es2)
+adjust_oracle_reset_replay=adjust_oracle (ci :α compiler_instance) (f :dec list -> dec list) (reset_env_generation (es1 :eval_state option) (es2 :eval_state option)) = reset_env_generation (adjust_oracle ci f es1) (adjust_oracle ci f es2)

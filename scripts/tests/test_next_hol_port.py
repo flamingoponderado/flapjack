@@ -43,6 +43,26 @@ class NextHolPortTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "expected one declaration"):
             PORT.candidates([declaration], set(), "pancake/example.sml", "missing", {"Definition"})
 
+    def test_frontend_script_candidates_use_index_and_hol_mapping(self):
+        source = "compiler/backend/proofs/source_to_flatProofScript.sml"
+        declarations = [
+            PORT.Declaration("Definition", "ported_def", source, 3, 7),
+            PORT.Declaration("Theorem", "missing", source, 8, 12),
+        ]
+        tagged = PORT.read_mapping(
+            "Flapjack/Example.lean:4\tported\t"
+            "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml\tported_def\n"
+        )
+        self.assertEqual(PORT.source_path("cakeml/" + source), source)
+        found, count = PORT.candidates(declarations, tagged, source, None, {"Theorem"})
+        self.assertEqual([entry.name for entry in found], ["missing"])
+        self.assertEqual(count, 1)
+
+    def test_rejects_paths_outside_cakeml_or_without_script_extension(self):
+        for source in ("../outside.sml", "/outside.sml", "cakeml/../outside.sml", "compiler/backend/file.lean"):
+            with self.subTest(source=source), self.assertRaises(ValueError):
+                PORT.source_path(source)
+
 
 if __name__ == "__main__":
     unittest.main()

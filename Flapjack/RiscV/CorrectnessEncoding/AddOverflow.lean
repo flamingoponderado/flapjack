@@ -1,21 +1,12 @@
 import Flapjack.RiscV.CorrectnessEncoding.AddOverflow.Post
 import Flapjack.RiscV.CorrectnessEncoding.ConstAssertions
 namespace Flapjack.RiscV.TargetProof
+open Flapjack.RiscV.TargetProof.ArithNative
 open Flapjack RiscV.L3 Compiler.Encoders.Asm Compiler.Encoders.AsmSem
   Compiler.Encoders.AsmProps Compiler.Encoders.RiscV.Target AddOverflow
 set_option autoImplicit false
 set_option maxRecDepth 200000
 set_option maxHeartbeats 2000000
-private theorem bytes_from_domain (pc : BitVec 64) (bs : List (BitVec 8))
-    (m1 m2 : BitVec 64 → BitVec 8) (d : BitVec 64 → Prop)
-    (bytes : bytesInMemoryHOL pc bs m1 d)
-    (agree : ∀ a, d a → m2 a = m1 a) : bytesInMemoryHOL pc bs m2 d := by
-  induction bs generalizing pc with
-  | nil => trivial
-  | cons b bs ih =>
-    exact ⟨(agree pc bytes.2.1).trans bytes.1, bytes.2.1,
-      ih (pc + 1) bytes.2.2⟩
-
 /-- Full original six-instruction AddOverflow constructor: original source step and initial target
 relation only; every original environment and both assertion predicates retained.
 The XOR/XORI/ADD/XOR/AND/SRLI list retains source aliases, including r1=r4.

@@ -1015,19 +1015,6 @@ theorem panSemBitVec64Read32_eq_panMemLoad32HOL (state : PanSemState (RiscV.Word
       | rStruct fs => simp [panValueWordDefined, hcell]
       | nStruct nm fs => simp [panValueWordDefined, hcell]
 
-private theorem bitVecSetWidth_eq_ofNat_toNat {sourceWidth targetWidth : Nat}
-    (value : BitVec sourceWidth) :
-    BitVec.setWidth targetWidth value = BitVec.ofNat targetWidth value.toNat := by
-  apply BitVec.eq_of_toNat_eq
-  simp only [BitVec.toNat_setWidth, BitVec.toNat_ofNat]
-
-/-! ### Structured `.load` word-node bridge (flapjack-pxn.18.3.6.9.2.2)
-
-The executed structured `.load` uses `panValueFlatLoad`; the HOL-shaped
-(core currently untagged) `panMemLoadHOL` reads the same nodes.  The `One` clause is proved here; the
-`Comb`/`Named` clauses require the fuel/context/offset machinery and are tracked
-by the child bead `flapjack-pxn.18.3.6.9.2.2.1`. -/
-
 theorem panValueFlatLoad_one_eq_panMemLoadHOL (state : PanSemState (RiscV.Word 64) ffi)
     (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
     (structs : StructContext) (address : RiscV.Word 64) :
@@ -1085,6 +1072,80 @@ theorem panValueFlatShapeSize_eq_sizeOfShWithCtxt (structs : StructContext) (sha
       simp only [shapeSizeWithContext, sizeOfShWithCtxt]
       rw [lookupInfo_toHOL]
       cases lookupInfo name structs <;> rfl
+
+/-! ### Payload-size bridge for the clocked `Return`/`Raise` 32-word check
+
+HOL bounds returned and raised payloads by
+`size_of_sh_with_ctxt s.structs (shape_of value) <= 32`
+(`panSemScript.sml:638-652`), where `size_of_sh_with_ctxt`
+(`panLangScript.sml:164-172`) counts one word per `One`, sums `Comb`, and uses
+`ALOOKUP`'s declared size for `Named`.  The clocked evaluator's
+`panValuePayloadSize` (`Flapjack/PanValues.lean`) computes the same number
+structurally from the value: `.word` is one, `.rStruct` sums its fields, and
+`.nStruct` uses the declared structure size.  The two agree, so
+`panValuePayloadWithinLimit` accepts exactly the payloads HOL accepts.
+
+This closes the value-based vs shape-based gap recorded as #1250 (a).  The
+previous fuel-indexed size (`panValuePayloadSizeFuel`) charged two units per
+`RStruct` nesting level while `panValueFlatValueFuel` counts one per node, so
+deeply nested records were under-counted and the check accepted payloads HOL
+rejects; the structural definition has no fuel argument.  Untagged Flapjack
+infrastructure, not a HOL declaration. -/
+
+/-- Folding a context-size sum from an accumulator equals the accumulator plus
+    the fold from zero. -/
+theorem foldl_add_sizeOfShWithCtxt (structs : StructContext) (shapes : List Shape)
+    (acc : Nat) :
+    shapes.foldl (fun total shape => total + sizeOfShWithCtxt structs.toHOL shape) acc =
+      acc + shapes.foldl (fun total shape => total + sizeOfShWithCtxt structs.toHOL shape) 0 := by
+  induction shapes generalizing acc with
+  | nil => simp
+  | cons shape shapes ih =>
+      simp only [List.foldl_cons, Nat.zero_add]
+      rw [ih (acc + sizeOfShWithCtxt structs.toHOL shape),
+        ih (sizeOfShWithCtxt structs.toHOL shape)]
+      omega
+
+mutual
+  theorem panValuePayloadSize_eq_sizeOfShWithCtxt (structs : StructContext) :
+      (value : PanValue α) →
+      panValuePayloadSize structs value =
+        sizeOfShWithCtxt structs.toHOL (panValueShape structs value)
+    | .word _ => by simp [panValuePayloadSize, panValueShape, sizeOfShWithCtxt]
+    | .rStruct fields => by
+        simp only [panValuePayloadSize, panValueShape, sizeOfShWithCtxt]
+        exact panValuePayloadSizeFields_eq_sizeOfShWithCtxt structs fields
+    | .nStruct name _ => by
+        simp only [panValuePayloadSize, panValueShape, sizeOfShWithCtxt,
+          lookupInfo_toHOL]
+        cases lookupInfo name structs <;> rfl
+
+  theorem panValuePayloadSizeFields_eq_sizeOfShWithCtxt (structs : StructContext) :
+      (fields : List (PanValue α)) →
+      panValuePayloadSize.panValuePayloadSizeFields structs fields =
+        (fields.map (panValueShape structs)).foldl
+          (fun total shape => total + sizeOfShWithCtxt structs.toHOL shape) 0
+    | [] => by simp [panValuePayloadSize.panValuePayloadSizeFields]
+    | value :: values => by
+        simp only [panValuePayloadSize.panValuePayloadSizeFields, List.map_cons,
+          List.foldl_cons]
+        rw [panValuePayloadSize_eq_sizeOfShWithCtxt structs value,
+          panValuePayloadSizeFields_eq_sizeOfShWithCtxt structs values]
+        simp only [Nat.zero_add]
+        rw [foldl_add_sizeOfShWithCtxt structs (values.map (panValueShape structs))
+          (sizeOfShWithCtxt structs.toHOL (panValueShape structs value))]
+end
+
+/-- The clocked evaluator's 32-word acceptance test agrees with HOL's
+    `size_of_sh_with_ctxt ... <= 32` (`panSemScript.sml:638-652`): the clocked
+    `Return`/`Raise` clauses accept exactly the payloads HOL accepts.  This is
+the decision-level corollary of `panValuePayloadSize_eq_sizeOfShWithCtxt` and
+closes the #1250 (a) gap.  Untagged Flapjack infrastructure. -/
+theorem panValuePayloadWithinLimit_eq_sizeOfShWithCtxt (structs : StructContext)
+    (value : PanValue α) :
+    panValuePayloadWithinLimit structs value = true ↔
+      sizeOfShWithCtxt structs.toHOL (panValueShape structs value) ≤ 32 := by
+  simp [panValuePayloadWithinLimit, panValuePayloadSize_eq_sizeOfShWithCtxt]
 
 theorem panValueFlatOffset_eq_widen (address : RiscV.Word 64) (n : Nat) :
     panValueFlatOffset (8 : RiscV.Word 64) address n =

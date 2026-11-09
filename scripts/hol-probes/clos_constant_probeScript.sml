@@ -1,0 +1,33 @@
+load "clos_constantProofTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = Globals.show_types := true;
+fun show_thm label th =
+  if null (hyp th) then (print label; print_term (concl th); print "\n")
+  else raise Fail (label ^ " has hypotheses");
+val _ = show_thm "cc_ALOOKUP_conses_ok_IMP=" clos_constantProofTheory.ALOOKUP_conses_ok_IMP;
+val _ = show_thm "cc_IMP_conses_ok_CONS=" clos_constantProofTheory.IMP_conses_ok_CONS;
+val _ = show_thm "cc_add_part_thm=" clos_constantProofTheory.add_part_thm;
+val _ = show_thm "cc_add_parts_thm=" clos_constantProofTheory.add_parts_thm;
+val _ = show_thm "cc_build_prime_def=" clos_constantProofTheory.build'_def;
+val _ = show_thm "cc_build_const_prime_def=" clos_constantProofTheory.build_const'_def;
+val _ = show_thm "cc_build_const_def=" clos_constantProofTheory.build_const_def;
+val _ = show_thm "cc_build_const_to_parts=" clos_constantProofTheory.build_const_to_parts;
+val _ = show_thm "cc_build_def=" clos_constantProofTheory.build_def;
+val _ = show_thm "cc_build_map_APPEND=" clos_constantProofTheory.build_map_APPEND;
+val _ = show_thm "cc_build_map_def=" clos_constantProofTheory.build_map_def;
+val _ = show_thm "cc_build_map_ignore=" clos_constantProofTheory.build_map_ignore;
+val _ = show_thm "cc_build_mem_thm=" clos_constantProofTheory.build_mem_thm;
+val _ = show_thm "cc_build_part_prime_def=" clos_constantProofTheory.build_part'_def;
+val _ = show_thm "cc_build_part_def=" clos_constantProofTheory.build_part_def;
+val _ = show_thm "cc_compile_const_thm=" clos_constantProofTheory.compile_const_thm;
+val _ = show_thm "cc_conses_ok_def=" clos_constantProofTheory.conses_ok_def;
+val _ = show_thm "cc_good_hash_table_def=" clos_constantProofTheory.good_hash_table_def;
+val _ = show_thm "cc_make_const_thm=" clos_constantProofTheory.make_const_thm;
+val _ = show_thm "cc_make_part_def=" clos_constantProofTheory.make_part_def;
+val _ = show_thm "cc_parts_acc=" clos_constantProofTheory.parts_acc;
+val _ = show_thm "cc_parts_def=" clos_constantProofTheory.parts_def;
+val _ = show_thm "cc_parts_thm=" clos_constantProofTheory.parts_thm;
+val _ = show_thm "cc_to_parts_def=" clos_constantProofTheory.to_parts_def;
+val _ = show_thm "cc_update_tag_11=" clos_constantProofTheory.update_tag_11;
+val _ = show_thm "cc_update_tag_def=" clos_constantProofTheory.update_tag_def;

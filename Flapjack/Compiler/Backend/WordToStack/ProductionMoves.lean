@@ -21,7 +21,4 @@ def join {width : Nat} [NeZero width] (first second : HolProg width) : HolProg w
   | first, .skip => first
   | first, second => .seq first second
 
-private theorem join_skip_right {width : Nat} [NeZero width] (program : HolProg width) :
-    join program .skip = program := by cases program <;> rfl
-
 end Flapjack.ProductionMoves

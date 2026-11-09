@@ -1,0 +1,7 @@
+{
+  "cakeml_revision": "857f0d98da8f8a3580f34423338e697809308ede",
+  "hol_revision": "a390cbabd3a4521bab4ee20281e3e42933a8a3ae",
+  "source": "datatype t = A | B int; fun f x = case x of A => ~1 | B n => n; val x = f (B 7);",
+  "length": 518378,
+  "sha256": "f7a3e431edbcba6dd7e2ed4a3643148e913b4218cbf67d27f8dcba25cb7b9b59"
+}

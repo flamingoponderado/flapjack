@@ -21,17 +21,23 @@ stated over the extensional finite-map model from `Flapjack.FiniteMap.Basic`.
 
 namespace Flapjack
 
-/-- HOL `ctxt_max_def` (`cakeml/pancake/semantics/pan_commonPropsScript.sml:11`):
-    the slot bound is non-negative and every slot assigned by the context map
-    is at most `n`. -/
-@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "ctxt_max_def"]
+/-! Faithful finite-map ports remain open for `all_distinct_flookup_all_distinct`,
+`no_overlap_flookup_distinct`, `fm_empty_zip_flookup_el`,
+`flookup_fupdate_zip_not_mem`, `fm_update_diff_vars`,
+`not_mem_fst_zip_flookup_empty`, `opt_mmap_flookup_update`, and
+`domsub_commutes_fupdate`. Former raw-function analogues had different carriers. -/
+
+/-- Flapjack-specific support corresponding to HOL `ctxt_max_def`.
+    This uses raw lookup functions, which admit maps with infinite support;
+    HOL uses finite maps. Any Boolean equality instances are extra assumptions.
+    The faithful HOL declaration remains to be ported. -/
 def ctxtMax {α β : Type} (n : Nat) (fm : FiniteMap α (β × List Nat)) : Prop :=
   0 ≤ n ∧ ∀ v a xs, FLOOKUP fm v = some (a, xs) → ∀ x ∈ xs, x ≤ n
 
-/-- HOL `no_overlap_def` (`cakeml/pancake/semantics/pan_commonPropsScript.sml:18`):
-    every variable's slot list is duplicate-free, and variables whose slot sets
-    intersect are the same variable. -/
-@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "no_overlap_def"]
+/-- Flapjack-specific support corresponding to HOL `no_overlap_def`.
+    This uses raw lookup functions, which admit maps with infinite support;
+    HOL uses finite maps. Any Boolean equality instances are extra assumptions.
+    The faithful HOL declaration remains to be ported. -/
 def noOverlap {α β : Type} (fm : FiniteMap α (β × List Nat)) : Prop :=
   (∀ x a xs, FLOOKUP fm x = some (a, xs) → xs.Nodup) ∧
     ∀ x y a b xs ys, FLOOKUP fm x = some (a, xs) → FLOOKUP fm y = some (b, ys) →
@@ -99,11 +105,10 @@ theorem flookupAlistToFmap_mem [BEq α] [LawfulBEq α]
         obtain ⟨found, hmem, hkey, hvalue⟩ := ih htail
         exact ⟨found, by simp [hmem], hkey, hvalue⟩
 
-/-- Exact port of HOL `fm_empty_zip_alist`
-    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:426`): zipping two
-    equal-length lists with duplicate-free keys makes the list fold and the
-    right fold of `FUPDATE` agree. -/
-@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "fm_empty_zip_alist"]
+/-- Flapjack-specific support corresponding to HOL `fm_empty_zip_alist`.
+    This uses raw lookup functions, which admit maps with infinite support;
+    HOL uses finite maps. Any Boolean equality instances are extra assumptions.
+    The faithful HOL declaration remains to be ported. -/
 theorem fmEmptyZipAlist [BEq α] [LawfulBEq α] (xs : List α) (ys : List β)
     (hlen : xs.length = ys.length) (hdistinct : xs.Nodup) :
     FUPDATE_LIST FEMPTY (xs.zip ys) = alistToFmap (xs.zip ys) := by
@@ -129,12 +134,10 @@ theorem fmEmptyZipAlist [BEq α] [LawfulBEq α] (xs : List α) (ys : List β)
             rw [hkeys]; exact hmem
           exact (FUPDATE_FUPDATE_LIST_commutes FEMPTY x y (xs.zip ys) hnotin).symm
 
-/-- Exact port of HOL `fm_empty_zip_flookup`
-    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:448`): a successful
-    lookup in a duplicate-free zipped finite map comes from one of the listed
-    pairs, exposing the common index. HOL's `EL n (ZIP (xs,ys)) = (x,y)` is
-    rendered as a bounded `getElem`, matching the tagged `elLoadGlobals`. -/
-@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "fm_empty_zip_flookup"]
+/-- Flapjack-specific support corresponding to HOL `fm_empty_zip_flookup`.
+    This uses raw lookup functions, which admit maps with infinite support;
+    HOL uses finite maps. Any Boolean equality instances are extra assumptions.
+    The faithful HOL declaration remains to be ported. -/
 theorem fmEmptyZipFlookup [BEq α] [LawfulBEq α] (xs : List α) (ys : List β)
     (x : α) (y : β) (_hlen : xs.length = ys.length) (_hdistinct : xs.Nodup)
     (hlookup : FLOOKUP (FUPDATE_LIST FEMPTY (xs.zip ys)) x = some y) :
@@ -148,26 +151,6 @@ theorem fmEmptyZipFlookup [BEq α] [LawfulBEq α] (xs : List α) (ys : List β)
     exact ⟨i, hi, by rw [List.getElem_zip, hfst, hsnd, hkey, hvalue]⟩
   · simp at hbase
 
-/-- Exact port of HOL `all_distinct_flookup_all_distinct`
-    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:512`): the slot list of
-    any binding in a `no_overlap` context is duplicate-free. -/
-@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "all_distinct_flookup_all_distinct"]
-theorem allDistinctFlookupAllDistinct {α β : Type} (fm : FiniteMap α (β × List Nat))
-    (x : α) (y : β) (zs : List Nat)
-    (hno : noOverlap fm) (hlookup : FLOOKUP fm x = some (y, zs)) : zs.Nodup :=
-  hno.1 x y zs hlookup
-
-/-- Exact port of HOL `no_overlap_flookup_distinct`
-    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:519`): two distinct
-    variables in a `no_overlap` context have `distinct_lists` slot lists. -/
-@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "no_overlap_flookup_distinct"]
-theorem noOverlapFlookupDistinct {α β : Type} (fm : FiniteMap α (β × List Nat))
-    (x y : α) (a b : β) (xs ys : List Nat)
-    (hno : noOverlap fm) (hxy : x ≠ y)
-    (hx : FLOOKUP fm x = some (a, xs)) (hy : FLOOKUP fm y = some (b, ys)) :
-    distinctListsHol xs ys = true :=
-  (distinctListsHol_eq_true_iff_listDisjoint xs ys).mpr
-    (fun value hzxs hzys => hxy (hno.2 x y a b xs ys hx hy ⟨value, hzxs, hzys⟩))
 
 /-- Exact port of HOL `MAX_LIST_add_not_mem`
     (`cakeml/pancake/semantics/pan_commonPropsScript.sml:642`): `MAX_LIST xs + 1`
@@ -388,22 +371,6 @@ theorem memTransportsOfEq {α : Type} {a b : List α} {x : α}
 theorem set_eq_membership {α : Type} {a b : α → Prop} {x : α}
     (h : a = b ∧ a x) : b x := h.1 ▸ h.2
 
-/-- Exact port of HOL `fm_empty_zip_flookup_el`
-    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:479`): looking up the
-    `n`-th distinct key of a doubly zipped finite map returns the `n`-th pair
-    of the value lists. HOL `EL` is rendered as a bounded `getElem`, matching
-    `fmEmptyZipFlookup`/`elLoadGlobals`. -/
-@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "fm_empty_zip_flookup_el"]
-theorem fmEmptyZipFlookupEl [BEq α] [LawfulBEq α] (xs : List α) (ys zs : List β)
-    (n : Nat) (x : α) (hdistinct : xs.Nodup)
-    (hlen1 : xs.length = ys.length) (hlen2 : ys.length = zs.length)
-    (hn : n < xs.length) (hget : xs[n]'hn = x) :
-    FLOOKUP (FUPDATE_LIST FEMPTY (xs.zip (ys.zip zs))) x =
-      some (ys[n]'(by omega), zs[n]'(by omega)) := by
-  subst hget
-  rw [FLOOKUP_FUPDATE_LIST_zip_getElem xs (ys.zip zs) FEMPTY n hdistinct
-    (by rw [List.length_zip]; omega) hn]
-  simp only [List.getElem_zip]
 
 /-- Exact port of HOL `el_reduc_tl`
     (`cakeml/pancake/semantics/pan_commonPropsScript.sml:360`): an index of the
@@ -438,15 +405,6 @@ theorem all_distinct_el_fst_same_eq {α β : Type} (xs : List (α × β)) (n n' 
     n = n' :=
   getElem_fst_inj xs n n' hnodup hn hn' heq heq'
 
-/-- Exact port of HOL `flookup_fupdate_zip_not_mem`
-    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:289`): a lookup at a
-    key absent from the update keys is unchanged by the zipped update. -/
-@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "flookup_fupdate_zip_not_mem"]
-theorem flookup_fupdate_zip_not_mem [BEq α] [LawfulBEq α]
-    (xs : List α) (ys : List β) (f : FiniteMap α β) (n : α)
-    (hlen : xs.length = ys.length) (h : n ∉ xs) :
-    FLOOKUP (FUPDATE_LIST f (xs.zip ys)) n = FLOOKUP f n :=
-  FLOOKUP_FUPDATE_LIST_zip_not_mem xs ys f n hlen h
 
 /-- Exact port of HOL `disjoint_take_drop_sum`
     (`cakeml/pancake/semantics/pan_commonPropsScript.sml:399`): a prefix and a
@@ -465,19 +423,6 @@ theorem disjoint_drop_take_sum {α : Type} (n m p : Nat) (values : List α)
      ListDisjoint ((values.drop (n + m)).take p) (values.take n) :=
    listDisjoint_drop_take_sum values n m p h
 
-/-- Exact port of HOL `fm_update_diff_vars`
-    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:780`): updating a
-    finite map at `a`, then at a distinct key `b`, then at `a` again, then at
-    `b` again is the same as updating once at `a` and once at `b`. -/
-@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "fm_update_diff_vars"]
-theorem fm_update_diff_vars [BEq α] [LawfulBEq α] (fm : FiniteMap α β)
-    (a b : α) (a' b' b'' : β) (h : a ≠ b) :
-    FUPDATE (FUPDATE (FUPDATE (FUPDATE fm (a, a')) (b, b')) (a, a')) (b, b'') =
-      FUPDATE (FUPDATE fm (a, a')) (b, b'') := by
-  rw [FUPDATE_comm fm a a' b b' h]
-  rw [FUPDATE_FUPDATE_same (FUPDATE fm (b, b')) a a' a']
-  rw [FUPDATE_comm fm b b' a a' h.symm]
-  rw [FUPDATE_FUPDATE_same (FUPDATE fm (a, a')) b b' b'']
 
 /-- Exact port of HOL `all_distinct_take_frop_disjoint`
     (`cakeml/pancake/semantics/pan_commonPropsScript.sml:534`): the first `n`
@@ -497,101 +442,6 @@ theorem disjoint_not_mem_el {α : Type} (xs ys : List α) (n : Nat)
     xs[n] ∉ ys :=
   not_mem_of_listDisjoint_getElem xs ys n h hn
 
-/-- Exact port of HOL `not_mem_fst_zip_flookup_empty`
-    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:575`): updating the
-    empty finite map with `ZIP (xs, ys)` leaves a key outside `xs` unmapped. -/
-@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "not_mem_fst_zip_flookup_empty"]
-theorem not_mem_fst_zip_flookup_empty [BEq α] [LawfulBEq α]
-    (xs : List α) (ys : List β) (x : α)
-    (hnot : x ∉ xs) (_hdistinct : xs.Nodup) (hlen : xs.length = ys.length) :
-    FLOOKUP (FUPDATE_LIST FEMPTY (xs.zip ys)) x = none := by
-  rw [FLOOKUP_FUPDATE_LIST_zip_not_mem xs ys FEMPTY x hlen hnot, FLOOKUP_empty]
-
-/-- `mapM` congruence: pointwise-equal maps on the elements of a list give the
-    same `OPT_MMAP` result.  Flapjack-specific proof infrastructure for the
-    exact `opt_mmap_disj_zip_flookup` port below; no exact HOL counterpart. -/
-private theorem listMapMCongr {α β : Type} (g h : α → Option β) (xs : List α)
-    (hgh : ∀ x, x ∈ xs → g x = h x) : xs.mapM g = xs.mapM h := by
-  induction xs with
-  | nil => rfl
-  | cons x xs ih =>
-    rw [List.mapM_cons, List.mapM_cons, hgh x (by simp),
-      ih (fun y hy => hgh y (by simp [hy]))]
-
-/-- Exact port of HOL `opt_mmap_some_eq_zip_flookup`
-    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:170`): folding the
-    `(key,value)` list over a finite map makes every key look up its paired
-    value, provided the key list is duplicate-free and the lengths agree.
-    HOL's `OPT_MMAP (FLOOKUP _)` is rendered as `List.mapM` over `FLOOKUP`, and
-    `ALL_DISTINCT`/`LENGTH` as `Nodup`/`length`. -/
-@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "opt_mmap_some_eq_zip_flookup"]
-theorem optMmapSomeEqZipFlookup [BEq α] [LawfulBEq α]
-    (xs : List α) (f : FiniteMap α β) (ys : List β)
-    (hdistinct : xs.Nodup) (hlen : xs.length = ys.length) :
-    xs.mapM (fun key => FLOOKUP (FUPDATE_LIST f (xs.zip ys)) key) = some ys := by
-  induction xs generalizing ys f with
-  | nil => cases ys <;> simp_all
-  | cons x xs ih =>
-    cases ys with
-    | nil => simp at hlen
-    | cons y ys =>
-      obtain ⟨hxnot, hdistinct'⟩ := List.nodup_cons.mp hdistinct
-      have hlen' : xs.length = ys.length := by
-        simp only [List.length_cons] at hlen
-        omega
-      have hxzip : x ∉ (xs.zip ys).map Prod.fst := by
-        intro hmem
-        obtain ⟨p, hp, hfst⟩ := List.mem_map.mp hmem
-        obtain ⟨hpin, _hpy⟩ := List.of_mem_zip hp
-        rw [hfst] at hpin
-        exact hxnot hpin
-      rw [List.zip_cons_cons, FUPDATE_LIST_cons, List.mapM_cons]
-      have hhead : FLOOKUP (FUPDATE_LIST (FUPDATE f (x, y)) (xs.zip ys)) x = some y := by
-        rw [FLOOKUP_FUPDATE_LIST_not_mem (FUPDATE f (x, y)) (xs.zip ys) x hxzip,
-          FLOOKUP_update]
-        simp
-      have htail :
-          xs.mapM (fun key => FLOOKUP (FUPDATE_LIST (FUPDATE f (x, y)) (xs.zip ys)) key)
-            = some ys :=
-        ih (ys := ys) (f := FUPDATE f (x, y)) hdistinct' hlen'
-      rw [hhead, htail]
-      rfl
-
-/-- Exact port of HOL `opt_mmap_disj_zip_flookup`
-    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:188`): if the updated
-    keys are disjoint from the queried keys, the list update is invisible to the
-    query.  HOL's `distinct_lists` is rendered as `ListDisjoint`. -/
-@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "opt_mmap_disj_zip_flookup"]
-theorem optMmapDisjZipFlookup [BEq α] [LawfulBEq α]
-    (xs : List α) (f : FiniteMap α β) (ys : List α) (zs : List β)
-    (hdisj : ListDisjoint xs ys) (hlen : xs.length = zs.length) :
-    ys.mapM (fun key => FLOOKUP (FUPDATE_LIST f (xs.zip zs)) key) =
-      ys.mapM (fun key => FLOOKUP f key) := by
-  induction xs generalizing zs f with
-  | nil => rfl
-  | cons x xs ih =>
-    cases zs with
-    | nil => simp at hlen
-    | cons z zs =>
-      have hlen' : xs.length = zs.length := by
-        simp only [List.length_cons] at hlen
-        omega
-      have hxnot : x ∉ ys := by
-        intro hmem
-        exact hdisj x (by simp) hmem
-      have hdisj' : ListDisjoint xs ys := by
-        intro value hin hin'
-        exact hdisj value (by simp [hin]) hin'
-      rw [List.zip_cons_cons, FUPDATE_LIST_cons]
-      rw [ih (zs := zs) (f := FUPDATE f (x, z)) hdisj' hlen']
-      apply listMapMCongr
-      intro key hkey
-      rw [FLOOKUP_update]
-      have hkx : (x == key) = false := by
-        apply beq_eq_false_iff_ne.mpr
-        intro he
-        exact hxnot (he ▸ hkey)
-      simp [hkx]
 
 /-- Exact port of HOL `genlist_distinct_max`
     (`cakeml/pancake/semantics/pan_commonPropsScript.sml:208`): the
@@ -630,15 +480,10 @@ theorem memGenlistAddSucValHOL (n x k : Nat) :
   rw [List.mem_range] at hi
   omega
 
-/-- Exact port of HOL `update_eq_zip_flookup`
-    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:244`): if `xs` has
-    distinct keys and `xs`, `ys` have equal length, then every in-range index
-    `n` looks up the `n`-th key of `xs` to the `n`-th value of `ys` in
-    `f |++ ZIP (xs, ys)`. HOL `ALL_DISTINCT` is rendered as `List.Nodup`,
-    `FLOOKUP` as the reviewed extensional lookup, `f |++` as `FUPDATE_LIST`,
-    and `EL n` as the bounded `getElem` `xs[n]'hn` (respectively
-    `ys[n]'…`, whose bound follows from `LENGTH xs = LENGTH ys`). -/
-@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "update_eq_zip_flookup"]
+/-- Flapjack-specific support corresponding to HOL `update_eq_zip_flookup`.
+    This uses raw lookup functions, which admit maps with infinite support;
+    HOL uses finite maps. Any Boolean equality instances are extra assumptions.
+    The faithful HOL declaration remains to be ported. -/
 theorem updateEqZipFlookupHOL [BEq α] [LawfulBEq α]
     (xs : List α) (ys : List β) (f : FiniteMap α β) (n : Nat)
     (hdistinct : xs.Nodup) (hlen : xs.length = ys.length) (hn : n < xs.length) :
@@ -646,27 +491,6 @@ theorem updateEqZipFlookupHOL [BEq α] [LawfulBEq α]
       some (ys[n]'(by rw [← hlen]; exact hn)) :=
   FLOOKUP_FUPDATE_LIST_zip_getElem xs ys f n hdistinct hlen hn
 
-/-- Exact port of HOL `opt_mmap_flookup_update`
-    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:156`): updating a map
-    at a key absent from the queried key list leaves the `OPT_MMAP (FLOOKUP ·)`
-    result unchanged.  HOL's `OPT_MMAP` is the repository's `List.mapM` for
-    `Option`, `~MEM x xs` is rendered as `x ∉ xs`, and `fm |+ (x,y)` as
-    `FUPDATE fm (x, y)`. -/
-@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "opt_mmap_flookup_update"]
-theorem optMmapFlookupUpdateHOL [BEq α] [LawfulBEq α]
-    (fm : FiniteMap α β) (x : α) (y : β) (xs : List α) (ys : List β)
-    (hmap : xs.mapM (fun key => FLOOKUP fm key) = some ys) (hnotmem : x ∉ xs) :
-    xs.mapM (fun key => FLOOKUP (FUPDATE fm (x, y)) key) = some ys := by
-  rw [listMapMCongr (fun key => FLOOKUP (FUPDATE fm (x, y)) key)
-    (fun key => FLOOKUP fm key) xs ?_]
-  · exact hmap
-  · intro key hkey
-    rw [FLOOKUP_update]
-    have hkx : (x == key) = false := by
-      apply beq_eq_false_iff_ne.mpr
-      intro he
-      exact hnotmem (he ▸ hkey)
-    simp [hkx]
 
 /-- Exact port of HOL `distinct_lists_eq_disjoint`
     (`cakeml/pancake/semantics/pan_commonPropsScript.sml:102`):
@@ -698,18 +522,6 @@ theorem opt_mmap_el {α β : Type} (l : List α) (f : α → Option β) (x : Lis
     List.getElem?_map, List.getElem?_eq_getElem hn', Option.map_some] at hpoint
   exact Option.some.inj hpoint
 
-/-- Exact port of HOL `domsub_commutes_fupdate`
-    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:319`): domain
-    subtraction at a key absent from the update list commutes with the list
-    update.  HOL `\\` is rendered as the Boolean-`BEq` `FDOMSUB`, `|++` as
-    `FUPDATE_LIST`, `~MEM` as list non-membership and `LENGTH` as `length`. -/
-@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "domsub_commutes_fupdate"]
-theorem domsub_commutes_fupdate [BEq α] [LawfulBEq α]
-    (xs : List α) (ys : List β) (fm : FiniteMap α β) (x : α)
-    (h : x ∉ xs) (hlen : xs.length = ys.length) :
-    FDOMSUB (FUPDATE_LIST fm (xs.zip ys)) x =
-      FUPDATE_LIST (FDOMSUB fm x) (xs.zip ys) :=
-  FDOMSUB_FUPDATE_LIST_commutes xs ys fm x h hlen
 
 /-- Exact port of HOL `map_the_some_cancel`
     (`cakeml/pancake/semantics/pan_commonPropsScript.sml:332`): mapping

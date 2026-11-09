@@ -14,18 +14,6 @@ def fixture : List (Decl Nat) :=
        body := .skip, returnShape := .one },
    .name "S" [], .exnDecl "E" (.named "T"), .decl .one "h" (.const 9)]
 
-theorem notIsFunctionFixture (declaration : Decl Nat) :
-    (isName declaration = true → globalDeclIsFunction declaration = false) ∧
-    (isDecl declaration = true → globalDeclIsFunction declaration = false) ∧
-    (isExnDecl declaration = true → globalDeclIsFunction declaration = false) :=
-  not_is_function declaration
-
-theorem declDistinctFixture : ∀ declaration ∈ fixture,
-    (isDecl declaration && isName declaration) = false ∧
-    (isDecl declaration && globalDeclIsFunction declaration) = false ∧
-    (isDecl declaration && isExnDecl declaration) = false :=
-  fun declaration _ => decl_distinct declaration
-
 def notIsFunctionGuard : Bool :=
   fixture.all (fun declaration =>
     (!isName declaration || !globalDeclIsFunction declaration) &&

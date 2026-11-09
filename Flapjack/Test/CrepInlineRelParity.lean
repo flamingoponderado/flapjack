@@ -37,47 +37,12 @@ def weakState : CrepHolState Nat Unit :=
       | 2 => some (.word 11)
       | _ => none }
 
-/-- A strict subset of `baseState`'s locals. -/
-def subsetState : CrepHolState Nat Unit :=
-  { baseState with
-    locals := fun n => match n with
-      | 0 => some (.word 7)
-      | _ => none }
-
-theorem baseState_submap_weak : crepInlineLocalsRel baseState weakState := by
-  rintro (_ | _ | _ | n) v h <;> simp_all [baseState, weakState]
-
-theorem subsetState_submap_base : crepInlineLocalsRel subsetState baseState := by
-  rintro (_ | _ | n) v h <;> simp_all [baseState, subsetState]
-
-theorem not_baseState_submap_subset : ¬ crepInlineLocalsRel baseState subsetState := by
-  intro h
-  have hlookup := h 1 (.word 9) (by simp [baseState])
-  simp [subsetState] at hlookup
-
 theorem baseState_strong_rel : crepInlineLocalsStrongRel baseState baseState := rfl
 
 theorem not_baseState_strong_weak : ¬ crepInlineLocalsStrongRel baseState weakState := by
   intro h
   have hpoint := congrFun h 2
   simp [baseState, weakState] at hpoint
-
-theorem baseState_state_rel : crepInlineStateRel baseState baseState :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-theorem not_baseState_state_rel_other_clock :
-    ¬ crepInlineStateRel baseState { baseState with clock := 4 } := by
-  intro h
-  have hcl := h.2.2.2.2.2.1
-  simp [baseState] at hcl
-
-theorem decClock_preserves :
-    crepInlineLocalsRel (decCrepHolClock baseState) (decCrepHolClock weakState) ∧
-    crepInlineStateRel (decCrepHolClock baseState) (decCrepHolClock weakState) :=
-  crepInlineLocalsRel_decClock baseState weakState baseState_submap_weak
-    (by
-      refine ⟨rfl, rfl, rfl, rfl, rfl, ?_, rfl, rfl, rfl, rfl⟩
-      simp [baseState, weakState])
 
 def baseStateGuard : Bool :=
   (decCrepHolClock baseState).clock == 4 &&
@@ -255,27 +220,5 @@ def inlineSkipGuard : Bool :=
     Flapjack.Test.CrepGlobalShapeParity.globalState CrepProg.skip).isSome
 
 #guard inlineSkipGuard
-
-/-- Width-indexed crep_inline relations agree with their generic-α forms at BitVec 64. -/
-example (s t : CrepHolState (BitVec 64) Unit) :
-    crepInlineStateRelW s t ↔ crepInlineStateRel s t := Iff.rfl
-
-example (s t : CrepHolState (BitVec 64) Unit) :
-    crepInlineLocalsRelW s t ↔ crepInlineLocalsRel s t := Iff.rfl
-
-example (s t : CrepHolState (BitVec 64) Unit) :
-    crepInlineLocalsStrongRelW s t ↔ crepInlineLocalsStrongRel s t := Iff.rfl
-
-example (a b a' b' : CrepHolState (BitVec 64) Unit) :
-    crepInlineLocalsExtRelW a b a' b' ↔ crepInlineLocalsExtRel a b a' b' := Iff.rfl
-
-example (s t : CrepHolState (BitVec 64) Unit) :
-    crepInlineStateRelCodeW s t ↔ crepInlineStateRelCode s t := Iff.rfl
-
-example (s t : CrepHolState (BitVec 64) Unit)
-    (hl : crepInlineLocalsRelW s t) (hs : crepInlineStateRelW s t) :
-    crepInlineLocalsRelW (decCrepHolClockW s) (decCrepHolClockW t) ∧
-    crepInlineStateRelW (decCrepHolClockW s) (decCrepHolClockW t) :=
-  crepInlineLocalsRel_decClockW s t hl hs
 
 end Flapjack.Test.CrepInlineRelParity

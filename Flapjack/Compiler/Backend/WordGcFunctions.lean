@@ -41,8 +41,8 @@ instance wordLocWNonemptyGc {width : Nat} [NeZero width] : Nonempty (WordLocW wi
 
 /-- HOL combinator `UPDATE` (`(a =+ b) f = λx. if a = x then b else f x`) on a
 memory function.  Flapjack infrastructure (HOL source outside `cakeml/`). -/
-def gcUpdate {width : Nat} [NeZero width] (a : BitVec width) (b : WordLocW width)
-    (f : BitVec width → WordLocW width) : BitVec width → WordLocW width :=
+def gcUpdate {width : Nat} [NeZero width] {β : Type} (a : BitVec width) (b : β)
+    (f : BitVec width → β) : BitVec width → β :=
   fun x => if a = x then b else f x
 
 /-- HOL `word_bits h 0 w` (`(h -- 0) w`): the bits `0 .. MIN h (dimindex - 1)`
@@ -114,9 +114,10 @@ def updateAddr {width : Nat} [NeZero width] (conf : Config) (fwdPtr oldAddr : Bi
 /-- Exact HOL `memcpy_def` (`word_gcFunctionsScript.sml:53-59`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "memcpy_def"
   (words_as_type_indexed_bitvec)]
-def memcpy {width : Nat} [NeZero width] (w a b : BitVec width)
-    (m : BitVec width → WordLocW width) (dm : BitVec width → Bool) :
-    BitVec width × (BitVec width → WordLocW width) × Bool :=
+def memcpy {width : Nat} {countWidth : Nat} [NeZero width] [NeZero countWidth] {β : Type}
+    (w : BitVec countWidth) (a b : BitVec width)
+    (m : BitVec width → β) (dm : BitVec width → Bool) :
+    BitVec width × (BitVec width → β) × Bool :=
   if w = 0 then (b, m, true) else
     let (b1, m1, c1) := memcpy (w - 1) (a + wordSemBytesInWord) (b + wordSemBytesInWord)
       (gcUpdate b (m a) m) dm
@@ -124,13 +125,14 @@ def memcpy {width : Nat} [NeZero width] (w a b : BitVec width)
 termination_by w.toNat
 decreasing_by apply bitVec_toNat_sub_one_lt; assumption
 
-theorem memcpy_zero {width : Nat} [NeZero width] (a b : BitVec width)
-    (m : BitVec width → WordLocW width) (dm : BitVec width → Bool) :
-    memcpy (0#width) a b m dm = (b, m, true) := by
+theorem memcpy_zero {width countWidth : Nat} [NeZero width] [NeZero countWidth] {β : Type} (a b : BitVec width)
+    (m : BitVec width → β) (dm : BitVec width → Bool) :
+    memcpy (0#countWidth) a b m dm = (b, m, true) := by
   rw [memcpy]; simp
 
-theorem memcpy_of_ne {width : Nat} [NeZero width] {w : BitVec width} (h : w ≠ 0)
-    (a b : BitVec width) (m : BitVec width → WordLocW width) (dm : BitVec width → Bool) :
+theorem memcpy_of_ne {width countWidth : Nat} [NeZero width] [NeZero countWidth] {β : Type}
+    {w : BitVec countWidth} (h : w ≠ 0)
+    (a b : BitVec width) (m : BitVec width → β) (dm : BitVec width → Bool) :
     memcpy w a b m dm =
       (let (b1, m1, c1) := memcpy (w - 1) (a + wordSemBytesInWord) (b + wordSemBytesInWord)
         (gcUpdate b (m a) m) dm

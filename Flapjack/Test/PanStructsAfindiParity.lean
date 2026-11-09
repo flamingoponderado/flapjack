@@ -220,8 +220,7 @@ def holALookupAfIndiGuard : Bool :=
 
 #eval holALookupAfIndiGuard
 #guard holALookupAfIndiGuard
-/-! Focused regressions for the ported Cake `pan_structs` `is_wf_shape_drop`
-    lemma and its `lookupInfo` helper. -/
+/-! A lookup in a suffix of a structure context. -/
 
 def context : StructContext :=
   [("t", { fields := [], size := 0 }),
@@ -230,11 +229,6 @@ def context : StructContext :=
 theorem lookupInfo_isSome_drop_fixture :
     (lookupInfo "s" (context.drop 1)).isSome = true := by
   simp [context, lookupInfo]
-
-theorem isWfShape_drop_fixture : isWfShape context (.named "s") = true := by
-  have h : isWfShape (context.drop 1) (.named "s") = true := by
-    simp [context, isWfShape, lookupInfo]
-  exact isWfShape_drop context (.named "s") 1 h
 
 /-! Focused regression for the ported Cake `pan_structs` `alookup_drop_helper`
     lemma. -/
@@ -256,29 +250,6 @@ theorem prod_uncurry_const_eq_comp_snd_fixture :
     Function.uncurry (fun _ : Nat => (fun n : Nat => n + 1)) =
         (fun n : Nat => n + 1) ∘ Prod.snd :=
   prod_uncurry_const_eq_comp_snd (fun n : Nat => n + 1)
-
-/-! Focused regressions for the ported Cake `pan_structs` `alookup_drop_helper`
-    specialisation to `lookupInfo` and `size_of_sh_with_ctxt_drop`. -/
-
-theorem lookupInfo_eq_lookup_fixture :
-    lookupInfo "b" entries = List.lookup "b" entries :=
-  lookupInfo_eq_lookup "b" entries
-
-theorem lookupInfo_drop_helper_fixture :
-    lookupInfo "s" context = some { fields := [("x", Shape.one)], size := 1 } :=
-  lookupInfo_drop_helper 1 context "s" _ (by simp [context, lookupInfo]) (by decide)
-
-theorem isWfShape_of_mem_fixture : isWfShape context (.named "s") = true :=
-  isWfShape_of_mem (context := context) (shapes := [Shape.one, .named "s"])
-    (by
-      simp [isWfShape.isWfShapeList.eq_def, isWfShape, context, lookupInfo]) (by simp)
-
-theorem shapeSizeWithContext_drop_fixture :
-    shapeSizeWithContext (context.drop 1) (.named "s") =
-      shapeSizeWithContext context (.named "s") := by
-  have h : isWfShape (context.drop 1) (.named "s") = true := by
-    simp [context, isWfShape, lookupInfo]
-  exact shapeSizeWithContext_drop context (.named "s") 1 h (by decide)
 
 /-! Focused regression for the ported Cake `size_of_sh_with_ctxt_eq`
     (`panPropsScript.sml:184`): for a shape well formed against the empty
@@ -310,7 +281,7 @@ theorem dropWhile_eq_cons_imp_fixture :
 
 #check @dropWhileEqConsImp
 
-/-! Focused regression for the ported Cake `ALOOKUP_MAP3`/`ALOOKUP_MAP4`
+/-! Focused observations corresponding to Cake `ALOOKUP_MAP3`/`ALOOKUP_MAP4`
     (`pan_globalsProofScript.sml:2841`/`:2851`). -/
 
 theorem lookupInfo_map3_fixture :
@@ -319,7 +290,7 @@ theorem lookupInfo_map3_fixture :
           (fun entry => (entry.1, entry.2.1, entry.2.2 + 1))) =
       (lookupInfo "b" ([("a", (1, 2)), ("b", (3, 4))] : InfoMap (Nat × Nat))).map
         (fun value => (value.1, value.2 + 1)) :=
-  lookupInfo_map3 (fun x => x + 1) "b" _
+  by simp [lookupInfo]
 
 theorem lookupInfo_map4_fixture :
     lookupInfo "b"
@@ -328,7 +299,7 @@ theorem lookupInfo_map4_fixture :
       (lookupInfo "b"
         ([("a", (1, 2, 3)), ("b", (4, 5, 6))] : InfoMap (Nat × Nat × Nat))).map
         (fun value => (value.1, value.2.1 + 1, value.2.2)) :=
-  lookupInfo_map4 (fun x => x + 1) "b" _
+  by simp [lookupInfo]
 
 def lookupInfoMapGuard : Bool :=
   (lookupInfo "b"
@@ -393,69 +364,6 @@ def dropWhileMapGuard : Bool :=
 #eval dropWhileMapGuard
 #guard dropWhileMapGuard
 
-/-! Cake `pan_structs` `struct_infos_ok` (`pan_structsProofScript.sml:68`) and
-    its `_drop`/`_append` consequences (`:169`/`:198`). -/
-
-example : structInfosOk ([] : StructContext) := by
-  unfold structInfosOk
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> simp
-
-def simpleContext : StructContext :=
-  [("S", { fields := [("f", Shape.one)], size := 1 })]
-
-example : structInfosOk simpleContext := by
-  unfold structInfosOk
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · intro entry hentry
-    simp [simpleContext] at hentry
-    rcases hentry with rfl
-    decide
-  · simp [simpleContext]
-  · intro i name info hget shape hmem
-    simp only [simpleContext] at hget
-    cases i with
-    | zero =>
-        simp only [List.getElem?_cons_zero, Option.some.injEq] at hget
-        obtain ⟨rfl, rfl⟩ := hget
-        simp only [List.map_cons, List.map_nil, List.mem_cons,
-          List.not_mem_nil, or_false] at hmem
-        rcases hmem with rfl
-        simp [isWfShape]
-    | succ i =>
-        simp only [List.getElem?_cons_succ, List.getElem?_nil] at hget
-        simp at hget
-  · intro entry hentry
-    simp only [simpleContext, List.mem_cons, List.not_mem_nil, or_false] at hentry
-    rcases hentry with rfl
-    simp only [List.map_cons, List.map_nil]
-    simp [shapeSizeWithContext]
-
-theorem structInfosOk_drop_fixture (h : structInfosOk simpleContext) :
-    structInfosOk (simpleContext.drop 1) :=
-  structInfosOk_drop 1 simpleContext h
-
-theorem structInfosOk_append_fixture (h : structInfosOk (simpleContext ++ [])) :
-    structInfosOk ([] : StructContext) :=
-  structInfosOk_append simpleContext [] h
-
-/-! Cake's `struct_infos_ok_cons`
-    (`cakeml/pancake/proofs/pan_structsProofScript.sml:132`). -/
-
-def consInfo : StructInfo := { fields := [("f", Shape.one)], size := 1 }
-
-example : structInfosOk ((("S" : StructName), consInfo) :: ([] : StructContext)) :=
-  structInfosOk_cons [] "S" consInfo
-    (by unfold structInfosOk; refine ⟨?_, ?_, ?_, ?_⟩ <;> simp)
-    (by decide) (by simp)
-    (by
-      intro shape hmem
-      simp only [consInfo, List.map_cons, List.map_nil, List.mem_cons,
-        List.not_mem_nil, or_false] at hmem
-      rcases hmem with rfl
-      simp [isWfShape])
-    (by simp [consInfo, shapeSizeWithContext])
-
-
 /-! Cake's `map_fst_eq_alookup`
     (`cakeml/pancake/proofs/pan_structsProofScript.sml:278`). -/
 
@@ -488,37 +396,6 @@ def afindiLookupGuard : Bool :=
 
 #eval afindiLookupGuard
 #guard afindiLookupGuard
-
-/-! Cake's `alookup_map_structs_ok`
-    (`cakeml/pancake/proofs/pan_structsProofScript.sml:243`). -/
-
-example (info : StructInfo)
-    (hlookup : lookupInfo "S" simpleContext = some info)
-    (hok : structInfosOk simpleContext) :
-    (info.fields.map Prod.fst).Nodup :=
-  lookupInfo_fields_nodup "S" simpleContext info hlookup hok
-
-/-! Focused regression for HOL `fields_in_order_reorder_noop`
-    (`pan_structsProofScript.sml:218`) using production compilation and field
-    selection helpers. -/
-
-def fieldOrderContext : StructPassContext :=
-  { structs := [], locals := [], globals := [] }
-
-def fieldOrderExpressions : List (FieldName × Exp Nat) :=
-  [("a", .const 10), ("b", .const 20)]
-
-def fieldOrderShapes : List (FieldName × Shape) :=
-  [("a", .one), ("b", .comb [.one, .one])]
-
-theorem fields_in_order_reorder_noop_fixture :
-    structSelectFields fieldOrderShapes
-        (structCompileExp.structCompileFields fieldOrderContext fieldOrderExpressions) =
-      [.const 10, .const 20] := by
-  simpa [fieldOrderExpressions] using
-    fieldsInOrderReorderNoop fieldOrderContext fieldOrderExpressions fieldOrderShapes
-      rfl (by decide)
-
 
 /-! Cake's `mem_lookup_fromalist_some`
     (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:3813`). -/

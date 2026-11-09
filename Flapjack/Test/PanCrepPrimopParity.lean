@@ -69,16 +69,6 @@ def crepNonzeroCarry : Bool :=
 #guard crepFourArgs
 #guard crepNonzeroCarry
 
-/-- Apply the exact HOL bridge to the nonzero-carry oracle case. -/
-theorem bridgeFixture :
-    crepPrimopHOL .addCarry
-      (([.word (3 : BitVec 8), .word 4, .word 2] :
-        List (PanValue (BitVec 8))).flatMap panSemFlattenHOL) =
-      some (panSemFlattenHOL
-        (.rStruct [.word (8 : BitVec 8), .word 0])) := by
-  apply panPrimopCrepPrimop
-  rfl
-
 /-- Apply the exact-carrier HOL bridge to the nonzero-carry oracle case. -/
 theorem exactBridgeFixture :
     crepPrimopHOL .addCarry

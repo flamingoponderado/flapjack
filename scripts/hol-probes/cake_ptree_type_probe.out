@@ -1,0 +1,2 @@
+type=SOME (Atfun (Atvar «'a») (Atapp [Atapp [] (Short «int»)] (Short «list»)))
+abbrev=SOME (Dtabbrev (Locs (POSN 0 0) (POSN 0 21)) [«'a»] «box» (Atapp [Atvar «'a»] (Short «list»)))

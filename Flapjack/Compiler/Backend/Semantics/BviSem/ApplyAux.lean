@@ -1,0 +1,95 @@
+import Flapjack.Compiler.Backend.Semantics.BviSem.Finalise
+import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
+import Flapjack.Compiler.Backend.Semantics.ClosSem.Word
+import Flapjack.Compiler.Backend.BackendCommon.SmallInt
+
+/-! Source-shaped BVI-specific primitive dispatch. -/
+namespace Flapjack.Compiler.Backend.BviSem
+open Flapjack.Compiler.Backend.BvlSem
+open Flapjack.Compiler.Backend.BackendCommon
+
+namespace ApplyAuxCarrier
+/-- Canonical reference-map state roundtrip for BVI primitive dispatch. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end ApplyAuxCarrier
+
+/-- BVI-specific primitive handling. `none` denotes a type error, `some none`
+delegates to BVL, and `some (some ...)` returns a value and state. -/
+@[hol "cakeml/compiler/backend/semantics/bviSemScript.sml" "do_app_aux_def"
+  (fmap_as_finite_support := [refs])]
+noncomputable def doAppAux {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (s : BviState C F) : Option (Option (Value × BviState C F)) :=
+  let result (value : Value) := some (some (value, s))
+  let write (ptr : Nat) (entry : Ref Value) :=
+    some (some (unitValue, { s with refs := s.refs.updateEq (ptr, entry) }))
+  match op, args with
+  | .intOp (.const n), [] => if smallEnoughInt n then result (.number n) else none
+  | .intOp (.const _), _ => none
+  | .label loc, [] => if (sptLookup loc s.code).isSome then result (.codePtr loc) else none
+  | .label _, _ => none
+  | .globOp .globalsPtr, [] => s.global.map (fun ptr => some (.refPtr true ptr, s))
+  | .globOp .globalsPtr, _ => none
+  | .globOp .setGlobalsPtr, [.refPtr true ptr] => some (some (unitValue, { s with global := some ptr }))
+  | .globOp .setGlobalsPtr, _ => none
+  | .globOp (.global index), [] => do
+    let ptr ← s.global
+    let .valueArray values ← s.refs.lookup ptr | none
+    match values[index]? with
+    | none => none
+    | some value => result value
+  | .globOp (.global _), _ => none
+  | .globOp (.setGlobal index), [value] => do
+    let ptr ← s.global
+    let .valueArray values ← s.refs.lookup ptr | none
+    if index < values.length then write ptr (.valueArray (values.set index value)) else none
+  | .globOp (.setGlobal _), _ => none
+  | .blockOp (.fromList tag), [length, list] => do
+    let values ← valueToList list
+    match length with
+    | .number n => if n = Int.ofNat values.length then result (.block tag values) else none
+    | _ => none
+  | .blockOp (.fromList _), _ => none
+  | .memOp (.refByte flag), [.number count, .number byte] => do
+    if count < 0 then none else
+      let byte ← Flapjack.Compiler.Backend.ClosSem.intToByte byte
+      let ptr := leastUnusedRef s.refs
+      some (some (.refPtr true ptr,
+        { s with refs := s.refs.updateEq (ptr, .byteArray flag (List.replicate count.toNat byte)) }))
+  | .memOp (.refByte _), _ => none
+  | .memOp (.mutCons tag index), values =>
+    match values[index]? with
+    | none => none
+    | some child =>
+      let ptr := leastUnusedRef s.refs
+      let entry := Ref.mutBlock tag false (values.take index) child (values.drop (index + 1))
+      some (some (.refPtr false ptr, { s with refs := s.refs.updateEq (ptr, entry) }))
+  | .memOp .updateCons, [.refPtr _ ptr, .number index, value] =>
+    match s.refs.lookup ptr with
+    | some (.mutBlock tag finalised left _ right) =>
+      if index ≠ Int.ofNat left.length ∨ finalised then none
+      else write ptr (.mutBlock tag false left value right)
+    | _ => none
+  | .memOp .finaliseCons, [value] =>
+    (finaliseCons value s.refs).map (fun (resultValue, refs) => some (resultValue, { s with refs := refs }))
+  | .globOp .allocGlobal, _ => none
+  | .memOp .fromListByte, _ => none
+  | .memOp .toListByte, _ => none
+  | .memOp .concatByteVec, _ => none
+  | .memOp (.copyByte true), _ => none
+  | _, _ => some none
+
+/-- A global operation is handled by BVI and cannot reach the BVL fallback.
+This dispatcher fact is Flapjack infrastructure used to discard BVL's
+arbitrary global fields; HOL uses the corresponding cases inline. -/
+theorem doAppAux_delegates_not_global {C F : Type} (op : ClosLang.GlobOp)
+    (args : List Value) (s : BviState C F) :
+    doAppAux (.globOp op) args s ≠ some none := by
+  cases op <;> cases args <;> simp [doAppAux]
+  all_goals repeat' split <;> simp_all
+  all_goals simp_all [Option.bind_eq_some_iff]
+  all_goals aesop
+
+end Flapjack.Compiler.Backend.BviSem

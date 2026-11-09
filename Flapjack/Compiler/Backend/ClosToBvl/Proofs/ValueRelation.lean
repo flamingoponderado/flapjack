@@ -1,0 +1,249 @@
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureRelation
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
+import Flapjack.Compiler.Backend.BackendCommon.ClosTags
+import Mathlib.Data.List.Forall2
+
+/-! Value and environment relations for closure-to-BVL simulation. -/
+namespace Flapjack.Compiler.Backend.ClosToBvl
+open Flapjack.Compiler.Backend.BackendCommon
+
+private def toBroad {α : Type} (m : HolFiniteMapExact Nat α) := m.lookup
+private def ofBroad {α : Type} (lookup : Nat → Option α)
+    (support : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat α := ⟨lookup, support⟩
+
+/-- Codec roundtrips for the finite maps in the value relation. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧
+    (ofBroad (toBroad f) f.finiteSupport).finiteSupport = f.finiteSupport ∧
+    ofBroad (toBroad f) f.finiteSupport = f := by
+  cases f
+  exact ⟨rfl, rfl, rfl⟩
+
+theorem holFmapAsFiniteSupportParamWitness_vRel_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs := by
+  cases refs
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Closure values and their BVL representations, including partial applications. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel"
+  (fmap_as_finite_support_parameters := [f, refs])]
+inductive vRel (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
+    (code : Spt (Nat × Bvl.Exp)) : ClosSem.Value → BvlSem.Value → Prop where
+  | number (n : Int) : vRel maxApp f refs code (.number n) (.number n)
+  | word64 (w : BitVec 64) : vRel maxApp f refs code (.word64 w) (.word64 w)
+  | block {tag xs ys} : List.Forall₂ (vRel maxApp f refs code) xs ys →
+      vRel maxApp f refs code (.block tag xs) (.block (closTagShift tag) ys)
+  | byteVector {bs p} : refs.lookup p = some (.byteArray true bs) →
+      (¬ ∃ r, f.lookup r = some p) →
+      vRel maxApp f refs code (.byteVector bs) (.refPtr true p)
+  | refPtr {b r1 r2} : f.lookup r1 = some r2 →
+      vRel maxApp f refs code (.refPtr b r1) (.refPtr b r2)
+  | closure {env fvs cl p n ys} : List.Forall₂ (vRel maxApp f refs code) env fvs →
+      clRel maxApp (fun p => ∃ r, f.lookup r = some p) refs code (env, fvs) cl
+        (.block 30 (.codePtr p :: .number n :: ys)) →
+      vRel maxApp f refs code cl (.block 30 (.codePtr p :: .number n :: ys))
+  | partialClosure {env fvs argEnv ys numArgs cl clApp cl'} :
+      List.Forall₂ (vRel maxApp f refs code) env fvs →
+      List.Forall₂ (vRel maxApp f refs code) argEnv ys →
+      argEnv ≠ [] → argEnv.length < numArgs →
+      sptLookup (partialAppFnLocation maxApp (numArgs - 1) (ys.length - 1)) code =
+        some (numArgs - argEnv.length + 1,
+          generatePartialAppClosureFn (numArgs - 1) (ys.length - 1)) →
+      addArgs cl argEnv = some clApp → getNumArgs cl = some numArgs →
+      clRel maxApp (fun p => ∃ r, f.lookup r = some p) refs code (env, fvs) cl cl' →
+      vRel maxApp f refs code clApp
+        (.block 31 (.codePtr (partialAppFnLocation maxApp (numArgs - 1) (ys.length - 1)) ::
+          .number (Int.ofNat (numArgs - 1 - argEnv.length)) :: cl' :: ys))
+
+/-- Canonical finite-map codec witnesses for Boolean value relatedness. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_bool_iff_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧
+    (ofBroad (toBroad f) f.finiteSupport).finiteSupport = f.finiteSupport ∧
+    ofBroad (toBroad f) f.finiteSupport = f :=
+  holFmapAsFiniteSupportParamWitness_vRel_f f key
+
+theorem holFmapAsFiniteSupportParamWitness_vRel_bool_iff_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_vRel_refs refs key
+
+/-- Related Boolean values are characterized in both directions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_Boolv"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem vRel_bool_iff (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (b : Bool) (source : ClosSem.Value) (target : BvlSem.Value) :
+    (vRel maxApp f refs code (ClosSem.boolValue b) target ↔ target = BvlSem.boolValue b) ∧
+    (vRel maxApp f refs code source (BvlSem.boolValue b) ↔ source = ClosSem.boolValue b) := by
+  cases b <;> simp only [ClosSem.boolValue, BvlSem.boolValue, BackendCommon.boolToTag,
+    BackendCommon.trueTag, BackendCommon.falseTag, ↓reduceIte]
+  all_goals constructor <;> constructor
+  all_goals try { intro h; cases h with
+    | block fields => cases fields; rfl
+    | closure _ closure => cases closure
+    | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added }
+  all_goals try { intro h; subst_vars; exact .block .nil }
+  case false.right.mp =>
+    intro h
+    generalize eq : (BvlSem.Value.block (if false = true then 1 else 0) []) = t at h
+    (cases h <;> simp_all [BackendCommon.closTagShift]); split at * <;> omega
+  case true.right.mp =>
+    intro h
+    generalize eq : (BvlSem.Value.block 1 []) = t at h
+    (cases h <;> simp_all [BackendCommon.closTagShift]); split at * <;> omega
+
+/-- Canonical finite-map codec witnesses for unit value relatedness. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_unit_iff_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧
+    (ofBroad (toBroad f) f.finiteSupport).finiteSupport = f.finiteSupport ∧
+    ofBroad (toBroad f) f.finiteSupport = f :=
+  holFmapAsFiniteSupportParamWitness_vRel_f f key
+
+theorem holFmapAsFiniteSupportParamWitness_vRel_unit_iff_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_vRel_refs refs key
+
+/-- Related unit values are characterized in both directions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_Unit"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem vRel_unit_iff (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (source : ClosSem.Value) (target : BvlSem.Value) :
+    (vRel maxApp f refs code ClosSem.unitValue target ↔ target = BvlSem.unitValue) ∧
+    (vRel maxApp f refs code source BvlSem.unitValue ↔ source = ClosSem.unitValue) := by
+  simpa [ClosSem.unitValue, BvlSem.unitValue, ClosSem.boolValue, BvlSem.boolValue,
+    BackendCommon.boolToTag, BackendCommon.falseTag] using
+    vRel_bool_iff maxApp f refs code false source target
+
+theorem holFmapAsFiniteSupportParamWitness_vRel_subspt_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧
+    (ofBroad (toBroad f) f.finiteSupport).finiteSupport = f.finiteSupport ∧
+    ofBroad (toBroad f) f.finiteSupport = f :=
+  holFmapAsFiniteSupportParamWitness_vRel_f f key
+
+theorem holFmapAsFiniteSupportParamWitness_vRel_subspt_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_vRel_refs refs key
+
+/-- Extending the code tree preserves related values.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_subspt" (fmap_as_finite_support_parameters := [f, refs])] -/
+theorem vRel_subspt {maxApp : Nat} (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
+    {code1 code2 : Spt (Nat × Bvl.Exp)} {x y}
+    (related : vRel maxApp f refs code1 x y) (sub : sptSubspt code1 code2) :
+    vRel maxApp f refs code2 x y := by
+  refine vRel.rec
+    (motive_1 := fun x y _ => ∀ code2, sptSubspt code1 code2 → vRel maxApp f refs code2 x y)
+    (motive_2 := fun xs ys _ => ∀ code2, sptSubspt code1 code2 →
+      List.Forall₂ (vRel maxApp f refs code2) xs ys)
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ related code2 sub
+  · intro n code2 sub
+    exact .number n
+  · intro w code2 sub
+    exact .word64 w
+  · intro tag xs ys related ih code2 sub
+    exact .block (ih code2 sub)
+  · intro bs p lookup fresh code2 sub
+    exact .byteVector lookup fresh
+  · intro b r1 r2 lookup code2 sub
+    exact .refPtr lookup
+  · intro env fvs cl p n ys related closure ih code2 sub
+    exact .closure (ih code2 sub) (clRel_subspt refs closure sub)
+  · intro env fvs argEnv ys numArgs cl clApp cl' envRel argRel nonempty bound lookup added arity closure
+      envIh argIh code2 sub
+    have mem := (sptMem_iff_lookup _ _).2 ⟨_, lookup⟩
+    exact .partialClosure (envIh code2 sub) (argIh code2 sub) nonempty bound
+      ((sub _ mem).2.trans lookup) added arity (clRel_subspt refs closure sub)
+  · intro code2 sub
+    exact .nil
+  · intro a b xs ys head tail headIh tailIh code2 sub
+    exact .cons (headIh code2 sub) (tailIh code2 sub)
+
+theorem holFmapAsFiniteSupportParamWitness_envRel_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧
+    (ofBroad (toBroad f) f.finiteSupport).finiteSupport = f.finiteSupport ∧
+    ofBroad (toBroad f) f.finiteSupport = f :=
+  holFmapAsFiniteSupportParamWitness_vRel_f f key
+
+theorem holFmapAsFiniteSupportParamWitness_envRel_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_vRel_refs refs key
+
+/-- The source environment may be related to a prefix of a longer BVL environment. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "env_rel_def"
+  (fmap_as_finite_support_parameters := [f, refs])]
+def envRel (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp)) :
+    List ClosSem.Value → List BvlSem.Value → Prop
+  | [], _ => True
+  | _ :: _, [] => False
+  | x :: xs, y :: ys => vRel maxApp f refs code x y ∧ envRel maxApp f refs code xs ys
+
+/-- Source-shaped environment-length consequence. The finite-map parameter
+qualifiers and inferred HOL type remain to be reviewed before tagging it. -/
+theorem envRel_length {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    {xs ys} (related : envRel maxApp f refs code xs ys) : xs.length ≤ ys.length := by
+  induction xs generalizing ys with
+  | nil => simp
+  | cons x xs ih =>
+      cases ys with
+      | nil => exact False.elim related
+      | cons y ys =>
+          have tail : envRel maxApp f refs code xs ys := related.2
+          simpa using Nat.succ_le_succ (ih tail)
+
+theorem holFmapAsFiniteSupportParamWitness_envRel_subspt_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧
+    (ofBroad (toBroad f) f.finiteSupport).finiteSupport = f.finiteSupport ∧
+    ofBroad (toBroad f) f.finiteSupport = f :=
+  holFmapAsFiniteSupportParamWitness_vRel_f f key
+
+theorem holFmapAsFiniteSupportParamWitness_envRel_subspt_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_vRel_refs refs key
+
+/-- Extending the code tree preserves related environments.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "env_rel_subspt" (fmap_as_finite_support_parameters := [f, refs])] -/
+theorem envRel_subspt {maxApp : Nat} (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
+    {code1 code2 : Spt (Nat × Bvl.Exp)} {xs ys}
+    (related : envRel maxApp f refs code1 xs ys) (sub : sptSubspt code1 code2) :
+    envRel maxApp f refs code2 xs ys := by
+  induction xs generalizing ys with
+  | nil => trivial
+  | cons x xs ih =>
+      cases ys with
+      | nil => exact False.elim related
+      | cons y ys => exact ⟨vRel_subspt f refs related.1 sub, ih related.2⟩
+
+end Flapjack.Compiler.Backend.ClosToBvl

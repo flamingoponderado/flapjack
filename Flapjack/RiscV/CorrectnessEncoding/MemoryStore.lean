@@ -8,6 +8,7 @@ Original source assertions and independent positive word widths are retained;
 no native execution or desired post-state relation is assumed. -/
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 Compiler.Encoders.Asm Compiler.Encoders.AsmSem
+open Flapjack.RiscV.L3.Step.ByteMemory
 open Compiler.Backend.LabToTarget
 set_option autoImplicit false
 

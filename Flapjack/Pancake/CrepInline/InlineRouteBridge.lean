@@ -324,20 +324,6 @@ theorem alistToFmapHOLExact_codec_lookup {width : Nat} [NeZero width] {γ : Type
   exact flookup_fupdateList_codec FEMPTY FEMPTY decode
     (fun t _ => by simp only [FEMPTY, Option.map_none]) entries.reverse s hs
 
-/-- `nestedDecs` over a constant-zero value list maps to `List.replicate` of the
-    exact constant under the codec. -/
-private theorem crepExpMap_const_replicate {width : Nat} [NeZero width] (l : List Nat) :
-    (l.map (fun _ => CrepExp.const (0 : BitVec width))).map crepExpToHOL =
-      List.replicate l.length (CrepExpHOL.const 0) := by
-  induction l with
-  | nil => rfl
-  | cons n t ih =>
-      have h : crepExpToHOL (CrepExp.const (0 : BitVec width)) = CrepExpHOL.const 0 := by
-        simp [crepExpToHOL]
-      simp only [List.map_cons]
-      rw [ih, h]
-      rfl
-
 def crepEarlyExitToHOL : CrepEarlyExit → CrepEarlyExitHOL
   | .exception => .exception
   | .return => .return
@@ -363,56 +349,12 @@ theorem crepMergeExit_map (a b : Option CrepEarlyExit) :
       | none => rfl
       | some eb => cases eb <;> rfl
 
-private theorem crepInlineActiveNames_contains_any_go [BEq FunName] [LawfulBEq FunName]
-    [LawfulHashable FunName] {α : Type} (inlineable : List (CrepInlineEntry α))
-    (name : FunName) (s : Std.HashSet FunName) :
-    (inlineable.foldl (fun names entry => names.insert entry.1) s).contains name =
-      (s.contains name || inlineable.any (fun entry => entry.1 == name)) := by
-  induction inlineable generalizing s with
-  | nil => simp
-  | cons entry rest ih =>
-      simp only [List.foldl_cons, List.any_cons]
-      rw [ih (s.insert entry.1), Std.HashSet.contains_insert]
-      rw [Bool.or_comm (entry.1 == name) (s.contains name), Bool.or_assoc]
-
-/-- The `ofString`/`toStringOfBytes` codec preserves Bool equality on
-    byte-ranged names. -/
 theorem beq_ofString_eq_ofString {s t : String}
     (hs : CrepNameRanged s) (ht : CrepNameRanged t) :
     (ofString s == ofString t) = (s == t) := by
   rw [beq_comm (ofString s) (ofString t), beq_ofString_eq ht,
       toStringOfBytes_ofString_of_bytes s hs, beq_comm t s]
 
-private theorem erase_active_contains {width : Nat} [NeZero width]
-    (map : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
-    (active : Std.HashSet FunName) (name s : FunName)
-    (hactive : ∀ s, CrepNameRanged s → active.contains s = (map.lookup (ofString s)).isSome)
-    (hname : CrepNameRanged name) (hs : CrepNameRanged s) :
-    (active.erase name).contains s =
-      ((map.erase (ofString name)).lookup (ofString s)).isSome := by
-  rw [Std.HashSet.contains_erase, hactive s hs, HolFiniteMapExact.lookup_erase,
-      show (FDOMSUB map.lookup (ofString name) (ofString s)) =
-        FLOOKUP (FDOMSUB map.lookup (ofString name)) (ofString s) from rfl,
-      FLOOKUP_domsub, beq_ofString_eq_ofString hname hs]
-  by_cases hb : (name == s) = true <;> simp_all [FLOOKUP]
-
-private theorem erase_range {width : Nat} [NeZero width]
-    (map : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
-    (name : CrepInlineMapHOLName)
-    (hrange : ∀ k v, map.lookup k = some v → CrepProgNameRanged (crepProgOfHOL v.2)) :
-    ∀ k v, (map.erase name).lookup k = some v → CrepProgNameRanged (crepProgOfHOL v.2) := by
-  intro k v h
-  rw [HolFiniteMapExact.lookup_erase,
-      show (FDOMSUB map.lookup name k) = FLOOKUP (FDOMSUB map.lookup name) k from rfl,
-      FLOOKUP_domsub] at h
-  by_cases hk : (name == k) = true
-  · rw [hk] at h; simp at h
-  · rw [Bool.not_eq_true] at hk
-    rw [hk] at h; simp only [Bool.false_eq_true, if_false, FLOOKUP] at h
-    exact hrange k v (by simpa using h)
-
-/-- `FUPDATE_LIST` can only return a value that is either in the entries or in the
-    base map. Flapjack codec infrastructure with no HOL original. -/
 theorem flookup_fupdateList_exists {α β : Type} [BEq α] [LawfulBEq α]
     (f : FiniteMap α β) (entries : List (α × β)) (k : α) (v : β)
     (h : FLOOKUP (FUPDATE_LIST f entries) k = some v) :

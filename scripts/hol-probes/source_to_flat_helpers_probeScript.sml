@@ -41,3 +41,12 @@ val _ = if null (hyp (simple_dlet_def)) then () else raise Fail "hypotheses: sim
 val _ = (print "simple_dlet_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (simple_dlet_def)); print "\n");
 val _ = if null (hyp (concat_def)) then () else raise Fail "hypotheses: concat_def";
 val _ = (print "concat_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (concat_def)); print "\n");
+
+val _ = if null (hyp compile_funs_map) then () else raise Fail "hypotheses: compile_funs_map";
+val _ = (print "compile_funs_map_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_funs_map); print "\n");
+
+val _ = if null (hyp compile_exps_reverse) then () else raise Fail "hypotheses: compile_exps_reverse";
+val _ = (print "compile_exps_reverse_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_exps_reverse); print "\n");
+
+val _ = if null (hyp fst_alloc_defs) then () else raise Fail "hypotheses: fst_alloc_defs";
+val _ = (print "fst_alloc_defs_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl fst_alloc_defs); print "\n");

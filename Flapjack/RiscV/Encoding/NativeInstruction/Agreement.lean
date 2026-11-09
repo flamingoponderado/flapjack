@@ -53,25 +53,6 @@ private theorem utypeNumeric (o : BitVec 7) (d : BitVec 5) (i : BitVec 20) :
   simp only [appendNumeric, BitVec.toNat_ofNat, Nat.reducePow]
   omega
 
-private theorem encodeRNative (o : BitVec 7) (f3 : BitVec 3)
-    (f7 : BitVec 7) (d a b : Fin 32) :
-    EncodingReference.encodeR o.toNat f3.toNat f7.toNat d a b =
-      L3.Rtype (o,f3,nativeRegister d,nativeRegister a,nativeRegister b,f7) := by
-  rw [rtypeNumeric]
-  simp [EncodingReference.encodeR, EncodingReference.encodeWord32, EncodingReference.registerBits, nativeRegister_toNat]
-
-private theorem encodeINative (o : BitVec 7) (f3 : BitVec 3)
-    (d a : Fin 32) (i : BitVec width) :
-    EncodingReference.encodeI o.toNat f3.toNat d a i =
-      L3.Itype (o,f3,nativeRegister d,nativeRegister a,i.setWidth 12) := by
-  rw [itypeNumeric]
-  simp [EncodingReference.encodeI, EncodingReference.encodeIValue, EncodingReference.encodeWord32, EncodingReference.lowBits, EncodingReference.registerBits, nativeRegister_toNat]
-
-private theorem encodeUNative (o : BitVec 7) (d : Fin 32) (i : BitVec width) :
-    EncodingReference.encodeU o.toNat d i = L3.Utype (o,nativeRegister d,i.setWidth 20) := by
-  rw [utypeNumeric]
-  simp [EncodingReference.encodeU, EncodingReference.encodeWord32, EncodingReference.lowBits, EncodingReference.registerBits, nativeRegister_toNat]
-
 private theorem stypeNumeric (o : BitVec 7) (f3 : BitVec 3)
     (a b : BitVec 5) (i : BitVec 12) :
     L3.Stype (o,f3,a,b,i) =
@@ -84,12 +65,6 @@ private theorem stypeNumeric (o : BitVec 7) (f3 : BitVec 3)
   simp only [appendNumeric, BitVec.toNat_ofNat, Nat.reducePow]
   simp [L3.holWordExtract, Nat.shiftRight_eq_div_pow]
   omega
-
-private theorem encodeSNative (f3 : BitVec 3) (b a : Fin 32) (i : BitVec width) :
-    EncodingReference.encodeS f3.toNat b a i =
-      L3.Stype (0x23,f3,nativeRegister a,nativeRegister b,i.setWidth 12) := by
-  rw [stypeNumeric]
-  simp [EncodingReference.encodeS, EncodingReference.encodeWord32, EncodingReference.lowBits, EncodingReference.registerBits, nativeRegister_toNat]
 
 private theorem singletonV2w (b : Bool) : L3.holV2w 1 [b] = BitVec.ofBool b := by
   cases b <;> decide
@@ -117,28 +92,6 @@ private theorem sbtypeNumeric (o : BitVec 7) (f3 : BitVec 3)
   simp [L3.holWordExtract, Nat.shiftRight_eq_div_pow]
   omega
 
-private theorem opcLoad : L3.opc (BitVec.ofNat 8 0) = BitVec.ofNat 7 3 := by decide
-private theorem opcStore : L3.opc (BitVec.ofNat 8 8) = BitVec.ofNat 7 35 := by decide
-
-private theorem encodeBNative {width : Nat} [NeZero width] (f3 : BitVec 3) (a b : Fin 32) (i : BitVec width) :
-    EncodingReference.encodeB f3.toNat a b i =
-      L3.SBtype (0x63,f3,nativeRegister a,nativeRegister b,(i >>> 1).setWidth 12) := by
-  rw [sbtypeNumeric]
-  apply BitVec.eq_of_toNat_eq
-  simp [EncodingReference.encodeB, EncodingReference.encodeWord32, EncodingReference.lowBits, EncodingReference.registerBits, nativeRegister_toNat,
-    Nat.shiftRight_eq_div_pow]
-  have hmod : 1 % 2 ^ width = 1 := Nat.mod_eq_of_lt (Nat.one_lt_two_pow (NeZero.ne width))
-  simp only [hmod, Nat.reducePow]
-  simp only [Nat.mod_mul_right_div_self i.toNat 4096 2,
-    Nat.mod_mul_right_div_self i.toNat 32 256,
-    Nat.mod_mul_right_div_self i.toNat 2 4096,
-    Nat.mod_mul_right_div_self i.toNat 2048 4,
-    Nat.mod_mul_right_div_self (i.toNat / 2) 2048 2,
-    Nat.mod_mul_right_div_self (i.toNat / 2) 16 256,
-    Nat.mod_mul_right_div_self (i.toNat / 2) 1024 4]
-  simp [Nat.div_div_eq_div_mul, Nat.mod_mod_of_dvd _ (by decide : 2 ∣ 4),
-    Nat.mod_mod_of_dvd _ (by decide : 64 ∣ 256)]
-
 private theorem ujtypeNumeric (o : BitVec 7) (d : BitVec 5) (i : BitVec 20) :
     L3.UJtype (o,d,i) =
       BitVec.ofNat 32 (o.toNat + d.toNat * 128 +
@@ -152,27 +105,6 @@ private theorem ujtypeNumeric (o : BitVec 7) (d : BitVec 5) (i : BitVec 20) :
   simp [L3.holWordExtract, Nat.shiftRight_eq_div_pow]
   omega
 
-private theorem encodeJNative {width : Nat} [NeZero width] (d : Fin 32) (i : BitVec width) :
-    EncodingReference.encodeJ d i =
-      L3.UJtype (0x6f,nativeRegister d,(i >>> 1).setWidth 20) := by
-  rw [ujtypeNumeric]
-  apply BitVec.eq_of_toNat_eq
-  simp [EncodingReference.encodeJ, EncodingReference.encodeWord32, EncodingReference.lowBits, EncodingReference.registerBits, nativeRegister_toNat,
-    Nat.shiftRight_eq_div_pow]
-  have hmod : 1 % 2 ^ width = 1 := Nat.mod_eq_of_lt (Nat.one_lt_two_pow (NeZero.ne width))
-  simp only [hmod, Nat.reducePow]
-  simp only [Nat.mod_mul_right_div_self i.toNat 4096 512,
-    Nat.mod_mul_right_div_self i.toNat 2048 1024,
-    Nat.mod_mul_right_div_self i.toNat 2 1048576,
-    Nat.mod_mul_right_div_self i.toNat 1048576 2,
-    Nat.mod_mul_right_div_self (i.toNat / 2) 2048 512,
-    Nat.mod_mul_right_div_self (i.toNat / 2) 1024 1024,
-    Nat.mod_mul_right_div_self (i.toNat / 2) 524288 2]
-  simp [Nat.div_div_eq_div_mul, Nat.mod_mod_of_dvd _ (by decide : 256 ∣ 512),
-    Nat.mod_mod_of_dvd _ (by decide : 2 ∣ 1024),
-    Nat.mod_mod_of_dvd _ (by decide : 1024 ∣ 1048576)]
-
-/-- Numerical byte emission is retained only as a non-executable proof reference. -/
 theorem encodeWordBytes_eq_weighted (value : BitVec 32) :
     encodeWordBytes value = EncodingReference.encodeWordBytesWeighted value := by
   simp only [encodeWordBytes, EncodingReference.encodeWordBytesWeighted,

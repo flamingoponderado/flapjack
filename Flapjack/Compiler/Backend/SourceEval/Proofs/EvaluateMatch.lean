@@ -1,0 +1,176 @@
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateExpressions
+
+/-! Pattern-match cases of source evaluator oracle adjustment. -/
+namespace Flapjack.Compiler.Backend.SourceEval.Proofs
+open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL Flapjack.NamespaceHOL
+
+/-- Match adjustment at one state, environment, scrutinee and error value. This
+Flapjack predicate represents a single recursive evaluator hypothesis. -/
+def MatchOracleAdjustedAt {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec) (state : State F) (env : SemEnv Value)
+    (value : Value) (clauses : List (Pat × AstHOL.Exp)) (errValue : Value) : Prop :=
+  ∀ (next : State F) (result : Result (List Value) Value),
+    evaluateMatch state env value clauses errValue = (next, result) ∧
+    isInsertOracle ci f state.evalState ∧ result ≠ .err (.abort .typeError) →
+    isInsertOracle ci f next.evalState ∧
+    evaluateMatch { state with evalState := adjustOracle ci (compile ∘ f) state.evalState }
+      env value clauses errValue =
+        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)
+
+/-- Empty pattern-match case of the original evaluator induction. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+theorem adjustOracle_evaluate_MatchNil {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
+    (state : State F) (env : SemEnv Value) (value errValue : Value) :
+    MatchOracleAdjustedAt compile ci f state env value [] errValue := by
+  intro next result ⟨source, inserted, _⟩
+  simp [evaluateMatch] at source
+  obtain ⟨rfl, rfl⟩ := source
+  exact ⟨inserted, by simp [evaluateMatch]⟩
+
+/-- Nonempty pattern-match case, with induction hypotheses for the chosen
+branch and for the remaining clauses. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+theorem adjustOracle_evaluate_MatchCons {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
+    (state : State F) (env : SemEnv Value) (value : Value) (pat : Pat) (expr : AstHOL.Exp) (rest : List (Pat × AstHOL.Exp)) (errValue : Value)
+    (ih : (∀ bindings, (patBindings pat).Nodup ∧ pmatch env.c state.refs pat value [] = .match bindings →
+      ExpsOracleAdjustedAt compile ci f state { env with v := nsAppend (alistToNs bindings) env.v } [expr]) ∧
+      ((patBindings pat).Nodup ∧ pmatch env.c state.refs pat value [] = .noMatch →
+        MatchOracleAdjustedAt compile ci f state env value rest errValue)) :
+    MatchOracleAdjustedAt compile ci f state env value ((pat, expr) :: rest) errValue := by
+  obtain ⟨exprIH, restIH⟩ := ih
+  intro next result ⟨source, inserted, safe⟩
+  classical
+  by_cases unique : (patBindings pat).Nodup
+  · cases matched : pmatch env.c state.refs pat value [] with
+    | noMatch =>
+      have source' : evaluateMatch state env value rest errValue = (next, result) := by
+        simpa [evaluateMatch, unique, matched] using source
+      obtain ⟨nextInserted, replacement⟩ := restIH ⟨unique, matched⟩ next result ⟨source', inserted, safe⟩
+      exact ⟨nextInserted, by simpa [evaluateMatch, unique, matched] using replacement⟩
+    | typeError =>
+      simp [evaluateMatch, unique, matched, typeError] at source
+      obtain ⟨_, rfl⟩ := source
+      exact (safe rfl).elim
+    | «match» bindings =>
+      have source' : evaluate state { env with v := nsAppend (alistToNs bindings) env.v } [expr] =
+          (next, result) := by simpa [evaluateMatch, unique, matched] using source
+      obtain ⟨nextInserted, replacement⟩ := exprIH bindings ⟨unique, matched⟩ next result ⟨source', inserted, safe⟩
+      exact ⟨nextInserted, by simpa [evaluateMatch, unique, matched] using replacement⟩
+  · simp [evaluateMatch, unique, typeError] at source
+    obtain ⟨_, rfl⟩ := source
+    exact (safe rfl).elim
+
+/-- Case-expression case of the original evaluator induction. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+theorem adjustOracle_evaluate_Mat {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
+    (state : State F) (env : SemEnv Value) (expr : AstHOL.Exp) (clauses : List (Pat × AstHOL.Exp))
+    (ih : (∀ (middle : State F) (outcome : Result (List Value) Value) (values : List Value),
+      evaluate state env [expr] = (middle, outcome) ∧ outcome = .val values ∧
+        canPmatchAll env.c middle.refs (clauses.map Prod.fst) (headValue values) = true →
+        MatchOracleAdjustedAt compile ci f middle env (headValue values) clauses bindExnV) ∧
+      ExpsOracleAdjustedAt compile ci f state env [expr]) :
+    ExpsOracleAdjustedAt compile ci f state env [.mat expr clauses] := by
+  obtain ⟨matchIH, exprIH⟩ := ih
+  intro next result ⟨source, inserted, safe⟩
+  let adjusted := { state with evalState := adjustOracle ci (compile ∘ f) state.evalState }
+  simp only [evaluate, (fixClockEvaluate state env [expr] []).1] at source
+  change isInsertOracle ci f next.evalState ∧
+    evaluate adjusted env [.mat expr clauses] =
+      ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)
+  simp only [evaluate, (fixClockEvaluate adjusted env [expr] []).1]
+  cases run : evaluate state env [expr] with
+  | mk middle inner =>
+    cases inner with
+    | err error =>
+      have pair : (middle, .err error) = (next, result) := by simpa [run] using source
+      have innerSafe : (Result.err error : Result (List Value) Value) ≠ .err (.abort .typeError) := by
+        intro bad
+        apply safe
+        have h := congrArg Prod.snd pair
+        simpa [bad] using h.symm
+      obtain ⟨middleInserted, replacement⟩ := exprIH middle (.err error) ⟨run, inserted, innerSafe⟩
+      cases pair
+      exact ⟨middleInserted, by simp [adjusted, replacement]⟩
+    | val values =>
+      by_cases matchable : canPmatchAll env.c middle.refs (clauses.map Prod.fst) (headValue values) = true
+      · have branch : evaluateMatch middle env (headValue values) clauses bindExnV = (next, result) := by
+          simpa [run, matchable] using source
+        obtain ⟨middleInserted, replacement⟩ := exprIH middle (.val values) ⟨run, inserted, (by simp)⟩
+        obtain ⟨nextInserted, branchReplacement⟩ :=
+          matchIH middle (.val values) values ⟨run, rfl, matchable⟩ next result ⟨branch, middleInserted, safe⟩
+        exact ⟨nextInserted, by simpa [adjusted, replacement, matchable] using branchReplacement⟩
+      · simp [run, matchable, typeError] at source
+        obtain ⟨_, rfl⟩ := source
+        exact (safe rfl).elim
+
+/-- Exception-handler case of the original evaluator induction. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+theorem adjustOracle_evaluate_Handle {Config F : Type} (compile : List Dec → List Dec)
+    (ci : CompilerInstance Config) (f : List Dec → List Dec)
+    (_preserves : ∀ (s : State F) (env : SemEnv Value) (ds : List Dec) (next : State F)
+      (res : Result (SemEnv Value) Value),
+      evaluateDecs s env ds = (next, res) ∧ res ≠ .err (.abort .typeError) →
+        evaluateDecs s env (compile ds) = (next, res))
+    (state : State F) (env : SemEnv Value) (expr : AstHOL.Exp) (clauses : List (Pat × AstHOL.Exp))
+    (ih : (∀ middle outcome err value,
+      evaluate state env [expr] = (middle, outcome) ∧ outcome = .err err ∧ err = .raise value ∧
+        canPmatchAll env.c middle.refs (clauses.map Prod.fst) value = true →
+        MatchOracleAdjustedAt compile ci f middle env value clauses value) ∧
+      ExpsOracleAdjustedAt compile ci f state env [expr]) :
+    ExpsOracleAdjustedAt compile ci f state env [.handle expr clauses] := by
+  obtain ⟨matchIH, exprIH⟩ := ih
+  intro next result ⟨source, inserted, safe⟩
+  let adjusted := { state with evalState := adjustOracle ci (compile ∘ f) state.evalState }
+  simp only [evaluate, (fixClockEvaluate state env [expr] []).1] at source
+  change isInsertOracle ci f next.evalState ∧
+    evaluate adjusted env [.handle expr clauses] =
+      ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)
+  simp only [evaluate, (fixClockEvaluate adjusted env [expr] []).1]
+  cases run : evaluate state env [expr] with
+  | mk middle inner =>
+    cases inner with
+    | val values =>
+      have pair : (middle, .val values) = (next, result) := by simpa [run] using source
+      obtain ⟨middleInserted, replacement⟩ := exprIH middle (.val values) ⟨run, inserted, (by simp)⟩
+      cases pair
+      exact ⟨middleInserted, by simp [adjusted, replacement]⟩
+    | err error =>
+      cases error with
+      | abort abort =>
+        have pair : (middle, .err (.abort abort)) = (next, result) := by simpa [run] using source
+        have innerSafe : (Result.err (.abort abort) : Result (List Value) Value) ≠ .err (.abort .typeError) := by
+          intro bad
+          apply safe
+          have h := congrArg Prod.snd pair
+          simpa [bad] using h.symm
+        obtain ⟨middleInserted, replacement⟩ := exprIH middle (.err (.abort abort)) ⟨run, inserted, innerSafe⟩
+        cases pair
+        exact ⟨middleInserted, by simp [adjusted, replacement]⟩
+      | raise value =>
+        by_cases matchable : canPmatchAll env.c middle.refs (clauses.map Prod.fst) value = true
+        · have branch : evaluateMatch middle env value clauses value = (next, result) := by
+            simpa [run, matchable] using source
+          obtain ⟨middleInserted, replacement⟩ := exprIH middle (.err (.raise value)) ⟨run, inserted, (by simp)⟩
+          obtain ⟨nextInserted, branchReplacement⟩ :=
+            matchIH middle (.err (.raise value)) (.raise value) value ⟨run, rfl, rfl, matchable⟩ next result ⟨branch, middleInserted, safe⟩
+          exact ⟨nextInserted, by simpa [adjusted, replacement, matchable] using branchReplacement⟩
+        · simp [run, matchable, typeError] at source
+          obtain ⟨_, rfl⟩ := source
+          exact (safe rfl).elim
+
+end Flapjack.Compiler.Backend.SourceEval.Proofs

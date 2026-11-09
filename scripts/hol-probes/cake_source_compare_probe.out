@@ -1,0 +1,9 @@
+num_type=:opb -> num -> num -> bool
+int_type=:opb -> int -> int -> bool
+str_type=:bool -> opb -> mlstring -> mlstring -> bool
+natural=T
+integer=T
+lex=F
+fast=T
+same_length=T
+byte=T

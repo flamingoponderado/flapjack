@@ -1,0 +1,12 @@
+load "clos_callTheory"; load "clos_callProofTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = set_trace "Unicode" 0;
+val _ = (print "code_list_type="; print_type (type_of ``clos_call$code_list``); print "\n");
+val _ = (print "insert_each_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.insert_each_def); print "\n");
+val _ = (print "fst_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.FST_code_list); print "\n");
+val _ = (print "snd_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.SND_code_list_change); print "\n");
+val _ = (print "map_fst_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.MAP_FST_code_list); print "\n");
+val _ = (print "suffix_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.code_list_IS_SUFFIX); print "\n");
+val entry = EVAL ``clos_call$code_list 10 [(2,closLang$Var None 4);(0,closLang$Var None 9);(1,closLang$Var None 2)] (sptree$LN,[(90,3,closLang$Var None 0)])``;
+val _ = (print "example="; print_term (rhs (concl entry)); print "\n");

@@ -1,0 +1,16 @@
+skip=:α mini
+assign=:num -> α exp -> α mini
+delete=:num list -> α mini
+seq=:α mini -> α mini -> α mini
+load=:num -> num -> address -> α mini
+store=:num -> num -> α mini
+if=:cmp -> num -> α reg_imm -> α mini -> α mini -> α mini
+swap=:α mini
+add=:num -> num -> num -> α reg_imm -> α reg_imm -> α mini
+sub=:num -> num -> num -> α reg_imm -> α reg_imm -> α mini
+mul=:num -> num -> num -> num -> α mini
+div=:num -> num -> num -> num -> num -> α mini
+loop=:bool -> num list -> α mini -> α mini
+continue=:α mini
+rec=:num list -> num list -> α mini
+loop_body=:α mini -> α mini

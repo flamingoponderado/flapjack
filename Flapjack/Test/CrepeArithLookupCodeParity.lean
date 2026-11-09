@@ -1,10 +1,12 @@
+import Flapjack.Test.CrepArithExactParity
 import Flapjack.Pancake.Proofs.CrepArith
+import Flapjack.Pancake.Semantics.CrepSem.LookupCode
+import Flapjack.Pancake.Semantics.CrepSem.HOLState
 
 /-! Direct original-HOL boundary for the local `lookup_code` theorem used by
 `crep_arithProofScript.sml:simp_prog_correct`. The HOL fixture simplifies an
 8-bit multiplication in the stored function body before looking it up. The
-width-indexed Lean theorem states the source `FMAP_MAP2`/`OPTION_MAP` commute
-law over `lookupCrepHolCodeW`; the generic helper remains untagged support. -/
+tests retain the exact lookup observation and production failure cases. -/
 
 namespace Flapjack.Test.CrepeArithLookupCodeParity
 
@@ -15,81 +17,61 @@ private abbrev Word8 := RiscV.Word 8
 private def code : FunName → Option (List Nat × CrepProg Word8) :=
   FUPDATE FEMPTY ("f", ([1], .assign 2 (.crepOp .mul [.const 2, .const 4])))
 
-private def arguments : List (PanWordLab Word8) := [.word 9]
-
-private def simpCode := crepArithSimpCodeMap (BitVec.ofNat 8) code
-
 private def wrongArityCode : FunName → Option (List Nat × CrepProg Word8) :=
   FUPDATE FEMPTY ("f", ([1, 2], .skip))
 
 private def duplicateParameterCode : FunName → Option (List Nat × CrepProg Word8) :=
   FUPDATE FEMPTY ("f", ([1, 1], .skip))
 
-example :
-    lookupCrepHolCode simpCode "f" arguments 1 =
-      (lookupCrepHolCode code "f" arguments 1).map
-        (fun (body, locals) => (crepSimpProg (BitVec.ofNat 8) body, locals)) :=
-  crepArithLookupCodeSimpProg (fromNat := BitVec.ofNat 8)
-    code "f" arguments 1
+-- Key-sensitive FMAP_MAP2 regression on the canonical finite-map carrier.
+private def selected := Flapjack.Basis.Pure.MlString.ofString "selected"
+private def untouched := Flapjack.Basis.Pure.MlString.ofString "untouched"
+private def keyedCode : HolFiniteMapExact Flapjack.Basis.Pure.MlString.MlString (List Nat × CrepProgHOL 8) :=
+  (HolFiniteMapExact.empty.update (selected, ([1, 2], .skip))).update
+    (untouched, ([1, 2], .skip))
+private def keyedUpdate (entry : Flapjack.Basis.Pure.MlString.MlString × (List Nat × CrepProgHOL 8)) : List Nat × CrepProgHOL 8 :=
+  if entry.1 = selected then (entry.2.1.reverse, entry.2.2) else entry.2
 
-example :
-    lookupCrepHolCodeW simpCode "f" arguments 1 =
-      (lookupCrepHolCodeW code "f" arguments 1).map
-        (fun (body, locals) => (crepSimpProg (BitVec.ofNat 8) body, locals)) :=
-  crepArithLookupCodeSimpProgW code "f" arguments 1
+example : (keyedCode.map2 keyedUpdate).lookup selected = some ([2, 1], .skip) := by
+  simp +decide [keyedCode, keyedUpdate, selected, untouched, HolFiniteMapExact.update,
+    HolFiniteMapExact.map2, FUPDATE, HolFiniteMapExact.empty]
+example : (keyedCode.map2 keyedUpdate).lookup untouched = some ([1, 2], .skip) := by
+  simp +decide [keyedCode, keyedUpdate, selected, untouched, HolFiniteMapExact.update,
+    HolFiniteMapExact.map2, FUPDATE, HolFiniteMapExact.empty]
 
-/-- The production runtime lookup equals the positive-width tagged HOL
-    definition, including its complete body/locals result shape. -/
-example :
-    lookupCrepRuntimeCode "f" [BitVec.ofNat 8 9] simpCode =
-      lookupCrepHolCodeW simpCode "f" [.word (BitVec.ofNat 8 9)] 1 :=
-  lookupCrepRuntimeCode_eq_lookupCrepHolCodeW
-    "f" [BitVec.ofNat 8 9] 1 simpCode
+-- HOL `OPTION_MAP (simp_prog ## I) (lookup_code ...)`, including the
+-- complete local-map result of the successful lookup.
+private def exactCode : CrepCodeMapExact 8 :=
+  FUPDATE FEMPTY (Flapjack.Basis.Pure.MlString.ofString "f",
+    ([1], .assign 2 (.crepOp .mul [.const 2, .const 4])))
 
-/-- The HOL definition accepts `len` but does not inspect it. The exact lemma
-    retains that quantified input, including values different from the
-    parameter count. -/
-example :
-    lookupCrepHolCode simpCode "f" arguments 0 =
-      (lookupCrepHolCode code "f" arguments 0).map
-        (fun (body, locals) => (crepSimpProg (BitVec.ofNat 8) body, locals)) :=
-  crepArithLookupCodeSimpProg (fromNat := BitVec.ofNat 8)
-    code "f" arguments 0
+example : (lookupCodeHOL exactCode (Flapjack.Basis.Pure.MlString.ofString "f")
+      [.word 9] 1).map (fun result => (crepSimpProgHOL result.1, result.2)) =
+    some (.assign 2 (.const 8), FUPDATE FEMPTY (1, .word 9)) := by
+  simp [lookupCodeHOL, exactCode, FLOOKUP, FUPDATE, FUPDATE_LIST,
+    crepSimpProgHOL, Flapjack.Test.CrepArithExactParity.simpMul,
+    crepSimpExpHOL, crepDestConstHOL]
 
-/- HOL `simp_prog_after_lookup` in `crep_arith_lookup_code_probe.out` is
-   `SOME (Assign 2 (Const 8w), FEMPTY⟨1 ↦ Word 9w⟩)`. -/
-#guard match lookupCrepHolCode simpCode "f" arguments 1 with
-  | some (body, locals) =>
-      (match body with
-       | .assign 2 (.const value) => value == BitVec.ofNat 8 8
-       | _ => false) &&
-      FLOOKUP locals 1 == some (.word (BitVec.ofNat 8 9))
-  | none => false
-
-#guard match lookupCrepHolCodeW simpCode "f" arguments 1 with
-  | some (body, locals) =>
-      (match body with
-       | .assign 2 (.const value) => value == BitVec.ofNat 8 8
-       | _ => false) &&
-      FLOOKUP locals 1 == some (.word (BitVec.ofNat 8 9))
-  | none => false
-
-/- The production call lookup is definitionally routed through the same
-   HOL-shaped lookup helper; the checked oracle row above is the direct HOL
-   successful lookup observation. -/
-#guard match lookupCrepRuntimeCode "f" [BitVec.ofNat 8 9] simpCode with
-  | some (body, locals) =>
-      (match body with
-       | .assign 2 (.const value) => value == BitVec.ofNat 8 8
-       | _ => false) &&
-      FLOOKUP locals 1 == some (.word (BitVec.ofNat 8 9))
-  | none => false
+-- These three additional source-script rows are not in the older captured
+-- .out file; their arguments are copied from the HOL probe itself.
+example : lookupCodeHOL
+    (FUPDATE FEMPTY (Flapjack.Basis.Pure.MlString.ofString "f",
+      ([1, 2], .skip)) : CrepCodeMapExact 8)
+    (Flapjack.Basis.Pure.MlString.ofString "f") [.word 9] 2 = none := by
+  simp [lookupCodeHOL, FLOOKUP, FUPDATE]
+example : lookupCodeHOL
+    (FUPDATE FEMPTY (Flapjack.Basis.Pure.MlString.ofString "f",
+      ([1, 1], .skip)) : CrepCodeMapExact 8)
+    (Flapjack.Basis.Pure.MlString.ofString "f") [.word 9, .word 10] 2 = none := by
+  simp [lookupCodeHOL, FLOOKUP, FUPDATE]
+example : lookupCodeHOL exactCode (Flapjack.Basis.Pure.MlString.ofString "missing") [] 0 = none := by
+  decide
 
 #guard (lookupCrepRuntimeCode "f" [BitVec.ofNat 8 9] wrongArityCode).isNone
 #guard (lookupCrepRuntimeCode "f"
   [BitVec.ofNat 8 9, BitVec.ofNat 8 10] duplicateParameterCode).isNone
 #guard (lookupCrepRuntimeCode "missing" [] code).isNone
 
-#guard (lookupCrepHolCode simpCode "missing" [] 0).isNone
+#guard (lookupCrepHolCode code "missing" [] 0).isNone
 
 end Flapjack.Test.CrepeArithLookupCodeParity

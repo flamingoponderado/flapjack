@@ -1,7 +1,8 @@
-import Flapjack.RiscV.CorrectnessEncoding.AddCarry.Native
+import Flapjack.RiscV.CorrectnessEncoding.ArithNative
 import Flapjack.RiscV.CorrectnessEncoding.AddCarry.Arithmetic
 import Flapjack.RiscV.CorrectnessEncoding.ConstRelation
 namespace Flapjack.RiscV.TargetProof.AddCarry
+open Flapjack.RiscV.TargetProof.ArithNative
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target
   Compiler.Encoders.Asm Compiler.Encoders.AsmSem Compiler.Encoders.AsmProps
 set_option autoImplicit false
@@ -12,12 +13,11 @@ def program (r1 r2 r3 r4 : BitVec 5) : List instruction :=
   [.ArithR (.SLTU (31,0,r4)), .ArithR (.ADD (r1,r2,r3)),
    .ArithR (.SLTU (r4,r1,r3)), .ArithR (.ADD (r1,r1,31)),
    .ArithR (.SLTU (31,r1,31)), .ArithR (.OR (r4,r4,31))]
-/-- AddCarry-local execution/source composition; no separately named HOL declaration. -/
-theorem step_eq (op : Op) (rd rs rt : BitVec 5) (ms : riscv_state)
-    (rn : rd ≠ 0#5) (ok : riscvOk ms = true) :
-    constStep (instructionOf op rd rs rt) ms =
-      writePost ms rd (valueOf op (GPR rs ms) (GPR rt ms)) := by
-  have run := run_eq op rd rs rt ms ok
+/-- Complete native pure step; no separately named HOL original. -/
+theorem step_eq (i : instruction) (kind : Family i) (ms : riscv_state)
+    (rn : destination i ≠ 0#5) (ok : riscvOk ms = true) :
+    constStep i ms = writePost ms (destination i) (value i ms) := by
+  have run := run_eq i kind ms ok
   simp [constStep, run, writePost, «write'GPR», «write'gpr», rn]
 /-- AddCarry-local execution/source composition; no separately named HOL declaration. -/
 theorem singleton (c : Bool) : holV2w 64 [c] = (if c then 1 else 0) := by
@@ -68,16 +68,18 @@ theorem pure_post (r1 r2 r3 r4 : BitVec 5) (ms : riscv_state)
   have add (rd rs rt : BitVec 5) (s : riscv_state)
       (nz : rd ≠ 0#5) (valid : riscvOk s = true) :
       constStep (.ArithR (.ADD (rd,rs,rt))) s =
-        writePost s rd (GPR rs s + GPR rt s) := step_eq .add rd rs rt s nz valid
+        writePost s rd (GPR rs s + GPR rt s) :=
+      step_eq (.ArithR (.ADD (rd,rs,rt))) (.add rd rs rt) s nz valid
   have sltu (rd rs rt : BitVec 5) (s : riscv_state)
       (nz : rd ≠ 0#5) (valid : riscvOk s = true) :
       constStep (.ArithR (.SLTU (rd,rs,rt))) s =
         writePost s rd (holV2w 64 [BitVec.ult (GPR rs s) (GPR rt s)]) :=
-      step_eq .sltu rd rs rt s nz valid
+      step_eq (.ArithR (.SLTU (rd,rs,rt))) (.sltu rd rs rt) s nz valid
   have bitOr (rd rs rt : BitVec 5) (s : riscv_state)
       (nz : rd ≠ 0#5) (valid : riscvOk s = true) :
       constStep (.ArithR (.OR (rd,rs,rt))) s =
-        writePost s rd (GPR rs s ||| GPR rt s) := step_eq .or rd rs rt s nz valid
+        writePost s rd (GPR rs s ||| GPR rt s) :=
+      step_eq (.ArithR (.OR (rd,rs,rt))) (.or rd rs rt) s nz valid
   simp only [program, List.foldl_cons, List.foldl_nil]
   rw [sltu 31 0 r4 ms nz31 ok]
   rw [add r1 r2 r3 _ nz1 (writePost_ok _ _ _ ok)]
@@ -114,21 +116,6 @@ theorem post_read (r1 r2 r3 r4 i : BitVec 5) (ms : riscv_state)
     · simp [purePost,writePost,holUpdate,eq4,eq1,Ne.symm eq4,
         Ne.symm eq1,Ne.symm scratch]
 /-- AddCarry-local execution/source composition; no separately named HOL declaration. -/
-theorem guard (r : Nat) (g : asmRegOkExact r riscvConfig = true) :
-    r < 32 ∧ BitVec.ofNat 5 r ≠ 0#5 ∧ BitVec.ofNat 5 r ≠ 31#5 := by
-  have facts : r < 32 ∧ r ≠ 0 ∧ r ≠ 31 := by
-    simp [asmRegOkExact,riscvConfig] at g
-    exact ⟨of_decide_eq_true g.1,g.2.1,g.2.2.2.2.2⟩
-  refine ⟨facts.1,?_,?_⟩
-  all_goals
-    intro eq
-    have n := congrArg BitVec.toNat eq
-    simp only [BitVec.toNat_ofNat] at n
-    norm_num at n
-    rw [Nat.mod_eq_of_lt facts.1] at n
-  · exact facts.2.1 n
-  · exact facts.2.2 n
-/-- AddCarry-local execution/source composition; no separately named HOL declaration. -/
 theorem reg_ne (a b : Nat) (ha : a < 32) (hb : b < 32) (h : a ≠ b) :
     BitVec.ofNat 5 a ≠ BitVec.ofNat 5 b := by
   intro eq
@@ -137,16 +124,6 @@ theorem reg_ne (a b : Nat) (ha : a < 32) (hb : b < 32) (h : a ≠ b) :
   norm_num at n
   rw [Nat.mod_eq_of_lt ha,Nat.mod_eq_of_lt hb] at n
   exact h n
-/-- AddCarry-local execution/source composition; no separately named HOL declaration. -/
-theorem reg_read (r : Nat) (s : AsmState 64) (ms : riscv_state)
-    (g : asmRegOkExact r riscvConfig = true)
-    (rel : targetStateRel riscvTarget s ms) :
-    GPR (BitVec.ofNat 5 r) ms = readReg r s := by
-  have valid : r < riscvConfig.regCount ∧ riscvConfig.avoidRegs.contains r = false := by
-    simpa [asmRegOkExact] using g
-  have before := rel.2.2.2.1 r valid
-  change ms.c_gpr ms.procID (BitVec.ofNat 5 r) = s.regs r at before
-  simpa [GPR,gpr,(guard r g).2.1,readReg] using before
 /-- AddCarry-local execution/source composition; no separately named HOL declaration. -/
 theorem program_family (r1 r2 r3 r4 : BitVec 5) :
     ∀ i ∈ program r1 r2 r3 r4, Family i := by

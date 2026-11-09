@@ -90,13 +90,14 @@ theorem mips32CLIOutput_correct {format : RiscV.NativeCLI.Format} {source : Stri
       out.artifact = some (bytes, bitmaps, config) ∧
       text = Mips32.NativeCLI.render format out.declarations bytes config ∧
       compileProgMaxAsmExecutable pancakeMips32BackendConfig mips32Config out.declarations =
-        (some (bytes, bitmaps, config), mips32NativeSourceLogicalBound out) ∧
+        (some (bytes, bitmaps, { config with symbols := notFoundSymbols config }),
+          mips32NativeSourceLogicalBound out) ∧
       NativeMips32Correctness parsed out := by
   obtain ⟨out, bytes, bitmaps, config, compiled, result, rendered⟩ :=
     Mips32.NativeCLI.output_ok succeeded
   obtain ⟨parsed, parsedEq, -, -⟩ := mips32NativeSourceCompile_ok compiled
   refine ⟨parsed, out, bytes, bitmaps, config, parsedEq, compiled, result, rendered, ?_, ?_⟩
-  · simpa only [result] using mips32NativeSourceCompile_full_result compiled
+  · simpa only [result, Option.map_some] using mips32NativeSourceCompile_full_result compiled
   · intro σ mc bytes' bitmaps' c' stack_max s ms globals_size heap_len adj_ptr2 adj_ptr4 ffi
       cbspace data_sp start hmc hasMain premises
     exact mips32NativeSourceCompile_correct parsed compiled parsedEq mc bytes' bitmaps' c' stack_max s ms

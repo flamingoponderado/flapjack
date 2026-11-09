@@ -39,9 +39,8 @@ abbrev InfoMap (α : Type u) := List (String × α)
 /-- Projection of the production cache-augmented `StructContext` onto the
     HOL-shaped `StructContextHOL`, keeping the HOL `struct_info` fields `fields`
     and `size` and dropping the production-only `StructInfo.shapedFields`
-    cache. This is the context adapter used to relate the exact HOL-shaped
-    predicates (`panValueFldsOk`, `panIsWfShapeValueHOL`) to the production
-    predicates over `StructContext`. Because both lookups are first-match, the
+    cache. This context adapter relates `panIsWfShapeValueHOL` to the
+    production predicate over `StructContext`. Because both lookups are first-match, the
     projection preserves shadowing of duplicate struct names. -/
 def StructContext.toHOL (context : StructContext) : StructContextHOL :=
   context.map (fun entry => (entry.1, { fields := entry.2.fields, size := entry.2.size }))
@@ -73,40 +72,6 @@ theorem lookupInfo_toHOL [BEq String] (name : String) (context : StructContext) 
   rw [lookupInfo_toHOL]
   cases lookupInfo name context <;> rfl
 
-/-- Cake's `ALOOKUP_MAP3` (`pan_globalsProofScript.sml:2841`): mapping a
-    function over the value component of every entry commutes with the
-    lookup. -/
-theorem lookupInfo_map3 [BEq κ] (f : γ → δ) (name : κ)
-    (entries : List (κ × (β × γ))) :
-    lookupInfo name (entries.map (fun entry => (entry.1, entry.2.1, f entry.2.2))) =
-      (lookupInfo name entries).map (fun value => (value.1, f value.2)) := by
-  induction entries with
-  | nil => simp [lookupInfo]
-  | cons entry entries ih =>
-      simp only [List.map_cons, lookupInfo]
-      by_cases h : (entry.1 == name) = true
-      · rw [if_pos h, if_pos h]
-        rfl
-      · rw [if_neg h, if_neg h]
-        exact ih
-
-/-- Cake's `ALOOKUP_MAP4` (`pan_globalsProofScript.sml:2851`): mapping a
-    function over the middle component of every entry commutes with the
-    lookup. -/
-theorem lookupInfo_map4 [BEq κ] (f : γ → δ) (name : κ)
-    (entries : List (κ × (β × γ × ε))) :
-    lookupInfo name
-        (entries.map (fun entry => (entry.1, entry.2.1, f entry.2.2.1, entry.2.2.2))) =
-      (lookupInfo name entries).map (fun value => (value.1, f value.2.1, value.2.2)) := by
-  induction entries with
-  | nil => simp [lookupInfo]
-  | cons entry entries ih =>
-      simp only [List.map_cons, lookupInfo]
-      by_cases h : (entry.1 == name) = true
-      · rw [if_pos h, if_pos h]
-        rfl
-      · rw [if_neg h, if_neg h]
-        exact ih
 
 /-! The original Pancake `mem_load` uses `dropWhile` to find a named
     structure and then evaluates its fields against the remaining context.

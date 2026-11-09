@@ -1,0 +1,11 @@
+load "source_to_flatProofTheory";
+open HolKernel Parse boolLib bossLib;
+open source_to_flatProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = set_trace "Unicode" 0;
+val _ = (print "env_rel_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl source_to_flatProofTheory.env_rel_LIST_REL); print "\n");
+val _ = (print "env_rel_dom_typed="; Lib.with_flag (Globals.show_types,true) print_term ``!genv env env'. env_rel genv env env' ==> ?l. env = alist_to_ns l /\ MAP FST l = MAP FST env'``; print "\n");
+val _ = (print "env_rel_lookup_typed="; Lib.with_flag (Globals.show_types,true) print_term ``!genv env x v env'. ALOOKUP env x = SOME v /\ env_rel genv (alist_to_ns env) env' ==> ?v'. v_rel genv v v' /\ ALOOKUP env' x = SOME v'``; print "\n");
+val _ = (print "env_rel_append_typed="; Lib.with_flag (Globals.show_types,true) print_term ``!genv env1 env2 env1' env2'. env_rel genv env1 env1' /\ env_rel genv env2 env2' ==> env_rel genv (nsAppend env1 env2) (env1'++env2')``; print "\n");
+val _ = (print "env_rel_one_typed="; Lib.with_flag (Globals.show_types,true) print_term ``env_rel genv (nsBind a b nsEmpty) xs <=> ?v. xs = [(a, v)] /\ v_rel genv b v``; print "\n");
+val _ = (print "env_rel_bind_one_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl source_to_flatProofTheory.env_rel_bind_one); print "\n");

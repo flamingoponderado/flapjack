@@ -1,0 +1,1024 @@
+{
+  "cakeml_revision": "857f0d98da8f8a3580f34423338e697809308ede",
+  "hol_revision": "a390cbabd3a4521bab4ee20281e3e42933a8a3ae",
+  "programs": {
+    "empty": {
+      "sexp": "\nnil",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21308,
+          "stderr_sha256": "1d40f191b0e88de2c66dd177026236a43188ba5b7cade74afb4fb2d6395580d8"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 325124,
+          "stdout_sha256": "d8246681aace705785b9e4be24337832873a0cac858f27d289ca6bce2029ce0e",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "literal": {
+      "sexp": "\n((Dlet ((0 0) (0 11)) \"x\" (Lannot (Lit 1) ((0 11) (0 11)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21315,
+          "stderr_sha256": "dfb815390800fea108821411a038084902af6f1f8ce600e739e7d0b4f6bb1521"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 325124,
+          "stdout_sha256": "d76eb8176eb30fdc6f6ad3628f33025d8468b1542664d3882d7d28b2de94af15",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "string": {
+      "sexp": "\n((Dlet ((0 0) (0 14)) \"x\" (Lannot (Lit \"hi\") ((0 11) (0 14)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21318,
+          "stderr_sha256": "cc79d79a65abcef236cbf24bb6635ac1570e5f324f56d3c410253ca12f202bcc"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 325124,
+          "stdout_sha256": "d76eb8176eb30fdc6f6ad3628f33025d8468b1542664d3882d7d28b2de94af15",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "word": {
+      "sexp": "\n((Dlet ((0 0) (0 14)) \"x\" (Lannot (Lit (word64 42)) ((0 11) (0 14)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21323,
+          "stderr_sha256": "b8bf5920f66fd0d31c46e1799f10a6ecfdeae1d48184edd9b51d1b9c364f4149"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 325124,
+          "stdout_sha256": "d76eb8176eb30fdc6f6ad3628f33025d8468b1542664d3882d7d28b2de94af15",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "function": {
+      "sexp": "\n((Dletrec ((0 0) (0 20)) ((\"f\" \"x\" Lannot (App Opapp ((App Opapp ((Var (Short \"+\")) (Lannot (Var (Short \"x\")) ((0 14) (0 15))))) (Lannot (Lit 1) ((0 20) (0 20))))) ((0 14) (0 20))))) (Dlet ((0 24) (0 52)) (Pany) (Lannot (App Opapp ((Lannot (Var (Short \"print_int\")) ((0 34) (0 43))) (Lannot (App Opapp ((Lannot (Var (Short \"f\")) ((0 47) (0 48))) (Lannot (Lit 3) ((0 50) (0 50))))) ((0 47) (0 50))))) ((0 34) (0 52)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21322,
+          "stderr_sha256": "84d777b52dbc3f172508d08b750425c858c457fd2051f78340bb58e83b74b65e"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 395382,
+          "stdout_sha256": "20bed4e43eb1f41482ca2f019ca379f4a7a3200678ccc6deef42420bec0a4c8e",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "datatype_match": {
+      "sexp": "\n((Dtype ((0 0) unk) ((nil \"t\" (\"A\") (\"B\" (Atapp nil (Short \"int\")))))) (Dlet ((0 32) (0 95)) (Pany) (Lannot (App Opapp ((Lannot (Var (Short \"print_int\")) ((0 42) (0 51))) (Lannot (Mat (Lannot (Con (SOME (Short \"B\")) ((Lit 3))) ((0 61) (0 64))) (((Pcon (SOME (Short \"A\")) nil) Lannot (Lit 0) ((0 77) (0 77))) ((Pcon (SOME (Short \"B\")) (\"n\")) Lannot (Var (Short \"n\")) ((0 92) (0 93))))) ((0 55) unk)))) ((0 42) (0 95)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21308,
+          "stderr_sha256": "1d40f191b0e88de2c66dd177026236a43188ba5b7cade74afb4fb2d6395580d8"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 394288,
+          "stdout_sha256": "9025a620fc8c7000063127ce1027886ee9bb847b4644041710a89e4086b1c4bc",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "exception": {
+      "sexp": "\n((Dexn ((0 0) unk) \"E\" ((Atapp nil (Short \"int\")))) (Dlet ((0 21) (0 81)) (Pany) (Lannot (App Opapp ((Lannot (Var (Short \"print_int\")) ((0 31) (0 40))) (Lannot (Handle (Lannot (Raise (Lannot (Con (SOME (Short \"E\")) ((Lit 4))) ((0 53) (0 56)))) ((0 46) (0 56))) (((Pcon (SOME (Short \"E\")) (\"n\")) Lannot (Var (Short \"n\")) ((0 78) (0 79))))) ((0 44) unk)))) ((0 31) (0 81)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21308,
+          "stderr_sha256": "1d40f191b0e88de2c66dd177026236a43188ba5b7cade74afb4fb2d6395580d8"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 394308,
+          "stdout_sha256": "50bfd7988c811e4566fbdb32d22df27ec1aaaa7558f48a7cf8761d46d4fed463",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "module": {
+      "sexp": "\n((Dmod \"M\" ((Dlet ((0 25) (0 37)) \"x\" (Lannot (Lit 42) ((0 36) (0 37)))))) (Dlet ((0 48) (0 71)) (Pany) (Lannot (App Opapp ((Lannot (Var (Short \"print_int\")) ((0 58) (0 67))) (Lannot (Var (Long \"M\" (Short \"x\"))) ((0 69) (0 71))))) ((0 58) (0 71)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21317,
+          "stderr_sha256": "e200770b37ef3e36b457d0015ab717fcac8f95229888119897385d13c8165bdb"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 393870,
+          "stdout_sha256": "de9ef707c18310d9abc044d7039b7f3a016eb7d86069222ac020f3af55252800",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "conditional": {
+      "sexp": "\n((Dletrec ((0 0) (0 35)) ((\"f\" \"x\" Lannot (If (Lannot (Var (Short \"x\")) ((0 18) (0 19))) (Lannot (Lit 1) ((0 27) (0 27))) (Lannot (Lit 2) ((0 35) (0 35)))) ((0 14) (0 35))))) (Dlet ((0 39) (0 71)) (Pany) (Lannot (App Opapp ((Lannot (Var (Short \"print_int\")) ((0 49) (0 58))) (Lannot (App Opapp ((Lannot (Var (Short \"f\")) ((0 62) (0 63))) (Lannot (Con (SOME (Short \"True\")) nil) ((0 65) (0 69))))) ((0 62) (0 69))))) ((0 49) (0 71)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21323,
+          "stderr_sha256": "d357408e233e0d49854fc4fb576166165007600ec29616bf3c123a7aea1778a3"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 394924,
+          "stdout_sha256": "3aa2c35f8a3bb9fad439022db94760b361a6146be8693aff6c25242d1808dc8e",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "list": {
+      "sexp": "\n((Dlet ((0 0) (0 47)) (Pany) (Lannot (App Opapp ((Lannot (Var (Short \"print_int\")) ((0 10) (0 19))) (Lannot (App Opapp ((Lannot (Var (Long \"List\" (Short \"length\"))) ((0 23) (0 33))) (Lannot (Con (SOME (Short \"::\")) ((Lannot (Lit 1) ((0 37) (0 37))) (Con (SOME (Short \"::\")) ((Lannot (Lit 2) ((0 40) (0 40))) (Con (SOME (Short \"::\")) ((Lannot (Lit 3) ((0 43) (0 43))) (Con (SOME (Short \"[]\")) nil))))))) ((0 35) (0 45))))) ((0 23) (0 45))))) ((0 10) (0 47)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21308,
+          "stderr_sha256": "1d40f191b0e88de2c66dd177026236a43188ba5b7cade74afb4fb2d6395580d8"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 397238,
+          "stdout_sha256": "b4fdda3acf59cb56b1d890ba5006488a8b52cadf15cbc809f79633840d021d14",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "local": {
+      "sexp": "\n((Dlocal ((Dlet ((0 7) (0 18)) \"x\" (Lannot (Lit 1) ((0 18) (0 18))))) ((Dlet ((0 24) (0 36)) \"y\" (Lannot (Var (Short \"x\")) ((0 35) (0 36)))))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21315,
+          "stderr_sha256": "5b177fac5a396402b110fb55b5b665cc9466c0eceadb5017b2b4dc0c9b5561a6"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 325497,
+          "stdout_sha256": "c270d4a7bf9929e4a6c1b8ba17dded4d6dbef2a70c1b655bd5fd23364a942eab",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "type_alias": {
+      "sexp": "\n((Dtabbrev ((0 0) (0 21)) nil \"t\" (Atapp ((Atapp nil (Short \"int\"))) (Short \"list\"))) (Dlet ((0 25) (0 46)) (Ptannot \"x\" (Atapp nil (Short \"t\"))) (Lannot (Con (SOME (Short \"::\")) ((Lannot (Lit 1) ((0 44) (0 44))) (Con (SOME (Short \"[]\")) nil))) ((0 42) (0 46)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21320,
+          "stderr_sha256": "c66828d73f81b0e5c3328c7fb921797d9c6654bd7b379f27e8d338f5955c43d7"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 325124,
+          "stdout_sha256": "d76eb8176eb30fdc6f6ad3628f33025d8468b1542664d3882d7d28b2de94af15",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "array": {
+      "sexp": "\n((Dlet ((0 0) (0 25)) \"a\" (Lannot (App Opapp ((Lannot (App Opapp ((Lannot (Var (Long \"Array\" (Short \"array\"))) ((0 11) (0 21))) (Lannot (Lit 3) ((0 23) (0 23))))) ((0 11) (0 23))) (Lannot (Lit 1) ((0 25) (0 25))))) ((0 11) (0 25)))) (Dlet ((0 29) (0 57)) (Pany) (Lannot (App Opapp ((Lannot (App Opapp ((Lannot (App Opapp ((Lannot (Var (Long \"Array\" (Short \"update\"))) ((0 39) (0 50))) (Lannot (Var (Short \"a\")) ((0 52) (0 53))))) ((0 39) (0 53))) (Lannot (Lit 1) ((0 55) (0 55))))) ((0 39) (0 55))) (Lannot (Lit 4) ((0 57) (0 57))))) ((0 39) (0 57)))) (Dlet ((0 61) (0 99)) (Pany) (Lannot (App Opapp ((Lannot (Var (Short \"print_int\")) ((0 71) (0 80))) (Lannot (App Opapp ((Lannot (App Opapp ((Lannot (Var (Long \"Array\" (Short \"sub\"))) ((0 84) (0 92))) (Lannot (Var (Short \"a\")) ((0 94) (0 95))))) ((0 84) (0 95))) (Lannot (Lit 1) ((0 97) (0 97))))) ((0 84) (0 97))))) ((0 71) (0 99)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21327,
+          "stderr_sha256": "578f307afb4c6c0da1b89b71955984530076e1073114ffe69fd8fee56b2d434a"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 400693,
+          "stdout_sha256": "f9b9d9ce5fa65baa554bc86077fc8866685ea105321cbe909c584d1eec7114fa",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "closure": {
+      "sexp": "\n((Dlet ((0 0) (0 38)) \"x\" (Lannot (Fun \"x\" (Lannot (Fun \"y\" (Lannot (App Opapp ((App Opapp ((Var (Short \"+\")) (Lannot (Var (Short \"x\")) ((0 33) (0 34))))) (Lannot (Var (Short \"y\")) ((0 37) (0 38))))) ((0 33) (0 38)))) ((0 22) (0 38)))) ((0 11) (0 38)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21329,
+          "stderr_sha256": "81c5703eae3c7bbe07492b1837ee55c7bc6ac768d5885f3d834e295b25366ec9"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 325124,
+          "stdout_sha256": "d76eb8176eb30fdc6f6ad3628f33025d8468b1542664d3882d7d28b2de94af15",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "recursive_list": {
+      "sexp": "\n((Dletrec ((0 0) (0 63)) ((\"f\" \"n\" Lannot (If (Lannot (App Opapp ((App Opapp ((Var (Short \"=\")) (Lannot (Var (Short \"n\")) ((0 18) (0 19))))) (Lannot (Lit 0) ((0 24) (0 24))))) ((0 18) (0 24))) (Lannot (Con (SOME (Short \"[]\")) nil) ((0 32) (0 35))) (Lannot (Con (SOME (Short \"::\")) ((Lannot (Var (Short \"n\")) ((0 43) (0 44))) (Lannot (App Opapp ((Lannot (Var (Short \"f\")) ((0 50) (0 51))) (Lannot (App Opapp ((App Opapp ((Var (Short \"-\")) (Lannot (Var (Short \"n\")) ((0 55) (0 56))))) (Lannot (Lit 1) ((0 61) (0 61))))) ((0 55) (0 61))))) ((0 50) (0 63))))) ((0 43) (0 63)))) ((0 14) (0 63))))) (Dlet ((0 67) (0 111)) (Pany) (Lannot (App Opapp ((Lannot (Var (Short \"print_int\")) ((0 77) (0 86))) (Lannot (App Opapp ((Lannot (Var (Long \"List\" (Short \"length\"))) ((0 90) (0 100))) (Lannot (App Opapp ((Lannot (Var (Short \"f\")) ((0 104) (0 105))) (Lannot (Lit 7) ((0 107) (0 107))))) ((0 104) (0 107))))) ((0 90) (0 109))))) ((0 77) (0 111)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21327,
+          "stderr_sha256": "97f95c8b0a034da70ff08d0096c0c1f927ac91d29af5a5bb9c08615c922d21bd"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 401584,
+          "stdout_sha256": "f360e9d1f1e278fa54ef6d47041738527fcfed50292dfe2d8b9f45e82041df2d",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "annotated_function": {
+      "sexp": "\n((Dletrec ((0 0) (0 32)) ((\"f\" \"\" Mat (Var (Short \"\")) (((Ptannot \"x\" (Atapp nil (Short \"int\"))) Lannot (App Opapp ((App Opapp ((Var (Short \"+\")) (Lannot (Var (Short \"x\")) ((0 26) (0 27))))) (Lannot (Lit 1) ((0 32) (0 32))))) ((0 26) (0 32))))))) (Dlet ((0 36) (0 64)) (Pany) (Lannot (App Opapp ((Lannot (Var (Short \"print_int\")) ((0 46) (0 55))) (Lannot (App Opapp ((Lannot (Var (Short \"f\")) ((0 59) (0 60))) (Lannot (Lit 7) ((0 62) (0 62))))) ((0 59) (0 62))))) ((0 46) (0 64)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21322,
+          "stderr_sha256": "84d777b52dbc3f172508d08b750425c858c457fd2051f78340bb58e83b74b65e"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 395382,
+          "stdout_sha256": "85a1a64bbfd268df8e85cde2e17ecf52d744439733b32c88881da54a639c9c02",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "boolean_logic": {
+      "sexp": "\n((Dlet ((0 0) (0 79)) (Pany) (Lannot (App Opapp ((Lannot (Var (Short \"print_int\")) ((0 10) (0 19))) (Lannot (If (Lannot (Log Orelse (Lannot (Log Andalso (Lannot (Con (SOME (Short \"True\")) nil) ((0 27) (0 31))) (Lannot (Con (SOME (Short \"False\")) nil) ((0 42) (0 47)))) ((0 27) (0 47))) (Lannot (Con (SOME (Short \"True\")) nil) ((0 57) (0 61)))) ((0 27) (0 61))) (Lannot (Lit 1) ((0 69) (0 69))) (Lannot (Lit 0) ((0 77) (0 77)))) ((0 23) (0 77))))) ((0 10) (0 79)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21308,
+          "stderr_sha256": "1d40f191b0e88de2c66dd177026236a43188ba5b7cade74afb4fb2d6395580d8"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 393660,
+          "stdout_sha256": "102530504e75357c438a589e0e0d61ea58ee821005c88220cba21df00a2b3663",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "nested_module": {
+      "sexp": "\n((Dmod \"A\" ((Dmod \"B\" ((Dlet ((0 50) (0 62)) \"x\" (Lannot (Lit 42) ((0 61) (0 62)))))))) (Dlet ((0 76) (0 90)) \"y\" (Lannot (Var (Long \"A\" (Long \"B\" (Short \"x\")))) ((0 87) (0 90)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21326,
+          "stderr_sha256": "a0d2660371930bc143b33048a1c51b2e4fb8523ad9963df411219fb1c1585626"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 325497,
+          "stdout_sha256": "e989dcf4bdd37d5f56136c1a7522de348bd4599b198e6c5e45db5216e77e3bc8",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "nested_type_alias": {
+      "sexp": "\n((Dtabbrev ((0 0) (0 40)) nil \"t\" (Atapp ((Attup ((Atapp ((Atapp nil (Short \"int\"))) (Short \"list\")) (Atapp nil (Short \"bool\"))))) (Short \"list\"))) (Dlet ((0 44) (0 84)) (Ptannot \"x\" (Atapp nil (Short \"t\"))) (Lannot (Con (SOME (Short \"::\")) ((Lannot (Con NONE ((Lannot (Con (SOME (Short \"::\")) ((Lannot (Lit 1) ((0 67) (0 67))) (Con (SOME (Short \"::\")) ((Lannot (Lit 2) ((0 70) (0 70))) (Con (SOME (Short \"[]\")) nil))))) ((0 65) (0 72))) (Lannot (Con (SOME (Short \"True\")) nil) ((0 76) (0 80))))) ((0 63) (0 82))) (Con (SOME (Short \"[]\")) nil))) ((0 61) (0 84)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21334,
+          "stderr_sha256": "c8001b8b974f8e602c8664ba09a9d8f2c6a783943e4b11360415c6f22ebfca11"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 325124,
+          "stdout_sha256": "d76eb8176eb30fdc6f6ad3628f33025d8468b1542664d3882d7d28b2de94af15",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "nested_pattern": {
+      "sexp": "\n((Dtype ((0 0) unk) ((nil \"t\" (\"L\" (Atapp nil (Short \"int\"))) (\"N\" (Atapp nil (Short \"t\")) (Atapp nil (Short \"t\")))))) (Dletrec ((0 38) unk) ((\"f\" \"t\" Lannot (Mat (Lannot (Var (Short \"t\")) ((0 58) (0 59))) (((Pcon (SOME (Short \"N\")) ((Pcon (SOME (Short \"L\")) (\"x\")) (Pcon (SOME (Short \"L\")) (\"y\")))) Lannot (App Opapp ((App Opapp ((Var (Short \"+\")) (Lannot (Var (Short \"x\")) ((0 92) (0 93))))) (Lannot (Var (Short \"y\")) ((0 96) (0 97))))) ((0 92) (0 97))) ((Pany) Lannot (Lit 0) ((0 108) (0 108))))) ((0 52) unk)))) (Dlet ((0 112) (0 149)) \"z\" (Lannot (App Opapp ((Lannot (Var (Short \"f\")) ((0 123) (0 124))) (Lannot (Con (SOME (Short \"N\")) ((Con (SOME (Short \"L\")) ((Lit 1))) (Con (SOME (Short \"L\")) ((Lit 2))))) ((0 128) (0 145))))) ((0 123) (0 149)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21327,
+          "stderr_sha256": "57a6ae85ba7cca7179d202de23bd316a0a6289eff68997f93b8e591aa1397865"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 329998,
+          "stdout_sha256": "d7401b371e6159a1cfdf15599fa64c78d2c0a6715ada0a4549d90a42172ee835",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  },
+  "failures": [
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 92,
+      "stderr_sha256": "ed70ad3c59c4dee248a3b578f91a601ab3180a6d06b74beeebed4ec84276dfa1"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 92,
+      "stderr_sha256": "ed70ad3c59c4dee248a3b578f91a601ab3180a6d06b74beeebed4ec84276dfa1"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 92,
+      "stderr_sha256": "ed70ad3c59c4dee248a3b578f91a601ab3180a6d06b74beeebed4ec84276dfa1"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 92,
+      "stderr_sha256": "ed70ad3c59c4dee248a3b578f91a601ab3180a6d06b74beeebed4ec84276dfa1"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 92,
+      "stderr_sha256": "ed70ad3c59c4dee248a3b578f91a601ab3180a6d06b74beeebed4ec84276dfa1"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 92,
+      "stderr_sha256": "ed70ad3c59c4dee248a3b578f91a601ab3180a6d06b74beeebed4ec84276dfa1"
+    }
+  ],
+  "type_errors": [
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 122,
+      "stderr_sha256": "a9639743a38f41d4212faba2f3301fbfce01ba8ccf187fa7f336b38efb320273"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 122,
+      "stderr_sha256": "a9639743a38f41d4212faba2f3301fbfce01ba8ccf187fa7f336b38efb320273"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 122,
+      "stderr_sha256": "a9639743a38f41d4212faba2f3301fbfce01ba8ccf187fa7f336b38efb320273"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 122,
+      "stderr_sha256": "a9639743a38f41d4212faba2f3301fbfce01ba8ccf187fa7f336b38efb320273"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 109,
+      "stderr_sha256": "c74b0772a09c7370d739f64c22e8a344af2cc16232aff00750a0e7151254dea9"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 115,
+      "stderr_sha256": "b8224fd77cfe156fd8b7a91f5a4ca99450c78f74702f8bf1dc5e4f493c54ef07"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 173,
+      "stderr_sha256": "251392edaeffd7e8f2bbfa44ebfb80c821824461b6dbb30c790723391193b130"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 101,
+      "stderr_sha256": "c248d3b666136fd8928d4291d0d5fb45b7e329d68af4ddf71491dd88c1c3dd85"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 170,
+      "stderr_sha256": "895c39731a21c9a2e1750fdbffcfd557744458a328c863ea00fd41f05a5b97cb"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 103,
+      "stderr_sha256": "641e7091aeeb75e1df392350fcac15690bba9197030db6c1a37fdba98c68d2f3"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 175,
+      "stderr_sha256": "dd0d27541dc8e4640984e9dbaeb1c1e43081fc50816b6b3724fd167bdadb046f"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 109,
+      "stderr_sha256": "c74b0772a09c7370d739f64c22e8a344af2cc16232aff00750a0e7151254dea9"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 109,
+      "stderr_sha256": "c74b0772a09c7370d739f64c22e8a344af2cc16232aff00750a0e7151254dea9"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 155,
+      "stderr_sha256": "112b9f2dd6567a5e8f6a81a21f7f8f3836d8fe49cebe18af1a9e018873e17b74"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 116,
+      "stderr_sha256": "0e2c7ab2e88468b0c4dc7bec6419a0a937e5455de06513ce435e787f0bd28c8a"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 116,
+      "stderr_sha256": "ccba12fae46ffd533df7316c411ab8a06b53dc711487c18c9b2cb95f02858a75"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 110,
+      "stderr_sha256": "2d7433d4c383724df645af837018ed116f85afd2d978ac70494e8ca87f9caefe"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 110,
+      "stderr_sha256": "2d7433d4c383724df645af837018ed116f85afd2d978ac70494e8ca87f9caefe"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 110,
+      "stderr_sha256": "2d7433d4c383724df645af837018ed116f85afd2d978ac70494e8ca87f9caefe"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 177,
+      "stderr_sha256": "fb3dba00be0a32b52bc9fc50d0c43c0efb9e779c0b18a681d055544878a7be4c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 109,
+      "stderr_sha256": "c74b0772a09c7370d739f64c22e8a344af2cc16232aff00750a0e7151254dea9"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 130,
+      "stderr_sha256": "0364fd282ab82f98d020283938f6cc94d6d16ebc0fca0d028a677377252f38de"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 133,
+      "stderr_sha256": "576a39f2e7b6695801bb51569b200cd7c1eb810d0b1a1a92dfbd5e21de04a5aa"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 130,
+      "stderr_sha256": "758588d54deff01b57e01e779b5fdb34169d5e59dd829c209d49398d93931a1d"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 132,
+      "stderr_sha256": "44a879a08d5538998810b3b92ddcbaaf2421fc8dd4fb9c7da419d391ba9941ae"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 133,
+      "stderr_sha256": "ea57ba16165006502a1a81581fc7d738ccf40b02135e45d99644ad024b0f187d"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 133,
+      "stderr_sha256": "cae6ed24a7bc60a5d7de701d2d28e7b007966619d41907dcf39facbdfbfbc9fe"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 131,
+      "stderr_sha256": "16db29ec9a15ecc8d412e12b3e20ba6af36caece48064106672e2884d79d7dda"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 134,
+      "stderr_sha256": "0c79200679acbdd3fb36877d2c086ff8bfcd114baf1bca4c7af02de4c62724a6"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 134,
+      "stderr_sha256": "c994c89f61a5a57e26c4950466a37669719bce0653d4d014a1ea87d82a82592d"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 135,
+      "stderr_sha256": "af1ad7e0da2742ae0e1a62ff8ad6efa97f9c88c50ce38181bc67777b3d134646"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 135,
+      "stderr_sha256": "76285d1a27e5a388536ec2846b9a61bea206daf4eb941419eb7d956c7141a406"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 135,
+      "stderr_sha256": "22e6bad1c3bfccb895c2ecd0a7ba95bd88309e9bc82580ae7aaa57ec4739943e"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 135,
+      "stderr_sha256": "cf8bcaf36f6afde193911a848e2653ee47d0a970e2e59b22719fe82f18a4db51"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 131,
+      "stderr_sha256": "51988ee3296b1b93d8596d0fdbc7f9d7bf732d68a644bf757a154f82422700c4"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 131,
+      "stderr_sha256": "67ab1b24329ae99430f0c0acfdae95acec82442235bdf5affc388cf7b8d471d2"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 132,
+      "stderr_sha256": "fee8b4a3e1b7e0d78974248feba659d54b2d14aee8b973ad183b188f6b8681e1"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 132,
+      "stderr_sha256": "130beb377b1bef70ab292114f914c49337e4c4e557ce2790b992904bfa2a19e7"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 131,
+      "stderr_sha256": "280a31a4a404e6b5f4084926b78fc34d8b5686e566e1d3198586aeab3e9146d2"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 134,
+      "stderr_sha256": "12234a102c59f51b9f421a3327896a357d46f6bd71f5b77d661d9a72cf75272a"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 129,
+      "stderr_sha256": "e4d9ed00c5ae8dfc17c96e25ebe42ef693bfc8cae5d1c3bd0e78621cf89b9917"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 132,
+      "stderr_sha256": "db77264684a659d79dd1b9d6b9628f5797a0d7a9dc23d41e642d0f7aa0e99849"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 131,
+      "stderr_sha256": "7bbc03fbf575e0cc72f51492f9d3ef46948495c4d2c3581e291fa5b89d4d4eee"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 136,
+      "stderr_sha256": "ca42c9eb826bdce4ff0b437abb459fbc7e5b535afc5ffc3868940caa75817617"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 129,
+      "stderr_sha256": "b763773c76a6857cd412fdfe72e4bc07a31df3f5b0127ad6bff3aba0e9de446e"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 132,
+      "stderr_sha256": "989bb4b48a4ab865393b9d9434d7c9455d3f53c45646f0c98d22fdf52c9db327"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 132,
+      "stderr_sha256": "12a358ceb8ac75e43149ce432706c0a60f9c3b664c67d4355cbd2a856d962041"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 133,
+      "stderr_sha256": "a8f47dc6d3f500d462b17a24758c9a8daec58ffd014b13aba13b1272965d07d5"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 135,
+      "stderr_sha256": "fe18fd9b140838ebcde18d07f50c339a174f24b036b6ebedcf62df41b1fc7bc4"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 128,
+      "stderr_sha256": "0703204cd6be0a54ed69af71a684a8b5dc3407f61b8c5ed246e20af6978bcfb7"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 130,
+      "stderr_sha256": "5fe3aaa3501dd3ef5b677e237186472c29f838b351905835bc097883985d7fb6"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 95,
+      "stderr_sha256": "4a06680c0da939f704d88d61e7e56d300979ce07d0cd253b1db6614f78af48cc"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 95,
+      "stderr_sha256": "4a06680c0da939f704d88d61e7e56d300979ce07d0cd253b1db6614f78af48cc"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 130,
+      "stderr_sha256": "f46bf05b8c26a2c48e940ee0a9b8276d1faf9318e2811370784206bb1dd167ae"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 130,
+      "stderr_sha256": "c35f1174719925c25455b07c48e26b5a0789fb657cd40540aed23721bce1c540"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 131,
+      "stderr_sha256": "dfc09415b726b412cea21e0c742c576f98d5a389c70850a83825fa50646c92ea"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 193,
+      "stderr_sha256": "14ffa4874f318f6b789941a4d3212592943783c568dc0cdf86edde6ec7b77c03"
+    }
+  ],
+  "stress": {
+    "many_declarations": {
+      "exit_code": 0,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 2,
+      "stderr_sha256": "75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070"
+    },
+    "long_byte_string": {
+      "exit_code": 0,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 2,
+      "stderr_sha256": "75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070"
+    }
+  },
+  "raw_programs": {
+    "evaluated_thunk": {
+      "exit_code": 0,
+      "stdout_bytes": 311621,
+      "stdout_sha256": "f0e1a8acd4c661ec07a027f495ca6d94c1f2ec23a1a9ccd30b1ebefc046fa9a1",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pending_thunk": {
+      "exit_code": 0,
+      "stdout_bytes": 312127,
+      "stdout_sha256": "d007570bbc4741542d7d25aa1d444ffc4b808260f4a9a22b194d37eb533b4270",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "dynamic_eval": {
+      "exit_code": 0,
+      "stdout_bytes": 331357,
+      "stdout_sha256": "fc82997cb81037cbcb93b5079f626c3213aaa82b6f550e9bf112d696a9e1e560",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "environment_declaration": {
+      "exit_code": 0,
+      "stdout_bytes": 310091,
+      "stdout_sha256": "190452c735f110b227123cb1f21e3a3d4738b2d51a39687b8c2d8b8b98b581eb",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "two_environment_declarations": {
+      "exit_code": 0,
+      "stdout_bytes": 310091,
+      "stdout_sha256": "ce66dbbe77bc1513c00872a286d094f94db2e7084c6694e6588d80b0821227a3",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "module_environment_declaration": {
+      "exit_code": 0,
+      "stdout_bytes": 310091,
+      "stdout_sha256": "190452c735f110b227123cb1f21e3a3d4738b2d51a39687b8c2d8b8b98b581eb",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local_environment_declarations": {
+      "exit_code": 0,
+      "stdout_bytes": 310091,
+      "stdout_sha256": "ce66dbbe77bc1513c00872a286d094f94db2e7084c6694e6588d80b0821227a3",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "environment_after_binding": {
+      "exit_code": 0,
+      "stdout_bytes": 310091,
+      "stdout_sha256": "ce66dbbe77bc1513c00872a286d094f94db2e7084c6694e6588d80b0821227a3",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "binding_after_environment": {
+      "exit_code": 0,
+      "stdout_bytes": 310091,
+      "stdout_sha256": "ce66dbbe77bc1513c00872a286d094f94db2e7084c6694e6588d80b0821227a3",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "current_environment_id": {
+      "exit_code": 0,
+      "stdout_bytes": 310214,
+      "stdout_sha256": "5c424cd5643b96cce9f55d3bbfdd339ec7557022c89dae116a6cb848e2a222da",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "eval_empty_arguments": {
+      "exit_code": 0,
+      "stdout_bytes": 330857,
+      "stdout_sha256": "f45c3c871eba0010d752c150da5b09b6afee2f7e046361493645bb2919cba575",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "direct_ffi": {
+      "exit_code": 0,
+      "stdout_bytes": 310679,
+      "stdout_sha256": "f1c722be78d0ee442851fa750a278ab0fdec7f0990264bc049fd8564864fb89b",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "fixed_allocation": {
+      "exit_code": 0,
+      "stdout_bytes": 311000,
+      "stdout_sha256": "2f851f041ebcbe013ec12fcc1f04fd7cd30082ab98add624224dd16bd82f8067",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "unsafe_byte_subscript": {
+      "exit_code": 0,
+      "stdout_bytes": 310274,
+      "stdout_sha256": "351190ed7a7a012b1992a7a6b902470cc15f326224dbcd392abf8bc682b1f71c",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "unsafe_byte_xor": {
+      "exit_code": 0,
+      "stdout_bytes": 310214,
+      "stdout_sha256": "5c424cd5643b96cce9f55d3bbfdd339ec7557022c89dae116a6cb848e2a222da",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pending_thunk_update": {
+      "exit_code": 0,
+      "stdout_bytes": 310274,
+      "stdout_sha256": "c71ed5a6739a7f7ab13bd4f507ebffa051687a0bea08ab5ab10388eed6d2e6df",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

@@ -23,13 +23,13 @@ def originalDeleteOther : Option (PanValue Nat) := some (.word 3)
 def originalUpdateHit : Option (PanValue Nat) := some (.word 7)
 
 def deleteHit : Option (PanValue Nat) :=
-  panValueResVar locals "x" none "x"
+  restorePanValueLocal locals "x" none "x"
 
 def deleteOther : Option (PanValue Nat) :=
-  panValueResVar locals "y" none "x"
+  restorePanValueLocal locals "y" none "x"
 
 def updateHit : Option (PanValue Nat) :=
-  panValueResVar locals "x" (some (.word 7)) "x"
+  restorePanValueLocal locals "x" (some (.word 7)) "x"
 
 def isWord (value : Option (PanValue Nat)) (expected : Nat) : Bool :=
   match value with
@@ -50,42 +50,24 @@ def isNone (value : Option (PanValue Nat)) : Bool :=
 /-! `flookup_res_var_some_eq_lookup` (`panPropsScript.sml:220`) and
     `flookup_res_var_diff_eq_org` (`:228`). -/
 
-theorem panValueResVar_lookup_same_fixture :
-    locals "x" = some (.word 3) :=
-  panValueResVar_lookup_same locals locals "x" (by simp [panValueResVar, locals])
-
-theorem panValueResVar_lookup_diff_fixture :
-    panValueResVar locals "y" none "x" = locals "x" :=
-  panValueResVar_lookup_diff locals "y" "x" none (by decide)
-
 def lookupSameGuard : Bool := isWord (locals "x") 3
-def lookupDiffGuard : Bool := isWord (panValueResVar locals "y" none "x") 3
+def lookupDiffGuard : Bool := isWord (restorePanValueLocal locals "y" none "x") 3
 
 #guard lookupSameGuard
 #guard lookupDiffGuard
 
 /-! `FLOOKUP_pan_res_var_thm` (`panPropsScript.sml:236`). -/
 
-theorem panValueResVar_eq_ite_fixture :
-    panValueResVar locals "y" none "x" =
-      (if "x" == "y" then none else locals "x") :=
-  panValueResVar_eq_ite locals "y" none "x"
-
-def iteGuard : Bool := isWord (panValueResVar locals "y" none "x") 3
+def iteGuard : Bool := isWord (restorePanValueLocal locals "y" none "x") 3
 
 #guard iteGuard
 
 /-! `res_var_commutes'` (`pan_to_crepProofScript.sml:4094`). -/
 
-theorem panValueResVar_comm_fixture :
-    panValueResVar (panValueResVar locals "y" none) "x" (some (.word 7)) =
-      panValueResVar (panValueResVar locals "x" (some (.word 7))) "y" none :=
-  panValueResVar_comm locals "y" "x" none (some (.word 7)) (by decide)
-
 def commGuard : Bool :=
-  isWord (panValueResVar (panValueResVar locals "y" none) "x"
+  isWord (restorePanValueLocal (restorePanValueLocal locals "y" none) "x"
       (some (.word 7)) "x") 7 &&
-    isNone (panValueResVar (panValueResVar locals "y" none) "x"
+    isNone (restorePanValueLocal (restorePanValueLocal locals "y" none) "x"
       (some (.word 7)) "y")
 
 #eval commGuard
@@ -93,18 +75,8 @@ def commGuard : Bool :=
 
 /-! `res_var_commutes_strong` (`crep_inlineProofScript.sml:699`). -/
 
-theorem panValueResVar_comm_strong_fixture :
-    panValueResVar (panValueResVar locals "x" (locals "x")) "x" (locals "x") =
-      panValueResVar (panValueResVar locals "x" (locals "x")) "x" (locals "x") :=
-  panValueResVar_comm_strong locals locals "x" "x"
-
-theorem panValueResVar_comm_strong_fixture2 :
-    panValueResVar (panValueResVar locals "x" (locals "x")) "y" (locals "y") =
-      panValueResVar (panValueResVar locals "y" (locals "y")) "x" (locals "x") :=
-  panValueResVar_comm_strong locals locals "x" "y"
-
 def commStrongGuard : Bool :=
-  isWord (panValueResVar (panValueResVar locals "x" (locals "x")) "x"
+  isWord (restorePanValueLocal (restorePanValueLocal locals "x" (locals "x")) "x"
       (locals "x") "x") 3
 
 #eval commStrongGuard
@@ -113,18 +85,14 @@ def commStrongGuard : Bool :=
 /-! `res_var_foldl_commutes_strong` (`crep_inlineProofScript.sml:706`) and
     `flookup_res_var_is_mem_zip_eq` (`crep_inlineProofScript.sml:802`). -/
 
-theorem panValueResVarFold_comm_fixture :
-    panValueResVar (panValueResVarFold locals locals ["x", "y"]) "y" (locals "y") =
-      panValueResVarFold (panValueResVar locals "y" (locals "y")) locals ["x", "y"] :=
-  panValueResVarFold_comm locals locals "y" ["x", "y"]
-
-theorem panValueResVarFold_mem_fixture :
-    panValueResVarFold locals locals ["x", "y"] "x" = locals "x" :=
-  panValueResVarFold_mem locals locals ["x", "y"] (by simp)
+def restoreFold (initial saved : VarName → Option (PanValue Nat))
+    (names : List VarName) : VarName → Option (PanValue Nat) :=
+  (names.zip (names.map saved)).foldl
+    (fun current entry => restorePanValueLocal current entry.1 entry.2) initial
 
 def foldGuard : Bool :=
-  isWord (panValueResVarFold locals locals ["x", "y"] "x") 3 &&
-    isNone (panValueResVarFold locals locals ["x", "y"] "z")
+  isWord (restoreFold locals locals ["x", "y"] "x") 3 &&
+    isNone (restoreFold locals locals ["x", "y"] "z")
 
 #eval foldGuard
 #guard foldGuard

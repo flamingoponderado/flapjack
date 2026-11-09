@@ -1,0 +1,5 @@
+v_to_char_list_typed=∀(genv :global_env). genv_c_ok genv.c ⇒ ∀(v1 :semanticPrimitives$v) (v2 :v) (vs1 :string). (v_rel genv v1 v2 :bool) ∧ v_to_char_list v1 = SOME vs1 ⇒ v_to_char_list v2 = SOME vs1
+v_to_list_typed=∀(genv :global_env). genv_c_ok genv.c ⇒ ∀(v1 :semanticPrimitives$v) (v2 :v) (vs1 :semanticPrimitives$v list). (v_rel genv v1 v2 :bool) ∧ v_to_list v1 = SOME vs1 ⇒ ∃(vs2 :v list). v_to_list v2 = SOME vs2 ∧ LIST_REL (v_rel genv :semanticPrimitives$v -> v -> bool) vs1 vs2
+v_to_word8_list_rel_typed=v_to_word8_list (bytes_v :semanticPrimitives$v) = SOME (bytes :word8 list) ∧ (v_rel (genv :global_env) bytes_v (v' :v) :bool) ∧ genv_c_ok genv.c ⇒ v_to_bytes v' = SOME bytes
+v_to_word64_list_rel_typed=v_to_word64_list (words_v :semanticPrimitives$v) = SOME (words :word64 list) ∧ (v_rel (genv :global_env) words_v (v' :v) :bool) ∧ genv_c_ok genv.c ⇒ v_to_words v' = SOME words
+vs_to_string_local_typed=∀(v1 :semanticPrimitives$v list) (v2 :v list) (s :mlstring). LIST_REL (v_rel (genv :global_env) :semanticPrimitives$v -> v -> bool) v1 v2 ⇒ vs_to_string v1 = SOME s ⇒ vs_to_string v2 = SOME s

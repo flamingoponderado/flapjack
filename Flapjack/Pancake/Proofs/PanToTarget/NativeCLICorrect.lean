@@ -88,15 +88,16 @@ theorem nativeCLIOutput_correct {format : RiscV.NativeCLI.Format} {source : Stri
       Parser.parseTopDecs (fun value => BitVec.ofInt 64 value) source = .ok parsed ∧
       RiscV.NativeSource.compile source = .ok out ∧
       out.artifact = some (bytes, bitmaps, config) ∧
-      text = RiscV.NativeCLI.render format out.declarations bytes bitmaps config ∧
+      text = RiscV.NativeCLI.render format bytes bitmaps config ∧
       compileProgMaxAsmExecutable pancakeRiscVBackendConfig riscvConfig out.declarations =
-        (some (bytes, bitmaps, config), nativeSourceLogicalBound out) ∧
+        (some (bytes, bitmaps, { config with symbols := notFoundSymbols config }),
+          nativeSourceLogicalBound out) ∧
       NativeRiscVCorrectness parsed out := by
   obtain ⟨out, bytes, bitmaps, config, compiled, result, rendered⟩ :=
     RiscV.NativeCLI.output_ok succeeded
   obtain ⟨parsed, parsedEq, -, -⟩ := nativeSourceCompile_ok compiled
   refine ⟨parsed, out, bytes, bitmaps, config, parsedEq, compiled, result, rendered, ?_, ?_⟩
-  · simpa only [result] using nativeSourceCompile_full_result compiled
+  · simpa only [result, Option.map_some] using nativeSourceCompile_full_result compiled
   · intro σ mc bytes' bitmaps' c' stack_max s ms globals_size heap_len adj_ptr2 adj_ptr4 ffi
       cbspace data_sp start hmc hasMain premises
     exact nativeSourceCompile_correct parsed compiled parsedEq mc bytes' bitmaps' c' stack_max s ms

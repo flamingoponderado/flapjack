@@ -1,0 +1,4 @@
+subst=Infer_Tapp [Infer_Tuvar 9; Infer_Tapp [] 5; Infer_Tvar_db 2] 4
+generalise=(2,SOME 0,SOME 1,Infer_Tapp [Infer_Tuvar 1; Infer_Tvar_db 0; Infer_Tvar_db 0; Infer_Tvar_db 1] 9)
+unify=SOME FEMPTY⟨1 ↦ Infer_Tapp [] 5; 0 ↦ Infer_Tapp [] 5⟩
+occurs=NONE

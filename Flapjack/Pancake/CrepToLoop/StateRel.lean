@@ -954,14 +954,13 @@ def mkCtxtHOL (target : Compiler.Encoders.Asm.AsmArchitecture) (vmap : FiniteMap
     CrepToLoopFiniteMapContext :=
   { vars := vmap, funcs := functions, vmax := vmax, target := target }
 
-/-- Exact port of HOL `make_vmap_def`
-    (`cakeml/pancake/crep_to_loopScript.sml:230-233`): Cake's
-    `FEMPTY |++ ZIP (params, GENLIST I (LENGTH params))`. -/
-@[hol "cakeml/pancake/crep_to_loopScript.sml" "make_vmap_def"]
+/-- Flapjack-specific lookup-map rendering of HOL `make_vmap_def`.
+    Its result is a raw function, not a finite map; `makeVmapExact` provides
+    the finite-support carrier needed for a faithful port. -/
 def makeVmapHOL (params : List Nat) : FiniteMap Nat Nat :=
   FUPDATE_LIST FEMPTY (params.zip (List.range params.length))
 
-/-! ## Executable `crepMakeVmap` vs the tagged HOL `make_vmap_def` -/
+/-! ## Executable `crepMakeVmap` vs the raw lookup-map rendering -/
 
 /-- Adapter from the executable list-backed lookup map to the finite map built
     by replaying the association list in reverse (Cake's `FEMPTY |++ ...`). -/
@@ -994,7 +993,7 @@ theorem lookupNatInfo_eq_flookup_natInfoMapToFiniteMap [BEq Nat] [LawfulBEq Nat]
     `crepMakeVmap` replays the positional pairs most-recent-first, so its
     first-match lookup reproduces HOL's last-binding-wins behaviour for a
     duplicate parameter name.  This is the general correspondence with the
-    tagged `makeVmapHOL`, valid for every parameter list. -/
+    raw lookup-map `makeVmapHOL`, valid for every parameter list. -/
 theorem lookupNatInfo_crepMakeVmap_eq_flookup_makeVmapHOL (params : List Nat) (name : Nat) :
     lookupNatInfo name (crepMakeVmap params) = FLOOKUP (makeVmapHOL params) name := by
   simp only [crepMakeVmap, makeVmapHOL,
@@ -1047,28 +1046,9 @@ theorem memLookupFromAListSome {β : Type} [BEq Nat] [LawfulBEq Nat]
     entries.lookup n = some x :=
   list_lookup_of_mem_of_nodup hnodup hmem
 
-/-! ## Association-list entry agreement
 
-`crep_to_loopProofScript.sml`'s `alookup_el_pair_eq_el` (`:3921`): in a
-program association list with distinct first components, the entry at an index
-whose first component is `start` and whose parameter list is empty is exactly
-the pair recorded by `ALOOKUP prog start`.  The Lean counterpart is the
-untagged `getElem_eq_of_lookup_eq` (`Flapjack/Pancake/PanLang.lean`); HOL's
-`EL n prog = (start, [], SND (SND (EL n prog)))` premise is rendered literally
-as `prog[n] = (start, [], (prog[n]).2.2)` over the right-associated triple. -/
-
-/-- Exact port of HOL `alookup_el_pair_eq_el`
-    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:3921`). -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "alookup_el_pair_eq_el"]
-theorem alookupElPairEqEl {α β : Type} [BEq α] [LawfulBEq α]
-    (prog : List (α × List Nat × β)) (start : α) (cp : β) (n : Nat)
-    (hn : n < prog.length)
-    (hshape : prog[n]'hn = (start, [], (prog[n]'hn).2.2))
-    (hdistinct : (prog.map Prod.fst).Nodup)
-    (hlookup : prog.lookup start = some ([], cp)) :
-    prog[n]'hn = (start, [], cp) := by
-  have hhead : (prog[n]'hn).1 = start := congrArg Prod.fst hshape
-  exact getElem_eq_of_lookup_eq hdistinct hn hhead hlookup
+/-! The HOL `alookup_el_pair_eq_el` remains to be ported without the extra
+    Boolean equality assumptions of its former analogue. -/
 
 /-! ## Distinctness of `rt_vars` over a distinct map
 
@@ -1076,8 +1056,7 @@ theorem alookupElPairEqEl {α β : Type} [BEq α] [LawfulBEq α]
 (`:3345`): for a distinct list of return variables and a `distinct_vars`
 context, `rt_vars` (the `OPT_MMAP` of `ctxt.vars` over those variables, or
 `[n+1]` on failure) is itself `ALL_DISTINCT`. The Lean counterpart uses the
-exact carriers `crepToLoopDistinctVars` (`distinct_vars_def`) and `rtVars`
-(`rt_vars_def`); `ALL_DISTINCT` is rendered as `List.Nodup`. -/
+the `crepToLoopDistinctVars` and `rtVars` lookup helpers; `ALL_DISTINCT` is rendered as `List.Nodup`. -/
 
 private theorem forall_some_of_mapM_some {ι : Type} {vars : FiniteMap ι Nat}
     (rts : List ι) (m : List Nat)

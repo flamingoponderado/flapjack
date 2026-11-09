@@ -202,48 +202,6 @@ private theorem evalHOLFinite_isWf {width : Nat} {σ : Type} [NeZero width]
   apply hExact
   simpa using heval
 
-private theorem evalListHOLFinite_mem_isWf {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) [DecidablePred state.memaddrs]
-    (hlocals : valuesHOLWf state.structs state.locals.lookup)
-    (hglobals : valuesHOLWf state.structs state.globals.lookup) :
-    ∀ expressions values, state.evalListHOLFinite expressions = some values →
-      ∀ value, value ∈ values → isWfShapeValueHOLExact state.structs value = true := by
-  intro expressions
-  induction expressions with
-  | nil =>
-      intro values heval value hmem
-      simp [PanSemStateFiniteExact.evalListHOLFinite, evalListHOLExact] at heval
-      subst values
-      simp at hmem
-  | cons expression rest ih =>
-      intro values heval value hmem
-      letI : DecidablePred state.toExact.memaddrs := by
-        simpa [PanSemStateFiniteExact.toExact] using
-          (inferInstance : DecidablePred state.memaddrs)
-      change evalListHOLExact state.toExact (expression :: rest) = some values at heval
-      cases hhead : evalHOLExact state.toExact expression with
-      | none => simp [evalListHOLExact, hhead] at heval
-      | some head =>
-          cases htail : evalListHOLExact state.toExact rest with
-          | none => simp [evalListHOLExact, hhead, htail] at heval
-          | some tail =>
-              have hValues : values = head :: tail := by
-                simpa [evalListHOLExact, hhead, htail] using heval.symm
-              subst values
-              simp only [List.mem_cons] at hmem
-              rcases hmem with hheadMem | htailMem
-              · subst value
-                have hheadFinite : state.evalHOLFinite expression = some head := by
-                  simpa using hhead
-                exact evalHOLFinite_isWf state hlocals hglobals expression head hheadFinite
-              · apply ih tail
-                · simpa [PanSemStateFiniteExact.evalListHOLFinite] using htail
-                · exact htailMem
-
-/-- Flapjack-specific reduction helper for the Return/Exception result cases
-    used by the evaluator invariant proofs. Its cases mirror the result match
-    in HOL `evaluate_is_wf_shape_invariant`, but it has no standalone HOL
-    declaration. -/
 def panSemResultHOLWf {width : Nat} [NeZero width]
     (structs : Flapjack.Pancake.PanLang.StructContextExact) :
     Option (PanSemResultExact width) → Prop

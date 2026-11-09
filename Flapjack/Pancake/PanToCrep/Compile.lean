@@ -454,44 +454,6 @@ def compileProgHOL [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
   | .annot _ _ => .skip
 termination_by structural program
 
-/-! ### Structural support fragment for `compile_def`
-
-The source-reviewed exact recursive compiler is in `CompileExact.lean` under
-`flapjack-pxn.18.3.5.8.13`. This separate inductive fragment retains the
-independent HOL equations for `Skip`, `Seq`, `Break`, `Continue`, `Tick`, and `Annot`
-(`pan_to_crepScript.sml:139, 207-220, 306-307`). Its support predicate makes
-the covered sublanguage explicit; unsupported constructors have no output in
-this helper, rather than inheriting an invented `Skip` fallback. This is
-Flapjack-only proof infrastructure, not the full HOL `compile` definition, so
-it is deliberately untagged. -/
-
-inductive CompileProgStructuralFragmentHOL {width : Nat} [NeZero width] :
-    Flapjack.Pancake.PanLang.ProgHOL width → Type where
-  | skip : CompileProgStructuralFragmentHOL .skip
-  | seq {first second : Flapjack.Pancake.PanLang.ProgHOL width}
-      (firstSupported : CompileProgStructuralFragmentHOL first)
-      (secondSupported : CompileProgStructuralFragmentHOL second) :
-      CompileProgStructuralFragmentHOL (.seq first second)
-  | break : CompileProgStructuralFragmentHOL .break
-  | continue : CompileProgStructuralFragmentHOL .continue
-  | tick : CompileProgStructuralFragmentHOL .tick
-  | annot (tag text : Flapjack.Pancake.PanLang.MlS) :
-      CompileProgStructuralFragmentHOL (.annot tag text)
-
-def compileProgStructuralFragmentHOL {width : Nat} [NeZero width]
-    {program : Flapjack.Pancake.PanLang.ProgHOL width}
-    (supported : CompileProgStructuralFragmentHOL program) :
-    Flapjack.CrepProgHOL width :=
-  match supported with
-  | .skip => .skip
-  | .seq firstSupported secondSupported =>
-      .seq (compileProgStructuralFragmentHOL firstSupported)
-        (compileProgStructuralFragmentHOL secondSupported)
-  | .break => .break 0
-  | .continue => .continue 0
-  | .tick => .tick
-  | .annot _ _ => .skip
-
 /-! FLAPJACK-SPECIFIC (not an exact HOL port). Source-reviewed decision
     (`flapjack-dlc.18`): the `@[hol]` tag stays withdrawn as a documented
     carrier mismatch. HOL `compile_def`
@@ -1078,29 +1040,6 @@ private theorem declOfHOL_map_declToHOL_eq {width : Nat} [NeZero width]
         intro d hd
         exact hdecls d (by simp [hd])
       simp [Flapjack.Pancake.PanLang.declOfHOL_declToHOL declaration hhead, ih htail]
-
-private theorem exceptionsHOL_names_of_exact_eq {width : Nat} [NeZero width]
-    (declarations : List (Decl (BitVec width)))
-    (hdecls : ∀ declaration ∈ declarations,
-      Flapjack.Pancake.PanLang.DeclByteRanged declaration) :
-    ((Flapjack.Pancake.PanLang.exceptionsHOL
-        (declarations.map Flapjack.Pancake.PanLang.declToHOL)).map
-          (fun entry => (Flapjack.Pancake.PanLang.paramOfHOL entry).1)) =
-      (exceptionEntries declarations).map Prod.fst := by
-  have hexact := Flapjack.Pancake.PanLang.exceptionsHOL_map_paramOfHOL
-    (declarations.map Flapjack.Pancake.PanLang.declToHOL)
-  calc
-    _ = ((Flapjack.Pancake.PanLang.exceptionsHOL
-        (declarations.map Flapjack.Pancake.PanLang.declToHOL)).map
-          Flapjack.Pancake.PanLang.paramOfHOL).map Prod.fst := by
-          rw [List.map_map]
-          rfl
-    _ = (exceptionEntries
-        ((declarations.map Flapjack.Pancake.PanLang.declToHOL).map
-          Flapjack.Pancake.PanLang.declOfHOL)).map Prod.fst := by
-          rw [hexact]
-    _ = (exceptionEntries declarations).map Prod.fst := by
-          rw [declOfHOL_map_declToHOL_eq declarations hdecls]
 
 /-! HOL `compile_to_crep_def` (`cakeml/pancake/pan_to_crepScript.sml:383-391`):
 

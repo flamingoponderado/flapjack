@@ -22,18 +22,6 @@ private theorem orderedLtTrans {κ ν : Type} (cmp : κ → κ → Ordering)
     exact ⟨hgood.2.2.2.2.2.2 x y root ⟨hxy, hordered.1⟩,
       ihl hordered.2.1, ihr hordered.2.2⟩
 
-/-- Lookup extensionality for the canonical carrier, using proof irrelevance
-for finite support. This is representation infrastructure, not a HOL port. -/
-private theorem mapExt {α β : Type} (left right : HolFiniteMapExact α β)
-    (h : ∀ key, left.lookup key = right.lookup key) : left = right := by
-  cases left with
-  | mk l hl =>
-    cases right with
-    | mk r hr =>
-      have heq : l = r := funext h
-      cases heq
-      rfl
-
 /-- Entire original single-right-rotation correctness theorem, retaining
 both invariant and semantic-map preservation under all original premises. -/
 @[hol "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "singleR_thm"

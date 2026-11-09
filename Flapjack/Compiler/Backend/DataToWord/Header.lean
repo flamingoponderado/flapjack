@@ -1,0 +1,48 @@
+import Flapjack.Compiler.Backend.DataToWord.Config
+
+/-! Word-level block header encoding. -/
+namespace Flapjack.Compiler.Backend.DataToWord
+
+/-- Encode the length, tag and two low marker bits into a word. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "make_header_def"
+  (words_as_type_indexed_bitvec)]
+def makeHeader {width : Nat} [NeZero width] (conf : Config) (tag : BitVec width) (len : Nat) : BitVec width :=
+  (BitVec.ofNat width len <<< (width - conf.lenSize)) ||| (tag <<< 2) ||| 3
+
+/-- Encode a header only when both length and tag fit the source bounds. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "encode_header_def"
+  (words_as_type_indexed_bitvec)]
+def encodeHeader {width : Nat} [NeZero width] (conf : Config) (tag len : Nat) : Option (BitVec width) :=
+  if tag < 2 ^ (width - conf.lenSize - 2) ∧ tag < 2 ^ width / 16 ∧
+     len < 2 ^ (width - 4) ∧ len < 2 ^ conf.lenSize then
+    some (makeHeader conf (BitVec.ofNat width tag) len)
+  else none
+
+/-- Preserve the low pointer-tag bits of a word location, setting its low bit;
+a code location has only that bit set. The executed compiler uses this
+definition; its agreement with the previous mask is proved in `Proofs.Mask`. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "get_lowerbits_def"
+  (words_as_type_indexed_bitvec)]
+def getLowerBits {width : Nat} [NeZero width] (conf : Config) : WordLocW width → BitVec width
+  | .word value => (value.extractLsb' 0 (smallShiftLength conf)).setWidth width ||| 1
+  | .loc _ _ => 1
+
+/-- Construct a byte-array header using the source's 32-bit or other-width
+layout. The closure-constant compiler uses this for string headers. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "make_byte_header_def"
+  (words_as_type_indexed_bitvec)]
+def makeByteHeader {width : Nat} [NeZero width] (conf : Config) (compareByContents : Bool) (len : Nat) : BitVec width :=
+  let tag : BitVec width := if compareByContents then 7 else 23
+  if width = 32 then (BitVec.ofNat width (len + 4) <<< (width - 2 - conf.lenSize)) ||| tag
+  else (BitVec.ofNat width (len + 8) <<< (width - 3 - conf.lenSize)) ||| tag
+
+/-- Flapjack-specific equivalence with the previously inlined string-header
+formula, at every positive width and without restrictions on the length. -/
+theorem makeByteHeader_contents_eq_inlined {width : Nat} [NeZero width]
+    (conf : Config) (len : Nat) :
+    makeByteHeader (width := width) conf true len =
+      (BitVec.ofNat width (len + (if width == 32 then 4 else 8)) <<<
+        (width - (if width == 32 then 2 else 3) - conf.lenSize)) ||| 7 := by
+  by_cases h : width = 32 <;> simp [makeByteHeader, h]
+
+end Flapjack.Compiler.Backend.DataToWord

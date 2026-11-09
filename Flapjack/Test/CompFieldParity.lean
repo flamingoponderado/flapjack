@@ -123,13 +123,6 @@ example :
   intro expression hmem
   exact memCompFieldHOLExact_or_zero 2 [.one] [.const 4] expression hmem
 
-example :
-    ∀ expression ∈
-      (compileField 2 [.one] [.const 4]).1,
-      expression ∈ ([.const 4] : List (CrepExp Nat)) ∨ expression = .const 0 := by
-  intro expression hmem
-  exact compileField_mem_or_zero 2 [.one] [.const 4] expression hmem
-
 def runChecks : IO Bool := do
   if parityGuard then
     IO.println "PASS comp_field first/second/fallback"

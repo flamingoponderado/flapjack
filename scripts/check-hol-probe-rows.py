@@ -306,8 +306,8 @@ def definition_bodies(text: str) -> list[tuple[str, str]]:
 def script_printed_labels(text: str) -> tuple[set[str], set[str]]:
     """Return the printed label set and the detected label-printer names.
 
-    A definition is a label printer when its body prints ``label`` (either
-    ``label ^ "="`` or ``print label``), or when it forwards its ``label``
+    A definition is a label printer when its body prints its first parameter
+    (either ``name ^ "="`` or ``print name``), or when it forwards that
     parameter to another label printer. String literals passed as the first
     argument to a label printer are collected, together with labels printed
     directly as ``print "label=..."``.
@@ -315,7 +315,9 @@ def script_printed_labels(text: str) -> tuple[set[str], set[str]]:
     bodies = definition_bodies(text)
     printers: set[str] = set()
     for name, body in bodies:
-        if re.search(r"print\s*\(?\s*label\b", body) or re.search(r"label\s*\^", body):
+        header = re.match(r"(?:fun|val)\s+\w+\s+([A-Za-z][A-Za-z0-9_]*)\b", body)
+        arg = re.escape(header.group(1)) if header else "label"
+        if re.search(r"print\s*\(?\s*" + arg + r"\b", body):
             printers.add(name)
     changed = True
     while changed:
@@ -333,10 +335,10 @@ def script_printed_labels(text: str) -> tuple[set[str], set[str]]:
     labels: set[str] = set()
     for helper in printers:
         for match in re.finditer(
-            r"\b" + re.escape(helper) + r'\s+"([A-Za-z][A-Za-z0-9_]*)"', text
+            r"\b" + re.escape(helper) + r'\s+"([A-Za-z][A-Za-z0-9_]*)=?"', text
         ):
             labels.add(match.group(1))
-    for match in re.finditer(r'print\s*\(?\s*"([A-Za-z][A-Za-z0-9_]*)=', text):
+    for match in re.finditer(r'print\s*\(?\s*"(?:\\n)?([A-Za-z][A-Za-z0-9_]*)=', text):
         labels.add(match.group(1))
     return labels, printers
 

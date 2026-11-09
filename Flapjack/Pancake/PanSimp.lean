@@ -258,19 +258,6 @@ theorem panSimpDecls_eq_map (declarations : List (Decl α)) :
   | cons declaration declarations ih =>
       cases declaration <;> simp [panSimpDecls, panSimpDecl, ih]
 
-/-! Counterpart of Cake's `functions_compile_prog`
-    (`pan_simpProofScript.sml:1017-1022`): `pan_simp` rewrites each function
-    body through `panSimpProg` and leaves the name, parameters, and return
-    shape unchanged. -/
-theorem functions_panSimpDecls (declarations : List (Decl α)) :
-    functions (panSimpDecls declarations) =
-      (functions declarations).map (fun entry =>
-        (entry.1, entry.2.1, panSimpProg entry.2.2.1, entry.2.2.2)) := by
-  induction declarations with
-  | nil => simp [panSimpDecls, functions, functionEntries]
-  | cons declaration declarations ih =>
-      cases declaration <;>
-        simp [panSimpDecls, functions, functionEntries, ih]
 
 /-! Cake's `MEM_functions` (`pan_globalsProofScript.sml:2380`): every entry of
     the `functions` projection comes from a function declaration of the source
@@ -289,14 +276,6 @@ theorem mem_functions {declarations : List (Decl α)}
   | function declaration => exact ⟨declaration, hdecl, (Option.some.inj hentry).symm⟩
   | _ => contradiction
 
-/-! Counterpart of Cake's `first_compile_prog_all_distinct`
-    (`pan_simpProofScript.sml:1025-1041`): `pan_simp` preserves distinctness of
-    the function-name table.  This is the invariant `state_rel_imp_semantics`
-    needs for the compiled program. -/
-theorem functions_panSimpDecls_names_nodup (declarations : List (Decl α))
-    (hnames : ((functions declarations).map (fun entry => entry.1)).Nodup) :
-    ((functions (panSimpDecls declarations)).map (fun entry => entry.1)).Nodup := by
-  simpa only [functions_panSimpDecls, List.map_map, Function.comp_def] using hnames
 
 /-- Counterpart of the original `ALOOKUP` on the function table
     (`panLangScript.sml:319-326`): first-occurrence lookup of a function name in
@@ -309,56 +288,6 @@ def lookupFunctionEntry (name : FunName) :
       if name == entry.1 then some (entry.2.1, entry.2.2.1, entry.2.2.2)
       else lookupFunctionEntry name functions
 
-/-! `pan_simp` preserves the exception identifiers collected by the source
-    program. These are the two local preservation steps used by Cake's
-    `exp_ids_ret_to_tail_eq` and `exp_ids_seq_assoc_eq` proofs. -/
-
-theorem expIds_seqCallRet (program : Prog α) :
-    expIds (seqCallRet program) = expIds program := by
-  unfold seqCallRet
-  split
-  · split <;> simp [expIds]
-  · rfl
-
-theorem expIds_smartSeq (pre program : Prog α) :
-    expIds (smartSeq pre program) = expIds pre ++ expIds program := by
-  cases pre <;> simp [smartSeq, expIds]
-
-/-! Functional induction exposes recursive handlers nested inside `Call`
-    for the exception-identifier preservation proof. -/
-
-theorem expIds_seqAssoc (pre program : Prog α) :
-    expIds (seqAssoc pre program) = expIds pre ++ expIds program := by
-  fun_induction expIds program generalizing pre with
-  | case14 info _ _ noHandler =>
-      rcases info with _ | ⟨returns, _ | ⟨exception, handlerVar, handler⟩⟩
-      · simp [seqAssoc, expIds_smartSeq, expIds]
-      · simp [seqAssoc, expIds_smartSeq, expIds]
-      · exact (noHandler returns exception handlerVar handler rfl).elim
-  | _ =>
-      grind only [seqAssoc, expIds_smartSeq, expIds, List.append_assoc,
-        List.nil_append, List.append_nil]
-
-/-! The same functional induction covers the nested handler in `retToTail`. -/
-
-theorem expIds_retToTail (program : Prog α) :
-    expIds (retToTail program) = expIds program := by
-  fun_induction expIds program with
-  | case14 info _ _ noHandler =>
-      rcases info with _ | ⟨returns, _ | ⟨exception, handlerVar, handler⟩⟩
-      · simp [retToTail, expIds]
-      · simp [retToTail, expIds]
-      · exact (noHandler returns exception handlerVar handler rfl).elim
-  | _ => grind only [retToTail, expIds_seqCallRet, expIds]
-
-/-- The full `pan_simp` program transformation preserves the exception
-    identifiers reachable from a program, mirroring Cake's
-    `exp_ids_compile_eq`. -/
-theorem expIds_panSimpProg (program : Prog α) :
-    expIds (panSimpProg program) = expIds program := by
-  simp only [panSimpProg]
-  rw [expIds_retToTail, expIds_seqAssoc]
-  simp [expIds]
 
 /-! ## A linear syntactic size bound for `seqAssoc`
 

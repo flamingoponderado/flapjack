@@ -95,6 +95,15 @@ def allocDefs {α : Type} : Nat → Nat → List α → List (α × VarName)
   | _, _, [] => []
   | n, next, x :: xs => (x, .glob omTra next) :: allocDefs (n + 1) (next + 1) xs
 
+/-- Allocating definitions preserves the list of names. -/
+@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "fst_alloc_defs"]
+theorem fst_allocDefs {α : Type} : ∀ (n next : Nat) (names : List α),
+    (allocDefs n next names).map Prod.fst = names := by
+  intro n next names
+  induction names generalizing n next with
+  | nil => rfl
+  | cons name names ih => simp [allocDefs, ih]
+
 /-- Exact HOL `make_varls_def`; the singleton clause precedes the general cons
 clause, as in HOL's clause order. -/
 @[hol "cakeml/compiler/backend/source_to_flatScript.sml" "make_varls_def"]

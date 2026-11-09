@@ -22,6 +22,12 @@ val _ = print_eval "gc_memcpy"
       (b, m1 200w, m1 208w, m1 216w, c)``;
 val _ = print_eval "gc_memcpy_dom"
   ``let (b,m1,c) = memcpy (2w:64 word) (100w:64 word) (200w:64 word) (\a. Word a) {100w:64 word; 200w; 108w} in c``;
+val _ = print_eval "gc_memcpy_independent_widths"
+  ``let (b,m,c) = memcpy (2w:8 word) (16w:64 word) (32w:64 word)
+      (\w. if w = 16w then 7n else if w = 24w then 9n else 0n) UNIV in
+      (b,m 32w,m 40w,c)``;
+val _ = print_eval "gc_forward_header_width1" ``(1w:1 word) << 2``;
+val _ = print_eval "gc_thunk_header_shift_width1" ``(1w:1 word) << 3``;
 val _ = print_eval "gc_move_loc"
   ``let (w1,i1,pa1,m1,c) = word_gc_move ^conf (Loc 3 0, 7w:64 word, 2000w, 1000w,
       (\a. Word a), UNIV) in (w1, i1, pa1, c)``;

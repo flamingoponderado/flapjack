@@ -1,0 +1,5 @@
+ensure_fp_config_typed=!(asm_c :'a asm_config) (c :data_to_word$config). ensure_fp_conf_ok asm_c c = c with <|has_fp_ops := ((1 :num) < asm_c.fp_reg_count); has_fp_tern := (asm_c.ISA = ARMv7 /\ (2 :num) < asm_c.fp_reg_count)|>
+riscv_fp_config=(F,F)
+armv7_three_fp_config=(T,T)
+armv7_two_fp_config=(T,F)
+riscv_three_fp_config=(T,F)

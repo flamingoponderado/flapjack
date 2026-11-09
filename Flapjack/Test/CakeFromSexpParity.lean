@@ -1,0 +1,204 @@
+import Flapjack.CakeParser.FromSexp.Ast
+import Flapjack.CakeParser.ToSexp
+
+/-! Finite observations from `cake_from_sexp_probe.out`. -/
+namespace Flapjack.Test.CakeFromSexpParity
+open Flapjack.CakeParser.Sexp Flapjack.CakeParser.FromSexp
+open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
+open Flapjack.Misc.Location
+
+private def bytes (s : String) := (ofString s).explode
+private def sym (s : String) : Sexp := .sym (bytes s)
+private def str (s : String) : Sexp := .str (bytes s)
+private def list (xs : List Sexp) : Sexp := xs.foldr .cons (sym "nil")
+private def node (name : String) (args : List Sexp) : Sexp := list (sym name :: args)
+private def number : Sexp → Option Nat
+  | .num n => some n
+  | _ => none
+
+#guard [decodeControl (bytes "abc"), decodeControl (bytes "\\\\"),
+    decodeControl (bytes "\\00"), decodeControl (bytes "\\1F"),
+    decodeControl (bytes "\\7F"), decodeControl (bytes "\\FF"),
+    decodeControl (bytes "\\20"), decodeControl (bytes "\\5C"),
+    decodeControl (bytes "\\1f"), decodeControl (bytes "\\FG"),
+    decodeControl (bytes "\\"), decodeControl [31], decodeControl (bytes "x\\00y")] =
+    [some (bytes "abc"), some [92], some [0], some [31], some [127], some [255],
+     none, none, none, none, none, none, some [120, 0, 121]]
+
+#guard [decodeList number (list []), decodeList number (list [.num 1, .num 2, .num 3]),
+    decodeList number (.cons (.num 1) (.num 2)), decodeList number (list [str "x"])] =
+    [some [], some [1, 2, 3], none, none]
+
+#guard [decodeOption number (sym "NONE"), decodeOption number (node "SOME" [.num 5]),
+    decodeOption number (node "SOME" [.num 1, .num 2]), decodeOption number (sym "SOME")] =
+    [some none, some (some 5), none, none]
+
+#guard [decodeIdFuel destString 10 (node "Short" [str "x"]),
+    decodeIdFuel destString 10 (node "Long" [str "M", node "Short" [str "x"]]),
+    decodeIdFuel destString 10 (node "Long" [str "M", sym "x"])] =
+    [some (.short (ofString "x")), some (.long (ofString "M") (.short (ofString "x"))), none]
+
+#guard [decodeId destString (node "Short" [str "x"]),
+    decodeId destString (node "Long" [str "M", node "Short" [str "x"]]),
+    decodeId destString (node "Long" [str "M", sym "x"]),
+    decodeId destString (node "Long" [str "A", node "Long" [str "B", node "Short" [str "x"]]]),
+    decodeId destString (.cons (sym "Short") (.cons (str "x") (sym "bad"))),
+    decodeId destString (node "Long" [str "A", node "Short" [str "x"], .num 1])] =
+    [some (.short (ofString "x")), some (.long (ofString "M") (.short (ofString "x"))), none,
+     some (.long (ofString "A") (.long (ofString "B") (.short (ofString "x")))), none, none]
+
+private def nestedIdentifier (depth : Nat) : Sexp :=
+  (List.replicate depth ()).foldr (fun _ rest => node "Long" [str "M", rest]) (node "Short" [str "x"])
+
+private def expectedIdentifier (depth : Nat) : Ident MlString MlString :=
+  (List.replicate depth ()).foldr (fun _ rest => .long (ofString "M") rest) (.short (ofString "x"))
+
+#guard decodeId destString (nestedIdentifier 64) = some (expectedIdentifier 64) ∧
+    decodeIdFuel destString 64 (nestedIdentifier 64) = none
+
+#guard [decodeLiteral (.num 0), decodeLiteral (.num 12), decodeLiteral (str "a\\00b"),
+    decodeLiteral (node "-" [.num 0]), decodeLiteral (node "-" [.num 12]),
+    decodeLiteral (node "char" [str "z"]), decodeLiteral (node "char" [str "ab"]),
+    decodeLiteral (node "word8" [.num 255]), decodeLiteral (node "word8" [.num 256]),
+    decodeLiteral (node "word64" [.num 18446744073709551615]),
+    decodeLiteral (node "word64" [.num 18446744073709551616]),
+    decodeLiteral (node "float64" [.num 42])] =
+    [some (.intLit 0), some (.intLit 12), some (.strLit (.implode [97, 0, 98])),
+     none, some (.intLit (-12)), some (.char 122), none, some (.word8 255), none,
+     some (.word64 18446744073709551615), none, some (.float64 42)]
+
+#guard [decodeLoc (list [sym "unk", sym "eof"]),
+    decodeLoc (list [list [.num 1, .num 2], list [.num 3, .num 4]]),
+    decodeLoc (list [sym "bad", sym "unk"]), decodeLoc (list [.num 1])] =
+    [some (.locs .unknownPt .eofPt), some (.locs (.posn 1 2) (.posn 3 4)), none, none]
+
+private def typeCases : Bool := Id.run do
+  let a := node "Atvar" [str "a"]
+  match decodeTypeFuel 20 a with
+  | some (.atvar n) => if n != ofString "a" then return false
+  | _ => return false
+  match decodeTypeFuel 20 (node "Atfun" [a, node "Attup" [list []]]) with
+  | some (.atfun (.atvar n) (.attup [])) => if n != ofString "a" then return false
+  | _ => return false
+  match decodeTypeFuel 20 (node "Atapp" [list [a], node "Short" [str "list"]]) with
+  | some (.atapp [.atvar n] (.short name)) =>
+    if n != ofString "a" || name != ofString "list" then return false
+  | _ => return false
+  return (decodeTypeFuel 20 (node "Atvar" [sym "x"])).isNone
+
+private def patternCases : Bool := Id.run do
+  match decodePatternFuel 20 (str "x") with
+  | some (.pvar n) => if n != ofString "x" then return false
+  | _ => return false
+  match decodePatternFuel 20 (node "Pany" []) with
+  | some .pany => pure ()
+  | _ => return false
+  match decodePatternFuel 20 (node "Plit" [.num 42]) with
+  | some (.plit (.intLit 42)) => pure ()
+  | _ => return false
+  match decodePatternFuel 20 (node "Pcon" [sym "NONE", list [str "x", node "Pany" []]]) with
+  | some (.pcon none [.pvar n, .pany]) => if n != ofString "x" then return false
+  | _ => return false
+  match decodePatternFuel 20 (node "Pas" [node "Pref" [str "x"], str "y"]) with
+  | some (.pas (.pref (.pvar x)) y) => if x != ofString "x" || y != ofString "y" then return false
+  | _ => return false
+  match decodePatternFuel 20 (node "Ptannot" [str "x", node "Atvar" [str "a"]]) with
+  | some (.ptannot (.pvar x) (.atvar a)) => if x != ofString "x" || a != ofString "a" then return false
+  | _ => return false
+  return (decodePatternFuel 20 (node "Pany" [.num 1])).isNone
+
+#guard typeCases = true ∧ patternCases = true
+
+#guard [decodeType (node "Atvar" [str "a"]),
+    decodeType (node "Atfun" [node "Atvar" [str "a"], node "Attup" [list []]]),
+    decodeType (node "Atapp" [list [node "Atvar" [str "a"]], node "Short" [str "list"]]),
+    decodeType (node "Atvar" [sym "x"]),
+    decodeType (node "Attup" [list [node "Atvar" [str "a"], node "Atvar" [str "b"]]]),
+    decodeType (node "Attup" [.cons (node "Atvar" [str "a"]) (sym "bad")]),
+    decodeType (node "Atfun" [node "Atvar" [str "a"]])].map (Option.map CakeParser.ToSexp.type) =
+    [some (node "Atvar" [str "a"]),
+     some (node "Atfun" [node "Atvar" [str "a"], node "Attup" [list []]]),
+     some (node "Atapp" [list [node "Atvar" [str "a"]], node "Short" [str "list"]]), none,
+     some (node "Attup" [list [node "Atvar" [str "a"], node "Atvar" [str "b"]]]), none, none]
+
+private def nestedType (depth : Nat) : Sexp :=
+  (List.replicate depth ()).foldr (fun _ rest => node "Attup" [list [rest]]) (node "Atvar" [str "a"])
+
+#guard (decodeType (nestedType 64)).map CakeParser.ToSexp.type = some (nestedType 64) ∧
+    (decodeTypeFuel 64 (nestedType 64)).isNone = true
+
+private def patternInputs : List Sexp :=
+  [str "x", node "Pany" [], node "Plit" [.num 42],
+   node "Pcon" [sym "NONE", list [str "x", node "Pany" []]],
+   node "Pas" [node "Pref" [str "x"], str "y"],
+   node "Ptannot" [str "x", node "Atvar" [str "a"]],
+   node "Pany" [.num 1],
+   node "Pcon" [sym "NONE", list [node "Pref" [str "x"], node "Pany" []]],
+   node "Pcon" [sym "NONE", .cons (str "x") (sym "bad")],
+   .cons (sym "Pany") (sym "bad")]
+
+#guard patternInputs.map (fun p => (decodePattern p).map CakeParser.ToSexp.pattern) =
+    (patternInputs.take 6).map some ++
+      [none, some (node "Pcon" [sym "NONE", list [node "Pref" [str "x"], node "Pany" []]]), none, none]
+
+private def nestedPattern (depth : Nat) : Sexp :=
+  (List.replicate depth ()).foldr (fun _ rest => node "Pref" [rest]) (str "x")
+
+#guard (decodePattern (nestedPattern 64)).map CakeParser.ToSexp.pattern = some (nestedPattern 64) ∧
+    (decodePatternFuel 64 (nestedPattern 64)).isNone = true
+
+private def expressionInputs : List Sexp :=
+  [node "Lit" [.num 1], node "Var" [node "Short" [str "x"]],
+   node "Raise" [node "Lit" [.num 1]],
+   node "Fun" [str "x", node "Var" [node "Short" [str "x"]]],
+   node "Con" [sym "NONE", list [node "Lit" [.num 1], node "Lit" [.num 2]]],
+   node "Mat" [node "Lit" [.num 1], list [.cons (str "x") (node "Lit" [.num 2])]],
+   node "Letrec" [list [.cons (str "f") (.cons (str "x") (node "Lit" [.num 1]))], node "Lit" [.num 2]],
+   node "If" [node "Lit" [.num 1], node "Lit" [.num 2], node "Lit" [.num 3]],
+   node "App" [sym "Opref", .cons (node "Lit" [.num 1]) (sym "bad")],
+   node "Mat" [node "Lit" [.num 1], list [str "x"]], node "Lit" [.num 1, .num 2]]
+
+#guard expressionInputs.map (fun e => (decodeExp e).map CakeParser.ToSexp.exp) =
+    (expressionInputs.take 8).map some ++ [none, none, none]
+
+private def nestedExpression (depth : Nat) : Sexp :=
+  (List.replicate depth ()).foldr (fun _ rest => node "Raise" [rest]) (node "Lit" [.num 1])
+
+#guard (decodeExp (nestedExpression 64)).map CakeParser.ToSexp.exp = some (nestedExpression 64) ∧
+    (decodeExpFuel 64 (nestedExpression 64)).isNone = true
+
+private def declarationInputs : List Sexp :=
+  let loc := list [sym "unk", sym "unk"]
+  [node "Denv" [str "x"], node "Dlet" [loc, str "x", node "Lit" [.num 1]],
+   node "Dmod" [str "M", list [node "Denv" [str "x"]]],
+   node "Dlocal" [list [node "Denv" [str "a"]], list [node "Denv" [str "b"]]],
+   node "Dtype" [loc, list []],
+   node "Dexn" [loc, str "E", list [node "Atvar" [str "a"]]],
+   node "Dtabbrev" [loc, list [str "a"], str "t", node "Atvar" [str "a"]],
+   node "Dmod" [str "M", .cons (node "Denv" [str "x"]) (sym "bad")],
+   node "Dlet" [sym "unk"]]
+
+#guard declarationInputs.map (fun d => (decodeDec d).map CakeParser.ToSexp.dec) =
+    (declarationInputs.take 7).map some ++ [none, none]
+
+private def nestedDeclaration (depth : Nat) : Sexp :=
+  (List.replicate depth ()).foldr (fun _ rest => node "Dmod" [str "M", list [rest]]) (node "Denv" [str "x"])
+
+#guard (decodeDec (nestedDeclaration 64)).map CakeParser.ToSexp.dec = some (nestedDeclaration 64)
+
+#guard [decodeOp (sym "Equality"), decodeOp (sym "Opapp"), decodeOp (sym "Aw8subunsafe"),
+    decodeOp (sym "ForceThunk"), decodeOp (sym "Envid"), decodeOp (.cons (sym "FFI") (str "x\\00y")),
+    decodeOp (.cons (sym "AllocThunk") (sym "Evaluated")),
+    decodeOp (.cons (sym "UpdateThunk") (sym "NotEvaluated")),
+    decodeOp (.cons (sym "Shift64Ror") (.num 123)),
+    decodeOp (.cons (sym "Arith") (.cons (sym "Add") (sym "IntT"))),
+    decodeOp (.cons (sym "FromTo") (.cons (sym "Word8T") (sym "Word64T"))),
+    decodeOp (.cons (sym "Test") (.cons (sym "AltLessEq") (sym "IntT"))),
+    decodeOp (node "Arith" [sym "Add", sym "IntT"]), decodeOp (sym "NoSuchOp")] =
+    [some .equality, some .opapp, some .aw8subUnsafe, some (.thunkOp .forceThunk), some .envId,
+     some (.ffi (.implode [120, 0, 121])), some (.thunkOp (.allocThunk .evaluated)),
+     some (.thunkOp (.updateThunk .notEvaluated)), some (.shift .w64 .ror 123),
+     some (.arith .add .intT), some (.fromTo (.wordT .w8) (.wordT .w64)),
+     some (.test (.altCompare .leq) .intT), none, none]
+
+end Flapjack.Test.CakeFromSexpParity

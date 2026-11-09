@@ -327,19 +327,6 @@ WITHDRAWN_HOL_DECLARATIONS = {
         "exact-carrier port is tracked by flapjack-pxn.18.3.5.8 (parent "
         "flapjack-pxn.18.3.5.7.2)."
     ),
-    ("Flapjack/Pancake/Proofs/PanToCrep.lean", "tlc"): (
-        "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-        "tlc_def",
-        "flapjack-ds3 (bead flapjack-4ac.5.37): HOL tlc_def (2317-2319) returns a "
-        "finite map to 'a word_lab (flatten : 'a v -> 'a word_lab list), while Lean "
-        "tlc returns FiniteMap Nat alpha, i.e. the raw word payload with the "
-        "PanWordLab.word wrapper dropped; PanValue is explicitly not statement-exact "
-        "(.word stores alpha, not 'a word_lab). Keys agree (Nat/num) but the element "
-        "carrier mismatch is not authorized by any qualifier. Untagged tlcWordLab is "
-        "the PanWordLab-carrying analogue; faithful port tracked by flapjack-0lj "
-        "(word_lab) and flapjack-pxn.18.3.5.8 (MlString). Same-file slc stays untagged "
-        "for the String-vs-mlstring key mismatch (bead flapjack-4ac.5.36)."
-    ),
     ("Flapjack/Pancake/PanToCrep.lean", "expHdlHOL"): (
         "cakeml/pancake/pan_to_crepScript.sml",
         "exp_hdl_def",
@@ -429,6 +416,21 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Misc/Sptree.lean", "sptDomain"): ("hol4/src/finite_maps/sptreeScript.sml", "domain_def", "HOL defines domain with recursive set clauses; the Lean lookup predicate is extensionally characterized by its membership lemmas, but is not the source definition. The source-shaped definition and set representation remain open."),
+    ("Flapjack/Compiler/Backend/PatternSemantics/Semantics.lean", "isSibling"): ("cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml", "is_sibling_def", "The executed operation specializes HOL's polymorphic element type to Nat pairs. isSiblingHOL is the unrestricted port, and isSibling_eq_HOL checks agreement at this specialization."),
+    ('Flapjack/Compiler/Backend/PatternExh/Matrix.lean', 'ctorInter'): ('cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml', 'ctor_inter_def', 'HOL infers an arbitrary element type; the executed ctorInter specializes it to Ctor and is not tagged as the generic source declaration. ctorInterHOL is the unrestricted HOL-shaped port; a kernel-checked equality connects its Ctor specialization to the executed operation.'),
+    ('Flapjack/Compiler/Backend/PatternExh/Matrix.lean', 'ctorKeep'): ('cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml', 'ctor_keep_def', 'HOL infers an arbitrary element type; the executed ctorKeep specializes it to Ctor and is not tagged as the generic source declaration. ctorKeepHOL is the unrestricted HOL-shaped port; a kernel-checked equality connects its Ctor specialization to the executed operation.'),
+    ('Flapjack/Compiler/Backend/PatternExh/Matrix.lean', 'ctorNub'): ('cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml', 'ctor_nub_def', 'HOL infers an arbitrary element type; the executed ctorNub specializes it to Ctor and is not tagged as the generic source declaration. ctorNubHOL is the unrestricted HOL-shaped port; a kernel-checked equality connects its Ctor specialization to the executed operation.'),
+    ('Flapjack/Pancake/Semantics/PanSem/ValueHOL.lean', 'shapeOfHOLExact'): ('cakeml/pancake/semantics/panSemScript.sml', 'shape_of_def', 'HOL-shaped word-indexed definition retained for faithful proofs; the required word qualifier is blocked until the checker supports the nested ValueHOL to HolWordLab to BitVec carrier.'),
+    ('Flapjack/Pancake/CrepToLoop.lean', 'rtVars'): ('cakeml/pancake/crep_to_loopScript.sml', 'rt_vars_def', 'Raw function map admits infinite support, unlike HOL finite maps; retained for faithful finite-map lookup proofs.'),
+    ('Flapjack/Pancake/CrepToLoop/StateRel.lean', 'makeVmapHOL'): ('cakeml/pancake/crep_to_loopScript.sml', 'make_vmap_def', 'Raw function map admits infinite support, unlike HOL finite maps; retained for faithful finite-map lookup proofs.'),
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'ctxtMax'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'ctxt_max_def', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'noOverlap'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'no_overlap_def', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'fmEmptyZipAlist'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'fm_empty_zip_alist', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'fmEmptyZipFlookup'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'fm_empty_zip_flookup', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
+    ('Flapjack/FiniteMap/Basic.lean', 'opt_mmap_some_eq_zip_flookup'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'opt_mmap_some_eq_zip_flookup', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
+    ('Flapjack/FiniteMap/Basic.lean', 'opt_mmap_disj_zip_flookup'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'opt_mmap_disj_zip_flookup', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'updateEqZipFlookupHOL'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'update_eq_zip_flookup', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
     ("Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Labels.lean", "compileNamesLabels"): (
         "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml", "compile_to_word_conventions",
         "PR1213 source review: only names/labels conjuncts; the full theorem is separately tagged in CompileConventions.Output. This helper must remain untagged."
@@ -474,55 +476,6 @@ DOCUMENTED_MISMATCHES = {
         "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
     ),
 
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineStateRelW"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "state_rel_def",
-        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
-        "CrepHolState has raw lookup functions for locals/globals/code and admits "
-        "infinite-support states HOL finite maps cannot represent; words_as_type_indexed_bitvec "
-        "does not authorize this map-carrier difference. The helper remains useful Flapjack "
-        "infrastructure; the exact state_rel finite-support port is still open."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineLocalsRelW"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "locals_rel_def",
-        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
-        "CrepHolState locals are a raw lookup function admitting infinite support, unlike HOL "
-        "finite maps. This helper remains Flapjack infrastructure; an exact finite-support "
-        "locals_rel port is still open."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineLocalsStrongRelW"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "locals_strong_rel_def",
-        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
-        "CrepHolState locals are a raw lookup function admitting infinite support, unlike HOL "
-        "finite maps. Exact finite-support counterpart crepInlineLocalsStrongRelExact is "
-        "tagged in this file."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineLocalsRel_decClockW"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "locals_rel_dec_clock",
-        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn "
-        "because this theorem quantifies over CrepHolState raw-function maps, not HOL "
-        "finite-support maps. The helper remains useful Flapjack infrastructure."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineLocalsExtRelW"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "locals_ext_rel_def",
-        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
-        "CrepHolState locals are raw lookup functions admitting infinite support, unlike HOL "
-        "finite maps. This helper remains Flapjack infrastructure; an exact finite-support "
-        "locals_ext_rel port is still open."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineStateRelCodeW"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "state_rel_code_def",
-        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
-        "CrepHolState has raw lookup functions for locals/globals/code and admits "
-        "infinite-support states HOL finite maps cannot represent; words_as_type_indexed_bitvec "
-        "does not authorize this map-carrier difference. Exact finite-support counterpart "
-        "crepInlineStateRelCodeExact is tagged in this file."
-    ),
     ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopGlobalsRel_intro"): (
         "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
         "globals_rel_intro",
@@ -569,42 +522,6 @@ DOCUMENTED_MISMATCHES = {
         "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Prog/Decl carriers; "
         "HOL states it over the exact mlstring-keyed panLang syntax. Tag withdrawn; exact port "
         "tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
-    ),
-    ("Flapjack/Pancake/Proofs/PanSimp.lean", "expIdsRetToTailEq"): (
-        "cakeml/pancake/proofs/pan_simpProofScript.sml",
-        "exp_ids_ret_to_tail_eq",
-        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Prog carriers; HOL uses exact "
-        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
-    ),
-    ("Flapjack/Pancake/Proofs/PanSimp.lean", "expIdsSeqAssocEq"): (
-        "cakeml/pancake/proofs/pan_simpProofScript.sml",
-        "exp_ids_seq_assoc_eq",
-        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Prog carriers; HOL uses exact "
-        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
-    ),
-    ("Flapjack/Pancake/Proofs/PanSimp.lean", "expIdsCompileEq"): (
-        "cakeml/pancake/proofs/pan_simpProofScript.sml",
-        "exp_ids_compile_eq",
-        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Prog carriers; HOL uses exact "
-        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
-    ),
-    ("Flapjack/Pancake/Proofs/PanSimp.lean", "sizeOfEidsPanSimpDeclsEq"): (
-        "cakeml/pancake/proofs/pan_simpProofScript.sml",
-        "size_of_eids_compile_eq",
-        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Decl carriers; HOL uses exact "
-        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
-    ),
-    ("Flapjack/Pancake/Proofs/PanSimp.lean", "functionsCompileProg"): (
-        "cakeml/pancake/proofs/pan_simpProofScript.sml",
-        "functions_compile_prog",
-        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Decl carriers; HOL uses exact "
-        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
-    ),
-    ("Flapjack/Pancake/Proofs/PanSimp.lean", "firstCompileProgAllDistinctPanSimp"): (
-        "cakeml/pancake/proofs/pan_simpProofScript.sml",
-        "first_compile_prog_all_distinct",
-        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Decl carriers; HOL uses exact "
-        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
     ),
     ("Flapjack/Pancake/Proofs/PanGlobals/ShapeInfrastructure.lean", "evaluateDeclsFunctionsWf"): (
         "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -1031,30 +948,6 @@ DOCUMENTED_MISMATCHES = {
         "ProgHOL width in Flapjack/Pancake/Semantics/PanProps.lean. Faithful replacement "
         "depends on flapjack-pxn.18.3.5.8 (MlString carriers). "
     ),
-    ("Flapjack/Pancake/Proofs/PanStructs.lean", "fieldsInOrderReorderNoop"): (
-        "cakeml/pancake/proofs/pan_structsProofScript.sml",
-        "fields_in_order_reorder_noop",
-        "Codex (source comparison with pan_structsProofScript.sml:218-239: the "
-        "matching field-name-list and distinctness premises and reorder equation "
-        "correspond, but production FieldName/StructPassContext/Exp identifiers "
-        "are String while HOL uses mlstring and exact expression/context carriers. "
-        "The conclusion preserves compiled expression identifiers, which are "
-        "byte-observable. No NameRanged premise exists, so names_as_string cannot "
-        "bridge arbitrary names. Keep @[hol] withheld pending exact carrier work "
-        "flapjack-pxn.18.3.5.8."
-    ),
-    ("Flapjack/Pancake/Proofs/PanGlobals.lean", "fperm_decs_decls"): (
-        "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-        "fperm_decs_decls",
-        "Codex (source comparison with pan_globalsProofScript.sml:2023-2029: "
-        "the unused ys binder, non-function premise, and rename-to-self equation "
-        "correspond. Lean quantifies over production Decl α, with String names "
-        "and arbitrary α global values; HOL uses mlstring names and word-valued "
-        "globals. The premise makes each renamer a no-op but does not equate the "
-        "declaration carriers. There is no NameRanged premise or checked "
-        "declaration bridge for names_as_string. Keep @[hol] withheld pending "
-        "exact-carrier work flapjack-pxn.18.3.5.8."
-    ),
     ("Flapjack/Pancake/Proofs/PanToCrep.lean", "globalsLookup"): (
         "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
         "globals_lookup_def",
@@ -1068,17 +961,6 @@ DOCUMENTED_MISMATCHES = {
         "value/shape/state carriers, and no NameRanged witness is statable for an "
         "Option (List (PanWordLab α)) output. Keep @[hol] withheld; exact-carrier "
         "work flapjack-pxn.18.3.5.8.8.)"
-    ),
-    ("Flapjack/Pancake/Proofs/PanToCrep.lean", "excpRel"): (
-        "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-        "excp_rel_def",
-        "flapjack-ds5 (source comparison with pan_to_crepProofScript.sml:16-23: "
-        "the FDOM-equality plus code-map injectivity statement matches "
-        "clause-for-clause, but Lean quantifies over production "
-        "FiniteMap String α/β while HOL ceids/seids are eid = mlstring finite "
-        "maps. The key carrier is not a name-representation detail and no "
-        "NameRanged premise exists, so names_as_string cannot apply. Keep @[hol] "
-        "withheld pending exact-carrier work flapjack-pxn.18.3.5.8.)"
     ),
     ("Flapjack/Pancake/Proofs/PanToCrep.lean", "ctxtFc"): (
         "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -1126,17 +1008,6 @@ DOCUMENTED_MISMATCHES = {
         "and uses word_lab. Beyond name representation; keep @[hol] withheld "
         "pending exact-carrier work flapjack-pxn.18.3.5.8.)"
     ),
-    ("Flapjack/PanValueEvaluatorStability.lean", "evalPanValueExps_update_local_not_mem"): (
-        "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-        "update_locals_not_vars_eval_mmap",
-        "flapjack-ds5 (source comparison with pan_to_crepProofScript.sml:4082-4087: "
-        "single fresh local binding leaves OPT_MMAP (eval) es unchanged; Lean "
-        "evalPanValueExps_update_local_not_mem matches the shape, but is generic "
-        "over the word payload α with Exp α/PanValue α and VarName = String "
-        "functional maps, while HOL is word-indexed with varname = mlstring. "
-        "Beyond name representation; keep @[hol] withheld pending exact-carrier "
-        "work flapjack-pxn.18.3.5.8.)"
-    ),
     ("Flapjack/PanValueEvaluatorStability.lean", "evalPanValueExps_update_locals_not_mem"): (
         "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
         "opt_mmap_eval_distinct_lists_not_affect",
@@ -1159,61 +1030,6 @@ DOCUMENTED_MISMATCHES = {
         "functional maps, while HOL is word-indexed with varname = mlstring. "
         "Beyond name representation; keep @[hol] withheld pending exact-carrier "
         "work flapjack-pxn.18.3.5.8.)"
-    ),
-    ("Flapjack/Pancake/Proofs/PanStructs.lean", "isWfShape_drop"): (
-        "cakeml/pancake/proofs/pan_structsProofScript.sml",
-        "is_wf_shape_drop",
-        "Codex (source comparison with pan_structsProofScript.sml:114-127: the "
-        "DROP-n implication and boolean is_wf_shape equations correspond, but "
-        "the Lean declaration quantifies over production StructContext/Shape "
-        "with unrestricted String identifiers and a production-only "
-        "shapedFields cache; HOL uses StructContextExact/ShapeHOL and mlstring. "
-        "There is no NameRanged premise, so names_as_string cannot bridge the "
-        "carriers. The direct pan_lang_is_wf_shape_probe.out examples cover "
-        "the HOL predicate only, not a carrier equivalence. Keep @[hol] "
-        "withheld pending exact-carrier work flapjack-pxn.18.3.5.8."
-    ),
-    ("Flapjack/Pancake/Proofs/PanStructs.lean", "structOldExpShapes_eq_map"): (
-        "cakeml/pancake/proofs/pan_structsProofScript.sml",
-        "old_exp_shapes_eq",
-        "Codex (source comparison with pan_structsProofScript.sml:679-683: the "
-        "recursive list equation and induction argument match, but production "
-        "Exp α/Shape/StructPassContext use unrestricted String identifiers while "
-        "HOL uses mlstring names and HOL expression/shape carriers. NStruct "
-        "returns its name as a byte-observable named shape; no NameRanged premise "
-        "is present, so names_as_string cannot bridge arbitrary inputs. The Lean "
-        "kernel proof and HOL's source proof establish the list equation only "
-        "within their respective carriers. Keep @[hol] withheld pending exact "
-        "carrier work flapjack-pxn.18.3.5.8."
-    ),
-    ("Flapjack/Pancake/Proofs/PanStructs.lean", "structInfosOk"): (
-        "cakeml/pancake/proofs/pan_structsProofScript.sml",
-        "struct_infos_ok_def",
-        "flapjack-main and flapjack-seven-luna (source comparison with "
-        "pan_structsProofScript.sml:68-76: four predicate clauses match, but "
-        "HOL uses mlstring names and a fields/size-only struct_info, while "
-        "production StructContext uses String identifiers and StructInfo "
-        "adds a shapedFields cache. The different record/context carriers "
-        "cannot be covered by names_as_string. Keep the analogue untagged "
-        "pending exact-carrier work flapjack-pxn.18.3.5.8.)"
-    ),
-    ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "panStructConvertValue"): (
-        "cakeml/pancake/proofs/pan_structsProofScript.sml",
-        "convert_v_def",
-        "flapjack-ds5 (source comparison with pan_structsProofScript.sml:31-37: the "
-        "three constructor equations match, but the carrier differs. HOL is over "
-        "panSem$v (panSemScript.sml:22) with stcname/fldname = mlstring and "
-        "Val ('a word_lab); production PanValue alpha uses StructName/FieldName = "
-        "String and stores alpha directly in the first constructor rather than a "
-        "word_lab wrapper. The constructor field-type difference is beyond name "
-        "representation, so names_as_string does not apply. Exact HolValue/HolWordLab "
-        "carriers now exist (PanSem.lean, flapjack-pxn.18.3.6.8), but no HOL-shaped "
-        "convert_v over HolValue with a production bridge is defined yet; keep this "
-        "source analogue untagged pending flapjack-pxn.18.3.5.8.19 (parent "
-        "flapjack-pxn.18.3.5.8). Direct HOL row "
-        "convert_named_record=RStruct [ValWord 3w; ValWord 5w] in "
-        "pan_structs_compile_correct_probe.out:1; paired Lean regression "
-        "Flapjack.Test.PanStructsCompileCorrect:13-17.)"
     ),
     ("Flapjack/Pancake/PanGlobals.lean", "compileProgCake"): (
         "cakeml/pancake/pan_globalsScript.sml",
@@ -1351,18 +1167,6 @@ DOCUMENTED_MISMATCHES = {
         "functions, unlike HOL finite maps. Keep the tag withdrawn pending "
         "finite-support state carrier flapjack-pxn.18.3.7.1.3.1.1.3.1."
     ),
-    ("Flapjack/Pancake/Semantics/CrepProps.lean", "crepAssignedVars_nestedSeq_assign_zipWithW"): (
-        "cakeml/pancake/semantics/crepPropsScript.sml",
-        "nested_seq_assigned_vars_eq",
-        "Codex (source comparison with crepPropsScript.sml:410-415: the list-length "
-        "premise and assigned-variable equation match. The Lean theorem and its "
-        "...W wrapper use production CrepProg, whose Call/ExtCall names are "
-        "String; HOL prog uses mlstring. CrepProgHOL is available, but no "
-        "assigned_vars helper or nested-seq theorem is ported over that exact "
-        "carrier. Existing direct HOL rows check concrete observations, not a "
-        "carrier bridge. Keep this analogue untagged until the exact-carrier "
-        "port is added."
-    ),
     ("Flapjack/Pancake/Semantics/CrepSem.lean", "setCrepHolVarW"): (
         "cakeml/pancake/semantics/crepSemScript.sml",
         "set_var_def",
@@ -1455,128 +1259,6 @@ DOCUMENTED_MISMATCHES = {
         "res_var bridges exist, but there is still no fix_clock bridge. Tag remains "
         "withdrawn pending flapjack-pxn.18.3.7.1.3.1.1.3.1."
     ),
-    ("Flapjack/Pancake/Semantics/CrepProps.lean", "decCrepHolClock_simp"): (
-        "cakeml/pancake/semantics/crepPropsScript.sml",
-        "dec_clock_simp",
-        "Codex (source comparison with crepPropsScript.sml:267-278: the ten field "
-        "equations for the clock decrement match the Lean conjunction clause for "
-        "clause, with HOL be/base_addr/top_addr/sh_memaddrs renamed "
-        "bigEndian/baseAddress/topAddress/shMemaddrs, and [NeZero width] excludes "
-        "the invalid zero word dimension. However the quantified whole-state "
-        "carrier CrepHolState (BitVec width) stores locals/globals/code as "
-        "unrestricted Nat-to-Option, BitVec-5-to-Option and FunName-to-Option "
-        "functions that admit infinite support and String-backed code names, a "
-        "strict superset of HOL's finite mlstring-keyed maps "
-        "(crepSemScript.sml:19-32). names_as_string cannot authorize a whole-state "
-        "carrier and no NameRanged byte witness applies. Direct HOL rows "
-        "dec_clock_clock / dec_clock_globals / dec_clock_be / dec_clock_top are in "
-        "crep_dec_clock_simp_probe.out and sampled by "
-        "Flapjack/Test/CrepGlobalShapeParity.lean:601-605. No exact "
-        "finite-support carrier; tag remains withdrawn pending "
-        "flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Semantics/CrepProps.lean", "emptyCrepHolLocals_simp"): (
-        "cakeml/pancake/semantics/crepPropsScript.sml",
-        "empty_locals_simp",
-        "Codex (source comparison with crepPropsScript.sml:282-294: the ten field "
-        "equations for clearing locals match the Lean conjunction clause for "
-        "clause, with HOL be/base_addr/top_addr/sh_memaddrs renamed "
-        "bigEndian/baseAddress/topAddress/shMemaddrs. However the quantified "
-        "whole-state carrier CrepHolState (BitVec width) stores locals/globals/code "
-        "as unrestricted Nat-to-Option, BitVec-5-to-Option and FunName-to-Option "
-        "functions that admit infinite support and String-backed code names, a "
-        "strict superset of HOL's finite mlstring-keyed maps "
-        "(crepSemScript.sml:19-32). names_as_string cannot authorize a whole-state "
-        "carrier and no NameRanged byte witness applies. Direct HOL rows "
-        "empty_locals_locals / empty_locals_clock / empty_locals_memory are in "
-        "crep_dec_clock_simp_probe.out, and empty_locals_none / "
-        "empty_locals_fields_preserved in crep_local_updates_probe.out; sampled by "
-        "Flapjack/Test/CrepGlobalShapeParity.lean:608-612. No exact "
-        "finite-support carrier; tag remains withdrawn pending "
-        "flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Semantics/CrepProps.lean", "crepAssignedFreeVars_nestedSeq_assign_zipWithW"): (
-        "cakeml/pancake/semantics/crepPropsScript.sml",
-        "nested_seq_assigned_free_vars_eq",
-        "Codex (source comparison with crepPropsScript.sml:420-427: the equation "
-        "`assigned_free_vars (nested_seq (MAP2 Assign ns vs)) = ns` under "
-        "LENGTH ns = LENGTH vs matches the Lean zipWith/crepNestedSeqW form "
-        "pointwise. The mismatch is the imported programme carrier: HOL "
-        "crepLang$prog embeds funname = mlstring in Call/ExtCall, while Lean "
-        "CrepProg embeds FunName = String. The quantifiers are varname = num names "
-        "and a List Nat result, so no mlstring identifier exists for "
-        "names_as_string to qualify, and no NameRanged byte witness applies. "
-        "Direct HOL row nested_afv=[1; 2] is in crep_assigned_vars_probe.out "
-        "(probe header cites crepPropsScript.sml:420) and the equation is sampled "
-        "by Flapjack/Test/CrepAssignedVarsParity.lean:103-107. Keep the tag "
-        "withdrawn pending the exact mlstring-carrier port "
-        "flapjack-pxn.18.3.5.8.8."
-    ),
-    ("Flapjack/Pancake/Semantics/CrepProps.lean", "flookup_setCrepHolGlobals_localsW"): (
-        "cakeml/pancake/semantics/crepPropsScript.sml",
-        "FLOOKUP_set_globals",
-        "Codex (source comparison with crepPropsScript.sml:297-301: the equation "
-        "`FLOOKUP (set_globals gv w s).locals n = FLOOKUP s.locals n` matches the "
-        "Lean pointwise equation, because setCrepHolGlobalsW updates only globals, "
-        "as HOL set_globals_def does (crepSemScript.sml:61-63). However the "
-        "quantified whole-state carrier CrepHolState (BitVec width) stores "
-        "locals/globals/code as unrestricted Nat-to-Option, BitVec-5-to-Option and "
-        "FunName-to-Option functions that admit infinite support and String-backed "
-        "code names, a strict superset of HOL's finite mlstring-keyed maps "
-        "(crepSemScript.sml:19-32). names_as_string cannot authorize a whole-state "
-        "carrier and no NameRanged byte witness applies. The update boundary is "
-        "pinned by the set_globals_direct=(SOME (Word 22w),SOME (Word 7w),NONE) row "
-        "of crep_store_global_probe.out and sampled by "
-        "Flapjack/Test/CrepGlobalShapeParity.lean:110-116. No exact finite-support "
-        "carrier; tag remains withdrawn pending flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Semantics/CrepProps.lean", "crepAssignedFreeVars_nestedSeq_storeGlobalsW"): (
-        "cakeml/pancake/semantics/crepPropsScript.sml",
-        "assigned_free_vars_store_globals_empty",
-        "Codex (source comparison with crepPropsScript.sml:458-465: the equation "
-        "`assigned_free_vars (nested_seq (store_globals ad es)) = []` matches the "
-        "Lean crepNestedSeqW/storeGlobalsW equation pointwise, since storeGlobals "
-        "builds only StoreGlob programs. The mismatch is the imported programme "
-        "carrier: HOL crepLang$prog embeds funname = mlstring in Call/ExtCall, "
-        "while Lean CrepProg embeds FunName = String, so the quantified programs "
-        "need not agree and no mlstring identifier exists for names_as_string, nor "
-        "a NameRanged byte witness. The store_globals list shape is pinned by the "
-        "empty/one/two rows of crep_store_globals_probe.out and sampled by "
-        "Flapjack/Test/CrepAssignedVarsParity.lean:84-86,108-111. Keep the tag "
-        "withdrawn pending the exact mlstring-carrier port flapjack-pxn.18.3.5.8.8."
-    ),
-    ("Flapjack/Pancake/Semantics/CrepProps.lean", "crepAssignedVars_nestedSeq_storeGlobalsW"): (
-        "cakeml/pancake/semantics/crepPropsScript.sml",
-        "assigned_vars_store_globals_empty",
-        "Codex (source comparison with crepPropsScript.sml:449-456: the equation "
-        "`assigned_vars (nested_seq (store_globals ad es)) = []` matches the Lean "
-        "crepNestedSeqW/storeGlobalsW equation pointwise, since storeGlobals builds "
-        "only StoreGlob programs. The mismatch is the imported programme carrier: "
-        "HOL crepLang$prog embeds funname = mlstring in Call/ExtCall, while Lean "
-        "CrepProg embeds FunName = String, so the quantified programs need not "
-        "agree and no mlstring identifier exists for names_as_string, nor a "
-        "NameRanged byte witness. The store_globals list shape is pinned by "
-        "crep_store_globals_probe.out and sampled by "
-        "Flapjack/Test/CrepAssignedVarsParity.lean:88-90,111. Keep the tag "
-        "withdrawn pending the exact mlstring-carrier port flapjack-pxn.18.3.5.8.8."
-    ),
-    ("Flapjack/Pancake/Semantics/CrepProps.lean", "mem_crepAssignedFreeVars_imp_mem_crepAssignedVarsW"): (
-        "cakeml/pancake/semantics/crepPropsScript.sml",
-        "assigned_free_vars_IMP_assigned_vars",
-        "Codex (source comparison with crepPropsScript.sml:373-378: the implication "
-        "`MEM x (assigned_free_vars prog) ==> MEM x (assigned_vars prog)` matches "
-        "the Lean crepAssignedFreeVarsW/crepAssignedVarsW implication pointwise. "
-        "The mismatch is the imported programme carrier: HOL crepLang$prog embeds "
-        "funname = mlstring in Call/ExtCall, while Lean CrepProg embeds "
-        "FunName = String, so the quantified program ranges over a carrier whose "
-        "function names can differ from HOL's. The quantifiers are a whole CrepProg "
-        "and a varname = num name, so no mlstring identifier exists for "
-        "names_as_string and no NameRanged byte witness applies. Direct HOL rows "
-        "imp_mem=T and imp_mem_absent=T are in crep_assigned_vars_probe.out (probe "
-        "header cites crepPropsScript.sml:373) and sampled by "
-        "Flapjack/Test/CrepAssignedVarsParity.lean:50-62. Keep the tag withdrawn "
-        "pending the exact mlstring-carrier port flapjack-pxn.18.3.5.8.8."
-    ),
     ("Flapjack/Pancake/Proofs/CrepInline.lean", "foldl_res_var_zip_lookup_var_hol"): (
         "cakeml/pancake/proofs/crep_inlineProofScript.sml",
         "FOLDL_res_var_ZIP_lookup_var",
@@ -1587,44 +1269,6 @@ DOCUMENTED_MISMATCHES = {
         "(Flapjack/FiniteMap/Basic.lean:19), which admits infinite-support inhabitants whereas "
         "HOL alpha |-> beta is finite-support. Tag withdrawn; faithful port over "
         "HolFiniteMapExact (Flapjack/Pancake/Semantics/CrepSem/HOLState.lean) tracked by bead "
-        "flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "foldl_res_var_zip_lookup_hol"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "FOLDL_res_var_ZIP_lookup",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq encodes HOL equality and "
-        "removes the [BEq]/[LawfulBEq] side conditions, but the statement quantifies the raw "
-        "function carrier FiniteMap, which admits infinite support whereas HOL alpha |-> beta is "
-        "finite-support. Tag withdrawn; faithful port over HolFiniteMapExact tracked by bead "
-        "flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "submap_imp_fupdate_submap_hol"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "SUBMAP_IMP_FUPDATE_SUBMAP",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq removes the BEq side condition, "
-        "but crepHolSubmap and the FUPDATE_HOL carrier are raw functions FiniteMap, which admit "
-        "infinite support whereas HOL SUBMAP/FUPDATE range over finite maps. Tag withdrawn; "
-        "faithful port over HolFiniteMapExact tracked by bead flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "submap_imp_domsub_submap_hol"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "SUBMAP_IMP_DOMSUB_SUBMAP",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq removes the BEq side condition, "
-        "but crepHolSubmap and the FDOMSUB_HOL carrier are raw functions FiniteMap, which admit "
-        "infinite support whereas HOL SUBMAP/DOMSUB range over finite maps. Tag withdrawn; "
-        "faithful port over HolFiniteMapExact tracked by bead flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "submap_imp_domsub_fupdate_hol"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "SUBMAP_IMP_DOMSUB_FUPDATE",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq removes the BEq side condition, "
-        "but crepHolSubmap and the FDOMSUB_HOL/FUPDATE_HOL carriers are raw functions FiniteMap, "
-        "which admit infinite support whereas HOL SUBMAP/DOMSUB/FUPDATE range over finite maps. "
-        "Tag withdrawn; faithful port over HolFiniteMapExact tracked by bead "
         "flapjack-pxn.18.3.7.1.3.1.1.3.1."
     ),
     ("Flapjack/Pancake/Proofs/CrepInline.lean", "res_var_commutes_strong_hol"): (
@@ -1648,15 +1292,6 @@ DOCUMENTED_MISMATCHES = {
     ("Flapjack/Pancake/Proofs/CrepInline.lean", "flookup_res_var_is_mem_zip_eq_hol"): (
         "cakeml/pancake/proofs/crep_inlineProofScript.sml",
         "flookup_res_var_is_mem_zip_eq",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq removes the BEq side condition, "
-        "but resVarHOL/FLOOKUP quantify the raw function carrier FiniteMap, which admits infinite "
-        "support whereas HOL res_var/FLOOKUP range over finite maps. Tag withdrawn; faithful port "
-        "over HolFiniteMapExact tracked by bead flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Semantics/CrepProps.lean", "flookup_res_var_distinct_zip_eq_hol"): (
-        "cakeml/pancake/semantics/crepPropsScript.sml",
-        "flookup_res_var_distinct_zip_eq",
         "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
         "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq removes the BEq side condition, "
         "but resVarHOL/FLOOKUP quantify the raw function carrier FiniteMap, which admits infinite "
@@ -1708,23 +1343,6 @@ DOCUMENTED_MISMATCHES = {
         "flapjack-pxn.18.3.5.8.13 for exact compile and flapjack-e7w.1 for exact "
         "inline-map carrier flapjack-e7w.1 and open epic flapjack-e7w.2 for the "
         "full compile_inl_top and production-inliner port."
-    ),
-    ("Flapjack/Pancake/Proofs/PanToCrep/CompileProgParams.lean", "compileProgTopHOL_params_nodup"): (
-        "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-        "compile_prog_distinct_params",
-        "flapjack-luna-b (source comparison, 2026-09-26; follow exact "
-        "compile_prog carrier work flapjack-4ac.2.20; FLAPJACK-SPECIFIC, "
-        "documented_mismatch). HOL compile_prog_distinct_params "
-        "(pan_to_crepProofScript.sml:4684-4691) quantifies over the positive-"
-        "width word-indexed HOL program and concludes about exact "
-        "compile_prog triples (mlstring names, CrepProgHOL bodies). Lean "
-        "compileProgTopHOL_params_nodup instead quantifies over production "
-        "Decl (BitVec width), String names, production Shape/Prog, and concludes "
-        "about production String/CrepProg output; its unrestricted width also "
-        "admits BitVec 0. The proposition's parameter-slot result is useful, "
-        "but these input/output carriers and width domain are not authorized by "
-        "a qualifier. Remove the HOL tag until the statement is ported over "
-        "DeclHOL and exact compile_prog."
     ),
 }
 
@@ -1783,7 +1401,7 @@ INFRASTRUCTURE_THEOREMS = {
     ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningCalleeTransport'): ('Flapjack-specific inline factoring of original returning Call8422-8477, no standalone HOL declaration. Actual mapped paired-cut domains/injections, second-cut value relation and matching handler labels derive a source root permutation, complete callee-entry state equality after stack replacement and value-equal stacks; existing total evaluateStackSwap supplies result-sensitive body transport. No target evaluation or desired callee equality premise. Full returning Call return/exception restoration and full SSA remain open on flapjack-sola-callreturn.'),
     ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningRestoreRegisters'): ('Flapjack-specific inline returning Call continuation factoring of original8550-8575, no standalone HOL declaration. Internal restored cut SSA, source cut domain, original map validity/frame and return-value length derive preservation under actual physical registers2*(i+1) insertion and actual retMov NONE/newSSA/frame via original rename preservation. No target evaluation or desired output SSA premise. Pop-environment cut SSA derivation, continuation/exception assembly and fullSSA remain open on flapjack-sola-callreturn.'),
     ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningPopCutRelation'): ('Flapjack-specific inline returning Call8477-8550 factoring, no standalone HOL declaration. Actual callee key/value stack facts and pushed root-map correspondence derive successful source/target pops, complete wordStateEqRel, popped cut domain and all value lookup transport using native pushEnvPopEnvSKeyEq/popEnvFrame/keyMapImplies/allocLocalsRel. Internal actual cut domain/scoped lookup relation plus map-domain and source-bound facts reconstruct all restricted SSA conjuncts. No desired popped-local relation/output SSA or target evaluation premise. Continuation/exception full returning Call and fullSSA assembly remain open on flapjack-sola-callreturn.'),
-    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningCutSSA'): ('Flapjack-specific inline returning Call8477-8550 factoring, no standalone HOL declaration. Actual callee key/value stack facts and pushed root-map correspondence derive successful source/target pops, complete wordStateEqRel, popped cut domain and all value lookup transport using native pushEnvPopEnvSKeyEq/popEnvFrame/keyMapImplies/allocLocalsRel. Internal actual cut domain/scoped lookup relation plus map-domain and source-bound facts reconstruct all restricted SSA conjuncts. No desired popped-local relation/output SSA or target evaluation premise. Continuation/exception full returning Call and fullSSA assembly remain open on flapjack-sola-callreturn.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCut.lean', 'cutLocalsRelation'): ('Flapjack-specific inline returning Call8477-8550 factoring, no standalone HOL declaration. Actual callee key/value stack facts and pushed root-map correspondence derive successful source/target pops, complete wordStateEqRel, popped cut domain and all value lookup transport using native pushEnvPopEnvSKeyEq/popEnvFrame/keyMapImplies/allocLocalsRel. Internal actual cut domain/scoped lookup relation plus map-domain and source-bound facts reconstruct all restricted SSA conjuncts. No desired popped-local relation/output SSA or target evaluation premise. Continuation/exception full returning Call and fullSSA assembly remain open on flapjack-sola-callreturn.'),
     ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningRestoreRegistersRead'): ('Flapjack-specific inline returning Call8575-8610 factoring, no standalone HOL declaration. Existing actual retMov preservation plus duplicate-free physical convention writes derive successful return-register rereads; actual listNextVarRename producer and Move copy derive NONE/source-setVars versus target-setVars SSA/frame from internal cut SSA/map/nonphysical/bounds and native Call return Nodup/length guards. No target continuation run or desired output relation premise. Counter class/bounds are internal original producer facts to be discharged in full case. Full continuation/exception assembly and fullSSA remain open on flapjack-sola-callreturn.'),
     ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningBindResults'): ('Flapjack-specific inline returning Call8575-8610 factoring, no standalone HOL declaration. Existing actual retMov preservation plus duplicate-free physical convention writes derive successful return-register rereads; actual listNextVarRename producer and Move copy derive NONE/source-setVars versus target-setVars SSA/frame from internal cut SSA/map/nonphysical/bounds and native Call return Nodup/length guards. No target continuation run or desired output relation premise. Counter class/bounds are internal original producer facts to be discharged in full case. Full continuation/exception assembly and fullSSA remain open on flapjack-sola-callreturn.'),
     ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningNoHandlerException'): ('Flapjack-specific inline no-handler returning Call8660-8692 factoring, no standalone HOL declaration. Actual source callee Exception and total evaluateStackSwap prove LASTN cannot select the new NONE-handler frame, so it enters the identical original common stack. Native key/value equality reconstructs identical outer-handler locals/tail stack and actual target evaluate equals the complete original returned state. Internal pre-run callee stack-replacement equality comes from calleeSwap, never a target run or output-state premise. Full returning Call constructor with original six premises and return/handler IHs remains open on flapjack-sola-callreturn.'),
@@ -1799,7 +1417,7 @@ INFRASTRUCTURE_THEOREMS = {
     ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean', 'installCallbacksAligned'): ('Flapjack-specific factoring of original Install9710-9858 callback transport, no standalone HOL declaration. Source/target argument and cut success are internal alignment facts derived by preparation; original shared frame yields identical actual compile callback, buffer flush, oracle/config check and code union branches. Total evaluator result/frame and successful source-pointer versus target-pointer Loc local shapes are conclusions, no targetrun/result or post-frame premise. Failure cases retained. Infrastructure prerequisite only; full six-premise Install simulation is assembled in ssaCcTransCorrectInstall; full SSA remains open.'),
     ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean', 'installResultLocals'): ('Flapjack-specific factoring of original Install9800-9858 post-result algebra/restoration, no standalone HOL declaration. Actual callback local shapes, source cut environment domain/strong matching and original map bounds are intermediate branch facts. Fresh SSA insertion/physical2 nonalias, actual pointer-copy/final native rename execution and final SSA/frame are proved conclusions. No targetrun or desired final locals hypothesis. This is an independent prerequisite of full six-premise Install simulation, not an additional completed HOL port; callback branch and full case are assembled in ssaCcTransCorrectInstall; full SSA remains open.'),
     ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean', 'installRestoreResult'): ('Flapjack-specific factoring of original Install9800-9858 post-result algebra/restoration, no standalone HOL declaration. Actual callback local shapes, source cut environment domain/strong matching and original map bounds are intermediate branch facts. Fresh SSA insertion/physical2 nonalias, actual pointer-copy/final native rename execution and final SSA/frame are proved conclusions. No targetrun or desired final locals hypothesis. This is an independent prerequisite of full six-premise Install simulation, not an additional completed HOL port; callback branch and full case are assembled in ssaCcTransCorrectInstall; full SSA remains open.'),
-    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean', 'installRefreshCutNames'): ('Flapjack-specific factoring of original Install9710-9800 preparation, no standalone HOL declaration. Successful source argument/cut guards are evaluator branch facts; actual native rename/scratch execution, preserved data arguments and mapped-cut relation are conclusions, never final correctness premises. Useful dependency of full Install case, not an additional completed HOL theorem port; full six-premise Install simulation and callback/post-rename assembly are assembled in ssaCcTransCorrectInstall; full SSA remains open.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCut.lean', 'refreshCutNames'): ('Flapjack-specific factoring of original Install9710-9800 preparation, no standalone HOL declaration. Successful source argument/cut guards are evaluator branch facts; actual native rename/scratch execution, preserved data arguments and mapped-cut relation are conclusions, never final correctness premises. Useful dependency of full Install case, not an additional completed HOL theorem port; full six-premise Install simulation and callback/post-rename assembly are assembled in ssaCcTransCorrectInstall; full SSA remains open.'),
     ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean', 'installPrepareArguments'): ('Flapjack-specific factoring of original Install9710-9800 preparation, no standalone HOL declaration. Successful source argument/cut guards are evaluator branch facts; actual native rename/scratch execution, preserved data arguments and mapped-cut relation are conclusions, never final correctness premises. Useful dependency of full Install case, not an additional completed HOL theorem port; full six-premise Install simulation and callback/post-rename assembly are assembled in ssaCcTransCorrectInstall; full SSA remains open.'),
     ("Flapjack/Pancake/Semantics/CrepSem/EvaluateIndWhile.lean", "evalCrepSemHOLProgExact_inductWhile"): (
         "Flapjack-specific well-founded clock/sizeOf induction interface, no standalone "
@@ -1874,6 +1492,63 @@ INFRASTRUCTURE_THEOREMS = {
         "observation and ordered field payload are replayed in "
         "pan_lang_exp_probe.out by PanLangExpHOLParity."
     ),
+
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'compileProgAsmWithReason_toOption'):
+        "Flapjack-only located-failure sibling agreement for the allocator-"
+        "parametric artifact compiler: the with-reason function succeeds "
+        "exactly when the reviewed compileProgAsmWith succeeds, with the same "
+        "tuple. No separately named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'compileProgAsmFastWithReason_toOption'):
+        "Flapjack-only located-failure sibling agreement for the ordinary "
+        "artifact compiler: the with-reason function succeeds exactly when the "
+        "reviewed compileProgAsmFast succeeds, with the same tuple. No "
+        "separately named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'fromStackChecked_ok_agrees'):
+        "Flapjack-only checked-from_stack agreement: when the driver-side "
+        "encoding guard accepts the stack_to_lab output (register ranges and "
+        "unsupported instruction shapes), the checked sibling returns exactly "
+        "the reviewed from_stack tuple. No separately named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'compileProgAsmWithChecked_ok_agrees'):
+        "Flapjack-only checked-pipeline agreement: when the word-to-stack and "
+        "encoding guards accept, the checked allocator-parametric artifact "
+        "pipeline returns exactly the reviewed compileProgAsmWith tuple. No "
+        "separately named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'compileProgAsmFastChecked_ok_agrees'):
+        "Flapjack-only checked-pipeline agreement for the ordinary artifact "
+        "compiler: the checked function returns exactly the reviewed "
+        "compileProgAsmFast tuple on success. No separately named HOL "
+        "declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'fromStack_names_eq'):
+        "Flapjack-only names-table agreement for from_stack: the named call "
+        "differs from the empty-names call only in the recorded symbol table "
+        "(attach_bitmaps), so bytes, bitmaps and every other configuration "
+        "field agree. No separately named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'fromStack_ln_eq_names'):
+        "Flapjack-only reverse names-table agreement for from_stack: the "
+        "empty-names call is the named call with the symbol table reset to "
+        "NOTFOUND. No separately named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'compileProgAsmWith_names_eq_fst'):
+        "Flapjack-only artifact agreement: the named artifact pipeline is the "
+        "compile_prog_max mirror with the real symbol table recorded. No "
+        "separately named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'compileProgAsmWith_fst_names_eq'):
+        "Flapjack-only reverse artifact agreement: the compile_prog_max mirror "
+        "is the named artifact pipeline with the symbol table reset to "
+        "NOTFOUND. No separately named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsmWith.lean',
+     'compileProgAsmFast_symbols_eq_fst'):
+        "Flapjack-only artifact agreement for the executable allocator: the "
+        "named driver artifact is the compile_prog_max mirror with the real "
+        "symbol table recorded. No separately named HOL declaration.",
 }
 VALID_STATUSES = {
     "reviewed_exact",
@@ -1883,6 +1558,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support",
     "reviewed_fmap_as_finite_support_function",
     "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
+    "reviewed_fmap_as_finite_support_tuple_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_heterogeneous_function",
     "reviewed_fmap_as_finite_support_heterogeneous_function_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_result",
@@ -2061,7 +1737,7 @@ def tagged_declarations(
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions,
              fmap_heterogeneous_function_positions, reals_cuts,
-             fmap_equality, result_observations, dimension_widths) in HOL_ATTRIBUTE_SITES(
+             fmap_equality, result_observations, dimension_widths, fmap_tuple) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
@@ -2070,6 +1746,7 @@ def tagged_declarations(
                  include_fmap_as_finite_support_equality=True,
                  include_result_observations=True,
                  include_word_dimensions_widths=True,
+                 include_fmap_tuple=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -2080,7 +1757,7 @@ def tagged_declarations(
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
                      fmap_existentials, dimension_width, fmap_function_positions,
-                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations, dimension_widths)
+                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations, dimension_widths, fmap_tuple)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -2096,7 +1773,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
         fmap_existentials, dimension_width,
         fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-        fmap_equality, result_observations, dimension_widths,
+        fmap_equality, result_observations, dimension_widths, fmap_tuple,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -2118,6 +1795,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support_result"] = True
         if fmap_function_positions:
             entry["fmap_as_finite_support_function"] = list(fmap_function_positions)
+        if fmap_tuple:
+            entry["fmap_as_finite_support_tuple"] = list(fmap_tuple)
         if fmap_heterogeneous_function_positions:
             entry["fmap_as_finite_support_heterogeneous_function"] = list(
                 fmap_heterogeneous_function_positions
@@ -2221,7 +1900,6 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/CrepInline.lean", "genlist_all_distinct"),
         ("Flapjack/Pancake/Proofs/CrepInline.lean", "moreThenNotMaxList"),
         ("Flapjack/Pancake/Proofs/CrepInline.lean", "max_list_genlist_add_suc_val"),
-        ("Flapjack/Pancake/Proofs/PanToCrep.lean", "firstCompileProgAllDistinct"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "map_pick_up_first"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "tuple_4_o"),
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "convertResHOL"),
@@ -2232,8 +1910,6 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "everyConvertVEq"),
         ("Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
          "structInfosOkHOLExact_lookup_fields_nodup"),
-        ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP3"),
-        ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP4"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "numCasesLemma"),
         ("Flapjack/Pancake/PanGlobals.lean", "fpermName"),
         ("Flapjack/Pancake/PanGlobals.lean", "resortDeclsHOL"),
@@ -2247,7 +1923,6 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "mod_eq_of_lt_eq"),
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "option_ne_none_iff_exists"),
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "prod_mk_pair_eq_id"),
-        ("Flapjack/Pancake/Proofs/PanToCrep/CompileExpVmax.lean", "genlistVmaxDistinctListsCompiledExpsW"),
         ("Flapjack/Pancake/PanLang/Decl.lean", "isDeclHOL"),
         ("Flapjack/Pancake/PanLang/Decl.lean", "isFunctionHOL"),
         ("Flapjack/Pancake/PanLang/Decl.lean", "isNameHOL"),
@@ -2452,6 +2127,16 @@ def validate_inventory(
         fmap_equality = bool(tag[16]) if tag is not None and len(tag) > 16 else False
         result_observations = tag[17] if tag is not None and len(tag) > 17 else ()
         dimension_widths = tag[18] if tag is not None and len(tag) > 18 else ()
+        fmap_tuple = tag[19] if tag is not None and len(tag) > 19 else ()
+        tuple_status = "reviewed_fmap_as_finite_support_tuple_words_as_type_indexed_bitvec"
+        if tuple(record.get("fmap_as_finite_support_tuple", ())) != fmap_tuple:
+            errors.append(f"{key[0]}:{key[1]}: tuple-map positions do not match @[hol] tag")
+        if bool(fmap_tuple) != (status == tuple_status) or (fmap_tuple and not words_bitvec):
+            errors.append(f"{key[0]}:{key[1]}: tuple maps require their combined reviewed status and word qualifier")
+        if fmap_tuple and (not isinstance(reviewer, str) or
+                           any(pos not in reviewer for pos in fmap_tuple) or
+                           "source" not in reviewer.lower()):
+            errors.append(f"{key[0]}:{key[1]}: tuple-map review must name the source and both positions")
         manifest_observations = tuple(record.get("fmap_as_finite_support_result_observations", ()))
         observation_status = "reviewed_fmap_as_finite_support_result_observations"
         if manifest_observations != result_observations:
@@ -2806,6 +2491,7 @@ def validate_inventory(
             )
         if words_bitvec and status not in {
             "reviewed_words_as_type_indexed_bitvec",
+            "reviewed_fmap_as_finite_support_tuple_words_as_type_indexed_bitvec",
             combined_words_status,
             "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
             "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",

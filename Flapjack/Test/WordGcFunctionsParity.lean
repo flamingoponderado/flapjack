@@ -49,12 +49,12 @@ example : isRefHeader (8 : BitVec 64) = true := by decide
 example : isRefHeader (12 : BitVec 64) = false := by decide
 -- gc_memcpy=(216w,Word 100w,Word 108w,Word 216w,T)
 example :
-    (let (b, m1, c) := memcpy (2 : BitVec 64) 100 200 (fun a => .word a) univ
+    (let (b, m1, c) := memcpy (2 : BitVec 64) 100 200 (fun a => WordLocW.word a) univ
      (b, m1 200, m1 208, m1 216, c)) = (216, .word 100, .word 108, .word 216, true) := by
   simp [memcpy_zero, memcpy_of_ne, gcUpdate, wordSemBytesInWord, univ]
 -- gc_memcpy_dom=F
 example :
-    (let (_, _, c) := memcpy (2 : BitVec 64) 100 200 (fun a => .word a)
+    (let (_, _, c) := memcpy (2 : BitVec 64) (100 : BitVec 64) 200 (fun a => WordLocW.word a)
         (fun a => a = 100 ∨ a = 200 ∨ a = 108)
      c) = false := by
   simp [memcpy_zero, memcpy_of_ne, gcUpdate, wordSemBytesInWord]

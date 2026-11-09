@@ -1,0 +1,12 @@
+load "closPropsTheory"; load "clos_callTheory"; load "clos_callProofTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = set_trace "Unicode" 0;
+val _ = (print "free_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.free_def); print "\n");
+val _ = (print "closed_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.closed_def); print "\n");
+val _ = (print "free_thm="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.free_thm); print "\n");
+val _ = (print "closed_fn_fv="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.closed_Fn_fv); print "\n");
+val closed_cases = EVAL ``(clos_call$closed (closLang$Fn «f» (SOME 4) NONE 2 (closLang$Var None 1)), clos_call$closed (closLang$Fn «f» (SOME 4) NONE 2 (closLang$Var None 2)), clos_call$closed (closLang$Fn «f» (SOME 4) NONE 1 (closLang$Let None [closLang$Var None 0] (closLang$Var None 1))), clos_call$closed (closLang$Fn «f» (SOME 4) NONE 1 (closLang$Let None [closLang$Var None 0] (closLang$Var None 2))))``;
+val _ = (print "closed_cases="; print_term (rhs (concl closed_cases)); print "\n");
+val group_cases = EVAL ``(EVERY2 (λ(n,_) p. clos_call$closed (closLang$Fn «» NONE NONE n p)) [(1,closLang$Var None 0);(2,closLang$Var None 1)] [closLang$Var None 0;closLang$Var None 1], EVERY2 (λ(n,_) p. clos_call$closed (closLang$Fn «» NONE NONE n p)) [(1,closLang$Var None 0);(2,closLang$Var None 1)] [closLang$Var None 0;closLang$Var None 2], EVERY2 (λ(n,_) p. clos_call$closed (closLang$Fn «» NONE NONE n p)) [(1,closLang$Var None 0);(2,closLang$Var None 1)] [closLang$Var None 0])``;
+val _ = (print "group_cases="; print_term (rhs (concl group_cases)); print "\n");

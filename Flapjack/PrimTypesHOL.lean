@@ -1,4 +1,5 @@
 import Flapjack.AstHOL.Syntax
+import Flapjack.EvaluateHOL.Definition
 
 /-!
 # `primTypesScript`: the primitive-types program
@@ -30,5 +31,22 @@ def primTypesProgram : List Dec :=
        [(ofString "[]", []),
         (ofString "::", [.atvar (ofString "'a"),
           .atapp [.atvar (ofString "'a")] (.short (ofString "list"))])])]]
+
+/-- Evaluate declarations and extend the semantic environment on success.
+The source evaluator and its carriers are pending complete source review. -/
+@[hol "cakeml/semantics/primTypesScript.sml" "add_to_sem_env_def"]
+noncomputable def addToSemEnv {σ : Type}
+    (initial : SemanticPrimitivesHOL.State σ × SemanticPrimitivesHOL.SemEnv SemanticPrimitivesHOL.Value)
+    (prog : List Dec) : Option (SemanticPrimitivesHOL.State σ × SemanticPrimitivesHOL.SemEnv SemanticPrimitivesHOL.Value) :=
+  match EvaluateHOL.evaluateDecs initial.1 initial.2 prog with
+  | (st, .val env) => some (st, SemanticPrimitivesHOL.extendDecEnv env initial.2)
+  | (_, .err _) => none
+
+/-- Build the primitive semantic environment from the initial FFI state.
+This inherits the evaluator's pending source review and floating-point assumption. -/
+@[hol "cakeml/semantics/primTypesScript.sml" "prim_sem_env_def"]
+noncomputable def primSemEnv {σ : Type} (ffi : HolFfiState σ) :
+    Option (SemanticPrimitivesHOL.State σ × SemanticPrimitivesHOL.SemEnv SemanticPrimitivesHOL.Value) :=
+  addToSemEnv ({ clock := 0, refs := [], ffi := ffi, nextTypeStamp := 0, nextExnStamp := 0, evalState := none }, { v := nsEmpty, c := nsEmpty }) primTypesProgram
 
 end Flapjack.PrimTypesHOL
