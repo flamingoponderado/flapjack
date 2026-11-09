@@ -498,4 +498,115 @@ theorem arm8Enc_inst_shiftImm_eq (sh : Shift) (destination source : Nat)
           (by omega)]
         rfl
 
+/-! ## Load/store immediate
+
+`load_store_ast` and its 32/16-bit siblings share one shape: a nine-bit
+signed-offset guard and, when it fails, a `temp`-register address computation
+followed by the scaled immediate form.  The computable encoder writes the
+scaled offset with `BitVec.ofNat 64` while the L3 ast uses `zeroExtend`; the
+two agree on the same twelve-bit field. -/
+
+/-- The computable scaled offset is the L3 `scaled` word, at the same shift. -/
+theorem loadStoreScaled_eq (k : Nat) (a : BitVec 64) :
+    (BitVec.ofNat 64 (a.toNat >>> k % 4096)) <<< k =
+      (BitVec.zeroExtend 64 (BitVec.ofNat 12 (a.toNat >>> k))) <<< k := by
+  congr 1
+  apply BitVec.eq_of_toNat_eq
+  simp only [BitVec.toNat_ofNat, BitVec.toNat_setWidth]
+
+/-- The L3 sign-extended nine-bit immediate is the computable `sx9`. -/
+theorem sx9_eq (a : BitVec 64) :
+    BitVec.signExtend 64 (BitVec.ofNat 9 a.toNat) =
+      BitVec.signExtend 64 (BitVec.setWidth 9 a) := by
+  congr 1
+
+/-- The computable nine-bit fit test is the L3 `a = sx9` test. -/
+theorem fitsSigned9_eq (a : BitVec 64) :
+    fitsSigned 9 a = (a == BitVec.signExtend 64 (BitVec.ofNat 9 a.toNat)) := by
+  rw [loadStoreGuard9_eq, h9w_eq, ← sx9_eq]
+
+/-- A 64-bit load lowers to the same instruction list, up to encoding. -/
+theorem loadStoreAst64_load_eq (r1 r2 : Nat) (a : BitVec 64) :
+    (loadStoreAst 3 false .load r1 r2 a).flatMap encodeBytes =
+      (arm8LoadStoreAst .MemOp_LOAD r1 r2 a).flatMap arm8Encode := by
+  simp [loadStoreAst, arm8LoadStoreAst, loadStoreScaled_eq, fitsSigned9_eq]
+  split_ifs <;> simp_all [temp, encodeBytes_addSubImmediate, encodeBytes_loadStore64_load]
+
+/-- A 64-bit store lowers to the same instruction list, up to encoding. -/
+theorem loadStoreAst64_store_eq (r1 r2 : Nat) (a : BitVec 64) :
+    (loadStoreAst 3 false .store r1 r2 a).flatMap encodeBytes =
+      (arm8LoadStoreAst .MemOp_STORE r1 r2 a).flatMap arm8Encode := by
+  simp [loadStoreAst, arm8LoadStoreAst, loadStoreScaled_eq, fitsSigned9_eq]
+  split_ifs <;> simp_all [temp, encodeBytes_addSubImmediate, encodeBytes_loadStore64_store]
+
+/-- A 32-bit load lowers to the same instruction list, up to encoding. -/
+theorem loadStoreAst32_load_eq (r1 r2 : Nat) (a : BitVec 64) :
+    (loadStoreAst 2 true .load r1 r2 a).flatMap encodeBytes =
+      (arm8LoadStoreAst32 .MemOp_LOAD r1 r2 a).flatMap arm8Encode := by
+  simp [loadStoreAst, arm8LoadStoreAst32, loadStoreScaled_eq, fitsSigned9_eq]
+  split_ifs <;> simp_all [temp, encodeBytes_addSubImmediate, encodeBytes_loadStore32_load]
+
+/-- A 32-bit store lowers to the same instruction list, up to encoding. -/
+theorem loadStoreAst32_store_eq (r1 r2 : Nat) (a : BitVec 64) :
+    (loadStoreAst 2 true .store r1 r2 a).flatMap encodeBytes =
+      (arm8LoadStoreAst32 .MemOp_STORE r1 r2 a).flatMap arm8Encode := by
+  simp [loadStoreAst, arm8LoadStoreAst32, loadStoreScaled_eq, fitsSigned9_eq]
+  split_ifs <;> simp_all [temp, encodeBytes_addSubImmediate, encodeBytes_loadStore32_store]
+
+/-- A 16-bit load lowers to the same instruction list, up to encoding. -/
+theorem loadStoreAst16_load_eq (r1 r2 : Nat) (a : BitVec 64) :
+    (loadStoreAst 1 true .load r1 r2 a).flatMap encodeBytes =
+      (arm8LoadStoreAst16 .MemOp_LOAD r1 r2 a).flatMap arm8Encode := by
+  simp [loadStoreAst, arm8LoadStoreAst16, loadStoreScaled_eq, fitsSigned9_eq]
+  split_ifs <;> simp_all [temp, encodeBytes_addSubImmediate, encodeBytes_loadStore16_load]
+
+/-- A 16-bit store lowers to the same instruction list, up to encoding. -/
+theorem loadStoreAst16_store_eq (r1 r2 : Nat) (a : BitVec 64) :
+    (loadStoreAst 1 true .store r1 r2 a).flatMap encodeBytes =
+      (arm8LoadStoreAst16 .MemOp_STORE r1 r2 a).flatMap arm8Encode := by
+  simp [loadStoreAst, arm8LoadStoreAst16, loadStoreScaled_eq, fitsSigned9_eq]
+  split_ifs <;> simp_all [temp, encodeBytes_addSubImmediate, encodeBytes_loadStore16_store]
+
+/-- `.inst (.mem .load ...)` lowers to the same bytes. -/
+theorem arm8Enc_inst_loadStore64_load_eq (destination base : Nat) (offset : W) :
+    Arm8.arm8Enc (.inst (.mem .load destination (.addr base offset))) =
+      arm8Enc (.inst (.mem .load destination (.addr base offset))) := by
+  simp only [Arm8.arm8Enc, Arm8.arm8Ast, Arm8.arm8Inst, arm8Enc, arm8Ast]
+  exact loadStoreAst64_load_eq destination base offset
+
+/-- `.inst (.mem .store ...)` lowers to the same bytes. -/
+theorem arm8Enc_inst_loadStore64_store_eq (source base : Nat) (offset : W) :
+    Arm8.arm8Enc (.inst (.mem .store source (.addr base offset))) =
+      arm8Enc (.inst (.mem .store source (.addr base offset))) := by
+  simp only [Arm8.arm8Enc, Arm8.arm8Ast, Arm8.arm8Inst, arm8Enc, arm8Ast]
+  exact loadStoreAst64_store_eq source base offset
+
+/-- `.inst (.mem .load32 ...)` lowers to the same bytes. -/
+theorem arm8Enc_inst_loadStore32_load_eq (destination base : Nat) (offset : W) :
+    Arm8.arm8Enc (.inst (.mem .load32 destination (.addr base offset))) =
+      arm8Enc (.inst (.mem .load32 destination (.addr base offset))) := by
+  simp only [Arm8.arm8Enc, Arm8.arm8Ast, Arm8.arm8Inst, arm8Enc, arm8Ast]
+  exact loadStoreAst32_load_eq destination base offset
+
+/-- `.inst (.mem .store32 ...)` lowers to the same bytes. -/
+theorem arm8Enc_inst_loadStore32_store_eq (source base : Nat) (offset : W) :
+    Arm8.arm8Enc (.inst (.mem .store32 source (.addr base offset))) =
+      arm8Enc (.inst (.mem .store32 source (.addr base offset))) := by
+  simp only [Arm8.arm8Enc, Arm8.arm8Ast, Arm8.arm8Inst, arm8Enc, arm8Ast]
+  exact loadStoreAst32_store_eq source base offset
+
+/-- `.inst (.mem .load16 ...)` lowers to the same bytes. -/
+theorem arm8Enc_inst_loadStore16_load_eq (destination base : Nat) (offset : W) :
+    Arm8.arm8Enc (.inst (.mem .load16 destination (.addr base offset))) =
+      arm8Enc (.inst (.mem .load16 destination (.addr base offset))) := by
+  simp only [Arm8.arm8Enc, Arm8.arm8Ast, Arm8.arm8Inst, arm8Enc, arm8Ast]
+  exact loadStoreAst16_load_eq destination base offset
+
+/-- `.inst (.mem .store16 ...)` lowers to the same bytes. -/
+theorem arm8Enc_inst_loadStore16_store_eq (source base : Nat) (offset : W) :
+    Arm8.arm8Enc (.inst (.mem .store16 source (.addr base offset))) =
+      arm8Enc (.inst (.mem .store16 source (.addr base offset))) := by
+  simp only [Arm8.arm8Enc, Arm8.arm8Ast, Arm8.arm8Inst, arm8Enc, arm8Ast]
+  exact loadStoreAst16_store_eq source base offset
+
 end Flapjack.Compiler.Encoders.Arm8.L3
