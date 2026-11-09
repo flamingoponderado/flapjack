@@ -131033,5 +131033,13 @@
   "lean_name": "findValuesGlobals_replicate",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared exported find_v_globalsL_REPLICATE typed capture: binder order n, v, vs is preserved, including the unused vs of arbitrary type without Nonempty; REPLICATE is List.replicate and domain inclusion uses globalsWithin over num_set. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "find_v_globals_MAP_Recclosure",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/RecclosureGlobals.lean",
+  "lean_name": "findValueGlobals_map_recclosure",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared exported find_v_globals_MAP_Recclosure typed capture: free env and f precede the original forall funs, v, l; independent types and the unused v binder are retained. Domain set equality is predicate equality, empty set and union are pointwise, and NULL is List.isEmpty. Independently source-reviewed."
 }
 ]
