@@ -13856,7 +13856,7 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "lean_name": "evaluate",
-  "reviewer": "Compared all original expression-list and singleton-expression clauses with the corresponding source-shaped equations in EvaluateSource, including HD, reverse order, pattern errors, clock clamping, call and Eval clock decrement, thunk forcing and FFI results. The arbitrary HD empty value uses the shared HOL ARB model; compiler and FFI carriers remain independent. Floating operations inherit the reviewed rational-cut dependency; this review does not establish cross-language equivalence or pass correctness. Inherits the reals_as_rational_cuts assumption through its dependencies."
+  "reviewer": "Compared all original expression-list and singleton-expression clauses with the corresponding source-shaped equations in EvaluateSource, including HD, reverse order, pattern errors, clock clamping, call and Eval clock decrement, thunk forcing and FFI results. HD uses holHd directly with a proof-irrelevant nonemptiness witness; the arbitrary empty value uses the shared HOL ARB model. The previous definitionally equal wrapper was removed after source review; compiler and FFI carriers remain independent. Floating operations inherit the reviewed rational-cut dependency; this review does not establish cross-language equivalence or pass correctness. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
   {
   "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/EvaluateExact.lean",

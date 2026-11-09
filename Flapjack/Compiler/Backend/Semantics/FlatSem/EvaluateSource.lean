@@ -119,8 +119,8 @@ theorem evaluate_if_source {C F : Type} (env : Environment Value) (state : State
   cases result with
   | err error => rfl
   | val values =>
-    simp only [headValue_eq_holHd]
-    split <;> simp_all
+    dsimp only
+    cases doIf (@Flapjack.holHd Value ⟨unitValue⟩ values) yes no <;> rfl
 
 /-- A handler examines rows only for a raised exception and retains the
 original exception when no row matches. -/
@@ -174,7 +174,6 @@ theorem evaluate_mat_source {C F : Type} (env : Environment Value) (state : Stat
   | err error => rfl
   | val values =>
     dsimp only
-    simp only [headValue_eq_holHd]
     unfold selectRow
     split <;> try simp_all
     all_goals split <;> simp_all
