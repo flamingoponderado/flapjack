@@ -195,11 +195,36 @@ theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.
   | aw8sub => exact evaluate_checkedByteRead env names values source target trace args argsSim notTypeError
   | aw8length => exact evaluate_byteArrayLength env names values source target trace args argsSim notTypeError
   | aw8update => exact evaluate_checkedByteUpdate env names values source target trace args argsSim notTypeError
-  | copyStrStr => exact evaluate_copyString env names values source target trace args argsSim notTypeError
-  | copyStrAw8 => exact evaluate_copyStringToByteArray env names values source target trace args argsSim notTypeError
-  | copyAw8Str => exact evaluate_copyByteArray env names values source target trace args argsSim notTypeError
-  | copyAw8Aw8 => exact evaluate_copyByteArrayToByteArray env names values source target trace args argsSim notTypeError
-  | xorAw8StrUnsafe => exact evaluate_xorByteArray env names values source target trace args argsSim notTypeError
+  | copyStrStr =>
+    apply evalSim_app_of_op env names values source target trace (.src .copyStrStr) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opByteCopy _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inl rfl)))) premises
+  | copyStrAw8 =>
+    apply evalSim_app_of_op env names values source target trace (.src .copyStrAw8) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opByteCopy _ s vs sNext result tNext xs db t ws tt (Or.inl rfl) premises
+  | copyAw8Str =>
+    apply evalSim_app_of_op env names values source target trace (.src .copyAw8Str) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opByteCopy _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inl rfl)) premises
+  | copyAw8Aw8 =>
+    apply evalSim_app_of_op env names values source target trace (.src .copyAw8Aw8) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opByteCopy _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inl rfl))) premises
+  | xorAw8StrUnsafe =>
+    apply evalSim_app_of_op env names values source target trace (.src .xorAw8StrUnsafe) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opByteCopy _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inr rfl)))) premises
   | implode =>
     apply evalSim_app_of_op env names values source target trace (.src .implode) args
       ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
