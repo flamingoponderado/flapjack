@@ -3,6 +3,7 @@ Copyright (c) 2025 Flapjack contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import Mathlib.Tactic.IntervalCases
+import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
 import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofSimple2
 import Flapjack.Compiler.Encoders.Arm8.TargetProof
 
@@ -49,11 +50,6 @@ theorem and_not_low_eq_zero (k : Nat) (w : BitVec 64) (h : w.toNat < 2 ^ k) :
       omega
     have hb : w.getLsbD i = false := Nat.testBit_lt_two_pow hlt
     simp [hik, hb]
-
-/-- The `12`-bit immediate shape of `encodeInsn32` is selected below `4096`. -/
-theorem and_not_fff_eq_zero (w : BitVec 64) (h : w.toNat < 4096) :
-    w &&& ~~~(0xFFF : W) = 0 :=
-  and_not_low_eq_zero 12 w h
 
 /-- A multiple of `4096` below `2^24` is killed by `~~~(0xFFF000)`: its low
 twelve bits vanish by construction and its high bits by the bound. -/
@@ -212,7 +208,7 @@ theorem encodeInsn_addSubImmediate (sub setFlags : Bool) (imm : W) (rn rd : Nat)
     encodeInsn (.addSubImmediate sub setFlags imm rn rd) =
       some ((fields [(1, 1), (1, bit sub), (1, bit setFlags), (7, 0b1000100),
         (12, imm.toNat % 4096), (5, rn), (5, rd)]).setWidth 64) := by
-  have hmask : imm &&& ~~~(0xFFF : W) = 0 := and_not_fff_eq_zero imm himm
+  have hmask : imm &&& ~~~(0xFFF : W) = 0 := and_not_fff_eq_zero (x := imm) himm
   unfold encodeInsn
   simp only [encodeInsn32, if_pos hmask]
   rfl

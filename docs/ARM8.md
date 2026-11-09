@@ -83,8 +83,10 @@ ARMv8 model (`HOL/examples/l3-machine-code/arm8/model/arm8Script.sml` and
 `L3/Defs.lean`, `L3/Target.lean`, `L3/Ast.lean`) and proves the corresponding
 `encoderCorrect arm8TargetL3` obligation for the instructions the backend emits
 in `L3/CorrectnessEncoding/Complete.lean`; see "L3 carrier and validity gate"
-below. The closed subset model is retained for the executable driver, which
-still runs `arm8Config` rather than `arm8ConfigL3`. The L3 assembling theorem
+below. The closed subset model is proof-side only: the executed
+`--target=arm8` driver runs the computable `arm8Config` of
+`Arm8/Configuration.lean` (the encoder-only configuration, not the closed
+model), rather than `arm8ConfigL3`. The L3 assembling theorem
 `arm8EncoderCorrectL3` and its 64 case theorems are tagged
 `arm8_encoder_correct` and `reviewed_exact`; the closed-model
 `arm8EncoderCorrect` is Flapjack infrastructure with no HOL original, because it

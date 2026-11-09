@@ -122381,7 +122381,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Arm8L3Instance.lean",
     "lean_name": "arm8PancakeHeapLimitL3_lt",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure (ARM8 L3-carrier instance, 2026-11-03): the concrete heap-limit side condition for `pancakeBackendConf arm8BackendConfig`, discharged by kernel `decide`. It has no HOL original because it is the configuration-only bound the top theorem carries; it reads only `arm8BackendConfig`, not the target carrier. It restates the closed-model `Arm8Instance` row; the L3 copy is named `arm8PancakeHeapLimitL3_lt` because Lean accepts the same fully qualified name from two imported modules silently, with the later import winning, so a shared name would shadow rather than clash."
+    "reviewer": "Flapjack infrastructure (ARM8 L3-carrier instance, 2026-11-03): the concrete heap-limit side condition for `pancakeBackendConf arm8BackendConfig`, discharged by kernel `decide`. It has no HOL original because it is the configuration-only bound the top theorem carries; it reads only `arm8BackendConfig`, not the target carrier. The name carries the `L3` suffix because Lean accepts the same fully qualified name from two imported modules silently, with the later import winning, so a shared name would shadow rather than clash; the theorem itself is stated over the L3 ARMv8 configuration only."
   },
   {
     "hol_path": null,
