@@ -206,7 +206,8 @@ theorem doApp_some_flatStateRel_globalLookup {C F G : Type} (reachable : NumSet)
         have globals := related.2.2.2.1
         have sourceBound : index < source.globals.length := (List.getElem?_eq_some_iff.mp lookup).choose
         have targetBound : index < target.globals.length := by simpa [← globals.1] using sourceBound
-        have same := globals.2.1 index reachableIndex targetBound
+        have same := globals.2.1 index ⟨reachableIndex, targetBound⟩
+        rw [holEl_eq_getD _ _ sourceBound, holEl_eq_getD _ _ targetBound] at same
         have targetLookup : target.globals[index]? = some (some value) := by
           cases targetEntry : target.globals[index]? with
           | none =>
@@ -215,7 +216,8 @@ theorem doApp_some_flatStateRel_globalLookup {C F G : Type} (reachable : NumSet)
           | some entry =>
             simp [lookup, targetEntry] at same
             simpa [targetEntry] using same.symm
-        have closed := globals.2.2.2.2 index value reachableIndex targetBound (by simp [targetLookup])
+        have closed := globals.2.2.2.2 index value ⟨reachableIndex, targetBound,
+          by simp [holEl_eq_getD _ _ targetBound, targetLookup]⟩
         have resultSafe := primitiveResult_value_invariants reachable value closed.2 closed.1
         exact ⟨target, related, by simp [FlatSem.doApp, FlatSem.doAppFlat, targetLookup],
           resultSafe.1, resultSafe.2⟩
@@ -257,7 +259,9 @@ theorem doApp_some_flatStateRel_globalInit {C F G : Type} (reachable : NumSet)
           have globals := related.2.2.2.1
           have sourceBound : index < source.globals.length := (List.getElem?_eq_some_iff.mp lookup).choose
           have targetBound : index < target.globals.length := by simpa [← globals.1] using sourceBound
-          have targetD := globals.2.2.2.1 index targetBound (by simp [lookup])
+          have targetD := globals.2.2.2.1 index ⟨targetBound,
+            by simp [holEl_eq_getD _ _ sourceBound, lookup]⟩
+          rw [holEl_eq_getD _ _ targetBound] at targetD
           have targetEmpty : target.globals[index]? = some none := by
             cases targetEntry : target.globals[index]? with
             | none =>

@@ -19385,24 +19385,24 @@
     "hol_name": "globals_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/StateRelation.lean",
     "lean_name": "globalsRel",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared globals_relation in flat_elim_value_globals_probe.out: all five conjuncts, grouped premises, HOL EL, and value and sparse-tree carriers match. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "globals_rel_trans",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/StateRelation.lean",
     "lean_name": "globalsRel_trans",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared globals_transitivity in flat_elim_value_globals_probe.out, including the grouped premise and source, intermediate, and target carriers. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "flat_state_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/StateRelation.lean",
     "lean_name": "flatStateRel",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared state_relation in flat_elim_value_globals_probe.out, including the shared state parameters, globals relation, reference reachability and nested EVERY store traversal. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
