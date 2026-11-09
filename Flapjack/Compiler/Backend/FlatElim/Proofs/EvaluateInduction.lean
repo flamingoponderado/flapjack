@@ -13,7 +13,7 @@ theorem evaluate_con_simulation_step {C F : Type} (env : FlatSem.Environment Fla
     evaluationSimulationAt env source [.con tra constructor args] := by
   intro next result reachable target run lookupsClosed related envClosed envSafe expressionsSafe notTypeError
   have argsClosed : globalsWithin (findGlobalsList destGlobalVarLookup args.reverse) reachable := by
-    apply findLookupsList_reverse_within args reachable
+    rw [← findLookupsList_reverse args]
     simp only [findGlobalsList, findGlobals, globalsWithin_union] at lookupsClosed
     exact lookupsClosed.1
   have argsSafe : expressionsNoEval args.reverse := by
@@ -41,7 +41,7 @@ theorem evaluate_con_simulation_step {C F : Type} (env : FlatSem.Environment Fla
       simp only at run
       rcases run with ⟨rfl, rfl⟩
       have valuesClosed : globalsWithin (findValuesGlobals values.reverse) reachable := by
-        apply findValuesGlobals_reverse_within
+        rw [← findValuesGlobals_reverse values]
         simpa [findPrimitiveResultGlobals] using argClosed
       have valuesSafe : valuesNoEval values.reverse := by
         apply valuesNoEval_reverse
@@ -202,7 +202,7 @@ theorem evaluate_ordinary_simulation_step {C F : Type} (env : FlatSem.Environmen
     evaluationSimulationAt env source [.app tra op args] := by
   intro next result reachable target run lookupsClosed related envClosed envSafe expressionsSafe notTypeError
   have argsClosed : globalsWithin (findGlobalsList destGlobalVarLookup args.reverse) reachable := by
-    apply findLookupsList_reverse_within args reachable
+    rw [← findLookupsList_reverse args]
     have appClosed := (findLookupsList_within_iff _ _).mp lookupsClosed (.app tra op args) (by simp)
     exact (findLookups_app_within tra op args reachable appClosed).1
   have argsSafe : expressionsNoEval args.reverse := by
@@ -235,7 +235,7 @@ theorem evaluate_ordinary_simulation_step {C F : Type} (env : FlatSem.Environmen
     | val values =>
       simp only at run
       have valuesClosed : globalsWithin (findValuesGlobals values.reverse) reachable := by
-        apply findValuesGlobals_reverse_within
+        rw [← findValuesGlobals_reverse values]
         simpa [findPrimitiveResultGlobals] using argClosed
       have valuesSafe : valuesNoEval values.reverse := by
         apply valuesNoEval_reverse

@@ -94,7 +94,7 @@ theorem evaluate_force_simulation_step {C F : Type} (env : FlatSem.Environment F
     evaluationSimulationAt env source [.app tra (.src (.thunkOp .forceThunk)) args] := by
   intro next result reachable target run lookupsClosed related envClosed envSafe expressionsSafe notTypeError
   have argsClosed : globalsWithin (findGlobalsList destGlobalVarLookup args.reverse) reachable := by
-    apply findLookupsList_reverse_within args reachable
+    rw [← findLookupsList_reverse args]
     have appClosed := (findLookupsList_within_iff _ _).mp lookupsClosed (.app tra (.src (.thunkOp .forceThunk)) args) (by simp)
     exact (findLookups_app_within tra (.src (.thunkOp .forceThunk)) args reachable appClosed).1
   have argsSafe : expressionsNoEval args.reverse := by

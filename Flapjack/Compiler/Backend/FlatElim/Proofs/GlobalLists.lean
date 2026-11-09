@@ -23,6 +23,32 @@ theorem findValuesGlobals_append (left right : List FlatSem.Value) :
   | nil => simp [findValuesGlobals, sptUnion]
   | cons first rest ih => simp [findValuesGlobals, ih, sptUnion_assoc]
 
+/-- Reversing an expression list preserves its lookup dependencies. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_lookupsL_REVERSE"]
+theorem findLookupsList_reverse (expressions : List FlatLang.Exp) :
+    findGlobalsList destGlobalVarLookup expressions =
+      findGlobalsList destGlobalVarLookup expressions.reverse := by
+  induction expressions with
+  | nil => rfl
+  | cons first rest ih =>
+    simp only [List.reverse_cons, findLookupsList_append, findGlobalsList, ih]
+    have empty : sptUnion (findGlobals destGlobalVarLookup first) .ln = findGlobals destGlobalVarLookup first := by
+      cases h : findGlobals destGlobalVarLookup first <;> simp [sptUnion]
+    simpa only [empty] using
+      (sptUnion_numSet_sym (findGlobals destGlobalVarLookup first) (findGlobalsList destGlobalVarLookup rest.reverse))
+
+/-- Reversing a value list preserves its global dependencies. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_v_globalsL_REVERSE"]
+theorem findValuesGlobals_reverse (values : List FlatSem.Value) :
+    findValuesGlobals values = findValuesGlobals values.reverse := by
+  induction values with
+  | nil => rfl
+  | cons first rest ih =>
+    simp only [List.reverse_cons, findValuesGlobals_append, findValuesGlobals, ih]
+    have empty : sptUnion (findValueGlobals first) .ln = findValueGlobals first := by
+      cases h : findValueGlobals first <;> simp [sptUnion]
+    simpa [empty] using (sptUnion_numSet_sym (findValueGlobals first) (findValuesGlobals rest.reverse))
+
 /-- Store dependencies distribute over appended reference lists. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_refs_globals_APPEND"]
 theorem findRefsGlobals_append (refs new : List (StoreValue FlatSem.Value)) :

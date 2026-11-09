@@ -4,6 +4,8 @@ refs_globals=(∀(t :v store_v list) (a :v). find_refs_globals (Refv a::t) = uni
 lookups_append=∀(l1 :exp list) (l2 :exp list). find_lookupsL (l1 ++ l2) = union (find_lookupsL l1) (find_lookupsL l2)
 value_globals_append=∀(l1 :v list) (l2 :v list). find_v_globalsL (l1 ++ l2) = union (find_v_globalsL l1) (find_v_globalsL l2)
 refs_globals_append=∀(refs :v store_v list) (new :v store_v list). find_refs_globals (refs ++ new) = union (find_refs_globals refs) (find_refs_globals new)
+lookups_reverse=∀(l :exp list). find_lookupsL l = find_lookupsL (REVERSE l)
+value_globals_reverse=∀(l :v list). find_v_globalsL l = find_v_globalsL (REVERSE l)
 value_globals_el=∀(n :num) (vs :v list). n < LENGTH vs ⇒ (domain (find_v_globals vs❲n❳) :num -> bool) ⊆ (domain (find_v_globalsL vs) :num -> bool)
 refs_globals_el=(n :num) < LENGTH (refs :v store_v list) ∧ (domain (find_refs_globals refs) :num -> bool) ⊆ (R :num -> bool) ⇒ (∀(a :v). refs❲n❳ = Refv a ⇒ (domain (find_v_globals a) :num -> bool) ⊆ R) ∧ (∀(vs :v list). refs❲n❳ = Varray vs ⇒ (domain (find_v_globalsL vs) :num -> bool) ⊆ R) ∧ ∀(m :thunk_mode) (a :v). refs❲n❳ = Thunk m a ⇒ (domain (find_v_globals a) :num -> bool) ⊆ R
 env_globals=∀(env :v environment). find_env_globals env = find_v_globalsL (MAP (SND :mlstring # v -> v) env.v)

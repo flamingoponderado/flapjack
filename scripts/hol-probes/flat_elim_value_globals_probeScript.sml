@@ -12,6 +12,8 @@ val _ = show_thm "refs_globals=" flat_elimProofTheory.find_refs_globals_def;
 val _ = show_thm "lookups_append=" flat_elimProofTheory.find_lookupsL_APPEND;
 val _ = show_thm "value_globals_append=" flat_elimProofTheory.find_v_globalsL_APPEND;
 val _ = show_thm "refs_globals_append=" flat_elimProofTheory.find_refs_globals_APPEND;
+val _ = show_thm "lookups_reverse=" flat_elimProofTheory.find_lookupsL_REVERSE;
+val _ = show_thm "value_globals_reverse=" flat_elimProofTheory.find_v_globalsL_REVERSE;
 val _ = show_thm "value_globals_el=" flat_elimProofTheory.find_v_globalsL_EL;
 val _ = show_thm "refs_globals_el=" flat_elimProofTheory.find_refs_globals_EL;
 val _ = show_thm "env_globals=" flat_elimProofTheory.find_env_globals_def;

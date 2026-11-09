@@ -130610,6 +130610,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "find_lookupsL_REVERSE",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalLists.lean",
+  "lean_name": "findLookupsList_reverse",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed lookups_reverse in flat_elim_value_globals_probe.out, including equality orientation, expression-list carrier and sparse-tree union. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "find_v_globalsL_REVERSE",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalLists.lean",
+  "lean_name": "findValuesGlobals_reverse",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed value_globals_reverse in flat_elim_value_globals_probe.out, including equality orientation, value-list carrier and sparse-tree union. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
   "hol_name": "find_v_globalsL_APPEND",
   "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalLists.lean",
   "lean_name": "findValuesGlobals_append",
