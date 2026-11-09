@@ -36,14 +36,14 @@ This module starts the genuinely HOL-shaped total interface:
   nonrecursive constructors `Skip`, `Break`, `Continue`, and `Tick`. Its state
   is the complete production `PanSemState`; there is no evaluator `Option` or
   fuel layer. The remaining constructors are outside this restricted domain,
-  so this is not the whole-program `panSemEvaluate`;
+  so this is not the whole-program evaluator;
 * `panSemTotalSeqStep` is the HOL `Seq` composition (clamp the first result's
   clock with `fix_clock`, continue only on a normal completion) as a helper over
   an already evaluated first pair and a continuation, not a whole-program
   evaluator.
 
 The state half is the production `PanSemState`, so the eventual total
-`panSemEvaluate` returns a `PanSemProgResult α σ × PanSemState α (FfiState σ)`
+evaluator returns a `PanSemProgResult α σ × PanSemState α (FfiState σ)`
 pair with no `Option`/fuel wrapper, using the source recursion measure
 `panSemEvalMeasure`, whose coordinates are `(state.clock, panSemProgFuel
 program)`.  `panSemTotalOfExecuted` is only a proved

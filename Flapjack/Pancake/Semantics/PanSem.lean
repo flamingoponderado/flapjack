@@ -223,11 +223,11 @@ mutual
             rw [Function.comp_apply, ih pair hmem])
 end
 
+/-- Expression-evaluation runtime carried by the source declaration state.
+    The HOL-finite source code map lives in `PanSemDeclarationState.code`;
+    this carrier holds only the expression-level runtime fields. -/
 structure PanSemEvaluateState (α : Type u) (σ : Type v) where
   structs : StructContext
-  /-- Compatibility function table. This list cannot stand in for the
-      HOL-finite `PanSemState.code` map in a source Call/DecCall proof. -/
-  functions : List (FunName × List VarName × Prog α)
   locals : VarName → Option (PanValue α)
   globals : VarName → Option (PanValue α)
   memory : α → Option (PanValue α)
@@ -240,20 +240,6 @@ structure PanSemEvaluateState (α : Type u) (σ : Type v) where
   contracts : Option PanValueCallContracts := none
   memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none
 
-/-! Source-faithful callers carry the Cake memory operations as a required
-    field.  The legacy state remains optional for executable compatibility;
-    this wrapper is the typed boundary used by exact evaluator proofs. -/
-structure PanSemExactState (α : Type u) (σ : Type v) where
-  legacy : PanSemEvaluateState α σ
-  memoryAccess : PanValueMemoryAccess α
-
-def PanSemExactState.toEvaluateState (state : PanSemExactState α σ) :
-    PanSemEvaluateState α σ :=
-  { state.legacy with memoryAccess := some state.memoryAccess }
-
-/-- One source `panSem$state.code` entry: typed parameters, function body, and
-    return shape. This full entry is kept separately from the legacy runtime
-    state's function-name/parameter-name/body triples. -/
 structure PanSemFunctionEntry (α : Type u) where
   params : List (VarName × Shape)
   body : Prog α
@@ -263,9 +249,8 @@ structure PanSemFunctionEntry (α : Type u) where
     carries the expression-evaluation fields and preserves all runtime state;
     `code` and `eshapes` model the source finite maps directly, and the
     required `memoryAccess` supplies the source memory-domain/byte behavior;
-    declaration evaluation cannot fall back to the permissive legacy memory
-    path. In particular, the lossy `runtime.functions` compatibility field is
-    not used as `code`. -/
+    declaration evaluation cannot fall back to a permissive legacy memory
+    path. -/
 structure PanSemDeclarationState (α : Type u) (σ : Type v) where
   runtime : PanSemEvaluateState α σ
   code : InfoMap (PanSemFunctionEntry α)
@@ -325,42 +310,7 @@ mutual
         1 + panSemExpFuel address + panSemExpFuel value
     | .annot _ _ => 1
 
-  def panSemFunctionFuel : List (FunName × List VarName × Prog α) → Nat
-    | [] => 0
-    | (_, _, body) :: functions =>
-        max (panSemProgFuel body) (panSemFunctionFuel functions)
 end
-
-def panSemEvaluateFuel (state : PanSemEvaluateState α σ)
-  (program : Prog α) : Nat :=
-  state.clock + max (panSemProgFuel program) (panSemFunctionFuel state.functions) + 1
-
-def panSemEvaluateWithFuel
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (fuel : Nat) (state : PanSemEvaluateState α σ) (program : Prog α) :
-    Option (PanValueFfiClockResult α σ) :=
-  evalPanValueFfiClockProg context primitive handler state.structs state.functions
-    state.baseAddress state.topAddress state.bytesInWord fuel state.locals state.globals
-    state.memory state.ffi state.clock program
-    (memoryAccess := state.memoryAccess) (contracts := state.contracts)
-    (memoryHandler := state.memoryHandler)
-
-def panSemEvaluate
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (state : PanSemEvaluateState α σ) (program : Prog α) :
-    Option (PanValueFfiClockResult α σ) :=
-  panSemEvaluateWithFuel context primitive handler
-    (panSemEvaluateFuel state program) state program
 
 /-- Maximum structural evaluation cost of a body stored in the finite source
     code map. The evaluator's internal fuel is derived from the state-owned
@@ -1295,271 +1245,6 @@ theorem panSemEvaluateCodeStateWithFuel_primitive
                   evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValuePrimitiveResult,
                   evalPanValueExpsWith, hvalues, hprim, hlocal, hshape]
 
-/-!
-  Exact source-memory entry point.
-
-  CakeML's `panSem$evaluate` receives `memaddrs`, `be`, and the word-memory
-  operations through its state.  The structured compatibility API keeps an
-  optional access field for older callers, but this entry point requires the
-  access record explicitly so `Load32`/`LoadByte` cannot silently fall back to
-  whole-cell reads.
--/
-def panSemEvaluateExact
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (memoryAccess : PanValueMemoryAccess α)
-    (state : PanSemEvaluateState α σ) (program : Prog α) :
-    Option (PanValueFfiClockResult α σ) :=
-  panSemEvaluate context primitive handler
-    { state with memoryAccess := some memoryAccess } program
-
-/-! The exact source entrypoint is a state boundary, not a second evaluator:
-    it installs the explicit Cake memory operations before evaluating.  Keeping
-    this equation named makes exact correctness proofs unable to silently
-    select the legacy no-access compatibility path. -/
-theorem panSemEvaluateExact_uses_memory_access
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (memoryAccess : PanValueMemoryAccess α)
-    (state : PanSemEvaluateState α σ) (program : Prog α) :
-    panSemEvaluateExact context primitive handler memoryAccess state program =
-      panSemEvaluate context primitive handler
-        { state with memoryAccess := some memoryAccess } program := by
-  rfl
-
-def panSemEvaluateExactState
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (state : PanSemExactState α σ) (program : Prog α) :
-    Option (PanValueFfiClockResult α σ) :=
-  panSemEvaluate context primitive handler state.toEvaluateState program
-
-/-! Exact source `Return` Error paths: an expression that fails to evaluate and
-    a payload that exceeds the 32-word limit both yield `SOME Error` with the
-    full unchanged state (HOL `panSemScript.sml:638-644`). -/
-theorem panSemEvaluateExactState_return_error_of_eval_none
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (state : PanSemExactState α σ)
-    (expression : Exp α)
-    (heval : evalPanValueExp state.legacy.structs state.legacy.locals
-      state.legacy.globals state.legacy.memory state.legacy.baseAddress
-      state.legacy.topAddress state.legacy.bytesInWord expression
-      (memoryAccess := some state.memoryAccess) = none) :
-    panSemEvaluateExactState context primitive handler state
-        (.return expression) =
-      some (.control (.error state.legacy.locals state.legacy.globals
-        state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
-  simp [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
-    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg, evalPanValueFfiLeafControl, panValueReturnResult, evalPanValueExpWith,
-    PanSemExactState.toEvaluateState, heval]
-
-theorem panSemEvaluateExactState_return_error_of_oversized
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (state : PanSemExactState α σ)
-    (expression : Exp α) (value : PanValue α)
-    (heval : evalPanValueExp state.legacy.structs state.legacy.locals
-      state.legacy.globals state.legacy.memory state.legacy.baseAddress
-      state.legacy.topAddress state.legacy.bytesInWord expression
-      (memoryAccess := some state.memoryAccess) = some value)
-    (hlimit : panValuePayloadWithinLimit state.legacy.structs value = false) :
-    panSemEvaluateExactState context primitive handler state
-        (.return expression) =
-      some (.control (.error state.legacy.locals state.legacy.globals
-        state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
-  simp [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
-    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg, evalPanValueFfiLeafControl, panValueReturnResult, evalPanValueExpWith,
-    PanSemExactState.toEvaluateState, heval, hlimit]
-
-/-! Exact source `Raise` Error paths: an expression that fails to evaluate and
-    a payload that fails the exception-shape or size check both yield
-    `SOME Error` with the full unchanged state (HOL `panSemScript.sml:645-652`). -/
-theorem panSemEvaluateExactState_raise_error_of_eval_none
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (state : PanSemExactState α σ)
-    (exception : ExceptionId) (expression : Exp α)
-    (heval : evalPanValueExp state.legacy.structs state.legacy.locals
-      state.legacy.globals state.legacy.memory state.legacy.baseAddress
-      state.legacy.topAddress state.legacy.bytesInWord expression
-      (memoryAccess := some state.memoryAccess) = none) :
-    panSemEvaluateExactState context primitive handler state
-        (.raise exception expression) =
-      some (.control (.error state.legacy.locals state.legacy.globals
-        state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
-  simp [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
-    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg, evalPanValueFfiLeafControl, panValueRaiseResult, evalPanValueExpWith,
-    PanSemExactState.toEvaluateState, heval]
-
-theorem panSemEvaluateExactState_raise_error_of_invalid
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (state : PanSemExactState α σ)
-    (exception : ExceptionId) (expression : Exp α) (value : PanValue α)
-    (heval : evalPanValueExp state.legacy.structs state.legacy.locals
-      state.legacy.globals state.legacy.memory state.legacy.baseAddress
-      state.legacy.topAddress state.legacy.bytesInWord expression
-      (memoryAccess := some state.memoryAccess) = some value)
-    (hinvalid : (panValueExceptionValid state.legacy.structs
-        state.legacy.contracts exception value &&
-        panValuePayloadWithinLimit state.legacy.structs value) = false) :
-    panSemEvaluateExactState context primitive handler state
-        (.raise exception expression) =
-      some (.control (.error state.legacy.locals state.legacy.globals
-        state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
-  simp [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
-    panSemEvaluateFuel, evalPanValueFfiClockLeaf, evalPanValueFfiClockProg, evalPanValueFfiLeafControl, panValueRaiseResult, evalPanValueExpWith,
-    PanSemExactState.toEvaluateState, heval, hinvalid]
-
-/-! Exact source `Call` error equations.  HOL evaluates `OPT_MMAP (eval s)
-    argexps` before looking up the callee, and rejects the call with
-    `(SOME Error, s)` with the unchanged caller state when an argument fails or
-    when the callee is not found.  These equations run the state-derived memory
-    access, so a memory-reading argument is gated by the source `memaddrs`; no
-    legacy whole-cell fallback is used. -/
-theorem panSemEvaluateExactState_call_error_of_arguments_none
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (state : PanSemExactState α σ)
-    (info : Option (Option (VarKind × VarName) ×
-      Option (ExceptionId × VarName × Prog α)))
-    (function : FunName) (arguments : List (Exp α))
-    (harguments : evalPanValueExps state.legacy.structs state.legacy.locals
-      state.legacy.globals state.legacy.memory state.legacy.baseAddress
-      state.legacy.topAddress state.legacy.bytesInWord arguments
-      (memoryAccess := some state.memoryAccess) = none) :
-    panSemEvaluateExactState context primitive handler state
-        (.call info function arguments) =
-      some (.control (.error state.legacy.locals state.legacy.globals
-        state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
-  simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
-    panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  have hle : 1 ≤ max (panSemProgFuel (Prog.call info function arguments))
-      (panSemFunctionFuel state.legacy.functions) := by
-    rw [panSemProgFuel]
-    exact Nat.le_trans (by omega) (Nat.le_max_left _ _)
-  obtain ⟨k, hk⟩ : ∃ k, state.legacy.clock +
-      max (panSemProgFuel (Prog.call info function arguments))
-        (panSemFunctionFuel state.legacy.functions) = k + 1 := by
-    cases h : state.legacy.clock +
-        max (panSemProgFuel (Prog.call info function arguments))
-          (panSemFunctionFuel state.legacy.functions) with
-    | zero => omega
-    | succ k => exact ⟨k, rfl⟩
-  rw [hk]
-  simp [evalPanValueFfiClockCall, panValueCallArgumentsValue, harguments]
-
-theorem panSemEvaluateExactState_call_error_of_target_none
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (state : PanSemExactState α σ)
-    (info : Option (Option (VarKind × VarName) ×
-      Option (ExceptionId × VarName × Prog α)))
-    (function : FunName) (arguments : List (Exp α)) (values : List (PanValue α))
-    (harguments : evalPanValueExps state.legacy.structs state.legacy.locals
-      state.legacy.globals state.legacy.memory state.legacy.baseAddress
-      state.legacy.topAddress state.legacy.bytesInWord arguments
-      (memoryAccess := some state.memoryAccess) = some values)
-    (htarget : panValueCallTarget state.legacy.structs state.legacy.contracts
-      function state.legacy.functions values = none) :
-    panSemEvaluateExactState context primitive handler state
-        (.call info function arguments) =
-      some (.control (.error state.legacy.locals state.legacy.globals
-        state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
-  simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
-    panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  have hle : 1 ≤ max (panSemProgFuel (Prog.call info function arguments))
-      (panSemFunctionFuel state.legacy.functions) := by
-    rw [panSemProgFuel]
-    exact Nat.le_trans (by omega) (Nat.le_max_left _ _)
-  obtain ⟨k, hk⟩ : ∃ k, state.legacy.clock +
-      max (panSemProgFuel (Prog.call info function arguments))
-        (panSemFunctionFuel state.legacy.functions) = k + 1 := by
-    cases h : state.legacy.clock +
-        max (panSemProgFuel (Prog.call info function arguments))
-          (panSemFunctionFuel state.legacy.functions) with
-    | zero => omega
-    | succ k => exact ⟨k, rfl⟩
-  rw [hk]
-  simp [evalPanValueFfiClockCall, panValueCallArgumentsValue, harguments, htarget]
-
-/-- HOL `lookup_code` (`panSemScript.sml:458-467`) rejects a callee whose
-    argument shapes or parameter-name distinctness fail, and the `Call` case
-    (`:657-662`) then returns `(SOME Error, s)` with the caller state unchanged.
-    This is the parameter-validity failure branch, stated over the exact source
-    state with the caller's full-state memory access. Untagged: the executed
-    result is the reduced structured pair, not HOL's literal `result option`
-    pairing. -/
-theorem panSemEvaluateExactState_call_error_of_parameters_invalid
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (state : PanSemExactState α σ)
-    (info : Option (Option (VarKind × VarName) × Option (ExceptionId × VarName × Prog α)))
-    (function : FunName) (arguments : List (Exp α))
-    (values : List (PanValue α))
-    (harguments :
-      evalPanValueExps state.legacy.structs state.legacy.locals state.legacy.globals
-        state.legacy.memory state.legacy.baseAddress state.legacy.topAddress
-        state.legacy.bytesInWord arguments (memoryAccess := some state.memoryAccess) =
-        some values)
-    (hlookup : lookupPanFunction function state.legacy.functions = some (parameters, body))
-    (hinvalid :
-      panValueParametersValid state.legacy.structs state.legacy.contracts function values =
-        false) :
-    panSemEvaluateExactState context primitive handler state (.call info function arguments) =
-      some (.control (.error state.legacy.locals state.legacy.globals state.legacy.memory
-        state.legacy.ffi), state.legacy.clock) := by
-  refine panSemEvaluateExactState_call_error_of_target_none context primitive handler state
-    info function arguments (values := values) harguments ?_
-  simp [panValueCallTarget, hlookup, hinvalid]
-
-/-! The legacy function-list evaluator does not carry HOL `state.code`'s
-    per-entry `returnShape`; an optional `PanValueCallContracts.returnShapes`
-    table is not a sound substitute for that field. The compatibility call
-    path therefore does not reject a return based on that table. The exact
-    state-owned evaluator checks the source code-map return shape. -/
-
 /-- HOL `Call` (`panSemScript.sml:667-672`) rejects a callee whose returned
     value shape disagrees with the source code-map entry's `returnShape`,
     returning `(SOME Error, st)` with the callee's post-call globals, memory,
@@ -1702,7 +1387,7 @@ theorem panSemEvaluateCodeState_call_error_of_returnShapeMismatch_param
                     panValueShape, panShapeMatches, decPanClock]
 
 /-- HOL `Call` invalid-return-shape rejection with the callee body result left as
-    an abstract hypothesis, mirroring the exact-state callee-error equations.
+    an abstract hypothesis.
     When the source code entry declares `returnShape` and the callee finishes
     with a single value whose `panValueShape` does not match it, HOL
     `shape_of retv ≠ return_sh` (`panSemScript.sml:668-670`) makes the call
@@ -1711,9 +1396,7 @@ theorem panSemEvaluateCodeState_call_error_of_returnShapeMismatch_param
     clamp. The callee's post-state locals are preserved, including bindings
     restored by a surrounding declaration. Untagged: the executed
     result is the reduced structured pair, not HOL's literal `result option #
-    state` pairing.  The functions-list `PanSemExactState` compatibility carrier
-    has no source `returnShape`, so this rejection is only available on the
-    state-owned code-map path. -/
+    state` pairing. -/
 theorem panSemEvaluateCodeState_call_error_of_callee_returnShapeMismatch
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1829,113 +1512,6 @@ theorem panSemEvaluateCodeState_decCall_error_of_returnShapeMismatch
     evalPanValueFfiClockCodeCall, panValueCallArgumentsValue,
     evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueReturnResult, evalPanValueExpWith, evalPanValueExp,
     hargs, hcallee, hclock, panValueShape, panShapeMatches, decPanClock]
-
-/-- HOL `panSemScript$evaluate_def` `Store` returns `SOME Error` with the
-unchanged state when the address expression fails to evaluate. -/
-theorem panSemEvaluateExactState_store_error_of_address_none
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ) (state : PanSemExactState α σ)
-    (address value : Exp α)
-    (haddress : evalPanValueExp state.legacy.structs state.legacy.locals
-      state.legacy.globals state.legacy.memory state.legacy.baseAddress
-      state.legacy.topAddress state.legacy.bytesInWord address
-      (memoryAccess := some state.memoryAccess) = none) :
-    panSemEvaluateExactState context primitive handler state
-        (.store address value) =
-      some (.control (.error state.legacy.locals state.legacy.globals
-        state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
-  simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
-    panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueStoreResult,
-    evalPanValueExpWith, haddress]
-
-/-- HOL `panSemScript$evaluate_def` `Store32` returns `SOME Error` with the
-unchanged state when the address expression fails to evaluate. -/
-theorem panSemEvaluateExactState_store32_error_of_address_none
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ) (state : PanSemExactState α σ)
-    (address value : Exp α)
-    (haddress : evalPanValueExp state.legacy.structs state.legacy.locals
-      state.legacy.globals state.legacy.memory state.legacy.baseAddress
-      state.legacy.topAddress state.legacy.bytesInWord address
-      (memoryAccess := some state.memoryAccess) = none) :
-    panSemEvaluateExactState context primitive handler state
-        (.store32 address value) =
-      some (.control (.error state.legacy.locals state.legacy.globals
-        state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
-  simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
-    panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueStore32Result,
-    evalPanValueExpWith, haddress]
-
-/-- HOL `panSemScript$evaluate_def` `StoreByte` returns `SOME Error` with the
-unchanged state when the address expression fails to evaluate. -/
-theorem panSemEvaluateExactState_storeByte_error_of_address_none
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ) (state : PanSemExactState α σ)
-    (address value : Exp α)
-    (haddress : evalPanValueExp state.legacy.structs state.legacy.locals
-      state.legacy.globals state.legacy.memory state.legacy.baseAddress
-      state.legacy.topAddress state.legacy.bytesInWord address
-      (memoryAccess := some state.memoryAccess) = none) :
-    panSemEvaluateExactState context primitive handler state
-        (.storeByte address value) =
-      some (.control (.error state.legacy.locals state.legacy.globals
-        state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
-  simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
-    panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  simp [evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueStoreByteResult,
-    evalPanValueExpWith, haddress]
-
-/-- HOL `If` (`panSemScript.sml:617-620`) whose condition does not evaluate to a
-    word (either the expression fails or it is not a word value) returns
-    `(SOME Error, s)` with the unchanged source state and clock.  Stated over the
-    exact source state with the state-owned memory access; untagged boundary
-    equation.  Oracle: `scripts/hol-probes/pan_sem_ite_e2e_probe.out`
-    (`if_nonword_result=SOME Error`, `if_fail_result=SOME Error`). -/
-theorem panSemEvaluateExactState_ite_error_of_condition_none
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
-    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (context : PanValueFfiContext α)
-    (primitive : PanPrimitiveHandler α)
-    (handler : PanValueStatefulFfiHandler α σ)
-    (state : PanSemExactState α σ)
-    (condition : Exp α) (thenBranch elseBranch : Prog α)
-    (hcondition : panValueIteConditionValue state.legacy.structs
-      state.legacy.baseAddress state.legacy.topAddress state.legacy.bytesInWord
-      state.legacy.locals state.legacy.globals state.legacy.memory condition
-      (some state.memoryAccess) = none) :
-    panSemEvaluateExactState context primitive handler state
-        (.ite condition thenBranch elseBranch) =
-      some (.control (.error state.legacy.locals state.legacy.globals
-        state.legacy.memory state.legacy.ffi), state.legacy.clock) := by
-  simp only [panSemEvaluateExactState, panSemEvaluate, panSemEvaluateWithFuel,
-    panSemEvaluateFuel, evalPanValueFfiClockProg, PanSemExactState.toEvaluateState]
-  have hle : 1 ≤ max (panSemProgFuel (Prog.ite condition thenBranch elseBranch))
-      (panSemFunctionFuel state.legacy.functions) := by
-    rw [panSemProgFuel]
-    exact Nat.le_trans (by omega) (Nat.le_max_left _ _)
-  obtain ⟨k, hk⟩ : ∃ k, state.legacy.clock +
-      max (panSemProgFuel (Prog.ite condition thenBranch elseBranch))
-        (panSemFunctionFuel state.legacy.functions) = k + 1 := by
-    cases h : state.legacy.clock +
-        max (panSemProgFuel (Prog.ite condition thenBranch elseBranch))
-          (panSemFunctionFuel state.legacy.functions) with
-    | zero => omega
-    | succ k => exact ⟨k, rfl⟩
-  rw [hk]
-  rw [hcondition]
-  rfl
 
 /-! Finite-map updates for the source declaration evaluator. `InfoMap` is an
     association-list representation; putting the updated binding first and
