@@ -9,9 +9,8 @@ public import Flapjack.PanBst
 # Clocked structured Pancake semantics
 
 This module adds the clock/timeout part of CakeML's `panSem` boundary to the
-canonical structured, stateful-FFI evaluator.  The existing evaluator remains
-available for compatibility and for proofs that do not model a clock.  The
-clocked evaluator charges one unit at a function call, at each executed while
+canonical structured, stateful-FFI evaluator.  The clocked evaluator charges
+one unit at a function call, at each executed while
 iteration, and at `Tick`, exactly as `dec_clock` is used by `panSem`.
 
 Semantic errors (`panSem`'s `SOME Error`) are explicit
@@ -211,10 +210,9 @@ theorem evalPanValueFfiClockLeaf_some_eq
       panValueFfiExtCallResult, panValueReturnResult, panValueRaiseResult,
       panValueShMemLoadResult, panValueShMemStoreResult, hs, hl]
 
-
-/-! Source-state clock evaluator. Unlike the compatibility evaluator above,
-    every Call and DecCall resolves directly from the finite code map that is
-    threaded unchanged through recursive evaluation. This is an executable
+/-! Source-state clock evaluator. Every Call and DecCall resolves directly
+    from the finite code map that is threaded unchanged through recursive
+    evaluation. This is an executable
     evaluator analogue exercised against direct HOL oracle cases; it is not
     tagged as a HOL theorem port because the full state-rel correspondence
     proof remains open. -/
@@ -285,8 +283,8 @@ mutual
                           | _ => false
                         if sourceReturnValid then
                           -- The source code entry supplies `returnShape`; HOL
-                          -- Call checks that shape directly. `contracts` is a
-                          -- compatibility input and is not part of the HOL
+                          -- Call checks that shape directly. `contracts` is an
+                          -- optional extra input and is not part of the HOL
                           -- state, so it must not impose a second return-shape
                           -- check here. The payload-size limit is enforced by
                           -- the callee's `Return` equation.

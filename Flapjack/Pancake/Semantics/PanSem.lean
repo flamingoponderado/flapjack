@@ -11,16 +11,16 @@ public import Flapjack.PanValueFfiClockSemantics
 
 Source reference: `cakeml/pancake/semantics/panSemScript.sml:556-736`
 (`evaluate_def`). The HOL source evaluates one `panLang$prog` against a state
-whose `code` field is a finite map. `PanSemEvaluateState` is the existing
-list-backed executable compatibility boundary. `panSemEvaluateCodeState`
-resolves every recursive Call and DecCall from the source state's code map,
-    but choosing no memory access is a legacy compatibility path. HOL-facing
+whose `code` field is a finite map. `PanSemEvaluateState` is the
+expression-evaluation runtime carried by the source declaration state.
+`panSemEvaluateCodeState` resolves every recursive Call and DecCall from the
+source state's code map, but choosing no memory access is a legacy no-access
+path. HOL-facing
 RV64 evaluation uses `panSemEvaluateRiscV64CodeState`, which derives its
 memory access from the state.
 
-The fuel is only Lean's termination guard. The compatibility entry point uses
-its legacy function list; the source-state entry point derives fuel from the
-code map and source clock. Observable clock transitions remain those of the
+The fuel is only Lean's termination guard. The source-state entry point
+derives fuel from the code map and source clock. Observable clock transitions remain those of the
 source semantics.
 -/
 
@@ -240,6 +240,8 @@ structure PanSemEvaluateState (α : Type u) (σ : Type v) where
   contracts : Option PanValueCallContracts := none
   memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none
 
+/-- One source `panSem$state.code` entry: typed parameters, function body, and
+    return shape. -/
 structure PanSemFunctionEntry (α : Type u) where
   params : List (VarName × Shape)
   body : Prog α
@@ -787,8 +789,8 @@ theorem panSemCodeEvaluateFuel_decCall_body_le
   omega
 
 /-- Clocked production evaluator whose recursive Call and DecCall clauses read
-    each callee from `state.code`. The compatibility function list is empty;
-    code lookup and the fuel bound both remain tied to the source state. -/
+    each callee from `state.code`; code lookup and the fuel bound both remain
+    tied to the source state. -/
 def panSemEvaluateCodeStateWithFuel
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -810,7 +812,7 @@ def panSemEvaluateCodeStateWithFuel
     (memoryHandler := memoryHandler)
 
 /-- Code-map entry with a finite-map-derived fuel bound. Choosing no access
-    is a legacy compatibility mode; use the state-derived memory-model entry
+    is a legacy no-access mode; use the state-derived memory-model entry
     for HOL-facing evaluation. -/
 def panSemEvaluateCodeState
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
@@ -835,7 +837,7 @@ def panSemEvaluateCodeState
     source word operations; every memory domain and endianness input is
     derived from `state`, while `bytesInWord` is source word-type metadata.
     This boundary must be used for HOL-facing proofs instead of the optional
-    no-access compatibility path or a width read from the target state. -/
+    no-access path or a width read from the target state. -/
 def panSemEvaluateCodeStateWithMemoryModel
     [BEq α] [OfNat α 0] [OfNat α 1] [OfNat α 2] [OfNat α 3]
     [Add α] [Mul α] [Sub α] [AndOp α] [OrOp α] [HXor α α α]
@@ -972,7 +974,7 @@ theorem panSemEvaluateCodeStateWithPostState_skip
     (distinct from Lean `none`, which now denotes a missing evaluation result).
     This is an untagged boundary equation because
     the structured result is reduced rather than HOL's `(prog_result, state)`
-    pair. This equation uses the no-access compatibility path; state-owned memory access
+    pair. This equation uses the no-access path; state-owned memory access
     is not covered by it. -/
 theorem panSemEvaluateCodeStateWithFuel_assign
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
@@ -1131,7 +1133,7 @@ theorem panSemEvaluateCodeStateWithFuel_assign_state_memory
     phrased against the finite-map-derived entry point. This is an untagged
     boundary equation because the structured result is reduced rather than HOL's
     `(prog_result, state)` pair. Reference:
-    cakeml/pancake/semantics/panSemScript.sml:558-565 (`Dec`). This equation uses the no-access compatibility path; state-owned memory access
+    cakeml/pancake/semantics/panSemScript.sml:558-565 (`Dec`). This equation uses the no-access path; state-owned memory access
     is not covered by it. -/
 theorem panSemEvaluateCodeStateWithFuel_dec
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
@@ -1180,7 +1182,7 @@ theorem panSemEvaluateCodeStateWithFuel_dec
     `(SOME Error, s)`), distinct from a missing `none` evaluation result. This is
     an untagged boundary equation because the structured result is reduced
     rather than HOL's `(prog_result, state)` pair. Reference:
-    cakeml/pancake/semantics/panSemScript.sml:573-582 (`Primitive`). This equation uses the no-access compatibility path; state-owned memory access
+    cakeml/pancake/semantics/panSemScript.sml:573-582 (`Primitive`). This equation uses the no-access path; state-owned memory access
     is not covered by it. -/
 theorem panSemEvaluateCodeStateWithFuel_primitive
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
