@@ -34,49 +34,6 @@ namespace Flapjack.Test.PanEvaluateParity
 open Flapjack
 open Flapjack.RiscV
 
-def emptyPanState (clock : Nat) : PanSemEvaluateState (Word 64) Unit :=
-  { structs := []
-    functions := []
-    locals := fun _ => none
-    globals := fun _ => none
-    memory := fun _ => none
-    ffi := statefulTestFfiState
-    clock := clock
-    baseAddress := BitVec.ofNat 64 0
-    topAddress := BitVec.ofNat 64 100
-    bytesInWord := BitVec.ofNat 64 8 }
-
-def evaluateSkip :=
-  panSemEvaluate statefulTestContext statefulTestPrimitive statefulTestHandler
-    (emptyPanState 4) (.skip : Prog (Word 64))
-
-def evaluateReturn41 :=
-  panSemEvaluate statefulTestContext statefulTestPrimitive statefulTestHandler
-    (emptyPanState 4) (.return (.const (BitVec.ofNat 64 41)) : Prog (Word 64))
-
-def evaluateSequence :=
-  panSemEvaluate statefulTestContext statefulTestPrimitive statefulTestHandler
-    (emptyPanState 1)
-    ((.seq .tick (.return (.const (BitVec.ofNat 64 13)))) : Prog (Word 64))
-
-def evaluateTickAtZero :=
-  panSemEvaluate statefulTestContext statefulTestPrimitive statefulTestHandler
-    (emptyPanState 0) (.tick : Prog (Word 64))
-
-def idFunctions : List (FunName × List VarName × Prog (Word 64)) :=
-  [("id", ["x"], .return (.var .local "x"))]
-
-def idContracts : PanValueCallContracts :=
-  PanValueCallContracts.mk
-    [("id", .one)] [] [("id", [("x", .one)])]
-
-def evaluateCall :=
-  panSemEvaluate statefulTestContext statefulTestPrimitive statefulTestHandler
-    ({ emptyPanState 10 with
-        functions := idFunctions
-        contracts := some idContracts }
-      : PanSemEvaluateState (Word 64) Unit)
-    (.call none "id" [.const (BitVec.ofNat 64 7)] : Prog (Word 64))
 
 private abbrev Word64 := Word 64
 
@@ -98,6 +55,29 @@ def emptyPanSourceState (clock : Nat)
 
 def sourceIdCode : PanSemCodeMap Word64 :=
   [("id", ([ ("x", .one) ], .return (.var .local "x"), .one))]
+
+def evaluateSkip :=
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive
+    statefulTestHandler (emptyPanSourceState 4 []) (.skip : Prog (Word 64))
+
+def evaluateReturn41 :=
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive
+    statefulTestHandler (emptyPanSourceState 4 [])
+    (.return (.const (BitVec.ofNat 64 41)) : Prog (Word 64))
+
+def evaluateSequence :=
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive
+    statefulTestHandler (emptyPanSourceState 1 [])
+    ((.seq .tick (.return (.const (BitVec.ofNat 64 13)))) : Prog (Word 64))
+
+def evaluateTickAtZero :=
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive
+    statefulTestHandler (emptyPanSourceState 0 []) (.tick : Prog (Word 64))
+
+def evaluateCall :=
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive
+    statefulTestHandler (emptyPanSourceState 10 sourceIdCode)
+    (.call none "id" [.const (BitVec.ofNat 64 7)] : Prog (Word 64))
 
 def sourcePairCode : PanSemCodeMap Word64 :=
   [("pair", ([ ("p", .comb [.one, .one]) ], .return (.var .local "p"),
@@ -756,25 +736,23 @@ def evaluateExactProgramByteDomainFailure :=
     (BitVec.ofNat 64 8) (fun _ => none) (fun _ => none) fixedLoadMemory fixedLoadAccess
     (.return (.loadByte (.const (BitVec.ofNat 64 16))) : Prog (Word 64))
 
-def fixedLoadState (clock : Nat) : PanSemEvaluateState (Word 64) Unit :=
-  { emptyPanState clock with
+def fixedLoadState (clock : Nat) : PanSemState Word64 (FfiState Unit) :=
+  { emptyPanSourceState clock [] with
       memory := fixedLoadMemory
-      memoryAccess := some fixedLoadAccess }
-
-def fixedLoadStateWithoutAccess (clock : Nat) : PanSemEvaluateState (Word 64) Unit :=
-  { fixedLoadState clock with memoryAccess := none }
-
-def fixedExactState : PanSemExactState (Word 64) Unit :=
-  { legacy := fixedLoadStateWithoutAccess 4
-    memoryAccess := fixedLoadAccess }
+      memaddrs := fixedLoadDomain }
 
 def nestedRaiseExpression : Exp (Word 64) :=
   .rStruct [.const (BitVec.ofNat 64 3),
     .rStruct [.const (BitVec.ofNat 64 4), .const (BitVec.ofNat 64 5)]]
 
+def fixedRaiseState : PanSemState Word64 (FfiState Unit) :=
+  { fixedLoadState 4 with
+      exceptionShapes := fun exception =>
+        if exception == "E" then some (.comb [.one, .comb [.one, .one]]) else none }
+
 def evaluateNestedRaise :=
-  panSemEvaluateExactState statefulTestContext statefulTestPrimitive
-    statefulTestHandler fixedExactState
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive
+    statefulTestHandler fixedRaiseState
     (.raise "E" nestedRaiseExpression : Prog (Word 64))
 
 def fixedStoreLocals : VarName → Option (PanValue (Word 64)) :=
@@ -783,80 +761,50 @@ def fixedStoreLocals : VarName → Option (PanValue (Word 64)) :=
 def fixedStoreGlobals : VarName → Option (PanValue (Word 64)) :=
   fun name => if name == "keptGlobal" then some (.word (BitVec.ofNat 64 66)) else none
 
-def fixedStoreState (clock : Nat) : PanSemEvaluateState (Word 64) Unit :=
+def fixedStoreState (clock : Nat) : PanSemState Word64 (FfiState Unit) :=
   { fixedLoadState clock with
       locals := fixedStoreLocals
       globals := fixedStoreGlobals }
 
 def evaluateFixedByte :=
-  panSemEvaluateExact statefulTestContext statefulTestPrimitive statefulTestHandler
-    fixedLoadAccess (fixedLoadState 4)
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive statefulTestHandler (fixedLoadState 4)
     (.return (.loadByte (.const (BitVec.ofNat 64 9))) : Prog (Word 64))
 
 def evaluateFixedWord32 :=
-  panSemEvaluateExact statefulTestContext statefulTestPrimitive statefulTestHandler
-    fixedLoadAccess (fixedLoadState 4)
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive statefulTestHandler (fixedLoadState 4)
     (.return (.load32 (.const (BitVec.ofNat 64 8))) : Prog (Word 64))
-
-example :
-    panSemEvaluateExact statefulTestContext statefulTestPrimitive statefulTestHandler
-        fixedLoadAccess (fixedLoadStateWithoutAccess 4)
-        (.return (.load32 (.const (BitVec.ofNat 64 8))) : Prog (Word 64)) =
-      panSemEvaluate statefulTestContext statefulTestPrimitive statefulTestHandler
-        { fixedLoadStateWithoutAccess 4 with memoryAccess := some fixedLoadAccess }
-        (.return (.load32 (.const (BitVec.ofNat 64 8))) : Prog (Word 64)) := by
-  exact panSemEvaluateExact_uses_memory_access
-    statefulTestContext statefulTestPrimitive statefulTestHandler fixedLoadAccess
-    (fixedLoadStateWithoutAccess 4)
-    (.return (.load32 (.const (BitVec.ofNat 64 8))) : Prog (Word 64))
-
-example :
-    panSemEvaluateExactState statefulTestContext statefulTestPrimitive
-        statefulTestHandler fixedExactState
-        (.return (.load32 (.const (BitVec.ofNat 64 8))) : Prog (Word 64)) =
-      panSemEvaluateExact statefulTestContext statefulTestPrimitive
-        statefulTestHandler fixedLoadAccess (fixedLoadStateWithoutAccess 4)
-        (.return (.load32 (.const (BitVec.ofNat 64 8))) : Prog (Word 64)) := by
-  rfl
 
 def evaluateFixedByteDomainFailure :=
-  panSemEvaluateExact statefulTestContext statefulTestPrimitive statefulTestHandler
-    fixedLoadAccess (fixedLoadState 4)
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive statefulTestHandler (fixedLoadState 4)
     (.return (.loadByte (.const (BitVec.ofNat 64 16))) : Prog (Word 64))
 
 def evaluateFixedStore :=
-  panSemEvaluateExact statefulTestContext statefulTestPrimitive statefulTestHandler
-    fixedLoadAccess (fixedStoreState 4)
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive statefulTestHandler (fixedStoreState 4)
     (.store (.const (BitVec.ofNat 64 8))
       (.const (BitVec.ofNat 64 0x1122334455667788)) : Prog (Word 64))
 
 def evaluateFixedStoreDomainFailure :=
-  panSemEvaluateExact statefulTestContext statefulTestPrimitive statefulTestHandler
-    fixedLoadAccess (fixedStoreState 4)
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive statefulTestHandler (fixedStoreState 4)
     (.store (.const (BitVec.ofNat 64 16))
       (.const (BitVec.ofNat 64 0x1122334455667788)) : Prog (Word 64))
 
 def evaluateFixedStore32 :=
-  panSemEvaluateExact statefulTestContext statefulTestPrimitive statefulTestHandler
-    fixedLoadAccess (fixedStoreState 4)
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive statefulTestHandler (fixedStoreState 4)
     (.store32 (.const (BitVec.ofNat 64 8))
       (.const (BitVec.ofNat 64 0x11223344)) : Prog (Word 64))
 
 def evaluateFixedStore32Unaligned :=
-  panSemEvaluateExact statefulTestContext statefulTestPrimitive statefulTestHandler
-    fixedLoadAccess (fixedStoreState 4)
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive statefulTestHandler (fixedStoreState 4)
     (.store32 (.const (BitVec.ofNat 64 9))
       (.const (BitVec.ofNat 64 0x11223344)) : Prog (Word 64))
 
 def evaluateFixedStoreByte :=
-  panSemEvaluateExact statefulTestContext statefulTestPrimitive statefulTestHandler
-    fixedLoadAccess (fixedStoreState 4)
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive statefulTestHandler (fixedStoreState 4)
     (.storeByte (.const (BitVec.ofNat 64 9))
       (.const (BitVec.ofNat 64 0xaa)) : Prog (Word 64))
 
 def evaluateFixedStoreByteDomainFailure :=
-  panSemEvaluateExact statefulTestContext statefulTestPrimitive statefulTestHandler
-    fixedLoadAccess (fixedStoreState 4)
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive statefulTestHandler (fixedStoreState 4)
     (.storeByte (.const (BitVec.ofNat 64 16))
       (.const (BitVec.ofNat 64 0xaa)) : Prog (Word 64))
 
@@ -864,28 +812,23 @@ def emptySharedContext : PanValueFfiContext (Word 64) :=
   { statefulTestContext with sharedDomain := fun _ => false }
 
 def evaluateIfBadCondition :=
-  panSemEvaluateExact statefulTestContext statefulTestPrimitive statefulTestHandler
-    fixedLoadAccess (fixedStoreState 5)
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive statefulTestHandler (fixedStoreState 5)
     (.ite (.var .local "missing") .skip .skip : Prog (Word 64))
 
 def evaluateIfOk :=
-  panSemEvaluateExact statefulTestContext statefulTestPrimitive statefulTestHandler
-    fixedLoadAccess (fixedStoreState 5)
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive statefulTestHandler (fixedStoreState 5)
     (.ite (.const (BitVec.ofNat 64 1)) .skip .skip : Prog (Word 64))
 
 def evaluateShMemLoadUnbound :=
-  panSemEvaluateExact emptySharedContext statefulTestPrimitive statefulTestHandler
-    fixedLoadAccess (fixedStoreState 5)
+  panSemEvaluateRiscV64CodeState emptySharedContext statefulTestPrimitive statefulTestHandler (fixedStoreState 5)
     (.shMemLoad .op8 .local "missing" (.const (BitVec.ofNat 64 8)) : Prog (Word 64))
 
 def evaluateShMemLoadDomainFailure :=
-  panSemEvaluateExact emptySharedContext statefulTestPrimitive statefulTestHandler
-    fixedLoadAccess (fixedStoreState 5)
+  panSemEvaluateRiscV64CodeState emptySharedContext statefulTestPrimitive statefulTestHandler (fixedStoreState 5)
     (.shMemLoad .op8 .local "kept" (.const (BitVec.ofNat 64 8)) : Prog (Word 64))
 
 def evaluateShMemStoreDomainFailure :=
-  panSemEvaluateExact emptySharedContext statefulTestPrimitive statefulTestHandler
-    fixedLoadAccess (fixedStoreState 5)
+  panSemEvaluateRiscV64CodeState emptySharedContext statefulTestPrimitive statefulTestHandler (fixedStoreState 5)
     (.shMemStore .op8 (.const (BitVec.ofNat 64 8))
       (.const (BitVec.ofNat 64 7)) : Prog (Word 64))
 
