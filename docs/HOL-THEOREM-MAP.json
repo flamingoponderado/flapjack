@@ -13885,7 +13885,7 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "lean_name": "doApp",
-  "reviewer": "Compared the complete typed original dispatcher, its state/value/op carriers and each case with the assembled partial dispatchers. The reviewed ApplyFlatSource, ApplyCompareSource, ApplyArithmeticSource, ApplyMemorySource, ApplyCopySource and ApplyDataSource equations cover all original cases and the source-operation fallback, including malformed operands, bounds errors, thunk updates, FFI final events and independent compiler/FFI state types. The source numeric and float cases preserve the reviewed binary64 rational-cut dependency; representation and probes do not constitute a cross-language proof. Inherits the reals_as_rational_cuts assumption through its dependencies."
+  "reviewer": "Compared the complete typed original dispatcher, its state/value/op carriers and each case with the assembled partial dispatchers. Compared all original cases and the source-operation fallback, including malformed operands, bounds errors, thunk updates, FFI final events and independent compiler/FFI state types. The ApplyFlatSource, ApplyCompareSource, ApplyArithmeticSource, ApplyMemorySource, ApplyCopySource and ApplyDataSource modules provide reviewed equations for individual clauses. The source numeric and float cases preserve the reviewed binary64 rational-cut dependency; representation and probes do not constitute a cross-language proof. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
   {
   "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/ApplyFlatSource.lean",
@@ -19228,7 +19228,7 @@
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/StateRelation.lean",
     "lean_name": "decsClosed",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared typed declarations_closed in flat_elim_value_globals_probe.out: analysis equality, set inclusion, grouped reachability premise and binder order agree. Domain membership uses the lookup-based sptMem set convention; domain_def itself remains a documented mismatch. Independently source-reviewed."
+    "reviewer": "Compared typed declarations_closed in flat_elim_value_globals_probe.out: analysis equality, set inclusion, grouped reachability premise and binder order agree. Domain membership uses the lookup-based sptMem set convention, corresponding to HOL domain_lookup; the source-shaped domain_def is not claimed by this row. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
@@ -130512,7 +130512,7 @@
   "lean_name": "doArith",
   "statement_status": "reviewed_reals_as_rational_cuts",
   "reals_as_rational_cuts": true,
-  "reviewer": "Compared typed do_arith_definition in cake_source_apply_probe.out, including unchecked selectors, all operation clauses and floating-point FMA order. Direct real renderings use reals_as_rational_cuts, documented in SOUNDNESS item 8. Independently source-reviewed."
+  "reviewer": "Compared typed do_arith_definition in cake_source_apply_probe.out, including unchecked selectors, all operation clauses and floating-point FMA order. Guarded nonzero integer division and remainder use Int.fdiv and Int.fmod for HOL floor division and modulus; integer_division_probe.out records reference cases, not an equivalence proof. Direct real renderings use reals_as_rational_cuts, documented in SOUNDNESS item 8. Independently source-reviewed."
 },
 {
   "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
