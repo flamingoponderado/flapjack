@@ -63,8 +63,8 @@ def mkNewCutsetHOL (context : Spt Nat) (live : Spt Unit) : Spt Unit :=
 well-founded over the loopLang expression size.  HOL's type-indexed `'a word`
 is rendered as the positive-width `BitVec width`; the HOL stackLang
 `store_name` `Temp m` (a `5 word`) maps to Lean `WordStore.temp` (`BitVec 5`).
-This is the proof-side exact port; routing the production list-based
-`loopToWordExp` through it is tracked separately. -/
+This declaration is executed: `panToWordCompileProgHOL` →
+`loopToWordCompileHOL` → `loopToWordCompFuncHOL` → `compHOL` calls it. -/
 @[hol "cakeml/pancake/loop_to_wordScript.sml" "comp_exp_def"
   (words_as_type_indexed_bitvec)]
 def compExpHOL {width : Nat} [NeZero width] (context : Spt Nat) :
@@ -86,9 +86,9 @@ def compExpHOL {width : Nat} [NeZero width] (context : Spt Nat) :
 /-- Exact total port of HOL `comp_def` (`cakeml/pancake/loop_to_wordScript.sml:56-150`)
 over the exact `HolLoopProg width` carrier with the exact `Spt Nat` variable context
 and the threaded label pair. Clause-for-clause with the HOL definition. This
-total definition is the reviewed tagged port. The executable production route
-is tracked separately (bead `flapjack-pxn.18.5.9.5`); this declaration is the
-HOL-shaped reference definition. -/
+total definition is the reviewed tagged port and the executed loop-to-word
+lowering: `panToWordCompileProgHOL` → `loopToWordCompileHOL` →
+`loopToWordCompileProgHOL` → `loopToWordCompFuncHOL` calls it. -/
 @[hol "cakeml/pancake/loop_to_wordScript.sml" "comp_def"
   (words_as_type_indexed_bitvec)]
 def compHOL {width : Nat} [NeZero width] (context : Spt Nat) :

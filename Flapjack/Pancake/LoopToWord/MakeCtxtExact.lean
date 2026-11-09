@@ -14,11 +14,10 @@ register `next, next + 2, ...`.  The HOL context is `num |-> num`, rendered
 constructor-for-constructor by `Spt Nat`, and the insertion is the reviewed
 `sptInsert`.
 
-The production compiler keeps its own association-list `makeCtxt`
-(`Flapjack/Pancake/LoopToWord.lean:50`), whose observable `find_var` behaviour
-is tracked separately.  This exact rendering is the reviewed counterpart of
-the HOL definition used by the `comp_func` chain, so the executable route is
-still tracked by the `comp_func` prerequisite beads rather than claimed here.
+The executed `comp_func` chain uses this exact rendering:
+`panToWordCompileProgHOL` → `loopToWordCompileHOL` →
+`loopToWordCompileProgHOL` → `loopToWordCompFuncHOL` calls `makeCtxtHOL`
+directly.
 -/
 
 namespace Flapjack
