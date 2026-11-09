@@ -153,8 +153,8 @@ theorem idxRangeRel_shrink {C : Type}
   obtain ⟨_, _, final, _, tuple, nextMatch, finalPrev, disjoint, types, exceptions⟩ := range
   cases tuple
   refine ⟨next, finish, final, other, rfl, nextMatch, finalPrev, ?_, types, exceptions⟩
-  apply allDisjoint_shrinkFirst (idxBlock start finish) (idxBlock next finish)
-    (idxFinalBlock final) other (genvAllocatedIndices genv) disjoint
+  apply allDisjoint_subsets _ _ ⟨disjoint, .cons ?_ (.cons (fun _ h => h)
+    (.cons (fun _ h => h) (.cons (fun _ h => h) .nil)))⟩
   intro ⟨i, kind⟩ member
   change idxBlock next finish (i, kind) at member
   change idxBlock start finish (i, kind)
