@@ -1,5 +1,41 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/backend_commonScript.sml", "hol_name": "closure_tag_def",
+  "lean_path": "Flapjack/Compiler/Backend/BackendCommon/ClosTags.lean", "lean_name": "closureTag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared closure_tag_def_typed: the natural-number closure tag is 30."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/backend_commonScript.sml", "hol_name": "partial_app_tag_def",
+  "lean_path": "Flapjack/Compiler/Backend/BackendCommon/ClosTags.lean", "lean_name": "partialAppTag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_app_tag_def_typed: the natural-number partial-application tag is 31."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/bvlScript.sml", "hol_name": "Bool_def",
+  "lean_path": "Flapjack/Compiler/Backend/Bvl/Boolean.lean", "lean_name": "boolExp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bvl_Bool_def_typed: the Boolean is converted to its source tag and used to construct an empty BVL block."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/backend_commonScript.sml", "hol_name": "tuple_tag_def",
+  "lean_path": "Flapjack/Compiler/Backend/BackendCommon/ClosTags.lean", "lean_name": "tupleTag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared tuple_tag_def_typed: the original natural-number constructor tag is zero."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "get_src_names_sing_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Names.lean", "lean_name": "getSrcNames_sing_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared get_src_names_sing_eq_typed: both universally quantified conjuncts equate the original list traversal with the singleton and list traversals, with unchanged environments and result maps."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "compile_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/WholeProgram.lean", "lean_name": "compileSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_def_typed in clos_to_bvl_state_relation_probe.out and the original HOL source, including all inferred carriers, clauses and operands. Reviewed the prerequisite definitions and full assembly order; compileCallMtiFuel_eq_source proves correspondence with the executed compiler."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_common_inc_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CommonCompiler.lean", "lean_name": "compileCommonInc",
   "statement_status": "reviewed_exact",
@@ -116309,8 +116345,8 @@
     "lean_name": "partialAppLabelTableLoc",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "partial_app_label_table_loc_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared partial_app_label_table_loc_def_typed: the natural-number global index is zero."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
@@ -116325,24 +116361,24 @@
     "lean_name": "mkConst",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "mk_const_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared mk_const_def_typed in clos_to_bvl_state_relation_probe.out and the original HOL source, including all inferred carriers, clauses and operands."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
     "lean_name": "mkLabel",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "mk_label_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared mk_label_def_typed in clos_to_bvl_state_relation_probe.out and the original HOL source, including all inferred carriers, clauses and operands."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
     "lean_name": "mkEl",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "mk_el_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared mk_el_def_typed in clos_to_bvl_state_relation_probe.out and the original HOL source, including all inferred carriers, clauses and operands."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
@@ -116357,24 +116393,24 @@
     "lean_name": "genericAppFnLocation",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "generic_app_fn_location_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared generic_app_fn_location_def_typed in clos_to_bvl_state_relation_probe.out and the original HOL source, including all inferred carriers, clauses and operands."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
     "lean_name": "partialAppFnLocation",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "partial_app_fn_location_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared partial_app_fn_location_def_typed in clos_to_bvl_state_relation_probe.out and the original HOL source, including all inferred carriers, clauses and operands."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
     "lean_name": "partialAppFnLocationCode",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "partial_app_fn_location_code_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared partial_app_fn_location_code_def_typed in clos_to_bvl_state_relation_probe.out and the original HOL source, including all inferred carriers, clauses and operands."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
@@ -116397,16 +116433,16 @@
     "lean_name": "codeMerge",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "code_merge_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_merge_def_typed: generic payloads, empty cases, natural-key comparison, recursive inputs and right-hand tie choice match."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Sort.lean",
     "lean_name": "codeSort",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "code_sort_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_sort_def_typed: generic payloads, empty and singleton cases, alternating split and recursive merge match."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
@@ -117371,32 +117407,32 @@
     "lean_name": "addSrcNames",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "add_src_names_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source traversal transcribed; typed HOL capture and complete statement, ordering and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared add_src_names_def_typed: mlstring list and sparse-tree carriers, two insertions, concatenation and step by two agree."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Names.lean",
     "lean_name": "getSrcNamesSing",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "get_src_names_sing_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source traversal transcribed; typed HOL capture and complete statement, ordering and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared get_src_names_sing_def_typed: the singleton clauses match; getSrcNamesFuns_eq proves the Letrec MAP SND factoring."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Names.lean",
     "lean_name": "getSrcNamesList",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "get_src_names_sing_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source traversal transcribed; typed HOL capture and complete statement, ordering and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared get_src_names_sing_def_typed: the list clauses and source order agree with the singleton traversal."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Names.lean",
     "lean_name": "getSrcNames",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "get_src_names_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source traversal transcribed; typed HOL capture and complete statement, ordering and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared get_src_names_def_typed: the original list clauses and order match; getSrcNames_letrec exposes the ordinary MAP SND clause."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber.lean",
@@ -117435,16 +117471,16 @@
     "lean_name": "mkClCall",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "mk_cl_call_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared mk_cl_call_def_typed in clos_to_bvl_state_relation_probe.out and the original HOL source, including all inferred carriers, clauses and operands. Append is regrouped using List.append_assoc; mkClCall_hol states the source grouping."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
     "lean_name": "generatePartialAppClosureFn",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "generate_partial_app_closure_fn_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared generate_partial_app_closure_fn_def_typed in clos_to_bvl_state_relation_probe.out and the original HOL source, including all inferred carriers, clauses and operands."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/ExtractName.lean",
@@ -117459,8 +117495,8 @@
     "lean_name": "makeNameAlist",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "make_name_alist_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared make_name_alist_def_typed: independent α and β program payloads, original name traversal, stub cases, declaration bounds and sparse-tree lookup match."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
@@ -118133,56 +118169,56 @@
     "lean_name": "jumpList",
     "hol_path": "cakeml/compiler/backend/bvl_jumpScript.sml",
     "hol_name": "JumpList_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared JumpList_def_typed in clos_to_bvl_state_relation_probe.out and the original HOL source, including all inferred carriers, clauses and operands. HOL HD is rendered by headD under the length-one guard; jumpList_hol states the holHd form."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlJump.lean",
     "lean_name": "jump",
     "hol_path": "cakeml/compiler/backend/bvl_jumpScript.sml",
     "hol_name": "Jump_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared Jump_def_typed in clos_to_bvl_state_relation_probe.out and the original HOL source, including all inferred carriers, clauses and operands."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Stubs.lean",
     "lean_name": "generateGenericApp",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "generate_generic_app_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared generate_generic_app_def_typed in clos_to_bvl_state_relation_probe.out and the original HOL source, including all inferred carriers, clauses and operands."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Stubs.lean",
     "lean_name": "checkClosure",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "check_closure_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared check_closure_def_typed in clos_to_bvl_state_relation_probe.out and the original HOL source, including all inferred carriers, clauses and operands."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Stubs.lean",
     "lean_name": "initCode",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "init_code_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared init_code_def_typed in clos_to_bvl_state_relation_probe.out and the original HOL source, including all inferred carriers, clauses and operands."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Stubs.lean",
     "lean_name": "initGlobals",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "init_globals_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared init_globals_def_typed in clos_to_bvl_state_relation_probe.out and the original HOL source, including all inferred carriers, clauses and operands."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Stubs.lean",
     "lean_name": "forceThunkCode",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "force_thunk_code_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared force_thunk_code_def_typed: the source unit and element-at overloads, both call branches, thunk update and result agree."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",

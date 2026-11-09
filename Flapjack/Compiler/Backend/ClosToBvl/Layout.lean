@@ -104,7 +104,7 @@ def numStubs (maxApp : Nat) : Nat := maxApp + maxApp * (maxApp - 1) / 2 + 1 + 1
 
 /-- Location of a generic-application stub. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "generic_app_fn_location_def"]
-def genericAppFnLocation (n : Nat) : Nat := n
+def genericAppFnLocation {α : Type} (n : α) : α := n
 
 /-- Location of a partial-application stub. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "partial_app_fn_location_def"]
@@ -127,6 +127,16 @@ def mkClCall (cl : Bvl.Exp) (args : List Bvl.Exp) : Bvl.Exp :=
   .ifThenElse (.op (.blockOp (.equalConst (.int (Int.ofNat arity)))) [mkElemAt cl 1])
     (.call arity none (args ++ [cl, mkElemAt cl 0]))
     (.call 0 (some (genericAppFnLocation arity)) (args ++ [cl]))
+
+/-- HOL-shaped append grouping for `mkClCall`; this Flapjack-specific
+equation records the associativity used by its executable definition. -/
+theorem mkClCall_hol (cl : Bvl.Exp) (args : List Bvl.Exp) :
+    mkClCall cl args =
+      let arity := args.length - 1
+      .ifThenElse (.op (.blockOp (.equalConst (.int (Int.ofNat arity)))) [mkElemAt cl 1])
+        (.call arity none ((args ++ [cl]) ++ [mkElemAt cl 0]))
+        (.call 0 (some (genericAppFnLocation arity)) (args ++ [cl])) := by
+  simp [mkClCall, List.append_assoc]
 
 /-- Emit the function that completes a partial closure application. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "generate_partial_app_closure_fn_def"]

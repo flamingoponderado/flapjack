@@ -101,7 +101,7 @@ theorem evaluate_initGlobals {C F : Type} (maxApp start : Nat) (state : BvlSem.S
     rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, blockRun]
     simp [BvlSem.doApp, BvlSem.applyGlobal, allocated]
   rw [initGlobals, BvlSem.evaluate, BvlSem.fixClock_evaluate, allocRun]
-  simp only [List.append_nil]
+  simp only [List.append_nil, partialAppLabelTableLoc, BackendCommon.tupleTag]
   rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, setRun]
   simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.findCode]
 
