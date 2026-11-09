@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Equality
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Ffi
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Globals
 import Flapjack.Compiler.Backend.FlatToClos.Op
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
@@ -295,5 +296,101 @@ theorem opFfi {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                             obtain ⟨rfl, rfl⟩ := applied
                             simp [ClosSem.doApp, targetFound, targetCall, states,
                               Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+
+/-- Global lookup, initialization and allocation satisfy the original operator goal. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "op_globals"
+  (fmap_as_finite_support := [refs, code])]
+theorem opGlobals {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
+    (vs : List FlatSem.Value) (sourceNext : FlatSem.State C F)
+    (result : Result FlatSem.Value FlatSem.Value) (targetNext : ClosSem.State C F)
+    (xs : List ClosLang.Exp) (db : List ClosSem.Value) (target : ClosSem.State C F)
+    (ws : List ClosSem.Value) (trace : BackendCommon.Tra) :
+    ((∃ n, op = .globalVarLookup n) ∨ (∃ n, op = .globalVarInit n) ∨ (∃ n, op = .globalVarAlloc n)) →
+    FlatSem.doApp source op vs = some (sourceNext, result) ∧
+      StateRel source targetNext ∧ ClosSem.evaluate xs db target = (.val ws, targetNext) ∧
+      List.Forall₂ ValueRel vs ws.reverse ∧ xs.length = vs.length ∧
+      op ≠ .src .opapp ∧ op ≠ .src (.thunkOp .forceThunk) →
+    ∃ targetResult targetLast,
+      ClosSem.evaluate [compileOp trace op xs] db target = (targetResult, targetLast) ∧
+      StateRel sourceNext targetLast ∧
+      SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel
+        (Flapjack.EvaluateHOL.listResult result) targetResult := by
+  intro opCase premises
+  obtain ⟨applied, states, evaluated, related, length, _, _⟩ := premises
+  rcases opCase with ⟨n, rfl⟩ | ⟨n, rfl⟩ | ⟨n, rfl⟩
+  case inl =>
+    cases vs with
+    | cons v rest => simp [FlatSem.doApp, FlatSem.doAppFlat] at applied
+    | nil =>
+      have wsNil : ws = [] := by simpa using related.length_eq.symm
+      have xsNil : xs = [] := by simpa using length
+      subst ws
+      subst xs
+      simp [ClosSem.evaluate] at evaluated
+      subst targetNext
+      cases slot : source.globals[n]? with
+      | none => simp [FlatSem.doApp, FlatSem.doAppFlat, slot] at applied
+      | some v =>
+        cases v with
+        | none => simp [FlatSem.doApp, FlatSem.doAppFlat, slot] at applied
+        | some value =>
+          simp [FlatSem.doApp, FlatSem.doAppFlat, slot] at applied
+          obtain ⟨rfl, rfl⟩ := applied
+          obtain ⟨targetValue, targetFound, valueRel⟩ := globalLookup_related source target n value states slot
+          simp [compileOp, ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp,
+            ClosSem.applyGlobal, targetFound, Flapjack.EvaluateHOL.listResult,
+            SemanticPrimitivesProps.resultRel]
+          exact ⟨states, valueRel⟩
+  case inr.inr =>
+    cases vs with
+    | cons v rest => simp [FlatSem.doApp, FlatSem.doAppFlat] at applied
+    | nil =>
+      have wsNil : ws = [] := by simpa using related.length_eq.symm
+      have xsNil : xs = [] := by simpa using length
+      subst ws
+      subst xs
+      simp [ClosSem.evaluate] at evaluated
+      subst targetNext
+      simp [FlatSem.doApp, FlatSem.doAppFlat] at applied
+      obtain ⟨rfl, rfl⟩ := applied
+      have updated := stateRel_allocGlobals source target n states
+      simp [compileOp, ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp,
+        ClosSem.applyNumeric, ClosSem.doIntApp, ClosSem.applyGlobal,
+        Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+      have nonneg : ¬ (Int.ofNat n < 0) := by exact Int.not_lt.mpr (Int.natCast_nonneg n)
+      simp only [Int.ofNat_eq_natCast] at nonneg
+      simp [nonneg]
+      exact ⟨updated, (vRel_unit _).mpr rfl⟩
+  case inr.inl =>
+    cases vs with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppFlat] at applied
+    | cons value rest =>
+      cases rest with
+      | cons v rest => simp [FlatSem.doApp, FlatSem.doAppFlat] at applied
+      | nil =>
+        cases slot : source.globals[n]? with
+        | none => simp [FlatSem.doApp, FlatSem.doAppFlat, slot] at applied
+        | some contents =>
+          cases contents with
+          | some v => simp [FlatSem.doApp, FlatSem.doAppFlat, slot] at applied
+          | none =>
+            simp [FlatSem.doApp, FlatSem.doAppFlat, slot] at applied
+            obtain ⟨rfl, rfl⟩ := applied
+            have wsLen : ws.length = 1 := by simpa using related.length_eq.symm
+            cases ws with
+            | nil => simp at wsLen
+            | cons w rest =>
+              cases rest with
+              | cons v rest => simp at wsLen
+              | nil =>
+                simp only [List.reverse_singleton] at related
+                cases related with
+                | cons valRel tail =>
+                  obtain ⟨targetSlot, updated⟩ := stateRel_initGlobal source targetNext n value w states valRel slot
+                  simp only [compileOp]
+                  rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+                  simp [ClosSem.doApp, ClosSem.applyGlobal, targetSlot,
+                    Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                  exact ⟨updated, (vRel_unit _).mpr rfl⟩
 
 end Flapjack.Compiler.Backend.FlatToClos

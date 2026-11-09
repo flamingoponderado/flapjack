@@ -24,22 +24,6 @@ theorem stateRel_allocGlobals {C F : Type} (source : FlatSem.State C F) (target 
     | nil => simp [globals] at nonempty
     | cons first rest => simpa [globals] using appended
 
-/-- Allocating empty globals produces unit and preserves related states. -/
-theorem evaluate_globalAlloc {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (names : List (Option MlString)) (values : List ClosSem.Value)
-    (source : FlatSem.State C F) (target : ClosSem.State C F)
-    (trace : BackendCommon.Tra) (count : Nat) (states : StateRel source target) :
-    EvalSim env names values source target [.app trace (.globalVarAlloc count) []] := by
-  have updated := stateRel_allocGlobals source target count states
-  have allocated : ClosSem.applyGlobal .allocGlobal [.number (Int.ofNat count)] target =
-      some (ClosSem.unitValue, { target with globals := target.globals ++ List.replicate count none }) := by
-    simp [ClosSem.applyGlobal]
-  simp only [Int.ofNat_eq_natCast] at allocated
-  simp [EvalSim, compile, compileExps, compileExp, destNop, compileOp, FlatSem.evaluate, FlatSem.fixClock,
-    FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat, ClosSem.evaluate, ClosSem.fixClock,
-    ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp, allocated, updated,
-    FlatSem.unitValue, ClosSem.unitValue, EvalResultRel.value (.cons (ValueRel.tuple .nil) .nil)]
-
 /-- Initializing corresponding empty slots preserves the global relation. -/
 theorem stateRel_initGlobal {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F)
     (index : Nat) (value : FlatSem.Value) (targetValue : ClosSem.Value)
@@ -69,59 +53,6 @@ theorem stateRel_initGlobal {C F : Type} (source : FlatSem.State C F) (target : 
       · simp
       · simpa [globals] using updated
 
-/-- Initializing a global with a related operand returns unit in related
-states. -/
-theorem evaluate_globalInit {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (names : List (Option MlString)) (values : List ClosSem.Value)
-    (source : FlatSem.State C F) (target : ClosSem.State C F)
-    (trace : BackendCommon.Tra) (index : Nat) (argument : FlatLang.Exp)
-    (argSim : (FlatSem.evaluate env source [argument]).2 ≠ .err (.abort .typeError) →
-      EvalSim env names values source target [argument])
-    (notTypeError : (FlatSem.evaluate env source [.app trace (.globalVarInit index) [argument]]).2 ≠
-      .err (.abort .typeError)) :
-    EvalSim env names values source target [.app trace (.globalVarInit index) [argument]] := by
-  have flatFix := (FlatSem.fixClock_evaluations env source [argument] argument []).1
-  have closFix := ClosSem.fixClock_evaluate [compileExp names argument] values target
-  have argsNotTypeError : (FlatSem.evaluate env source [argument]).2 ≠ .err (.abort .typeError) := by
-    intro failure
-    apply notTypeError
-    rw [FlatSem.evaluate]
-    simp only [List.reverse_singleton, flatFix, failure]
-  have argSim := argSim argsNotTypeError
-  unfold EvalSim at argSim ⊢
-  simp only [compile, compileExps, compileExp, destNop, compileOp, List.reverse_singleton] at argSim ⊢
-  rw [FlatSem.evaluate] at notTypeError ⊢
-  rw [ClosSem.evaluate, closFix]
-  simp only [List.reverse_singleton, flatFix] at notTypeError ⊢
-  cases flatRun : FlatSem.evaluate env source [argument] with
-  | mk next flatResult =>
-    cases closRun : ClosSem.evaluate [compileExp names argument] values target with
-    | mk closResult nextTarget =>
-      simp only [flatRun, closRun] at argSim notTypeError ⊢
-      rcases argSim with ⟨states, results⟩
-      cases results with
-      | abort error => exact ⟨states, .abort error⟩
-      | raise related => exact ⟨states, .raise related⟩
-      | value related =>
-        have length := FlatSem.evaluate_singleton_length env source next argument _ flatRun
-        cases related with
-        | nil => simp at length
-        | cons head tail =>
-          cases tail with
-          | cons _ _ => simp at length
-          | nil =>
-            rename_i sourceValue targetValue
-            cases slot : next.globals[index]? with
-            | none => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat, slot] at notTypeError
-            | some slotValue =>
-              cases slotValue with
-              | some value => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat, slot] at notTypeError
-              | none =>
-                obtain ⟨targetSlot, updated⟩ := stateRel_initGlobal next nextTarget index sourceValue targetValue states head slot
-                simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat, slot, ClosSem.doApp,
-                  ClosSem.applyGlobal, targetSlot, updated, FlatSem.unitValue, ClosSem.unitValue,
-                  EvalResultRel.value (.cons (ValueRel.tuple .nil) .nil)]
-
 /-- The target's first global is reserved, so a related source global at
 index `n` appears at target index `n + 1`. -/
 theorem globalLookup_related {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F)
@@ -150,28 +81,5 @@ theorem globalLookup_related {C F : Type} (source : FlatSem.State C F) (target :
       simp only [globals, List.tail_cons] at targetBound targetFound
       change rest[index]? = some (some targetValue)
       exact List.getElem?_eq_some_iff.mpr ⟨targetBound, targetFound⟩
-
-/-- A successful global lookup reads the related target global and leaves
-both states unchanged. -/
-theorem evaluate_globalLookup {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (names : List (Option MlString)) (values : List ClosSem.Value)
-    (source : FlatSem.State C F) (target : ClosSem.State C F)
-    (trace : BackendCommon.Tra) (index : Nat) (states : StateRel source target)
-    (notTypeError : (FlatSem.evaluate env source [.app trace (.globalVarLookup index) []]).2 ≠
-      .err (.abort .typeError)) :
-    EvalSim env names values source target [.app trace (.globalVarLookup index) []] := by
-  cases slot : source.globals[index]? with
-  | none => simp [FlatSem.evaluate, FlatSem.fixClock, FlatSem.applyResult, FlatSem.doApp,
-      FlatSem.doAppFlat, slot] at notTypeError
-  | some slotValue =>
-    cases slotValue with
-    | none => simp [FlatSem.evaluate, FlatSem.fixClock, FlatSem.applyResult, FlatSem.doApp,
-        FlatSem.doAppFlat, slot] at notTypeError
-    | some value =>
-      obtain ⟨targetValue, targetFound, related⟩ := globalLookup_related source target index value states slot
-      simp [EvalSim, compile, compileExps, compileExp, destNop, compileOp, FlatSem.evaluate, FlatSem.fixClock,
-        FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat, slot, ClosSem.evaluate, ClosSem.fixClock,
-        ClosSem.doApp, ClosSem.applyGlobal, targetFound, states,
-        EvalResultRel.value (.cons related .nil)]
 
 end Flapjack.Compiler.Backend.FlatToClos

@@ -12,64 +12,6 @@ require additional induction hypotheses. This is not a reviewed HOL port. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL Flapjack.AstHOL Flapjack.Basis.Pure.MlString
 
-/-- These source operators have no ordinary Flat semantics: after argument
-evaluation they abort with a type error. -/
-theorem rejectedSourceOp_apply {C F : Type} (state : FlatSem.State C F)
-    (op : AstHOL.Op) (args : List FlatSem.Value)
-    (rejected : op = .opderef ∨ op = .aallocEmpty ∨ op = .envId) :
-    (FlatSem.applyResult state (.src op) args).2 = .err (.abort .typeError) := by
-  rcases rejected with rfl | rfl | rfl <;>
-    simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-      FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy]
-
-/-- The source operators without ordinary Flat semantics preserve argument
-errors; successful arguments contradict the non-type-error premise. -/
-theorem evaluate_rejectedSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (names : List (Option MlString)) (values : List ClosSem.Value)
-    (source : FlatSem.State C F) (target : ClosSem.State C F)
-    (trace : BackendCommon.Tra) (op : AstHOL.Op) (args : List FlatLang.Exp)
-    (rejected : op = .opderef ∨ op = .aallocEmpty ∨ op = .envId)
-    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
-      EvalSim env names values source target args.reverse)
-    (notTypeError : (FlatSem.evaluate env source [.app trace (.src op) args]).2 ≠
-      .err (.abort .typeError)) :
-    EvalSim env names values source target [.app trace (.src op) args] := by
-  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
-  have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
-  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
-    intro failure
-    apply notTypeError
-    rw [FlatSem.evaluate]
-    simp only [flatFix, failure]
-  have argsSim := argsSim argsNotTypeError
-  unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps_reverse] at argsSim
-  simp only [compile, compileExps] at ⊢
-  have compiled : compileExp names (.app trace (.src op) args) =
-      .let .none (compileExps names args).reverse (.var .none 0) := by
-    rcases rejected with rfl | rfl | rfl <;> simp [compileExp, destNop, compileOp]
-  rw [compiled, FlatSem.evaluate, ClosSem.evaluate, closFix]
-  simp only [flatFix]
-  cases flatRun : FlatSem.evaluate env source args.reverse with
-  | mk next flatResult =>
-    cases closRun : ClosSem.evaluate (compileExps names args).reverse values target with
-    | mk closResult nextTarget =>
-      simp only [flatRun, closRun] at argsSim ⊢
-      rcases argsSim with ⟨states, results⟩
-      cases results with
-      | abort error => exact ⟨states, .abort error⟩
-      | raise related => exact ⟨states, .raise related⟩
-      | value related =>
-        rename_i sourceArgs targetArgs
-        have failure : (FlatSem.applyResult next (.src op) sourceArgs.reverse).2 =
-            .err (.abort .typeError) := rejectedSourceOp_apply next op _ rejected
-        have fixed := flatFix
-        rw [flatRun] at fixed
-        apply False.elim
-        apply notTypeError
-        rw [FlatSem.evaluate, flatRun, fixed]
-        rcases rejected with rfl | rfl | rfl <;> simpa using failure
-
 /-- Operators whose simulations require only argument evaluation, except
 for conversion's explicit nested-expression induction hypotheses. -/
 inductive DirectSourceOp : AstHOL.Op → Prop where
@@ -207,9 +149,27 @@ theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.
       exact opFfi _ s vs sNext result tNext xs db t ws tt (⟨name, rfl⟩) premises
   | allocThunk mode => exact evaluate_allocThunk env names values source target trace mode args argsSim notTypeError
   | updateThunk mode => exact evaluate_updateThunk env names values source target trace mode args argsSim notTypeError
-  | opderef => exact evaluate_rejectedSourceOp env names values source target trace .opderef args (Or.inl rfl) argsSim notTypeError
-  | aallocEmpty => exact evaluate_rejectedSourceOp env names values source target trace .aallocEmpty args (Or.inr (Or.inl rfl)) argsSim notTypeError
-  | envId => exact evaluate_rejectedSourceOp env names values source target trace .envId args (Or.inr (Or.inr rfl)) argsSim notTypeError
+  | opderef =>
+    apply evalSim_app_of_op env names values source target trace (.src .opderef) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+        FlatSem.doAppData, FlatSem.doAppCopy] at premises
+  | aallocEmpty =>
+    apply evalSim_app_of_op env names values source target trace (.src .aallocEmpty) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+        FlatSem.doAppData, FlatSem.doAppCopy] at premises
+  | envId =>
+    apply evalSim_app_of_op env names values source target trace (.src .envId) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+        FlatSem.doAppData, FlatSem.doAppCopy] at premises
   | equality =>
     apply evalSim_app_of_op env names values source target trace (.src .equality) args
       ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
