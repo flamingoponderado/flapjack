@@ -9,6 +9,7 @@ import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
 import Flapjack.Compiler.Backend.StackToLab.Compile
 import Flapjack.Compiler.Backend.LabToTarget.Compile
+import Flapjack.Compiler.Backend.LabToTarget.Diagnostics
 import Flapjack.Compiler.Backend.PresLang.Config
 import Flapjack.Misc.LookupAny
 
@@ -83,6 +84,63 @@ def fromStack {width : Nat} [NeZero width] {Bitmaps : Type}
     (2 * DataToWord.maxHeapLimit width config.dataConf - 1)
     (asmConf.regCount - (asmConf.avoidRegs.length + 3)) asmConf.addrOffset program
   fromLab asmConf config names program bitmaps
+
+/-- Flapjack-only located sibling of `from_lab_def`: the reviewed
+`attach_bitmaps` result on success, a structured lab-to-target failure
+otherwise. -/
+def fromLabWithReason {width : Nat} [NeZero width] {Bitmaps : Type}
+    (asmConf : AsmConfigExact width) (config : Flapjack.Compiler.Backend.Backend.Config)
+    (names : Spt MlString) (program : LabSem.LabProgHOL width) (bitmaps : Bitmaps) :
+    Except LabToTarget.LabLoweringFailure
+      (List (BitVec 8) × Bitmaps × Flapjack.Compiler.Backend.Backend.Config) :=
+  match LabToTarget.compileWithReason asmConf config.labConf program with
+  | .error failure => .error failure
+  | .ok (bytes, updatedLab) =>
+      .ok (bytes, bitmaps, { config with
+        labConf := updatedLab
+        symbols := updatedLab.secPosLen.map fun (name, position, length) =>
+          (lookupAny name names (ofString "NOTFOUND"), position, length) })
+
+/-- The located `from_lab` sibling succeeds exactly when `from_lab_def`
+succeeds, with the same tuple; proved from the definition. -/
+theorem fromLabWithReason_toOption {width : Nat} [NeZero width] {Bitmaps : Type}
+    (asmConf : AsmConfigExact width) (config : Flapjack.Compiler.Backend.Backend.Config)
+    (names : Spt MlString) (program : LabSem.LabProgHOL width) (bitmaps : Bitmaps) :
+    (fromLabWithReason asmConf config names program bitmaps).toOption
+      = fromLab asmConf config names program bitmaps := by
+  unfold fromLabWithReason fromLab LabToTarget.compileWithReason
+  cases h : LabToTarget.compile asmConf config.labConf program with
+  | none =>
+      simp [attachBitmaps]
+      rfl
+  | some result =>
+      simp [attachBitmaps]
+      cases result with
+      | mk bytes updatedLab => rfl
+
+/-- Flapjack-only located sibling of `from_stack_def`: the reviewed stack pass
+followed by `fromLabWithReason`. -/
+def fromStackWithReason {width : Nat} [NeZero width] {Bitmaps : Type}
+    (asmConf : AsmConfigExact width) (config : Flapjack.Compiler.Backend.Backend.Config)
+    (names : Spt MlString) (program : List (Nat × StackLang.HolProg width))
+    (bitmaps : Bitmaps) :
+    Except LabToTarget.LabLoweringFailure
+      (List (BitVec 8) × Bitmaps × Flapjack.Compiler.Backend.Backend.Config) :=
+  let program := StackToLab.compile config.stackConf config.dataConf
+    (2 * DataToWord.maxHeapLimit width config.dataConf - 1)
+    (asmConf.regCount - (asmConf.avoidRegs.length + 3)) asmConf.addrOffset program
+  fromLabWithReason asmConf config names program bitmaps
+
+/-- The located `from_stack` sibling succeeds exactly when `from_stack_def`
+succeeds, with the same tuple; proved from the definition. -/
+theorem fromStackWithReason_toOption {width : Nat} [NeZero width] {Bitmaps : Type}
+    (asmConf : AsmConfigExact width) (config : Flapjack.Compiler.Backend.Backend.Config)
+    (names : Spt MlString) (program : List (Nat × StackLang.HolProg width))
+    (bitmaps : Bitmaps) :
+    (fromStackWithReason asmConf config names program bitmaps).toOption
+      = fromStack asmConf config names program bitmaps := by
+  unfold fromStackWithReason fromStack
+  exact fromLabWithReason_toOption asmConf config names _ bitmaps
 
 /-- Original word pipeline. The frame-size tuple component is retained as
 `_frames`, although HOL does not use it in this definition. Only wordConf is

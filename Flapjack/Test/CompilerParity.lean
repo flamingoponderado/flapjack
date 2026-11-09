@@ -7,6 +7,8 @@ import Flapjack.Test.DataToWordWordMemoryEqualityParity
 import Flapjack.Test.DataToWordMultiwordCompareParity
 import Flapjack.Test.CakeProgramSemanticsParity
 import Flapjack.Test.BackendConfigDecidableEq
+import Flapjack.Test.BackendFailureDiagnostic
+import Flapjack.Test.WordStackGuard
 import Flapjack.Test.RiscVBackendConfigExecutable
 import Flapjack.Test.Mips32Encoding
 import Flapjack.Test.Arm8Parity

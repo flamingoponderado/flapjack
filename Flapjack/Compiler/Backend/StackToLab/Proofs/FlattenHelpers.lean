@@ -207,16 +207,6 @@ private theorem labPresKnown {n nl : Nat} {E : List (Nat × Nat)} {x : Nat × Na
   · intro l hl; simp at hl; subst hl; exact hgood
   · intro l hl; simp at hl; subst hl; left; exact hx
 
-private theorem labPresWeaken {n nl0 nl nl' : Nat} {E E' L : List (Nat × Nat)}
-    (h : LabPres n nl nl' E L) (hnl : nl0 ≤ nl) (hE : ∀ x ∈ E, x ∈ E') :
-    LabPres n nl0 nl' E' L := by
-  obtain ⟨h1, h2, h3, h4⟩ := h
-  refine ⟨h1, h2, ?_, by omega⟩
-  intro lab hl
-  rcases h3 lab hl with h | h
-  · exact .inl (hE _ h)
-  · exact .inr ⟨by omega, h.2⟩
-
 private theorem labPresPerm {n nl nl' : Nat} {E L L' : List (Nat × Nat)}
     (h : LabPres n nl nl' E L) (hp : L.Perm L') : LabPres n nl nl' E L' := by
   obtain ⟨h1, h2, h3, h4⟩ := h

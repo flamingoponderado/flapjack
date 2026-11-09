@@ -54,21 +54,6 @@ private theorem loop_step_cut_some {L L' : NumSet} {B : HolLoopProg width}
   next X1' h => rw [hc] at h; simp at h
   next h => exact hc
 
-private theorem loop_step_none {L L' : NumSet} {B : HolLoopProg width}
-    {X X1 s2 : LoopSemStateFiniteExact width F}
-    (hc : LoopSemStateFiniteExact.cutRes L (none, X) = (none, X1))
-    (hb : LoopSemStateFiniteExact.evaluate B X1 = (none, s2)) :
-    LoopSemStateFiniteExact.evaluate (.loop L B L') X = LoopSemStateFiniteExact.evaluate (.loop L B L') s2 := by
-  rw [LoopSemStateFiniteExact.evaluate]
-  split
-  next X1' h =>
-    rw [hc] at h
-    simp only [Prod.mk.injEq, true_and] at h
-    subst h
-    split <;> rename_i h2 <;> rw [LoopSemStateFiniteExact.fix_clock_evaluate, hb] at h2 <;>
-      simp_all [LoopSemStateFiniteExact.exitLoop]
-  next h => exact absurd hc (h X1)
-
 private theorem loop_step_continue {L L' : NumSet} {B : HolLoopProg width}
     {X X1 s2 : LoopSemStateFiniteExact width F}
     (hc : LoopSemStateFiniteExact.cutRes L (none, X) = (none, X1))
@@ -123,22 +108,6 @@ section WhileHelpers
 unfolding of the compiled loop body, and `exit_loop` against the result map. -/
 
 variable {width : Nat} [NeZero width] {F : Type}
-
-private theorem locals_rel_inter (ctxt : CrepToLoopContextExact) (l : NumSet)
-    (sl : HolFiniteMapExact Nat (HolWordLab width)) (tl : Spt (WordLocW width))
-    (h : crepToLoopLocalsRelExact ctxt l sl tl) :
-    crepToLoopLocalsRelExact ctxt l sl (sptInter tl l) := by
-  refine ⟨h.1, h.2.1, fun k hk => ?_, fun vn val hval => ?_⟩
-  · have hk' : (sptLookup k l).isSome := hk
-    show (sptLookup k (sptInter tl l)).isSome
-    rw [sptLookup_sptInter, if_pos hk']
-    exact h.2.2.1 k hk
-  · obtain ⟨n, hn1, hn2, hn3⟩ := h.2.2.2 vn val hval
-    have hnl : (sptLookup n l).isSome := hn2
-    refine ⟨n, hn1, hn2, ?_⟩
-    show sptLookup n (sptInter tl l) = _
-    rw [sptLookup_sptInter, if_pos hnl]
-    exact hn3
 
 /-- `locals_rel ctxt l` survives the compiled condition (whose output live set
     `nl` contains `l`) and the write of the fresh temporary `tmp > vmax`. -/

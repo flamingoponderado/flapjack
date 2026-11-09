@@ -1492,6 +1492,37 @@ INFRASTRUCTURE_THEOREMS = {
         "observation and ordered field payload are replayed in "
         "pan_lang_exp_probe.out by PanLangExpHOLParity."
     ),
+
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'compileProgAsmWithReason_toOption'):
+        "Flapjack-only located-failure sibling agreement for the allocator-"
+        "parametric artifact compiler: the with-reason function succeeds "
+        "exactly when the reviewed compileProgAsmWith succeeds, with the same "
+        "tuple. No separately named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'compileProgAsmFastWithReason_toOption'):
+        "Flapjack-only located-failure sibling agreement for the ordinary "
+        "artifact compiler: the with-reason function succeeds exactly when the "
+        "reviewed compileProgAsmFast succeeds, with the same tuple. No "
+        "separately named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'fromStackChecked_ok_agrees'):
+        "Flapjack-only checked-from_stack agreement: when the driver-side "
+        "register-range guard accepts the stack_to_lab output, the checked "
+        "sibling returns exactly the reviewed from_stack tuple. No separately "
+        "named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'compileProgAsmWithChecked_ok_agrees'):
+        "Flapjack-only checked-pipeline agreement: when the word-to-stack and "
+        "register guards accept, the checked allocator-parametric artifact "
+        "pipeline returns exactly the reviewed compileProgAsmWith tuple. No "
+        "separately named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'compileProgAsmFastChecked_ok_agrees'):
+        "Flapjack-only checked-pipeline agreement for the ordinary artifact "
+        "compiler: the checked function returns exactly the reviewed "
+        "compileProgAsmFast tuple on success. No separately named HOL "
+        "declaration.",
 }
 VALID_STATUSES = {
     "reviewed_exact",

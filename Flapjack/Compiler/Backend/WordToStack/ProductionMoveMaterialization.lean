@@ -394,10 +394,4 @@ theorem parmove_independent {α : Type} [DecidableEq α]
   rw [result]
   simp
 
-private theorem prodMap_function {α β γ δ : Type} (f : α → γ) (g : β → δ) :
-    Prod.map f g = (fun pair => (f pair.1, g pair.2)) := by
-  funext pair
-  cases pair
-  rfl
-
 end Flapjack.ProductionMoveMaterialization

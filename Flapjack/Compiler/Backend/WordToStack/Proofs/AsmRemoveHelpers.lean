@@ -9,7 +9,7 @@ open Flapjack.Compiler.Backend.StackProps Flapjack.Compiler.Encoders.Asm
 /-- Flapjack-specific implication between the two full native predicates.
 No separate HOL declaration names this stronger uniform transport; it discharges
 only register-name obligations that the complete register bound already checks. -/
-private theorem removeOfBound {configWidth : Nat} {width : Nat} [NeZero configWidth] [NeZero width]
+theorem removeOfBound {configWidth : Nat} {width : Nat} [NeZero configWidth] [NeZero width]
     (conf : AsmConfigExact configWidth) (program : HolProg width) (bound : Nat)
     (bounded : regBound program bound)
     (room : bound ≤ conf.regCount - conf.avoidRegs.length) : stackAsmRemove conf program := by

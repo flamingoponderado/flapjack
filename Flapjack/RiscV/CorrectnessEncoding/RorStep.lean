@@ -174,10 +174,6 @@ private theorem gpr_projection_eq (d : BitVec 64 → Prop) (ms ns : riscv_state)
   simp only [riscvProj, Prod.mk.injEq] at h
   simp [GPR, gpr, h.2.2.2.2.1]
 
-private theorem write_gpr_ok (ms : riscv_state) (r : BitVec 5) (v : BitVec 64) :
-    riscvOk («write'GPR» (v,r) ms) = riscvOk ms := by
-  by_cases zero : r = 0#5 <;> simp [«write'GPR», «write'gpr», riscvOk, zero]
-
 private theorem write_gpr_projection_eq (d : BitVec 64 → Prop)
     (ms ns : riscv_state) (r : BitVec 5) (v : BitVec 64)
     (h : riscvProj d ms = riscvProj d ns) :
@@ -234,6 +230,5 @@ theorem ror_step_projection_eq (d : BitVec 64 → Prop) (i : instruction)
     holUpdate] using
     ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, runH.2.2.2.2.1,
       h.2.2.2.2.2.1, h.2.2.2.2.2.2⟩
-
 
 end Flapjack.RiscV.TargetProof
