@@ -197,14 +197,13 @@ theorem flat_remove_sameClock {C F : Type} (ffi : HolFfiState F) (declarations :
         (removeFlatProgTotal declarations) ⟨run, notTypeError, analysis.symm, rfl, safe, filtered⟩
 
 /-- The flat elimination pass satisfies the original evaluation simulation
-relation with no added clock. The evaluator and carriers remain pending HOL
-correspondence review. -/
+relation with no added clock. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "flat_remove_eval_sim"]
 theorem flat_remove_evalSim {C F : Type} (ffi : HolFfiState F) (declarations : List FlatLang.Exp)
     (config : FlatSem.InstallConfig C) :
     FlatProps.evalSim ffi declarations (removeFlatProgTotal declarations) config config
       (fun source target => target = removeFlatProgTotal source) false := by
-  intro clock result sourceState run allowed _
+  intro clock result sourceState ⟨run, allowed, _⟩
   have notTypeError : result ≠ some (.abort .typeError) := by simpa using allowed
   obtain ⟨targetState, ffiEq, evaluated⟩ := flat_remove_sameClock ffi declarations config clock sourceState result run notTypeError
   refine ⟨0, result, targetState, by simpa using evaluated, ffiEq.symm, ?_, ?_, ?_⟩

@@ -19006,15 +19006,16 @@
     "lean_name": "evalSim",
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Compared flat_eval_sim_definition in flat_elim_value_globals_probe.out and the original clauses. Source and target compiler carriers are independent; the FFI carrier is shared. The clock extension, original premises, result-class implications and FFI equality agree. Evaluation inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+    "reviewer": "Compared flat_eval_sim_definition in flat_elim_value_globals_probe.out and the original clauses. Source and target compiler carriers are independent; the FFI carrier is shared. The clock extension, grouped conjunctive premise, result-class implications and FFI equality agree. Evaluation inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "flat_remove_eval_sim",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Removal.lean",
     "lean_name": "flat_remove_evalSim",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out. Full evaluator, carrier, and statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared flat_remove_eval_sim in flat_elim_value_globals_probe.out: the free-variable order, shared installation configuration, elimination relation and grouped simulation definition agree. The evaluator, carriers and elimination dependencies were independently source-reviewed. The evaluator inherits the reals_as_rational_cuts assumption."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",

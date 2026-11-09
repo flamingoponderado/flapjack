@@ -12,7 +12,7 @@ theorem compileDecs_evalSim {C F : Type} (cfg cfg2 : Config) (ffi : HolFfiState 
     (configs : installConfRel cfg sourceConfig targetConfig) :
     FlatProps.evalSim ffi source target sourceConfig targetConfig
       (fun decs decs' => decs.map (compileDec cfg2) = decs') false := by
-  intro clock sourceResult sourceState run safe programs
+  intro clock sourceResult sourceState ⟨run, safe, programs⟩
   have sourceSafe : sourceResult ≠ some (.abort .typeError) := by simpa using safe
   subst target
   have states := stateRel_initial cfg ffi clock sourceConfig targetConfig configs
