@@ -80,3 +80,26 @@ val esgc_free_filter_replay = prove (
   ``EVERY flatProps$esgc_free ds ==> EVERY flatProps$esgc_free (FILTER P ds)``,
   Induct_on `ds` \\ rw []);
 val _ = show_thm "esgc_free_filter_typed=" esgc_free_filter_replay;
+
+(* Replay the local has_Eval_def theorem from flat_elimProofScript.sml. *)
+open flatLangTheory flat_elimTheory;
+val has_eval_cases_replay = prove (
+  ``(has_Eval (Handle htrace e pes) = (has_Eval e \/ EXISTS has_Eval (MAP SND pes))) /\
+    (has_Eval (Con ctrace c es) = EXISTS has_Eval es) /\
+    (has_Eval (Fun ftrace farg e) = has_Eval e) /\
+    (has_Eval (App t op es) = (op = Src Eval \/ EXISTS has_Eval es)) /\
+    (has_Eval (If t e1 e2 e3) = (has_Eval e1 \/ has_Eval e2 \/ has_Eval e3)) /\
+    (has_Eval (Mat t e pes) = (has_Eval e \/ EXISTS has_Eval (MAP SND pes))) /\
+    (has_Eval (Let ltrace opt e1 e2) = (has_Eval e1 \/ has_Eval e2)) /\
+    (has_Eval (Letrec rtrace funs e) = (has_Eval e \/ EXISTS has_Eval (MAP (SND o SND) funs))) /\
+    (has_Eval (Raise xtrace e) = has_Eval e) /\
+    (has_Eval (Var_local vtrace varnum) = F) /\
+    (has_Eval (Lit littrace v) = F)``,
+  `!es. has_Eval_list es <=> EXISTS has_Eval es` by
+     (Induct >> fs [flat_elimTheory.has_Eval_def]) >>
+  `!pes. has_Eval_pats pes <=> EXISTS has_Eval (MAP SND pes)` by
+     (Induct >> fs [flat_elimTheory.has_Eval_def, pairTheory.FORALL_PROD]) >>
+  `!pes. has_Eval_funs pes <=> EXISTS has_Eval (MAP (SND o SND) pes)` by
+     (Induct >> fs [flat_elimTheory.has_Eval_def, pairTheory.FORALL_PROD]) >>
+  rw [] >> simp [Once flat_elimTheory.has_Eval_def]);
+val _ = show_thm "has_eval_cases_typed=" has_eval_cases_replay;

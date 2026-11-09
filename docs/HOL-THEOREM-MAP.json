@@ -19051,40 +19051,40 @@
     "hol_name": "find_v_globals_v_to_list",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
     "lean_name": "findValueGlobals_valueToList",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared value_to_list_globals typed capture, including binder order, grouped premises and equation orientation. HOL domain inclusion uses globalsWithin and lookup-based sptMem (Sptree.lean set convention); domain_def is not claimed. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "find_v_globals_list_to_v",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
     "lean_name": "findValueGlobals_listToValue",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared list_to_value_globals typed capture, including binder order, grouped premises and equation orientation. HOL domain inclusion uses globalsWithin and lookup-based sptMem (Sptree.lean set convention); domain_def is not claimed. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "find_v_globals_list_to_v_APPEND",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
     "lean_name": "findValueGlobals_listToValue_append",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared list_append_globals typed capture, including binder order and grouped premises. HOL domain inclusion uses globalsWithin and lookup-based sptMem (Sptree.lean set convention); domain_def is not claimed. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "v_has_Eval_list_to_v",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
     "lean_name": "valueHasEval_listToValue",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared list_to_value_eval typed capture: HOL EXISTS v_has_Eval is structural valuesHaveEval and boolean equivalence is Bool equality. The value and conversion carriers are reviewed. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "v_has_Eval_v_to_list",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
     "lean_name": "valueHasEval_valueToList",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared value_to_list_eval typed capture, preserving binders and decoding premise. HOL EXISTS v_has_Eval is structural valuesHaveEval and boolean equivalence is Bool equality. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -19315,8 +19315,8 @@
     "hol_name": "flat_state_rel_trans",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/StateRelation.lean",
     "lean_name": "flatStateRel_trans",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared state_transitivity typed capture and state_relation carriers: all three states share both type parameters and the grouped relational premises and conclusion agree. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -130976,5 +130976,13 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared the complete original shift clause and typed flat do_app_def, including every word size, shift, literal and independent state payload. It delegates directly to doShift, as in HOL. Independently source-reviewed; inherits the reals_as_rational_cuts assumption through doApp."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "has_Eval_def",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/HasEval.lean",
+  "lean_name": "hasEval_cases",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared local has_Eval_def and typed replay has_eval_cases_typed: independent HOL wildcards and shared named variables match, binders follow first occurrence, boolean associativity agrees, and EXISTS is List.any over the mapped bodies. Independently source-reviewed."
 }
 ]
