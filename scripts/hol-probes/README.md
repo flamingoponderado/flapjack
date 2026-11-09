@@ -238,7 +238,8 @@ definition and its cons and lookup equations, including first-entry behavior.
 statement, its annotation and shift traversals, and the source's optimized
 singleton/list equations, including arbitrary installed code. It also captures
 the inferred source statements for function-location and free-variable
-annotation invariants, the free-variable observation, and the mutual value and
+annotation invariants, the free-variable observation and its source theorem,
+and the mutual value and
 environment relation rules with inferred types. It also replays the local
 default-environment proof with inferred types. These captures support review;
 the factored Lean mutual relation remains untagged pending a representation qualifier.

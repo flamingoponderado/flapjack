@@ -20,6 +20,7 @@ val _ = show "shift_sing_eq_typed=" clos_annotateTheory.shift_sing_eq;
 val _ = show "shift_sing_typed=" clos_annotateTheory.shift_sing_def;
 val _ = show "annotate_def_typed=" clos_annotateTheory.annotate_def;
 val _ = show "alt_fv_def_typed=" clos_annotateProofTheory.alt_fv_def;
+val _ = show "alt_free_thm_typed=" clos_annotateProofTheory.alt_free_thm;
 val _ = show "v_rel_rules_typed=" clos_annotateProofTheory.v_rel_rules;
 val _ = show "annotate_sing_typed=" clos_annotateTheory.annotate_sing_def;
 val _ = show "annotate_list_typed=" clos_annotateTheory.annotate_list_def;

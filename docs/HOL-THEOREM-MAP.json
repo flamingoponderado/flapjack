@@ -120,6 +120,12 @@
   "reviewer": "Compared shift_obeys_max_app_typed: the bound and all expression-list, natural and sparse-tree index variables are unrestricted. Both occurrences of EVERY are membership quantification over the reviewed obeysMaxApp predicate, and the conclusion uses original shiftSource."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_free_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "altFreeSource_observation",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alt_free_thm_typed: the original expression-list quantifier, pair-pattern let over source alt_free, inner natural quantifier and Boolean equality of the free-variable observation to has_var on the second component agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_fv_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "altFvSource",
   "statement_status": "reviewed_exact",

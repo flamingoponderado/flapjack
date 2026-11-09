@@ -10,6 +10,14 @@ open ClosLang DbVars
 noncomputable def altFvSource (index : Nat) (expressions : List Exp) : Bool :=
   hasVar index (altFreeSource expressions).2
 
+/-- The free-variable observation reads the second component of the pass. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "alt_free_thm"]
+theorem altFreeSource_observation (expressions : List Exp) :
+    let (_, live) := altFreeSource expressions
+    ∀ index, altFvSource index expressions = hasVar index live := by
+  cases result : altFreeSource expressions with
+  | mk output live => simp [altFvSource, result]
+
 /-- The optimized observation computes the source free-variable predicate. -/
 theorem altFvSource_eq_altFv (index : Nat) (expressions : List Exp) :
     altFvSource index expressions = altFv index expressions := by
