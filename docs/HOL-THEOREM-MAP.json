@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "assign_get_code_label_compile_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CodeLabels.lean", "lean_name": "assignGetCodeLabel_compileOp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared assign_get_code_label_compile_op_typed and inferred carriers in clos_to_bvl_state_relation_probe.out with the original HOL source. The HOL optional choice is holOptionSome; its witness is unique whenever present."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/backend_commonScript.sml", "hol_name": "closure_tag_def",
   "lean_path": "Flapjack/Compiler/Backend/BackendCommon/ClosTags.lean", "lean_name": "closureTag",
   "statement_status": "reviewed_exact",
@@ -116289,56 +116295,56 @@
     "lean_name": "closTagShift",
     "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
     "hol_name": "clos_tag_shift_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared clos_tag_shift_def_typed and inferred carriers in clos_to_bvl_state_relation_probe.out with the original HOL source."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
     "lean_name": "partHash",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "part_hash_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared part_hash_def_typed and inferred carriers in clos_to_bvl_state_relation_probe.out with the original HOL source. The literal modulus is the source local PRIME overload; MlString.length_explode equates explode.length with strlen, and HOL ORD is BitVec.toNat on the 8-bit character carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
     "lean_name": "addPart",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "add_part_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared add_part_def_typed and inferred carriers in clos_to_bvl_state_relation_probe.out with the original HOL source. lookupPart_eq_holALookup proves the executable bucket lookup agrees with HOL ALOOKUP, including argument order."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
     "lean_name": "addParts",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "add_parts_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared add_parts_def_typed and inferred carriers in clos_to_bvl_state_relation_probe.out with the original HOL source."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
     "lean_name": "addPartsList",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "add_parts_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared add_parts_def_typed and inferred carriers in clos_to_bvl_state_relation_probe.out with the original HOL source."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
     "lean_name": "compileConst",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "compile_const_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_const_def_typed and inferred carriers in clos_to_bvl_state_relation_probe.out with the original HOL source."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
     "lean_name": "numAddedGlobals",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "num_added_globals_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared num_added_globals_def_typed and inferred carriers in clos_to_bvl_state_relation_probe.out with the original HOL source."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
@@ -116353,8 +116359,8 @@
     "lean_name": "compileOp",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "compile_op_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_op_def_typed and inferred carriers in clos_to_bvl_state_relation_probe.out with the original HOL source."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
@@ -128727,8 +128733,8 @@
   "hol_name": "assign_get_code_label_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosLang/CodeLabels.lean",
   "lean_name": "assignGetCodeLabel",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared assign_get_code_label_def_typed and inferred carriers in clos_to_bvl_state_relation_probe.out with the original HOL source."
 },
 {
   "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",

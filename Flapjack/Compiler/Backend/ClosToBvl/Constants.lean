@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.ClosLang.Syntax
 public import Flapjack.Compiler.Backend.BackendCommon.ClosTags
 public import Flapjack.Misc.Sptree
+public import Flapjack.FiniteMap.AlistExact.Lookup
 
 @[expose] public section
 
@@ -18,10 +19,22 @@ def partHash : ConstPart → Nat
   | .w64 w => (17 + w.toNat) % 999983
   | .con t ns => (18 + 5 * t + 7 * ns.sum) % 999983
 
-/-- HOL `ALOOKUP` on a constant-part bucket. -/
+/-- Executable bucket lookup; `lookupPart_eq_holALookup` proves its agreement
+with HOL association-list lookup. -/
 def lookupPart {α : Type} (p : ConstPart) : List (ConstPart × α) → Option α
   | [] => none
   | (q, n) :: xs => if p = q then some n else lookupPart p xs
+
+/-- The executable bucket lookup agrees with HOL's association-list lookup.
+This Flapjack-specific equation justifies the executable rendering. -/
+theorem lookupPart_eq_holALookup {α : Type} (p : ConstPart) (bucket : List (ConstPart × α)) :
+    lookupPart p bucket = Flapjack.holALookup bucket p := by
+  classical
+  induction bucket with
+  | nil => rfl
+  | cons entry rest ih =>
+    cases entry with
+    | mk key value => simp [lookupPart, Flapjack.holALookup, ih]
 
 /-- Hash-cons one component, preserving bucket and accumulated-list order. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "add_part_def"]

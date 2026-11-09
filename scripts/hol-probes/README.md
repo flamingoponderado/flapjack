@@ -281,7 +281,8 @@ closure, value and environment relations, whole-program closure preprocessing
 and its incremental callback composition,
 installed-code definitions, their
 supporting lemmas, the complete expression simulation, and program-level
-observational correctness. Regenerate with
+observational correctness. It also captures operator-label preservation and
+the constant translation and hashing definitions used by that theorem. Regenerate with
 `HOL_PROBE_ONLY=clos_to_bvl_state_relation_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source review, not cross-language equivalence.
 
