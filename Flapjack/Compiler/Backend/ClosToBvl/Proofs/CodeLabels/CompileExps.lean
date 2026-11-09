@@ -569,4 +569,47 @@ theorem compileExps_codeLabels (app : Nat) (es1 : List Exp) (aux1 : List (Nat ×
     ((obeysMaxAppList_iff app es1).2 h.2.2.2.1) h.2.2.2.2
   simpa only [run, auxLabels, limitLabels, BvlProps.getCodeLabelsList_eq,
     ClosProps.getCodeLabelsList_eq] using result
+
+private theorem zipCompiledBodies (offset : Nat) (program : List (Nat × Nat × Exp))
+    (bodies : List Bvl.Exp) (len : bodies.length = program.length) :
+    (((program.zip bodies).map (fun ((loc, args, _), body) => (loc + offset, args, body))).map
+      (fun t => t.2.2)) = bodies := by
+  induction program generalizing bodies with
+  | nil => cases bodies <;> simp_all
+  | cons entry rest ih =>
+    cases entry with
+    | mk loc pair =>
+      cases pair with
+      | mk args source =>
+        cases bodies with
+        | nil => simp at len
+        | cons body bodies =>
+          simp only [List.length_cons, Nat.succ.injEq] at len
+          simp [ih bodies len]
+
+/-- Every label in compiled program bodies comes from an input body or a
+reserved compiler stub. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_prog_code_labels"]
+theorem compileProg_codeLabels (maxApp : Nat) (prog : List (Nat × Nat × Exp))
+    (h : 0 < maxApp ∧
+      (∀ e ∈ prog.map (fun t => t.2.2), noLabels e) ∧
+      (∀ e ∈ prog.map (fun t => t.2.2), obeysMaxApp maxApp e) ∧
+      everyFnLocationSome (prog.map (fun t => t.2.2))) :
+    (⋃₀ (BvlProps.getCodeLabels ''
+      {e | e ∈ (compileProgExpsHOL maxApp prog).map (fun t => t.2.2)})) ⊆
+    (fun k => numStubs maxApp + k) ''
+      (⋃₀ (ClosProps.getCodeLabels '' {e | e ∈ prog.map (fun t => t.2.2)})) ∪
+      (sptDomain (initCode maxApp) : Set Nat) ∪ {numStubs maxApp - 2} := by
+  cases run : compileExpsHOL maxApp (prog.map (fun t => t.2.2)) [] with
+  | mk compiled emitted =>
+    have len := compileExps_length maxApp (prog.map (fun t => t.2.2)) [] compiled emitted run
+    simp only [List.length_map] at len
+    have labels := compileExps_codeLabels maxApp (prog.map (fun t => t.2.2)) [] compiled emitted
+      ⟨run, h.2.1, h.1, h.2.2.1, h.2.2.2⟩
+    simp only [← BvlProps.getCodeLabelsList_eq, ← ClosProps.getCodeLabelsList_eq] at labels ⊢
+    simp only [List.map_nil, BvlProps.getCodeLabelsList, Set.union_empty] at labels
+    simp only [compileProgExpsHOL, run, List.map_append,
+      zipCompiledBodies (numStubs maxApp) prog compiled len, labelsAppend]
+    exact labels
+
 end Flapjack.Compiler.Backend.ClosToBvl

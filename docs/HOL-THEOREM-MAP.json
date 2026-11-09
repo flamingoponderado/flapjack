@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_prog_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CodeLabels/CompileExps.lean", "lean_name": "compileProg_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_prog_code_labels_typed and independent source review: maxApp and prog carriers, grouped EVERY premises over mapped bodies, target BVL and source closure labels, image shift, domain and union order match HOL."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_code_labels",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CodeLabels/CompileExps.lean", "lean_name": "compileExps_codeLabels",
   "statement_status": "reviewed_exact",
