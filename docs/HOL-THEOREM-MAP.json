@@ -19137,8 +19137,9 @@
     "hol_name": "do_app_SOME_flat_state_rel",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyNumeric.lean",
     "lean_name": "doApp_some_flatStateRel",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Full assembled Lean statement; underlying flat and source numeric evaluators, value carriers, and HOL correspondence require source review."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared primitive_simulation in flat_elim_value_globals_probe.out, including the vacuous universally quantified type, grouped premises, existential result, and domain and EVERY expressions. The evaluator inherits reals_as_rational_cuts. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
@@ -19185,8 +19186,8 @@
     "hol_name": "result_vs_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/ResultValues.lean",
     "lean_name": "resultValues",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; full flat value and result carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the result_vs clauses and value and result carriers against HOL: success returns its list, raise returns a singleton, and abort returns an empty list. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
@@ -19217,24 +19218,24 @@
     "hol_name": "flat_state_rel_pmatch",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PatternRelation.lean",
     "lean_name": "flatStateRel_pmatch",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full underlying matcher and state-relation carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared state_pmatch in flat_elim_value_globals_probe.out, including free and per-conjunct binders, matcher and state-relation carriers. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "flat_state_rel_pmatch_rows",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PatternRelation.lean",
     "lean_name": "flatStateRel_pmatchRows",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full underlying matcher and state-relation carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared state_pmatch_rows in flat_elim_value_globals_probe.out, including binder order and matcher and state-relation carriers. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "pmatch_rows_find_lookups",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PatternRelation.lean",
     "lean_name": "pmatchRows_findLookups",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full underlying matcher and state-relation carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original in flat_elim_value_globals_probe.out, including binder order, grouped premise and matcher and sparse-tree carriers. Independently source-reviewed."
   },
   {
     "hol_path": "HOL/examples/algorithms/spt_closureScript.sml",
@@ -19353,24 +19354,24 @@
     "hol_name": "find_env_globals_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
     "lean_name": "findEnvGlobals",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared env_globals in flat_elim_value_globals_probe.out, including the mapped environment values and its carriers. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "find_result_globals_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
     "lean_name": "findResultGlobals",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared result_globals in flat_elim_value_globals_probe.out, including the raised-value and empty fallback cases. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "find_sem_prim_res_globals_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
     "lean_name": "findPrimitiveResultGlobals",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared primitive_result_globals in flat_elim_value_globals_probe.out, including error and successful value-list branches. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",

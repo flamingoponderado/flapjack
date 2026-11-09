@@ -161,7 +161,8 @@ theorem hasEvalFuns_eq_map (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL
     obtain ⟨_, _, _⟩ := funSpec
     simp [hasEvalFuns, ih]
 
-/-- All global keys in an analysis occur in the reachable set. -/
+/-- Flapjack-specific abbreviation of the HOL subset of sparse-tree domains;
+it has no separate HOL declaration. -/
 def globalsWithin (globals reachable : NumSet) : Prop :=
   ∀ key, sptMem key globals → sptMem key reachable
 
