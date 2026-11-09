@@ -30,5 +30,9 @@ val _ = show "shift_obeys_max_app_typed=" clos_annotateProofTheory.shift_obeys_m
 val _ = show "alt_free_obeys_max_app_typed=" clos_annotateProofTheory.alt_free_obeys_max_app;
 val _ = show "annotate_obeys_max_app_typed=" clos_annotateProofTheory.annotate_obeys_max_app;
 val _ = show "obeys_max_app_ann_typed=" clos_annotateProofTheory.obeys_max_app_ann;
+val _ = show "shift_no_Labels_typed=" clos_annotateProofTheory.shift_no_Labels;
+val _ = show "alt_free_no_Labels_typed=" clos_annotateProofTheory.alt_free_no_Labels;
+val _ = show "annotate_no_Labels_typed=" clos_annotateProofTheory.annotate_no_Labels;
+val _ = show "no_Labels_ann_typed=" clos_annotateProofTheory.no_Labels_ann;
 val _ = show "HD_annotate_SING_typed=" clos_annotateProofTheory.HD_annotate_SING;
 val _ = show "every_Fn_SOME_ann_typed=" clos_annotateProofTheory.every_Fn_SOME_ann;

@@ -22,5 +22,9 @@ shift_obeys_max_app_typed=∀(xs :closLang$exp list) (m :num) (l :num) (i :num s
 alt_free_obeys_max_app_typed=∀(xs :closLang$exp list) (m :α) (l :β) (i :γ). EVERY (obeys_max_app (n :num)) xs ⇒ EVERY (obeys_max_app n) (FST (alt_free xs))
 annotate_obeys_max_app_typed=∀(n :num) (xs :closLang$exp list). EVERY (obeys_max_app (m :num)) xs ⇒ EVERY (obeys_max_app m) (annotate n xs)
 obeys_max_app_ann_typed=∀(xs :(α # num # closLang$exp) list). EVERY (obeys_max_app (m :num)) (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :α # num # closLang$exp -> num # closLang$exp)) xs) ⇒ EVERY (obeys_max_app m) (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :α # num # closLang$exp -> num # closLang$exp)) (compile xs))
+shift_no_Labels_typed=∀(xs :closLang$exp list) (m :num) (l :num) (i :num sptree$num_map). EVERY no_Labels xs ⇒ EVERY no_Labels (shift xs m l i)
+alt_free_no_Labels_typed=∀(xs :closLang$exp list) (m :α) (l :β) (i :γ). EVERY no_Labels xs ⇒ EVERY no_Labels (FST (alt_free xs))
+annotate_no_Labels_typed=∀(n :num) (xs :closLang$exp list). EVERY no_Labels xs ⇒ EVERY no_Labels (annotate n xs)
+no_Labels_ann_typed=∀(xs :(α # num # closLang$exp) list). EVERY no_Labels (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :α # num # closLang$exp -> num # closLang$exp)) xs) ⇒ EVERY no_Labels (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :α # num # closLang$exp -> num # closLang$exp)) (compile xs))
 HD_annotate_SING_typed=[HD (annotate (x :num) [(y :closLang$exp)])] = annotate x [y]
 every_Fn_SOME_ann_typed=∀(xs :(α # num # closLang$exp) list). every_Fn_SOME (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :α # num # closLang$exp -> num # closLang$exp)) xs) ⇒ every_Fn_SOME (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :α # num # closLang$exp -> num # closLang$exp)) (compile xs))

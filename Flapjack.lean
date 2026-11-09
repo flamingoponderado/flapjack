@@ -1299,6 +1299,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.ExtractName.Original
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants.Original
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.MaxApp
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeMaxApp
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.NoLabels
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.LabelOrigins
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Pure
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate

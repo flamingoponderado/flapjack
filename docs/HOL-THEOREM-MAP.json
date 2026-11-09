@@ -1,5 +1,29 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "shift_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/NoLabels.lean", "lean_name": "shiftSource_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared shift_no_Labels_typed: expression list, natural shift indices and sparse tree, source shift, and both EVERY no_Labels predicates agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_free_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/NoLabels.lean", "lean_name": "altFreeSource_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alt_free_no_Labels_typed: expression list, three independently polymorphic unused parameters, source free-variable discovery and both EVERY predicates agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "annotate_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/NoLabels.lean", "lean_name": "annotateSource_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared annotate_no_Labels_typed: annotation arity, expression list, original source annotation and the EVERY implication agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "no_Labels_ann",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/NoLabels.lean", "lean_name": "compileSource_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared no_Labels_ann_typed: polymorphic program labels and both EVERY predicates over mapped expression bodies, including the original source compile, agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_free_obeys_max_app",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeMaxApp.lean", "lean_name": "altFreeSource_obeysMaxApp",
   "statement_status": "reviewed_exact",
