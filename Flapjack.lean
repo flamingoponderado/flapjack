@@ -1238,6 +1238,7 @@ import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
 import Flapjack.Compiler.Backend.ClosAnnotate.Free
 import Flapjack.Compiler.Backend.ClosAnnotate.Shift
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables.Original
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ShiftedEnv
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.EnvironmentExtension

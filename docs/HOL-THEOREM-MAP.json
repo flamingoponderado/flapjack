@@ -120,6 +120,12 @@
   "reviewer": "Compared shift_obeys_max_app_typed: the bound and all expression-list, natural and sparse-tree index variables are unrestricted. Both occurrences of EVERY are membership quantification over the reviewed obeysMaxApp predicate, and the conclusion uses original shiftSource."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_fv_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "altFvSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alt_fv_def_typed: the natural index and expression list feed has_var applied to the second component of the original alt_free traversal. The source expression and de Bruijn set carriers and both operations have reviewed HOL ports."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "every_Fn_vs_SOME_shift",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotationInvariants/Original.lean", "lean_name": "everyFnVarsSome_shift",
   "statement_status": "reviewed_exact",
