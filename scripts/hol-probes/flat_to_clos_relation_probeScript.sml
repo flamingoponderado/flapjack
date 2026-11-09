@@ -129,3 +129,17 @@ val _ = (print "v_rel_v_to_char_list_typed="; Lib.with_flag (Globals.show_types,
 
 val _ = if null (hyp imp_cmp_eq_num_cmp) then () else raise Fail "hypotheses: imp_cmp_eq_num_cmp";
 val _ = (print "imp_cmp_eq_num_cmp_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl imp_cmp_eq_num_cmp); print "\n");
+
+(* Replay the local primitive-type prerequisite used in the operator proofs. *)
+val check_type_IntT_flat_to_v_replay = prove (
+  ``semanticPrimitives$check_type ast$IntT (flatSem$flat_to_v (v:flatSem$v)) ==>
+    ?i. v = flatSem$Litv (ast$IntLit i)``,
+  Cases_on `v` >>
+  simp [flatSemTheory.flat_to_v_def, semanticPrimitivesTheory.check_type_def,
+        flatSemTheory.Boolv_def, semanticPrimitivesTheory.Boolv_def] >> rw []);
+val _ = if null (hyp check_type_IntT_flat_to_v_replay) then () else raise Fail "hypotheses: check_type_IntT_flat_to_v";
+val _ = (print "check_type_IntT_flat_to_v_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl check_type_IntT_flat_to_v_replay); print "\n");
+val _ = if null (hyp op_from_to) then () else raise Fail "hypotheses: op_from_to";
+val _ = (print "op_from_to_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl op_from_to); print "\n");
+val _ = if null (hyp compile_op_correct) then () else raise Fail "hypotheses: compile_op_correct";
+val _ = (print "compile_op_correct_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_op_correct); print "\n");

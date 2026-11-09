@@ -131105,5 +131105,13 @@
   "lean_name": "sumMapV3Size",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared sum_map_v3_size_typed: the list of mlstring/value pairs, component projections, sums, association and equality agree. The untagged HOL-generated value and expression sizes are transcribed from flat_value_size_def_typed and flat_exp_size_def_typed and checked against original HOL evaluations; Lean sizeOf is not used. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "check_type_IntT_flat_to_v",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CheckType.lean",
+  "lean_name": "checkTypeInt_flatToValue",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local check_type_IntT_flat_to_v with its typed HOL replay: the source semantic check_type is Bool = true on flatSem flat_to_v, HOL int is Lean Int, and the conclusion is the same existential equality v = Litv (IntLit i). Independently source-reviewed."
 }
 ]
