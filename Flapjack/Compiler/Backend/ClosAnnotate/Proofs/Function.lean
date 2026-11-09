@@ -61,8 +61,8 @@ theorem evaluate_fn {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
           apply (memVarsToList _ _).mpr
           have equal : n - arity + arity = n := by omega
           simpa [altFvSource_eq_altFv, altFv, hasVar, equal] using present
-        exact envOk_shiftedEnv m l index env nextEnv captured (n - arity) live
-          (liveVars _ member) member distinct captureRun
+        exact envOk_shiftedEnv m l index env nextEnv (n - arity) live captured
+          ⟨liveVars _ member, member, distinct, captureRun⟩
       · exact safeParts.2
       · omega
       · exact .nil

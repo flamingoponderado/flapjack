@@ -1,4 +1,4 @@
-"""The initial nested-list qualifier is restricted to the reviewed relation."""
+"""The nested-list qualifier checks its relation and observers."""
 
 import runpy
 import unittest
@@ -39,11 +39,26 @@ class NestedListQualifierTest(unittest.TestCase):
                  observer_attr, "theorem envSetDefault : EnvOk 0 := by trivial"]
         validate = CHECK["nested_list_rel_errors"]
         self.assertEqual(validate(lines, LEAN, 5, PATH, "env_set_default", ("FunctionsRel",)), [])
-        for bad in ("theorem envSetDefault : True := by trivial",
-                    "theorem envSetDefault : EnvOk (FunctionsRel 0) := by trivial"):
+        for bad in ("theorem envSetDefault : EnvOk (FunctionsRel 0) := by trivial",):
             changed = [*lines[:-1], bad]
             self.assertTrue(validate(changed, LEAN, 5, PATH, "env_set_default", ("FunctionsRel",)))
         self.assertTrue(validate(lines[4:], LEAN, 1, PATH, "env_set_default", ("FunctionsRel",)))
+
+    def test_general_observers_and_wrong_relation_tag(self):
+        attr = f'@[hol "{PATH}" "env_ok_shifted_env" (nested_list_rel_as_mutual := [FunctionsRel])]'
+        peers = [ATTRIBUTE, "inductive ValueRel : Prop", ATTRIBUTE, "inductive EnvOk : Prop"]
+        validate = CHECK["nested_list_rel_errors"]
+        for decl in ("theorem arbitrary : EnvOk 0 := by trivial",
+                     "theorem arbitrary : ValueRel 0 := by trivial"):
+            self.assertEqual(validate(peers + [attr, decl], LEAN, 5, PATH,
+                                      "env_ok_shifted_env", ("FunctionsRel",)), [])
+        bad = peers + [ATTRIBUTE, "theorem fake : EnvOk 0 := by trivial"]
+        self.assertTrue(validate(bad, LEAN, 5, PATH, "v_rel", ("FunctionsRel",)))
+        other = [attr, "theorem arbitrary : EnvOk 0 := by trivial"]
+        self.assertEqual(validate(other, "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/Other.lean", 1, PATH,
+                                  "env_ok_shifted_env", ("FunctionsRel",)), [])
+        self.assertTrue(validate(other, "Flapjack/Other.lean", 1, PATH,
+                                 "env_ok_shifted_env", ("FunctionsRel",)))
 
 
 if __name__ == "__main__":

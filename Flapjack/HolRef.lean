@@ -418,9 +418,7 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
        !fmapAsFiniteSupportRelation.isEmpty || fmapAsFiniteSupportEqualities || fmapAsFiniteSupportEquality) then
     throwError "@[hol]: fmap_as_finite_support_result_observations is mutually exclusive with other finite-map qualifiers"
   if !nestedListRelAsMutual.isEmpty then
-    unless nestedListRelAsMutual == #["FunctionsRel"] &&
-        path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" &&
-        (name == "v_rel" || name == "env_set_default") do
+    unless nestedListRelAsMutual == #["FunctionsRel"] do
       throwError "@[hol]: nested_list_rel_as_mutual is restricted to the reviewed closure relation"
     if !listAsArray.isEmpty || !namesAsString.isEmpty || !namesAsStringBoundary.isEmpty ||
         !fmapAsFiniteSupport.isEmpty || fmapAsFiniteSupportResult ||
@@ -698,29 +696,88 @@ private def resultObservationProblems (type : Expr) (producers : Array String) :
     if producerMatches.size == 1 then none else
       some s!"producer {producer} must resolve to exactly one constant in the elaborated observer type"
 
+/-- Inspect the public closure-relation dependency without descending through
+its reviewed mutual implementation. Definition bodies, but not theorem proofs,
+participate in the closure. -/
+def nestedListRelationDependenciesCached (env : Environment) (root : ConstantInfo)
+    (cache : Std.HashMap Name (Bool × Bool)) : (Bool × Bool) × Std.HashMap Name (Bool × Bool) := Id.run do
+  unless env.contains `Flapjack.Compiler.Backend.ClosAnnotate.ValueRel ||
+      env.contains `Flapjack.Compiler.Backend.ClosAnnotate.EnvOk ||
+      env.contains `Flapjack.Compiler.Backend.ClosAnnotate.FunctionsRel do
+    return ((false, false), cache)
+  let edges (info : ConstantInfo) : Array Name :=
+    let fromType := info.type.getUsedConstants
+    match info with
+    | .defnInfo value => fromType ++ value.value.getUsedConstants
+    | .opaqueInfo value => fromType ++ value.value.getUsedConstants
+    | .inductInfo value => fromType ++ value.ctors.toArray
+    | _ => fromType
+  let mut pending := edges root
+  let mut seen : NameSet := {}
+  let mut observes := false
+  let mut exposes := false
+  while !pending.isEmpty do
+    let current := pending.back!
+    pending := pending.pop
+    if seen.contains current then continue
+    seen := seen.insert current
+    if current == `Flapjack.Compiler.Backend.ClosAnnotate.ValueRel ||
+        current == `Flapjack.Compiler.Backend.ClosAnnotate.EnvOk then
+      observes := true
+      continue
+    if current == `Flapjack.Compiler.Backend.ClosAnnotate.FunctionsRel then
+      exposes := true
+      continue
+    if let some (knownObserves, knownExposes) := cache.get? current then
+      observes := observes || knownObserves
+      exposes := exposes || knownExposes
+      continue
+    match env.getModuleIdxFor? current with
+    | some idx =>
+      if env.header.moduleNames[idx.toNat]!.getRoot != `Flapjack then continue
+    | none => pure ()
+    match env.find? current with
+    | some info => pending := pending ++ edges info
+    | none => pure ()
+  let result := (observes, exposes)
+  let mut cache := cache.insert root.name result
+  -- If the whole traversal found neither boundary, every visited node also
+  -- has an empty closure. Do not cache individual nodes after a positive
+  -- traversal: cycles make their individual results potentially different.
+  if !observes && !exposes then
+    for name in seen.toList do
+      cache := cache.insert name (false, false)
+  return (result, cache)
+
+def nestedListRelationDependencies (env : Environment) (root : ConstantInfo) : Bool × Bool :=
+  (nestedListRelationDependenciesCached env root {}).1
+
 initialize holRefAttribute : ParametricAttribute HolRef ←
   registerParametricAttribute {
     name := `hol
     descr := "original HOL4 declaration (file path and declaration name) ported by this Lean declaration"
     getParam := fun _ stx => parseHolRefAttribute stx
     afterSet := fun decl ref => do
-      if !ref.nestedListRelAsMutual.isEmpty then
-        let isRelation := ref.name == "v_rel" &&
-          (decl == `Flapjack.Compiler.Backend.ClosAnnotate.ValueRel ||
-           decl == `Flapjack.Compiler.Backend.ClosAnnotate.EnvOk)
-        let isDefault := ref.name == "env_set_default" &&
-          decl == `Flapjack.Compiler.Backend.ClosAnnotate.envSetDefault
-        unless isRelation || isDefault do
-          logError m!"{decl}: nested_list_rel_as_mutual is restricted to the reviewed relation members"
-        if isDefault then
-          let env ← getEnv
-          match env.find? decl with
-          | some info =>
-            let used := info.type.getUsedConstants
-            unless used.contains `Flapjack.Compiler.Backend.ClosAnnotate.EnvOk &&
-                !used.contains `Flapjack.Compiler.Backend.ClosAnnotate.FunctionsRel do
-              logError m!"{decl}: nested-list observer must use EnvOk without exposing FunctionsRel"
-          | none => logError m!"{decl}: missing nested-list observer declaration"
+      let isRelation := ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" &&
+        ref.name == "v_rel" &&
+        (decl == `Flapjack.Compiler.Backend.ClosAnnotate.ValueRel ||
+         decl == `Flapjack.Compiler.Backend.ClosAnnotate.EnvOk)
+      if ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" &&
+          ref.name == "v_rel" && !isRelation then
+        logError m!"{decl}: v_rel qualifier is restricted to the reviewed relation members"
+      let env ← getEnv
+      match env.find? decl with
+      | some info =>
+        let (observes, exposes) := nestedListRelationDependencies env info
+        if !ref.nestedListRelAsMutual.isEmpty then
+          let observerScope := decl.toString.startsWith "Flapjack.Compiler.Backend.ClosAnnotate." &&
+            (ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" ||
+             ref.path == "cakeml/compiler/backend/clos_annotateScript.sml")
+          unless isRelation || (observerScope && observes && !exposes) do
+            logError m!"{decl}: nested-list observer must use ValueRel or EnvOk without exposing FunctionsRel"
+        else if isRelation || observes || exposes then
+          logError m!"{decl}: tagged nested-list observer requires nested_list_rel_as_mutual"
+      | none => logError m!"{decl}: missing tagged declaration"
       if !ref.fmapAsFiniteSupportResultObservations.isEmpty then
         let env ← getEnv
         match env.find? decl with

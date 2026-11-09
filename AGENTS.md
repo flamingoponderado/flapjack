@@ -490,10 +490,13 @@ review of both the producer and observer remains required.
 **Qualify the factored closure list relation.** The narrowly scoped
 `(nested_list_rel_as_mutual := [FunctionsRel])` qualifier records the
 recursive-closure `LIST_REL` factoring in `clos_annotateProof$v_rel` into the
-mutually inductive `FunctionsRel`. It is only valid on the `ValueRel` and
-`EnvOk` members and the `envSetDefault` observer in
-`ClosAnnotate/Proofs/ValueRelation.lean`; both relation members must carry it.
-The observer must mention `EnvOk` and must not expose `FunctionsRel`. It cannot
+mutually inductive `FunctionsRel`. Both `ValueRel` and `EnvOk` members in
+`ClosAnnotate/Proofs/ValueRelation.lean` must carry it. An observer must depend on
+`ValueRel` or `EnvOk` and must not expose `FunctionsRel`; tagged declarations
+with those dependencies require the qualifier. The attribute and exporter
+follow elaborated types and definition bodies, stopping at the public relations;
+they do not follow theorem proofs. Observers are restricted to ClosAnnotate
+modules and the corresponding annotation scripts. It cannot
 combine with other qualifiers. Use manifest status
 `reviewed_nested_list_rel_as_mutual` after comparing every source rule and the
 `functionsRel_iff` witness with the typed HOL capture. The elaborated audit

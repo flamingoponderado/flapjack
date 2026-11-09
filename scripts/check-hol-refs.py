@@ -4850,24 +4850,30 @@ def hol_ref_error(
 
 def nested_list_rel_errors(lines: list[str], rel: str, number: int, hol_path: str,
                            hol_name: str, fields: tuple[str, ...]) -> list[str]:
-    """Restrict the qualifier to the reviewed relation and default observer."""
+    """Check the reviewed relation peers and the observer's written signature.
+
+    Lean's attribute and export additionally check fully resolved constants.
+    """
     errors = []
     declaration = find_lean_decl(lines, number - 1)
-    relation = hol_name == "v_rel" and declaration in {"ValueRel", "EnvOk"}
-    observer = hol_name == "env_set_default" and declaration == "envSetDefault"
-    if (rel != "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ValueRelation.lean" or
-            not (relation or observer) or
-            hol_path != "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" or
-            fields != ("FunctionsRel",)):
+    relation_file = "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ValueRelation.lean"
+    relation_path = "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml"
+    relation = hol_path == relation_path and hol_name == "v_rel"
+    if fields != ("FunctionsRel",) or (relation and
+            (rel != relation_file or declaration not in {"ValueRel", "EnvOk"})):
         errors.append("nested relation qualifier is restricted to the reviewed mutual relation")
-    peers = [site for site in hol_attribute_sites(lines, include_nested_list_rel=True)
-             if site[1:3] == (hol_path, "v_rel") and site[-1] == ("FunctionsRel",)]
-    if {find_lean_decl(lines, site[0] - 1) for site in peers} != {"ValueRel", "EnvOk"} or len(peers) != 2:
+    peer_lines = lines if rel == relation_file else (ROOT / relation_file).read_text(encoding="utf-8").splitlines()
+    peers = [site for site in hol_attribute_sites(peer_lines, include_nested_list_rel=True)
+             if site[1:3] == (relation_path, "v_rel") and site[-1] == ("FunctionsRel",)]
+    if {find_lean_decl(peer_lines, site[0] - 1) for site in peers} != {"ValueRel", "EnvOk"} or len(peers) != 2:
         errors.append("both mutual relation members require the same qualifier")
-    if observer:
-        source = tagged_declaration_text(lines, number).split("theorem envSetDefault", 1)[-1]
-        if not re.search(r"\bEnvOk\b", source) or re.search(r"\bFunctionsRel\b", source):
-            errors.append("default observer must use EnvOk without exposing FunctionsRel")
+    if not relation:
+        source = tagged_declaration_text(lines, number)
+        source = re.split(r"\b(?:theorem|lemma|def|abbrev)\s+" + re.escape(declaration) + r"\b", source, maxsplit=1)[-1]
+        if (not rel.startswith("Flapjack/Compiler/Backend/ClosAnnotate/") or
+                hol_path not in {relation_path, "cakeml/compiler/backend/clos_annotateScript.sml"} or
+                re.search(r"\bFunctionsRel\b", source)):
+            errors.append("observer has invalid scope or exposes FunctionsRel")
     return errors
 
 

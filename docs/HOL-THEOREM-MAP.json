@@ -152,6 +152,13 @@
   "reviewer": "Compared FOLDR_mk_Union_local_typed, replayed with the original HOL proof: the list payload type is polymorphic, and the pair fold, seed, projections, append and variable-set fold have the same order and no premises."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "env_ok_shifted_env",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ValueRelation.lean", "lean_name": "envOk_shiftedEnv",
+  "statement_status": "reviewed_nested_list_rel_as_mutual",
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "reviewer": "Source comparison with env_ok_shifted_env_local_typed, replayed with the original HOL proof: all environments, indices and live variables are unrestricted; the grouped relation, membership, distinctness and lookup premises and the compacted environment conclusion agree. nested_list_rel_as_mutual records the factored environment relation witnessed by functionsRel_iff."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "env_set_default",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ValueRelation.lean", "lean_name": "envSetDefault",
   "statement_status": "reviewed_nested_list_rel_as_mutual",

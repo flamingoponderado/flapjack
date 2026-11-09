@@ -145,11 +145,14 @@ theorem lookupVars_position {α : Type} (indices : List Nat) (env values : List 
 
 /-- Restricting an environment to its distinct live slots preserves the
 source relation at every live variable. -/
-theorem envOk_shiftedEnv (m l : Nat) (index : Spt Nat) (env nextEnv selected : List Value)
-    (n : Nat) (live : List Nat) (related : EnvOk m l index env nextEnv n)
-    (member : n ∈ live) (distinct : live.Nodup)
-    (run : lookupVars ((live.filter (· < m + l)).map (getVar m l index)) nextEnv = some selected) :
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "env_ok_shifted_env"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem envOk_shiftedEnv (m l : Nat) (index : Spt Nat) (env nextEnv : List Value)
+    (n : Nat) (live : List Nat) (selected : List Value)
+    (h : EnvOk m l index env nextEnv n ∧ n ∈ live ∧ live.Nodup ∧
+      lookupVars ((live.filter (· < m + l)).map (getVar m l index)) nextEnv = some selected) :
     EnvOk (m + l) 0 (shiftedEnv 0 (live.filter (· < m + l))) env selected n := by
+  obtain ⟨related, member, distinct, run⟩ := h
   let _ : Nonempty Value := ⟨unitValue⟩
   by_cases tracked : n < m + l
   · let filtered := live.filter (· < m + l)

@@ -134,3 +134,36 @@ val EL_shift_alt_free_replay = prove (
   >> REPEAT (AP_TERM_TAC ORELSE AP_THM_TAC)
   >> full_simp_tac(srw_ss())[SING_HD,LENGTH_FST_alt_free]);
 val _ = show "EL_shift_alt_free_local_typed=" EL_shift_alt_free_replay;
+(* Replay the local environment-compaction proof with its local prerequisites. *)
+open closSemTheory;
+val env_ok_def = clos_annotateProofTheory.v_rel_cases |> CONJUNCT2;
+val lookup_EL_shifted_env = lookup_EL_shifted_env_replay;
+val env_ok_shifted_env_replay = prove (
+  ``clos_annotateProof$env_ok m l i env env2 k /\ MEM k live /\ ALL_DISTINCT live /\
+    (lookup_vars (MAP (get_var m l i) (FILTER (\n. n < m + l) live)) env2 = SOME x) ==>
+    clos_annotateProof$env_ok (m + l) 0 (shifted_env 0 (FILTER (\n. n < m + l) live)) env x k``,
+  REPEAT STRIP_TAC
+  >> Q.ABBREV_TAC `y = FILTER (\n. n < m + l) live`
+  >> `ALL_DISTINCT y` by
+       (UNABBREV_ALL_TAC >> MATCH_MP_TAC FILTER_ALL_DISTINCT >> full_simp_tac(srw_ss())[])
+  >> Cases_on `~(k < m + l)` THEN1 (full_simp_tac(srw_ss())[env_ok_def,NOT_LESS] >> DECIDE_TAC)
+  >> full_simp_tac(srw_ss())[]
+  >> `MEM k y` by (UNABBREV_ALL_TAC >> full_simp_tac(srw_ss())[MEM_FILTER])
+  >> POP_ASSUM MP_TAC
+  >> simp [MEM_EL] >> STRIP_TAC
+  >> POP_ASSUM (ASSUME_TAC o GSYM)
+  >> Q.PAT_X_ASSUM `MEM k live` (K ALL_TAC)
+  >> Q.PAT_X_ASSUM `Abbrev vvv` (K ALL_TAC)
+  >> `(EL n (MAP (get_var m l i) y) = get_var m l i k) /\
+      n < LENGTH (MAP (get_var m l i) y)` by full_simp_tac(srw_ss())[EL_MAP]
+  >> Q.ABBREV_TAC `ys = (MAP (get_var m l i) y)`
+  >> MP_TAC lookup_vars_MEM >> full_simp_tac(srw_ss())[] >> STRIP_TAC
+  >> `clos_annotateProof$v_rel (EL k env) (EL (get_var m l i k) env2)` by
+   (full_simp_tac(srw_ss())[env_ok_def] THEN1 (`F` by DECIDE_TAC) >> full_simp_tac(srw_ss())[get_var_def]
+    >> `~(k < l)` by DECIDE_TAC >> full_simp_tac(srw_ss())[zlookup_def])
+  >> Q.PAT_X_ASSUM `EL n x = yy` (ASSUME_TAC o GSYM) >> full_simp_tac(srw_ss())[]
+  >> full_simp_tac(srw_ss())[env_ok_def] >> DISJ2_TAC
+  >> TRY (`k < l + m` by DECIDE_TAC) >> full_simp_tac(srw_ss())[]
+  >> SRW_TAC [] [] >> full_simp_tac(srw_ss())[lookup_EL_shifted_env]
+  >> IMP_RES_TAC lookup_vars_SOME >> full_simp_tac(srw_ss())[]);
+val _ = show "env_ok_shifted_env_local_typed=" env_ok_shifted_env_replay;

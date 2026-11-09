@@ -270,6 +270,7 @@ elab "#emit_hol_ref_export" : command => do
   let realsTagged : NameSet := (HolRef.all env).foldl
     (fun acc (entry : Name × HolRef) => if entry.2.realsAsRationalCuts then acc.insert entry.1 else acc) {}
   let mut known : Std.HashMap Name Bool := {}
+  let mut nestedKnown : Std.HashMap Name (Bool × Bool) := {}
   for (name, ref) in HolRef.all env do
     if !ref.nestedListRelAsMutual.isEmpty then
       let marker := ``Flapjack.Test.nestedRelationAudit_passed
@@ -280,7 +281,24 @@ elab "#emit_hol_ref_export" : command => do
       | none => throwError "missing elaborated audit marker for nested-list relation {name}"
     match env.find? name with
     | none => throwError "missing declaration {name}"
-    | some _ =>
+    | some info =>
+        let isRelation := ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" &&
+          ref.name == "v_rel" &&
+          (name == `Flapjack.Compiler.Backend.ClosAnnotate.ValueRel ||
+           name == `Flapjack.Compiler.Backend.ClosAnnotate.EnvOk)
+        if ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" &&
+            ref.name == "v_rel" && !isRelation then
+          throwError "invalid nested-list relation producer {name}"
+        let ((observes, exposes), nestedKnown') := nestedListRelationDependenciesCached env info nestedKnown
+        nestedKnown := nestedKnown'
+        if !ref.nestedListRelAsMutual.isEmpty then
+          let observerScope := name.toString.startsWith "Flapjack.Compiler.Backend.ClosAnnotate." &&
+            (ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" ||
+             ref.path == "cakeml/compiler/backend/clos_annotateScript.sml")
+          unless isRelation || (observerScope && observes && !exposes) do
+            throwError "invalid nested-list relation observer {name}"
+        else if isRelation || observes || exposes then
+          throwError "missing nested-list relation qualifier on {name}"
         let mut qualifiers : List (String × Json) := [
           ("list_as_array", toJson ref.listAsArray),
           ("names_as_string", toJson ref.namesAsString),

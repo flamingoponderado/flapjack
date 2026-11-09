@@ -211,4 +211,5 @@ if ! output=$(lake lean "$test_file" 2>&1); then
 fi
 printf '%s\n' "$output"
 
+lake lean scripts/tests/fixtures/NestedRelationDependencies.lean
 echo 'HOL reference attribute syntax: exact and qualified forms pass; invalid qualifiers rejected'

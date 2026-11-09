@@ -111,8 +111,8 @@ theorem recursiveFunctions_capture (names : List Flapjack.Basis.Pure.MlString.Ml
     refine ⟨(arity, exp), member, ?_⟩
     have equal : n - (arity + functions.length) + arity + functions.length = n := by omega
     simpa [equal] using present
-  exact envOk_shiftedEnv m l index env nextEnv captured _ live (liveVars _ liveMember)
-    liveMember distinct captureRun
+  exact envOk_shiftedEnv m l index env nextEnv _ live captured
+    ⟨liveVars _ liveMember, liveMember, distinct, captureRun⟩
 
 /-- Related recursive function lists have the same arities in the same order. -/
 theorem functionsRel_arities (env captured : List Value) (count : Nat)
