@@ -87,7 +87,6 @@ let that evaluates the same arguments before its body. -/
 inductive FlatLetOp : FlatLang.Op → Prop where
   | globalAlloc (count : Nat) : FlatLetOp (.globalVarAlloc count)
   | el (index : Nat) : FlatLetOp (.el index)
-  | id : FlatLetOp .id
 
 theorem flatLetOp_compile_wrong (names : List (Option MlString)) (trace : BackendCommon.Tra)
     (op : FlatLang.Op) (args : List FlatLang.Exp) (arity : Nat) (kind : FlatLetOp op)
@@ -108,17 +107,6 @@ theorem flatLetOp_compile_wrong (names : List (Option MlString)) (trace : Backen
         have lengths := congrArg List.length h
         simp at lengths
       · exact ⟨.none, _, rfl⟩
-  | id =>
-    simp [flatOpArity] at expected
-    subst arity
-    rcases args with _ | ⟨a, _ | ⟨b, rest⟩⟩ <;> simp_all [compileExp, destNop, compileOp, compileExps, arg1]
-    all_goals
-      split
-      · rename_i h
-        have lengths := congrArg List.length h
-        simp at lengths
-      · exact ⟨.none, _, rfl⟩
-
 /-- Wrong-arity let-lowered Flat operations preserve argument errors; a successful
 argument list would force a source type error. -/
 theorem evaluate_flatLet_wrong {C F : Type} (env : FlatSem.Environment FlatSem.Value)
