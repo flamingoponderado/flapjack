@@ -104,4 +104,25 @@ theorem pmatchNil {C F : Type} :
   · intro values tail state patterns
     simpa using ((pmatch_append (α := Unit) (β := Unit) tail).2 state patterns values [] ()).symm
 
+/-- Flapjack proof infrastructure: track the binding accumulator in variable-list matching. -/
+private theorem matchVarsAux {C F : Type} (state : State C F)
+    (xs : List Flapjack.AstHOL.VarN) (vs : List Value) (bindings : List (Flapjack.AstHOL.VarN × Value))
+    (len : xs.length = vs.length) :
+    pmatchList state (xs.map FlatLang.Pat.pvar) vs bindings = .match ((xs.zip vs).reverse ++ bindings) := by
+  induction xs generalizing vs bindings with
+  | nil => cases vs <;> simp_all [pmatchList]
+  | cons x xs ih =>
+    cases vs with
+    | nil => simp at len
+    | cons v vs =>
+      have lenTail : xs.length = vs.length := by simpa using len
+      simpa [pmatchList, pmatch, List.reverse_cons, List.append_assoc] using ih vs ((x, v) :: bindings) lenTail
+
+/-- Equal-length variable patterns bind the values in reverse pair order. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "pmatch_list_MAP_Pvar"]
+theorem pmatchList_mapPvar {C F : Type} (state : State C F) :
+    ∀ (xs : List Flapjack.AstHOL.VarN) (vs : List Value), xs.length = vs.length →
+      pmatchList state (xs.map FlatLang.Pat.pvar) vs [] = .match ((xs.zip vs).reverse) := by
+  intro xs vs length
+  simpa using matchVarsAux state xs vs [] length
 end Flapjack.Compiler.Backend.FlatProps

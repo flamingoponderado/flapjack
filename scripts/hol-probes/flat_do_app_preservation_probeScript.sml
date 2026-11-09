@@ -65,3 +65,5 @@ val _ = show_thm "flat_evaluate_decs_add_clock_io_events_mono_typed=" flatPropsT
 val _ = show_thm "flat_evaluate_map_var_local_typed=" flatPropsTheory.evaluate_MAP_Var_local;
 val _ = show_thm "flat_bind_locals_list_def_typed=" flatPropsTheory.bind_locals_list_def;
 val _ = show_thm "flat_evaluate_vars_typed=" flatPropsTheory.evaluate_vars;
+
+val _ = show_thm "flat_pmatch_list_map_pvar_typed=" flatPropsTheory.pmatch_list_MAP_Pvar;

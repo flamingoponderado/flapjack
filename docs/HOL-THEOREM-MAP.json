@@ -130583,6 +130583,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "pmatch_list_MAP_Pvar",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternList.lean",
+  "lean_name": "pmatchList_mapPvar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_pmatch_list_map_pvar_typed in flat_do_app_preservation_probe.out: free state, universally quantified names and values, equal-length premise, and reverse ZIP result agree; independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
   "hol_name": "evaluate_MAP_Var_local",
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateVars.lean",
   "lean_name": "evaluate_mapVarLocal",
