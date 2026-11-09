@@ -57,11 +57,11 @@ theorem doAppFromTo_callFFIRel {σ : Type} (store store' : Store Value)
     (values : List Value) (result : Result Value Value)
     (h : doApp (store, ffi) (.fromTo source target) values = some ((store', ffi'), result)) :
     Relation.ReflTransGen callFFIRelHOL ffi ffi' := by
-  simp only [doApp, doAppBasic] at h
+  rw [doApp_fromTo_core] at h
   cases hn : doAppNumericCore (store, ffi) (.fromTo source target) values with
   | none => simp [hn] at h
   | some outcome =>
-    simp only [hn] at h
+    simp only [hn, Option.getD_some] at h
     have heq := doAppNumericCore_ffi store store' ffi ffi' (.fromTo source target) values result (by rw [hn]; exact congrArg some h)
     subst ffi'
     exact Relation.ReflTransGen.refl

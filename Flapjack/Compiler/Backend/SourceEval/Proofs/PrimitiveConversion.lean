@@ -11,8 +11,9 @@ private theorem conversionResult_transport {F : Type} (es : EvalOracleState) (st
     xs.all (checkType sourceType) = true ∧ refs = state.1 ∧ ffi = state.2 ∧
     doApp target (.fromTo sourceType targetType) xs = some (target, result) ∧
     resultRel (ValueRel es) (ValueRel es) result result := by
+  rw [doApp_fromTo_core] at run ⊢
   cases sourceType <;> cases targetType <;>
-    simp only [doApp, doAppNumericCore] at run ⊢ <;>
+    simp only [doAppNumericCore, Option.getD_some] at run ⊢ <;>
     repeat' first | split at run | contradiction
   all_goals simp_all [checkType]
   all_goals obtain ⟨_, rfl⟩ := run

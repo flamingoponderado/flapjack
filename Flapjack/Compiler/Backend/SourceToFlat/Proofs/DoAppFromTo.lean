@@ -31,12 +31,12 @@ theorem doApp_FromTo {C F : Type} (genv : GlobalEnv)
   cases vs with
   | nil =>
     cases fromType <;> cases toType <;> (try cases ‹WordSize›) <;> (try cases ‹WordSize›) <;>
-      simp [doApp, doAppNumericCore] at run
+      simp [doApp] at run
   | cons operand rest =>
     cases rest with
     | cons second rest =>
       cases fromType <;> cases toType <;> (try cases ‹WordSize›) <;> (try cases ‹WordSize›) <;>
-        simp [doApp, doAppNumericCore] at run
+        simp [doApp] at run
     | nil =>
       let source : SemanticPrimitivesHOL.State F := ⟨0, s1.1, s1.2, 0, 0, none⟩
       have successful : doApp (source.refs, source.ffi) (.fromTo fromType toType) [operand] ≠ none := by

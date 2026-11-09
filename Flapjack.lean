@@ -5,6 +5,9 @@ import Flapjack.SemanticPrimitivesHOL.StoreSource
 import Flapjack.SemanticPrimitivesHOL.PatternMatch
 import Flapjack.SemanticPrimitivesHOL.Operations
 import Flapjack.SemanticPrimitivesHOL.Conversions
+import Flapjack.SemanticPrimitivesHOL.NumericConversion
+import Flapjack.SemanticPrimitivesProps.Conversion
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveConversion
 import Flapjack.SemanticPrimitivesHOL.Thunk
 import Flapjack.EvaluateHOL
 import Flapjack.EvaluateHOL.Definition

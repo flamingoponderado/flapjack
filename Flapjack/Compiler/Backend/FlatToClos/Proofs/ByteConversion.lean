@@ -75,7 +75,7 @@ theorem evaluate_intToWord8_regular {C F : Type} (env : FlatSem.Environment Flat
           | nil =>
             cases head <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
               FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat,
-              SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore] at notTypeError ⊢
+              SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore] at notTypeError ⊢
             case con rel =>
               rename_i sourceFields targetFields tag typeId
               cases sourceFields <;> cases typeId <;> simp_all [SemanticPrimitivesHOL.boolValue]
@@ -142,11 +142,11 @@ theorem intToWord8_wrong_arity {C F : Type} (state : FlatSem.State C F)
     (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
     (FlatSem.applyResult state (.src (.fromTo .intT (.wordT .w8))) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
   | cons first rest =>
     cases rest with
     | nil => simp at wrong
-    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- At a non-unary syntactic arity, the conversion can only propagate an
 argument error under the source non-type-error hypothesis. -/

@@ -8,6 +8,13 @@ fun show_thm label th =
 val _ = show_thm "do_app_definition=" semanticPrimitivesTheory.do_app_def;
 val _ = show_thm "do_arith_definition=" semanticPrimitivesTheory.do_arith_def;
 val _ = show_thm "do_conversion_definition=" semanticPrimitivesTheory.do_conversion_def;
+val _ = show_thm "selector_int_definition=" semanticPrimitivesTheory.the_Litv_IntLit_def;
+val _ = show_thm "selector_word8_definition=" semanticPrimitivesTheory.the_Litv_Word8_def;
+val _ = show_thm "selector_word64_definition=" semanticPrimitivesTheory.the_Litv_Word64_def;
+val _ = show_thm "selector_float64_definition=" semanticPrimitivesTheory.the_Litv_Float64_def;
+val _ = show_thm "selector_char_definition=" semanticPrimitivesTheory.the_Litv_Char_def;
+val _ = show_thm "char_to_word8_definition=" mlstringTheory.char_to_word8_def;
+val _ = show_thm "word8_to_char_definition=" mlstringTheory.word8_to_char_def;
 val opref_equation = prove (
   ``∀s (t:'ffi ffi$ffi_state) v.
       semanticPrimitives$do_app (s,t) ast$Opref [v] =

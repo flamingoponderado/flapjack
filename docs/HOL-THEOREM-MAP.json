@@ -119031,7 +119031,7 @@
   "lean_name": "doApp",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared every typed do_app_definition case in cake_source_apply_probe.out with the assembled numeric and basic dispatchers, including argument shapes, guarded arithmetic and conversions, safe and unsafe bounds, byte and array copies, list encodings, Eval and Opapp fallback, thunk operations, and FFI return and final cases. HOL characters and word8s use the reviewed identical eight-bit carrier; FFI state remains independently polymorphic. The original proof and Lean source equations cover reference allocation, fixed array allocation and GC configuration. Floating operations inherit the rational-cut assumption in SOUNDNESS item 8; these checks do not prove cross-language correspondence. Inherits the reals_as_rational_cuts assumption through its dependencies."
+  "reviewer": "Compared every typed do_app_definition case in cake_source_apply_probe.out with the assembled numeric and basic dispatchers, including argument shapes, guarded arithmetic and conversions, safe and unsafe bounds, byte and array copies, list encodings, Eval and Opapp fallback, thunk operations, and FFI return and final cases. The FromTo branch now executes the reviewed doConversion under the HOL type guard; doApp_fromTo_core proves agreement with the computable dispatcher. HOL characters and word8s use the reviewed identical eight-bit carrier; FFI state remains independently polymorphic. Independently source-reviewed after integration. The original proof and Lean source equations cover reference allocation, fixed array allocation and GC configuration. Floating operations inherit the rational-cut assumption in SOUNDNESS item 8; these checks do not prove cross-language correspondence. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -130591,6 +130591,102 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared flat_do_app_io_events_mono_typed in flat_do_app_preservation_probe.out: the source state, operation, argument list, target state and result retain source order and types; the successful application premise implies the original FFI-event prefix. The dispatcher inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+  "hol_name": "the_Litv_IntLit_def",
+  "lean_path": "Flapjack/SemanticPrimitivesHOL/NumericConversion.lean",
+  "lean_name": "theLitvInt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed selector_int_definition in cake_source_apply_probe.out, including literal carriers, HOL arbitrary completion and all original clauses. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+  "hol_name": "the_Litv_Word8_def",
+  "lean_path": "Flapjack/SemanticPrimitivesHOL/NumericConversion.lean",
+  "lean_name": "theLitvWord8",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed selector_word8_definition in cake_source_apply_probe.out, including literal carriers, HOL arbitrary completion and all original clauses. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+  "hol_name": "the_Litv_Word64_def",
+  "lean_path": "Flapjack/SemanticPrimitivesHOL/NumericConversion.lean",
+  "lean_name": "theLitvWord64",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed selector_word64_definition in cake_source_apply_probe.out, including literal carriers, HOL arbitrary completion and all original clauses. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+  "hol_name": "the_Litv_Float64_def",
+  "lean_path": "Flapjack/SemanticPrimitivesHOL/NumericConversion.lean",
+  "lean_name": "theLitvFloat64",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed selector_float64_definition in cake_source_apply_probe.out, including literal carriers, HOL arbitrary completion and all original clauses. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+  "hol_name": "the_Litv_Char_def",
+  "lean_path": "Flapjack/SemanticPrimitivesHOL/NumericConversion.lean",
+  "lean_name": "theLitvChar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed selector_char_definition in cake_source_apply_probe.out, including literal carriers, HOL arbitrary completion and all original clauses. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+  "hol_name": "do_conversion_def",
+  "lean_path": "Flapjack/SemanticPrimitivesHOL/NumericConversion.lean",
+  "lean_name": "doConversion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed do_conversion_definition in cake_source_apply_probe.out, including literal carriers, HOL arbitrary completion and all original clauses. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/basis/pure/mlstringScript.sml",
+  "hol_name": "char_to_word8_def",
+  "lean_path": "Flapjack/Basis/Pure/MlString/CharWord.lean",
+  "lean_name": "charToWord8",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed char_to_word8_definition in cake_source_apply_probe.out, including the HOL byte character model and word conversion. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/basis/pure/mlstringScript.sml",
+  "hol_name": "word8_to_char_def",
+  "lean_path": "Flapjack/Basis/Pure/MlString/CharWord.lean",
+  "lean_name": "word8ToChar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed word8_to_char_definition in cake_source_apply_probe.out, including the HOL byte character model and word conversion. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "do_conversion_check_type",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/Conversion.lean",
+  "lean_name": "doConversion_checkType",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared semantic_do_conversion_check_type_typed in flat_do_app_preservation_probe.out, including binder order, successful-result premise and target type check. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "do_conversion_INL",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PrimitiveConversion.lean",
+  "lean_name": "doConversion_inl",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "c",
+    "tys"
+  ],
+  "reviewer": "Compared typed HOL proof replay conversion_inl_typed in source_to_flat_init_probe.out, including binder order, grouped premise, conclusion and canonical GlobalEnv finite maps. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "do_conversion_INR",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PrimitiveConversion.lean",
+  "lean_name": "doConversion_inr",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "c",
+    "tys"
+  ],
+  "reviewer": "Compared typed HOL proof replay conversion_inr_typed in source_to_flat_init_probe.out, including binder order, grouped premise, conclusion and canonical GlobalEnv finite maps. Independently source-reviewed."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",

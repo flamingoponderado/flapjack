@@ -223,6 +223,8 @@ val do_app_conversion_inr = Q.prove (
   strip_tac >> drule_all source_to_flatProofTheory.check_type_v_rel_flat_to_v >>
   strip_tac >> fs [] >> drule_all semanticPrimitivesPropsTheory.do_conversion_check_type >>
   rpt strip_tac >> drule_all source_to_flatProofTheory.check_type_IMP_v_rel >> simp []);
+val _ = show_thm "conversion_inl_typed=" do_app_conversion_inl;
+val _ = show_thm "conversion_inr_typed=" do_app_conversion_inr;
 val from_to_op = ``ast$FromTo ty1 ty2``;
 val do_app_fromto_typed = list_mk_forall
   (List.take (do_app_binders, 3) @ List.rev (free_vars from_to_op) @ List.drop (do_app_binders, 4),

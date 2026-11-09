@@ -84,7 +84,7 @@ theorem evaluate_char_word_nop {C F : Type} (env : FlatSem.Environment FlatSem.V
           | nil =>
             cases head <;>
               simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp,
+                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp_fromTo_core,
                 SemanticPrimitivesHOL.doAppNumericCore] at notTypeError ⊢
             case char => exact ⟨states, .value (.cons (.word8 _) .nil)⟩
             case con rel =>
@@ -127,7 +127,7 @@ theorem evaluate_word_char_nop {C F : Type} (env : FlatSem.Environment FlatSem.V
           | nil =>
             cases head <;>
               simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp,
+                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp_fromTo_core,
                 SemanticPrimitivesHOL.doAppNumericCore] at notTypeError ⊢
             case word8 byte =>
               have inRange : ¬((byte.toNat : Int) < 0 ∨ 255 < (byte.toNat : Int)) := by

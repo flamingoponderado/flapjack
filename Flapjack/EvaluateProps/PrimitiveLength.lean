@@ -74,11 +74,11 @@ theorem doApp_refs_length {σ : Type} (refsFfi : Store Value × HolFfiState σ)
     simp only [doApp] at h
     repeat' first | split at h | simp_all
   | fromTo source target =>
-    simp only [doApp, doAppBasic] at h
+    rw [doApp_fromTo_core] at h
     cases hn : doAppNumericCore (store, ffi) (.fromTo source target) values with
     | none => simp [hn] at h
     | some outcome =>
-      simp only [hn] at h
+      simp only [hn, Option.getD_some] at h
       apply doAppNumericCore_refs store store' ffi ffi' (.fromTo source target) values result
       rw [hn]
       exact congrArg some h

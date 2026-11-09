@@ -146,11 +146,12 @@ theorem conversion_operand {F : Type} (source : SemanticPrimitivesHOL.State F)
     (fromType toType : PrimType) (operand : SemanticPrimitivesHOL.Value)
     (successful : doApp (source.refs, source.ffi) (.fromTo fromType toType) [operand] ≠ none) :
     ∃ lit, operand = .litv lit := by
+  rw [doApp_fromTo_core] at successful
   cases operand with
   | litv lit => exact ⟨lit, rfl⟩
   | _ =>
     cases fromType <;> cases toType <;> (try cases ‹WordSize›) <;> (try cases ‹WordSize›) <;>
-      simp [doApp, doAppNumericCore] at successful
+      simp [doAppNumericCore] at successful
 
 /-- Source and flat conversions agree on literals, including `Chr` failures.
 This is Flapjack proof infrastructure for the source-to-flat simulation. -/
@@ -167,11 +168,11 @@ theorem conversion_related {C F : Type} (genv : GlobalEnv) (ok : genvCOk genv.c)
   cases fromType <;> cases toType <;> (try cases ‹WordSize›) <;> (try cases ‹WordSize›) <;> cases lit
   case intT.charT.intLit n =>
     by_cases bad : n < 0 ∨ n > 255 <;>
-      simp [doApp, doAppNumericCore, FlatSem.doAppNumeric,
+      simp [doApp_fromTo_core, doAppNumericCore, FlatSem.doAppNumeric,
         FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat, bad]
     · exact ResultRel.raise (valueRel_lemmas genv ok).2.2.1
     · exact ResultRel.value (.literal genv _)
-  all_goals simp [doApp, doAppNumericCore, FlatSem.doAppNumeric,
+  all_goals simp [doApp_fromTo_core, doAppNumericCore, FlatSem.doAppNumeric,
     FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat]
   all_goals exact ResultRel.value (.literal genv _)
 

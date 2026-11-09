@@ -137,7 +137,7 @@ theorem doApp_fromTo_source {C F : Type} (s : State C F)
       | _, _, _ => none := by
   generalize valuesEq : vs.map flatToValue = values
   simp only [doApp, doAppNumeric, applyNumericProjection,
-    SemanticPrimitivesHOL.doApp, doAppNumericCore, valuesEq]
+    SemanticPrimitivesHOL.doApp_fromTo_core, doAppNumericCore, valuesEq]
   clear valuesEq
   all_goals cases source <;> cases target
   all_goals try (cases ‹WordSize›)
