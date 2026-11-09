@@ -6,6 +6,62 @@ namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Compiler.Backend.ClosProps
 
+private theorem destConstant_noApp (maxApp : Nat) (e : ClosLang.Exp) (c : ClosLang.Const)
+    (decoded : destConstant e = some c) : ¬ containsAppSomeExp maxApp e := by
+  cases e <;> simp [destConstant] at decoded
+  case op t op args =>
+    cases args with
+    | cons a rest => cases op <;> simp at decoded
+    | nil =>
+      cases op <;> try simp at decoded
+      case intOp op => cases op <;> try simp at decoded <;> simp [containsAppSomeExp, containsAppSome]
+      case blockOp op => cases op <;> try simp at decoded <;> simp [containsAppSomeExp, containsAppSome]
+
+private theorem destConstants_noApp (maxApp : Nat) (xs : List ClosLang.Exp) (cs : List ClosLang.Const)
+    (decoded : destConstants xs = some cs) : ¬ containsAppSome maxApp xs := by
+  induction xs generalizing cs with
+  | nil => simp [containsAppSome]
+  | cons x xs ih =>
+    cases first : destConstant x with
+    | none => simp [destConstants, first] at decoded
+    | some c =>
+      cases rest : destConstants xs with
+      | none => simp [destConstants, first, rest] at decoded
+      | some cs' =>
+        simpa [containsAppSome] using
+          And.intro (destConstant_noApp maxApp x c first) (ih cs' rest)
+
+/-- The smart constructor preserves the application predicate. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "contains_App_SOME_SmartCons"]
+theorem containsAppSome_smartCons (maxApp : Nat) (t : BackendCommon.Tra) (tag : Nat)
+    (xs : List ClosLang.Exp) :
+    containsAppSome maxApp [smartCons t tag xs] ↔ containsAppSome maxApp xs := by
+  cases xs with
+  | nil => simp [smartCons, containsAppSome, containsAppSomeExp]
+  | cons x xs =>
+    cases decoded : destConstants (x :: xs) with
+    | none => simp [smartCons, decoded, containsAppSome, containsAppSomeExp]
+    | some constants =>
+      have absent := destConstants_noApp maxApp (x :: xs) constants decoded
+      simp [smartCons, decoded, containsAppSome, containsAppSomeExp] at absent ⊢
+      exact absent
+
+/-- The smart constructor preserves the function-annotation predicate. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "every_Fn_vs_NONE_SmartCons"]
+theorem everyFnVarsNone_smartCons (t : BackendCommon.Tra) (tag : Nat) (xs : List ClosLang.Exp) :
+    everyFnVarsNone [smartCons t tag xs] ↔ everyFnVarsNone xs := by
+  cases xs with
+  | nil => simp [smartCons, everyFnVarsNone, fnVarsNoneExp]
+  | cons x xs =>
+    cases decoded : destConstants (x :: xs) with
+    | none => simp [smartCons, decoded, everyFnVarsNone, fnVarsNoneExp]
+    | some constants =>
+      have safe : ∀ e ∈ x :: xs, noMti e := by
+        apply (noMti_smartCons t tag (x :: xs)).1
+        simp [smartCons, decoded, noMti, noMtiList]
+      have annotations := (noMtiList_syntactic 1 (by decide) _ safe).1
+      simp [smartCons, decoded, everyFnVarsNone, fnVarsNoneExp, annotations]
+
 /-- Initializer functions carry no variable annotations. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "every_Fn_vs_NONE_compile_init"]
 theorem everyFnVarsNone_compileInit (b : Bool) :

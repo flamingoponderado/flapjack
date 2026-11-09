@@ -90,6 +90,8 @@ val state_clock_replay = prove
 val _ = (print "state_rel_dec_clock_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl state_clock_replay); print "\n");
 val _ = (print "state_rel_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl state_rel_def); print "\n");
 val _ = (print "state_rel_LEAST_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl state_rel_LEAST); print "\n");
+val _ = (print "every_Fn_vs_NONE_SmartCons_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl every_Fn_vs_NONE_SmartCons); print "\n");
+val _ = (print "contains_App_SOME_SmartCons_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl contains_App_SOME_SmartCons); print "\n");
 val _ = (print "evaluate_compile_prog_initial_state_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl evaluate_compile_prog_initial_state); print "\n");
 val _ = (print "evaluate_compile_prog_initial_state_FST_Err_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl evaluate_compile_prog_initial_state_FST_Err); print "\n");
 val _ = (print "lookup_refv_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl lookup_refv); print "\n");

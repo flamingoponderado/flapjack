@@ -1,6 +1,22 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "every_Fn_vs_NONE_SmartCons",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
+  "lean_name": "everyFnVarsNone_smartCons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_Fn_vs_NONE_SmartCons_typed and the original source: the trace, tag, expression list, singleton SmartCons result, and full predicate equivalence agree; the application predicate additionally retains its arbitrary maximum. Compared the reviewed SmartCons and closure syntax predicate definitions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "contains_App_SOME_SmartCons",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
+  "lean_name": "containsAppSome_smartCons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared contains_App_SOME_SmartCons_typed and the original source: the trace, tag, expression list, singleton SmartCons result, and full predicate equivalence agree; the application predicate additionally retains its arbitrary maximum. Compared the reviewed SmartCons and closure syntax predicate definitions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "every_Fn_vs_NONE_compile_init",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
   "lean_name": "everyFnVarsNone_compileInit",
