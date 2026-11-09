@@ -99,6 +99,7 @@ import Flapjack.Compiler.Backend.FlatProps.EvaluateVars
 import Flapjack.Compiler.Backend.FlatProps.InitialClock
 import Flapjack.Compiler.Backend.FlatProps.SemanticsSimulation
 import Flapjack.Compiler.Backend.FlatProps.SimpleType
+import Flapjack.Compiler.Backend.FlatProps.SimpleDoApp
 import Flapjack.Compiler.Backend.FlatProps.NoMat
 import Flapjack.Compiler.Backend.FlatProps.InstallConfig
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
@@ -735,19 +736,6 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.DynamicEvaluation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedDeclaration
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ThunkRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ThunkEvaluation
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveMemory
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveArray
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveByteArray
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveFFI
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveThunk
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveGlobals
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveNumeric
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveComparison
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.StructuralEquality
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveAccess
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveVector
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveString
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveCopy
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.SourceApplication
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedApplication
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedInduction

@@ -130593,6 +130593,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "simple_do_app_thm",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleDoApp.lean",
+  "lean_name": "simpleDoApp",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_simple_do_app_typed in flat_do_app_preservation_probe.out. Independent source and target compiler types, the grouped simple relation premise, quantified arguments, original two simulation premises, and all three existential conclusions match. The evaluator inherits the reals_as_rational_cuts assumption. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
   "hol_name": "check_type_LIST_REL_same",
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/SimpleType.lean",
   "lean_name": "checkType_listRel_same",
