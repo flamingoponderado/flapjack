@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "extract_name_code_locs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "extractName_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared extract_name_code_locs_typed and independent source review: free exps, n and realEs order, source extractNameSource and code location equality direction match HOL."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_inc_req_addrs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "compileInc_reqAddrs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_inc_req_addrs_typed and independent review: free program then maxApp, the distinctness implication and membership-set inclusion, left offset and numeric metadata carrier match HOL."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "extracted_addrs_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "extractedAddrs",
   "statement_status": "reviewed_exact",
