@@ -131224,5 +131224,14 @@
   "lean_name": "doEval_thm",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the exported flat_do_eval_simulation typed capture: grouped premises, independent shared state carriers, existential result, declarations and configuration order, state field updates, value relation, and declaration-map equality all agree. This replaces the parallel doEval_simulation and doEval_state_simulation variants. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "naive_pattern_match_correct",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NaiveMatch.lean",
+  "lean_name": "naivePatternMatch_correct",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the exported naive_pattern_match_correct typed capture: the state and environment, ordered binders, grouped four-conjunct premise, exact match result and generated expression, and pure evaluation of Boolv (res ≠ No_match) agree. HOL's Boolean inequality is rendered by decide using classical decidability. Evaluation inherits the reals_as_rational_cuts assumption (SOUNDNESS item 8). The proof uses private induction-case infrastructure and replaces the public naiveList_all variant. Independently source-reviewed."
 }
 ]
