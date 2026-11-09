@@ -93,3 +93,9 @@ val flat_initial_state_with_clock = prove (
 val _ = show_thm "flat_initial_state_with_clock_typed=" flat_initial_state_with_clock;
 
 val _ = show_thm "flat_imp_semantics_eq_typed=" flatPropsTheory.IMP_semantics_eq;
+
+val _ = show_thm "flat_elist_globals_foldr_typed=" flatPropsTheory.elist_globals_FOLDR;
+val _ = show_thm "flat_elist_globals_reverse_typed=" flatPropsTheory.elist_globals_REVERSE;
+val _ = show_thm "flat_initial_state_clock_typed=" flatPropsTheory.initial_state_clock;
+
+val _ = show_thm "flat_evaluate_decs_add_clock_io_events_mono_alt_typed=" flatPropsTheory.evaluate_decs_add_to_clock_io_events_mono_alt;

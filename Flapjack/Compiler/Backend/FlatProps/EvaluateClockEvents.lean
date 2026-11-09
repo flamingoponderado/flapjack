@@ -844,4 +844,14 @@ theorem evaluateDecs_addToClock_ioEventsMono {C F : Type} :
   intro ds state extra
   exact (evaluate_addToClock_ioEventsMono extra).2.2 state ds
 
+/-- Explicit evaluation results preserve the event prefix under clock extension. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "evaluate_decs_add_to_clock_io_events_mono_alt"]
+theorem evaluateDecs_addToClock_ioEventsMono_alt {C F : Type} (s : State C F) (ds : List FlatLang.Exp)
+    (s1 : State C F) (res : Option (ErrorResult Value)) (extra : Nat)
+    (s2 : State C F) (res2 : Option (ErrorResult Value))
+    (premises : evaluateDecs s ds = (s1, res) ∧
+      evaluateDecs { s with clock := s.clock + extra } ds = (s2, res2)) :
+    s1.ffi.ioEvents <+: s2.ffi.ioEvents := by
+  simpa [premises.1, premises.2] using evaluateDecs_addToClock_ioEventsMono ds s extra
+
 end Flapjack.Compiler.Backend.FlatProps

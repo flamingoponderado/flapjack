@@ -130585,6 +130585,39 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_decs_add_to_clock_io_events_mono_alt",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateClockEvents.lean",
+  "lean_name": "evaluateDecs_addToClock_ioEventsMono_alt",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_decs_add_clock_io_events_mono_alt_typed in flat_do_app_preservation_probe.out. Both evaluation equations are grouped in the original order and both result binders remain independent. The evaluator inherits the reals_as_rational_cuts assumption. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "elist_globals_FOLDR",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
+  "lean_name": "elistGlobals_foldr",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_elist_globals_foldr_typed in flat_do_app_preservation_probe.out. HOL FOLDR over mapped bags agrees with List.foldr over the same pointwise bag union. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "elist_globals_REVERSE",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
+  "lean_name": "elistGlobals_reverse",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_elist_globals_reverse_typed in flat_do_app_preservation_probe.out. The reverse and bag equality retain the original expression-list carrier. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "initial_state_clock",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/InitialClock.lean",
+  "lean_name": "initialState_clock",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_initial_state_clock_typed in flat_do_app_preservation_probe.out. Both conjuncts, the clock update and free-variable order agree. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
   "hol_name": "IMP_semantics_eq",
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/SemanticsSimulation.lean",
   "lean_name": "imp_semanticsEq",

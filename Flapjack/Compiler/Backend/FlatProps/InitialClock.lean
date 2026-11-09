@@ -29,4 +29,11 @@ theorem evaluateDecs_addToClock_initialState_ioEventsMono {C F : Type}
 theorem initialState_withClock {C F : Type} (ffi : HolFfiState F) (k : Nat) (ec : InstallConfig C) (ck : Nat) :
     { initialState ffi k ec with clock := (initialState ffi k ec).clock + ck } = initialState ffi (k + ck) ec := by
   rfl
+/-- An initial state has its supplied clock, and an update replaces it. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "initial_state_clock"]
+theorem initialState_clock {C F : Type} (ffi : HolFfiState F) (k : Nat) (ec : InstallConfig C) (k1 : Nat) :
+    (initialState ffi k ec).clock = k ∧
+      { initialState ffi k ec with clock := k1 } = initialState ffi k1 ec := by
+  exact ⟨rfl, rfl⟩
+
 end Flapjack.Compiler.Backend.FlatProps
