@@ -131065,5 +131065,13 @@
   "lean_name": "findLoc_every_isEmpty",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared exported find_loc_EVERY_isEmpty typed capture: binders l and reachable:num_set; isEmpty is sptIsEmpty = true, EVERY is List.all = true, and find_locL is findGlobalsList destGlobalVarInit. Replaces the one-direction findLocList_disjoint. Independently source-reviewed."
+},
+{
+  "hol_path": "HOL/src/string/stringScript.sml",
+  "hol_name": "char_size_def",
+  "lean_path": "Flapjack/Basis/Pure/MlString/Size.lean",
+  "lean_name": "holCharSize",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL char_size_def with hol_char_size_def_typed: the reviewed HolChar carrier represents HOL char and the result is constantly zero. This is also the registered HOL TypeBase character size. Independently source-reviewed."
 }
 ]

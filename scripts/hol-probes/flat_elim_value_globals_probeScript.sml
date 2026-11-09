@@ -172,3 +172,14 @@ val _ = show_thm "find_loc_every_empty_typed=" flat_elimProofTheory.find_loc_EVE
 val _ = show_thm "sum_map_v3_size_typed=" flat_elimProofTheory.SUM_MAP_v3_size;
 val _ = show_thm "flat_value_size_def_typed=" flatSemTheory.v_size_def;
 val _ = show_thm "mlstring_size_def_typed=" mlstringTheory.mlstring_size_def;
+val _ = show_thm "hol_char_size_def_typed=" stringTheory.char_size_def;
+val _ = show_thm "ast_lit_size_def_typed=" astTheory.lit_size_def;
+val _ = show_thm "ast_op_size_def_typed=" astTheory.op_size_def;
+val _ = show_thm "flat_exp_size_def_typed=" flatLangTheory.exp_size_def;
+val _ = show_thm "flat_pat_size_def_typed=" flatLangTheory.pat_size_def;
+val _ = show_eval "ast_lit_size_negative_int=" ``ast$lit_size (ast$IntLit (~42))``;
+val _ = show_eval "ast_lit_size_char=" ``ast$lit_size (ast$Char (CHR 255))``;
+val _ = show_eval "ast_lit_size_string=" ``ast$lit_size (ast$StrLit (mlstring$implode [CHR 65; CHR 0; CHR 255]))``;
+val _ = show_eval "ast_lit_size_word8=" ``ast$lit_size (ast$Word8 (255w :word8))``;
+val _ = show_eval "ast_lit_size_word64=" ``ast$lit_size (ast$Word64 (4294967297w :word64))``;
+val _ = show_eval "ast_lit_size_float64=" ``ast$lit_size (ast$Float64 (9223372036854775808w :word64))``;

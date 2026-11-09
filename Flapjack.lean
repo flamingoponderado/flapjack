@@ -589,6 +589,7 @@ import Flapjack.Compiler.Backend.WordBignum.Proofs.GenerateTotal
 import Flapjack.Compiler.Backend.ClosLang.Syntax
 import Flapjack.AstHOL.BackendOperators
 import Flapjack.AstHOL.LitOp
+import Flapjack.AstHOL.GeneratedSize
 import Flapjack.AstHOL.Syntax
 import Flapjack.PrimTypesHOL
 import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
@@ -3860,6 +3861,7 @@ import Flapjack.Compiler.Backend.StackLang.WordPayloads.InstructionBoundary
 import Flapjack.Compiler.Backend.StackCarrier
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Basis.Pure.MlString.Length
+import Flapjack.Basis.Pure.MlString.Size
 import Flapjack.Compiler.Backend.MlStringBridge
 import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Compiler.Backend.RegAlloc
