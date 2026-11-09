@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CodeLabels/CompileExps.lean", "lean_name": "compileExps_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_exps_code_labels_typed and independent reviewer review: binder carriers, grouped premises, EVERY as bounded universal quantification, mapped unions and image of shifted source labels match. Source and target label traversals and sptDomain_def were reviewed separately."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "MEM_build_aux_imp_SND_MEM",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CodeLabels.lean", "lean_name": "mem_buildAux_imp_snd_mem",
   "statement_status": "reviewed_exact",
