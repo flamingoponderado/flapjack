@@ -113,7 +113,7 @@ theorem evaluate_allocThunk {C F : Type} (env : FlatSem.Environment FlatSem.Valu
 
 /-- Updating a related unevaluated thunk with related payloads preserves
 the stores, irrespective of the new thunk mode. -/
-theorem updateThunkOp_related {C F : Type} (source : FlatSem.State C F)
+private theorem updateThunkOp_related {C F : Type} (source : FlatSem.State C F)
     (target : ClosSem.State C F) (index : Nat) (old value : FlatSem.Value)
     (targetValue : ClosSem.Value) (mode : ThunkMode) (states : StateRel source target)
     (related : ValueRel value targetValue)

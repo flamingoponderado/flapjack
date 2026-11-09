@@ -89,6 +89,22 @@ theorem compileCorrect_sourceShape {C F α : Type} [Nonempty α] :
     refine ⟨_, _, Prod.eta _, relation.1, values, ?_⟩
     cases result <;> exact resultRel
 
+/-- Compilation of declarations simulates the complete source declaration evaluation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_decs_correct"
+  (fmap_as_finite_support := [refs, code])]
+theorem compileDecs_correct {C F α : Type} [Nonempty α] :
+    ∀ (source : FlatSem.State C F) (declarations : List FlatLang.Exp)
+      (result : Option (ErrorResult FlatSem.Value)) (sourceLast : FlatSem.State C F) (target : ClosSem.State C F),
+      FlatSem.evaluateDecs source declarations = (sourceLast, result) ∧ StateRel source target ∧
+      FlatProps.noMatDecs declarations = true ∧ result ≠ some (.abort .typeError) →
+      ∃ targetResult targetLast,
+        ClosSem.evaluate (compileDecs declarations) [] target = (targetResult, targetLast) ∧
+        StateRel sourceLast targetLast ∧
+        ∃ values : List α, SemanticPrimitivesProps.resultRel
+          (List.Forall₂ (fun (_ : α) (_ : ClosSem.Value) => True)) ValueRel
+          (match result with | none => .val values | some error => .err error) targetResult :=
+  (compileCorrect_sourceShape (C := C) (F := F) (α := α)).2
+
 /-- The two concrete declaration evaluations have related final states and results. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_decs_correct2"
   (fmap_as_finite_support := [refs, code])]

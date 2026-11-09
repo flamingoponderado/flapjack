@@ -1,8 +1,7 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalEnvironment
 import Flapjack.EvaluateHOL.ClockFull
 
-/-! Clock-bounded local expression and list simulation. These factored
-relations remain pending HOL correspondence review. -/
+/-! Clock-bounded local expression and list simulation infrastructure. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant

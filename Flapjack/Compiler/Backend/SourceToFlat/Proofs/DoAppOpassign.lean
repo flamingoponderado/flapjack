@@ -1001,7 +1001,7 @@ theorem doApp_Vsub {C F : Type} (genv : GlobalEnv)
           cases tail with
           | cons indexRel tail =>
             cases tail
-            obtain ⟨flatValues, rfl, related⟩ := (valueRel_vector_iff genv sourceValues _).mp vectorRel
+            obtain ⟨flatValues, rfl, related⟩ := ((valueRel_eqns_nonGlobal).2.2.2.1 sourceValues _ genv).mp vectorRel
             cases indexRel
             have sim := vsub_complete_related genv source flat ok sourceValues flatValues related index false
             simp only [Bool.false_eq_true, if_false, source, run] at sim
@@ -1056,7 +1056,7 @@ theorem doApp_VsubUnsafe {C F : Type} (genv : GlobalEnv)
           cases tail with
           | cons indexRel tail =>
             cases tail
-            obtain ⟨flatValues, rfl, related⟩ := (valueRel_vector_iff genv sourceValues _).mp vectorRel
+            obtain ⟨flatValues, rfl, related⟩ := ((valueRel_eqns_nonGlobal).2.2.2.1 sourceValues _ genv).mp vectorRel
             cases indexRel
             have sim := vsub_complete_related genv source flat ok sourceValues flatValues related index true
             simp only [if_true, source, run] at sim
@@ -1105,7 +1105,7 @@ theorem doApp_Vlength {C F : Type} (genv : GlobalEnv)
         cases values with
         | cons valueRel tail =>
           cases tail
-          obtain ⟨flatValues, rfl, related⟩ := (valueRel_vector_iff genv sourceValues _).mp valueRel
+          obtain ⟨flatValues, rfl, related⟩ := ((valueRel_eqns_nonGlobal).2.2.2.1 sourceValues _ genv).mp valueRel
           have lengths := List.Forall₂.length_eq related
           refine ⟨.val (.litv (.intLit sourceValues.length)), flat, stores, nonempty, ffi, rfl, rfl,
             .value (.literal genv _), ?_⟩

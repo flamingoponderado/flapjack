@@ -133,14 +133,14 @@ decreasing_by all_goals subst_vars; all_goals assumption
 /-- A simple relation preserves successful value and list equality results. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_do_eq_thm_ind"]
 theorem simpleDoEq_ind (relation : Value → Value → Prop) :
-    (∀ x1 y1 x2 y2 b, simpleValueRel relation → doEq x1 y1 = .val b →
-      relation x1 x2 → relation y1 y2 → doEq x2 y2 = .val b) ∧
-    (∀ x1 y1 x2 y2 b, simpleValueRel relation → doEqList x1 y1 = .val b →
-      List.Forall₂ relation x1 x2 → List.Forall₂ relation y1 y2 → doEqList x2 y2 = .val b) := by
+    (∀ x1 y1 x2 y2 b, simpleValueRel relation ∧ doEq x1 y1 = .val b ∧
+      relation x1 x2 ∧ relation y1 y2 → doEq x2 y2 = .val b) ∧
+    (∀ x1 y1 x2 y2 b, simpleValueRel relation ∧ doEqList x1 y1 = .val b ∧
+      List.Forall₂ relation x1 x2 ∧ List.Forall₂ relation y1 y2 → doEqList x2 y2 = .val b) := by
   constructor
-  · intro x1 y1 x2 y2 b simple run xRel yRel
+  · rintro x1 y1 x2 y2 b ⟨simple, run, xRel, yRel⟩
     exact (doEq_simple relation simple x1 y1 x2 y2 xRel yRel).symm.trans run
-  · intro x1 y1 x2 y2 b simple run xRel yRel
+  · rintro x1 y1 x2 y2 b ⟨simple, run, xRel, yRel⟩
     have equal := doEqList_congr xRel yRel (by
       intro x _ y _ x' y' xRelated yRelated
       exact doEq_simple relation simple x y x' y' xRelated yRelated)
@@ -149,8 +149,8 @@ theorem simpleDoEq_ind (relation : Value → Value → Prop) :
 /-- A simple relation preserves successful value equality results. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_do_eq_thm"]
 theorem simpleDoEq (relation : Value → Value → Prop) (x1 y1 x2 y2 : Value) (b : Bool)
-    (simple : simpleValueRel relation) (run : doEq x1 y1 = .val b)
-    (xRel : relation x1 x2) (yRel : relation y1 y2) : doEq x2 y2 = .val b :=
-  (simpleDoEq_ind relation).1 x1 y1 x2 y2 b simple run xRel yRel
+    (premises : simpleValueRel relation ∧ doEq x1 y1 = .val b ∧
+      relation x1 x2 ∧ relation y1 y2) : doEq x2 y2 = .val b :=
+  (simpleDoEq_ind relation).1 x1 y1 x2 y2 b premises
 
 end Flapjack.Compiler.Backend.FlatProps

@@ -6,58 +6,6 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
 namespace Flapjack.Compiler.Backend.FlatElim
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
-/-- Pattern matching observes the state only through the reference store.
-This is a Flapjack helper for the original state-relation theorem. -/
-theorem pmatch_refs_eq {C F : Type} (first second : FlatSem.State C F)
-    (refs : first.refs = second.refs) :
-    (∀ pattern value bindings, FlatSem.pmatch first pattern value bindings =
-      FlatSem.pmatch second pattern value bindings) ∧
-    (∀ patterns values bindings, FlatSem.pmatchList first patterns values bindings =
-      FlatSem.pmatchList second patterns values bindings) := by
-  have one : ∀ pattern : FlatLang.Pat, ∀ value bindings,
-      FlatSem.pmatch first pattern value bindings = FlatSem.pmatch second pattern value bindings := by
-    apply FlatLang.Pat.rec
-      (motive_1 := fun pattern => ∀ value bindings,
-        FlatSem.pmatch first pattern value bindings = FlatSem.pmatch second pattern value bindings)
-      (motive_2 := fun patterns => ∀ values bindings,
-        FlatSem.pmatchList first patterns values bindings = FlatSem.pmatchList second patterns values bindings)
-    case pany => intros; simp [FlatSem.pmatch]
-    case pvar => intros; simp [FlatSem.pmatch]
-    case plit => intro lit value bindings; cases value <;> simp [FlatSem.pmatch]
-    case pcon =>
-      intro stamp patterns ih value bindings
-      cases value <;> simp [FlatSem.pmatch]
-      case conv actual values =>
-        split <;> simp_all
-    case pref =>
-      intro pattern ih value bindings
-      cases value <;> simp [FlatSem.pmatch]
-      case loc flag index =>
-        simp only [refs]
-        cases storeLookup index second.refs <;> simp_all
-    case pas =>
-      intro pattern name ih value bindings
-      simpa [FlatSem.pmatch] using ih value ((name, value) :: bindings)
-    case nil => intro values bindings; cases values <;> simp [FlatSem.pmatchList]
-    case cons =>
-      intro pattern patterns ihHead ihTail values bindings
-      cases values with
-      | nil => simp [FlatSem.pmatchList]
-      | cons value values =>
-        simp only [FlatSem.pmatchList, ihHead value bindings]
-        cases FlatSem.pmatch second pattern value bindings <;> simp_all
-  refine ⟨one, ?_⟩
-  intro patterns
-  induction patterns with
-  | nil => intro values bindings; cases values <;> simp [FlatSem.pmatchList]
-  | cons pattern patterns ih =>
-    intro values bindings
-    cases values with
-    | nil => simp [FlatSem.pmatchList]
-    | cons value values =>
-      simp only [FlatSem.pmatchList, one pattern value bindings]
-      cases FlatSem.pmatch second pattern value bindings <;> simp_all
-
 /-- Related elimination states produce the same single-pattern and
 pattern-list results, with the original conjunct quantification. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "flat_state_rel_pmatch"]
@@ -68,9 +16,9 @@ theorem flatStateRel_pmatch {C F : Type} (reachable : NumSet) (removed : FlatSem
       FlatSem.pmatchList removed patterns values bindings = FlatSem.pmatchList source patterns values bindings) := by
   constructor
   · intro source pattern value bindings related
-    exact (pmatch_refs_eq removed source related.2.1.symm).1 pattern value bindings
+    exact FlatProps.pmatch_state.1 source pattern value bindings removed _ ⟨rfl, related.2.1⟩
   · intro source patterns values bindings related
-    exact (pmatch_refs_eq removed source related.2.1.symm).2 patterns values bindings
+    exact FlatProps.pmatch_state.2 source patterns values bindings removed _ ⟨rfl, related.2.1⟩
 
 /-- Selecting the first matching expression row is unchanged by elimination. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "flat_state_rel_pmatch_rows"]
@@ -85,9 +33,11 @@ theorem flatStateRel_pmatchRows {C F : Type} (reachable : NumSet)
     simp only [FlatSem.pmatchRows, (flatStateRel_pmatch reachable removed).1 source pattern value [] related, ih]
 
 /-- A member expression's global lookups occur in the list analysis. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_lookupsL_MEM"]
 theorem findLookupsList_member (body : FlatLang.Exp) (bodies : List FlatLang.Exp)
-    (member : body ∈ bodies) (key : Nat) (found : sptMem key (findLookups body)) :
-    sptMem key (findGlobalsList destGlobalVarLookup bodies) := by
+    : body ∈ bodies → ∀ key, sptMem key (findLookups body) →
+      sptMem key (findGlobalsList destGlobalVarLookup bodies) := by
+  intro member key found
   induction bodies with
   | nil => simp at member
   | cons first rest ih =>
@@ -111,20 +61,6 @@ theorem pmatchRows_findLookups {C F R : Type} (rows : List (FlatLang.Pat × Flat
   apply bounded key
   apply findLookupsList_member body _ _ key found
   exact List.mem_map.mpr ⟨(pattern, body), (FlatProps.pmatchRows_imp_pmatch rows state value bindings pattern body selected).2, rfl⟩
-
-/-- A reference value contributes its globals to the store analysis. -/
-theorem findRefsGlobals_ref_mem (refs : List (StoreValue FlatSem.Value))
-    (value : FlatSem.Value) (member : StoreValue.refv value ∈ refs) (key : Nat)
-    (found : sptMem key (findValueGlobals value)) : sptMem key (findRefsGlobals refs) := by
-  induction refs with
-  | nil => simp at member
-  | cons ref rest ih =>
-    simp only [List.mem_cons] at member
-    rcases member with equal | member
-    · subst ref
-      exact (sptMem_sptUnion _ _ _).mpr (Or.inl found)
-    · cases ref <;> simp only [findRefsGlobals, sptMem_sptUnion]
-      all_goals first | exact Or.inr (ih member) | exact ih member
 
 /-- Pattern environments use the same analysis as the original mapped list. -/
 def bindingsWithin (bindings : List (VarN × FlatSem.Value)) (reachable : NumSet) : Prop :=
@@ -190,8 +126,8 @@ theorem pmatchReachable_aux {C F : Type} (state : FlatSem.State C F) (reachable 
           case refv v =>
             apply ih v bindings result matched
             · intro key found
-              exact store key (findRefsGlobals_ref_mem state.refs v
-                (List.mem_of_getElem? (by simpa [storeLookup] using lookup)) key found)
+              exact (findRefsGlobals_mem (fun n => sptMem n reachable) state.refs .ln store).1 v
+                (List.mem_of_getElem? (by simpa [storeLookup] using lookup)) key found
             · exact env
             · exact store
     case pas =>
@@ -255,7 +191,8 @@ theorem pmatch_Match_reachable {C F : Type} :
   · intro state patterns values bindings result reachable ⟨matched, valuesClosed, bindingsClosed, refsClosed⟩
     exact (pmatchReachable_aux state reachable).2 patterns values bindings result matched valuesClosed bindingsClosed refsClosed
 
-/-- Every value in a list is free of dynamic evaluation. -/
+/-- Flapjack-specific abbreviation for every value being Eval-free; HOL uses
+the corresponding `EVERY` expression and has no separate declaration. -/
 def valuesNoEval (values : List FlatSem.Value) : Prop :=
   ∀ value ∈ values, valueHasEval value = false
 
@@ -268,7 +205,8 @@ theorem valuesNoEval_set (values : List FlatSem.Value) (index : Nat) (value : Fl
   · exact old item oldMember
   · exact new
 
-/-- Every value in a pattern environment is free of dynamic evaluation. -/
+/-- Flapjack-specific abbreviation for Eval-free bindings; HOL uses an `EVERY`
+expression over the mapped values and has no separate declaration. -/
 def bindingsNoEval (bindings : List (VarN × FlatSem.Value)) : Prop :=
   ∀ binding ∈ bindings, valueHasEval binding.2 = false
 
@@ -335,7 +273,7 @@ theorem pmatchNoEval_aux {C F : Type} (state : FlatSem.State C F) :
           cases ref <;> simp [lookup] at matched
           case refv v =>
             apply ih v bindings result matched
-            · exact store _ (List.mem_of_getElem? (by simpa [storeLookup] using lookup))
+            · exact store _ (List.mem_of_getElem? (by simpa [storeLookup] using lookup)) v (by simp [FlatProps.storeValueValues])
             · exact store
             · exact env
     case pas =>

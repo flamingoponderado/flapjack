@@ -12,10 +12,6 @@ def ResourceLe {C F : Type} (before after : State C F) : Prop :=
   BackendProps.optionLe before.stackMax after.stackMax ∧
   (after.safeForSpace = true → before.safeForSpace = true)
 
-/-- Resource observations are reflexive. -/
-theorem ResourceLe.refl {C F : Type} (state : State C F) : ResourceLe state state := by
-  simp [ResourceLe, BackendProps.optionLe_refl]
-
 /-- Resource observations compose through multiple state transitions. -/
 theorem ResourceLe.trans {C F : Type} {first middle last : State C F}
     (a : ResourceLe first middle) (b : ResourceLe middle last) : ResourceLe first last :=
@@ -43,13 +39,23 @@ theorem callEnv_resourceLe {C F : Type} (args : List Value) (size : Option Nat) 
   · simp
     tauto
 
-/-- Popping a saved frame preserves all three resource observations. -/
-theorem popEnv_resourceLe {C F : Type} (state next : State C F) (run : popEnv state = some next) :
-    ResourceLe state next := by
+/-- A successful frame pop preserves the FFI state, clock and stack maximum. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "pop_env_const"]
+theorem popEnv_const {C F : Type} (state next : State C F) (run : popEnv state = some next) :
+    next.ffi = state.ffi ∧ next.clock = state.clock ∧ next.stackMax = state.stackMax := by
   cases stack : state.stack with
   | nil => simp [popEnv, stack] at run
   | cons frame rest =>
-    cases frame <;> simp [popEnv, stack] at run <;> subst next <;> exact ResourceLe.refl _
+    cases frame <;> simp [popEnv, stack] at run <;> subst next <;> exact ⟨rfl, rfl, rfl⟩
+
+/-- A successful frame pop preserves the safety flag. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "pop_env_safe_for_space"]
+theorem popEnv_safeForSpace {C F : Type} (state next : State C F) (run : popEnv state = some next) :
+    next.safeForSpace = state.safeForSpace := by
+  cases stack : state.stack with
+  | nil => simp [popEnv, stack] at run
+  | cons frame rest =>
+    cases frame <;> simp [popEnv, stack] at run <;> subst next <;> rfl
 
 /-- A tail call inherits resource monotonicity from its strictly lower-clock
 callee, including bad lookups and timeout. This is one case of the pending
@@ -176,7 +182,10 @@ theorem resourceMono_returningForce {C F : Type} (dest : Nat) (names : NumSet) (
                         cases popped : popEnv after with
                         | none => simpa [ResourceMono, ResourceLe, evaluate, read, th, found, cut, zero, bodyRun, popped] using facts
                         | some final =>
-                          have finalFacts := facts.trans (popEnv_resourceLe after final popped)
+                          have ⟨popFfi, _, popMax⟩ := popEnv_const after final popped
+                          have popSafe := popEnv_safeForSpace after final popped
+                          have finalFacts := facts.trans (show ResourceLe after final from by
+                            simp [ResourceLe, popFfi, popMax, popSafe, BackendProps.optionLe_refl])
                           simpa [ResourceMono, ResourceLe, evaluate, read, th, found, cut, zero, bodyRun, popped, setVar] using finalFacts
 
 /-- All force forms inherit resource monotonicity from lower-clock callees. -/
@@ -238,7 +247,10 @@ theorem resourceMono_returningCall_noHandler {C F : Type} (returns : List Nat) (
                   · cases popped : popEnv after with
                     | none => simpa [ResourceMono, ResourceLe, evaluate, read, found, distinct, cut, zero, bodyRun, length, popped] using facts
                     | some final =>
-                      have finalFacts := facts.trans (popEnv_resourceLe after final popped)
+                      have ⟨popFfi, _, popMax⟩ := popEnv_const after final popped
+                      have popSafe := popEnv_safeForSpace after final popped
+                      have finalFacts := facts.trans (show ResourceLe after final from by
+                        simp [ResourceLe, popFfi, popMax, popSafe, BackendProps.optionLe_refl])
                       simpa [ResourceMono, ResourceLe, evaluate, read, found, distinct, cut, zero, bodyRun, length, popped, setVars] using finalFacts
                   · simpa [ResourceMono, ResourceLe, evaluate, read, found, distinct, cut, zero, bodyRun, length] using facts
       · simp [ResourceMono, evaluate, read, found, distinct, BackendProps.optionLe_refl]
@@ -305,7 +317,10 @@ theorem resourceMono_returningCall_handler {C F : Type} (returns : List Nat) (li
                   · cases popped : popEnv after with
                     | none => simpa [ResourceMono, ResourceLe, evaluate, read, found, distinct, cut, zero, bodyRun, length, popped] using facts
                     | some final =>
-                      have finalFacts := facts.trans (popEnv_resourceLe after final popped)
+                      have ⟨popFfi, _, popMax⟩ := popEnv_const after final popped
+                      have popSafe := popEnv_safeForSpace after final popped
+                      have finalFacts := facts.trans (show ResourceLe after final from by
+                        simp [ResourceLe, popFfi, popMax, popSafe, BackendProps.optionLe_refl])
                       simpa [ResourceMono, ResourceLe, evaluate, read, found, distinct, cut, zero, bodyRun, length, popped, setVars] using finalFacts
                   · simpa [ResourceMono, ResourceLe, evaluate, read, found, distinct, cut, zero, bodyRun, length] using facts
       · simp [ResourceMono, evaluate, read, found, distinct, BackendProps.optionLe_refl]
@@ -380,73 +395,53 @@ theorem evaluate_resourceMono {C F : Type} (program : DataLang.Prog) (state : St
     intro body next bound
     exact smaller body next (by omega)
 
-/-- Flapjack projection of the combined resource proof onto event prefixes.
-The direct-result formulation is infrastructure, and the full cross-language
-evaluator correspondence is still under review. -/
-theorem evaluate_resourceEvents {C F : Type} (program : DataLang.Prog) (state : State C F) :
-    state.ffi.ioEvents <+: (evaluate program state).2.ffi.ioEvents :=
-  (evaluate_resourceMono program state).1
-
-/-- Flapjack projection onto the source stack bound. The direct-result
-formulation is infrastructure pending evaluator correspondence review. -/
-theorem evaluate_resourceStack {C F : Type} (program : DataLang.Prog) (state : State C F) :
-    BackendProps.optionLe state.stackMax (evaluate program state).2.stackMax :=
-  (evaluate_resourceMono program state).2.1
-
-/-- Flapjack projection onto the source safety flag. The direct-result
-formulation is infrastructure pending evaluator correspondence review. -/
-theorem evaluate_resourceSafety {C F : Type} (program : DataLang.Prog) (state : State C F) :
-    (evaluate program state).2.safeForSpace = true → state.safeForSpace = true :=
-  (evaluate_resourceMono program state).2.2
-
-/-- Successful primitive applications preserve the event prefix. This has the
-source theorem's premise and conclusion, but remains untagged until the whole
-primitive evaluator and its dependencies have been reviewed against HOL. -/
+/-- Successful primitive applications preserve the event prefix. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_io_events_mono"]
 theorem doApp_events_of_result {C F : Type} (op : ClosLang.Op) (args : List Value)
     (state : State C F) (value : Value) (next : State C F)
     (run : doApp op args state = .val (value, next)) :
     state.ffi.ioEvents <+: next.ffi.ioEvents :=
   (doApp_resource_frame op args state next value run).1
 
-/-- Successful primitive applications cannot increase space safety. This is
-untagged pending the primitive evaluator's full correspondence review. -/
+/-- Successful primitive applications cannot increase space safety. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_safe_for_space_mono"]
 theorem doApp_safety_of_result {C F : Type} (op : ClosLang.Op) (args : List Value)
     (state : State C F) (value : Value) (next : State C F)
     (premises : doApp op args state = .val (value, next) ∧ next.safeForSpace = true) :
     state.safeForSpace = true :=
   (doApp_resource_frame op args state next value premises.1).2.2 premises.2
 
-/-- Successful primitive applications do not decrease the stack maximum.
-This is untagged pending the primitive evaluator's full correspondence review. -/
+/-- Successful primitive applications do not decrease the stack maximum. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_stack_max"]
 theorem doApp_stack_of_result {C F : Type} (op : ClosLang.Op) (args : List Value)
     (state : State C F) (value : Value) (next : State C F)
     (run : doApp op args state = .val (value, next)) :
     BackendProps.optionLe state.stackMax next.stackMax :=
   (doApp_resource_frame op args state next value run).2.1
 
-/-- Evaluation preserves the event prefix for an explicit evaluation result.
-The source evaluator and its dependencies still require correspondence review. -/
+/-- Evaluation preserves the event prefix for an explicit evaluation result. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_io_events_mono"]
 theorem evaluate_events_of_result {C F : Type} (program : DataLang.Prog)
     (state : State C F) (result : Option (Result (List Value) Value)) (next : State C F)
     (run : evaluate program state = (result, next)) :
     state.ffi.ioEvents <+: next.ffi.ioEvents := by
-  simpa only [run] using evaluate_resourceEvents program state
+  simpa only [run] using (evaluate_resourceMono program state).1
 
-/-- Evaluation cannot increase space safety. This source-shaped statement is
-untagged pending the full evaluator correspondence review. -/
+/-- Evaluation cannot increase space safety. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_safe_for_space_mono"]
 theorem evaluate_safety_of_result {C F : Type} (program : DataLang.Prog)
     (state : State C F) (result : Option (Result (List Value) Value)) (next : State C F)
     (premises : evaluate program state = (result, next) ∧ next.safeForSpace = true) :
     state.safeForSpace = true := by
-  apply evaluate_resourceSafety program state
+  apply (evaluate_resourceMono program state).2.2
   simpa only [premises.1] using premises.2
 
-/-- Evaluation does not decrease the recorded stack maximum. This source-shaped
-statement is untagged pending the full evaluator correspondence review. -/
+/-- Evaluation does not decrease the recorded stack maximum. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_option_le_stack_max"]
 theorem evaluate_stack_of_result {C F : Type} (program : DataLang.Prog)
     (state : State C F) (result : Option (Result (List Value) Value)) (next : State C F)
     (run : evaluate program state = (result, next)) :
     BackendProps.optionLe state.stackMax next.stackMax := by
-  simpa only [run] using evaluate_resourceStack program state
+  simpa only [run] using (evaluate_resourceMono program state).2.1
 
 end Flapjack.Compiler.Backend.DataSem

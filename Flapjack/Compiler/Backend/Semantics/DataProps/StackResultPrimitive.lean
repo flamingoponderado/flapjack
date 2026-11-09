@@ -64,7 +64,9 @@ theorem evaluate_assign_stackResult {C F : Type} (dest : Nat) (op : ClosLang.Op)
           | raise value => exact False.elim (doApp_ne_raise op args prepared value app)
         | val pair =>
           obtain ⟨value, applied⟩ := pair
-          have control := doApp_stack_handler op args prepared applied value app
+          have frame := doApp_controlFrame op args prepared applied value app
+          have control : applied.stack = prepared.stack ∧ applied.handler = prepared.handler :=
+            ⟨frame.2.1, frame.2.2.1⟩
           have cutControl := cutStateOpt_control live state prepared cut
           simp [evaluate, invalid, read, cut, app] at run
           obtain ⟨rfl, rfl⟩ := run

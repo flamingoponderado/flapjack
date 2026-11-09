@@ -24,13 +24,13 @@ def bignumSize (arch64 : Bool) (value : Int) : Nat :=
 
 /-- Discard an intermediate reference tree if it has grown. -/
 @[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "check_res_def"]
-def checkRes {α β : Type} (original : Spt α) (result : Nat × Spt α × β) : Nat × Spt α × β :=
+def checkRes {α β γ : Type} (original : Spt β) (result : α × Spt β × γ) : α × Spt β × γ :=
   if sptSize result.2.1 ≤ sptSize original then result else (result.1, original, result.2.2)
 
 /-- The reference component of the checked result cannot grow. -/
 @[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "check_res_IMP"]
-theorem checkRes_size {α β : Type} (original : Spt α) (n : Nat) (refs : Spt α) (seen : β)
-    (result : Nat × Spt α × β) (h : (n, refs, seen) = checkRes original result) :
+theorem checkRes_size {α β γ : Type} (n : α) (refs : Spt β) (seen : γ) (original : Spt β)
+    (result : α × Spt β × γ) (h : (n, refs, seen) = checkRes original result) :
     sptSize refs ≤ sptSize original := by
   rcases result with ⟨m, tree, other⟩
   by_cases size : sptSize tree ≤ sptSize original

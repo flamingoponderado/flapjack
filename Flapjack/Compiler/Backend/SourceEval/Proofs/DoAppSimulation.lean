@@ -36,7 +36,7 @@ theorem destRelated (oracle : EvalOracleState) (s t : Store Value) (v w : Value)
       have targetFound := storeValueRel_lookup_none stores index found
       simp [destThunk, found, targetFound, destRel]
     | some source =>
-      obtain ⟨target, targetFound, related⟩ := storeValueRel_lookup stores index source found
+      obtain ⟨target, related, targetFound⟩ := storeLookup_simulation _ _ _ index source ⟨stores, found⟩
       cases source <;> cases target <;> simp_all [destThunk, destRel, storeValueRel]
       case thunk.thunk mode x mode' y =>
         obtain ⟨rfl, related⟩ := related
@@ -284,7 +284,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
           | some entry =>
             cases entry with
             | refv value =>
-              obtain ⟨entry', found', related⟩ := storeValueRel_lookup stores index (.refv value) found
+              obtain ⟨entry', related, found'⟩ := storeLookup_simulation _ _ _ index (.refv value) ⟨stores, found⟩
               cases entry' with
               | refv value' =>
                 have valueRel : ValueRel oracle value value' := related
@@ -370,7 +370,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                 | some entry =>
                   cases entry with
                   | w8array items =>
-                    obtain ⟨entry', found', related⟩ := storeValueRel_lookup stores address (.w8array items) found
+                    obtain ⟨entry', related, found'⟩ := storeLookup_simulation _ _ _ address (.w8array items) ⟨stores, found⟩
                     cases entry' with
                     | w8array items' =>
                       have itemsEq : items = items' := related
@@ -461,7 +461,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                       | some entry =>
                         cases entry with
                         | w8array items =>
-                          obtain ⟨entry', found', related⟩ := storeValueRel_lookup stores address (.w8array items) found
+                          obtain ⟨entry', related, found'⟩ := storeLookup_simulation _ _ _ address (.w8array items) ⟨stores, found⟩
                           cases entry' with
                           | w8array items' =>
                             have itemsEq : items = items' := related
@@ -1420,7 +1420,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                 | some entry =>
                   cases entry with
                   | w8array items =>
-                    obtain ⟨entry', found', related⟩ := storeValueRel_lookup stores address (.w8array items) found
+                    obtain ⟨entry', related, found'⟩ := storeLookup_simulation _ _ _ address (.w8array items) ⟨stores, found⟩
                     cases entry' with
                     | w8array items' =>
                       have itemsEq : items = items' := related
@@ -1475,7 +1475,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                       | some entry =>
                         cases entry with
                         | w8array items =>
-                          obtain ⟨entry', found', related⟩ := storeValueRel_lookup stores address (.w8array items) found
+                          obtain ⟨entry', related, found'⟩ := storeLookup_simulation _ _ _ address (.w8array items) ⟨stores, found⟩
                           cases entry' with
                           | w8array items' =>
                             have itemsEq : items = items' := related

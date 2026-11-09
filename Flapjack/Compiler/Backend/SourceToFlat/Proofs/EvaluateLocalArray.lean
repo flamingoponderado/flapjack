@@ -1,8 +1,0 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalEnvironment
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalMatch
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalCall
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedControl
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedMatch
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedPrimitive
-
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveArray

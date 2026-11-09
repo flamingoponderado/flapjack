@@ -370,7 +370,9 @@ private def headerConfig : Config := { conf with lenSize := 4 }
     (.assign 3 (.blockOp (.equalConst (.con 4 [1]))) [1] none) with
   | some (.skip, 2) => true
   | _ => false
-#guard (compileControl? (width := 8) conf 5 2 (.assign 3 (.blockOp (.equalConst (.int 32))) [1] none)).isNone
+#guard match compileControl? (width := 8) conf 5 2 (.assign 3 (.blockOp (.equalConst (.int 32))) [1] none) with
+  | some (.assign 8 (.const 2), 2) => true
+  | _ => false
 -- Installation checks and call captured from the original data-to-word pass.
 private def matchesInstallFailure {width : Nat} [NeZero width] (p : Flapjack.WordLangProgHOL (BitVec width)) : Bool :=
   match p with

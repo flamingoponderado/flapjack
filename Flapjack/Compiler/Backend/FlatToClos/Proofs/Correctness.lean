@@ -55,7 +55,7 @@ theorem evaluate_singleton_simulation {C F : Type}
       have original : body ∈ args := by simpa using member
       have bodySafe : FlatProps.noMat body = true :=
         noMat_member args body (by simpa [FlatProps.noMat] using safe) original
-      have bodyWeight := expWeight_lt_expsWeight args body original
+      have bodyWeight := FlatSem.expWeight_lt_expsWeight args body original
       apply exprIH body env names values next nextTarget bound ?_ nextStates environments bodySafe
         bodyNot
       simp only [FlatSem.expWeight] at ⊢

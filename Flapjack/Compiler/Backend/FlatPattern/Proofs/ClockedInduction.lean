@@ -1,6 +1,7 @@
 import Flapjack.SemanticPrimitivesProps.ResultRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedApplication
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedDeclaration
+import Flapjack.Compiler.Backend.Semantics.FlatSem.MeasureMembers
 
 /-! Induction on the flat evaluator clock and expression weight. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
@@ -13,34 +14,6 @@ theorem expressionSimulationUpTo_mono {C F : Type} (cfg stateCfg : Config) (larg
     (bound : small ≤ large) : ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg small expression := by
   intro sourceEnv targetEnv source target sourceFinal result n sourceBound run envs states nameBound safe
   exact sim sourceEnv targetEnv source target sourceFinal result n (by omega) run envs states nameBound safe
-
-/-- Each list member has less weight than its containing expression list. -/
-theorem expressionWeight_member (expression : FlatLang.Exp) (expressions : List FlatLang.Exp)
-    (member : expression ∈ expressions) : FlatSem.expWeight expression < FlatSem.expsWeight expressions := by
-  induction expressions with
-  | nil => simp at member
-  | cons head tail ih =>
-    simp only [List.mem_cons] at member
-    rcases member with rfl | member
-    · simp only [FlatSem.expsWeight]; omega
-    · have bound := ih member
-      simp only [FlatSem.expsWeight]
-      omega
-
-/-- Each pattern-row body has less weight than its containing row list. -/
-theorem rowWeight_member (pattern : FlatLang.Pat) (body : FlatLang.Exp)
-    (rows : List (FlatLang.Pat × FlatLang.Exp)) (member : (pattern, body) ∈ rows) :
-    FlatSem.expWeight body < FlatSem.rowsWeight rows := by
-  induction rows with
-  | nil => simp at member
-  | cons row tail ih =>
-    obtain ⟨p, e⟩ := row
-    simp only [List.mem_cons, Prod.mk.injEq] at member
-    rcases member with ⟨rfl, rfl⟩ | member
-    · simp only [FlatSem.rowsWeight]; omega
-    · have bound := ih member
-      simp only [FlatSem.rowsWeight]
-      omega
 
 /-- The proof-side flat pattern compiler simulates expression evaluation at
 every clock. Its evaluator and relations still require HOL correspondence
@@ -81,24 +54,24 @@ theorem expressionSimulationUpTo_all {C F : Type} (clock : Nat) :
         | con trace tag args =>
           apply compile_con_simulation_upTo cfg stateCfg clock trace tag args
           intro expression member
-          have h := expressionWeight_member expression args member
+          have h := FlatSem.expWeight_lt_expsWeight args expression member
           apply weightIH (FlatSem.expWeight expression) (by simp [FlatSem.expWeight] at weightEq; omega) cfg stateCfg expression rfl
         | mat trace scrutinee rows =>
           apply compile_mat_simulation_upTo cfg stateCfg clock trace scrutinee rows
           · apply weightIH (FlatSem.expWeight scrutinee) (by simp [FlatSem.expWeight] at weightEq; omega) cfg stateCfg scrutinee rfl
           · intro pattern body member
-            have h := rowWeight_member pattern body rows member
+            have h := FlatSem.rowsWeight_member rows pattern body member
             apply weightIH (FlatSem.expWeight body) (by simp [FlatSem.expWeight] at weightEq; omega) cfg stateCfg body rfl
         | handle trace protectedExpr rows =>
           apply compile_handle_simulation_upTo cfg stateCfg clock trace protectedExpr rows
           · apply weightIH (FlatSem.expWeight protectedExpr) (by simp [FlatSem.expWeight] at weightEq; omega) cfg stateCfg protectedExpr rfl
           · intro pattern body member
-            have h := rowWeight_member pattern body rows member
+            have h := FlatSem.rowsWeight_member rows pattern body member
             apply weightIH (FlatSem.expWeight body) (by simp [FlatSem.expWeight] at weightEq; omega) cfg stateCfg body rfl
         | app trace op args =>
           have argsIH : ∀ expression ∈ args, ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock expression := by
             intro expression member
-            have h := expressionWeight_member expression args member
+            have h := FlatSem.expWeight_lt_expsWeight args expression member
             apply weightIH (FlatSem.expWeight expression) ?_ cfg stateCfg expression rfl
             simp only [FlatSem.expWeight] at weightEq
             omega

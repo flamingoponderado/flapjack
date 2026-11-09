@@ -44,7 +44,7 @@ private theorem related_literals (genv : GlobalEnv) (lits : List Lit) (flat : Li
   | cons lit lits ih =>
     cases related with
     | cons head tail =>
-      have same := (valueRel_literal_iff genv lit _).mp head
+      have same := ((valueRel_eqns_nonGlobal).1 _ lit genv).mp head
       simp [same, ih _ tail]
 
 private theorem word8_recover (value : Value) (byte : BitVec 8)

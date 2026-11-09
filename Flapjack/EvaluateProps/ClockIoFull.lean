@@ -7,7 +7,7 @@ open Flapjack.EvaluateHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL F
 
 mutual
 /-- Flapjack induction infrastructure for the expression invariant. -/
-theorem clockIoEvaluateFull {σ : Type} (st : State σ) (env : SemEnv Value) (es : List AstHOL.Exp) :
+private theorem clockIoEvaluateFull {σ : Type} (st : State σ) (env : SemEnv Value) (es : List AstHOL.Exp) :
     isClockIoMono (fun state => evaluate state env es) st := by
   cases es with
   | nil => exact clockIoEvaluate_nil st env
@@ -86,7 +86,7 @@ decreasing_by
   all_goals try omega
 
 /-- Flapjack induction infrastructure for the pattern-match invariant. -/
-theorem clockIoMatchFull {σ : Type} (st : State σ) (env : SemEnv Value)
+private theorem clockIoMatchFull {σ : Type} (st : State σ) (env : SemEnv Value)
     (value : Value) (clauses : List (Pat × AstHOL.Exp)) (errorValue : Value) :
     isClockIoMono (fun state => evaluateMatch state env value clauses errorValue) st := by
   cases clauses with
@@ -109,7 +109,7 @@ decreasing_by
   all_goals try omega
 
 /-- Flapjack induction infrastructure for the declaration invariant. -/
-theorem clockIoDecsFull {σ : Type} (st : State σ) (env : SemEnv Value) (ds : List Dec) :
+private theorem clockIoDecsFull {σ : Type} (st : State σ) (env : SemEnv Value) (ds : List Dec) :
     isClockIoMono (fun state => evaluateDecs state env ds) st := by
   cases ds with
   | nil => exact clockIoDecs_nil st env

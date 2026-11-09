@@ -59,9 +59,9 @@ theorem patternSimulation {C F : Type} (genv : GlobalEnv) (compMap compMap2 : En
         cases stamp with
         | some actual => simp [SemanticPrimitivesHOL.pmatch, MatchResultRel]
         | none =>
-          obtain ⟨flats, ctor, related, rfl, hctor⟩ :=
-            (valueRel_conv_iff genv none sources flat).mp valueRel
-          subst ctor
+          have shape := ((valueRel_eqns_nonGlobal).2.1 sources flat genv none).mp valueRel
+          simp only [reduceCtorEq, false_and, exists_false, false_or, true_and] at shape
+          obtain ⟨flats, rfl, related⟩ := shape
           exact pmatch_tuple_related genv compMap sourceEnv.c sourceState.refs flatState suffix bound flatEnv
             patterns sources flats related (ih sources flats bound flatEnv envRel related)
       | _ => simp [SemanticPrimitivesHOL.pmatch, MatchResultRel]
@@ -69,7 +69,7 @@ theorem patternSimulation {C F : Type} (genv : GlobalEnv) (compMap compMap2 : En
     intro pattern ih source flat bound flatEnv envRel valueRel
     cases source with
     | loc flag n =>
-      have hflat := (valueRel_location_iff genv flag n flat).mp valueRel
+      have hflat := ((valueRel_eqns_nonGlobal).2.2.1 flat n genv flag).mp valueRel
       subst flat
       apply pmatch_reference_related genv compMap sourceEnv.c sourceState flatState suffix bound flatEnv pattern flag n stateRel
       intro source flat valueRel

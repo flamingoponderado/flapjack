@@ -14,21 +14,6 @@ theorem doApp_opapp_source {C F : Type} (s : State C F) (vs : List Value) :
 theorem doApp_eval_source {C F : Type} (s : State C F) (vs : List Value) :
     doApp s (.src .eval) vs = none := by rfl
 
-/-- Dereference is not an operation of the flat primitive dispatcher. -/
-@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_def"]
-theorem doApp_opderef_source {C F : Type} (s : State C F) (vs : List Value) :
-    doApp s (.src .opderef) vs = none := by rfl
-
-/-- Empty array allocation has no flat primitive application case. -/
-@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_def"]
-theorem doApp_aallocEmpty_source {C F : Type} (s : State C F) (vs : List Value) :
-    doApp s (.src .aallocEmpty) vs = none := by rfl
-
-/-- Source environment identifiers have no flat primitive application case. -/
-@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_def"]
-theorem doApp_envId_source {C F : Type} (s : State C F) (vs : List Value) :
-    doApp s (.src .envId) vs = none := by rfl
-
 /-- Global allocation accepts no arguments and appends empty slots. -/
 @[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_def"]
 theorem doApp_globalAlloc_source {C F : Type} (s : State C F) (n : Nat) (vs : List Value) :

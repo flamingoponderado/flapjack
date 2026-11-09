@@ -2,8 +2,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundConstructor
 import Flapjack.NamespaceProps
 import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
 
-/-! Growing expression simulation for arbitrary related local environments.
-These factored relations remain pending HOL correspondence review. -/
+/-! Growing expression simulation infrastructure for related local environments. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant

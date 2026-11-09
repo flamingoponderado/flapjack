@@ -39,6 +39,16 @@ theorem blocksUnique_number (ws stack : List Value) (refs : Spt (BvlSem.Ref Valu
     ⟨liftBlock tag1 xs1 (allValues_numberBlock i refs stack stamp tag1 xs1 first), nonempty1,
       liftBlock tag2 xs2 (allValues_numberBlock i refs stack stamp tag2 xs2 second), nonempty2⟩
 
+/-- A Word64 adds no block, so replacing any stack prefix by it preserves uniqueness. -/
+@[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "blocks_unique_Word64"]
+theorem blocksUnique_word64 (ws stack : List Value) (refs : Spt (BvlSem.Ref Value))
+    (next : Nat) (word : BitVec 64) :
+    blocksUnique next (allValues refs (ws ++ stack)) →
+    blocksUnique next (allValues refs (.word64 word :: stack)) := by
+  intro unique
+  simpa [blocksUnique, allValues, valueListValues] using
+    blocksUnique_number ws stack refs next 0 unique
+
 /-- A small integer can be added to an abstract stack without allocating a heap cell. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "abs_ml_inv_Num"
   (words_as_type_indexed_bitvec)]

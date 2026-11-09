@@ -52,7 +52,7 @@ theorem intDivMod_body_related {C F : Type} (source : FlatSem.State C F) (target
   rcases supported with rfl | rfl <;> by_cases zero : right = 0
   all_goals have flipped : (0 = right) ↔ right = 0 := eq_comm
   all_goals simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-    FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore,
+    FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore,
     ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock, ClosSem.applyNumeric, ClosSem.doIntApp,
     ClosSem.doEq, ClosSem.boolValue, ClosSem.asBool, BackendCommon.trueTag, BackendCommon.falseTag, zero, flipped, states]
   all_goals first | exact .raise (.con .nil) | exact .value (.cons (.int _) .nil)
@@ -62,14 +62,14 @@ theorem intAdd_wrong_arity {C F : Type} (state : FlatSem.State C F)
     (args : List FlatSem.Value) (wrong : args.length ≠ 2) :
     (FlatSem.applyResult state (.src (.arith .add .intT)) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
   | cons first rest =>
     cases rest with
-    | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
     | cons second rest =>
       cases rest with
       | nil => simp at wrong
-      | cons third rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+      | cons third rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- Integer addition simulates the source expression for arbitrary
 argument lists whenever the source does not report a type error. -/
@@ -129,7 +129,7 @@ theorem evaluate_intAdd {C F : Type} (env : FlatSem.Environment FlatSem.Value)
             | nil =>
               simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at resultShape
               cases pointerRel <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-                FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore] at resultShape
+                FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore] at resultShape
               case con rel =>
                 rename_i sourceFields targetFields tag typeId
                 cases sourceFields <;> cases typeId <;> simp_all [SemanticPrimitivesHOL.boolValue]
@@ -142,7 +142,7 @@ theorem evaluate_intAdd {C F : Type} (env : FlatSem.Environment FlatSem.Value)
                   split_ifs at resultShape <;> simp_all
                 case int _ =>
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-                    FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp,
+                    FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp_arith_core,
                     SemanticPrimitivesHOL.doAppNumericCore, ClosSem.doApp, ClosSem.applyNumeric,
                     ClosSem.doIntApp, states, EvalResultRel.value (.cons (ValueRel.int _) .nil)]
 
@@ -152,14 +152,14 @@ theorem intSub_wrong_arity {C F : Type} (state : FlatSem.State C F)
     (args : List FlatSem.Value) (wrong : args.length ≠ 2) :
     (FlatSem.applyResult state (.src (.arith .sub .intT)) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
   | cons first rest =>
     cases rest with
-    | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
     | cons second rest =>
       cases rest with
       | nil => simp at wrong
-      | cons third rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+      | cons third rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- Integer subtraction simulates the source expression for arbitrary
 argument lists whenever the source does not report a type error. -/
@@ -219,7 +219,7 @@ theorem evaluate_intSub {C F : Type} (env : FlatSem.Environment FlatSem.Value)
             | nil =>
               simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at resultShape
               cases pointerRel <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-                FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore] at resultShape
+                FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore] at resultShape
               case con rel =>
                 rename_i sourceFields targetFields tag typeId
                 cases sourceFields <;> cases typeId <;> simp_all [SemanticPrimitivesHOL.boolValue]
@@ -232,7 +232,7 @@ theorem evaluate_intSub {C F : Type} (env : FlatSem.Environment FlatSem.Value)
                   split_ifs at resultShape <;> simp_all
                 case int _ =>
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-                    FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp,
+                    FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp_arith_core,
                     SemanticPrimitivesHOL.doAppNumericCore, ClosSem.doApp, ClosSem.applyNumeric,
                     ClosSem.doIntApp, states, EvalResultRel.value (.cons (ValueRel.int _) .nil)]
 
@@ -242,14 +242,14 @@ theorem intMul_wrong_arity {C F : Type} (state : FlatSem.State C F)
     (args : List FlatSem.Value) (wrong : args.length ≠ 2) :
     (FlatSem.applyResult state (.src (.arith .mul .intT)) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
   | cons first rest =>
     cases rest with
-    | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
     | cons second rest =>
       cases rest with
       | nil => simp at wrong
-      | cons third rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+      | cons third rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- Integer multiplication simulates the source expression for arbitrary
 argument lists whenever the source does not report a type error. -/
@@ -309,7 +309,7 @@ theorem evaluate_intMul {C F : Type} (env : FlatSem.Environment FlatSem.Value)
             | nil =>
               simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at resultShape
               cases pointerRel <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-                FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore] at resultShape
+                FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore] at resultShape
               case con rel =>
                 rename_i sourceFields targetFields tag typeId
                 cases sourceFields <;> cases typeId <;> simp_all [SemanticPrimitivesHOL.boolValue]
@@ -322,7 +322,7 @@ theorem evaluate_intMul {C F : Type} (env : FlatSem.Environment FlatSem.Value)
                   split_ifs at resultShape <;> simp_all
                 case int _ =>
                   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-                    FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp,
+                    FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp_arith_core,
                     SemanticPrimitivesHOL.doAppNumericCore, ClosSem.doApp, ClosSem.applyNumeric,
                     ClosSem.doIntApp, states, EvalResultRel.value (.cons (ValueRel.int _) .nil)]
 
@@ -332,14 +332,14 @@ theorem intDiv_wrong_arity {C F : Type} (state : FlatSem.State C F)
     (args : List FlatSem.Value) (wrong : args.length ≠ 2) :
     (FlatSem.applyResult state (.src (.arith .div .intT)) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
   | cons first rest =>
     cases rest with
-    | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
     | cons second rest =>
       cases rest with
       | nil => simp at wrong
-      | cons third rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+      | cons third rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- Integer division simulates the source expression for arbitrary
 argument lists whenever the source does not report a type error. -/
@@ -399,7 +399,7 @@ theorem evaluate_intDiv {C F : Type} (env : FlatSem.Environment FlatSem.Value)
             | nil =>
               simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at resultShape
               cases pointerRel <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-                FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore] at resultShape
+                FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore] at resultShape
               case con rel =>
                 rename_i sourceFields targetFields tag typeId
                 cases sourceFields <;> cases typeId <;> simp_all [SemanticPrimitivesHOL.boolValue]
@@ -419,14 +419,14 @@ theorem intMod_wrong_arity {C F : Type} (state : FlatSem.State C F)
     (args : List FlatSem.Value) (wrong : args.length ≠ 2) :
     (FlatSem.applyResult state (.src (.arith .mod .intT)) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
   | cons first rest =>
     cases rest with
-    | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
     | cons second rest =>
       cases rest with
       | nil => simp at wrong
-      | cons third rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+      | cons third rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- Integer remainder simulates the source expression for arbitrary
 argument lists whenever the source does not report a type error. -/
@@ -486,7 +486,7 @@ theorem evaluate_intMod {C F : Type} (env : FlatSem.Environment FlatSem.Value)
             | nil =>
               simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at resultShape
               cases pointerRel <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-                FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore] at resultShape
+                FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore] at resultShape
               case con rel =>
                 rename_i sourceFields targetFields tag typeId
                 cases sourceFields <;> cases typeId <;> simp_all [SemanticPrimitivesHOL.boolValue]

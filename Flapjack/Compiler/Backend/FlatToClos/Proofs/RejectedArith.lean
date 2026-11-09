@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.BooleanExpressions
+import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyArithmeticSource
 
 /-! Unsupported arithmetic cases in flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -32,7 +33,7 @@ theorem intArith_rejects {C F : Type} (state : FlatSem.State C F) (action : Arit
     (FlatSem.applyResult state (.src (.arith action .intT)) args).2 = .err (.abort .typeError) := by
   have core := intNumericCore_rejects ([], state.ffi) action invalid (args.map FlatSem.flatToValue)
   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-    SemanticPrimitivesHOL.doApp, core]
+    SemanticPrimitivesHOL.doApp_arith_core, core]
 
 /-- Unsupported integer arithmetic preserves errors raised by its arguments. -/
 theorem evaluate_rejectedIntArith {C F : Type} (env : FlatSem.Environment FlatSem.Value)
@@ -82,7 +83,7 @@ theorem wordArith_rejects {C F : Type} (state : FlatSem.State C F) (action : Ari
     (FlatSem.applyResult state (.src (.arith action (.wordT width))) args).2 = .err (.abort .typeError) := by
   have core := wordNumericCore_rejects ([], state.ffi) action invalid width (args.map FlatSem.flatToValue)
   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-    SemanticPrimitivesHOL.doApp, core]
+    SemanticPrimitivesHOL.doApp_arith_core, core]
 
 /-- Unsupported word arithmetic preserves errors raised by its arguments. -/
 theorem evaluate_rejectedWordArith {C F : Type} (env : FlatSem.Environment FlatSem.Value)
@@ -110,8 +111,7 @@ theorem floatArith_rejects {C F : Type} (state : FlatSem.State C F) (action : Ar
       action ≠ .sub ∧ action ≠ .mul ∧ action ≠ .div ∧ action ≠ .fma)
     (args : List FlatSem.Value) :
     (FlatSem.applyResult state (.src (.arith action .float64T)) args).2 = .err (.abort .typeError) := by
-  cases action <;> simp_all [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-    FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.floatArith]
+  cases action <;> simp_all [FlatSem.applyResult, FlatSem.doApp_arith_source, SemanticPrimitivesHOL.doArith, SemanticPrimitivesHOL.checkType]
 
 /-- Unsupported floating-point arithmetic preserves argument errors. -/
 theorem evaluate_rejectedFloatArith {C F : Type} (env : FlatSem.Environment FlatSem.Value)

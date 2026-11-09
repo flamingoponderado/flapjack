@@ -84,7 +84,7 @@ theorem compile_raise_simulation_upTo {C F : Type} (cfg stateCfg : Config) (cloc
           exact ⟨targetNext, .err rightError, by simpa [compileExp, compiled] using targetOuter, nextStates, errorsRel⟩
         case val.val sourceValues targetValues =>
           have valuesRel := related
-          obtain ⟨value, valueEq⟩ := FlatProps.evaluate_sing sourceEnv source sourceNext body sourceValues bodyRun
+          obtain ⟨value, valueEq⟩ := FlatProps.evaluate_sing sourceEnv source body sourceNext sourceValues bodyRun
           subst sourceValues
           cases valuesRel with
           | cons valueRel tailRel =>
@@ -142,7 +142,7 @@ theorem compile_if_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock :
                     stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, errorsRel⟩
                 case val.val sourceValues targetValues =>
                   have valuesRel := related
-                  obtain ⟨value, valueEq⟩ := FlatProps.evaluate_sing sourceEnv source sourceNext condition sourceValues conditionRun
+                  obtain ⟨value, valueEq⟩ := FlatProps.evaluate_sing sourceEnv source condition sourceNext sourceValues conditionRun
                   subst sourceValues
                   cases valuesRel with
                   | cons valueRel tailRel =>
@@ -225,7 +225,7 @@ theorem compile_let_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
                 stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, errorsRel⟩
             case val.val sourceValues targetValues =>
               have valuesRel := related
-              obtain ⟨value, valueEq⟩ := FlatProps.evaluate_sing sourceEnv source sourceNext first sourceValues firstRun
+              obtain ⟨value, valueEq⟩ := FlatProps.evaluate_sing sourceEnv source first sourceNext sourceValues firstRun
               subst sourceValues
               cases valuesRel with
               | cons valueRel tailRel =>
@@ -378,7 +378,7 @@ theorem compile_mat_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
       exact ⟨_, _, targetRun', stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, errorsRel⟩
     case val.val values values' =>
       have valuesRel := related
-      obtain ⟨value, valuesEq⟩ := FlatProps.evaluate_sing sourceEnv source sourceNext scrutinee values scrutineeRun
+      obtain ⟨value, valuesEq⟩ := FlatProps.evaluate_sing sourceEnv source scrutinee sourceNext values scrutineeRun
       subst values
       cases valuesRel with
       | cons valueRel tailRel =>

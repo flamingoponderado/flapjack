@@ -165,6 +165,7 @@ theorem envRel_cons (n : Nat) (left right : Environment Value) (name : Flapjack.
     EnvRel n { left with v := (name, value) :: left.v } { right with v := (name, value') :: right.v } := by
   apply (envRel_iff_lookup _ _ _).2
   apply aLookupRel_cons
+  constructor
   · intro _
     exact values
   · exact (envRel_iff_lookup n left right).1 related
