@@ -152,6 +152,24 @@
   "reviewer": "Compared FOLDR_mk_Union_local_typed, replayed with the original HOL proof: the list payload type is polymorphic, and the pair fold, seed, projections, append and variable-set fold have the same order and no premises."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "REVERSE_compile",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/Compile.lean", "lean_name": "reverse_compileSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared REVERSE_compile_typed: the unrestricted program's label type is polymorphic and both sides use original compile with list reversal in the same order."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "ALOOKUP_compile",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/Compile.lean", "lean_name": "alookup_compileSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared ALOOKUP_compile_typed: the unrestricted program's key type is polymorphic, HOL propositional association-list lookup is equated as a function with the same option map and original singleton annotation head."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "compile_append",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/Compile.lean", "lean_name": "compileSource_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_append_typed: the two unrestricted program lists share the original polymorphic key type, and compilation distributes over append in the same order."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "v_to_bytes",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/Install.lean", "lean_name": "valueToBytes_related",
   "statement_status": "reviewed_nested_list_rel_as_mutual",

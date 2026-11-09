@@ -236,3 +236,6 @@ val v_to_list_replay = prove (
 val _ = show "v_to_list_local_typed=" v_to_list_replay;
 val _ = show "v_to_bytes_typed=" clos_annotateProofTheory.v_to_bytes;
 val _ = show "v_to_words_typed=" clos_annotateProofTheory.v_to_words;
+val _ = show "REVERSE_compile_typed=" clos_annotateProofTheory.REVERSE_compile;
+val _ = show "ALOOKUP_compile_typed=" clos_annotateProofTheory.ALOOKUP_compile;
+val _ = show "compile_append_typed=" clos_annotateProofTheory.compile_append;

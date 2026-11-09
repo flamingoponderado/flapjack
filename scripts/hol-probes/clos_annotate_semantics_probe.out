@@ -67,3 +67,6 @@ v_rel_Number_local_typed=(v_rel (x :v) (Number (i :int)) ⇔ x = Number i) ∧ (
 v_to_list_local_typed=∀(h :v) (h' :v). v_rel h h' ⇒ v_to_list h = (NONE :v list option) ∧ v_to_list h' = (NONE :v list option) ∨ ∃(x :v list) (x' :v list). v_to_list h = SOME x ∧ v_to_list h' = SOME x' ∧ LIST_REL v_rel x x'
 v_to_bytes_typed=v_rel (x :v) (y :v) ⇒ v_to_bytes x = v_to_bytes y
 v_to_words_typed=v_rel (x :v) (y :v) ⇒ v_to_words x = v_to_words y
+REVERSE_compile_typed=REVERSE (compile (ls :(α # num # closLang$exp) list)) = compile (REVERSE ls)
+ALOOKUP_compile_typed=ALOOKUP (compile (ls :(α # num # closLang$exp) list)) = OPTION_MAP (λ((args :num),(e :closLang$exp)). (args,HD (annotate args [e]))) ∘ ALOOKUP ls
+compile_append_typed=compile ((p1 :(α # num # closLang$exp) list) ++ (p2 :(α # num # closLang$exp) list)) = compile p1 ++ compile p2
