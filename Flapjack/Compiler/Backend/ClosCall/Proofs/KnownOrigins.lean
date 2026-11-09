@@ -211,35 +211,4 @@ theorem callsListBounded_wellFormed (fuel : Nat) (es : List ClosLang.Exp)
     simp only [first] at run
     exact callsListFuel_wellFormed _ es initial final out run distinct fresh well
 
-/-- Numbering and direct-call conversion from the empty state produce a
-well-formed state for either choice of the direct-call option. -/
-theorem numbered_compileFuel_wellFormed (fuel start : Nat) (enabled : Bool)
-    (es out : List ClosLang.Exp) (final : State)
-    (run : compileFuel fuel enabled (ClosNumber.compileInc start es).2 = some (out, final)) :
-    wellFormed final := by
-  have emptyWell : wellFormed ((.ln, []) : State) := by
-    constructor
-    · ext label
-      simp only [Set.mem_ofPred_eq, List.map_nil, List.not_mem_nil, false_iff]
-      rintro ⟨key, member, _⟩
-      change sptDomain (.ln : NumSet) key at member
-      simp [sptDomain, sptLookup] at member
-    · simp
-  cases enabled with
-  | false => simp [compileFuel] at run; obtain ⟨_, rfl⟩ := run; exact emptyWell
-  | true =>
-    simp only [compileFuel, ↓reduceIte] at run
-    apply callsListBounded_wellFormed fuel _ (.ln, []) final out run
-      (ClosNumber.compileInc_codeLocations_nodup start es)
-    · simp [LabelsFresh]
-    · exact emptyWell
-
-/-- The numbered pass both succeeds and establishes its state invariant. -/
-theorem numbered_compileFuel_exists_wellFormed (fuel start : Nat) (enabled : Bool)
-    (es : List ClosLang.Exp) :
-    ∃ out final, compileFuel fuel enabled (ClosNumber.compileInc start es).2 = some (out, final) ∧
-      wellFormed final := by
-  obtain ⟨⟨out, final⟩, run⟩ := compileFuel_succeeds fuel enabled (ClosNumber.compileInc start es).2
-  exact ⟨out, final, run, numbered_compileFuel_wellFormed fuel start enabled es out final run⟩
-
 end Flapjack.Compiler.Backend.ClosCall

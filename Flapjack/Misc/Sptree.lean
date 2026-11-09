@@ -135,9 +135,8 @@ library. HOL sets are rendered as predicates, matching the
 `domain t1 SUBSET domain t2` is `forall k, sptMem k t1 -> sptMem k t2`. -/
 
 /-- Lookup-based predicate for the tree domain. HOL defines `domain` by
-recursive set clauses; a reviewed representation of sets and a source-shaped
-definition are still needed before this can be tagged as `domain_def`. The
-membership clauses `sptMem_*` below establish this predicate's behavior. -/
+recursive set clauses; `FromList/Domain.lean` proves those complete equations
+for this predicate. This definition itself retains the lookup-based form. -/
 def sptDomain {α : Type} (tree : Spt α) : Nat → Prop :=
   fun key => (sptLookup key tree).isSome
 

@@ -1,5 +1,29 @@
 [
  {
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml", "hol_name": "domain_def",
+  "lean_path": "Flapjack/Misc/Sptree/FromList/Domain.lean", "lean_name": "sptDomain_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared sptree_domain_def_typed: all four recursive domain equations, set images and unions are preserved. The theorem establishes these equations for the existing lookup-based domain predicate."
+ },
+ {
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml", "hol_name": "domain_fromList",
+  "lean_path": "Flapjack/Misc/Sptree/FromList/Domain.lean", "lean_name": "sptDomainFromList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared sptree_domain_fromList_typed: arbitrary polymorphic lists and sparse trees, no hypotheses, and count LENGTH as the predicate key < length agree. sptDomain_def proves the complete original domain equations."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "domain_init_code",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "domain_initCode",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared domain_init_code_typed: the positive maxApp premise, initial stub tree, exact triangular bound and predicate rendering of count agree; initCode and the domain equations are source-reviewed."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "domain_init_code_lt_num_stubs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "domain_initCode_lt_numStubs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared domain_init_code_lt_num_stubs_typed: arbitrary maxApp and key, domain membership hypothesis and strict numStubs bound agree, including the zero case."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "get_code_labels_def", "hol_line": 878,
   "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/CodeLabels.lean", "lean_name": "getCodeLabels",
   "statement_status": "reviewed_exact",
@@ -4046,7 +4070,7 @@
   "lean_path": "Flapjack/Misc/Sptree.lean",
   "lean_name": "sptDomain",
   "statement_status": "documented_mismatch",
-  "reviewer": "HOL defines domain by four recursive set clauses; the Lean predicate uses lookup instead. Its membership clauses are kernel-checked, but the source-shaped definition and set representation remain to be reviewed."
+  "reviewer": "HOL defines domain with recursive set clauses; this executable definition uses lookup. The complete original clauses are proved by the reviewed sptDomain_def theorem, establishing extensional correspondence while retaining the different definition shape."
 },
 {
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml",

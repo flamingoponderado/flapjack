@@ -54,6 +54,10 @@ val _ = show "bvl_get_code_labels_def_typed=" bvlPropsTheory.get_code_labels_def
 val _ = show "recc_Lets_code_labels_typed=" clos_to_bvlProofTheory.recc_Lets_code_labels;
 val _ = show "recc_Let_def_typed=" clos_to_bvlTheory.recc_Let_def;
 val _ = show "recc_Lets_def_typed=" clos_to_bvlTheory.recc_Lets_def;
+val _ = show "sptree_domain_fromList_typed=" sptreeTheory.domain_fromList;
+val _ = show "sptree_domain_def_typed=" sptreeTheory.domain_def;
+val _ = show "domain_init_code_typed=" clos_to_bvlProofTheory.domain_init_code;
+val _ = show "domain_init_code_lt_num_stubs_typed=" clos_to_bvlProofTheory.domain_init_code_lt_num_stubs;
 val _ = show "num_added_globals_def_typed=" clos_to_bvlTheory.num_added_globals_def;
 val _ = show "chain_exps_code_locs_typed=" clos_to_bvlProofTheory.chain_exps_code_locs;
 val _ = show "chain_exps_vars_none_typed=" clos_to_bvlProofTheory.chain_exps_every_Fn_vs_NONE;

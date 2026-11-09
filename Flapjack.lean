@@ -1150,6 +1150,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CommonCompiler
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WholeProgram
 import Flapjack.Compiler.Backend.ClosKnown.Inline.SizeShortCircuit
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CodeLabels
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InitialCodeDomain
 import Flapjack.Compiler.Backend.BvlConst.SourceCompile
 import Flapjack.Compiler.Backend.BvlConst.Proofs.SourceCompile
 import Flapjack.Compiler.Backend.BvlHandle.SourceCompile

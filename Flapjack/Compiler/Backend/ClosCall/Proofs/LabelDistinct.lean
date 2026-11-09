@@ -1,7 +1,6 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelOrigins
-public import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationDistinct
 
 @[expose] public section
 
@@ -264,14 +263,5 @@ theorem compileFuel_labelsDistinct (fuel : Nat) (enabled : Bool) (es : List Exp)
     apply callsListBounded_labelsDistinct fuel es (.ln, []) final out run distinct
     · simp [LabelsFresh]
     · simp
-
-/-- Closure numbering discharges the distinct-location premise for the
-incremental compiler's direct-call pass. -/
-theorem numbered_compileFuel_labelsDistinct (fuel start : Nat) (enabled : Bool) (es : List Exp)
-    (out : List Exp) (final : State)
-    (run : compileFuel fuel enabled (ClosNumber.compileInc start es).2 = some (out, final)) :
-    (final.2.map Prod.fst).Nodup := by
-  exact compileFuel_labelsDistinct fuel enabled _ out final run
-    (ClosNumber.compileInc_codeLocations_nodup start es)
 
 end Flapjack.Compiler.Backend.ClosCall

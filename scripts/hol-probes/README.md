@@ -282,7 +282,8 @@ and its incremental callback composition,
 installed-code definitions, their
 supporting lemmas, the complete expression simulation, and program-level
 observational correctness. It also captures operator-label preservation,
-BVL label collection, recursive-closure labels, and their source definitions.
+BVL label collection, recursive-closure labels, initial-stub domains, and
+their source definitions.
 Regenerate with
 `HOL_PROBE_ONLY=clos_to_bvl_state_relation_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source review, not cross-language equivalence.
