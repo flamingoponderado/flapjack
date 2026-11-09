@@ -1,6 +1,11 @@
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyWordToStack
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyPanToWord
-import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyWordToStack
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyPanToWord
+public import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
+
+@[expose] public section
+
 
 /-!
 # `pan_to_target_compile_semantics` assembly, lab-state chain

@@ -1,14 +1,19 @@
-import Flapjack.Compiler.Backend.WordToWord.Proofs.Syntactic
-import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.CompileExp
-import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
-import Flapjack.Pancake.Proofs.WordConvs.SSALabelFull
-import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
-import Flapjack.Pancake.Proofs.WordConvs.WordCse
-import Flapjack.Pancake.Proofs.WordConvs.CopyProp
-import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
-import Flapjack.Pancake.Proofs.WordConvs.UnreachLabels
-import Flapjack.Pancake.Proofs.WordConvs.WordAlloc
-import Flapjack.Pancake.Proofs.WordConvs.RemoveMustTerminate
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.Syntactic
+public import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.CompileExp
+public import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
+public import Flapjack.Pancake.Proofs.WordConvs.SSALabelFull
+public import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
+public import Flapjack.Pancake.Proofs.WordConvs.WordCse
+public import Flapjack.Pancake.Proofs.WordConvs.CopyProp
+public import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
+public import Flapjack.Pancake.Proofs.WordConvs.UnreachLabels
+public import Flapjack.Pancake.Proofs.WordConvs.WordAlloc
+public import Flapjack.Pancake.Proofs.WordConvs.RemoveMustTerminate
+
+@[expose] public section
+
 
 /-! First two original conjunction sections (names and labels). The remaining five
 conventions and the full tagged theorem are assembled in `CompileConventions.Output`. -/

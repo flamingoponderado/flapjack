@@ -1,6 +1,11 @@
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTop
-import Flapjack.Compiler.Backend.Arm8Config.BackendProofL3
-import Flapjack.Compiler.Backend.Arm8Config.ProofsL3
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTop
+public import Flapjack.Compiler.Backend.Arm8Config.BackendProofL3
+public import Flapjack.Compiler.Backend.Arm8Config.ProofsL3
+
+@[expose] public section
+
 
 /-!
 # `pan_to_target_compile_semantics` at the L3 ARMv8 target

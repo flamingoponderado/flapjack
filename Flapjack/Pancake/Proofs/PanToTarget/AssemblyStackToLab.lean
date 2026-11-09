@@ -1,10 +1,15 @@
-import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
-import Flapjack.Compiler.Backend.BackendProof.ConfigOk
-import Flapjack.Compiler.Backend.BackendProof.MachineInit
-import Flapjack.Compiler.Backend.LabToTarget.Initialization
-import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
-import Flapjack.Compiler.Backend.Semantics.TargetProps.CalleeSaved
-import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCode
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
+public import Flapjack.Compiler.Backend.BackendProof.ConfigOk
+public import Flapjack.Compiler.Backend.BackendProof.MachineInit
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization
+public import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.CalleeSaved
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCode
+
+@[expose] public section
+
 
 /-!
 # `pan_to_target_compile_semantics` assembly, stage A3a

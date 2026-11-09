@@ -1,6 +1,11 @@
-import Flapjack.Compiler.Backend.WordToWord.Proofs.NoInstallCompileSingle
-import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwapStack
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.NoInstallCompileSingle
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwapStack
+
+@[expose] public section
+
 
 /-!
 # `word_to_wordProof`: Pancake-facing semantics preservation

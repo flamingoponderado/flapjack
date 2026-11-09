@@ -1,8 +1,13 @@
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyLabToTarget
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyGoodCode
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyGoodCodeSource
-import Flapjack.Compiler.Backend.LabToTarget.SemanticsCompileFinal
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyWordToStack
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyLabToTarget
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyGoodCode
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyGoodCodeSource
+public import Flapjack.Compiler.Backend.LabToTarget.SemanticsCompileFinal
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyWordToStack
+
+@[expose] public section
+
 
 /-!
 # `pan_to_target_compile_semantics` assembly, stage A4

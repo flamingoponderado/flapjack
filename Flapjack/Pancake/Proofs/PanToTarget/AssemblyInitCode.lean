@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInitSemantics
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyResourceLimit
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInitSemantics
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyResourceLimit
+
+@[expose] public section
+
 
 /-!
 # `pan_to_target_compile_semantics` assembly, stage E (init code)

@@ -1,22 +1,27 @@
-import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
-import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
-import Flapjack.Pancake.Proofs.PanToWord
-import Flapjack.Pancake.Proofs.PanToWord.LabPres
-import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
-import Flapjack.Compiler.Backend.Proofs.WordConventions
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ExtractLabelsCompiler
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackConventions
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallTop
-import Flapjack.Compiler.Backend.StackToLab.Proofs.CompileLabPres
-import Flapjack.Compiler.Backend.StackToLab.Proofs.NoInstall
-import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCode
-import Flapjack.Compiler.Backend.Backend
-import Flapjack.Compiler.Backend.LabToTarget.GoodCode
-import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
-import Flapjack.Compiler.Backend.LabProps.SecLabelOk
-import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodHandlerLabels
-import Flapjack.Compiler.Backend.WordToStack.Proofs.TopLabelSafety
-import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersTail
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
+public import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
+public import Flapjack.Pancake.Proofs.PanToWord
+public import Flapjack.Pancake.Proofs.PanToWord.LabPres
+public import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
+public import Flapjack.Compiler.Backend.Proofs.WordConventions
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ExtractLabelsCompiler
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackConventions
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallTop
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.CompileLabPres
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.NoInstall
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCode
+public import Flapjack.Compiler.Backend.Backend
+public import Flapjack.Compiler.Backend.LabToTarget.GoodCode
+public import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
+public import Flapjack.Compiler.Backend.LabProps.SecLabelOk
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodHandlerLabels
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.TopLabelSafety
+public import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersTail
+
+@[expose] public section
+
 
 /-!
 # `pan_to_targetProof`: labels, `good_code` and `no_install` of the compiled stack/lab code

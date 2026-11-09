@@ -1,5 +1,10 @@
-import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsmWith
-import Flapjack.Compiler.Backend.WordDepth.AnalysisInput
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsmWith
+public import Flapjack.Compiler.Backend.WordDepth.AnalysisInput
+
+@[expose] public section
+
 
 /-! Callable whole compiler with the kernel-equivalent fused stack-depth
 computation. The full bytes/bitmaps/configuration/stack-bound tuple is unchanged.

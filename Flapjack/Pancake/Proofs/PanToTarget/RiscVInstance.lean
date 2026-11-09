@@ -1,5 +1,10 @@
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTop
-import Flapjack.Compiler.Backend.RiscVConfig.PancakeConfigOk
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTop
+public import Flapjack.Compiler.Backend.RiscVConfig.PancakeConfigOk
+
+@[expose] public section
+
 
 /-!
 # `pan_to_target_compile_semantics` at RISC-V with Pancake's configuration

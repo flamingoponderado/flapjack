@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Assembly
-import Flapjack.Compiler.Backend.WordRemove.Proofs.Correct
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Assembly
+public import Flapjack.Compiler.Backend.WordRemove.Proofs.Correct
+
+@[expose] public section
+
 
 /-!
 # `word_to_wordProof`: `compile_word_to_word_thm`

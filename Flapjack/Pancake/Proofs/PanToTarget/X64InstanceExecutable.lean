@@ -1,5 +1,10 @@
-import Flapjack.Pancake.Proofs.PanToTarget.X64Instance
-import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.X64Instance
+public import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
+
+@[expose] public section
+
 
 /-!
 # The x86-64 Pancake theorem against the callable compiler

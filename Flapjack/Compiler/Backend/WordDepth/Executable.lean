@@ -4,6 +4,10 @@ public import Flapjack.Compiler.Backend.WordDepthProof.Helpers
 
 @[expose] public section
 
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
+
 /-! Exact executable fusion of call-graph construction and maximum-depth
 evaluation. Original HOL declarations remain unchanged. The composed Option
 result retains missing frames, indirect calls, and recursive-call behavior. -/

@@ -1,13 +1,18 @@
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Labels
-import Flapjack.Pancake.Proofs.WordConvs.SSAFlatFull
-import Flapjack.Pancake.Proofs.WordConvs.Unreach
-import Flapjack.Pancake.Proofs.WordConvs.UnreachPreAlloc
-import Flapjack.Pancake.Proofs.WordConvs.WordSimpInstructions
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Full
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.FullInstructionValidity
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.AllocationConventions
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.InstructionConventions
-import Flapjack.Compiler.Backend.WordCse.Proofs.Conventions
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Labels
+public import Flapjack.Pancake.Proofs.WordConvs.SSAFlatFull
+public import Flapjack.Pancake.Proofs.WordConvs.Unreach
+public import Flapjack.Pancake.Proofs.WordConvs.UnreachPreAlloc
+public import Flapjack.Pancake.Proofs.WordConvs.WordSimpInstructions
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Full
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.FullInstructionValidity
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.AllocationConventions
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.InstructionConventions
+public import Flapjack.Compiler.Backend.WordCse.Proofs.Conventions
+
+@[expose] public section
+
 
 /-! The five original output conditions and whole compile-to-word conventions. -/
 namespace Flapjack.Compiler.Backend.WordToWord.CompileConventions

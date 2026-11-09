@@ -1,6 +1,11 @@
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyGoodCode
-import Flapjack.Pancake.Proofs.PanToWord.CompileProgInstOkLess
-import Flapjack.Pancake.Proofs.PanToTarget
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyGoodCode
+public import Flapjack.Pancake.Proofs.PanToWord.CompileProgInstOkLess
+public import Flapjack.Pancake.Proofs.PanToTarget
+
+@[expose] public section
+
 
 namespace Flapjack.Pancake.Proofs.PanToTarget
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.Asm

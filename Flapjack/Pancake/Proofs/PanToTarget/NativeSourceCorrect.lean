@@ -1,6 +1,11 @@
-import Flapjack.RiscV.NativeSource
-import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsmWith
-import Flapjack.Pancake.Proofs.PanToTarget.RiscVSource
+module
+
+public import Flapjack.RiscV.NativeSource
+public import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsmWith
+public import Flapjack.Pancake.Proofs.PanToTarget.RiscVSource
+
+@[expose] public section
+
 
 /-!
 # Correctness of the parser-backed native RISC-V compiler

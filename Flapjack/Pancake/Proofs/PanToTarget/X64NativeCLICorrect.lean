@@ -1,5 +1,10 @@
-import Flapjack.Pancake.Proofs.PanToTarget.X64NativeSourceCorrect
-import Flapjack.X64.NativeCLIAdapter
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.X64NativeSourceCorrect
+public import Flapjack.X64.NativeCLIAdapter
+
+@[expose] public section
+
 
 /-!
 # Correctness of `flapjack-compile --target=x64` output

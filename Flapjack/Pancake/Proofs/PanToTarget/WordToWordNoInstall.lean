@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSemantics
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSemantics
+
+@[expose] public section
+
 
 /-!
 # `pan_to_targetProof`: `word_to_word_compile_no_install_no_alloc`

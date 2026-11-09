@@ -1,6 +1,11 @@
-import Flapjack.X64.NativeSource
-import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsmWith
-import Flapjack.Pancake.Proofs.PanToTarget.X64Source
+module
+
+public import Flapjack.X64.NativeSource
+public import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsmWith
+public import Flapjack.Pancake.Proofs.PanToTarget.X64Source
+
+@[expose] public section
+
 
 /-!
 # Correctness of the parser-backed x86-64 compiler

@@ -1,6 +1,11 @@
-import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsm
-import Flapjack.Compiler.Backend.WordToWord.FastCompile
-import Flapjack.Compiler.Backend.RegAlloc.Executable
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsm
+public import Flapjack.Compiler.Backend.WordToWord.FastCompile
+public import Flapjack.Compiler.Backend.RegAlloc.Executable
+
+@[expose] public section
+
 
 /-! Allocator-parametric assembler-only callable compiler.
 

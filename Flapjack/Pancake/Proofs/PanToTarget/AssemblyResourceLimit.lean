@@ -1,14 +1,19 @@
-import Flapjack.Pancake.Proofs.PanToTarget.StackSizeConst
-import Flapjack.Compiler.Backend.WordDepthProof.CallGraph
-import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
-import Flapjack.Compiler.Backend.BackendProof.WordToStackSfs
-import Flapjack.Misc.Sptree.MapiWf
-import Flapjack.Misc.Sptree.MapiLookup
-import Flapjack.Misc.Sptree.Wf
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
-import Flapjack.Compiler.Backend.BackendProof.MachineInit
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordLemmas
-import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.StackSizeConst
+public import Flapjack.Compiler.Backend.WordDepthProof.CallGraph
+public import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
+public import Flapjack.Compiler.Backend.BackendProof.WordToStackSfs
+public import Flapjack.Misc.Sptree.MapiWf
+public import Flapjack.Misc.Sptree.MapiLookup
+public import Flapjack.Misc.Sptree.Wf
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
+public import Flapjack.Compiler.Backend.BackendProof.MachineInit
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordLemmas
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
+
+@[expose] public section
+
 
 /-!
 # `pan_to_target_compile_semantics` assembly, stage G (resource limit)

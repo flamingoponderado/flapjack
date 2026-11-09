@@ -1,8 +1,13 @@
-import Flapjack.Pancake.Proofs.PanToTarget.CompileSemanticsStatement
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTopResource
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyMachineToLab
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyLabToTarget
-import Flapjack.Pancake.Proofs.PanToWord.CompileProgInstOkLess
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.CompileSemanticsStatement
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTopResource
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyMachineToLab
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyLabToTarget
+public import Flapjack.Pancake.Proofs.PanToWord.CompileProgInstOkLess
+
+@[expose] public section
+
 
 /-!
 # `pan_to_target_compile_semantics`: final assembly
