@@ -1,5 +1,13 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml",
+  "hol_name": "MAP_FST_compile",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations.lean",
+  "lean_name": "mapFst_compile",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared MAP_FST_compile_typed and the original theorem: the program label is an independent arbitrary type \u03b1, the arity is natural, and mapping the first component of the annotated program equals mapping the first component of the input. The polymorphic compile definition and ordered map agree with HOL."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "chain_exps_GT",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainLocations.lean",
@@ -117733,7 +117741,7 @@
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "compile_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared compile_def_typed and compile_eq_typed: the source singleton annotate and HD are replaced exactly by annotateSing using HOL annotate_sing_eq, retaining each label, arity and original list order. Source review and Lean checking do not establish cross-language equivalence."
+    "reviewer": "Compared compile_def_typed and compile_eq_typed: the source singleton annotate and HD are replaced exactly by annotateSing using HOL annotate_sing_eq, retaining each label, arity and original list order. Source review and Lean checking do not establish cross-language equivalence. The program label carrier is independently polymorphic, matching α in compile_def_typed."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
@@ -117741,7 +117749,7 @@
     "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
     "hol_name": "compile_inc_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared compile_inc_def_typed and compile_inc_eq_typed: the main expression list is annotated at arity zero and the auxiliary function list uses compile; the two independently typed product components and order are preserved. Source review and Lean checking do not establish cross-language equivalence."
+    "reviewer": "Compared compile_inc_def_typed and compile_inc_eq_typed: the main expression list is annotated at arity zero and the auxiliary function list uses compile; the two independently typed product components and order are preserved. Source review and Lean checking do not establish cross-language equivalence. The auxiliary program label carrier is independently polymorphic, matching α in compile_inc_def_typed."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Names.lean",

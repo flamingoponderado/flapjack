@@ -65,12 +65,12 @@ def annotateList (arity : Nat) (xs : List Exp) : List Exp := shiftList (altFreeL
 
 /-- Annotate each labeled closure function. -/
 @[hol "cakeml/compiler/backend/clos_annotateScript.sml" "compile_def"]
-def compile (prog : List (Nat × Nat × Exp)) : List (Nat × Nat × Exp) :=
+def compile {α : Type} (prog : List (α × Nat × Exp)) : List (α × Nat × Exp) :=
   prog.map (fun (n, args, exp) => (n, args, annotateSing args exp))
 
 /-- Annotate the expression and auxiliary code of an incremental program. -/
 @[hol "cakeml/compiler/backend/clos_annotateScript.sml" "compile_inc_def"]
-def compileInc (p : List Exp × List (Nat × Nat × Exp)) : List Exp × List (Nat × Nat × Exp) :=
+def compileInc {α : Type} (p : List Exp × List (α × Nat × Exp)) : List Exp × List (α × Nat × Exp) :=
   (annotateList 0 p.1, compile p.2)
 
 end Flapjack.Compiler.Backend.ClosAnnotate

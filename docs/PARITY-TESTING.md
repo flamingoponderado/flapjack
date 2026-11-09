@@ -18,6 +18,10 @@ not a general equivalence proof.
 At Flapjack commit `05992bd4b9`, all 143 fixed corpus cases matched the
 compiler built from the pinned CakeML submodule revision `857f0d98da8f`.
 
+After generalizing closure annotation's label carrier to match HOL, the
+rebuilt executable also matched all 143 fixed corpus cases against that
+pinned compiler, including output, diagnostics, and exit status.
+
 At `45f70abdf1`, 25 generated nested programs matched the pinned compiler's
 complete output, diagnostics, and exit status with:
 

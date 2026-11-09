@@ -80,9 +80,4 @@ theorem chainExps_labels_nodup (start : Nat) (expressions : List ClosLang.Exp) :
         omega
       · exact ih (start + 1)
 
-/-- Annotation retains the entry labels of a closure program. -/
-theorem annotated_labels (program : List (Nat × Nat × ClosLang.Exp)) :
-    (ClosAnnotate.compile program).map Prod.fst = program.map Prod.fst := by
-  simp [ClosAnnotate.compile, List.map_map]
-
 end Flapjack.Compiler.Backend.ClosToBvl
