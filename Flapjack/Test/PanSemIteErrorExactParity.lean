@@ -6,8 +6,8 @@ import Flapjack.Test.PanValueFfiCore
 
 The original HOL `panSemScript$evaluate_def` `If` case returns `SOME Error` with
 the unchanged state when the condition expression fails to evaluate or does not
-produce a word value.  This module checks the corresponding untagged exact-state
-equation in `Flapjack.Pancake.Semantics.PanSem` against the direct HOL oracle
+produce a word value.  This module checks the corresponding untagged
+state-owned code-map equation against the direct HOL oracle
 `scripts/hol-probes/pan_sem_ite_e2e_probe.out` (`if_nonword_result=SOME Error`,
 `if_fail_result=SOME Error`). The checks of the non-clocked evaluator
 moved to stepped-flapjack with the stepped semantics (#1251).
@@ -22,35 +22,31 @@ private abbrev Word64 := Word 64
 
 private def exactDomain (address : Word64) : Bool := address == 8
 
-private def exactAccess : PanValueMemoryAccess Word64 :=
-  panValueMemoryAccessOfModel panSemBitVec64WordModel exactDomain (fun _ => false) false
-
 private def exactMemory : Word64 → Option (PanValue Word64) := fun _ => some (.word 0)
-
-private def exactLegacy (locals : VarName → Option (PanValue Word64)) :
-    PanSemEvaluateState Word64 Unit :=
-  { structs := []
-    functions := []
-    locals := locals
-    globals := fun _ => none
-    memory := exactMemory
-    ffi := statefulTestFfiState
-    clock := 5
-    baseAddress := 0
-    topAddress := 100
-    bytesInWord := BitVec.ofNat 64 8 }
-
-private def exactState (locals : VarName → Option (PanValue Word64)) :
-    PanSemExactState Word64 Unit :=
-  { legacy := exactLegacy locals, memoryAccess := exactAccess }
 
 private def localsWordX : VarName → Option (PanValue Word64) :=
   fun name => if name == "x" then some (.word 3) else none
 
-private def evaluate (state : PanSemExactState Word64 Unit) (program : Prog Word64) :
+/-- State-owned source state used by the `If` guards: local `x` holds a word. -/
+private def sourceState : PanSemState Word64 (FfiState Unit) :=
+  { locals := localsWordX
+    globals := fun _ => none
+    structs := []
+    code := []
+    exceptionShapes := fun _ => none
+    memory := exactMemory
+    memaddrs := exactDomain
+    sharedMemaddrs := fun _ => false
+    clock := 5
+    be := false
+    ffi := statefulTestFfiState
+    baseAddress := BitVec.ofNat 64 0
+    topAddress := BitVec.ofNat 64 100 }
+
+private def evaluate (state : PanSemState Word64 (FfiState Unit)) (program : Prog Word64) :
     Option (PanValueFfiClockResult Word64 Unit) :=
-  panSemEvaluateExactState statefulTestContext statefulTestPrimitive statefulTestHandler
-    state program
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive
+    statefulTestHandler state program
 
 private def isWordOption (expected : Nat) : Option (PanValue Word64) → Bool
   | some (.word value) => value == BitVec.ofNat 64 expected
@@ -73,35 +69,38 @@ private def failedConditionProgram : Prog Word64 :=
   .ite (.var .local "z") .skip .skip
 
 private def iteNonwordGuard : Bool :=
-  isErrorKeepingX 5 3 (evaluate (exactState localsWordX) nonwordConditionProgram)
+  isErrorKeepingX 5 3 (evaluate sourceState nonwordConditionProgram)
 
 private def iteFailedGuard : Bool :=
-  isErrorKeepingX 5 3 (evaluate (exactState localsWordX) failedConditionProgram)
+  isErrorKeepingX 5 3 (evaluate sourceState failedConditionProgram)
 
 private def iteErrorGuard : Bool :=
   iteNonwordGuard && iteFailedGuard
 
 #guard iteErrorGuard
 
-example :
-    panSemEvaluateExactState statefulTestContext statefulTestPrimitive statefulTestHandler
-        (exactState localsWordX) (.ite (.rStruct []) .skip .skip) =
-      some (.control (.error (exactLegacy localsWordX).locals
-        (exactLegacy localsWordX).globals (exactLegacy localsWordX).memory
-        (exactLegacy localsWordX).ffi), (exactLegacy localsWordX).clock) :=
-  panSemEvaluateExactState_ite_error_of_condition_none statefulTestContext
-    statefulTestPrimitive statefulTestHandler _ _ _ _
-    (by simp [exactState, exactLegacy, panValueIteConditionValue, evalPanValueExp])
+/-- The kernel-checked code-map `If` non-word-condition equation at clock 5. -/
+theorem iteNonword_eq :
+    evaluate sourceState nonwordConditionProgram =
+      some (.control (.error localsWordX (fun _ => none) exactMemory
+        statefulTestFfiState), 5) := by
+  simp (config := { decide := true }) [evaluate, sourceState, nonwordConditionProgram,
+    panSemEvaluateRiscV64CodeState, panSemEvaluateWordCodeState,
+    panSemEvaluateCodeStateWithMemoryModel, panSemEvaluateCodeState,
+    panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemProgFuel,
+    panSemExpFuel, panSemCodeBodyFuel, panSemBitVec64BytesInWord,
+    evalPanValueFfiClockCodeProg, panValueIteConditionValue,
+    evalPanValueExpWith, evalPanValueExp]
 
 def runChecks : IO Bool := do
   if iteNonwordGuard then
-    IO.println "PASS exact-state If non-word condition keeps state and clock"
+    IO.println "PASS source If non-word condition keeps state and clock"
   else
-    IO.println "FAIL exact-state If non-word condition keeps state and clock"
+    IO.println "FAIL source If non-word condition keeps state and clock"
   if iteFailedGuard then
-    IO.println "PASS exact-state If failing condition keeps state and clock"
+    IO.println "PASS source If failing condition keeps state and clock"
   else
-    IO.println "FAIL exact-state If failing condition keeps state and clock"
+    IO.println "FAIL source If failing condition keeps state and clock"
   pure iteErrorGuard
 
 end Flapjack.Test.PanSemIteErrorExactParity
