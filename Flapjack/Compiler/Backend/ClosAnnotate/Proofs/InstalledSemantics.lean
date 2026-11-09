@@ -30,7 +30,8 @@ theorem everyFnVarsNone_member (expressions : List ClosLang.Exp)
 
 /-- Optimized annotation preserves whole-program observations with installed
 code. The HOL theorem uses the separate source `annotate`, `compile`, and
-`compile_inc` definitions, whose equivalence to these traversals remains open. -/
+`compile_inc` definitions, related to these traversals by the equivalences in
+`ClosAnnotate.Original`. -/
 theorem semanticsAnnotate_sourceShape {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
     (code : List (Nat × Nat × ClosLang.Exp)) (oracle : CompileOracle C) (compiler : Compiler C)
     (program : List ClosLang.Exp)

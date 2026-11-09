@@ -65,13 +65,14 @@ def annotateList (arity : Nat) (xs : List Exp) : List Exp := shiftList (altFreeL
 
 /-- Executable optimized annotation of labeled closure functions. HOL's
 `compile_def` uses the separate list-shaped `annotate` and its singleton
-head; its source definition and equivalence to this traversal remain open. -/
+head; `compileSource_eq_compile` proves that source definition agrees with
+this traversal. -/
 def compile {α : Type} (prog : List (α × Nat × Exp)) : List (α × Nat × Exp) :=
   prog.map (fun (n, args, exp) => (n, args, annotateSing args exp))
 
 /-- Executable optimized annotation of an incremental program. HOL's
-`compile_inc_def` uses the separate source `annotate` and `compile`; their
-source definitions and equivalence to this traversal remain open. -/
+`compile_inc_def` uses the separate source `annotate` and `compile`;
+`compileIncSource_eq_compileInc` proves agreement with this traversal. -/
 def compileInc {α : Type} (p : List Exp × List (α × Nat × Exp)) : List Exp × List (α × Nat × Exp) :=
   (annotateList 0 p.1, compile p.2)
 

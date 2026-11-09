@@ -11,7 +11,7 @@ namespace Flapjack.Compiler.Backend.ClosToBvl
 
 /-- Thread the closure configuration through the incremental passes. The
 annotation stage uses the optimized traversal; HOL uses its separate source
-definition, whose port and equivalence remain open. -/
+definition, proved equivalent by `compileIncSource_eq_compileInc`. -/
 noncomputable def closToBvlCompileInc (config : Config)
     (program : List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)) :
     Config × List (Nat × Nat × Bvl.Exp) :=

@@ -1,5 +1,41 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml", "hol_name": "annotate_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Original.lean", "lean_name": "annotateSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared annotate_def_typed: arity and expression list, original free-variable traversal, first projection, source shift and initial index agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml", "hol_name": "compile_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Original.lean", "lean_name": "compileSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_def_typed: the label carrier is polymorphic, the input and output tuples and source annotation head agree. The production implementation agrees by compileSource_eq_compile."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml", "hol_name": "compile_inc_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Original.lean", "lean_name": "compileIncSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_inc_def_typed: the pair, polymorphic label carrier, source annotation and source compilation agree. The production implementation agrees by compileIncSource_eq_compileInc."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml", "hol_name": "annotate_sing_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Original.lean", "lean_name": "annotateSource_sing_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared annotate_sing_eq_typed: both conjuncts retain the same arity and expression or list and relate source annotation to the singleton and list optimized traversals."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml", "hol_name": "compile_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Original.lean", "lean_name": "compileSource_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_eq_typed: polymorphic label carrier, input program and mapped singleton annotation agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml", "hol_name": "compile_inc_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Original.lean", "lean_name": "compileIncSource_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_inc_eq_typed: the expression list and polymorphic labelled auxiliary program, optimized list annotation and original compile are preserved."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
   "hol_name": "shift_sing_eq",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift/OriginalEquivalence.lean",
@@ -37,7 +73,7 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations.lean",
   "lean_name": "mapFst_compile",
   "statement_status": "documented_mismatch",
-  "reviewer": "This theorem uses the optimized compile rather than the separate source compile in HOL MAP_FST_compile. The literal source definition and a Lean-checked equivalence remain open."
+  "reviewer": "This theorem uses the optimized compile rather than the separate source compile in HOL MAP_FST_compile. The source definition agrees by compileSource_eq_compile."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
@@ -10232,7 +10268,7 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/InstalledSemantics.lean",
   "lean_name": "semanticsAnnotate_sourceShape",
   "statement_status": "documented_mismatch",
-  "reviewer": "This theorem uses optimized annotateList, compile and compileInc where HOL semantics_annotate uses separate source definitions. The literal source definitions and Lean-checked equivalences remain open."
+  "reviewer": "This theorem uses optimized annotateList, compile and compileInc where HOL semantics_annotate uses separate source definitions. The source entry points agree by the annotation and compilation equivalence theorems."
 },
   {
   "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
@@ -17371,7 +17407,7 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/FullIncremental.lean",
   "lean_name": "closToBvlCompileInc",
   "statement_status": "documented_mismatch",
-  "reviewer": "The annotation stage calls optimized compileInc, while HOL calls its separate source compile_inc. The literal source definition and Lean-checked equivalence remain open."
+    "reviewer": "The annotation stage calls optimized compileInc, while HOL calls its separate source compile_inc. The source definition agrees by compileIncSource_eq_compileInc."
 },
   {
     "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "calls_def",
@@ -117771,7 +117807,7 @@
   "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
   "hol_name": "compile_def",
   "statement_status": "documented_mismatch",
-  "reviewer": "The executable uses annotateSing, while HOL compile_def uses the head of the separate source annotate on a singleton. The literal source definition and a Lean-checked equivalence remain open."
+  "reviewer": "The executable uses annotateSing, while HOL compile_def uses the head of the separate source annotate on a singleton. The source definition agrees by compileSource_eq_compile."
 },
   {
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
@@ -117779,7 +117815,7 @@
   "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
   "hol_name": "compile_inc_def",
   "statement_status": "documented_mismatch",
-  "reviewer": "The executable uses annotateList and optimized compile, while HOL compile_inc_def uses the separate source annotate and compile. The literal source definitions and equivalences remain open."
+  "reviewer": "The executable uses annotateList and optimized compile, while HOL compile_inc_def uses the separate source annotate and compile. The source definition agrees by compileIncSource_eq_compileInc."
 },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Names.lean",
