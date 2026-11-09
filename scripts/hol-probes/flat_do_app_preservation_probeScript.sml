@@ -61,3 +61,7 @@ val _ = show_thm "flat_evaluate_decs_io_events_mono_typed=" flatPropsTheory.eval
 val _ = show_thm "flat_evaluate_add_clock_io_events_mono_typed=" flatPropsTheory.evaluate_add_to_clock_io_events_mono;
 val _ = show_thm "flat_evaluate_dec_add_clock_io_events_mono_typed=" flatPropsTheory.evaluate_dec_add_to_clock_io_events_mono;
 val _ = show_thm "flat_evaluate_decs_add_clock_io_events_mono_typed=" flatPropsTheory.evaluate_decs_add_to_clock_io_events_mono;
+
+val _ = show_thm "flat_evaluate_map_var_local_typed=" flatPropsTheory.evaluate_MAP_Var_local;
+val _ = show_thm "flat_bind_locals_list_def_typed=" flatPropsTheory.bind_locals_list_def;
+val _ = show_thm "flat_evaluate_vars_typed=" flatPropsTheory.evaluate_vars;

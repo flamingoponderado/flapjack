@@ -130583,6 +130583,32 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_MAP_Var_local",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateVars.lean",
+  "lean_name": "evaluate_mapVarLocal",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_map_var_local_typed in flat_do_app_preservation_probe.out. The free binder order and lookup-to-result implication match. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "bind_locals_list_def",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateVars.lean",
+  "lean_name": "bindLocalsList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_bind_locals_list_def_typed in flat_do_app_preservation_probe.out. List.zipWith follows HOL MAP2 including truncation at the shorter input."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_vars",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateVars.lean",
+  "lean_name": "evaluate_vars",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_vars_typed in flat_do_app_preservation_probe.out. Compared binders, conjuncts, set disjointness and conclusion. The evaluator inherits the reals_as_rational_cuts assumption; independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
   "hol_name": "evaluate_add_to_clock_io_events_mono",
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateClockEvents.lean",
   "lean_name": "evaluate_addToClock_ioEventsMono",
