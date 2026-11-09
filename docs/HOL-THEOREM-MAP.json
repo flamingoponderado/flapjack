@@ -1,5 +1,35 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "extracted_addrs_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "extractedAddrs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared extracted_addrs_def_typed: COUNT_LIST is List.range, MAX is max and $+ n adds n on the left; extractNameSource is the reviewed source definition."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "req_compile_inc_addrs_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "reqCompileIncAddrs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared req_compile_inc_addrs_def_typed: polymorphic code metadata, tupled input, body projection, left-associated list appends and flattened location transforms agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "can_extract_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "canExtract",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared can_extract_def_typed: existential order, expression constructors and int_of_num as Int.ofNat agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "MAP_FST_chain_exps_any",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "mapFst_chainExps_any",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared MAP_FST_chain_exps_any_typed: arbitrary start and expression list, chain labels, COUNT_LIST as List.range and MAX 1 agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "extract_name_MAP_FST_addrs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "extractName_mapFst_addrs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared extract_name_MAP_FST_addrs_typed: source extraction equation, free variable order and equality of chained labels and extracted addresses agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_prog_code_labels",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CodeLabels/CompileExps.lean", "lean_name": "compileProg_codeLabels",
   "statement_status": "reviewed_exact",

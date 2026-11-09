@@ -54,6 +54,13 @@ val _ = show "bvl_get_code_labels_def_typed=" bvlPropsTheory.get_code_labels_def
 val _ = show "clos_get_code_labels_def_typed=" closPropsTheory.get_code_labels_def;
 val _ = show "compile_exps_code_labels_typed=" clos_to_bvlProofTheory.compile_exps_code_labels;
 val _ = show "compile_prog_code_labels_typed=" clos_to_bvlProofTheory.compile_prog_code_labels;
+val _ = show "syntax_oracle_ok_bvl_FST_monotonic_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_bvl_FST_monotonic;
+val _ = show "extracted_addrs_def_typed=" clos_to_bvlProofTheory.extracted_addrs_def;
+val _ = show "req_compile_inc_addrs_def_typed=" clos_to_bvlProofTheory.req_compile_inc_addrs_def;
+val _ = show "can_extract_def_typed=" clos_to_bvlProofTheory.can_extract_def;
+val _ = show "compile_inc_req_addrs_typed=" clos_to_bvlProofTheory.compile_inc_req_addrs;
+val _ = show "extract_name_MAP_FST_addrs_typed=" clos_to_bvlProofTheory.extract_name_MAP_FST_addrs;
+val _ = show "MAP_FST_chain_exps_any_typed=" clos_to_bvlProofTheory.MAP_FST_chain_exps_any;
 val _ = show "compile_exps_SING_typed=" clos_to_bvlTheory.compile_exps_SING;
 val _ = show "compile_exps_LENGTH_typed=" clos_to_bvlTheory.compile_exps_LENGTH;
 val _ = show "MEM_build_aux_imp_SND_MEM_typed=" clos_to_bvlProofTheory.MEM_build_aux_imp_SND_MEM;
