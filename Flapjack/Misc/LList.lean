@@ -655,9 +655,8 @@ theorem lprefix_refl (ll : HolLList α) : lprefix ll ll := by
   | none => rfl
   | some xs => exact ⟨[], by simp⟩
 
-/-- Flapjack-only SOME-index corollary of prefix agreement. HOL LPREFIX_NTH
-    is an iff using less_opt and LLENGTH, so this direction-only helper does
-    not carry that theorem's tag. -/
+/-- The direction-only `lnth` corollary of prefix agreement, used by the tagged
+    `lprefix_lnth_iff` below. -/
 theorem lprefix_lnth {a b : HolLList α} (h : lprefix a b) {n : Nat} {x : α}
     (ha : lnth n a = some x) : lnth n b = some x := by
   rw [lnth_eq_rep] at ha ⊢
@@ -726,6 +725,24 @@ theorem lprefix_of_rep_agree {a b : HolLList α}
               rw [toList_eq_some_rep hb j, dif_pos (Nat.lt_of_lt_of_le hj1 hlt)]
             rw [hby] at hbj
             exact (Option.some.inj hbj).symm
+
+/-- HOL `LPREFIX_NTH` (`llistScript.sml:3656-3658`): `LPREFIX l1 l2` holds
+    exactly when every `LNTH` value of the smaller list appears at the same
+    index in the larger one. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LPREFIX_NTH"]
+theorem lprefix_lnth_iff (l1 l2 : HolLList α) :
+    lprefix l1 l2 ↔ ∀ i v, lnth i l1 = some v → lnth i l2 = some v := by
+  constructor
+  · intro h i v hv
+    exact lprefix_lnth h hv
+  · intro h
+    apply lprefix_of_rep_agree
+    intro n x hx
+    have hv : lnth n l1 = some x := by
+      rw [lnth_eq_rep]
+      exact hx
+    rw [← lnth_eq_rep]
+    exact h n x hv
 
 /-- Curried convenience form of transitivity. The separately tagged
 `lprefixTransHOL` retains HOL's conjunction premise. -/
@@ -1741,7 +1758,7 @@ theorem llistExists_of_lnth {P : α → Prop} :
     some index. -/
 @[hol "hol4/src/coalgebras/llistScript.sml" "exists_LNTH"]
 theorem llistExists_iff (P : α → Prop) (ll : HolLList α) :
-    LExists P ll ↔ ∃ n x, lnth n ll = some x ∧ P x := by
+    LExists P ll ↔ ∃ n x, some x = lnth n ll ∧ P x := by
   constructor
   · intro h
     induction h with
@@ -1749,12 +1766,12 @@ theorem llistExists_iff (P : α → Prop) (ll : HolLList α) :
         exact ⟨0, h, by simp [lnth_eq_rep, lcons], hP⟩
     | tail h t _ ih =>
         obtain ⟨n, x, hx, hP⟩ := ih
-        have hx' : t.rep n = some x := by
+        have hx' : some x = t.rep n := by
           rw [lnth_eq_rep] at hx
           exact hx
         exact ⟨n + 1, x, by simp [lnth_eq_rep, lcons, hx'], hP⟩
   · rintro ⟨n, x, hx, hP⟩
-    exact llistExists_of_lnth n ll x hx hP
+    exact llistExists_of_lnth n ll x hx.symm hP
 
 /-- HOL `every`/`LL_ALL` (`llistScript.sml:1591`, `Definition every_def`): every
     element satisfies `P`. The body is HOL's `~exists ((~) o P) ll`, with `exists`
@@ -1773,11 +1790,11 @@ theorem llistEvery_iff (P : α → Prop) (ll : HolLList α) :
   · intro h n x hx
     by_cases hP : P x
     · exact hP
-    · exact absurd ⟨n, x, by rw [lnth_eq_rep]; exact hx, hP⟩ h
+    · exact absurd ⟨n, x, by rw [lnth_eq_rep]; exact hx.symm, hP⟩ h
   · intro h hex
     obtain ⟨n, x, hx, hnP⟩ := hex
     rw [lnth_eq_rep] at hx
-    exact hnP (h n x hx)
+    exact hnP (h n x hx.symm)
 
 /-- HOL `every_thm` (`llistScript.sml:1608-1612`), also exported as `LL_ALL_THM`:
     the empty and cons equations. -/
@@ -1818,10 +1835,10 @@ theorem lflatten_eq_lnil (ll : HolLList (HolLList α)) :
     rw [lnth_eq_rep] at hk
     have h0 : inner.rep 0 ≠ none := rep_zero_ne_none_of_ne_lnil hne
     have hex : ∃ j, ∃ inner' : HolLList α, ll.rep j = some inner' ∧
-        inner'.rep 0 ≠ none := ⟨k, inner, hk, h0⟩
+        inner'.rep 0 ≠ none := ⟨k, inner, hk.symm, h0⟩
     obtain ⟨k', hfe⟩ : ∃ k', firstNonempty ll = some k' := by
       cases hf : firstNonempty ll with
-      | none => exact absurd (firstNonempty_none hf k inner hk) h0
+      | none => exact absurd (firstNonempty_none hf k inner hk.symm) h0
       | some k' => exact ⟨k', rfl⟩
     obtain ⟨⟨inner', hrep', hne'⟩, -⟩ := firstNonempty_spec hfe
     have hl0 : (lflatten ll).rep 0 ≠ none := by
