@@ -179,6 +179,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterFlip
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapExtend
 import Flapjack
+import Flapjack.Test.NestedRelationAudit
 import Flapjack.Compiler.Backend.WordAlloc.Instructions
 import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
 import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConstsGuard
@@ -270,6 +271,13 @@ elab "#emit_hol_ref_export" : command => do
     (fun acc (entry : Name × HolRef) => if entry.2.realsAsRationalCuts then acc.insert entry.1 else acc) {}
   let mut known : Std.HashMap Name Bool := {}
   for (name, ref) in HolRef.all env do
+    if !ref.nestedListRelAsMutual.isEmpty then
+      let marker := ``Flapjack.Test.nestedRelationAudit_passed
+      match env.getModuleIdxFor? marker with
+      | some idx =>
+        unless env.header.moduleNames[idx.toNat]! == `Flapjack.Test.NestedRelationAudit do
+          throwError "nested-list relation audit marker has the wrong defining module"
+      | none => throwError "missing elaborated audit marker for nested-list relation {name}"
     match env.find? name with
     | none => throwError "missing declaration {name}"
     | some _ =>
@@ -296,6 +304,8 @@ elab "#emit_hol_ref_export" : command => do
         if !ref.fmapAsFiniteSupportTuple.isEmpty then
           qualifiers := qualifiers ++ [
             ("fmap_as_finite_support_tuple", toJson ref.fmapAsFiniteSupportTuple)]
+        if !ref.nestedListRelAsMutual.isEmpty then
+          qualifiers := qualifiers ++ [("nested_list_rel_as_mutual", toJson ref.nestedListRelAsMutual)]
         if let some width := ref.wordDimensionAsWidth then
           qualifiers := qualifiers ++ [("word_dimension_as_width", toJson width)]
         if !ref.wordDimensionsAsWidths.isEmpty then

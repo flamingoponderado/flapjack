@@ -142,3 +142,8 @@ run_cmd do
   for axiomName in axioms do
     unless allowed.contains axiomName do
       throwError "functionsRel_iff has unapproved axiom {axiomName}"
+
+namespace Flapjack.Test
+/-- Marker emitted only after the elaborated relation audit succeeds. -/
+theorem nestedRelationAudit_passed : True := trivial
+end Flapjack.Test

@@ -290,6 +290,10 @@ structure HolRef where
       with HOL's real-number specification remains the documented external
       assumption. -/
   realsAsRationalCuts : Bool := false
+  /-- The reviewed recursive-closure list relation is factored through the
+      named mutually inductive auxiliary relation. This records only that
+      factoring; constructor and witness checks do not prove HOL correspondence. -/
+  nestedListRelAsMutual : Array String := #[]
   deriving Inhabited, Repr, BEq
 
 open Lean Meta
@@ -313,6 +317,7 @@ syntax "(" "words_as_type_indexed_bitvec" ")" : holQualifier
 syntax "(" "word_dimension_as_width" ":=" ident ")" : holQualifier
 syntax "(" "word_dimensions_as_widths" ":=" "[" ident,* "]" ")" : holQualifier
 syntax "(" "reals_as_rational_cuts" ")" : holQualifier
+syntax "(" "nested_list_rel_as_mutual" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax (name := hol) "hol " str str (num)? holQualifier* : attr
 
 private def checkedHolRef (path name : String) (line? : Option Nat := none)
@@ -330,7 +335,8 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     (realsAsRationalCuts : Bool := false)
     (fmapAsFiniteSupportResultObservations : Array String := #[])
     (wordDimensionsAsWidths : Array String := #[])
-    (fmapAsFiniteSupportTuple : Array String := #[]) : CoreM HolRef := do
+    (fmapAsFiniteSupportTuple : Array String := #[])
+    (nestedListRelAsMutual : Array String := #[]) : CoreM HolRef := do
   unless (path.startsWith "cakeml/" && path.endsWith ".sml" ||
       -- Pinned upstream HOL submodule; `scripts/check-hol-refs.py` verifies the
       -- gitlink, checkout commit and blob of every cited `HOL/...` file.
@@ -411,7 +417,20 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
        !fmapAsFiniteSupportParameters.isEmpty || !fmapAsFiniteSupportExistentials.isEmpty ||
        !fmapAsFiniteSupportRelation.isEmpty || fmapAsFiniteSupportEqualities || fmapAsFiniteSupportEquality) then
     throwError "@[hol]: fmap_as_finite_support_result_observations is mutually exclusive with other finite-map qualifiers"
-  pure { fmapAsFiniteSupportTuple, fmapAsFiniteSupportResultObservations, path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportFunction, fmapAsFiniteSupportHeterogeneousFunction, fmapAsFiniteSupportParameters, fmapAsFiniteSupportExistentials, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, fmapAsFiniteSupportEquality, wordsAsTypeIndexedBitvec, wordDimensionAsWidth, wordDimensionsAsWidths, realsAsRationalCuts }
+  if !nestedListRelAsMutual.isEmpty then
+    unless nestedListRelAsMutual == #["FunctionsRel"] &&
+        path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" && name == "v_rel" do
+      throwError "@[hol]: nested_list_rel_as_mutual is restricted to the reviewed closure relation"
+    if !listAsArray.isEmpty || !namesAsString.isEmpty || !namesAsStringBoundary.isEmpty ||
+        !fmapAsFiniteSupport.isEmpty || fmapAsFiniteSupportResult ||
+        !fmapAsFiniteSupportFunction.isEmpty || !fmapAsFiniteSupportTuple.isEmpty ||
+        !fmapAsFiniteSupportHeterogeneousFunction.isEmpty || !fmapAsFiniteSupportParameters.isEmpty ||
+        !fmapAsFiniteSupportExistentials.isEmpty || !fmapAsFiniteSupportRelation.isEmpty ||
+        fmapAsFiniteSupportEqualities || fmapAsFiniteSupportEquality ||
+        !fmapAsFiniteSupportResultObservations.isEmpty || wordsAsTypeIndexedBitvec ||
+        wordDimensionAsWidth.isSome || !wordDimensionsAsWidths.isEmpty || realsAsRationalCuts then
+      throwError "@[hol]: nested_list_rel_as_mutual cannot combine with other qualifiers"
+  pure { nestedListRelAsMutual, fmapAsFiniteSupportTuple, fmapAsFiniteSupportResultObservations, path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportFunction, fmapAsFiniteSupportHeterogeneousFunction, fmapAsFiniteSupportParameters, fmapAsFiniteSupportExistentials, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, fmapAsFiniteSupportEquality, wordsAsTypeIndexedBitvec, wordDimensionAsWidth, wordDimensionsAsWidths, realsAsRationalCuts }
 
 private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × Bool × Array (String × String)) := do
   match stx with
@@ -463,6 +482,8 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
         (fun width => width.getId.eraseMacroScopes.toString), false, #[])
   | `(holQualifier| (reals_as_rational_cuts)) =>
       pure ("reals_as_rational_cuts", #[], true, #[])
+  | `(holQualifier| (nested_list_rel_as_mutual := [$names:ident,*])) =>
+      pure ("nested_list_rel_as_mutual", names.getElems.map (fun name => name.getId.eraseMacroScopes.toString), false, #[])
   | _ => throwError "@[hol]: malformed qualifier"
 
 private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
@@ -486,6 +507,7 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut seenWordDimensionsAsWidths := false
     let mut fmapAsFiniteSupportResultObservations : Array String := #[]
     let mut realsAsRationalCuts : Bool := false
+    let mut nestedListRelAsMutual : Array String := #[]
     for qualifier in qualifiers do
       let (kind, fields, isResult, pairs) ← parseHolQualifier qualifier
       if kind == "list_as_array" then listAsArray := listAsArray ++ fields
@@ -520,8 +542,10 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
         if realsAsRationalCuts then
           throwError "@[hol]: reals_as_rational_cuts may appear only once"
         realsAsRationalCuts := true
+      else if kind == "nested_list_rel_as_mutual" then
+        nestedListRelAsMutual := nestedListRelAsMutual ++ fields
       else fmapAsFiniteSupport := fmapAsFiniteSupport ++ fields
-    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportFunction fmapAsFiniteSupportHeterogeneousFunction fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities fmapAsFiniteSupportEquality wordsAsTypeIndexedBitvec wordDimensionAsWidth realsAsRationalCuts fmapAsFiniteSupportResultObservations wordDimensionsAsWidths fmapAsFiniteSupportTuple
+    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportFunction fmapAsFiniteSupportHeterogeneousFunction fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities fmapAsFiniteSupportEquality wordsAsTypeIndexedBitvec wordDimensionAsWidth realsAsRationalCuts fmapAsFiniteSupportResultObservations wordDimensionsAsWidths fmapAsFiniteSupportTuple nestedListRelAsMutual
   match stx with
   | `(attr| hol $path:str $name:str $line:num $qualifiers:holQualifier*) =>
       parse path.getString name.getString (some line.getNat) qualifiers
@@ -679,6 +703,10 @@ initialize holRefAttribute : ParametricAttribute HolRef ←
     descr := "original HOL4 declaration (file path and declaration name) ported by this Lean declaration"
     getParam := fun _ stx => parseHolRefAttribute stx
     afterSet := fun decl ref => do
+      if !ref.nestedListRelAsMutual.isEmpty then
+        unless decl == `Flapjack.Compiler.Backend.ClosAnnotate.ValueRel ||
+            decl == `Flapjack.Compiler.Backend.ClosAnnotate.EnvOk do
+          logError m!"{decl}: nested_list_rel_as_mutual is restricted to the reviewed relation members"
       if !ref.fmapAsFiniteSupportResultObservations.isEmpty then
         let env ← getEnv
         match env.find? decl with
@@ -735,12 +763,29 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     " (reals_as_rational_cuts)" else ""
   let observations := if ref.fmapAsFiniteSupportResultObservations.isEmpty then "" else
     s!" (fmap_as_finite_support_result_observations := [{String.intercalate ", " ref.fmapAsFiniteSupportResultObservations.toList}])"
-  observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++ fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++ fmapAsFiniteSupportParameters ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++ realsAsRationalCuts
+  let nested := if ref.nestedListRelAsMutual.isEmpty then "" else
+    s!" (nested_list_rel_as_mutual := [{String.intercalate ", " ref.nestedListRelAsMutual.toList}])"
+  observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++ fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++ fmapAsFiniteSupportParameters ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++ realsAsRationalCuts ++ nested
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not
 add test declarations to the HOL-reference inventory. -/
 run_cmd do
+  let nestedSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel"
+    (nested_list_rel_as_mutual := [FunctionsRel]))
+  let nestedRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute nestedSyntax)
+  unless nestedRef.nestedListRelAsMutual == #["FunctionsRel"] &&
+      nestedRef.qualifierSuffix == " (nested_list_rel_as_mutual := [FunctionsRel])" do
+    throwError "@[hol] nested-list relation qualifier syntax regression"
+  let badNestedSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel"
+    (nested_list_rel_as_mutual := [FunctionsRel]) (list_as_array := [fields]))
+  let badNestedRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute badNestedSyntax
+      pure false
+    catch _ => pure true
+  unless badNestedRejected do
+    throwError "@[hol] nested-list relation qualifier must reject combinations"
   let plainSyntax ← `(attr| hol "cakeml/pancake/panLangScript.sml" "varname" 7)
   let plain ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute plainSyntax)
   unless plain.line? == some 7 && plain.listAsArray.isEmpty && plain.namesAsString.isEmpty &&

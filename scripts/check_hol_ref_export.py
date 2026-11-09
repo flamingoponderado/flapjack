@@ -19,6 +19,8 @@ equivalence or replace source-level review.
 from __future__ import annotations
 
 import json
+import hashlib
+import runpy
 import subprocess
 import sys
 from pathlib import Path
@@ -28,6 +30,32 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = ROOT / "docs" / "HOL-THEOREM-MAP.json"
 EXPORTER = ROOT / "scripts" / "HolRefExport.lean"
+NESTED_AUDIT = ROOT / "Flapjack" / "Test" / "NestedRelationAudit.lean"
+NESTED_AUDIT_SHA256 = "77f30bebc1f3622d310d980cf94d13f24b54716d802215872653e111cf34c2c6"
+
+
+def validate_nested_audit_source(source: str) -> None:
+    """Require the source-reviewed audit; this does not establish HOL correspondence."""
+    if hashlib.sha256(source.encode("utf-8")).hexdigest() != NESTED_AUDIT_SHA256:
+        raise ValueError("nested-list relation audit changed and requires source re-review")
+    source = runpy.run_path(str(ROOT / "scripts" / "check-hol-refs.py"))["strip_lean_comments"](source)
+    required = (
+        "private def expectedNumberRule", "private def expectedWordRule",
+        "private def expectedBlockRule", "private def expectedBytesRule",
+        "private def expectedPointerRule", "private def expectedClosureRule",
+        "private def expectedRecclosureRule", "private def expectedOutsideRule",
+        "private def expectedLocalRule", "private def expectedCapturedRule",
+        "private def expectedFunctionsNilRule", "private def expectedFunctionsConsRule",
+        "private def expectedFunctionsWitness", "for (ruleName, expectedName) in rules do",
+        "Lean.Meta.isDefEq rule.type expected.value",
+        "Lean.Meta.isDefEq witness.type expectedWitness.value",
+        "Lean.collectAxioms ``functionsRel_iff",
+    )
+    if any(source.count(item) != 1 for item in required):
+        raise ValueError("nested-list relation audit is missing required checks")
+    marker = "theorem nestedRelationAudit_passed : True := trivial"
+    if source.count(marker) != 1 or source.index(marker) < source.index("Lean.collectAxioms ``functionsRel_iff"):
+        raise ValueError("nested-list relation audit marker must follow the audit")
 
 ALLOWED_QUALIFIERS = {
     "list_as_array", "names_as_string", "names_as_string_boundary",
@@ -43,6 +71,7 @@ ALLOWED_QUALIFIERS = {
     "words_as_type_indexed_bitvec",
     "word_dimension_as_width", "word_dimensions_as_widths",
     "reals_as_rational_cuts",
+    "nested_list_rel_as_mutual",
 }
 BOOLEAN_QUALIFIERS = {
     "fmap_as_finite_support_result", "fmap_as_finite_support_equalities",
@@ -129,6 +158,7 @@ def manifest_qualifiers(record: dict[str, Any]) -> dict[str, Any]:
         "fmap_as_finite_support_parameters",
         "fmap_as_finite_support_existentials",
         "word_dimensions_as_widths",
+        "nested_list_rel_as_mutual",
     ):
         if record.get(key, ()):
             qualifiers[key] = list(record[key])
@@ -185,6 +215,12 @@ def check_records(
                 f"{record['lean_path']}:{record['lean_name']}: tuple-map qualifier "
                 "differs from elaborated @[hol] exporter"
             )
+        if (exported_qualifiers.get("nested_list_rel_as_mutual", []) !=
+                qualifiers.get("nested_list_rel_as_mutual", [])):
+            raise ValueError(
+                f"{record['lean_path']}:{record['lean_name']}: nested-list relation qualifier "
+                "differs from elaborated @[hol] exporter"
+            )
         if (exported_qualifiers.get("reals_as_rational_cuts", False)
                 and not qualifiers.get("reals_as_rational_cuts", False)):
             raise ValueError(
@@ -205,6 +241,7 @@ def check_records(
 
 def main() -> int:
     try:
+        validate_nested_audit_source(NESTED_AUDIT.read_text(encoding="utf-8"))
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
         checked = check_records(manifest, exported_refs())
         print(f"{checked} reviewed theorem-map rows match their elaborated @[hol] attributes")

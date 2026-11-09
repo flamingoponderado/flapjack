@@ -1467,6 +1467,25 @@ class ValidateInventoryTest(unittest.TestCase):
         self.assertNotIn(mismatch, MAP["tagged_declarations"]())
 
 
+class NestedRelationStatusTest(unittest.TestCase):
+    def test_qualifier_requires_matching_manifest_and_status(self):
+        key = ("Flapjack/Example.lean", "ValueRel")
+        record = {
+            "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml",
+            "hol_name": "v_rel", "lean_path": key[0], "lean_name": key[1],
+            "statement_status": "reviewed_nested_list_rel_as_mutual",
+            "nested_list_rel_as_mutual": ["FunctionsRel"],
+            "reviewer": "source comparison of nested_list_rel_as_mutual and functionsRel_iff",
+        }
+        tag = (record["hol_path"], record["hol_name"], (), (), (), (), False, (), False,
+               False, (), (), None, (), (), False, False, (), (), (), ("FunctionsRel",))
+        validate = MAP["validate_inventory"]
+        self.assertEqual(validate([record], set(), {key: tag}, set()), [])
+        for changed in ({"nested_list_rel_as_mutual": []}, {"statement_status": "reviewed_exact"},
+                        {"reviewer": "source comparison"}):
+            self.assertTrue(validate([{**record, **changed}], set(), {key: tag}, set()))
+
+
 class TupleFmapStatusTest(unittest.TestCase):
     def setUp(self):
         self.key = ("Flapjack/Example.lean", "ClockValueInv")

@@ -487,6 +487,22 @@ elaborated-attribute export checks manifest agreement and Lean checks the
 witness. None establishes cross-language correspondence. Complete source
 review of both the producer and observer remains required.
 
+**Qualify the factored closure list relation.** The narrowly scoped
+`(nested_list_rel_as_mutual := [FunctionsRel])` qualifier records the
+recursive-closure `LIST_REL` factoring in `clos_annotateProof$v_rel` into the
+mutually inductive `FunctionsRel`. It is only valid on the `ValueRel` and
+`EnvOk` members in `ClosAnnotate/Proofs/ValueRelation.lean`, and both members
+must carry it. It cannot combine with other qualifiers. Use manifest status
+`reviewed_nested_list_rel_as_mutual` after comparing every source rule and the
+`functionsRel_iff` witness with the typed HOL capture. The elaborated audit
+checks the mutual block, constructor and witness types, and witness axioms; it
+does not establish HOL correspondence. The qualifier authorizes only this
+factoring, not any changed rule, hypothesis, carrier, or conclusion.
+Edits to `Flapjack/Test/NestedRelationAudit.lean` require re-review of the
+qualifier and its source comparison, followed by updating its audit-file digest
+in `scripts/check_hol_ref_export.py`. The digest covers the audit, not the
+ported declarations or their proof bodies.
+
 **Qualify multi-carrier finite-map relations.** Use
 `(fmap_as_finite_support_relation := [Carrier.field, ...])` when a HOL relation
 mentions multiple carrier structures and needs explicit ownership for the

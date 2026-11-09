@@ -13,8 +13,9 @@ open Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.ClosProps
 mutual
 /-- Relate source and annotated closure values. HOL's nested list relation is
 factored into the mutually inductive `FunctionsRel`, characterized by
-`functionsRel_iff` below. This non-identity representation is not yet covered
-by a reviewed HOL qualifier, so the relation remains untagged. -/
+`functionsRel_iff` below. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
 inductive ValueRel : Value → Value → Prop where
   | number (value : Int) : ValueRel (.number value) (.number value)
   | word64 (value : BitVec 64) : ValueRel (.word64 value) (.word64 value)
@@ -51,6 +52,8 @@ inductive FunctionsRel : List Value → List Value → Nat →
 
 /-- Relate an environment slot through a compacting sparse map. Slots beyond
 the tracked source environment impose no value relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
 inductive EnvOk : Nat → Nat → Spt Nat → List Value → List Value → Nat → Prop where
   | outside (m l : Nat) (index : Spt Nat) (env nextEnv : List Value) (n : Nat) :
       l + m ≤ n → EnvOk m l index env nextEnv n

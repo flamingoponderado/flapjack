@@ -243,7 +243,7 @@ replication and source-component theorems,
 and the mutual value and
 environment relation rules with inferred types. It also replays the local
 default-environment proof with inferred types. These captures support review;
-the factored Lean mutual relation remains untagged pending a representation qualifier.
+the factored Lean mutual relation records its representation with a qualifier.
 
 `db_vars_definitions_probe.out` captures the typed De Bruijn variable-set
 operations used by closure annotation, including sparse-tree traversal order.

@@ -323,6 +323,9 @@ FMAP_AS_FINITE_SUPPORT_FUNCTION_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_TUPLE_RE = re.compile(
     r'\(\s*fmap_as_finite_support_tuple\s*:=\s*\[([^]]*)\]\s*\)'
 )
+NESTED_LIST_REL_AS_MUTUAL_RE = re.compile(
+    r'\(\s*nested_list_rel_as_mutual\s*:=\s*\[([^]]*)\]\s*\)'
+)
 FMAP_AS_FINITE_SUPPORT_HETEROGENEOUS_FUNCTION_RE = re.compile(
     r'\(\s*fmap_as_finite_support_heterogeneous_function\s*:=\s*\[([^]]*)\]\s*\)'
 )
@@ -560,7 +563,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_fmap_as_finite_support_equality: bool = False,
                         include_result_observations: bool = False,
                         include_word_dimensions_widths: bool = False,
-                        include_fmap_tuple: bool = False):
+                        include_fmap_tuple: bool = False,
+                        include_nested_list_rel: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -659,6 +663,12 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     if len(matches) > 1:
                         positions += ("",)
                     site += (positions,)
+                if include_nested_list_rel:
+                    matches = list(NESTED_LIST_REL_AS_MUTUAL_RE.finditer(attribute))
+                    names = tuple(field.strip() for match in matches for field in match.group(1).split(","))
+                    if len(matches) > 1:
+                        names += ("",)
+                    site += (names,)
                 yield site
         start = None
         chunks = []
@@ -4838,6 +4848,23 @@ def hol_ref_error(
     return None
 
 
+def nested_list_rel_errors(lines: list[str], rel: str, number: int, hol_path: str,
+                           hol_name: str, fields: tuple[str, ...]) -> list[str]:
+    """Restrict the initial qualifier to both reviewed closure-relation members."""
+    errors = []
+    declaration = find_lean_decl(lines, number - 1)
+    if (rel != "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ValueRelation.lean" or
+            declaration not in {"ValueRel", "EnvOk"} or
+            (hol_path, hol_name) != ("cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "v_rel") or
+            fields != ("FunctionsRel",)):
+        errors.append("nested relation qualifier is restricted to the reviewed mutual relation")
+    peers = [site for site in hol_attribute_sites(lines, include_nested_list_rel=True)
+             if site[1:3] == (hol_path, hol_name) and site[-1] == ("FunctionsRel",)]
+    if {find_lean_decl(lines, site[0] - 1) for site in peers} != {"ValueRel", "EnvOk"} or len(peers) != 2:
+        errors.append("both mutual relation members require the same qualifier")
+    return errors
+
+
 def main(argv: list[str]) -> int:
     want_mapping = "--mapping" in argv
     want_orphans = "--orphans" in argv
@@ -4867,7 +4894,7 @@ def main(argv: list[str]) -> int:
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-             fmap_equality, result_observations, dimension_widths, fmap_tuple) in hol_attribute_sites(
+             fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -4877,8 +4904,17 @@ def main(argv: list[str]) -> int:
                 include_result_observations=True,
                 include_word_dimensions_widths=True,
                 include_fmap_tuple=True,
+                include_nested_list_rel=True,
              ):
             where = f"{rel}:{number}"
+            if nested_list_rel:
+                errors.extend(f"{where}: {error}" for error in nested_list_rel_errors(
+                    lines, rel, number, hol_path, hol_name, nested_list_rel))
+                if (list_fields or names_fields or boundary_fields or fmap_fields or fmap_result or fmap_relation or
+                        fmap_equalities or words_bitvec or fmap_parameters or fmap_existentials or dimension_width or
+                        fmap_function_positions or fmap_heterogeneous_function_positions or reals_cuts or fmap_equality or
+                        result_observations or dimension_widths or fmap_tuple):
+                    errors.append(f"{where}: nested relation qualifier cannot combine with other qualifiers")
             if fmap_tuple:
                 if rel != "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv.lean":
                     errors.append(f"{where}: tuple maps require the reviewed value-invariant module")

@@ -1529,6 +1529,7 @@ INFRASTRUCTURE_THEOREMS = {
 }
 VALID_STATUSES = {
     "reviewed_exact",
+    "reviewed_nested_list_rel_as_mutual",
     "reviewed_list_as_array",
     "reviewed_names_as_string",
     "reviewed_list_as_array_names_as_string",
@@ -1715,7 +1716,7 @@ def tagged_declarations(
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions,
              fmap_heterogeneous_function_positions, reals_cuts,
-             fmap_equality, result_observations, dimension_widths, fmap_tuple) in HOL_ATTRIBUTE_SITES(
+             fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
@@ -1725,6 +1726,7 @@ def tagged_declarations(
                  include_result_observations=True,
                  include_word_dimensions_widths=True,
                  include_fmap_tuple=True,
+                 include_nested_list_rel=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1735,7 +1737,7 @@ def tagged_declarations(
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
                      fmap_existentials, dimension_width, fmap_function_positions,
-                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations, dimension_widths, fmap_tuple)
+                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1751,7 +1753,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
         fmap_existentials, dimension_width,
         fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-        fmap_equality, result_observations, dimension_widths, fmap_tuple,
+        fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1775,6 +1777,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support_function"] = list(fmap_function_positions)
         if fmap_tuple:
             entry["fmap_as_finite_support_tuple"] = list(fmap_tuple)
+        if nested_list_rel:
+            entry["nested_list_rel_as_mutual"] = list(nested_list_rel)
         if fmap_heterogeneous_function_positions:
             entry["fmap_as_finite_support_heterogeneous_function"] = list(
                 fmap_heterogeneous_function_positions
@@ -2106,6 +2110,14 @@ def validate_inventory(
         result_observations = tag[17] if tag is not None and len(tag) > 17 else ()
         dimension_widths = tag[18] if tag is not None and len(tag) > 18 else ()
         fmap_tuple = tag[19] if tag is not None and len(tag) > 19 else ()
+        nested_list_rel = tag[20] if tag is not None and len(tag) > 20 else ()
+        if tuple(record.get("nested_list_rel_as_mutual", ())) != nested_list_rel:
+            errors.append(f"{key[0]}:{key[1]}: nested-list relation qualifier does not match @[hol] tag")
+        if bool(nested_list_rel) != (status == "reviewed_nested_list_rel_as_mutual"):
+            errors.append(f"{key[0]}:{key[1]}: nested-list relation requires its reviewed status")
+        if nested_list_rel and (not isinstance(reviewer, str) or "functionsRel_iff" not in reviewer or
+                                "nested_list_rel_as_mutual" not in reviewer or "source" not in reviewer.lower()):
+            errors.append(f"{key[0]}:{key[1]}: nested-list relation review must cite qualifier, source and functionsRel_iff")
         tuple_status = "reviewed_fmap_as_finite_support_tuple_words_as_type_indexed_bitvec"
         if tuple(record.get("fmap_as_finite_support_tuple", ())) != fmap_tuple:
             errors.append(f"{key[0]}:{key[1]}: tuple-map positions do not match @[hol] tag")
