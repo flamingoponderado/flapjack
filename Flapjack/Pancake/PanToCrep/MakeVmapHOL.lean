@@ -30,9 +30,11 @@ carries the standalone `fmap_as_finite_support_result` qualifier, justified by
 the same-module lookup witness `holFmapAsFiniteSupportResultWitness_panToCrepMakeVmapHOLExact`
 against the raw function-backed counterpart `panToCrepMakeVmapRaw`.
 
-The production boundary still builds its map with the `String`/`Shape`-keyed
-`panToCrepMakeVmapHOL` in `Flapjack/Pancake/PanToCrep/Compile.lean`; the exact
-carrier replacement of that production path is tracked by `flapjack-pxn.18.3.5.8`.
+The executed pan-to-crep boundary builds its map with this exact definition:
+`panToWordCompileProgHOL` → `compileProgDeclsHOLW` →
+`compileToCrepExactHOLW` → `compFuncExactHOLW`. The `String`/`Shape`-keyed
+`panToCrepMakeVmapHOL` in `Flapjack/Pancake/PanToCrep/Compile.lean` remains
+only for the legacy compatibility definitions.
 -/
 
 namespace Flapjack

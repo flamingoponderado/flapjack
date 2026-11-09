@@ -1,8 +1,8 @@
 import Flapjack.Pancake.PanStructs.CompileProgExact
 import Flapjack.Pancake.PanLang.Decl
 
-/-! Exact source declaration/top compilation. Source definitions alone do not
-complete the executed production route, which remains separately tracked. -/
+/-! Exact source declaration/top compilation. `compileTopExact` is the
+    executed pan-structs stage of `panToWordCompileProgHOL`. -/
 namespace Flapjack.Pancake.PanStructs.CompileShapeExact
 open Flapjack.Pancake.PanLang
 
