@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Executable
 import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileDefinitions
 import Flapjack.Pancake.PanToTarget
 import Flapjack.Compiler.Backend.RiscVConfig.Executable
+import Flapjack.Compiler.Encoders.RiscV.Unsupported
 import Flapjack.RiscV.PipelineDiagnostics
 
 /-! Parser-backed native artifact interface. The artifact retains failure and final
@@ -42,9 +43,10 @@ def compileWithConfig (config : Compiler.Backend.Backend.Config) (source : Strin
       | .error error => .error (.static error)
       | .ok _ =>
           let declarations := Pancake.PanToTarget.mainFirstHOL (declarations.map declToHOL)
-          match compileProgAsmFastChecked config riscvConfig declarations with
+          match compileProgAsmFastChecked Flapjack.Compiler.Encoders.RiscV.riscvUnsupported
+            config riscvConfig declarations with
           | .error (.wordToStack failure) => .error (.wordStackGuard failure)
-          | .error (.labRegister failure) => .error (.labRegisterGuard failure)
+          | .error (.labEncoding failure) => .error (.labEncodingGuard failure)
           | .error (.labToTarget failure) => .error (.artifactFailure failure)
           | .ok artifact =>
               .ok { declarations := declarations

@@ -1,28 +1,37 @@
 import Flapjack.Compiler.Backend.LabToTarget.Encoding
+import Flapjack.Compiler.Encoders.RiscV.Unsupported
 
 /-!
-# Register-range guard before native encoding
+# Encoding guard before native encoding
 
-`lab_to_target$line_ok_light` accepts every `Asm` line, and the RISC-V
-encoder narrows each register with `BitVec.ofNat 5 r` (`riscv_ast_def`), so a
-register outside the target's register file would silently become a different
-register instead of being rejected.  `riscv_enc_def`/`riscv_ast_def` stay
-exact; this module is Flapjack-only driver infrastructure that checks the
+`lab_to_target$line_ok_light` accepts every `Asm` line, and the RISC-V encoder
+narrows each register with `BitVec.ofNat 5 r` (`riscv_ast_def`), so a register
+outside the target's register file would silently become a different register
+instead of being rejected.  `riscvAst` also maps `Arith (LongDiv ...)` and
+`FP _` to `riscv_encode_fail_def`, silently substituting the fail encoding
+(`Skip` is the padding instruction and its fail encoding is the intended
+no-op, so it is accepted).  `riscv_enc_def`/`riscv_ast_def` stay exact; this
+module is Flapjack-only driver infrastructure that checks the
 `Asm` lines of the `stack_to_lab` output before encoding and reports the first
-register that `asm$reg_ok` rejects (`reg < reg_count` and not in
-`avoid_regs`).
+line that cannot be encoded, with a named reason:
+
+- a register that `asm$reg_ok` rejects (`reg < reg_count` and not in
+  `avoid_regs`);
+- an instruction shape the target encoder rejects.
 
 `LabAsm` lines are not inspected here: their registers are chosen by
 `stack_to_lab` from the same target configuration (through
-`StackNames.compileHOL`), not carried over from a source program.  The guard
-is a no-op on every program the pass actually supports.  There is no
-separately named HOL declaration for this guard.
+`StackNames.compileHOL`), and `lab_inst_def` only produces `Jump`, `JumpCmp`,
+`Call` and `Loc`, none of which is a fail shape.  The guard is a no-op on
+every program the pass actually supports.  There is no separately named HOL
+declaration for this guard.
 -/
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 
 open Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Encoders.Asm
+open Flapjack.Compiler.Encoders.RiscV
 open Flapjack.Basis.Pure.MlString
 
 /-- A lab line over the exact assembler carriers, as `stack_to_lab` produces
@@ -34,15 +43,16 @@ abbrev GuardLine (width : Nat) [NeZero width] :=
 /-- A lab section over the exact assembler carriers. -/
 abbrev GuardSection (width : Nat) [NeZero width] := Section (GuardLine width)
 
-/-- A located register-range failure.  `sectionIndex` and `lineIndex` are
-zero-based positions in the lab program. -/
-inductive RegisterGuardFailure where
+/-- A located reason an `Asm` line cannot be encoded for this target.
+`sectionIndex` and `lineIndex` are zero-based positions in the lab program. -/
+inductive EncodingGuardFailure where
   | outOfRange (sectionIndex lineIndex register : Nat)
   | avoided (sectionIndex lineIndex register : Nat)
+  | unsupported (sectionIndex lineIndex : Nat) (reason : UnsupportedReason)
   deriving DecidableEq, Repr
 
-/-- Human-readable description of a located register-range failure. -/
-def registerGuardFailureDescription : RegisterGuardFailure → String
+/-- Human-readable description of a located encoding failure. -/
+def encodingGuardFailureDescription : EncodingGuardFailure → String
   | .outOfRange sectionIndex lineIndex register =>
       "lab-to-target: section " ++ toString sectionIndex ++ " line " ++
         toString lineIndex ++ " uses register " ++ toString register ++
@@ -51,6 +61,10 @@ def registerGuardFailureDescription : RegisterGuardFailure → String
       "lab-to-target: section " ++ toString sectionIndex ++ " line " ++
         toString lineIndex ++ " uses register " ++ toString register ++
         ", which the target reserves"
+  | .unsupported sectionIndex lineIndex reason =>
+      "lab-to-target: section " ++ toString sectionIndex ++ " line " ++
+        toString lineIndex ++ " cannot be encoded: " ++
+        unsupportedReasonDescription reason
 
 /-- Every register of an exact `arith` payload. -/
 def arithRegisters {width : Nat} [NeZero width] : HolArith width → List Nat
@@ -93,55 +107,68 @@ def asmRegisters {width : Nat} [NeZero width] : HolAsm width → List Nat
 /-- Classify a register that `asm$reg_ok` rejects: outside the register count,
 or in the target's avoid set. -/
 def classifyRegister {width : Nat} [NeZero width] (config : AsmConfigExact width)
-    (sectionIndex lineIndex register : Nat) : RegisterGuardFailure :=
+    (sectionIndex lineIndex register : Nat) : EncodingGuardFailure :=
   if register < config.regCount then .avoided sectionIndex lineIndex register
   else .outOfRange sectionIndex lineIndex register
 
 /-- The first register in the list that `asm$reg_ok` rejects, if any. -/
-private def firstBadRegisterInList {width : Nat} [NeZero width]
+private def firstFailureInList {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (sectionIndex lineIndex : Nat) :
-    List Nat → Option RegisterGuardFailure
+    List Nat → Option EncodingGuardFailure
   | [] => none
   | register :: rest =>
       if asmRegOkExact register config then
-        firstBadRegisterInList config sectionIndex lineIndex rest
+        firstFailureInList config sectionIndex lineIndex rest
       else some (classifyRegister config sectionIndex lineIndex register)
 
-/-- The first rejected register of one lab line; `LabAsm` and `Label` lines
-carry no checked register. -/
-private def firstBadRegisterInLine {width : Nat} [NeZero width]
-    (config : AsmConfigExact width) (sectionIndex lineIndex : Nat)
-    (line : GuardLine width) : Option RegisterGuardFailure :=
+/-- The first reason one lab line cannot be encoded: a rejected register, then
+an unsupported instruction shape.  `LabAsm` and `Label` lines carry no checked
+register and no fail shape. -/
+private def firstFailureInLine {width : Nat} [NeZero width]
+    (config : AsmConfigExact width)
+    (unsupported : HolAsm width → Option UnsupportedReason)
+    (sectionIndex lineIndex : Nat) (line : GuardLine width) :
+    Option EncodingGuardFailure :=
   match line with
   | .asm instruction _ _ =>
-      firstBadRegisterInList config sectionIndex lineIndex
-        (asmRegisters (cbwToAsmExact instruction))
+      let asm := cbwToAsmExact instruction
+      match firstFailureInList config sectionIndex lineIndex (asmRegisters asm) with
+      | some failure => some failure
+      | none =>
+          match unsupported asm with
+          | some reason => some (.unsupported sectionIndex lineIndex reason)
+          | none => none
   | _ => none
 
-/-- The first rejected register of a section's lines, in line order. -/
-private def firstBadRegisterInLines {width : Nat} [NeZero width]
-    (config : AsmConfigExact width) (sectionIndex lineIndex : Nat) :
-    List (GuardLine width) → Option RegisterGuardFailure
+/-- The first encoding failure of a section's lines, in line order. -/
+private def firstFailureInLines {width : Nat} [NeZero width]
+    (config : AsmConfigExact width)
+    (unsupported : HolAsm width → Option UnsupportedReason)
+    (sectionIndex lineIndex : Nat) : List (GuardLine width) →
+      Option EncodingGuardFailure
   | [] => none
   | line :: rest =>
-      match firstBadRegisterInLine config sectionIndex lineIndex line with
+      match firstFailureInLine config unsupported sectionIndex lineIndex line with
       | some failure => some failure
-      | none => firstBadRegisterInLines config sectionIndex (lineIndex + 1) rest
+      | none => firstFailureInLines config unsupported sectionIndex (lineIndex + 1) rest
 
-/-- The first rejected register across sections, in section and line order. -/
-private def firstBadRegisterInSections {width : Nat} [NeZero width]
-    (config : AsmConfigExact width) (sectionIndex : Nat) :
-    List (GuardSection width) → Option RegisterGuardFailure
+/-- The first encoding failure across sections, in section and line order. -/
+private def firstFailureInSections {width : Nat} [NeZero width]
+    (config : AsmConfigExact width)
+    (unsupported : HolAsm width → Option UnsupportedReason)
+    (sectionIndex : Nat) : List (GuardSection width) → Option EncodingGuardFailure
   | [] => none
   | ⟨_, lines⟩ :: rest =>
-      match firstBadRegisterInLines config sectionIndex 0 lines with
+      match firstFailureInLines config unsupported sectionIndex 0 lines with
       | some failure => some failure
-      | none => firstBadRegisterInSections config (sectionIndex + 1) rest
+      | none => firstFailureInSections config unsupported (sectionIndex + 1) rest
 
-/-- The register-range guard: `none` exactly when every `Asm` line of the lab
-program satisfies `asm$reg_ok` for this target configuration. -/
-def firstBadRegister {width : Nat} [NeZero width] (config : AsmConfigExact width)
-    (sections : List (GuardSection width)) : Option RegisterGuardFailure :=
-  firstBadRegisterInSections config 0 sections
+/-- The encoding guard: `none` exactly when every `Asm` line of the lab program
+satisfies `asm$reg_ok` for this target configuration and has a defined
+lowering under the supplied unsupported-shape check. -/
+def firstUnencodable {width : Nat} [NeZero width] (config : AsmConfigExact width)
+    (unsupported : HolAsm width → Option UnsupportedReason)
+    (sections : List (GuardSection width)) : Option EncodingGuardFailure :=
+  firstFailureInSections config unsupported 0 sections
 
 end Flapjack.Compiler.Backend.LabToTarget

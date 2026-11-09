@@ -580,11 +580,9 @@ def main (args : List String) : IO UInt32 := do
         | some (bytes, bitmaps, config) =>
           if !options.noWarn then
             IO.eprint (String.join (warnings.map pancakeStaticDiagnostic))
-          let output := Flapjack.RiscV.NativeCLI.assembly out.declarations bytes bitmaps config
+          let output := Flapjack.RiscV.NativeCLI.assembly bytes bitmaps config
           if options.mainReturn then
             let config := { config with
-              symbols := Flapjack.RiscV.NativeCLI.exportSymbols
-                (Flapjack.RiscV.NativeCLI.compileProgNames out.declarations) config
               exported := Flapjack.Pancake.PanToTarget.exportsHOL out.declarations }
             IO.print (Flapjack.RiscV.CakeArtifactFormat.returningAssembly output config)
           else IO.print output
