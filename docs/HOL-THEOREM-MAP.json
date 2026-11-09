@@ -13275,6 +13275,16 @@
     "reviewer": "Compared evaluate_op_error_typed: an arbitrary failed argument evaluation propagates its exact error and final state through the closure operation. The independent compiler and FFI types are retained; closure-state refs and code use canonical finite maps with a local witness. Evaluation inherits reals_as_rational_cuts."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+    "hol_name": "compile_op_evaluates_args",
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ErrorPropagation.lean",
+    "lean_name": "compileOp_evaluates_args",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared compile_op_evaluates_args_typed: binder order xs, db, t, err, t1, op, tra; arbitrary argument error, three excluded source operators, unchanged error and final state, and independent compiler and FFI carriers agree. Closure-state refs and code use canonical finite maps with the local witness. Evaluation inherits reals_as_rational_cuts (SOUNDNESS item 8). Independently source-reviewed."
+  },
+  {
     "hol_path": "HOL/src/finite_maps/alistScript.sml",
     "hol_name": "alist_to_fmap_def",
     "lean_path": "Flapjack/FiniteMap/AlistExact.lean",

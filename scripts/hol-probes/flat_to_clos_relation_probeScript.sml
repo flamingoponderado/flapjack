@@ -200,3 +200,5 @@ val _ = if null (hyp op_eq_gc) then () else raise Fail "hypotheses: op_eq_gc";
 val _ = (print "op_eq_gc_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl op_eq_gc); print "\n");
 val _ = if null (hyp op_ffi) then () else raise Fail "hypotheses: op_ffi";
 val _ = (print "op_ffi_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl op_ffi); print "\n");
+val _ = if null (hyp compile_op_evaluates_args) then () else raise Fail "hypotheses: compile_op_evaluates_args";
+val _ = (print "compile_op_evaluates_args_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_op_evaluates_args); print "\n");
