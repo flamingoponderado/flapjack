@@ -191,11 +191,36 @@ theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.
   | copyAw8Str => exact evaluate_copyByteArray env names values source target trace args argsSim notTypeError
   | copyAw8Aw8 => exact evaluate_copyByteArrayToByteArray env names values source target trace args argsSim notTypeError
   | xorAw8StrUnsafe => exact evaluate_xorByteArray env names values source target trace args argsSim notTypeError
-  | implode => exact evaluate_stringImplode env names values source target trace args argsSim notTypeError
-  | explode => exact evaluate_stringExplode env names values source target trace args argsSim notTypeError
-  | strsub => exact evaluate_checkedStringRead env names values source target trace args argsSim notTypeError
-  | strlen => exact evaluate_stringLength env names values source target trace args argsSim notTypeError
-  | strcat => exact evaluate_stringConcat env names values source target trace args argsSim notTypeError
+  | implode =>
+    apply evalSim_app_of_op env names values source target trace (.src .implode) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opString _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inl rfl)) premises
+  | explode =>
+    apply evalSim_app_of_op env names values source target trace (.src .explode) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opString _ s vs sNext result tNext xs db t ws tt (Or.inl rfl) premises
+  | strsub =>
+    apply evalSim_app_of_op env names values source target trace (.src .strsub) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opString _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inl rfl)))) premises
+  | strlen =>
+    apply evalSim_app_of_op env names values source target trace (.src .strlen) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opString _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inl rfl))) premises
+  | strcat =>
+    apply evalSim_app_of_op env names values source target trace (.src .strcat) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opString _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inr rfl)))) premises
   | vfromList =>
     apply evalSim_app_of_op env names values source target trace (.src .vfromList) args
       ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
