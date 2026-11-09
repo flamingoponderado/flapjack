@@ -113,23 +113,16 @@ theorem valueToList_related (source : FlatSem.Value) (target : ClosSem.Value)
     ∃ targetValues, ClosSem.valueToList target = some targetValues ∧
       List.Forall₂ ValueRel sourceValues targetValues := by
   revert target sourceValues
-  refine FlatSem.valueToList.induct (motive := fun source =>
-    ∀ (target : ClosSem.Value) (sourceValues : List FlatSem.Value),
-      ValueRel source target → FlatSem.valueToList source = some sourceValues →
-      ∃ targetValues, ClosSem.valueToList target = some targetValues ∧
-        List.Forall₂ ValueRel sourceValues targetValues) ?_ ?_ ?_ ?_ ?_ source
-  · intro cid tid h target sourceValues rel dec
-    simp [FlatSem.valueToList, h] at dec
-    subst sourceValues
+  fun_induction FlatSem.valueToList source with
+  | case1 =>
+    intro target sourceValues rel dec
+    simp_all
     cases rel with
-    | con values =>
-      cases values
-      exact ⟨[], by simp [ClosSem.valueToList, h.1], .nil⟩
-  · intro cid tid h target sourceValues rel dec
-    simp [FlatSem.valueToList, h] at dec
-  · intro cid tid head tail h ih target sourceValues rel dec
-    simp only [FlatSem.valueToList, h] at dec
-    obtain ⟨tailValues, tailDec, rfl⟩ := Option.map_eq_some_iff.mp dec
+    | con values => cases values; exact ⟨[], by simp [ClosSem.valueToList], .nil⟩
+  | case3 =>
+    intro target sourceValues rel dec
+    simp_all
+    rename_i ih
     cases rel with
     | con values =>
       cases values with
@@ -137,13 +130,12 @@ theorem valueToList_related (source : FlatSem.Value) (target : ClosSem.Value)
         cases rest with
         | cons tailRel endRel =>
           cases endRel
-          obtain ⟨targetTail, targetDec, tailRelated⟩ := ih _ tailValues tailRel tailDec
-          exact ⟨_, by simp [ClosSem.valueToList, h.1, targetDec],
-            .cons headRel tailRelated⟩
-  · intro cid tid head tail h target sourceValues rel dec
-    simp [FlatSem.valueToList, h] at dec
-  · intro x h1 h2 target sourceValues rel dec
-    simp [FlatSem.valueToList] at dec
+          obtain ⟨tailValues, decTail, rfl⟩ := dec
+          obtain ⟨ys, decY, relY⟩ := ih _ tailValues tailRel decTail
+          exact ⟨_, by simp [ClosSem.valueToList, decY], .cons headRel relY⟩
+  | _ =>
+    intro target sourceValues rel dec
+    simp_all
 
 /-- Flapjack rendering of a type-changing update of the flat environment’s
 single value field; the previous field value is discarded. -/
