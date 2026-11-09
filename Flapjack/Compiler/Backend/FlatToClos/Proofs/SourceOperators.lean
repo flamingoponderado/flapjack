@@ -1,4 +1,3 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveTests
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveArith
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveConversions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ApplicationOperators
@@ -140,7 +139,12 @@ theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.
     · simp [destNop]
     · intro s vs sNext result tNext xs db t ws tt premises
       exact opShifts _ s vs sNext result tNext xs db t ws tt ⟨width, shift, amount, rfl⟩ premises
-  | test test typ => exact evaluate_primitiveTest env names values source target trace test typ args argsSim notTypeError
+  | test test typ =>
+    apply evalSim_app_of_op env names values source target trace (.src (.test test typ)) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opTest _ s vs sNext result tNext xs db t ws tt ⟨test, typ, rfl⟩ premises
   | ffi name =>
     apply evalSim_app_of_op env names values source target trace (.src (.ffi name)) args
       ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
