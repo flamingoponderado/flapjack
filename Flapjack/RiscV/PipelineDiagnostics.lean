@@ -25,6 +25,9 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionRemoveDead
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAMetadata
 import Flapjack.Compiler.Backend.WordUnreach.Production
 import Flapjack.Compiler.Backend.WordCopy.Production
+import Flapjack.Compiler.Backend.LabToTarget.Diagnostics
+import Flapjack.Compiler.Backend.LabToTarget.EncodingGuard
+import Flapjack.Compiler.Backend.WordToStack.Guard
 
 /-!
 # Checked pipeline Word-to-Stack diagnostics
@@ -80,7 +83,9 @@ inductive SourceRiscVImageError where
   | entryNotFound
   | lowering (error : PipelineRiscVLoweringError)
   | loweringInFunction (functionName : FunName) (error : PipelineRiscVLoweringError)
-  | artifactFailure
+  | artifactFailure (failure : Flapjack.Compiler.Backend.LabToTarget.LabLoweringFailure)
+  | wordStackGuard (failure : Flapjack.Compiler.Backend.WordToStack.WordStackGuardFailure)
+  | labEncodingGuard (failure : Flapjack.Compiler.Backend.LabToTarget.EncodingGuardFailure)
   deriving Repr
 
 def pipelineLoweringSectionId : PipelineRiscVLoweringError → Option Nat
@@ -122,6 +127,14 @@ def sourceRiscVImageErrorDescription : SourceRiscVImageError → String
   | .lowering error => pipelineRiscVLoweringErrorDescription error
   | .loweringInFunction functionName error =>
       s!"in function '{functionName}': {pipelineRiscVLoweringErrorDescription error}"
-  | .artifactFailure => "failed to assemble a runtime artifact section"
+  | .artifactFailure failure =>
+      "native backend compilation failed: " ++
+        Flapjack.Compiler.Backend.LabToTarget.labLoweringFailureDescription failure
+  | .wordStackGuard failure =>
+      "native backend compilation failed: " ++
+        Flapjack.Compiler.Backend.WordToStack.wordStackGuardFailureDescription failure
+  | .labEncodingGuard failure =>
+      "native backend compilation failed: " ++
+        Flapjack.Compiler.Backend.LabToTarget.encodingGuardFailureDescription failure
 
 end Flapjack

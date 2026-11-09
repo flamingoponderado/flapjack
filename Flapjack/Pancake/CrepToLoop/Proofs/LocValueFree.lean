@@ -803,13 +803,6 @@ private theorem compHOL_preserves_locValueFree {width : Nat} [NeZero width]
   exact markAllHOL_preserves_locValueFree _
     (shrinkHOL_preserves_locValueFree program .ln hfree)
 
-private theorem optimiseHOL_preserves_locValueFree {width : Nat} [NeZero width]
-    (program : HolLoopProg width) (hfree : holLoopProgLocValueFree program) :
-    holLoopProgLocValueFree (optimiseHOL program) := by
-  apply compHOL_preserves_locValueFree
-  exact loopCallCompHOL_preserves_locValueFree program .ln hfree
-
-/-- The executable Loop carrier has no nested `locValue` constructor. -/
 def loopProgLocValueFree {width : Nat} : LoopProg (BitVec width) → Prop
   | .locValue _ _ => False
   | .seq first second => loopProgLocValueFree first ∧ loopProgLocValueFree second

@@ -15,9 +15,4 @@ theorem productionMergeMapLookup (entries : List (Nat × Nat)) (key : Nat) :
     · have hk : key ≠ name := Ne.symm h
       simp [lookupNatInfo,sptAListLookup,h,hk,ih]
 
-private theorem decodedLookup (tree : Spt Nat) (key : Nat) :
-    lookupNatInfo key (sptToAList tree) = sptLookup key tree := by
-  rw [productionMergeMapLookup]
-  simpa only [sptLookup_sptFromAList] using sptLookup_sptFromAList_sptToAList key tree
-
 end Flapjack.Compiler.Backend.WordAlloc

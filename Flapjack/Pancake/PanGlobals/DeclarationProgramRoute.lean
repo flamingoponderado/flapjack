@@ -16,12 +16,4 @@ def GlobalDeclarationContextRel {width : Nat} [NeZero width]
     production.globals (Flapjack.Basis.Pure.MlString.toStringOfBytes key) =
       (exactContext.globals.lookup key).map (fun value => (shapeOfHOL value.1, value.2))
 
-/-- Local proof-irrelevance factoring for the context codec; no HOL original. -/
-private theorem contextCodecMapExt {α β : Type} {left right : HolFiniteMapExact α β}
-    (h : left.lookup = right.lookup) : left = right := by
-  cases left
-  cases right
-  cases h
-  rfl
-
 end Flapjack

@@ -9,20 +9,6 @@ open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 private theorem starEmptyRight {α : Type} (p : (α → Prop) → Prop) : SetSep.star p SetSep.emp = p := by
   rw [SetSep.starComm, StackRemove.StackHeap.starEmptyLeft]
 
-private theorem shiftedForward_isForward {width : Nat} [NeZero width] (value : BitVec width) :
-    wordSemIsFwdPtr (.word (value <<< (2 : Nat))) = true := by
-  simp only [wordSemIsFwdPtr, decide_eq_true_eq]
-  apply BitVec.eq_of_getLsbD_eq
-  intro i hi
-  simp only [BitVec.getLsbD_and, BitVec.getLsbD_shiftLeft]
-  by_cases h : i < 2
-  · simp [h]
-  · have h' : 2 ≤ i := by omega
-    have pow : 2 ^ 2 ≤ 2 ^ i := Nat.pow_le_pow_right (by decide : 0 < (2 : Nat)) h'
-    have bit : (3 : Nat).testBit i = false := Nat.testBit_lt_two_pow (by omega)
-    simp [h, BitVec.getLsbD_ofNat, bit]
-
-
 /-- Forwarding-pointer case; the lookup selects the corresponding original case. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "word_gen_gc_move_thm"
   (words_as_type_indexed_bitvec)]

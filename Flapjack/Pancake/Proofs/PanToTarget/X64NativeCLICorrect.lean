@@ -91,13 +91,14 @@ theorem x64CLIOutput_correct {format : RiscV.NativeCLI.Format} {source : String}
       out.artifact = some (bytes, bitmaps, config) ∧
       text = X64.NativeCLI.render format out.declarations bytes bitmaps config ∧
       compileProgMaxAsmExecutable pancakeX64BackendConfig x64Config out.declarations =
-        (some (bytes, bitmaps, config), x64NativeSourceLogicalBound out) ∧
+        (some (bytes, bitmaps, { config with symbols := notFoundSymbols config }),
+          x64NativeSourceLogicalBound out) ∧
       NativeX64Correctness parsed out := by
   obtain ⟨out, bytes, bitmaps, config, compiled, result, rendered⟩ :=
     X64.NativeCLI.output_ok succeeded
   obtain ⟨parsed, parsedEq, -, -⟩ := x64NativeSourceCompile_ok compiled
   refine ⟨parsed, out, bytes, bitmaps, config, parsedEq, compiled, result, rendered, ?_, ?_⟩
-  · simpa only [result] using x64NativeSourceCompile_full_result compiled
+  · simpa only [result, Option.map_some] using x64NativeSourceCompile_full_result compiled
   · intro σ mc bytes' bitmaps' c' stack_max s ms globals_size heap_len adj_ptr2 adj_ptr4 ffi
       cbspace data_sp start hmc hasMain premises
     exact x64NativeSourceCompile_correct parsed compiled parsedEq mc bytes' bitmaps' c' stack_max s ms

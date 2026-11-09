@@ -195,28 +195,6 @@ def eraseEq [DecidableEq α] (map : HolFiniteMapWithDomain α β) (key : α) :
       exact ⟨(map.keys_iff_lookup query).mpr hparts.2,
         decide_eq_true hparts.1⟩
 
-private theorem filter_length_lt_of_mem [DecidableEq α]
-    (keys : List α) (key : α) (hnodup : keys.Nodup)
-    (hmem : key ∈ keys) :
-    (keys.filter (fun query => decide (query ≠ key))).length < keys.length := by
-  induction keys with
-  | nil => simp at hmem
-  | cons head tail ih =>
-      simp only [List.nodup_cons] at hnodup
-      simp only [List.mem_cons] at hmem
-      rcases hmem with hhead | htail
-      · subst head
-        simp only [List.filter_cons]
-        simp
-        exact Nat.lt_succ_of_le (List.length_filter_le _ _)
-      · have hne : head ≠ key := by
-          intro heq
-          apply hnodup.1
-          simpa [heq] using htail
-        have htailLt := ih hnodup.2 htail
-        simp [hne]
-        omega
-
 end HolFiniteMapWithDomain
 
 namespace HolFiniteMapExact

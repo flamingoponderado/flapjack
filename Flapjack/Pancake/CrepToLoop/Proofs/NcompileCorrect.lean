@@ -667,4 +667,23 @@ theorem crepToLoop_ncompile_correct_assign {width : Nat} [NeZero width] {σ : Ty
           · simpa only [CrepSemHOLState.setVar, LoopSemStateFiniteExact.setVar] using hm'
           · simpa only [CrepSemHOLState.setVar, LoopSemStateFiniteExact.setVar] using hg'
           · simpa only [CrepSemHOLState.setVar, LoopSemStateFiniteExact.setVar] using hc'
+/-- The `locals_rel_def` / `domain_inter` step of HOL's While case: the
+locals relation survives intersection with the live set. This helper has no
+standalone HOL declaration. -/
+theorem locals_rel_inter {width : Nat} [NeZero width] (ctxt : CrepToLoopContextExact)
+    (l : NumSet) (sl : HolFiniteMapExact Nat (HolWordLab width)) (tl : Spt (WordLocW width))
+    (h : crepToLoopLocalsRelExact ctxt l sl tl) :
+    crepToLoopLocalsRelExact ctxt l sl (sptInter tl l) := by
+  refine ⟨h.1, h.2.1, fun k hk => ?_, fun vn val hval => ?_⟩
+  · have hk' : (sptLookup k l).isSome := hk
+    show (sptLookup k (sptInter tl l)).isSome
+    rw [sptLookup_sptInter, if_pos hk']
+    exact h.2.2.1 k hk
+  · obtain ⟨n, hn1, hn2, hn3⟩ := h.2.2.2 vn val hval
+    have hnl : (sptLookup n l).isSome := hn2
+    refine ⟨n, hn1, hn2, ?_⟩
+    show sptLookup n (sptInter tl l) = _
+    rw [sptLookup_sptInter, if_pos hnl]
+    exact hn3
+
 end Flapjack

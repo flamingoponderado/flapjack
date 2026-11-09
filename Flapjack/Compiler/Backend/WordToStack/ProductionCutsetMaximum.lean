@@ -53,13 +53,4 @@ theorem maxList_toNumSetHOL (values : List Nat) :
     intro key hkey
     exact maxList_ge_of_mem _ key ((mem key).mpr hkey)
 
-/-- Production's accumulator scan and the reviewed source maximum have the
-same value for all lists and initial maxima. Flapjack-only fold packaging. -/
-private theorem foldMaximum (values : List Nat) (initial : Nat) :
-    values.foldl max initial = max initial (maxList values) := by
-  induction values generalizing initial with
-  | nil => simp [maxList]
-  | cons head tail ih =>
-      simp only [List.foldl_cons, maxList, ih, Nat.max_assoc]
-
 end Flapjack

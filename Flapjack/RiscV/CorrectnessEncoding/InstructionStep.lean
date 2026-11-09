@@ -21,22 +21,6 @@ def writePost (ms : riscv_state) (r : BitVec 5) (v : BitVec 64) : riscv_state :=
     c_gpr := holUpdate ms.procID (holUpdate r v (ms.c_gpr ms.procID)) ms.c_gpr
     c_PC := holUpdate ms.procID (ms.c_PC ms.procID + 4) ms.c_PC}
 
-theorem aligned_add_four (pc : BitVec 64) (h : holAligned 2 pc = true) :
-    holAligned 2 (pc + 4) = true := by
-  have he := congrArg BitVec.toNat (of_decide_eq_true h)
-  rw [holAlign_eq_div] at he
-  simp only [BitVec.toNat_ofNat] at he
-  change decide (holAlign 2 (pc + 4) = pc + 4) = true
-  apply decide_eq_true
-  apply BitVec.eq_of_toNat_eq
-  rw [holAlign_eq_div]
-  simp only [BitVec.toNat_ofNat, BitVec.toNat_add]
-  have four : (4 : BitVec 64).toNat = 4 := by decide
-  rw [four]
-  norm_num at *
-  have bound := pc.isLt
-  omega
-
 theorem write_post_rel (s : AsmState 64) (ms : riscv_state) (r : Nat)
     (v : BitVec 64) (bound : r < 32)
     (hr : targetStateRel riscvTarget s ms) :

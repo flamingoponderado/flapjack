@@ -12,6 +12,25 @@ namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm
   Compiler.Encoders.AsmProps Compiler.Encoders.AsmSem Compiler.Encoders.RiscV.Target
 
+/-- Alignment arithmetic shared by the native instruction steps: advancing by
+four bytes preserves two-byte alignment. This is Flapjack infrastructure with
+no separately named HOL original. -/
+theorem aligned_add_four (pc : BitVec 64) (h : holAligned 2 pc = true) :
+    holAligned 2 (pc + 4) = true := by
+  have he := congrArg BitVec.toNat (of_decide_eq_true h)
+  rw [holAlign_eq_div] at he
+  simp only [BitVec.toNat_ofNat] at he
+  change decide (holAlign 2 (pc + 4) = pc + 4) = true
+  apply decide_eq_true
+  apply BitVec.eq_of_toNat_eq
+  rw [holAlign_eq_div]
+  simp only [BitVec.toNat_ofNat, BitVec.toNat_add]
+  have four : (4 : BitVec 64).toNat = 4 := by decide
+  rw [four]
+  norm_num at *
+  have bound := pc.isLt
+  omega
+
 /-- Actual emitted native Skip bytes; Flapjack infrastructure. -/
 private theorem skip_encoding : riscvEnc (.inst .skip) = [19, 0, 0, 0] := by
   decide
@@ -115,23 +134,6 @@ private theorem skip_next (ms : riscv_state) (ok : riscvOk ms = true)
     {ms with c_Skip := holUpdate ms.procID 4 ms.c_Skip}
     ⟨hf, skip_decode, skip_run _, fields.2.2.2.1, fields.2.2.1⟩
   simpa [update_pc, «write'PC», Skip, PC, holUpdate, skipPost] using hn
-
-/-- Flapjack source-alignment arithmetic used only to discharge post-state validity. -/
-private theorem aligned_add_four (pc : BitVec 64) (h : holAligned 2 pc = true) :
-    holAligned 2 (pc + 4) = true := by
-  have he := congrArg BitVec.toNat (of_decide_eq_true h)
-  rw [holAlign_eq_div] at he
-  simp only [BitVec.toNat_ofNat] at he
-  change decide (holAlign 2 (pc + 4) = pc + 4) = true
-  apply decide_eq_true
-  apply BitVec.eq_of_toNat_eq
-  rw [holAlign_eq_div]
-  simp only [BitVec.toNat_ofNat, BitVec.toNat_add]
-  have four : (4 : BitVec 64).toNat = 4 := by decide
-  rw [four]
-  norm_num at *
-  have bound := pc.isLt
-  omega
 
 /-- Flapjack intermediate native post-relation, derived rather than assumed. -/
 private theorem skip_post_rel (s : AsmState 64) (ms : riscv_state)
