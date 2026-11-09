@@ -204,3 +204,6 @@ val _ = show_eval "flat_op_size_src=" ``flatLang$op_size (flatLang$Src (ast$Shif
 val _ = show_eval "flat_op_size_tag=" ``flatLang$op_size (flatLang$TagLenEq 3 5)``;
 val _ = show_eval "flat_op_size_id=" ``flatLang$op_size flatLang$Id``;
 val _ = show_eval "backend_tra_size_nested=" ``backend_common$tra_size (backend_common$Union (backend_common$SourceLoc 1 2 3 4) (backend_common$Cons backend_common$None 5))``;
+val _ = show_thm "option_size_def_typed=" basicSizeTheory.option_size_def;
+val _ = show_thm "pair_size_def_typed=" basicSizeTheory.pair_size_def;
+val _ = show_eval "flat_pat_size_nested=" ``flatLang$pat_size (flatLang$Pcon (SOME (2,SOME (3,[(4,5)]))) [flatLang$Pany; flatLang$Plit (ast$IntLit (~2))])``;

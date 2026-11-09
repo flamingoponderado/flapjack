@@ -115,3 +115,6 @@ flat_op_size_src=(44 :num)
 flat_op_size_tag=(9 :num)
 flat_op_size_id=(0 :num)
 backend_tra_size_nested=(18 :num)
+option_size_def_typed=(∀(f :α -> num). option_size f (NONE :α option) = (0 :num)) ∧ ∀(f :α -> num) (x :α). option_size f (SOME x) = (1 :num) + f x
+pair_size_def_typed=∀(f :α -> num) (g :β -> num) (x :α) (y :β). pair_size f g (x,y) = (1 :num) + (f x + g y)
+flat_pat_size_nested=(25 :num)

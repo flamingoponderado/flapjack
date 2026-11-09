@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.FlatLang
 import Flapjack.AstHOL.GeneratedSize
 import Flapjack.Compiler.Backend.BackendCommon.Trace.GeneratedSize
+import Flapjack.Misc.GeneratedSize
 
 namespace Flapjack.Compiler.Backend.FlatLang
 
@@ -16,5 +17,25 @@ def opSizeHOL : Op → Nat
   | .lenEq n => 1 + n
   | .el n => 1 + n
   | .id => 0
+
+mutual
+/-- HOL's generated `pat_size`. Its complete typed equations are captured as
+`flat_pat_size_def_typed` in `flat_elim_value_globals_probe.out`. -/
+def patSizeHOL : Pat → Nat
+  | .pany => 0
+  | .pvar name => 1 + mlstringSizeHOL name
+  | .plit lit => 1 + AstHOL.litSizeHOL lit
+  | .pcon tag pats =>
+      1 + (optionSizeHOL (pairSizeHOL id
+        (optionSizeHOL (pairSizeHOL id (listSizeHOL (pairSizeHOL id id))))) tag +
+        patListSizeHOL pats)
+  | .pas pat name => 1 + (patSizeHOL pat + mlstringSizeHOL name)
+  | .pref pat => 1 + patSizeHOL pat
+
+/-- The list component `pat1_size` generated along with `pat_size`. -/
+def patListSizeHOL : List Pat → Nat
+  | [] => 0
+  | pat :: pats => 1 + (patSizeHOL pat + patListSizeHOL pats)
+end
 
 end Flapjack.Compiler.Backend.FlatLang

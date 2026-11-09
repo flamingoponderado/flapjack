@@ -131073,5 +131073,21 @@
   "lean_name": "holCharSize",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared HOL char_size_def with hol_char_size_def_typed: the reviewed HolChar carrier represents HOL char and the result is constantly zero. This is also the registered HOL TypeBase character size. Independently source-reviewed."
+},
+{
+  "hol_path": "HOL/src/num/theories/basicSizeScript.sml",
+  "hol_name": "option_size_def",
+  "lean_path": "Flapjack/Misc/GeneratedSize.lean",
+  "lean_name": "optionSizeHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original recursive definition and option_size_def_typed capture: both option clauses, element measure and polymorphic carrier match. Independently source-reviewed."
+},
+{
+  "hol_path": "HOL/src/num/theories/basicSizeScript.sml",
+  "hol_name": "pair_size_def",
+  "lean_path": "Flapjack/Misc/GeneratedSize.lean",
+  "lean_name": "pairSizeHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original pair-pattern definition and pair_size_def_typed capture: the component carriers are independent, both size functions are preserved, and the result retains HOL's addition nesting. Independently source-reviewed."
 }
 ]
