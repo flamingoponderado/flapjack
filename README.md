@@ -31,11 +31,14 @@ Flapjack is an in-progress Lean 4 port of the formally verified Pancake compiler
   [`docs/MIPS32.md`](docs/MIPS32.md) and [`docs/SOUNDNESS.md`](docs/SOUNDNESS.md) item 9.
 - An experimental ARMv8 (AArch64) backend follows CakeML's `arm8` target. Its
   source-to-assembly output is byte-for-byte parity-tested against the original
-  Pancake compiler. It also proves `encoderCorrect arm8Target` for a closed
-  ARMv8 machine model covering the emitted instruction subset (not the
-  full L3 semantics) and instantiates the Pancake-to-machine-code theorem at
-  that model; see [`docs/ARM8.md`](docs/ARM8.md) and
-  [`docs/SOUNDNESS.md`](docs/SOUNDNESS.md) item 10.
+  Pancake compiler. It proves `encoderCorrect arm8Target` for a closed ARMv8
+  machine model covering the emitted instruction subset and instantiates the
+  Pancake-to-machine-code theorem there, and it also proves the L3 obligation
+  `arm8EncoderCorrectL3 : encoderCorrect arm8TargetL3` over CakeML's
+  `arm8_state`/`NextStateARM8` model, with `panToTargetCompileSemanticsArm8L3`
+  instantiating the Pancake-to-target theorem at that configuration; see
+  [`docs/ARM8.md`](docs/ARM8.md) and [`docs/SOUNDNESS.md`](docs/SOUNDNESS.md)
+  item 10.
 - An x86-64 backend follows CakeML's `x64` target. Its source-to-assembly
   output is byte-for-byte parity-tested against the original Pancake compiler.
   The machine model is a closed model for the emitted instruction subset, not a

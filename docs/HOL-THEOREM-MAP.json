@@ -114289,7 +114289,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Arm8Instance.lean",
     "lean_name": "arm8PancakeHeapLimit_lt",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure (ARM8 closed-model instance, 2026-10-19): this is the concrete heap-limit side condition for `pancakeBackendConf arm8BackendConfig`, discharged by kernel `decide`. It has no HOL original because the closed ARM8 `arm8BackendConfig` is Flapjack-specific; the full L3 ARM8 configuration is tracked separately in #1229."
+    "reviewer": "Flapjack infrastructure (ARM8 closed-model instance, 2026-10-19): this is the concrete heap-limit side condition for `pancakeBackendConf arm8BackendConfig`, discharged by kernel `decide`. It has no HOL original because the closed ARM8 `arm8BackendConfig` is Flapjack-specific; the L3 ARM8 configuration is `arm8ConfigL3` (`Arm8/L3/Configuration.lean`), whose heap bound is `arm8PancakeHeapLimitL3_lt`, and removing the closed model is tracked in #1270."
   },
   {
     "hol_path": null,
@@ -114297,7 +114297,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Arm8Instance.lean",
     "lean_name": "panToTargetCompileSemanticsArm8",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure (ARM8 closed-model instance, 2026-10-19): instantiates the generic `panToTargetCompileSemantics` theorem at the closed `arm8Target`, supplying `arm8MachineConfigOk` and `arm8EncoderCorrect`. It has no single HOL original: the CakeML analogue depends on the unported L3 `arm8_encoder_correct` and the full `arm8_config` carrier, tracked in #1229."
+    "reviewer": "Flapjack infrastructure (ARM8 closed-model instance, 2026-10-19): instantiates the generic `panToTargetCompileSemantics` theorem at the closed `arm8Target`, supplying `arm8MachineConfigOk` and `arm8EncoderCorrect`. It has no single HOL original: the CakeML analogue depends on the L3 `arm8_encoder_correct`, which is ported as `arm8EncoderCorrectL3`, and the full `arm8_config` carrier, `arm8ConfigL3`; the L3 instance is `panToTargetCompileSemanticsArm8L3`. Removing the closed model is tracked in #1270."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileProg.lean",
