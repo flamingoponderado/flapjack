@@ -1,7 +1,8 @@
 import Flapjack.Compiler.Backend.DataToWord.Control
 
-/-! These cases mirror `data_to_word_fragment_comp_probe.out`; they check
-representative source-shaped outputs and do not prove HOL correspondence. -/
+/-! These cases mirror `data_to_word_fragment_comp_probe.out` and
+`data_to_word_config_probe.out`. Some expected programs reuse compiler helpers,
+so the checks provide partial regression evidence, not HOL correspondence. -/
 namespace Flapjack.Test.DataToWordCompilerParity
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.DataToWord
 

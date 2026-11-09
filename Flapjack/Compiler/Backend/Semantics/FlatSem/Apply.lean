@@ -10,7 +10,7 @@ namespace Flapjack.Compiler.Backend.FlatSem
 
 /-- Assemble the flat and source primitive cases, including the original
 failure fallback and operations handled specially by the evaluator. The
-case equations are reviewed in the `Apply*Source` submodules. -/
+`Apply*Source` submodules review equations for individual clauses. -/
 @[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_def"]
 noncomputable def doApp {C F : Type} (state : State C F) (op : FlatLang.Op) (values : List Value) :
     Option (State C F × Flapjack.SemanticPrimitivesHOL.Result Value Value) :=
