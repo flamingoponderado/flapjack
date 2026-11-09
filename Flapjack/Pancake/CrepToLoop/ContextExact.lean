@@ -199,13 +199,10 @@ def progIfHOLExact {width : Nat} [NeZero width]
 
 mutual
   /-- Exact HOL `compile_exp_def` over the source Crep and Loop carriers. This
-  is proof-side exact infrastructure for now: production `loopCompileExp`
-  consumes generic `CrepExp`/list-backed `LoopContext` and emits the
-  String-capable, list-live `LoopProg`, whereas this definition consumes
-  `CrepExpHOL`, the `MlString`/finite-map context, and emits `HolLoopProg` with
-  `NumSet`. No production-routing or material-performance exception is
-  claimed. The exact compiler-path bridge is open work linked to
-  `flapjack-pxn.18.5.6.28`. -/
+  definition consumes `CrepExpHOL`, the `MlString`/finite-map context, and
+  emits `HolLoopProg` with `NumSet`. It is executed: `flapjack-compile`
+  reaches it through `panToWordCompileProgHOL` → `compileProgHOLExact` →
+  `compileHOLExact`. -/
   @[hol "cakeml/pancake/crep_to_loopScript.sml" "compile_exp_def"
     (fmap_as_finite_support := [vars, funcs]) (words_as_type_indexed_bitvec)]
   def compileExpHOLExact {width : Nat} [NeZero width]
@@ -290,10 +287,9 @@ end
 /-- Exact HOL `compile_def` (`crep_to_loopScript.sml:120-213`) over the
 width-indexed `CrepProgHOL` and `HolLoopProg` carriers. The context's two map
 fields use the reviewed canonical finite-support translation, and word fields
-use positive-width `BitVec`. This is proof-side exact infrastructure: the
-executed compiler still uses `CrepProg`/`LoopProg` with generic words, String
-names and list-backed live sets. No executable routing or performance
-exception is claimed; the production bridge is tracked separately. -/
+use positive-width `BitVec`. This is the executed crep-to-loop lowering:
+`flapjack-compile` reaches it through `panToWordCompileProgHOL` →
+`compileProgHOLExact` → `compFuncHOLExact`. -/
 @[hol "cakeml/pancake/crep_to_loopScript.sml" "compile_def"
   (fmap_as_finite_support := [vars, funcs]) (words_as_type_indexed_bitvec)]
 def compileHOLExact {width : Nat} [NeZero width]
@@ -589,9 +585,10 @@ declaration signature contains no finite map and only the words qualifier
 applies; the type-indexed `'a word` becomes `BitVec width` with `[NeZero
 width]`. No premise, side condition, or result case is added. Direct original
 HOL rows are in `scripts/hol-probes/crep_to_loop_compile_prog_probe.out` and
-replayed by `Flapjack.Test.CrepToLoopCompileProgParity`. Proof-side exact port:
-the executed `flapjack-compile` path still uses the production
-`CrepProg`/`LoopProg`/`String` lowering, not this declaration. -/
+replayed by `Flapjack.Test.CrepToLoopCompileProgParity`. This declaration is
+the executed `flapjack-compile` crep-to-loop stage: `panToWordCompileProgHOL`
+calls it directly, over `CrepProgHOL`/`HolLoopProg` (there is no production
+`CrepProg`/`LoopProg` decoding in the executed path). -/
 @[hol "cakeml/pancake/crep_to_loopScript.sml" "compile_prog_def"
   (words_as_type_indexed_bitvec)]
 def compileProgHOLExact {width : Nat} [NeZero width] (target : AsmArchitecture)

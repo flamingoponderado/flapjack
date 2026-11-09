@@ -66,6 +66,25 @@ theorem elistGlobals_append (xs ys : List FlatLang.Exp) :
     funext key
     simp [unionGlobalBag, Flapjack.bagUnion, Nat.add_assoc]
 
+/-- Global bags of a list are the right fold of the expression bags. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "elist_globals_FOLDR"]
+theorem elistGlobals_foldr (es : List FlatLang.Exp) :
+    elistGlobals es = (es.map setGlobals).foldr unionGlobalBag emptyGlobalBag := by
+  induction es with
+  | nil => simp [elistGlobals]
+  | cons e es ih => simp [elistGlobals, ih]
+
+/-- Reversing a list of expressions preserves its global-initialization bag. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "elist_globals_REVERSE"]
+theorem elistGlobals_reverse (es : List FlatLang.Exp) :
+    elistGlobals es.reverse = elistGlobals es := by
+  induction es with
+  | nil => rfl
+  | cons e es ih =>
+    rw [List.reverse_cons, elistGlobals_append, ih]
+    funext key
+    simp [elistGlobals, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag, Nat.add_comm]
+
 /-- Flapjack helper: the row traversal equals HOL's mapped list traversal;
 this equality is not a separate HOL declaration. -/
 theorem rowGlobals_eq_elistGlobals (rows : List (FlatLang.Pat × FlatLang.Exp)) :

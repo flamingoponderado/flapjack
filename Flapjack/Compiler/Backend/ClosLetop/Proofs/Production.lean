@@ -1,7 +1,6 @@
 import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.ClosLetop.Source
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Total
-import Flapjack.Misc.ListMapM
 import Mathlib.Tactic
 
 /-! Agreement of executable let-operation cleanup with the source traversal. -/

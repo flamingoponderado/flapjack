@@ -1,0 +1,2 @@
+strlen=∀(s :string). strlen (implode s) = STRLEN s
+length_explode=STRLEN (explode (s :mlstring)) = strlen s

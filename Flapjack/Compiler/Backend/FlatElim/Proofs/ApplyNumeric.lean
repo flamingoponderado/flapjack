@@ -88,8 +88,10 @@ theorem doApp_some_flatStateRel_shift {C F G : Type} (reachable : NumSet)
     applyNumericProjection_related reachable source target next (.shift width shift amount) values FlatSem.divExnV result related
       (by simp [FlatSem.divExnV, findValueGlobals, findValuesGlobals, globalsWithin, sptMem, sptDomain])
       (by simp [FlatSem.divExnV, valueHasEval, valuesHaveEval])
-      (by simpa [FlatSem.doApp, FlatSem.doAppNumeric] using run)
-  exact ⟨targetNext, stateRel, by simpa [FlatSem.doApp, FlatSem.doAppNumeric] using evaluated, closed, safe⟩
+      (by simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.shift_projection_eq] using run)
+  exact ⟨targetNext, stateRel,
+    by simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.shift_projection_eq] using evaluated,
+    closed, safe⟩
 
 /-- The arith case preserves the primitive simulation.
 This operation-specific proof helper has no separate HOL theorem. -/
@@ -212,11 +214,9 @@ theorem doApp_some_flatStateRel_test {C F G : Type} (reachable : NumSet)
           exact ⟨target, related, by simp [FlatSem.doApp, FlatSem.doAppNumeric, comparison], resultSafe.1, resultSafe.2⟩
 
 /-- Primitive application preserves the flat-elimination state relation and
-result invariants. The underlying assembled evaluator still requires its full
-source and carrier review. `Nonempty G` reflects the inhabited HOL type of the
-otherwise unused removed state. -/
+result invariants. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
-theorem doApp_some_flatStateRel {C F G : Type} [Nonempty G] (tra : BackendCommon.Tra)
+theorem doApp_some_flatStateRel {C F G : Type} (tra : BackendCommon.Tra)
     (reachable : NumSet) (source target : FlatSem.State C F) (op : FlatLang.Op)
     (values : List FlatSem.Value) (next : FlatSem.State C F)
     (result : Result FlatSem.Value FlatSem.Value) (unusedRemovedState : G)

@@ -1,5 +1,4 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.BlockResources
-import Flapjack.Compiler.Backend.Semantics.DataProps.ThunkResources
+import Flapjack.Compiler.Backend.Semantics.DataProps.PrimitiveResources
 
 /-! Compositional source event and resource monotonicity. -/
 namespace Flapjack.Compiler.Backend.DataSem
@@ -74,14 +73,23 @@ theorem cutStateOpt_resource_frame {C F : Type} (names : Option NumSet) (state n
       subst next
       exact ⟨rfl, rfl, rfl⟩
 
-/-- An assignment is resource-monotone when its primitive is; failed cuts,
-argument reads, and primitive errors follow the actual evaluator branches. -/
-theorem resourceMono_assign {C F : Type} (dest : Nat) (op : ClosLang.Op) (names : List Nat)
-    (live : Option NumSet) (state : State C F)
-    (primitive : ∀ (args : List Value) (before after : State C F) (value : Value),
-      doApp op args before = .val (value, after) →
-      before.ffi.ioEvents <+: after.ffi.ioEvents ∧ BackendProps.optionLe before.stackMax after.stackMax ∧
-        (after.safeForSpace = true → before.safeForSpace = true)) :
+/-- Every successful source primitive application satisfies the event,
+stack and safety properties required by the evaluator induction. -/
+theorem doApp_resource_frame {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doApp op args state = .val (value, next)) :
+    state.ffi.ioEvents <+: next.ffi.ioEvents ∧ BackendProps.optionLe state.stackMax next.stackMax ∧
+      (next.safeForSpace = true → state.safeForSpace = true) := by
+  by_cases install : op = .install
+  · subst op
+    exact doApp_install_resource_frame args state next value run
+  · simp only [doApp] at run
+    repeat' (split at run <;> try simp_all)
+    all_goals exact accounted_resource_frame op args state _ next value (by assumption) run
+
+/-- Every assignment is resource-monotone, including failed reads, cuts and primitive errors. -/
+theorem resourceMono_assign_all {C F : Type} (dest : Nat) (op : ClosLang.Op) (names : List Nat)
+    (live : Option NumSet) (state : State C F) :
     ResourceMono (.assign dest op names live) state := by
   by_cases bad : (DataLang.opRequiresNames op == live.isNone) = true
   · simp [ResourceMono, evaluate, bad, BackendProps.optionLe_refl]
@@ -98,119 +106,9 @@ theorem resourceMono_assign {C F : Type} (dest : Nat) (op : ClosLang.Op) (names 
             installSfs, ffi, stack, safe, BackendProps.optionLe_refl]
         | val pair =>
           obtain ⟨value, after⟩ := pair
-          obtain ⟨events, bound, safeBefore⟩ := primitive values prepared after value application
+          obtain ⟨events, bound, safeBefore⟩ := doApp_resource_frame op values prepared after value application
           cases op <;> simp [ResourceMono, evaluate, bad, reads, cut, application, setVar,
             installSfs, ffi, stack, safe] at events bound safeBefore ⊢ <;> tauto
-
-/-- The FFI assignment case uses the actual primitive dispatcher and FFI
-oracle; returned events are extended exactly as in the FFI semantics. -/
-theorem resourceMono_ffiAssign {C F : Type} (dest : Nat) (name : Basis.Pure.MlString.MlString)
-    (names : List Nat) (live : Option NumSet) (state : State C F) :
-    ResourceMono (.assign dest (.ffi name) names live) state := by
-  apply resourceMono_assign dest (.ffi name) names live state
-  intro args before after value run
-  exact doApp_ffi_resource_frame name args before after value run
-
-/-- Installation assignments satisfy source resource monotonicity. -/
-theorem resourceMono_installAssign {C F : Type} (dest : Nat) (names : List Nat)
-    (live : Option NumSet) (state : State C F) :
-    ResourceMono (.assign dest .install names live) state := by
-  apply resourceMono_assign dest .install names live state
-  intro args before after value run
-  exact doApp_install_resource_frame args before after value run
-
-/-- Integer assignments satisfy source resource monotonicity. -/
-theorem resourceMono_intAssign {C F : Type} (dest : Nat) (op : ClosLang.IntOp)
-    (names : List Nat) (live : Option NumSet) (state : State C F) :
-    ResourceMono (.assign dest (.intOp op) names live) state := by
-  apply resourceMono_assign dest (.intOp op) names live state
-  intro args before after value run
-  exact doApp_int_resource_frame op args before after value run
-
-/-- Word and floating-point word assignments satisfy source resource
-monotonicity. -/
-theorem resourceMono_wordAssign {C F : Type} (dest : Nat) (op : ClosLang.WordOp)
-    (names : List Nat) (live : Option NumSet) (state : State C F) :
-    ResourceMono (.assign dest (.wordOp op) names live) state := by
-  apply resourceMono_assign dest (.wordOp op) names live state
-  intro args before after value run
-  exact doApp_word_resource_frame op args before after value run
-
-/-- Code-label assignments satisfy source resource monotonicity. -/
-theorem resourceMono_labelAssign {C F : Type} (dest label : Nat)
-    (names : List Nat) (live : Option NumSet) (state : State C F) :
-    ResourceMono (.assign dest (.label label) names live) state := by
-  apply resourceMono_assign dest (.label label) names live state
-  intro args before after value run
-  exact doApp_label_resource_frame label args before after value run
-
-/-- Global-variable assignments satisfy source resource monotonicity. -/
-theorem resourceMono_globalAssign {C F : Type} (dest : Nat) (op : ClosLang.GlobOp)
-    (names : List Nat) (live : Option NumSet) (state : State C F) :
-    ResourceMono (.assign dest (.globOp op) names live) state := by
-  apply resourceMono_assign dest (.globOp op) names live state
-  intro args before after value run
-  exact doApp_global_resource_frame op args before after value run
-
-/-- All block assignments satisfy source resource monotonicity, including
-allocation and timestamp bookkeeping. -/
-theorem resourceMono_blockAssign {C F : Type} (dest : Nat) (op : ClosLang.BlockOp)
-    (names : List Nat) (live : Option NumSet) (state : State C F) :
-    ResourceMono (.assign dest (.blockOp op) names live) state := by
-  apply resourceMono_assign dest (.blockOp op) names live state
-  intro args before after value run
-  exact doApp_block_resource_frame op args before after value run
-
-/-- Every successful source primitive application satisfies the event,
-stack and safety properties required by the evaluator induction. -/
-theorem doApp_resource_frame {C F : Type} (op : ClosLang.Op) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doApp op args state = .val (value, next)) :
-    state.ffi.ioEvents <+: next.ffi.ioEvents ∧ BackendProps.optionLe state.stackMax next.stackMax ∧
-      (next.safeForSpace = true → state.safeForSpace = true) := by
-  cases op with
-  | label label => exact doApp_label_resource_frame label args state next value run
-  | ffi name => exact doApp_ffi_resource_frame name args state next value run
-  | intOp op => exact doApp_int_resource_frame op args state next value run
-  | wordOp op => exact doApp_word_resource_frame op args state next value run
-  | blockOp op => exact doApp_block_resource_frame op args state next value run
-  | globOp op => exact doApp_global_resource_frame op args state next value run
-  | memOp op => exact doApp_mem_resource_frame op args state next value run
-  | thunkOp op => exact doApp_thunk_resource_frame op args state next value run
-  | install => exact doApp_install_resource_frame args state next value run
-
-/-- Every data-language assignment satisfies source resource monotonicity. -/
-theorem resourceMono_assign_all {C F : Type} (dest : Nat) (op : ClosLang.Op)
-    (names : List Nat) (live : Option NumSet) (state : State C F) :
-    ResourceMono (.assign dest op names live) state := by
-  apply resourceMono_assign dest op names live state
-  intro args before after value run
-  exact doApp_resource_frame op args before after value run
-
-/-- Sequential source execution composes the three resource properties. -/
-theorem resourceMono_seq {C F : Type} (first second : DataLang.Prog) (state : State C F)
-    (firstMono : ResourceMono first state)
-    (secondMono : ∀ state : State C F, ResourceMono second state) :
-    ResourceMono (.seq first second) state := by
-  cases firstRun : evaluate first state with
-  | mk result mid =>
-    have firstFacts : state.ffi.ioEvents <+: mid.ffi.ioEvents ∧
-        BackendProps.optionLe state.stackMax mid.stackMax ∧
-        (mid.safeForSpace = true → state.safeForSpace = true) := by
-      simpa [ResourceMono, firstRun] using firstMono
-    cases result with
-    | some result =>
-      simpa [ResourceMono, evaluate, firstRun, fixClock] using firstFacts
-    | none =>
-      let clamped := { mid with clock := min state.clock mid.clock }
-      have secondFacts := secondMono clamped
-      have seqRun : evaluate (.seq first second) state = evaluate second clamped := by
-        simp [evaluate, firstRun, fixClock, clamped]
-      rw [ResourceMono, seqRun]
-      refine ⟨?_, ?_, ?_⟩
-      · exact List.IsPrefix.trans firstFacts.1 secondFacts.1
-      · exact BackendProps.optionLe_trans _ _ _ ⟨firstFacts.2.1, secondFacts.2.1⟩
-      · exact fun safe => firstFacts.2.2 (secondFacts.2.2 safe)
 
 /-- Clock-bounded form of sequence composition for the well-founded source
 evaluator induction. -/

@@ -10,7 +10,7 @@ namespace Flapjack.Compiler.Backend.FlatSem
 
 /-- Assemble the flat and source primitive cases, including the original
 failure fallback and operations handled specially by the evaluator. The
-case equations are reviewed in the `Apply*Source` submodules. -/
+`Apply*Source` submodules review equations for individual clauses. -/
 @[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_def"]
 noncomputable def doApp {C F : Type} (state : State C F) (op : FlatLang.Op) (values : List Value) :
     Option (State C F × Flapjack.SemanticPrimitivesHOL.Result Value Value) :=
@@ -24,5 +24,14 @@ noncomputable def doApp {C F : Type} (state : State C F) (op : FlatLang.Op) (val
         | some result => result
         | none => (doAppCopy state sourceOp values).getD none
   | _ => (doAppFlat state op values).getD none
+
+/-- The original projected dispatcher and direct shift clause agree. This is
+Flapjack infrastructure for proofs that use the source primitive simulation. -/
+theorem doApp_shift_projection {C F : Type} (state : State C F)
+    (width : Flapjack.AstHOL.WordSize) (shift : Flapjack.Shift) (amount : Nat)
+    (values : List Value) :
+    doApp state (.src (.shift width shift amount)) values =
+      applyNumericProjection state (.shift width shift amount) values divExnV := by
+  exact shift_projection_eq state width shift amount values
 
 end Flapjack.Compiler.Backend.FlatSem

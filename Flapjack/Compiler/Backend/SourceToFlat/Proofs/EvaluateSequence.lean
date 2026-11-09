@@ -234,9 +234,9 @@ theorem factoredDecBoundedIH_cons {C F : Type} [Nonempty C]
   subst flatDecs
   have validGen := invariantEnvGenInv interp transform gen genv start finish other source flat invariant
   have validFirst := (compileDecs_envGenInv trace n start env gen [first] n1 next1 env1 gen1 code1
-    firstCompiled validGen).1
+    ⟨firstCompiled, validGen⟩).1
   have validFinal := (compileDecs_envGenInv trace n1 next1 (extendEnv env1 env) gen1 (second :: rest)
-    n2 next2 env2 gen2 code2 tailCompiled validFirst).1
+    n2 next2 env2 gen2 code2 ⟨tailCompiled, validFirst⟩).1
   have previous := compileDecs_idxPrev trace n1 next1 (extendEnv env1 env) gen1 (second :: rest)
     n2 next2 env2 gen2 code2 tailCompiled
   have firstBound := idxPrev_trans next1 next2 finish ⟨previous, bounded⟩

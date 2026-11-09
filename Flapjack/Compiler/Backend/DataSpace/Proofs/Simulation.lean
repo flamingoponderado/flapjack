@@ -505,22 +505,4 @@ theorem simulationFor_seq_move_makeSpace {C F : Type} (dest src amount : Nat) (n
         simp [DataSem.evaluate, DataSem.getVar, targetMid, targetNext, addSpace, setVar, beforeRead, moved]
       · simpa [addSpace] using afterIncluded
 
-/-- Changing only resource-accounting fields preserves the evaluator result
-and observable data state for non-type-error executions. The stronger HOL
-swap theorem additionally describes the exact final locals and control fields. -/
-theorem evaluate_resource_variation {C F : Type} (program : DataLang.Prog)
-    (source sourceNext : State C F) (result : Option (Result (List DataSem.Value) DataSem.Value))
-    (safe : Bool) (peak : Nat) (stackMax : Option Nat)
-    (run : DataSem.evaluate program source = (result, sourceNext))
-    (notType : result ≠ some (.err (.abort .typeError))) :
-    ∃ targetNext,
-      DataSem.evaluate program { source with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax } = (result, targetNext) ∧
-      DataLive.stateRel sourceNext targetNext .ln ∧ (result = none → sourceNext.locals = targetNext.locals) := by
-  let target := { source with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
-  have related : DataLive.stateRel source target .ln := by
-    simp [DataLive.stateRel, target, sptMem, sptDomain, sptLookup]
-  have exceptions : DataLive.exceptionRel source target := by
-    apply DataLive.exceptionRel_after source source source target .ln related (DataLive.exceptionRel_refl source) <;> rfl
-  exact DataLive.evaluatorSimulation_all program source target sourceNext result related rfl exceptions notType run
-
 end Flapjack.Compiler.Backend.DataSpace

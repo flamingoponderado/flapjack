@@ -159,8 +159,9 @@ theorem boolValueRel_iff (genv : GlobalEnv) (b : Bool) (flat : FlatSem.Value) (o
   · intro rel
     cases b <;> simp only [SemanticPrimitivesHOL.boolValue, boolTypeNum] at rel
     all_goals
-      obtain ⟨flats, ctor, fields, rfl, flatCtor, rfl, lookup⟩ :=
-        (valueRel_conv_iff genv _ _ flat).mp rel
+      have shape := ((valueRel_eqns_nonGlobal).2.1 _ flat genv _).mp rel
+      simp only [Option.some.injEq, reduceCtorEq, false_and, exists_false, or_false] at shape
+      obtain ⟨_, flatCtor, flats, rfl, rfl, fields, lookup⟩ := shape
       cases fields
     · have key := ok.2.2.2.2 flatCtor (falseTag, some FlatLang.boolId) 0 0
         (.typeStamp (ofString "False") 0) lookup (by simpa [boolTypeNum] using ok.1.2)

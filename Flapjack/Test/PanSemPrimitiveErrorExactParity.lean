@@ -2,7 +2,7 @@ import Flapjack.Pancake.Semantics.PanSemStateEval
 import Flapjack.Test.PanValueFfiCore
 
 /-!
-Direct regression for the exact source `PanSemExactState` `Primitive` error
+Direct regression for the source `PanSemState` code-map `Primitive` error
 equations.  HOL `panSemScript.sml:573-582` rejects a `Primitive` whose argument
 list fails to evaluate, whose `pan_primop` produces nothing (including a wrong
 argument count), whose destination local is unbound, or whose result shape does
@@ -45,37 +45,32 @@ private def addCarryPrimitive : PanPrimitiveHandler Word64 :=
 private def exactDomain : Word64 → Bool :=
   fun address => address == 8
 
-private def exactAccess : PanValueMemoryAccess Word64 :=
-  panValueMemoryAccessOfModel panSemBitVec64WordModel exactDomain
-    (fun _ => false) false
-
-private def exactLegacy (locals : VarName → Option (PanValue Word64)) :
-    PanSemEvaluateState Word64 Unit :=
-  { structs := []
-    functions := []
-    locals := locals
-    globals := fun _ => none
-    memory := fun _ => some (.word 0)
-    ffi := statefulTestFfiState
-    clock := 5
-    baseAddress := 0
-    topAddress := 100
-    bytesInWord := 8
-    memoryAccess := none }
-
-private def exactState (locals : VarName → Option (PanValue Word64)) :
-    PanSemExactState Word64 Unit :=
-  { legacy := exactLegacy locals, memoryAccess := exactAccess }
-
 private def localsWordX : VarName → Option (PanValue Word64) :=
   fun name => if name == "x" then some (.word 1) else none
 
 private def localsStructX : VarName → Option (PanValue Word64) :=
   fun name => if name == "x" then some (.rStruct [.word 0, .word 0]) else none
 
-private def evaluate (state : PanSemExactState Word64 Unit) (program : Prog Word64) :
+/-- State-owned source state used by the primitive guards. -/
+private def sourceState (locals : VarName → Option (PanValue Word64)) :
+    PanSemState Word64 (FfiState Unit) :=
+  { locals := locals
+    globals := fun _ => none
+    structs := []
+    code := []
+    exceptionShapes := fun _ => none
+    memory := fun _ => some (.word 0)
+    memaddrs := exactDomain
+    sharedMemaddrs := fun _ => false
+    clock := 5
+    be := false
+    ffi := statefulTestFfiState
+    baseAddress := BitVec.ofNat 64 0
+    topAddress := BitVec.ofNat 64 100 }
+
+private def evaluate (state : PanSemState Word64 (FfiState Unit)) (program : Prog Word64) :
     Option (PanValueFfiClockResult Word64 Unit) :=
-  panSemEvaluateExactState statefulTestContext addCarryPrimitive statefulTestHandler
+  panSemEvaluateRiscV64CodeState statefulTestContext addCarryPrimitive statefulTestHandler
     state program
 
 /-- Error at `clock` whose preserved `"x"` local is the given word. -/
@@ -119,16 +114,16 @@ private def argumentsNoneProgram : Prog Word64 :=
   .primitive "x" .addCarry [.const 1, .const 2, .var .local "z"]
 
 private def primWrongArityGuard : Bool :=
-  isStructX 5 (evaluate (exactState localsStructX) wrongArityProgram)
+  isStructX 5 (evaluate (sourceState localsStructX) wrongArityProgram)
 
 private def primShapeMismatchGuard : Bool :=
-  isWordX 5 1 (evaluate (exactState localsWordX) shapeMismatchProgram)
+  isWordX 5 1 (evaluate (sourceState localsWordX) shapeMismatchProgram)
 
 private def primDestinationNoneGuard : Bool :=
-  isStructX 5 (evaluate (exactState localsStructX) destinationNoneProgram)
+  isStructX 5 (evaluate (sourceState localsStructX) destinationNoneProgram)
 
 private def primArgumentsNoneGuard : Bool :=
-  isStructX 5 (evaluate (exactState localsStructX) argumentsNoneProgram)
+  isStructX 5 (evaluate (sourceState localsStructX) argumentsNoneProgram)
 
 private def primErrorGuard : Bool :=
   primWrongArityGuard && primShapeMismatchGuard &&
@@ -138,21 +133,21 @@ private def primErrorGuard : Bool :=
 
 def runChecks : IO Bool := do
   if primWrongArityGuard then
-    IO.println "PASS exact-state Primitive pan_primop failure keeps state and clock"
+    IO.println "PASS source Primitive pan_primop failure keeps state and clock"
   else
-    IO.println "FAIL exact-state Primitive pan_primop failure"
+    IO.println "FAIL source Primitive pan_primop failure"
   if primShapeMismatchGuard then
-    IO.println "PASS exact-state Primitive destination shape mismatch keeps state and clock"
+    IO.println "PASS source Primitive destination shape mismatch keeps state and clock"
   else
-    IO.println "FAIL exact-state Primitive destination shape mismatch"
+    IO.println "FAIL source Primitive destination shape mismatch"
   if primDestinationNoneGuard then
-    IO.println "PASS exact-state Primitive unbound destination keeps state and clock"
+    IO.println "PASS source Primitive unbound destination keeps state and clock"
   else
-    IO.println "FAIL exact-state Primitive unbound destination"
+    IO.println "FAIL source Primitive unbound destination"
   if primArgumentsNoneGuard then
-    IO.println "PASS exact-state Primitive failing arguments keeps state and clock"
+    IO.println "PASS source Primitive failing arguments keeps state and clock"
   else
-    IO.println "FAIL exact-state Primitive failing arguments"
+    IO.println "FAIL source Primitive failing arguments"
   pure primErrorGuard
 
 end Flapjack.Test.PanSemPrimitiveErrorExactParity

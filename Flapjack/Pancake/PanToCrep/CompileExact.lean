@@ -10,11 +10,11 @@ import Flapjack.Pancake.PanCommon
 Exact-carrier expression lowering from HOL `PanLang.ExpHOL` to `CrepExpHOL`.
 
 The parser-proved compiler entry executes this lowering transitively through
-`compileProgExactHOLW` before decoding its result to production Crep. The
-per-function and top-level output-preservation bridges live in `CompileProg`.
-Direct callers without byte-range evidence retain the untagged String-backed
-compatibility route; the broader `compile_prog` carrier gap is tracked
-separately for exact `compile_inl_top`.
+`compileProgExactHOLW`; its exact `CrepProgHOL` result stays on the exact
+carrier through `compileProgDeclsHOLW` into `compileProgHOLExact`, with no
+decode to production Crep. The per-function and top-level output-preservation
+bridges live in `CompileProg`. Direct callers without byte-range evidence
+retain the untagged String-backed compatibility route.
 -/
 
 namespace Flapjack
@@ -786,10 +786,10 @@ finite-map values are local intermediates and do not occur in this
 declaration's input or output type, so no finite-map carrier qualifier applies
 here; their individual definition tags record their own result translations.
 The only outer type translation is HOL's positive type-indexed word to
-`BitVec width`. The production String-backed `compileToCrepHOL` route is still
-separate; routing the executable compiler through this exact declaration-only
-definition remains tracked by `flapjack-pxn.18.3.1.3`, and the exact
-`compile_prog` boundary by `flapjack-4ac.2.20.2`. -/
+`BitVec width`. This declaration is the executed pan-to-crep declaration
+stage: `panToWordCompileProgHOL` calls `compileProgDeclsHOLW`, which calls it
+directly. The String-backed `compileToCrepHOL` remains legacy compatibility
+infrastructure; the exact `compile_prog` boundary is `compileProgDeclsHOLW`. -/
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_to_crep_def"
   (words_as_type_indexed_bitvec)]
 def compileToCrepExactHOLW {width : Nat} [NeZero width]

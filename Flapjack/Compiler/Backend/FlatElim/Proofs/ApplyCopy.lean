@@ -19,7 +19,7 @@ theorem byteStoreUpdate_related {C F : Type} (reachable : NumSet)
   refine ⟨assigned, ?_, ?_⟩
   · simpa [← related.2.1] using assigned
   · exact flatStateRel_setRefs reachable source target address (.w8array new) related
-      (by simp [storeValueGlobals, globalsWithin, sptMem, sptDomain]) (by simp [storeHasNoEval])
+      (by simp [storeValueGlobals, globalsWithin, sptMem, sptDomain]) (by simp [storeHasNoEval, FlatProps.storeValueValues])
 
 /-- Copying a substring preserves related states and result invariants.
 This operation-specific proof helper has no separate HOL theorem. -/

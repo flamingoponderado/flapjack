@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.ToData
-import Flapjack.Compiler.Backend.DataToWord.Control
+import Flapjack.Compiler.Backend.DataToWord.Total
 import Flapjack.Compiler.Backend.DataToWord.Stubs
 import Flapjack.Compiler.Backend.WordBignum.Generated64
 import Flapjack.Compiler.Backend.WordBignum.Generate
@@ -8,17 +8,16 @@ import Flapjack.Compiler.Backend.WordBignum.Generate
 namespace Flapjack.Compiler.Backend.SourceToFlat
 
 /-- Flapjack's checked per-function composition retains the next local label
-for diagnostics. It returns `none` when an upstream pass or a data-to-word
-case is unsupported; it does not add the separately generated word stubs. -/
+for diagnostics. It returns `none` when an upstream pass is unsupported; it
+does not add the separately generated word stubs. -/
 def compileCakeToWordWithNamesAndLabelsNoOptsFuel {width : Nat} [NeZero width]
     (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
     (word : DataToWord.Config) (decls : List AstHOL.Dec) :
     Option (Config × ClosToBvl.Config × Nat ×
       List (Nat × Nat × (WordLangProgHOL (BitVec width) × Nat)) × Nat × Spt Basis.Pure.MlString.MlString) := do
   let (source, closure, start, code, next, names) ← compileCakeToDataWithNamesNoOptsFuel fuel source closure decls
-  let code ← code.mapM fun (name, args, body) => do
-    let compiled ← DataToWord.compileControl? word name 2 body
-    pure (name, args, compiled)
+  let code := code.map fun (name, args, body) =>
+    (name, args, DataToWord.compileControl word name 2 body)
   pure (source, closure, start, code, next, names)
 
 /-- The checked word composition without its symbol-name result. -/
@@ -68,16 +67,15 @@ def compileCakeToWordWithStubsAndNames64NoOptsFuel
   pure (source, closure, start, fixed ++ bignum ++ code, next, names)
 
 /-- Continue the checked multi-argument and BVI-inlining route to the 64-bit
-word stage. Unsupported data operations and exhausted fuel return `none`. -/
+word stage. Unsupported upstream operations and exhausted fuel return `none`. -/
 def compileCakeToWordWithStubsAndNames64InlineFuel
     (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
     (word : DataToWord.Config) (decls : List AstHOL.Dec) :
     Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × WordLangProgHOL (BitVec 64)) × Nat ×
       Spt Basis.Pure.MlString.MlString) := do
   let (source, closure, start, code, next, names) ← compileCakeToDataInlineFuel fuel source closure decls
-  let code ← code.mapM fun (name, args, body) => do
-    let (body, _) ← DataToWord.compileControl? (width := 64) word name 2 body
-    pure (name, args + 1, body)
+  let code := code.map fun (name, args, body) =>
+    (name, args + 1, (DataToWord.compileControl (width := 64) word name 2 body).1)
   let fixed ← DataToWord.fixedStubs? word
   let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
   pure (source, closure, start, fixed ++ bignum ++ code, next, names)
@@ -91,9 +89,8 @@ def compileCakeToWord64OptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq 
       Spt Basis.Pure.MlString.MlString) := do
   let (source, closure, start, code, next, names) ←
     compileCakeToDataOptimizedFuel fuel inlineLimit cutSize splitSeq source closure decls
-  let code ← code.mapM fun (name, args, body) => do
-    let (body, _) ← DataToWord.compileControl? (width := 64) word name 2 body
-    pure (name, args + 1, body)
+  let code := code.map fun (name, args, body) =>
+    (name, args + 1, (DataToWord.compileControl (width := 64) word name 2 body).1)
   let fixed ← DataToWord.fixedStubs? word
   let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
   pure (source, closure, start, fixed ++ bignum ++ code, next, names)
@@ -106,8 +103,8 @@ def compileCakeToWord64ConfiguredFuel (fuel : Nat) (source : Config) (closure : 
   let (source, closure, bvlConfig, code, names) ← compileCakeToBviConfiguredFuel fuel source closure bvlConfig decls
   let code ← code.mapM fun (name, args, body) => do
     let body ← BviToData.compileExpBounded fuel args body
-    let (body, _) ← DataToWord.compileControl? (width := 64) word name 2 body
-    pure (name, args + 1, body)
+    let body := DataToWord.compileControl (width := 64) word name 2 body
+    pure (name, args + 1, body.1)
   let fixed ← DataToWord.fixedStubs? word
   let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
   pure (source, closure, bvlConfig, fixed ++ bignum ++ code, names)

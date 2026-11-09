@@ -1,26 +1,11 @@
 import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateInduction
 import Flapjack.Misc.ClockWeightInduction
+import Flapjack.Compiler.Backend.Semantics.FlatSem.MeasureMembers
 
 /-! Nested-induction assembly of the flat evaluation simulation. -/
 namespace Flapjack.Compiler.Backend.FlatElim
 open Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend.FlatSem
-
-/-- Every member body has less weight than its enclosing pattern-row list. -/
-theorem rowsWeight_member (rows : List (FlatLang.Pat × FlatLang.Exp))
-    (pattern : FlatLang.Pat) (body : FlatLang.Exp) (member : (pattern, body) ∈ rows) :
-    expWeight body < rowsWeight rows := by
-  induction rows with
-  | nil => simp at member
-  | cons row rest ih =>
-    obtain ⟨p, e⟩ := row
-    rcases List.mem_cons.mp member with same | member
-    · cases same
-      simp [rowsWeight]
-      omega
-    · have bound := ih member
-      simp [rowsWeight]
-      omega
 
 /-- Induction motive for the full flat evaluation simulation; this is a
 Flapjack proof helper with no separate HOL theorem. -/

@@ -60,7 +60,7 @@ theorem doApp_assign_related {C F : Type} (reachable : NumSet)
       simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, targetAssign]
     · apply flatStateRel_setRefs reachable source target address (.refv value) related
       · exact valueReachable
-      · simpa [storeHasNoEval] using valueSafe
+      · simpa [storeHasNoEval, FlatProps.storeValueValues] using valueSafe
 
 /-- The assignment case of the original primitive simulation, with arbitrary
 argument lists and the original result obligations.
@@ -140,7 +140,7 @@ theorem doApp_some_flatStateRel_ref {C F G : Type} (reachable : NumSet)
       refine ⟨{ target with refs := target.refs ++ [.refv value] }, ?_, ?_, ?_, ?_⟩
       · apply flatStateRel_appendRef reachable source target (.refv value) related
         · exact valueReachable
-        · simpa [storeHasNoEval] using valueSafe
+        · simpa [storeHasNoEval, FlatProps.storeValueValues] using valueSafe
       · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, storeAlloc, refsEq]
       · simp [findPrimitiveResultGlobals, Flapjack.EvaluateHOL.listResult,
           findValuesGlobals, findValueGlobals, sptUnion, globalsWithin, sptMem, sptDomain]
@@ -170,7 +170,7 @@ theorem doApp_some_flatStateRel_fixedArray {C F G : Type} (reachable : NumSet)
   refine ⟨{ target with refs := target.refs ++ [.varray values] }, ?_, ?_, ?_, ?_⟩
   · apply flatStateRel_appendRef reachable source target (.varray values) related
     · exact valuesReachable
-    · simpa [storeHasNoEval, valuesNoEval] using valuesSafe
+    · simpa [storeHasNoEval, FlatProps.storeValueValues, valuesNoEval] using valuesSafe
   · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, storeAlloc, refsEq]
   · simp [findPrimitiveResultGlobals, Flapjack.EvaluateHOL.listResult,
       findValuesGlobals, findValueGlobals, sptUnion, globalsWithin, sptMem, sptDomain]
@@ -239,7 +239,7 @@ theorem doApp_some_flatStateRel_array {C F G : Type} (reachable : NumSet)
                 ?_, ?_, ?_, ?_⟩
               · apply flatStateRel_appendRef reachable source target (.varray (List.replicate size.toNat value)) related
                 · exact replicateValues_within size.toNat value reachable valueReachable
-                · simp [storeHasNoEval, valueSafe]
+                · simp [storeHasNoEval, FlatProps.storeValueValues, valueSafe]
               · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, negative, storeAlloc, refsEq]
               · simp [findPrimitiveResultGlobals, Flapjack.EvaluateHOL.listResult,
                   findValuesGlobals, findValueGlobals, sptUnion, globalsWithin, sptMem, sptDomain]
@@ -298,7 +298,7 @@ theorem doApp_some_flatStateRel_byteArray {C F G : Type} (reachable : NumSet)
                     ?_, ?_, ?_, ?_⟩
                   · apply flatStateRel_appendRef reachable source target (.w8array (List.replicate size.toNat byte)) related
                     · simp [storeValueGlobals, globalsWithin, sptMem, sptDomain]
-                    · simp [storeHasNoEval]
+                    · simp [storeHasNoEval, FlatProps.storeValueValues]
                   · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, negative, storeAlloc, refsEq]
                   · simp [findPrimitiveResultGlobals, Flapjack.EvaluateHOL.listResult,
                       findValuesGlobals, findValueGlobals, sptUnion, globalsWithin, sptMem, sptDomain]
@@ -766,7 +766,7 @@ theorem doApp_some_flatStateRel_arrayUpdate {C F G : Type} (reachable : NumSet)
                     have newReachable : globalsWithin (storeValueGlobals (.varray (items.set index.toNat value))) reachable :=
                       findValuesGlobals_set_within items index.toNat value reachable itemsReachable valueReachable
                     have newSafe : storeHasNoEval [.varray (items.set index.toNat value)] := by
-                      simpa [storeHasNoEval, valuesNoEval] using valuesNoEval_set items index.toNat value itemsSafe valueSafe
+                      simpa [storeHasNoEval, FlatProps.storeValueValues, valuesNoEval] using valuesNoEval_set items index.toNat value itemsSafe valueSafe
                     have opEq : (Flapjack.AstHOL.Op.aupdate == .aupdateUnsafe) = false := by decide
                     obtain ⟨targetNext, stateRel, updated, closed, safe⟩ :=
                       updateIndexed_related reachable source target next false address items index value .varray result
@@ -825,7 +825,7 @@ theorem doApp_some_flatStateRel_arrayUpdateUnsafe {C F G : Type} (reachable : Nu
                     have newReachable : globalsWithin (storeValueGlobals (.varray (items.set index.toNat value))) reachable :=
                       findValuesGlobals_set_within items index.toNat value reachable itemsReachable valueReachable
                     have newSafe : storeHasNoEval [.varray (items.set index.toNat value)] := by
-                      simpa [storeHasNoEval, valuesNoEval] using valuesNoEval_set items index.toNat value itemsSafe valueSafe
+                      simpa [storeHasNoEval, FlatProps.storeValueValues, valuesNoEval] using valuesNoEval_set items index.toNat value itemsSafe valueSafe
 
                     obtain ⟨targetNext, stateRel, updated, closed, safe⟩ :=
                       updateIndexed_related reachable source target next true address items index value .varray result
@@ -879,7 +879,7 @@ theorem doApp_some_flatStateRel_byteArrayUpdate {C F G : Type} (reachable : NumS
                       case w8array items =>
                         have newReachable : globalsWithin (storeValueGlobals (.w8array (items.set index.toNat byte))) reachable := by
                           simp [storeValueGlobals, globalsWithin, sptMem, sptDomain]
-                        have newSafe : storeHasNoEval [.w8array (items.set index.toNat byte)] := by simp [storeHasNoEval]
+                        have newSafe : storeHasNoEval [.w8array (items.set index.toNat byte)] := by simp [storeHasNoEval, FlatProps.storeValueValues]
                         have opEq : (Flapjack.AstHOL.Op.aw8update == .aw8updateUnsafe) = false := by decide
                         obtain ⟨targetNext, stateRel, updated, closed, safe⟩ :=
                           updateIndexed_related reachable source target next false address items index byte .w8array result
@@ -933,7 +933,7 @@ theorem doApp_some_flatStateRel_byteArrayUpdateUnsafe {C F G : Type} (reachable 
                       case w8array items =>
                         have newReachable : globalsWithin (storeValueGlobals (.w8array (items.set index.toNat byte))) reachable := by
                           simp [storeValueGlobals, globalsWithin, sptMem, sptDomain]
-                        have newSafe : storeHasNoEval [.w8array (items.set index.toNat byte)] := by simp [storeHasNoEval]
+                        have newSafe : storeHasNoEval [.w8array (items.set index.toNat byte)] := by simp [storeHasNoEval, FlatProps.storeValueValues]
 
                         obtain ⟨targetNext, stateRel, updated, closed, safe⟩ :=
                           updateIndexed_related reachable source target next true address items index byte .w8array result

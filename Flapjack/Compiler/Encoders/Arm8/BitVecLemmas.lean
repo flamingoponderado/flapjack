@@ -106,4 +106,28 @@ theorem movWideImm_value (v : BitVec 64) (k imm16 : Nat) (hk : k ≤ 48)
   apply BitVec.eq_of_toNat_eq
   rw [toNat_ofNat_shiftLeft, h2, Nat.mod_eq_of_lt v.isLt]
 
+/-- A `BitVec 64` whose `toNat` is below `2 ^ 12` has no bits outside the low twelve,
+so `~~~0xFFF` clears it: the condition behind `validImmediate`'s `add`/`sub` range
+test `i &&& ~~~0xFFF = 0`. -/
+theorem and_not_fff_eq_zero {x : BitVec 64} (hx : x.toNat < 4096) :
+    x &&& ~~~(0xFFF : BitVec 64) = 0 := by
+  have hx' : x.toNat < 2 ^ 12 := by norm_num; exact hx
+  have h1 : x &&& (0xFFF : BitVec 64) = x := by
+    rw [BitVec.toNat_eq, BitVec.toNat_and]
+    exact Nat.and_two_pow_sub_one_of_lt_two_pow hx'
+  calc x &&& ~~~(0xFFF : BitVec 64)
+      = (x &&& (0xFFF : BitVec 64)) &&& ~~~(0xFFF : BitVec 64) := by rw [h1]
+    _ = x &&& ((0xFFF : BitVec 64) &&& ~~~(0xFFF : BitVec 64)) := by rw [BitVec.and_assoc]
+    _ = x &&& 0 := by rw [BitVec.and_not_self]
+    _ = 0 := BitVec.and_zero
+
+/-- `validImmediate`'s `add`/`sub` test holds for `BitVec.ofNat 64 m` when
+`m < 2 ^ 12` (the stack-frame byte offsets `n * (64 / 8)` for `n ≤ 255`). -/
+theorem ofNat_and_not_fff_eq_zero {m : Nat} (hm : m < 4096) :
+    BitVec.ofNat 64 m &&& ~~~(0xFFF : BitVec 64) = 0 := by
+  apply and_not_fff_eq_zero
+  rw [BitVec.toNat_ofNat]
+  have hpow : (2 : Nat) ^ 64 = 18446744073709551616 := by norm_num
+  omega
+
 end Flapjack.Compiler.Encoders.Arm8

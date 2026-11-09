@@ -634,7 +634,7 @@ theorem doApp_some_flatStateRel_thunkAlloc {C F G : Type} (reachable : NumSet)
         refine ⟨{ target with refs := target.refs ++ [.thunk mode value] }, ?_, ?_, resultSafe.1, resultSafe.2⟩
         · apply flatStateRel_appendRef reachable source target (.thunk mode value) related
           · exact valueClosed
-          · simpa [storeHasNoEval] using valueSafe
+          · simpa [storeHasNoEval, FlatProps.storeValueValues] using valueSafe
         · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData,
             ← refsEq, bad, storeAlloc]
 
@@ -697,7 +697,7 @@ theorem doApp_some_flatStateRel_thunkUpdate {C F G : Type} (reachable : NumSet)
                   resultSafe.1, resultSafe.2⟩
                 · apply flatStateRel_setRefs reachable source target address (.thunk mode value) related
                   · exact valueClosed
-                  · simpa [storeHasNoEval] using valueSafe
+                  · simpa [storeHasNoEval, FlatProps.storeValueValues] using valueSafe
                 · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData,
                     ← refsEq, bad, assigned]
 
@@ -765,7 +765,7 @@ theorem doApp_some_flatStateRel_ffi {C F G : Type} (reachable : NumSet)
                       resultSafe.1, resultSafe.2⟩
                     · have stateRel := flatStateRel_setRefs reachable source target address (.w8array output) related
                         (by simp [storeValueGlobals, globalsWithin, sptMem, sptDomain])
-                        (by simp [storeHasNoEval])
+                        (by simp [storeHasNoEval, FlatProps.storeValueValues])
                       exact ⟨stateRel.1, stateRel.2.1, rfl, stateRel.2.2.2⟩
                     · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData,
                         ← refsEq, ← ffiEq, lookup, call, assigned]

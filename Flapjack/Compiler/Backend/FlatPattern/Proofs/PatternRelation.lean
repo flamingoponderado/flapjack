@@ -51,7 +51,7 @@ theorem pmatch_var_related {C F : Type} (n : Nat) (source target : FlatSem.State
     MatchRel n (FlatSem.pmatch source (.pvar name) value bindings)
       (FlatSem.pmatch target (.pvar name) value' bindings') := by
   simp only [FlatSem.pmatch, MatchRel]
-  exact aLookupRel_cons _ _ _ _ _ _ _ (fun _ => values) envs
+  exact aLookupRel_cons _ _ _ _ _ _ _ ⟨fun _ => values, envs⟩
 
 /-- Wildcard patterns leave related bindings unchanged. -/
 theorem pmatch_any_related {C F : Type} (n : Nat) (source target : FlatSem.State C F)
@@ -213,7 +213,7 @@ theorem pmatch_related {C F : Type} (cfg : Config) (n : Nat) (source target : Fl
   | pas pattern name =>
     apply pmatch_as_related n source target pattern name value value' bindings bindings'
     apply pmatch_related cfg n source target pattern value value' _ _ states values
-    · exact aLookupRel_cons _ _ _ _ _ _ _ (fun _ => values) envs
+    · exact aLookupRel_cons _ _ _ _ _ _ _ ⟨fun _ => values, envs⟩
     · simpa [FlatSem.pmatch] using safe
   | pref pattern =>
     apply pmatch_ref_related cfg n source target pattern value value' bindings bindings' states values safe
@@ -254,20 +254,20 @@ end
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "pmatch_thm"]
 theorem pmatch_simulation {C F : Type} (cfg : Config) (n : Nat) :
     (∀ (source : FlatSem.State C F) pattern value bindings result target value' bindings',
-      FlatSem.pmatch source pattern value bindings = result → result ≠ .typeError →
-      StateRel cfg source target → ValueRel value value' →
+      FlatSem.pmatch source pattern value bindings = result ∧ result ≠ .typeError ∧
+      StateRel cfg source target ∧ ValueRel value value' ∧
       aLookupRel (fun key => decNameToNum key < n) ValueRel bindings bindings' →
       ∃ result', FlatSem.pmatch target pattern value' bindings' = result' ∧ MatchRel n result result') ∧
     (∀ (source : FlatSem.State C F) patterns values bindings result target values' bindings',
-      FlatSem.pmatchList source patterns values bindings = result → result ≠ .typeError →
-      StateRel cfg source target → List.Forall₂ ValueRel values values' →
+      FlatSem.pmatchList source patterns values bindings = result ∧ result ≠ .typeError ∧
+      StateRel cfg source target ∧ List.Forall₂ ValueRel values values' ∧
       aLookupRel (fun key => decNameToNum key < n) ValueRel bindings bindings' →
       ∃ result', FlatSem.pmatchList target patterns values' bindings' = result' ∧ MatchRel n result result') := by
   constructor
-  · intro source pattern value bindings result target value' bindings' resultEq safe states values envs
+  · intro source pattern value bindings result target value' bindings' ⟨resultEq, safe, states, values, envs⟩
     subst result
     exact ⟨_, rfl, pmatch_related cfg n source target pattern value value' bindings bindings' states values envs safe⟩
-  · intro source patterns values bindings result target values' bindings' resultEq safe states related envs
+  · intro source patterns values bindings result target values' bindings' ⟨resultEq, safe, states, related, envs⟩
     subst result
     exact ⟨_, rfl, pmatchList_related cfg n source target patterns values values' bindings bindings' states related envs safe⟩
 
@@ -306,15 +306,15 @@ theorem simpleStateRel_stateRel {C F : Type} (cfg : Config) :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro source target related
     exact related.2.1
-  · intro source target sourceRefs targetRefs related refs
+  · rintro source target sourceRefs targetRefs ⟨related, refs⟩
     exact ⟨related.1, refs, related.2.2.1, related.2.2.2.1, related.2.2.2.2⟩
   · intro source target related
     exact related.2.2.2.1
-  · intro source target sourceGlobals targetGlobals related globals
+  · rintro source target sourceGlobals targetGlobals ⟨related, globals⟩
     exact ⟨related.1, related.2.1, related.2.2.1, globals, related.2.2.2.2⟩
   · intro source target related
     exact related.2.2.1.symm
-  · intro source target sourceFfi targetFfi related ffi
+  · rintro source target sourceFfi targetFfi ⟨related, ffi⟩
     exact ⟨related.1, related.2.1, ffi.symm, related.2.2.2.1, related.2.2.2.2⟩
 
 end Flapjack.Compiler.Backend.FlatPattern

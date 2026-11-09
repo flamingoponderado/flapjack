@@ -252,8 +252,8 @@ theorem evaluate_force_length_step {C F : Type} (env : Environment Value) (state
               rcases run with ⟨_, rfl⟩
               exact bodyIH intermediate last value result bound bodyRun
 
-/-- A successful singleton evaluation returns exactly one value. The clocked
-evaluator and this theorem remain pending HOL correspondence review. -/
+/-- A successful singleton evaluation returns exactly one value. This
+infrastructure theorem has no separate HOL declaration. -/
 theorem evaluate_singleton_length {C F : Type} (env : Environment Value) (state next : State C F)
     (expression : FlatLang.Exp) (values : List Value)
     (run : evaluate env state [expression] = (next, .val values)) : values.length = 1 := by

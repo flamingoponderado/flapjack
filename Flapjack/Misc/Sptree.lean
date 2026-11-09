@@ -463,14 +463,14 @@ theorem sptMem_sptInsert {α : Type} (key other : Nat) (value : α) (tree : Spt 
 
 /-- HOL `lrnext`: the increment used when placing subtrees in the spt index
 space (`HOL/src/finite_maps/sptreeScript.sml:421-422`). -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "lrnext_def"]
 def lrNext : Nat → Nat
   | 0 => 1
   | n + 1 => 2 * lrNext (n / 2)
 
 /-! The `foldi` traversal in HOL's `toAList` relies on these two adjacent
 `lrNext` identities (`lrlemma1` and `lrlemma2` in
-`HOL/src/finite_maps/sptreeScript.sml`).  They are untagged infrastructure
-because the source is the external HOL standard library, not CakeML. -/
+`HOL/src/finite_maps/sptreeScript.sml`). -/
 
 theorem lrNext_offset_one (index : Nat) :
     lrNext (index + lrNext index) = 2 * lrNext index := by
@@ -653,8 +653,8 @@ theorem sptAcc_childRight (index key : Nat) :
   rw [Nat.mul_add, ← Nat.mul_assoc, Nat.mul_comm (lrNext index) 2]
   omega
 
-/-- HOL sptree `foldi` (`HOL/src/finite_maps/sptreeScript.sml:737-749`) over
-the exact tree, in the same mixed order. -/
+/-- Association-list instance of HOL sptree `foldi`, related to the generic
+port by `sptFoldi_eq_sptFoldiGen`. -/
 def sptFoldi {α : Type} (f : Nat → α → List (Nat × α) → List (Nat × α))
     (index : Nat) (accumulator : List (Nat × α)) : Spt α → List (Nat × α)
   | .ln => accumulator
@@ -670,6 +670,7 @@ def sptFoldi {α : Type} (f : Nat → α → List (Nat × α) → List (Nat × �
 
 /-- HOL `toAList` (`HOL/src/finite_maps/sptreeScript.sml:898-899`): the
 association list of the tree in the mixed sptree enumeration order. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "toAList_def"]
 def sptToAList {α : Type} (tree : Spt α) : List (Nat × α) :=
   sptFoldi (fun key value accumulator => (key, value) :: accumulator) 0 [] tree
 
@@ -976,9 +977,8 @@ def sptDelete {α : Type} (key : Nat) : Spt α → Spt α
         sptMkBS (sptDelete ((key - 1) / 2) left) value right
       else sptMkBS left value (sptDelete ((key - 1) / 2) right)
 
-/-- HOL `sptree$union` (`HOL/src/finite_maps/sptreeScript.sml:219-244`).  The
-left operand's value wins on shared keys, matching HOL's clause order.
-Untagged Flapjack infrastructure (source outside `cakeml/`). -/
+/-- Union sparse trees, retaining the left value at shared keys. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "union_def"]
 def sptUnion {α : Type} : Spt α → Spt α → Spt α
   | .ln, right => right
   | .ls value, right =>
@@ -1042,11 +1042,9 @@ theorem sptDomain_sptUnion {α : Type} (left right : Spt α) :
   funext key
   exact propext (sptMem_sptUnion left right key)
 
-/-- HOL `sptree$inter` (`HOL/src/finite_maps/sptreeScript.sml:272-291`): keep
-only keys present in both trees, with the left operand's value.  HOL's declared
-type is heterogeneous (`'a num_map -> 'b num_map -> 'a num_map`; the second
-tree's values are never read), so this rendering is generic in both value
-types.  Untagged Flapjack infrastructure (source outside `cakeml/`). -/
+/-- Keep keys present in both trees, with the left operand's value. The two
+trees may have different value types. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "inter_def"]
 def sptInter {α β : Type} : Spt α → Spt β → Spt α
   | .ln, _ => .ln
   | .ls value, right =>
@@ -1162,9 +1160,8 @@ def sptOel {α : Type} : Nat → List α → Option α
   | 0, value :: _ => some value
   | n + 1, _ :: rest => sptOel n rest
 
-/-- HOL `sptree$size` (`HOL/src/finite_maps/sptreeScript.sml:117-122`): the
-number of stored values.  Untagged Flapjack infrastructure (source outside
-`cakeml/`). -/
+/-- Count the values stored in a sparse tree. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "size_def"]
 def sptSize {α : Type} : Spt α → Nat
   | .ln => 0
   | .ls _ => 1
@@ -1379,24 +1376,16 @@ theorem sptInsert_swap {α : Type} :
               conv => rhs; rw [sptInsert.eq_4, if_neg ha0, if_neg ha2, sptInsert.eq_4, if_neg hc0, if_pos hc2]
               rw [sptInsert.eq_4, if_neg hc0, if_pos hc2, sptInsert.eq_4, if_neg ha0, if_neg ha2]
 
-/-! ## HOL `fromAList` rendering
+/-! ## Sparse trees from association lists -/
 
-The `fromAList` definition is in HOL's external standard-library
-`HOL/src/finite_maps/sptreeScript.sml`, not in the CakeML submodule. Its Lean
-rendering below is therefore Flapjack infrastructure without an `@[hol]` tag.
-The CakeML theorem `mem_lookup_fromalist_some` is ported in the
-`Flapjack.Pancake.CrepToLoop.StateRel` proof counterpart. -/
-
-/-- Flapjack rendering of HOL `sptree$fromAList`: each head association is
-inserted over the tree built from the tail, matching the external HOL
-standard-library definition. -/
+/-- Insert each head association over the tree built from the tail. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "fromAList_def"]
 def sptFromAList {α : Type} : List (Nat × α) → Spt α
   | [] => .ln
   | (key, value) :: entries => sptInsert key value (sptFromAList entries)
 
-/-- External HOL-library `ALOOKUP` rendering for numeric Spt association lists:
-return the first value paired with `key`. This helper is untagged because
-`ALOOKUP` and `fromAList` here come from the external Sptree library. -/
+/-- Return the first value paired with `key`. This untagged proof helper
+specializes HOL `ALOOKUP` to the natural-number keys used by sparse trees. -/
 def sptAListLookup {α : Type} (key : Nat) : List (Nat × α) → Option α
   | [] => none
   | (other, value) :: entries =>

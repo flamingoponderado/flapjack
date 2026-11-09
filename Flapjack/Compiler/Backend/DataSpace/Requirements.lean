@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.DataLang.Syntax
+import Flapjack.Basis.Pure.MlString.Length
 
 /-! Allocation-space requirements for data-language operations. -/
 namespace Flapjack.Compiler.Backend.DataSpace
@@ -16,7 +17,7 @@ decreasing_by exact Nat.div_lt_self (by omega) (by decide)
 def partSpaceReq : ClosLang.ConstPart → Nat
   | .w64 _ => 3
   | .int i => if i.natAbs < 536870912 then 0 else numSize i.natAbs
-  | .str s => s.explode.length / 4 + 2
+  | .str s => s.strlen / 4 + 2
   | .con _ ns => if ns.isEmpty then 0 else ns.length + 1
 
 /-- Space consumed by an operation with the given operand count. -/

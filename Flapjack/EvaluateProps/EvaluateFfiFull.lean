@@ -7,7 +7,7 @@ open Flapjack.EvaluateHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL F
 
 mutual
 /-- Flapjack induction infrastructure for expression FFI preservation. -/
-theorem evaluateFfiFull {σ : Type} (st : State σ) (env : SemEnv Value) (es : List AstHOL.Exp) :
+private theorem evaluateFfiFull {σ : Type} (st : State σ) (env : SemEnv Value) (es : List AstHOL.Exp) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluate st env es).1.ffi := by
   cases es with
   | nil => exact evaluateFfi_nil st env
@@ -86,7 +86,7 @@ decreasing_by
   all_goals try omega
 
 /-- Flapjack induction infrastructure for pattern-match FFI preservation. -/
-theorem evaluateMatchFfiFull {σ : Type} (st : State σ) (env : SemEnv Value)
+private theorem evaluateMatchFfiFull {σ : Type} (st : State σ) (env : SemEnv Value)
     (value : Value) (clauses : List (Pat × AstHOL.Exp)) (errorValue : Value) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluateMatch st env value clauses errorValue).1.ffi := by
   cases clauses with
@@ -109,7 +109,7 @@ decreasing_by
   all_goals try omega
 
 /-- Flapjack induction infrastructure for declaration FFI preservation. -/
-theorem evaluateDecsFfiFull {σ : Type} (st : State σ) (env : SemEnv Value) (ds : List Dec) :
+private theorem evaluateDecsFfiFull {σ : Type} (st : State σ) (env : SemEnv Value) (ds : List Dec) :
     Relation.ReflTransGen callFFIRelHOL st.ffi (evaluateDecs st env ds).1.ffi := by
   cases ds with
   | nil => exact evaluateDecsFfi_nil st env

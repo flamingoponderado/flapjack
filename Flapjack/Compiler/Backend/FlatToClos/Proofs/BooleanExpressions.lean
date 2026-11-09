@@ -9,11 +9,11 @@ theorem boolNot_wrong_arity {C F : Type} (state : FlatSem.State C F)
     (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
     (FlatSem.applyResult state (.src (.arith .not .boolT)) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
   | cons first rest =>
     cases rest with
     | nil => simp at wrong
-    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- Boolean negation gives related Boolean values,
 including the argument-evaluation error cases. -/
@@ -70,7 +70,7 @@ theorem evaluate_boolNot {C F : Type} (env : FlatSem.Environment FlatSem.Value)
           | nil =>
             simp only [List.reverse_singleton] at resultShape
             cases head <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-              FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp,
+              FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_arith_core,
               SemanticPrimitivesHOL.doAppNumericCore] at resultShape
             case con rel =>
               rename_i sourceFields targetFields tag typeId
@@ -78,7 +78,7 @@ theorem evaluate_boolNot {C F : Type} (env : FlatSem.Environment FlatSem.Value)
               | nil =>
                 cases typeId <;> simp_all [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
                   FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat,
-                  SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore,
+                  SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore,
                   SemanticPrimitivesHOL.boolValue, SemanticPrimitivesHOL.checkType,
                   ClosSem.doApp, ClosSem.applyBlock, ClosSem.asBool,
                   BackendCommon.trueTag, BackendCommon.falseTag, FlatLang.boolId]
@@ -142,7 +142,7 @@ theorem nonNumericArith_rejects {C F : Type} (state : FlatSem.State C F) (action
     (FlatSem.applyResult state (.src (.arith action typ)) args).2 = .err (.abort .typeError) := by
   rcases invalid with rfl | rfl <;>
     simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-      SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+      SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- Character and string arithmetic preserve prior argument errors. -/
 theorem evaluate_nonNumericArith {C F : Type} (env : FlatSem.Environment FlatSem.Value)
@@ -169,7 +169,7 @@ theorem boolArith_rejects {C F : Type} (state : FlatSem.State C F) (action : Ari
     (invalid : action ≠ .not) (args : List FlatSem.Value) :
     (FlatSem.applyResult state (.src (.arith action .boolT)) args).2 = .err (.abort .typeError) := by
   cases action <;> simp_all [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-    FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- A rejected Boolean arithmetic operation simulates the source expression for arbitrary
 argument lists whenever the source does not report a type error. -/

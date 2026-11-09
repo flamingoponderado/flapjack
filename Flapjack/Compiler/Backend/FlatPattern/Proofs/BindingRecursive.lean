@@ -220,7 +220,7 @@ theorem bindingSimulation_var {C F : Type} (trace : BackendCommon.Tra) (upper ke
         · exact preBound entry inPre
       have tailRelated : aLookupRel (fun n => decNameToNum n < lower) Eq
           ((name, value) :: env.v) (((name, value) :: pre) ++ base) :=
-        aLookupRel_cons _ _ name value value env.v (pre ++ base) (fun _ => rfl) related
+        aLookupRel_cons _ name _ value value env.v (pre ++ base) ⟨fun _ => rfl, related⟩
       have tailBounds : ∀ item ∈ rest, (∀ n ∈ FlatLang.patBindings item.1, decNameToNum n < lower) ∧
           lower < item.2.1 ∧ item.2.1 < upper := by
         intro item member
@@ -457,28 +457,28 @@ theorem bindingSimulation_all {C F : Type} (trace : BackendCommon.Tra) (upper : 
   | case7 i key expression rest pattern generated used continuation compiled ih =>
     exact bindingSimulation_ref trace i key pattern expression body rest ih
 
-/-- Work-list binding simulation with the compiler result exposed explicitly.
-HOL also quantifies an unused variable `vset` of an independent inhabited type;
-that vacuous binder is omitted. -/
+/-- Work-list binding simulation with the compiler result exposed explicitly. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_pat_bindings_simulation"]
-theorem compilePatBindings_simulation {C F : Type} (trace : BackendCommon.Tra) (lower upper : Nat)
-    (todo : List (FlatLang.Pat × Nat × FlatLang.Exp)) (body compiledBody : FlatLang.Exp) (used : NumSet)
-    (state final : FlatSem.State C F) (values : List FlatSem.Value) (pre bindings : List (VarN × FlatSem.Value))
-    (env : FlatSem.Environment FlatSem.Value) (result : Result (List FlatSem.Value) FlatSem.Value)
-    (base : List (VarN × FlatSem.Value))
-    (compiled : compilePatBindings trace upper todo body = (used, compiledBody))
-    (matched : FlatSem.pmatchList state (todo.map Prod.fst) values pre = .match bindings)
-    (evaluated : FlatSem.evaluate env state [compiledBody] = (final, result))
-    (inputs : List.Forall₂ (fun item value => ∀ env2,
+theorem compilePatBindings_simulation {C F V : Type} (lower : Nat) (base : List (VarN × FlatSem.Value))
+    (trace : BackendCommon.Tra) (upper : Nat) (todo : List (FlatLang.Pat × Nat × FlatLang.Exp))
+    (body compiledBody : FlatLang.Exp) (used : NumSet) (state : FlatSem.State C F)
+    (values : List FlatSem.Value) (pre bindings : List (VarN × FlatSem.Value))
+    (env : FlatSem.Environment FlatSem.Value) (final : FlatSem.State C F)
+    (result : Result (List FlatSem.Value) FlatSem.Value) (_vset : V)
+    (premises : compilePatBindings trace upper todo body = (used, compiledBody) ∧
+    FlatSem.pmatchList state (todo.map Prod.fst) values pre = .match bindings ∧
+    FlatSem.evaluate env state [compiledBody] = (final, result) ∧
+    List.Forall₂ (fun item value => ∀ env2,
       sptMem item.2.1 used ∧
         aLookupRel (fun name => lower < decNameToNum name ∧ decNameToNum name < upper) Eq env2.v env.v →
-      pureEvalTo state env2 item.2.2 value) todo values)
-    (preBound : ∀ entry ∈ pre, decNameToNum entry.1 < lower) (bound : lower < upper)
-    (related : aLookupRel (fun name => decNameToNum name < lower) Eq env.v (pre ++ base))
-    (itemBounds : ∀ item ∈ todo, (∀ name ∈ FlatLang.patBindings item.1, decNameToNum name < lower) ∧
-      lower < item.2.1 ∧ item.2.1 < upper) :
+      pureEvalTo state env2 item.2.2 value) todo values ∧
+    (∀ entry ∈ pre, decNameToNum entry.1 < lower) ∧ lower < upper ∧
+    aLookupRel (fun name => decNameToNum name < lower) Eq env.v (pre ++ base) ∧
+    (∀ item ∈ todo, (∀ name ∈ FlatLang.patBindings item.1, decNameToNum name < lower) ∧
+      lower < item.2.1 ∧ item.2.1 < upper)) :
     ∃ env2, FlatSem.evaluate env2 state [body] = (final, result) ∧
       aLookupRel (fun name => decNameToNum name < lower) Eq env2.v (bindings ++ base) := by
+  obtain ⟨compiled, matched, evaluated, inputs, preBound, bound, related, itemBounds⟩ := premises
   apply bindingSimulation_all trace upper todo body lower state values pre bindings env final result base matched
   · simpa [compiled] using evaluated
   · have inputs' : BindingInputs lower upper used env state todo values := by

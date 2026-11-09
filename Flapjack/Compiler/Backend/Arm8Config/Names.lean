@@ -44,4 +44,29 @@ theorem arm8Names_lookup_eq (register : Nat) :
     unfold arm8NameMap
     split <;> first | rfl | omega
 
+/-- The inverse of `arm8NameMap` (Flapjack infrastructure): the ten-cycle
+`0 → 30 → 26 → 25 → 29 → 18 → 4 → 3 → 2 → 1 → 0` reversed, identity elsewhere. -/
+def arm8NameInv (register : Nat) : Nat :=
+  match register with
+  | 30 => 0 | 0 => 1 | 1 => 2 | 2 => 3 | 3 => 4 | 4 => 18 | 29 => 25
+  | 25 => 26 | 18 => 29 | 26 => 30 | r => r
+
+/-- `arm8NameInv` is a left inverse of `arm8NameMap`: the names map is injective. -/
+theorem arm8NameInv_map (k : Nat) : arm8NameInv (arm8NameMap k) = k := by
+  by_cases h : k < 32
+  · interval_cases k <;> rfl
+  · unfold arm8NameMap
+    split <;> (try omega)
+    unfold arm8NameInv
+    split <;> first | rfl | omega
+
+/-- `arm8NameInv` is a right inverse of `arm8NameMap`: the names map is surjective. -/
+theorem arm8NameMap_inv (k : Nat) : arm8NameMap (arm8NameInv k) = k := by
+  by_cases h : k < 32
+  · interval_cases k <;> rfl
+  · unfold arm8NameInv
+    split <;> (try omega)
+    unfold arm8NameMap
+    split <;> first | rfl | omega
+
 end Flapjack.Compiler.Backend.Arm8Config

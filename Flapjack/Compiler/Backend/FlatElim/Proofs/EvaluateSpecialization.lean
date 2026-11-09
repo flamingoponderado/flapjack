@@ -73,7 +73,7 @@ theorem kept_declaration_lookups_closed (reachable : NumSet) (expression : FlatL
           simpa [analyseExp, pure] using analysis
         have paths := (closed _ _ analysis').2
         intro key member
-        apply paths source key sourceReachable
+        apply paths source key ⟨sourceReachable, ?_⟩
         apply Relation.ReflTransGen.single
         refine ⟨findLookups expression, ?_, ?_⟩
         · simp [sptLookup_sptMap, sourceLoc]

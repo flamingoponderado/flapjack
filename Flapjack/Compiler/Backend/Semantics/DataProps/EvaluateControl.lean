@@ -4,34 +4,6 @@ import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
 namespace Flapjack.Compiler.Backend.DataSem
 open Flapjack Flapjack.SemanticPrimitivesHOL
 
-/-- Successful installation leaves the control stack and handler intact.
-This helper has no direct HOL counterpart. -/
-theorem doInstall_stack_handler {C F R : Type} (args : List Value) (state next : State C F) (value : Value)
-    (run : doInstall (R := R) args state = .val (value, next)) :
-    next.stack = state.stack ∧ next.handler = state.handler := by
-  simp only [doInstall] at run
-  repeat' (split at run <;> try simp_all)
-  all_goals obtain ⟨_, rfl⟩ := run
-  all_goals exact ⟨rfl, rfl⟩
-
-/-- Successful primitive applications preserve the control stack and
-handler. This helper has no direct HOL counterpart. -/
-theorem doApp_stack_handler {C F : Type} (op : ClosLang.Op) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doApp op args state = .val (value, next)) :
-    next.stack = state.stack ∧ next.handler = state.handler := by
-  cases op with
-  | label label => exact ⟨(doApp_label_frame label args state next value run).2.1, (doApp_label_frame label args state next value run).2.2.1⟩
-  | ffi name => exact ⟨(doApp_ffi_frame name args state next value run).2.1, (doApp_ffi_frame name args state next value run).2.2.1⟩
-  | intOp op => exact ⟨(doApp_int_frame op args state next value run).2.1, (doApp_int_frame op args state next value run).2.2.1⟩
-  | wordOp op => exact ⟨(doApp_word_frame op args state next value run).2.1, (doApp_word_frame op args state next value run).2.2.1⟩
-  | blockOp op => exact ⟨(doApp_block_frame op args state next value run).2.1, (doApp_block_frame op args state next value run).2.2.1⟩
-  | globOp op => exact ⟨(doApp_global_frame op args state next value run).2.1, (doApp_global_frame op args state next value run).2.2.1⟩
-  | memOp op => exact ⟨(doApp_mem_frame op args state next value run).2.1, (doApp_mem_frame op args state next value run).2.2.1⟩
-  | thunkOp op => exact ⟨(doApp_thunk_frame op args state next value run).2.1, (doApp_thunk_frame op args state next value run).2.2.1⟩
-  | install =>
-    exact doInstall_stack_handler args { state with stackMax := none, stackFrameSizes := .ln } next value run
-
 /-- A continuing assignment preserves the stack and handler, including when
 the primitive installs code. This is one case of the still-open general
 evaluator control-preservation result. -/
@@ -52,7 +24,9 @@ theorem evaluate_assign_stack_handler {C F : Type} (dest : Nat) (op : ClosLang.O
         | err error => simp [evaluate, invalid, read, cut, app] at run
         | val pair =>
           obtain ⟨value, applied⟩ := pair
-          have appControl := doApp_stack_handler op args prepared applied value app
+          have frame := doApp_controlFrame op args prepared applied value app
+          have appControl : applied.stack = prepared.stack ∧ applied.handler = prepared.handler :=
+            ⟨frame.2.1, frame.2.2.1⟩
           simp [evaluate, invalid, read, cut, app] at run
           subst next
           exact ⟨appControl.1.trans cutControl.1, appControl.2.trans cutControl.2.1⟩

@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyArithmeticSource
 
 /-! Matched observations from `cake_flat_sem_apply_probe.out`, through the
 assembled dispatcher. -/
@@ -66,10 +67,24 @@ example {C F : Type} (s : State C F) :
     doApp s (.src (.arith .add (.wordT .w8))) [.litv (.word8 3), .litv (.word64 5)] = none := by rfl
 example {C F : Type} (s : State C F) :
     doApp s (.src (.arith .not .boolT)) [boolValue true] =
-      some (s, .val (boolValue false)) := by rfl
+      some (s, .val (boolValue false)) := by
+  have distinct : ofString "False" ≠ ofString "True" := by decide
+  simp [doApp_arith_source, Flapjack.SemanticPrimitivesHOL.doArith,
+    Flapjack.SemanticPrimitivesHOL.checkType, Flapjack.SemanticPrimitivesHOL.theBoolv,
+    boolValue, flatToValue, valueToFlat, Flapjack.Compiler.Backend.BackendCommon.boolToTag,
+    Flapjack.Compiler.Backend.FlatLang.boolId, Flapjack.Compiler.Backend.BackendCommon.trueTag,
+    Flapjack.Compiler.Backend.BackendCommon.falseTag, Flapjack.SemanticPrimitivesHOL.boolValue,
+    Flapjack.SemanticPrimitivesHOL.boolTypeNum, distinct]
 example {C F : Type} (s : State C F) :
     doApp s (.src (.arith .not .boolT)) [boolValue false] =
-      some (s, .val (boolValue true)) := by rfl
+      some (s, .val (boolValue true)) := by
+  have distinct : ofString "False" ≠ ofString "True" := by decide
+  simp [doApp_arith_source, Flapjack.SemanticPrimitivesHOL.doArith,
+    Flapjack.SemanticPrimitivesHOL.checkType, Flapjack.SemanticPrimitivesHOL.theBoolv,
+    boolValue, flatToValue, valueToFlat, Flapjack.Compiler.Backend.BackendCommon.boolToTag,
+    Flapjack.Compiler.Backend.FlatLang.boolId, Flapjack.Compiler.Backend.BackendCommon.trueTag,
+    Flapjack.Compiler.Backend.BackendCommon.falseTag, Flapjack.SemanticPrimitivesHOL.boolValue,
+    Flapjack.SemanticPrimitivesHOL.boolTypeNum, distinct]
 example {C F : Type} (s : State C F) :
     doApp s (.src (.arith .not .boolT)) [.conv (some (8, some 0)) []] = none := by rfl
 example {C F : Type} (s : State C F) :

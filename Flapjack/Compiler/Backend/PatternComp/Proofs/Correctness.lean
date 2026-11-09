@@ -30,7 +30,7 @@ theorem comp_correct (refs : HolFiniteMapExact Nat Term) (value : Term) (rows : 
   by_cases exhaustive : PatternExh.exhRows (moveConstUp rows) = true
   · obtain ⟨insertedSafe, insertedEq⟩ := matchRows_insertAny refs value (moveConstUp rows) movedSafe
     have codeEq := patsToCode_correct refs value (insertAny (moveConstUp rows)) insertedSafe
-    have exhaustiveSound := exhRows_sound refs value (moveConstUp rows) movedSafe exhaustive
+    have exhaustiveSound := exhRows_sound refs (moveConstUp rows) value ⟨movedSafe, exhaustive⟩
     simpa [comp, exhaustive, insertedEq exhaustiveSound, movedEq] using codeEq
   · have codeEq := patsToCode_correct refs value (moveConstUp rows) movedSafe
     simpa [comp, exhaustive, movedEq] using codeEq

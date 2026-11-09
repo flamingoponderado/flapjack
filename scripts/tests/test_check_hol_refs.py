@@ -2185,6 +2185,25 @@ End
 DECL = CHECKER["hol_declaration_lines"]
 
 
+class DataToWordAssignDeclarationsTest(unittest.TestCase):
+    def test_pinned_generated_names_and_line(self):
+        path = CHECKER["ROOT"] / CHECKER["DATA_TO_WORD_SCRIPT"]
+        declarations = CHECKER["data_to_word_assign_declarations"](path, path.read_text())
+        self.assertEqual(len(declarations), 60)
+        self.assertIn(("assign_Const_def", 1182), declarations)
+        self.assertIn(("assign_FinaliseCons_def", 2455), declarations)
+        self.assertIsNone(REF_ERROR(path, "assign_Const_def", 1182, {}))
+        self.assertIn("not at line", REF_ERROR(path, "assign_Const_def", 1183, {}))
+
+    def test_other_path_or_changed_source_does_not_authorize_names(self):
+        path = CHECKER["ROOT"] / CHECKER["DATA_TO_WORD_SCRIPT"]
+        source = path.read_text()
+        parse = CHECKER["data_to_word_assign_declarations"]
+        self.assertEqual(parse(Path("elsewhere/data_to_wordScript.sml"), source), [])
+        self.assertEqual(parse(path, source + "\n"), [])
+        self.assertEqual(parse(path, source.replace("val thm = Define q", "val thm = other q")), [])
+
+
 class HolRelnTupleDeclarationsTest(unittest.TestCase):
     def fixture(self, text):
         directory = tempfile.TemporaryDirectory()

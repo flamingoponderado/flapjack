@@ -42,7 +42,7 @@ theorem doApp_Shift {C F : Type} (genv : GlobalEnv)
           cases lit <;> simp_all
           obtain ⟨rfl, rfl⟩ := run
           refine ⟨_, flat, stores, nonempty, rfl, rfl, rfl, ResultRel.value (ValueRel.literal genv _), ?_⟩
-          simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
+          simp [astOpToFlatOp, FlatSem.doApp_shift_projection, FlatSem.applyNumericProjection,
             FlatSem.flatToValue, FlatSem.valueToFlat, doApp, doAppNumericCore, doAppBasic]
 
 end Flapjack.Compiler.Backend.SourceToFlat

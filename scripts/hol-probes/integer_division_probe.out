@@ -1,0 +1,2 @@
+int_div=∀(i :int) (j :int). j ≠ (0 :int) ⇒ i / j = if (0 :int) < j then if (0 :int) ≤ i then ((&(Num i DIV Num j)) :int) else -((&(Num (-i) DIV Num j)) :int) + if Num (-i) MOD Num j = (0 :num) then (0 :int) else -(1 :int) else if (0 :int) ≤ i then -((&(Num i DIV Num (-j))) :int) + if Num i MOD Num (-j) = (0 :num) then (0 :int) else -(1 :int) else ((&(Num (-i) DIV Num (-j))) :int)
+int_mod=∀(i :int) (j :int). j ≠ (0 :int) ⇒ i % j = i − i / j * j

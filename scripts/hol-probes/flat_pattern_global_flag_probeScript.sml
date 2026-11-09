@@ -143,3 +143,6 @@ val _ = show_thm "encode_pat_definition=" flat_patternTheory.encode_pat_def;
 val _ = show_thm "naive_match_definition=" flat_patternTheory.naive_pattern_match_def;
 val _ = show_thm "naive_matches_definition=" flat_patternTheory.naive_pattern_matches_def;
 val _ = show_thm "max_dec_name_definition=" flat_patternTheory.max_dec_name_def;
+val _ = show_thm "alookup_rel_mono_typed=" flat_patternProofTheory.ALOOKUP_rel_mono;
+val _ = show_thm "alookup_rel_eq_typed=" flat_patternProofTheory.ALOOKUP_rel_EQ_ALOOKUP;
+val _ = show_thm "alookup_rel_append_typed=" flat_patternProofTheory.ALOOKUP_rel_append_suff;

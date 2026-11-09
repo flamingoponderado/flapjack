@@ -1,61 +1,61 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+import Flapjack.FfiHOL
 
-/-! Clock and evaluation-configuration preservation for the flat primitive dispatcher. These
-lemmas are untagged pending full review of the underlying dispatcher. -/
+/-! Clock, evaluation-configuration, and I/O-event preservation for the flat primitive dispatcher. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
 /-- Flat-specific primitive operations preserve the clock and evaluation configuration. -/
-theorem doAppFlat_stable {C F : Type} (state next : State C F) (op : FlatLang.Op)
+private theorem doAppFlat_stable {C F : Type} (state next : State C F) (op : FlatLang.Op)
     (values : List Value) (result : Result Value Value)
     (run : doAppFlat state op values = some (some (next, result))) :
-    next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
+    next.clock = state.clock ∧ next.evalConfig = state.evalConfig ∧ state.ffi.ioEvents <+: next.ffi.ioEvents := by
   cases op <;> simp only [doAppFlat] at run
   all_goals repeat' split at run
   all_goals simp_all
-  all_goals try (rcases run with ⟨h, _⟩; subst next; exact ⟨rfl, rfl⟩)
-  all_goals rcases run with ⟨_, _, h, _⟩; subst next; exact ⟨rfl, rfl⟩
+  all_goals try (rcases run with ⟨h, _⟩; subst next; exact ⟨rfl, rfl, List.prefix_refl _⟩)
+  all_goals rcases run with ⟨_, _, h, _⟩; subst next; exact ⟨rfl, rfl, List.prefix_refl _⟩
 
 /-- The source numeric projection leaves the flat state unchanged. -/
-theorem applyNumericProjection_stable {C F : Type} (state next : State C F) (op : Op)
+private theorem applyNumericProjection_stable {C F : Type} (state next : State C F) (op : Op)
     (values : List Value) (errorValue : Value) (result : Result Value Value)
     (run : applyNumericProjection state op values errorValue = some (next, result)) :
-    next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
+    next.clock = state.clock ∧ next.evalConfig = state.evalConfig ∧ state.ffi.ioEvents <+: next.ffi.ioEvents := by
   unfold applyNumericProjection at run
   cases call : SemanticPrimitivesHOL.doApp ([], state.ffi) op (values.map flatToValue) with
   | none => simp [call] at run
   | some pair =>
     obtain ⟨sourceState, sourceResult⟩ := pair
     cases sourceResult with
-    | val value => simp [call] at run; rcases run with ⟨h, _⟩; subst next; exact ⟨rfl, rfl⟩
+    | val value => simp [call] at run; rcases run with ⟨h, _⟩; subst next; exact ⟨rfl, rfl, List.prefix_refl _⟩
     | err error =>
-      cases error <;> simp [call] at run <;> rcases run with ⟨h, _⟩ <;> subst next <;> exact ⟨rfl, rfl⟩
+      cases error <;> simp [call] at run <;> rcases run with ⟨h, _⟩ <;> subst next <;> exact ⟨rfl, rfl, List.prefix_refl _⟩
 
 /-- Numeric and comparison primitives leave the state unchanged. -/
-theorem doAppNumeric_stable {C F : Type} (state next : State C F) (op : Op)
+private theorem doAppNumeric_stable {C F : Type} (state next : State C F) (op : Op)
     (values : List Value) (result : Result Value Value)
     (run : doAppNumeric state op values = some (some (next, result))) :
-    next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
+    next.clock = state.clock ∧ next.evalConfig = state.evalConfig ∧ state.ffi.ioEvents <+: next.ffi.ioEvents := by
   cases op <;> simp only [doAppNumeric] at run
   all_goals try (simp only [Option.some.injEq] at run; exact applyNumericProjection_stable state next _ values _ result run)
   all_goals repeat' split at run
   all_goals simp_all
-  all_goals try (rcases run with ⟨h, _⟩; subst next; exact ⟨rfl, rfl⟩)
+  all_goals try (rcases run with ⟨h, _⟩; subst next; exact ⟨rfl, rfl, List.prefix_refl _⟩)
 
 /-- Bounds failures preserve the clock and evaluation configuration. -/
-theorem boundsFailure_stable {C F : Type} (state next : State C F) (unsafeOp : Bool)
+private theorem boundsFailure_stable {C F : Type} (state next : State C F) (unsafeOp : Bool)
     (result : Result Value Value) (run : boundsFailure state unsafeOp = some (next, result)) :
-    next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
+    next.clock = state.clock ∧ next.evalConfig = state.evalConfig ∧ state.ffi.ioEvents <+: next.ffi.ioEvents := by
   cases unsafeOp <;> simp [boundsFailure] at run
   rcases run with ⟨h, _⟩
   subst next
-  exact ⟨rfl, rfl⟩
+  exact ⟨rfl, rfl, List.prefix_refl _⟩
 
 /-- Indexed reads preserve the clock and evaluation configuration, including bounds errors. -/
-theorem readIndexed_stable {C F α : Type} (state next : State C F) (unsafeOp : Bool)
+private theorem readIndexed_stable {C F α : Type} (state next : State C F) (unsafeOp : Bool)
     (items : List α) (index : Int) (toValue : α → Value) (result : Result Value Value)
     (run : readIndexed state unsafeOp items index toValue = some (next, result)) :
-    next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
+    next.clock = state.clock ∧ next.evalConfig = state.evalConfig ∧ state.ffi.ioEvents <+: next.ffi.ioEvents := by
   unfold readIndexed at run
   split at run
   · exact boundsFailure_stable state next unsafeOp result run
@@ -64,14 +64,14 @@ theorem readIndexed_stable {C F α : Type} (state next : State C F) (unsafeOp : 
     · simp at run
       rcases run with ⟨h, _⟩
       subst next
-      exact ⟨rfl, rfl⟩
+      exact ⟨rfl, rfl, List.prefix_refl _⟩
 
 /-- Indexed writes update only the store, including checked bounds errors. -/
-theorem updateIndexed_stable {C F α : Type} (state next : State C F) (unsafeOp : Bool)
+private theorem updateIndexed_stable {C F α : Type} (state next : State C F) (unsafeOp : Bool)
     (address : Nat) (items : List α) (index : Int) (value : α)
     (asStore : List α → StoreValue Value) (result : Result Value Value)
     (run : updateIndexed state unsafeOp address items index value asStore = some (next, result)) :
-    next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
+    next.clock = state.clock ∧ next.evalConfig = state.evalConfig ∧ state.ffi.ioEvents <+: next.ffi.ioEvents := by
   unfold updateIndexed at run
   split at run
   · exact boundsFailure_stable state next unsafeOp result run
@@ -81,58 +81,62 @@ theorem updateIndexed_stable {C F α : Type} (state next : State C F) (unsafeOp 
       simp [assigned] at run
       rcases run with ⟨h, _⟩
       subst next
-      exact ⟨rfl, rfl⟩
+      exact ⟨rfl, rfl, List.prefix_refl _⟩
 
 /-- Reference and array primitives preserve the clock and evaluation configuration. -/
-theorem doAppMemory_stable {C F : Type} (state next : State C F) (op : Op)
+private theorem doAppMemory_stable {C F : Type} (state next : State C F) (op : Op)
     (values : List Value) (result : Result Value Value)
     (run : doAppMemory state op values = some (some (next, result))) :
-    next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
+    next.clock = state.clock ∧ next.evalConfig = state.evalConfig ∧ state.ffi.ioEvents <+: next.ffi.ioEvents := by
   cases op <;> simp only [doAppMemory] at run
   all_goals repeat' split at run
   all_goals try (simp only [Option.some.injEq] at run; exact readIndexed_stable state next _ _ _ _ result run)
   all_goals try (simp only [Option.some.injEq] at run; exact updateIndexed_stable state next _ _ _ _ _ _ result run)
   all_goals try (simp only [Option.some.injEq] at run; exact boundsFailure_stable state next _ result run)
   all_goals simp_all [storeAlloc]
-  all_goals try (rcases run with ⟨h, _⟩; subst next; exact ⟨rfl, rfl⟩)
+  all_goals try (rcases run with ⟨h, _⟩; subst next; exact ⟨rfl, rfl, List.prefix_refl _⟩)
   all_goals simp only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq] at run
-  all_goals rcases run with ⟨_, _, h, _⟩; subst next; exact ⟨rfl, rfl⟩
+  all_goals rcases run with ⟨_, _, h, _⟩; subst next; exact ⟨rfl, rfl, List.prefix_refl _⟩
 
 /-- String, list, vector, thunk and FFI primitives preserve the clock and evaluation configuration. -/
-theorem doAppData_stable {C F : Type} (state next : State C F) (op : Op)
+private theorem doAppData_stable {C F : Type} (state next : State C F) (op : Op)
     (values : List Value) (result : Result Value Value)
     (run : doAppData state op values = some (some (next, result))) :
-    next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
+    next.clock = state.clock ∧ next.evalConfig = state.evalConfig ∧ state.ffi.ioEvents <+: next.ffi.ioEvents := by
   cases op <;> simp only [doAppData] at run
   all_goals repeat' split at run
   all_goals try (simp only [Option.some.injEq] at run; exact readIndexed_stable state next _ _ _ _ result run)
   all_goals simp_all [storeAlloc, Option.bind_eq_some_iff]
-  all_goals try (rcases run with ⟨h, _⟩; subst next; exact ⟨rfl, rfl⟩)
-  all_goals try (rcases run with ⟨_, _, _, _, h, _⟩; subst next; exact ⟨rfl, rfl⟩)
-  all_goals rcases run with ⟨_, _, h, _⟩; subst next; exact ⟨rfl, rfl⟩
+  all_goals try (rcases run with ⟨h, _⟩; subst next; exact ⟨rfl, rfl, List.prefix_refl _⟩)
+  all_goals try (rcases run with ⟨_, _, _, _, h, _⟩; subst next; exact ⟨rfl, rfl, List.prefix_refl _⟩)
+  all_goals rcases run with ⟨_, _, h, _⟩; subst next
+  all_goals refine ⟨rfl, rfl, ?_⟩
+  all_goals apply Flapjack.callFFIHOL_return_ioEvents_prefix
+  all_goals assumption
 
 /-- Copy and XOR primitives preserve the clock and evaluation configuration. -/
-theorem doAppCopy_stable {C F : Type} (state next : State C F) (op : Op)
+private theorem doAppCopy_stable {C F : Type} (state next : State C F) (op : Op)
     (values : List Value) (result : Result Value Value)
     (run : doAppCopy state op values = some (some (next, result))) :
-    next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
+    next.clock = state.clock ∧ next.evalConfig = state.evalConfig ∧ state.ffi.ioEvents <+: next.ffi.ioEvents := by
   cases op <;> simp only [doAppCopy] at run
   all_goals repeat' split at run
   all_goals try (simp only [Option.some.injEq] at run; exact boundsFailure_stable state next _ result run)
   all_goals simp_all [Option.bind_eq_some_iff]
-  all_goals try (rcases run with ⟨h, _⟩; subst next; exact ⟨rfl, rfl⟩)
-  all_goals try (rcases run with ⟨_, _, _, _, h, _⟩; subst next; exact ⟨rfl, rfl⟩)
-  all_goals rcases run with ⟨_, _, h, _⟩; subst next; exact ⟨rfl, rfl⟩
+  all_goals try (rcases run with ⟨h, _⟩; subst next; exact ⟨rfl, rfl, List.prefix_refl _⟩)
+  all_goals try (rcases run with ⟨_, _, _, _, h, _⟩; subst next; exact ⟨rfl, rfl, List.prefix_refl _⟩)
+  all_goals rcases run with ⟨_, _, h, _⟩; subst next; exact ⟨rfl, rfl, List.prefix_refl _⟩
 
 private theorem getD_some {α : Type} (value : Option (Option α)) (result : α)
     (h : value.getD none = some result) : value = some (some result) := by
   cases value <;> simp_all
 
-/-- The assembled flat primitive dispatcher preserves the clock and evaluation configuration. This is an
-untagged result about the dispatcher pending its full HOL source review. -/
-theorem doApp_stable {C F : Type} (state next : State C F) (op : FlatLang.Op)
+/-- Flapjack infrastructure: the primitive dispatcher jointly preserves clock
+and evaluation configuration while extending I/O events. This shared invariant
+proves the separate HOL primitive preservation results. -/
+theorem doApp_stableAndIo {C F : Type} (state next : State C F) (op : FlatLang.Op)
     (values : List Value) (result : Result Value Value)
-    (run : doApp state op values = some (next, result)) : next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
+    (run : doApp state op values = some (next, result)) : next.clock = state.clock ∧ next.evalConfig = state.evalConfig ∧ state.ffi.ioEvents <+: next.ffi.ioEvents := by
   cases op with
   | src sourceOp =>
     unfold doApp at run
@@ -160,5 +164,21 @@ theorem doApp_stable {C F : Type} (state next : State C F) (op : FlatLang.Op)
   | globalVarAlloc _ | globalVarInit _ | globalVarLookup _ | tagLenEq _ _ | lenEq _ | el _ | id =>
     simp only [doApp] at run
     exact doAppFlat_stable state next _ values result (getD_some _ _ run)
+
+/-- The clock and configuration projections of the shared dispatcher invariant. -/
+theorem doApp_stable {C F : Type} (state next : State C F) (op : FlatLang.Op)
+    (values : List Value) (result : Result Value Value)
+    (run : doApp state op values = some (next, result)) :
+    next.clock = state.clock ∧ next.evalConfig = state.evalConfig := by
+  have stable := doApp_stableAndIo state next op values result run
+  exact ⟨stable.1, stable.2.1⟩
+
+/-- A successful primitive application preserves the clock. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_const"]
+theorem doApp_const {C F : Type} (state : State C F) (op : FlatLang.Op)
+    (values : List Value) (next : State C F) (result : Result Value Value) :
+    doApp state op values = some (next, result) → state.clock = next.clock := by
+  intro run
+  exact (doApp_stable state next op values result run).1.symm
 
 end Flapjack.Compiler.Backend.FlatSem

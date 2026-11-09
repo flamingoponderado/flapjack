@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShiftedRegister
-import Flapjack.Compiler.Encoders.Arm8.Machine.MaskConverses
+import Flapjack.Compiler.Encoders.Arm8.MaskConverses
 
 set_option maxHeartbeats 12000000
 set_option maxRecDepth 10000

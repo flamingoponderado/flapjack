@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.DataLive.Proofs.Simulation
+import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyErrors
 
 /-! Error behavior of pure data-language primitive applications. -/
 namespace Flapjack.Compiler.Backend.DataLive
@@ -17,26 +18,15 @@ theorem isPure_ne_install (op : ClosLang.Op) (pure : isPure op = true) : op ≠ 
   subst op
   simp [isPure] at pure
 
-/-- Non-FFI primitive dispatch can fail only with a type error. This is
-untagged auxiliary infrastructure for the HOL pure-operation proof. -/
-theorem doAppAux_error_nonFfi {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
-    (state : State C F) (error : ErrorResult DataSem.Value)
-    (noFfi : ∀ name, op ≠ .ffi name) (run : doAppAux op args state = .err error) :
-    error = .abort .typeError := by
-  simp only [doAppAux] at run
-  repeat' (split at run <;> try simp_all)
-
 /-- A pure primitive application can fail only with a type error. This
 statement is untagged until the source evaluator and carriers are reviewed. -/
 theorem pure_doApp_error {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
     (state : State C F) (error : ErrorResult DataSem.Value)
     (pure : isPure op = true) (run : doApp op args state = .err error) :
     error = .abort .typeError := by
-  have noFfi := isPure_ne_ffi op pure
-  have noInstall := isPure_ne_install op pure
-  simp only [doApp] at run
-  repeat' (split at run <;> try simp_all)
-  all_goals exact doAppAux_error_nonFfi op args _ error noFfi run
+  rcases DataProps.doApp_err op args state error run with typeError | ⟨name, _, ffi, _⟩
+  · exact typeError
+  · exact False.elim (isPure_ne_ffi op pure name ffi)
 
 /-- A successful pure integer operation changes only resource bookkeeping,
 so it leaves the liveness relation to its input state intact. This is an

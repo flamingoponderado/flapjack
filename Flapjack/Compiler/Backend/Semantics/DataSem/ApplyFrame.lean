@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyFields
 
-/-! Local and control fields preserved by numeric primitive application. -/
+/-! Control fields preserved by primitive application and evaluation. -/
 namespace Flapjack.Compiler.Backend.DataSem
 open Flapjack Flapjack.SemanticPrimitivesHOL
 
@@ -35,13 +36,6 @@ theorem SameControl.jumpExc_ne_none {C F : Type} {before after : State C F}
     | cons head rest => cases head <;> simp_all
   · simp [jumpExc, h] at available
 
-/-- Local/control preservation composes across bookkeeping steps. -/
-theorem SameLocalControl.trans {C F : Type} {a b c : State C F}
-    (first : SameLocalControl a b) (second : SameLocalControl b c) : SameLocalControl a c := by
-  rcases first with ⟨a1, a2, a3, a4, a5, a6⟩
-  rcases second with ⟨b1, b2, b3, b4, b5, b6⟩
-  exact ⟨b1.trans a1, b2.trans a2, b3.trans a3, b4.trans a4, b5.trans a5, b6.trans a6⟩
-
 /-- Successful space accounting preserves local and control fields. -/
 theorem doSpace_frame {C F : Type} (op : ClosLang.Op) (args : List Value)
     (state next : State C F) (run : doSpace op args state = some next) : SameLocalControl state next := by
@@ -61,6 +55,37 @@ theorem doSpace_frame {C F : Type} (op : ClosLang.Op) (args : List Value)
       · simp only [Option.some.injEq] at run
         subst next
         exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Auxiliary application preserves local control fields for every operation. -/
+private theorem doAppAux_controlFrame {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doAppAux op args state = .val (value, next)) : SameLocalControl state next := by
+  obtain ⟨stack, localsSize, _, _, locals, _, handler, clock, frameSizes, _⟩ :=
+    doAppAux_fieldFrame op args state next value run
+  exact ⟨locals, stack, handler, localsSize, frameSizes, clock⟩
+
+/-- Primitive application preserves control fields, accounting for installation
+resetting the frame-size map. -/
+theorem doApp_controlFrame {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (state next : State C F) (value : Value)
+    (run : doApp op args state = .val (value, next)) :
+    SameLocalControl {state with stackFrameSizes := if op == .install then .ln else state.stackFrameSizes} next := by
+  by_cases install : op = .install
+  · subst op
+    simp only [doApp] at run
+    simp only [beq_self_eq_true, ↓reduceIte]
+    simp only [doInstall] at run
+    repeat' (split at run <;> try simp_all)
+    all_goals obtain ⟨_, rfl⟩ := run
+    all_goals exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+  · have check : (op == .install) = false := by simp [install]
+    simp only [check, Bool.false_eq_true, ↓reduceIte]
+    simp only [doApp] at run
+    repeat' (split at run <;> try simp_all)
+    all_goals have aux := doAppAux_controlFrame _ _ _ _ _ run
+    all_goals have before := doSpace_frame _ _ state _ (by assumption)
+    all_goals simpa [SameLocalControl, doStack, doLimSafe, before.1, before.2.1, before.2.2.1,
+      before.2.2.2.1, before.2.2.2.2.1, before.2.2.2.2.2] using aux
 
 /-- Cutting the local environment leaves the control and clock fields intact. -/
 theorem cutStateOpt_control {C F : Type} (live : Option NumSet) (state next : State C F)
@@ -128,267 +153,6 @@ theorem evaluate_seq_inv_control {C F : Type} (first second : DataLang.Prog) (st
     rw [evaluate, firstRun, clamp] at run
     exact run
 
-/-- A successful integer auxiliary operation leaves local and control fields
-unchanged. This is Flapjack infrastructure for compiler-pass simulation. -/
-theorem doAppAux_int_frame {C F : Type} (op : ClosLang.IntOp) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doAppAux (.intOp op) args state = .val (value, next)) : SameLocalControl state next := by
-  cases intResult : doIntApp op args with
-  | none => simp [doAppAux, applyNonFfi, intResult] at run
-  | some result =>
-    simp [doAppAux, applyNonFfi, intResult] at run
-    obtain ⟨rfl, rfl⟩ := run
-    exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- A successful word auxiliary operation leaves local and control fields
-unchanged, including for floating-point word operations. -/
-theorem doAppAux_word_frame {C F : Type} (op : ClosLang.WordOp) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doAppAux (.wordOp op) args state = .val (value, next)) : SameLocalControl state next := by
-  cases wordResult : doWordApp op args with
-  | none => simp [doAppAux, applyNonFfi, wordResult] at run
-  | some result =>
-    simp [doAppAux, applyNonFfi, wordResult] at run
-    obtain ⟨rfl, rfl⟩ := run
-    exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- Successful global operations preserve local and control fields. -/
-theorem doAppAux_global_frame {C F : Type} (op : ClosLang.GlobOp) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doAppAux (.globOp op) args state = .val (value, next)) : SameLocalControl state next := by
-  cases op with
-  | allocGlobal => simp [doAppAux, applyNonFfi] at run
-  | globalsPtr =>
-    cases args with
-    | cons a rest => simp [doAppAux, applyNonFfi] at run
-    | nil =>
-      cases global : state.global with
-      | none => simp [doAppAux, applyNonFfi, global] at run
-      | some ptr =>
-        simp [doAppAux, applyNonFfi, global] at run
-        obtain ⟨rfl, rfl⟩ := run
-        exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-  | setGlobalsPtr =>
-    cases args with
-    | nil => simp [doAppAux, applyNonFfi] at run
-    | cons a rest =>
-      cases rest with
-      | cons b rest => simp [doAppAux, applyNonFfi] at run
-      | nil =>
-        cases a <;> simp [doAppAux, applyNonFfi] at run
-        case refPtr bit ptr =>
-          cases bit with
-          | false => simp at run
-          | true =>
-            simp at run
-            obtain ⟨rfl, rfl⟩ := run
-            exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-  | global index =>
-    cases args with
-    | cons a rest => simp [doAppAux, applyNonFfi] at run
-    | nil =>
-      cases global : state.global with
-      | none => simp [doAppAux, applyNonFfi, global] at run
-      | some ptr =>
-        cases found : sptLookup ptr state.refs with
-        | none => simp [doAppAux, applyNonFfi, global, found] at run
-        | some entry =>
-          cases entry with
-          | byteArray flag bytes => simp [doAppAux, applyNonFfi, global, found] at run
-          | thunk mode v => simp [doAppAux, applyNonFfi, global, found] at run
-          | mutBlock tag done left child right => simp [doAppAux, applyNonFfi, global, found] at run
-          | valueArray values =>
-            cases slot : values[index]? with
-            | none => simp [doAppAux, applyNonFfi, global, found, slot] at run
-            | some v =>
-              simp [doAppAux, applyNonFfi, global, found, slot] at run
-              obtain ⟨rfl, rfl⟩ := run
-              exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-  | setGlobal index =>
-    cases args with
-    | nil => simp [doAppAux, applyNonFfi] at run
-    | cons a rest =>
-      cases rest with
-      | cons b rest => simp [doAppAux, applyNonFfi] at run
-      | nil =>
-        cases global : state.global with
-        | none => simp [doAppAux, applyNonFfi, global] at run
-        | some ptr =>
-          cases found : sptLookup ptr state.refs with
-          | none => simp [doAppAux, applyNonFfi, global, found] at run
-          | some entry =>
-            cases entry with
-            | byteArray flag bytes => simp [doAppAux, applyNonFfi, global, found] at run
-            | thunk mode v => simp [doAppAux, applyNonFfi, global, found] at run
-            | mutBlock tag done left child right => simp [doAppAux, applyNonFfi, global, found] at run
-            | valueArray values =>
-              by_cases bound : index < values.length
-              · simp [doAppAux, applyNonFfi, global, found, bound] at run
-                obtain ⟨rfl, rfl⟩ := run
-                exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-              · simp [doAppAux, applyNonFfi, global, found, bound] at run
-
-/-- Successful code-label lookup preserves local and control fields. -/
-theorem doAppAux_label_frame {C F : Type} (label : Nat) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doAppAux (.label label) args state = .val (value, next)) : SameLocalControl state next := by
-  cases args with
-  | cons a rest => simp [doAppAux, applyNonFfi] at run
-  | nil =>
-    cases found : sptLookup label state.code with
-    | none => simp [doAppAux, applyNonFfi, found] at run
-    | some entry =>
-      simp [doAppAux, applyNonFfi, found] at run
-      obtain ⟨rfl, rfl⟩ := run
-      exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-/-- A successful FFI auxiliary application preserves local and control
-fields while updating the reference store and FFI state. -/
-theorem doAppAux_ffi_frame {C F : Type} (name : Basis.Pure.MlString.MlString) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doAppAux (.ffi name) args state = .val (value, next)) : SameLocalControl state next := by
-  cases args with
-  | nil => simp [doAppAux] at run
-  | cons a rest =>
-    cases rest with
-    | nil => simp [doAppAux] at run
-    | cons b rest =>
-      cases rest with
-      | cons c tail => simp [doAppAux] at run
-      | nil =>
-        cases a with
-        | number n => simp [doAppAux] at run
-        | word64 w => simp [doAppAux] at run
-        | codePtr p => simp [doAppAux] at run
-        | block ts tag vs => simp [doAppAux] at run
-        | refPtr flag configPtr =>
-          cases b with
-          | number n => simp [doAppAux] at run
-          | word64 w => simp [doAppAux] at run
-          | codePtr p => simp [doAppAux] at run
-          | block ts tag vs => simp [doAppAux] at run
-          | refPtr bit ptr =>
-            cases configFound : sptLookup configPtr state.refs with
-            | none => simp [doAppAux, configFound] at run
-            | some configEntry =>
-              cases configEntry with
-              | valueArray values => simp [doAppAux, configFound] at run
-              | thunk mode value => simp [doAppAux, configFound] at run
-              | mutBlock tag done left child right => simp [doAppAux, configFound] at run
-              | byteArray immutable config =>
-                cases immutable with
-                | false => simp [doAppAux, configFound] at run
-                | true =>
-                  cases bytesFound : sptLookup ptr state.refs with
-                  | none => simp [doAppAux, configFound, bytesFound] at run
-                  | some bytesEntry =>
-                    cases bytesEntry with
-                    | valueArray values => simp [doAppAux, configFound, bytesFound] at run
-                    | thunk mode value => simp [doAppAux, configFound, bytesFound] at run
-                    | mutBlock tag done left child right => simp [doAppAux, configFound, bytesFound] at run
-                    | byteArray mutable bytes =>
-                      cases mutable with
-                      | true => simp [doAppAux, configFound, bytesFound] at run
-                      | false =>
-                        cases call : callFFIHOL state.ffi (.extCall name) config bytes with
-                        | final outcome => simp [doAppAux, configFound, bytesFound, call] at run
-                        | ret ffi updated =>
-                          simp [doAppAux, configFound, bytesFound, call] at run
-                          obtain ⟨rfl, rfl⟩ := run
-                          exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-private theorem intAccounting_frame {C F : Type} (op : ClosLang.IntOp) (args : List Value)
-    (state accounted next : State C F) (value : Value)
-    (space : doSpace (.intOp op) args state = some accounted)
-    (aux : doAppAux (.intOp op) args
-      (doStack (.intOp op) args (doLimSafe accounted (.intOp op) args)) = .val (value, next)) :
-    SameLocalControl state next := by
-  have first := doSpace_frame (.intOp op) args state accounted space
-  have second := doAppAux_int_frame op args _ next value aux
-  have second' : SameLocalControl accounted next := by
-    simpa [SameLocalControl, doStack, doLimSafe] using second
-  exact first.trans second'
-
-/-- A successful full integer dispatcher preserves local and control fields,
-including the explicit space and stack accounting. -/
-theorem doApp_int_frame {C F : Type} (op : ClosLang.IntOp) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doApp (.intOp op) args state = .val (value, next)) : SameLocalControl state next := by
-  cases op <;> simp only [doApp] at run
-  all_goals try simp at run
-  all_goals split at run
-  all_goals try simp at run
-  all_goals rename_i accounted space
-  all_goals exact intAccounting_frame _ args state accounted next value space run
-
-private theorem wordAccounting_frame {C F : Type} (op : ClosLang.WordOp) (args : List Value)
-    (state accounted next : State C F) (value : Value)
-    (space : doSpace (.wordOp op) args state = some accounted)
-    (aux : doAppAux (.wordOp op) args
-      (doStack (.wordOp op) args (doLimSafe accounted (.wordOp op) args)) = .val (value, next)) :
-    SameLocalControl state next := by
-  have first := doSpace_frame (.wordOp op) args state accounted space
-  have second := doAppAux_word_frame op args _ next value aux
-  have second' : SameLocalControl accounted next := by
-    simpa [SameLocalControl, doStack, doLimSafe] using second
-  exact first.trans second'
-
-/-- A successful full word dispatcher preserves local and control fields. -/
-theorem doApp_word_frame {C F : Type} (op : ClosLang.WordOp) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doApp (.wordOp op) args state = .val (value, next)) : SameLocalControl state next := by
-  simp only [doApp] at run
-  cases space : doSpace (.wordOp op) args state with
-  | none => simp [space] at run
-  | some accounted =>
-    simp only [space] at run
-    exact wordAccounting_frame op args state accounted next value space run
-
-/-- The complete global dispatcher preserves local and control fields. -/
-theorem doApp_global_frame {C F : Type} (op : ClosLang.GlobOp) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doApp (.globOp op) args state = .val (value, next)) : SameLocalControl state next := by
-  simp only [doApp] at run
-  cases space : doSpace (.globOp op) args state with
-  | none => simp [space] at run
-  | some accounted =>
-    simp only [space] at run
-    have first := doSpace_frame (.globOp op) args state accounted space
-    have second := doAppAux_global_frame op args _ next value run
-    have second' : SameLocalControl accounted next := by
-      simpa [SameLocalControl, doStack, doLimSafe] using second
-    exact first.trans second'
-
-/-- The complete label dispatcher preserves local and control fields. -/
-theorem doApp_label_frame {C F : Type} (label : Nat) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doApp (.label label) args state = .val (value, next)) : SameLocalControl state next := by
-  simp only [doApp] at run
-  cases space : doSpace (.label label) args state with
-  | none => simp [space] at run
-  | some accounted =>
-    simp only [space] at run
-    have first := doSpace_frame (.label label) args state accounted space
-    have second := doAppAux_label_frame label args _ next value run
-    have second' : SameLocalControl accounted next := by
-      simpa [SameLocalControl, doStack, doLimSafe] using second
-    exact first.trans second'
-
-/-- The complete returning FFI dispatcher preserves local and control
-fields through its space and stack accounting. -/
-theorem doApp_ffi_frame {C F : Type} (name : Basis.Pure.MlString.MlString) (args : List Value)
-    (state next : State C F) (value : Value)
-    (run : doApp (.ffi name) args state = .val (value, next)) : SameLocalControl state next := by
-  simp only [doApp] at run
-  cases space : doSpace (.ffi name) args state with
-  | none => simp [space] at run
-  | some accounted =>
-    simp only [space] at run
-    have first := doSpace_frame (.ffi name) args state accounted space
-    have second := doAppAux_ffi_frame name args _ next value run
-    have second' : SameLocalControl accounted next := by
-      simpa [SameLocalControl, doStack, doLimSafe] using second
-    exact first.trans second'
-
 /-- Invert a successful assignment using a frame theorem for its primitive.
 The returned intermediate states expose the actual read, cut, application and
 destination update performed by the evaluator. -/
@@ -448,7 +212,7 @@ theorem evaluate_assign_int_frame {C F : Type} (op : ClosLang.IntOp) (dest : Nat
       getVars names state.locals = some args ∧ cutStateOpt live state = some prepared ∧
       doApp (.intOp op) args prepared = .val (value, applied) ∧
       next = setVar dest value (installSfs (.intOp op) applied) ∧ SameLocalControl prepared applied :=
-  evaluate_assign_frame (.intOp op) dest names live state next (doApp_int_frame op) run
+  evaluate_assign_frame (.intOp op) dest names live state next (fun args before after value run => by simpa using doApp_controlFrame (.intOp op) args before after value run) run
 
 /-- Word assignment execution has the same local/control frame. -/
 theorem evaluate_assign_word_frame {C F : Type} (op : ClosLang.WordOp) (dest : Nat)
@@ -458,7 +222,7 @@ theorem evaluate_assign_word_frame {C F : Type} (op : ClosLang.WordOp) (dest : N
       getVars names state.locals = some args ∧ cutStateOpt live state = some prepared ∧
       doApp (.wordOp op) args prepared = .val (value, applied) ∧
       next = setVar dest value (installSfs (.wordOp op) applied) ∧ SameLocalControl prepared applied :=
-  evaluate_assign_frame (.wordOp op) dest names live state next (doApp_word_frame op) run
+  evaluate_assign_frame (.wordOp op) dest names live state next (fun args before after value run => by simpa using doApp_controlFrame (.wordOp op) args before after value run) run
 
 /-- A successful word assignment preserves the control stack and metadata. -/
 theorem evaluate_assign_word_control {C F : Type} (op : ClosLang.WordOp) (dest : Nat)

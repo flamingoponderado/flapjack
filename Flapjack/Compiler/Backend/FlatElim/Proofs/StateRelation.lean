@@ -1,5 +1,7 @@
+import Flapjack.Compiler.Backend.FlatProps.StoreValues
 import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
 import Flapjack.Compiler.Backend.FlatElim.Proofs.Reachability
+import Flapjack.Misc.ListEl
 
 /-! State relation used by the flat dead-code elimination proof. -/
 namespace Flapjack.Compiler.Backend.FlatElim
@@ -10,7 +12,7 @@ program's dependency graph. -/
 def decsClosed (reachable : NumSet) (decs : List FlatLang.Exp) : Prop :=
   ∀ roots tree, analyseCode decs = (roots, tree) →
     (∀ key, sptMem key roots → sptMem key reachable) ∧
-    ∀ source target, sptMem source reachable → isReachable tree source target → sptMem target reachable
+    ∀ source target, sptMem source reachable ∧ isReachable tree source target → sptMem target reachable
 
 /-- A closed declaration sequence remains closed after removing its head. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "decs_closed_reduce"]
@@ -26,8 +28,8 @@ theorem decsClosed_tail (reachable : NumSet) (head : FlatLang.Exp) (tail : List 
     constructor
     · intro key member
       exact rootsClosed key ((sptMem_sptUnion _ _ _).mpr (Or.inr member))
-    · intro source target member path
-      apply pathsClosed source target member
+    · intro source target ⟨member, path⟩
+      apply pathsClosed source target ⟨member, ?_⟩
       rw [numSetTreeUnion_sym]
       exact isReachable_union tree headTree source target path
 
@@ -53,8 +55,8 @@ theorem decsClosed_head (reachable : NumSet) (head : FlatLang.Exp) (tail : List 
       constructor
       · intro key member
         exact rootsClosed key ((sptMem_sptUnion _ _ _).mpr (Or.inl member))
-      · intro source target member path
-        exact pathsClosed source target member (isReachable_union _ tailTree source target path)
+      · intro source target ⟨member, path⟩
+        exact pathsClosed source target ⟨member, isReachable_union _ tailTree source target path⟩
 
 /-- The calculated closure satisfies the original closed-declaration
 condition for the program it analyses. This is a helper for the elimination
@@ -70,7 +72,7 @@ theorem decsClosed_analysisClosure (decs : List FlatLang.Exp) (roots : NumSet) (
     change sptDomain (closureTotal roots tree) key
     rw [domain]
     exact ⟨key, member, .refl⟩
-  · intro source target member path
+  · intro source target ⟨member, path⟩
     change sptDomain (closureTotal roots tree) source at member
     rw [domain] at member
     obtain ⟨root, rootMem, prior⟩ := member
@@ -81,12 +83,12 @@ theorem decsClosed_analysisClosure (decs : List FlatLang.Exp) (roots : NumSet) (
 /-- Relate the original global list to the list after unreachable entries are
 removed, retaining every reachable value and its closed dependency set. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "globals_rel_def"]
-def globalsRel (reachable : NumSet) (source target : List (Option FlatSem.Value)) : Prop :=
+noncomputable def globalsRel (reachable : NumSet) (source target : List (Option FlatSem.Value)) : Prop :=
   source.length = target.length ∧
-  (∀ n, sptMem n reachable → n < target.length → source[n]?.getD none = target[n]?.getD none) ∧
-  (∀ n value, n < target.length → target[n]?.getD none = some value → source[n]?.getD none = some value) ∧
-  (∀ n, n < target.length → source[n]?.getD none = none → target[n]?.getD none = none) ∧
-  (∀ n value, sptMem n reachable → n < target.length → target[n]?.getD none = some value →
+  (∀ n, sptMem n reachable ∧ n < target.length → Flapjack.holEl n source = Flapjack.holEl n target) ∧
+  (∀ n value, n < target.length ∧ Flapjack.holEl n target = some value → Flapjack.holEl n source = some value) ∧
+  (∀ n, n < target.length ∧ Flapjack.holEl n source = none → Flapjack.holEl n target = none) ∧
+  (∀ n value, sptMem n reachable ∧ n < target.length ∧ Flapjack.holEl n target = some value →
     valueHasEval value = false ∧ ∀ key, sptMem key (findValueGlobals value) → sptMem key reachable)
 
 /-- Global removal relations compose without changing the reachable set. -/
@@ -96,12 +98,12 @@ theorem globalsRel_trans (reachable : NumSet) (first middle last : List (Option 
     globalsRel reachable first last := by
   obtain ⟨⟨length1, reach1, present1, empty1, _⟩, ⟨length2, reach2, present2, empty2, closed⟩⟩ := relations
   refine ⟨length1.trans length2, ?_, ?_, ?_, closed⟩
-  · intro n inReachable bound
-    exact (reach1 n inReachable (by omega)).trans (reach2 n inReachable bound)
-  · intro n value bound present
-    exact present1 n value (by omega) (present2 n value bound present)
-  · intro n bound empty
-    exact empty2 n bound (empty1 n (by omega) empty)
+  · intro n ⟨inReachable, bound⟩
+    exact (reach1 n ⟨inReachable, by omega⟩).trans (reach2 n ⟨inReachable, bound⟩)
+  · intro n value ⟨bound, present⟩
+    exact present1 n value ⟨by omega, present2 n value ⟨bound, present⟩⟩
+  · intro n ⟨bound, empty⟩
+    exact empty2 n ⟨bound, empty1 n ⟨by omega, empty⟩⟩
 
 /-- Initializing the same empty slot in related global lists preserves their
 relation when the initialized value is closed and Eval-free. -/
@@ -114,35 +116,41 @@ theorem globalsRel_set_init (reachable : NumSet) (source target : List (Option F
   have targetBound : index < target.length := (List.getElem?_eq_some_iff.mp targetEmpty).choose
   obtain ⟨lengths, same, present, empty, contents⟩ := related
   refine ⟨by simpa using lengths, ?_, ?_, ?_, ?_⟩
-  · intro n reachableN bound
+  · intro n ⟨reachableN, bound⟩
     simp only [List.length_set] at bound
     by_cases eq : n = index
     · subst n
-      simp [sourceBound, targetBound]
-    · simpa [List.getElem?_set_ne (Ne.symm eq)] using same n reachableN bound
-  · intro n v bound found
+      simp [Flapjack.holEl_set, sourceBound, targetBound]
+    · simpa [Flapjack.holEl_set, sourceBound, targetBound, Ne.symm eq] using same n ⟨reachableN, bound⟩
+  · intro n v ⟨bound, found⟩
     simp only [List.length_set] at bound
     by_cases eq : n = index
     · subst n
-      simpa [sourceBound, targetBound] using found
-    · simp only [List.getElem?_set_ne (Ne.symm eq)] at found ⊢
-      exact present n v bound found
-  · intro n bound isEmpty
+      simpa [Flapjack.holEl_set, sourceBound, targetBound] using found
+    · simp only [Flapjack.holEl_set _ _ _ _ targetBound, if_neg (Ne.symm eq)] at found
+      simpa [Flapjack.holEl_set, sourceBound, Ne.symm eq] using present n v ⟨bound, found⟩
+  · intro n ⟨bound, isEmpty⟩
     simp only [List.length_set] at bound
     by_cases eq : n = index
     · subst n
-      simp [sourceBound] at isEmpty
-    · simp only [List.getElem?_set_ne (Ne.symm eq)] at isEmpty ⊢
-      exact empty n bound isEmpty
-  · intro n v reachableN bound found
+      simp [Flapjack.holEl_set, sourceBound] at isEmpty
+    · simp only [Flapjack.holEl_set _ _ _ _ sourceBound, if_neg (Ne.symm eq)] at isEmpty
+      simpa [Flapjack.holEl_set, targetBound, Ne.symm eq] using empty n ⟨bound, isEmpty⟩
+  · intro n v ⟨reachableN, bound, found⟩
     simp only [List.length_set] at bound
     by_cases eq : n = index
     · subst n
-      simp [targetBound] at found
+      simp [Flapjack.holEl_set, targetBound] at found
       subst v
       exact ⟨safe, closed⟩
-    · simp only [List.getElem?_set_ne (Ne.symm eq)] at found
-      exact contents n v reachableN bound found
+    · simp only [Flapjack.holEl_set _ _ _ _ targetBound, if_neg (Ne.symm eq)] at found
+      exact contents n v ⟨reachableN, bound, found⟩
+
+/-- In-bounds HOL list selection agrees with the evaluator's optional lookup.
+This Flapjack helper has no separate HOL original. -/
+theorem holEl_eq_getD (values : List (Option FlatSem.Value)) (index : Nat)
+    (bound : index < values.length) : Flapjack.holEl index values = values[index]?.getD none := by
+  simp [Flapjack.holEl_eq_getElem index values bound, bound]
 
 /-- Extending both global lists with empty slots preserves the elimination
 relation. This is a Flapjack helper for global allocation. -/
@@ -159,38 +167,47 @@ theorem globalsRel_append_empty (reachable : NumSet) (source target : List (Opti
     rw [List.getElem?_append_right bound, List.getElem?_replicate]
     split <;> rfl
   refine ⟨by simp [lengths], ?_, ?_, ?_, ?_⟩
-  · intro n reachableN bound
+  · intro n ⟨reachableN, bound⟩
+    have sourceBound : n < (source ++ List.replicate count none).length := by simpa [lengths] using bound
+    rw [holEl_eq_getD _ _ sourceBound, holEl_eq_getD _ _ bound]
     by_cases old : n < target.length
     · have sourceOld : n < source.length := by omega
-      simpa [List.getElem?_append_left old, List.getElem?_append_left sourceOld] using same n reachableN old
+      simpa [holEl_eq_getD _ _ old, holEl_eq_getD _ _ sourceOld, List.getElem?_append_left old, List.getElem?_append_left sourceOld] using same n ⟨reachableN, old⟩
     · rw [sourceExtra n (by omega), targetExtra n (by omega)]
-  · intro n v bound found
+  · intro n v ⟨bound, found⟩
+    have sourceBound : n < (source ++ List.replicate count none).length := by simpa [lengths] using bound
+    rw [holEl_eq_getD _ _ bound] at found
+    rw [holEl_eq_getD _ _ sourceBound]
     by_cases old : n < target.length
     · have sourceOld : n < source.length := by omega
       simp only [List.getElem?_append_left old] at found
-      simpa [List.getElem?_append_left sourceOld] using present n v old found
+      have found' : Flapjack.holEl n target = some v := by simpa [holEl_eq_getD _ _ old] using found
+      simpa [holEl_eq_getD _ _ sourceOld, List.getElem?_append_left sourceOld] using present n v ⟨old, found'⟩
     · rw [targetExtra n (by omega)] at found
       contradiction
-  · intro n bound isEmpty
+  · intro n ⟨bound, isEmpty⟩
+    have sourceBound : n < (source ++ List.replicate count none).length := by simpa [lengths] using bound
+    rw [holEl_eq_getD _ _ sourceBound] at isEmpty
+    rw [holEl_eq_getD _ _ bound]
     by_cases old : n < target.length
     · have sourceOld : n < source.length := by omega
       simp only [List.getElem?_append_left sourceOld] at isEmpty
-      simpa [List.getElem?_append_left old] using empty n old isEmpty
+      have empty' : Flapjack.holEl n source = none := by simpa [holEl_eq_getD _ _ sourceOld] using isEmpty
+      simpa [holEl_eq_getD _ _ old, List.getElem?_append_left old] using empty n ⟨old, empty'⟩
     · exact targetExtra n (by omega)
-  · intro n v reachableN bound found
+  · intro n v ⟨reachableN, bound, found⟩
+    rw [holEl_eq_getD _ _ bound] at found
     by_cases old : n < target.length
     · simp only [List.getElem?_append_left old] at found
-      exact contents n v reachableN old found
+      apply contents n v ⟨reachableN, old, ?_⟩
+      simpa [holEl_eq_getD _ _ old] using found
     · rw [targetExtra n (by omega)] at found
       contradiction
 
-/-- Stores contain no dynamic Eval values, including in reference and thunk
-payloads. This helper expands the original store-value list traversal. -/
+/-- Flapjack-specific abbreviation of HOL's nested `EVERY` expression for
+Eval-free store payloads; it has no separate HOL declaration. -/
 def storeHasNoEval (refs : List (Flapjack.SemanticPrimitivesHOL.StoreValue FlatSem.Value)) : Prop :=
-  ∀ ref ∈ refs, match ref with
-    | .refv value | .thunk _ value => valueHasEval value = false
-    | .varray values => ∀ value ∈ values, valueHasEval value = false
-    | .w8array _ => True
+  ∀ ref ∈ refs, ∀ value ∈ FlatProps.storeValueValues ref, valueHasEval value = false
 
 /-- Updating a store with an Eval-free entry preserves the store invariant.
 This is a Flapjack helper for the evaluator simulation. -/

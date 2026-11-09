@@ -11,11 +11,11 @@ theorem word64ToInt_wrong_arity {C F : Type} (state : FlatSem.State C F)
     (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
     (FlatSem.applyResult state (.src (.fromTo (.wordT .w64) .intT)) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
   | cons first rest =>
     cases rest with
     | nil => simp at wrong
-    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- Converting a 64-bit word to an integer gives related values on both sides,
 including the argument-evaluation error cases. -/
@@ -72,7 +72,7 @@ theorem evaluate_word64ToInt {C F : Type} (env : FlatSem.Environment FlatSem.Val
           | nil =>
             simp only [List.reverse_singleton] at resultShape
             cases head <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-              FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp,
+              FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core,
               SemanticPrimitivesHOL.doAppNumericCore] at resultShape
             case con rel =>
               rename_i sourceFields targetFields tag typeId
@@ -80,7 +80,7 @@ theorem evaluate_word64ToInt {C F : Type} (env : FlatSem.Environment FlatSem.Val
               split_ifs at resultShape <;> simp_all
             case word64 word =>
               simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp,
+                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp_fromTo_core,
                 SemanticPrimitivesHOL.doAppNumericCore,
                 ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, ClosSem.doWordAppIntegral,
                 states, EvalResultRel.value (.cons (ValueRel.int _) .nil)]
@@ -90,11 +90,11 @@ theorem intToWord64_wrong_arity {C F : Type} (state : FlatSem.State C F)
     (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
     (FlatSem.applyResult state (.src (.fromTo .intT (.wordT .w64))) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
   | cons first rest =>
     cases rest with
     | nil => simp at wrong
-    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- Converting an integer to a 64-bit word gives related values on both sides,
 including the argument-evaluation error cases. -/
@@ -151,7 +151,7 @@ theorem evaluate_intToWord64 {C F : Type} (env : FlatSem.Environment FlatSem.Val
           | nil =>
             simp only [List.reverse_singleton] at resultShape
             cases head <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-              FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp,
+              FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core,
               SemanticPrimitivesHOL.doAppNumericCore] at resultShape
             case con rel =>
               rename_i sourceFields targetFields tag typeId
@@ -159,7 +159,7 @@ theorem evaluate_intToWord64 {C F : Type} (env : FlatSem.Environment FlatSem.Val
               split_ifs at resultShape <;> simp_all
             case int value =>
               simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp,
+                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp_fromTo_core,
                 SemanticPrimitivesHOL.doAppNumericCore,
                 ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp, ClosSem.doWordAppIntegral,
                 states, EvalResultRel.value (.cons (ValueRel.word64 _) .nil)]
@@ -169,11 +169,11 @@ theorem charToInt_wrong_arity {C F : Type} (state : FlatSem.State C F)
     (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
     (FlatSem.applyResult state (.src (.fromTo .charT .intT)) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
   | cons first rest =>
     cases rest with
     | nil => simp at wrong
-    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- Converting a character to an integer gives related values on both sides,
 including the argument-evaluation error cases. -/
@@ -230,7 +230,7 @@ theorem evaluate_charToInt {C F : Type} (env : FlatSem.Environment FlatSem.Value
           | nil =>
             simp only [List.reverse_singleton] at resultShape
             cases head <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-              FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp,
+              FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core,
               SemanticPrimitivesHOL.doAppNumericCore] at resultShape
             case con rel =>
               rename_i sourceFields targetFields tag typeId
@@ -238,7 +238,7 @@ theorem evaluate_charToInt {C F : Type} (env : FlatSem.Environment FlatSem.Value
               split_ifs at resultShape <;> simp_all
             case char word =>
               simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp,
+                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp_fromTo_core,
                 SemanticPrimitivesHOL.doAppNumericCore,
                 ClosSem.evaluate, states, EvalResultRel.value (.cons (ValueRel.int _) .nil)]
 
@@ -247,11 +247,11 @@ theorem charToWord8_wrong_arity {C F : Type} (state : FlatSem.State C F)
     (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
     (FlatSem.applyResult state (.src (.fromTo .charT (.wordT .w8))) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
   | cons first rest =>
     cases rest with
     | nil => simp at wrong
-    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- Converting Character-to-Word8 gives related values on both sides,
 including the argument-evaluation error cases. -/
@@ -308,7 +308,7 @@ theorem evaluate_charToWord8 {C F : Type} (env : FlatSem.Environment FlatSem.Val
           | nil =>
             simp only [List.reverse_singleton] at resultShape
             cases head <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-              FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp,
+              FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core,
               SemanticPrimitivesHOL.doAppNumericCore] at resultShape
             case con rel =>
               rename_i sourceFields targetFields tag typeId
@@ -316,7 +316,7 @@ theorem evaluate_charToWord8 {C F : Type} (env : FlatSem.Environment FlatSem.Val
               split_ifs at resultShape <;> simp_all
             case char word =>
               simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp,
+                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp_fromTo_core,
                 SemanticPrimitivesHOL.doAppNumericCore,
                 ClosSem.evaluate, states, EvalResultRel.value (.cons (ValueRel.word8 _) .nil)]
 
@@ -325,11 +325,11 @@ theorem word8ToChar_wrong_arity {C F : Type} (state : FlatSem.State C F)
     (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
     (FlatSem.applyResult state (.src (.fromTo (.wordT .w8) .charT)) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
   | cons first rest =>
     cases rest with
     | nil => simp at wrong
-    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- Converting Word8-to-character gives related values on both sides,
 including the argument-evaluation error cases. -/
@@ -386,7 +386,7 @@ theorem evaluate_word8ToChar {C F : Type} (env : FlatSem.Environment FlatSem.Val
           | nil =>
             simp only [List.reverse_singleton] at resultShape
             cases head <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-              FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp,
+              FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core,
               SemanticPrimitivesHOL.doAppNumericCore] at resultShape
             case con rel =>
               rename_i sourceFields targetFields tag typeId
@@ -394,7 +394,7 @@ theorem evaluate_word8ToChar {C F : Type} (env : FlatSem.Environment FlatSem.Val
               split_ifs at resultShape <;> simp_all
             case word8 word =>
               simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp,
+                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp_fromTo_core,
                 SemanticPrimitivesHOL.doAppNumericCore,
                 ClosSem.evaluate, states, EvalResultRel.value (.cons (ValueRel.char _) .nil)]
 
@@ -403,11 +403,11 @@ theorem floatToWord64_wrong_arity {C F : Type} (state : FlatSem.State C F)
     (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
     (FlatSem.applyResult state (.src (.fromTo .float64T (.wordT .w64))) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
   | cons first rest =>
     cases rest with
     | nil => simp at wrong
-    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- Converting Float64-to-Word64 gives related values on both sides,
 including the argument-evaluation error cases. -/
@@ -464,7 +464,7 @@ theorem evaluate_floatToWord64 {C F : Type} (env : FlatSem.Environment FlatSem.V
           | nil =>
             simp only [List.reverse_singleton] at resultShape
             cases head <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-              FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp,
+              FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core,
               SemanticPrimitivesHOL.doAppNumericCore] at resultShape
             case con rel =>
               rename_i sourceFields targetFields tag typeId
@@ -472,7 +472,7 @@ theorem evaluate_floatToWord64 {C F : Type} (env : FlatSem.Environment FlatSem.V
               split_ifs at resultShape <;> simp_all
             case float64 word =>
               simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp,
+                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp_fromTo_core,
                 SemanticPrimitivesHOL.doAppNumericCore,
                 ClosSem.evaluate, states, EvalResultRel.value (.cons (ValueRel.word64 _) .nil)]
 
@@ -481,11 +481,11 @@ theorem word64ToFloat_wrong_arity {C F : Type} (state : FlatSem.State C F)
     (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
     (FlatSem.applyResult state (.src (.fromTo (.wordT .w64) .float64T)) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
   | cons first rest =>
     cases rest with
     | nil => simp at wrong
-    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- Converting Word64-to-Float64 gives related values on both sides,
 including the argument-evaluation error cases. -/
@@ -542,7 +542,7 @@ theorem evaluate_word64ToFloat {C F : Type} (env : FlatSem.Environment FlatSem.V
           | nil =>
             simp only [List.reverse_singleton] at resultShape
             cases head <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-              FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp,
+              FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core,
               SemanticPrimitivesHOL.doAppNumericCore] at resultShape
             case con rel =>
               rename_i sourceFields targetFields tag typeId
@@ -550,7 +550,7 @@ theorem evaluate_word64ToFloat {C F : Type} (env : FlatSem.Environment FlatSem.V
               split_ifs at resultShape <;> simp_all
             case word64 word =>
               simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp,
+                FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp_fromTo_core,
                 SemanticPrimitivesHOL.doAppNumericCore,
                 ClosSem.evaluate, states, EvalResultRel.value (.cons (ValueRel.float64 _) .nil)]
 
@@ -559,11 +559,11 @@ theorem word8ToInt_wrong_arity {C F : Type} (state : FlatSem.State C F)
     (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
     (FlatSem.applyResult state (.src (.fromTo (.wordT .w8) .intT)) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
   | cons first rest =>
     cases rest with
     | nil => simp at wrong
-    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- Converting a byte to an integer preserves its closure number when the
 argument list is syntactically unary. -/
@@ -605,7 +605,7 @@ theorem evaluate_word8ToInt_singleton {C F : Type} (env : FlatSem.Environment Fl
           | nil =>
             cases head <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
               FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat,
-              SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore] at notTypeError ⊢
+              SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore] at notTypeError ⊢
             case word8 => exact ⟨states, .value (.cons (.int _) .nil)⟩
             case con rel =>
               rename_i sourceFields targetFields tag typeId

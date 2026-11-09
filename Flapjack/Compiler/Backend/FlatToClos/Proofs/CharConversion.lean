@@ -21,7 +21,7 @@ theorem intToChar_body_related {C F : Type} (source : FlatSem.State C F) (target
     StateRel flat.1 clos.2 ∧ EvalResultRel flat.2 clos.1 := by
   by_cases low : value < 0 <;> by_cases high : 255 < value
   all_goals simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-    FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore,
+    FlatSem.flatToValue, FlatSem.valueToFlat, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore,
     ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock, ClosSem.applyNumeric, ClosSem.doIntApp,
     ClosSem.boolValue, ClosSem.asBool, BackendCommon.trueTag, BackendCommon.falseTag, low, high, states]
   all_goals first | exact .raise (.con .nil) | skip
@@ -82,7 +82,7 @@ theorem evaluate_intToChar_regular {C F : Type} (env : FlatSem.Environment FlatS
           | nil =>
             cases head <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
               FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat,
-              SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore] at notTypeError ⊢
+              SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore] at notTypeError ⊢
             case con rel =>
               rename_i sourceFields targetFields tag typeId
               cases sourceFields <;> cases typeId <;> simp_all [SemanticPrimitivesHOL.boolValue]
@@ -90,7 +90,7 @@ theorem evaluate_intToChar_regular {C F : Type} (env : FlatSem.Environment FlatS
             case int value =>
               simpa [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
                 FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat,
-                SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore] using
+                SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore] using
                 intToChar_body_related next nextTarget trace values value states
 
 /-- Outside the source no-op pattern, unary integer-to-character conversion emits
@@ -154,11 +154,11 @@ theorem intToChar_wrong_arity {C F : Type} (state : FlatSem.State C F)
     (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
     (FlatSem.applyResult state (.src (.fromTo .intT .charT)) args).2 = .err (.abort .typeError) := by
   cases args with
-  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
   | cons first rest =>
     cases rest with
     | nil => simp at wrong
-    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp_fromTo_core, SemanticPrimitivesHOL.doAppNumericCore]
 
 /-- At a non-unary syntactic arity, the conversion can only propagate an
 argument error under the source non-type-error hypothesis. -/

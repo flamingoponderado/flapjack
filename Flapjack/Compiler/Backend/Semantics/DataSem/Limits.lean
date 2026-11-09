@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.DataSem.Space
+import Flapjack.Basis.Pure.MlString.Length
 
 /-! Architecture and representation limits for data-language operations. -/
 namespace Flapjack.Compiler.Backend.DataSem
@@ -14,7 +15,7 @@ noncomputable def limSafePart (limits : Limits) : ClosLang.ConstPart → Prop
         4 * tag < 2 ^ archSize limits / 16 ∧ 4 * tag < 2 ^ (archSize limits - limits.lengthLimit - 2)
   | .int i => if smallNum limits.arch64Bit i then True else bignumSize limits.arch64Bit i ≤ 2 ^ limits.lengthLimit
   | .str text =>
-      let length := text.explode.length
+      let length := text.strlen
       length / (archSize limits / 8) < 2 ^ archSize limits / archSize limits ∧
       length / (archSize limits / 8) + 1 < 2 ^ limits.lengthLimit ∧
       smallNum limits.arch64Bit (Int.ofNat length)

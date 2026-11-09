@@ -41,7 +41,7 @@ theorem conversion_rejects {C F : Type} (state : FlatSem.State C F) (sourceType 
     (FlatSem.applyResult state (.src (.fromTo sourceType targetType)) args).2 = .err (.abort .typeError) := by
   have core := conversionCore_rejects ([], state.ffi) sourceType targetType invalid (args.map FlatSem.flatToValue)
   simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
-    SemanticPrimitivesHOL.doApp, core]
+    SemanticPrimitivesHOL.doApp_fromTo_core, core]
 
 /-- A rejected conversion simulates the source expression for arbitrary
 argument lists whenever the source does not report a type error. -/
