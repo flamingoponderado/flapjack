@@ -15,6 +15,18 @@ def storeValueRel {A B : Type} (relation : A → B → Prop) : StoreValue A → 
   | .thunk mode left, .thunk mode' right => mode = mode' ∧ relation left right
   | _, _ => False
 
+/-- The four related store-entry forms and their shared payload conditions. -/
+@[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "sv_rel_cases"]
+theorem storeValueRel_cases {A B : Type} (R : A → B → Prop) :
+    ∀ (x : StoreValue A) (y : StoreValue B),
+      storeValueRel R x y ↔
+        (∃ v1 v2, x = .refv v1 ∧ y = .refv v2 ∧ R v1 v2) ∨
+        (∃ w, x = .w8array w ∧ y = .w8array w) ∨
+        (∃ m v1 v2, x = .thunk m v1 ∧ y = .thunk m v2 ∧ R v1 v2) ∨
+        (∃ vs1 vs2, x = .varray vs1 ∧ y = .varray vs2 ∧ List.Forall₂ R vs1 vs2) := by
+  intro x y
+  cases x <;> cases y <;> simp [storeValueRel, eq_comm, and_assoc]
+
 /-- Pointwise implication lifts through the complete store-value relation. -/
 @[hol "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml" "sv_rel_mono"]
 theorem storeValueRel_mono {A B : Type} (P Q : A → B → Prop)

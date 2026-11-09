@@ -17881,6 +17881,14 @@
   },
   {
     "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+    "hol_name": "sv_rel_cases",
+    "lean_path": "Flapjack/SemanticPrimitivesProps/StoreRelation.lean",
+    "lean_name": "storeValueRel_cases",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared semantic_sv_rel_cases_typed in flat_do_app_preservation_probe.out. The independent payload types and four existential constructor cases match. Independently source-reviewed."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
     "hol_name": "sv_rel_def",
     "lean_path": "Flapjack/SemanticPrimitivesProps/StoreRelation.lean",
     "lean_name": "storeValueRel",

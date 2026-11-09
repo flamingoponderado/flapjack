@@ -1,3 +1,8 @@
+`flat_do_app_preservation_probe.out` also captures the typed original flat
+primitive simulation and its semantic-primitives store-relation and arithmetic
+prerequisites. The local typed-list relation is replayed from its HOL proof.
+These captures support source review, not cross-language equivalence.
+
 `pattern_exh_steps_probe.out` captures the typed original step-count and
 worklist equations, concrete results, the exported row-checker equation, and
 typed replays of the local append and worklist-equivalence lemmas. It also

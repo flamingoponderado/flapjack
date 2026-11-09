@@ -116,3 +116,8 @@ val flat_check_type_list_rel_same = prove (
   >> gvs[flat_to_v_def,CaseEq"bool",semanticPrimitivesTheory.Boolv_def]
   >> gvs[flatSemTheory.Boolv_def]);
 val _ = show_thm "flat_check_type_list_rel_same_typed=" flat_check_type_list_rel_same;
+
+val _ = show_thm "flat_simple_do_app_typed=" flatPropsTheory.simple_do_app_thm;
+
+val _ = show_thm "semantic_sv_rel_cases_typed=" semanticPrimitivesPropsTheory.sv_rel_cases;
+val _ = show_thm "semantic_do_arith_check_type_typed=" semanticPrimitivesPropsTheory.do_arith_check_type;
