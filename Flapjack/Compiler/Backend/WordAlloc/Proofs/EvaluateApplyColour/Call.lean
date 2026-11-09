@@ -464,7 +464,8 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
   | none =>
     apply applyColourPost_self
     intro he
-    simp [ht, hgv] at he
+    rw [ht, hgv] at he
+    exact absurd rfl he
   | some xv =>
   have hgvC : WordSemStateFiniteExact.getVars (args.map f) cst = some xv :=
     strongLocalsRelGetVars args xv f _ st cst ⟨hr, hargs, hgv⟩
@@ -473,7 +474,10 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
   by_cases hbad : wordSemBadDestArgs dest args = true
   · apply applyColourPost_self
     intro he
-    simp [ht, hgv, hbad] at he
+    rw [ht, hgv] at he
+    dsimp only at he
+    rw [if_pos hbad] at he
+    exact absurd rfl he
   have hcode : cst.code = st.code := wsrCode hs
   have hss : cst.stackSize = st.stackSize := by unfold wordStateEqRel at hs; exact hs.2.2.2.2.2.2.1
   have hclk : cst.clock = st.clock := wsrClock hs
@@ -483,20 +487,26 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
     | some hv =>
       apply applyColourPost_self
       intro he
-      simp [ht, hgv, hbad] at he
-      split at he <;> simp at he
+      rw [ht, hgv] at he
+      dsimp only at he
+      rw [if_neg hbad] at he
+      split at he <;> exact absurd rfl he
     | none =>
     cases hfc : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xv) st.code st.stackSize with
     | none =>
       apply applyColourPost_self
       intro he
-      simp [ht, hgv, hbad, hfc] at he
+      rw [ht, hgv] at he
+      dsimp only at he
+      rw [if_neg hbad, hfc] at he
+      exact absurd rfl he
     | some fc =>
     obtain ⟨args1, prog, ss⟩ := fc
     have hEq : evaluate (applyColour f (.call none dest args none)) cst =
         evaluate (.call none dest args none) { st with permute := cst.permute } := by
       simp only [applyColour]
       rw [ht cst, ht { st with permute := cst.permute }, hgvC, getVars_withPermute, hgv]
+      dsimp only
       simp only [hbadC, hbad, Bool.false_eq_true, ↓reduceIte, hcode, hss, hfc, hclk]
       by_cases hz : st.clock = 0
       · simp only [hz, ↓reduceIte]
@@ -570,13 +580,21 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
   | none =>
     apply applyColourPost_self
     intro he
-    simp [ht, hgv, hbad, hfc] at he
+    rw [ht, hgv] at he
+    dsimp only at he
+    rw [if_neg hbad, hfc] at he
+    exact absurd rfl he
   | some fc =>
   obtain ⟨args1, prog, ss⟩ := fc
   by_cases hg : sptDomainEmpty n1 ∨ ¬ n.Nodup
   · apply applyColourPost_self
     intro he
-    simp [ht, hgv, hbad, hfc, hg] at he
+    rw [ht, hgv] at he
+    dsimp only at he
+    rw [if_neg hbad, hfc] at he
+    dsimp only at he
+    rw [if_pos hg] at he
+    exact absurd rfl he
   have hgC : ¬ (sptDomainEmpty (applyNummapsKey f (n1, n2)).1 ∨ ¬ (n.map f).Nodup) := by
     intro h
     apply hg
@@ -597,7 +615,13 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
   | none =>
     apply applyColourPost_self
     intro he
-    simp [ht, hgv, hbad, hfc, hg, hce] at he
+    rw [ht, hgv] at he
+    dsimp only at he
+    rw [if_neg hbad, hfc] at he
+    dsimp only at he
+    rw [if_neg hg] at he
+    rw [hce] at he
+    exact absurd rfl he
   | some xs =>
   obtain ⟨x1, x2⟩ := xs
   obtain ⟨y1, y2, hceC, hdy1, hdy2, hr1, hr2, hi1, hi2, hdx1, hdx2⟩ :=
