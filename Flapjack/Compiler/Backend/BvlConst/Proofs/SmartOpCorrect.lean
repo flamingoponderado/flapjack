@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.BvlConst.Proofs.ArithmeticMul
+module
+
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.ArithmeticMul
+
+@[expose] public section
+
 /-! Source operation rewrite correctness, including addition and subtraction. -/
 namespace Flapjack.Compiler.Backend.BvlConst.Proofs
 open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BvlProps
@@ -93,6 +98,7 @@ theorem add_nonconstant_eq (x y : Bvl.Exp) (hy : simple y = none) :
       | some (.intOp .sub, a, m), some (.intOp .add, b, n) => if n + m == 0 then .op (.intOp .sub) [a, b] else .op (.intOp .add) [.op (.intOp .sub) [a, b], .op (.intOp (.const (n + m))) []]
       | _, _ => .op (.intOp .add) [x, y]) : Bvl.Exp) = _
   simp only [hy]
+  rfl
 
 /-- Expose the source sub rewrite when the right operand is not simple. -/
 theorem sub_nonconstant_eq (x y : Bvl.Exp) (hy : simple y = none) :
@@ -116,6 +122,7 @@ theorem sub_nonconstant_eq (x y : Bvl.Exp) (hy : simple y = none) :
       | some (.intOp .sub, a, m), some (.intOp .add, b, n) => if n - m == 0 then .op (.intOp .add) [a, b] else .op (.intOp .add) [.op (.intOp .add) [a, b], .op (.intOp (.const (n - m))) []]
       | _, _ => .op (.intOp .sub) [x, y]) : Bvl.Exp) = _
   simp only [hy]
+  rfl
 
 namespace AddSubCarrier
 /-- Canonical BVL reference-map state representation roundtrip. -/

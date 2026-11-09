@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.BvlConst.Proofs.ArithmeticBoth
+module
+
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.ArithmeticBoth
+
+@[expose] public section
+
 /-! Multiplication cases of the source binary rewrite correctness theorem. -/
 namespace Flapjack.Compiler.Backend.BvlConst.Proofs
 open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BvlProps
@@ -139,6 +144,7 @@ theorem smartOp2_mul_nonconstant_eq (x y : Bvl.Exp) (hy : simple y = none) :
           .op (.intOp .mult) [.op (.intOp (.const (n * m))) [], .op (.intOp .mult) [a, b]]
       | _, _ => .op (.intOp .mult) [x, y]) : Bvl.Exp) = _
   simp only [hy]
+  rfl
 
 /-- The multiplication case of the binary source rewrite. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "SmartOp2_thm"

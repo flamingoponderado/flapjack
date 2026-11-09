@@ -1,6 +1,11 @@
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.VarBound
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.HandleOk
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.SequenceCorrect
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.VarBound
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.HandleOk
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SequenceCorrect
+
+@[expose] public section
+
 
 /-! Handler-shape properties of generated packing expressions. -/
 namespace Flapjack.Compiler.Backend.BvlHandle.Proofs

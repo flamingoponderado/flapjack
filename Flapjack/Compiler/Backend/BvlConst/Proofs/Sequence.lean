@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.BvlConst.Proofs.Variables
+module
+
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.Variables
+
+@[expose] public section
+
 /-! List and operation cases of constant-propagation simulation. -/
 namespace Flapjack.Compiler.Backend.BvlConst.Proofs
 open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BvlProps
