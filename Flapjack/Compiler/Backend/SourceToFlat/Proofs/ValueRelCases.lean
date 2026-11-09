@@ -40,27 +40,37 @@ theorem valueRel_eqns_nonGlobal :
     (∀ (v : FlatSem.Value) (id : Nat × Nat) (genv : GlobalEnv) (e : SemEnv Value),
       ValueRel genv (.env e id) v ↔ False) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · intro v l genv; exact ⟨fun h => by cases h; rfl, fun h => by cases h; exact .literal genv l⟩
+  · intro v l genv
+    constructor
+    · intro h; cases h; rfl
+    · intro h; cases h; exact .literal genv l
   · intro vs v genv cn
     constructor
     · intro related
       cases related with
       | constructor _ ctor _ flats rel lookup =>
         exact Or.inl ⟨_, ctor, flats, rfl, rfl, (valueListRel_iff genv vs flats).mp rel, lookup⟩
-      | tuple _ flats rel => exact Or.inr ⟨flats, rfl, rfl, (valueListRel_iff genv vs flats).mp rel⟩
+      | tuple _ flats rel =>
+        exact Or.inr ⟨flats, rfl, rfl, (valueListRel_iff genv vs flats).mp rel⟩
     · rintro (⟨cn', cn'', vs'', rfl, rfl, rel, lookup⟩ | ⟨vs'', rfl, rfl, rel⟩)
       · exact valueRel_constructor genv cn' cn'' vs vs'' rel lookup
       · exact valueRel_tuple genv vs vs'' rel
-  · intro v l genv b; exact ⟨fun h => by cases h; rfl, fun h => by cases h; exact .location genv l b⟩
+  · intro v l genv b
+    constructor
+    · intro h; cases h; rfl
+    · intro h; cases h; exact .location genv l b
   · intro vs v genv
-    exact ⟨fun h => by
+    constructor
+    · intro h
       cases h with
       | vector _ flats related =>
-        exact ⟨flats, rfl, (valueListRel_iff genv vs flats).mp related⟩,
-      fun h => by rcases h with ⟨flats, rfl, related⟩; exact valueRel_vector genv vs flats related⟩
+        exact ⟨flats, rfl, (valueListRel_iff genv vs flats).mp related⟩
+    · rintro ⟨flats, rfl, related⟩
+      exact valueRel_vector genv vs flats related
   · intro genv env'
     constructor
-    · intro h; generalize he : (nsEmpty : Namespace ModN VarN Value) = sourceEnv at h
+    · intro h
+      generalize he : (nsEmpty : Namespace ModN VarN Value) = sourceEnv at h
       cases h with
       | empty => rfl
       | bind _ _ env _ _ _ _ => cases env; simp [nsEmpty, nsBind] at he
@@ -73,12 +83,14 @@ theorem valueRel_eqns_nonGlobal :
       | empty => cases env; simp [nsEmpty, nsBind] at he
       | bind name' source' env' tail flat hEnv hValue =>
         cases env with
-        | bind values modules => cases env' with
+        | bind values modules =>
+          cases env' with
           | bind values' modules' =>
             simp only [nsBind, Namespace.bind.injEq, List.cons.injEq, Prod.mk.injEq] at he
             rcases he with ⟨⟨⟨rfl, rfl⟩, rfl⟩, rfl⟩
             exact ⟨tail, flat, rfl, hEnv, hValue⟩
-    · rintro ⟨tail, flat, rfl, hEnv, hValue⟩; exact .bind genv x v env tail flat hEnv hValue
+    · rintro ⟨tail, flat, rfl, hEnv, hValue⟩
+      exact .bind genv x v env tail flat hEnv hValue
   · intro v id genv e
     constructor
     · intro related; cases related
