@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.MoveLemmas
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.MoveLemmas
+
+@[expose] public section
 
 /-!
 # `word_cseProof` `comp_correct`: the non-recursive simple cases

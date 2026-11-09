@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
+
+@[expose] public section
 
 /-!
 # pan_globals `ShMemLoad` prerequisites

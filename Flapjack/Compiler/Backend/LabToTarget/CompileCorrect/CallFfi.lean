@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Asm
-import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.ShareMem
-import Flapjack.Compiler.Backend.LabToTarget.FfiBytearray
-import Flapjack.Compiler.Backend.Semantics.TargetProps.NextCases
-import Flapjack.Compiler.Backend.StackRemove
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Asm
+public import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.ShareMem
+public import Flapjack.Compiler.Backend.LabToTarget.FfiBytearray
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.NextCases
+public import Flapjack.Compiler.Backend.StackRemove
+
+@[expose] public section
 
 /-! `LabAsm (CallFFI s)` case of the original `compile_correct`
 (lab_to_targetProofScript.sml:8292-8720): the target jumps to the FFI entry

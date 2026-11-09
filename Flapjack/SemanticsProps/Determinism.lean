@@ -1,4 +1,8 @@
-import Flapjack.SemanticsProps.Clock
+module
+
+public import Flapjack.SemanticsProps.Clock
+
+@[expose] public section
 
 /-! Supporting lemmas for determinism of source-program observations. The
 source evaluator and its carriers remain pending review. -/

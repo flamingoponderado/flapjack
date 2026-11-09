@@ -1,4 +1,12 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Integer division and remainder with HOL's partial specification.
 The HOL constants are introduced by `new_specification`, whose equations only

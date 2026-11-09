@@ -1,9 +1,14 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Free.SourceEquations
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
-import Flapjack.Compiler.Backend.ClosAnnotate.Shift
-import Flapjack.Compiler.Backend.ClosAnnotate.Shift.OriginalEquivalence
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.EnvironmentExtension
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Free.SourceEquations
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+public import Flapjack.Compiler.Backend.ClosAnnotate.Shift
+public import Flapjack.Compiler.Backend.ClosAnnotate.Shift.OriginalEquivalence
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.EnvironmentExtension
+
+
+@[expose] public section
 
 /-! Pure-binding replacement prerequisites for closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

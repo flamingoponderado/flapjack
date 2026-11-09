@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.Production
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.Relations
+module
+
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Production
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Relations
+
+@[expose] public section
 
 /-! Relations used by the closure tick-removal simulation. -/
 namespace Flapjack.Compiler.Backend.ClosTicks

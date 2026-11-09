@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectNilName
-import Flapjack.Pancake.Proofs.PanStructs.CompiledShapesWf
-import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsStructs
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectNilName
+public import Flapjack.Pancake.Proofs.PanStructs.CompiledShapesWf
+public import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsStructs
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectFunctionExn
 open Flapjack Flapjack.Pancake.PanLang
 open Flapjack.Pancake.PanStructs.CompileShapeExact

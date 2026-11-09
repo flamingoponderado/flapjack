@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Motive
-import Flapjack.Misc.Sptree.UnionAlgebra
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Motive
+public import Flapjack.Misc.Sptree.UnionAlgebra
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Flapjack.RegAlloc

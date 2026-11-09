@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
-import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
+public import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
+
+@[expose] public section
 
 /-! Global-initialization invariants for source-to-flat expression compilation.
 The untagged supporting lemmas are Flapjack proof infrastructure; the two

@@ -1,4 +1,8 @@
-import Flapjack.Misc.BinaryIeee
+module
+
+public import Flapjack.Misc.BinaryIeee
+
+@[expose] public section
 
 /-!
 # HOL `machine_ieee` binary64 encoding and exact lifted operations

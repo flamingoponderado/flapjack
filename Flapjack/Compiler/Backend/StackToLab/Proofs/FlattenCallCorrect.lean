@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect
-import Flapjack.Compiler.Backend.StackProps.EvaluateMono
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect
+public import Flapjack.Compiler.Backend.StackProps.EvaluateMono
+
+@[expose] public section
 
 /-! `flatten_call_correct` (`stack_to_labProofScript.sml:2741-2825`): a whole
 StackSem call of the start procedure is simulated by running its flattened

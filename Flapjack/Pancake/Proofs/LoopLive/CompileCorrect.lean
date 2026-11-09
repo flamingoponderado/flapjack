@@ -1,11 +1,15 @@
-import Flapjack.Pancake.LoopLive
-import Flapjack.Pancake.LoopLive.Fixedpoint
-import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
-import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateInd
-import Flapjack.Pancake.Semantics.LoopProps.EvalExact
-import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
-import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+module
+
+public import Flapjack.Pancake.LoopLive
+public import Flapjack.Pancake.LoopLive.Fixedpoint
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateInd
+public import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+public import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
+public import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+
+@[expose] public section
 
 /-!
 # loop_live `compile_correct`, proved along HOL's `Resume` cases

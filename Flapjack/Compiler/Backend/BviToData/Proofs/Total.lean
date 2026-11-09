@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviToData.Compile
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Compile
+
+@[expose] public section
 
 /-! Structural bounds for the checked BVI-to-data traversal. These results
 are Flapjack infrastructure, not a port of a HOL correctness theorem. -/

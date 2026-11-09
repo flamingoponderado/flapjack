@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabSem.Evaluate
-import Flapjack.Misc.LprefixLub
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Evaluate
+public import Flapjack.Misc.LprefixLub
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabSem
 open Flapjack

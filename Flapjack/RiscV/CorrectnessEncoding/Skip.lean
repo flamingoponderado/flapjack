@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
-import Flapjack.RiscV.CorrectnessEncoding.BytesInMemory
-import Flapjack.RiscV.CorrectnessEncoding.TargetOk
-import Flapjack.RiscV.L3.Step.Evaluation
-import Flapjack.RiscV.L3.Step.FetchTheorems
+module
+
+public import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+public import Flapjack.RiscV.CorrectnessEncoding.BytesInMemory
+public import Flapjack.RiscV.CorrectnessEncoding.TargetOk
+public import Flapjack.RiscV.L3.Step.Evaluation
+public import Flapjack.RiscV.L3.Step.FetchTheorems
+
+@[expose] public section
 
 /-! Full native Skip case of the original encoder correctness proof. Native
 byte fetch, complete decoder and Run are used directly; no target run is assumed.

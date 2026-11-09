@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Pure compiler and oracle transformations from the backend properties. -/
 namespace Flapjack.Compiler.Backend.BackendProps

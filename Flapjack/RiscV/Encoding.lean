@@ -1,5 +1,9 @@
-import Flapjack.RiscV.Encoding.NativeInstruction
-import Flapjack.Compiler.Encoders.RiscV.Target
+module
+
+public import Flapjack.RiscV.Encoding.NativeInstruction
+public import Flapjack.Compiler.Encoders.RiscV.Target
+
+@[expose] public section
 
 /-!
 # RISC-V instruction encoding

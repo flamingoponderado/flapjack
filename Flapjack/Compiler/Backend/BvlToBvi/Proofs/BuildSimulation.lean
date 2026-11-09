@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileStringCmp
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileStringCmp
+
+@[expose] public section
 
 /-! Relocation simulation for BVL constant construction. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

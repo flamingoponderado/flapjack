@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Refs
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Names
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxCode
-import Flapjack.Compiler.Backend.BvlToBvi.SourceProgram
-import Flapjack.Compiler.Backend.BvlToBvi.Stubs
-import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Refs
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Names
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxCode
+public import Flapjack.Compiler.Backend.BvlToBvi.SourceProgram
+public import Flapjack.Compiler.Backend.BvlToBvi.Stubs
+public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+
+@[expose] public section
 
 /-! Source-shaped state relation for BVL-to-BVI correctness. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

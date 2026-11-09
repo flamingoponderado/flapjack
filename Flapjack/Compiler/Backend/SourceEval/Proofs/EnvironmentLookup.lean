@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
+
+@[expose] public section
 
 /-! Lookup preservation for the source evaluator's environment relation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

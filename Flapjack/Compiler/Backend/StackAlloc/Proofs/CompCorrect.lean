@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect.AllocStore
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect.Calls
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect.Install
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect.AllocStore
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect.Calls
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect.Install
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `comp_correct`

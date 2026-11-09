@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.While
-import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Call
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.While
+public import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Call
+
+@[expose] public section
 
 /-!
 # crep_inline: assembled `transform_eoc_correct`

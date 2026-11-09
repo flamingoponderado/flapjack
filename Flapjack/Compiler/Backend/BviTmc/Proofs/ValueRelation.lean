@@ -1,7 +1,18 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeRelation
-import Flapjack.Compiler.Backend.BackendCommon.SmallInt
-import Flapjack.Misc.ListEl
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeRelation
+public import Flapjack.Compiler.Backend.BackendCommon.SmallInt
+public import Flapjack.Misc.ListEl
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Value and environment relations for the TMC semantic simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc

@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! The polymorphic HOL bag carrier and basic union laws. -/
 namespace Flapjack

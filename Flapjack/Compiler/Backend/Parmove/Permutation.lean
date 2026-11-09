@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.UpdateLemmas
+module
+
+public import Flapjack.Compiler.Backend.Parmove.UpdateLemmas
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

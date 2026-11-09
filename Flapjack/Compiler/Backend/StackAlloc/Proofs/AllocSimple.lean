@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcSimple
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveLoop
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveRootsBitmaps
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.Submap
-import Flapjack.Compiler.Backend.StackAlloc.Compile
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcSimple
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveLoop
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveRootsBitmaps
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.Submap
+public import Flapjack.Compiler.Backend.StackAlloc.Compile
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `alloc_correct_lemma_Simple`

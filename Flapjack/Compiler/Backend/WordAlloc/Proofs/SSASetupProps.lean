@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.EvenListDistinct
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.EvenListDistinct
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

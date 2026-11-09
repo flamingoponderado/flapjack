@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Frame
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Frame
+
+@[expose] public section
 
 /-!
 # `word_to_wordProof` `compile_single_correct`: leaf cases

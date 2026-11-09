@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
-import Flapjack.Compiler.Backend.ClosLang.Budget
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+public import Flapjack.Compiler.Backend.ClosLang.Budget
+
+@[expose] public section
 
 /-! Bounded infrastructure for the closure free-variable cleanup pass. -/
 namespace Flapjack.Compiler.Backend.ClosFvs

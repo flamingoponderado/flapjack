@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.FilterSkip
-import Flapjack.Compiler.Backend.LabToTarget.CodeSafety
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.FilterSkip
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSafety
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

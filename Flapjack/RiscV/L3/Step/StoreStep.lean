@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Step.LoadStep
-import Flapjack.RiscV.L3.Defs.IntegerStore
+module
+
+public import Flapjack.RiscV.L3.Step.LoadStep
+public import Flapjack.RiscV.L3.Defs.IntegerStore
+
+@[expose] public section
 
 /-! Evaluated original `riscv_stepScript.sml` memory-store instruction theorems
 (`SD`/`SW`/`SH`/`SB`, lines 908-915) over the literal native `dfn'SD`/`dfn'SW`/

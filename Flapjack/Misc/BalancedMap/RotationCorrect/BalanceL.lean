@@ -1,9 +1,13 @@
-import Flapjack.FiniteMap.Comparison
-import Flapjack.Misc.BalancedMap.Rotations
-import Flapjack.Misc.BalancedMap.RotationAux
-import Flapjack.Misc.BalancedMap.StructuralSize
-import Lean.Elab.Tactic.Omega
-import Mathlib.Tactic.SplitIfs
+module
+
+public import Flapjack.FiniteMap.Comparison
+public import Flapjack.Misc.BalancedMap.Rotations
+public import Flapjack.Misc.BalancedMap.RotationAux
+public import Flapjack.Misc.BalancedMap.StructuralSize
+public import Lean.Elab.Tactic.Omega
+public import Mathlib.Tactic.SplitIfs
+
+@[expose] public section
 
 namespace Flapjack.Misc.BalancedMap
 open FiniteMap.Comparison

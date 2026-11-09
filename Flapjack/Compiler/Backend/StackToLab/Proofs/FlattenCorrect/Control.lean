@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Leaves
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
-import Flapjack.Compiler.Backend.Semantics.StackSem.Measure.CallSites
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Leaves
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Measure.CallSites
+
+@[expose] public section
 
 /-! `flatten_correct` control-flow cases `Seq`, `If` and `Loop`
 (`stack_to_labProofScript.sml:1321-1460`, `1531-1840`). -/

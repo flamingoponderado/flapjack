@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.CrepProps
-import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
+module
+
+public import Flapjack.Pancake.Semantics.CrepProps
+public import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
+
+@[expose] public section
 
 /-! Exact Pan-to-Crep Assign-list theorem group. -/
 

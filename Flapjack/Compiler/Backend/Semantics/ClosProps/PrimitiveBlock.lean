@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBoolean
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBoolean
+
+@[expose] public section
 
 /-! Block construction and inspection in the generic primitive simulation. -/
 namespace Flapjack.Compiler.Backend.ClosProps.PrimitiveBlock

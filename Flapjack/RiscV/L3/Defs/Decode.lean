@@ -1,6 +1,10 @@
-import Flapjack.RiscV.L3.Defs.DecodeBits
-import Flapjack.RiscV.L3.Defs.DecodeImmediates
-import Flapjack.RiscV.L3.Support
+module
+
+public import Flapjack.RiscV.L3.Defs.DecodeBits
+public import Flapjack.RiscV.L3.Defs.DecodeImmediates
+public import Flapjack.RiscV.L3.Support
+
+@[expose] public section
 
 /-! Complete original native decoders. All opcode predicates, immediate bit
 orders, full ISA constructors and reserved/unknown branches are preserved.

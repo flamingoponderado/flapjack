@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
-import Mathlib.Data.Set.Basic
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+public import Mathlib.Data.Set.Basic
+
+@[expose] public section
 
 /-! Code labels referenced by closure-language primitive assignments. -/
 namespace Flapjack.Compiler.Backend.ClosLang

@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL
+module
+
+public import Flapjack.SemanticPrimitivesHOL
+
+@[expose] public section
 
 /-! Values carried by flat reference-store entries. -/
 namespace Flapjack.Compiler.Backend.FlatProps

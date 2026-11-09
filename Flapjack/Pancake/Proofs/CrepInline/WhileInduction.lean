@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.CrepInline
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateIndWhile
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateIndWhile
+
+@[expose] public section
 
 namespace Flapjack.CrepInlineWhileInduction
 open Flapjack.CrepInlineExact

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileEmptyLet
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileEmptyLet
+
+@[expose] public section
 
 /-! Auxiliary calls with an exception handler. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

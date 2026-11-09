@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyCode
-import Flapjack.Misc.Sptree.Subspt
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyCode
+public import Flapjack.Misc.Sptree.Subspt
+
+@[expose] public section
 
 /-! Code-growth prerequisites for the BVL evaluator. -/
 namespace Flapjack.Compiler.Backend.BvlProps

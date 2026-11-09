@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.StoreEach
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapExpand
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteStore
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateLaws
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.StoreEach
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.HeapExpand
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteStore
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateLaws
+
+@[expose] public section
 
 /-! Recovering the constructor's free word region from the actual heap relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct

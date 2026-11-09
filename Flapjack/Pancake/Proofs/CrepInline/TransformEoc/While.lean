@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Cases
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Cases
+
+@[expose] public section
 
 /-!
 # crep_inline `transform_eoc_correct`: the `While` case

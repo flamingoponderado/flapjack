@@ -1,9 +1,13 @@
-import Flapjack.Misc.List
-import Flapjack.Misc.Option.Rel
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.ValueRelation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.State
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyMemory
-import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+module
+
+public import Flapjack.Misc.List
+public import Flapjack.Misc.Option.Rel
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyMemory
+public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+
+@[expose] public section
 
 /-! State relation for the closure-numbering simulation. -/
 namespace Flapjack.Compiler.Backend.ClosNumber

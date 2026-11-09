@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodePre
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitProp
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitReduce
-import Flapjack.Compiler.Backend.StackRemove.Compile
-import Flapjack.Compiler.Backend.StackRemove.InitCode
-import Flapjack.Compiler.Backend.StackProps.RegisterBounds
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodePre
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitProp
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitReduce
+public import Flapjack.Compiler.Backend.StackRemove.Compile
+public import Flapjack.Compiler.Backend.StackRemove.InitCode
+public import Flapjack.Compiler.Backend.StackProps.RegisterBounds
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+
+@[expose] public section
 
 /-! Initializer definitions of `stack_removeProofScript.sml` (3839-3854,
 4007-4067): the optional and total initialized states, the initializer

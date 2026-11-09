@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Inline.Free
-import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeCorrect
-import Flapjack.Misc.Sptree.Wf
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Inline.Free
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeCorrect
+public import Flapjack.Misc.Sptree.Wf
+
+@[expose] public section
 
 /-! Agreement of the checked free-variable traversal with the source. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

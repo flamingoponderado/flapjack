@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionMkGraph
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.MkBij
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionMkGraph
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.MkBij
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV RiscV.CakeRegAlloc

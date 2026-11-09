@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosToBvl.SourceExps
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SourceCompile
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.SourceExps
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SourceCompile
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Equivalence between the original list-valued converter and its singleton
 reformulation. -/

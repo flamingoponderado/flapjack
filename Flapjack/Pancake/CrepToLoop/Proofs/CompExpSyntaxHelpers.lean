@@ -1,6 +1,10 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpTmpBound
-import Flapjack.Pancake.CrepToLoop.StateRel
-import Flapjack.Pancake.Semantics.LoopProps.CutSets
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.CompExpTmpBound
+public import Flapjack.Pancake.CrepToLoop.StateRel
+public import Flapjack.Pancake.Semantics.LoopProps.CutSets
+
+@[expose] public section
 
 /-!
 # crep_to_loopProof syntactic `compile_exp` helper lemmas

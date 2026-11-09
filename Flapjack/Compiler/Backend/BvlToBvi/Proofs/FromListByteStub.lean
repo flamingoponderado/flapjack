@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CopyByteAllocate
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CopyByteAllocate
+
+@[expose] public section
 
 /-! Byte-list conversion runtime stub in BVL-to-BVI lowering. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

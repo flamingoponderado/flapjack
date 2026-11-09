@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimitsDouble
-import Flapjack.Compiler.Backend.BackendCommon
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
-import Flapjack.Misc.Option
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimitsDouble
+public import Flapjack.Compiler.Backend.BackendCommon
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+public import Flapjack.Misc.Option
+
+@[expose] public section
 
 /-! Stack/heap limit calculations of `stack_removeProofScript.sml`
 (3053-3077). HOL `shift (:α)` is `backend_common$word_shift`

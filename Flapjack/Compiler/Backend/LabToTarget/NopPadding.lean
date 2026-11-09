@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
-import Flapjack.Compiler.Backend.LabToTarget.Padding
-import Flapjack.Misc.TakeFlatReplicate
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
+public import Flapjack.Compiler.Backend.LabToTarget.Padding
+public import Flapjack.Misc.TakeFlatReplicate
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Encoders.Asm Flapjack.Misc
 

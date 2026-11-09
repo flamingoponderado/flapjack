@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+
+@[expose] public section
 
 /-! Closure function-location and free-variable annotation predicates. -/
 namespace Flapjack.Compiler.Backend.ClosProps

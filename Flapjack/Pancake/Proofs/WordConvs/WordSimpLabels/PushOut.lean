@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.WordConvs.NotCreatedPasses
-import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.Sequence
+module
+
+public import Flapjack.Pancake.Proofs.WordConvs.NotCreatedPasses
+public import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.Sequence
+
+@[expose] public section
 
 namespace Flapjack.WordConvs
 open Flapjack.Compiler.Backend.WordSimp

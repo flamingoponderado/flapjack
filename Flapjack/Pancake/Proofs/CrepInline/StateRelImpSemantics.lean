@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Proofs.CrepInline.InlineProgCorrect
-import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
-import Flapjack.Pancake.Semantics.CrepSem.CrepObservationalSemantics
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Proofs.CrepInline.InlineProgCorrect
+public import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
+public import Flapjack.Pancake.Semantics.CrepSem.CrepObservationalSemantics
+
+@[expose] public section
 
 /-!
 # crep_inline: `state_rel_imp_semantics` group

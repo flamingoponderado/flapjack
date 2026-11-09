@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Misc.Sptree
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.Sptree
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 /-!
 # CakeML `word_depth`

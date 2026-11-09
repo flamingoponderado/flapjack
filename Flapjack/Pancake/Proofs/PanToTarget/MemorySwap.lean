@@ -1,9 +1,13 @@
-import Flapjack.Pancake.Proofs.PanToTarget.ConstMemory
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallEvaluate
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateConsts
-import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
-import Flapjack.HolArb
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.ConstMemory
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallEvaluate
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateConsts
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
+public import Flapjack.HolArb
+
+@[expose] public section
 
 /-! pan_to_targetProofScript.sml 606-778: evaluating a no_alloc/no_install
 WordSem program from a state whose memory is replaced by a graph-equal memory

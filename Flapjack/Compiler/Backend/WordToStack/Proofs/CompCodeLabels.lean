@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeCompile
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
-import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterLabels
-import Flapjack.Pancake.WordConvs.CodeLabels
-import Flapjack.Pancake.WordConvs
-import Mathlib.Data.Set.Insert
-import Mathlib.Data.Set.Image
-import Mathlib.Tactic.Tauto
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterLabels
+public import Flapjack.Pancake.WordConvs.CodeLabels
+public import Flapjack.Pancake.WordConvs
+public import Mathlib.Data.Set.Insert
+public import Mathlib.Data.Set.Image
+public import Mathlib.Tactic.Tauto
+
+@[expose] public section
 
 /-! Full referenced-code label bound for the literal Word-to-Stack compiler.
 The private equations are Flapjack-specific proof infrastructure for native

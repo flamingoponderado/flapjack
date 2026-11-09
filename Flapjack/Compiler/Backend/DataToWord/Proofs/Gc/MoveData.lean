@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.CopyingGc.Proofs.Progress
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
+module
+
+public import Flapjack.Compiler.Backend.CopyingGc.Proofs.Progress
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
+
+@[expose] public section
 
 /-! Data-address case of the abstract-to-word copying-collector simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

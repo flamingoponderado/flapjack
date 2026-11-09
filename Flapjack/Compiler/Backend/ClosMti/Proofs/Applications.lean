@@ -1,8 +1,15 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectApps
-import Flapjack.Compiler.Backend.ClosMti.Proofs.StateRelation
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
-import Mathlib.Data.List.Induction
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectApps
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+public import Mathlib.Data.List.Induction
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Application-reconstruction lemmas for the closure evaluator. -/
 namespace Flapjack.Compiler.Backend.ClosMti

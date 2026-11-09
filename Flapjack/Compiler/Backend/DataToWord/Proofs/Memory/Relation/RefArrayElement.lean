@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueArray
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockStack
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueArray
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockStack
+
+@[expose] public section
 
 /-! Concrete payload reads for value-array references. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

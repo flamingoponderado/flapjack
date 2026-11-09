@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateSequence
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshMappedRefs
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateSequence
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshMappedRefs
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
+
+@[expose] public section
 
 /-! Mutable reference allocation in the closure-to-BVL simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluatorSimulation
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluatorSimulation
+
+@[expose] public section
 
 /-! Related call-entry states for the data evaluator. -/
 namespace Flapjack.Compiler.Backend.DataLive

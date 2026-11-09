@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosInterp.Optimise
-import Flapjack.Compiler.Backend.Semantics.ClosSem.State
-import Flapjack.Compiler.Backend.BackendProps.Pure
-import Flapjack.Misc.ShiftSeq
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Optimise
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+public import Flapjack.Compiler.Backend.BackendProps.Pure
+public import Flapjack.Misc.ShiftSeq
+
+@[expose] public section
 
 /-! State and compiler relationships for interpreter insertion. The state
 carrier is proof-side and these declarations await full HOL correspondence review. -/

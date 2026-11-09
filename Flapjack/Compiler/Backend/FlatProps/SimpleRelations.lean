@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatProps.ValueBasics
-import Flapjack.SemanticPrimitivesProps.StoreRelation
-import Flapjack.Misc.Option.Rel
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.ValueBasics
+public import Flapjack.SemanticPrimitivesProps.StoreRelation
+public import Flapjack.Misc.Option.Rel
+
+@[expose] public section
 
 /-! Generic value and state relations used by flat-semantics proofs. -/
 namespace Flapjack.Compiler.Backend.FlatProps

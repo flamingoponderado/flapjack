@@ -2,7 +2,7 @@ import Flapjack.Pancake.Semantics.PanSemStateEval
 import Flapjack.Test.PanValueFfiCore
 
 /-!
-Direct regression for the exact source `PanSemExactState` `Call` error
+Direct regression for the source `PanSemState` code-map `Call` error
 equations.  HOL evaluates the argument list with `OPT_MMAP (eval s) argexps`
 before the callee lookup, so a memory-reading argument is gated by the source
 `memaddrs`: an address outside the domain rejects the call with `SOME Error`
@@ -11,8 +11,7 @@ unknown callee is likewise rejected.  The expected values are the original-HOL
 `EVAL` rows in `scripts/hol-probes/pan_sem_call_error_state_probe.out`.
 The return-shape conflict case is paired with
 `pan_sem_call_return_shape_probe.out`: HOL accepts `goodret` because its
-`state.code` entry declares `One`, regardless of any compatibility contracts
-Lean might supply separately; the mismatched source code-map row returns
+`state.code` entry declares `One`; the mismatched source code-map row returns
 `Error`.
 
 * `call_error_load_result=SOME Error`, `call_error_load_clock=5`,
@@ -41,63 +40,37 @@ private def exactMemory : Word64 → Option (PanValue Word64) :=
 private def exactDomain : Word64 → Bool :=
   fun address => address == 8
 
-private def exactAccess : PanValueMemoryAccess Word64 :=
-  panValueMemoryAccessOfModel panSemBitVec64WordModel exactDomain
-    (fun _ => false) false
-
-/-- Access whose `memaddrs`-style domain is empty, so every read misses. -/
-private def emptyAccess : PanValueMemoryAccess Word64 :=
-  panValueMemoryAccessOfModel panSemBitVec64WordModel (fun _ => false)
-    (fun _ => false) false
-
-private def exactLegacy (clock : Nat) (locals : VarName → Option (PanValue Word64))
-    (memory : Word64 → Option (PanValue Word64))
-    (contracts : Option PanValueCallContracts) :
-    PanSemEvaluateState Word64 Unit :=
-  { structs := []
-    functions := []
-    locals := locals
-    globals := fun _ => none
-    memory := memory
-    ffi := statefulTestFfiState
-    clock := clock
-    baseAddress := 0
-    topAddress := 100
-    bytesInWord := 8
-    memoryAccess := none
-    contracts := contracts
-    memoryHandler := none }
-
-private def exactStateOfWith (access : PanValueMemoryAccess Word64)
-    (legacy : PanSemEvaluateState Word64 Unit) : PanSemExactState Word64 Unit :=
-  { legacy := legacy, memoryAccess := access }
-
-private def exactStateOf (legacy : PanSemEvaluateState Word64 Unit) :
-    PanSemExactState Word64 Unit :=
-  exactStateOfWith exactAccess legacy
+/-- A domain that misses every address, so every source read fails. -/
+private def emptyDomain : Word64 → Bool := fun _ => false
 
 private def localsWithX : VarName → Option (PanValue Word64) :=
   fun name => if name == "x" then some (.word 3) else none
 
-/-- State with a present memory cell at address `8` and local `x`. -/
-private def memoryState : PanSemExactState Word64 Unit :=
-  exactStateOf <| exactLegacy 5 localsWithX exactMemory none
+private def callerLocalX : VarName -> Option (PanValue Word64) :=
+  fun name => if name == "x" then some (.word 3) else none
 
-/-- State whose `memaddrs` domain is empty while the raw memory holds a cell. -/
-private def emptyDomainState : PanSemExactState Word64 Unit :=
-  exactStateOfWith emptyAccess <| exactLegacy 5 localsWithX exactMemory none
+/-- State-owned source state: source locals, memory, `memaddrs` domain, and a
+    state-owned code map.  The exception shape map is empty. -/
+private def sourceState (clock : Nat) (locals : VarName → Option (PanValue Word64))
+    (memory : Word64 → Option (PanValue Word64)) (domain : Word64 → Bool)
+    (code : PanSemCodeMap Word64) : PanSemState Word64 (FfiState Unit) :=
+  { locals := locals
+    globals := fun _ => none
+    structs := []
+    code := code
+    exceptionShapes := fun _ => none
+    memory := memory
+    memaddrs := domain
+    sharedMemaddrs := fun _ => false
+    clock := clock
+    be := false
+    ffi := statefulTestFfiState
+    baseAddress := BitVec.ofNat 64 0
+    topAddress := BitVec.ofNat 64 100 }
 
-/-- State whose source evaluation fails immediately (no locals, no memory). -/
-private def emptyState : PanSemExactState Word64 Unit :=
-  exactStateOf <| exactLegacy 5 (fun _ => none) (fun _ => none) none
-
-/-- State whose `Const` evaluation succeeds. -/
-private def wordState : PanSemExactState Word64 Unit :=
-  exactStateOf <| exactLegacy 5 (fun _ => some (.word 7)) (fun _ => none) none
-
-private def evaluate (state : PanSemExactState Word64 Unit) (program : Prog Word64) :
+private def evaluate (state : PanSemState Word64 (FfiState Unit)) (program : Prog Word64) :
     Option (PanValueFfiClockResult Word64 Unit) :=
-  panSemEvaluateExactState statefulTestContext statefulTestPrimitive
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive
     statefulTestHandler state program
 
 private def isWordValue (expected : Nat) : Option (PanValue Word64) → Bool
@@ -119,23 +92,34 @@ private def loadMiss : Exp Word64 := .load Shape.one (.const 11)
 
 private def missingCall : Prog Word64 := .call none "f" [.const 1]
 
-/-- Callee contracts declaring one `One`-shaped parameter for `f`. -/
-private def parameterContracts : Option PanValueCallContracts :=
-  some { returnShapes := [], exceptionShapes := [],
-         parameterShapes := [("f", [("p", Shape.one)])] }
+/-- State with a present memory cell at address `8` and local `x`. -/
+private def memoryState : PanSemState Word64 (FfiState Unit) :=
+  sourceState 5 localsWithX exactMemory exactDomain []
 
-/-- State with a one-parameter callee `f` and matching contracts. -/
-private def parameterState : PanSemExactState Word64 Unit :=
-  exactStateOf <| { (exactLegacy 5 (fun _ => some (.word 7)) (fun _ => none)
-      parameterContracts) with functions := [("f", ["p"], .skip)] }
+/-- State whose `memaddrs` domain is empty while the raw memory holds a cell. -/
+private def emptyDomainState : PanSemState Word64 (FfiState Unit) :=
+  sourceState 5 localsWithX exactMemory emptyDomain []
+
+/-- State whose source evaluation fails immediately (no locals, no memory). -/
+private def emptyState : PanSemState Word64 (FfiState Unit) :=
+  sourceState 5 (fun _ => none) (fun _ => none) emptyDomain []
+
+/-- State whose `Const` evaluation succeeds. -/
+private def wordState : PanSemState Word64 (FfiState Unit) :=
+  sourceState 5 (fun _ => some (.word 7)) (fun _ => none) exactDomain []
+
+/-- State with a one-parameter callee `f`. -/
+private def parameterState : PanSemState Word64 (FfiState Unit) :=
+  sourceState 5 (fun _ => some (.word 7)) (fun _ => none) exactDomain
+    [("f", ([("p", Shape.one)], .skip, Shape.one))]
 
 /-- HOL-oracle-constant parity fixture.  The checked-in probe
     `scripts/hol-probes/pan_sem_call_arity_probe.out` runs both mismatches at
     `clock := 5` with local `x = ValWord 3w`; this state uses those exact
     constants so the Lean guards pair row-for-row with the HOL `EVAL` output. -/
-private def oracleParameterState : PanSemExactState Word64 Unit :=
-  exactStateOf <| { (exactLegacy 5 localsWithX (fun _ => none) parameterContracts) with
-      functions := [("f", ["p"], .skip)] }
+private def oracleParameterState : PanSemState Word64 (FfiState Unit) :=
+  sourceState 5 localsWithX (fun _ => none) exactDomain
+    [("f", ([("p", Shape.one)], .skip, Shape.one))]
 
 /-- Result matcher for the callee-fallthrough rejection, pairing all four rows
     of `scripts/hol-probes/pan_sem_call_callee_normal_probe.out`: an `Error` at
@@ -155,9 +139,9 @@ private def isFallThroughError (clock value : Nat)
   | _ => false
 
 /-- State whose callee `f` has body `Skip` and therefore falls through. -/
-private def fallThroughState : PanSemExactState Word64 Unit :=
-  exactStateOf <| { (exactLegacy 5 (fun _ => some (.word 3)) (fun _ => none)
-      parameterContracts) with functions := [("f", ["p"], .skip)] }
+private def fallThroughState : PanSemState Word64 (FfiState Unit) :=
+  sourceState 5 (fun _ => some (.word 3)) (fun _ => none) exactDomain
+    [("f", ([("p", Shape.one)], .skip, Shape.one))]
 
 private def callFallThroughGuard : Bool :=
   isFallThroughError 4 1 (evaluate fallThroughState (.call none "f" [.const 1]))
@@ -178,16 +162,13 @@ private def isTerminalError (clock value : Nat)
       | _ => false
   | _ => false
 
-private def callerLocalX : VarName -> Option (PanValue Word64) :=
-  fun name => if name == "x" then some (.word 3) else none
+private def breakState : PanSemState Word64 (FfiState Unit) :=
+  sourceState 5 callerLocalX (fun _ => none) exactDomain
+    [("f", ([("p", Shape.one)], .break, Shape.one))]
 
-private def breakState : PanSemExactState Word64 Unit :=
-  exactStateOf <| { (exactLegacy 5 callerLocalX (fun _ => none)
-      parameterContracts) with functions := [("f", ["p"], .break)] }
-
-private def continueState : PanSemExactState Word64 Unit :=
-  exactStateOf <| { (exactLegacy 5 callerLocalX (fun _ => none)
-      parameterContracts) with functions := [("f", ["p"], .continue)] }
+private def continueState : PanSemState Word64 (FfiState Unit) :=
+  sourceState 5 callerLocalX (fun _ => none) exactDomain
+    [("f", ([("p", Shape.one)], .continue, Shape.one))]
 
 /-- Break-specific matcher pairing all four rows of
     `scripts/hol-probes/pan_sem_call_callee_terminal_probe.out`: the fourth row
@@ -227,25 +208,21 @@ private def isPropagatedError (clock : Nat)
 
 /-- State whose callee `f` errors while evaluating its body: it reads address
     `11` outside the domain, so the callee finishes with `Error`. -/
-private def calleeErrorState : PanSemExactState Word64 Unit :=
-  exactStateOf <| { (exactLegacy 5 (fun _ => some (.word 3)) (fun _ => none)
-      parameterContracts) with
-    functions := [("f", ["p"], .assign .local "p" (.load Shape.one (.const 11)))] }
+private def calleeErrorState : PanSemState Word64 (FfiState Unit) :=
+  sourceState 5 (fun _ => some (.word 3)) (fun _ => none) exactDomain
+    [("f", ([("p", Shape.one)], .assign .local "p" (.load Shape.one (.const 11)), Shape.one))]
 
 private def callCalleeErrorGuard : Bool :=
   isPropagatedError 4 (evaluate calleeErrorState (.call none "f" [.const 1]))
 
-/-- A compatibility contract deliberately disagrees with the source-shaped
-    code map. The functions-list carrier has no source `returnShape`, so its
-    optional contract table must not be used as HOL's code-map return shape. -/
-private def returnInvalidContracts : Option PanValueCallContracts :=
-  some { returnShapes := [("f", Shape.named "Other")], exceptionShapes := [], parameterShapes := [("f", [("p", Shape.one)])] }
+/-- The `goodret` fixture of `pan_sem_call_return_shape_probe.out`: the source
+    code entry declares `One`, so HOL accepts the returned word. -/
+private def goodReturnState : PanSemState Word64 (FfiState Unit) :=
+  sourceState 5 (fun _ => some (.word 3)) (fun _ => none) exactDomain
+    [("f", ([("p", Shape.one)], .return (.const 0), Shape.one))]
 
-private def returnInvalidState : PanSemExactState Word64 Unit :=
-  exactStateOf <| { (exactLegacy 5 (fun _ => some (.word 3)) (fun _ => none) returnInvalidContracts) with functions := [("f", ["p"], .return (.const 0))] }
-
-private def callReturnContractConflictGuard : Bool :=
-  match evaluate returnInvalidState (.call none "f" [.const 1]) with
+private def callReturnShapeAcceptGuard : Bool :=
+  match evaluate goodReturnState (.call none "f" [.const 1]) with
   | some (.control (.returned _ _ _ _ [.word value]), clock) =>
       clock == 4 && value == BitVec.ofNat 64 0
   | _ => false
@@ -278,48 +255,59 @@ private def callGuard : Bool :=
   callLoadMissGuard && callMissingGuard && callDomainGuard &&
     callParamArityGuard && callParamShapeGuard && oracleArityGuard && oracleShapeGuard &&
     callFallThroughGuard &&
-    callBreakGuard && callContinueGuard && callCalleeErrorGuard && callReturnContractConflictGuard
+    callBreakGuard && callContinueGuard && callCalleeErrorGuard &&
+    callReturnShapeAcceptGuard
 
 #guard callGuard
 
 /-- A `Call` whose argument fails to evaluate returns `SOME Error` over the
-    full exact state. -/
+    full source state. -/
 theorem callArgsMiss_eq :
     evaluate emptyState (.call none "f" [.var .local "z"]) =
-      some (.control (.error emptyState.legacy.locals emptyState.legacy.globals
-        emptyState.legacy.memory emptyState.legacy.ffi), emptyState.legacy.clock) := by
-  apply panSemEvaluateExactState_call_error_of_arguments_none
-  simp [emptyState, exactStateOf, exactStateOfWith, exactLegacy, evalPanValueExps,
-    evalPanValueExp.evalPanValueExps, evalPanValueExp]
+      some (.control (.error emptyState.locals emptyState.globals
+        emptyState.memory emptyState.ffi), emptyState.clock) := by
+  simp (config := { decide := true }) [evaluate, emptyState, sourceState,
+    panSemEvaluateRiscV64CodeState, panSemEvaluateWordCodeState,
+    panSemEvaluateCodeStateWithMemoryModel, panSemEvaluateCodeState,
+    panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemProgFuel,
+    panSemExpFuel, panSemExpListFuel, panSemCodeBodyFuel, panSemCallInfoFuel,
+    panSemBitVec64BytesInWord, evalPanValueFfiClockCodeProg,
+    evalPanValueFfiClockCodeCall, panValueCallArgumentsValue, lookupPanSemCodeCall,
+    panSemCodeLookup, lookupInfo, bindPanValueParameters, evalPanValueExps,
+    evalPanValueExpsWith, evalPanValueExp.evalPanValueExps, evalPanValueExp]
 
-/-- A `Call` naming an unknown callee returns `SOME Error` over the full exact
+/-- A `Call` naming an unknown callee returns `SOME Error` over the full source
     state. -/
 theorem callMissing_eq :
     evaluate wordState missingCall =
-      some (.control (.error wordState.legacy.locals wordState.legacy.globals
-        wordState.legacy.memory wordState.legacy.ffi), wordState.legacy.clock) := by
-  apply panSemEvaluateExactState_call_error_of_target_none (values := [.word 1])
-  · simp [wordState, exactStateOf, exactStateOfWith, exactLegacy, evalPanValueExps,
-      evalPanValueExp.evalPanValueExps, evalPanValueExp]
-  · simp [wordState, exactStateOf, exactStateOfWith, exactLegacy, panValueCallTarget,
-      lookupPanFunction]
+      some (.control (.error wordState.locals wordState.globals
+        wordState.memory wordState.ffi), wordState.clock) := by
+  simp (config := { decide := true }) [evaluate, wordState, sourceState, missingCall,
+    panSemEvaluateRiscV64CodeState, panSemEvaluateWordCodeState,
+    panSemEvaluateCodeStateWithMemoryModel, panSemEvaluateCodeState,
+    panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemProgFuel,
+    panSemExpFuel, panSemExpListFuel, panSemCodeBodyFuel, panSemCallInfoFuel,
+    panSemBitVec64BytesInWord, evalPanValueFfiClockCodeProg,
+    evalPanValueFfiClockCodeCall, panValueCallArgumentsValue, lookupPanSemCodeCall,
+    panSemCodeLookup, lookupInfo, bindPanValueParameters, evalPanValueExps,
+    evalPanValueExpsWith, evalPanValueExp.evalPanValueExps, evalPanValueExp]
 
 /-- A `Call` whose argument list does not match the callee's parameter shapes
-    returns `SOME Error` over the full exact state. -/
+    returns `SOME Error` over the full source state. -/
 theorem callParamArity_eq :
     evaluate parameterState (.call none "f" []) =
-      some (.control (.error parameterState.legacy.locals parameterState.legacy.globals
-        parameterState.legacy.memory parameterState.legacy.ffi),
-        parameterState.legacy.clock) := by
-  apply panSemEvaluateExactState_call_error_of_parameters_invalid
-    (parameters := ["p"]) (body := .skip) (values := [])
-  · simp [parameterState, exactStateOf, exactStateOfWith, exactLegacy,
-      evalPanValueExps, evalPanValueExp.evalPanValueExps]
-  · simp [parameterState, exactStateOf, exactStateOfWith, exactLegacy,
-      lookupPanFunction]
-  · simp [parameterState, exactStateOf, exactStateOfWith, exactLegacy,
-      parameterContracts, panValueParametersValid, lookupInfo,
-      panValueValuesMatchShapes]
+      some (.control (.error parameterState.locals parameterState.globals
+        parameterState.memory parameterState.ffi),
+        parameterState.clock) := by
+  simp (config := { decide := true }) [evaluate, parameterState, sourceState,
+    panSemEvaluateRiscV64CodeState, panSemEvaluateWordCodeState,
+    panSemEvaluateCodeStateWithMemoryModel, panSemEvaluateCodeState,
+    panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemProgFuel,
+    panSemExpListFuel, panSemCodeBodyFuel, panSemCallInfoFuel,
+    panSemBitVec64BytesInWord, evalPanValueFfiClockCodeProg,
+    evalPanValueFfiClockCodeCall, panValueCallArgumentsValue, lookupPanSemCodeCall,
+    panSemCodeLookup, lookupInfo, bindPanValueParameters, evalPanValueExps,
+    evalPanValueExpsWith, evalPanValueExp.evalPanValueExps]
 
 /-- Source state with a state-owned code map, start clock 5, and a caller local
     `caller = 3`.  This exercises the code-map Call/DecCall path, which is where
@@ -541,20 +529,20 @@ private def stateCodeGuard : Bool :=
 
 def runChecks : IO Bool := do
   if callLoadMissGuard then
-    IO.println "PASS exact-state Call failing argument keeps state and clock"
-  else IO.println "FAIL exact-state Call failing argument keeps state and clock"
+    IO.println "PASS source Call failing argument keeps state and clock"
+  else IO.println "FAIL source Call failing argument keeps state and clock"
   if callMissingGuard then
-    IO.println "PASS exact-state Call unknown callee keeps state and clock"
-  else IO.println "FAIL exact-state Call unknown callee keeps state and clock"
+    IO.println "PASS source Call unknown callee keeps state and clock"
+  else IO.println "FAIL source Call unknown callee keeps state and clock"
   if callDomainGuard then
-    IO.println "PASS exact-state Call memory domain gates an argument read"
-  else IO.println "FAIL exact-state Call memory domain gates an argument read"
+    IO.println "PASS source Call memory domain gates an argument read"
+  else IO.println "FAIL source Call memory domain gates an argument read"
   if callParamArityGuard then
-    IO.println "PASS exact-state Call parameter arity mismatch keeps state and clock"
-  else IO.println "FAIL exact-state Call parameter arity mismatch keeps state and clock"
+    IO.println "PASS source Call parameter arity mismatch keeps state and clock"
+  else IO.println "FAIL source Call parameter arity mismatch keeps state and clock"
   if callParamShapeGuard then
-    IO.println "PASS exact-state Call parameter shape mismatch keeps state and clock"
-  else IO.println "FAIL exact-state Call parameter shape mismatch keeps state and clock"
+    IO.println "PASS source Call parameter shape mismatch keeps state and clock"
+  else IO.println "FAIL source Call parameter shape mismatch keeps state and clock"
   if oracleArityGuard then
     IO.println "PASS HOL-oracle Call arity mismatch (clock 5, x = ValWord 3w)"
   else IO.println "FAIL HOL-oracle Call arity mismatch (clock 5, x = ValWord 3w)"
@@ -562,20 +550,20 @@ def runChecks : IO Bool := do
     IO.println "PASS HOL-oracle Call shape mismatch (clock 5, x = ValWord 3w)"
   else IO.println "FAIL HOL-oracle Call shape mismatch (clock 5, x = ValWord 3w)"
   if callFallThroughGuard then
-    IO.println "PASS exact-state Call callee fallthrough rejects with Error and callee locals"
-  else IO.println "FAIL exact-state Call callee fallthrough rejects with Error and callee locals"
+    IO.println "PASS source Call callee fallthrough rejects with Error and callee locals"
+  else IO.println "FAIL source Call callee fallthrough rejects with Error and callee locals"
   if callBreakGuard then
-    IO.println "PASS exact-state Call callee break rejects with Error, callee locals, and absent caller x"
-  else IO.println "FAIL exact-state Call callee break rejects with Error, callee locals, and absent caller x"
+    IO.println "PASS source Call callee break rejects with Error, callee locals, and absent caller x"
+  else IO.println "FAIL source Call callee break rejects with Error, callee locals, and absent caller x"
   if callContinueGuard then
-    IO.println "PASS exact-state Call callee continue rejects with Error and callee locals"
-  else IO.println "FAIL exact-state Call callee continue rejects with Error and callee locals"
+    IO.println "PASS source Call callee continue rejects with Error and callee locals"
+  else IO.println "FAIL source Call callee continue rejects with Error and callee locals"
   if callCalleeErrorGuard then
-    IO.println "PASS exact-state Call callee error propagates cleared locals"
-  else IO.println "FAIL exact-state Call callee error propagates cleared locals"
-  if callReturnContractConflictGuard then
-    IO.println "PASS functions-list Call ignores a conflicting compatibility return contract"
-  else IO.println "FAIL functions-list Call ignores a conflicting compatibility return contract"
+    IO.println "PASS source Call callee error propagates cleared locals"
+  else IO.println "FAIL source Call callee error propagates cleared locals"
+  if callReturnShapeAcceptGuard then
+    IO.println "PASS source Call accepts the declared One return shape"
+  else IO.println "FAIL source Call accepts the declared One return shape"
   if callBadReturnShapeGuard then
     IO.println "PASS code-map Call invalid return shape rejects with Error (clock 4)"
   else IO.println "FAIL code-map Call invalid return shape rejects with Error (clock 4)"

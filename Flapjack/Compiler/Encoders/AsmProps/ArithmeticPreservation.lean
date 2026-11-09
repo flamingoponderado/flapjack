@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
+module
+
+public import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
+
+@[expose] public section
 
 /-! Full original ASM PC and arithmetic update invariants. The statements retain
 all original conjuncts over the native state and positive word dimension. -/

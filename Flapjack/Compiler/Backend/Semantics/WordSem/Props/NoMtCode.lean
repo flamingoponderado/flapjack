@@ -1,5 +1,9 @@
-import Flapjack.Pancake.WordConvs.NotCreated
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Pancake.WordConvs.NotCreated
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 namespace Flapjack
 namespace WordProps
 

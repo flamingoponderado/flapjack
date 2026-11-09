@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordInst.Proofs.InstSelect
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Compiler.Backend.WordInst.Proofs.InstSelect
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 /-!
 # `word_instProof`: semantics of `three_to_two_reg`

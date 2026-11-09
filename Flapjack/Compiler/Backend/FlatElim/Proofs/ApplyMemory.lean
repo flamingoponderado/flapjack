@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.PatternRelation
-import Flapjack.Compiler.Backend.FlatProps.ResultValues
-import Flapjack.EvaluateHOL
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.PatternRelation
+public import Flapjack.Compiler.Backend.FlatProps.ResultValues
+public import Flapjack.EvaluateHOL
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+
+@[expose] public section
 
 /-! Memory primitive cases for the flat-elimination simulation. -/
 namespace Flapjack.Compiler.Backend.FlatElim

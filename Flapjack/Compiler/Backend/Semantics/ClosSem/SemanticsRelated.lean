@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
-import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
-import Flapjack.SemanticPrimitivesProps.ResultRelation
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+
+@[expose] public section
 
 /-! Observational consequences of same-clock simulations between programs. -/
 namespace Flapjack.Compiler.Backend.ClosSem

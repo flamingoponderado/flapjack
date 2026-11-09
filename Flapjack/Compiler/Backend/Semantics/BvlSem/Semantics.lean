@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
-import Flapjack.Misc.LprefixLub
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
+public import Flapjack.Misc.LprefixLub
+
+@[expose] public section
 
 /-! Whole-program observations of the BVL evaluator. -/
 namespace Flapjack.Compiler.Backend.BvlSem

@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
-import Flapjack.Compiler.Backend.LabToTarget.SimpleEncoder
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
-import Flapjack.Compiler.Backend.LabProps.SectionEnd
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
+public import Flapjack.Compiler.Backend.LabToTarget.SimpleEncoder
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
+public import Flapjack.Compiler.Backend.LabProps.SectionEnd
+
+@[expose] public section
 
 /-! Full original ending-label preservation through initial/repeated encoding.
 The line theorem retains separate nonempty and LAST-classifier conjuncts.

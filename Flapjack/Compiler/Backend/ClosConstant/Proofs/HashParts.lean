@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosConstant.Proofs.Hash
+module
+
+public import Flapjack.Compiler.Backend.ClosConstant.Proofs.Hash
+
+@[expose] public section
 
 /-! Correspondence of recursive constant flattening implementations. -/
 namespace Flapjack.Compiler.Backend.ClosConstant.Proofs

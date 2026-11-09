@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
-import Flapjack.Compiler.Backend.WordToStack.Proofs.EvaluateWLive
-import Flapjack.PanToCrepMaxList
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.EvaluateWLive
+public import Flapjack.PanToCrepMaxList
+
+@[expose] public section
 
 /-!
 # Word-to-Stack `comp_correct`: the `Alloc` case

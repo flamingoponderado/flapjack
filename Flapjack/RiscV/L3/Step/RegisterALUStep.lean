@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.RegisterALU
+module
+
+public import Flapjack.RiscV.L3.Defs.RegisterALU
+
+@[expose] public section
 
 /-! Evaluated register-ALU instruction equations (HOL `riscv_step` register group).
 

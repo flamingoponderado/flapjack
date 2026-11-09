@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
-import Flapjack.Compiler.Backend.StackProps.CodeLabels
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
+public import Flapjack.Compiler.Backend.StackProps.CodeLabels
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRawCall
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackProps

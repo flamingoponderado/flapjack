@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveBlock
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveForward
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveData
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveBlock
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveForward
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveData
+
+@[expose] public section
 
 /-! Full abstract-to-word copying-collector move simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

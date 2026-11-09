@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions
-import Flapjack.Pancake.WordConvs.FullInstOkLess
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions
+public import Flapjack.Pancake.WordConvs.FullInstOkLess
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Flapjack Flapjack.Compiler.Backend.WordAlloc Flapjack.Compiler.Encoders.Asm

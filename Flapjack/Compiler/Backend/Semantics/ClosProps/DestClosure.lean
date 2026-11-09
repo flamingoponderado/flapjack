@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
+
+@[expose] public section
 
 /-! Shared unfolding of the recursive-closure clause of `destClosure` at a
 known function entry. Flapjack proof infrastructure; no separately named HOL

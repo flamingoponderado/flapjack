@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.OrderedLabels
+module
+
+public import Flapjack.Compiler.Backend.StackProps.OrderedLabels
+
+@[expose] public section
 
 /-! Namespace alias for the existing reviewed ordered-label extractor.
 This is Flapjack naming infrastructure, not a second definition or HOL port.

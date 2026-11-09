@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 
 /-! The global environment carrier used by the original source-to-flat value
 relation. The relation itself and the pass simulation remain unported. -/

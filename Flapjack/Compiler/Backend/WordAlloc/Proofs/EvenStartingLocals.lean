@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc
-import Flapjack.Misc.Sptree
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc
+public import Flapjack.Misc.Sptree
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc.Proofs
 

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Correctness
-import Flapjack.SemanticPrimitivesProps.ResultRelation
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Correctness
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+
+@[expose] public section
 
 /-! Source-shaped flat-to-closure compiler simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

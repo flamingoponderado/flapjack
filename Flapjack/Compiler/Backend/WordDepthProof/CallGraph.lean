@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma
+module
+
+public import Flapjack.Compiler.Backend.WordDepthProof.CallGraphLemma
+
+@[expose] public section
 
 /-!
 # `max_depth_call_graph` and `max_depth_Call_NONE`

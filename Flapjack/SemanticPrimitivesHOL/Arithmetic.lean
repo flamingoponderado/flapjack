@@ -1,5 +1,9 @@
-import Flapjack.SemanticPrimitivesHOL.NumericConversion
-import Flapjack.SemanticPrimitivesHOL.ApplyNumericCore
+module
+
+public import Flapjack.SemanticPrimitivesHOL.NumericConversion
+public import Flapjack.SemanticPrimitivesHOL.ApplyNumericCore
+
+@[expose] public section
 
 /-! HOL's primitive arithmetic before the application type guard. -/
 namespace Flapjack.SemanticPrimitivesHOL

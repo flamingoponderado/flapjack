@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+
+@[expose] public section
 
 /-!
 # Environment-list lookup support

@@ -1,4 +1,12 @@
-import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Exact Pan-to-Crep nested declaration evaluator theorem group. -/
 

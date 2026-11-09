@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.MemoryAllocation
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.MemoryAllocation
+
+@[expose] public section
 
 /-! Reference inspection under closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

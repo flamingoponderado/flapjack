@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+
+@[expose] public section
 
 /-! StackSem bitmap-copy prerequisites. Source: stackSemScript.sml:688-699.
 The source word-sized stride is byteTheory bytes_in_word_def:193-195,

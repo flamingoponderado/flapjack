@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionPrefreeze
-import Flapjack.Compiler.Backend.RegAlloc.ProductionLookupFirst
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionPrefreeze
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionLookupFirst
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc Translator.Monadic.MonadBase

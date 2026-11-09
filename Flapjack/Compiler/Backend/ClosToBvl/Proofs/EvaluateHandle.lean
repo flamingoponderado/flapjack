@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateLet
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateLet
+
+@[expose] public section
 
 /-! Exception-handler case of the closure-to-BVL simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

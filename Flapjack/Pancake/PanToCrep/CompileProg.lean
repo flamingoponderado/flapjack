@@ -1,12 +1,16 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.CrepInline.Pass
-import Flapjack.Pancake.PanToCrep.Compile
-import Flapjack.Pancake.PanToCrep.CompileExact
-import Flapjack.Pancake.PanToCrep.CompileExpBridge
-import Flapjack.FiniteMap
-import Flapjack.Pancake.PanToCrep.ContextBridge
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.Pancake.PanLang.ProgHOLInduction
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.CrepInline.Pass
+public import Flapjack.Pancake.PanToCrep.Compile
+public import Flapjack.Pancake.PanToCrep.CompileExact
+public import Flapjack.Pancake.PanToCrep.CompileExpBridge
+public import Flapjack.FiniteMap
+public import Flapjack.Pancake.PanToCrep.ContextBridge
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.PanLang.ProgHOLInduction
+
+@[expose] public section
 
 /-!
 HOL-shaped top-level Pancake-to-Crep compiler boundary. The per-function
@@ -26,8 +30,9 @@ private def panToCrepShapeSlotsExact : List ShapeHOL → Nat → List (List Nat)
 
 /-- The exact `with_shape` partition of the global slot range gives the same
     per-parameter slots as the production allocator's increasing offset. This
-    is the allocation fact needed before replacing the executed production
-    `compFuncHOL` call with the tagged HOL-shaped `compFuncExactHOLW`. -/
+    is the allocation fact relating the legacy production `compFuncHOL` to the
+    tagged HOL-shaped `compFuncExactHOLW`, which the executed pan-to-crep
+    boundary already calls. -/
 private theorem withShapeHOL_range_offset (shapes : List ShapeHOL) (offset : Nat) :
     withShapeHOL shapes
         ((List.range (sizeOfShapeHOL (.comb shapes))).map (offset + ·)) =
@@ -122,10 +127,11 @@ private theorem panToCrepParamsVmapEntries_exact_offset
 -- reproduced by `Flapjack/Test/CompileProgParamsParity.lean`. Faithful-port
 -- dependency `flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`; exact
 -- `compile` by `.18.3.5.8.13`, exact `compile_inl_top` by `flapjack-e7w.1`;
--- the exact-carrier inliner is a tested, non-executed alternative until proved
--- equal. The full compile_prog adapter and end-to-end carrier bridge remain
--- tracked by open epic `flapjack-e7w.2`). The `compile_prog_def` inventory
--- remains open for the full exact-carrier declaration and end-to-end bridge.
+-- the parser-backed route runs the exact-carrier inliner `compileInlTopHOLExact`,
+-- while this production adapter keeps the generic `compileInlTopHOL`. The full
+-- compile_prog adapter and end-to-end carrier bridge remain tracked by open
+-- epic `flapjack-e7w.2`). The `compile_prog_def` inventory remains open for
+-- the full exact-carrier declaration and end-to-end bridge.
 def compileProgTopHOL [BEq FunName] [LawfulBEq FunName]
     [LawfulHashable FunName] [OfNat (BitVec width) 0]
     [OfNat (BitVec width) 1]

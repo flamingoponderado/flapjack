@@ -1,5 +1,9 @@
-import Flapjack.Misc.BinaryIeeeSqrt
-import Flapjack.Misc.BinaryIeeeSqrt.RealAgreement
+module
+
+public import Flapjack.Misc.BinaryIeeeSqrt
+public import Flapjack.Misc.BinaryIeeeSqrt.RealAgreement
+
+@[expose] public section
 
 /-!
 # Real-square-root rounding agrees with the rational-cut rendering

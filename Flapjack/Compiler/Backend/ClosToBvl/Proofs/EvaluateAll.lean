@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateForce
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateIf
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateHandle
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRaise
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateTick
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateCall
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateClosure
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateLetrecMutual
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateForce
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateIf
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateHandle
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRaise
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateTick
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateCall
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateClosure
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateLetrecMutual
+
+@[expose] public section
 
 /-! Assembly of the closure-to-BVL expression simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

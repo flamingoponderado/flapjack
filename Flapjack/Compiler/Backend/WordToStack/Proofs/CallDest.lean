@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
-import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
-import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
-import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
+public import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
+public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+
+@[expose] public section
 
 /-!
 # Word-to-Stack `call_dest_lemma`

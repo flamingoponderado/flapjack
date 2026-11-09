@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.ClosToBvl.SourceInc
-import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
-import Flapjack.Compiler.Backend.Semantics.ClosSem.State
-import Flapjack.Compiler.Backend.Semantics.BvlSem.State
-import Flapjack.Compiler.Backend.BackendProps.Pure
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ExpsEquivalence
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.SourceInc
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.State
+public import Flapjack.Compiler.Backend.BackendProps.Pure
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ExpsEquivalence
+
+@[expose] public section
 
 /-! Future code and compilation-oracle conditions used by the pass simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

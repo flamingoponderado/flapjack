@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.FfiReads
-import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
-import Flapjack.Compiler.Backend.Semantics.TargetSem.PostAsm
-import Flapjack.Compiler.Backend.LabToTarget.Encoding
-import Flapjack.Byte.WordOfBytes
-import Flapjack.Misc.Alignment
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.FfiReads
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.PostAsm
+public import Flapjack.Compiler.Backend.LabToTarget.Encoding
+public import Flapjack.Byte.WordOfBytes
+public import Flapjack.Misc.Alignment
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 namespace Flapjack
 open Flapjack.Compiler.Encoders.Asm

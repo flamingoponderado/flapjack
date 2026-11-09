@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalsCorrect
-import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalMonad
-import Flapjack.Compiler.Backend.LinearScan.Proofs.LiveTree
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalsCorrect
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalMonad
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.LiveTree
+
+@[expose] public section
 
 /-!
 # linear_scanProof: `linear_reg_alloc_without_renaming_correct`

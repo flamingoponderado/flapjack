@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CompCorrect.Inst
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Arith
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Carry
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Arith
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Carry
+
+@[expose] public section
 
 set_option maxHeartbeats 4000000
 set_option maxRecDepth 10000

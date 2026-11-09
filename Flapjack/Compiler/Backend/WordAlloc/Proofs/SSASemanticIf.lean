@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapBounds
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectRight
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsGetVar
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapBounds
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectRight
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

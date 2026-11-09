@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ResVar
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ResVar
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCompileCorrectDec
 open Flapjack.Pancake.PanLang PanSemStateFiniteExact

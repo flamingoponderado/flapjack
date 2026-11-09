@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect
-import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
+module
+
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect
+public import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
+
+@[expose] public section
 
 /-!
 # Return case of HOL `crep_arith$simp_prog_correct`

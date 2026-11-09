@@ -1,10 +1,14 @@
-import Flapjack.FiniteMap
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.PanToCrep.ContextExact
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Pancake.Semantics.PanProps.EvaluateResultInvariant
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
-import Flapjack.Pancake.Semantics.ShMemBytesBridge
+module
+
+public import Flapjack.FiniteMap
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.PanToCrep.ContextExact
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Pancake.Semantics.PanProps.EvaluateResultInvariant
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Pancake.Semantics.ShMemBytesBridge
+
+@[expose] public section
 
 /-!
 Finite-support Pan-to-Crep relation infrastructure for the shape-invariant

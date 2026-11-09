@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.FlatToClos.Compile
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.GlobalInvariants
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.OperatorGlobals
-import Flapjack.Compiler.Backend.FlatProps.NoMat
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Compile
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.GlobalInvariants
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.OperatorGlobals
+public import Flapjack.Compiler.Backend.FlatProps.NoMat
+
+@[expose] public section
 
 /-! Global-write preservation across flat-to-closure lowering. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

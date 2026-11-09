@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanToTarget
+module
+
+public import Flapjack.Pancake.PanToTarget
+
+@[expose] public section
 
 namespace Flapjack.Pancake.PanToTarget
 open Flapjack Flapjack.Pancake.PanLang Flapjack.Basis.Pure.MlString

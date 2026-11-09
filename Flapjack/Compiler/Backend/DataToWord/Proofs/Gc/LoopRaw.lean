@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopClaim
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopClaim
+
+@[expose] public section
 
 /-! Raw-payload branch of the copying-collector scan induction. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

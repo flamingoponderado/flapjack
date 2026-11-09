@@ -1,14 +1,18 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalRefs
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopCell
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalRefs
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopCell
+
+@[expose] public section
 
 /-! Major collector data-scan simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.WordGcFunctions
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 
-private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+instance generationalDataInst1 {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
-private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
+instance generationalDataInst2 {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
 
 /-- Expose the concrete header and payload of the first pending data object,
 while retaining the whole reference region in the separated frame. This is

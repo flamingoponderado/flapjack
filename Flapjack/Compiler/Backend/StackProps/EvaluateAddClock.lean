@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
-import Flapjack.Compiler.Backend.StackProps.ClockSupport
-import Flapjack.Compiler.Backend.StackProps.InstructionConstants
-import Flapjack.Compiler.Backend.StackProps.AllocationConstants
-import Flapjack.Compiler.Backend.StackProps.SharedMemoryClock
-import Flapjack.Compiler.Backend.StackProps.ExpressionClock
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+public import Flapjack.Compiler.Backend.StackProps.ClockSupport
+public import Flapjack.Compiler.Backend.StackProps.InstructionConstants
+public import Flapjack.Compiler.Backend.StackProps.AllocationConstants
+public import Flapjack.Compiler.Backend.StackProps.SharedMemoryClock
+public import Flapjack.Compiler.Backend.StackProps.ExpressionClock
+
+@[expose] public section
 
 /-! StackProps `evaluate_add_clock` (`stackPropsScript.sml:495-534`) over the
 tagged exact StackSem `evaluate` (`EvaluateDef.lean`).

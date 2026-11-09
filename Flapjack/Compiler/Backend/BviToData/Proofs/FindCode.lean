@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.State
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
-import Flapjack.Compiler.Backend.Semantics.DataSem.Control
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.State
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Code lookup simulation for BVI-to-data correctness. -/
 namespace Flapjack.Compiler.Backend.BviToData

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
-import Flapjack.Misc.LprefixLub
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+public import Flapjack.Misc.LprefixLub
+
+@[expose] public section
 
 /-!
 # HOL `wordSem` observational semantics

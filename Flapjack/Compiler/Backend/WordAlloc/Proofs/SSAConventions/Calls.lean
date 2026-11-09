@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Allocation
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameShiftedProperties
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapBounds
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapPreservation
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Allocation
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramProps
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameShiftedProperties
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapBounds
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapPreservation
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Flapjack Flapjack.Compiler.Backend.WordAlloc

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanStructs.CompileDeclsExact
+module
+
+public import Flapjack.Pancake.PanStructs.CompileDeclsExact
+
+@[expose] public section
 
 namespace Flapjack.Pancake.PanStructs.CompileShapeExact
 open Flapjack.Pancake.PanLang

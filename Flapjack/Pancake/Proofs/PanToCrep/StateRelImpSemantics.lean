@@ -1,16 +1,20 @@
-import Flapjack.Misc.ListLookup
-import Flapjack.HolRef
-import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
-import Flapjack.Pancake.PanToCrep.ContextExact
-import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Assembly
-import Flapjack.Pancake.Semantics.PanSem.Semantics
-import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
-import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockEq
-import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockIoEventsMono
-import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClock
-import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClockIoEventsMono
-import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
+module
+
+public import Flapjack.Misc.ListLookup
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+public import Flapjack.Pancake.PanToCrep.ContextExact
+public import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
+public import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Assembly
+public import Flapjack.Pancake.Semantics.PanSem.Semantics
+public import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+public import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockEq
+public import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockIoEventsMono
+public import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClock
+public import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClockIoEventsMono
+public import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
+
+@[expose] public section
 
 /-!
 # pan_to_crep whole-program semantics

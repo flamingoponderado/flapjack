@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosKnown.KnownOp
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateGlobalsApprox
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.KnownOp
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateGlobalsApprox
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
+
+@[expose] public section
 
 /-! Cases of the known-operation approximation correctness theorem. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

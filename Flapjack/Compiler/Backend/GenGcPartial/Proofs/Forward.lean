@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.GenGcPartial
+module
+
+public import Flapjack.Compiler.Backend.GenGcPartial
+
+@[expose] public section
 
 /-! Forwarding invariants for the partial generational collector. -/
 namespace Flapjack.Compiler.Backend.GenGcPartial

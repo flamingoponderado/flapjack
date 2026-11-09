@@ -1,6 +1,10 @@
-import Flapjack.RiscV.L3.Defs.AddressException
-import Flapjack.RiscV.L3.Defs.IntegerLoadMode
-import Flapjack.RiscV.L3.Defs.MMU.Translate
+module
+
+public import Flapjack.RiscV.L3.Defs.AddressException
+public import Flapjack.RiscV.L3.Defs.IntegerLoadMode
+public import Flapjack.RiscV.L3.Defs.MMU.Translate
+
+@[expose] public section
 namespace Flapjack.RiscV.L3
 
 /-! Complete original integer load equations, riscvScript7084-7324. Fixed rd/rs1

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.StateOk
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ValueOk
-import Flapjack.Compiler.Backend.Semantics.BvlProps.BuildRefs
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.StateOk
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ValueOk
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.BuildRefs
+
+@[expose] public section
 
 /-! Well-formedness during source constant construction. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

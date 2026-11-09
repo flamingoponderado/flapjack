@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.MemStores
-import Flapjack.Pancake.Proofs.PanGlobals.ReadBytearray
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.MemStores
+public import Flapjack.Pancake.Proofs.PanGlobals.ReadBytearray
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsByteStore
 open Flapjack

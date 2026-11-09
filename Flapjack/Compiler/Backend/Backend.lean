@@ -1,17 +1,21 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Config
-import Flapjack.Compiler.Backend.ClosToBvl.Config
-import Flapjack.Compiler.Backend.BvlToBvi.Config
-import Flapjack.Compiler.Backend.DataToWord.Config
-import Flapjack.Compiler.Backend.WordToWord.Config
-import Flapjack.Compiler.Backend.WordToWord.Compile
-import Flapjack.Compiler.Backend.WordToStack.NativeConfig
-import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
-import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
-import Flapjack.Compiler.Backend.StackToLab.Compile
-import Flapjack.Compiler.Backend.LabToTarget.Compile
-import Flapjack.Compiler.Backend.LabToTarget.Diagnostics
-import Flapjack.Compiler.Backend.PresLang.Config
-import Flapjack.Misc.LookupAny
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Config
+public import Flapjack.Compiler.Backend.ClosToBvl.Config
+public import Flapjack.Compiler.Backend.BvlToBvi.Config
+public import Flapjack.Compiler.Backend.DataToWord.Config
+public import Flapjack.Compiler.Backend.WordToWord.Config
+public import Flapjack.Compiler.Backend.WordToWord.Compile
+public import Flapjack.Compiler.Backend.WordToStack.NativeConfig
+public import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
+public import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
+public import Flapjack.Compiler.Backend.StackToLab.Compile
+public import Flapjack.Compiler.Backend.LabToTarget.Compile
+public import Flapjack.Compiler.Backend.LabToTarget.Diagnostics
+public import Flapjack.Compiler.Backend.PresLang.Config
+public import Flapjack.Misc.LookupAny
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Backend
 open Flapjack Flapjack.Basis.Pure.MlString

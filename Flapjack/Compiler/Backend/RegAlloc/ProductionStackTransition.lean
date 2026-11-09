@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTransition
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTransition
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc Translator.Monadic.MonadBase

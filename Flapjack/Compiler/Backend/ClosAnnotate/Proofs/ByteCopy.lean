@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ByteUpdate
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ByteUpdate
+
+@[expose] public section
 
 /-! Byte copying under closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

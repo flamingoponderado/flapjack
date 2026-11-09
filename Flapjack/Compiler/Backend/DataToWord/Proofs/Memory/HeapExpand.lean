@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListMemory
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListMemory
+
+@[expose] public section
 
 /-! The word-memory assertion for an entirely unused abstract heap. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

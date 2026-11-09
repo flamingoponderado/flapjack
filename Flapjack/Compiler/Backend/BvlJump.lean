@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Bvl.Syntax
+module
+
+public import Flapjack.Compiler.Backend.Bvl.Syntax
+
+@[expose] public section
 
 /-! Balanced switch construction for BVL. -/
 namespace Flapjack.Compiler.Backend.BvlJump

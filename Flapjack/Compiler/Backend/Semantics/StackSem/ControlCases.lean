@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Control
-import Flapjack.Compiler.Backend.Semantics.StackSem.Measure
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Measure
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+
+@[expose] public section
 
 /-! Untagged, source-shaped fragments of the structured-control clauses of HOL
 `evaluate_def` (`cakeml/compiler/backend/semantics/stackSemScript.sml:811-837`):

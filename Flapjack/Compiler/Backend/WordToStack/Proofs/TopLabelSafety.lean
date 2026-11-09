@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabelSafety
-import Flapjack.Compiler.Backend.WordToStack.Proofs.HandlerLabels
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabelSafety
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.HandlerLabels
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang

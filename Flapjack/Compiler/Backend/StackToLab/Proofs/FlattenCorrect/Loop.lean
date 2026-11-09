@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.If
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.If
+
+@[expose] public section
 
 /-! `flatten_correct` case `Loop` (`stack_to_labProofScript.sml:1741-1880`):
 the body runs between the continue label and the back jump; `Continue 0` and

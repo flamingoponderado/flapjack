@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.RemoveDead
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MoveStoreConsts
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.RemoveDead
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MoveStoreConsts
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

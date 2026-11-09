@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.CodeRelation
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.CodeRelation
+
+@[expose] public section
 
 /-! State-independent accumulator primitive behavior for the tail-recursion
 simulation. The evaluator and dispatcher remain subject to source review. -/

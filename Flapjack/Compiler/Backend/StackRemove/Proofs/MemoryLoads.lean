@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
-import Flapjack.Compiler.Backend.Semantics.WordSem
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryReads
+public import Flapjack.Compiler.Backend.Semantics.WordSem
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.MemoryLoads
 open Flapjack

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegister
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegister
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.LoadRegisterClock
 open Flapjack.Compiler.Backend.WordToStack.Native

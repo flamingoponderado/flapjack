@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeCompile
-import Flapjack.Compiler.Backend.StackProps.RegisterBounds
-import Flapjack.Pancake.WordConvs
-import Mathlib.Tactic.SplitIfs
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+public import Flapjack.Compiler.Backend.StackProps.RegisterBounds
+public import Flapjack.Pancake.WordConvs
+public import Mathlib.Tactic.SplitIfs
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.RegisterBoundInstructions
 open Flapjack Flapjack.Compiler.Backend.WordToStack.Native

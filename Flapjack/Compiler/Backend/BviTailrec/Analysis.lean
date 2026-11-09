@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.BviTailrec
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Type and operator analysis used by BVI tail-recursion elimination.
 The source-shaped term tests are total; their bounded executable versions

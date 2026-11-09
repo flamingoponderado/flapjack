@@ -1,5 +1,9 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpLeTmpDomain
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.CompExpLeTmpDomain
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+
+@[expose] public section
 
 /-!
 # crep_to_loopProof `member_cutset_survives_comp_exp`

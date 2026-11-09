@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
-import Flapjack.SemanticPrimitivesHOL.Conversions
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
+public import Flapjack.SemanticPrimitivesHOL.Conversions
+
+@[expose] public section
 
 /-! List conversion compatibility over the source-to-flat value relation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

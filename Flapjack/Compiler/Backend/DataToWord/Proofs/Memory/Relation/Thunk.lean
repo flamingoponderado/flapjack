@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ThunkHeap
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
-import Flapjack.Compiler.Backend.DataToWord.Proofs.WordTest
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Word64
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberHeader
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ThunkHeap
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.WordTest
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Word64
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberHeader
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 open Flapjack Flapjack.Compiler.Backend.DataSem
 

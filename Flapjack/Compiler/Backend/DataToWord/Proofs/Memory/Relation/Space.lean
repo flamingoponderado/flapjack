@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
-import Mathlib.Tactic.NormNum
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+public import Mathlib.Tactic.NormNum
+
+@[expose] public section
 
 /-! Space monotonicity of the data-to-word memory relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

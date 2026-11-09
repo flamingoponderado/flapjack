@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.GenGc.Proofs.Invariant
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorSimple
+module
+
+public import Flapjack.Compiler.Backend.GenGc.Proofs.Invariant
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.CollectorSimple
+
+@[expose] public section
 
 /-! Abstract heap correctness for major collection. -/
 namespace Flapjack.Compiler.Backend.GenGc

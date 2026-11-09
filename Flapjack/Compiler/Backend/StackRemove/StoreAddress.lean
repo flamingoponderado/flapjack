@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.StackRemove
+module
+
+public import Flapjack.Compiler.Backend.StackRemove
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Native storage addressing from stack_removeScript.sml:37–53.
 The default Pancake and assembly modes initializedRuntimeLab? executes these native

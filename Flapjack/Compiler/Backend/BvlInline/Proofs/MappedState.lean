@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.StateRel
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.StateRel
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
+
+@[expose] public section
 
 /-! Common state structure for arity-preserving BVL code transformations. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

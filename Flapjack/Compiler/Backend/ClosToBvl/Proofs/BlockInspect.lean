@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockCons
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateIf
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockCons
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateIf
+
+@[expose] public section
 
 /-! Block inspection primitives in the closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

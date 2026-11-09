@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleCallback
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleRecording
-import Flapjack.EvaluateHOL.Definition
-import Flapjack.HolArb
-import Flapjack.Misc.OptionLeast
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleCallback
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleRecording
+public import Flapjack.EvaluateHOL.Definition
+public import Flapjack.HolArb
+public import Flapjack.Misc.OptionLeast
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Recording-state projection and oracle extraction for the source evaluator. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

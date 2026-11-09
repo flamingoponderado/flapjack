@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Support
+module
+
+public import Flapjack.RiscV.L3.Support
+
+@[expose] public section
 
 /-! Complete original MMU exception-raising equation. -/
 namespace Flapjack.RiscV.L3

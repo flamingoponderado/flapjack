@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
-import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateAppend
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateAppend
+
+@[expose] public section
 
 /-! Declaration sequencing for the proof-side flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

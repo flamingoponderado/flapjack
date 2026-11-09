@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.WordAlloc.ClashTreeProg
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.LiveExpressions
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ReadsLiveExpressions
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
-import Flapjack.Compiler.Backend.RegAlloc.Proofs
-import Flapjack.Pancake.WordConvs.ProgramMonotonicity
-import Flapjack.Misc.Sptree.ToAList
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ClashTreeProg
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.LiveExpressions
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ReadsLiveExpressions
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs
+public import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+public import Flapjack.Misc.Sptree.ToAList
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Flapjack Flapjack.RegAlloc Flapjack.Compiler.Encoders.Asm

@@ -1,6 +1,10 @@
-import Flapjack.Misc.BalancedMap.Domain
-import Flapjack.Misc.BalancedMap.KeyOrderedSemantics
-import Mathlib.Data.Set.Disjoint
+module
+
+public import Flapjack.Misc.BalancedMap.Domain
+public import Flapjack.Misc.BalancedMap.KeyOrderedSemantics
+public import Mathlib.Data.Set.Disjoint
+
+@[expose] public section
 
 namespace Flapjack.Misc.BalancedMap
 open FiniteMap.Comparison

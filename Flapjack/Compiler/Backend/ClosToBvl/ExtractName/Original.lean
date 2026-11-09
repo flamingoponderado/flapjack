@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
-import Flapjack.Misc.Option
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
+public import Flapjack.Misc.Option
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Choice-based source entry-location extraction. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

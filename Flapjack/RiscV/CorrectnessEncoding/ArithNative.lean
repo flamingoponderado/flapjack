@@ -1,11 +1,15 @@
-import Flapjack.RiscV.CorrectnessEncoding.ConstExecution
-import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
-import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
-import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
-import Flapjack.RiscV.CorrectnessEncoding.DecodeSltu
-import Flapjack.RiscV.L3.Step.RegisterComparison
-import Flapjack.RiscV.L3.Step.RegisterALUStep
-import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.ConstExecution
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeSltu
+public import Flapjack.RiscV.L3.Step.RegisterComparison
+public import Flapjack.RiscV.L3.Step.RegisterALUStep
+public import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
+
+@[expose] public section
 namespace Flapjack.RiscV.TargetProof.ArithNative
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target
   Compiler.Encoders.AsmProps

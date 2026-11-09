@@ -1,7 +1,11 @@
-import Flapjack.Pancake.CrepToLoop.ContextExact
-import Flapjack.Pancake.CrepToLoop.StateRel
-import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+module
+
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+public import Flapjack.Pancake.CrepToLoop.StateRel
+public import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+
+@[expose] public section
 
 /-!
 # `crep_to_loop` expression simulation: constant leaf
@@ -49,7 +53,7 @@ end CompExpPreservesEvalLeafFmapWitnesses
     strengthening. The HOL proof discharges this case by unfolding the Crep
     evaluator/compiler clauses, `nested_seq`, and Loop evaluation; the exact
     zero-code compilation leaves the Loop state unchanged. This theorem is
-    proof-side; it does not route the production `loopCompileExp` path. -/
+    proof-side and does not alter the executed `compileExpHOLExact` lowering. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "comp_exp_preserves_eval"
   (fmap_as_finite_support_relation := [CrepSemHOLState.locals,
     CrepSemHOLState.globals, CrepSemHOLState.code,

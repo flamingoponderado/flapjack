@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.Proofs.Intervals
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.Intervals
+
+@[expose] public section
 
 /-!
 # linear_scanProof: interval checking implies live-tree checking

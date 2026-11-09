@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRelation
+
+@[expose] public section
 
 /-! Preservation of closure, value and environment relations as stores grow. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

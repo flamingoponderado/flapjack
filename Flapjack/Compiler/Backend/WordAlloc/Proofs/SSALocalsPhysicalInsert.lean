@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

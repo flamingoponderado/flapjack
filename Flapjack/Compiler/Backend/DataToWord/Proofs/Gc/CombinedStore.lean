@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedNone
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedSimple
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalStore
-import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedNone
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedSimple
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalStore
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+
+@[expose] public section
 
 /-! Collector branch composition for the store-level simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRel
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRel
+
+@[expose] public section
 
 /-! Inversion facts for the source-to-flat value relation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

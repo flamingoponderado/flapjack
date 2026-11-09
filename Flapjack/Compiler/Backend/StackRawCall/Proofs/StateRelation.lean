@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.StackRawCall
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateOk
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompLn
-import Flapjack.Compiler.Backend.Semantics.StackSem.State
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateOk
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompLn
+public import Flapjack.Compiler.Backend.Semantics.StackSem.State
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRawCall
 open Flapjack Flapjack.Compiler.Backend.StackLang

@@ -68934,6 +68934,174 @@
   },
   {
     "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "fromList_11",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "fromList_inj",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:3520-3522 Theorem fromList_11[simp]: !xs ys. fromList xs = fromList ys <=> xs = ys. The Lean statement is the same iff over the same two List binders in HOL order, fromList read as fromList. The proof splits on the two lists: the empty/cons cases use lcons_ne_lnil and the cons/cons case lcons_inj plus the induction hypothesis. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LAPPEND_ASSOC",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lappendHOL_assoc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:843-845 Theorem LAPPEND_ASSOC: !ll1 ll2 ll3. LAPPEND (LAPPEND ll1 ll2) ll3 = LAPPEND ll1 (LAPPEND ll2 ll3). The Lean statement is the same equation with the same three universally quantified lists in the same order, LAPPEND read as lappendHOL. The proof is rep extensionality over the three firstNone cases of the left operands, the rep-level counterpart of HOL's LLIST_STRONG_BISIMULATION argument. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LAPPEND_EQ_LNIL",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lappendHOL_eq_lnil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:836-837 Theorem LAPPEND_EQ_LNIL[simp]: (LAPPEND l1 l2 = [||]) <=> (l1 = [||]) /\\ (l2 = [||]). The Lean statement is the same biconditional (lappendHOL l1 l2 = lnil) <-> (l1 = lnil /\\ l2 = lnil) with the same two operands in HOL order and the same two conjuncts on the right; [||] is lnil and LAPPEND is the tagged lappendHOL (LAPPEND row). HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise. The proof splits on whether each operand's rep reaches a NONE (the rep-level counterpart of HOL's llist_CASES split) and uses only the tagged append equations."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LAPPEND_fromList",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lappendHOL_fromList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:2206-2208 Theorem LAPPEND_fromList: !l1 l2. LAPPEND (fromList l1) (fromList l2) = fromList (l1 ++ l2). The Lean statement is the same equation over the same two List binders in HOL order, with LAPPEND read as lappendHOL and fromList as fromList. The proof is the source's list induction using the tagged LAPPEND equations. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LAPPEND11_FINITE1",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lappendHOL_left_cancel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:4023-4025 Theorem LAPPEND11_FINITE1: !l1 l2 l3. LFINITE l1 ==> (LAPPEND l1 l2 = LAPPEND l1 l3 <=> l2 = l3). The Lean statement has the same binders in HOL's order (l1, l2, l3) and the same LFINITE l1 hypothesis, then the same iff between append equality and l2 = l3; LFINITE is LFinite, LAPPEND is lappendHOL. The proof cancels the finite prefix by reading the representation from firstNone l1 onward. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LAPPEND_NIL_2ND",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lappendHOL_nil_2nd",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:873-874 Theorem LAPPEND_NIL_2ND: !ll. LAPPEND ll LNIL = ll. The Lean statement is forall ll : HolLList alpha, lappendHOL ll lnil = ll: one universally quantified lazy list, the same equation, LNIL read as lnil. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise. The proof is rep extensionality, the Lean counterpart of HOL's LLIST_BISIMULATION argument."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LAPPEND",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lappendHOL_spec",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:781-785 val LAPPEND = new_specification (\"LAPPEND\", [\"LAPPEND\"], prove(`?LAPPEND. (!x. LAPPEND LNIL x = x) /\\ (!h t x. LAPPEND (LCONS h t) x = LCONS h (LAPPEND t x))`)) with the statement at :784-785. The Lean theorem states the same conjunction in HOL's order: (forall x : HolLList alpha, lappendHOL lnil x = x) /\\ (forall h t x : HolLList alpha, lappendHOL (lcons h t) x = lcons h (lappendHOL t x)), with lnil/lcons standing for LNIL/LCONS. The untagged constant lappendHOL is the rep-level append lappendRep (the elements of l1 up to its first NONE, then l2), the analogue of the llist_Axiom witness in HOL's own existence proof (:787-833); its behaviour is pinned by this tagged specification theorem, which is why the constant itself carries no separate tag. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finite-list premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LDROP",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "ldropHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1275-1277 Definition LDROP[nocompute]: (LDROP 0 ll = SOME ll) /\\ (LDROP (SUC n) ll = OPTION_JOIN (OPTION_MAP (LDROP n) (LTL ll))). The Lean definition ldropHOL : Nat -> HolLList alpha -> Option (HolLList alpha) has exactly these two equations: ldropHOL 0 ll = some ll and ldropHOL (n + 1) ll = (ll.ltl.map (ldropHOL n)).join, with SUC n the n+1 pattern, OPTION_MAP/OPTION_JOIN the Option.map/Option.join and LTL the tagged ltl (an Option-valued partial function, as in HOL). HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra clause, premise or side condition. The declaration is supporting infrastructure for LFLATTEN (HOL's flattening witness uses LDROP (SUC n) ll); HOL's LDROP_THM (:1295-1298) is not ported, so only the two defining equations are claimed."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LFINITE_fromList",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lfinite_fromList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1176-1178 Theorem LFINITE_fromList[simp]: !l. LFINITE (fromList l). The Lean statement is the same universal fact over the same List binder, LFINITE read as LFinite and fromList as fromList. The Lean declaration is the source's list recursion (the lnil and lcons rules). HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LFINITE_APPEND",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lfinite_lappendHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1048-1049 Theorem LFINITE_APPEND[simp]: !ll1 ll2. LFINITE (LAPPEND ll1 ll2) <=> LFINITE ll1 /\\ LFINITE ll2. The Lean statement is the same biconditional over the same two operands in HOL order, LFINITE read as LFinite and LAPPEND as lappendHOL. The proof uses firstNone_lappend and LFinite_of_rep_none. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LFINITE_LAPPEND_IMP_NIL",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lfinite_lappendHOL_imp_lnil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1094-1096 Theorem LFINITE_LAPPEND_IMP_NIL: !ll. LFINITE ll ==> !l2. (LAPPEND ll l2 = ll) ==> (l2 = [||]). The Lean statement keeps HOL's binder order (ll, then the LFINITE hypothesis, then l2, then the append-equation hypothesis) and concludes l2 = lnil; [||] is lnil. The proof uses rep_zero_ne_none_of_ne_lnil and firstNone_lappend. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "NOT_LFINITE_APPEND",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "not_lfinite_lappendHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1081-1082 Theorem NOT_LFINITE_APPEND: !ll1 ll2. ~LFINITE ll1 ==> (LAPPEND ll1 ll2 = ll1). The Lean statement is the same implication with the same two operands and no extra premise: an infinite left operand makes the append equal to it. The proof shows firstNone ll1 = none from the negated finiteness and reads the append pointwise. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LFLATTEN",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lflatten_spec",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1895-1907 val LFLATTEN = new_specification (\"LFLATTEN\", [\"LFLATTEN\"], prove(`?LFLATTEN. !ll. LFLATTEN ll = if LL_ALL ($= LNIL) ll then LNIL else if THE (LHD ll) = LNIL then LFLATTEN (THE (LTL ll)) else LCONS (THE (LHD (THE (LHD ll)))) (LFLATTEN (LCONS (THE (LTL (THE (LHD ll)))) (THE (LTL ll))))`)), statement at :1899-1907. The Lean theorem states the same equation over the same carrier: lflatten ll = if llistEvery (fun x => x = lnil) ll then lnil else if (lhd ll).get p = lnil then lflatten ((ltl ll).get q) else lcons ((lhd ((lhd ll).get p)).get r) (lflatten (lcons ((ltl ((lhd ll).get p)).get s) ((ltl ll).get q))). HOL's THE is Lean's Option.get: the get proofs p q r s are exactly the guards HOL leaves implicit (the negated preceding branch condition makes each Option defined) and proof irrelevance keeps them out of the value, so the equation itself is unchanged. LNIL is lnil, LCONS is lcons, LL_ALL ($= LNIL) is the tagged llistEvery (fun x => x = lnil), and LHD/LTL are the file's untagged lhd/ltl renderings (docstring-cited). HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LFLATTEN_EQ_NIL",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lflatten_eq_lnil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1999-2006 Theorem LFLATTEN_EQ_NIL: !ll. (LFLATTEN ll = LNIL) = LL_ALL ($= LNIL) ll. The Lean statement is the same equivalence for the same universally quantified lazy list of lazy lists: lflatten ll = lnil iff every member is lnil, with LL_ALL/every read as the tagged llistEvery (HOL's every_def body over the untagged LExists inductive) and HOL's boolean = rendered as an iff, as this file already renders LPREFIX's boolean predicates. The proof shows that a nonempty member forces a value at flattening index 0 and conversely that no nonempty member forces firstNonempty to none. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LFLATTEN_THM",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lflattenHOL_THM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1967-1971 Theorem LFLATTEN_THM[simp]: (LFLATTEN LNIL = LNIL) /\\ (!tl. LFLATTEN (LCONS LNIL t) = LFLATTEN t) /\\ (!h t tl. LFLATTEN (LCONS (LCONS h t) tl) = LCONS h (LFLATTEN (LCONS t tl))). The Lean theorem states the same three conjuncts in HOL's order over HolLList (a lazy list of lazy lists of alpha), with lnil/lcons standing for LNIL/LCONS and the same quantified shapes (none, one list, then element plus tail plus rest). The untagged definition lflatten is the rep-level LEAST-index flattening, the analogue of the llist_Axiom witness in HOL's own new_specification (:1895-1965); the raw LFLATTEN specification statement (whose guard uses LL_ALL) is not ported, so this row covers the characterising theorem only and claims no tag for the constant. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "every_def",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "llistEvery",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1591 Definition every_def: every P ll = ~exists ((~) o P) ll, with Overload LL_ALL = every at :1593. The Lean definition llistEvery P ll := \u00ac LExists (fun x => \u00ac P x) ll has exactly that body: (~) o P is fun x => \u00ac P x, and exists is the LExists inductive, HOL's Inductive exists (:1495-1498) rendered constructor-for-constructor as an untagged Prop-valued inductive over HolLList (HOL's relation is bool-valued), the same treatment this file gives LFinite (HOL Hol_reln); its tagged characterization is llistExists_iff (exists_LNTH). HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "every_thm",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "llistEvery_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1608-1612 Theorem every_thm[simp] (also exported as LL_ALL_THM): (every P [||] = T) /\\ (every P (h:::t) <=> P h /\\ every P t), with P, h, t free. The Lean statement has the same three parameters in the same order and the same conjunction of the empty case and the cons equivalence; every is the tagged llistEvery (HOL's every_def body), [||] is lnil and ::: is lcons, with HOL's boolean = T and <=> rendered as the conjunction and iff this file already uses for LPREFIX. The proof goes through the untagged characterization llistEvery_iff (the forall-rep form), which is llistExists_iff complemented. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "exists_LNTH",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "llistExists_iff",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1509-1510 Theorem exists_LNTH: !l. exists P l = ?n e. (SOME e = LNTH n l) /\\ P e. The Lean statement is the same equivalence over the same lazy list and predicate: LExists P ll <-> \u2203 n x, some x = lnth n ll \u2227 P x (HOL's operand orientation), with exists read as the untagged LExists inductive (HOL Inductive exists :1495-1498, its two rules as its two constructors) and LNTH as lnth (lnth_eq_rep). HOL's boolean = is rendered as an iff, as this file already renders LPREFIX's boolean predicates. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LPREFIX_APPEND",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lprefix_append_iff",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:2797-2798 Theorem LPREFIX_APPEND: LPREFIX l1 l2 <=> ?ll. l2 = LAPPEND l1 ll. The Lean statement is the same biconditional with the same two operands in HOL order and the same existential on the right (l2 = lappendHOL l1 ll). The proof uses the file's rep characterization of lprefix (lprefix_rep and lprefix_of_rep_agree) rather than HOL's LTAKE/LDROP/LNTH route, and builds the witness from the right operand's representation beyond firstNone l1. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "to_fromList",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "fromList_toList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1214-1216 Theorem to_fromList: !ll. LFINITE ll ==> (fromList (THE (toList ll)) = ll). The Lean statement keeps HOL's binder order (ll, then the LFINITE hypothesis) and the same conclusion, with THE read as Option.get: the get proof obligation toList ll != none is exactly what LFINITE supplies, and proof irrelevance keeps it out of the value. The proof uses toList_eq_some_rep and fromList_rep. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LPREFIX_NTH",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lprefix_lnth_iff",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:3656-3658 Theorem LPREFIX_NTH: LPREFIX l1 l2 <=> !i v. LNTH i l1 = SOME v ==> LNTH i l2 = SOME v. The Lean statement is the same iff with the same two operands in HOL order and the same universally quantified index and value: lprefix l1 l2 <-> \u2200 i v, lnth i l1 = some v \u2192 lnth i l2 = some v, with LPREFIX read as lprefix and LNTH as lnth. The proof goes through the file's rep characterization of lprefix (lprefix_rep / lprefix_of_rep_agree) rather than HOL's fromList/SNOC route. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
     "hol_name": "LPREFIX_ANTISYM",
     "lean_path": "Flapjack/Misc/LList.lean",
     "lean_name": "lprefixAntisymHOL",
@@ -68955,6 +69123,14 @@
     "lean_name": "prefixesLprefixTotalHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-b rc27.3 source comparison pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae llistScript:2744-2747: universal common upper bound c then lists a,b; conjunction of prefixes of c implies their disjunctive comparability; no finite-list/index/chain or evaluator premise. HolLList is the original Nat-to-Option invariant subtype, using source lrep_ok_alt:36-57 and llist_tydef:64; LPREFIX case split matches source2655-2662 with ordinary List/Option carriers, equality and isPREFIX. toList getD0 is guarded by LFinite and llength_spec proves SOME length, so the fallback cannot be selected there. Curried convenience APIs remain untagged; these separate exact statements preserve HOL conjunction and quantifier order. Source-reviewed this declaration individually, not blanket lazy-list library approval; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "from_toList",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "toList_fromList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1194-1196 Theorem from_toList: !l. toList (fromList l) = SOME l. The Lean statement is the same universal equation over the same List binder, toList read as toList and fromList as fromList. The proof unfolds toList, uses lfinite_fromList and llength_fromList, then ltake_fromList, as the source does. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
   },
   {
     "hol_path": "HOL/src/list/src/listScript.sml",
@@ -70692,7 +70868,7 @@
     "lean_path": "Flapjack/Pancake/CrepInline/Canonical.lean",
     "lean_name": "compileInlProgHOLExact",
     "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7) against cakeml/pancake/crep_inlineScript.sml:259-262. HOL MAPs each (name, params, body) triple to the same name and params with inline_prog (inl_fs \\ name) body. Lean maps over the same List triple carrier, uses HolFiniteMapExact.erase for DOMSUB and the tagged inlineProgHOLExact; the standalone inl_fs parameter has a same-module lookup/finite-support roundtrip witness. MlString is the exact tagged HOL mlstring carrier, and the word-indexed program carrier uses words_as_type_indexed_bitvec. No BEq/LawfulBEq binders remain on the tagged declaration. Direct HOL output rows for inlining are replayed by canonicalOracleGuard. The executed parser-backed path still uses String-backed `compileInlTopHOL`; this tagged wrapper is used by the tested `compileProgTopHOLProductionExactInline` alternative. Production routing remains open under flapjack-e7w.2.",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7) against cakeml/pancake/crep_inlineScript.sml:259-262. HOL MAPs each (name, params, body) triple to the same name and params with inline_prog (inl_fs \\ name) body. Lean maps over the same List triple carrier, uses HolFiniteMapExact.erase for DOMSUB and the tagged inlineProgHOLExact; the standalone inl_fs parameter has a same-module lookup/finite-support roundtrip witness. MlString is the exact tagged HOL mlstring carrier, and the word-indexed program carrier uses words_as_type_indexed_bitvec. No BEq/LawfulBEq binders remain on the tagged declaration. Direct HOL output rows for inlining are replayed by canonicalOracleGuard. The executed parser-backed path reaches the computable support-certified companion compileInlProgHOLExactWithSupport through compileInlTopHOLExact in compileProgDeclsHOLW; this Classical.choose wrapper is its proof-facing form, and the String-backed compileInlTopHOL remains for the non-executed compileProgTopHOL adapter.",
     "fmap_as_finite_support_parameters": [
       "inl_fs"
     ],
@@ -70704,7 +70880,7 @@
     "lean_path": "Flapjack/Pancake/CrepInline/Canonical.lean",
     "lean_name": "compileInlTopHOLExact",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7) against cakeml/pancake/crep_inlineScript.sml:264-269. HOL filters prog by membership of each function name in inl_fname, creates alist_to_fmap over the selected triples, and calls compile_inl_prog on the original prog. Lean uses List.filter with MlString's fixed lawful equality, alistToFmapHOLExact whose lookup rows match HOL's first-occurrence-wins alist_to_fmap, then the support-certified executable inline pass over the original prog. The function signature has the same two list inputs and triple-list output with exact MlString names and width-indexed CrepProgHOL; words_as_type_indexed_bitvec records the positive word model. Direct HOL inline/alist rows are replayed by canonicalOracleGuard. The executed parser-backed path still uses String-backed `compileInlTopHOL`; this tagged wrapper is used by the tested `compileProgTopHOLProductionExactInline` alternative. Production routing remains open under flapjack-e7w.2.",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7) against cakeml/pancake/crep_inlineScript.sml:264-269. HOL filters prog by membership of each function name in inl_fname, creates alist_to_fmap over the selected triples, and calls compile_inl_prog on the original prog. Lean uses List.filter with MlString's fixed lawful equality, alistToFmapHOLExact whose lookup rows match HOL's first-occurrence-wins alist_to_fmap, then the support-certified executable inline pass over the original prog. The function signature has the same two list inputs and triple-list output with exact MlString names and width-indexed CrepProgHOL; words_as_type_indexed_bitvec records the positive word model. Direct HOL inline/alist rows are replayed by canonicalOracleGuard. The executed parser-backed path uses this tagged wrapper through compileProgDeclsHOLW in panToWordCompileProgHOL; the String-backed compileInlTopHOL remains for the non-executed compileProgTopHOL adapter.",
     "words_as_type_indexed_bitvec": true
   },
   {
@@ -70713,7 +70889,7 @@
     "lean_path": "Flapjack/Pancake/CrepInline/Canonical.lean",
     "lean_name": "inlineProgHOLExact",
     "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7) against cakeml/pancake/crep_inlineScript.sml:203-257. Compared the standalone inlineable finite-map parameter and Crep program input/output; HOL's map has type mlstring |-> (num list # prog), Lean uses HolFiniteMapExact MlString (List Nat × CrepProgHOL width), and the same-module holFmapAsFiniteSupportParamWitness_inlineProgHOLExact_inlineable proves lookup and finite-support roundtrips. MlString is the exact tagged HOL mlstring carrier, so its map-key equality is HOL equality; the wrapper fixes the global lawful equality and adds no generic BEq/LawfulBEq assumptions. words_as_type_indexed_bitvec records HOL's positive word dimension as BitVec width under [NeZero width]. Reviewed all source clauses: Call handler recursion uses the unchanged inline map; return non-distinctness returns the call; FLOOKUP miss preserves it; a hit recurses after DOMSUB of the callee; tail and non-tail paths preserve the HOL MAX_LIST/GENLIST/arg_load/transform sequence; Dec, Seq, If, While recurse structurally and the catch-all is identity. The support list/proof are confined to an untagged termination core and the wrapper's result is proved support-independent. Direct HOL rows are replayed by canonicalOracleGuard. Production `compileProgTopHOLWithMetadataOfExact` currently calls `compileProgTopHOLProductionExact`, whose inline stage is the String-backed `compileInlTopHOL`; the tagged exact wrapper is used by the tested alternative `compileProgTopHOLProductionExactInline`, not the executed pipeline. Production routing remains open under flapjack-e7w.2.",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7) against cakeml/pancake/crep_inlineScript.sml:203-257. Compared the standalone inlineable finite-map parameter and Crep program input/output; HOL's map has type mlstring |-> (num list # prog), Lean uses HolFiniteMapExact MlString (List Nat × CrepProgHOL width), and the same-module holFmapAsFiniteSupportParamWitness_inlineProgHOLExact_inlineable proves lookup and finite-support roundtrips. MlString is the exact tagged HOL mlstring carrier, so its map-key equality is HOL equality; the wrapper fixes the global lawful equality and adds no generic BEq/LawfulBEq assumptions. words_as_type_indexed_bitvec records HOL's positive word dimension as BitVec width under [NeZero width]. Reviewed all source clauses: Call handler recursion uses the unchanged inline map; return non-distinctness returns the call; FLOOKUP miss preserves it; a hit recurses after DOMSUB of the callee; tail and non-tail paths preserve the HOL MAX_LIST/GENLIST/arg_load/transform sequence; Dec, Seq, If, While recurse structurally and the catch-all is identity. The support list/proof are confined to an untagged termination core and the wrapper's result is proved support-independent. Direct HOL rows are replayed by canonicalOracleGuard. The executed pipeline reaches the computable core `inlineProgHOLCoreExact` through `compileInlProgHOLExactWithSupport` and `compileInlTopHOLExact`; this `Classical.choose` wrapper is the proof-facing form of that core, and the String-backed `compileInlTopHOL` remains for the non-executed `compileProgTopHOL` adapter.",
     "fmap_as_finite_support_parameters": [
       "inlineable"
     ],
@@ -70981,7 +71157,7 @@
       "fs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-09-28, bead flapjack-pxn.18.5.6.30) against crep_to_loopScript.sml:235-241: comp_func target fs params body = let vmap = make_vmap params; vmax = LENGTH params - 1; l = list_to_num_set (GENLIST I (LENGTH params)) in compile (mk_ctxt target vmap fs vmax) l body. Lean keeps HOL's target/fs/params/body binder order and the same let order: make_vmap is the exact-carrier makeVmapExact (FEMPTY |++ ZIP (params, GENLIST I (LENGTH params)) rendered as HolFiniteMapExact.updateListEq empty (params.zip (List.range params.length)), so a later duplicate parameter shadows an earlier one), vmax is params.length - 1, the live set list_to_num_set (GENLIST I (LENGTH params)) is built by the untagged source-shaped right-recursive helper listToNumSetHOLExact (List.range params.length) (listToNumSetHOLExact [] = LN and listToNumSetHOLExact (k :: ks) = sptInsert k () (listToNumSetHOLExact ks), matching HOL sptree$list_to_num_set_def rather than a left fold; the earlier sptListInsert left-fold rendering was repaired on 2026-09-28 under bead flapjack-pxn.18.5.6.30.2), and compile is the tagged compileHOLExact with the tagged mkCtxtExact. The standalone fs finite-map parameter is a same-module HolFiniteMapExact binder with checked parameter witness holFmapAsFiniteSupportParamWitness_compFuncHOLExact_fs; the words qualifier records the indexed CrepProgHOL/HolLoopProg word translation. This is proof-side exact infrastructure; production compileCrepToLoop does not route through it (tracked separately). No executable behavior or performance exception is claimed."
+    "reviewer": "flapjack-ds9 source comparison (2026-09-28, bead flapjack-pxn.18.5.6.30) against crep_to_loopScript.sml:235-241: comp_func target fs params body = let vmap = make_vmap params; vmax = LENGTH params - 1; l = list_to_num_set (GENLIST I (LENGTH params)) in compile (mk_ctxt target vmap fs vmax) l body. Lean keeps HOL's target/fs/params/body binder order and the same let order: make_vmap is the exact-carrier makeVmapExact (FEMPTY |++ ZIP (params, GENLIST I (LENGTH params)) rendered as HolFiniteMapExact.updateListEq empty (params.zip (List.range params.length)), so a later duplicate parameter shadows an earlier one), vmax is params.length - 1, the live set list_to_num_set (GENLIST I (LENGTH params)) is built by the untagged source-shaped right-recursive helper listToNumSetHOLExact (List.range params.length) (listToNumSetHOLExact [] = LN and listToNumSetHOLExact (k :: ks) = sptInsert k () (listToNumSetHOLExact ks), matching HOL sptree$list_to_num_set_def rather than a left fold; the earlier sptListInsert left-fold rendering was repaired on 2026-09-28 under bead flapjack-pxn.18.5.6.30.2), and compile is the tagged compileHOLExact with the tagged mkCtxtExact. The standalone fs finite-map parameter is a same-module HolFiniteMapExact binder with checked parameter witness holFmapAsFiniteSupportParamWitness_compFuncHOLExact_fs; the words qualifier records the indexed CrepProgHOL/HolLoopProg word translation. This is the executed crep-to-loop comp_func definition: panToWordCompileProgHOL calls compileProgHOLExact, which calls compFuncHOLExact, which calls compileHOLExact with mkCtxtExact. No executable behavior or performance exception is claimed."
   },
   {
     "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
@@ -70998,7 +71174,7 @@
     "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
     "lean_name": "compileExpHOLExact",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27) against crep_to_loopScript.sml:50-95. Compared BaseAddr/TopAddr/Const, vars FLOOKUP with 0 fallback, recursive Load/Load32/LoadByte, LoadGlob to Lookup, mapped Op, Crepop temporary assignments and target-specific long multiply, Cmp's two recursive calls and prog_if temporaries, and Shift's ordered recursive calls. The exact carriers are CrepExpHOL width, HolLoopExp/HolLoopProg, and CrepToLoopContextExact; vars/funcs use its checked finite-support witness and the word qualifier records the positive indexed BitVec translation. Direct EVAL rows base, var_hit, load32, op_nary, crepop_mul, cmp, shift, compile_exps are captured in scripts/hol-probes/crep_to_loop_compile_exp_probe.out and checked by Flapjack.Test.CrepToLoopCompileExpExactParity. `compile_exps` is a local source helper with no separate HOL declaration. This is proof-side exact infrastructure: generic production loopCompileExp does not route through it. The exact `compile_def` port is now `compileHOLExact`; routing production through it is tracked by flapjack-pxn.18.5.6.28.1, and the dependent exact `comp_func_def` port remains tracked by flapjack-pxn.18.5.6.35.",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27) against crep_to_loopScript.sml:50-95. Compared BaseAddr/TopAddr/Const, vars FLOOKUP with 0 fallback, recursive Load/Load32/LoadByte, LoadGlob to Lookup, mapped Op, Crepop temporary assignments and target-specific long multiply, Cmp's two recursive calls and prog_if temporaries, and Shift's ordered recursive calls. The exact carriers are CrepExpHOL width, HolLoopExp/HolLoopProg, and CrepToLoopContextExact; vars/funcs use its checked finite-support witness and the word qualifier records the positive indexed BitVec translation. Direct EVAL rows base, var_hit, load32, op_nary, crepop_mul, cmp, shift, compile_exps are captured in scripts/hol-probes/crep_to_loop_compile_exp_probe.out and checked by Flapjack.Test.CrepToLoopCompileExpExactParity. `compile_exps` is a local source helper with no separate HOL declaration. This is executed: compileHOLExact reaches it through compileExpHOLExact inside compileProgHOLExact.",
     "fmap_as_finite_support": [
       "vars",
       "funcs"
@@ -71011,7 +71187,7 @@
     "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
     "lean_name": "compileHOLExact",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.28) against crep_to_loopScript.sml:120-213. Compared all 19 source equations: Skip/Break/Continue/Tick; Return's compile_exps, fresh destinations, MAP2 assignments and nested_seq; Raise's vmax+1 assignment; ShMem's mapped-name guard; Store/Store32/StoreByte temporary sequencing; StoreGlob; recursive Seq; mapped Assign and Primitive with skip on missing vars; Dec's FUPDATE of vars/vmax and insert into the incoming live set; If's two recursive branches and original live set; While's Loop and Continue/Break structure; Call's find_lab, argument temps, rt_vars sentinel, return set, exception/handler branch; and ExtCall's four-name guard. The carriers are CrepProgHOL width/HolLoopProg width and CrepToLoopContextExact; vars/funcs are the checked same-module HolFiniteMapExact fields and the two qualifiers record exactly that finite-map translation and the positive indexed BitVec word translation. Direct HOL rows for all 19 constructors plus nested_seq empty/one/two are in scripts/hol-probes/crep_to_loop_compile_probe.out; exact Lean equations are checked in Flapjack.Test.CrepToLoopCompileExactParity. This is proof-side infrastructure only: production compileCrepToLoop still consumes generic CrepProg/LoopProg (String names and list live sets) and does not route through this definition. The production bridge is tracked by a linked bead; no executable behavior or performance exception is claimed.",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.28) against crep_to_loopScript.sml:120-213. Compared all 19 source equations: Skip/Break/Continue/Tick; Return's compile_exps, fresh destinations, MAP2 assignments and nested_seq; Raise's vmax+1 assignment; ShMem's mapped-name guard; Store/Store32/StoreByte temporary sequencing; StoreGlob; recursive Seq; mapped Assign and Primitive with skip on missing vars; Dec's FUPDATE of vars/vmax and insert into the incoming live set; If's two recursive branches and original live set; While's Loop and Continue/Break structure; Call's find_lab, argument temps, rt_vars sentinel, return set, exception/handler branch; and ExtCall's four-name guard. The carriers are CrepProgHOL width/HolLoopProg width and CrepToLoopContextExact; vars/funcs are the checked same-module HolFiniteMapExact fields and the two qualifiers record exactly that finite-map translation and the positive indexed BitVec word translation. Direct HOL rows for all 19 constructors plus nested_seq empty/one/two are in scripts/hol-probes/crep_to_loop_compile_probe.out; exact Lean equations are checked in Flapjack.Test.CrepToLoopCompileExactParity. This is the executed crep-to-loop compile_def: panToWordCompileProgHOL calls compileProgHOLExact directly. No executable behavior or performance exception is claimed.",
     "fmap_as_finite_support": [
       "vars",
       "funcs"
@@ -72918,7 +73094,7 @@
     "lean_name": "compHOL",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-29; bead flapjack-pxn.18.5.9.6.7): exact total port of HOL comp_def (loop_to_wordScript.sml:56-150) over the exact HolLoopProg width carrier, the exact num |-> num spt context rendered as the reviewed tree-map carrier Spt Nat (never an fmap_as_finite_support finite map), and the threaded label pair. Clause-for-clause in HOL order: Skip; Assign; Primitive AddCarry with the [result,carry]/[left,right,carryIn] destructuring and Skip on any other arity; Arith LLongMul/LLongDiv/LDiv; Store; SetGlobal (Temp address); Load32/LoadByte/Store32/StoreByte with Addr (find_var address) 0w; Seq threading the pair; If with find_var/find_reg_imm and a trailing Tick; Loop via mk_new_cutset on liveIn/liveOut; Break; Continue; Raise; Return 0 (map find_var); Tick; Mark; Fail (Skip); LocValue; Call (tail NONE gives link 0 :: mapped args; no handler gives a Skip handler body at the bumped pair; handler compiles p1 then p2 and Seqs a Tick); FFI (mk_new_cutset); ShMem becomes ShareInst. words_as_type_indexed_bitvec because HOL is polymorphic in the type-indexed word/label type while Lean fixes BitVec width under [NeZero width] via the reviewed HolLoopProg/WordLangProgHOL carriers; no extra hypotheses and no other differences. Expressions are compiled by the tagged compExpHOL (comp_exp_def). Representative direct original-HOL EVAL rows in scripts/hol-probes/loop_to_word_comp_probe.out, loop_to_word_comp_recursive_probe.out and loop_to_word_comp_call_probe.out are replayed by Flapjack/Test/LoopToWordCompHOLParity.lean. Production routing of the list-based loopToWord compiler is tracked separately (bead flapjack-pxn.18.5.9.5)."
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-29; bead flapjack-pxn.18.5.9.6.7): exact total port of HOL comp_def (loop_to_wordScript.sml:56-150) over the exact HolLoopProg width carrier, the exact num |-> num spt context rendered as the reviewed tree-map carrier Spt Nat (never an fmap_as_finite_support finite map), and the threaded label pair. Clause-for-clause in HOL order: Skip; Assign; Primitive AddCarry with the [result,carry]/[left,right,carryIn] destructuring and Skip on any other arity; Arith LLongMul/LLongDiv/LDiv; Store; SetGlobal (Temp address); Load32/LoadByte/Store32/StoreByte with Addr (find_var address) 0w; Seq threading the pair; If with find_var/find_reg_imm and a trailing Tick; Loop via mk_new_cutset on liveIn/liveOut; Break; Continue; Raise; Return 0 (map find_var); Tick; Mark; Fail (Skip); LocValue; Call (tail NONE gives link 0 :: mapped args; no handler gives a Skip handler body at the bumped pair; handler compiles p1 then p2 and Seqs a Tick); FFI (mk_new_cutset); ShMem becomes ShareInst. words_as_type_indexed_bitvec because HOL is polymorphic in the type-indexed word/label type while Lean fixes BitVec width under [NeZero width] via the reviewed HolLoopProg/WordLangProgHOL carriers; no extra hypotheses and no other differences. Expressions are compiled by the tagged compExpHOL (comp_exp_def). Representative direct original-HOL EVAL rows in scripts/hol-probes/loop_to_word_comp_probe.out, loop_to_word_comp_recursive_probe.out and loop_to_word_comp_call_probe.out are replayed by Flapjack/Test/LoopToWordCompHOLParity.lean. This declaration is the executed loop-to-word compiler: panToWordCompileProgHOL calls loopToWordCompileHOL, which reaches it through loopToWordCompileProgHOL and loopToWordCompFuncHOL."
   },
   {
     "hol_path": "cakeml/pancake/loop_to_wordScript.sml",
@@ -72994,7 +73170,7 @@
     "lean_path": "Flapjack/Pancake/LoopToWord/MakeCtxtExact.lean",
     "lean_name": "makeCtxtHOL",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds10 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.8.3) against loop_to_wordScript.sml:152-155. HOL make_ctxt n [] l = l and make_ctxt n (x::xs) l = make_ctxt (n+2) xs (insert x n l); Lean makeCtxtHOL is the constructor-for-constructor port over the exact spt num|->num carrier Spt Nat with the reviewed sptInsert, keeping the same recursion, the +2 register stride, and the list order. No word, fmap, or list qualifier applies (Spt is the ordinary reviewed sptree carrier, as for find_var_neq_0_ctxt). The production association-list makeCtxt in Flapjack/Pancake/LoopToWord.lean stays distinct; executable routing through this reviewed definition remains tracked by the comp_func chain (.18.5.9.8/.18.5.9.9)."
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.8.3) against loop_to_wordScript.sml:152-155. HOL make_ctxt n [] l = l and make_ctxt n (x::xs) l = make_ctxt (n+2) xs (insert x n l); Lean makeCtxtHOL is the constructor-for-constructor port over the exact spt num|->num carrier Spt Nat with the reviewed sptInsert, keeping the same recursion, the +2 register stride, and the list order. No word, fmap, or list qualifier applies (Spt is the ordinary reviewed sptree carrier, as for find_var_neq_0_ctxt). The executed comp_func chain calls this definition directly: loopToWordCompileHOL reaches it through loopToWordCompileProgHOL and loopToWordCompFuncHOL."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
@@ -74399,7 +74575,7 @@
     "lean_name": "compileDeclsExact",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source/carrier review 2026-09-30 bead .18.5.3.77.1.5: source213-247 compared clause-by-clause with exact DeclHOL/FunDeclHOL/ContextExact. Reverse compile_decs recursion retains source global shapes in final context; Decl initializer uses initial context. Function preserves name/inline/export, compiles params/return against initial structs, body against final tail context with original params replacing locals. Name removed, ExnDecl retained with compiled shape. get_names prepends source names in traversal order, ignores non-Name constructors; compile_top starts all three context lists empty, collects names then takes first pair component. Exact MlS names and positive word-indexed syntax; no other representation differences. New original five-row HOL EVAL probe/kernel replay checks full output+context, function forward global reference, flags/params, Name removal, reverse name order and duplicate struct shadow. Source definitions only; production routing remains on parent acceptance graph."
+    "reviewer": "flapjack-luna-a source/carrier review 2026-09-30 bead .18.5.3.77.1.5: source213-247 compared clause-by-clause with exact DeclHOL/FunDeclHOL/ContextExact. Reverse compile_decs recursion retains source global shapes in final context; Decl initializer uses initial context. Function preserves name/inline/export, compiles params/return against initial structs, body against final tail context with original params replacing locals. Name removed, ExnDecl retained with compiled shape. get_names prepends source names in traversal order, ignores non-Name constructors; compile_top starts all three context lists empty, collects names then takes first pair component. Exact MlS names and positive word-indexed syntax; no other representation differences. New original five-row HOL EVAL probe/kernel replay checks full output+context, function forward global reference, flags/params, Name removal, reverse name order and duplicate struct shadow. These exact pan-structs definitions are the executed pan-structs stage of panToWordCompileProgHOL."
   },
   {
     "hol_path": "cakeml/pancake/pan_structsScript.sml",
@@ -74408,7 +74584,7 @@
     "lean_name": "compileTopExact",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source/carrier review 2026-09-30 bead .18.5.3.77.1.5: source213-247 compared clause-by-clause with exact DeclHOL/FunDeclHOL/ContextExact. Reverse compile_decs recursion retains source global shapes in final context; Decl initializer uses initial context. Function preserves name/inline/export, compiles params/return against initial structs, body against final tail context with original params replacing locals. Name removed, ExnDecl retained with compiled shape. get_names prepends source names in traversal order, ignores non-Name constructors; compile_top starts all three context lists empty, collects names then takes first pair component. Exact MlS names and positive word-indexed syntax; no other representation differences. New original five-row HOL EVAL probe/kernel replay checks full output+context, function forward global reference, flags/params, Name removal, reverse name order and duplicate struct shadow. Source definitions only; production routing remains on parent acceptance graph."
+    "reviewer": "flapjack-luna-a source/carrier review 2026-09-30 bead .18.5.3.77.1.5: source213-247 compared clause-by-clause with exact DeclHOL/FunDeclHOL/ContextExact. Reverse compile_decs recursion retains source global shapes in final context; Decl initializer uses initial context. Function preserves name/inline/export, compiles params/return against initial structs, body against final tail context with original params replacing locals. Name removed, ExnDecl retained with compiled shape. get_names prepends source names in traversal order, ignores non-Name constructors; compile_top starts all three context lists empty, collects names then takes first pair component. Exact MlS names and positive word-indexed syntax; no other representation differences. New original five-row HOL EVAL probe/kernel replay checks full output+context, function forward global reference, flags/params, Name removal, reverse name order and duplicate struct shadow. These exact pan-structs definitions are the executed pan-structs stage of panToWordCompileProgHOL."
   },
   {
     "hol_path": "cakeml/pancake/pan_structsScript.sml",
@@ -74417,7 +74593,7 @@
     "lean_name": "getNamesExact",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source/carrier review 2026-09-30 bead .18.5.3.77.1.5: source213-247 compared clause-by-clause with exact DeclHOL/FunDeclHOL/ContextExact. Reverse compile_decs recursion retains source global shapes in final context; Decl initializer uses initial context. Function preserves name/inline/export, compiles params/return against initial structs, body against final tail context with original params replacing locals. Name removed, ExnDecl retained with compiled shape. get_names prepends source names in traversal order, ignores non-Name constructors; compile_top starts all three context lists empty, collects names then takes first pair component. Exact MlS names and positive word-indexed syntax; no other representation differences. New original five-row HOL EVAL probe/kernel replay checks full output+context, function forward global reference, flags/params, Name removal, reverse name order and duplicate struct shadow. Source definitions only; production routing remains on parent acceptance graph."
+    "reviewer": "flapjack-luna-a source/carrier review 2026-09-30 bead .18.5.3.77.1.5: source213-247 compared clause-by-clause with exact DeclHOL/FunDeclHOL/ContextExact. Reverse compile_decs recursion retains source global shapes in final context; Decl initializer uses initial context. Function preserves name/inline/export, compiles params/return against initial structs, body against final tail context with original params replacing locals. Name removed, ExnDecl retained with compiled shape. get_names prepends source names in traversal order, ignores non-Name constructors; compile_top starts all three context lists empty, collects names then takes first pair component. Exact MlS names and positive word-indexed syntax; no other representation differences. New original five-row HOL EVAL probe/kernel replay checks full output+context, function forward global reference, flags/params, Name removal, reverse name order and duplicate struct shadow. These exact pan-structs definitions are the executed pan-structs stage of panToWordCompileProgHOL."
   },
   {
     "hol_path": "cakeml/pancake/pan_structsScript.sml",
@@ -74627,7 +74803,7 @@
     "lean_name": "compileProgDeclsHOLW",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol source comparison (2026-09-30, bead flapjack-4ac.2.20.2.2; pan_to_crepScript.sml:393-397): sole List (DeclHOL width) input and ordered List (MlS x List Nat x CrepProgHOL width) output, no hypotheses. HOL extracts MAP FST (functions (FILTER inlinable prog)), then compile_to_crep prog, then compile_inl_top with those two arguments. Lean uses exactly reviewed inlinableHOL/functionsHOL/compileToCrepExactHOLW/CrepInlineCanonical.compileInlTopHOLExact in the same order. The canonical wrapper uses first-binding alist lookup and DOMSUB per function, and its unconditional compileInlTopHOLExact_eq_compileInlProgHOLExact theorem removes the computational support certificate to identify the source-shaped compile_inl_prog/inline_prog composition. The finite maps are local intermediates, so no map qualifier applies to this signature. Positive type-indexed HOL words translate to BitVec width with NeZero width. Existing exact DeclHOL kernel oracle replays cover empty, inline call, duplicate-first and nested inline cases in CompileProgParity. No executed production route or performance exception is claimed: production carrier/inline replacement remains on 4ac.2.20.3/e7w.2 and the direct-oracle/production bridge child4ac.2.20.2.1 stays open."
+    "reviewer": "flapjack-sol source comparison (2026-09-30, bead flapjack-4ac.2.20.2.2; pan_to_crepScript.sml:393-397): sole List (DeclHOL width) input and ordered List (MlS x List Nat x CrepProgHOL width) output, no hypotheses. HOL extracts MAP FST (functions (FILTER inlinable prog)), then compile_to_crep prog, then compile_inl_top with those two arguments. Lean uses exactly reviewed inlinableHOL/functionsHOL/compileToCrepExactHOLW/CrepInlineCanonical.compileInlTopHOLExact in the same order. The canonical wrapper uses first-binding alist lookup and DOMSUB per function, and its unconditional compileInlTopHOLExact_eq_compileInlProgHOLExact theorem removes the computational support certificate to identify the source-shaped compile_inl_prog/inline_prog composition. The finite maps are local intermediates, so no map qualifier applies to this signature. Positive type-indexed HOL words translate to BitVec width with NeZero width. Existing exact DeclHOL kernel oracle replays cover empty, inline call, duplicate-first and nested inline cases in CompileProgParity. This declaration is the executed pan-to-crep compile_prog stage: panToWordCompileProgHOL calls compileProgDeclsHOLW, which calls compileToCrepExactHOLW and compileInlTopHOLExact. No performance exception is claimed; the direct-oracle/production bridge child4ac.2.20.2.1 stays open."
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
@@ -74650,7 +74826,7 @@
     "lean_name": "compileToCrepExactHOLW",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-27, bead flapjack-4ac.2.19.1; pan_to_crepScript.sml:383-391): the unconditionally declared result is an ordered list of triples (mlstring, num list, Crep program), computed by projecting functions decls, constructing make_funcs from that ordered projection and get_eids_from_decls from the original declarations, then mapping (name, params, body, return) to (name, crep_vars params, comp params body). compileToCrepExactHOLW has the same sole declaration-list input and triple-list output over DeclHOL width/MlS/List Nat/CrepProgHOL width; it uses exactly the tagged functionsHOL, makeFuncsExactHOL, getEidsFromDeclsHOL, crepVarsHOL and compFuncExactHOLW helpers and deliberately ignores the projected return field in the final mapping just as HOL does. List.map preserves output order and duplicate function declarations. makeFuncsExactHOL uses the reviewed HOL alist_to_fmap right-fold behavior: the first duplicate name wins for callees, while every function row is still emitted; direct HOL row duplicate_function_names and its exact DeclHOL regression demonstrate both behaviors. The direct raise_const EVAL row also checks exception-ID derivation through getEidsFromDeclsHOL. Maps are local intermediate values, not fields or binders of this declaration, so no finite-map representation qualifier applies; their helper declarations record their standalone map result translations. The positive width-indexed HOL word carrier is represented by BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. Original rows are in scripts/hol-probes/compile_to_crep_probe.out and exact-carrier Lean checks are in Flapjack/Test/CompileToCrepeParity.lean. This is a tagged proof-side declaration only: the production String-backed compileToCrepHOL path is not routed through it; that executable gap is tracked by flapjack-pxn.18.3.1.3, and the larger exact compile_prog boundary by flapjack-4ac.2.20.2."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-27, bead flapjack-4ac.2.19.1; pan_to_crepScript.sml:383-391): the unconditionally declared result is an ordered list of triples (mlstring, num list, Crep program), computed by projecting functions decls, constructing make_funcs from that ordered projection and get_eids_from_decls from the original declarations, then mapping (name, params, body, return) to (name, crep_vars params, comp params body). compileToCrepExactHOLW has the same sole declaration-list input and triple-list output over DeclHOL width/MlS/List Nat/CrepProgHOL width; it uses exactly the tagged functionsHOL, makeFuncsExactHOL, getEidsFromDeclsHOL, crepVarsHOL and compFuncExactHOLW helpers and deliberately ignores the projected return field in the final mapping just as HOL does. List.map preserves output order and duplicate function declarations. makeFuncsExactHOL uses the reviewed HOL alist_to_fmap right-fold behavior: the first duplicate name wins for callees, while every function row is still emitted; direct HOL row duplicate_function_names and its exact DeclHOL regression demonstrate both behaviors. The direct raise_const EVAL row also checks exception-ID derivation through getEidsFromDeclsHOL. Maps are local intermediate values, not fields or binders of this declaration, so no finite-map representation qualifier applies; their helper declarations record their standalone map result translations. The positive width-indexed HOL word carrier is represented by BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. Original rows are in scripts/hol-probes/compile_to_crep_probe.out and exact-carrier Lean checks are in Flapjack/Test/CompileToCrepeParity.lean. This is the executed pan-to-crep declaration stage: panToWordCompileProgHOL calls compileProgDeclsHOLW, which calls it directly. The String-backed compileToCrepHOL remains legacy compatibility infrastructure; the exact compile_prog boundary is compileProgDeclsHOLW."
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
@@ -74723,7 +74899,7 @@
     "lean_name": "panToCrepMakeVmapHOLExact",
     "statement_status": "reviewed_fmap_as_finite_support_result",
     "fmap_as_finite_support_result": true,
-    "reviewer": "flapjack-ds10 (source comparison, bead flapjack-4ac.2.13): HOL make_vmap_def (pan_to_crepScript.sml:327-334) returns the finite map FEMPTY |++ ZIP (pvars, ZIP (shs, with_shape shs (GENLIST I (size_of_shape (Comb shs))))) directly. panToCrepMakeVmapHOLExact reproduces the construction clause-for-clause over the canonical carrier HolFiniteMapExact MlS (ShapeHOL × List Nat): MAP FST/SND = List.map Prod.fst/snd, GENLIST I = List.range, with_shape = tagged withShapeHOL, size_of_shape = tagged sizeOfShapeHOL, and |++ = HolFiniteMapExact.updateList (the FUPDATE_LIST fold, later duplicates winning). The standalone qualifier is justified by the same-module lookup witness holFmapAsFiniteSupportResultWitness_panToCrepMakeVmapHOLExact: (panToCrepMakeVmapHOLExact params).lookup key = panToCrepMakeVmapRaw params key, the raw FUPDATE_LIST-backed HOL map. Direct HOL-EVAL rows make_vmap_shaped/make_vmap_duplicate_lookup from scripts/hol-probes/compile_to_crep_probe.out are replayed by Flapjack/Test/PanToCrepMakeVmapParity.lean. The production String/Shape-keyed panToCrepMakeVmapHOL remains untagged; its exact-carrier replacement is tracked by flapjack-pxn.18.3.5.8. The qualifier is representation-only and does not change the quantifiers, side conditions, or result."
+    "reviewer": "flapjack-ds10 (source comparison, bead flapjack-4ac.2.13): HOL make_vmap_def (pan_to_crepScript.sml:327-334) returns the finite map FEMPTY |++ ZIP (pvars, ZIP (shs, with_shape shs (GENLIST I (size_of_shape (Comb shs))))) directly. panToCrepMakeVmapHOLExact reproduces the construction clause-for-clause over the canonical carrier HolFiniteMapExact MlS (ShapeHOL × List Nat): MAP FST/SND = List.map Prod.fst/snd, GENLIST I = List.range, with_shape = tagged withShapeHOL, size_of_shape = tagged sizeOfShapeHOL, and |++ = HolFiniteMapExact.updateList (the FUPDATE_LIST fold, later duplicates winning). The standalone qualifier is justified by the same-module lookup witness holFmapAsFiniteSupportResultWitness_panToCrepMakeVmapHOLExact: (panToCrepMakeVmapHOLExact params).lookup key = panToCrepMakeVmapRaw params key, the raw FUPDATE_LIST-backed HOL map. Direct HOL-EVAL rows make_vmap_shaped/make_vmap_duplicate_lookup from scripts/hol-probes/compile_to_crep_probe.out are replayed by Flapjack/Test/PanToCrepMakeVmapParity.lean. The executed pan-to-crep boundary uses this exact definition through compFuncExactHOLW; the String/Shape-keyed panToCrepMakeVmapHOL remains untagged legacy infrastructure. The qualifier is representation-only and does not change the quantifiers, side conditions, or result."
   },
   {
     "lean_path": "Flapjack/Pancake/PanToTarget.lean",
@@ -114712,7 +114888,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Mips32NativeSourceCorrect.lean",
     "lean_name": "mips32NativeSourceCompile_full_result",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure: every Mips32.NativeSource.compile artifact equals the full logical compiler result with its logical stack bound mips32NativeSourceLogicalBound."
+    "reviewer": "Flapjack infrastructure: every `Mips32.NativeSource.compile` artifact relates to the full logical compiler result with its logical stack bound `mips32NativeSourceLogicalBound`, up to the recorded symbol table (the artifact records real `compile_prog` names; the full compiler mirror records NOTFOUND)."
   },
   {
     "hol_path": null,
@@ -114736,7 +114912,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Mips32NativeSourceCorrect.lean",
     "lean_name": "mips32NativeSourceCompileDeclarations_eq",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure: Mips32.NativeSource.compileDeclarations is the first projection of compileProgMaxAsmExecutable pancakeMips32BackendConfig mips32Config on mainFirstHOL of the parsed declarations."
+    "reviewer": "Flapjack infrastructure: `Mips32.NativeSource.compileDeclarations` is the first projection of `compileProgMaxAsmExecutable pancakeMips32BackendConfig mips32Config` on `mainFirstHOL` of the parsed declarations, with the recorded symbol table replaced by the real `compile_prog` name table. Bytes, bitmaps and every other configuration field agree."
   },
   {
     "hol_path": null,
@@ -114824,7 +115000,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/X64NativeSourceCorrect.lean",
     "lean_name": "x64NativeSourceCompileDeclarations_eq",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure: `X64.NativeSource.compileDeclarations` is the first projection of `compileProgMaxAsmExecutable pancakeX64BackendConfig x64Config` on `mainFirstHOL` of the parsed declarations."
+    "reviewer": "Flapjack infrastructure: `X64.NativeSource.compileDeclarations` is the first projection of `compileProgMaxAsmExecutable pancakeX64BackendConfig x64Config` on `mainFirstHOL` of the parsed declarations, with the recorded symbol table replaced by the real `compile_prog` name table. Bytes, bitmaps and every other configuration field agree."
   },
   {
     "hol_path": null,
@@ -114840,7 +115016,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/X64NativeSourceCorrect.lean",
     "lean_name": "x64NativeSourceCompile_full_result",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure: every `X64.NativeSource.compile` artifact equals the full logical compiler result with its logical stack bound `x64NativeSourceLogicalBound`."
+    "reviewer": "Flapjack infrastructure: every `X64.NativeSource.compile` artifact relates to the full logical compiler result with its logical stack bound `x64NativeSourceLogicalBound`, up to the recorded symbol table (the artifact records real `compile_prog` names; the full compiler mirror records NOTFOUND)."
   },
   {
     "hol_path": null,
@@ -114936,7 +115112,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsmWith.lean",
     "lean_name": "compileProgAsmFast_eq_fst",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure (flapjack-sol; bead flapjack-pr1215-depth-blocker): Unconditional equality of the no-depth artifact API to the first projection of the full logical compiler; allocator equality followed by definitional projection."
+    "reviewer": "Flapjack infrastructure (flapjack-sol; bead flapjack-pr1215-depth-blocker): unconditional agreement of the no-depth artifact API with the first projection of the full logical compiler, up to the recorded symbol table. The driver passes the real `compile_prog` name table, so the artifact config records real symbols; the `compile_prog_max` mirror passes LN and records NOTFOUND. Bytes, bitmaps and every other configuration field agree; allocator equality gives the executable form."
   },
   {
     "hol_path": null,
@@ -114944,7 +115120,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/NativeSourceCorrect.lean",
     "lean_name": "nativeSourceCompileDeclarations_eq",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure (flapjack-sol; bead flapjack-pr1215-depth-blocker): No-depth native source artifact equals the full logical compiler first projection on main-first parsed declarations, including failures."
+    "reviewer": "Flapjack infrastructure (flapjack-sol; bead flapjack-pr1215-depth-blocker): the no-depth native source artifact equals the full logical compiler first projection on main-first parsed declarations, with the recorded symbol table replaced by the real `compile_prog` name table. Bytes, bitmaps and every other configuration field agree; failures are preserved."
   },
   {
     "hol_path": null,
@@ -114952,7 +115128,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/NativeSourceCorrect.lean",
     "lean_name": "nativeSourceCompile_full_result",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure (flapjack-sol; bead flapjack-pr1215-depth-blocker): Every successful source driver run supplies the full logical compiler tuple (out.artifact, nativeSourceLogicalBound out); Prod.ext and artifact equality establish this without evaluating depth in the driver."
+    "reviewer": "Flapjack infrastructure (flapjack-sol; bead flapjack-pr1215-depth-blocker): every successful source driver run supplies the full logical compiler tuple with the recorded symbol table reset to NOTFOUND (the `compile_prog_max` names), together with nativeSourceLogicalBound out. The driver artifact itself records the real `compile_prog` names; bytes, bitmaps and every other configuration field agree. Prod.ext and artifact agreement establish this without evaluating depth in the driver."
   },
   {
     "hol_path": "cakeml/compiler/encoders/arm8/arm8_targetScript.sml",
@@ -114984,7 +115160,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Arm8Instance.lean",
     "lean_name": "arm8PancakeHeapLimit_lt",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure (ARM8 closed-model instance, 2026-10-19): this is the concrete heap-limit side condition for `pancakeBackendConf arm8BackendConfig`, discharged by kernel `decide`. It has no HOL original because the closed ARM8 `arm8BackendConfig` is Flapjack-specific; the full L3 ARM8 configuration is tracked separately in #1229."
+    "reviewer": "Flapjack infrastructure (ARM8 closed-model instance, 2026-10-19): this is the concrete heap-limit side condition for `pancakeBackendConf arm8BackendConfig`, discharged by kernel `decide`. It has no HOL original because the closed ARM8 `arm8BackendConfig` is Flapjack-specific; the L3 ARM8 configuration is `arm8ConfigL3` (`Arm8/L3/Configuration.lean`), whose heap bound is `arm8PancakeHeapLimitL3_lt`, and removing the closed model is tracked in #1270."
   },
   {
     "hol_path": null,
@@ -114992,7 +115168,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Arm8Instance.lean",
     "lean_name": "panToTargetCompileSemanticsArm8",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure (ARM8 closed-model instance, 2026-10-19): instantiates the generic `panToTargetCompileSemantics` theorem at the closed `arm8Target`, supplying `arm8MachineConfigOk` and `arm8EncoderCorrect`. It has no single HOL original: the CakeML analogue depends on the unported L3 `arm8_encoder_correct` and the full `arm8_config` carrier, tracked in #1229."
+    "reviewer": "Flapjack infrastructure (ARM8 closed-model instance, 2026-10-19): instantiates the generic `panToTargetCompileSemantics` theorem at the closed `arm8Target`, supplying `arm8MachineConfigOk` and `arm8EncoderCorrect`. It has no single HOL original: the CakeML analogue depends on the L3 `arm8_encoder_correct`, which is ported as `arm8EncoderCorrectL3`, and the full `arm8_config` carrier, `arm8ConfigL3`; the L3 instance is `panToTargetCompileSemanticsArm8L3`. Removing the closed model is tracked in #1270."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileProg.lean",
@@ -123036,7 +123212,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Arm8L3Instance.lean",
     "lean_name": "arm8PancakeHeapLimitL3_lt",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure (ARM8 L3-carrier instance, 2026-11-03): the concrete heap-limit side condition for `pancakeBackendConf arm8BackendConfig`, discharged by kernel `decide`. It has no HOL original because it is the configuration-only bound the top theorem carries; it reads only `arm8BackendConfig`, not the target carrier. It restates the closed-model `Arm8Instance` row; the L3 copy is named `arm8PancakeHeapLimitL3_lt` because Lean accepts the same fully qualified name from two imported modules silently, with the later import winning, so a shared name would shadow rather than clash."
+    "reviewer": "Flapjack infrastructure (ARM8 L3-carrier instance, 2026-11-03): the concrete heap-limit side condition for `pancakeBackendConf arm8BackendConfig`, discharged by kernel `decide`. It has no HOL original because it is the configuration-only bound the top theorem carries; it reads only `arm8BackendConfig`, not the target carrier. The name carries the `L3` suffix because Lean accepts the same fully qualified name from two imported modules silently, with the later import winning, so a shared name would shadow rather than clash; the theorem itself is stated over the L3 ARMv8 configuration only."
   },
   {
     "hol_path": null,
@@ -132019,5 +132195,101 @@
     "encodeRefs"
   ],
   "reviewer": "Compared the exported FLOOKUP_encode_refs typed capture: FLOOKUP is lookup on the reviewed encodeRefs producer, and bounded HOL EL is holEl with a proof-irrelevant witness. The bound, reference case and out-of-range result agree. This replaces the alternate encodeRefs_lookup formulation. Independently source-reviewed."
-}
+},
+{
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean",
+    "lean_name": "fromStack_names_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only names-table agreement for `from_stack`: the named call differs from the empty-names call only in the recorded symbol table (`attach_bitmaps`), so bytes, bitmaps and every other configuration field agree. No separately named HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean",
+    "lean_name": "fromStack_ln_eq_names",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only reverse names-table agreement for `from_stack`: the empty-names call is the named call with the symbol table reset to NOTFOUND. No separately named HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean",
+    "lean_name": "compileProgAsmWith_names_eq_fst",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only artifact agreement: the named artifact pipeline is the `compile_prog_max` mirror with the real symbol table recorded. No separately named HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean",
+    "lean_name": "compileProgAsmWith_fst_names_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only reverse artifact agreement: the `compile_prog_max` mirror is the named artifact pipeline with the symbol table reset to NOTFOUND. No separately named HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsmWith.lean",
+    "lean_name": "compileProgAsmFast_symbols_eq_fst",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only artifact agreement for the executable allocator: the named driver artifact is the `compile_prog_max` mirror with the real symbol table recorded. No separately named HOL declaration."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LUNFOLD_def",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lunfold",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:367-369 Definition LUNFOLD_def[nocompute]: LUNFOLD f z = llist_abs (\\n. OPTION_MAP SND (FUNPOW (\\m. OPTION_BIND m (UNCURRY (K o f))) n (f z))). The Lean definition has the same f : beta -> (beta * alpha) option and z : beta binders, and its representation function is exactly OPTION_MAP SND of the FUNPOW iterate: lunfoldStep is FUNPOW of OPTION_BIND (UNCURRY (K o f)) (UNCURRY (K o f) (b,a) = f b), so step 0 is f z and step n+1 is step n bound into f on the first component, matching FUNPOW's definition; llist_abs is the HolLList rep carrier, the same Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64), and the proof obligation is exactly lrep_ok of that function. No clause, hypothesis or side condition is added."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LUNFOLD",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lunfoldHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:377-381 Theorem LUNFOLD: !f x. LUNFOLD f x = case f x of NONE => [||] | SOME (v1,v2) => v2 ::: LUNFOLD f v1. The Lean statement is the same universal equation over the same f and x, with [||] read as lnil, ::: as lcons and the pair case as the match on f x; the cons argument order v2 ::: LUNFOLD f v1 is preserved (head is the second component, recursive call on the first). The proof compares the reps index by index as the source does via llist_rep_LCONS/llist_rep_LNIL and the FUNPOW iterate; no hypothesis is added."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LUNFOLD_UNIQUE",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lunfold_unique",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:394-401 Theorem LUNFOLD_UNIQUE: !f g. (!x. g x = case f x of NONE => [||] | SOME (v1,v2) => v2 ::: g v1) ==> (!y. g y = LUNFOLD f y). The Lean statement keeps the same f : beta -> (beta * alpha) option and g : beta -> alpha llist binders, the same universally quantified case equation as the single premise (same lnil/lcons branches and v2 ::: g v1 order), and the same conclusion forall y. The proof is the source's LNTH_EQ + Induct_on n + once-rewrite of LUNFOLD, i.e. rep-index induction with the same case split; no premise or side condition is added."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LUNFOLD_BISIMULATION",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lunfold_bisimulation",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:525-534 Theorem LUNFOLD_BISIMULATION: !f1 f2 x1 x2. (LUNFOLD f1 x1 = LUNFOLD f2 x2) = ?R. R x1 x2 /\\ !y1 y2. R y1 y2 ==> (f1 y1 = NONE) /\\ (f2 y2 = NONE) \\/ ?h t1 t2. (f1 y1 = SOME (t1, h)) /\\ (f2 y2 = SOME (t2, h)) /\\ R t1 t2. The Lean statement is the same iff between the same unfolded-list equality and the same existential over the same R with the same conjunction order, the same two generator binders f1 : beta1 -> (beta1 * alpha) option / f2 : beta2 -> (beta2 * alpha) option and the same starts x1, x2; NONE is none, SOME the same pair with head h second and states t1, t2 first, and the boolean = is rendered as iff because both sides are propositions (this file's convention for HOL boolean predicates). The forward direction uses R = fun a b => lunfold f1 a = lunfold f2 b exactly as the source, and the reverse direction is the source's LNTH_EQ + Induct_on n induction; no hypothesis is added."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LLIST_BISIMULATION0",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "llist_bisimulation0",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:549-561 Theorem LLIST_BISIMULATION0: !ll1 ll2. (ll1 = ll2) = ?R. R ll1 ll2 /\\ !ll3 ll4. R ll3 ll4 ==> (ll3 = LNIL) /\\ (ll4 = LNIL) \\/ ?h t1 t2. (ll3 = h:::t1) /\\ (ll4 = h:::t2) /\\ R t1 t2. The Lean statement is the same iff over the same two HolLList binders, the same existential R with the same conjunct order, the same LNIL pair disjunct and the same LCONS disjunct with the same head h and tails t1, t2 order; the boolean = is rendered as iff as elsewhere in this file. The proof follows the source's LUNFOLD_LTL_HD rewrite in spirit, but since LTL_HD is not needed it uses the representation directly: reflexivity gives R = (=) with lcons_lhd_ltail in the cons case, and the reverse direction is the rep-index induction with the same disjunctive case split. No premise is added."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LLIST_STRONG_BISIMULATION",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "llist_strong_bisimulation",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:589-597 Theorem LLIST_STRONG_BISIMULATION: !ll1 ll2. (ll1 = ll2) = ?R. R ll1 ll2 /\\ !ll3 ll4. R ll3 ll4 ==> (ll3 = ll4) \\/ ?h t1 t2. (ll3 = h:::t1) /\\ (ll4 = h:::t2) /\\ R t1 t2. The Lean statement is the same iff with the same binders, existential and conjunct order, the same equality disjunct and the same two-conses disjunct sharing one head h; the boolean = is rendered as iff as in the companion theorems. The proof is the source's reflexive R in the forward direction and the rep-index induction in the reverse direction; no hypothesis is added."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "every_coind",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "every_coind",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1596-1600 Theorem every_coind: !P Q. (!h t. Q (h:::t) ==> P h /\\ Q t) ==> !ll. Q ll ==> every P ll. The Lean statement is the same two-step implication with P : alpha -> Prop and Q : HolLList alpha -> Prop (HOL bool predicates read as Prop as throughout this file), the same forall h t premise with the same conjunction order P h /\\ Q t, and the same forall ll conclusion with every P ll the tagged llistEvery of every_def (llistScript:1591, ported in the previous batch). The proof is the source's exists_ind coinduction translated to the rep-index induction used by llistExists_iff/llistEvery_iff, with the same lcons hd (ltail ll) case step; no hypothesis or finiteness premise is added."
+  }
 ]

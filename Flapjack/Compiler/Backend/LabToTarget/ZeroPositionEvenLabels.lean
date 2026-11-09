@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.EvenLabels
-import Flapjack.Compiler.Backend.LabToTarget.LabelPosition
-import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.EvenLabels
+public import Flapjack.Compiler.Backend.LabToTarget.LabelPosition
+public import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

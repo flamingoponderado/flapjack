@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.Arm8Config.Names
-import Flapjack.Compiler.Backend.Backend
-import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
-import Flapjack.Compiler.Backend.Backend.PrimSrcConfig.Executable
-import Flapjack.Compiler.Backend.ClosToBvl.Config
-import Flapjack.Compiler.Backend.BvlToBvi.Config
-import Flapjack.Compiler.Backend.PresLang.Config
-import Flapjack.Compiler.Compiler
+module
+
+public import Flapjack.Compiler.Backend.Arm8Config.Names
+public import Flapjack.Compiler.Backend.Backend
+public import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
+public import Flapjack.Compiler.Backend.Backend.PrimSrcConfig.Executable
+public import Flapjack.Compiler.Backend.ClosToBvl.Config
+public import Flapjack.Compiler.Backend.BvlToBvi.Config
+public import Flapjack.Compiler.Backend.PresLang.Config
+public import Flapjack.Compiler.Compiler
+
+@[expose] public section
 
 /-!
 # The ARMv8 (AArch64) backend configuration

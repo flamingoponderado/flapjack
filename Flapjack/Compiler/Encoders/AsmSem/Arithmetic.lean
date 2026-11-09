@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.AsmSem.State
-import Flapjack.Compiler.Encoders.AsmSem
+module
+
+public import Flapjack.Compiler.Encoders.AsmSem.State
+public import Flapjack.Compiler.Encoders.AsmSem
+
+@[expose] public section
 
 /-! Faithful asmSem state primitives and the complete arithmetic transition.
 Assertions retain completed writes and previous failures. Constructor arguments

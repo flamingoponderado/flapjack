@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.EqualityRel
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.EqualityRel
+
+@[expose] public section
 
 /-! Equality operations in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

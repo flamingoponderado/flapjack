@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.CallFrame
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.CallFrame
+
+@[expose] public section
 
 /-! Non-tail force simulation with the evaluator induction hypothesis. -/
 namespace Flapjack.Compiler.Backend.DataLive

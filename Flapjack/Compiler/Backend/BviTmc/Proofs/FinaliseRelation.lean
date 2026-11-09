@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.FinaliseHoles
-import Flapjack.Compiler.Backend.BviTmc.Proofs.MutableBlockOld
-import Flapjack.Compiler.Backend.Semantics.BviSem.Finalise
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.FinaliseHoles
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.MutableBlockOld
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Finalise
+
+@[expose] public section
 
 /-! Finalisation of a related mutable-constructor chain. -/
 namespace Flapjack.Compiler.Backend.BviTmc.FinaliseRelation

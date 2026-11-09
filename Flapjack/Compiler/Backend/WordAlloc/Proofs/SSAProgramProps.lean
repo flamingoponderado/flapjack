@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsMove
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsAllocation
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsLoopControl
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsCalls
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsPrimitives
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsControl
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsMove
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsAllocation
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsLoopControl
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsCalls
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsPrimitives
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsControl
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

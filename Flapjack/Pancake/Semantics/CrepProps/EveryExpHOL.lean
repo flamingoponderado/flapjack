@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.CrepProps
+module
+
+public import Flapjack.Pancake.Semantics.CrepProps
+
+@[expose] public section
 
 /-!
 # `crepProps$every_exp` over the exact `CrepExpHOL` carrier

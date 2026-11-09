@@ -1,16 +1,20 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.OracleInvariant
-import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.FiniteMapGrowth
-import Flapjack.Misc.Option
-import Flapjack.Misc.Sptree.Subspt
-import Flapjack.HolArb
-import Flapjack.SemanticPrimitivesHOL.EvalState
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.OracleInvariant
+public import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.FiniteMapGrowth
+public import Flapjack.Misc.Option
+public import Flapjack.Misc.Sptree.Subspt
+public import Flapjack.HolArb
+public import Flapjack.SemanticPrimitivesHOL.EvalState
+
+@[expose] public section
 
 /-! Source-oracle decoding and incremental compiler steps. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat.OracleInvariant
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
-private instance : Nonempty Config :=
+instance oracleStepInst1 : Nonempty Config :=
   ⟨{ next := ⟨0, 0, 0⟩, modEnv := emptyEnv, patternCfg := ⟨0⟩, envs := ⟨0, .ln⟩ }⟩
 
 namespace OracleStepPort

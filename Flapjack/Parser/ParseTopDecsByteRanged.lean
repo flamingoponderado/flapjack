@@ -1,6 +1,10 @@
-import Flapjack.Parser
-import Flapjack.Parser.LocaliseByteRanged
-import Flapjack.Pancake.PanToCrep.CompileProg
+module
+
+public import Flapjack.Parser
+public import Flapjack.Parser.LocaliseByteRanged
+public import Flapjack.Pancake.PanToCrep.CompileProg
+
+@[expose] public section
 
 /-!
 The executed parser boundary preserves byte-rangedness.

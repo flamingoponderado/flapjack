@@ -1,6 +1,10 @@
-import Flapjack.Misc.List
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Misc.List
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Store-update infrastructure for the factored source-to-flat state relation.
 The underlying value and state relations remain subject to HOL review. -/

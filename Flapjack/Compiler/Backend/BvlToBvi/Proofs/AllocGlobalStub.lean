@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CopyGlobalsStub
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CopyGlobalsStub
+
+@[expose] public section
 
 /-! Global-array allocation stub in BVL-to-BVI lowering. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

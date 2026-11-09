@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxStep
-import Flapjack.Compiler.Backend.Parmove.SeqsemUnchanged
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxStep
+public import Flapjack.Compiler.Backend.Parmove.SeqsemUnchanged
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.MoveAuxReconstruction
 open Flapjack.Compiler.Backend.Parmove

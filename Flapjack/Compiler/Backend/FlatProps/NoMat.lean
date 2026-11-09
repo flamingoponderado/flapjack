@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatLang
+module
+
+public import Flapjack.Compiler.Backend.FlatLang
+
+@[expose] public section
 
 /-! The flat-to-closure pass assumes pattern matches have been compiled. -/
 namespace Flapjack.Compiler.Backend.FlatProps

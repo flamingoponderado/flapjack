@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Measure
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Measure
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Bounded approximation of closure evaluation. Exhausting the bound is
 separate from the original clock timeout. The unbounded HOL evaluator and its

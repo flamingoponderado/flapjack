@@ -1,8 +1,17 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.SourceOperators
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Application
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Force
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvalInstall
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.SourceOperators
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Application
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Force
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvalInstall
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Special operator cases for the proof-side evaluator simulation. These
 lemmas are infrastructure and have not been reviewed as HOL theorem ports. -/

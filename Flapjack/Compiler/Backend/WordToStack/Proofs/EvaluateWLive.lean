@@ -1,14 +1,18 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocStateRel
-import Flapjack.Compiler.Backend.WordToStack.NativeLive
-import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWrite
-import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapInsert
-import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
-import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedKeys
-import Flapjack.Compiler.Backend.WordToStack.Proofs.KeyValueOrder
-import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexListLemmas
-import Flapjack.Basis.Pure.MlList.SortPerm
-import Flapjack.Misc.Sptree.ToAList
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocStateRel
+public import Flapjack.Compiler.Backend.WordToStack.NativeLive
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWrite
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapInsert
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedKeys
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.KeyValueOrder
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexListLemmas
+public import Flapjack.Basis.Pure.MlList.SortPerm
+public import Flapjack.Misc.Sptree.ToAList
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+
+@[expose] public section
 
 /-!
 # Word-to-Stack `evaluate_wLive`

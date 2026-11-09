@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabSem.State
-import Flapjack.Compiler.Backend.LabSem
+module
+
+public import Flapjack.Compiler.Backend.LabSem.State
+public import Flapjack.Compiler.Backend.LabSem
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabSem
 

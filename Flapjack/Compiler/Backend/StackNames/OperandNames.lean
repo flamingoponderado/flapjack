@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackNames
+module
+
+public import Flapjack.Compiler.Backend.StackNames
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackNames
 open Flapjack.Compiler.Encoders.Asm

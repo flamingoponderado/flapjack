@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Instructions
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Instructions
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+
+@[expose] public section
 
 /-!
 # Exact live-scoped local lookup transport for Word allocation

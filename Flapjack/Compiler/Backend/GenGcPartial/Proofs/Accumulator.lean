@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.GenGcPartial
+module
+
+public import Flapjack.Compiler.Backend.GenGcPartial
+
+@[expose] public section
 
 /-! Accumulator factoring for partial generational collection. -/
 namespace Flapjack.Compiler.Backend.GenGcPartial

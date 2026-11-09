@@ -1,31 +1,35 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRejected
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateInteger
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateWord
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateConstant
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockBoolean
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockInspect
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockCompare
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockCons
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockExtend
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockList
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockEqual
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateGlobal
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryLength
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryByte
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryEl
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryBounds
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteBounds
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteVectorRead
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryAlloc
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryUpdate
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteToList
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteStringCmp
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteConstruct
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteCopy
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteXor
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryConfig
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateFfi
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateThunk
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRejected
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateInteger
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateWord
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateConstant
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockBoolean
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockInspect
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockCompare
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockCons
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockExtend
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockList
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockEqual
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateGlobal
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryLength
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryByte
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryEl
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryBounds
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteBounds
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteVectorRead
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryAlloc
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryUpdate
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteToList
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteStringCmp
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteConstruct
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteCopy
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateByteXor
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateMemoryConfig
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateFfi
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateThunk
+
+@[expose] public section
 
 /-! Assembly of ordinary operator cases for the candidate simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

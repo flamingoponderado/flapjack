@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InstalledCode
-import Mathlib.Data.List.Enum
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InstalledCode
+public import Mathlib.Data.List.Enum
+
+@[expose] public section
 
 /-! Indexed installation facts for mutually recursive closure code. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

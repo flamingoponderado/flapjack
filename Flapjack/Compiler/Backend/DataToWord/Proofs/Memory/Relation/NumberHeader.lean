@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeader
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Number
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordMemoryEquality
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeader
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Number
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordMemoryEquality
+
+@[expose] public section
 
 /-! Header extraction for heap-allocated integers. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

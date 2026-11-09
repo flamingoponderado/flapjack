@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.ClashTree
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetInsertion
-import Flapjack.Misc.Sptree.InsertUnchanged
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ClashTree
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetInsertion
+public import Flapjack.Misc.Sptree.InsertUnchanged
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

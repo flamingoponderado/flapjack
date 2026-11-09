@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateRefs
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdateRefs
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
+
+@[expose] public section
 
 /-! Value-observation preservation when inserting a byte-array reference. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

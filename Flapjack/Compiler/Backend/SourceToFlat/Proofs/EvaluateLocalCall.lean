@@ -1,8 +1,15 @@
-import Flapjack.Compiler.Backend.FlatProps.ValueBasics
-import Flapjack.FiniteMap.AlistExact.Lookup
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.ValueBasics
+public import Flapjack.FiniteMap.AlistExact.Lookup
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Function-call prerequisites over the factored source-to-flat relations.
 These lemmas remain pending HOL correspondence review. -/

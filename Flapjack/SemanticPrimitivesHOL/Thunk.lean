@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL
+module
+
+public import Flapjack.SemanticPrimitivesHOL
+
+@[expose] public section
 
 /-! Source thunk and byte-XOR operations. Statement review is pending. -/
 namespace Flapjack.SemanticPrimitivesHOL

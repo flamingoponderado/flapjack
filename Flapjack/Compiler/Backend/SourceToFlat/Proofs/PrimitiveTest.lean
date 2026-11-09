@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Test
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Equality
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Test
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Equality
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
+
+@[expose] public section
 
 /-! Primitive comparison preservation for source-to-flat simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

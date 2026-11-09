@@ -3,6 +3,9 @@ name: Lean Action CI
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
+  # Builds on main save the shared Lake build cache that pull requests restore.
+  push:
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -17,8 +20,22 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # lean-action's built-in cache stores all of .lake (about 22 GB including
+      # .lake/packages) under a per-commit key, which overflows the 10 GB
+      # repository cache limit and evicts main's cache. Cache only .lake/build,
+      # restore it here before lean-action builds, and save it only from main.
+      - name: Restore Lake build cache
+        id: lake-cache
+        uses: actions/cache/restore@v5.1.0
+        with:
+          path: .lake/build
+          key: lake-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            lake-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
       - uses: leanprover/lean-action@v1
         with:
+          use-github-cache: false
           use-mathlib-cache: true
 
       - name: Check native proof and compiler trust mechanisms
@@ -103,3 +120,12 @@ jobs:
         run: |
           python3 scripts/check-frame-occupancy-parity.py
           python3 scripts/check-allocator-parity.py
+
+      - name: Save Lake build cache
+        if: >-
+          github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
+          && steps.lake-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5.1.0
+        with:
+          path: .lake/build
+          key: ${{ steps.lake-cache.outputs.cache-primary-key }}

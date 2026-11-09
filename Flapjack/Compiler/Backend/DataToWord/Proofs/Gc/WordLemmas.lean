@@ -1,4 +1,8 @@
-import Flapjack.Misc.Alignment
+module
+
+public import Flapjack.Misc.Alignment
+
+@[expose] public section
 
 /-! `data_to_word_gcProofScript.sml` opening word lemmas (lines 38-115). Only
 `lsr_lsl`, cited by the Pancake-to-target proof, is ported so far. HOL's `>>>`

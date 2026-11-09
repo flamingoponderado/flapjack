@@ -1,13 +1,17 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Proofs.PanStructs
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Pancake.Semantics.PanSem.ValueHOL
-import Flapjack.Pancake.Semantics.PanSem.IsValidValueExact
-import Flapjack.Pancake.Semantics.PanSem.DecExact
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalRanged
-import Flapjack.Pancake.PanLang.Decl
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Proofs.PanStructs
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Pancake.Semantics.PanSem
+public import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+public import Flapjack.Pancake.Semantics.PanSem.IsValidValueExact
+public import Flapjack.Pancake.Semantics.PanSem.DecExact
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalRanged
+public import Flapjack.Pancake.PanLang.Decl
+
+@[expose] public section
 
 /-!
 Source-state conversion and evaluator support for porting HOL

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Jumps
-import Flapjack.Compiler.Backend.StackToLab.Proofs.Prelude
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Jumps
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.Prelude
+
+@[expose] public section
 
 /-! `flatten_correct` case `Call` (`stack_to_labProofScript.sml:2041-2397`):
 tail calls jump to the callee; returning calls first load the return label

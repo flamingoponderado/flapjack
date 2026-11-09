@@ -1,9 +1,13 @@
-import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
-import Flapjack.Pancake.Semantics.PanProps.EvaluateResultInvariant
-import Flapjack.Pancake.Proofs.PanStructs.EvaluateStructsCodeInvariant
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
-import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
-import Flapjack.Pancake.PanStructs.CompileProgExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+public import Flapjack.Pancake.Semantics.PanProps.EvaluateResultInvariant
+public import Flapjack.Pancake.Proofs.PanStructs.EvaluateStructsCodeInvariant
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
+public import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
+public import Flapjack.Pancake.PanStructs.CompileProgExact
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.CompileCorrectWhile
 open Flapjack
 open Flapjack.Pancake.PanLang

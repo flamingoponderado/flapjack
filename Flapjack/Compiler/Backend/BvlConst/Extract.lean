@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlConst
+module
+
+public import Flapjack.Compiler.Backend.BvlConst
+
+@[expose] public section
 
 /-! The original polymorphic suffix-list interface for constant extraction. -/
 namespace Flapjack.Compiler.Backend.BvlConst

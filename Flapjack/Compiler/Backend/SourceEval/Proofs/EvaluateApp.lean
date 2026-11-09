@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateControl
-import Flapjack.EvaluateHOL.EvalDispatch
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateControl
+public import Flapjack.EvaluateHOL.EvalDispatch
+
+@[expose] public section
 
 /-! Application cases in source evaluator oracle adjustment. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.ClosLang.Pure
-import Flapjack.Compiler.Backend.DbVars
-import Flapjack.Compiler.Backend.BackendCommon.Trace
-import Flapjack.Compiler.Backend.ClosLang.Budget
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.ClosLang.Pure
+public import Flapjack.Compiler.Backend.DbVars
+public import Flapjack.Compiler.Backend.BackendCommon.Trace
+public import Flapjack.Compiler.Backend.ClosLang.Budget
+
+@[expose] public section
 
 /-! Executable closure-to-direct-call conversion. `Proofs.Total` establishes
 structural traversal bounds; HOL correspondence and correctness remain open. -/

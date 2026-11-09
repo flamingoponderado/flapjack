@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCse.Transform
-import Flapjack.Pancake.WordConvs.FullInstOkLess
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Transform
+public import Flapjack.Pancake.WordConvs.FullInstOkLess
+
+@[expose] public section
 
 /-!
 # `word_cseProof`: syntactic conventions

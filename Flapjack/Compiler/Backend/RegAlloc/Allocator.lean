@@ -1,28 +1,32 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.Accessors
-import Flapjack.Compiler.Backend.RegAlloc.Coalesce
-import Flapjack.Compiler.Backend.RegAlloc.Colouring
-import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
-import Flapjack.Compiler.Backend.RegAlloc.ExceptionFunctions
-import Flapjack.Compiler.Backend.RegAlloc.GraphConstruction
-import Flapjack.Compiler.Backend.RegAlloc.Initialization
-import Flapjack.Compiler.Backend.RegAlloc.MovePrep
-import Flapjack.Compiler.Backend.RegAlloc.MoveTable
-import Flapjack.Compiler.Backend.RegAlloc.Remap
-import Flapjack.Compiler.Backend.RegAlloc.SafeDiv
-import Flapjack.Compiler.Backend.RegAlloc.SortMoves
-import Flapjack.Compiler.Backend.RegAlloc.SortedMem
-import Flapjack.Compiler.Backend.RegAlloc.SpDefault
-import Flapjack.Compiler.Backend.RegAlloc.SpillChoice
-import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
-import Flapjack.Compiler.Backend.RegAlloc.StateFilter
-import Flapjack.Compiler.Backend.RegAlloc.StateForeach
-import Flapjack.Compiler.Backend.RegAlloc.StateMap
-import Flapjack.Compiler.Backend.RegAlloc.StatePartition
-import Flapjack.Compiler.Backend.RegAlloc.StempColouring
-import Flapjack.Compiler.Backend.RegAlloc.Worklists
-import Flapjack.Misc.LookupAny
-import Flapjack.Misc.Sorting
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.Accessors
+public import Flapjack.Compiler.Backend.RegAlloc.Coalesce
+public import Flapjack.Compiler.Backend.RegAlloc.Colouring
+public import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
+public import Flapjack.Compiler.Backend.RegAlloc.ExceptionFunctions
+public import Flapjack.Compiler.Backend.RegAlloc.GraphConstruction
+public import Flapjack.Compiler.Backend.RegAlloc.Initialization
+public import Flapjack.Compiler.Backend.RegAlloc.MovePrep
+public import Flapjack.Compiler.Backend.RegAlloc.MoveTable
+public import Flapjack.Compiler.Backend.RegAlloc.Remap
+public import Flapjack.Compiler.Backend.RegAlloc.SafeDiv
+public import Flapjack.Compiler.Backend.RegAlloc.SortMoves
+public import Flapjack.Compiler.Backend.RegAlloc.SortedMem
+public import Flapjack.Compiler.Backend.RegAlloc.SpDefault
+public import Flapjack.Compiler.Backend.RegAlloc.SpillChoice
+public import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
+public import Flapjack.Compiler.Backend.RegAlloc.StateFilter
+public import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+public import Flapjack.Compiler.Backend.RegAlloc.StateMap
+public import Flapjack.Compiler.Backend.RegAlloc.StatePartition
+public import Flapjack.Compiler.Backend.RegAlloc.StempColouring
+public import Flapjack.Compiler.Backend.RegAlloc.Worklists
+public import Flapjack.Misc.LookupAny
+public import Flapjack.Misc.Sorting
+
+@[expose] public section
 
 /-!
 # reg_alloc: the colouring phases and the top-level allocator

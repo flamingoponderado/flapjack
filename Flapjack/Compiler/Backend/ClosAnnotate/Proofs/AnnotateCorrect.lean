@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Evaluate
+
+@[expose] public section
 
 /-! Initial-program consequences of the candidate annotation simulation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

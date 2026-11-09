@@ -1,10 +1,16 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Config
-import Flapjack.Compiler.Backend.ClosToBvl.SourceInc
-import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
-import Flapjack.Compiler.Backend.ClosNumber
-import Flapjack.Compiler.Backend.ClosKnown.Compile
-import Flapjack.Compiler.Backend.ClosCall.Compile
-import Flapjack.Compiler.Backend.ClosAnnotate.Original
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Config
+public import Flapjack.Compiler.Backend.ClosToBvl.SourceInc
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
+public import Flapjack.Compiler.Backend.ClosNumber
+public import Flapjack.Compiler.Backend.ClosKnown.Compile
+public import Flapjack.Compiler.Backend.ClosCall.Compile
+public import Flapjack.Compiler.Backend.ClosAnnotate.Original
+public import Flapjack.Compiler.Backend.ClosAnnotate.Shift
+
+
+@[expose] public section
 
 /-! Source-shaped incremental composition of the closure-to-BVL passes. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

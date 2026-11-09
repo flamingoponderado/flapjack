@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveAllocation
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateClosure
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveAllocation
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateClosure
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Evaluation of generated mutually recursive closure construction. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

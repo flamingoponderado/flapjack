@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
-import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
+public import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 /-! Exact StackSem stack encoding/decoding prerequisites. Recursion decreases
 stack length using the source's bitmap LENGTH theorems; there is no fuel cutoff.

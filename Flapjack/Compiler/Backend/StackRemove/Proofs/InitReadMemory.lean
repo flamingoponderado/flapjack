@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.Proofs.InitReadMemory
 open Flapjack

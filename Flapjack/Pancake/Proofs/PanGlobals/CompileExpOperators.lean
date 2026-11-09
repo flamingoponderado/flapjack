@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpRStruct
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpRStruct
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCompileExpOperators
 open Flapjack

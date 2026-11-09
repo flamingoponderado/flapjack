@@ -1,4 +1,8 @@
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Comparison
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Comparison
+
+@[expose] public section
 
 /-! Local decomposition of the actual JumpCmp encoder. Branch guards are
 original lowering cases, to be discharged by the full constructor proof. -/

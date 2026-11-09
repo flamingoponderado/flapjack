@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateLength
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateLength
+
+@[expose] public section
 
 /-! Successful result lengths for the clocked flat evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatProps

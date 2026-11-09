@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Compiler.Backend.BackendCommon
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Compiler.Backend.BackendCommon
+
+@[expose] public section
 
 /-! Source-shaped dynamic-index StackSem evaluator fragments. These are
 untagged assembly infrastructure: HOL's total evaluate_def remains unfinished.

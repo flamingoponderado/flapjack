@@ -1,27 +1,31 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Alloc
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Call
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Clock
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CodeBufferWrite
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.DataBufferWrite
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.FFI
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Flat
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Get
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.If
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Install
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.LocValue
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Loop
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveFull
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.OpCurrHeap
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Raise
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Return
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Set
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.ShareInst
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.StoreConsts
+module
 
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Inst
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Alloc
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Call
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Clock
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CodeBufferWrite
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.DataBufferWrite
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.FFI
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Flat
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Get
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.If
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Install
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.LocValue
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Loop
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveFull
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.OpCurrHeap
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Raise
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Return
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Set
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.ShareInst
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.StoreConsts
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Inst
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CompCorrect
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

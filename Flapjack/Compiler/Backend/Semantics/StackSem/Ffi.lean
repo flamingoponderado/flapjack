@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
-import Flapjack.Compiler.Backend.Semantics.WordSem
-import Flapjack.Pancake.Semantics.LoopSem
-import Flapjack.FfiHOL
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public import Flapjack.Compiler.Backend.Semantics.WordSem
+public import Flapjack.Pancake.Semantics.LoopSem
+public import Flapjack.FfiHOL
+
+@[expose] public section
 
 /-! Source-matched `evaluate_def` FFI clause fragment over the exact StackSem
 state/result carriers. It is deliberately untagged: this partial dispatch helper

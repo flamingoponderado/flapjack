@@ -1,4 +1,8 @@
-import Flapjack.RiscV.Backend
+module
+
+public import Flapjack.RiscV.Backend
+
+@[expose] public section
 
 /-!
 Call-target tables for Word programs: each target records a function label,

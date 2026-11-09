@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.FlatProps.EvaluateClockShift.Support
-import Flapjack.Compiler.Backend.FlatProps.EvaluateList
-import Flapjack.Compiler.Backend.FlatProps.DoAppClock
-import Flapjack.Compiler.Backend.FlatProps.PatternMatch
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.EvaluateClockShift.Support
+public import Flapjack.Compiler.Backend.FlatProps.EvaluateList
+public import Flapjack.Compiler.Backend.FlatProps.DoAppClock
+public import Flapjack.Compiler.Backend.FlatProps.PatternMatch
+
+@[expose] public section
 
 /-! Clock-extension preservation for the faithful flat evaluator. The private
 helpers below structure the well-founded mutual induction and have no separate

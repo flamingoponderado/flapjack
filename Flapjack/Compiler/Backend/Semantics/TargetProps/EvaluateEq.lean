@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.TargetProps.Interference
-import Flapjack.Compiler.Backend.Semantics.TargetProps.FindNextInterference
-import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
-import Flapjack.Compiler.Encoders.AsmProps.Assertions.Iteration
-import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
-import Flapjack.Compiler.Encoders.AsmProps.Interference
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.Interference
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.FindNextInterference
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
+public import Flapjack.Compiler.Encoders.AsmProps.Assertions.Iteration
+public import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
+public import Flapjack.Compiler.Encoders.AsmProps.Interference
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmProps Classical

@@ -1,4 +1,9 @@
-import Flapjack.EvaluateProps.ClockIo
+module
+
+public import Flapjack.EvaluateProps.ClockIo
+
+import Batteries.Tactic.Init
+@[expose] public section
 
 /-! Composition of the original clock-and-I/O invariant. -/
 namespace Flapjack.EvaluateProps

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.State
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+public import Flapjack.HolRef
+
+@[expose] public section
 
 namespace Flapjack
 

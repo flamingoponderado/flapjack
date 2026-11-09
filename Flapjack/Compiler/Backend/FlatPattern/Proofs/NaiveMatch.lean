@@ -1,8 +1,15 @@
-import Flapjack.SemanticPrimitivesProps.Literals
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternRowsSame
-import Flapjack.Compiler.Backend.FlatProps.PatternList
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.BranchEvaluation
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.SemanticPrimitivesProps.Literals
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternRowsSame
+public import Flapjack.Compiler.Backend.FlatProps.PatternList
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.BranchEvaluation
+public import Mathlib.Data.List.Forall2
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Evaluation facts for the naive pattern dispatcher. The clocked evaluator
 remains pending source and carrier review. -/

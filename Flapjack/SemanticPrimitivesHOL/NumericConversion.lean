@@ -1,6 +1,10 @@
-import Flapjack.SemanticPrimitivesHOL
-import Flapjack.HolArb
-import Flapjack.Basis.Pure.MlString.CharWord
+module
+
+public import Flapjack.SemanticPrimitivesHOL
+public import Flapjack.HolArb
+public import Flapjack.Basis.Pure.MlString.CharWord
+
+@[expose] public section
 
 /-! HOL's partially specified literal selectors and primitive conversions. -/
 namespace Flapjack.SemanticPrimitivesHOL

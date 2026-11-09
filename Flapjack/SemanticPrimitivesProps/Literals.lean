@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL
+module
+
+public import Flapjack.SemanticPrimitivesHOL
+
+@[expose] public section
 
 /-! Properties of literal type compatibility. -/
 namespace Flapjack.SemanticPrimitivesProps

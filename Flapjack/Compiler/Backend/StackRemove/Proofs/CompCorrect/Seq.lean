@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.Seq
 open Flapjack Compiler.Backend.StackLang StackSemEvaluate StackSemControl
 /-- Canonical owning-state roundtrip; Flapjack representation infrastructure. -/

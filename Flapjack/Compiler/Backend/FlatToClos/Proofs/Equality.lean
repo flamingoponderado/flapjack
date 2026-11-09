@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Proof-side facts for polymorphic equality during flat-to-closure lowering. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

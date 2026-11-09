@@ -1,5 +1,9 @@
-import Flapjack.Pancake.WordLang.MaxVarExp
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
+module
+
+public import Flapjack.Pancake.WordLang.MaxVarExp
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
+
+@[expose] public section
 
 /-!
 # wordProps `permute_swap_lemma` over the exact wordSem evaluator

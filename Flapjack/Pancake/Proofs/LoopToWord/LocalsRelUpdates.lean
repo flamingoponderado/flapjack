@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
-import Flapjack.Pancake.Semantics.LoopSemStateExact
+module
+
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+
+@[expose] public section
 
 /-!
 # Exact update support for the Loop-to-Word locals relation

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.ConvertCodeLocals
 open Flapjack
 open Flapjack.Pancake.PanLang

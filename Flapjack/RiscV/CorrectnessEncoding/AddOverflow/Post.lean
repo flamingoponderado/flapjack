@@ -1,6 +1,10 @@
-import Flapjack.RiscV.CorrectnessEncoding.ArithNative
-import Flapjack.RiscV.CorrectnessEncoding.AddOverflow.Arithmetic
-import Flapjack.RiscV.CorrectnessEncoding.ConstRelation
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.ArithNative
+public import Flapjack.RiscV.CorrectnessEncoding.AddOverflow.Arithmetic
+public import Flapjack.RiscV.CorrectnessEncoding.ConstRelation
+
+@[expose] public section
 namespace Flapjack.RiscV.TargetProof.AddOverflow
 open Flapjack.RiscV.TargetProof.ArithNative
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target

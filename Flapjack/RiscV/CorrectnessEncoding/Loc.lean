@@ -1,9 +1,13 @@
-import Flapjack.RiscV.CorrectnessEncoding.InstructionStep
-import Flapjack.RiscV.CorrectnessEncoding.Skip
-import Flapjack.RiscV.CorrectnessEncoding.Immediate
-import Flapjack.RiscV.CorrectnessEncoding.DecodeAddi
-import Flapjack.RiscV.CorrectnessEncoding.DecodeUpperImmediates
-import Flapjack.RiscV.L3.Defs.UpperJump
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.InstructionStep
+public import Flapjack.RiscV.CorrectnessEncoding.Skip
+public import Flapjack.RiscV.CorrectnessEncoding.Immediate
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeAddi
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeUpperImmediates
+public import Flapjack.RiscV.L3.Defs.UpperJump
+
+@[expose] public section
 
 /-! Full original Loc constructor case. Local infrastructure derives both
 native transitions from emitted bytes and preserves the complete assertion

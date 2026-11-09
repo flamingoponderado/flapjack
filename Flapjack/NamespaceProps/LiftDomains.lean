@@ -1,6 +1,10 @@
-import Flapjack.NamespaceProps.LiftLookup
-import Mathlib.Data.Set.Image
-import Mathlib.Data.Set.Insert
+module
+
+public import Flapjack.NamespaceProps.LiftLookup
+public import Mathlib.Data.Set.Image
+public import Mathlib.Data.Set.Insert
+
+@[expose] public section
 
 /-! Original namespace-domain characterizations for module lifting. -/
 namespace Flapjack.NamespaceHOL

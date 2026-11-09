@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL.Control
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Control
+
+@[expose] public section
 
 /-! Source literal type checks and fixed-width shifts. -/
 namespace Flapjack.SemanticPrimitivesHOL

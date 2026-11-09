@@ -1,4 +1,8 @@
-import Flapjack.Misc.WordList
+module
+
+public import Flapjack.Misc.WordList
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.WordListExists
 open Flapjack
 

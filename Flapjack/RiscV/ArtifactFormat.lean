@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.StackRemove.StubNames
-import Flapjack.Compiler.Backend.StackAlloc.StubNames
-import Flapjack.Compiler.Backend.WordToStack.StubNames
-import Flapjack.RiscV.PipelineDiagnostics
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.StubNames
+public import Flapjack.Compiler.Backend.StackAlloc.StubNames
+public import Flapjack.Compiler.Backend.WordToStack.StubNames
+public import Flapjack.RiscV.PipelineDiagnostics
+
+@[expose] public section
 
 /-!
 # Pancake-compatible RISC-V artifact formatting

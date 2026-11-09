@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateLet
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateLet
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Conditional case of the closure-to-BVL expression simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

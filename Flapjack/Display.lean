@@ -1,7 +1,11 @@
-import Flapjack.Pancake.PanLang
-import Flapjack.Pancake.CrepLang
-import Flapjack.Pancake.LoopLang
-import Flapjack.NumSet
+module
+
+public import Flapjack.Pancake.PanLang
+public import Flapjack.Pancake.CrepLang
+public import Flapjack.Pancake.LoopLang
+public import Flapjack.NumSet
+
+@[expose] public section
 
 /-!
 The small display-language boundary used by Pancake's pass printer.

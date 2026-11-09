@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeAccessors
-import Flapjack.Compiler.Backend.Parmove.Semantics
-import Flapjack.Misc.FindIndex.ShiftZero
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeAccessors
+public import Flapjack.Compiler.Backend.Parmove.Semantics
+public import Flapjack.Misc.FindIndex.ShiftZero
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.MoveAuxStep
 open Flapjack.Compiler.Backend.Parmove Flapjack.Misc

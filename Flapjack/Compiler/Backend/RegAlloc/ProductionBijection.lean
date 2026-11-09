@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionNumSet
-import Flapjack.Compiler.Backend.RegAlloc.Remap
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionNumSet
+public import Flapjack.Compiler.Backend.RegAlloc.Remap
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV RiscV.CakeRegAlloc

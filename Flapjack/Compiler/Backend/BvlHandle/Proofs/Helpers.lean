@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlHandle.Helpers
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle.Helpers
+
+@[expose] public section
 
 /-! Source properties of handler-pass helper definitions. -/
 namespace Flapjack.Compiler.Backend.BvlHandle.Proofs

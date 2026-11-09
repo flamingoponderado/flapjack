@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineStateRel
-import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramRelation
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineStateRel
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramRelation
+
+@[expose] public section
 
 /-! Code invariants for dynamic BVL installation. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

@@ -1,10 +1,14 @@
-import Flapjack.HolRef
-import Flapjack.Misc.LprefixLub
-import Flapjack.Pancake.Semantics.PanSem.Semantics
-import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
-import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockIoEventsMono
-import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubAssembly
-import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockEq
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.LprefixLub
+public import Flapjack.Pancake.Semantics.PanSem.Semantics
+public import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+public import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockIoEventsMono
+public import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubAssembly
+public import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockEq
+
+@[expose] public section
 
 /-!
 # pan_globals: `LUB_IMAGE_SUC` (the `semantics_init_call` group)

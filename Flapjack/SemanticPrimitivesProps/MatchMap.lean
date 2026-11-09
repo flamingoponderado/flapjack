@@ -1,5 +1,9 @@
-import Flapjack.SemanticPrimitivesHOL
-import Flapjack.HolRef
+module
+
+public import Flapjack.SemanticPrimitivesHOL
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Mapping successful pattern-match results. -/
 namespace Flapjack.SemanticPrimitivesProps

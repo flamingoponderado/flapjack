@@ -1,9 +1,13 @@
-import Flapjack.Pancake.WordLang.MaxVarExp
-import Flapjack.Compiler.Backend.WordRemove
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateDecClock
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.GcConst
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.AllocConst
-import Flapjack.Misc.Sptree.Map
+module
+
+public import Flapjack.Pancake.WordLang.MaxVarExp
+public import Flapjack.Compiler.Backend.WordRemove
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateDecClock
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.GcConst
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.AllocConst
+public import Flapjack.Misc.Sptree.Map
+
+@[expose] public section
 
 /-!
 # `word_removeProof`: the `compile_state` group

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BackendCommon
+module
+
+public import Flapjack.Compiler.Backend.BackendCommon
+
+@[expose] public section
 
 /-! Stub locations reserved by data-to-word compilation. -/
 namespace Flapjack.Compiler.Backend.DataToWord

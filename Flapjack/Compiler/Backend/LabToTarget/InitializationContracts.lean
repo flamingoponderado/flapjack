@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.LabToTarget.Compile
-import Flapjack.Compiler.Backend.LabToTarget.GoodCode
-import Flapjack.Compiler.Backend.LabProps.CodeSafety
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
-import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
-import Flapjack.Misc.GoodDimindex
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Compile
+public import Flapjack.Compiler.Backend.LabToTarget.GoodCode
+public import Flapjack.Compiler.Backend.LabProps.CodeSafety
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+public import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+public import Flapjack.Misc.GoodDimindex
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm

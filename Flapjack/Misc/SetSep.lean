@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Counterpart of the pinned HOL set_sepScript.sml heap predicates.
 Sets are represented by predicates. The function graph retains independent

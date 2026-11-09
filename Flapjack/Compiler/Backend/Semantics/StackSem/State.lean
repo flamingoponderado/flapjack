@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.State
-import Flapjack.Compiler.Backend.StackLang.Prog
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+public import Flapjack.Compiler.Backend.StackLang.Prog
+
+@[expose] public section
 
 /-!
 # Exact StackSem carriers

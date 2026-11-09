@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Arithmetic
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Binary
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Memory
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.FloatingPoint
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Arithmetic
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Binary
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Memory
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.FloatingPoint
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRemove.InstructionSimulation
 open Flapjack Compiler.Encoders.Asm

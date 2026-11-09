@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.GenGc.Proofs.Accumulator
+module
+
+public import Flapjack.Compiler.Backend.GenGc.Proofs.Accumulator
+
+@[expose] public section
 
 /-! Source accumulator lemmas for the major collector. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

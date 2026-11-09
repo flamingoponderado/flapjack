@@ -38,9 +38,11 @@ for every parsed input, including failure (Flapjack infrastructure). -/
 theorem x64NativeSourceCompileDeclarations_eq (parsed : List (Decl (BitVec 64))) :
     X64.NativeSource.compileDeclarations parsed =
       (compileProgMaxAsmExecutable pancakeX64BackendConfig x64Config
-        (mainFirstHOL (parsed.map declToHOL))).1 := by
+        (mainFirstHOL (parsed.map declToHOL))).1.map fun (bytes, bms, c) =>
+        (bytes, bms, { c with symbols :=
+          (compileProgSymbols x64Config (mainFirstHOL (parsed.map declToHOL)) c) }) := by
   unfold X64.NativeSource.compileDeclarations
-  exact compileProgAsmFast_eq_fst _ _ _
+  exact compileProgAsmFast_symbols_eq_fst _ _ _
 
 /-- A successful driver run comes from a successful parse and static check, records
 `mainFirstHOL` of the parsed declarations and the native artifact compiler's result on them
@@ -67,10 +69,18 @@ CLI (Flapjack infrastructure). -/
 theorem x64NativeSourceCompile_full_result {source : String} {out : X64.NativeSource.Output}
     (compiled : X64.NativeSource.compile source = .ok out) :
     compileProgMaxAsmExecutable pancakeX64BackendConfig x64Config out.declarations =
-      (out.artifact, x64NativeSourceLogicalBound out) := by
+      (out.artifact.map fun (bytes, bms, c) =>
+        (bytes, bms, { c with symbols := notFoundSymbols c }),
+       x64NativeSourceLogicalBound out) := by
   obtain ⟨parsed, _, declsEq, resultEq⟩ := x64NativeSourceCompile_ok compiled
+  unfold X64.NativeSource.compileDeclarations at resultEq
+  have h1 := compileProgAsmFast_eq_fst pancakeX64BackendConfig x64Config out.declarations
+  have hfast : compileProgAsmFast pancakeX64BackendConfig x64Config out.declarations =
+      out.artifact := by
+    rw [declsEq, ← resultEq]
+  rw [hfast] at h1
   apply Prod.ext
-  · rw [resultEq, x64NativeSourceCompileDeclarations_eq, declsEq]
+  · exact h1
   · rfl
 
 /-- Concrete x86-64 correctness of the parser-backed native compiler: if
@@ -140,14 +150,15 @@ theorem x64NativeSourceCompile_correct {σ : Type} {source : String}
   rw [parsedEq] at parsedEq'
   cases Except.ok.inj parsedEq'
   rw [declsEq] at rest
-  rw [resultEq, x64NativeSourceCompileDeclarations_eq] at hartifact
+  have hfull := x64NativeSourceCompile_full_result compiled
+  rw [declsEq, hartifact] at hfull
+  simp only [Option.map_some] at hfull
+  rw [← hbound] at hfull
   have hcomp : compileProgMaxAsmExecutable pancakeX64BackendConfig x64Config
-      (mainFirstHOL (parsed.map declToHOL)) = (some (bytes, bitmaps, c'), stack_max) := by
-    apply Prod.ext
-    · exact hartifact
-    · simpa only [x64NativeSourceLogicalBound, declsEq] using hbound.symm
-  exact panToTargetCompileSemanticsX64Source mc (parsed.map declToHOL) bytes bitmaps c'
-    stack_max s ms globals_size heap_len adj_ptr2 adj_ptr4 ffi cbspace data_sp start hmc hasMain
-    ⟨hcomp, rest⟩
+      (mainFirstHOL (parsed.map declToHOL)) =
+      (some (bytes, bitmaps, { c' with symbols := notFoundSymbols c' }), stack_max) := hfull
+  exact panToTargetCompileSemanticsX64Source mc (parsed.map declToHOL) bytes bitmaps
+    { c' with symbols := notFoundSymbols c' } stack_max s ms globals_size heap_len
+    adj_ptr2 adj_ptr4 ffi cbspace data_sp start hmc hasMain ⟨hcomp, rest⟩
 
 end Flapjack.Pancake.Proofs.PanToTarget

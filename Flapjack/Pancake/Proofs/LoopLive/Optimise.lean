@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.LoopLive.CompileCorrect
-import Flapjack.Pancake.Proofs.LoopCall.CompileCorrect
+module
+
+public import Flapjack.Pancake.Proofs.LoopLive.CompileCorrect
+public import Flapjack.Pancake.Proofs.LoopCall.CompileCorrect
+
+@[expose] public section
 
 /-!
 # loop_live `mark_correct` / `comp_correct`

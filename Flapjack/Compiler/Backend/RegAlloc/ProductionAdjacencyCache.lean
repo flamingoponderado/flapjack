@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionStateRelation
-import Std.Data.TreeSet.Lemmas
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionStateRelation
+public import Std.Data.TreeSet.Lemmas
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc

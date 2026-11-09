@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ByteReads
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ByteReads
+
+@[expose] public section
 
 /-! Byte-array update operations under closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

@@ -1,4 +1,14 @@
-import Flapjack.Pancake.CrepInline.Pass
+module
+
+public import Flapjack.Pancake.CrepInline.Pass
+-- The `#guard` oracles below run compiled code from these modules.
+meta import Flapjack.Pancake.CrepInline.Pass
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # HOL `inline_prog` over the canonical `HolFiniteMapExact`
@@ -16,9 +26,10 @@ rather than the untagged unique-key list model `CrepInlineFmapHOL`
 
 The recursive core is intentionally untagged because it carries Lean-only
 support-list termination evidence. Its support-independent wrapper and the
-top-level exact wrapper are tagged; the top-level wrapper runs in the tested,
-non-executed alternative `compileProgTopHOLProductionExactInline`. The wider
-exact `compile_prog` output/metadata bridge remains tracked separately.
+top-level exact wrapper are tagged; the top-level wrapper `compileInlTopHOLExact`
+is the executed crep-inline stage, called by `compileProgDeclsHOLW` in
+`panToWordCompileProgHOL`. The wider exact `compile_prog` output/metadata
+bridge remains tracked separately.
 
 The core `inlineProgHOLCoreExact` reproduces the clause structure of
 `inlineProgHOLCore` (`Pass.lean:827`) and of the HOL source equation by

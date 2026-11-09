@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Proofs.CrepInline.CallNontail
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Proofs.CrepInline.CallNontail
+
+@[expose] public section
 
 /-!
 # `inline_prog_correct`: the tagged `Call` case

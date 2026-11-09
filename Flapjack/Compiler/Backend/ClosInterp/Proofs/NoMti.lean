@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosInterp.Optimise
-import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Optimise
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
+
+@[expose] public section
 
 /-! Pre-multi-argument syntax under incremental interpreter insertion. -/
 namespace Flapjack.Compiler.Backend.ClosInterp

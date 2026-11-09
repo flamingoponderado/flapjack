@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviLet.Proofs.DeleteVar
+module
+
+public import Flapjack.Compiler.Backend.BviLet.Proofs.DeleteVar
+
+@[expose] public section
 
 /-! Ordinary let-binding case of the BVI let-propagation simulation. -/
 namespace Flapjack.Compiler.Backend.BviLet.Proofs

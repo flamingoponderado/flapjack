@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Compare
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.JumpCmp
-import Flapjack.Compiler.Encoders.Arm8.Machine.MulCarryCase
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Compare
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.JumpCmp
+public import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
+public import Flapjack.HolRef
+
+@[expose] public section
 
 set_option maxHeartbeats 12000000
 set_option maxRecDepth 10000

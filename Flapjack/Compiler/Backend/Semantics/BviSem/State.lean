@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.State
-import Flapjack.Compiler.Backend.Bvi.Syntax
-import Flapjack.SemanticPrimitivesHOL
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.State
+public import Flapjack.Compiler.Backend.Bvi.Syntax
+public import Flapjack.SemanticPrimitivesHOL
+
+@[expose] public section
 
 /-! Runtime result and state carriers for the BVI semantics. -/
 namespace Flapjack.Compiler.Backend.BviSem

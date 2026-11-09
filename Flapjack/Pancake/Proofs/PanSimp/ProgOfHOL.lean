@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanSimp
-import Flapjack.Pancake.PanLang.ProgHOLInduction
+module
+
+public import Flapjack.Pancake.PanSimp
+public import Flapjack.Pancake.PanLang.ProgHOLInduction
+
+@[expose] public section
 
 /-!
 Flapjack-specific representation bridges for the exact HOL `pan_simp` pass.

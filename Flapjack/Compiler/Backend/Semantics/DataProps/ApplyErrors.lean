@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
+
+@[expose] public section
 
 /-! Error classification for data-language primitive applications. -/
 namespace Flapjack.Compiler.Backend.DataProps

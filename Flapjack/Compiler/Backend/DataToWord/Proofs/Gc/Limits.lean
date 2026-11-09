@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.State
-import Flapjack.Compiler.Backend.Semantics.WordSem.State
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.State
+public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+
+@[expose] public section
 
 /-! Architecture and heap-limit invariant for data-to-word correctness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

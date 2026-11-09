@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosFvs.Source
-import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+module
+
+public import Flapjack.Compiler.Backend.ClosFvs.Source
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+
+@[expose] public section
 
 /-! Code-location preservation by free-variable cleanup. -/
 namespace Flapjack.Compiler.Backend.ClosFvs

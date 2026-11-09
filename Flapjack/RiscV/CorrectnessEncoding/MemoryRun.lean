@@ -1,6 +1,10 @@
-import Flapjack.RiscV.CorrectnessEncoding.BinopRun
-import Flapjack.RiscV.L3.Step.StoreStep
-import Flapjack.Compiler.Encoders.RiscV.Target.State
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.BinopRun
+public import Flapjack.RiscV.L3.Step.StoreStep
+public import Flapjack.Compiler.Encoders.RiscV.Target.State
+
+@[expose] public section
 
 /-! Literal actual native memory Run compositions for the original fixed RV64
 target. Mode and bare translation follow only from riscvOk; every intrinsic

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosConstant.Proofs.Bounds
+module
+
+public import Flapjack.Compiler.Backend.ClosConstant.Proofs.Bounds
+
+@[expose] public section
 
 /-! Memory invariants for reconstructing flattened constants. -/
 namespace Flapjack.Compiler.Backend.ClosConstant.Proofs

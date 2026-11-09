@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownGlobals
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownGlobals
+
+@[expose] public section
 
 /-! Tree inclusion across sequential known-function traversals. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.SubsptComposition

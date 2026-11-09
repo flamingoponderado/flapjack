@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelation
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleRecording
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleExtraction
-import Flapjack.SemanticPrimitivesProps.StoreRelation
-import Flapjack.Misc.ListEl
-import Flapjack.Misc.Option.Rel
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleRecording
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleExtraction
+public import Flapjack.SemanticPrimitivesProps.StoreRelation
+public import Flapjack.Misc.ListEl
+public import Flapjack.Misc.Option.Rel
+
+@[expose] public section
 
 /-! State relation for the source evaluator's recording simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.CrepInline.NoReturn
-import Flapjack.Pancake.Proofs.CrepInline.UnreachElim
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.NoReturn
+public import Flapjack.Pancake.Proofs.CrepInline.UnreachElim
+
+@[expose] public section
 
 namespace Flapjack.CrepInlineNotBranchReturn
 

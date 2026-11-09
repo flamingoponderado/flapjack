@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Stateful callback adaptation used by incremental compiler passes. -/
 namespace Flapjack.Compiler.Backend.BackendProps

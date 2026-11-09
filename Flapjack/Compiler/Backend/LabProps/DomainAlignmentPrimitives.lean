@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabProps.DomainAlignment
-import Flapjack.Compiler.Backend.LabSem.Navigation
-import Flapjack.Compiler.Backend.LabSem.Arithmetic
+module
+
+public import Flapjack.Compiler.Backend.LabProps.DomainAlignment
+public import Flapjack.Compiler.Backend.LabSem.Navigation
+public import Flapjack.Compiler.Backend.LabSem.Arithmetic
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm

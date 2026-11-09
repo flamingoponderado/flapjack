@@ -1,5 +1,9 @@
-import Flapjack.RiscV.RegisterTransfer
-import Flapjack.RiscV.WordToStack
+module
+
+public import Flapjack.RiscV.RegisterTransfer
+public import Flapjack.RiscV.WordToStack
+
+@[expose] public section
 
 /-!
 # Reseating backend configuration to CakeML's stack-register convention

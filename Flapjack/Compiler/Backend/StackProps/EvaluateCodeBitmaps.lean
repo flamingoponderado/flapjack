@@ -1,15 +1,19 @@
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Call
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Nonrecursive
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Inst
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Alloc
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.StoreConsts
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Install
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.FFI
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.If
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Loop
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.JumpLower
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.RawCall
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Call
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Nonrecursive
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Inst
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Alloc
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.StoreConsts
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Install
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.FFI
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.If
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Loop
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.JumpLower
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.RawCall
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm

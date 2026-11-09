@@ -1,7 +1,11 @@
-import Flapjack.Misc.Option.MapM
-import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOp
-import Flapjack.Compiler.Backend.BvlInline.Proofs.TraversalTotal
-import Flapjack.Compiler.Backend.BvlInline.TickInline
+module
+
+public import Flapjack.Misc.Option.MapM
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOp
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.TraversalTotal
+public import Flapjack.Compiler.Backend.BvlInline.TickInline
+
+@[expose] public section
 
 /-! Executable correspondence for BVL let-operation optimization. -/
 namespace Flapjack.Compiler.Backend.BvlInline

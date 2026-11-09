@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Expression weights used to define the clocked BVL evaluator. -/
 namespace Flapjack.Compiler.Backend.BvlSem

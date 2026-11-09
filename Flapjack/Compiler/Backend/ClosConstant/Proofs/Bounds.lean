@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosConstant.Proofs.Flatten
+module
+
+public import Flapjack.Compiler.Backend.ClosConstant.Proofs.Flatten
+
+@[expose] public section
 
 /-! Index bounds for source constant flattening. -/
 namespace Flapjack.Compiler.Backend.ClosConstant.Proofs

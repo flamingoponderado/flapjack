@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CorrectnessEncoding.BinopRun
-import Flapjack.Compiler.Encoders.RiscV.Target.State
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.BinopRun
+public import Flapjack.Compiler.Encoders.RiscV.Target.State
+
+@[expose] public section
 
 /-! Local source/Run compositions required by the full original Shift encoder
 case560-620. They have no separately named HOL originals and remain untagged

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordSuffix
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordSuffix
+
+@[expose] public section
 
 /-! Common recorded-oracle prefix for declaration evaluation at different clocks. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

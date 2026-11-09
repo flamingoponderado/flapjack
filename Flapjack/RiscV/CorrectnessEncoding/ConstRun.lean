@@ -1,6 +1,14 @@
-import Flapjack.RiscV.CorrectnessEncoding.Const32
-import Flapjack.RiscV.CorrectnessEncoding.ConstWide
-import Flapjack.Compiler.Encoders.RiscV.Target.State
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.Const32
+public import Flapjack.RiscV.CorrectnessEncoding.ConstWide
+public import Flapjack.Compiler.Encoders.RiscV.Target.State
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 Compiler.Encoders.Asm Compiler.Encoders.RiscV.Target

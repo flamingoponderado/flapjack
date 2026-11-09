@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationIf
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationIf
+
+@[expose] public section
 
 /-! Short-circuit Boolean case of the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

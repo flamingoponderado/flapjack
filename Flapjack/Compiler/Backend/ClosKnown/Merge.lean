@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosKnown.Config
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Config
+
+@[expose] public section
 
 /-! Source-shaped total approximation merging. The list helper implements the
 pairwise traversal used by HOL’s MAP2; it is called on equal-length lists. -/

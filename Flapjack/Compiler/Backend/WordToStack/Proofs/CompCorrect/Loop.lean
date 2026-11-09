@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Clock
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelCutState
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoopHandler
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Clock
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelCutState
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoopHandler
+
+@[expose] public section
 namespace Flapjack.WordToStackProofs.CompCorrect.Loop
 open Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.WordToStack.Native

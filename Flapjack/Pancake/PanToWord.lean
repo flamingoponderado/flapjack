@@ -1,9 +1,13 @@
-import Flapjack.Pancake.PanSimp
-import Flapjack.Pancake.PanStructs.CompileDeclsExact
-import Flapjack.Pancake.PanGlobals.CompileTopExact
-import Flapjack.Pancake.PanToCrep.CompileExact
-import Flapjack.Pancake.CrepToLoop.ContextExact
-import Flapjack.Pancake.LoopToWord.CompFuncExact
+module
+
+public import Flapjack.Pancake.PanSimp
+public import Flapjack.Pancake.PanStructs.CompileDeclsExact
+public import Flapjack.Pancake.PanGlobals.CompileTopExact
+public import Flapjack.Pancake.PanToCrep.CompileExact
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+public import Flapjack.Pancake.LoopToWord.CompFuncExact
+
+@[expose] public section
 
 /-!
 Counterpart of `cakeml/pancake/pan_to_wordScript.sml`: the whole Pancake to

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Safety
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Safety
+
+@[expose] public section
 
 /-! Control-flow cases of the proof-side annotation simulation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

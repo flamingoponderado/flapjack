@@ -1,29 +1,33 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallReturnHandler
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.FFI
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallReturnNone
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Bitmap
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Install
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.DataBufferWrite
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.RawCall
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallTail
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreConsts
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackMemoryAny
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.JumpLower
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.If
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Locations
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.ShMemOp
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Seq
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackSpace
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Loop
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackMemory
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CodeBufferWrite
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Call
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackSize
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallReturnHandler
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.FFI
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallReturnNone
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Bitmap
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Install
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.DataBufferWrite
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.RawCall
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CallTail
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreConsts
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackMemoryAny
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.JumpLower
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.If
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Locations
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.ShMemOp
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Seq
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackSpace
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Loop
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackMemory
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.CodeBufferWrite
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Call
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackSize
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.Assembly
 open Flapjack Compiler.Backend.StackLang StackSemEvaluate StackSemStateOps StackSemControl StackSemMeasure
 /-- Flapjack-only normalization of the case proofs' dependent result matches.

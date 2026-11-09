@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordInst.ExecutablePullExp
+module
+
+public import Flapjack.Compiler.Backend.WordInst.ExecutablePullExp
+
+@[expose] public section
 
 /-! Flapjack execution infrastructure for the complete native instruction
 selector. This keeps every original selector clause, using the unconditionally

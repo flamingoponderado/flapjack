@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanStructs.OldExpShapeExact
-import Flapjack.Pancake.PanStructs
+module
+
+public import Flapjack.Pancake.PanStructs.OldExpShapeExact
+public import Flapjack.Pancake.PanStructs
+
+@[expose] public section
 
 /-! Exact source expression compilation. Production expression routing is still
 an open obligation; these definitions preserve the HOL context and syntax. -/

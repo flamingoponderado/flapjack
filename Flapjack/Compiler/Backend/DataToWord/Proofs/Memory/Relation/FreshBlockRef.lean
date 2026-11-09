@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.FreshBlock
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.HeapExtend
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.FreshBlock
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.HeapExtend
+
+@[expose] public section
 
 /-! Reference invariants during allocation of a constructor. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

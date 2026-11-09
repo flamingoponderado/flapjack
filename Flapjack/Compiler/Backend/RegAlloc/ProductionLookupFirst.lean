@@ -1,5 +1,9 @@
-import Flapjack.Pancake.CrepToLoop
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Pancake.CrepToLoop
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-!
 # First-match lookup for numeric association lists

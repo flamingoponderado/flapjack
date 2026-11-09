@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.WordUnreach
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
-import Flapjack.Misc.Option
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.WordUnreach
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
+public import Flapjack.Misc.Option
+
+@[expose] public section
 
 /-!
 # word_unreachProof: correctness of `remove_unreach`
@@ -176,7 +180,7 @@ open WordSemStateFiniteExact
 
 variable {width : Nat} [NeZero width] {C F : Type}
 
-private instance wordLocWNonemptyUnreach : Nonempty (WordLocW width) := ⟨.word 0⟩
+instance wordLocWNonemptyUnreach : Nonempty (WordLocW width) := ⟨.word 0⟩
 
 private theorem evSkip (s : WordSemStateFiniteExact width C F) : evaluate .skip s = (none, s) :=
   (evaluate_def_rebound (width := width) (C := C) (F := F)).1 s

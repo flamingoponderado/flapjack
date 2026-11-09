@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.LabelPositionPrefix
-import Flapjack.Compiler.Backend.LabToTarget.AddNopProps
-import Flapjack.Compiler.Backend.LabToTarget.ZeroPreservation
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.LabelPositionPrefix
+public import Flapjack.Compiler.Backend.LabToTarget.AddNopProps
+public import Flapjack.Compiler.Backend.LabToTarget.ZeroPreservation
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

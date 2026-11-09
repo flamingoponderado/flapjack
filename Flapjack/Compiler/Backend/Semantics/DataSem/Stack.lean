@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Control
-import Flapjack.Compiler.Backend.DataToWord.CallTree
-import Flapjack.Compiler.Backend.DataToWord.Locations
-import Flapjack.Misc.Integer
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+public import Flapjack.Compiler.Backend.DataToWord.CallTree
+public import Flapjack.Compiler.Backend.DataToWord.Locations
+public import Flapjack.Misc.Integer
+
+@[expose] public section
 
 /-! Data-language stack-space accounting. -/
 namespace Flapjack.Compiler.Backend.DataSem

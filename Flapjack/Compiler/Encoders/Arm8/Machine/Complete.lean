@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.Machine.MemCaseFull
-import Flapjack.Compiler.Encoders.Arm8.Machine.TargetProof
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Machine.MemCaseFull
+public import Flapjack.Compiler.Encoders.Arm8.Machine.TargetProof
+
+@[expose] public section
 
 /-! # `encoder_correct arm8Target`
 

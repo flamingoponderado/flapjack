@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosLang.Pure
-import Flapjack.Compiler.Backend.DbVars
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Pure
+public import Flapjack.Compiler.Backend.DbVars
+
+@[expose] public section
 
 /-! Free-variable discovery and closure annotations. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

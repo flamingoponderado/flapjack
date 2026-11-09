@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatPattern.Config
-import Flapjack.Compiler.Backend.FlatLang
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Config
+public import Flapjack.Compiler.Backend.FlatLang
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-! Generated-name encoding used by CakeML's flat pattern compiler. -/
 

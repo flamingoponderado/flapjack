@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBoolean
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBoolean
+
+@[expose] public section
 
 /-! Byte-vector cases of the generic closure primitive simulation. -/
 namespace Flapjack.Compiler.Backend.ClosProps.PrimitiveBytes

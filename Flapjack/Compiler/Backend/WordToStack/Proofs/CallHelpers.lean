@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Results
-import Flapjack.Compiler.Backend.WordToStack.NativeReturn
-import Flapjack.Compiler.Backend.WordToStack.NativePrograms
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Results
+public import Flapjack.Compiler.Backend.WordToStack.NativeReturn
+public import Flapjack.Compiler.Backend.WordToStack.NativePrograms
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+
+@[expose] public section
 
 /-!
 # Word-to-Stack call helper lemmas

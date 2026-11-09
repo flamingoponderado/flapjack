@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackOperations
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Numbers
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BitLemmas
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackOperations
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Numbers
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BitLemmas
+
+@[expose] public section
 
 /-! Small integers in the data-to-word abstract heap invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

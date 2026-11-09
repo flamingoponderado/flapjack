@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Config
-import Flapjack.NamespaceHOL
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Config
+public import Flapjack.NamespaceHOL
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.ClosToBvl
 

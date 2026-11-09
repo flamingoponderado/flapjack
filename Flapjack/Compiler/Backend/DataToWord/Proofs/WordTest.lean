@@ -1,5 +1,9 @@
-import Flapjack.Misc.GoodDimindex
-import Mathlib.Tactic.IntervalCases
+module
+
+public import Flapjack.Misc.GoodDimindex
+public import Mathlib.Tactic.IntervalCases
+
+@[expose] public section
 
 /-! Bit-mask facts used by the data-to-word thunk proof. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs

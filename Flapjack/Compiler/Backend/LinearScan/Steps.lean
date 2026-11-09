@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.HiddenState
-import Flapjack.Compiler.Backend.RegAlloc
-import Flapjack.Compiler.Backend.RegAlloc.StateMap
-import Flapjack.Misc.MiscThe
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.HiddenState
+public import Flapjack.Compiler.Backend.RegAlloc
+public import Flapjack.Compiler.Backend.RegAlloc.StateMap
+public import Flapjack.Misc.MiscThe
+
+@[expose] public section
 
 /-!
 # linear_scan colouring steps

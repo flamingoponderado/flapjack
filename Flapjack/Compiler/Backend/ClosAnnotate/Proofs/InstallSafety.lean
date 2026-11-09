@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.EvaluateCases
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.EvaluateCases
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Code and oracle safety across closure-language installation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

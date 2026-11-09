@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordCse.ProductionStoreErase
-import Flapjack.Compiler.Backend.WordCse.ProductionRegisterData
-import Flapjack.Pancake.LoopToWord
+module
+
+public import Flapjack.Compiler.Backend.WordCse.ProductionStoreErase
+public import Flapjack.Compiler.Backend.WordCse.ProductionRegisterData
+public import Flapjack.Pancake.LoopToWord
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack RiscV

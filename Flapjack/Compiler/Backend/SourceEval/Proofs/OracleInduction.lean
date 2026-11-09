@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateApp
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateMatch
-import Flapjack.SemanticsHOL
-import Flapjack.EvaluateHOL.Induction
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateApp
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateMatch
+public import Flapjack.SemanticsHOL
+public import Flapjack.EvaluateHOL.Induction
+
+@[expose] public section
 
 /-! Mutual lexicographic induction for source evaluator oracle adjustment. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

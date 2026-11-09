@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.Semantics
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.Semantics
+
+@[expose] public section
 
 /-! The source term checks remain valid when their type context is extended.
 These results remain untagged pending carrier review. -/

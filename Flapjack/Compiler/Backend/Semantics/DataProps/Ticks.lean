@@ -1,5 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
+public import Lean.Elab.Tactic.Omega
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+@[expose] public section
 
 /-! Execution of compiler-generated tick sequences. -/
 namespace Flapjack.Compiler.Backend.DataSem

@@ -1,6 +1,10 @@
-import Flapjack.Pancake.PanLang
-import Flapjack.Parser.Grammar
-import Flapjack.Pancake.PanLang.Exp
+module
+
+public import Flapjack.Pancake.PanLang
+public import Flapjack.Parser.Grammar
+public import Flapjack.Pancake.PanLang.Exp
+
+@[expose] public section
 
 /-!
 Parse tree to Flapjack AST.

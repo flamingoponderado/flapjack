@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
+
+@[expose] public section
 
 /-! Sequencing properties of the proof-side closure evaluator. -/
 namespace Flapjack.Compiler.Backend.ClosProps

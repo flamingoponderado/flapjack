@@ -1,7 +1,14 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.Applications
-import Mathlib.Data.List.Forall2
-import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallConst
-import Flapjack.SemanticPrimitivesProps.ResultRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.Applications
+public import Mathlib.Data.List.Forall2
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallConst
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Expression cases of the multi-argument introduction evaluation simulation. -/
 namespace Flapjack.Compiler.Backend.ClosMti

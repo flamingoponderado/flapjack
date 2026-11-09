@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreUpdate
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Thunk
-import Flapjack.SemanticPrimitivesHOL.Thunk
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreUpdate
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Thunk
+public import Flapjack.SemanticPrimitivesHOL.Thunk
+
+@[expose] public section
 
 /-! Thunk simulation over the factored source-to-flat value and state relations.
 Full HOL correspondence of those relations remains open. -/

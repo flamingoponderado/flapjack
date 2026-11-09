@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
+
+@[expose] public section
 
 /-! Full original section-label validity chain through initial encoding,
 repeated encoding, label-length updates and padding. Accumulators retain all

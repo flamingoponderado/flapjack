@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.Domain
-import Flapjack.Compiler.Backend.ClosCall.Proofs.Suffix
-import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelDistinct
-import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.Domain
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.Suffix
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelDistinct
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.Total
+
+@[expose] public section
 
 /-! Origins of newly known locations in direct-call conversion. -/
 namespace Flapjack.Compiler.Backend.ClosCall

@@ -1,6 +1,10 @@
-import Flapjack.RiscV.L3.Step.LoadStep
-import Flapjack.RiscV.L3.Defs.WordArithmetic
-import Flapjack.RiscV.L3.Defs.UpperJump
+module
+
+public import Flapjack.RiscV.L3.Step.LoadStep
+public import Flapjack.RiscV.L3.Defs.WordArithmetic
+public import Flapjack.RiscV.L3.Defs.UpperJump
+
+@[expose] public section
 
 /-! Evaluated original `riscv_stepScript.sml` word-arithmetic step theorems
 (`Skip` line 637, `ADDIW` line 838, `ADDW` line 859, `SUBW` line 861).  The

@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateThunk
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateThunk
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Bounded-state induction steps for the flat evaluation simulation. -/
 namespace Flapjack.Compiler.Backend.FlatElim

@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Scalar assignment in the proof-side flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosKnown.KnownOp
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.KnownOp
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+
+@[expose] public section
 
 /-! Global approximation changes made by known-function primitives. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

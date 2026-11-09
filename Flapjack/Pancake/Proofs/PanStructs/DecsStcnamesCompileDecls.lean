@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanStructs.CompileDeclsExact
-import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
+module
+
+public import Flapjack.Pancake.PanStructs.CompileDeclsExact
+public import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
+
+@[expose] public section
 namespace Flapjack.Pancake.PanStructs.CompileShapeExact
 open Flapjack.Pancake.PanLang
 /-- Compiled declarations contain no struct-name declarations, so the exact

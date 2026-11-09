@@ -1,7 +1,11 @@
-import Flapjack.Pancake.Proofs.PanStructs.SemanticsEq
-import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectExact
-import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesCompileDecls
-import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesNames
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.SemanticsEq
+public import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectExact
+public import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesCompileDecls
+public import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesNames
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.CompileTopSemanticsDeclsExact
 open Flapjack Flapjack.Pancake.PanLang
 open Flapjack.Pancake.PanStructs.CompileShapeExact

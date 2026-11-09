@@ -1,5 +1,9 @@
-import Flapjack.EvaluateHOL.ClockFull
-import Flapjack.EvaluateProps.DoApp
+module
+
+public import Flapjack.EvaluateHOL.ClockFull
+public import Flapjack.EvaluateProps.DoApp
+
+@[expose] public section
 
 /-! Flapjack proof helpers used by the assembled source evaluator FFI theorem. -/
 namespace Flapjack.EvaluateProps

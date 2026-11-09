@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
-import Flapjack.Compiler.Backend.WordToStack.NativeMoves
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
+public import Flapjack.Compiler.Backend.WordToStack.NativeMoves
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.MoveSingle
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

@@ -1,13 +1,18 @@
-import Flapjack.Pancake.CrepInline.Canonical
+module
+
+public import Flapjack.Pancake.CrepInline.Canonical
+
+@[expose] public section
 
 /-!
-# Executed inline route vs. the exact tagged inline pass (first routing step)
+# Production inline pass vs. the exact tagged inline pass
 
-The executable `flapjack-compile` inliner runs the production
-`compileInlTopHOL` (`CrepInline/Pass.lean:1283`), while the exact HOL-shaped
-tagged pass is `compileInlTopHOLExact` (`CrepInline/Canonical.lean:712`).  This
-module starts proving that the two agree, so the executable route can be routed
-through the reviewed exact definition.
+The legacy production inliner is `compileInlTopHOL` (`CrepInline/Pass.lean`),
+used by the non-executed `compileProgTopHOL` adapter; the executable
+`flapjack-compile` route runs the exact HOL-shaped tagged pass
+`compileInlTopHOLExact` (`CrepInline/Canonical.lean`) through
+`compileProgDeclsHOLW`.  This module proves that the two agree, so the legacy
+production pass is characterised by the reviewed exact definition.
 
 This slice covers the empty-inline-name base case: with no inline candidate
 names both inliners are the identity, so the production result and the exact

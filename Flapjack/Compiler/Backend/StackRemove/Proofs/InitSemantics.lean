@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeCorrect
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitClock
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CompileSemantics
-import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeRelation
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeCorrect
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitClock
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CompileSemantics
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeRelation
+
+@[expose] public section
 
 /-! Initializer semantics of `stack_removeProofScript.sml` (3856-4087):
 `evaluate_init_code`, `init_semantics`, `make_init_opt_SOME_semantics` and

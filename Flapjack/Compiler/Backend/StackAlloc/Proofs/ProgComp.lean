@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.StackAlloc.Compile
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.Submap
-import Flapjack.Compiler.Backend.Semantics.StackSem.Control
-import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Compile
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.Submap
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` code-lookup lemmas used by `comp_correct`

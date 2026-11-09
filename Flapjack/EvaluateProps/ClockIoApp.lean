@@ -1,4 +1,8 @@
-import Flapjack.EvaluateProps.ClockIoExpr
+module
+
+public import Flapjack.EvaluateProps.ClockIoExpr
+
+@[expose] public section
 
 /-! Flapjack application proof helpers for the clock-and-I/O evaluator theorem. -/
 namespace Flapjack.EvaluateProps
@@ -405,7 +409,9 @@ theorem clockIoEvaluate_app {σ : Type} (st : State σ) (env : SemEnv Value)
         have eval := clockIo_evalOperation next reversed.reverse (by
           intro decoded evalEnv decs hevalDecoded nonzero
           exact ihEval next reversed decoded evalEnv decs heval hc hevalDecoded nonzero)
-        simpa only [continuation, hc] using eval
+        -- `exact` matches `eval`'s matcher and `continuation`'s up to defeq.
+        simp only [continuation, hc]
+        exact eval
       | simple =>
         cases happ : doApp (next.refs, next.ffi) op reversed.reverse with
         | none => simp [isClockIoMono, continuation, hc, happ, typeError, ioEventsMonoHOL]

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.Equality
-import Flapjack.Compiler.Backend.SourceEval.Proofs.PrimitiveType
-import Flapjack.SemanticPrimitivesHOL.Test
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.Equality
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.PrimitiveType
+public import Flapjack.SemanticPrimitivesHOL.Test
+
+@[expose] public section
 
 /-! Primitive comparison preservation for the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

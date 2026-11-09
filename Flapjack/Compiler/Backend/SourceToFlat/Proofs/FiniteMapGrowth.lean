@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalWeakening
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalWeakening
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Finite-map growth lemmas for source-to-flat global environments. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

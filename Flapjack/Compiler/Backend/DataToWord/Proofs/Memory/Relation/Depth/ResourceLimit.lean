@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.Size
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueEquality
-import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.Size
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueEquality
+public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+
+@[expose] public section
 
 /-! Equality helper termination resource bounds. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

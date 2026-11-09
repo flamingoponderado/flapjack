@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackOperations
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.StackOperations
+
+@[expose] public section
 
 /-! Empty constructors and unit in the data-to-word memory invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

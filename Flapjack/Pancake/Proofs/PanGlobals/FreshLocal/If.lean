@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocalEval
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals
+public import Flapjack.Pancake.Proofs.PanGlobals.FreshLocalEval
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsFreshLocalIf
 open Flapjack.Pancake.PanLang

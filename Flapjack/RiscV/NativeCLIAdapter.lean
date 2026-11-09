@@ -1,6 +1,10 @@
-import Flapjack.RiscV.NativeSource
-import Flapjack.RiscV.ArtifactFormat
-import Flapjack.RiscV.LabToTargetRoute
+module
+
+public import Flapjack.RiscV.NativeSource
+public import Flapjack.RiscV.ArtifactFormat
+public import Flapjack.RiscV.LabToTargetRoute
+
+@[expose] public section
 
 /-! Rendering the parser-backed native whole compiler result as CLI output.
 
@@ -12,25 +16,14 @@ words and `c.symbols`. Source inspection suggests `compile_prog` computes the sa
 `compile_prog_max`'s word-to-stack and `from_stack`); it differs only in the names it
 gives `from_lab`, which become `c.symbols`, and in configuration fields the exporter does not
 print; no theorem here proves that comparison with tagged `compileProgHOL`.
-These renderers take the native whole tuple and rebuild `c.symbols` from
-`lab_conf.sec_pos_len` with `compile_prog`'s names table. Flapjack driver infrastructure;
-no separate HOL declaration. -/
+The native whole tuple's configuration already carries `c.symbols`: the pipeline
+passes `compile_prog`'s names table to `from_lab`, so the renderers read
+`config.symbols` instead of recomputing it. Flapjack driver infrastructure; no
+separate HOL declaration. -/
 
 namespace Flapjack.RiscV.NativeCLI
 open Flapjack Flapjack.Pancake.PanLang Flapjack.Basis.Pure.MlString
 open Flapjack.Compiler.Backend
-
-/-- `compile_prog`'s function-name table (`pan_to_targetScript.sml:41-47`) for the
-main-first declarations at RISC-V: sorted pan-to-word function numbers paired with
-`generated_main` and the declared function names, extended by the backend stub names. -/
-def compileProgNames (prog1 : List (DeclHOL 64)) : Spt MlString :=
-  let prog2 := panToWordCompileProgHOL
-    Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig.isa prog1
-  let names := sptFromAList ((Flapjack.Basis.Pure.MlList.sort
-    (fun a b : Nat => decide (a < b)) (prog2.map Prod.fst)).zip
-    (ofString "generated_main" :: (functionsHOL prog1).map Prod.fst))
-  sptUnion (sptFromAList
-    (WordToStack.stubNames () ++ StackAlloc.stubNames () ++ StackRemove.stubNames ())) names
 
 /-- The exported symbols `from_lab` would record with that names table
 (`attach_bitmaps`: `lookup_any n names «NOTFOUND»` over `sec_pos_len`). -/
@@ -55,13 +48,14 @@ def symbolLines (symbols : List (MlString × Nat × Nat)) : List String :=
       "_" ++ toString index
     s!"    makesym({label}, {start}, {length})"
 
-/-- The Pancake assembly frame for a compiled tuple. -/
-def assembly (prog1 : List (DeclHOL 64)) (bytes : List (BitVec 8)) (bitmaps : List (BitVec 64))
+/-- The Pancake assembly frame for a compiled tuple.  The configuration already
+carries the real symbol table (`config.symbols`). -/
+def assembly (bytes : List (BitVec 8)) (bitmaps : List (BitVec 64))
     (config : Backend.Config) : String :=
   RiscV.pancakeAssemblyFrame
     ((Backend.ffinamesToStringList (config.labConf.ffiNames.getD [])).map toStringOfBytes)
     bytes (bitmaps.map BitVec.toNat)
-    (symbolLines (exportSymbols (compileProgNames prog1) config))
+    (symbolLines config.symbols)
 
 def hexDigit (value : Nat) : Char :=
   if value < 10 then
@@ -85,10 +79,10 @@ inductive Format where
   deriving DecidableEq
 
 /-- The rendered standard output for a compiled tuple. -/
-def render (format : Format) (declarations : List (DeclHOL 64)) (bytes : List (BitVec 8))
+def render (format : Format) (bytes : List (BitVec 8))
     (bitmaps : List (BitVec 64)) (config : Backend.Config) : String :=
   match format with
-  | .assembly => assembly declarations bytes bitmaps config
+  | .assembly => assembly bytes bitmaps config
   | .hex => hexBytes bytes ++ "\n"
   | .sections =>
       String.join ((RiscV.sectionsOfSymbols (width := 64) bytes config.labConf.secPosLen).map
@@ -104,7 +98,7 @@ def output (format : Format) (source : String) : Except String (List String × S
       | none => .error "native backend compilation failed"
       | some (bytes, bitmaps, config) =>
           .ok (out.warnings.map (fun warning => s!"{repr warning}"),
-            render format out.declarations bytes bitmaps config)
+            render format bytes bitmaps config)
 
 /-- Adapter projection: a successful native CLI run comes from a successful
 `NativeSource.compile` whose whole tuple is compiled, and its output is that tuple's
@@ -117,7 +111,7 @@ theorem output_ok {format : Format} {source : String} {warnings : List String} {
         (config : Backend.Config),
       RiscV.NativeSource.compile source = .ok out ∧
       out.artifact = some (bytes, bitmaps, config) ∧
-      text = render format out.declarations bytes bitmaps config := by
+      text = render format bytes bitmaps config := by
   unfold output at succeeded
   split at succeeded
   · simp at succeeded

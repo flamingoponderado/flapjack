@@ -1,6 +1,10 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.NcompileCorrect
-import Flapjack.Pancake.CrepToLoop.Proofs.NotMemContextAssigned
-import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.NcompileCorrect
+public import Flapjack.Pancake.CrepToLoop.Proofs.NotMemContextAssigned
+public import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
+
+@[expose] public section
 
 /-!
 # The `Dec` case of `crep_to_loop`'s `ncompile_correct`

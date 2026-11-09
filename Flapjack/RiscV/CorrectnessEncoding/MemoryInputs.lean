@@ -1,7 +1,11 @@
-import Flapjack.RiscV.CorrectnessEncoding.MemoryRun
-import Flapjack.RiscV.CorrectnessEncoding.Immediate
-import Flapjack.Compiler.Encoders.AsmSem.Step
-import Flapjack.Compiler.Encoders.RiscV.Target.AsmOkRewrites
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.MemoryRun
+public import Flapjack.RiscV.CorrectnessEncoding.Immediate
+public import Flapjack.Compiler.Encoders.AsmSem.Step
+public import Flapjack.Compiler.Encoders.RiscV.Target.AsmOkRewrites
+
+@[expose] public section
 
 /-! Source-to-native inputs for the original Mem case (riscv_targetProof661–669).
 These are local compositions of the reviewed asm guards, initial state relation,

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack Compiler.Encoders.Asm

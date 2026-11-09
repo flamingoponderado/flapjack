@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.TargetProps.PositionTail
-import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
-import Flapjack.Compiler.Backend.Semantics.TargetProps.SearchConst
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.PositionTail
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.SearchConst
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Classical

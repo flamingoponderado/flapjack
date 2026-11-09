@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyRefs
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyRefs
+
+@[expose] public section
 
 /-! Reference-domain preservation for BVI primitive operations. -/
 namespace Flapjack.Compiler.Backend.BviProps

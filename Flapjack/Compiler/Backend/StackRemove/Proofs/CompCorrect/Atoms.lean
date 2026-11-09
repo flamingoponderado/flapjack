@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.RelationLaws
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+
+@[expose] public section
 
 /-! First three genuine cases of the full original StackRemove evaluation
 simulation. The original existential target evaluation is proved, not assumed.

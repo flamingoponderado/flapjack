@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataLang.Syntax
+module
+
+public import Flapjack.Compiler.Backend.DataLang.Syntax
+
+@[expose] public section
 
 /-! Simplify sequencing in data-language programs. -/
 namespace Flapjack.Compiler.Backend.DataSimp

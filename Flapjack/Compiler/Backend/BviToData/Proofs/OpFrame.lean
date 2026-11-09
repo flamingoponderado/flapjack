@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.BviToData.Assign
-import Flapjack.Compiler.Backend.BviToData.Proofs.CutEnv
-import Flapjack.Compiler.Backend.BviToData.Proofs.Compare
-import Flapjack.Compiler.Backend.BviToData.Proofs.CompileCorrect
-import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyFrame
-import Mathlib.Tactic.CasesM
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Assign
+public import Flapjack.Compiler.Backend.BviToData.Proofs.CutEnv
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Compare
+public import Flapjack.Compiler.Backend.BviToData.Proofs.CompileCorrect
+public import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyFrame
+public import Mathlib.Tactic.CasesM
+
+@[expose] public section
 
 /-! Assignment local/control frames for the BVI-to-data operation proof. -/
 namespace Flapjack.Compiler.Backend.BviToData

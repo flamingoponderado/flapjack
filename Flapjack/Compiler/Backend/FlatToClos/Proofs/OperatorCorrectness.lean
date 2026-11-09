@@ -1,24 +1,30 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Equality
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Ffi
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Globals
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Thunk
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.CopyUpdate
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Array
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.ByteComparisons
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.CheckType
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.CharConversion
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyArithmeticSource
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyCompareSource
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
-import Flapjack.Compiler.Backend.FlatToClos.Op
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
-import Flapjack.SemanticPrimitivesProps.ResultRelation
-import Flapjack.EvaluateHOL
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Equality
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Ffi
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Globals
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Thunk
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.CopyUpdate
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Array
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.ByteComparisons
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.CheckType
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.CharConversion
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyArithmeticSource
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyCompareSource
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+public import Flapjack.Compiler.Backend.FlatToClos.Op
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+public import Flapjack.EvaluateHOL
+public import Mathlib.Data.List.Forall2
+
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.FlatToClos
 
@@ -2264,7 +2270,7 @@ theorem opArith {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
               simp only [compileOp, compileArith]
               rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
               have flipped : (0 = right) ↔ right = 0 := eq_comm
-              simp [ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock,
+              simp [ClosSem.evaluate, ClosSem.headValue, Flapjack.holHd, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock,
                 ClosSem.applyNumeric, ClosSem.doIntApp, ClosSem.doEq, ClosSem.boolValue,
                 ClosSem.asBool, BackendCommon.trueTag, BackendCommon.falseTag, zero, flipped,
                 Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel,

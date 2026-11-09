@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabProps.Labels
-import Flapjack.Compiler.Backend.LabSem.Classifier
+module
+
+public import Flapjack.Compiler.Backend.LabProps.Labels
+public import Flapjack.Compiler.Backend.LabSem.Classifier
+
+@[expose] public section
 
 /-! Original Lab-to-Target code similarity: encoding bytes, recorded lengths,
 and resolved word positions may change; instructions and section/label names

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.HolRef
-import Mathlib.Data.List.Flatten
+module
+
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.HolRef
+public import Mathlib.Data.List.Flatten
+
+@[expose] public section
 
 /-! Original NOP-padding relation used by assembly-step refinement.
 The source leaves encoded-list elements generic; only the assembly instruction

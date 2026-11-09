@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Step.ImmediateShiftStep
-import Flapjack.RiscV.L3.Defs.RegisterShift
+module
+
+public import Flapjack.RiscV.L3.Step.ImmediateShiftStep
+public import Flapjack.RiscV.L3.Defs.RegisterShift
+
+@[expose] public section
 
 /-! Evaluated original `riscv_stepScript.sml` register-shift instruction
 theorems (`SLL`, `SRL`, `SRA`, lines 867-869) over the literal native

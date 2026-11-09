@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateApplication
-import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateLetrec
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateApplication
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateLetrec
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Recursive closure application for multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti

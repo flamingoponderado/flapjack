@@ -1,7 +1,14 @@
-import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
-import Flapjack.Compiler.Backend.Arm8Config.Proofs
-import Flapjack.Compiler.Backend.BackendProof.ConfigOk
-import Mathlib.Tactic.IntervalCases
+module
+
+public import Flapjack.Compiler.Backend.Arm8Config.Names
+public import Flapjack.Compiler.Backend.Arm8Config.NameLemmas
+public import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
+public import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
+public import Flapjack.Compiler.Backend.Arm8Config.Proofs
+public import Flapjack.Compiler.Backend.BackendProof.ConfigOk
+public import Mathlib.Tactic.IntervalCases
+
+@[expose] public section
 
 /-!
 # `backend_config_ok` for the ARMv8 (AArch64) backend configuration
@@ -23,60 +30,6 @@ namespace Flapjack.Compiler.Backend.Arm8Config
 
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.BackendProof
 open Flapjack.Compiler.Encoders.Arm8
-
-/-- The inverse of `arm8NameMap` (Flapjack infrastructure): the ten-cycle
-`0 → 30 → 26 → 25 → 29 → 18 → 4 → 3 → 2 → 1 → 0` reversed, identity elsewhere. -/
-def arm8NameInv (register : Nat) : Nat :=
-  match register with
-  | 30 => 0 | 0 => 1 | 1 => 2 | 2 => 3 | 3 => 4 | 4 => 18 | 29 => 25
-  | 25 => 26 | 18 => 29 | 26 => 30 | r => r
-
-/-- `arm8NameInv` is a left inverse of `arm8NameMap`: the names map is injective. -/
-theorem arm8NameInv_map (k : Nat) : arm8NameInv (arm8NameMap k) = k := by
-  by_cases h : k < 32
-  · interval_cases k <;> rfl
-  · unfold arm8NameMap
-    split <;> (try omega)
-    unfold arm8NameInv
-    split <;> first | rfl | omega
-
-/-- `arm8NameInv` is a right inverse of `arm8NameMap`: the names map is surjective. -/
-theorem arm8NameMap_inv (k : Nat) : arm8NameMap (arm8NameInv k) = k := by
-  by_cases h : k < 32
-  · interval_cases k <;> rfl
-  · unfold arm8NameInv
-    split <;> (try omega)
-    unfold arm8NameMap
-    split <;> first | rfl | omega
-
-/-- `findNameSpt` of `arm8Names` is the explicit map `arm8NameMap`. -/
-theorem findNameSpt_arm8Names :
-    StackNames.findNameSpt arm8Names = arm8NameMap :=
-  funext arm8Names_lookup_eq
-
-/-- A `BitVec 64` whose `toNat` is below `2 ^ 12` has no bits outside the low twelve,
-so `~~~0xFFF` clears it: the condition behind `validImmediate`'s `add`/`sub` range
-test `i &&& ~~~0xFFF = 0`. -/
-theorem and_not_fff_eq_zero {x : BitVec 64} (hx : x.toNat < 4096) :
-    x &&& ~~~(0xFFF : BitVec 64) = 0 := by
-  have hx' : x.toNat < 2 ^ 12 := by norm_num; exact hx
-  have h1 : x &&& (0xFFF : BitVec 64) = x := by
-    rw [BitVec.toNat_eq, BitVec.toNat_and]
-    exact Nat.and_two_pow_sub_one_of_lt_two_pow hx'
-  calc x &&& ~~~(0xFFF : BitVec 64)
-      = (x &&& (0xFFF : BitVec 64)) &&& ~~~(0xFFF : BitVec 64) := by rw [h1]
-    _ = x &&& ((0xFFF : BitVec 64) &&& ~~~(0xFFF : BitVec 64)) := by rw [BitVec.and_assoc]
-    _ = x &&& 0 := by rw [BitVec.and_not_self]
-    _ = 0 := BitVec.and_zero
-
-/-- `validImmediate`'s `add`/`sub` test holds for `BitVec.ofNat 64 m` when
-`m < 2 ^ 12` (the stack-frame byte offsets `n * (64 / 8)` for `n ≤ 255`). -/
-theorem ofNat_and_not_fff_eq_zero {m : Nat} (hm : m < 4096) :
-    BitVec.ofNat 64 m &&& ~~~(0xFFF : BitVec 64) = 0 := by
-  apply and_not_fff_eq_zero
-  rw [BitVec.toNat_ofNat]
-  have hpow : (2 : Nat) ^ 64 = 18446744073709551616 := by norm_num
-  omega
 
 /-- `backend_config_ok` at `arm8_config` and `arm8_backend_config`. -/
 theorem arm8BackendConfigOkRaw :

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem
-import Flapjack.Pancake.Semantics.LoopSem
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem
+public import Flapjack.Pancake.Semantics.LoopSem
+
+@[expose] public section
 
 /- Declaration-local alignment review (user correction, 2026-10-02): the
 original three proofs use byte_align only as a common aligned-address key.

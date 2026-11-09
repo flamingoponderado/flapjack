@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.LabToTarget.AddNopProps
-import Flapjack.Compiler.Backend.LabToTarget.PaddingLength
-import Flapjack.Compiler.Backend.LabToTarget.PositionalEncoding
-import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
-import Flapjack.Compiler.Backend.LabToTarget.PrefixZero
-import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.AddNopProps
+public import Flapjack.Compiler.Backend.LabToTarget.PaddingLength
+public import Flapjack.Compiler.Backend.LabToTarget.PositionalEncoding
+public import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
+public import Flapjack.Compiler.Backend.LabToTarget.PrefixZero
+public import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem

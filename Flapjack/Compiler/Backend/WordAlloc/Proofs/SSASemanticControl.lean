@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcile
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopTable
-import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapPreservation
-import Flapjack.Pancake.WordLang.OccurrencesExact
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcile
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopTable
+public import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapPreservation
+public import Flapjack.Pancake.WordLang.OccurrencesExact
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

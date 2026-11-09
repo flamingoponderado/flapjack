@@ -1,6 +1,10 @@
-import Flapjack.EvaluateHOL.ClockFull
-import Flapjack.HolRef
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.EvaluateHOL.ClockFull
+public import Flapjack.HolRef
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 /-! Source evaluator result-length theorems. -/
 namespace Flapjack.EvaluateProps

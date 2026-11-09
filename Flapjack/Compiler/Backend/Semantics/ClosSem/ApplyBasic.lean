@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.State
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Int
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Word
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Int
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Word
+
+@[expose] public section
 
 /-! Global, block and numeric cases of the closure primitive dispatcher. -/
 namespace Flapjack.Compiler.Backend.ClosSem

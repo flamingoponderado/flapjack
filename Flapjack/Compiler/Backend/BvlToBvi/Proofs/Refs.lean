@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Values
-import Flapjack.Compiler.Backend.Semantics.BviSem.State
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Values
+public import Flapjack.Compiler.Backend.Semantics.BviSem.State
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Reference-store component of the BVL-to-BVI state relation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

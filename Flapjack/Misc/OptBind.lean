@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Optional association-list binding from CakeML's misc theory. -/
 namespace Flapjack

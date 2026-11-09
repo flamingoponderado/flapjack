@@ -1,6 +1,10 @@
-import Flapjack.Pancake.WordLang.MaxVarExp
-import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
-import Flapjack.Compiler.Backend.StackProps.ExpressionClock
+module
+
+public import Flapjack.Pancake.WordLang.MaxVarExp
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
+public import Flapjack.Compiler.Backend.StackProps.ExpressionClock
+
+@[expose] public section
 
 /-! Full original StackProps instruction field-preservation and clock/FFI
 commutation statements over the native total primitive instHOL operation.

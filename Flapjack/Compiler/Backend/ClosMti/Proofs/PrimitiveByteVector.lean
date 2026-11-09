@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveBlock
-import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveArray
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveBlock
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveArray
+
+@[expose] public section
 
 /-! Byte-vector operations for multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti

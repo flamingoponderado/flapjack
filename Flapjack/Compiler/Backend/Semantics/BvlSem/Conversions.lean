@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyMemory
-import Flapjack.Misc.Option.Characterization
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.ApplyMemory
+public import Flapjack.Misc.Option.Characterization
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Deterministic list decoders used by BVL installation. -/
 namespace Flapjack.Compiler.Backend.BvlSem

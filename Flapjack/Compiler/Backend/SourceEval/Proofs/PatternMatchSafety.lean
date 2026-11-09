@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.PatternMatch
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.PatternMatch
+
+@[expose] public section
 
 /-! Matchability under source-evaluator recording. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

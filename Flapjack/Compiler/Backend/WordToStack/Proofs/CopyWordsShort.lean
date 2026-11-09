@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack
 

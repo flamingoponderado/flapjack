@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexListLemmas
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexListLemmas
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack

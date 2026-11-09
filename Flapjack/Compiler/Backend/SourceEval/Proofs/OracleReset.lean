@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleCallback
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleExtraction
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleRecording
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleCallback
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleExtraction
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleRecording
+
+@[expose] public section
 
 /-! Interaction of source Eval oracle recording and generation reset. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

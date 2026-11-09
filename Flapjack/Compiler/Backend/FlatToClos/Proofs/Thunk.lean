@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Thunk
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Thunk
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
+
+@[expose] public section
 
 /-! Thunk inspection across the preliminary flat-to-closure relation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

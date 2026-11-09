@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviInline.Proofs.CompileSimulation
+module
+
+public import Flapjack.Compiler.Backend.BviInline.Proofs.CompileSimulation
+
+@[expose] public section
 
 /-! State and code relations for BVI tick removal. -/
 namespace Flapjack.Compiler.Backend.BviInline

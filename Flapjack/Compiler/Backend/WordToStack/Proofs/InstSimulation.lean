@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Arithmetic
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Constant
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Memory
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Skip
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpArith
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpTransfer
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpConversions
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Arithmetic
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Constant
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Memory
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Skip
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpArith
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpTransfer
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpConversions
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.InstSimulation
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveArray
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ListConversion
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveArray
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ListConversion
+
+@[expose] public section
 
 /-! Data operation simulation for the source-to-flat primitive proof. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

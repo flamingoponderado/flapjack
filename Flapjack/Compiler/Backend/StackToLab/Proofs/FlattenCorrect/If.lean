@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Control
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Control
+
+@[expose] public section
 
 /-! `flatten_correct` case `If` (`stack_to_labProofScript.sml:1531-1740`): the
 six flattening shapes of a conditional (both branches `Skip`, one `Skip`, a

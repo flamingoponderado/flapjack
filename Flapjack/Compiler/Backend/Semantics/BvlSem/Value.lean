@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
-import Flapjack.Compiler.Backend.BackendCommon.BoolTags
-import Flapjack.Compiler.Backend.BackendCommon.ConstructorTags
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+public import Flapjack.Compiler.Backend.BackendCommon.BoolTags
+public import Flapjack.Compiler.Backend.BackendCommon.ConstructorTags
+
+@[expose] public section
 
 /-! BVL runtime values and their list representation. -/
 namespace Flapjack.Compiler.Backend.BvlSem

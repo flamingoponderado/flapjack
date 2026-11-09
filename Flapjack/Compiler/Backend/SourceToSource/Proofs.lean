@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToSource
-import Flapjack.Compiler.Backend.SourceLet.Proofs.Semantics
+module
+
+public import Flapjack.Compiler.Backend.SourceToSource
+public import Flapjack.Compiler.Backend.SourceLet.Proofs.Semantics
+
+@[expose] public section
 
 /-! Semantic preservation of the source-to-source pass driver. -/
 namespace Flapjack.Compiler.Backend.SourceToSource

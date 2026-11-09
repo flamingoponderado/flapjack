@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyAux
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyAux
+public import Aesop
+
+@[expose] public section
 /-! Shared non-FFI facts for resource and safety proofs. -/
 namespace Flapjack.Compiler.Backend.DataSem
 open Flapjack Flapjack.SemanticPrimitivesHOL

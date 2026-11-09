@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Shift.Original
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Shift.Original
+
+@[expose] public section
 
 /-! Agreement between source-shaped and executable shifting. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

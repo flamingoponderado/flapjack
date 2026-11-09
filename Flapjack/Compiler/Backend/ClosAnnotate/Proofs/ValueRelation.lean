@@ -1,10 +1,16 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables.Original
-import Flapjack.Compiler.Backend.ClosAnnotate.Shift.OriginalEquivalence
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ShiftedEnv
-import Flapjack.Compiler.Backend.Semantics.ClosSem
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables.Original
+public import Flapjack.Compiler.Backend.ClosAnnotate.Shift.OriginalEquivalence
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ShiftedEnv
+public import Flapjack.Compiler.Backend.Semantics.ClosSem
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+public import Mathlib.Data.List.Forall2
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables
+
+
+@[expose] public section
 
 /-! Candidate value and environment relations for closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

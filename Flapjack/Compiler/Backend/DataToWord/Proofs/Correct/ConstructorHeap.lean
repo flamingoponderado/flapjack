@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorFree
-import Flapjack.Compiler.Backend.GcShared.Filter
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Numbers
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeaderInjective
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.FreshBlockGc
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorFree
+public import Flapjack.Compiler.Backend.GcShared.Filter
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Numbers
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeaderInjective
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.FreshBlockGc
+
+@[expose] public section
 
 /-! Reconstruction of the separated word heap after constructor writes. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Correct

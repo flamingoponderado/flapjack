@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Parmove
-import Flapjack.Compiler.Backend.Parmove.StateToList
+module
+
+public import Flapjack.Compiler.Backend.Parmove
+public import Flapjack.Compiler.Backend.Parmove.StateToList
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

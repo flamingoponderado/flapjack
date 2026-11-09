@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+
+@[expose] public section
 
 /-! Code growth during proof-side closure installation. -/
 namespace Flapjack.Compiler.Backend.ClosSem

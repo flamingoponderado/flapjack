@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Equality
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Equality
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+
+@[expose] public section
 
 /-! Byte and word decoding under simple closure-value relations. -/
 namespace Flapjack.Compiler.Backend.ClosProps

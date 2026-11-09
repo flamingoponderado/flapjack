@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosKnown.Merge
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Merge
+
+@[expose] public section
 
 /-! Source algebraic properties of known-closure approximation merging. -/
 namespace Flapjack.Compiler.Backend.ClosKnownProps

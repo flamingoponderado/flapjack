@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.PatternExh.Proofs.Soundness
+module
+
+public import Flapjack.Compiler.Backend.PatternExh.Proofs.Soundness
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Pattern compiler correctness over the source-shaped matcher. -/
 namespace Flapjack.Compiler.Backend.PatternComp

@@ -1,7 +1,11 @@
-import Flapjack.Pancake.LoopToWord.CompFuncExact
-import Flapjack.Pancake.LoopToWord.Proofs.NoFP
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallEvaluate
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoMtCode
+module
+
+public import Flapjack.Pancake.LoopToWord.CompFuncExact
+public import Flapjack.Pancake.LoopToWord.Proofs.NoFP
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallEvaluate
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoMtCode
+
+@[expose] public section
 
 /-!
 # `loop_to_wordProof`: no_install/no_alloc/no_mt lemmas

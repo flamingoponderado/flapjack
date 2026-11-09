@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal
+
+@[expose] public section
 
 /-! Source-shaped TMC purity and correspondence with the executed traversal. -/
 namespace Flapjack.Compiler.Backend.BviTmc

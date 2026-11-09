@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.PatternComp.Decision
-import Flapjack.Compiler.Backend.PatternExh.Proofs.Match
+module
+
+public import Flapjack.Compiler.Backend.PatternComp.Decision
+public import Flapjack.Compiler.Backend.PatternExh.Proofs.Match
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Row-selection lemmas for the pattern compiler. -/
 namespace Flapjack.Compiler.Backend.PatternComp

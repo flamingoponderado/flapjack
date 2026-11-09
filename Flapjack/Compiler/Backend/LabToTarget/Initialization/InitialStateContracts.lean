@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.Initialization.FullStateRel
-import Flapjack.Compiler.Backend.LabToTarget.OracleTie
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization.FullStateRel
+public import Flapjack.Compiler.Backend.LabToTarget.OracleTie
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabLang

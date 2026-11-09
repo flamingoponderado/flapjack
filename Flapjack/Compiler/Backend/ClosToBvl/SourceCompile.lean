@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Constants
-import Flapjack.Compiler.Backend.ClosToBvl.Layout
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Constants
+public import Flapjack.Compiler.Backend.ClosToBvl.Layout
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Total closure-to-BVL expression conversion in the original source shape. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

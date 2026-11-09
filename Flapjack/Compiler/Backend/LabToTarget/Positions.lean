@@ -1,10 +1,14 @@
-import Flapjack.Misc.LookupAny
-import Flapjack.Compiler.Backend.LabToTarget.Encoding
-import Flapjack.Compiler.Backend.LabToTarget.Labels
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.FfiHOL
-import Flapjack.Misc.FindIndex
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Misc.LookupAny
+public import Flapjack.Compiler.Backend.LabToTarget.Encoding
+public import Flapjack.Compiler.Backend.LabToTarget.Labels
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.FfiHOL
+public import Flapjack.Misc.FindIndex
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-!
 # Faithful Cake position and jump-offset lookups (`lab_to_target`)

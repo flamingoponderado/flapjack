@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.State
-import Flapjack.Compiler.Backend.Semantics.DataSem.Control
-import Flapjack.Compiler.Backend.Semantics.WordSem.State
-import Flapjack.Compiler.Backend.DataToWord.Variables
-import Flapjack.Misc.Option
-import Mathlib.Data.List.Induction
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.State
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+public import Flapjack.Compiler.Backend.DataToWord.Variables
+public import Flapjack.Misc.Option
+public import Mathlib.Data.List.Induction
+
+@[expose] public section
 
 /-! Stack-frame relations used by data-to-word garbage-collector correctness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

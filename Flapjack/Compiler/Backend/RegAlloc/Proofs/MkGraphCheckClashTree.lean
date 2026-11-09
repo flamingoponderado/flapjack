@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.Proofs
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.ClashTreeDomain
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.CliqueSuccess
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.ColouringTransport
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.ClashTreeDomain
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.CliqueSuccess
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.ColouringTransport
+
+@[expose] public section
 
 /-!
 # reg_allocProof: the interference graph certifies the clash tree

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlHandle.Compile
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileTotal
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle.Compile
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileTotal
+
+@[expose] public section
 
 /-! The fuel-bounded compiler agrees with the source-shaped total traversal. -/
 namespace Flapjack.Compiler.Backend.BvlHandle

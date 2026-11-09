@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+
+@[expose] public section
 
 /-! Source-shaped fixed-index StackSem evaluator fragments. These helpers are
 untagged because they are individual cases, not HOL's total evaluate_def.

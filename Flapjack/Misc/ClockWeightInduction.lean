@@ -1,3 +1,7 @@
+module
+
+@[expose] public section
+
 /-! Shared lexicographic `(clock, weight)` induction for backend evaluator proofs. -/
 namespace Flapjack
 

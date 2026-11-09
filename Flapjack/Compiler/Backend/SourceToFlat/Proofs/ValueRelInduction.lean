@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRel
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRel
+
+@[expose] public section
 
 /-! Source-shaped induction for the mutually recursive source-to-flat
 relations. This is Flapjack infrastructure derived from their mutual recursor. -/

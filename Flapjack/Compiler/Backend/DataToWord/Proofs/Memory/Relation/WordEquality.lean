@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.SimpleEquality
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.CompareLoop
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeaderInjective
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.SimpleEquality
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.CompareLoop
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeaderInjective
+
+@[expose] public section
 
 /-! Word-level equality model from the data-to-word memory proof. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

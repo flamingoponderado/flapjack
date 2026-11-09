@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackLang.Prog
-import Mathlib.Data.Set.Basic
+module
+
+public import Flapjack.Compiler.Backend.StackLang.Prog
+public import Mathlib.Data.Set.Basic
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackProps
 open StackLang

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.FpRegisterInstructions
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.FpRegisterInstructions
+
+@[expose] public section
 
 /-! Complete FP constructor branch for native StackSem instruction assembly.
 This operation accepts every HolFp opcode and returns HOL's single Option state.

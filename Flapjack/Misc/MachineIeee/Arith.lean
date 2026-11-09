@@ -1,5 +1,9 @@
-import Flapjack.Misc.BinaryIeeeArith
-import Flapjack.Misc.MachineIeee
+module
+
+public import Flapjack.Misc.BinaryIeeeArith
+public import Flapjack.Misc.MachineIeee
+
+@[expose] public section
 
 /-!
 # HOL `machine_ieee` fp64 arithmetic lifts

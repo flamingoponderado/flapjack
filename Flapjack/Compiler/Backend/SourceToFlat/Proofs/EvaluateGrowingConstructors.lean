@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateSequence
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateSequence
+
+@[expose] public section
 
 /-! Constructor composition for argument lists that may change state and
 grow the preliminary factored global environment. -/

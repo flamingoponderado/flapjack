@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.RegisterBounds
+module
+
+public import Flapjack.Compiler.Backend.StackProps.RegisterBounds
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackProps

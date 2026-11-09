@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan
-import Flapjack.Compiler.Backend.RegAlloc.Proofs
-import Flapjack.Misc.Sptree.ToAList
-import Flapjack.Misc.Sptree.InsertUnchanged
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs
+public import Flapjack.Misc.Sptree.ToAList
+public import Flapjack.Misc.Sptree.InsertUnchanged
+
+@[expose] public section
 
 /-!
 # linear_scanProof: live-tree checker correctness

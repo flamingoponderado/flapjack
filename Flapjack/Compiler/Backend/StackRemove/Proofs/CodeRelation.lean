@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove.Comp
-import Flapjack.Compiler.Backend.StackProps.RegisterBounds
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Comp
+public import Flapjack.Compiler.Backend.StackProps.RegisterBounds
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Native code relation used by the full StackRemove state relation.
 Code maps retain HOL's Spt carrier, including arbitrary malformed trees. The

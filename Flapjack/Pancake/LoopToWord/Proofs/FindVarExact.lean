@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Misc.Sptree
-import Flapjack.Pancake.LoopToWord
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.Sptree
+public import Flapjack.Pancake.LoopToWord
+
+@[expose] public section
 
 /-!
 # Exact `find_var_neq_0_ctxt` proof port

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionWrapper
-import Flapjack.Compiler.Backend.RegAlloc.ProductionInputGuard
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionWrapper
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionInputGuard
+
+@[expose] public section
 
 /-! Executable realization of the native allocator through its checked array
 implementation. The original declaration and its literal list-state body are

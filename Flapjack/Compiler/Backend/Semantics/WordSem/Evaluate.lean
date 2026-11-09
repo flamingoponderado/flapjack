@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
-import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
-import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
-import Flapjack.Compiler.Backend.Semantics.WordSem.Domain
-import Flapjack.Misc.ShiftSeq
-import Flapjack.Pancake.Semantics.LoopSem
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+public import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
+public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Domain
+public import Flapjack.Misc.ShiftSeq
+public import Flapjack.Pancake.Semantics.LoopSem
+
+@[expose] public section
 
 /-!
 # Exact HOL `wordSem$evaluate_def`

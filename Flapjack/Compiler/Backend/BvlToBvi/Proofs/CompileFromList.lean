@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ListLengthStub
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ListLengthStub
+
+@[expose] public section
 
 /-! List-to-block lowering in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

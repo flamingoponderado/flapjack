@@ -1,8 +1,12 @@
-import Flapjack.RiscV.CorrectnessEncoding.MemoryInputs
-import Flapjack.RiscV.CorrectnessEncoding.MemoryRead
-import Flapjack.RiscV.CorrectnessEncoding.MemoryStore
-import Flapjack.RiscV.CorrectnessEncoding.MemoryStep
-import Flapjack.RiscV.CorrectnessEncoding.Length
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.MemoryInputs
+public import Flapjack.RiscV.CorrectnessEncoding.MemoryRead
+public import Flapjack.RiscV.CorrectnessEncoding.MemoryStore
+public import Flapjack.RiscV.CorrectnessEncoding.MemoryStep
+public import Flapjack.RiscV.CorrectnessEncoding.Length
+
+@[expose] public section
 
 /-! Complete post-state relation infrastructure for the original Mem case.
 The local compositions have no separately named HOL originals and stay untagged.

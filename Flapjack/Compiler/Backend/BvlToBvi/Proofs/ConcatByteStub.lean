@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.SumListLengthStub
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.SumListLengthStub
+
+@[expose] public section
 
 /-! The byte-array concatenation runtime stub. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Bvl.Syntax
-import Flapjack.Compiler.Backend.DbVars
-import Flapjack.Compiler.Backend.BvlConst
-import Flapjack.Compiler.Backend.BvlToBvi.Budget
+module
+
+public import Flapjack.Compiler.Backend.Bvl.Syntax
+public import Flapjack.Compiler.Backend.DbVars
+public import Flapjack.Compiler.Backend.BvlConst
+public import Flapjack.Compiler.Backend.BvlToBvi.Budget
+
+@[expose] public section
 
 /-! Fuel-bounded executable infrastructure for the BVL handler pass. The
 total HOL definitions and termination proofs have not yet been ported. -/

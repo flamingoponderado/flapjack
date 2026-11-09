@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.LoopProps.AccVars
+module
+
+public import Flapjack.Pancake.Semantics.LoopProps.AccVars
+
+@[expose] public section
 
 /-!
 # Exact Loop-to-Word `acc_vars_acc'`

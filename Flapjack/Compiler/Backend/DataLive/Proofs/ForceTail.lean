@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.CallEntry
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.CallEntry
+
+@[expose] public section
 
 /-! Tail-force liveness simulation with the evaluator induction hypothesis. -/
 namespace Flapjack.Compiler.Backend.DataLive

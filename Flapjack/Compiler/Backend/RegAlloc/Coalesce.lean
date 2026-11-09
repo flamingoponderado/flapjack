@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
-import Flapjack.Compiler.Backend.RegAlloc.SortedMem
-import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
+public import Flapjack.Compiler.Backend.RegAlloc.SortedMem
+public import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+
+@[expose] public section
 
 /-!
 # reg_alloc coalescing helpers

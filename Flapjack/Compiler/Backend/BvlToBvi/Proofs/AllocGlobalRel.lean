@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AllocGlobalStub
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AllocGlobalStub
+
+@[expose] public section
 
 /-! State relation after global-array growth. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

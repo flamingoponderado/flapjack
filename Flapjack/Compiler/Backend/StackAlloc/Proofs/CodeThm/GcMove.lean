@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.Memcpy
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.Memcpy
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `word_gc_move_code_thm`

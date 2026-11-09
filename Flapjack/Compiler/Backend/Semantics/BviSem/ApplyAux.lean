@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.Finalise
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Word
-import Flapjack.Compiler.Backend.BackendCommon.SmallInt
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Finalise
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Word
+public import Flapjack.Compiler.Backend.BackendCommon.SmallInt
+
+@[expose] public section
 
 /-! Source-shaped BVI-specific primitive dispatch. -/
 namespace Flapjack.Compiler.Backend.BviSem

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockStack
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockEquality
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.RefEquality
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberCompare
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockStack
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockEquality
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.RefEquality
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.NumberCompare
+
+@[expose] public section
 
 /-! Cases of pointer equality for the data-to-word memory relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

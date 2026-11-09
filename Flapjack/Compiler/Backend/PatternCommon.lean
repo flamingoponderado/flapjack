@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Syntax shared by the CakeML pattern compiler and its semantics. -/
 namespace Flapjack.Compiler.Backend.PatternCommon

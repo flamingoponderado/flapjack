@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CorrectnessEncoding.Skip
-import Flapjack.RiscV.L3.Defs.UpperJump
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.Skip
+public import Flapjack.RiscV.L3.Defs.UpperJump
+
+@[expose] public section
 
 /-! Full original JumpReg constructor case. Native decoding and execution are
 derived from emitted bytes; no target evaluation is assumed. Native Run

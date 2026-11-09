@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlHandle
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle
+
+@[expose] public section
 
 /-! Structural sufficiency for BVL handler live-variable compilation. These
 are Flapjack infrastructure lemmas, not HOL correctness theorem ports. -/

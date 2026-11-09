@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
+
+@[expose] public section
 
 /-! Source-shaped cases for the mutual source-to-flat relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

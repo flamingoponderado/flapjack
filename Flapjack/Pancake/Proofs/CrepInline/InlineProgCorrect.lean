@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Proofs.CrepInline.CallCase
-import Flapjack.Pancake.Proofs.CrepInline.ShMem
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Proofs.CrepInline.CallCase
+public import Flapjack.Pancake.Proofs.CrepInline.ShMem
+
+@[expose] public section
 
 /-!
 # crep_inline: assembled `inline_prog_correct`

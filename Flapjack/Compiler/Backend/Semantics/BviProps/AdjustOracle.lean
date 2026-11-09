@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyRuntimeFrame
-import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyRuntimeFrame
+public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+
+@[expose] public section
 
 /-! Adjusting the compiler configuration carried by a BVI oracle. -/
 namespace Flapjack.Compiler.Backend.BviProps

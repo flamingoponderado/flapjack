@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Function
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.EnvironmentExtension
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Function
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.EnvironmentExtension
+
+@[expose] public section
 
 /-! Shared environment and value relations for recursive closure groups. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

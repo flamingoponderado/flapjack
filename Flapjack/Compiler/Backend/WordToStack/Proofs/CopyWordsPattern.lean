@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBits
-import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
-import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBits
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
+public import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack
 

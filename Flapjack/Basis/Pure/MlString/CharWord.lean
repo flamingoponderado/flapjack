@@ -1,4 +1,8 @@
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-! Conversions between HOL byte characters and words. -/
 namespace Flapjack.Basis.Pure.MlString

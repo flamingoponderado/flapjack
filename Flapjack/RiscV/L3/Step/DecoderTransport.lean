@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Step.DecodeAny
+module
+
+public import Flapjack.RiscV.L3.Step.DecodeAny
+
+@[expose] public section
 
 /-! Original decoder transport rules used by the symbolic step library. Both
 retain the full native instruction carrier and literal decoder equality premise. -/

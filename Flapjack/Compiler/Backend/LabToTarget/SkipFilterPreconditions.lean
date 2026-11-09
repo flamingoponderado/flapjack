@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabFilter.Map
-import Flapjack.Compiler.Backend.LabProps.Native
+module
+
+public import Flapjack.Compiler.Backend.LabFilter.Map
+public import Flapjack.Compiler.Backend.LabProps.Native
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.LabLang

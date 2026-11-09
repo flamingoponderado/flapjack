@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordUnreach.ProductionDecoderDomain
-import Flapjack.Pancake.WordConvs.FullInstOkLess
-import Flapjack.Pancake.WordConvs.WfCutsets
+module
+
+public import Flapjack.Compiler.Backend.WordUnreach.ProductionDecoderDomain
+public import Flapjack.Pancake.WordConvs.FullInstOkLess
+public import Flapjack.Pancake.WordConvs.WfCutsets
+
+@[expose] public section
 
 namespace Flapjack.WordConvs
 open Flapjack Flapjack.Compiler.Backend.WordUnreach Flapjack.Compiler.Encoders.Asm

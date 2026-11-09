@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess.PanGlobals
-import Flapjack.Pancake.PanStructs.CompileDeclsExact
+module
+
+public import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess.PanGlobals
+public import Flapjack.Pancake.PanStructs.CompileDeclsExact
+
+@[expose] public section
 
 /-!
 # `pan_to_wordProofScript.sml` 1237-1298: `every_inst_ok_less` for `pan_structs`

@@ -1,7 +1,13 @@
-import Flapjack.Compiler.Backend.Arm8Config.BackendProof
-import Flapjack.Compiler.Backend.Arm8Config.ProofsL3
-import Flapjack.Compiler.Backend.BackendProof.ConfigOk
-import Mathlib.Tactic.IntervalCases
+module
+
+public import Flapjack.Compiler.Backend.Arm8Config.Names
+public import Flapjack.Compiler.Backend.Arm8Config.NameLemmas
+public import Flapjack.Compiler.Backend.Arm8Config.ProofsL3
+public import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
+public import Flapjack.Compiler.Backend.BackendProof.ConfigOk
+public import Mathlib.Tactic.IntervalCases
+
+@[expose] public section
 
 /-!
 # `backend_config_ok` at the L3 ARMv8 configuration
@@ -12,6 +18,8 @@ and the configuration Pancake compiles with,
 `pancake_backend_conf arm8_backend_config`.  The only field that differs from the
 closed-model `arm8Config` is `valid_imm`, so the proof follows
 `Arm8Config.BackendProof.arm8BackendConfigOkRaw` with the L3 immediate test.
+The register-name and range-test lemmas it shares with the closed-model proof
+live in `Arm8Config.Names` and `Arm8/BitVecLemmas.lean`.
 
 The machine-configuration half of `arm8_configProofScript.sml` over the L3
 carriers is in `Arm8Config.ProofsL3`.  Flapjack-specific instantiation, so untagged.
@@ -97,7 +105,7 @@ theorem arm8BackendConfigOkRawL3 :
     have h8 : (64 : Nat) / 8 = 8 := by norm_num
     have hm : n * (64 / 8) < 4096 := by rw [h8]; omega
     have hv : BitVec.ofNat 64 (n * (64 / 8)) &&& ~~~(0xFFF : BitVec 64) = 0 :=
-      ofNat_and_not_fff_eq_zero hm
+      Flapjack.Compiler.Encoders.Arm8.ofNat_and_not_fff_eq_zero hm
     simp only [arm8ConfigL3, arm8ValidImmediate, hv, decide_true, Bool.true_or]
     exact ⟨trivial, trivial⟩
 

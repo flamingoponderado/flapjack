@@ -1,8 +1,17 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Identity
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.ApplicationOperators
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Array
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Identity
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.ApplicationOperators
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Array
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Ffi
+
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Dispatcher for ordinary source operators in the proof-side simulation.
 The special application, assignment, dynamic installation, and thunk forcing cases

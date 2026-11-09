@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.MakeInit
-import Flapjack.Compiler.Backend.StackToLab.Compile
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.MakeInit
-import Flapjack.Compiler.Backend.StackNames.Proofs.MakeInit
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitAny
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitFfi
-import Flapjack.Compiler.Backend.StackProps.EvaluateConsts
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.MakeInit
+public import Flapjack.Compiler.Backend.StackToLab.Compile
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.MakeInit
+public import Flapjack.Compiler.Backend.StackNames.Proofs.MakeInit
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitAny
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitFfi
+public import Flapjack.Compiler.Backend.StackProps.EvaluateConsts
+
+@[expose] public section
 
 /-! `full_make_init_def` and `full_make_init_buffer`/`_ffi`/`_compile`
 (`stack_to_labProofScript.sml:3056`): the StackSem initial state of the

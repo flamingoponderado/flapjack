@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Collect closure-code locations in traversal order. -/
 namespace Flapjack.Compiler.Backend.ClosProps

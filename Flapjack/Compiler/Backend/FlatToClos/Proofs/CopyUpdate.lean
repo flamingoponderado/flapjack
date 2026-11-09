@@ -1,4 +1,13 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Copy
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Copy
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Checked byte-array copy updates for the proof-side simulation. These
 lemmas are Flapjack infrastructure, not reviewed HOL theorem ports. -/

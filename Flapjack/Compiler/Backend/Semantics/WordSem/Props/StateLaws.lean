@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Env
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-!
 # wordProps variable, store and stack-size laws

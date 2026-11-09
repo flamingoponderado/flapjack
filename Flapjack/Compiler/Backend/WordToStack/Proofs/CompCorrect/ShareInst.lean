@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterTwo
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadContinuations
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
-import Flapjack.Compiler.Backend.WordToStack.NativeSharedMemory
-import Flapjack.Misc.Option
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterClock
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterTwo
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadContinuations
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
+public import Flapjack.Compiler.Backend.WordToStack.NativeSharedMemory
+public import Flapjack.Misc.Option
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterClock
+
+@[expose] public section
 
 /-!
 # Word-to-Stack `comp_correct`: the `ShareInst` case

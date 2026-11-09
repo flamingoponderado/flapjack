@@ -1,7 +1,11 @@
-import Flapjack.Misc.List
-import Flapjack.Misc.ListLookupRel
-import Flapjack.SemanticPrimitivesHOL
-import Batteries.Data.List.Basic
+module
+
+public import Flapjack.Misc.List
+public import Flapjack.Misc.ListLookupRel
+public import Flapjack.SemanticPrimitivesHOL
+public import Batteries.Data.List.Basic
+
+@[expose] public section
 
 /-! Relation between store entries in the source semantics. -/
 namespace Flapjack.SemanticPrimitivesProps

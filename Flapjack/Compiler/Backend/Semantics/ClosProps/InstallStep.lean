@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
+
+@[expose] public section
 
 /-! Shared installation step of the proof-side Clos evaluator: the install
 arguments are evaluated first, then the dynamically installed program runs on

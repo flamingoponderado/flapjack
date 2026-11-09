@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStackRegFormat
+module
+
+public import Flapjack.Compiler.Backend.WordToStackRegFormat
+
+@[expose] public section
 
 /-! Native move lowering for the literal Word-to-Stack compiler.
 All source scheduler and formatting operations are retained; this does not

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.Environment
+
+@[expose] public section
 
 /-! Constructor-namespace equality for the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanToWord.PanToCrepCompileValidity
-import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess.PanStructs
+module
+
+public import Flapjack.Pancake.Proofs.PanToWord.PanToCrepCompileValidity
+public import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess.PanStructs
+
+@[expose] public section
 
 namespace Flapjack.PanToCrepTableValidity
 open Pancake.PanLang

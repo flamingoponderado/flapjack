@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileEmpty
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileGetVars
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileEmpty
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileGetVars
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

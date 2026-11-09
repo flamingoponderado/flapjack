@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.ConstantComposition
-import Flapjack.Compiler.Backend.BvlConst.SourceCompile
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.ConstantComposition
+public import Flapjack.Compiler.Backend.BvlConst.SourceCompile
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Total source entry points for BVL handler lowering. -/
 namespace Flapjack.Compiler.Backend.BvlHandle
 open Bvl DbVars
-private instance : Nonempty Exp := ⟨.var 0⟩
+instance sourceCompileInst1 : Nonempty Exp := ⟨.var 0⟩
 
 /-- HOL's list traversal, using its equivalent singleton-list formulation. -/
 @[hol "cakeml/compiler/backend/bvl_handleScript.sml" "compile_def"]

@@ -1,5 +1,13 @@
-import Flapjack.Pancake.PanToCrep
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Pancake.PanToCrep
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Exact finite-map port of `pan_to_crep$exp_hdl`, preserving the standalone HOL

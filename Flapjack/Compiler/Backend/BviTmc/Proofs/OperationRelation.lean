@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.HoleRelation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.Allocation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
-import Flapjack.Compiler.Backend.BviTmc.Proofs.BuildRelation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ThunkRelation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.InstallRelation
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.HoleRelation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.WordRelation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.Allocation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.BuildRelation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ThunkRelation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.InstallRelation
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
+
+@[expose] public section
 
 /-! Primitive-operation cases of the TMC evaluation simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc

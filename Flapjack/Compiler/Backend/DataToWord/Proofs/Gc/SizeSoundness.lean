@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeVisited
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeVisited
+
+@[expose] public section
 
 /-! Generalized source sizing bound for heap reachability. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

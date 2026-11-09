@@ -8,7 +8,7 @@ replayed with proofs using original native definitions in HOL.
 from pathlib import Path
 import hashlib
 ROOT = Path(__file__).resolve().parents[2]
-CHECKS = {'Flapjack/RiscV/CorrectnessEncoding/DecodeLongMul.lean': '6637fb01a5b619bc9478edba91f4f8bd2b2f8b91687af00919999a398de2057e', 'scripts/hol-probes/riscv_longmul_decode_probeScript.sml': 'd919404d4dcf653ab9205ca7efa033d5802d879ca599dbd16eb0fbc805b9399b', 'scripts/hol-probes/riscv_longmul_decode_probe.out': '3de16c333167c40058027f04d310221411019f7de94959eb3d747176c6c32b14'}
+CHECKS = {'Flapjack/RiscV/CorrectnessEncoding/DecodeLongMul.lean': '6e8ef5b4e9ceefc5bba31eae937085504535c8367b962f073aa314fe4e0631a7', 'scripts/hol-probes/riscv_longmul_decode_probeScript.sml': 'd919404d4dcf653ab9205ca7efa033d5802d879ca599dbd16eb0fbc805b9399b', 'scripts/hol-probes/riscv_longmul_decode_probe.out': '3de16c333167c40058027f04d310221411019f7de94959eb3d747176c6c32b14'}
 LABELS = ['mulhu_decode_universal', 'mulhu_decode_hypotheses', 'mulhu_decode_zero', 'mulhu_decode_all_ones', 'mulhu_decode_high_bit', 'mulhu_decode_alias', 'mulhu_encode_source_clause', 'mulhu_carrier_types', 'mul_decode_universal', 'mul_decode_hypotheses', 'mul_decode_zero', 'mul_decode_all_ones', 'mul_decode_high_bit', 'mul_decode_alias', 'mul_encode_source_clause', 'mul_carrier_types']
 def check(root=ROOT):
     for name, digest in CHECKS.items():

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyClock
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyClock
+public import Aesop
+
+@[expose] public section
 
 /-! Preservation of an initialized BVI global pointer by primitives. -/
 namespace Flapjack.Compiler.Backend.BviProps

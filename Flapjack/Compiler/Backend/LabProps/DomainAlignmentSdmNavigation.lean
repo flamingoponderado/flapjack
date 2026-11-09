@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.LabSem.Updates
-import Flapjack.Compiler.Backend.LabProps.DomainAlignment
-import Flapjack.Compiler.Backend.LabSem.Navigation
-import Flapjack.Compiler.Backend.Semantics.WordSem
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Updates
+public import Flapjack.Compiler.Backend.LabProps.DomainAlignment
+public import Flapjack.Compiler.Backend.LabSem.Navigation
+public import Flapjack.Compiler.Backend.Semantics.WordSem
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm

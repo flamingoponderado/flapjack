@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Pmov
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.FirstIndex
-import Flapjack.Compiler.Backend.Parmove.PmovFinal
-import Mathlib.Data.List.Nodup
-import Mathlib.Tactic.Convert
-import Lean.Elab.Tactic.Omega
+module
+
+public import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Pmov
+public import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.FirstIndex
+public import Flapjack.Compiler.Backend.Parmove.PmovFinal
+public import Mathlib.Data.List.Nodup
+public import Mathlib.Tactic.Convert
+public import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 open Flapjack.Misc

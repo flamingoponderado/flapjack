@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
-import Flapjack.SemanticPrimitivesProps.Conversion
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
+public import Flapjack.SemanticPrimitivesProps.Conversion
+
+@[expose] public section
 
 /-! Conversion cases for the source-to-flat primitive simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

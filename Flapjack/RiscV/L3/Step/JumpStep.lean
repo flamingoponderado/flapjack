@@ -1,7 +1,11 @@
-import Flapjack.RiscV.L3.Defs.UpperJump
-import Flapjack.RiscV.L3.Step.AvoidSignalAddressException
-import Flapjack.RiscV.L3.Step.UpdatePC
-import Mathlib.Tactic
+module
+
+public import Flapjack.RiscV.L3.Defs.UpperJump
+public import Flapjack.RiscV.L3.Step.AvoidSignalAddressException
+public import Flapjack.RiscV.L3.Step.UpdatePC
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-!
 Full evaluated original JAL/JALR equations from riscv_stepScript888-889.

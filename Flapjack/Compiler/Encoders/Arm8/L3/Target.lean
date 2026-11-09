@@ -1,9 +1,12 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Types
-import Flapjack.Compiler.Encoders.Arm8.L3.Defs
-import Flapjack.Compiler.Encoders.Arm8.Machine.State
-import Flapjack.Misc.Alignment
-import Flapjack.Misc.SetSep
-import Flapjack.Misc.Option
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Types
+public import Flapjack.Compiler.Encoders.Arm8.L3.Defs
+public import Flapjack.Misc.Alignment
+public import Flapjack.Misc.SetSep
+public import Flapjack.Misc.Option
+
+@[expose] public section
 
 /-!
 # L3 ARMv8 target: projection, validity gate, and the closed-model link
@@ -21,12 +24,11 @@ stated here over the L3 carrier, using the rendered `NextStateARM8` closure of
 `arm8_encoder_correct` case theorems in `L3/CorrectnessEncoding/`, assembled as
 `arm8EncoderCorrectL3`.
 
-The final theorem links the closed model's validity condition to the L3 gate:
-under `arm8StateRel`, the closed `arm8StateOk` implies L3 `arm8_ok`, with the
-L3-only control-register, privilege and exception fields supplied as explicit
-hypotheses because the closed carrier does not model them.  It is a
-validity-condition refinement only; it does not refine transitions and does not
-establish HOL-to-Lean semantic equivalence.
+The link between the closed model's validity condition and the L3 gate (under
+`arm8StateRel`, the closed `arm8StateOk` implies L3 `arm8_ok`) lives on the
+closed-model side in `Machine/L3Link.lean`, so this module does not import
+`Machine/`.  That link is a validity-condition refinement only; it does not
+refine transitions and does not establish HOL-to-Lean semantic equivalence.
 -/
 
 namespace Flapjack.Compiler.Encoders.Arm8.L3
@@ -80,45 +82,5 @@ theorem arm8Proj_memory (d : BitVec 64 → Prop) (s : arm8_state)
     (a : BitVec 64) (b : BitVec 8) :
     (arm8Proj d s).2.2.2.2.2.1 (a, b) ↔ s.MEM a = b ∧ d a := by
   exact SetSep.fun2SetThm s.MEM d a b
-
-/-- Flapjack relation between the closed `Arm8State` and the L3 `arm8_state` on
-the fields the closed model does model: PC, the four flags, the general
-registers below 31, and the byte memory.  L3's `REG` is a stored map with no
-zero-register invariant -- only the `X` read function returns zero for index 31
--- so the stored `REG 31` is left unconstrained.  The L3-only fields (`EL`,
-`SCTLR_EL1`, `TCR_EL1`, `exception`, `SP_EL*`, `branch_hint`) are not
-constrained here either; `arm8Ok_of_closed` takes the ones `arm8_ok` reads as
-explicit hypotheses.  No HOL original. -/
-def arm8StateRel (ms : Arm8State) (l3 : arm8_state) : Prop :=
-  l3.PC = ms.pc ∧
-  l3.PSTATE.N = ms.n ∧
-  l3.PSTATE.Z = ms.z ∧
-  l3.PSTATE.C = ms.c ∧
-  l3.PSTATE.V = ms.v ∧
-  (∀ r : BitVec 5, r.toNat < 31 → l3.REG r = ms.regs r.toNat) ∧
-  (∀ a : BitVec 64, l3.MEM a = ms.mem a)
-
-/-- The closed model's validity condition implies CakeML's L3 `arm8_ok` on the
-related L3 state, given the L3-only configuration fields that the closed
-carrier does not model.  Flapjack infrastructure (no HOL original): it relates
-the closed model to the L3 validity gate, not to the L3 transition semantics,
-and it is not a HOL-to-Lean equivalence claim. -/
-theorem arm8Ok_of_closed (ms : Arm8State) (l3 : arm8_state)
-    (hrel : arm8StateRel ms l3)
-    (hEL : l3.PSTATE.EL = 0)
-    (hE0E : l3.SCTLR_EL1.E0E = false)
-    (hSA0 : l3.SCTLR_EL1.SA0 = false)
-    (hTBI1 : l3.TCR_EL1.TBI1 = false)
-    (hTBI0 : l3.TCR_EL1.TBI0 = false)
-    (hExc : l3.exception = exception.NoException)
-    (hok : arm8StateOk ms = true) :
-    arm8Ok l3 = true := by
-  rcases hrel with ⟨hPC, _, _, _, _, _, _⟩
-  have hal : holAligned 2 ms.pc = true := by
-    have h := hok
-    simp only [arm8StateOk, Bool.and_eq_true] at h
-    exact h.1
-  rw [← hPC] at hal
-  simp [arm8Ok, hEL, hE0E, hSA0, hTBI1, hTBI0, hExc, hal]
 
 end Flapjack.Compiler.Encoders.Arm8.L3

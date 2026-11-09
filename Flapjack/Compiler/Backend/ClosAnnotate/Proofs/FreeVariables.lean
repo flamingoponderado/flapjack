@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Free.SourceEquations
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Free.SourceEquations
+
+@[expose] public section
 
 /-! Free-variable observations for the closure-annotation simulation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

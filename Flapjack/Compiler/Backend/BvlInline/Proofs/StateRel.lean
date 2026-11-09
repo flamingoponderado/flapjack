@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
-import Flapjack.Compiler.Backend.Semantics.BvlSem.State
-import Flapjack.Misc.Sptree.Map
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.State
+public import Flapjack.Misc.Sptree.Map
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! State relation for the tick-removal part of BVL inlining correctness. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

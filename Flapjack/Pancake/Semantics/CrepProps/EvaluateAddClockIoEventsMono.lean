@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClock
-import Flapjack.Pancake.Semantics.CrepSem.AddClock
-import Flapjack.Pancake.Semantics.CrepSem.EventsMono
+module
+
+public import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClock
+public import Flapjack.Pancake.Semantics.CrepSem.AddClock
+public import Flapjack.Pancake.Semantics.CrepSem.EventsMono
+
+@[expose] public section
 
 /-!
 # Combined clock-shift / event-prefix lemma for the exact Crep evaluator

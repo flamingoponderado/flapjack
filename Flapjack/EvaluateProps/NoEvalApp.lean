@@ -1,4 +1,8 @@
-import Flapjack.EvaluateProps.NoEvalControl
+module
+
+public import Flapjack.EvaluateProps.NoEvalControl
+
+@[expose] public section
 namespace Flapjack.EvaluateProps
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL
 /-- The application induction case of evaluation without Eval state. -/

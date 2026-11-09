@@ -274,8 +274,10 @@ The following are open review or verification obligations:
      simulated FFI calls. Nothing is compared with Ziren's Rust executor or the
      original Pancake compiler, which has no MIPS32 target.
 
-10. The ARMv8 (AArch64) backend proves a closed-subset machine theorem, not an
-    L3 port.
+10. The ARMv8 (AArch64) backend proves a closed-subset machine theorem and,
+    separately, CakeML's L3 encoder-correctness obligation; the closed model is
+    not an L3 port, and the executed configuration is not yet proved identical
+    to the L3 one.
     - **What is checked.** `flapjack-compile --target=arm8` emits the same GNU
       AArch64 assembly as `cake --pancake --target=arm8` for the checked-in
       corpus in `scripts/arm8/parity/`, including the code bytes, frame and
@@ -337,17 +339,21 @@ The following are open review or verification obligations:
       whose constant closure reaches the FP renderings
       inherits the item 8 real-rendering assumption.  There is no proof about
       arbitrary ARMv8 code, and nothing shows that the model agrees with real
-      AArch64 hardware.  The trusted compiler claim still rests on the closed
-      model plus the parity evidence: the executed driver emits the closed
-      subset, and the L3 chain proves the L3 encoder correct for the same
-      source instructions.  No
-      theorem relates the closed `arm8Ast`/`arm8Enc`/`validImmediate` to the L3
-      `arm8Ast`/`arm8Enc`/`arm8ValidImmediate`: the only evidence that the
-      executed encoder emits the same bytes and makes the same immediate
-      decisions as the L3 one is the compiler-output parity against CakeML, so
-      a divergence between the two encoders would not be caught by
-      `arm8EncoderCorrectL3`.  Proving the closed encoder equal to the L3 one on
-      the emitted subset is an open gap.
+      AArch64 hardware.  The two encoders are proved to agree, not merely
+      parity-tested: `arm8Enc_eq` (`L3/Executable/Composition.lean`, landed with
+      #1357) states `Arm8.arm8Enc a = arm8Enc a` for every `HolAsm 64`, not only
+      the emitted subset, and `validImmediate_eq`
+      (`L3/Executable/ConfigurationBridge.lean`) states the computable
+      `validImmediate` equal to the L3 `arm8ValidImmediate`.  The executed
+      encoder therefore emits exactly the L3 encoder's bytes and makes the same
+      immediate decisions; a divergence between the two encoders would be caught
+      by these theorems, not only by compiler-output parity.  What remains is
+      configuration-level and structural, not encoder-level: no theorem yet
+      identifies the executed computable `arm8Config` with `arm8ConfigL3` (the
+      two non-literal fields are exactly the ones the equalities above cover, and
+      the other fourteen are identical literal values), and the closed model is
+      still in the tree.  Both are tracked in #1270; until that step lands the
+      trusted compiler claim rests on the closed model plus the parity evidence.
     - **Proof port status.** The structural length lemmas at the start of
       `arm8_targetProofScript.sml`, the word64 conjunct of
       `Decode_EncodeBitMask`, `mul_long`, and the length half of

@@ -1,8 +1,12 @@
-import Flapjack.FiniteMap.MapKeys
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StackPointer
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
-import Flapjack.Compiler.Backend.StackRemove.StackFree
+module
+
+public import Flapjack.FiniteMap.MapKeys
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StackPointer
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StateUpdates
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+public import Flapjack.Compiler.Backend.StackRemove.StackFree
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.StackFreeSimulation
 open Flapjack.Compiler.Backend.StackRemove
 open Flapjack

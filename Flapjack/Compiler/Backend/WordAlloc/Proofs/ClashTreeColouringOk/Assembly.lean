@@ -1,11 +1,15 @@
-import Flapjack.Pancake.WordLang.MaxVar
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Control
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.CutSets
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.LoopCases
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ShareInst
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.CallNone
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ReturnNoHandler
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.CallHandler
+module
+
+public import Flapjack.Pancake.WordLang.MaxVar
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Control
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.CutSets
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.LoopCases
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ShareInst
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.CallNone
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ReturnNoHandler
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.CallHandler
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Flapjack.RegAlloc

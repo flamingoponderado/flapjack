@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalEnvironment
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalEnvironment
+
+@[expose] public section
 
 /-! Clock-bounded primitive simulation over preliminary source-to-flat relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

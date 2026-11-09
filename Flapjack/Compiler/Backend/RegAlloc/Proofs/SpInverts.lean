@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Misc.Sptree.ToAList
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.Sptree.ToAList
+
+@[expose] public section
 
 /-!
 # reg_allocProof: mutually inverse sparse maps

@@ -1,7 +1,12 @@
-import Flapjack.Compiler.Encoders.Arm8.Target
-import Flapjack.Compiler.Encoders.AsmProps.Target
-import Flapjack.Misc.Alignment
-import Flapjack.Misc.SetSep
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Target
+public import Flapjack.Compiler.Encoders.AsmProps.Target
+public import Flapjack.Misc.Alignment
+public import Flapjack.Misc.SetSep
+public import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
+
+@[expose] public section
 
 /-!
 # A closed ARMv8 machine state for the Pancake instruction subset
@@ -96,9 +101,6 @@ def writeMemN (s : Arm8State) (size : Nat) (address : BitVec 64) (value : BitVec
       else if a = address + 6 then byteAt 6
       else if a = address + 7 then byteAt 7
       else s.mem a) }
-
-/-- ARM condition flags in the order `N`, `Z`, `C`, `V`. -/
-abbrev Arm8Flags := Bool × Bool × Bool × Bool
 
 /-- Read the flags. -/
 def readFlags (s : Arm8State) : Arm8Flags := (s.n, s.z, s.c, s.v)

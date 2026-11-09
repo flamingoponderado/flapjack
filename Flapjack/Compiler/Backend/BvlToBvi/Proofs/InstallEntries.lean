@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InstallNames
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InstallNames
+
+@[expose] public section
 
 /-! Correspondence of installed source functions and generated BVI code. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

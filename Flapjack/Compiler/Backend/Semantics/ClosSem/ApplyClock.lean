@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
+public import Aesop
+
+@[expose] public section
 
 /-! Clock preservation for the proof-side closure primitive dispatcher. -/
 namespace Flapjack.Compiler.Backend.ClosSem

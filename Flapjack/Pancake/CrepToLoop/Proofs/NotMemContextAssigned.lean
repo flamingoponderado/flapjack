@@ -1,6 +1,10 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpSyntaxHelpers
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpOutRel
-import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.CompExpSyntaxHelpers
+public import Flapjack.Pancake.CrepToLoop.Proofs.CompExpOutRel
+public import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
+
+@[expose] public section
 
 /-!
 # crep_to_loop `not_mem_context_assigned_mem_gt` over the exact carriers

@@ -1,8 +1,14 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.ApplySimulation
-import Flapjack.Compiler.Backend.BvlInline.Proofs.FindCode
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateClockShift
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.ApplySimulation
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.FindCode
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateClockShift
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+public import Flapjack.Misc.ClockWeightInduction
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! Case factoring for the BVL tick-removal evaluator simulation. The full
 source theorem remains open until all cases are assembled. -/

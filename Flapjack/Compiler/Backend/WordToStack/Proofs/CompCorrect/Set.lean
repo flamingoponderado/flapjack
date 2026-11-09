@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegister
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelStoreUpdate
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegister
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelStoreUpdate
+
+@[expose] public section
 namespace Flapjack.WordToStackProofs.CompCorrect.Set
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Backend.WordToStack.Native

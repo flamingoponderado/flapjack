@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordBignum.Equality
+module
+
+public import Flapjack.Compiler.Backend.WordBignum.Equality
+
+@[expose] public section
 
 /-! Reflection for structural equality of bignum generator syntax. -/
 namespace Flapjack.Compiler.Backend.WordBignum

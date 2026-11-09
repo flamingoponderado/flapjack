@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDeclarations
-import Flapjack.Compiler.Backend.SourceEval.Proofs.DoAppSimulation
-import Flapjack.Compiler.Backend.SourceEval.Proofs.DoEvalSimulation
-import Flapjack.Compiler.Backend.SourceEval.Proofs.DeclareEnvSimulation
-import Flapjack.Compiler.Backend.SourceEval.Proofs.SimulationPrerequisites
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentAppend
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EvalSimulationDeclarations
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.DoAppSimulation
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.DoEvalSimulation
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.DeclareEnvSimulation
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.SimulationPrerequisites
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentAppend
+
+@[expose] public section
 
 /-! Application case of the source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Defs.IntegerStore
-import Flapjack.Misc.Alignment
+module
+
+public import Flapjack.RiscV.L3.Defs.IntegerStore
+public import Flapjack.Misc.Alignment
+
+@[expose] public section
 
 /-! Flapjack-specific byte consequences of the actual native memory definitions.
 No independently named HOL theorem is claimed. These lemmas retain modular

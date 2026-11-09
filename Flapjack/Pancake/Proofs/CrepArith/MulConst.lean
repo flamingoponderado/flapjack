@@ -1,6 +1,10 @@
-import Flapjack.Pancake.CrepArith
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Misc.Words.Log2
+module
+
+public import Flapjack.Pancake.CrepArith
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Misc.Words.Log2
+
+@[expose] public section
 
 /-!
 # crep_arith `mul_const` correctness over the exact carriers

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
-import Flapjack.SemanticPrimitivesProps.StoreRelation
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
+public import Flapjack.SemanticPrimitivesProps.StoreRelation
+
+@[expose] public section
 
 /-! State relation for flat pattern compilation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

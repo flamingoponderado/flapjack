@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatPattern.Patterns
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Patterns
+
+@[expose] public section
 
 /-! Total expression traversal for the flat pattern compiler. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

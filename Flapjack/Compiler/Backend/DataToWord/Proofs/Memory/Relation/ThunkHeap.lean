@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeader
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockStack
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.Thunk
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockHeader
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockStack
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.Thunk
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
+
+@[expose] public section
 
 /-! Concrete heap facts used by the source thunk memory-relation proof. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.AddressException
+module
+
+public import Flapjack.RiscV.L3.Defs.AddressException
+
+@[expose] public section
 
 /-! `avoid_signalAddressException`: the original step theory's observation that a
 false guard leaves the state unchanged. HOL `riscv_stepScript.sml:553-557` proves

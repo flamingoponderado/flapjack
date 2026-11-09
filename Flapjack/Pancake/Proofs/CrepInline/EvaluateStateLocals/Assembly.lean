@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.While
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Call
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.While
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Call
+
+@[expose] public section
 
 /-!
 # crep_inline: assembled `evaluate_state_locals_rel_strong`

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectDecl
-import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectFunctionExn
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectDecl
+public import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectFunctionExn
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectExact
 open Flapjack Flapjack.Pancake.PanLang
 open Flapjack.Pancake.PanStructs.CompileShapeExact

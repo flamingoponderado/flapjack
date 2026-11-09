@@ -1,5 +1,9 @@
-import Flapjack.EvaluateProps.ClockIoSafe
-import Flapjack.EvaluateProps.PrimitiveLength
+module
+
+public import Flapjack.EvaluateProps.ClockIoSafe
+public import Flapjack.EvaluateProps.PrimitiveLength
+
+@[expose] public section
 
 /-! Flapjack proof helpers for the clock-and-I/O evaluator theorem. -/
 namespace Flapjack.EvaluateProps

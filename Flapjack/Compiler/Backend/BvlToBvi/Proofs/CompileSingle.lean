@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCorrect
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCorrect
+
+@[expose] public section
 
 /-! Entry-point simulation for BVL-to-BVI compilation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

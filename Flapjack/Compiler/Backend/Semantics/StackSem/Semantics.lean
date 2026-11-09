@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
-import Flapjack.Misc.LprefixLub
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+public import Flapjack.Misc.LprefixLub
+
+@[expose] public section
 
 /-!
 # HOL `stackSem` observational semantics
@@ -147,7 +151,9 @@ theorem semanticsAux_congr {width : Nat} [NeZero width] {C F : Type}
       rw [hr, hg]
   unfold semanticsAux
   simp only [hg]
-  rw [hP]
+  -- `hP`'s local matcher differs from `semanticsAux`'s under the module system.
+  erw [hP]
+  rfl
 
 /-- Two states whose entry-call evaluations agree in result, and in final state up to an
 FFI-preserving map, have the same semantics (Flapjack infrastructure). -/

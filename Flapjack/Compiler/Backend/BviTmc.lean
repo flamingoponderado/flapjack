@@ -1,7 +1,15 @@
-import Flapjack.Compiler.Backend.Bvi.Syntax
-import Flapjack.Compiler.Backend.Bvi.Budget
-import Flapjack.Compiler.Backend.BackendCommon.BvlStubs
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.Bvi.Syntax
+public import Flapjack.Compiler.Backend.Bvi.Budget
+public import Flapjack.Compiler.Backend.BackendCommon.BvlStubs
+public import Flapjack.HolRef
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Executable infrastructure for BVI tail-modulo-constructor lowering.
 `Proofs.Total` proves structural traversal bounds for the checked code;

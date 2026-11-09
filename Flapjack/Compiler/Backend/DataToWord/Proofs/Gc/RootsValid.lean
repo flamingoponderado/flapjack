@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRoots
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveRoots
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CollectorFilter
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DecodedRoots
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRoots
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.MoveRoots
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CollectorFilter
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DecodedRoots
+
+@[expose] public section
 
 /-! Valid collector locations supplied by the data-to-word memory relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

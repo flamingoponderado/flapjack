@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileRefByte
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileRefByte
+
+@[expose] public section
 
 /-! Array bounds checks in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

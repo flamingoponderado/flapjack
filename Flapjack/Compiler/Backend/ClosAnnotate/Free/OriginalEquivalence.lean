@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Free.Original
-import Flapjack.Compiler.Backend.ClosAnnotate.Free.SourceEquations
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Free.Original
+public import Flapjack.Compiler.Backend.ClosAnnotate.Free.SourceEquations
+
+@[expose] public section
 
 /-! Agreement between source-shaped and executable free-variable traversals. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

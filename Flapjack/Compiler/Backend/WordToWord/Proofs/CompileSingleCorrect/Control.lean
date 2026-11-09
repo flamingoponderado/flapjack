@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Leaf
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Leaf
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
+
+@[expose] public section
 
 /-!
 # `word_to_wordProof` `compile_single_correct`: control cases

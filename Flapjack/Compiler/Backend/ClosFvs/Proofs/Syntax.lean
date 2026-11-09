@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.ClosFvs.Source
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
-import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.FreeVars
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.Production
+module
+
+public import Flapjack.Compiler.Backend.ClosFvs.Source
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.FreeVars
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Production
+
+@[expose] public section
 
 /-! Syntactic invariants of closure free-variable cleanup. -/
 namespace Flapjack.Compiler.Backend.ClosFvs

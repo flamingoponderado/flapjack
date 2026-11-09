@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcSimple
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcSimple
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackAlloc.Generational
 

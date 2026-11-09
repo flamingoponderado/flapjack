@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabFilter
+module
+
+public import Flapjack.Compiler.Backend.LabFilter
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabFilter
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

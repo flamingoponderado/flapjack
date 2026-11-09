@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanToTarget
-import Flapjack.Pancake.Semantics.PanSem.Semantics
+module
+
+public import Flapjack.Pancake.PanToTarget
+public import Flapjack.Pancake.Semantics.PanSem.Semantics
+
+@[expose] public section
 
 /-! Main-first reordering preserves Pancake declaration semantics.
 

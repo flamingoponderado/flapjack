@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
-import Flapjack.Pancake.Proofs.PanGlobals.GlobalUpdateSupport
-import Flapjack.Pancake.Proofs.PanGlobals.GlobalStoreReload
-import Flapjack.Pancake.Proofs.PanGlobals.GlobalStorePreservation
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
+public import Flapjack.Pancake.Proofs.PanGlobals.GlobalUpdateSupport
+public import Flapjack.Pancake.Proofs.PanGlobals.GlobalStoreReload
+public import Flapjack.Pancake.Proofs.PanGlobals.GlobalStorePreservation
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCompileCorrectAssignGlobal
 open Flapjack.Pancake.PanLang

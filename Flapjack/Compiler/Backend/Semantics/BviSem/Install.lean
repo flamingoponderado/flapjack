@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyAux
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyAux
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
+
+@[expose] public section
 
 /-! BVI code installation. -/
 namespace Flapjack.Compiler.Backend.BviSem

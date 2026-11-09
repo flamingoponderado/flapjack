@@ -1,4 +1,8 @@
-import Flapjack.EvaluateHOL.ClockFull
+module
+
+public import Flapjack.EvaluateHOL.ClockFull
+
+@[expose] public section
 
 /-! Shared source-evaluator Eval-clause proof infrastructure. -/
 namespace Flapjack.EvaluateHOL

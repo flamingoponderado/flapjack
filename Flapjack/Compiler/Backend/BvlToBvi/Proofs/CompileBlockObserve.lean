@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileBlock
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileBlock
+
+@[expose] public section
 
 /-! Pure block observations in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

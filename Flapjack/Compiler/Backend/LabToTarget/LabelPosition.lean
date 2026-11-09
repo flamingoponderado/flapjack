@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Basis.Pure.MlString
-import Flapjack.Compiler.Backend.LabToTarget.SectionLength
+module
+
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Compiler.Backend.LabToTarget.SectionLength
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

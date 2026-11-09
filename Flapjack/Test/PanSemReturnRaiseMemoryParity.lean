@@ -2,11 +2,11 @@ import Flapjack.Pancake.Semantics.PanSemStateEval
 import Flapjack.Test.PanValueFfiCore
 
 /-!
-Direct regression for the exact source `PanSemExactState` `Return`/`Raise`
+Direct regression for the source `PanSemState` code-map `Return`/`Raise`
 equations.  The payload expressions read the source state's memory, so a
-present word cell exercises the state-derived `memoryAccess` path while an
-address outside `memaddrs` exercises the `SOME Error` rejection.  The expected
-values are the original-HOL `EVAL` rows in
+present word cell exercises the state-derived memory domain while an address
+outside `memaddrs` exercises the `SOME Error` rejection.  The expected values
+are the original-HOL `EVAL` rows in
 `scripts/hol-probes/pan_sem_return_raise_memory_probe.out`:
 
 * `ret_mem_fail_result=SOME Error`, `ret_mem_fail_locals=SOME (ValWord 3w)`,
@@ -38,58 +38,58 @@ private def exactMemory : Word64 → Option (PanValue Word64) :=
 private def exactDomain : Word64 → Bool :=
   fun address => address == 8
 
-private def exactAccess : PanValueMemoryAccess Word64 :=
-  panValueMemoryAccessOfModel panSemBitVec64WordModel exactDomain
-    (fun _ => false) false
+private def emptyDomain : Word64 → Bool := fun _ => false
 
-private def exactLegacy (clock : Nat) (locals : VarName → Option (PanValue Word64))
-    (memory : Word64 → Option (PanValue Word64))
-    (contracts : Option PanValueCallContracts) :
-    PanSemEvaluateState Word64 Unit :=
-  { structs := []
-    functions := []
-    locals := locals
+/-- The source `eshapes` map: `E` is declared with shape `One`. -/
+private def shapesOne : ExceptionId → Option Shape :=
+  fun exception => if exception == "E" then some .one else none
+
+/-- The source `eshapes` map: `E` is declared with a non-`One` shape. -/
+private def shapesBad : ExceptionId → Option Shape :=
+  fun exception => if exception == "E" then some (.named "Other") else none
+
+private def localsWordX : VarName → Option (PanValue Word64) :=
+  fun name => if name == "x" then some (.word 3) else none
+
+private def localsWordSeven : VarName → Option (PanValue Word64) :=
+  fun name => if name == "x" then some (.word 7) else none
+
+/-- State-owned source state used by the memory-reading guards. -/
+private def sourceState (clock : Nat) (locals : VarName → Option (PanValue Word64))
+    (memory : Word64 → Option (PanValue Word64)) (domain : Word64 → Bool)
+    (shapes : ExceptionId → Option Shape) : PanSemState Word64 (FfiState Unit) :=
+  { locals := locals
     globals := fun _ => none
+    structs := []
+    code := []
+    exceptionShapes := shapes
     memory := memory
-    ffi := statefulTestFfiState
+    memaddrs := domain
+    sharedMemaddrs := fun _ => false
     clock := clock
-    baseAddress := 0
-    topAddress := 100
-    bytesInWord := 8
-    memoryAccess := none
-    contracts := contracts
-    memoryHandler := none }
+    be := false
+    ffi := statefulTestFfiState
+    baseAddress := BitVec.ofNat 64 0
+    topAddress := BitVec.ofNat 64 100 }
 
-private def exactStateOf (legacy : PanSemEvaluateState Word64 Unit) :
-    PanSemExactState Word64 Unit :=
-  { legacy := legacy, memoryAccess := exactAccess }
-
-/-- State used by the memory-reading guards: local `x` holds a word and memory
-    has a present cell at address `8`. -/
-private def memoryState (clock : Nat) (contracts : Option PanValueCallContracts) :
-    PanSemExactState Word64 Unit :=
-  exactStateOf <| exactLegacy clock
-    (fun name => if name == "x" then some (.word 3) else none) exactMemory contracts
+/-- State with a present memory cell at address `8` and local `x`. -/
+private def memoryState (clock : Nat) (shapes : ExceptionId → Option Shape) :
+    PanSemState Word64 (FfiState Unit) :=
+  sourceState clock localsWordX exactMemory exactDomain shapes
 
 /-- State whose source evaluation fails immediately (no locals, no memory). -/
-private def emptyState : PanSemExactState Word64 Unit :=
-  exactStateOf <| exactLegacy 5 (fun _ => none) (fun _ => none) none
+private def emptyState : PanSemState Word64 (FfiState Unit) :=
+  sourceState 5 (fun _ => none) (fun _ => none) emptyDomain (fun _ => none)
 
 /-- State whose source evaluation succeeds with `.word 7`. -/
-private def wordState (contracts : Option PanValueCallContracts) :
-    PanSemExactState Word64 Unit :=
-  exactStateOf <| exactLegacy 5 (fun _ => some (.word 7)) (fun _ => none) contracts
+private def wordState (shapes : ExceptionId → Option Shape) :
+    PanSemState Word64 (FfiState Unit) :=
+  sourceState 5 localsWordSeven (fun _ => none) emptyDomain shapes
 
-private def evaluate (state : PanSemExactState Word64 Unit) (program : Prog Word64) :
+private def evaluate (state : PanSemState Word64 (FfiState Unit)) (program : Prog Word64) :
     Option (PanValueFfiClockResult Word64 Unit) :=
-  panSemEvaluateExactState statefulTestContext statefulTestPrimitive
+  panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive
     statefulTestHandler state program
-
-private def contractsOne : Option PanValueCallContracts :=
-  some { returnShapes := [], exceptionShapes := [("E", Shape.one)] }
-
-private def contractsBadShape : Option PanValueCallContracts :=
-  some { returnShapes := [], exceptionShapes := [("E", Shape.named "Other")] }
 
 private def isWordValue (expected : Nat) : Option (PanValue Word64) → Bool
   | some (.word value) => value == BitVec.ofNat 64 expected
@@ -134,20 +134,19 @@ private def loadHit : Exp Word64 := .load Shape.one (.const 8)
 private def loadMiss : Exp Word64 := .load Shape.one (.const 11)
 
 private def returnMissGuard : Bool :=
-  isErrorKeeping 5 3 (evaluate (memoryState 5 none) (.return loadMiss))
+  isErrorKeeping 5 3 (evaluate (memoryState 5 (fun _ => none)) (.return loadMiss))
 
 private def returnHitGuard : Bool :=
-  isReturnedWith 5 119 (evaluate (memoryState 5 none) (.return loadHit))
+  isReturnedWith 5 119 (evaluate (memoryState 5 (fun _ => none)) (.return loadHit))
 
 private def raiseMissGuard : Bool :=
-  isErrorKeeping 5 3 (evaluate (memoryState 5 contractsOne) (.raise "E" loadMiss))
+  isErrorKeeping 5 3 (evaluate (memoryState 5 shapesOne) (.raise "E" loadMiss))
 
 private def raiseBadShapeGuard : Bool :=
-  isErrorKeeping 5 3
-    (evaluate (memoryState 5 contractsBadShape) (.raise "E" loadHit))
+  isErrorKeeping 5 3 (evaluate (memoryState 5 shapesBad) (.raise "E" loadHit))
 
 private def raiseHitGuard : Bool :=
-  isRaisedWith 5 "E" 119 (evaluate (memoryState 5 contractsOne) (.raise "E" loadHit))
+  isRaisedWith 5 "E" 119 (evaluate (memoryState 5 shapesOne) (.raise "E" loadHit))
 
 private def exactGuard : Bool :=
   returnMissGuard && returnHitGuard && raiseMissGuard && raiseBadShapeGuard &&
@@ -156,53 +155,66 @@ private def exactGuard : Bool :=
 #guard exactGuard
 
 /-- `Return` whose payload fails to evaluate returns `SOME Error` over the full
-    exact state. -/
+    source state. -/
 theorem returnMiss_eq :
     evaluate emptyState (.return (.var .local "z")) =
-      some (.control (.error emptyState.legacy.locals emptyState.legacy.globals
-        emptyState.legacy.memory emptyState.legacy.ffi), emptyState.legacy.clock) := by
-  apply panSemEvaluateExactState_return_error_of_eval_none
-  simp [emptyState, exactStateOf, exactLegacy, evalPanValueExp]
+      some (.control (.error emptyState.locals emptyState.globals
+        emptyState.memory emptyState.ffi), emptyState.clock) := by
+  simp (config := { decide := true }) [evaluate, emptyState, sourceState,
+    panSemEvaluateRiscV64CodeState, panSemEvaluateWordCodeState,
+    panSemEvaluateCodeStateWithMemoryModel, panSemEvaluateCodeState,
+    panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemProgFuel,
+    panSemExpFuel, panSemCodeBodyFuel, panSemBitVec64BytesInWord,
+    evalPanValueFfiClockCodeProg, evalPanValueFfiClockLeaf,
+    evalPanValueFfiLeafControl, panValueReturnResult, evalPanValueExpWith,
+    evalPanValueExp]
 
 /-- `Raise` whose payload fails to evaluate returns `SOME Error` over the full
-    exact state. -/
+    source state. -/
 theorem raiseMiss_eq :
     evaluate emptyState (.raise "E" (.var .local "z")) =
-      some (.control (.error emptyState.legacy.locals emptyState.legacy.globals
-        emptyState.legacy.memory emptyState.legacy.ffi), emptyState.legacy.clock) := by
-  apply panSemEvaluateExactState_raise_error_of_eval_none
-  simp [emptyState, exactStateOf, exactLegacy, evalPanValueExp]
+      some (.control (.error emptyState.locals emptyState.globals
+        emptyState.memory emptyState.ffi), emptyState.clock) := by
+  simp (config := { decide := true }) [evaluate, emptyState, sourceState,
+    panSemEvaluateRiscV64CodeState, panSemEvaluateWordCodeState,
+    panSemEvaluateCodeStateWithMemoryModel, panSemEvaluateCodeState,
+    panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemProgFuel,
+    panSemExpFuel, panSemCodeBodyFuel, panSemBitVec64BytesInWord,
+    evalPanValueFfiClockCodeProg, evalPanValueExpWith, evalPanValueExp]
 
 /-- `Raise` whose payload shape does not match the declared shape returns
-    `SOME Error` over the full exact state. -/
+    `SOME Error` over the full source state. -/
 theorem raiseBadShape_eq :
-    evaluate (wordState contractsBadShape) (.raise "E" (.var .local "x")) =
-      some (.control (.error (wordState contractsBadShape).legacy.locals
-        (wordState contractsBadShape).legacy.globals
-        (wordState contractsBadShape).legacy.memory
-        (wordState contractsBadShape).legacy.ffi),
-        (wordState contractsBadShape).legacy.clock) := by
-  apply panSemEvaluateExactState_raise_error_of_invalid (value := .word 7)
-  · simp [wordState, exactStateOf, exactLegacy, evalPanValueExp]
-  · simp [wordState, exactStateOf, exactLegacy, contractsBadShape,
-      panValueExceptionValid, panValueShape, panShapeMatches, lookupInfo]
+    evaluate (wordState shapesBad) (.raise "E" (.var .local "x")) =
+      some (.control (.error (wordState shapesBad).locals
+        (wordState shapesBad).globals
+        (wordState shapesBad).memory
+        (wordState shapesBad).ffi),
+        (wordState shapesBad).clock) := by
+  simp (config := { decide := true }) [evaluate, wordState, sourceState, shapesBad,
+    panSemEvaluateRiscV64CodeState, panSemEvaluateWordCodeState,
+    panSemEvaluateCodeStateWithMemoryModel, panSemEvaluateCodeState,
+    panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemProgFuel,
+    panSemExpFuel, panSemCodeBodyFuel, panSemBitVec64BytesInWord,
+    evalPanValueFfiClockCodeProg, evalPanValueExpWith, evalPanValueExp,
+    panValueShape, panShapeMatches, localsWordSeven]
 
 def runChecks : IO Bool := do
   if returnMissGuard then
-    IO.println "PASS exact-state Return eval failure keeps state and clock"
-  else IO.println "FAIL exact-state Return eval failure keeps state and clock"
+    IO.println "PASS source Return eval failure keeps state and clock"
+  else IO.println "FAIL source Return eval failure keeps state and clock"
   if returnHitGuard then
-    IO.println "PASS exact-state Return memory read returns the cell"
-  else IO.println "FAIL exact-state Return memory read returns the cell"
+    IO.println "PASS source Return memory read returns the cell"
+  else IO.println "FAIL source Return memory read returns the cell"
   if raiseMissGuard then
-    IO.println "PASS exact-state Raise eval failure keeps state and clock"
-  else IO.println "FAIL exact-state Raise eval failure keeps state and clock"
+    IO.println "PASS source Raise eval failure keeps state and clock"
+  else IO.println "FAIL source Raise eval failure keeps state and clock"
   if raiseBadShapeGuard then
-    IO.println "PASS exact-state Raise shape mismatch keeps state and clock"
-  else IO.println "FAIL exact-state Raise shape mismatch keeps state and clock"
+    IO.println "PASS source Raise shape mismatch keeps state and clock"
+  else IO.println "FAIL source Raise shape mismatch keeps state and clock"
   if raiseHitGuard then
-    IO.println "PASS exact-state Raise memory read raises the matched value"
-  else IO.println "FAIL exact-state Raise memory read raises the matched value"
+    IO.println "PASS source Raise memory read raises the matched value"
+  else IO.println "FAIL source Raise memory read raises the matched value"
   pure exactGuard
 
 end Flapjack.Test.PanSemReturnRaiseMemoryParity

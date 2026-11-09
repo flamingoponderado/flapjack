@@ -2,9 +2,13 @@
 Copyright (c) 2025 Flapjack contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Flapjack.Compiler.Encoders.Arm8.Machine.JumpCmpCase
-import Flapjack.Compiler.Encoders.Arm8.Machine.MaskConverses
-import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Machine.JumpCmpCase
+public import Flapjack.Compiler.Encoders.Arm8.MaskConverses
+public import Flapjack.Compiler.Encoders.Arm8.BitVecLemmas
+
+@[expose] public section
 
 /-!
 # The ARM8 `const` encoder-correctness case

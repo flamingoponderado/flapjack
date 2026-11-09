@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
-import Flapjack.Misc.MiscThe
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
+public import Flapjack.Misc.MiscThe
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 

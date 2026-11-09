@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets
-import Flapjack.Pancake.WordConvs.NotCreated
+module
+
+public import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets
+public import Flapjack.Pancake.WordConvs.NotCreated
+
+@[expose] public section
 
 /-!
 # `wordConvsProof`: `not_created_subprogs` through SSA

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosKnown.Merge
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Merge
+
+@[expose] public section
 
 /-! Total approximation operation from the known-function optimizer. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

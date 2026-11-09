@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyAux
-import Flapjack.SemanticPrimitivesProps.ResultMap
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyAux
+public import Flapjack.SemanticPrimitivesProps.ResultMap
+
+@[expose] public section
 
 /-! Field-independence infrastructure for the auxiliary primitive dispatcher. -/
 namespace Flapjack.Compiler.Backend.DataSem

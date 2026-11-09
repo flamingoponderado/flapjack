@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.Total
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.Total
+
+@[expose] public section
 
 /-! Successful multi-argument traversals remain stable when given more fuel. -/
 namespace Flapjack.Compiler.Backend.ClosMti

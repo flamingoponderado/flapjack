@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.Proofs.SpillRegister
-import Flapjack.Compiler.Backend.LinearScan.Proofs.EdgesToAdjlist
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.SpillRegister
+public import Flapjack.Compiler.Backend.LinearScan.Proofs.EdgesToAdjlist
+
+@[expose] public section
 
 /-!
 # linear_scanProof: stealing, colouring and the allocation step

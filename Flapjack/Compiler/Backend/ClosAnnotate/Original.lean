@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Free.OriginalEquivalence
-import Flapjack.Compiler.Backend.ClosAnnotate.Shift.OriginalEquivalence
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Free.OriginalEquivalence
+public import Flapjack.Compiler.Backend.ClosAnnotate.Shift.OriginalEquivalence
+
+@[expose] public section
 
 /-! Original annotation entry points and their executable equivalents. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

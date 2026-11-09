@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackLang.Prog
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.StackLang.Prog
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRawCall
 open Flapjack Flapjack.Compiler.Backend.StackLang

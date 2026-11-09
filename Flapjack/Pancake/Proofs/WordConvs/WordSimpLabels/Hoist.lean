@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.ConstFp
-import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.HoistPrerequisites
+module
+
+public import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.ConstFp
+public import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.HoistPrerequisites
+
+@[expose] public section
 
 namespace Flapjack.WordConvs.WordSimpLabels
 open Flapjack Flapjack.Compiler.Backend.WordSimp

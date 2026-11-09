@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompileCodeInfo
-import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompileSemantics
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompileCodeInfo
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompileSemantics
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRawCall.CompileSemantics
 open Flapjack Flapjack.Compiler.Backend.StackLang

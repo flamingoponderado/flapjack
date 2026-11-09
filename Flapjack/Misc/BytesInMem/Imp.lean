@@ -1,5 +1,9 @@
-import Flapjack.Misc.BytesInMem
-import Flapjack.Misc.BytesInMemory
+module
+
+public import Flapjack.Misc.BytesInMem
+public import Flapjack.Misc.BytesInMemory
+
+@[expose] public section
 namespace Flapjack
 
 /-- Full original excluded-domain memory implication.

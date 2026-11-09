@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.LabelExistence
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.LabelExistence
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Misc Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

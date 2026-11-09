@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitMake
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitMake
+
+@[expose] public section
 
 /-! Field laws of the total initialized state, `stack_removeProofScript.sml`
 (4100-4157).

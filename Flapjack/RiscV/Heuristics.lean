@@ -1,7 +1,11 @@
-import Std.Data.TreeMap
-import Std.Data.TreeSet
-import Flapjack.NatDedup
-import Flapjack.RiscV.RegAlloc
+module
+
+public import Std.Data.TreeMap
+public import Std.Data.TreeSet
+public import Flapjack.NatDedup
+public import Flapjack.RiscV.RegAlloc
+
+@[expose] public section
 
 /-!
 # CakeML Word allocation heuristics

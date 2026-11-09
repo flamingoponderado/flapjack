@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.FlatToClos
 

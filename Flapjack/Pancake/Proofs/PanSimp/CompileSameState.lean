@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanSimp.RetToTailAssembly
+module
+
+public import Flapjack.Pancake.Proofs.PanSimp.RetToTailAssembly
+
+@[expose] public section
 
 /-!
 Original pan_simp evaluation lemmas around the whole compiler

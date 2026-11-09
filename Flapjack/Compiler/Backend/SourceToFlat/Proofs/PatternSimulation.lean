@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRel
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRel
+
+@[expose] public section
 
 /-! Source-to-flat pattern preservation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

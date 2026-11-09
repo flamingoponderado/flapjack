@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.RiscVConfig.BackendConfig
-import Flapjack.Compiler.Backend.RiscVConfig.RegisterNames
-import Flapjack.Compiler.Backend.BackendProof.MachineInit
-import Flapjack.Compiler.Backend.BackendProof.ConfigOk
-import Flapjack.Compiler.Encoders.RiscV.Target.State
-import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
-import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
-import Flapjack.RiscV.CorrectnessEncoding.Complete
+module
+
+public import Flapjack.Compiler.Backend.RiscVConfig.BackendConfig
+public import Flapjack.Compiler.Backend.RiscVConfig.RegisterNames
+public import Flapjack.Compiler.Backend.BackendProof.MachineInit
+public import Flapjack.Compiler.Backend.BackendProof.ConfigOk
+public import Flapjack.Compiler.Encoders.RiscV.Target.State
+public import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+public import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
+public import Flapjack.RiscV.CorrectnessEncoding.Complete
+
+@[expose] public section
 
 /-!
 # `riscv_configProofScript.sml`

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosKnown.Inline.Free
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Inline.Free
+
+@[expose] public section
 
 /-! The direct-call and known-closure passes share the same free traversal. -/
 namespace Flapjack.Compiler.Backend.ClosCall

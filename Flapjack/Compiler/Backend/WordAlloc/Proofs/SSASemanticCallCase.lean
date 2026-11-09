@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallReturn
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSemanticHelpers
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameShiftedProperties
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectRight
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCallReturn
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSemanticHelpers
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameShiftedProperties
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectRight
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 

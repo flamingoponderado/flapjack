@@ -1,7 +1,11 @@
-import Mathlib.Tactic.IntervalCases
-import Flapjack.Misc.Alignment
-import Flapjack.RiscV.L3.Defs.Encode
-import Flapjack.RiscV.L3.Step.DecodeAny
+module
+
+public import Mathlib.Tactic.IntervalCases
+public import Flapjack.Misc.Alignment
+public import Flapjack.RiscV.L3.Defs.Encode
+public import Flapjack.RiscV.L3.Step.DecodeAny
+
+@[expose] public section
 
 /-! Symbolic decoding prerequisites of original Const/Loc encoder cases.
 Utype concatenates the twenty immediate bits, five destination bits and

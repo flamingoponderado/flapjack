@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationBounds
+module
+
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationBounds
+
+@[expose] public section
 
 /-! Parity of the code locations allocated by closure numbering. -/
 namespace Flapjack.Compiler.Backend.ClosNumber

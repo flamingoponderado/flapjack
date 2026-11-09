@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.Bvl.Syntax
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.Bvl.Syntax
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Closure-to-BVL code-layout and small instruction constructors. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

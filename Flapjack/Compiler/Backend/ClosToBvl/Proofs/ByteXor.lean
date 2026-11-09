@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ByteCopy
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ByteCopy
+
+@[expose] public section
 
 /-! In-place byte XOR correspondence for closure-to-BVL. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

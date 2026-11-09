@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.CompCorrect.Clock
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

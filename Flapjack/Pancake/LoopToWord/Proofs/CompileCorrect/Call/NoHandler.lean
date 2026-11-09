@@ -1,14 +1,18 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.Support
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelAllDistinct
-import Flapjack.Pancake.Proofs.LoopToWord.CutsetDomain
-import Flapjack.Pancake.Proofs.LoopToWord.CutEnvSupport
-import Flapjack.Pancake.Proofs.LoopToWord.LastNAddCons
-import Flapjack.Pancake.Proofs.LoopToWord.FindVar
-import Flapjack.Pancake.Semantics.LoopProps.EvalExact
-import Flapjack.Pancake.Semantics.LoopProps.AccVars
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.Support
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelAllDistinct
+public import Flapjack.Pancake.Proofs.LoopToWord.CutsetDomain
+public import Flapjack.Pancake.Proofs.LoopToWord.CutEnvSupport
+public import Flapjack.Pancake.Proofs.LoopToWord.LastNAddCons
+public import Flapjack.Pancake.Proofs.LoopToWord.FindVar
+public import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+public import Flapjack.Pancake.Semantics.LoopProps.AccVars
+
+@[expose] public section
 
 /-!
 # `Call_NOhandler` piece of `loop_to_word`'s `compile_correct`

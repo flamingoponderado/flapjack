@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.FillHole
-import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateRefs
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.FillHole
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateRefs
+
+@[expose] public section
 
 /-! Sequential expression-list simulation for the TMC proof. -/
 namespace Flapjack.Compiler.Backend.BviTmc.ListSimulation

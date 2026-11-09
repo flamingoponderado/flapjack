@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DecStack
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DecStack
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+
+@[expose] public section
 
 /-! Agreement of source-related roots with the encoded collector stack. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

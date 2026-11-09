@@ -1,5 +1,9 @@
-import Flapjack.RiscV.Allocator
-import Flapjack.RiscV.WordExpressionFlatten
+module
+
+public import Flapjack.RiscV.Allocator
+public import Flapjack.RiscV.WordExpressionFlatten
+
+@[expose] public section
 
 /-!
 Production implements original word_simp compile_exp through Seq_assoc,

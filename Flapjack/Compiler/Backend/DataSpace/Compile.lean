@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataSpace.Requirements
+module
+
+public import Flapjack.Compiler.Backend.DataSpace.Requirements
+
+@[expose] public section
 
 /-! Move and combine allocation-space reservations. -/
 namespace Flapjack.Compiler.Backend.DataSpace

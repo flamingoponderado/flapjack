@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleExtractSuccessor
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleExtractSuccessor
+
+@[expose] public section
 
 /-! Initial and successive extracted compiler-oracle properties. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

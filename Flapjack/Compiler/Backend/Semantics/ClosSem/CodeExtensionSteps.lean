@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtensionPrimitive
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtensionPrimitive
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Structural evaluator steps under a safe code extension. -/
 namespace Flapjack.Compiler.Backend.ClosSem

@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedGenerational
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.FullStore
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GcConfig
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DoPartial
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
-import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Similarity
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedGenerational
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.FullStore
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GcConfig
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.DoPartial
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+public import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Similarity
+
+@[expose] public section
 
 /-! Generational collectors under the heap/store invariant. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

@@ -1,16 +1,18 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Accumulator
-import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveInstalled
-import Mathlib.Data.List.Nodup
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Accumulator
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveInstalled
+public import Mathlib.Data.List.Nodup
+
+@[expose] public section
 
 /-! Origins of labels in closure-to-BVL program conversion. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
-private abbrev Aux := List (Nat × Nat × Bvl.Exp)
-
 /-- Recursive-group construction prepends the reserved labels in reverse
 order, while leaving the input accumulator suffix intact. -/
-theorem buildAux_label_list (entries : List (Nat × Bvl.Exp)) (start : Nat) (aux : Aux) :
+theorem buildAux_label_list (entries : List (Nat × Bvl.Exp)) (start : Nat) (aux : List (Nat × Nat × Bvl.Exp)) :
     (buildAux start entries aux).2.map Prod.fst =
       ((List.range entries.length).map (fun index => start + 2 * index)).reverse ++ aux.map Prod.fst := by
   induction entries generalizing start aux with
@@ -30,7 +32,7 @@ mutual
 
 /-- Compiling an expression prepends its closure labels, shifted by the stub
 prefix and in reverse traversal order, to the auxiliary accumulator. -/
-theorem compileExp_aux_labels (maxApp : Nat) (expression : ClosLang.Exp) (aux : Aux) :
+theorem compileExp_aux_labels (maxApp : Nat) (expression : ClosLang.Exp) (aux : List (Nat × Nat × Bvl.Exp)) :
     (compileExpHOL maxApp expression aux).2.map Prod.fst =
       ((ClosProps.codeLocationsExp expression).reverse.map (fun location => location + numStubs maxApp)) ++
         aux.map Prod.fst := by
@@ -83,7 +85,7 @@ termination_by sizeOf expression
 decreasing_by all_goals subst_vars; simp_wf <;> omega
 
 /-- Expression-list compilation emits the same auxiliary labels. -/
-theorem compileExpList_aux_labels (maxApp : Nat) (expressions : List ClosLang.Exp) (aux : Aux) :
+theorem compileExpList_aux_labels (maxApp : Nat) (expressions : List ClosLang.Exp) (aux : List (Nat × Nat × Bvl.Exp)) :
     (compileExpListHOL maxApp expressions aux).2.map Prod.fst =
       ((ClosProps.codeLocations expressions).reverse.map (fun location => location + numStubs maxApp)) ++
         aux.map Prod.fst := by
@@ -96,7 +98,7 @@ termination_by sizeOf expressions
 decreasing_by all_goals (simp_wf; omega)
 
 /-- Recursive bodies emit the same auxiliary labels. -/
-theorem compileExpFuns_aux_labels (maxApp : Nat) (functions : List (Nat × ClosLang.Exp)) (aux : Aux) :
+theorem compileExpFuns_aux_labels (maxApp : Nat) (functions : List (Nat × ClosLang.Exp)) (aux : List (Nat × Nat × Bvl.Exp)) :
     (compileExpFunsHOL maxApp functions aux).2.map Prod.fst =
       ((ClosProps.codeLocationsFuns functions).reverse.map (fun location => location + numStubs maxApp)) ++
         aux.map Prod.fst := by
@@ -115,7 +117,7 @@ end
 closure locations. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_exps_code_locs"]
 theorem compileExps_codeLocs (maxApp : Nat) (expressions : List ClosLang.Exp)
-    (aux : Aux) (compiled : List Bvl.Exp) (emitted : Aux) :
+    (aux : List (Nat × Nat × Bvl.Exp)) (compiled : List Bvl.Exp) (emitted : List (Nat × Nat × Bvl.Exp)) :
     compileExpsHOL maxApp expressions aux = (compiled, emitted ++ aux) →
       emitted.map Prod.fst =
         (ClosProps.codeLocations expressions).reverse.map (fun location => numStubs maxApp + location) := by

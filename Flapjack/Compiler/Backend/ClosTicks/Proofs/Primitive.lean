@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.Relations
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
+module
+
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Relations
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
+
+@[expose] public section
 
 /-! Primitive-operation relation for closure tick-removal removal. -/
 namespace Flapjack.Compiler.Backend.ClosTicks

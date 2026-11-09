@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.StateRelation
-import Flapjack.SemanticPrimitivesHOL.Apply
-import Flapjack.SemanticPrimitivesProps.ResultRelation
-import Flapjack.Misc.ListLookupRel
-import Flapjack.Misc.List
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.StateRelation
+public import Flapjack.SemanticPrimitivesHOL.Apply
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+public import Flapjack.Misc.ListLookupRel
+public import Flapjack.Misc.List
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Shared indexed-operation prerequisites for the source primitive simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

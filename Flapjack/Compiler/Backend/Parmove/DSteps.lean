@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.Steps
+module
+
+public import Flapjack.Compiler.Backend.Parmove.Steps
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

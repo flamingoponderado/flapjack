@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdate
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdate
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+
+@[expose] public section
 
 /-! Heap-shape preservation for byte-array payload updates. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

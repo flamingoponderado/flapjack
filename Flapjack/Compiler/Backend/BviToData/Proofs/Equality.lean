@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.Value
-import Flapjack.Compiler.Backend.Semantics.DataSem.Equality
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Equality
-import Flapjack.Misc.Sptree.Map
-import Mathlib.Tactic.CasesM
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Value
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Equality
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Equality
+public import Flapjack.Misc.Sptree.Map
+public import Mathlib.Tactic.CasesM
+
+@[expose] public section
 
 /-! Equality under the BVI-to-data value projection. -/
 namespace Flapjack.Compiler.Backend.BviToData

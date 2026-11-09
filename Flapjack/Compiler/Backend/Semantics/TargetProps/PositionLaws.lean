@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.TargetProps.PositionUnique
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.PositionUnique
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Classical

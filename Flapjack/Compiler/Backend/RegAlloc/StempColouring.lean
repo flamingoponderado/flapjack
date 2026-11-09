@@ -1,11 +1,15 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.Accessors
-import Flapjack.Compiler.Backend.RegAlloc.ExceptionFunctions
-import Flapjack.Compiler.Backend.RegAlloc.StateForeach
-import Flapjack.Compiler.Backend.RegAlloc.StateMap
-import Flapjack.Basis.Pure.MlList
-import Flapjack.Misc.Sptree
-import Flapjack.Compiler.Backend.RegAlloc.TagColour
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.Accessors
+public import Flapjack.Compiler.Backend.RegAlloc.ExceptionFunctions
+public import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+public import Flapjack.Compiler.Backend.RegAlloc.StateMap
+public import Flapjack.Basis.Pure.MlList
+public import Flapjack.Misc.Sptree
+public import Flapjack.Compiler.Backend.RegAlloc.TagColour
+
+@[expose] public section
 
 /-!
 # reg_alloc Stemp colouring

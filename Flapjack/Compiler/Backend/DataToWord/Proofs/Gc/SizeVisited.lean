@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeValues
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.SizeValues
+
+@[expose] public section
 
 /-! Visited-address bookkeeping for source heap sizing. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

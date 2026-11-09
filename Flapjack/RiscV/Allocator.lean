@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSAStateRoute
-import Flapjack.Compiler.Backend.WordAlloc.MergeMovesRoute
-import Flapjack.Compiler.Backend.WordAlloc.Instructions
-import Flapjack.Word
-import Flapjack.Compiler.Backend.WordAlloc.Expressions
-import Flapjack.NumSet
-import Std.Data.HashMap
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSAStateRoute
+public import Flapjack.Compiler.Backend.WordAlloc.MergeMovesRoute
+public import Flapjack.Compiler.Backend.WordAlloc.Instructions
+public import Flapjack.Word
+public import Flapjack.Compiler.Backend.WordAlloc.Expressions
+public import Flapjack.NumSet
+public import Std.Data.HashMap
+
+@[expose] public section
 
 /-!
 The first explicit register-allocation boundary for the Word backend.

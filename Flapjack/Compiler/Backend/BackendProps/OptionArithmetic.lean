@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BackendProps
+module
+
+public import Flapjack.Compiler.Backend.BackendProps
+
+@[expose] public section
 
 /-! Ordering and addition of optional natural-number bounds. -/
 namespace Flapjack.Compiler.Backend.BackendProps

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.Value
-import Flapjack.Compiler.Backend.Semantics.DataSem.Finalise
-import Flapjack.Compiler.Backend.Semantics.BviSem.Finalise
-import Flapjack.Misc.SptreeLookup
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Value
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Finalise
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Finalise
+public import Flapjack.Misc.SptreeLookup
+
+@[expose] public section
 
 /-! Finalization simulation across timestamped data values. -/
 namespace Flapjack.Compiler.Backend.BviToData

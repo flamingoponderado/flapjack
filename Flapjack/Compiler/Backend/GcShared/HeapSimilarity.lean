@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.GcShared.HeapMap.Properties
-import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.GcShared.HeapMap.Properties
+public import Flapjack.Compiler.Backend.GenGc.Proofs.HeapLookup
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! The source heap and its forwarding-pointer version. -/
 namespace Flapjack.Compiler.Backend

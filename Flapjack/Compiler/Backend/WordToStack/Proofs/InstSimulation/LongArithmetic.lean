@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegister
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeAccessors
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
-import Flapjack.Pancake.WordLang.MaxVarInst
-import Flapjack.Compiler.Backend.RegAlloc
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegister
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeAccessors
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
+public import Flapjack.Pancake.WordLang.MaxVarInst
+public import Flapjack.Compiler.Backend.RegAlloc
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.InstSimulation.LongArithmetic
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

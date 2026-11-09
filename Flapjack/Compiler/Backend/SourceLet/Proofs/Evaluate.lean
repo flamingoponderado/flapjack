@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceLet.Proofs
-import Flapjack.EvaluateHOL.ClockFull
-import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
+module
+
+public import Flapjack.Compiler.Backend.SourceLet.Proofs
+public import Flapjack.EvaluateHOL.ClockFull
+public import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
+
+@[expose] public section
 
 /-! Evaluation preservation for source let-lifting. -/
 namespace Flapjack.Compiler.Backend.SourceLet

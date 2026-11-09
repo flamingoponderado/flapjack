@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationRules
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationRules
+
+@[expose] public section
 
 /-! Induction in the source shape for the flat-pattern mutual relation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

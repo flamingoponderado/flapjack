@@ -1,8 +1,12 @@
-import Flapjack.Misc.Option.Rel
-import Flapjack.Compiler.Backend.ClosFvs.Source
-import Flapjack.Compiler.Backend.Semantics.ClosSem.State
-import Flapjack.Compiler.Backend.BackendProps.Pure
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Misc.Option.Rel
+public import Flapjack.Compiler.Backend.ClosFvs.Source
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+public import Flapjack.Compiler.Backend.BackendProps.Pure
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Source relations for closure free-variable removal. -/
 namespace Flapjack.Compiler.Backend.ClosFvs

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalList
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalList
+
+@[expose] public section
 
 /-! Structural invariants for major generational collection. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

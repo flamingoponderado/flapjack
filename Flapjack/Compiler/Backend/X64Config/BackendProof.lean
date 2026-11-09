@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.X64Config.BackendConfig
-import Flapjack.Compiler.Backend.BackendProof.ConfigOk
-import Flapjack.Compiler.Encoders.X64.Machine.Target
-import Mathlib.Tactic.IntervalCases
+module
+
+public import Flapjack.Compiler.Backend.X64Config.BackendConfig
+public import Flapjack.Compiler.Backend.BackendProof.ConfigOk
+public import Flapjack.Compiler.Encoders.X64.Machine.Target
+public import Mathlib.Tactic.IntervalCases
+
+@[expose] public section
 
 /-!
 # `backend_config_ok` for the x86-64 backend configuration

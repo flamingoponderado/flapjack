@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.X64.Machine.MulCase
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.MulCase
+
+@[expose] public section
 
 /-!
 # The `longDiv` case of `encoder_correct x64Target`

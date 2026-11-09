@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlConst.Proofs.Arithmetic
+module
+
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.Arithmetic
+
+@[expose] public section
 /-! Two-operand arithmetic rewrite cases; evaluation helpers are Flapjack proof infrastructure. -/
 namespace Flapjack.Compiler.Backend.BvlConst.Proofs
 open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BvlProps

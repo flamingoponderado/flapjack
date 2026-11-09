@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.MoreAtoms
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.MoreAtoms
+
+@[expose] public section
 
 /-!
 # crep_inline `evaluate_state_locals_rel_strong`: the `Call` case

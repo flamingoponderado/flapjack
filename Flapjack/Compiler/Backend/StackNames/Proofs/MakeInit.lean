@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackNames.Proofs.CompileSemantics
-import Flapjack.Misc.PredSet
+module
+
+public import Flapjack.Compiler.Backend.StackNames.Proofs.CompileSemantics
+public import Flapjack.Misc.PredSet
+
+@[expose] public section
 
 /-!
 # stack_namesProof: `make_init_def` and `make_init_semantics`

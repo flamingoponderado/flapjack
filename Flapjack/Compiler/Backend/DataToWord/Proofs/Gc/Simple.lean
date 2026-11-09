@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.FullStore
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.FullStore
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+
+@[expose] public section
 
 /-! Correctness of the Simple store-level collector. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

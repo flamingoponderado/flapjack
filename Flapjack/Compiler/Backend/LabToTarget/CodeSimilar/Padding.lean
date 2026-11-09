@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
-import Flapjack.Compiler.Backend.LabToTarget.Padding
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
+public import Flapjack.Compiler.Backend.LabToTarget.Padding
+
+@[expose] public section
 
 /-! Original padding similarity chain, preserving arbitrary source accumulators. -/
 namespace Flapjack.Compiler.Backend.LabToTarget

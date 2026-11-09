@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Bvi.Syntax
+module
+
+public import Flapjack.Compiler.Backend.Bvi.Syntax
+
+@[expose] public section
 
 /-! Computable structural budgets for BVI traversals. -/
 namespace Flapjack.Compiler.Backend.Bvi

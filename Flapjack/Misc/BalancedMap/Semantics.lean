@@ -1,6 +1,10 @@
-import Flapjack.Misc.BalancedMap.Core
-import Flapjack.FiniteMap.UnionExact
-import Mathlib.Data.Set.Basic
+module
+
+public import Flapjack.Misc.BalancedMap.Core
+public import Flapjack.FiniteMap.UnionExact
+public import Mathlib.Data.Set.Basic
+
+@[expose] public section
 
 namespace Flapjack.Misc.BalancedMap
 

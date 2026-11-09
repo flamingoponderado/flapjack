@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
-import Flapjack.Misc.Sptree.UnionAlgebra
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
+public import Flapjack.Misc.Sptree.UnionAlgebra
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Global-dependency properties of expression, value and store lists. -/
 namespace Flapjack.Compiler.Backend.FlatElim

@@ -7,7 +7,7 @@ import hashlib
 ROOT=Path(__file__).resolve().parents[2]
 # Ror's pin was refreshed after the PR1213 stale-status documentation repair.
 # Only its two doc comments changed; statements and proof bodies are unchanged.
-CHECKS={'Flapjack/RiscV/CorrectnessEncoding/RorExecution.lean': '9bf5ff1b4e3803a449c81ea520d8813fe0fa151a7a6a782378b3444dd5353935', 'Flapjack/RiscV/CorrectnessEncoding/ConstExecution.lean': '8ccc2e226b846fe9046546c3f7c6604bd299d8a54b1921e18bc0e336a8db3d40'}
+CHECKS={'Flapjack/RiscV/CorrectnessEncoding/RorExecution.lean': '588f30e516b4a52b31b88954b2462e0902719da0db953758d542848b69d640f4', 'Flapjack/RiscV/CorrectnessEncoding/ConstExecution.lean': '9913b30a287b7d5c176d44484e545b03063b62efa6e7057dfa4899a540779d32'}
 def check(root=ROOT):
     for name,expected in CHECKS.items():
         if hashlib.sha256((root/name).read_bytes()).hexdigest()!=expected:

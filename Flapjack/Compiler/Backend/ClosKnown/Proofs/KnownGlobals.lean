@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosKnown.Total
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.OpGlobals
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Total
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.OpGlobals
+
+@[expose] public section
 
 /-! Global-write framing for the total known-function traversal. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

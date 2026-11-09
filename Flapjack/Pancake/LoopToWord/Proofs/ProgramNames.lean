@@ -1,4 +1,8 @@
-import Flapjack.Pancake.LoopToWord.CompFuncExact
+module
+
+public import Flapjack.Pancake.LoopToWord.CompFuncExact
+
+@[expose] public section
 
 namespace Flapjack
 

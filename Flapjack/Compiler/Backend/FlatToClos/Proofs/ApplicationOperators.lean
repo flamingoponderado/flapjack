@@ -1,6 +1,12 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.OperatorCorrectness
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.ErrorPropagation
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.OperatorCorrectness
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.ErrorPropagation
+
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.FlatToClos
 
@@ -66,7 +72,7 @@ theorem evalSim_app_of_op {C F : Type} (env : FlatSem.Environment FlatSem.Value)
           | none =>
             have h := notTypeError
             rw [FlatSem.evaluate, flatFix, flatRun] at h
-            simp [FlatSem.applyResult, applied] at h
+            simp [FlatSem.applyResult, FlatSem.typeError, applied] at h
           | some pair =>
             obtain ⟨sourceNext, result⟩ := pair
             have length := FlatSem.evaluate_length env source next args.reverse sourceArgs flatRun

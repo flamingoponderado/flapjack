@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateSource
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateSource
+
+@[expose] public section
 
 /-! The flat pattern-match evaluator used by the source-to-flat proof. -/
 namespace Flapjack.Compiler.Backend.FlatProps

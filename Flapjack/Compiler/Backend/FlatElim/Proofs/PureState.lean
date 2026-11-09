@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.TotalPattern
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.TotalPattern
+
+@[expose] public section
 
 /-! State invariants for pure expressions that only initialize unreachable
 globals. -/

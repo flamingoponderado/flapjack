@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.StackCarrier
-import Flapjack.Compiler.Backend.StackLang
-import Flapjack.Compiler.Backend.StackLang.Prog
-import Flapjack.Pancake.WordLang
-import Flapjack.HolRef
-import Flapjack.HolArb
-import Flapjack.FfiHOL
+module
+
+public import Flapjack.Compiler.Backend.StackCarrier
+public import Flapjack.Compiler.Backend.StackLang
+public import Flapjack.Compiler.Backend.StackLang.Prog
+public import Flapjack.Pancake.WordLang
+public import Flapjack.HolRef
+public import Flapjack.HolArb
+public import Flapjack.FfiHOL
+
+@[expose] public section
 
 /-!
 # Stack-remove / stack-alloc `make_init` prerequisites

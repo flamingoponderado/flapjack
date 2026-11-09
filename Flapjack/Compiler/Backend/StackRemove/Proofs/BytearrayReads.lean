@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryLoads
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryLoads
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.BytearrayReads
 open Flapjack
 

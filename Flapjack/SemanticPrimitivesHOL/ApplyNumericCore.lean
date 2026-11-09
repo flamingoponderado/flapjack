@@ -1,5 +1,9 @@
-import Flapjack.SemanticPrimitivesHOL.Apply
-import Flapjack.SemanticPrimitivesHOL.Test
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Apply
+public import Flapjack.SemanticPrimitivesHOL.Test
+
+@[expose] public section
 
 /-! Computable source primitive arithmetic and conversion dispatcher. -/
 namespace Flapjack.SemanticPrimitivesHOL

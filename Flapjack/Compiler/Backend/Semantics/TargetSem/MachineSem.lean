@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
-import Flapjack.Misc.LprefixLub
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
+public import Flapjack.Misc.LprefixLub
+
+@[expose] public section
 
 namespace Flapjack
 

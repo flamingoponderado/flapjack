@@ -1,5 +1,9 @@
-import Flapjack.SemanticPrimitivesHOL.Operations
-import Mathlib.Data.List.Basic
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Operations
+public import Mathlib.Data.List.Basic
+
+@[expose] public section
 /-! Characterization of source closure application. -/
 namespace Flapjack.SemanticPrimitivesProps
 open Flapjack.SemanticPrimitivesHOL Flapjack.AstHOL Flapjack.NamespaceHOL

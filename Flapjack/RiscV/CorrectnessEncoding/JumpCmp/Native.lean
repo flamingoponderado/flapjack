@@ -1,6 +1,10 @@
-import Flapjack.RiscV.CorrectnessEncoding.Jump.Native
-import Flapjack.RiscV.CorrectnessEncoding.DecodeBranches
-import Flapjack.RiscV.L3.Step.ConditionalBranchStep
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.Jump.Native
+public import Flapjack.RiscV.CorrectnessEncoding.DecodeBranches
+public import Flapjack.RiscV.L3.Step.ConditionalBranchStep
+
+@[expose] public section
 
 /-! Full byte-driven native conditional branch transitions. These untagged
 composition lemmas have no separately named HOL original: they combine the

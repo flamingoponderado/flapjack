@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.EnvironmentIdentity
-import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedAList
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionSuffix
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InterUnionLeft
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.EnvironmentIdentity
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedAList
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionSuffix
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InterUnionLeft
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack.Compiler.Backend.WordToStack

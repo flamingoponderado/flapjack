@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
-import Flapjack.Compiler.Backend.FlatToClos.Op
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
+public import Flapjack.Compiler.Backend.FlatToClos.Op
+
+
+@[expose] public section
 
 /-! Error propagation through closure expressions used by flat-to-closure compilation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

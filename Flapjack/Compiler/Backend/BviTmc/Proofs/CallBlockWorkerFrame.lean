@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockAuxSimulation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.FillHole
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockAuxSimulation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.FillHole
+
+@[expose] public section
 
 /-! Constructor frames in the optimized call-block worker. -/
 namespace Flapjack.Compiler.Backend.BviTmc.CallBlockWorkerFrame

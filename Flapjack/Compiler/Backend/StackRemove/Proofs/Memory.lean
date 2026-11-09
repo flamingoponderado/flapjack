@@ -1,4 +1,8 @@
-import Flapjack.Misc.SetSep
+module
+
+public import Flapjack.Misc.SetSep
+
+@[expose] public section
 
 /-! Full generic heap assertion from stack_removeProofScript.sml.
 Address and stored-value types are independent, as in the original declaration;

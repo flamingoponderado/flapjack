@@ -1,14 +1,18 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.DoAppIndexed
-import Flapjack.Compiler.Backend.SourceEval.Proofs.Store
-import Flapjack.Compiler.Backend.SourceEval.Proofs.Equality
-import Flapjack.Compiler.Backend.SourceEval.Proofs.PrimitiveTest
-import Flapjack.Compiler.Backend.SourceEval.Proofs.PrimitiveArithmetic
-import Flapjack.Compiler.Backend.SourceEval.Proofs.PrimitiveConversion
-import Flapjack.Compiler.Backend.SourceEval.Proofs.Conversions
-import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
-import Flapjack.SemanticPrimitivesProps.ResultRelation
-import Flapjack.Misc.RichList
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.DoAppIndexed
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.Store
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.Equality
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.PrimitiveTest
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.PrimitiveArithmetic
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.PrimitiveConversion
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.Conversions
+public import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+public import Flapjack.Misc.RichList
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Complete source primitive-application simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

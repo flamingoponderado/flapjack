@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.FullStore
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.FullStore
+
+@[expose] public section
 
 /-! No-collection case of the combined GC simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

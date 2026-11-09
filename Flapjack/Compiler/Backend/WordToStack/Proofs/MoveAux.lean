@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveSingle
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveSingle
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.MoveAux
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang

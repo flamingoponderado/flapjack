@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.EvaluatorCall
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.EvaluatorCall
+public import Flapjack.Misc.ClockWeightInduction
+
+@[expose] public section
 
 /-! Clock and program-size induction for same-program evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.DataLive

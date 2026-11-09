@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.CSRDispatch
+module
+
+public import Flapjack.RiscV.L3.Defs.CSRDispatch
+
+@[expose] public section
 
 /-! Complete original CSR register/immediate instruction equations.
 Preserves permission selection, zero-source read-only paths, old CSR readback,

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.DecisionEncoding
-import Flapjack.Compiler.Backend.PatternComp.Proofs.Correctness
-import Flapjack.Misc.Sptree.ToList
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.DecisionEncoding
+public import Flapjack.Compiler.Backend.PatternComp.Proofs.Correctness
+public import Flapjack.Misc.Sptree.ToList
+
+@[expose] public section
 
 /-! The decision-tree path of flat pattern compilation. Its evaluator and
 finite-map carrier remain pending HOL correspondence review. -/

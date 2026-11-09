@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BvlInline.Recursion
-import Flapjack.Compiler.Backend.BvlInline.Proofs.SmallProduction
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Recursion
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.SmallProduction
+
+@[expose] public section
 
 /-! Correspondence between executed and total BVL inlining tests. -/
 namespace Flapjack.Compiler.Backend.BvlInline

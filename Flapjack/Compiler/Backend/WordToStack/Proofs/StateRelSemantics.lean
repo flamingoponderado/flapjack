@@ -1,13 +1,17 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
-import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClockIoEventsMono
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Results
-import Flapjack.Compiler.Backend.WordToStack.Proofs.SemanticsHelpers
-import Flapjack.SemanticsProps.Implements
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCall
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClockIoEventsMono
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Results
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.SemanticsHelpers
+public import Flapjack.SemanticsProps.Implements
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCall
+
+@[expose] public section
 
 /-! Observational layer of the original Word-to-Stack proof
 (word_to_stackProofScript.sml 10154-10372, state_rel_IMP_semantics). The

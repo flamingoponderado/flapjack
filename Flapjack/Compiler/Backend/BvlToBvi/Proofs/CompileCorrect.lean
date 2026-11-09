@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileInstall
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileIfCase
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileHandle
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCall
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileInstall
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileIfCase
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileHandle
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCall
+public import Flapjack.Misc.ClockWeightInduction
+
+@[expose] public section
 
 /-! Induction assembling BVL-to-BVI expression simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

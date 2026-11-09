@@ -1,7 +1,16 @@
-import Flapjack.Compiler.Backend.PatternSemantics.Semantics
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.NaiveMatch
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingSimulation
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.DecisionEncoding.Lookup
+module
+
+public import Flapjack.Compiler.Backend.PatternSemantics.Semantics
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.NaiveMatch
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingSimulation
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.DecisionEncoding.Lookup
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.DecisionEncoding.Encoding
+
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
+@[expose] public section
 
 /-! Encoding of flat values and references for decision-tree simulation.
 The source evaluator and carriers remain pending HOL correspondence review. -/

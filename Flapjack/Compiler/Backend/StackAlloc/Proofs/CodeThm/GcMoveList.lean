@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMove
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMove
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `word_gc_move_list_code_thm`

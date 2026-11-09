@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabProps.Labels
-import Flapjack.Compiler.Backend.LabProps.LabelSets
+module
+
+public import Flapjack.Compiler.Backend.LabProps.Labels
+public import Flapjack.Compiler.Backend.LabProps.LabelSets
+
+@[expose] public section
 
 /-!
 # labProps `EVERY_sec_label_ok`

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanToWord
-import Flapjack.Pancake.LoopToWord.Proofs.NoInstallCode
+module
+
+public import Flapjack.Pancake.PanToWord
+public import Flapjack.Pancake.LoopToWord.Proofs.NoInstallCode
+
+@[expose] public section
 
 /-!
 # `pan_to_wordProof`: no_install/no_alloc/no_mt lemmas

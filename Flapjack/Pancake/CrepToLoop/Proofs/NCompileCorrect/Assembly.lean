@@ -1,15 +1,19 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Leaf
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Seq
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Primitive
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Store
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Store32
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.StoreByte
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Dec
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.While
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Call
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.ShMem
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
-import Flapjack.Pancake.Proofs.LoopLive.Optimise
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Leaf
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Seq
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Primitive
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Store
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Store32
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.StoreByte
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Dec
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.While
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Call
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.ShMem
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
+public import Flapjack.Pancake.Proofs.LoopLive.Optimise
+
+@[expose] public section
 
 /-!
 # crep_to_loop `ncompile_correct`: assembly of the `evaluate_ind` cases

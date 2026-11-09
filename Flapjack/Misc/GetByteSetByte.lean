@@ -1,6 +1,10 @@
-import Flapjack.Byte.GetSetByte
-import Flapjack.Misc.Alignment
-import Flapjack.Misc.GoodDimindex
+module
+
+public import Flapjack.Byte.GetSetByte
+public import Flapjack.Misc.Alignment
+public import Flapjack.Misc.GoodDimindex
+
+@[expose] public section
 
 /-! Original 32/64-bit byte read-after-write laws from `cakeml/misc/miscScript.sml`
 (4319-4411): reading back the written byte, and reading a different byte of

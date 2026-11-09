@@ -1,5 +1,9 @@
-import Flapjack.Misc.BinaryIeeeConvert
-import Flapjack.Misc.MachineIeee
+module
+
+public import Flapjack.Misc.BinaryIeeeConvert
+public import Flapjack.Misc.MachineIeee
+
+@[expose] public section
 
 /-!
 # HOL `machine_ieee` fp64 integer conversions

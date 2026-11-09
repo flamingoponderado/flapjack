@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.Stack
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Values.Stack
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Reference-graph invariants for value-array replacement. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

@@ -1,6 +1,10 @@
-import Flapjack.EvaluateProps
-import Aesop
-import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
+module
+
+public import Flapjack.EvaluateProps
+public import Aesop
+public import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
+
+@[expose] public section
 
 /-! Cases and assembly of the original primitive-application FFI transition
 theorem. The evaluator and dispatcher are pending source and carrier review;

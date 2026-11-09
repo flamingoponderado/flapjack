@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
+
+@[expose] public section
 
 /-! Code-map updates do not affect the evaluation of the non-calling Pan
 statements: `evaluate (p, s with code := c) = (res, post with code := c)`

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.ShmemPrefix
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemPrefix
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

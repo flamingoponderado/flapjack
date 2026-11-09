@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.MappedGlobals
-import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.MappedGlobals
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+
+@[expose] public section
 
 /-! Global-write safety of dynamic closure-code installation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

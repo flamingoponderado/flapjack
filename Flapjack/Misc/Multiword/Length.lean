@@ -1,4 +1,8 @@
-import Flapjack.Misc.Multiword
+module
+
+public import Flapjack.Misc.Multiword
+
+@[expose] public section
 
 /-! Length properties of the HOL multiword encoding. -/
 namespace Flapjack.Misc.Multiword

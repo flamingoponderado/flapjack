@@ -1,7 +1,11 @@
-import Flapjack.Misc.BalancedMap.InsertCorrect.Infrastructure
-import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceLCorrect
-import Flapjack.Misc.BalancedMap.KeySets
-import Flapjack.FiniteMap.MapKeys
+module
+
+public import Flapjack.Misc.BalancedMap.InsertCorrect.Infrastructure
+public import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceLCorrect
+public import Flapjack.Misc.BalancedMap.KeySets
+public import Flapjack.FiniteMap.MapKeys
+
+@[expose] public section
 namespace Flapjack.Misc.BalancedMap
 open FiniteMap.Comparison
 /-- Full Less branch, with only the recursive full theorem induction result

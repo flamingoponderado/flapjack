@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
-import Flapjack.Misc.Sptree.ToAList
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
+public import Flapjack.Misc.Sptree.ToAList
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 /-!
 # word_alloc SSA branch reconciliation

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
+
+@[expose] public section
 
 /-!
 # FFI event-prefix monotonicity of the exact Crep evaluator

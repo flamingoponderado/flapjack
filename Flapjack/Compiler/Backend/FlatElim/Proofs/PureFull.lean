@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.PureControl
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.PureControl
+
+@[expose] public section
 
 /-! Full pure-expression simulation for flat elimination. -/
 namespace Flapjack.Compiler.Backend.FlatElim

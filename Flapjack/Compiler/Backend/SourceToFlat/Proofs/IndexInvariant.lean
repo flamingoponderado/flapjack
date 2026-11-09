@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalSlots
-import Flapjack.Misc.ListEl
-import Mathlib.Data.Set.Basic
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalSlots
+public import Flapjack.Misc.ListEl
+public import Mathlib.Data.Set.Basic
+
+@[expose] public section
 
 /-! Index blocks and allocated indices used by the source-to-flat proof. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

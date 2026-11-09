@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.OracleStep
-import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
-import Flapjack.PanToCrepMaxList
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.OracleStep
+public import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
+public import Flapjack.PanToCrepMaxList
+
+@[expose] public section
 
 /-! Initial environments for source-to-flat compilation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

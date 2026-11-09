@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstAssign
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstArith
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstMemory
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstFp
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstAssign
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstArith
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstMemory
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstFp
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

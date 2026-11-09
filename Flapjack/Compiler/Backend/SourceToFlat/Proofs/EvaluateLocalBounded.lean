@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalEnvironment
-import Flapjack.EvaluateHOL.ClockFull
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalEnvironment
+public import Flapjack.EvaluateHOL.ClockFull
+
+@[expose] public section
 
 /-! Clock-bounded local expression and list simulation infrastructure. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

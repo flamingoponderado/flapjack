@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Encoders.X64.Machine.FpCase
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.FpCase
+
+-- Sum `==` must reduce by `rfl`/`decide`; core's derived instance is not exposed.
+import all Init.Data.Sum.Basic
+@[expose] public section
 
 /-!
 # The `jumpCmp` cases of `encoder_correct x64Target`

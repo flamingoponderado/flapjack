@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.LoopProps.CutSets
+module
+
+public import Flapjack.Pancake.Semantics.LoopProps.CutSets
+
+@[expose] public section
 
 namespace Flapjack
 

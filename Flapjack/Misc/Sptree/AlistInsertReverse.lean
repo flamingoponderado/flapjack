@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.LoopSemStateExact
-import Flapjack.HolRef
+module
+
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+public import Flapjack.HolRef
+
+@[expose] public section
 
 namespace Flapjack.Misc.SptreeAlistInsertReverse
 open Flapjack

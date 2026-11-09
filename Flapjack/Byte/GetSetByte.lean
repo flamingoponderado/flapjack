@@ -1,4 +1,8 @@
-import Flapjack.Byte.SetByte
+module
+
+public import Flapjack.Byte.SetByte
+
+@[expose] public section
 
 /-! Original byte read-after-write law (`HOL/src/n-bit/byteScript.sml:158`),
 over arbitrary word dimensions of at least eight bits, and its bit-level

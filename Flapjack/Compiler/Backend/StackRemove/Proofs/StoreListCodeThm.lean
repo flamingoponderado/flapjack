@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.MemVal
-import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryWrites
-import Flapjack.Compiler.Backend.StackRemove.StoreListCode
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
-import Flapjack.Misc.WordList
-import Flapjack.FiniteMap.MapKeys
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.MemVal
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryWrites
+public import Flapjack.Compiler.Backend.StackRemove.StoreListCode
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
+public import Flapjack.Misc.WordList
+public import Flapjack.FiniteMap.MapKeys
+
+@[expose] public section
 
 /-! Execution of the initializer's store-list code,
 `stack_removeProofScript.sml` (2636-2725).

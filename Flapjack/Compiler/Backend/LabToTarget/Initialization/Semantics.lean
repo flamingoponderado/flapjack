@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabFilter.Proofs.Semantics
-import Flapjack.Compiler.Backend.LabToTarget.MachineSemantics
+module
+
+public import Flapjack.Compiler.Backend.LabFilter.Proofs.Semantics
+public import Flapjack.Compiler.Backend.LabToTarget.MachineSemantics
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabLang

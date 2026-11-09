@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.Total
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.CodeRelation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.Total
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.CodeRelation
+
+@[expose] public section
 
 /-! Input and label invariants for the BVI tail-modulo-cons pass. -/
 namespace Flapjack.Compiler.Backend.BviTmc

@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.StackAlloc
-import Flapjack.Compiler.Backend.StackAlloc.GcCode
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.StackAlloc
+public import Flapjack.Compiler.Backend.StackAlloc.GcCode
+
+@[expose] public section
 
 /-!
 # `stack_alloc` compiler pass over the exact carrier

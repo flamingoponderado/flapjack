@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Assembly
-import Flapjack.Compiler.Backend.LabToTarget.Initialization.InitialStateContracts
-import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
-import Flapjack.Compiler.Backend.LabProps.EvaluateAddClockIoEventsMono
-import Flapjack.Compiler.Backend.LabSem.Semantics
-import Flapjack.Compiler.Backend.Semantics.TargetSem.MachineSem
-import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsMono
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Assembly
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization.InitialStateContracts
+public import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
+public import Flapjack.Compiler.Backend.LabProps.EvaluateAddClockIoEventsMono
+public import Flapjack.Compiler.Backend.LabSem.Semantics
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.MachineSem
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsMono
+
+@[expose] public section
 
 /-! Full source-to-machine observational assembly. Source clocks are unrestricted;
 termination witnesses and the complete infinite trace LUB are derived from the

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.X64.Machine.State
-import Flapjack.Compiler.Encoders.X64.Encode
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.State
+public import Flapjack.Compiler.Encoders.X64.Encode
+
+@[expose] public section
 
 /-!
 # Decoding the x86-64 machine-code subset

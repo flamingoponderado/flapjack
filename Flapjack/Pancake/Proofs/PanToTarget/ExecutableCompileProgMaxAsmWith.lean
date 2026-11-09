@@ -42,14 +42,31 @@ theorem compileProgMaxAsmFast_eq {width : Nat} [NeZero width] :
     (compileProgMaxAsmWith_eq _ regAllocExecutable_fun_eq (width := width)) config) asmConf)
     program
 
-/-- Unconditional artifact equality. The left side never evaluates the bound;
-the right side is a logical projection of the full compiler (Flapjack infrastructure). -/
+/-- Unconditional artifact agreement. The `compile_prog_max` mirror differs from the
+named driver artifact only in the recorded symbol table (`from_stack` takes it from
+its names argument), which `compile_prog_max` passes as the empty table. The left
+side never evaluates the bound; the right side is a logical projection of the full
+compiler (Flapjack infrastructure). -/
 theorem compileProgAsmFast_eq_fst {width : Nat} [NeZero width]
     (config : Backend.Config) (asmConf : AsmConfigExact width)
     (program : List (DeclHOL width)) :
-    compileProgAsmFast config asmConf program =
-      (compileProgMaxAsmExecutable config asmConf program).1 := by
+    (compileProgMaxAsmExecutable config asmConf program).1 =
+      (compileProgAsmFast config asmConf program).map fun (bytes, bms, c) =>
+        (bytes, bms, { c with symbols := notFoundSymbols c }) := by
   rw [← compileProgMaxAsmFast_eq]
-  rfl
+  unfold compileProgAsmFast compileProgMaxAsmFast
+  exact compileProgAsmWith_fst_names_eq Flapjack.RegAlloc.regAllocExecutable config asmConf program
+
+/-- The named driver artifact is the `compile_prog_max` mirror with the real
+symbol table recorded (Flapjack infrastructure). -/
+theorem compileProgAsmFast_symbols_eq_fst {width : Nat} [NeZero width]
+    (config : Backend.Config) (asmConf : AsmConfigExact width)
+    (program : List (DeclHOL width)) :
+    compileProgAsmFast config asmConf program =
+      (compileProgMaxAsmExecutable config asmConf program).1.map fun (bytes, bms, c) =>
+        (bytes, bms, { c with symbols := compileProgSymbols asmConf program c }) := by
+  rw [← compileProgMaxAsmFast_eq]
+  unfold compileProgAsmFast compileProgMaxAsmFast
+  exact compileProgAsmWith_names_eq_fst Flapjack.RegAlloc.regAllocExecutable config asmConf program
 
 end Flapjack.Pancake.Proofs.PanToTarget

@@ -1,7 +1,11 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.NcompileCorrect
-import Flapjack.Pancake.CrepToLoop.Proofs.CallPreserveStateCodeLocalsRel
-import Flapjack.Pancake.Proofs.LoopLive.Optimise
-import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelOptMmap
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.NcompileCorrect
+public import Flapjack.Pancake.CrepToLoop.Proofs.CallPreserveStateCodeLocalsRel
+public import Flapjack.Pancake.Proofs.LoopLive.Optimise
+public import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelOptMmap
+
+@[expose] public section
 
 /-!
 # crep_to_loop `ncompile_correct`, case `Call`

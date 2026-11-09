@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.FactInsert
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MoveStoreConsts
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.FactInsert
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MoveStoreConsts
+
+@[expose] public section
 
 /-!
 # `word_cseProof`: parallel moves and clock updates

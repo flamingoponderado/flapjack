@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv
+
+@[expose] public section
 
 /-! Reference cases for the data-to-word value relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

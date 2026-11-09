@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.MemoryReads
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.MemoryReads
+
+@[expose] public section
 
 /-! Mutable value-array operations under closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

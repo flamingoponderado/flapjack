@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyClockShift
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyClockShift
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Cases of clock extension for the proof-side closure evaluator. The complete
 mutual theorem, evaluator, and carriers remain pending HOL correspondence review. -/

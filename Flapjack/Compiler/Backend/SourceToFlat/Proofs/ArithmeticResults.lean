@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
-import Flapjack.SemanticPrimitivesProps.Arithmetic
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
+public import Flapjack.SemanticPrimitivesProps.Arithmetic
+
+@[expose] public section
 
 /-! Arithmetic result cases for the source-to-flat primitive simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

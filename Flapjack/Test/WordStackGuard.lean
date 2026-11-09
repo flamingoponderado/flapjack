@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.WordToStack.Guard
-import Flapjack.Compiler.Backend.LabToTarget.RegisterGuard
+import Flapjack.Compiler.Backend.LabToTarget.EncodingGuard
+import Flapjack.Compiler.Encoders.RiscV.Unsupported
 import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileDefinitions
 import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
 import Flapjack.Compiler.Backend.RiscVConfig.Executable
@@ -8,15 +9,17 @@ import Flapjack.RiscV.NativeSource
 /-!
 # Word-to-stack and register-range guard tests
 
-Pins the two Flapjack-only guards added before native encoding: the
-word-to-stack guard rejects exactly the constructs `compNative` would silently
-lower to `Skip` (remaining `Assign`/`Store`, a `Set` of `BitmapBase` or a
-non-`Var` expression, and a `ShareInst` whose expression is not an address),
-including nested sub-programs; the register guard rejects an `Asm` register
-outside the target's register count or in its avoid set.  A normal program
-passes both guards, and the checked pipeline produces exactly the bytes of the
-reviewed `compileProgAsmFast`.  The reviewed `@[hol]` definitions are
-untouched.
+Pins the Flapjack-only guards added before native encoding: the word-to-stack
+guard rejects exactly the constructs `compNative` would silently lower to
+`Skip` (remaining `Assign`/`Store`, a `Set` of `BitmapBase` or a non-`Var`
+expression, and a `ShareInst` whose expression is not an address), including
+nested sub-programs; the encoding guard rejects an `Asm` register outside the
+target's register count or in its avoid set, and the two shapes `riscvAst` maps
+to the fail encoding that the RISC-V configuration never emits (`LongDiv`,
+`FP`).  `Skip` stays accepted: it is the padding instruction and its fail
+encoding is the intended no-op.  A normal program passes all guards, and the
+checked pipeline produces exactly the bytes of the reviewed
+`compileProgAsmFast`.  The reviewed `@[hol]` definitions are untouched.
 -/
 
 namespace Flapjack.Test.WordStackGuard
@@ -27,6 +30,7 @@ open Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Backend.WordToStack
 open Flapjack.Compiler.Encoders.Asm
+open Flapjack.Compiler.Encoders.RiscV
 open Flapjack.Compiler.Encoders.RiscV.Target (riscvConfig)
 open Flapjack.Pancake.PanLang
 open Flapjack.Pancake.Proofs.PanToTarget
@@ -105,7 +109,7 @@ private def skipProgram : WordLangProgHOL (BitVec 64) := .skip
   "word-to-stack: function 2 contains a ShareInst whose expression is not an address, " ++
     "which word-to-stack would drop"
 
-/-! ## Register-range guard -/
+/-! ## Encoding guard: register ranges and unsupported shapes -/
 
 private def asmLine (instruction : AsmOrCbw (HolAsm 64) HolMemop (HolAddr 64)) :
     GuardLine 64 :=
@@ -115,53 +119,87 @@ private def labSection (lines : List (GuardLine 64)) : GuardSection 64 := ⟨0, 
 
 -- A register at or above the target register count is reported as out of range.
 #guard decide
-  (firstBadRegister riscvConfig [labSection [asmLine (.asmi (.inst (.const 32 0)))]] =
+  (firstUnencodable riscvConfig riscvUnsupported
+      [labSection [asmLine (.asmi (.inst (.const 32 0)))]] =
     some (.outOfRange 0 0 32))
 
 -- Registers in the target's avoid set are reported as reserved.
 #guard decide
-  (firstBadRegister riscvConfig [labSection [asmLine (.asmi (.inst (.const 0 0)))]] =
+  (firstUnencodable riscvConfig riscvUnsupported
+      [labSection [asmLine (.asmi (.inst (.const 0 0)))]] =
     some (.avoided 0 0 0))
 
 #guard decide
-  (firstBadRegister riscvConfig [labSection [asmLine (.asmi (.inst (.const 31 0)))]] =
+  (firstUnencodable riscvConfig riscvUnsupported
+      [labSection [asmLine (.asmi (.inst (.const 31 0)))]] =
     some (.avoided 0 0 31))
 
 -- A `cbw` line encodes as `Store8 right (Addr left 0)`, so both registers count.
 #guard decide
-  (firstBadRegister riscvConfig [labSection [asmLine (.cbw 0 1)]] =
+  (firstUnencodable riscvConfig riscvUnsupported [labSection [asmLine (.cbw 0 1)]] =
     some (.avoided 0 0 0))
 
 -- Line indices count every line, including labels.
 #guard decide
-  (firstBadRegister riscvConfig [labSection [.label 0 0 0, asmLine (.asmi (.inst (.const 33 0)))]] =
+  (firstUnencodable riscvConfig riscvUnsupported
+      [labSection [.label 0 0 0, asmLine (.asmi (.inst (.const 33 0)))]] =
     some (.outOfRange 0 1 33))
 
 -- Section indices count sections in order.
 #guard decide
-  (firstBadRegister riscvConfig
+  (firstUnencodable riscvConfig riscvUnsupported
       [labSection [asmLine (.asmi (.inst (.const 1 0)))],
        labSection [asmLine (.asmi (.inst (.const 40 0)))]] =
     some (.outOfRange 1 0 40))
 
 -- In-range registers are accepted, including memory operands.
 #guard decide
-  (firstBadRegister riscvConfig [labSection [asmLine (.asmi (.inst (.const 1 0)))]] = none)
+  (firstUnencodable riscvConfig riscvUnsupported
+      [labSection [asmLine (.asmi (.inst (.const 1 0)))]] = none)
 
 #guard decide
-  (firstBadRegister riscvConfig
+  (firstUnencodable riscvConfig riscvUnsupported
       [labSection [asmLine (.asmi (.inst (.mem .load 1 (.addr 10 0))))]] = none)
 
 -- `LabAsm` registers are chosen by `stack_to_lab`, not carried from source.
 #guard decide
-  (firstBadRegister riscvConfig
+  (firstUnencodable riscvConfig riscvUnsupported
       [labSection [.labAsm (.jump (.lab 0 0)) 0 [] 0]] = none)
 
-#guard registerGuardFailureDescription (.outOfRange 2 5 40) =
+#guard encodingGuardFailureDescription (.outOfRange 2 5 40) =
   "lab-to-target: section 2 line 5 uses register 40, which is outside the target's register count"
 
-#guard registerGuardFailureDescription (.avoided 0 1 0) =
+#guard encodingGuardFailureDescription (.avoided 0 1 0) =
   "lab-to-target: section 0 line 1 uses register 0, which the target reserves"
+
+-- The two unsupported shapes `riscvAst` maps to the fail encoding are rejected.
+#guard decide
+  (firstUnencodable riscvConfig riscvUnsupported
+      [labSection [asmLine (.asmi (.inst (.arith (.longDiv 1 10 11 12 13))))]] =
+    some (.unsupported 0 0 .longDiv))
+
+#guard decide
+  (firstUnencodable riscvConfig riscvUnsupported
+      [labSection [asmLine (.asmi (.inst (.fp (.fpAdd 1 2 3))))]] =
+    some (.unsupported 0 0 .fp))
+
+-- A supported instruction with a supported register still passes.
+#guard decide
+  (firstUnencodable riscvConfig riscvUnsupported
+      [labSection [asmLine (.asmi (.inst (.arith (.div 1 10 11))))]] = none)
+
+-- `Skip` is the padding instruction; its fail encoding is the intended no-op.
+#guard decide
+  (firstUnencodable riscvConfig riscvUnsupported
+      [labSection [asmLine (.asmi (.inst .skip))]] = none)
+
+#guard encodingGuardFailureDescription (.unsupported 0 3 .longDiv) =
+  "lab-to-target: section 0 line 3 cannot be encoded: LongDiv has no RISC-V encoding " ++
+    "(the encoder emits the fail encoding)"
+
+#guard encodingGuardFailureDescription (.unsupported 1 2 .fp) =
+  "lab-to-target: section 1 line 2 cannot be encoded: a floating-point instruction " ++
+    "has no RISC-V encoding (the encoder emits the fail encoding)"
 
 /-! ## A normal program passes both guards -/
 
@@ -174,7 +212,7 @@ private def normalSource : String := "fun 1 main() { return 0; }"
   | .ok declarations =>
       let program := Pancake.PanToTarget.mainFirstHOL (declarations.map declToHOL)
       let config := Compiler.Backend.RiscVConfig.pancakeRiscVBackendConfig
-      match compileProgAsmFastChecked config riscvConfig program,
+      match compileProgAsmFastChecked riscvUnsupported config riscvConfig program,
             compileProgAsmFast config riscvConfig program with
       | .ok (bytes, bitmaps, _), some (bytes', bitmaps', _) =>
           bytes == bytes' && bitmaps == bitmaps'
@@ -194,7 +232,7 @@ private def normalSource : String := "fun 1 main() { return 0; }"
       "Assign, which word-to-stack would drop"
 
 #guard
-  sourceRiscVImageErrorDescription (.labRegisterGuard (.outOfRange 2 5 40)) =
+  sourceRiscVImageErrorDescription (.labEncodingGuard (.outOfRange 2 5 40)) =
     "native backend compilation failed: lab-to-target: section 2 line 5 uses register 40, " ++
       "which is outside the target's register count"
 

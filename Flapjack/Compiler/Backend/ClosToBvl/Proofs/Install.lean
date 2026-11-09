@@ -1,9 +1,17 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockList
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WordRelation
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockList
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WordRelation
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Value decoding needed by the dynamic-installation simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

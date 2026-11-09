@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
-import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapBitStructure
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdate
-import Flapjack.Compiler.Backend.Semantics.WordSem.State
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapBitStructure
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdate
+public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack
 open Flapjack

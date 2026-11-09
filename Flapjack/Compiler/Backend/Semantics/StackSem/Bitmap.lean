@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Exact list-level bitmap prerequisites from stackSemScript.sml:27-71.
     These definitions retain HOL's polymorphic element carrier and use List,

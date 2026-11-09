@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileFromList
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileFromList
+
+@[expose] public section
 
 /-! Fixed-index block and array reads in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

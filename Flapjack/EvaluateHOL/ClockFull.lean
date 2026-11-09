@@ -1,4 +1,8 @@
-import Flapjack.EvaluateHOL.Clock
+module
+
+public import Flapjack.EvaluateHOL.Clock
+
+@[expose] public section
 
 /-! Explicit lexicographic induction over the source evaluator's three
 mutually recursive entry points. -/

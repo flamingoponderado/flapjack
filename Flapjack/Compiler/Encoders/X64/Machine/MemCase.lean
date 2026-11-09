@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.X64.Machine.CarryCase
-import Flapjack.Compiler.Encoders.MemBytes
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.CarryCase
+public import Flapjack.Compiler.Encoders.MemBytes
+
+@[expose] public section
 
 /-!
 # The memory cases of `encoder_correct x64Target`

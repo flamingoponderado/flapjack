@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GcConfig
-import Flapjack.Compiler.Backend.GcCombined.Collector
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedStore
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GcConfig
+public import Flapjack.Compiler.Backend.GcCombined.Collector
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.CombinedStore
+
+@[expose] public section
 
 /-! No-collection branch of abstract collector correctness. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

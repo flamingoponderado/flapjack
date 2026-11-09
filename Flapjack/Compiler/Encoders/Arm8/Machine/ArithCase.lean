@@ -2,7 +2,14 @@
 Copyright (c) 2025 Flapjack contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Flapjack.Compiler.Encoders.Arm8.Machine.ConstCase
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Machine.ConstCase
+public import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
+
+-- Sum `==` must reduce by `rfl`/`decide`; core's derived instance is not exposed.
+import all Init.Data.Sum.Basic
+@[expose] public section
 
 /-!
 # The ARM8 arithmetic encoder-correctness cases
@@ -50,41 +57,6 @@ Flapjack infrastructure and carries no `@[hol]` tags.
 namespace Flapjack.Compiler.Encoders.Arm8
 
 open Flapjack Compiler.Encoders.Asm Compiler.Encoders.AsmSem Compiler.Encoders.AsmProps
-
-/-! ## Word arithmetic used by the instruction models -/
-
-/-- `ofNat` of the sum of the `toNat`s is the word sum. -/
-theorem arith_ofNat64_add_toNat (x y : BitVec 64) :
-    BitVec.ofNat 64 (x.toNat + y.toNat) = x + y := by
-  apply BitVec.eq_of_toNat_eq
-  rw [BitVec.toNat_ofNat, BitVec.toNat_add]
-
-/-- The result half of `addWithCarry` without carry. -/
-theorem arith_addWithCarry_false (x y : BitVec 64) :
-    (addWithCarry x y false).1 = x + y := by
-  unfold addWithCarry
-  simp only [Bool.false_eq_true, if_false, Nat.add_zero]
-  exact arith_ofNat64_add_toNat x y
-
-/-- `ofNat` of a sum with one extra low bit is the word sum with one. -/
-theorem arith_ofNat64_add_one (x y : BitVec 64) :
-    BitVec.ofNat 64 (x.toNat + y.toNat + 1) = x + y + 1 := by
-  rw [show x.toNat + y.toNat + 1 = (x.toNat + y.toNat) + 1 by omega]
-  rw [BitVec.ofNat_add, arith_ofNat64_add_toNat]
-  rfl
-
-/-- The result half of `addWithCarry` with carry in. -/
-theorem arith_addWithCarry_true (x y : BitVec 64) :
-    (addWithCarry x y true).1 = x + y + 1 := by
-  unfold addWithCarry
-  simp only [if_true]
-  exact arith_ofNat64_add_one x y
-
-/-- The value `x + ~~~y + 1` is the difference `x - y`. -/
-theorem arith_add_not_add_one (x y : BitVec 64) : x + ~~~y + 1 = x - y := by
-  rw [BitVec.add_assoc]
-  have h1 : (1 : BitVec 64) = 1#64 := rfl
-  rw [h1, ← BitVec.neg_eq_not_add, BitVec.sub_eq_add_neg]
 
 /-- The all-ones word is the word `-1`. -/
 theorem arith_allOnes : (BitVec.allOnes 64 : BitVec 64) = -1 := by decide

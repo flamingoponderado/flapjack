@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.DirectCall
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.CodeLocations
-import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.DirectCall
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.CodeLocations
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
+
+@[expose] public section
 
 /-! Dynamic installation under closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

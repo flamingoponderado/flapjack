@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.CrepSem.EventsMono
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.EventsMono
+
+@[expose] public section
 
 /-!
 # Clock-shift infrastructure for the exact Crep evaluator

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Encoders.X64.Machine.SkipCase
-import Flapjack.Compiler.Encoders.X64.Machine.TargetProof
-import Flapjack.Compiler.Encoders.X64.Machine.MemDecodeProof
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.SkipCase
+public import Flapjack.Compiler.Encoders.X64.Machine.TargetProof
+public import Flapjack.Compiler.Encoders.X64.Machine.MemDecodeProof
+
+@[expose] public section
 
 /-!
 # The `jump` case of `encoder_correct x64Target`

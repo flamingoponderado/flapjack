@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileElement
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileElement
+
+@[expose] public section
 
 /-! Preservation of the BVL-to-BVI reference relation by existing-cell writes. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

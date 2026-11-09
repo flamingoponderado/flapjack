@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabProps.DomainAlignmentOperations
-import Flapjack.Compiler.Backend.LabSem.Inst
+module
+
+public import Flapjack.Compiler.Backend.LabProps.DomainAlignmentOperations
+public import Flapjack.Compiler.Backend.LabSem.Inst
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm

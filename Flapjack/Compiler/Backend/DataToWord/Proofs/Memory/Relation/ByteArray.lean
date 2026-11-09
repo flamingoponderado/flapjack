@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordMemoryEquality
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.RefEquality
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordMemoryEquality
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.RefEquality
+
+@[expose] public section
 
 /-! Concrete byte-array words from the abstract memory relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

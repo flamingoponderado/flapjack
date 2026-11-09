@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.AddSubImmediate
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftBitfieldCase
-import Flapjack.Compiler.Encoders.Arm8.Machine.MemCase
-import Mathlib.Data.List.GetD
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.AddSubImmediate
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.ShiftBitfieldCase
+public import Flapjack.Compiler.Encoders.Arm8.MemLemmas
+public import Mathlib.Data.List.GetD
+
+@[expose] public section
 
 set_option maxHeartbeats 12000000
 set_option maxRecDepth 10000
@@ -817,7 +821,7 @@ theorem arm8Mem_eight_pair (ms : arm8_state) (s : AsmState 64) (address : BitVec
 `write'Mem` writes each byte from the bit field `holField (8i+7) (8i)` of the
 value, while the source's `writeMemWord` shifts the value by eight bits per
 step.  `arm8HolByte` identifies the two byte extractions; `holUpdate_eight`
-identifies the nested `holUpdate` chain with the if-chain `writeMemN` uses. -/
+identifies the nested `holUpdate` chain with the if-chain `writeMemBytes` uses. -/
 
 /-- `holUpdate` at its application form (Flapjack infrastructure: the rendered
 `holUpdate` is an abbreviation, so `rw [holUpdate]` does not fire). -/
@@ -826,7 +830,7 @@ theorem holUpdate_apply (a : BitVec 64) (b : BitVec 8) (f : BitVec 64 → BitVec
     holUpdate a b f c = if a = c then b else f c := rfl
 
 /-- The eight nested `holUpdate`s `write'Mem` builds are the if-chain
-`writeMemN` uses (Flapjack infrastructure). -/
+`writeMemBytes` uses (Flapjack infrastructure). -/
 theorem holUpdate_eight (address : BitVec 64) (f : BitVec 64 → BitVec 8)
     (b0 b1 b2 b3 b4 b5 b6 b7 : BitVec 8) (x : BitVec 64) :
     holUpdate (address + 7#64) b7
@@ -908,7 +912,7 @@ theorem holField_eight_getElem? (value : BitVec 64) (i j : Nat) (hi : i < 8) (hj
   have hidx : 63 - (63 - 8 * i - j) = 8 * i + j := by omega
   simp only [hlt, if_true, hidx]
 
-/-- The byte `write'Mem` stores at `address + i` is the byte `writeMemN` stores
+/-- The byte `write'Mem` stores at `address + i` is the byte `writeMemBytes` stores
 there (Flapjack infrastructure). -/
 theorem arm8HolByte (value : BitVec 64) (i : Nat) (hi : i < 8) :
     holV2w 8 (holField (8 * i + 7) (8 * i) (holW2v value)) =
@@ -932,8 +936,8 @@ theorem arm8WriteMem_eight (ms : arm8_state) (address : BitVec 64) (value : BitV
     (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
     (x : BitVec 64) :
     («write'Mem» (TN := 64) (value, (address, (8, acctype))) ms).MEM x =
-      (writeMemN (memState ms.MEM) 8 address value).mem x := by
-  simp only [«write'Mem», writeMemN, memState]
+      writeMemBytes ms.MEM 8 address value x := by
+  simp only [«write'Mem», writeMemBytes]
   simp [holFor, CheckAlignment_aligned ms address 8 acctype true hal,
     BigEndian_false ms hel he0]
   have hb0 : holV2w 8 (holField 7 0 (holW2v value)) = BitVec.setWidth 8 value := by
@@ -1031,10 +1035,11 @@ theorem arm8ByteSetWidth32_64 (w : BitVec 64) (i : Nat) (hi : i < 4) :
 
 /-- A four-byte machine write ignores the `setWidth 32`-then-`setWidth 64`
 round trip of its value (Flapjack infrastructure). -/
-theorem writeMemN_four_setWidth32 (s : Arm8State) (a w : BitVec 64) (x : BitVec 64) :
-    (writeMemN s 4 a (BitVec.setWidth 64 (BitVec.setWidth 32 w))).mem x =
-      (writeMemN s 4 a w).mem x := by
-  simp only [writeMemN]
+theorem writeMemBytes_four_setWidth32 (m : BitVec 64 → BitVec 8) (a w : BitVec 64)
+    (x : BitVec 64) :
+    writeMemBytes m 4 a (BitVec.setWidth 64 (BitVec.setWidth 32 w)) x =
+      writeMemBytes m 4 a w x := by
+  simp only [writeMemBytes]
   rw [arm8ByteSetWidth32_64 w 0 (by decide), arm8ByteSetWidth32_64 w 1 (by decide),
     arm8ByteSetWidth32_64 w 2 (by decide), arm8ByteSetWidth32_64 w 3 (by decide)]
 
@@ -1069,8 +1074,8 @@ theorem arm8WriteMem_four (ms : arm8_state) (address : BitVec 64) (value : BitVe
     (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
     (x : BitVec 64) :
     («write'Mem» (TN := 32) (value, (address, (4, acctype))) ms).MEM x =
-      (writeMemN (memState ms.MEM) 4 address (BitVec.setWidth 64 value)).mem x := by
-  simp only [«write'Mem», writeMemN, memState]
+      writeMemBytes ms.MEM 4 address (BitVec.setWidth 64 value) x := by
+  simp only [«write'Mem», writeMemBytes]
   simp [holFor, CheckAlignment_aligned ms address 4 acctype true hal,
     BigEndian_false ms hel he0]
   have hb0 : holV2w 8 (holField 7 0 (holW2v value)) = BitVec.setWidth 8 value := by
@@ -1476,8 +1481,8 @@ theorem arm8WriteMem_one (ms : arm8_state) (address : BitVec 64) (value : BitVec
     (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
     (x : BitVec 64) :
     («write'Mem» (TN := 8) (value, (address, (1, acctype))) ms).MEM x =
-      (writeMemN (memState ms.MEM) 1 address (BitVec.setWidth 64 value)).mem x := by
-  simp only [«write'Mem», writeMemN, memState]
+      writeMemBytes ms.MEM 1 address (BitVec.setWidth 64 value) x := by
+  simp only [«write'Mem», writeMemBytes]
   simp [holFor, CheckAlignment_aligned ms address 1 acctype true hal,
     BigEndian_false ms hel he0, arm8HolByte8, holUpdate_apply]
   by_cases h : x = address
@@ -1487,10 +1492,10 @@ theorem arm8WriteMem_one (ms : arm8_state) (address : BitVec 64) (value : BitVec
 
 /-- A one-byte machine write ignores the `setWidth 8`-then-`setWidth 64` round
 trip of its value (Flapjack infrastructure). -/
-theorem writeMemN_one_setWidth8 (s : Arm8State) (a w x : BitVec 64) :
-    (writeMemN s 1 a (BitVec.setWidth 64 (BitVec.setWidth 8 w))).mem x =
-      (writeMemN s 1 a w).mem x := by
-  simp only [writeMemN]
+theorem writeMemBytes_one_setWidth8 (m : BitVec 64 → BitVec 8) (a w x : BitVec 64) :
+    writeMemBytes m 1 a (BitVec.setWidth 64 (BitVec.setWidth 8 w)) x =
+      writeMemBytes m 1 a w x := by
+  simp only [writeMemBytes]
   by_cases h : x = a
   · simp [h]
   · simp [h]
@@ -1888,10 +1893,10 @@ theorem arm8ByteSetWidth16_64 (w : BitVec 64) (i : Nat) (hi : i < 2) :
   have h64 : 8 * i + j < 64 := by omega
   simp [hk, h64]
 
-theorem writeMemN_two_setWidth16 (s : Arm8State) (a w x : BitVec 64) :
-    (writeMemN s 2 a (BitVec.setWidth 64 (BitVec.setWidth 16 w))).mem x =
-      (writeMemN s 2 a w).mem x := by
-  simp only [writeMemN]
+theorem writeMemBytes_two_setWidth16 (m : BitVec 64 → BitVec 8) (a w x : BitVec 64) :
+    writeMemBytes m 2 a (BitVec.setWidth 64 (BitVec.setWidth 16 w)) x =
+      writeMemBytes m 2 a w x := by
+  simp only [writeMemBytes]
   by_cases h : x = a
   · simp [h]
   · simp [h, arm8ByteSetWidth16_64 w 1 (by decide)]
@@ -1916,8 +1921,8 @@ theorem arm8WriteMem_two (ms : arm8_state) (address : BitVec 64) (value : BitVec
     (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2))
     (x : BitVec 64) :
     («write'Mem» (TN := 16) (value, (address, (2, acctype))) ms).MEM x =
-      (writeMemN (memState ms.MEM) 2 address (BitVec.setWidth 64 value)).mem x := by
-  simp only [«write'Mem», writeMemN, memState]
+      writeMemBytes ms.MEM 2 address (BitVec.setWidth 64 value) x := by
+  simp only [«write'Mem», writeMemBytes]
   simp [holFor, CheckAlignment_aligned ms address 2 acctype true hal,
     BigEndian_false ms hel he0]
   have hb0 : holV2w 8 (holField 7 0 (holW2v value)) = BitVec.setWidth 8 value := by
@@ -3110,20 +3115,20 @@ theorem arm8MemStorePost (op : HolMemop) (dest base : Nat) (off : BitVec 64)
     simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
       Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false]
 
-/-- A `2 ^ size`-byte `writeMemN` leaves every other address alone
+/-- A `2 ^ size`-byte `writeMemBytes` leaves every other address alone
 (Flapjack infrastructure). -/
 theorem arm8WriteMemN_out (m : BitVec 64 → BitVec 8) (size : Nat) (hsize : size < 4)
     (a v x : BitVec 64) (hx : ∀ k, k < 2 ^ size → x ≠ a + BitVec.ofNat 64 k) :
-    (writeMemN (memState m) (2 ^ size) a v).mem x = m x := by
+    writeMemBytes m (2 ^ size) a v x = m x := by
   have h0 : x ≠ a := by simpa using hx 0 (by positivity)
   interval_cases size
-  · simp [writeMemN, memState, h0]
+  · simp [writeMemBytes, h0]
   · have h1 : x ≠ a + 1#64 := by simpa using hx 1 (by omega)
-    simp [writeMemN, memState, h0, h1]
+    simp [writeMemBytes, h0, h1]
   · have h1 : x ≠ a + 1#64 := by simpa using hx 1 (by omega)
     have h2 : x ≠ a + 2#64 := by simpa using hx 2 (by omega)
     have h3 : x ≠ a + 3#64 := by simpa using hx 3 (by omega)
-    simp [writeMemN, memState, h0, h1, h2, h3]
+    simp [writeMemBytes, h0, h1, h2, h3]
   · have h1 : x ≠ a + 1#64 := by simpa using hx 1 (by omega)
     have h2 : x ≠ a + 2#64 := by simpa using hx 2 (by omega)
     have h3 : x ≠ a + 3#64 := by simpa using hx 3 (by omega)
@@ -3131,7 +3136,7 @@ theorem arm8WriteMemN_out (m : BitVec 64 → BitVec 8) (size : Nat) (hsize : siz
     have h5 : x ≠ a + 5#64 := by simpa using hx 5 (by omega)
     have h6 : x ≠ a + 6#64 := by simpa using hx 6 (by omega)
     have h7 : x ≠ a + 7#64 := by simpa using hx 7 (by omega)
-    simp [writeMemN, memState, h0, h1, h2, h3, h4, h5, h6, h7]
+    simp [writeMemBytes, h0, h1, h2, h3, h4, h5, h6, h7]
 
 /-- The one-instruction `Mem` load of `2 ^ size` bytes (Flapjack
 infrastructure): `arm8MemCaseOne` with the load's register and memory
@@ -3264,7 +3269,7 @@ theorem arm8MemStoreCaseOne (op : HolMemop) (dest base : Nat) (off : BitVec 64)
       X (TN := 64) (BitVec.ofNat 5 base) st = s1.regs base →
       st.REG (BitVec.ofNat 5 dest) = s1.regs dest →
       Run id st = { st with
-        MEM := (writeMemN (memState st.MEM) (2 ^ size) (s1.regs base + off) (s1.regs dest)).mem }) :
+        MEM := writeMemBytes st.MEM (2 ^ size) (s1.regs base + off) (s1.regs dest) }) :
     CaseGoal (.inst (.mem op dest (.addr base off))) s1 s2 ms := by
   have hs := h.1
   have hbe : s1.be = false := hs.2.2.1
@@ -3281,7 +3286,7 @@ theorem arm8MemStoreCaseOne (op : HolMemop) (dest base : Nat) (off : BitVec 64)
   obtain ⟨hs2dom, hs2regs, hs2mem⟩ := arm8MemStorePost op dest base off s1 s2 _ _ hspec hupd hbe
   refine arm8MemCaseOne op dest base off s1 s2 ms h ⟨hbase.1, hbase.2.1, hbase.2.2⟩
     ⟨hdest.1, hdest.2.1⟩ i id w
-    (fun R => R) (fun m => (writeMemN (memState m) (2 ^ size) (s1.regs base + off) (s1.regs dest)).mem)
+    (fun R => R) (fun m => writeMemBytes m (2 ^ size) (s1.regs base + off) (s1.regs dest))
     henc hencw hdec ?_ (fun _ _ _ _ => rfl) ?_ ?_ ?_ hs2dom (fun k _ => hs2regs k)
   · intro st he0 hel hX hregs _
     exact hrun st hdest.1 hdest.2.2 hbe hal he0 hel hrn hX (hregs dest hdest.1 hdest.2.1)
@@ -3317,7 +3322,7 @@ theorem arm8MemStoreCaseTwo (op : HolMemop) (dest base : Nat) (off : BitVec 64)
       X (TN := 64) (26 : BitVec 5) st = (if sub then s1.regs base - b else s1.regs base + b) →
       st.REG (BitVec.ofNat 5 dest) = s1.regs dest →
       Run i2d st = { st with
-        MEM := (writeMemN (memState st.MEM) (2 ^ size) (s1.regs base + off) (s1.regs dest)).mem }) :
+        MEM := writeMemBytes st.MEM (2 ^ size) (s1.regs base + off) (s1.regs dest) }) :
     CaseGoal (.inst (.mem op dest (.addr base off))) s1 s2 ms := by
   have hs := h.1
   have hbe : s1.be = false := hs.2.2.1
@@ -3334,7 +3339,7 @@ theorem arm8MemStoreCaseTwo (op : HolMemop) (dest base : Nat) (off : BitVec 64)
   obtain ⟨hs2dom, hs2regs, hs2mem⟩ := arm8MemStorePost op dest base off s1 s2 _ _ hspec hupd hbe
   refine arm8MemCaseTwo op dest base off s1 s2 ms h ⟨hbase.1, hbase.2.1, hbase.2.2⟩
     ⟨hdest.1, hdest.2.1⟩ sub b hlow i2 i2d w2
-    (fun R => R) (fun m => (writeMemN (memState m) (2 ^ size) (s1.regs base + off) (s1.regs dest)).mem)
+    (fun R => R) (fun m => writeMemBytes m (2 ^ size) (s1.regs base + off) (s1.regs dest))
     henc hencw2 hdec2 ?_ (fun _ _ _ _ => rfl) ?_ ?_ ?_ hs2dom (fun k _ => hs2regs k)
   · intro st he0 hel hX hregs _
     exact hrun2 st hdest.1 hdest.2.2 hbe hal he0 hel (by decide) hX (hregs dest hdest.1 hdest.2.1)
@@ -3453,7 +3458,7 @@ theorem arm8RunStore_eight (s1 : AsmState 64) (c : BitVec 64) (unsigned : Bool) 
     Run (.LoadStore (.«LoadStoreImmediate@64»
         (3, false, .MemOp_STORE, .AccType_NORMAL, false, false, false, false, false,
          unsigned, c, rn, BitVec.ofNat 5 dest))) st =
-      { st with MEM := (writeMemN (memState st.MEM) 8 addr (s1.regs dest)).mem } := by
+      { st with MEM := writeMemBytes st.MEM 8 addr (s1.regs dest) } := by
   rw [arm8Run_loadStoreImmediate_store _ _ _ _ _ hrn, hX, hc, arm8X_of_valid st hd31 hd, hv,
     arm8WriteMem_only_mem _ _ _ _ hal]
   congr 1
@@ -3473,12 +3478,12 @@ theorem arm8RunStore_four (s1 : AsmState 64) (c : BitVec 64) (unsigned : Bool) (
     Run (.LoadStore (.«LoadStoreImmediate@32»
         (BitVec.ofNat 32 2, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false, false,
          unsigned, c, rn, BitVec.ofNat 5 dest))) st =
-      { st with MEM := (writeMemN (memState st.MEM) 4 addr (s1.regs dest)).mem } := by
+      { st with MEM := writeMemBytes st.MEM 4 addr (s1.regs dest) } := by
   rw [arm8Run_loadStoreImmediate_store32 _ _ _ _ _ hrn, hX, hc, arm8X32_of_valid st hd31 hd, hv,
     arm8WriteMem_only_mem_four _ _ _ _ hal]
   congr 1
   funext x
-  rw [arm8WriteMem_four st addr _ _ hal he0 hel x, writeMemN_four_setWidth32]
+  rw [arm8WriteMem_four st addr _ _ hal he0 hel x, writeMemBytes_four_setWidth32]
 
 /-- `Run` of the 2-byte `LoadStoreImmediate` store at a register
 holding `xr`, offset `c`, as the memory update `arm8MemStoreCase*` expects
@@ -3493,12 +3498,12 @@ theorem arm8RunStore_two (s1 : AsmState 64) (c : BitVec 64) (unsigned : Bool) (r
     Run (.LoadStore (.«LoadStoreImmediate@16»
         (BitVec.ofNat 16 1, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false, false,
          unsigned, c, rn, BitVec.ofNat 5 dest))) st =
-      { st with MEM := (writeMemN (memState st.MEM) 2 addr (s1.regs dest)).mem } := by
+      { st with MEM := writeMemBytes st.MEM 2 addr (s1.regs dest) } := by
   rw [arm8Run_loadStoreImmediate_store16 _ _ _ _ _ hrn, hX, hc, arm8X16_of_valid st hd31 hd, hv,
     arm8WriteMem_only_mem_two _ _ _ _ hal]
   congr 1
   funext x
-  rw [arm8WriteMem_two st addr _ _ hal he0 hel x, writeMemN_two_setWidth16]
+  rw [arm8WriteMem_two st addr _ _ hal he0 hel x, writeMemBytes_two_setWidth16]
 
 /-- `Run` of the 1-byte `LoadStoreImmediate` store at a register
 holding `xr`, offset `c`, as the memory update `arm8MemStoreCase*` expects
@@ -3513,12 +3518,12 @@ theorem arm8RunStore_one (s1 : AsmState 64) (c : BitVec 64) (unsigned : Bool) (r
     Run (.LoadStore (.«LoadStoreImmediate@8»
         (BitVec.ofNat 8 0, true, .MemOp_STORE, .AccType_NORMAL, false, false, false, false, false,
          unsigned, c, rn, BitVec.ofNat 5 dest))) st =
-      { st with MEM := (writeMemN (memState st.MEM) 1 addr (s1.regs dest)).mem } := by
+      { st with MEM := writeMemBytes st.MEM 1 addr (s1.regs dest) } := by
   rw [arm8Run_loadStoreImmediate_store8 _ _ _ _ _ hrn, hX, hc, arm8X8_of_valid st hd31 hd, hv,
     arm8WriteMem_only_mem_one _ _ _ _ hal]
   congr 1
   funext x
-  rw [arm8WriteMem_one st addr _ _ hal he0 hel x, writeMemN_one_setWidth8]
+  rw [arm8WriteMem_one st addr _ _ hal he0 hel x, writeMemBytes_one_setWidth8]
 
 /-- The scaled-form branch condition of `arm8_load_store_ast*` from the
 `e_LoadStoreImmediate` one (Flapjack infrastructure). -/

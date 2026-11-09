@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.Force
-import Flapjack.Compiler.Backend.Semantics.DataProps.PrimitiveLocals
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.Force
+public import Flapjack.Compiler.Backend.Semantics.DataProps.PrimitiveLocals
+
+@[expose] public section
 
 /-! Full primitive relation for the data liveness proof. -/
 namespace Flapjack.Compiler.Backend.DataLive

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
-import Flapjack.Pancake.Semantics.LoopProps.CutSets
+module
+
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+public import Flapjack.Pancake.Semantics.LoopProps.CutSets
+
+@[expose] public section
 
 /-!
 # loopProps `survives`/`cut_sets` `nested_seq` lemmas and friends

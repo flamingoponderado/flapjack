@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeMoves
-import Flapjack.Compiler.Backend.WordToStack.NativeReturn
-import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
-import Flapjack.Compiler.Backend.WordToStack.NativeHandlers
-import Flapjack.Compiler.Backend.WordToStack.NativePerf
-import Flapjack.Compiler.Backend.WordToStack.NativeSharedMemory
-import Flapjack.Compiler.Backend.WordToStack.NativeLive
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeMoves
+public import Flapjack.Compiler.Backend.WordToStack.NativeReturn
+public import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
+public import Flapjack.Compiler.Backend.WordToStack.NativeHandlers
+public import Flapjack.Compiler.Backend.WordToStack.NativePerf
+public import Flapjack.Compiler.Backend.WordToStack.NativeSharedMemory
+public import Flapjack.Compiler.Backend.WordToStack.NativeLive
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang

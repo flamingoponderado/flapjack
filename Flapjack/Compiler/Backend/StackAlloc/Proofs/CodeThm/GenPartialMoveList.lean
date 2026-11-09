@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveList
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMove
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveList
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMove
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `word_gen_gc_partial_move_list_code_thm`

@@ -1,9 +1,14 @@
-import Flapjack.Compiler.Backend.WordAlloc.RemoveDead
-import Flapjack.Pancake.WordConvs
-import Flapjack.Pancake.WordConvs.FullInstOkLess
-import Flapjack.Pancake.WordConvs.NotCreated
-import Flapjack.Pancake.WordConvs.CodeLabels
-import Flapjack.Pancake.WordConvs.WfCutsets
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.RemoveDead
+public import Flapjack.Pancake.WordConvs
+public import Flapjack.Pancake.WordConvs.FullInstOkLess
+public import Flapjack.Pancake.WordConvs.NotCreated
+public import Flapjack.Pancake.WordConvs.CodeLabels
+public import Flapjack.Pancake.WordConvs.WfCutsets
+import Aesop
+
+@[expose] public section
 
 /-!
 # `wordConvsProof` `remove_dead_prog` group

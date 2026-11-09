@@ -1,17 +1,21 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialInvariant
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialList
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopArithmetic
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopCell
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalData
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialInvariant
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialList
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopArithmetic
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopCell
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalData
+
+@[expose] public section
 
 /-! Copied-data scan simulation for partial collection. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.WordGcFunctions
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 
-private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+instance partialDataInst1 {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
-private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
+instance partialDataInst2 {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
 
 open Classical in
 /-- Unfold a successful nonempty abstract scan into its root move and

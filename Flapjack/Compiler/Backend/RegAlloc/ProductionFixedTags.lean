@@ -1,4 +1,8 @@
-import Flapjack.RiscV.CakeRegAlloc
+module
+
+public import Flapjack.RiscV.CakeRegAlloc
+
+@[expose] public section
 
 /-!
 Production tag preservation needed by the executed Word-to-Stack caller.

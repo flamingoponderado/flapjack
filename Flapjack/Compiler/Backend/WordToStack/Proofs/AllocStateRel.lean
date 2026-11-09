@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.GcSimulation
-import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
-import Flapjack.Misc.Sptree.Wf
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.GcSimulation
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
+public import Flapjack.Misc.Sptree.Wf
+
+@[expose] public section
 
 /-!
 # Word-to-Stack allocation simulation: `alloc_IMP_alloc`, `alloc_IMP_alloc2`

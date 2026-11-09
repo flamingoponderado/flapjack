@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Compile
-import Flapjack.Compiler.Backend.StackProps.CallArgs
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Compile
+public import Flapjack.Compiler.Backend.StackProps.CallArgs
+
+@[expose] public section
 
 /-! `stack_remove_call_args` (`stack_removeProofScript.sml`): the
 stack_remove compiler keeps the `call_args p 1 2 3 4 0` convention of every

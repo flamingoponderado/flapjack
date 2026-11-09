@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveBitmap
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveBitmap
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `word_gc_move_bitmaps_code_thm`

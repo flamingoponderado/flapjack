@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.Relations
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
+module
+
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Relations
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
+
+@[expose] public section
 
 /-! Primitive-operation relations for closure let-operation correctness. -/
 namespace Flapjack.Compiler.Backend.ClosLetop

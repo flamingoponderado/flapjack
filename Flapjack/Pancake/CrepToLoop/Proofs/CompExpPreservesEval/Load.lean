@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Leaf
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Leaf
+
+@[expose] public section
 
 /-!
 # `crep_to_loop` expression simulation: load case
@@ -6,8 +10,8 @@ import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Leaf
 The `Load e` evaluator-induction case of HOL `comp_exp_preserves_eval`
 (`crep_to_loopProofScript.sml:772`, proof case at `:982-995`). The memory
 domain and both memories use the exact HOL-shaped carriers from `mem_rel_def`
-and `state_rel_def`; this theorem is proof-side and does not route production
-`loopCompileExp` through `compileExpHOLExact`.
+and `state_rel_def`; this theorem is proof-side and does not alter the executed
+`compileExpHOLExact` lowering.
 -/
 
 namespace Flapjack

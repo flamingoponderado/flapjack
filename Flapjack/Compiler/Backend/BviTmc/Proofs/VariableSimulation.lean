@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.FillHole
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.FillHole
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! TMC simulation for variable expressions. -/
 namespace Flapjack.Compiler.Backend.BviTmc.VariableSimulation

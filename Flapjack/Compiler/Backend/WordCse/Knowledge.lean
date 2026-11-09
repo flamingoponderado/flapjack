@@ -1,6 +1,10 @@
-import Flapjack.Misc.BalancedMap.Core
-import Flapjack.Misc.Sptree
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Misc.BalancedMap.Core
+public import Flapjack.Misc.Sptree
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 /-! Source-shaped native CSE knowledge. Both register maps retain the literal
 sparse-tree carrier, both fact maps retain every balanced-tree constructor and

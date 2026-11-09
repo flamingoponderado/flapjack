@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.ForceRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.ForceRelation
+
+@[expose] public section
 
 /-! Dynamic-installation simulation for the proof-side evaluator. The
 semantics and finite-map carriers remain pending HOL correspondence review. -/

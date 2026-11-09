@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.Measure
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Measure
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Clocked BVI evaluation with the source's explicit clock clamps. -/
 namespace Flapjack.Compiler.Backend.BviSem

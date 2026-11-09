@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentBind
-import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelation
-import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
-import Flapjack.SemanticPrimitivesProps.OpApp
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.EnvironmentBind
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.ValueRelation
+public import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
+public import Flapjack.SemanticPrimitivesProps.OpApp
+
+@[expose] public section
 
 /-! Recursive environments and closure application preserve source value relations. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Structural
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Structural
+
+@[expose] public section
 
 /-!
 # crep_inline `evaluate_state_locals_rel_strong`: remaining atom cases

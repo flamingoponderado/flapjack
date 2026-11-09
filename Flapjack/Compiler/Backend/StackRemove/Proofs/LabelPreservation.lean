@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.LabelBuilders
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CodeRelation
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.LabelBuilders
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CodeRelation
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.StackRemove.LabelPreservation
 open Flapjack.Compiler.Backend.StackRemove
 open Flapjack Flapjack.StackSem Flapjack.Compiler.Backend.StackLang LabelBuilders

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
+
+@[expose] public section
 
 /-! Runtime values of the data-language semantics. -/
 namespace Flapjack.Compiler.Backend.DataSem

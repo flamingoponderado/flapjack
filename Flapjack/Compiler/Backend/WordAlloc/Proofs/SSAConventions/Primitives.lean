@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 /-! Primitive original cases of ssa_cc_trans_pre_alloc_conventions.
 The complete recursive assembly remains open. -/

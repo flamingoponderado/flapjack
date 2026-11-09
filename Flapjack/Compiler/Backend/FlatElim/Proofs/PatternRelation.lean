@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatProps.PatternMatch
-import Flapjack.Compiler.Backend.FlatElim.Proofs.StateRelation
-import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.PatternMatch
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+
+@[expose] public section
 
 /-! Pattern matching is preserved by the flat-elimination state relation. -/
 namespace Flapjack.Compiler.Backend.FlatElim

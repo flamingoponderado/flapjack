@@ -1,12 +1,16 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelOptMmap
-import Flapjack.Pancake.CrepToLoop.Proofs.LocalListHelpers
-import Flapjack.Pancake.CrepToLoop.Proofs.Primop
-import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Property
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Pancake.Semantics.LoopProps.EvalExact
-import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelOptMmap
+public import Flapjack.Pancake.CrepToLoop.Proofs.LocalListHelpers
+public import Flapjack.Pancake.CrepToLoop.Proofs.Primop
+public import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Property
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+public import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+
+@[expose] public section
 
 /-!
 # The `Primitive` case of `crep_to_loop`'s `ncompile_correct`

@@ -1,7 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateEvents
-import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyError
-import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
-import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateLength
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateEvents
+public import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyError
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
+public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateLength
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+@[expose] public section
 
 /-! BVI event trace comparisons across clock allowances. -/
 namespace Flapjack.Compiler.Backend.BviProps

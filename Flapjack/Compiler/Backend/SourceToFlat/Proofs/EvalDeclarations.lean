@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatProps.EvaluateDecs
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreEnvId
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.EvaluateDecs
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreEnvId
+
+@[expose] public section
 
 /-! Execution of the generated incremental declaration sequence. The flat
 evaluator and factored relations remain subject to HOL correspondence review. -/

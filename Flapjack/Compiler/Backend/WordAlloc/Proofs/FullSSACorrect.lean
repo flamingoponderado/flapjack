@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCorrect
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Properties
-import Flapjack.Compiler.Backend.WordAlloc.FullSSA
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCorrect
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Properties
+public import Flapjack.Compiler.Backend.WordAlloc.FullSSA
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 open Classical

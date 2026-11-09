@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlHandle.Simplify
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle.Simplify
+
+@[expose] public section
 
 /-! Structural equations for BVL handler simplification. -/
 namespace Flapjack.Compiler.Backend.BvlHandle.Proofs

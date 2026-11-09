@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeCorrect
-import Flapjack.Compiler.Backend.ClosCall.Proofs.Length
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeCorrect
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.Length
+
+@[expose] public section
 
 /-! Closedness of mutually recursive groups in the executed direct-call pass. -/
 namespace Flapjack.Compiler.Backend.ClosCall

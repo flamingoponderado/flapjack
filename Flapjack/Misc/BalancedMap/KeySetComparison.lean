@@ -1,5 +1,9 @@
-import Flapjack.Misc.BalancedMap.Semantics
-import Flapjack.FiniteMap.Comparison
+module
+
+public import Flapjack.Misc.BalancedMap.Semantics
+public import Flapjack.FiniteMap.Comparison
+
+@[expose] public section
 
 namespace Flapjack.Misc.BalancedMap
 open FiniteMap.Comparison

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Expressions
-import Flapjack.Compiler.Backend.WordAlloc.Instructions
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Expressions
+public import Flapjack.Compiler.Backend.WordAlloc.Instructions
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

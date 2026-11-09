@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabSem.Arithmetic
-import Flapjack.Compiler.Backend.LabSem.Memory
-import Flapjack.Compiler.Backend.LabSem.FpUpdates
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Arithmetic
+public import Flapjack.Compiler.Backend.LabSem.Memory
+public import Flapjack.Compiler.Backend.LabSem.FpUpdates
+
+@[expose] public section
 
 /-! Literal native LabSem instruction dispatch and its full source frame
 theorem. FP execution inherits the reviewed `reals_as_rational_cuts`

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocSimulation
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocSimulation
+
+@[expose] public section
 namespace Flapjack.WordToStackProofs.StateRelStoreUpdate
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
 open WordSemStateFiniteExact

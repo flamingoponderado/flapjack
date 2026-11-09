@@ -1,4 +1,8 @@
-import Flapjack.Misc.Option
+module
+
+public import Flapjack.Misc.Option
+
+@[expose] public section
 
 /-! Equality with HOL's guarded option choice. -/
 namespace Flapjack

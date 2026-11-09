@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockStack
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BlockStack
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Rearrange
+
+@[expose] public section
 
 /-! Relating block fields to a consecutive sequence of concrete words. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

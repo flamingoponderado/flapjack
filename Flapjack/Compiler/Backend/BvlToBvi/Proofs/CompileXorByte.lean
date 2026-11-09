@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCopyByte
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCopyByte
+
+@[expose] public section
 
 /-! In-place byte-array XOR in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

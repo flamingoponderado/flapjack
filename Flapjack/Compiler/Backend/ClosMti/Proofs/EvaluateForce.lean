@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveThunk
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveThunk
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Forced thunk evaluation for multi-argument introduction. -/
 namespace Flapjack.Compiler.Backend.ClosMti

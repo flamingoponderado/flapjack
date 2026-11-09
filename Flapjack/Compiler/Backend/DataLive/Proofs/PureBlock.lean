@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataLive.Proofs.PureError
+module
+
+public import Flapjack.Compiler.Backend.DataLive.Proofs.PureError
+
+@[expose] public section
 
 /-! Pure block primitives and dead assignment elimination. -/
 namespace Flapjack.Compiler.Backend.DataLive

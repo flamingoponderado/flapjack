@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtension
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtension
+
+@[expose] public section
 
 /-! Primitive operations under a code-map replacement. -/
 namespace Flapjack.Compiler.Backend.ClosSem

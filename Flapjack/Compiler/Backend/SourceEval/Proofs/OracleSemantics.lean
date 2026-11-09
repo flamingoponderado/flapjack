@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.PutOracleClock
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.PutOracleClock
+
+@[expose] public section
 
 /-! Observational program semantics under compiler oracle installation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

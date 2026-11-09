@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.GenGc
-import Flapjack.Compiler.Backend.GcShared.HeapSimilarity
-import Flapjack.Compiler.Backend.GcShared.Reachability
-import Flapjack.Compiler.Backend.GcShared.Related
-import Flapjack.Compiler.Backend.CopyingGc.Proofs.Invariant
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialSplit
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalAccumulator
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GenerationalSplit
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalInvariant
+module
+
+public import Flapjack.Compiler.Backend.GenGc
+public import Flapjack.Compiler.Backend.GcShared.HeapSimilarity
+public import Flapjack.Compiler.Backend.GcShared.Reachability
+public import Flapjack.Compiler.Backend.GcShared.Related
+public import Flapjack.Compiler.Backend.CopyingGc.Proofs.Invariant
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialSplit
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalAccumulator
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.GenerationalSplit
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GenerationalInvariant
+
+@[expose] public section
 
 /-! Abstract invariant for the major generational collector. -/
 namespace Flapjack.Compiler.Backend.GenGc

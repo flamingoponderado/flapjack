@@ -1,6 +1,10 @@
-import Flapjack.Lab
-import Flapjack.Compiler.Backend.StackToLab.Native
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Lab
+public import Flapjack.Compiler.Backend.StackToLab.Native
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 /-!
 # Supported native Lab output at the executable boundary
 

@@ -1,10 +1,14 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Property
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Seq
-import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Primitive
-import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
-import Flapjack.Pancake.Semantics.PanCommonProps
-import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Property
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Seq
+public import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Primitive
+public import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
+public import Flapjack.Pancake.Semantics.PanCommonProps
+public import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
+
+@[expose] public section
 
 /-!
 # crep_to_loop `ncompile_correct`, split by HOL's `evaluate_ind` cases

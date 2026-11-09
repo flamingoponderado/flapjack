@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.GcShared.AddressMap
-import Flapjack.Misc.FiniteMapApply
+module
+
+public import Flapjack.Compiler.Backend.GcShared.AddressMap
+public import Flapjack.Misc.FiniteMapApply
+
+@[expose] public section
 
 /-! Forwarding maps and heap element starting addresses. -/
 namespace Flapjack.Compiler.Backend

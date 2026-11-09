@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Clock
-import Flapjack.Compiler.Backend.Semantics.StackSem.ClockControl
-import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Clock
+public import Flapjack.Compiler.Backend.Semantics.StackSem.ClockControl
+public import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
+
+@[expose] public section
 namespace Flapjack.StackSemEvaluateClock
 open Flapjack Compiler.Backend.StackLang Compiler.Encoders.Asm
 open StackSemEvaluate StackSemControl StackSemStateOps StackSemMeasure

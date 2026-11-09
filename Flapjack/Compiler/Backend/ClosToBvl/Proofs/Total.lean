@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Prepared
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Prepared
+
+@[expose] public section
 
 /-!
 Totality of the checked closure-to-BVL expression conversion. This is

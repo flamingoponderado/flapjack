@@ -1,10 +1,14 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
-import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
-import Flapjack.Pancake.Proofs.PanGlobals.MemStores
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
+public import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+public import Flapjack.Pancake.Proofs.PanGlobals.MemStores
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsInitGlobalsSimulation
 open Flapjack.Pancake.PanLang

@@ -119,7 +119,7 @@ theorem nestedBadShapeResultExact : nestedBadShapeResult = some
     panSemCodeStateAfter,
     evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall,
     evalPanValueFfiClockCodeDecCall,
-    evalPanValueFfiClockLeaf, evalPanValueFfiClockProg, evalPanValueFfiClockCall, evalPanValueFfiLeafControl,
+    evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl,
     evalPanValueExpWith, evalPanValueExpsWith, panValueReturnResult,
     panValuePayloadWithinLimit, updatePanValueMap,
     restorePanValueLocal, restorePanValueFfiLocal, panValueFfiClockRestoreLocal,
@@ -137,11 +137,15 @@ theorem nestedBadShapeResultExact : nestedBadShapeResult = some
     funext key
     simp [restorePanValueLocal, updatePanValueMap, nestedBadShapeLocals, beq_iff_eq]
 
+def nestedBadShapeClockedListCode : PanSemCodeMap Word64 :=
+  [("bad", ([("p", .one)],
+      (.decCall "p" .one "id" [] (.return (.var .local "p")) : Prog Word64), .one)),
+   ("id", ([], (.return (.const (BitVec.ofNat 64 7)) : Prog Word64), .one))]
+
 def nestedBadShapeClockedListResult :
     Option (PanValueFfiClockResult Word64 Unit) :=
-  evalPanValueFfiClockProg statefulTestContext statefulTestPrimitive statefulTestHandler
-    [] [("bad", ["p"], (.decCall "p" .one "id" [] (.return (.var .local "p")) : Prog Word64)),
-        ("id", [], (.return (.const (BitVec.ofNat 64 7)) : Prog Word64))]
+  evalPanValueFfiClockCodeProg statefulTestContext statefulTestPrimitive statefulTestHandler
+    [] nestedBadShapeClockedListCode (fun _ => none)
     (BitVec.ofNat 64 0) (BitVec.ofNat 64 100) (BitVec.ofNat 64 8) 10
     (fun _ => none) (fun _ => none) (fun _ => none) statefulTestFfiState 10
     nestedBadShapeProgram
@@ -153,12 +157,15 @@ theorem nestedBadShapeClockedListExact : nestedBadShapeClockedListResult = some
     (.control (.error nestedBadShapeLocals (fun _ => none) (fun _ => none)
       statefulTestFfiState), 8) := by
   simp (config := { decide := true }) [nestedBadShapeClockedListResult,
-    evalPanValueFfiClockProg, evalPanValueFfiClockCall, evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, evalPanValueExpWith,
-    evalPanValueExpsWith, panValueReturnResult, panValuePayloadWithinLimit, updatePanValueMap, restorePanValueLocal,
-    restorePanValueFfiLocal, panValueFfiClockRestoreLocal, fixPanClock, decPanClock,
-    panValueCallArgumentsValue, panValueCallTarget,
+    nestedBadShapeClockedListCode, evalPanValueFfiClockCodeProg,
+    evalPanValueFfiClockCodeCall, evalPanValueFfiClockCodeDecCall,
+    evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, evalPanValueExpWith,
+    evalPanValueExpsWith, panValueReturnResult, panValuePayloadWithinLimit,
+    updatePanValueMap, restorePanValueLocal, restorePanValueFfiLocal,
+    panValueFfiClockRestoreLocal, fixPanClock, decPanClock,
+    panValueCallArgumentsValue, lookupPanSemCodeCall, panSemCodeLookup, lookupInfo,
+    panSemCodeArgumentsMatch, bindPanValueParameters,
     panValueParametersValid, nestedBadShapeBindParameters, emptyPanValueBindParameters,
-    lookupPanFunction, panValueReturnValid,
     panValueShape, panShapeMatches, evalPanValueExps, evalPanValueExp.evalPanValueExps,
     evalPanValueExp, nestedBadShapeLocals, nestedBadShapeProgram]
   all_goals first

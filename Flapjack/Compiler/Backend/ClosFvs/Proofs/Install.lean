@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.Primitive
-import Flapjack.Compiler.Backend.Semantics.ClosProps.DecodeRelations
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
-import Flapjack.Misc.ShiftSeq
+module
+
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Primitive
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.DecodeRelations
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+public import Flapjack.Misc.ShiftSeq
+
+@[expose] public section
 
 /-! Dynamic-installation prerequisites for free-variable removal. -/
 namespace Flapjack.Compiler.Backend.ClosFvs

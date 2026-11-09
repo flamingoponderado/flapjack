@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.RemoveDead
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.RemoveDead
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Full native get_vars helper for SSA reconciliation, counterpart of the
 local lemma at word_allocProofScript.sml:6524–6549. The HOL tree maps remain

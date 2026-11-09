@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
+
+@[expose] public section
 
 /-! Location restrictions for closure application. -/
 namespace Flapjack.Compiler.Backend.ClosProps

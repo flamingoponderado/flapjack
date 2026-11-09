@@ -1,6 +1,10 @@
-import Flapjack.Basis.Pure.MlString
-import Flapjack.Compiler.Backend.RegAlloc.Carriers
-import Flapjack.Translator.Monadic.MonadBase
+module
+
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Compiler.Backend.RegAlloc.Carriers
+public import Flapjack.Translator.Monadic.MonadBase
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Prepared
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Prepared
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
+
+@[expose] public section
 
 /-! Label bounds for chained top-level closure expressions. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

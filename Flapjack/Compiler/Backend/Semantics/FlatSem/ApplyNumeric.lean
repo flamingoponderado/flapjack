@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Test
-import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
-import Flapjack.SemanticPrimitivesProps.Shift
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Test
+public import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
+public import Flapjack.SemanticPrimitivesProps.Shift
+
+@[expose] public section
 
 /-! Numeric cases of flat primitive application. The reused source dispatcher
 has its own pending whole-definition review; flat case equations are in the

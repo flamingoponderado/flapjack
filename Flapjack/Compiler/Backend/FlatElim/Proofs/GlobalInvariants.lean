@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.Removal
-import Flapjack.Compiler.Backend.FlatProps.Globals
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.Removal
+public import Flapjack.Compiler.Backend.FlatProps.Globals
+
+@[expose] public section
 
 /-! Global-bag invariants of flat declaration elimination. -/
 namespace Flapjack.Compiler.Backend.FlatElim

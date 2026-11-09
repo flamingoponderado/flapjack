@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateInduction
-import Flapjack.Misc.ClockWeightInduction
-import Flapjack.Compiler.Backend.Semantics.FlatSem.MeasureMembers
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateInduction
+public import Flapjack.Misc.ClockWeightInduction
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.MeasureMembers
+
+@[expose] public section
 
 /-! Nested-induction assembly of the flat evaluation simulation. -/
 namespace Flapjack.Compiler.Backend.FlatElim

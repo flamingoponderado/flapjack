@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Equality
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
-import Flapjack.SemanticPrimitivesProps.ResultRelation
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Equality
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+
+@[expose] public section
 
 /-! Boolean cases of the generic closure primitive simulation. -/
 namespace Flapjack.Compiler.Backend.ClosProps.PrimitiveBoolean

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Sequencing
-import Flapjack.Compiler.Backend.Semantics.FlatSem.MeasureMembers
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Sequencing
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.MeasureMembers
+
+@[expose] public section
 
 /-! The operator case of the proof-side evaluator induction. Its clock and
 weight hypotheses are induction hypotheses, not a reviewed HOL theorem. -/

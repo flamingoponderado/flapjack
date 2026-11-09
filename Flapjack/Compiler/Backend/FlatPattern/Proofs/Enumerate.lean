@@ -1,5 +1,9 @@
-import Flapjack.Misc.Enumerate
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Misc.Enumerate
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! Enumerated-list properties used in the flat pattern proof. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

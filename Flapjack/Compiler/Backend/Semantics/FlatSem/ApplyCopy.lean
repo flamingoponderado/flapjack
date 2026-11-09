@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyMemory
-import Flapjack.SemanticPrimitivesHOL.Array
-import Flapjack.SemanticPrimitivesHOL.Thunk
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyMemory
+public import Flapjack.SemanticPrimitivesHOL.Array
+public import Flapjack.SemanticPrimitivesHOL.Thunk
+
+@[expose] public section
 
 /-! Flat string and byte-array copy operations, assembled with the other
 primitive cases in `FlatSem.Apply`. -/

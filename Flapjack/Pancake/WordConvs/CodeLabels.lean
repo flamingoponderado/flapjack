@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.WordLang
-import Mathlib.Data.Set.Basic
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.WordLang
+public import Mathlib.Data.Set.Basic
+
+@[expose] public section
 
 namespace Flapjack
 

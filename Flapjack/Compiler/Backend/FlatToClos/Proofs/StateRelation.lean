@@ -1,9 +1,17 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.State
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
-import Flapjack.Compiler.Backend.BackendProps.Pure
-import Flapjack.Misc.ShiftSeq
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
+public import Flapjack.Compiler.Backend.BackendProps.Pure
+public import Flapjack.Misc.ShiftSeq
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! State relations for the proof-side flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

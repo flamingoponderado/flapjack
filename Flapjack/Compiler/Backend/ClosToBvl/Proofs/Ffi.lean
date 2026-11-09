@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MappedRefsUpdate
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MappedRefsUpdate
+
+@[expose] public section
 
 /-! Foreign-call correspondence, including observable FFI state. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

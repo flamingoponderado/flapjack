@@ -1,9 +1,13 @@
-import Flapjack.RiscV.LabDiagnostics
-import Flapjack.RiscV.Encoding
-import Flapjack.Compiler.Backend.LabToTarget.Compile
-import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
-import Flapjack.Compiler.Backend.StackToLab.Compile
-import Flapjack.Compiler.Backend.Backend
+module
+
+public import Flapjack.RiscV.LabDiagnostics
+public import Flapjack.RiscV.Encoding
+public import Flapjack.Compiler.Backend.LabToTarget.Compile
+public import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+public import Flapjack.Compiler.Backend.StackToLab.Compile
+public import Flapjack.Compiler.Backend.Backend
+
+@[expose] public section
 
 /-!
 # Executed Lab-to-target route through the reviewed `lab_to_target$compile`

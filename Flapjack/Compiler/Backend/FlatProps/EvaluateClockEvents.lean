@@ -1,6 +1,13 @@
-import Flapjack.Compiler.Backend.FlatProps.DoAppIO
-import Flapjack.Compiler.Backend.FlatProps.EvaluateIO
-import Flapjack.Compiler.Backend.FlatProps.EvaluateClockShift
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.DoAppIO
+public import Flapjack.Compiler.Backend.FlatProps.EvaluateIO
+public import Flapjack.Compiler.Backend.FlatProps.EvaluateClockShift
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! I/O-event monotonicity under clock extension for the faithful flat evaluator.
 The private helpers assemble the mutual induction and have no separate HOL originals. -/

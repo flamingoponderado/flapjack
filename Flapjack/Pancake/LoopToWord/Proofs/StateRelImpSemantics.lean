@@ -1,10 +1,14 @@
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Assembly
-import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
-import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClockIoEventsMono
-import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
-import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
+module
+
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Assembly
+public import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClockIoEventsMono
+public import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
+public import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
+
+@[expose] public section
 
 /-!
 # loop_to_word `state_rel_imp_semantics`, proof side

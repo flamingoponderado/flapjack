@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.DataProps.FrameSize
-import Flapjack.Compiler.Backend.Semantics.DataProps.PrimitiveLocals
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataProps.FrameSize
+public import Flapjack.Compiler.Backend.Semantics.DataProps.PrimitiveLocals
+public import Flapjack.Misc.ClockWeightInduction
+
+@[expose] public section
 
 /-! Result-sensitive frame-size invariants for data evaluation. -/
 namespace Flapjack.Compiler.Backend.DataSem

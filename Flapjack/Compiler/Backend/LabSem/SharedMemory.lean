@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabSem.Memory
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Memory
+
+@[expose] public section
 
 /-! Native shared-memory FFI transitions corresponding to labSemScript429–488.
 Unlike ordinary memory operations, shared-memory Load16/Store16 are supported.

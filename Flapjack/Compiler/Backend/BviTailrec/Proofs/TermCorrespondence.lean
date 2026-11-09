@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermTotal
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermTotal
+
+@[expose] public section
 
 /-! Agreement of bounded term analysis with the original total tests. -/
 namespace Flapjack.Compiler.Backend.BviTailrec

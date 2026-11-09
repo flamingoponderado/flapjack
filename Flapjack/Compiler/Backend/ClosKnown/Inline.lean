@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.ClosKnown.Config
-import Flapjack.Compiler.Backend.ClosKnown.Inline.Free
-import Flapjack.Compiler.Backend.ClosCall
-import Flapjack.Compiler.Backend.ClosLang.Budget
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Config
+public import Flapjack.Compiler.Backend.ClosKnown.Inline.Free
+public import Flapjack.Compiler.Backend.ClosCall
+public import Flapjack.Compiler.Backend.ClosLang.Budget
+
+@[expose] public section
 
 /-! Bounded infrastructure for the known-closure inlining decision. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

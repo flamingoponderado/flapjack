@@ -1,4 +1,8 @@
-import Flapjack.Parser.Lexer
+module
+
+public import Flapjack.Parser.Lexer
+
+@[expose] public section
 
 /-!
 Parser state and combinators.

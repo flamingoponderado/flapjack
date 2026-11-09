@@ -1,9 +1,13 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.RegAlloc.Allocator
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedPartition
-import Flapjack.Basis.Pure.MlList.SortPerm
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.RegAlloc.Allocator
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedPartition
+public import Flapjack.Basis.Pure.MlList.SortPerm
+
+@[expose] public section
 
 /-!
 # reg_allocProof: success of the simplify phase

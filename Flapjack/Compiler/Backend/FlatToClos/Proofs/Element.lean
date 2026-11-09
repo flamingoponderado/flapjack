@@ -1,8 +1,16 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
-import Mathlib.Data.List.Forall2
-import Flapjack.Misc.ListLookupRel
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+public import Mathlib.Data.List.Forall2
+public import Flapjack.Misc.ListLookupRel
+
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+@[expose] public section
 
 /-! Constructor and reference reads for the proof-side pass simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos

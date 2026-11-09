@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.FlatPattern.Names
-import Flapjack.Misc.Enumerate
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Names
+public import Flapjack.Misc.Enumerate
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Total pattern binding, using a decreasing count of pattern nodes. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

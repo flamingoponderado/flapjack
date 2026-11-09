@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.ByteArray
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality.ByteArray
+
+@[expose] public section
 
 /-! Reference case of the source word-equality simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

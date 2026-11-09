@@ -1,4 +1,8 @@
-import Flapjack.Misc.BinaryIeee
+module
+
+public import Flapjack.Misc.BinaryIeee
+
+@[expose] public section
 
 /-!
 # HOL `binary_ieee` rounding specification

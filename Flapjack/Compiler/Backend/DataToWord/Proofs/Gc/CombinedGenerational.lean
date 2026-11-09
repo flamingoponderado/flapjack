@@ -1,14 +1,18 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialFull
-import Flapjack.Compiler.Backend.GcCombined.Collector
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.PartialFull
+public import Flapjack.Compiler.Backend.GcCombined.Collector
+
+@[expose] public section
 
 /-! Combined collector's partial-generational heap simulation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.WordGcFunctions
 open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory Flapjack.Compiler.Backend.GcCombined
 
-private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+instance combinedGenerationalInst1 {α : Type} : Std.Associative (SetSep.star (α := α)) :=
   ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
-private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
+instance combinedGenerationalInst2 {α : Type} : Std.Commutative (SetSep.star (α := α)) := ⟨SetSep.starComm⟩
 
 /-- Pack the major collector's separated output into the two heap regions
 returned by the combined generational branch. -/

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
-import Flapjack.Misc.LprefixLub
+module
+
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+public import Flapjack.Misc.LprefixLub
+
+@[expose] public section
 
 namespace Flapjack
 namespace LoopSemStateFiniteExact

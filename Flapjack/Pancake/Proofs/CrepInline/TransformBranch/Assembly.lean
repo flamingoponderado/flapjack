@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.CrepInline.TransformBranch.Loops
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.TransformBranch.Loops
+
+@[expose] public section
 
 /-!
 # crep_inline: assembled `transform_branch_correct`

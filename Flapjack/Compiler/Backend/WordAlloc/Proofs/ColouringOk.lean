@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
-import Flapjack.Compiler.Backend.WordAlloc.ProgramWrites
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
+public import Flapjack.Compiler.Backend.WordAlloc.ProgramWrites
+
+@[expose] public section
 
 /-!
 # Liveness-scoped colouring relation `colouring_ok`

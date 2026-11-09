@@ -1,21 +1,25 @@
-import Flapjack.RiscV.CorrectnessEncoding.TargetOk
-import Flapjack.RiscV.CorrectnessEncoding.Skip
-import Flapjack.RiscV.CorrectnessEncoding.ConstAssertions
-import Flapjack.RiscV.CorrectnessEncoding.Binop
-import Flapjack.RiscV.CorrectnessEncoding.Shift
-import Flapjack.RiscV.CorrectnessEncoding.Div
-import Flapjack.RiscV.CorrectnessEncoding.LongMul
-import Flapjack.RiscV.CorrectnessEncoding.Rejected
-import Flapjack.RiscV.CorrectnessEncoding.AddCarry
-import Flapjack.RiscV.CorrectnessEncoding.AddOverflow
-import Flapjack.RiscV.CorrectnessEncoding.SubOverflow
-import Flapjack.RiscV.CorrectnessEncoding.MemoryAssertions
-import Flapjack.RiscV.CorrectnessEncoding.Jump
-import Flapjack.RiscV.CorrectnessEncoding.JumpCmp
-import Flapjack.RiscV.CorrectnessEncoding.Call
-import Flapjack.RiscV.CorrectnessEncoding.JumpReg
-import Flapjack.RiscV.CorrectnessEncoding.Loc
-import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.TargetOk
+public import Flapjack.RiscV.CorrectnessEncoding.Skip
+public import Flapjack.RiscV.CorrectnessEncoding.ConstAssertions
+public import Flapjack.RiscV.CorrectnessEncoding.Binop
+public import Flapjack.RiscV.CorrectnessEncoding.Shift
+public import Flapjack.RiscV.CorrectnessEncoding.Div
+public import Flapjack.RiscV.CorrectnessEncoding.LongMul
+public import Flapjack.RiscV.CorrectnessEncoding.Rejected
+public import Flapjack.RiscV.CorrectnessEncoding.AddCarry
+public import Flapjack.RiscV.CorrectnessEncoding.AddOverflow
+public import Flapjack.RiscV.CorrectnessEncoding.SubOverflow
+public import Flapjack.RiscV.CorrectnessEncoding.MemoryAssertions
+public import Flapjack.RiscV.CorrectnessEncoding.Jump
+public import Flapjack.RiscV.CorrectnessEncoding.JumpCmp
+public import Flapjack.RiscV.CorrectnessEncoding.Call
+public import Flapjack.RiscV.CorrectnessEncoding.JumpReg
+public import Flapjack.RiscV.CorrectnessEncoding.Loc
+public import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+
+@[expose] public section
 
 /-! Full native encoder correctness for the original complete assembler carrier.
 All seventeen HOL constructor groups are assembled without extra hypotheses.

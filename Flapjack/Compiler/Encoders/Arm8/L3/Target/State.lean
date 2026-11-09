@@ -1,9 +1,12 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Target
-import Flapjack.Compiler.Encoders.Arm8.L3.Configuration
-import Flapjack.Compiler.Encoders.Arm8.Configuration
-import Flapjack.Compiler.Encoders.AsmProps.Target
-import Flapjack.Compiler.Encoders.Arm8.Machine.TargetProof
-import Flapjack.HolArb
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Target
+public import Flapjack.Compiler.Encoders.Arm8.L3.Configuration
+public import Flapjack.Compiler.Encoders.Arm8.Configuration
+public import Flapjack.Compiler.Encoders.AsmProps.Target
+public import Flapjack.HolArb
+
+@[expose] public section
 
 /-!
 # The L3 ARMv8 `target` record

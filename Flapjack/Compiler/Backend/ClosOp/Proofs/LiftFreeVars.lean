@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftReduction
-import Flapjack.Compiler.Backend.Semantics.ClosProps.FreeVars
+module
+
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftReduction
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.FreeVars
+
+@[expose] public section
 
 /-! Free-variable invariants for source closure lifting. -/
 namespace Flapjack.Compiler.Backend.ClosOp

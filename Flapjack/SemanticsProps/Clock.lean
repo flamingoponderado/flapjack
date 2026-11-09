@@ -1,5 +1,10 @@
-import Flapjack.SemanticsHOL
-import Flapjack.EvaluateProps.ClockIoConsequences
+module
+
+public import Flapjack.SemanticsHOL
+public import Flapjack.EvaluateProps.ClockIoConsequences
+
+import Batteries.Tactic.Init
+@[expose] public section
 
 /-! Clock-indexed source program trace properties. The source evaluator and
 its carriers remain pending review. -/

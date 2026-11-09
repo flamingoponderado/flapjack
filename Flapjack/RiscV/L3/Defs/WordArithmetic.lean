@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Defs.IntegerLoadMode
-import Flapjack.RiscV.L3.Defs.SystemSignals
+module
+
+public import Flapjack.RiscV.L3.Defs.IntegerLoadMode
+public import Flapjack.RiscV.L3.Defs.SystemSignals
+
+@[expose] public section
 
 /-! Complete word arithmetic equations. RV32 signals Illegal_Instr. ADDIW
 sums at width64 before low32 extraction; ADDW/SUBW compute at width32.

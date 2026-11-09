@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConst
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConst
+
+@[expose] public section
 
 namespace Flapjack.WordSemInstConstFullSupport
 

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AppSafety
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AppSafety
+
+@[expose] public section
 
 /-! Mutual code and oracle safety preservation for closure evaluation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

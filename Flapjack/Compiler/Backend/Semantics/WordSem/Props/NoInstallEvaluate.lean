@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMax
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallCode
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMax
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallCode
+
+@[expose] public section
 
 /-!
 # wordProps no-install/no-alloc code-map family

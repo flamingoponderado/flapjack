@@ -1,7 +1,11 @@
-import Mathlib.Tactic.IntervalCases
-import Flapjack.Misc.Alignment
-import Flapjack.Compiler.Encoders.RiscV.Target
-import Flapjack.RiscV.L3.Defs.Run
+module
+
+public import Mathlib.Tactic.IntervalCases
+public import Flapjack.Misc.Alignment
+public import Flapjack.Compiler.Encoders.RiscV.Target
+public import Flapjack.RiscV.L3.Defs.Run
+
+@[expose] public section
 
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3

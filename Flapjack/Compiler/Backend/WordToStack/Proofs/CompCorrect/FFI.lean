@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
-import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocStateRel
-import Flapjack.Misc.Sptree.Wf
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocStateRel
+public import Flapjack.Misc.Sptree.Wf
+
+@[expose] public section
 
 /-!
 # Word-to-Stack `comp_correct`: the `FFI` case

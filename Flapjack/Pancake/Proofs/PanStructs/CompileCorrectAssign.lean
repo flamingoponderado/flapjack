@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
-import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
-import Flapjack.Pancake.PanStructs.CompileProgExact
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSupport
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
+public import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
+public import Flapjack.Pancake.PanStructs.CompileProgExact
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSupport
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAssign
 open Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSupport
 open Flapjack

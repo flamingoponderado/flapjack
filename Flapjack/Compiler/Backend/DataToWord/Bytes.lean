@@ -1,4 +1,8 @@
-import Flapjack.Byte.BytesToWord
+module
+
+public import Flapjack.Byte.BytesToWord
+
+@[expose] public section
 
 /-! Source-shaped byte packing used by the data-to-word heap model. -/
 namespace Flapjack.Compiler.Backend.DataToWord

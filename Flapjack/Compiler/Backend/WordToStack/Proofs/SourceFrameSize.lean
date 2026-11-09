@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackLists
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackLists
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs
 open Flapjack Flapjack.WordSemStackEq Flapjack.WordSemStateFiniteExact

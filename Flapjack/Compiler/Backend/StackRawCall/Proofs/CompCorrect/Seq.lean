@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Seq.Optimized
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Seq.Optimized
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRawCall.SeqCase
 open Flapjack Flapjack.Compiler.Backend.StackLang

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables
-import Flapjack.Compiler.Backend.ClosAnnotate.Free.OriginalEquivalence
-import Flapjack.Compiler.Backend.ClosAnnotate.Shift.OriginalEquivalence
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables
+public import Flapjack.Compiler.Backend.ClosAnnotate.Free.OriginalEquivalence
+public import Flapjack.Compiler.Backend.ClosAnnotate.Shift.OriginalEquivalence
+
+@[expose] public section
 
 /-! Source-shaped free-variable observation for closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

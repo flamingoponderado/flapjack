@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
-import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectArgs
-import Flapjack.Compiler.Backend.Semantics.ClosSem
-import Flapjack.Compiler.Backend.Semantics.ClosProps.DecodeRelations
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectArgs
+public import Flapjack.Compiler.Backend.Semantics.ClosSem
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.DecodeRelations
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 
 /-! Proof-side relations for the multi-argument introduction simulation. -/
 namespace Flapjack.Compiler.Backend.ClosMti

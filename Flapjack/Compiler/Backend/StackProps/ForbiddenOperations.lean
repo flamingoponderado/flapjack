@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackLang.Prog
+module
+
+public import Flapjack.Compiler.Backend.StackLang.Prog
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackProps
 open StackLang

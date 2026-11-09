@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+
+@[expose] public section
 
 /-! Source-side call shapes used for known-location application simulation. -/
 namespace Flapjack.Compiler.Backend.ClosSem

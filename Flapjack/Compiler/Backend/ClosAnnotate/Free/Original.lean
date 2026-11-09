@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Free
-import Flapjack.Misc.ListEl
-import Mathlib.Tactic
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Free
+public import Flapjack.Misc.ListEl
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-! Source-shaped closure free-variable discovery. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

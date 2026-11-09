@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.State
-import Flapjack.Compiler.Backend.BviToData.Proofs.Apply
-import Flapjack.Compiler.Backend.BviToData.Proofs.CutEnv
-import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.State
+public import Flapjack.Compiler.Backend.BviToData.Proofs.Apply
+public import Flapjack.Compiler.Backend.BviToData.Proofs.CutEnv
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
+
+@[expose] public section
 
 /-! Space and stack bookkeeping for primitive-operation simulation. -/
 namespace Flapjack.Compiler.Backend.BviToData

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCopy.Proofs.Invariant
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+module
+
+public import Flapjack.Compiler.Backend.WordCopy.Proofs.Invariant
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+
+@[expose] public section
 
 /-!
 # word_copyProof: `CPstate_models`

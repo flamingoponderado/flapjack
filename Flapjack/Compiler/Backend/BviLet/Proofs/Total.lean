@@ -1,7 +1,11 @@
-import Flapjack.Misc.Option.MapM
-import Flapjack.Compiler.Backend.BviLet.Compile
-import Flapjack.Compiler.Backend.ListFoldTotal
-import Flapjack.Compiler.Backend.Bvi.Budget
+module
+
+public import Flapjack.Misc.Option.MapM
+public import Flapjack.Compiler.Backend.BviLet.Compile
+public import Flapjack.Compiler.Backend.ListFoldTotal
+public import Flapjack.Compiler.Backend.Bvi.Budget
+
+@[expose] public section
 
 /-! Structural sufficiency for the BVI let optimizer. This is Flapjack
 infrastructure and does not assert HOL correspondence. -/

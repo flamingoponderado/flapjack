@@ -1,4 +1,8 @@
-import Flapjack.Misc.BalancedMap.BalanceArithmetic
+module
+
+public import Flapjack.Misc.BalancedMap.BalanceArithmetic
+
+@[expose] public section
 namespace Flapjack.Misc.BalancedMap
 /-- Arithmetic normalization infrastructure, not a separate HOL declaration. -/
 private theorem balancedLinear (l r : Nat) :

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanToTarget.CompileProgMax
-import Flapjack.Compiler.Backend.WordToWord.ExecutableCompile
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.CompileProgMax
+public import Flapjack.Compiler.Backend.WordToWord.ExecutableCompile
+
+@[expose] public section
 
 /-! Callable native maximum-stack API. This Flapjack computation infrastructure
 uses the proved executable WordToWord composition; every other operation is

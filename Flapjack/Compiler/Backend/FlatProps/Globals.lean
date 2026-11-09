@@ -1,5 +1,9 @@
-import Flapjack.Misc.Bag
-import Flapjack.Compiler.Backend.FlatLang
+module
+
+public import Flapjack.Misc.Bag
+public import Flapjack.Compiler.Backend.FlatLang
+
+@[expose] public section
 
 /-! Global-initialization bags and closure-freedom for flat expressions. -/
 namespace Flapjack.Compiler.Backend.FlatProps

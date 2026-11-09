@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileThunkUpdate
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileThunkUpdate
+
+@[expose] public section
 
 /-! Thunk allocation in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

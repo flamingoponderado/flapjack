@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LabToTarget.Compile
-import Flapjack.Compiler.Backend.LabToTarget.FindFfiNamesEvery
-import Flapjack.Compiler.Backend.LabToTarget.MmioShmem
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LabToTarget.Compile
+public import Flapjack.Compiler.Backend.LabToTarget.FindFfiNamesEvery
+public import Flapjack.Compiler.Backend.LabToTarget.MmioShmem
+
+@[expose] public section
 
 /-! backendProofScript.sml: the two `lab_to_target$compile_lab` output facts
 used by the Pancake top-level correctness theorem

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals.GlobalBlockAlignment
-import Flapjack.Pancake.Proofs.PanGlobals.MemStores
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.GlobalBlockAlignment
+public import Flapjack.Pancake.Proofs.PanGlobals.MemStores
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsGlobalStoreReload
 

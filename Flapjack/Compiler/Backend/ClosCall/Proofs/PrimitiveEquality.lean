@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Equality
-import Flapjack.Compiler.Backend.Semantics.ClosProps.DecodeRelations
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Equality
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.DecodeRelations
+
+@[expose] public section
 
 /-! Primitive observations of values related by direct-call conversion. -/
 namespace Flapjack.Compiler.Backend.ClosCall

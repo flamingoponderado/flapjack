@@ -1,5 +1,13 @@
-import Flapjack.RiscV.CorrectnessEncoding.MemorySource
-import Flapjack.RiscV.CorrectnessEncoding.MemoryBytes
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding.MemorySource
+public import Flapjack.RiscV.CorrectnessEncoding.MemoryBytes
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Literal source read-value reconstruction for native Mem correctness.
 These are untagged composition facts with no separately named HOL originals.

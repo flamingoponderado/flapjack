@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Config
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Config
+
+@[expose] public section
 
 /-! Word-level block header encoding. -/
 namespace Flapjack.Compiler.Backend.DataToWord

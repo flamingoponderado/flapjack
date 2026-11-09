@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordSuffixBase
+module
+
+public import Flapjack.Compiler.Backend.SourceEval.Proofs.RecordSuffixBase
+
+@[expose] public section
 
 /-! Control cases of the source evaluator recording-oracle clock suffix theorem. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.InstMem
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.InstMem
+
+@[expose] public section
 
 /-! Original instruction simulation `Inst_lemma`
 (lab_to_targetProofScript.sml:2170-2932) over the native labSem and asmSem

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeCompile
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LivePrefix
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InsertBitmapPrefix
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LivePrefix
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InsertBitmapPrefix
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack Flapjack.Compiler.Backend.StackLang

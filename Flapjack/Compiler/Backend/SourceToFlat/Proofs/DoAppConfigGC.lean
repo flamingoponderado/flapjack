@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
-import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+public import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
+
+@[expose] public section
 
 /-! The ConfigGC and Opapp cases of the source-to-flat primitive simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

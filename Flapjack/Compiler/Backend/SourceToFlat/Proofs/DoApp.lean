@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppOpassign
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppArith
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppFromTo
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppShift
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppEquality
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppTest
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppOpassign
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppArith
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppFromTo
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppShift
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppEquality
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppTest
+
+@[expose] public section
 
 /-! The complete primitive application simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

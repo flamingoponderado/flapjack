@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.SemanticInvariant
-import Flapjack.Compiler.Backend.WordCse.RegisterData
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.SemanticInvariant
+public import Flapjack.Compiler.Backend.WordCse.RegisterData
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack WordSemStateFiniteExact

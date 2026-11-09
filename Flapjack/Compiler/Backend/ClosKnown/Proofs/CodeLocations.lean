@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CompileProduction
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalCodeBagTotal
-import Flapjack.Compiler.Backend.ClosFvs.Proofs.CodeLocations
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.CodeLocations
-import Flapjack.Compiler.Backend.ClosLetop.Proofs.CodeLocations
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CompileProduction
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalCodeBagTotal
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.CodeLocations
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.CodeLocations
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.CodeLocations
+
+@[expose] public section
 
 /-! Location accounting through the executed closure optimizer. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.WordCse.Knowledge
-import Flapjack.Compiler.Backend.WordCse.ListOrder
-import Flapjack.Compiler.Backend.WordCse.InstructionKeys
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
-import Flapjack.Compiler.Backend.WordCse.Proofs.InNamesSet
-import Flapjack.Misc.BalancedMap.Invariants
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Knowledge
+public import Flapjack.Compiler.Backend.WordCse.ListOrder
+public import Flapjack.Compiler.Backend.WordCse.InstructionKeys
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+public import Flapjack.Compiler.Backend.WordCse.Proofs.InNamesSet
+public import Flapjack.Misc.BalancedMap.Invariants
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack

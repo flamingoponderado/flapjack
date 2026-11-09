@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
-import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
-import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
-import Flapjack.Pancake.Proofs.LoopToWord.AccVarsAcc
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
+public import Flapjack.Pancake.Proofs.LoopToWord.AccVarsAcc
+
+@[expose] public section
 
 /-!
 # `Seq` case of `loop_to_word`'s `compile_correct`

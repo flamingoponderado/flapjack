@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.PatternSemantics
+module
+
+public import Flapjack.Compiler.Backend.PatternSemantics
+
+@[expose] public section
 
 /-! Pattern-exhaustiveness matrix transformations. The total recursive
 decision procedure is defined in the `Exhaustive` module. -/

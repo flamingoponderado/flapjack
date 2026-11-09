@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundRecursive
-import Flapjack.Compiler.Backend.StackProps.RemoveNames
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundRecursive
+public import Flapjack.Compiler.Backend.StackProps.RemoveNames
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.AsmRemoveHelpers
 open Flapjack Flapjack.Compiler.Backend.StackLang

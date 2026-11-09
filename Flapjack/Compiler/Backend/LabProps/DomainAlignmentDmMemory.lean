@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabProps.DomainAlignmentWordMemory
-import Flapjack.Compiler.Backend.LabSem.Inst
+module
+
+public import Flapjack.Compiler.Backend.LabProps.DomainAlignmentWordMemory
+public import Flapjack.Compiler.Backend.LabSem.Inst
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosLang.Syntax
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Source-name table collection for closure-converted code. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

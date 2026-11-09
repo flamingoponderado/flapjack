@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.AllocConst
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConstFull
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.JumpExcConst
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.MemStoreConst
-import Flapjack.Compiler.Backend.BackendProps
-import Flapjack.Misc.MiscThe
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.AllocConst
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConstFull
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.JumpExcConst
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.MemStoreConst
+public import Flapjack.Compiler.Backend.BackendProps
+public import Flapjack.Misc.MiscThe
+
+@[expose] public section
 
 /-!
 # wordProps stack-limit and stack-maximum evaluator family

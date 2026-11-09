@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
+module
+
+public import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

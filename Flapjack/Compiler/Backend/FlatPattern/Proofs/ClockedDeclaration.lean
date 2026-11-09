@@ -1,7 +1,11 @@
-import Flapjack.SemanticPrimitivesProps.ResultRelation
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.DynamicEvaluation
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedExpressionCases
+module
+
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.DynamicEvaluation
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedExpressionCases
+
+@[expose] public section
 
 /-! Clock-bounded declaration simulation for flat pattern compilation. The
 evaluator and proof-side relations remain pending HOL correspondence review. -/

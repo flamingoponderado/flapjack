@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatPattern.Decode
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Decode
+
+@[expose] public section
 
 /-! Convert flat patterns to the input representation of the pattern compiler. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BitLemmas
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.BitLemmas
+
+@[expose] public section
 
 /-! Concrete addresses and offsets for the data-to-word memory relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

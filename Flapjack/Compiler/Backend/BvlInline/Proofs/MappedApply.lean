@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.MappedState
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyCode
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyRuntimeFrame
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.MappedState
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyCode
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyRuntimeFrame
+
+@[expose] public section
 
 /-! Primitive simulation for arity-preserving BVL code maps. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

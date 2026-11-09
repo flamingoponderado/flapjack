@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Memory
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Memory
+
+@[expose] public section
 
 /-! Thunk primitive operations under closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

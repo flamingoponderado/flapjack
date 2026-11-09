@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
-import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+
+@[expose] public section
 
 /-! Closure-language value, result, and state global-write safety. -/
 namespace Flapjack.Compiler.Backend.ClosProps

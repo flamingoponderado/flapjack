@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Shift
-import Flapjack.Misc.ListEl
-import Mathlib.Tactic
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Shift
+public import Flapjack.Misc.ListEl
+public import Mathlib.Tactic
+
+@[expose] public section
 
 /-! Source-shaped closure variable shifting. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

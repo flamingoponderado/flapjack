@@ -1,9 +1,13 @@
-import Flapjack.Pancake.Proofs.CrepInline.CallTail
-import Flapjack.Pancake.Proofs.CrepInline.FiniteMapLemmas
-import Flapjack.Pancake.Proofs.CrepInline.WrappedTransformIf
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Assembly
-import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Assembly
-import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline.CallTail
+public import Flapjack.Pancake.Proofs.CrepInline.FiniteMapLemmas
+public import Flapjack.Pancake.Proofs.CrepInline.WrappedTransformIf
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Assembly
+public import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Assembly
+public import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
+
+@[expose] public section
 
 /-!
 # `inline_prog_correct`: the `Call` case, `Nontail` part

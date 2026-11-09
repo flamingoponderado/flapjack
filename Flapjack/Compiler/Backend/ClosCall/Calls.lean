@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosCall.Free
-import Flapjack.Compiler.Backend.ClosCall.InsertEach
-import Flapjack.Compiler.Backend.ClosCall.Stubs
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Free
+public import Flapjack.Compiler.Backend.ClosCall.InsertEach
+public import Flapjack.Compiler.Backend.ClosCall.Stubs
+
+@[expose] public section
 
 /-! Total direct-call traversal. -/
 namespace Flapjack.Compiler.Backend.ClosCall

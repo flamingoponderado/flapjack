@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.X64.Machine.ArithBinopCase
+module
+
+public import Flapjack.Compiler.Encoders.X64.Machine.ArithBinopCase
+
+@[expose] public section
 
 /-!
 # The `shift` cases of `encoder_correct x64Target`

@@ -1,7 +1,11 @@
-import Flapjack.Misc.Option.MapM
-import Flapjack.Compiler.Backend.BvlHandle.Helpers
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.HelpersTotal
-import Aesop
+module
+
+public import Flapjack.Misc.Option.MapM
+public import Flapjack.Compiler.Backend.BvlHandle.Helpers
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.HelpersTotal
+public import Aesop
+
+@[expose] public section
 
 /-! Source and production correspondence for handler-pass helpers. -/
 namespace Flapjack.Compiler.Backend.BvlHandle

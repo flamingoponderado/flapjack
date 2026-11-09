@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppConfigGC
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveTest
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoAppConfigGC
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveTest
+
+@[expose] public section
 
 /-! The Test case of the source-to-flat primitive simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

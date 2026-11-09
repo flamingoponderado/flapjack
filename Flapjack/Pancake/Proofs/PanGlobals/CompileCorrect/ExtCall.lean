@@ -1,9 +1,13 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
-import Flapjack.Pancake.Proofs.PanGlobals.ReadBytearray
-import Flapjack.Pancake.Proofs.PanGlobals.WriteBytearray
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationFfi
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
+public import Flapjack.Pancake.Proofs.PanGlobals.ReadBytearray
+public import Flapjack.Pancake.Proofs.PanGlobals.WriteBytearray
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationFfi
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
+
+@[expose] public section
 
 /-!
 # pan_globals `compile_correct`: the `ExtCall` case

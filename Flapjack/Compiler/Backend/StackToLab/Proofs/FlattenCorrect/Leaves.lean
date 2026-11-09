@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Statement
-import Flapjack.Compiler.Backend.LabProps.ClockSupport
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect.Statement
+public import Flapjack.Compiler.Backend.LabProps.ClockSupport
+
+@[expose] public section
 
 /-! `flatten_correct` cases for the one-line StackSem leaves `Halt`, `Inst`,
 `Tick`, `Return`, `Raise`, `Break` and `Continue`

@@ -1,7 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateClockShift
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateEvents
-import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyError
-import Flapjack.Misc.ClockWeightInduction
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateClockShift
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateEvents
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyError
+public import Flapjack.Misc.ClockWeightInduction
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
 
 /-! BVL trace comparisons across clocks; proof cases have no standalone HOL declarations. -/
 namespace Flapjack.Compiler.Backend.BvlProps

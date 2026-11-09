@@ -1,16 +1,20 @@
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpAtomic
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpVar
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpRStruct
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpRField
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpNStruct
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpNField
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpOperators
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpCmpShift
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoadByte
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad32
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpBytesInWord
-import Flapjack.Pancake.Semantics.PanSem.EvalInd
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpAtomic
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpVar
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpRStruct
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpRField
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpNStruct
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpNField
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpOperators
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpCmpShift
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoadByte
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad32
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpBytesInWord
+public import Flapjack.Pancake.Semantics.PanSem.EvalInd
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
 open Flapjack
 open Flapjack.Pancake.PanLang

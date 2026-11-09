@@ -1,7 +1,15 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
-import Flapjack.FiniteMap.CardinalityExact
-import Flapjack.FiniteMap.MapKeys
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
+public import Flapjack.FiniteMap.CardinalityExact
+public import Flapjack.FiniteMap.MapKeys
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Weakening the factored source-to-flat relations across global growth. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

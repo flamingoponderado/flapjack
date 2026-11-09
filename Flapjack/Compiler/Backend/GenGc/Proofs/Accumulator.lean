@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.GenGc
+module
+
+public import Flapjack.Compiler.Backend.GenGc
+
+@[expose] public section
 
 /-! Accumulator factoring for major-collector root movement. -/
 namespace Flapjack.Compiler.Backend.GenGc

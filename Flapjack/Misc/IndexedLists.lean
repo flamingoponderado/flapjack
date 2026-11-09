@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Indexed-list operations used by the CakeML compiler proofs. -/
 namespace Flapjack

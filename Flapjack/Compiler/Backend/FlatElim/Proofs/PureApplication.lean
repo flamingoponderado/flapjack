@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.PureState
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.PureState
+
+@[expose] public section
 
 /-! Constructor and global-initialization cases of pure flat evaluation. -/
 namespace Flapjack.Compiler.Backend.FlatElim

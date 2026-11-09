@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BviTmc
+module
+
+public import Flapjack.Compiler.Backend.BviTmc
+
+@[expose] public section
 
 /-! Structural sufficiency for the TMC purity traversal. These results are
 Flapjack infrastructure; HOL correspondence remains a separate obligation. -/

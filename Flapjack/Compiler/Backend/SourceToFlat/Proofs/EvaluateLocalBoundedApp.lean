@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoApp
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
-import Flapjack.Compiler.Backend.FlatProps.DoAppState
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.DoApp
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
+public import Flapjack.Compiler.Backend.FlatProps.DoAppState
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL

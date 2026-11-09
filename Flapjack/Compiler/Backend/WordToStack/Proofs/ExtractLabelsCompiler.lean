@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ExtractLabelsHelpers
-import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ExtractLabelsHelpers
+public import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordToStack.Native.ExtractLabelsCompiler
 open Flapjack Flapjack.Compiler.Backend.StackLang

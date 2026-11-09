@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.GcShared.Reachability
-import Flapjack.Compiler.Backend.GcShared.HeapMap
-import Mathlib.Data.Set.Finite.Basic
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+module
+
+public import Flapjack.Compiler.Backend.GcShared.Reachability
+public import Flapjack.Compiler.Backend.GcShared.HeapMap
+public import Mathlib.Data.Set.Finite.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+
+@[expose] public section
 
 /-! Heap filtering by element starting addresses. -/
 namespace Flapjack.Compiler.Backend

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.FunctionApplication
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.ThunkRelation
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.FunctionApplication
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ThunkRelation
+
+@[expose] public section
 
 /-! Thunk forcing for the flat pattern compiler. The evaluator and proof-side
 relations remain pending HOL correspondence review. -/

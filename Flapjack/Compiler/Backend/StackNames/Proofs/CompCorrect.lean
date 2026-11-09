@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.StackNames.Proofs.RenameState
-import Flapjack.Compiler.Backend.StackProps.EvaluateConsts
-import Flapjack.Misc.Sptree.Wf
+module
+
+public import Flapjack.Compiler.Backend.StackNames.Proofs.RenameState
+public import Flapjack.Compiler.Backend.StackProps.EvaluateConsts
+public import Flapjack.Misc.Sptree.Wf
+
+@[expose] public section
 
 /-!
 # stack_namesProof: `comp_correct`

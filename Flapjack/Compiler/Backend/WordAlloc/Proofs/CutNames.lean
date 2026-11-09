@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
-import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

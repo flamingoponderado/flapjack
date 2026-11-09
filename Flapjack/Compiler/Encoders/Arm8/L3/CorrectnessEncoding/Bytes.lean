@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Skip
-import Mathlib.Tactic.IntervalCases
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Skip
+public import Mathlib.Tactic.IntervalCases
+
+@[expose] public section
 
 set_option maxHeartbeats 4000000
 

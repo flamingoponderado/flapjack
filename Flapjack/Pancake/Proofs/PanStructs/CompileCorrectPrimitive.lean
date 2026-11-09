@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAssign
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpMmapHelper
-import Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
-import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
-import Flapjack.Pancake.PanStructs.CompileProgExact
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAssign
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpMmapHelper
+public import Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
+public import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
+public import Flapjack.Pancake.PanStructs.CompileProgExact
+
+@[expose] public section
 namespace Flapjack.Pancake.Proofs.PanStructs.CompileCorrectPrimitive
 open Flapjack
 open Flapjack.Pancake.PanLang

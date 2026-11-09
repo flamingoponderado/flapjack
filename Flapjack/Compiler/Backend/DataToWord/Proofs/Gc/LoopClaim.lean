@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopCell
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.LoopCell
+
+@[expose] public section
 
 /-! The source-shaped predicate used for the collector scan induction. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

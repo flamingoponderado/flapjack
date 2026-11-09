@@ -1,9 +1,13 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpRStruct
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpRField
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpNamed
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpOperators
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCmpShift
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpRStruct
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpRField
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpNamed
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpOperators
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCmpShift
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsCompileExpCorrect
 open Flapjack.Pancake.PanLang

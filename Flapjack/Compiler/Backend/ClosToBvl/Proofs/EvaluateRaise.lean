@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateSequence
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateSequence
+
+@[expose] public section
 
 /-! Raising case of the closure-to-BVL expression simulation candidate. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

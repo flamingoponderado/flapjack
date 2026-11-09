@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.RawCall
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.RawCall
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackRawCall.JumpLowerCase
 open Flapjack Flapjack.Compiler.Backend.StackLang StackSemStateOps StackSemControl

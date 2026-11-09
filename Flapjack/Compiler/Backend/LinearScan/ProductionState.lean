@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LinearScan.HiddenState
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
+module
+
+public import Flapjack.Compiler.Backend.LinearScan.HiddenState
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
+
+@[expose] public section
 
 /-!
 Array-backed state for a future executable linear-scan allocator. The current

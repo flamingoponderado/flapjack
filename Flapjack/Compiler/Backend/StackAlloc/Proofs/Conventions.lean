@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.StackAlloc.Compile
-import Flapjack.Compiler.Backend.StackProps.ProgramNames
-import Flapjack.Compiler.Backend.StackProps.RemoveNames
-import Flapjack.Compiler.Backend.StackProps.RegisterBounds
-import Flapjack.Compiler.Backend.StackProps.CallArgs
-import Flapjack.Compiler.Backend.DataToWord.ConfOk
-import Flapjack.Misc.GoodDimindex
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Compile
+public import Flapjack.Compiler.Backend.StackProps.ProgramNames
+public import Flapjack.Compiler.Backend.StackProps.RemoveNames
+public import Flapjack.Compiler.Backend.StackProps.RegisterBounds
+public import Flapjack.Compiler.Backend.StackProps.CallArgs
+public import Flapjack.Compiler.Backend.DataToWord.ConfOk
+public import Flapjack.Misc.GoodDimindex
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` syntactic convention lemmas

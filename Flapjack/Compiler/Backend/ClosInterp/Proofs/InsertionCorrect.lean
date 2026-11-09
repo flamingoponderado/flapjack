@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterCorrect
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterCorrect
+
+@[expose] public section
 
 /-! Simulation of interpreter insertion for the proof-side evaluator. Its
 semantics and state carriers remain pending HOL correspondence review. -/

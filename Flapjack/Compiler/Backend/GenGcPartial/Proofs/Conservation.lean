@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Similarity
-import Flapjack.Compiler.Backend.GcShared.ForwardPtr
+module
+
+public import Flapjack.Compiler.Backend.GenGcPartial.Proofs.Similarity
+public import Flapjack.Compiler.Backend.GcShared.ForwardPtr
+
+@[expose] public section
 
 /-! Data-mass preservation for partial generational collection. -/
 namespace Flapjack.Compiler.Backend.GenGcPartial

@@ -1,6 +1,10 @@
-import Flapjack.Pancake.CrepToLoop.StateRel
-import Flapjack.Pancake.Semantics.LoopProps.EvalExact
-import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
+module
+
+public import Flapjack.Pancake.CrepToLoop.StateRel
+public import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+public import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
+
+@[expose] public section
 
 /-!
 # crep_to_loop `locals_rel` lookup/insert helpers over the exact carriers

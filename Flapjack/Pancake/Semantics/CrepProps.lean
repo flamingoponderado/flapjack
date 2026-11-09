@@ -1,16 +1,20 @@
-import Flapjack.HolRef
-import Flapjack.FiniteMap
-import Flapjack.Pancake.CrepLang
-import Flapjack.Pancake.CrepLang.Exp
-import Flapjack.Pancake.CrepLang.Prog
-import Flapjack.Pancake.Semantics.CrepSem
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
-import Flapjack.Pancake.Semantics.CrepSem.EventsMono
-import Flapjack.Pancake.Semantics.CrepSem.AddClock
-import Flapjack.Pancake.PanCommon
-import Flapjack.Pancake.Semantics.PanCommonProps
+module
+
+public import Flapjack.HolRef
+public import Flapjack.FiniteMap
+public import Flapjack.Pancake.CrepLang
+public import Flapjack.Pancake.CrepLang.Exp
+public import Flapjack.Pancake.CrepLang.Prog
+public import Flapjack.Pancake.Semantics.CrepSem
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
+public import Flapjack.Pancake.Semantics.CrepSem.EventsMono
+public import Flapjack.Pancake.Semantics.CrepSem.AddClock
+public import Flapjack.Pancake.PanCommon
+public import Flapjack.Pancake.Semantics.PanCommonProps
+
+@[expose] public section
 
 /-!
 Crepe language properties from `cakeml/pancake/semantics/crepPropsScript.sml`.

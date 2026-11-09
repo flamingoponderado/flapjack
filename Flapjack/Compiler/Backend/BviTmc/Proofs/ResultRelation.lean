@@ -1,6 +1,17 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ValueRelation
-import Flapjack.Compiler.Backend.Semantics.BviSem.State
-import Flapjack.SemanticPrimitivesProps.ResultRelation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.Semantics.BviSem.State
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Exception, return and optimized-result relations for TMC simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc.ResultRelation

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileDynamicGlobal
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileDynamicGlobal
+
+@[expose] public section
 
 /-! Thunk updates in BVL-to-BVI simulation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

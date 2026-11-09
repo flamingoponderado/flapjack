@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.HeapRelation
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Equality
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.HeapRelation
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Equality
+
+@[expose] public section
 
 /-! Structural equality under the TMC pointer and heap relations. -/
 namespace Flapjack.Compiler.Backend.BviTmc

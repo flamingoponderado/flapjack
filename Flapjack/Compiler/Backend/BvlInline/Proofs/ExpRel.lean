@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Bvl.Syntax
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.Bvl.Syntax
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Expression relation used by CakeML's BVL tick inlining proof. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.ClosTicks.Proofs.Simulation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
-import Flapjack.FiniteMap.EmptyExact
-import Flapjack.Compiler.Backend.Semantics.ClosProps.ResultObservations
+module
+
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Simulation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
+public import Flapjack.FiniteMap.EmptyExact
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.ResultObservations
+
+@[expose] public section
 
 /-! Whole-program observations of closure tick removal. -/
 namespace Flapjack.Compiler.Backend.ClosTicks

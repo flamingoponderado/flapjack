@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatProps.SimpleRelations
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
+module
+
+public import Flapjack.Compiler.Backend.FlatProps.SimpleRelations
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
+
+@[expose] public section
 
 /-! List conversion properties for simple flat value relations. -/
 namespace Flapjack.Compiler.Backend.FlatProps

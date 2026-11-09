@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.DecisionEncoding.Encoding
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.DecisionEncoding.Encoding
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.FlatPattern
 

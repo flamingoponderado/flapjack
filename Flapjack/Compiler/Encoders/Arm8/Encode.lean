@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
+
+@[expose] public section
 
 /-!
 # ARMv8 (AArch64) instruction encoder

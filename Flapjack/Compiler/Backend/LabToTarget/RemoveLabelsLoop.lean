@@ -1,40 +1,44 @@
-import Flapjack.Compiler.Backend.LabToTarget.Alignment
-import Flapjack.Compiler.Backend.LabToTarget.CodeLabelPositionPadding
-import Flapjack.Compiler.Backend.LabToTarget.CodeNopEncoding
-import Flapjack.Compiler.Backend.LabToTarget.CodeOffsetPadding
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelSets
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
-import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelDomain
-import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions
-import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPreservation
-import Flapjack.Compiler.Backend.LabToTarget.EncodingInvariant
-import Flapjack.Compiler.Backend.LabToTarget.EndingLabels
-import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
-import Flapjack.Compiler.Backend.LabToTarget.LabelExistenceDomain
-import Flapjack.Compiler.Backend.LabToTarget.LabelExistenceEncoding
-import Flapjack.Compiler.Backend.LabToTarget.LabelLookup
-import Flapjack.Compiler.Backend.LabToTarget.LabelLookupEvenness
-import Flapjack.Compiler.Backend.LabToTarget.LabelPositionEncoding
-import Flapjack.Compiler.Backend.LabToTarget.LabelPositionUpdates
-import Flapjack.Compiler.Backend.LabToTarget.LabelValidity
-import Flapjack.Compiler.Backend.LabToTarget.Navigation
-import Flapjack.Compiler.Backend.LabToTarget.NopInvariant
-import Flapjack.Compiler.Backend.LabToTarget.OddInstructionAlignment
-import Flapjack.Compiler.Backend.LabToTarget.OffsetEstablishment
-import Flapjack.Compiler.Backend.LabToTarget.PaddingLabels
-import Flapjack.Compiler.Backend.LabToTarget.PositionalEncoding
-import Flapjack.Compiler.Backend.LabToTarget.PreconditionPreservation
-import Flapjack.Compiler.Backend.LabToTarget.PrefixPreservation
-import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
-import Flapjack.Compiler.Backend.LabToTarget.StrongEvenLabels
-import Flapjack.Compiler.Backend.LabToTarget.UpdateZero
-import Flapjack.Compiler.Backend.LabToTarget.ValidityEstablishment
-import Flapjack.Compiler.Backend.LabToTarget.ZeroLabelExistence
-import Flapjack.Compiler.Backend.LabToTarget.ZeroPositionEvenLabels
-import Flapjack.Compiler.Backend.LabToTarget.ZeroPreservation
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Alignment
+public import Flapjack.Compiler.Backend.LabToTarget.CodeLabelPositionPadding
+public import Flapjack.Compiler.Backend.LabToTarget.CodeNopEncoding
+public import Flapjack.Compiler.Backend.LabToTarget.CodeOffsetPadding
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelSets
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
+public import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelDomain
+public import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPositions
+public import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPreservation
+public import Flapjack.Compiler.Backend.LabToTarget.EncodingInvariant
+public import Flapjack.Compiler.Backend.LabToTarget.EndingLabels
+public import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
+public import Flapjack.Compiler.Backend.LabToTarget.LabelExistenceDomain
+public import Flapjack.Compiler.Backend.LabToTarget.LabelExistenceEncoding
+public import Flapjack.Compiler.Backend.LabToTarget.LabelLookup
+public import Flapjack.Compiler.Backend.LabToTarget.LabelLookupEvenness
+public import Flapjack.Compiler.Backend.LabToTarget.LabelPositionEncoding
+public import Flapjack.Compiler.Backend.LabToTarget.LabelPositionUpdates
+public import Flapjack.Compiler.Backend.LabToTarget.LabelValidity
+public import Flapjack.Compiler.Backend.LabToTarget.Navigation
+public import Flapjack.Compiler.Backend.LabToTarget.NopInvariant
+public import Flapjack.Compiler.Backend.LabToTarget.OddInstructionAlignment
+public import Flapjack.Compiler.Backend.LabToTarget.OffsetEstablishment
+public import Flapjack.Compiler.Backend.LabToTarget.PaddingLabels
+public import Flapjack.Compiler.Backend.LabToTarget.PositionalEncoding
+public import Flapjack.Compiler.Backend.LabToTarget.PreconditionPreservation
+public import Flapjack.Compiler.Backend.LabToTarget.PrefixPreservation
+public import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
+public import Flapjack.Compiler.Backend.LabToTarget.StrongEvenLabels
+public import Flapjack.Compiler.Backend.LabToTarget.UpdateZero
+public import Flapjack.Compiler.Backend.LabToTarget.ValidityEstablishment
+public import Flapjack.Compiler.Backend.LabToTarget.ZeroLabelExistence
+public import Flapjack.Compiler.Backend.LabToTarget.ZeroPositionEvenLabels
+public import Flapjack.Compiler.Backend.LabToTarget.ZeroPreservation
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabProps.LabelSets

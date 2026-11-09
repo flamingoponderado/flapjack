@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionCliqueBatch
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionCliqueBatch
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 open RiscV.CakeRegAlloc

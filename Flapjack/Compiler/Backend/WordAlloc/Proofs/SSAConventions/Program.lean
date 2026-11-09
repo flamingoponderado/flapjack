@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Primitives
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Instructions
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Control
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Calls
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Primitives
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Instructions
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Control
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Calls
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Flapjack Flapjack.Compiler.Backend.WordAlloc

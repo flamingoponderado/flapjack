@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
-import Flapjack.Compiler.Encoders.Arm8.Machine.Complete
-import Flapjack.Compiler.Backend.BackendProof.MachineInit
-import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
-import Mathlib.Tactic.IntervalCases
+module
+
+public import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
+public import Flapjack.Compiler.Encoders.Arm8.Machine.Complete
+public import Flapjack.Compiler.Backend.BackendProof.MachineInit
+public import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
+public import Mathlib.Tactic.IntervalCases
+
+@[expose] public section
 
 /-!
 # ARMv8 machine-configuration facts

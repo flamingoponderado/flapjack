@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviLet.SourceSing
-import Flapjack.Compiler.Backend.BviLet.Proofs.Total
+module
+
+public import Flapjack.Compiler.Backend.BviLet.SourceSing
+public import Flapjack.Compiler.Backend.BviLet.Proofs.Total
+
+@[expose] public section
 
 /-! Agreement between the total source-shaped optimizer and the executable. -/
 namespace Flapjack.Compiler.Backend.BviLet

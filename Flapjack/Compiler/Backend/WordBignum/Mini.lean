@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 /-! Syntax of the bignum generator's mini-language. -/
 namespace Flapjack.Compiler.Backend.WordBignum

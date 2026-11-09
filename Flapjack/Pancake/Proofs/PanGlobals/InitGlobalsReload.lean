@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
-import Flapjack.Pancake.Proofs.PanGlobals.MemStores
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
+public import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
+public import Flapjack.Pancake.Proofs.PanGlobals.MemStores
+
+@[expose] public section
 
 namespace Flapjack.PanGlobalsInitGlobalsReload
 open Flapjack.Pancake.PanLang

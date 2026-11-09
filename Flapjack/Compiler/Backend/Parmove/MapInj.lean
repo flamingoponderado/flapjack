@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.Parmove.StepMapInj
-import Flapjack.Compiler.Backend.Parmove.InjOnState.Step
-import Flapjack.Compiler.Backend.Parmove.FstepMapInj
-import Flapjack.Compiler.Backend.Parmove.FstepDstep
-import Flapjack.Compiler.Backend.Parmove.DStepsSteps
-import Flapjack.Compiler.Backend.Parmove.Invariants.Preservation
-import Flapjack.Compiler.Backend.Parmove.PmovFinal
-import Mathlib.Data.List.Nodup
+module
+
+public import Flapjack.Compiler.Backend.Parmove.StepMapInj
+public import Flapjack.Compiler.Backend.Parmove.InjOnState.Step
+public import Flapjack.Compiler.Backend.Parmove.FstepMapInj
+public import Flapjack.Compiler.Backend.Parmove.FstepDstep
+public import Flapjack.Compiler.Backend.Parmove.DStepsSteps
+public import Flapjack.Compiler.Backend.Parmove.Invariants.Preservation
+public import Flapjack.Compiler.Backend.Parmove.PmovFinal
+public import Mathlib.Data.List.Nodup
+
+@[expose] public section
 
 /-!
 # parmove renaming: `steps_inj_on_state`, `steps_MAP_INJ`, `pmov_MAP_INJ`, `parmove_MAP_INJ`

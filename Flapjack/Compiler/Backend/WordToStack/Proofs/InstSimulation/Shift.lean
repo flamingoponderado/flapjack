@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
+
+@[expose] public section
 
 namespace Flapjack.WordToStackProofs.InstSimulation.Shift
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
