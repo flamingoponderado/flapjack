@@ -79,10 +79,10 @@ theorem primitiveSimulation_byteAt {C F : Type} (reference : Bool) :
     PrimitiveSimulation (C := C) (F := F) (.memOp (if reference then .derefByte else .derefByteVec)) := by
   intro values nextValues source target valuesRel states
   cases valuesRel with
-  | nil => cases reference <;> exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+  | nil => cases reference <;> exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons first rest =>
     cases rest with
-    | nil => cases reference <;> exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+    | nil => cases reference <;> exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons second rest =>
       cases rest with
       | nil =>
@@ -95,7 +95,7 @@ theorem primitiveSimulation_byteAt {C F : Type} (reference : Bool) :
             have nextResult : byteAt reference nextValue index target.refs = none := by rw [← same, result]
             refine ⟨.err (.abort .typeError), ?_, ?_⟩
             · simp [doApp, applyMemory_byteAt, nextResult]
-            · simp [doApp, applyMemory_byteAt, result, AppResultRel, ResultRel]
+            · simp [doApp, applyMemory_byteAt, result, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]
           | some read =>
             have nextResult : byteAt reference nextValue index target.refs = some read := by rw [← same, result]
             have valueRel : ValueRel read read := by
@@ -108,9 +108,9 @@ theorem primitiveSimulation_byteAt {C F : Type} (reference : Bool) :
             · simp only [doApp, applyMemory_byteAt, result, AppResultRel]
               exact ⟨valueRel, states⟩
         | _ => cases first <;> cases reference <;>
-            exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+            exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
       | cons third rest => cases reference <;>
-          exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+          exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- Bounds checks accept both byte vectors and byte-array references. -/
 def byteBounds (loose : Bool) (value : Value) (index : Int)
@@ -141,10 +141,10 @@ theorem primitiveSimulation_byteBounds {C F : Type} (loose : Bool) :
     PrimitiveSimulation (C := C) (F := F) (.memOp (.boundsCheckByte loose)) := by
   intro values nextValues source target valuesRel states
   cases valuesRel with
-  | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+  | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons first rest =>
     cases rest with
-    | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+    | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons second rest =>
       cases rest with
       | nil =>
@@ -156,7 +156,7 @@ theorem primitiveSimulation_byteBounds {C F : Type} (loose : Bool) :
           | none =>
             have nextResult : byteBounds loose nextValue index target.refs = none := by rw [← same, result]
             exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory_byteBounds, nextResult], by
-              simp [doApp, applyMemory_byteBounds, result, AppResultRel, ResultRel]⟩
+              simp [doApp, applyMemory_byteBounds, result, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
           | some read =>
             have nextResult : byteBounds loose nextValue index target.refs = some read := by rw [← same, result]
             have valueRel : ValueRel read read := by
@@ -175,16 +175,16 @@ theorem primitiveSimulation_byteBounds {C F : Type} (loose : Bool) :
             · simp only [doApp, applyMemory_byteBounds, result, AppResultRel]
               exact ⟨valueRel, states⟩
         | _ => cases first <;>
-            exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+            exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
       | cons third rest =>
-        exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+        exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- Byte-vector lengths agree for related values. -/
 theorem primitiveSimulation_lengthByteVec {C F : Type} :
     PrimitiveSimulation (C := C) (F := F) (.memOp .lengthByteVec) := by
   intro values nextValues source target valuesRel states
   cases valuesRel with
-  | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+  | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons head tail =>
     cases tail with
     | nil =>
@@ -194,19 +194,19 @@ theorem primitiveSimulation_lengthByteVec {C F : Type} :
         · simp [doApp, applyMemory]
         · simp only [doApp, applyMemory, AppResultRel]
           exact ⟨.number _, states⟩
-      | _ => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+      | _ => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons first rest =>
-      exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+      exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- String comparison observes identical byte-vector arguments. -/
 theorem primitiveSimulation_stringCmp {C F : Type} (fast : Bool) (op : Opb) :
     PrimitiveSimulation (C := C) (F := F) (.memOp (.stringCmp fast op)) := by
   intro values nextValues source target valuesRel states
   cases valuesRel with
-  | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+  | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons first rest =>
     cases rest with
-    | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+    | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons second rest =>
       cases rest with
       | nil =>
@@ -218,10 +218,10 @@ theorem primitiveSimulation_stringCmp {C F : Type} (fast : Bool) (op : Opb) :
             · simp [doApp, applyMemory]
             · simp only [doApp, applyMemory, AppResultRel]
               exact ⟨.block _ [] [] .nil, states⟩
-          | _ => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+          | _ => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
         | _ => cases second <;>
-            exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+            exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
       | cons third rest =>
-        exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+        exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate

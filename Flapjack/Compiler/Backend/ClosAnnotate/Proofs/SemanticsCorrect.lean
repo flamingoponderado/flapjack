@@ -25,16 +25,16 @@ theorem resultRel_observations (left right : Result (List Value) Value) (related
   cases left with
   | val values => cases right with
     | val nextValues => simp [resultOutcome]
-    | err error => cases error <;> simp [ResultRel] at related
+    | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at related
   | err error =>
     cases right with
-    | val values => cases error <;> simp [ResultRel] at related
+    | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at related
     | err nextError =>
       cases error with
-      | raise value => cases nextError <;> simp_all [ResultRel, resultOutcome]
+      | raise value => cases nextError <;> simp_all [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel, resultOutcome]
       | abort abort =>
         cases nextError with
-        | raise value => simp [ResultRel] at related
+        | raise value => simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel] at related
         | abort nextAbort =>
           have equal : abort = nextAbort := related
           subst nextAbort

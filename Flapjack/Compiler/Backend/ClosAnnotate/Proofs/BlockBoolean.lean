@@ -15,7 +15,7 @@ theorem primitiveSimulation_boolNot {C F : Type} :
   intro values nextValues source target valuesRel states
   cases valuesRel with
   | nil =>
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons head tail =>
     cases tail with
     | nil =>
@@ -25,7 +25,7 @@ theorem primitiveSimulation_boolNot {C F : Type} :
       | none =>
         have nextObserved : asBool nextValue = none := by rw [← same, observed]
         exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock, nextObserved], by
-          simp [doApp, applyBlock, observed, AppResultRel, ResultRel]⟩
+          simp [doApp, applyBlock, observed, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
       | some flag =>
         have nextObserved : asBool nextValue = some flag := by rw [← same, observed]
         refine ⟨.val (boolValue (!flag), target), ?_, ?_⟩
@@ -33,7 +33,7 @@ theorem primitiveSimulation_boolNot {C F : Type} :
         · simp only [doApp, applyBlock, observed, AppResultRel]
           exact ⟨.block _ [] [] .nil, states⟩
     | cons first rest =>
-      exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+      exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- Boolean tests preserve observations and reject the same malformed inputs. -/
 theorem primitiveSimulation_boolTest {C F : Type} (test : Flapjack.AstHOL.Test) :
@@ -41,11 +41,11 @@ theorem primitiveSimulation_boolTest {C F : Type} (test : Flapjack.AstHOL.Test) 
   intro values nextValues source target valuesRel states
   cases valuesRel with
   | nil =>
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons first rest =>
     cases rest with
     | nil =>
-      exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+      exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons second rest =>
       cases rest with
       | nil =>
@@ -56,14 +56,14 @@ theorem primitiveSimulation_boolTest {C F : Type} (test : Flapjack.AstHOL.Test) 
         | none =>
           have nextFirst : asBool nextLeft = none := by rw [← firstSame, firstObserved]
           exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock, nextFirst], by
-            simp [doApp, applyBlock, firstObserved, AppResultRel, ResultRel]⟩
+            simp [doApp, applyBlock, firstObserved, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
         | some a =>
           have nextFirst : asBool nextLeft = some a := by rw [← firstSame, firstObserved]
           cases secondObserved : asBool right with
           | none =>
             have nextSecond : asBool nextRight = none := by rw [← secondSame, secondObserved]
             exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock, nextFirst, nextSecond], by
-              simp [doApp, applyBlock, firstObserved, secondObserved, AppResultRel, ResultRel]⟩
+              simp [doApp, applyBlock, firstObserved, secondObserved, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
           | some b =>
             have nextSecond : asBool nextRight = some b := by rw [← secondSame, secondObserved]
             refine ⟨.val (boolValue (a == b), target), ?_, ?_⟩
@@ -71,7 +71,7 @@ theorem primitiveSimulation_boolTest {C F : Type} (test : Flapjack.AstHOL.Test) 
             · simp only [doApp, applyBlock, firstObserved, secondObserved, AppResultRel]
               exact ⟨.block _ [] [] .nil, states⟩
       | cons third rest =>
-        exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+        exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- Block bounds checks agree because related blocks have equal lengths. -/
 theorem primitiveSimulation_boundsCheckBlock {C F : Type} :
@@ -79,11 +79,11 @@ theorem primitiveSimulation_boundsCheckBlock {C F : Type} :
   intro values nextValues source target valuesRel states
   cases valuesRel with
   | nil =>
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons first rest =>
     cases rest with
     | nil =>
-      exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+      exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons second rest =>
       cases rest with
       | nil =>
@@ -98,12 +98,12 @@ theorem primitiveSimulation_boundsCheckBlock {C F : Type} :
             · simp only [doApp, applyBlock, AppResultRel]
               exact ⟨.block _ [] [] .nil, states⟩
           | _ =>
-            exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+            exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
         | _ =>
           cases second <;>
-            exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+            exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
       | cons third rest =>
-        exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+        exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- A constant translates to a value related to itself, including nested
 constructor constants. -/
@@ -131,6 +131,6 @@ theorem primitiveSimulation_constant {C F : Type} (constant : ClosLang.Const) :
     · simp [doApp, applyBlock]
     · simpa [doApp, applyBlock, AppResultRel] using And.intro (makeConst_related constant) states
   | cons head tail =>
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate

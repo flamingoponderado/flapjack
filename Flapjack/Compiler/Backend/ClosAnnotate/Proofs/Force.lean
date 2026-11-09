@@ -83,7 +83,7 @@ theorem evaluate_force_step {C F : Type} (trace : BackendCommon.Tra) (args : Lis
         argsIH env nextEnv target (.err error) sourceNext m l index argsRun noType length argsVars
           argsSafe code oracle states
       cases targetResult with
-      | val values => cases error <;> simp [ResultRel] at resultRel
+      | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
       | err targetError =>
         refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
         rw [altFree_op]
@@ -95,7 +95,7 @@ theorem evaluate_force_step {C F : Type} (trace : BackendCommon.Tra) (args : Lis
         argsIH env nextEnv target (.val values) middle m l index argsRun valuesNoType length argsVars
           argsSafe code oracle states
       cases targetResult with
-      | err error => cases error <;> simp [ResultRel] at resultRel
+      | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
       | val nextValues =>
         have middleClock : middle.clock ≤ source.clock := by
           have h := evaluate_clock_le args env source
@@ -144,7 +144,7 @@ theorem evaluate_force_step {C F : Type} (trace : BackendCommon.Tra) (args : Lis
                     forceCall_related middle targetMiddle value targetValue (.err error) last
                       (forceIH middle middleClock) forceRun noType valueRel middleSafe.1 middleSafe.2 middleRel
                   cases targetForceResult with
-                  | val values => cases error <;> simp [ResultRel] at related
+                  | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at related
                   | err targetError =>
                     refine ⟨.err targetError, targetLast, ?_, related, lastRel⟩
                     rw [altFree_op]
@@ -160,7 +160,7 @@ theorem evaluate_force_step {C F : Type} (trace : BackendCommon.Tra) (args : Lis
                     forceCall_related middle targetMiddle value targetValue (.val forced) last
                       (forceIH middle middleClock) forceRun forceNoType valueRel middleSafe.1 middleSafe.2 middleRel
                   cases targetForceResult with
-                  | err error => cases error <;> simp [ResultRel] at related
+                  | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at related
                   | val nextForced =>
                     have update := updateThunk_related last targetLast values nextValues forced nextForced
                       resultRel related lastRel

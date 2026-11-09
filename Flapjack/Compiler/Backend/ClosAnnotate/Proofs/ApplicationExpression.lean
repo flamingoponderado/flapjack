@@ -52,7 +52,7 @@ theorem evaluate_app_step {C F : Type} (trace : BackendCommon.Tra) (location : O
           argsIH env nextEnv target (.err error) middle m l index argsRun noType length argsVars
             safeParts.2 code oracle states
         cases targetResult with
-        | val values => cases error <;> simp [ResultRel] at resultRel
+        | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
         | err targetError =>
           refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
           rw [altFree_app]
@@ -66,7 +66,7 @@ theorem evaluate_app_step {C F : Type} (trace : BackendCommon.Tra) (location : O
           argsIH env nextEnv target (.val values) middle m l index argsRun argsNoType length argsVars
             safeParts.2 code oracle states
         cases targetArgsResult with
-        | err error => cases error <;> simp [ResultRel] at argsRel
+        | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at argsRel
         | val targetValues =>
           cases functionRun : evaluate [function] env middle with
           | mk functionResult last =>
@@ -82,7 +82,7 @@ theorem evaluate_app_step {C F : Type} (trace : BackendCommon.Tra) (location : O
                 functionIH middle middleClock env nextEnv targetMiddle (.err error) last m l index functionRun
                   noType length functionVars safeParts.1 middleSafe.1 middleSafe.2 middleRel
               cases targetResult with
-              | val values => cases error <;> simp [ResultRel] at resultRel
+              | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
               | err targetError =>
                 refine ⟨.err targetError, targetLast, ?_, resultRel, lastRel⟩
                 rw [altFree_app]
@@ -104,7 +104,7 @@ theorem evaluate_app_step {C F : Type} (trace : BackendCommon.Tra) (location : O
                     functionIH middle middleClock env nextEnv targetMiddle (.val [value]) last m l index functionRun
                       functionNoType length functionVars safeParts.1 middleSafe.1 middleSafe.2 middleRel
                   cases targetFunctionResult with
-                  | err error => cases error <;> simp [ResultRel] at functionRel
+                  | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at functionRel
                   | val targetFunctions =>
                     cases functionRel with
                     | cons valueRel tailRel =>

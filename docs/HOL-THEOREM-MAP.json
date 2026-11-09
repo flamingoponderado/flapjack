@@ -1,5 +1,14 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "annotate_correct",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotateCorrect.lean", "lean_name": "annotate_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
+  "fmap_as_finite_support": ["refs", "code"],
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared annotate_correct_typed: the free-variable order, carriers, grouped premises, empty source environment, arbitrary target environment, result relation and existential target evaluation and state agree. FEVERY is rendered by successful code lookups and entry.2; FDOM uses domain in StateRelSource. fmap_as_finite_support records refs and code; nested_list_rel_as_mutual records the source value relation with functionsRel_iff. ClosSem.evaluate inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "code_locs_const_0",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations/Original.lean", "lean_name": "codeLocs_const0",
   "statement_status": "reviewed_exact",

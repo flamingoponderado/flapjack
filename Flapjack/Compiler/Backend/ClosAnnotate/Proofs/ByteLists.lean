@@ -59,7 +59,7 @@ theorem primitiveSimulation_decodedBytes {C F : Type} (chunks : Bool) :
     PrimitiveSimulation (C := C) (F := F) (.memOp (if chunks then .concatByteVec else .fromListByte)) := by
   intro values nextValues source target valuesRel states
   cases valuesRel with
-  | nil => cases chunks <;> exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+  | nil => cases chunks <;> exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons head tail =>
     cases tail with
     | nil =>
@@ -69,7 +69,7 @@ theorem primitiveSimulation_decodedBytes {C F : Type} (chunks : Bool) :
       | none =>
         have nextDecoded : decodedBytes chunks nextValue = none := by rw [← same, decoded]
         exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory_decodedBytes, nextDecoded], by
-          simp [doApp, applyMemory_decodedBytes, decoded, AppResultRel, ResultRel]⟩
+          simp [doApp, applyMemory_decodedBytes, decoded, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
       | some bytes =>
         have nextDecoded : decodedBytes chunks nextValue = some bytes := by rw [← same, decoded]
         refine ⟨.val (.byteVector bytes, target), ?_, ?_⟩
@@ -77,14 +77,14 @@ theorem primitiveSimulation_decodedBytes {C F : Type} (chunks : Bool) :
         · simp only [doApp, applyMemory_decodedBytes, decoded, AppResultRel]
           exact ⟨.byteVector bytes, states⟩
     | cons first rest => cases chunks <;>
-        exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+        exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- A byte vector converts to a related encoded list of byte numbers. -/
 theorem primitiveSimulation_toListByte {C F : Type} :
     PrimitiveSimulation (C := C) (F := F) (.memOp .toListByte) := by
   intro values nextValues source target valuesRel states
   cases valuesRel with
-  | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+  | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons head tail =>
     cases tail with
     | nil =>
@@ -99,8 +99,8 @@ theorem primitiveSimulation_toListByte {C F : Type} :
         · simp [doApp, applyMemory]
         · simp only [doApp, applyMemory, AppResultRel]
           exact ⟨listToValue_related _ _ numbers, states⟩
-      | _ => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+      | _ => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons first rest =>
-      exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+      exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate

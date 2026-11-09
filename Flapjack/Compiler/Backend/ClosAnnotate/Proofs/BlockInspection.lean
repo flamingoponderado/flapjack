@@ -40,7 +40,7 @@ theorem primitiveSimulation_unaryBlock {C F : Type} (op : ClosLang.BlockOp)
     PrimitiveSimulation (C := C) (F := F) (.blockOp op) := by
   intro values nextValues source target valuesRel states
   cases valuesRel with
-  | nil => exact ⟨.err (.abort .typeError), by simp [doApp, equation], by simp [doApp, equation, AppResultRel, ResultRel]⟩
+  | nil => exact ⟨.err (.abort .typeError), by simp [doApp, equation], by simp [doApp, equation, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons head tail =>
     cases tail with
     | nil =>
@@ -51,9 +51,9 @@ theorem primitiveSimulation_unaryBlock {C F : Type} (op : ClosLang.BlockOp)
         refine ⟨outcome, ?_, ?_⟩
         · cases h : inspect tag nextFields <;> simpa [doApp, equation, h] using nextRun
         · cases h : inspect tag fields <;> simpa [doApp, equation, h] using rel
-      | _ => exact ⟨.err (.abort .typeError), by simp [doApp, equation], by simp [doApp, equation, AppResultRel, ResultRel]⟩
+      | _ => exact ⟨.err (.abort .typeError), by simp [doApp, equation], by simp [doApp, equation, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons first rest =>
-      exact ⟨.err (.abort .typeError), by simp [doApp, equation], by simp [doApp, equation, AppResultRel, ResultRel]⟩
+      exact ⟨.err (.abort .typeError), by simp [doApp, equation], by simp [doApp, equation, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- Selecting a block field preserves related values and bounds failures. -/
 theorem primitiveSimulation_elemAt {C F : Type} (index : Nat) :

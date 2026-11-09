@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation
-import Flapjack.Compiler.Backend.ClosAnnotate.Original
-import Flapjack.FiniteMap.CardinalityExact
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.ClosAnnotate.Original
+public import Flapjack.FiniteMap.CardinalityExact
+
+@[expose] public section
 
 /-! Source-shaped closure-annotation state relation and its connection to the
 lookup-oriented simulation. -/

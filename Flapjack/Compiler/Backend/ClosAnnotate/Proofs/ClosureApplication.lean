@@ -257,7 +257,7 @@ theorem evaluateApp_empty {C F : Type} (requested : Option Nat) (function nextFu
       StateRel (evaluateApp requested function [] source).2 targetNext := by
   refine ⟨.val [nextFunction], target, ?_, ?_, ?_⟩
   · rw [evaluateApp]
-  · simpa [evaluateApp, ResultRel] using List.Forall₂.cons related .nil
+  · simpa [evaluateApp, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel] using List.Forall₂.cons related .nil
   · simpa [evaluateApp] using states
 
 /-- A failed closure lookup produces the type error excluded by the
@@ -361,7 +361,7 @@ theorem evaluateApp_full {C F : Type} (requested : Option Nat) (function nextFun
           rw [bodyRun] at run
           cases run
           cases targetBodyResult with
-          | val values => cases error <;> simp [ResultRel] at bodyRel
+          | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at bodyRel
           | err targetError =>
             refine ⟨.err targetError, targetLast, ?_, bodyRel, lastRel⟩
             rw [evaluateApp, targetFound]
@@ -377,7 +377,7 @@ theorem evaluateApp_full {C F : Type} (requested : Option Nat) (function nextFun
             | cons value' tail => simp at size
             | nil =>
               cases targetBodyResult with
-              | err error => cases error <;> simp [ResultRel] at bodyRel
+              | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at bodyRel
               | val targetValues =>
                 cases bodyRel with
                 | cons valueRel tailRel =>

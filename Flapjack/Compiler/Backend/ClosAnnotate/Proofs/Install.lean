@@ -302,12 +302,12 @@ theorem runInstalled_related {C F : Type} (source target : State C F) (values ne
             simp [runInstalled, installRun, programRun] at run
             obtain ⟨rfl, rfl⟩ := run
             cases targetProgramResult with
-            | val values => cases error <;> simp [ResultRel] at programRel
+            | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at programRel
             | err targetError =>
               exact ⟨.err targetError, targetLast, by simp [runInstalled, targetInstallRun, targetRun], programRel, lastRel⟩
           | val returned =>
             cases targetProgramResult with
-            | err error => cases error <;> simp [ResultRel] at programRel
+            | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at programRel
             | val targetReturned =>
               have returnedNonempty : returned ≠ [] := by
                 intro empty
@@ -343,7 +343,7 @@ theorem evaluate_install_step {C F : Type} (trace : BackendCommon.Tra) (args : L
       obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
         argsIH env nextEnv target (.err error) sourceNext m l index argsRun noType length argsVars argsSafe code oracle states
       cases targetResult with
-      | val values => cases error <;> simp [ResultRel] at resultRel
+      | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
       | err targetError =>
         refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
         rw [altFree_op]
@@ -354,7 +354,7 @@ theorem evaluate_install_step {C F : Type} (trace : BackendCommon.Tra) (args : L
       obtain ⟨targetResult, targetMiddle, targetRun, resultRel, middleRel⟩ :=
         argsIH env nextEnv target (.val values) middle m l index argsRun valuesNoType length argsVars argsSafe code oracle states
       cases targetResult with
-      | err error => cases error <;> simp [ResultRel] at resultRel
+      | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
       | val nextValues =>
         have middleSafe := (evaluate_preserves_safe.1 args) env source (.val values) middle argsRun code oracle
         have middleClock : middle.clock ≤ source.clock := by
