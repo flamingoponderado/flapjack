@@ -130580,5 +130580,41 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared flat_do_app_io_events_mono_typed in flat_do_app_preservation_probe.out: the source state, operation, argument list, target state and result retain source order and types; the successful application premise implies the original FFI-event prefix. The dispatcher inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_io_events_mono",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateIO.lean",
+  "lean_name": "evaluate_ioEventsMono",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_io_events_mono_typed in flat_do_app_preservation_probe.out. All three quantified expression, single-declaration and declaration-list cases retain the original initial-to-final FFI-event prefix. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_io_events_mono_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateIO.lean",
+  "lean_name": "evaluate_ioEventsMono_imp",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_io_events_mono_imp_typed in flat_do_app_preservation_probe.out. All three implications retain the original free-variable order, shared states, result types and event-prefix conclusions. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_dec_io_events_mono",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateIO.lean",
+  "lean_name": "evaluateDec_ioEventsMono",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_dec_io_events_mono_typed in flat_do_app_preservation_probe.out. The original declaration-then-state quantification and unconditional FFI-event prefix agree. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_decs_io_events_mono",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateIO.lean",
+  "lean_name": "evaluateDecs_ioEventsMono",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_decs_io_events_mono_typed in flat_do_app_preservation_probe.out. The original declaration list, states, result order, successful-evaluation premise and event prefix agree. The evaluator inherits the reals_as_rational_cuts assumption."
 }
 ]
