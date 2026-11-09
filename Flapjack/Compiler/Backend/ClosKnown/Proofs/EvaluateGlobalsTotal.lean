@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.EvaluateGlobals
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.EvaluateGlobals
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Mutual closure-evaluator global-safety theorem. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.EvaluateGlobalsPort.Total

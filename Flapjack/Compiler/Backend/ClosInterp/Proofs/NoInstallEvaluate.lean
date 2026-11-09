@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallPrimitives
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallPrimitives
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! No-install invariants for the proof-side closure evaluator. Its evaluator
 and state carriers still require HOL correspondence review. -/

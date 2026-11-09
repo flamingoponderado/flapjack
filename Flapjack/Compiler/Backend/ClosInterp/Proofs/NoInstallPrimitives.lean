@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallValues
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallValues
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Primitive preservation of the no-install invariant. The evaluator and
 state carriers remain pending HOL correspondence review. -/

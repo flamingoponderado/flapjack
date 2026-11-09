@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLet
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxApp
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApplyPartial
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLet
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxApp
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApplyPartial
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Successful argument and function evaluation in the application case. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.AppPrefix

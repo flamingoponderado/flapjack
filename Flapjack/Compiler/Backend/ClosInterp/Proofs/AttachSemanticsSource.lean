@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemantics
-import Flapjack.FiniteMap.EmptyExact
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemantics
+public import Flapjack.FiniteMap.EmptyExact
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Source-shaped interpreter attachment observation. -/
 namespace Flapjack.Compiler.Backend.ClosInterp

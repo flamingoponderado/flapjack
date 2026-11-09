@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.Relations
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Relations
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Value relation for the known-function semantic simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Relations

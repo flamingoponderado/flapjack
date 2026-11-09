@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApplyFull
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.ClosureGlobals
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApplyFull
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ClosureGlobals
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Full-application body induction for known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.ApplyFull

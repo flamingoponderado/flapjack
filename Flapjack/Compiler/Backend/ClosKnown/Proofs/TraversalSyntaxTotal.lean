@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalSyntax
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SyntaxOracle
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalSyntax
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SyntaxOracle
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Assembling optimizer annotation preservation over the complete traversal. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.TraversalSyntax

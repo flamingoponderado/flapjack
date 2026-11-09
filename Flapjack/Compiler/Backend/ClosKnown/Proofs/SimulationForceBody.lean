@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationForce
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.Simulation
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationForce
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Simulation
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Forced-body induction for known-function optimization. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Force

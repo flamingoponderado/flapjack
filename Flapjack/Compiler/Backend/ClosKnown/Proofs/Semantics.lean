@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationTotal
-import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsRelated
-import Flapjack.FiniteMap.EmptyExact
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationTotal
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsRelated
+public import Flapjack.FiniteMap.EmptyExact
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Observational correctness of known-function optimization. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Semantics

@@ -1,8 +1,16 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxApp
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxLetrec
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxIf
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxLet
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxOpTotal
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxApp
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxLetrec
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxIf
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxLet
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxOpTotal
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Complete known-function approximation preservation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.CorrectApprox

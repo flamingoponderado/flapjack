@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.ApplicationRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.ApplicationRelation
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Control-flow simulation for the proof-side evaluator. The evaluator and
 state carriers remain pending HOL correspondence review. -/

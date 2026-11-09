@@ -1,12 +1,20 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationDecode
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateRelation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleMonotonic
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracle
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracleDisjoint
-import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownSubspt
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.Simulation
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationDecode
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleMonotonic
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracle
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracleDisjoint
+public import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownSubspt
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Simulation
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Installation prerequisites for the known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Install

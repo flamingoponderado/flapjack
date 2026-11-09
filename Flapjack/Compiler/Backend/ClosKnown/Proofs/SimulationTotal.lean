@@ -1,12 +1,20 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApp
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApplyFullBody
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationIf
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLetrec
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationRaise
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationHandle
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationTick
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationCall
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOp
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApp
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApplyFullBody
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationIf
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLetrec
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationRaise
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationHandle
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationTick
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationCall
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOp
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Mutual evaluator induction for the known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Total

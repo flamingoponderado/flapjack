@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxTotal
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.FreeVars
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxTotal
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.FreeVars
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Relations used in the known-function semantic simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Relations

@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallEvaluate
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallEvaluate
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! No-install preservation steps for closure evaluator control flow. The
 evaluator and its carriers await HOL correspondence review. -/

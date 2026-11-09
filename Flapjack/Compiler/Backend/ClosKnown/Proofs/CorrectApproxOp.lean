@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxCons
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownOpCorrect
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxCons
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownOpCorrect
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Ordinary primitive-operation cases of approximation correctness. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.CorrectApprox.Op

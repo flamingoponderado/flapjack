@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxCall
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxCall
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Thunk-forcing case of known-function approximation correctness. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.CorrectApprox.Force

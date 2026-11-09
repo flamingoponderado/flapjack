@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateRelation
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.PreserveSafetyTotal
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.PreserveSafetyTotal
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Oracle invariants of known-function optimization. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Relations.StateRelation.Oracle

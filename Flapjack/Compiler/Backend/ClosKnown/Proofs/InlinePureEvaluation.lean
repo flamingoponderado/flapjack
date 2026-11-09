@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.PreservePure
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppPrefix
-import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.PreservePure
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppPrefix
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Pure function-expression elimination in the inlining case. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.InlinePureEvaluation

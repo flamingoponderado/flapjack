@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.InstallRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.InstallRelation
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
 
 /-! Closure application simulation for the proof-side evaluator. The evaluator
 and state carriers remain pending HOL correspondence review. -/
@@ -143,6 +150,7 @@ theorem evaluateApp_simulation_step {C F : Type} (location : Option Nat) (functi
               congr 1
               omega
             rw [show (first :: rest).length - remaining.length = cost from rfl, clocks]
+            rfl
           rw [evaluateApp_full_step location function first rest source body bodyEnv remaining found (by simpa [cost] using enough)] at run
           cases bodyRun : ClosSem.evaluate [body] bodyEnv (ClosSem.decClock cost source) with
           | mk bodyResult sourceMid =>

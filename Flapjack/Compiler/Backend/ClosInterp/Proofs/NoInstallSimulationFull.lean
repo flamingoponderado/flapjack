@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallAppRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallAppRelation
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Mutual equal-clock no-install simulation for the proof-side evaluator.
 The evaluator and state carriers await HOL correspondence review. -/

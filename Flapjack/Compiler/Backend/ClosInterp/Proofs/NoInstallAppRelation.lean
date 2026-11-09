@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallSimulation
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallSimulation
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Equal-clock closure application simulation for the proof-side evaluator.
 The evaluator and state carriers await HOL correspondence review. -/

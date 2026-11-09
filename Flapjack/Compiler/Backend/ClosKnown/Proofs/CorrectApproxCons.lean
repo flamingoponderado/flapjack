@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApprox
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.PreserveSafetyTotal
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApprox
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.PreserveSafetyTotal
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Sequential case of known-function approximation correctness. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.CorrectApprox.Cons

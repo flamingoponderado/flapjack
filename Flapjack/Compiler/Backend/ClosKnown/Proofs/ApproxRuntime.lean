@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleGlobals
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleGlobals
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Global approximation across runtime closure execution. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.ApproxRuntime

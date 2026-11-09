@@ -1,7 +1,15 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.ValueRelation
-import Flapjack.Compiler.Backend.ClosKnown.Compile
-import Flapjack.Compiler.Backend.ClosMti.Proofs.StateRelation
-import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.ClosKnown.Compile
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! State relation for known-function optimization. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Relations.StateRelation

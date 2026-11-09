@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationForceBody
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLet
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationForceBody
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLet
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Force-body induction after evaluation of operation arguments. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Force

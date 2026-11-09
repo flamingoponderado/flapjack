@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallInit
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallInit
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Primitive simulation for the no-install interpreter-insertion relation.
 The proof-side evaluator and carriers await HOL correspondence review. -/

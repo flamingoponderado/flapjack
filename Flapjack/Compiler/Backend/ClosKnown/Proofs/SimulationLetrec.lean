@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationFn
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxLetrec
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationFn
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxLetrec
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Infrastructure for the recursive-closure case of optimizer simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Letrec

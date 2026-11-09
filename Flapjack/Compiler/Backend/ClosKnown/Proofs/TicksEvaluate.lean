@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.AppExact
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.AppExact
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Evaluation of the tick sequence emitted by closure inlining. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.TicksEvaluate

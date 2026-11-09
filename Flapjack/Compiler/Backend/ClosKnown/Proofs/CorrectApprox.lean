@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleGlobals
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleGlobals
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
+
+-- Proofs below unfold private helpers of these modules.
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+@[expose] public section
+
 
 /-! Base cases of the known-function approximation theorem. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.CorrectApprox
