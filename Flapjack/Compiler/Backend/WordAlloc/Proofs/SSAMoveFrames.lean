@@ -116,6 +116,38 @@ theorem fakeMovesFrame {width : Nat} [NeZero width] (prio : Option (Unit ⊕ Uni
           fun hk => ssaMapOKExtend na' r' y ⟨hokR hk, hphy⟩⟩
       · exact ⟨ha', hle, hokL, hokR⟩
 
+/-- Domain of `sptInsert y v l'` when `domain l'` is `domain ssa ∪ (ys ∩ R)`: the
+`y :: ys` version. Shared by the two inserting branches of `fakeMovesFrame2`. -/
+private theorem sptDomain_insert_cons_iff (y v : Nat) (ys : List Nat)
+    (l' ssa : Spt Nat) (R : Nat → Prop)
+    (hmem : ∀ x, sptDomain l' x ↔ sptDomain ssa x ∨ (x ∈ ys ∧ R x))
+    (hy : R y) (x : Nat) :
+    sptDomain (sptInsert y v l') x ↔ sptDomain ssa x ∨ (x ∈ y :: ys ∧ R x) := by
+  simp only [sptDomainInsert, hmem]
+  constructor
+  · rintro (rfl | h1 | ⟨hm, h2⟩)
+    · exact Or.inr ⟨List.mem_cons_self .., hy⟩
+    · exact Or.inl h1
+    · exact Or.inr ⟨List.mem_cons_of_mem _ hm, h2⟩
+  · rintro (h1 | ⟨hm, h2⟩)
+    · exact Or.inr (Or.inl h1)
+    · rcases List.mem_cons.mp hm with rfl | hm
+      · exact Or.inl rfl
+      · exact Or.inr (Or.inr ⟨hm, h2⟩)
+
+/-- Lookup agreement off `inter` survives inserting the same value on both sides
+(the `y :: ys` step of `fakeMovesFrame2`'s third conjunct). -/
+private theorem fakeMovesAgreeInsert (y v : Nat) (ys : List Nat) (l' r' ssaL ssaR : Spt Nat)
+    (agree : ∀ x, x ∈ ys ∧ ¬ sptDomain (sptInter ssaL ssaR) x →
+      sptLookup x l' = sptLookup x r') :
+    ∀ x, x ∈ y :: ys ∧ ¬ sptDomain (sptInter ssaL ssaR) x →
+      sptLookup x (sptInsert y v l') = sptLookup x (sptInsert y v r') := by
+  rintro x ⟨hm, hni⟩
+  by_cases hxy : x = y
+  · subst hxy; simp [lookup_ins]
+  · simp only [lookup_ins, hxy, if_false]
+    exact agree x ⟨(List.mem_cons.mp hm).resolve_left hxy, hni⟩
+
 /-- HOL `fake_moves_frame2` (`word_allocProofScript.sml:4948-4966`). -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "fake_moves_frame2"
   (words_as_type_indexed_bitvec)]
@@ -145,10 +177,6 @@ theorem fakeMovesFrame2 {width : Nat} [NeZero width] (prio : Option (Unit ⊕ Un
       have memR : ∀ x, sptDomain r' x ↔
           sptDomain ssaR x ∨ (x ∈ ys ∧ (sptDomain ssaR x ∨ sptDomain ssaL x)) := by
         intro x; rw [domR]
-      have domIns : ∀ (t : Spt Nat) (k v : Nat) (x : Nat),
-          sptDomain (sptInsert k v t) x ↔ x = k ∨ sptDomain t x := by
-        intro t k v x
-        exact sptMem_sptInsert x k v t
       simp only [fakeMoves, h]
       split <;> dsimp only
       · rename_i ly hnone hsome
@@ -158,33 +186,11 @@ theorem fakeMovesFrame2 {width : Nat} [NeZero width] (prio : Option (Unit ⊕ Un
           · exact Or.inl h1
           · exact h1
         refine ⟨?_, ?_, ?_⟩
-        · funext x; apply propext; rw [domIns, memL]
-          constructor
-          · rintro (rfl | h1 | ⟨hm, h2⟩)
-            · exact Or.inr ⟨List.mem_cons_self .., hyRL⟩
-            · exact Or.inl h1
-            · exact Or.inr ⟨List.mem_cons_of_mem _ hm, h2⟩
-          · rintro (h1 | ⟨hm, h2⟩)
-            · exact Or.inr (Or.inl h1)
-            · rcases List.mem_cons.mp hm with rfl | hm
-              · exact Or.inl rfl
-              · exact Or.inr (Or.inr ⟨hm, h2⟩)
-        · funext x; apply propext; rw [domIns, memR]
-          constructor
-          · rintro (rfl | h1 | ⟨hm, h2⟩)
-            · exact Or.inr ⟨List.mem_cons_self .., hyRL⟩
-            · exact Or.inl h1
-            · exact Or.inr ⟨List.mem_cons_of_mem _ hm, h2⟩
-          · rintro (h1 | ⟨hm, h2⟩)
-            · exact Or.inr (Or.inl h1)
-            · rcases List.mem_cons.mp hm with rfl | hm
-              · exact Or.inl rfl
-              · exact Or.inr (Or.inr ⟨hm, h2⟩)
-        · rintro x ⟨hm, hni⟩
-          by_cases hxy : x = y
-          · subst hxy; simp [lookup_ins]
-          · simp only [lookup_ins, hxy, if_false]
-            exact agree x ⟨(List.mem_cons.mp hm).resolve_left hxy, hni⟩
+        · funext x
+          exact propext (sptDomain_insert_cons_iff y na' ys l' ssaL _ memL hyRL x)
+        · funext x
+          exact propext (sptDomain_insert_cons_iff y na' ys r' ssaR _ memR hyRL x)
+        · exact fakeMovesAgreeInsert y na' ys l' r' ssaL ssaR agree
       · rename_i lx hsome hnone
         have hyL : sptDomain l' y := by rw [dom_iff]; exact ⟨lx, hsome⟩
         have hyRL : sptDomain ssaR y ∨ sptDomain ssaL y := by
@@ -192,33 +198,11 @@ theorem fakeMovesFrame2 {width : Nat} [NeZero width] (prio : Option (Unit ⊕ Un
           · exact Or.inr h1
           · exact h1
         refine ⟨?_, ?_, ?_⟩
-        · funext x; apply propext; rw [domIns, memL]
-          constructor
-          · rintro (rfl | h1 | ⟨hm, h2⟩)
-            · exact Or.inr ⟨List.mem_cons_self .., hyRL⟩
-            · exact Or.inl h1
-            · exact Or.inr ⟨List.mem_cons_of_mem _ hm, h2⟩
-          · rintro (h1 | ⟨hm, h2⟩)
-            · exact Or.inr (Or.inl h1)
-            · rcases List.mem_cons.mp hm with rfl | hm
-              · exact Or.inl rfl
-              · exact Or.inr (Or.inr ⟨hm, h2⟩)
-        · funext x; apply propext; rw [domIns, memR]
-          constructor
-          · rintro (rfl | h1 | ⟨hm, h2⟩)
-            · exact Or.inr ⟨List.mem_cons_self .., hyRL⟩
-            · exact Or.inl h1
-            · exact Or.inr ⟨List.mem_cons_of_mem _ hm, h2⟩
-          · rintro (h1 | ⟨hm, h2⟩)
-            · exact Or.inr (Or.inl h1)
-            · rcases List.mem_cons.mp hm with rfl | hm
-              · exact Or.inl rfl
-              · exact Or.inr (Or.inr ⟨hm, h2⟩)
-        · rintro x ⟨hm, hni⟩
-          by_cases hxy : x = y
-          · subst hxy; simp [lookup_ins]
-          · simp only [lookup_ins, hxy, if_false]
-            exact agree x ⟨(List.mem_cons.mp hm).resolve_left hxy, hni⟩
+        · funext x
+          exact propext (sptDomain_insert_cons_iff y na' ys l' ssaL _ memL hyRL x)
+        · funext x
+          exact propext (sptDomain_insert_cons_iff y na' ys r' ssaR _ memR hyRL x)
+        · exact fakeMovesAgreeInsert y na' ys l' r' ssaL ssaR agree
       · rename_i hcase1 hcase2
         -- both lookups present or both absent at `y`
         have both : (sptDomain l' y ↔ sptDomain r' y) := by
