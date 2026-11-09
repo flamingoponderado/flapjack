@@ -130953,5 +130953,13 @@
   "lean_name": "pairLet_eq",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared local pair_lam_lem with typed replay pair_lam_lem_typed: independent type variables, quantifier order, paired let as Lean destructuring, iff and conjunction match. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "EL_REP_NONE_SOME_trivia",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ListCases.lean",
+  "lean_name": "el_replicateNone_some",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared local EL_REP_NONE_SOME_trivia with typed replay el_rep_none_some_typed: binders n, xs, i, y; α option list without Nonempty α; HOL EL is holEl with unspecified out-of-range behavior, guarded as in HOL. Independently source-reviewed."
 }
 ]

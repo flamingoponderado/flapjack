@@ -702,6 +702,7 @@ import Flapjack.Compiler.Backend.FlatElim.Proofs.GlobalLists
 import Flapjack.Compiler.Backend.FlatElim.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatElim.Proofs.HasEval
 import Flapjack.Compiler.Backend.FlatElim.Proofs.PairCases
+import Flapjack.Compiler.Backend.FlatElim.Proofs.ListCases
 import Flapjack.Compiler.Backend.FlatElim.Proofs.PatternRelation
 import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyMemory
 import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyFlat

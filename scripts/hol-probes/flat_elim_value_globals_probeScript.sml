@@ -126,3 +126,12 @@ val pair_lam_lem_replay = prove (
   ``!f v z. (let (x,y) = z in f x y) = v <=> ?x1 x2. z = (x1,x2) /\ f x1 x2 = v``,
   srw_tac[][]);
 val _ = show_thm "pair_lam_lem_typed=" pair_lam_lem_replay;
+
+(* Replay the local list-index theorem used by the elimination proof. *)
+val el_rep_none_some_replay = prove (
+  ``n < LENGTH xs + i ==>
+    (EL n (xs ++ REPLICATE i NONE) = SOME y <=>
+      n < LENGTH xs /\ EL n xs = SOME y)``,
+  rw [EL_APPEND_EQN] >> simp [EL_REPLICATE]);
+val _ = show_thm "el_rep_none_some_typed=" el_rep_none_some_replay;
+val _ = show_thm "flat_do_app_cases_typed=" flat_elimProofTheory.do_app_cases;
