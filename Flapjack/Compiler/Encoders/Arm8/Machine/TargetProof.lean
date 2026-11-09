@@ -82,7 +82,7 @@ theorem arm8Loc_len_pos (register : Nat) (a1 a2 : BitVec 64)
   rw [hz] at h1 h2
   by_cases hf1 : fitsSigned 20 a1 = true <;>
     by_cases hf2 : fitsSigned 20 a2 = true <;>
-      simp [arm8Ast_loc, hf1, hf2] <;> try omega
+      simp [arm8Ast_loc, hf1, hf2]; try omega
   have hf1n : ¬ (-(2 ^ 19 : Int) ≤ a1.toInt ∧ a1.toInt ≤ 2 ^ 19 - 1) := by
     intro hr
     have := (fitsSigned20_toInt a1).2 hr
@@ -104,7 +104,7 @@ theorem arm8Loc_len_neg (register : Nat) (a1 a2 : BitVec 64)
   rw [hz] at h1 h2
   by_cases hf1 : fitsSigned 20 a1 = true <;>
     by_cases hf2 : fitsSigned 20 a2 = true <;>
-      simp [arm8Ast_loc, hf1, hf2] <;> try omega
+      simp [arm8Ast_loc, hf1, hf2]; try omega
   have hf1n : ¬ (-(2 ^ 19 : Int) ≤ a1.toInt ∧ a1.toInt ≤ 2 ^ 19 - 1) := by
     intro hr
     have := (fitsSigned20_toInt a1).2 hr
