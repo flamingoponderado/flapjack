@@ -5,6 +5,14 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants
 namespace Flapjack.Compiler.Backend.ClosAnnotate
 open ClosLang ClosProps
 
+/-- Annotating a singleton yields the singleton containing its head. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "HD_annotate_SING"]
+theorem hdAnnotate_sing (arity : Nat) (expression : Exp) :
+    [@Flapjack.holHd Exp ⟨.var .none 0⟩ (annotateSource arity [expression])] =
+      annotateSource arity [expression] := by
+  rw [(annotateSource_sing_eq arity expression []).1]
+  rfl
+
 /-- Annotation preserves existing function-code locations in every program body. -/
 @[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "every_Fn_SOME_ann"]
 theorem everyFnSome_ann {α : Type} (program : List (α × Nat × Exp)) :

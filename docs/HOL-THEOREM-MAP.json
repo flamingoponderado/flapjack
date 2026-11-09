@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "HD_annotate_SING",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotationInvariants/Original.lean", "lean_name": "hdAnnotate_sing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HD_annotate_SING_typed: the natural arity and closure expression binders, singleton original annotation on both sides, HOL head and equality orientation agree. The singleton property follows from the source-to-executable annotation theorem."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "every_Fn_SOME_ann",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotationInvariants/Original.lean", "lean_name": "everyFnSome_ann",
   "statement_status": "reviewed_exact",
