@@ -388,4 +388,114 @@ theorem bitfieldN_toNat (value : BitVec 64) :
     (BitVec.ofNat 6 value.toNat).toNat = value.toNat % 64 := by
   simp
 
+/-- `decodeBitMasks` succeeds with the `toNat` masks whenever `DecodeBitMasks`
+does. -/
+theorem decodeBitMasks_some (immN : BitVec 1) (imms immr : BitVec 6) (b : Bool)
+    (wmask tmask : BitVec 64)
+    (h : DecodeBitMasks (TM := 64) (immN, (imms, (immr, b))) = some (wmask, tmask)) :
+    decodeBitMasks immN.toNat imms.toNat immr.toNat b =
+      some (wmask.toNat, tmask.toNat) := by
+  rw [decodeBitMasks_eq, h]
+  rfl
+
+/-- `decodeBitMasks` fails whenever `DecodeBitMasks` does. -/
+theorem decodeBitMasks_none (immN : BitVec 1) (imms immr : BitVec 6) (b : Bool)
+    (h : DecodeBitMasks (TM := 64) (immN, (imms, (immr, b))) = none) :
+    decodeBitMasks immN.toNat imms.toNat immr.toNat b = none := by
+  rw [decodeBitMasks_eq, h]
+  rfl
+
+/-- A six-bit truncation on the `Nat` side moves onto the `BitVec 6` carrier. -/
+theorem ofNat6_mod (v : Nat) : BitVec.ofNat 6 (v % 64) = BitVec.ofNat 6 v := by
+  apply BitVec.eq_of_toNat_eq
+  simp
+
+/-- The `BitVec 6` carrier roundtrips through its `toNat`. -/
+theorem ofNat_toNat_six (x : BitVec 6) : BitVec.ofNat 6 x.toNat = x := by
+  apply BitVec.eq_of_toNat_eq
+  simp
+
+/-- `.inst (.arith (.shift ... (.imm ...)))` lowers to the same shift form, in
+all four shift kinds. -/
+theorem arm8Enc_inst_shiftImm_eq (sh : Shift) (destination source : Nat)
+    (value : BitVec 64) :
+    Arm8.arm8Enc (.inst (.arith (.shift sh destination source (.imm value)))) =
+      arm8Enc (.inst (.arith (.shift sh destination source (.imm value)))) := by
+  simp only [Arm8.arm8Enc, Arm8.arm8Ast, Arm8.arm8Inst, arm8Enc, arm8Ast]
+  cases sh
+  case lsl =>
+    rw [← bitfieldLslS_toNat value, ← bitfieldLslR_toNat value]
+    cases hd : DecodeBitMasks (TM := 64) ((1 : BitVec 1),
+        ((63 : BitVec 6) - BitVec.ofNat 6 value.toNat,
+         (-(BitVec.ofNat 6 value.toNat), false))) with
+    | none =>
+      have hd' : decodeBitMasks 1 ((64 - value.toNat % 64 + 63) % 64)
+          ((64 - value.toNat % 64) % 64) false = none := by
+        rw [show (64 - value.toNat % 64 + 63) % 64 = 63 - value.toNat % 64 from by omega]
+        have h := decodeBitMasks_none 1 ((63 : BitVec 6) - BitVec.ofNat 6 value.toNat)
+          (-(BitVec.ofNat 6 value.toNat)) false hd
+        rwa [bitfieldLslS_toNat value, bitfieldLslR_toNat value] at h
+      simp [hd', encodeBytes_noOp, arm8EncodeFail]
+    | some p =>
+      obtain ⟨wmask, tmask⟩ := p
+      have hd' : decodeBitMasks 1 ((63 : BitVec 6) - BitVec.ofNat 6 value.toNat).toNat
+          ((-(BitVec.ofNat 6 value.toNat)).toNat) false =
+          some (wmask.toNat, tmask.toNat) :=
+        decodeBitMasks_some 1 ((63 : BitVec 6) - BitVec.ofNat 6 value.toNat)
+          (-(BitVec.ofNat 6 value.toNat)) false wmask tmask hd
+      simp only [hd', List.flatMap_cons, List.flatMap_nil, List.append_nil]
+      rw [encodeBytes_bitfieldMove true false ((-(BitVec.ofNat 6 value.toNat)).toNat)
+        (((63 : BitVec 6) - BitVec.ofNat 6 value.toNat)).toNat source destination 2 wmask tmask
+        rfl (by rw [bitfieldLslR_toNat]; omega) (by rw [bitfieldLslS_toNat]; omega)
+        (by rw [ofNat_toNat_six, ofNat_toNat_six]; exact hd)]
+      rfl
+  case ror =>
+    simp [encodeBytes_extractRegister, ofNat6_mod]
+  case lsr =>
+    cases hd : DecodeBitMasks (TM := 64) ((1 : BitVec 1),
+        ((63 : BitVec 6), (BitVec.ofNat 6 value.toNat, false))) with
+    | none =>
+      have hd' : decodeBitMasks 1 63 (BitVec.ofNat 6 value.toNat).toNat false = none :=
+        decodeBitMasks_none 1 63 (BitVec.ofNat 6 value.toNat) false hd
+      rw [bitfieldN_toNat] at hd'
+      simp [hd', encodeBytes_noOp, arm8EncodeFail]
+    | some p =>
+      obtain ⟨wmask, tmask⟩ := p
+      have hd' : decodeBitMasks 1 63 (BitVec.ofNat 6 value.toNat).toNat false =
+          some (wmask.toNat, tmask.toNat) :=
+        decodeBitMasks_some 1 63 (BitVec.ofNat 6 value.toNat) false wmask tmask hd
+      rw [bitfieldN_toNat] at hd'
+      simp only [hd', show (Shift.lsr == Shift.asr) = false from by decide,
+        List.flatMap_cons, List.flatMap_nil, List.append_nil]
+      by_cases hlt : value.toNat < 64
+      · rw [encodeBytes_bitfieldMove true false value.toNat 63 source destination 2 wmask tmask
+          rfl hlt (by omega) hd]
+        rfl
+      · rw [encodeBytes_bitfieldMove_bad true false value.toNat 63 source destination wmask tmask
+          (by omega)]
+        rfl
+  case asr =>
+    cases hd : DecodeBitMasks (TM := 64) ((1 : BitVec 1),
+        ((63 : BitVec 6), (BitVec.ofNat 6 value.toNat, false))) with
+    | none =>
+      have hd' : decodeBitMasks 1 63 (BitVec.ofNat 6 value.toNat).toNat false = none :=
+        decodeBitMasks_none 1 63 (BitVec.ofNat 6 value.toNat) false hd
+      rw [bitfieldN_toNat] at hd'
+      simp [hd', encodeBytes_noOp, arm8EncodeFail]
+    | some p =>
+      obtain ⟨wmask, tmask⟩ := p
+      have hd' : decodeBitMasks 1 63 (BitVec.ofNat 6 value.toNat).toNat false =
+          some (wmask.toNat, tmask.toNat) :=
+        decodeBitMasks_some 1 63 (BitVec.ofNat 6 value.toNat) false wmask tmask hd
+      rw [bitfieldN_toNat] at hd'
+      simp only [hd', show (Shift.asr == Shift.asr) = true from by decide,
+        List.flatMap_cons, List.flatMap_nil, List.append_nil]
+      by_cases hlt : value.toNat < 64
+      · rw [encodeBytes_bitfieldMove true true value.toNat 63 source destination 0 wmask tmask
+          rfl hlt (by omega) hd]
+        rfl
+      · rw [encodeBytes_bitfieldMove_bad true true value.toNat 63 source destination wmask tmask
+          (by omega)]
+        rfl
+
 end Flapjack.Compiler.Encoders.Arm8.L3
