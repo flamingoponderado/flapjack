@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Encoders.Arm8.Machine.SkipCase
 import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofControl
 import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofSimple2
+import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
 
 /-!
 # The ARMv8 control-flow cases of `encoder_correct`
@@ -280,12 +281,6 @@ theorem arm8Enc_jumpReg (r : Nat) : arm8Enc (.jumpReg r) = encodeBytes (.branchR
 theorem arm8StateOk_set (s : Arm8State) (hal : holAligned 2 s.pc = true)
     (hf : s.failed = false) : arm8StateOk s = true := by
   simp only [arm8StateOk, hal, hf, Bool.not_false, Bool.and_self]
-
-/-- A `Bool` that is not `true` is `false`. -/
-theorem boolOfNotTrue {b : Bool} (h : ¬(b = true)) : b = false := by
-  cases b with
-  | false => rfl
-  | true => exact absurd rfl h
 
 /-- The left operand of a `false` disjunction is `false`. -/
 theorem boolOfOrFalse {a b : Bool} (h : (a || b) = false) : a = false := by

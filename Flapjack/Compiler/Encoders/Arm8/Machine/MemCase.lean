@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Encoders.Arm8.Machine.MulCarryCase
+import Flapjack.Compiler.Encoders.Arm8.MemLemmas
 import Flapjack.Compiler.Encoders.MemBytes
 
 /-!
@@ -47,15 +48,6 @@ theorem readMemWord_be (a : BitVec 64) (n : Nat) (s : AsmState 64) :
       simp only [assertState_be]
       exact ih _ _
 
-/-- `readMemWord` preserves the register file. -/
-theorem readMemWord_regs (a : BitVec 64) (n : Nat) (s : AsmState 64) :
-    (readMemWord (resultWidth := 64) a n s).2.regs = s.regs := by
-  induction n generalizing a s with
-  | zero => rfl
-  | succ n ih =>
-      rw [readMemWord_succ]
-      simp only [assertState]
-      exact ih _ _
 
 /-- `writeMemWord` preserves the endianness flag. -/
 theorem writeMemWord_be (a : BitVec 64) (n : Nat) (w : BitVec 64) (s : AsmState 64) :
@@ -84,25 +76,11 @@ theorem readMemN_eight (s : Arm8State) (a : BitVec 64) : readMemN s 8 a = readBy
   rw [readBytes_eight]; rfl
 
 
-/-! ## The machine writes, byte by byte
+/-! ## The machine state
 
-`writeMemWord` writes byte `k` from `value >>> (8 * k)` at `a + k`; the machine's
-`writeMemN` writes the same bytes through an explicit chain of `if`s.  The
-lemmas below match the two up at each byte count the lowering uses. -/
-
-/-- The `k`-th byte of a little-endian write is the `k`-fold right shift. -/
-theorem ushr8_iter (v : BitVec 64) (k : Nat) :
-    v >>> (8 * k : Nat) = (fun x : BitVec 64 => x >>> (8 : Nat))^[k] v := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-      rw [Nat.mul_succ, BitVec.shiftRight_add, ih, Function.iterate_succ_apply']
-
-/-- The byte `k` of a value, in the shifted form `writeMemWord` produces. -/
-theorem byteShift (v : BitVec 64) (k : Nat) :
-    (v >>> (8 * k : Nat)).setWidth 8 =
-      ((fun x : BitVec 64 => x >>> (8 : Nat))^[k] v).setWidth 8 := by
-  rw [ushr8_iter]
+`memState m` is a closed state whose only content is the memory map `m`;
+`readMemN`/`writeMemN` never look at anything else.  The byte-level agreement
+with `writeMemWord` lives in `Arm8/MemLemmas.lean`. -/
 
 /-- A machine state whose only content is the memory: `readMemN` and `writeMemN`
 never look at anything else. -/
@@ -117,58 +95,11 @@ def memState (m : BitVec 64 → BitVec 8) : Arm8State where
   memDomain := fun _ => False
   failed := false
 
-/-- A one-byte source store is the machine's one-byte write. -/
-theorem writeMemWord_mem_one (s : AsmState 64) (m : BitVec 64 → BitVec 8) (a v x : BitVec 64)
-    (hm : s.mem x = m x) :
-    (writeMemWord (valueWidth := 64) a 1 v s).mem x = (writeMemN (memState m) 1 a v).mem x := by
-  simp only [writeMemWord, writeMemN, memState, updMem_mem, assertState_mem]
-  simp [hm]
+/-- The closed write is the memory-map write on the state's memory. -/
+theorem writeMemN_memState_eq (m : BitVec 64 → BitVec 8) (size : Nat) (a v x : BitVec 64) :
+    (writeMemN (memState m) size a v).mem x = writeMemBytes m size a v x := by
+  obtain _ | _ | _ | _ | _ | size := size <;> rfl
 
-/-- A two-byte source store is the machine's two-byte write. -/
-theorem writeMemWord_mem_two (s : AsmState 64) (m : BitVec 64 → BitVec 8) (a v x : BitVec 64)
-    (hbe : s.be = false) (hm : s.mem x = m x) :
-    (writeMemWord (valueWidth := 64) a 2 v s).mem x = (writeMemN (memState m) 2 a v).mem x := by
-  simp only [writeMemWord, writeMemN, memState, updMem_mem, assertState_mem]
-  simp only [hbe, Bool.false_eq_true, if_false]
-  simp [hm]
-
-/-- A four-byte source store is the machine's four-byte write. -/
-theorem writeMemWord_mem_four (s : AsmState 64) (m : BitVec 64 → BitVec 8) (a v x : BitVec 64)
-    (hbe : s.be = false) (hm : s.mem x = m x) :
-    (writeMemWord (valueWidth := 64) a 4 v s).mem x = (writeMemN (memState m) 4 a v).mem x := by
-  simp only [writeMemWord, writeMemN, memState, updMem_mem, assertState_mem]
-  simp only [hbe, Bool.false_eq_true, if_false]
-  rw [show a + 1 + 1 + 1 = a + 3 by bv_omega, show a + 1 + 1 = a + 2 by bv_omega]
-  rw [byteShift v 1, byteShift v 0]
-  simp [hm]
-
-/-- An eight-byte source store is the machine's eight-byte write. -/
-theorem writeMemWord_mem_eight (s : AsmState 64) (m : BitVec 64 → BitVec 8) (a v x : BitVec 64)
-    (hbe : s.be = false) (hm : s.mem x = m x) :
-    (writeMemWord (valueWidth := 64) a 8 v s).mem x = (writeMemN (memState m) 8 a v).mem x := by
-  simp only [writeMemWord, writeMemN, memState, updMem_mem, assertState_mem]
-  simp only [hbe, Bool.false_eq_true, if_false]
-  rw [show a + 1 + 1 + 1 + 1 + 1 + 1 + 1 = a + 7 by bv_omega,
-    show a + 1 + 1 + 1 + 1 + 1 + 1 = a + 6 by bv_omega,
-    show a + 1 + 1 + 1 + 1 + 1 = a + 5 by bv_omega,
-    show a + 1 + 1 + 1 + 1 = a + 4 by bv_omega,
-    show a + 1 + 1 + 1 = a + 3 by bv_omega,
-    show a + 1 + 1 = a + 2 by bv_omega]
-  rw [byteShift v 1, byteShift v 2, byteShift v 3, byteShift v 4, byteShift v 5,
-    byteShift v 6, byteShift v 0]
-  simp [hm]
-
-/-- The source store and the machine store agree at every byte count the
-lowering emits. -/
-theorem writeMemWord_memSize (s : AsmState 64) (m : BitVec 64 → BitVec 8) (size : Nat)
-    (hsize : size < 4) (a v x : BitVec 64) (hbe : s.be = false) (hm : s.mem x = m x) :
-    (writeMemWord (valueWidth := 64) a (2 ^ size) v s).mem x =
-      (writeMemN (memState m) (2 ^ size) a v).mem x := by
-  interval_cases size
-  · exact writeMemWord_mem_one s m a v x hm
-  · exact writeMemWord_mem_two s m a v x hbe hm
-  · exact writeMemWord_mem_four s m a v x hbe hm
-  · exact writeMemWord_mem_eight s m a v x hbe hm
 
 /-! ## The machine reads -/
 
@@ -499,21 +430,6 @@ theorem stepSafe_mem (s : Arm8State) (d : BitVec 64 → Prop) (size : Nat) (memo
     cases hi
     exact htouch x hx
 
-/-- A load leaves the source state's memory domain bytes readable: they are in
-the domain of the state it reads. -/
-theorem memLoadDomain (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64)
-    (size : Nat) (pc : BitVec 64)
-    (hspec : memOp (width := 64) op = memLoad (width := 64) (2 ^ size))
-    (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
-    (hbe : s1.be = false) (hok : ¬ s2.failed) :
-    ∀ k, k < 2 ^ size → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) := by
-  have hfail : s2.failed = false := boolOfNotTrue hok
-  rw [← hupd] at hfail
-  simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
-  obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 hfail
-  exact readMemWord_domain (s1.regs base + off) (2 ^ size) s1 hbe hf
-
 
 /-- The PC does not affect the machine's memory reads. -/
 theorem readMemN_pcUpdate (s : Arm8State) (pc : BitVec 64) (n : Nat) (a : BitVec 64) :
@@ -669,16 +585,6 @@ theorem case_memLoadOne (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2 
     omega
 
 
-/-- `writeMemWord` preserves the register file. -/
-theorem writeMemWord_regs (a : BitVec 64) (n : Nat) (v : BitVec 64) (s : AsmState 64) :
-    (writeMemWord (valueWidth := 64) a n v s).regs = s.regs := by
-  induction n generalizing a v s with
-  | zero => rfl
-  | succ n ih =>
-      rw [writeMemWord_succ]
-      simp only [assertState, updMem]
-      exact ih _ _ _
-
 /-- A store lowered to a single memory instruction. -/
 theorem case_memStoreOne (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64)
     (ms : Arm8State) (size : Nat)
@@ -778,7 +684,7 @@ theorem case_memStoreOne (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2
       simp only [arm8Target_getByte, readReg_pcUpdate]
       rw [hs2memWord x, haddr, hvalr]
       rw [writeMemWord_memSize s1 ms.mem size hsize (s1.regs base + off) (s1.regs r) x st.be
-        (st.mem x (hs2dom ▸ hx)).symm]
+        (st.mem x (hs2dom ▸ hx)).symm, ← writeMemN_memState_eq]
       exact writeMemN_mem_of_mem (s := { ms with pc := ms.pc + 4 }) (t := memState ms.mem)
         rfl (2 ^ size) (s1.regs base + off) (s1.regs r) x
     · intro i hi
@@ -958,7 +864,6 @@ theorem encodeBytes_loadStoreImmediate_flag (size : Nat) (memop : MemOp) (u : Bo
       wordBytes ((fields [(2, size), (6, 56), (2, loadStoreOpc memop), (1, 0),
         (9, c.toNat % 512), (1, 0), (1, 0), (5, rn), (5, rt)]).setWidth 64) from by
       simp only [encodeBytes, encodeInsn_loadStoreImmediateSigned size false memop c rn rt hfits]]
-
 
 
 /-- A state whose bytes hold an `addSubImmediate` is step-safe for it. -/
@@ -1338,7 +1243,7 @@ theorem case_memStoreTwo (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2
         exact st.reg r hrdom
       rw [haddr2, hval2]
       rw [writeMemWord_memSize s1 ms.mem size hsize (s1.regs base + off) (s1.regs r) x st.be
-        (st.mem x (hs2dom ▸ hx)).symm]
+        (st.mem x (hs2dom ▸ hx)).symm, ← writeMemN_memState_eq]
       exact writeMemN_mem_of_mem (s := { t1 with pc := t1.pc + 4 }) (t := memState ms.mem)
         rfl (2 ^ size) (s1.regs base + off) (s1.regs r) x
     · intro i hi

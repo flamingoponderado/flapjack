@@ -1,7 +1,7 @@
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.LogicalShiftedRegister
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Overflow
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.AddSubImmediate
-import Flapjack.Compiler.Encoders.Arm8.Machine.JumpCmpCase
+import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.BranchConditional
 
 set_option maxHeartbeats 4000000
