@@ -194,3 +194,5 @@ val _ = if null (hyp op_eval) then () else raise Fail "hypotheses: op_eval";
 val _ = (print "op_eval_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl op_eval); print "\n");
 val _ = if null (hyp op_id) then () else raise Fail "hypotheses: op_id";
 val _ = (print "op_id_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl op_id); print "\n");
+val _ = if null (hyp op_shifts) then () else raise Fail "hypotheses: op_shifts";
+val _ = (print "op_shifts_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl op_shifts); print "\n");

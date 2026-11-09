@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatToClos.Op
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
 import Flapjack.SemanticPrimitivesProps.ResultRelation
 import Flapjack.EvaluateHOL
 import Mathlib.Data.List.Forall2
@@ -87,5 +88,61 @@ theorem opId {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
               cases rest with
               | cons z zs => simp at wsLen
               | nil => simpa using related
+
+/-- The original word-shift operator case of value-level correctness. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "op_shifts"
+  (fmap_as_finite_support := [refs, code])]
+theorem opShifts {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
+    (vs : List FlatSem.Value) (sourceNext : FlatSem.State C F)
+    (result : Result FlatSem.Value FlatSem.Value) (targetNext : ClosSem.State C F)
+    (xs : List ClosLang.Exp) (db : List ClosSem.Value) (target : ClosSem.State C F)
+    (ws : List ClosSem.Value) (trace : BackendCommon.Tra) :
+    (∃ width shift amount, op = .src (.shift width shift amount)) →
+    FlatSem.doApp source op vs = some (sourceNext, result) ∧
+      StateRel source targetNext ∧ ClosSem.evaluate xs db target = (.val ws, targetNext) ∧
+      List.Forall₂ ValueRel vs ws.reverse ∧ xs.length = vs.length ∧
+      op ≠ .src .opapp ∧ op ≠ .src (.thunkOp .forceThunk) →
+    ∃ targetResult targetLast,
+      ClosSem.evaluate [compileOp trace op xs] db target = (targetResult, targetLast) ∧
+      StateRel sourceNext targetLast ∧
+      SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel
+        (Flapjack.EvaluateHOL.listResult result) targetResult := by
+  intro ⟨width, shift, amount, h⟩ premises
+  subst op
+  obtain ⟨applied, states, evaluated, related, length, _, _⟩ := premises
+  cases vs with
+  | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric] at applied
+  | cons v vs =>
+    cases vs with
+    | cons u rest => simp [FlatSem.doApp, FlatSem.doAppNumeric] at applied
+    | nil =>
+      cases v with
+      | litv lit =>
+        simp [FlatSem.doApp, FlatSem.doAppNumeric] at applied
+        have wsLen : ws.length = 1 := by simpa using related.length_eq.symm
+        cases ws with
+        | nil => simp at wsLen
+        | cons w rest =>
+          cases rest with
+          | cons z zs => simp at wsLen
+          | nil =>
+            simp only [List.reverse_singleton] at related
+            cases related with
+            | cons rel tail =>
+              cases width <;> cases lit <;>
+                simp [SemanticPrimitivesProps.doShift] at applied
+              all_goals rcases applied with ⟨rfl, rfl⟩
+              all_goals cases rel
+              all_goals simp only [compileOp]
+              all_goals rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+              all_goals simp [ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doWordApp,
+                ClosSem.doWordAppIntegral, ClosSem.intToByte_toNat,
+                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+              all_goals refine ⟨states, ?_⟩
+              all_goals first
+                | exact .word8 _
+                | exact .word64 _
+      | conv _ _ | closure _ _ _ | recclosure _ _ _ | loc _ _ | vectorv _ =>
+        simp [FlatSem.doApp, FlatSem.doAppNumeric] at applied
 
 end Flapjack.Compiler.Backend.FlatToClos

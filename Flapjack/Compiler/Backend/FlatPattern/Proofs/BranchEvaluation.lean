@@ -7,19 +7,15 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-/-- Every name in a list is bounded by the maximum decoded name. -/
-theorem decName_le_maxDecName (names : List VarN) (name : VarN) (member : name ∈ names) :
-    decNameToNum name ≤ maxDecName names := by
+/-- The maximum decoded name is below a bound exactly when the bound is
+positive and every decoded name is below it. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "max_dec_name_LESS_EVERY"]
+theorem maxDecName_less_every (names : List VarN) (bound : Nat) :
+    maxDecName names < bound ↔ 0 < bound ∧ ∀ name ∈ names, decNameToNum name < bound := by
   induction names with
-  | nil => simp at member
+  | nil => simp [maxDecName]
   | cons first names ih =>
-    rcases List.mem_cons.mp member with same | later
-    · subst first
-      simp only [maxDecName]
-      omega
-    · have h := ih later
-      simp only [maxDecName]
-      omega
+    simp [maxDecName, ih, and_left_comm]
 
 /-- A singleton generated variable supplies the binding simulation's input
 premise whenever the environment contains the generated name. -/
@@ -86,8 +82,7 @@ theorem evaluate_compilePatRhs {C F A : Type} (env3 : FlatSem.Environment A)
     subst item
     constructor
     · intro name inPattern
-      have h := decName_le_maxDecName (FlatLang.patBindings pattern) name inPattern
-      omega
+      exact ((maxDecName_less_every (FlatLang.patBindings pattern) (n - 1)).mp patBound).2 name inPattern
     · simp only
       omega
   have sim := bindingSimulation_all trace (n + 1) todo body (n - 1) state [value] [] bindings env final result env2.v

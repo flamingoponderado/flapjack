@@ -131195,5 +131195,26 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared op_id_typed with the original op_goal: the curried Id equation, seven grouped premises, shared compiler and FFI carriers, and existential result, evaluation and relations agree. Closure state uses canonical refs and code maps with a re-exported witness. FlatSem.doApp and ClosSem.evaluate inherit the reals_as_rational_cuts assumption (SOUNDNESS item 8). Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "max_dec_name_LESS_EVERY",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/BranchEvaluation.lean",
+  "lean_name": "maxDecName_less_every",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the exported max_dec_name_LESS_EVERY typed capture: Boolean equality is iff, EVERY is universal list membership, and the same positive bound and decoded-name conditions are preserved. This replaces the weaker untagged decName_le_maxDecName. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "op_shifts",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/OperatorCorrectness.lean",
+  "lean_name": "opShifts",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared op_shifts_typed: the existential word size, shift and amount category and the full op_goal agree. Both W8 and W64 cases are proved from the original successful application and value relations. Closure state uses canonical refs and code maps with a re-exported witness; FlatSem.doApp and ClosSem.evaluate inherit the reals_as_rational_cuts assumption (SOUNDNESS item 8). Independently source-reviewed."
 }
 ]
