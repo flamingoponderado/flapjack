@@ -28,18 +28,18 @@ carrier; the computable lowering keeps the `Nat` modulus. -/
 theorem ofNat16_mod (v : Nat) :
     BitVec.ofNat 16 (v % 65536) = BitVec.ofNat 16 v := by
   apply BitVec.eq_of_toNat_eq
-  simp [BitVec.toNat_ofNat]
+  simp
 
 /-- A truncated `Nat` field of a `MoveWide` half-word index, moved onto the
 `BitVec 2` carrier. -/
 theorem ofNat2_mod (v : Nat) : BitVec.ofNat 2 (v % 4) = BitVec.ofNat 2 v := by
   apply BitVec.eq_of_toNat_eq
-  simp [BitVec.toNat_ofNat]
+  simp
 
 /-- A truncated `Nat` register field, moved onto the `BitVec 5` carrier. -/
 theorem ofNat5_mod (v : Nat) : BitVec.ofNat 5 (v % 32) = BitVec.ofNat 5 v := by
   apply BitVec.eq_of_toNat_eq
-  simp [BitVec.toNat_ofNat]
+  simp
 
 /-- `.jump` lowers to the same branch-immediate form. -/
 theorem arm8Enc_jump_eq (target : BitVec 64) :
@@ -361,5 +361,31 @@ theorem arm8Enc_inst_binop_imm_eq (bop : BinOp) (destination source : Nat)
         (EncodeLogicalOp_ORR false)]
     simp
 
+
+/-- The L3 `-i6` rotation field is the computable `(64 - n % 64) % 64`. -/
+theorem bitfieldLslR_toNat (value : BitVec 64) :
+    ((-(BitVec.ofNat 6 value.toNat) : BitVec 6)).toNat =
+      (64 - value.toNat % 64) % 64 := by
+  rw [BitVec.toNat_neg]
+  have hlt : (BitVec.ofNat 6 value.toNat).toNat = value.toNat % 64 := by
+    simp
+  rw [hlt]
+
+/-- The L3 `63 - i6` field is the computable `63 - n % 64`. -/
+theorem bitfieldLslS_toNat (value : BitVec 64) :
+    (((63 : BitVec 6) - BitVec.ofNat 6 value.toNat)).toNat =
+      63 - value.toNat % 64 := by
+  have hlt : (BitVec.ofNat 6 value.toNat).toNat = value.toNat % 64 := by
+    simp
+  rw [BitVec.toNat_sub, hlt]
+  have h63 : (63 : BitVec 6).toNat = 63 := by decide
+  rw [h63]
+  have : value.toNat % 64 ≤ 63 := by omega
+  omega
+
+/-- The L3 `BitVec.ofNat 6 n` is the computable `n % 64` on `Nat`. -/
+theorem bitfieldN_toNat (value : BitVec 64) :
+    (BitVec.ofNat 6 value.toNat).toNat = value.toNat % 64 := by
+  simp
 
 end Flapjack.Compiler.Encoders.Arm8.L3
