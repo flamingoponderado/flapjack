@@ -1,5 +1,21 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+  "hol_name": "alt_free_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Free/Original.lean",
+  "lean_name": "altFreeSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alt_free_def_typed and all thirteen source clauses: original list recursion, constructor cases, term and variable-set carriers, head operations and traversal order agree. The attached recursive-group map supplies termination evidence; altFreeSource_letrec proves the ordinary source MAP form. The executed traversal agrees by altFreeSource_sing_eq."
+},
+{
+  "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+  "hol_name": "alt_free_sing_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Free/OriginalEquivalence.lean",
+  "lean_name": "altFreeSource_sing_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alt_free_sing_eq_typed: all three original conjuncts retain their expression, list, count and recursive-function binders, EVERY membership, source and optimized traversals, pair construction and shifted sets. The separate source recursion is related to the optimized traversal by a kernel-checked induction."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml",
   "hol_name": "MAP_FST_compile",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations.lean",

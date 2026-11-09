@@ -5,9 +5,9 @@ import Flapjack.Misc.ListEl
 namespace Flapjack.Compiler.Backend.ClosAnnotate
 open ClosLang DbVars
 
-/-- Source-shaped equations for the optimized list traversal. This alias is
-not the original recursive `alt_free` definition; a literal port and the
-corresponding equivalence theorem remain to be proved. -/
+/-- Auxiliary alias for source-shaped equations of the optimized traversal.
+The separate original recursion and its equivalence are in `Free.Original`
+and `Free.OriginalEquivalence`. -/
 def altFree (expressions : List Exp) : List Exp × DbVarSet := altFreeList expressions
 
 private theorem mkUnion_empty_right (set : DbVarSet) : mkUnion set .empty = set := by
@@ -130,23 +130,5 @@ theorem altFree_letrec (names : List Flapjack.Basis.Pure.MlString.MlString)
         (@Flapjack.holHd Exp ⟨.var .none 0⟩ (altFree [body]).1)],
        mkUnion live (.shift functions.length (altFree [body]).2)) := by
   simp [altFree_singleton, altFreeSing, Flapjack.holHd, altFreeFuns_as_map]
-
-/-- The optimized list and recursive-function traversals agree with the
-singleton pass. The original theorem also compares the separate source
-recursion, which is not yet represented by `altFree`. -/
-theorem altFree_sing_eq :
-    (∀ expression, altFree [expression] =
-      ([(altFreeSing expression).1], (altFreeSing expression).2)) ∧
-    (∀ expressions, altFree expressions = altFreeList expressions) ∧
-    (∀ count functions, (∀ entry ∈ functions, altFree [entry.2] =
-        ([(altFreeSing entry.2).1], (altFreeSing entry.2).2)) ∧
-      altFreeFuns count functions = functions.map (fun (arity, body) =>
-        ((arity, (altFreeSing body).1), DbVarSet.shift (arity + count) (altFreeSing body).2))) := by
-  refine ⟨altFree_singleton, fun _ => rfl, ?_⟩
-  intro count functions
-  constructor
-  · intro entry _
-    exact altFree_singleton entry.2
-  · simpa [altFree_singleton, Flapjack.holHd] using altFreeFuns_as_map count functions
 
 end Flapjack.Compiler.Backend.ClosAnnotate
