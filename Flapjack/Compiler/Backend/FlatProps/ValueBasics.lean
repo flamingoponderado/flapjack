@@ -41,6 +41,18 @@ def isClosure (value : Value) : Prop :=
   (∃ env name body, value = .closure env name body) ∨
     ∃ env functions name, value = .recclosure env functions name
 
+/-- The six constructor-specific closure tests, with HOL's shared fields. -/
+@[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "isClosure_simps"]
+theorem isClosure_simps (lit : Flapjack.AstHOL.Lit)
+    (stamp : Option (FlatLang.CtorId × FlatLang.TypeId)) (values : List Value)
+    (env : Environment Value) (name : Flapjack.AstHOL.VarN) (body : FlatLang.Exp)
+    (functions : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp))
+    (flag : Bool) (index : Nat) :
+    ¬ isClosure (.litv lit) ∧ ¬ isClosure (.conv stamp values) ∧
+    isClosure (.closure env name body) ∧ isClosure (.recclosure env functions name) ∧
+    ¬ isClosure (.loc flag index) ∧ ¬ isClosure (.vectorv values) := by
+  simp [isClosure]
+
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "simple_basic_val_rel_def"]
 def simpleBasicValRel : Value → Value → Prop
   | .litv lit, value => value = .litv lit

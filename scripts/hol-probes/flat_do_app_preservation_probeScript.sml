@@ -99,3 +99,5 @@ val _ = show_thm "flat_elist_globals_reverse_typed=" flatPropsTheory.elist_globa
 val _ = show_thm "flat_initial_state_clock_typed=" flatPropsTheory.initial_state_clock;
 
 val _ = show_thm "flat_evaluate_decs_add_clock_io_events_mono_alt_typed=" flatPropsTheory.evaluate_decs_add_to_clock_io_events_mono_alt;
+
+val _ = show_thm "flat_isClosure_simps_typed=" flatPropsTheory.isClosure_simps;

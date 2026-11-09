@@ -130585,6 +130585,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "isClosure_simps",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/ValueBasics.lean",
+  "lean_name": "isClosure_simps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_isClosure_simps_typed in flat_do_app_preservation_probe.out: the six constructor cases, field types and shared constructor arguments match. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
   "hol_name": "evaluate_decs_add_to_clock_io_events_mono_alt",
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateClockEvents.lean",
   "lean_name": "evaluateDecs_addToClock_ioEventsMono_alt",
