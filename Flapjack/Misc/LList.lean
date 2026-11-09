@@ -70,9 +70,11 @@ def lunfoldStep (f : β → Option (β × α)) (z : β) : Nat → Option (β × 
   | 0 => f z
   | n + 1 => (lunfoldStep f z n).bind (fun p => f p.1)
 
-/-- HOL `LUNFOLD f z = llist_abs (\n. OPTION_MAP SND
-    (FUNPOW (\m. OPTION_BIND m (UNCURRY (K o f))) n (f z)))` (`llistScript.sml:367-369`);
-    `UNCURRY (K o f) (b, a) = f b`. -/
+/-- HOL `LUNFOLD_def` (`llistScript.sml:367-369`, `Definition LUNFOLD_def[nocompute]`):
+    `LUNFOLD f z = llist_abs (\n. OPTION_MAP SND
+    (FUNPOW (\m. OPTION_BIND m (UNCURRY (K o f))) n (f z)))`; the `FUNPOW` is
+    `lunfoldStep` and `UNCURRY (K o f) (b, a) = f b`. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LUNFOLD_def"]
 def lunfold (f : β → Option (β × α)) (z : β) : HolLList α :=
   ⟨fun n => (lunfoldStep f z n).map Prod.snd, by
     intro n h
@@ -2112,6 +2114,80 @@ theorem fromList_toList {ll : HolLList α} (h : LFinite ll) :
   by_cases hi : i < xs.length
   · rw [dif_pos hi, List.getElem?_eq_getElem hi]
   · rw [dif_neg hi, List.getElem?_eq_none_iff.mpr (by omega)]
+
+
+/-! ## Corecursion and coinduction
+
+HOL's `LUNFOLD` corecursor (`llistScript.sml:367-369`) with its case equation,
+uniqueness, bisimulation principle, and `every`'s coinduction principle. -/
+
+/-- The `FUNPOW` iterate is stationary once the generator returns `none`. -/
+theorem lunfoldStep_none {f : β → Option (β × α)} {z : β} (hf : f z = none) :
+    ∀ n, lunfoldStep f z n = none := by
+  intro n
+  induction n with
+  | zero => exact hf
+  | succ k ih =>
+      show (lunfoldStep f z k).bind (fun p => f p.1) = none
+      rw [ih]
+      rfl
+
+/-- The iterate from a state whose generator returns `some p` is the iterate
+    from `p.1`, shifted by one. -/
+theorem lunfoldStep_succ {f : β → Option (β × α)} {z : β} {p : β × α}
+    (hf : f z = some p) (n : Nat) : lunfoldStep f z (n + 1) = lunfoldStep f p.1 n := by
+  induction n with
+  | zero =>
+      show (lunfoldStep f z 0).bind (fun q => f q.1) = lunfoldStep f p.1 0
+      rw [show lunfoldStep f z 0 = some p from hf]
+      rfl
+  | succ k ih =>
+      show (lunfoldStep f z (k + 1)).bind (fun q => f q.1) =
+        (lunfoldStep f p.1 k).bind (fun q => f q.1)
+      rw [ih]
+
+/-- HOL `LUNFOLD` (`llistScript.sml:377-381`): the corecursor's case equation. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LUNFOLD"]
+theorem lunfoldHOL (f : β → Option (β × α)) (z : β) :
+    lunfold f z =
+      match f z with
+      | none => lnil
+      | some p => lcons p.2 (lunfold f p.1) := by
+  apply ext_of_rep
+  intro n
+  cases hf : f z with
+  | none =>
+      simp [lunfold, lunfoldStep_none hf n, lnil]
+  | some p =>
+      cases n with
+      | zero => simp [lunfold, lunfoldStep, hf, lcons]
+      | succ n =>
+          simp [lunfold, lunfoldStep_succ hf n, lcons]
+
+/-- HOL `LUNFOLD_UNIQUE` (`llistScript.sml:394-401`): `LUNFOLD` is the unique
+    solution of its case equation (the final-coalgebra property). -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LUNFOLD_UNIQUE"]
+theorem lunfold_unique {f : β → Option (β × α)} {g : β → HolLList α}
+    (h : ∀ x, g x = match f x with
+      | none => lnil
+      | some p => lcons p.2 (g p.1)) :
+    ∀ y, g y = lunfold f y := by
+  intro y
+  apply ext_of_rep
+  intro n
+  induction n generalizing y with
+  | zero =>
+      rw [h y]
+      cases hf : f y with
+      | none => simp [lunfold, lunfoldStep_none hf 0, lnil]
+      | some p => simp [lunfold, lunfoldStep, hf, lcons]
+  | succ n ih =>
+      rw [h y]
+      cases hf : f y with
+      | none => simp [lunfold, lunfoldStep_none hf (n + 1), lnil]
+      | some p =>
+          simp only [lunfold, lunfoldStep_succ hf n, lcons]
+          exact ih p.1
 
 
 end HolLList
