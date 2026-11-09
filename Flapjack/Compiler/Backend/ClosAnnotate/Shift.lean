@@ -63,13 +63,15 @@ def annotateSing (arity : Nat) (x : Exp) : Exp := shiftSing (altFreeSing x).1 0 
 @[hol "cakeml/compiler/backend/clos_annotateScript.sml" "annotate_list_def"]
 def annotateList (arity : Nat) (xs : List Exp) : List Exp := shiftList (altFreeList xs).1 0 arity .ln
 
-/-- Annotate each labeled closure function. -/
-@[hol "cakeml/compiler/backend/clos_annotateScript.sml" "compile_def"]
+/-- Executable optimized annotation of labeled closure functions. HOL's
+`compile_def` uses the separate list-shaped `annotate` and its singleton
+head; its source definition and equivalence to this traversal remain open. -/
 def compile {α : Type} (prog : List (α × Nat × Exp)) : List (α × Nat × Exp) :=
   prog.map (fun (n, args, exp) => (n, args, annotateSing args exp))
 
-/-- Annotate the expression and auxiliary code of an incremental program. -/
-@[hol "cakeml/compiler/backend/clos_annotateScript.sml" "compile_inc_def"]
+/-- Executable optimized annotation of an incremental program. HOL's
+`compile_inc_def` uses the separate source `annotate` and `compile`; their
+source definitions and equivalence to this traversal remain open. -/
 def compileInc {α : Type} (p : List Exp × List (α × Nat × Exp)) : List Exp × List (α × Nat × Exp) :=
   (annotateList 0 p.1, compile p.2)
 

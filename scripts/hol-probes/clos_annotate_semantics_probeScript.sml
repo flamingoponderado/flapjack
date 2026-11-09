@@ -9,6 +9,8 @@ fun show label th = if null (hyp th) then
 val _ = show "const_zero_typed=" clos_annotateTheory.const_0_def;
 val _ = show "no_overlap_typed=" clos_annotateTheory.no_overlap_def;
 val _ = show "alt_free_sing_typed=" clos_annotateTheory.alt_free_sing_def;
+val _ = show "alt_free_def_typed=" clos_annotateTheory.alt_free_def;
+val _ = show "alt_free_sing_eq_typed=" clos_annotateTheory.alt_free_sing_eq;
 val _ = show "get_var_typed=" clos_annotateTheory.get_var_def;
 val _ = show "shifted_env_typed=" clos_annotateTheory.shifted_env_def;
 val _ = show "shift_sing_typed=" clos_annotateTheory.shift_sing_def;

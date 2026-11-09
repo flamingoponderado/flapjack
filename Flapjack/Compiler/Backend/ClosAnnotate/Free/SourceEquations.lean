@@ -5,10 +5,9 @@ import Flapjack.Misc.ListEl
 namespace Flapjack.Compiler.Backend.ClosAnnotate
 open ClosLang DbVars
 
-/-- List form of the free-variable pass. The HOL source specifies this by
-equations on singleton and longer lists; the production implementation uses
-the optimized mutually recursive functions. Its source correspondence is
-supported by the equations below and remains untagged pending review. -/
+/-- Source-shaped equations for the optimized list traversal. This alias is
+not the original recursive `alt_free` definition; a literal port and the
+corresponding equivalence theorem remain to be proved. -/
 def altFree (expressions : List Exp) : List Exp × DbVarSet := altFreeList expressions
 
 private theorem mkUnion_empty_right (set : DbVarSet) : mkUnion set .empty = set := by
@@ -132,8 +131,9 @@ theorem altFree_letrec (names : List Flapjack.Basis.Pure.MlString.MlString)
        mkUnion live (.shift functions.length (altFree [body]).2)) := by
   simp [altFree_singleton, altFreeSing, Flapjack.holHd, altFreeFuns_as_map]
 
-/-- The list and recursive-function traversals agree with the optimized
-singleton pass, matching the three-part structure used by the source proof. -/
+/-- The optimized list and recursive-function traversals agree with the
+singleton pass. The original theorem also compares the separate source
+recursion, which is not yet represented by `altFree`. -/
 theorem altFree_sing_eq :
     (∀ expression, altFree [expression] =
       ([(altFreeSing expression).1], (altFreeSing expression).2)) ∧

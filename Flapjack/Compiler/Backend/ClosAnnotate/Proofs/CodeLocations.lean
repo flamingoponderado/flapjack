@@ -5,8 +5,8 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
 namespace Flapjack.Compiler.Backend.ClosAnnotate
 open ClosLang ClosProps
 
-/-- Annotation preserves each entry's label. -/
-@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "MAP_FST_compile"]
+/-- The optimized annotation preserves each entry's label. HOL's analogous
+theorem uses the separate source `compile`, whose port remains open. -/
 theorem mapFst_compile {α : Type} (program : List (α × Nat × Exp)) :
     (compile program).map Prod.fst = program.map Prod.fst := by
   simp [compile, List.map_map]
