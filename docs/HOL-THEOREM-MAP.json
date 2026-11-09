@@ -120,6 +120,12 @@
   "reviewer": "Compared shift_obeys_max_app_typed: the bound and all expression-list, natural and sparse-tree index variables are unrestricted. Both occurrences of EVERY are membership quantification over the reviewed obeysMaxApp predicate, and the conclusion uses original shiftSource."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "no_overlap_has_var_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/PureBindings.lean", "lean_name": "noOverlap_hasVar_bound",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared no_overlap_has_var_IMP_local_typed, replayed using the original HOL proof: both natural indices and the variable set are unrestricted, and the conjunction of no-overlap and membership implies the same bound. The two Boolean predicates and their carrier are reviewed exact."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "FOLDR_mk_Union",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "foldr_mkUnion",
   "statement_status": "reviewed_exact",

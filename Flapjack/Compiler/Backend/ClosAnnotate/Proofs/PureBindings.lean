@@ -11,8 +11,10 @@ open Flapjack.Compiler.Backend.DbVars
 
 /-- If none of the first `count` variables occurs, any present variable is
 outside that prefix. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "no_overlap_has_var_IMP"]
 theorem noOverlap_hasVar_bound (count : Nat) (set : DbVarSet) (index : Nat)
-    (noOverlapRun : noOverlap count set = true) (present : hasVar index set = true) : count ≤ index := by
+    (h : noOverlap count set = true ∧ hasVar index set = true) : count ≤ index := by
+  obtain ⟨noOverlapRun, present⟩ := h
   induction count with
   | zero => omega
   | succ count ih =>
@@ -60,8 +62,7 @@ theorem envOk_unused_bindings (trace : BackendCommon.Tra) (bindings : List ClosL
       (List.replicate bindings.length (.number 0) ++ nextEnv) n := by
   have bound : bindings.length ≤ n := by
     apply noOverlap_hasVar_bound bindings.length (altFree [body]).2 n
-    · exact unused
-    · exact present
+    exact ⟨unused, present⟩
   have tailRel : EnvOk m l index env nextEnv (n - bindings.length) := by
     apply vars (n - bindings.length)
     rw [altFv_let]

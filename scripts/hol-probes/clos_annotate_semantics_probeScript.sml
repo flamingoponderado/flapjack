@@ -105,3 +105,9 @@ val foldr_mk_union_replay = prove (
       (MAP FST ys ++ aux, FOLDR db_vars$mk_Union l (MAP SND ys))``,
   Induct >> fs [FORALL_PROD]);
 val _ = show "FOLDR_mk_Union_local_typed=" foldr_mk_union_replay;
+(* Replay the local no-overlap bound from the source script. *)
+val no_overlap_has_var_replay = prove (
+  ``!n l2 x. clos_annotate$no_overlap n l2 /\ db_vars$has_var x l2 ==> n <= x``,
+  Induct >> fs [no_overlap_def] >> rw [] >> res_tac
+  >> Cases_on `x = n` >> fs []);
+val _ = show "no_overlap_has_var_IMP_local_typed=" no_overlap_has_var_replay;

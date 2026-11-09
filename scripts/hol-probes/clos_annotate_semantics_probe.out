@@ -55,3 +55,4 @@ every_Fn_SOME_annotate_typed=every_Fn_SOME (es :closLang$exp list) ⇒ every_Fn_
 every_Fn_SOME_ann_typed=∀(xs :(α # num # closLang$exp) list). every_Fn_SOME (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :α # num # closLang$exp -> num # closLang$exp)) xs) ⇒ every_Fn_SOME (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :α # num # closLang$exp -> num # closLang$exp)) (compile xs))
 env_set_default_local_typed=(x :num -> bool) ⊆ env_ok (0 :num) (0 :num) (LN :num sptree$num_map) ([] :v list) (env' :v list)
 FOLDR_mk_Union_local_typed=∀(ys :(α # db_var_set) list) (aux :α list) (l :db_var_set). FOLDR (λ((x :α),(l :db_var_set)) ((ts :α list),(alt_frees :db_var_set)). (x::ts,mk_Union l alt_frees)) (aux,l) ys = (MAP (FST :α # db_var_set -> α) ys ++ aux,FOLDR mk_Union l (MAP (SND :α # db_var_set -> db_var_set) ys))
+no_overlap_has_var_IMP_local_typed=∀(n :num) (l2 :db_var_set) (x :num). no_overlap n l2 ∧ has_var x l2 ⇒ n ≤ x
