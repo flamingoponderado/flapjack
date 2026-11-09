@@ -131182,5 +131182,18 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared op_eval_typed with the original op_goal: the curried Eval equation, seven grouped premises, shared compiler and FFI carriers, and existential result, evaluation and relations agree. Closure state uses canonical refs and code maps with a re-exported witness. FlatSem.doApp and ClosSem.evaluate inherit the reals_as_rational_cuts assumption (SOUNDNESS item 8). Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "op_id",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/OperatorCorrectness.lean",
+  "lean_name": "opId",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs",
+    "code"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared op_id_typed with the original op_goal: the curried Id equation, seven grouped premises, shared compiler and FFI carriers, and existential result, evaluation and relations agree. Closure state uses canonical refs and code maps with a re-exported witness. FlatSem.doApp and ClosSem.evaluate inherit the reals_as_rational_cuts assumption (SOUNDNESS item 8). Independently source-reviewed."
 }
 ]
