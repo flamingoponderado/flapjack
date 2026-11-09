@@ -4,6 +4,15 @@ import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyMemory
 namespace Flapjack.Compiler.Backend.FlatElim
 open Flapjack.SemanticPrimitivesHOL
 
+/-- A flat list of character literals has no global dependencies. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "fvg_map_char_empty"]
+theorem findValueGlobals_charList (ss : List Flapjack.Basis.Pure.MlString.HolChar) :
+    findValueGlobals (FlatSem.listToValue (ss.map (fun c => .litv (.char c)))) = .ln := by
+  induction ss with
+  | nil => simp [FlatSem.listToValue, findValueGlobals, findValuesGlobals]
+  | cons c cs ih =>
+    simp [FlatSem.listToValue, findValueGlobals, findValuesGlobals, sptUnion, ih]
+
 /-- The vectorSub case preserves related states and primitive-result invariants.
 This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_vectorSub {C F G : Type} (reachable : NumSet)

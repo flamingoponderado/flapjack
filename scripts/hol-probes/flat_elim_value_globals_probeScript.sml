@@ -139,3 +139,9 @@ val _ = show_thm "flat_do_app_cases_typed=" flat_elimProofTheory.do_app_cases;
 (* Replay the local natural-order fact used in do_app_SOME_flat_state_rel. *)
 val not_le_less_replay = prove (``(~(x >= y)) ==> ((x :num) < y)``, simp []);
 val _ = show_thm "not_le_less_typed=" not_le_less_replay;
+
+(* Replay the local character-list dependency theorem. *)
+val fvg_map_char_empty_replay = prove (
+  ``find_v_globals (list_to_v (MAP (\c. Litv (Char c)) ss)) = LN``,
+  Induct_on `ss` >> simp [find_v_globals_def, list_to_v_def]);
+val _ = show_thm "fvg_map_char_empty_typed=" fvg_map_char_empty_replay;
