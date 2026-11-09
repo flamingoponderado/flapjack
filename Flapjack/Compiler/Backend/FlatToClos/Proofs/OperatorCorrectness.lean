@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Equality
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Ffi
 import Flapjack.Compiler.Backend.FlatToClos.Op
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
@@ -216,5 +217,83 @@ theorem opEqGc {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                       simp [ClosSem.doApp, ClosSem.applyBlock, targetEq,
                         Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
                       exact ⟨states, (vRel_bool _ _).mpr rfl⟩
+
+/-- Foreign calls satisfy the original value-level operator correctness goal. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "op_ffi"
+  (fmap_as_finite_support := [refs, code])]
+theorem opFfi {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
+    (vs : List FlatSem.Value) (sourceNext : FlatSem.State C F)
+    (result : Result FlatSem.Value FlatSem.Value) (targetNext : ClosSem.State C F)
+    (xs : List ClosLang.Exp) (db : List ClosSem.Value) (target : ClosSem.State C F)
+    (ws : List ClosSem.Value) (trace : BackendCommon.Tra) :
+    (∃ name, op = .src (.ffi name)) →
+    FlatSem.doApp source op vs = some (sourceNext, result) ∧
+      StateRel source targetNext ∧ ClosSem.evaluate xs db target = (.val ws, targetNext) ∧
+      List.Forall₂ ValueRel vs ws.reverse ∧ xs.length = vs.length ∧
+      op ≠ .src .opapp ∧ op ≠ .src (.thunkOp .forceThunk) →
+    ∃ targetResult targetLast,
+      ClosSem.evaluate [compileOp trace op xs] db target = (targetResult, targetLast) ∧
+      StateRel sourceNext targetLast ∧
+      SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel
+        (Flapjack.EvaluateHOL.listResult result) targetResult := by
+  intro ⟨name, opEq⟩ premises
+  subst op
+  obtain ⟨applied, states, evaluated, related, length, _, _⟩ := premises
+  cases vs with
+  | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+  | cons v vs =>
+    cases vs with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+    | cons u rest =>
+      cases rest with
+      | cons z zs => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+      | nil =>
+        have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
+        cases ws with
+        | nil => simp at wsLen
+        | cons w rest =>
+          cases rest with
+          | nil => simp at wsLen
+          | cons t rest =>
+            cases rest with
+            | cons z zs => simp at wsLen
+            | nil =>
+              simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
+              cases related with
+              | cons relV tail =>
+                cases tail with
+                | cons relU tail =>
+                  simp only [compileOp]
+                  rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+                  cases relV <;> simp [FlatSem.doApp, FlatSem.doAppNumeric,
+                    FlatSem.doAppMemory, FlatSem.doAppData] at applied
+                  case string configuration =>
+                    cases relU <;> simp at applied
+                    case loc flag pointer =>
+                      cases found : storeLookup pointer source.refs with
+                      | none => simp [found] at applied
+                      | some entry =>
+                        cases entry <;> simp [found] at applied
+                        case w8array bytes =>
+                          have targetFound := lookup_byteArray states found
+                          cases call : Flapjack.callFFIHOL source.ffi (.extCall name) configuration.explode bytes with
+                          | ret ffi updated =>
+                            obtain ⟨targetUpdated, sourceUpdate, targetUpdate, updatedStates⟩ :=
+                              ffiReturn_related source targetNext pointer flag bytes updated configuration name ffi states found call
+                            have foundList : source.refs[pointer]? = some (.w8array bytes) := by
+                              simpa [storeLookup] using found
+                            simp [call, storeAssign, storeValueSameType, foundList] at applied
+                            obtain ⟨rfl, rfl⟩ := applied
+                            simp [targetUpdate, Flapjack.EvaluateHOL.listResult,
+                              SemanticPrimitivesProps.resultRel]
+                            exact ⟨updatedStates, (vRel_unit _).mpr rfl⟩
+                          | final event =>
+                            have targetCall : Flapjack.callFFIHOL targetNext.ffi (.extCall name) configuration.explode bytes = .final event := by
+                              rw [← states.2.1]
+                              exact call
+                            simp [call] at applied
+                            obtain ⟨rfl, rfl⟩ := applied
+                            simp [ClosSem.doApp, targetFound, targetCall, states,
+                              Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
 
 end Flapjack.Compiler.Backend.FlatToClos

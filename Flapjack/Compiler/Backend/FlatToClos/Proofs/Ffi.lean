@@ -6,7 +6,8 @@ namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL Flapjack.Basis.Pure.MlString
 
 /-- A returning FFI call updates corresponding byte arrays and external
-states on both sides. -/
+states on both sides. This is part of HOL's `op_ffi` proof and has no
+separately named HOL declaration. -/
 theorem ffiReturn_related {C F : Type} (source : FlatSem.State C F)
     (target : ClosSem.State C F) (pointer : Nat) (flag : Bool)
     (bytes updated : List HolChar) (configuration name : MlString)
