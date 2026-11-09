@@ -57,6 +57,20 @@ class HolRefExportTest(unittest.TestCase):
             MODULE.check_records(self.manifest, [{**self.export[0], "qualifiers":
                 {"nested_list_rel_as_mutual": ["FunctionsRel"]}}])
 
+    def test_combined_nested_and_fmap_match_export(self):
+        fields = {"fmap_as_finite_support": ["refs", "code"],
+                  "nested_list_rel_as_mutual": ["FunctionsRel"]}
+        status = "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual"
+        manifest = [{**self.manifest[0], "statement_status": status, **fields}]
+        self.assertEqual(MODULE.check_records(manifest, [{**self.export[0], "qualifiers": fields}]), 1)
+        for missing in ("fmap_as_finite_support", "nested_list_rel_as_mutual"):
+            with self.subTest(missing=missing), self.assertRaises(ValueError):
+                MODULE.check_records(manifest, [{**self.export[0], "qualifiers":
+                    {key: value for key, value in fields.items() if key != missing}}])
+            with self.subTest(unrecorded=missing), self.assertRaises(ValueError):
+                MODULE.check_records([{key: value for key, value in manifest[0].items() if key != missing}],
+                                     [{**self.export[0], "qualifiers": fields}])
+
     def test_nested_audit_requires_witness_comparison_and_ordered_marker(self):
         source = MODULE.NESTED_AUDIT.read_text(encoding="utf-8")
         MODULE.validate_nested_audit_source(source)

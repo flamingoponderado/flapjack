@@ -244,7 +244,7 @@ and the mutual value and
 environment relation rules with inferred types. It also replays the local
 default-environment, pair-fold, no-overlap bound, shifted-environment lookup,
 elementwise shift, environment-compaction, environment-extension, primitive-value inversion and list-decoding proofs,
-the related list-encoding, byte/word decoding and compiler list-property statements, and the zero-replacement
+the related list-encoding, byte/word decoding, compiler list-property and state-relation statements, and the zero-replacement
 evaluation theorem with inferred types. These captures support review;
 the factored Lean mutual relation records its representation with a qualifier.
 

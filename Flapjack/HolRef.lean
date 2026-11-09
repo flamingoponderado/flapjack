@@ -421,7 +421,7 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     unless nestedListRelAsMutual == #["FunctionsRel"] do
       throwError "@[hol]: nested_list_rel_as_mutual is restricted to the reviewed closure relation"
     if !listAsArray.isEmpty || !namesAsString.isEmpty || !namesAsStringBoundary.isEmpty ||
-        !fmapAsFiniteSupport.isEmpty || fmapAsFiniteSupportResult ||
+        (!fmapAsFiniteSupport.isEmpty && fmapAsFiniteSupport != #["refs", "code"]) || fmapAsFiniteSupportResult ||
         !fmapAsFiniteSupportFunction.isEmpty || !fmapAsFiniteSupportTuple.isEmpty ||
         !fmapAsFiniteSupportHeterogeneousFunction.isEmpty || !fmapAsFiniteSupportParameters.isEmpty ||
         !fmapAsFiniteSupportExistentials.isEmpty || !fmapAsFiniteSupportRelation.isEmpty ||
@@ -765,6 +765,8 @@ initialize holRefAttribute : ParametricAttribute HolRef ←
       if ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" &&
           ref.name == "v_rel" && !isRelation then
         logError m!"{decl}: v_rel qualifier is restricted to the reviewed relation members"
+      if isRelation && !ref.fmapAsFiniteSupport.isEmpty then
+        logError m!"{decl}: nested-list relation producers cannot combine finite-map qualifiers"
       let env ← getEnv
       match env.find? decl with
       | some info =>

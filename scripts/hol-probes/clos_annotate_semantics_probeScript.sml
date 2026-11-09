@@ -239,3 +239,5 @@ val _ = show "v_to_words_typed=" clos_annotateProofTheory.v_to_words;
 val _ = show "REVERSE_compile_typed=" clos_annotateProofTheory.REVERSE_compile;
 val _ = show "ALOOKUP_compile_typed=" clos_annotateProofTheory.ALOOKUP_compile;
 val _ = show "compile_append_typed=" clos_annotateProofTheory.compile_append;
+val _ = show "state_rel_def_typed=" clos_annotateProofTheory.state_rel_def;
+val _ = show "state_rel_max_app_typed=" clos_annotateProofTheory.state_rel_max_app;

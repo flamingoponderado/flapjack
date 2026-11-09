@@ -289,6 +289,8 @@ elab "#emit_hol_ref_export" : command => do
         if ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" &&
             ref.name == "v_rel" && !isRelation then
           throwError "invalid nested-list relation producer {name}"
+        if isRelation && !ref.fmapAsFiniteSupport.isEmpty then
+          throwError "nested-list relation producer has finite-map qualifier {name}"
         let ((observes, exposes), nestedKnown') := nestedListRelationDependenciesCached env info nestedKnown
         nestedKnown := nestedKnown'
         if !ref.nestedListRelAsMutual.isEmpty then

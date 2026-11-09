@@ -1297,6 +1297,7 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Shift.OriginalEquivalence
 import Flapjack.Compiler.Backend.ClosAnnotate.Original
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.CodeLocations.Original
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Compile
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation.Original
 import Flapjack.Compiler.Backend.ClosToBvl.ExtractName.Original
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants.Original
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.MaxApp

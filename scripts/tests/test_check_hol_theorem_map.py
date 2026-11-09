@@ -1485,6 +1485,29 @@ class NestedRelationStatusTest(unittest.TestCase):
                         {"reviewer": "source comparison"}):
             self.assertTrue(validate([{**record, **changed}], set(), {key: tag}, set()))
 
+    def test_combined_fmap_status_requires_both_qualifiers(self):
+        key = ("Flapjack/Example.lean", "observer")
+        record = {
+            "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml",
+            "hol_name": "state_rel_def", "lean_path": key[0], "lean_name": key[1],
+            "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
+            "nested_list_rel_as_mutual": ["FunctionsRel"],
+            "fmap_as_finite_support": ["refs", "code"],
+            "reviewer": "source comparison of fmap_as_finite_support and nested_list_rel_as_mutual using functionsRel_iff",
+        }
+        tag = (record["hol_path"], record["hol_name"], (), (), (), ("refs", "code"), False, (), False,
+               False, (), (), None, (), (), False, False, (), (), (), ("FunctionsRel",))
+        validate = MAP["validate_inventory"]
+        self.assertEqual(validate([record], set(), {key: tag}, set()), [])
+        for changed in ({"statement_status": "reviewed_nested_list_rel_as_mutual"},
+                        {"statement_status": "reviewed_fmap_as_finite_support"},
+                        {"nested_list_rel_as_mutual": []}, {"fmap_as_finite_support": ["refs"]}):
+            self.assertTrue(validate([{**record, **changed}], set(), {key: tag}, set()))
+        for index in (5, 20):
+            missing = list(tag)
+            missing[index] = ()
+            self.assertTrue(validate([record], set(), {key: tuple(missing)}, set()))
+
 
 class TupleFmapStatusTest(unittest.TestCase):
     def setUp(self):

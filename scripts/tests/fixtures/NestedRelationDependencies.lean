@@ -59,6 +59,33 @@ theorem validIndirect : StateRel → True := by intro _; trivial
   (nested_list_rel_as_mutual := [FunctionsRel])]
 theorem validDirect : ValueRel → True := by intro _; trivial
 
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "env_set_default"
+  (nested_list_rel_as_mutual := [FunctionsRel]) (fmap_as_finite_support := [refs, code])]
+theorem combinedObserver : EnvOk → True := by intro _; trivial
+
+/-- error: Flapjack.Compiler.Backend.ClosAnnotate.ValueRel: nested-list relation producers cannot combine finite-map qualifiers -/
+#guard_msgs in
+attribute [hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel"
+  (nested_list_rel_as_mutual := [FunctionsRel]) (fmap_as_finite_support := [refs, code])] ValueRel
+
+/-- error: @[hol]: nested_list_rel_as_mutual cannot combine with other qualifiers -/
+#guard_msgs in
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "env_set_default"
+  (nested_list_rel_as_mutual := [FunctionsRel]) (words_as_type_indexed_bitvec)]
+theorem combinedWords : EnvOk → True := by intro _; trivial
+
+/-- error: @[hol]: nested_list_rel_as_mutual cannot combine with other qualifiers -/
+#guard_msgs in
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "env_set_default"
+  (nested_list_rel_as_mutual := [FunctionsRel]) (fmap_as_finite_support_relation := [State.refs])]
+theorem combinedMapRelation : EnvOk → True := by intro _; trivial
+
+/-- error: @[hol]: nested_list_rel_as_mutual cannot combine with other qualifiers -/
+#guard_msgs in
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "env_set_default"
+  (nested_list_rel_as_mutual := [FunctionsRel]) (fmap_as_finite_support := [refs])]
+theorem incompleteMapFields : EnvOk → True := by intro _; trivial
+
 /-- error: Flapjack.Compiler.Backend.ClosAnnotate.missing: tagged nested-list observer requires nested_list_rel_as_mutual -/
 #guard_msgs in
 @[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "env_set_default"]

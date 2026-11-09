@@ -1530,6 +1530,7 @@ INFRASTRUCTURE_THEOREMS = {
 VALID_STATUSES = {
     "reviewed_exact",
     "reviewed_nested_list_rel_as_mutual",
+    "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
     "reviewed_list_as_array",
     "reviewed_names_as_string",
     "reviewed_list_as_array_names_as_string",
@@ -2113,8 +2114,14 @@ def validate_inventory(
         nested_list_rel = tag[20] if tag is not None and len(tag) > 20 else ()
         if tuple(record.get("nested_list_rel_as_mutual", ())) != nested_list_rel:
             errors.append(f"{key[0]}:{key[1]}: nested-list relation qualifier does not match @[hol] tag")
-        if bool(nested_list_rel) != (status == "reviewed_nested_list_rel_as_mutual"):
+        nested_combined_status = "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual"
+        expected_nested_status = nested_combined_status if fmap_fields else "reviewed_nested_list_rel_as_mutual"
+        if bool(nested_list_rel) != (status in {"reviewed_nested_list_rel_as_mutual", nested_combined_status}):
             errors.append(f"{key[0]}:{key[1]}: nested-list relation requires its reviewed status")
+        if nested_list_rel and status != expected_nested_status:
+            errors.append(f"{key[0]}:{key[1]}: nested-list relation and finite-map qualifiers require matching combined status")
+        if status == nested_combined_status and tuple(fmap_fields) != ("refs", "code"):
+            errors.append(f"{key[0]}:{key[1]}: combined nested-list qualifier requires refs and code fields")
         if nested_list_rel and (not isinstance(reviewer, str) or "functionsRel_iff" not in reviewer or
                                 "nested_list_rel_as_mutual" not in reviewer or "source" not in reviewer.lower()):
             errors.append(f"{key[0]}:{key[1]}: nested-list relation review must cite qualifier, source and functionsRel_iff")
@@ -2769,7 +2776,8 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: {status} needs a matching "
                 "fmap_as_finite_support_heterogeneous_function @[hol] tag"
             )
-        if fmap_fields and status != "reviewed_fmap_as_finite_support" and status != combined_words_status and status != combined_relation_words_status:
+        if fmap_fields and status not in {"reviewed_fmap_as_finite_support", combined_words_status,
+                                          combined_relation_words_status, nested_combined_status}:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support @[hol] tag needs a reviewed "
                 "source classification (reviewed_fmap_as_finite_support, or the combined "

@@ -152,6 +152,22 @@
   "reviewer": "Compared FOLDR_mk_Union_local_typed, replayed with the original HOL proof: the list payload type is polymorphic, and the pair fold, seed, projections, append and variable-set fold have the same order and no premises."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "state_rel_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/StateRelation/Original.lean", "lean_name": "stateRelSource_maxApp",
+  "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
+  "fmap_as_finite_support": ["refs", "code"],
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "reviewer": "Source comparison with state_rel_max_app_typed: the two states share unrestricted compiler and FFI carriers, and the original state relation implies equality of their maximum application arities. fmap_as_finite_support records the canonical refs and code fields; nested_list_rel_as_mutual records the value relation witnessed by functionsRel_iff."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "state_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/StateRelation/Original.lean", "lean_name": "StateRelSource",
+  "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
+  "fmap_as_finite_support": ["refs", "code"],
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "reviewer": "Source comparison with state_rel_def_typed: clocks, FFI, maximum, Prod.map rendering of pair maps, source annotation callbacks, global relation, FDOM as HolFiniteMapExact.domain, lookup implications, and original code shift all match. fmap_as_finite_support records the canonical refs and code fields; nested_list_rel_as_mutual records the value relation witnessed by functionsRel_iff. stateRelSource_iff proves equivalence with the live simulation relation."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "REVERSE_compile",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/Compile.lean", "lean_name": "reverse_compileSource",
   "statement_status": "reviewed_exact",

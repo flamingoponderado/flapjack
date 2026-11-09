@@ -60,6 +60,26 @@ class NestedListQualifierTest(unittest.TestCase):
         self.assertTrue(validate(other, "Flapjack/Other.lean", 1, PATH,
                                  "env_ok_shifted_env", ("FunctionsRel",)))
 
+    def test_combined_observer_requires_map_fields_and_witness(self):
+        module = "Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation.Original"
+        path = CHECK["ROOT"] / "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/StateRelation/Original.lean"
+        lines = path.read_text(encoding="utf-8").splitlines()
+        site = next(site for site in CHECK["hol_attribute_sites"](lines, include_nested_list_rel=True)
+                    if site[2] == "state_rel_def")
+        signature = CHECK["tagged_declaration_text"](lines, site[0])
+        validate = CHECK["fmap_as_finite_support_errors"]
+        self.assertEqual(validate(lines, ("refs", "code"), module, signature), [])
+        no_witness = [line.replace("holFmapAsFiniteSupportWitness", "missingWitness") for line in lines]
+        self.assertTrue(validate(no_witness, ("refs", "code"), module, signature))
+        self.assertTrue(validate(lines, ("refs", "missing"), module, signature))
+
+    def test_only_reviewed_observer_combination_is_accepted(self):
+        allowed = CHECK["nested_list_combination_allowed"]
+        self.assertTrue(allowed(("refs", "code"), False, False))
+        self.assertFalse(allowed(("refs", "code"), True, False))
+        self.assertFalse(allowed(("refs",), False, False))
+        self.assertFalse(allowed((), False, True))  # includes relation and words qualifiers
+
 
 if __name__ == "__main__":
     unittest.main()

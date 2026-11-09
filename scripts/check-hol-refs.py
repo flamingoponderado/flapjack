@@ -4877,6 +4877,13 @@ def nested_list_rel_errors(lines: list[str], rel: str, number: int, hol_path: st
     return errors
 
 
+def nested_list_combination_allowed(fmap_fields: tuple[str, ...], producer: bool,
+                                    other_qualifiers: bool) -> bool:
+    """Permit only reviewed observer combinations with the closure state maps."""
+    return (not other_qualifiers and fmap_fields in ((), ("refs", "code"))
+            and not (producer and fmap_fields))
+
+
 def main(argv: list[str]) -> int:
     want_mapping = "--mapping" in argv
     want_orphans = "--orphans" in argv
@@ -4922,10 +4929,13 @@ def main(argv: list[str]) -> int:
             if nested_list_rel:
                 errors.extend(f"{where}: {error}" for error in nested_list_rel_errors(
                     lines, rel, number, hol_path, hol_name, nested_list_rel))
-                if (list_fields or names_fields or boundary_fields or fmap_fields or fmap_result or fmap_relation or
-                        fmap_equalities or words_bitvec or fmap_parameters or fmap_existentials or dimension_width or
-                        fmap_function_positions or fmap_heterogeneous_function_positions or reals_cuts or fmap_equality or
-                        result_observations or dimension_widths or fmap_tuple):
+                producer = (hol_path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" and
+                            hol_name == "v_rel")
+                other = bool(list_fields or names_fields or boundary_fields or fmap_result or fmap_relation or
+                             fmap_equalities or words_bitvec or fmap_parameters or fmap_existentials or dimension_width or
+                             fmap_function_positions or fmap_heterogeneous_function_positions or reals_cuts or fmap_equality or
+                             result_observations or dimension_widths or fmap_tuple)
+                if not nested_list_combination_allowed(fmap_fields, producer, other):
                     errors.append(f"{where}: nested relation qualifier cannot combine with other qualifiers")
             if fmap_tuple:
                 if rel != "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv.lean":

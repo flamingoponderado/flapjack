@@ -496,9 +496,13 @@ mutually inductive `FunctionsRel`. Both `ValueRel` and `EnvOk` members in
 with those dependencies require the qualifier. The attribute and exporter
 follow elaborated types and definition bodies, stopping at the public relations;
 they do not follow theorem proofs. Observers are restricted to ClosAnnotate
-modules and the corresponding annotation scripts. It cannot
-combine with other qualifiers. Use manifest status
-`reviewed_nested_list_rel_as_mutual` after comparing every source rule and the
+modules and the corresponding annotation scripts. An observer may combine it
+only with `(fmap_as_finite_support := [refs, code])`, retaining all finite-map
+owner and witness checks; use status
+`reviewed_fmap_as_finite_support_nested_list_rel_as_mutual` for that
+combination. Producers cannot combine qualifiers, and all other combinations
+remain disallowed. Use manifest status `reviewed_nested_list_rel_as_mutual`
+for the nested qualifier alone after comparing every source rule and the
 `functionsRel_iff` witness with the typed HOL capture. The elaborated audit
 checks the mutual block, constructor and witness types, and witness axioms; it
 does not establish HOL correspondence. The qualifier authorizes only this
