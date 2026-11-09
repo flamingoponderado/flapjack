@@ -1,4 +1,5 @@
 load "flat_to_closProofTheory";
+load "wordsLib";
 open HolKernel Parse boolLib bossLib listTheory pairTheory;
 open flat_to_closProofTheory;
 open rich_listTheory;
@@ -174,3 +175,18 @@ val check_type_BoolT_flat_to_v_replay = prove (
         flatSemTheory.Boolv_def, semanticPrimitivesTheory.Boolv_def] >> rw []);
 val _ = if null (hyp check_type_BoolT_flat_to_v_replay) then () else raise Fail "hypotheses: check_type_BoolT_flat_to_v";
 val _ = (print "check_type_BoolT_flat_to_v_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl check_type_BoolT_flat_to_v_replay); print "\n");
+
+(* These two local declarations have the same statement; replay each source
+   proof with its original binder names and type annotations. *)
+val MAP_n2w_o_ORD_11_replay = prove (
+  ``!l1 l2. MAP ((n2w :num -> word8) o ORD) l1 = MAP (n2w o ORD) l2 <=> l1 = l2``,
+  Induct >> Cases_on `l2` >> fs [wordsTheory.n2w_11, EVAL ``dimword (:8)``,
+    arithmeticTheory.MOD_LESS, stringTheory.ORD_BOUND, stringTheory.ORD_11]);
+val _ = if null (hyp MAP_n2w_o_ORD_11_replay) then () else raise Fail "hypotheses: MAP_n2w_o_ORD_11";
+val _ = (print "MAP_n2w_o_ORD_11_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl MAP_n2w_o_ORD_11_replay); print "\n");
+val MAP_n2w_ORD_eq_replay = prove (
+  ``!s s'. (MAP (n2w o ORD) s = MAP (n2w o ORD) s' :word8 list) <=> s = s'``,
+  Induct >> Cases_on `s'` >> gvs [wordsTheory.n2w_11, EVAL ``dimword (:8)``,
+    arithmeticTheory.MOD_LESS, stringTheory.ORD_BOUND, stringTheory.ORD_11]);
+val _ = if null (hyp MAP_n2w_ORD_eq_replay) then () else raise Fail "hypotheses: MAP_n2w_ORD_eq";
+val _ = (print "MAP_n2w_ORD_eq_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl MAP_n2w_ORD_eq_replay); print "\n");

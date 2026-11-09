@@ -131153,5 +131153,21 @@
   "lean_name": "checkTypeBool_flatToValue",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the local HOL statement with its typed replay: source semantic check_type after flat_to_v is Bool = true, and the conclusion preserves the disjunction Boolv F or Boolv T in that order using the flat Boolean constructor. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "MAP_n2w_o_ORD_11",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CharWord.lean",
+  "lean_name": "mapN2wOrd_injective",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local statement with its typed replay: HOL string is List HolChar, ORD is BitVec.toNat and n2w from num to fixed word8 is BitVec.ofNat 8, as in the reviewed character conversion; the iff orientation is unchanged. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "MAP_n2w_ORD_eq",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CharWord.lean",
+  "lean_name": "mapN2wOrd_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local statement with its typed replay: HOL string is List HolChar, ORD is BitVec.toNat and n2w from num to fixed word8 is BitVec.ofNat 8, as in the reviewed character conversion; the iff orientation is unchanged. Independently source-reviewed."
 }
 ]

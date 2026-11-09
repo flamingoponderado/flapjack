@@ -62,3 +62,5 @@ check_type_WordT_W8_flat_to_v_typed=check_type (WordT W8) (flat_to_v (v :v)) ==>
 check_type_WordT_W64_flat_to_v_typed=check_type (WordT W64) (flat_to_v (v :v)) ==> ?(w :word64). v = (Litv (Word64 w :lit) :v)
 check_type_CharT_flat_to_v_typed=check_type CharT (flat_to_v (v :v)) ==> ?(c :char). v = (Litv (Char c) :v)
 check_type_BoolT_flat_to_v_typed=check_type BoolT (flat_to_v (v :v)) ==> v = (Boolv F :v) \/ v = (Boolv T :v)
+MAP_n2w_o_ORD_11_typed=!(l1 :string) (l2 :string). MAP ((n2w :num -> word8) o ORD) l1 = MAP ((n2w :num -> word8) o ORD) l2 <=> l1 = l2
+MAP_n2w_ORD_eq_typed=!(s :string) (s' :string). MAP ((n2w :num -> word8) o ORD) s = MAP ((n2w :num -> word8) o ORD) s' <=> s = s'

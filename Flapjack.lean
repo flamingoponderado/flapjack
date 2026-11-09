@@ -1511,6 +1511,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Op
 import Flapjack.Compiler.Backend.FlatToClos.Compile
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.CheckType
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.CharWord
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ListRel
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.IntegerOperations
