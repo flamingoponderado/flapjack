@@ -1,3 +1,4 @@
+import Flapjack.Misc.ListLookup
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsExact
 import Flapjack.Pancake.Proofs.PanGlobals.SemanticsInitCall
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsCons
@@ -64,21 +65,6 @@ theorem fupdateListLookup {α β : Type} [BEq α] [LawfulBEq α]
             have h2 : (a == k) = false := by simp [Ne.symm hk]
             simp [FUPDATE, h1, h2, List.lookup_cons]
 
-theorem lookupOfMemNodup {α β : Type} [BEq α] [LawfulBEq α]
-    (l : List (α × β)) (k : α) (v : β) (hmem : (k, v) ∈ l) (hnd : (l.map Prod.fst).Nodup) :
-    List.lookup k l = some v := by
-  induction l with
-  | nil => simp at hmem
-  | cons e l ih =>
-    obtain ⟨a, b⟩ := e
-    simp only [List.map_cons, List.nodup_cons] at hnd
-    rcases List.mem_cons.mp hmem with h | h
-    · cases h; simp
-    · have hka : k ≠ a := by
-        intro hk; subst hk; exact hnd.1 (List.mem_map.mpr ⟨(k, v), h, rfl⟩)
-      have : (k == a) = false := by simp [hka]
-      simp [List.lookup_cons, this, ih h hnd.2]
-
 theorem lookupMem {α β : Type} [BEq α] [LawfulBEq α]
     (l : List (α × β)) (k : α) (v : β) (h : List.lookup k l = some v) : (k, v) ∈ l := by
   induction l with
@@ -108,10 +94,10 @@ theorem lookupReverseOfNodup {α β : Type} [BEq α] [LawfulBEq α]
     | none => rfl
     | some v =>
       have hm := lookupMem _ _ _ h'
-      have := lookupOfMemNodup l k v (List.mem_reverse.mp hm) hnd
+      have := Flapjack.Misc.listLookupOfMemNodup l k v (List.mem_reverse.mp hm) hnd
       rw [h] at this; cases this
   | some v =>
-    exact lookupOfMemNodup _ k v (List.mem_reverse.mpr (lookupMem _ _ _ h)) hnd'
+    exact Flapjack.Misc.listLookupOfMemNodup _ k v (List.mem_reverse.mpr (lookupMem _ _ _ h)) hnd'
 
 /-- `FUPDATE_LIST FEMPTY` over distinct keys is `ALOOKUP`. -/
 theorem emptyUpdateListLookup {α β : Type} [BEq α] [LawfulBEq α]
@@ -529,7 +515,7 @@ theorem compileTopSemanticsDeclsHOL {width : Nat} {σ : Type} [NeZero width]
     intro f entry hmem
     rw [hTcode, HolFiniteMapExact.lookup_updateList, fupdateListLookup,
       lookupReverseOfNodup _ _ hLNodup,
-      lookupOfMemNodup _ f (entry.1, compileProgExactHOL ctx entry.2.1, entry.2.2)
+      Flapjack.Misc.listLookupOfMemNodup _ f (entry.1, compileProgExactHOL ctx entry.2.1, entry.2.2)
         (List.mem_map.mpr ⟨(f, entry), hmem, rfl⟩) hLNodup]
   have hstartNotRenamed : start ∉ (functionsHOL (fpermDecsHOL start nm code)).map Prod.fst := by
     rw [functionsFpermDecsHOL, List.map_map]

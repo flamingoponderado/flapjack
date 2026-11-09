@@ -1889,20 +1889,6 @@ theorem gcInv_final_range {α β : Type} (conf : Config β) (state : GcState α 
         rwa [holFapply_of_lookup found] at mapEq
       exact ⟨i, equal ▸ found⟩
 
-private theorem heapFilterAux_covers {α β : Type} (heap : List (HeapElement α β))
-    (offset : Nat) (selected : Nat → Prop)
-    (covers : ∀ p, heapAddresses offset heap p → selected p) :
-    heapFilterAux offset selected heap = heap := by
-  classical
-  induction heap generalizing offset with
-  | nil => rfl
-  | cons head tail ih =>
-    have atHead : selected offset := covers offset (by simp [heapAddresses])
-    have coversTail : ∀ p, heapAddresses (offset + elLength head) tail p → selected p := by
-      intro p member
-      exact covers p (by simp [heapAddresses, member])
-    simp [heapFilterAux, atHead, ih (offset + elLength head) coversTail]
-
 /-- Filtering the final target heap by its live addresses discards just the
 unused expansion and retains both data segments. -/
 theorem gcInv_final_filterTarget {α β : Type} (conf : Config β) (state : GcState α β)
@@ -1914,11 +1900,11 @@ theorem gcInv_final_filterTarget {α β : Type} (conf : Config β) (state : GcSt
   have allocated : heapLength state.h1 = state.a := by simpa [h2Empty] using invariant.1
   let selected : Nat → Prop := fun p => heapAddresses 0 state.h1 p ∨ heapAddresses (state.a + state.n) state.r1 p
   have first : heapFilterAux 0 selected state.h1 = state.h1 := by
-    apply heapFilterAux_covers
+    apply heapFilterAux_of_covers
     intro p member
     exact Or.inl member
   have last : heapFilterAux (state.a + state.n) selected state.r1 = state.r1 := by
-    apply heapFilterAux_covers
+    apply heapFilterAux_of_covers
     intro p member
     exact Or.inr member
   have middle : heapFilterAux state.a selected (heapExpand state.n : List (HeapElement α β)) = [] := by

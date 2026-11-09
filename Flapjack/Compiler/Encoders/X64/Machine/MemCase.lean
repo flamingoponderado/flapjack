@@ -97,22 +97,6 @@ theorem readMemN_eq (s : X64State) (size : Nat) (hsize : size < 4) (a : BitVec 6
   · exact readMemN_four s a
   · exact readMemN_eight s a
 
-/-- `readBytes` only looks at the bytes at `a`, `a + 1`, ... -/
-theorem readBytes_congr (m m' : BitVec 64 → BitVec 8) (a : BitVec 64) (n : Nat)
-    (h : ∀ k, k < n → m (a + BitVec.ofNat 64 k) = m' (a + BitVec.ofNat 64 k)) :
-    readBytes m a n = readBytes m' a n := by
-  induction n generalizing a with
-  | zero => rfl
-  | succ n ih =>
-      have h0 : m a = m' a := by simpa using h 0 (by omega)
-      have hrec : readBytes m (a + 1) n = readBytes m' (a + 1) n := by
-        refine ih (a + 1) ?_
-        intro k hk
-        have hk' := h (k + 1) (by omega)
-        rwa [show a + BitVec.ofNat 64 (k + 1) = a + 1 + BitVec.ofNat 64 k by bv_omega] at hk'
-      simp only [readBytes]
-      rw [hrec, h0]
-
 /-- The value a source load assembles is the value the machine load assembles. -/
 theorem readValue_agree (a : BitVec 64) (size : Nat) (hsize : size < 4) (s : AsmState 64)
     (ms : X64State) (hbe : s.be = false)

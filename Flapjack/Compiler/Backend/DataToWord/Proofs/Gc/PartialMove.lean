@@ -18,19 +18,6 @@ private theorem partialClearLowBit {width : Nat} (value : BitVec width) :
 private theorem partialStarEmptyRight {α : Type} (p : (α → Prop) → Prop) : SetSep.star p SetSep.emp = p := by
   rw [SetSep.starComm, StackRemove.StackHeap.starEmptyLeft]
 
-private theorem partialShiftedForward_isForward {width : Nat} [NeZero width] (value : BitVec width) :
-    wordSemIsFwdPtr (.word (value <<< (2 : Nat))) = true := by
-  simp only [wordSemIsFwdPtr, decide_eq_true_eq]
-  apply BitVec.eq_of_getLsbD_eq
-  intro i hi
-  simp only [BitVec.getLsbD_and, BitVec.getLsbD_shiftLeft]
-  by_cases h : i < 2
-  · simp [h]
-  · have h' : 2 ≤ i := by omega
-    have pow : 2 ^ 2 ≤ 2 ^ i := Nat.pow_le_pow_right (by decide : 0 < (2 : Nat)) h'
-    have bit : (3 : Nat).testBit i = false := Nat.testBit_lt_two_pow (by omega)
-    simp [h, BitVec.getLsbD_ofNat, bit]
-
 /-- Byte-scaled offsets preserve ordering within a heap whose byte length fits
 in a machine word. This is arithmetic used by the partial collector proof. -/
 theorem partialByteOffsets_order {width : Nat} [NeZero width] (a b limit : Nat)
@@ -290,7 +277,7 @@ theorem wordGenGcPartialMove_forward {width : Nat} [NeZero width] (conf : Config
     simpa only [BitVec.mul_comm] using address
   simp only [wordAddr, wordGenGcPartialMove, low', if_false, inWord] at wordRun
   simp only [addr', read.1, read.2,
-    partialShiftedForward_isForward, if_true, wordSemTheWord, Prod.mk.injEq] at wordRun
+    shiftedForward_isForward, if_true, wordSemTheWord, Prod.mk.injEq] at wordRun
   obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := wordRun
   refine ⟨xs, current, ?_, ?_, rfl, segment, rfl, rfl, length.symm, ?_, ?_⟩
   · simpa [h2Empty, wordHeap, partialStarEmptyRight] using separated

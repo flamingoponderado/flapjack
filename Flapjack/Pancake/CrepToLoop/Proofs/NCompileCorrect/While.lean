@@ -124,22 +124,6 @@ unfolding of the compiled loop body, and `exit_loop` against the result map. -/
 
 variable {width : Nat} [NeZero width] {F : Type}
 
-private theorem locals_rel_inter (ctxt : CrepToLoopContextExact) (l : NumSet)
-    (sl : HolFiniteMapExact Nat (HolWordLab width)) (tl : Spt (WordLocW width))
-    (h : crepToLoopLocalsRelExact ctxt l sl tl) :
-    crepToLoopLocalsRelExact ctxt l sl (sptInter tl l) := by
-  refine ⟨h.1, h.2.1, fun k hk => ?_, fun vn val hval => ?_⟩
-  · have hk' : (sptLookup k l).isSome := hk
-    show (sptLookup k (sptInter tl l)).isSome
-    rw [sptLookup_sptInter, if_pos hk']
-    exact h.2.2.1 k hk
-  · obtain ⟨n, hn1, hn2, hn3⟩ := h.2.2.2 vn val hval
-    have hnl : (sptLookup n l).isSome := hn2
-    refine ⟨n, hn1, hn2, ?_⟩
-    show sptLookup n (sptInter tl l) = _
-    rw [sptLookup_sptInter, if_pos hnl]
-    exact hn3
-
 /-- `locals_rel ctxt l` survives the compiled condition (whose output live set
     `nl` contains `l`) and the write of the fresh temporary `tmp > vmax`. -/
 private theorem locals_rel_insert_of (ctxt : CrepToLoopContextExact) (l nl : NumSet)

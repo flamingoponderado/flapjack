@@ -54,9 +54,9 @@ theorem evaluateFakeConstChain {width : Nat} [NeZero width] {C F : Type}
     simp only [WordSemStateFiniteExact.setVar]
     rw [foldrInsertConstSwap]
 
--- Flapjack factoring of the common constant fold lookup, with no independent
--- HOL original. Duplicate registers are harmless because every payload agrees.
-private theorem constFoldLookup {α : Type} (names : List Nat) (value : α)
+/-- Flapjack factoring of the common constant fold lookup, with no independent
+HOL original. Duplicate registers are harmless because every payload agrees. -/
+theorem constFoldLookup {α : Type} (names : List Nat) (value : α)
     (locals : Spt α) (key : Nat) :
     sptLookup key (names.foldr (fun name tree => sptInsert name value tree) locals) =
       if key ∈ names then some value else sptLookup key locals := by
