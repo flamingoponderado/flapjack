@@ -6,6 +6,14 @@ namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Compiler.Backend.ClosProps
 
+/-- Initializer functions carry no variable annotations. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "every_Fn_vs_NONE_compile_init"]
+theorem everyFnVarsNone_compileInit (b : Bool) :
+    everyFnVarsNone [ClosInterp.compileInit b] := by
+  have safe : ∀ e ∈ [ClosInterp.compileInit b], noMti e := by
+    simpa using compileInit_noMti b
+  exact (noMtiList_syntactic 1 (by decide) _ safe).1
+
 /-- Initializer code contains no application exceeding a positive limit. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "contains_App_SOME_compile_init" 2549]
 theorem containsAppSome_compileInit (maxApp : Nat) (b : Bool) :

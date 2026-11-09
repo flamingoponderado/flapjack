@@ -114,6 +114,12 @@ val no_mti_compile_init_replay = Q.prove (
   Cases_on `b` >> fs [] >> EVAL_TAC);
 val _ = (print "no_mti_compile_init_replay="; Lib.with_flag (Globals.show_types,true) print_term (concl no_mti_compile_init_replay); print "\n");
 
+(* Replay the original local initializer annotation theorem. *)
+val every_Fn_vs_NONE_compile_init_replay = Q.prove (
+  `closProps$every_Fn_vs_NONE [clos_interp$compile_init b]`,
+  Cases_on `b` >> fs [] >> EVAL_TAC);
+val _ = (print "every_Fn_vs_NONE_compile_init_replay="; Lib.with_flag (Globals.show_types,true) print_term (concl every_Fn_vs_NONE_compile_init_replay); print "\n");
+
 (* Replay the second local declaration of this duplicated HOL name. *)
 val contains_App_SOME_compile_init_2549_replay = Q.prove (
   `1 <= max_app ==> closProps$contains_App_SOME max_app [clos_interp$compile_init b] = F`,

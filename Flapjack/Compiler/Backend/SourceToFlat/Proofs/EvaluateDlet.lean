@@ -442,10 +442,9 @@ theorem evaluateDlet_pattern_factored {C F : Type} [Nonempty C]
   · simpa [emptyEnv, names] using finalEnv
   · simpa [names] using finalInv
 
-/-- Factored outcome for a single declaration. This relation is narrower than
-the full HOL correctness theorem: it does not yet carry oracle-forward or
-generation relations, and the underlying evaluator relations remain under
-review. -/
+/-- An internal stage of the `Dlet` case of `compile_correct`. Oracle and
+generation relations are added by `DletOutcome.toGrowing` before conversion
+to the shared declaration case; this is not a separate HOL statement. -/
 def DletOutcome {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
@@ -681,9 +680,8 @@ def DletExpressionStep {C F : Type} [Nonempty C]
         factoredInvariant interp transform gen nextGenv (start, finish, other) result.1 flatResult.1 ∧
         envGenRel gen result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState
 
-/-- Declaration outcome with the original abort-sensitive growth condition.
-This remains factored infrastructure until the carrier and evaluator
-relations are reviewed against HOL. -/
+/-- An internal `Dlet` outcome with the original abort-sensitive growth,
+generation, and oracle-forward conditions. -/
 def DletOutcomeGrowing {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
@@ -707,9 +705,8 @@ def DletOutcomeGrowing {C F : Type} [Nonempty C]
             factoredInvariant interp transform gen nextGenv (start, finish, other) result.1 flatLast ∧
             envGenRel gen result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState
 
-/-- The growing declaration outcome with the compiled index and generation
-store on both successful and raised results. Its relations are still
-factored Flapjack infrastructure, not a reviewed HOL theorem. -/
+/-- An internal stage adding the compiled index and generation store on
+successful and raised results before forming the shared declaration case. -/
 def DletOutcomeAdvanced {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
@@ -902,10 +899,8 @@ theorem evaluateDlet_alias_growing {C F : Type} [Nonempty C]
       location name id safe envInv invariant)
     (dlet_effects_of_expression interp gen source sourceEnv location (.pvar name) (.var id) effects)
 
-/-- A source-safe `Dlet` satisfies the abort-sensitive growing declaration
-outcome from the expression induction hypothesis, for both alias and general
-pattern compilation. It remains untagged until its factored relations and
-evaluator carriers are reviewed against the full HOL theorem. -/
+/-- The internal abort-sensitive `Dlet` outcome follows from the expression
+induction hypothesis for both alias and general pattern compilation. -/
 theorem evaluateDlet_growing {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
@@ -967,9 +962,8 @@ theorem evaluateDlet_growing_compiled {C F : Type} [Nonempty C]
     location pattern expr safe envInv invariant generation expressionStep
     (compileDlet_fits_of_idxPrev trace n start finish compMap gen location pattern expr bound)
 
-/-- The factored simulation with compiled indices on every non-abort result.
-The expression induction hypothesis and correspondence review are still
-needed for the full source-to-flat correctness theorem. -/
+/-- The internal simulation carries compiled indices on every non-abort
+result, using the expression induction hypothesis. -/
 theorem evaluateDlet_advanced_compiled {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (genv : GlobalEnv) (start finish next : NextIndices) (other : Set (Nat × IndexKind))
@@ -1044,9 +1038,8 @@ theorem DletOutcomeAdvanced.toFactoredDecCase {C F : Type} [Nonempty C]
       | raise valueRel => exact .raise valueRel
       | abort kind => exact .abort kind
 
-/-- The `Dlet` declaration case in the shared factored result shape, assuming
-the expression simulation and oracle effects supplied by its induction step.
-The factored relations still require correspondence review. -/
+/-- The `Dlet` declaration case in the shared factored result shape, using
+the expression simulation and oracle effects supplied by its induction step. -/
 theorem evaluateDlet_case_factored {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (genv : GlobalEnv) (start finish next : NextIndices) (other : Set (Nat × IndexKind))

@@ -1,6 +1,14 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "every_Fn_vs_NONE_compile_init",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
+  "lean_name": "everyFnVarsNone_compileInit",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_Fn_vs_NONE_compile_init_replay with inferred types and the original local proof: the arbitrary Boolean flag and singleton initializer expression agree. Compared everyFnVarsNone and compileInit to the corresponding reviewed HOL definitions; the proposition and conclusion are unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "evaluate_compile_prog_initial_state",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Executable.lean",
   "lean_name": "evaluateCompileProgInitialState",

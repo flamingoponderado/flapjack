@@ -18,6 +18,13 @@ not a general equivalence proof.
 At Flapjack commit `05992bd4b9`, all 143 fixed corpus cases matched the
 compiler built from the pinned CakeML submodule revision `857f0d98da8f`.
 
+At `45f70abdf1`, 25 generated nested programs matched the pinned compiler's
+complete output, diagnostics, and exit status with:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 26110921 --count 25 --timeout 90
+```
+
 After replacing the data-to-word option-valued calls with the proved-total
 operation, the 143 fixed corpus cases, 60 structured-option cases with seed
 `11051109`, and 40 nested programs with seed `11050731` matched the pinned
