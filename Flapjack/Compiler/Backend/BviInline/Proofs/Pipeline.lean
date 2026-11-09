@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.BviInline.Proofs.Observation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.Observation
+module
+
+public import Flapjack.Compiler.Backend.BviInline.Proofs.Observation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.Observation
+
+@[expose] public section
+
 
 /-! Composition of the BVI TMC and inlining compiler passes. -/
 namespace Flapjack.Compiler.Backend.BviInline

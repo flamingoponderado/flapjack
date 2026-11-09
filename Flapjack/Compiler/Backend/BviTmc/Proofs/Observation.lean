@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.BviTmc.Proofs.CompileSemantics
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteSimulation
+module
+
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CompileSemantics
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteSimulation
+
+@[expose] public section
+
 
 /-! Whole-program observations for the TMC simulation. -/
 namespace Flapjack.Compiler.Backend.BviTmc.Observation
