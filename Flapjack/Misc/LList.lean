@@ -1,7 +1,6 @@
 module
 
 public import Flapjack.HolRef
-public import Mathlib.Data.Nat.Find
 
 @[expose] public section
 
@@ -820,38 +819,153 @@ constructed from the representation function, and the specification equations
 are proved as theorems. -/
 
 open Classical in
+/-- The least `k ≤ bound` with `p k`, if any. Flapjack infrastructure for HOL's
+    `LEAST`: a structural recursion bounded by an existence witness, so this
+    library does not depend on Mathlib's `Nat.find`. -/
+noncomputable def leastUpTo (p : Nat → Prop) : Nat → Option Nat
+  | 0 => if p 0 then some 0 else none
+  | n + 1 =>
+      match leastUpTo p n with
+      | some k => some k
+      | none => if p (n + 1) then some (n + 1) else none
+
+theorem leastUpTo_succ_some {p : Nat → Prop} {n k : Nat} (h : leastUpTo p n = some k) :
+    leastUpTo p (n + 1) = some k := by
+  unfold leastUpTo
+  rw [h]
+
+theorem leastUpTo_succ_none_true {p : Nat → Prop} {n : Nat}
+    (h : leastUpTo p n = none) (hp : p (n + 1)) :
+    leastUpTo p (n + 1) = some (n + 1) := by
+  unfold leastUpTo
+  rw [h, if_pos hp]
+
+theorem leastUpTo_succ_none_false {p : Nat → Prop} {n : Nat}
+    (h : leastUpTo p n = none) (hp : ¬ p (n + 1)) :
+    leastUpTo p (n + 1) = none := by
+  unfold leastUpTo
+  rw [h, if_neg hp]
+
+theorem leastUpTo_none {p : Nat → Prop} {n : Nat} (h : leastUpTo p n = none) :
+    ∀ m, m ≤ n → ¬ p m := by
+  induction n with
+  | zero =>
+      unfold leastUpTo at h
+      by_cases hp : p 0
+      · rw [if_pos hp] at h
+        exact absurd h (by simp)
+      · rw [if_neg hp] at h
+        intro m hm
+        have hm0 : m = 0 := by omega
+        subst hm0
+        exact hp
+  | succ n ih =>
+      cases hn : leastUpTo p n with
+      | some k =>
+          rw [leastUpTo_succ_some hn] at h
+          exact absurd h (by simp)
+      | none =>
+          by_cases hp : p (n + 1)
+          · rw [leastUpTo_succ_none_true hn hp] at h
+            exact absurd h (by simp)
+          · rw [leastUpTo_succ_none_false hn hp] at h
+            intro m hm
+            by_cases hmn : m ≤ n
+            · exact ih hn m hmn
+            · have hm' : m = n + 1 := by omega
+              subst hm'
+              exact hp
+
+theorem leastUpTo_some {p : Nat → Prop} {n k : Nat} (h : leastUpTo p n = some k) :
+    k ≤ n ∧ p k ∧ ∀ m, m < k → ¬ p m := by
+  induction n generalizing k with
+  | zero =>
+      unfold leastUpTo at h
+      by_cases hp : p 0
+      · rw [if_pos hp] at h
+        injection h with hk
+        subst hk
+        exact ⟨Nat.le_refl 0, hp, fun m hm => absurd hm (Nat.not_lt_zero m)⟩
+      · rw [if_neg hp] at h
+        exact absurd h (by simp)
+  | succ n ih =>
+      cases hn : leastUpTo p n with
+      | some k' =>
+          rw [leastUpTo_succ_some hn] at h
+          injection h with hk
+          subst hk
+          obtain ⟨hle, hp, hmin⟩ := ih hn
+          exact ⟨by omega, hp, hmin⟩
+      | none =>
+          by_cases hp : p (n + 1)
+          · rw [leastUpTo_succ_none_true hn hp] at h
+            injection h with hk
+            subst hk
+            refine ⟨Nat.le_refl _, hp, ?_⟩
+            intro m hm
+            exact leastUpTo_none hn m (by omega)
+          · rw [leastUpTo_succ_none_false hn hp] at h
+            exact absurd h (by simp)
+
+theorem leastUpTo_eq_some_of {p : Nat → Prop} {n k : Nat}
+    (hk : p k) (hmin : ∀ m, m < k → ¬ p m) (hkn : k ≤ n) :
+    leastUpTo p n = some k := by
+  induction n with
+  | zero =>
+      have hk0 : k = 0 := by omega
+      subst hk0
+      unfold leastUpTo
+      rw [if_pos hk]
+  | succ n ih =>
+      by_cases hkn' : k ≤ n
+      · rw [leastUpTo_succ_some (ih hkn')]
+      · have hkn'' : k = n + 1 := by omega
+        subst hkn''
+        cases hn : leastUpTo p n with
+        | some k' =>
+            obtain ⟨hle, hp, _⟩ := leastUpTo_some hn
+            exact absurd hp (hmin k' (by omega))
+        | none =>
+            rw [leastUpTo_succ_none_true hn hk]
+
+open Classical in
 /-- The least index at which a lazy list's representation is `NONE`, if any.
     Flapjack infrastructure: HOL specifies `LAPPEND` coinductively, not by this
     scan. -/
 noncomputable def firstNone (ll : HolLList α) : Option Nat :=
-  if h : ∃ k, ll.rep k = none then some (Nat.find h) else none
+  if h : ∃ k, ll.rep k = none then
+    leastUpTo (fun k => ll.rep k = none) (Classical.choose h)
+  else none
 
 theorem firstNone_spec {ll : HolLList α} {k : Nat} (h : firstNone ll = some k) :
     ll.rep k = none ∧ ∀ m, m < k → ll.rep m ≠ none := by
   unfold firstNone at h
-  split at h
-  · rename_i hex
-    injection h with hk
-    subst hk
-    exact ⟨Nat.find_spec hex, fun m hm => Nat.find_min hex hm⟩
-  · exact absurd h (by simp)
+  by_cases hex : ∃ k, ll.rep k = none
+  · rw [dif_pos hex] at h
+    obtain ⟨-, hk, hmin⟩ := leastUpTo_some h
+    exact ⟨hk, hmin⟩
+  · rw [dif_neg hex] at h
+    exact absurd h (by simp)
 
 theorem firstNone_none {ll : HolLList α} (h : firstNone ll = none) :
     ∀ k, ll.rep k ≠ none := by
   unfold firstNone at h
-  split at h
-  · simp at h
-  · rename_i hno
-    exact fun k hk => hno ⟨k, hk⟩
+  by_cases hex : ∃ k, ll.rep k = none
+  · rw [dif_pos hex] at h
+    exact absurd (Classical.choose_spec hex) (leastUpTo_none h _ (Nat.le_refl _))
+  · exact fun k hk => hex ⟨k, hk⟩
 
 theorem firstNone_eq_some_of_rep {ll : HolLList α} {k : Nat}
     (hk : ll.rep k = none) (hmin : ∀ m, m < k → ll.rep m ≠ none) :
     firstNone ll = some k := by
   have hex : ∃ j, ll.rep j = none := ⟨k, hk⟩
+  have hk_le : k ≤ Classical.choose hex := by
+    by_cases hlt : Classical.choose hex < k
+    · exact absurd (Classical.choose_spec hex) (hmin (Classical.choose hex) hlt)
+    · omega
   unfold firstNone
   rw [dif_pos hex]
-  congr 1
-  exact (Nat.find_eq_iff hex).mpr ⟨hk, hmin⟩
+  exact leastUpTo_eq_some_of hk hmin hk_le
 
 theorem firstNone_eq_none_of_rep {ll : HolLList α} (h : ∀ k, ll.rep k ≠ none) :
     firstNone ll = none := by
@@ -1054,22 +1168,23 @@ theorem lappendHOL_eq_lnil (l1 l2 : HolLList α) :
     have h1 : l1 = lnil := by
       apply eq_lnil_of_rep_none
       intro n
-      by_contra hne
-      cases hf : firstNone l1 with
-      | none =>
-          have hthis : lappendRep l1 l2 n = l1.rep n := by simp [lappendRep, hf]
-          have hn_none : lappendRep l1 l2 n = none := hall n
-          rw [hthis] at hn_none
-          exact hne hn_none
-      | some k =>
-          obtain ⟨hk, hmin⟩ := firstNone_spec hf
-          by_cases hn : n < k
-          · have hthis : lappendRep l1 l2 n = l1.rep n := by simp [lappendRep, hf, hn]
+      by_cases hrep : l1.rep n = none
+      · exact hrep
+      · cases hf : firstNone l1 with
+        | none =>
+            have hthis : lappendRep l1 l2 n = l1.rep n := by simp [lappendRep, hf]
             have hn_none : lappendRep l1 l2 n = none := hall n
             rw [hthis] at hn_none
-            exact hne hn_none
-          · have hnone : l1.rep n = none := rep_none_of_le l1 hk (by omega)
-            exact hne hnone
+            exact absurd hn_none hrep
+        | some k =>
+            obtain ⟨hk, hmin⟩ := firstNone_spec hf
+            by_cases hn : n < k
+            · have hthis : lappendRep l1 l2 n = l1.rep n := by simp [lappendRep, hf, hn]
+              have hn_none : lappendRep l1 l2 n = none := hall n
+              rw [hthis] at hn_none
+              exact absurd hn_none hrep
+            · have hnone : l1.rep n = none := rep_none_of_le l1 hk (by omega)
+              exact absurd hnone hrep
     subst h1
     exact ⟨rfl, (lappendHOL_spec.1 l2).symm.trans h⟩
   · rintro ⟨rfl, rfl⟩
@@ -1096,10 +1211,12 @@ theorem ldropHOL_one_lcons {γ : Type} (inner : γ) (rest : HolLList γ) :
 
 open Classical in
 /-- The index of the first nonempty member of a lazy list of lazy lists, if
-    any. Flapjack infrastructure: HOL defines `LFLATTEN` coinductively. -/
+    any. Flapjack infrastructure: HOL's `LFLATTEN` witness uses
+    `LEAST n. ?e. (SOME e = LNTH n ll) /\ ~(e = [||])`. -/
 noncomputable def firstNonempty (ll : HolLList (HolLList α)) : Option Nat :=
   if h : ∃ k, ∃ inner : HolLList α, ll.rep k = some inner ∧ inner.rep 0 ≠ none then
-    some (Nat.find h)
+    leastUpTo (fun k => ∃ inner : HolLList α, ll.rep k = some inner ∧ inner.rep 0 ≠ none)
+      (Classical.choose h)
   else none
 
 theorem firstNonempty_spec {ll : HolLList (HolLList α)} {k : Nat}
@@ -1107,24 +1224,23 @@ theorem firstNonempty_spec {ll : HolLList (HolLList α)} {k : Nat}
     (∃ inner : HolLList α, ll.rep k = some inner ∧ inner.rep 0 ≠ none) ∧
       ∀ m, m < k → ¬ ∃ inner : HolLList α, ll.rep m = some inner ∧ inner.rep 0 ≠ none := by
   unfold firstNonempty at h
-  split at h
-  · rename_i hex
-    injection h with hk
-    subst hk
-    exact ⟨Nat.find_spec hex, fun m hm => Nat.find_min hex hm⟩
-  · exact absurd h (by simp)
+  by_cases hex : ∃ k, ∃ inner : HolLList α, ll.rep k = some inner ∧ inner.rep 0 ≠ none
+  · rw [dif_pos hex] at h
+    obtain ⟨-, hk, hmin⟩ := leastUpTo_some h
+    exact ⟨hk, hmin⟩
+  · rw [dif_neg hex] at h
+    exact absurd h (by simp)
 
 theorem firstNonempty_none {ll : HolLList (HolLList α)} (h : firstNonempty ll = none) :
     ∀ (k : Nat) (inner : HolLList α), ll.rep k = some inner → inner.rep 0 = none := by
   intro k inner hk
-  by_contra hne
-  have hex : ∃ j, ∃ inner : HolLList α, ll.rep j = some inner ∧ inner.rep 0 ≠ none :=
-    ⟨k, inner, hk, hne⟩
-  have hsome : firstNonempty ll = some (Nat.find hex) := by
-    unfold firstNonempty
-    rw [dif_pos hex]
-  rw [hsome] at h
-  exact Option.some_ne_none _ h
+  by_cases hne : inner.rep 0 = none
+  · exact hne
+  · have hex : ∃ j, ∃ inner : HolLList α, ll.rep j = some inner ∧ inner.rep 0 ≠ none :=
+      ⟨k, inner, hk, hne⟩
+    unfold firstNonempty at h
+    rw [dif_pos hex] at h
+    exact absurd (Classical.choose_spec hex) (leastUpTo_none h _ (Nat.le_refl _))
 
 theorem firstNonempty_eq_some_of_rep {ll : HolLList (HolLList α)} {k : Nat}
     (hk : ∃ inner : HolLList α, ll.rep k = some inner ∧ inner.rep 0 ≠ none)
@@ -1132,10 +1248,13 @@ theorem firstNonempty_eq_some_of_rep {ll : HolLList (HolLList α)} {k : Nat}
     firstNonempty ll = some k := by
   have hex : ∃ j, ∃ inner : HolLList α, ll.rep j = some inner ∧ inner.rep 0 ≠ none :=
     ⟨k, hk⟩
+  have hk_le : k ≤ Classical.choose hex := by
+    by_cases hlt : Classical.choose hex < k
+    · exact absurd (Classical.choose_spec hex) (hmin (Classical.choose hex) hlt)
+    · omega
   unfold firstNonempty
   rw [dif_pos hex]
-  congr 1
-  exact (Nat.find_eq_iff hex).mpr ⟨hk, hmin⟩
+  exact leastUpTo_eq_some_of hk hmin hk_le
 
 theorem firstNonempty_eq_none_of {ll : HolLList (HolLList α)}
     (h : ∀ (k : Nat) (inner : HolLList α), ll.rep k = some inner → inner.rep 0 = none) :
