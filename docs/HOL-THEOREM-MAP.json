@@ -1,5 +1,23 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "app_call_dests_def", "hol_line": 3590,
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AppCallDests.lean", "lean_name": "appCallDests",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared app_call_dests_def_typed and all source clauses: option mode, original list-shaped recursion, natural-number sets, application and call destination conditions, and mapped recursive bodies agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "app_call_dests_append",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/AppCallDests.lean", "lean_name": "appCallDests_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared app_call_dests_append_typed: free optional mode precedes both quantified expression lists and the source destination-set union equality agrees."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "call_dests_shift",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CallDests.lean", "lean_name": "callDests_shift",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared call_dests_shift_typed: free optional mode precedes the expression list, natural indices and sparse-tree index, and both source destination sets and source shift are retained without extra hypotheses."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "shift_no_Labels",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/NoLabels.lean", "lean_name": "shiftSource_noLabels",
   "statement_status": "reviewed_exact",

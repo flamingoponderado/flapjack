@@ -1300,6 +1300,7 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants.Origin
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.MaxApp
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeMaxApp
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.NoLabels
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.CallDests
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.LabelOrigins
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Pure
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate

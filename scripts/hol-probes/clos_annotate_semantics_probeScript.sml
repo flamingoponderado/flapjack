@@ -34,5 +34,8 @@ val _ = show "shift_no_Labels_typed=" clos_annotateProofTheory.shift_no_Labels;
 val _ = show "alt_free_no_Labels_typed=" clos_annotateProofTheory.alt_free_no_Labels;
 val _ = show "annotate_no_Labels_typed=" clos_annotateProofTheory.annotate_no_Labels;
 val _ = show "no_Labels_ann_typed=" clos_annotateProofTheory.no_Labels_ann;
+val _ = show "app_call_dests_def_typed=" closPropsTheory.app_call_dests_def;
+val _ = show "app_call_dests_append_typed=" closPropsTheory.app_call_dests_append;
+val _ = show "call_dests_shift_typed=" clos_annotateProofTheory.call_dests_shift;
 val _ = show "HD_annotate_SING_typed=" clos_annotateProofTheory.HD_annotate_SING;
 val _ = show "every_Fn_SOME_ann_typed=" clos_annotateProofTheory.every_Fn_SOME_ann;
