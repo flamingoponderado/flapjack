@@ -1,5 +1,23 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml", "hol_name": "renumber_code_locs_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LocationInvariants.lean", "lean_name": "renumberCodeLocs_inc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared renumber_code_locs_inc_typed: both universally quantified conjuncts retain the source list/singleton order and lower bound on the final numbering state."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml", "hol_name": "renumber_code_locs_imp_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LocationInvariants.lean", "lean_name": "renumberCodeLocs_imp_inc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared renumber_code_locs_imp_inc_typed: the shared initial state, independent output pairs and both pair-equality implications match HOL exactly."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml", "hol_name": "renumber_code_locs_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LocationInvariants.lean", "lean_name": "renumberCodeLocs_everyFnSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared renumber_code_locs_every_Fn_SOME_typed: both source traversals, arbitrary input states, list and singleton predicates, and conjunct order agree."
+ },
+ {
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml", "hol_name": "domain_def",
   "lean_path": "Flapjack/Misc/Sptree/FromList/Domain.lean", "lean_name": "sptDomain_def",
   "statement_status": "reviewed_exact",

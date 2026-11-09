@@ -15,4 +15,7 @@ val _ = show "ref_rel_def_typed=" closPropsTheory.ref_rel_def;
 val _ = show "fmap_rel_def_typed=" finite_mapTheory.fmap_rel_def;
 val _ = show "state_rel_typed=" clos_numberProofTheory.state_rel_def;
 val _ = show "renumber_correct_typed=" clos_numberProofTheory.renumber_code_locs_correct;
+val _ = show "renumber_code_locs_inc_typed=" clos_numberProofTheory.renumber_code_locs_inc;
+val _ = show "renumber_code_locs_imp_inc_typed=" clos_numberProofTheory.renumber_code_locs_imp_inc;
+val _ = show "renumber_code_locs_every_Fn_SOME_typed=" clos_numberProofTheory.renumber_code_locs_every_Fn_SOME;
 val _ = show "semantics_number_typed=" clos_numberProofTheory.semantics_number;

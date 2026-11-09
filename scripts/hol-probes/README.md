@@ -98,7 +98,8 @@ the capture does not replay the local HOL proof.
 `clos_known_syntax_probe.out` captures the optimizer safety theorem, its consequences, the source induction rule, and tick-write preservation. These typed captures support source review, not cross-language equivalence.
 
 `clos_number_correctness_probe.out` captures the typed numbering traversal,
-incremental compiler, even alignment, value-relation rules, state relation,
+incremental compiler, location bounds, function-location invariant, even
+alignment, value-relation rules, state relation,
 reference and finite-map relations, mutual evaluator simulation and
 whole-program semantics theorem. The
 traversal's recursive-binding helper is checked in Lean against the original
