@@ -7,9 +7,6 @@ public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Semantics
 public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracleSimulation
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 -- Public declarations below use private helpers.

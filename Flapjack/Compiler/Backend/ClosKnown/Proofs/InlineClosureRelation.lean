@@ -6,9 +6,6 @@ public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownUnchanged
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppPrefix
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.TicksEvaluate
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 

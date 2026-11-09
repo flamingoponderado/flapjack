@@ -10,9 +10,6 @@ public import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemantics
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.NoMti
 public import Flapjack.Compiler.Backend.ClosMti.Proofs.Semantics
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 

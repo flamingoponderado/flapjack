@@ -5,8 +5,6 @@ public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CanRaise
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.Simplify
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateLength
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! Local semantic rewrites used by handler simplification. -/

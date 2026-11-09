@@ -8,9 +8,6 @@ public import Flapjack.Compiler.Backend.Semantics.BviSem.Semantics
 public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 public import Flapjack.Compiler.Backend.Semantics.BviProps.AdjustOracleEval
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 

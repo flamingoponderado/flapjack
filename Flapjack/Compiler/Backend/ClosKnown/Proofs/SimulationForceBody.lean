@@ -4,9 +4,6 @@ public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationForce
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Simulation
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 

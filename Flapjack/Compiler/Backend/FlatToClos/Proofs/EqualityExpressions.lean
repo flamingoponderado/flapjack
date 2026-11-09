@@ -3,11 +3,6 @@ module
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Equality
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.IntegerExpressions
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Expression simulation for flat polymorphic equality. -/

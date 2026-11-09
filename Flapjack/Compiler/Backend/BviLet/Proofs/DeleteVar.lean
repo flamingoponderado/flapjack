@@ -3,8 +3,6 @@ module
 public import Flapjack.Compiler.Backend.BviLet.Proofs.Environment
 public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateList
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
 @[expose] public section
 
 /-! Evaluation of the variable deletion used by the BVI let optimizer. -/

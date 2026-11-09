@@ -8,9 +8,6 @@ public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 /-! Closure-state relation for changing the compiler-oracle configuration. -/

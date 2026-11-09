@@ -4,9 +4,6 @@ public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyClock
 public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateInduction
 public import Lean.Elab.Tactic.Omega
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Clock preservation and clock clamping for flat evaluation and its

@@ -2,10 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterCall
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! The interpreter's raise-expression dispatch. Its evaluator and state

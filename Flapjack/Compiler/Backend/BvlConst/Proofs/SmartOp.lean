@@ -4,8 +4,6 @@ public import Flapjack.Compiler.Backend.BvlConst
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! Correctness prerequisites for BVL constant operation rewrites. -/

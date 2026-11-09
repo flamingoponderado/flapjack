@@ -2,9 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.BvlConst.Proofs.Control
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 @[expose] public section
 
 /-! Conditional case of constant-propagation simulation. -/

@@ -7,9 +7,6 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
 public import Aesop
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 

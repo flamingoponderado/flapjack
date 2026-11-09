@@ -7,9 +7,6 @@ public import Flapjack.Compiler.Backend.BviToData.Proofs.ApplyBool
 public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
 public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateLength
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
 @[expose] public section
 
 /-! The BVI-to-data compiler simulation, factored along the source cases. -/

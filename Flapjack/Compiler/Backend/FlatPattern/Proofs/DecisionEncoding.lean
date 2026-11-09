@@ -5,9 +5,6 @@ public import Flapjack.Compiler.Backend.FlatPattern.Proofs.NaiveMatch
 public import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingSimulation
 public import Flapjack.Compiler.Backend.FlatPattern.Proofs.DecisionEncoding.Encoding
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 -- Public declarations below use private helpers.

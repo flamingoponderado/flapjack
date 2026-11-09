@@ -5,8 +5,6 @@ public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateEvents
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyError
 public import Flapjack.Misc.ClockWeightInduction
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! BVL trace comparisons across clocks; proof cases have no standalone HOL declarations. -/

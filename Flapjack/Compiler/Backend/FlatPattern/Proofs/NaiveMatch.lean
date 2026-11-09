@@ -6,9 +6,6 @@ public import Flapjack.Compiler.Backend.FlatProps.PatternList
 public import Flapjack.Compiler.Backend.FlatPattern.Proofs.BranchEvaluation
 public import Mathlib.Data.List.Forall2
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Evaluation facts for the naive pattern dispatcher. The clocked evaluator

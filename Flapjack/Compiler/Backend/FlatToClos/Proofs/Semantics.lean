@@ -5,9 +5,6 @@ public import Flapjack.Compiler.Backend.FlatToClos.Proofs.CompileCorrectShape
 public import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemanticsSource
 public import Flapjack.FiniteMap.EmptyExact
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 -- Public declarations below use private helpers.

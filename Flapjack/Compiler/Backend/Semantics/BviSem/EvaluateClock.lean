@@ -3,8 +3,6 @@ module
 public import Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
 public import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyClock
 
--- Proofs below unfold the private error helpers of `BviSem.evaluate`.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
 @[expose] public section
 
 /-! Clock-bound building blocks for BVI evaluation. -/

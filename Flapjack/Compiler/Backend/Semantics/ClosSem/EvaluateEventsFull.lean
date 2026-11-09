@@ -3,9 +3,6 @@ module
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsControl
 public import Flapjack.Misc.ClockWeightInduction
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 /-! Event-prefix preservation for the proof-side closure evaluator. The

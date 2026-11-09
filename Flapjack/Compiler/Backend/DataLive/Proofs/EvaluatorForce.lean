@@ -2,9 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.DataLive.Proofs.CallHandler
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
 @[expose] public section
 
 /-! Same-program force simulation across related call stacks. -/

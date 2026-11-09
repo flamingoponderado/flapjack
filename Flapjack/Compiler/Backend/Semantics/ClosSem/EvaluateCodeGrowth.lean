@@ -5,9 +5,6 @@ public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 /-! Code-store growth in the proof-side closure evaluator. -/

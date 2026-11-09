@@ -4,8 +4,6 @@ public import Flapjack.Compiler.Backend.BvlHandle.Helpers
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyError
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! Soundness of the handler compiler's syntactic raise analysis. -/

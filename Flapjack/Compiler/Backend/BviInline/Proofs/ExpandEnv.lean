@@ -3,8 +3,6 @@ module
 public import Flapjack.Compiler.Backend.BviInline.Proofs.TickSemantics
 public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateLength
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
 @[expose] public section
 
 /-! Environment-extension cases for BVI evaluation. -/

@@ -5,9 +5,6 @@ public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SequenceCorrect
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.GeneratedShape
 public import Flapjack.Misc.ClockWeightInduction
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 @[expose] public section
 
 

@@ -10,9 +10,6 @@ public import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownSubspt
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Simulation
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 

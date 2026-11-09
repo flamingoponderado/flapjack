@@ -4,9 +4,6 @@ public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Control
 public import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
 public import Flapjack.Misc.Sptree.ToAList
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 /-! Closure creation for the proof-side annotation simulation. -/

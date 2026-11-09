@@ -3,9 +3,6 @@ module
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockLeaf
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.IfWorker
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! Evaluation of the recursive-call leaf of an optimized call block. -/

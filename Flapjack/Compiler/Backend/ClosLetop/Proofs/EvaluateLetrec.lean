@@ -2,9 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateBasic
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 /-! Recursive closure case of closure let-operation correctness. -/

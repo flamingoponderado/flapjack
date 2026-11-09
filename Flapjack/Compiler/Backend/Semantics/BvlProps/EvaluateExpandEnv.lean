@@ -4,8 +4,6 @@ public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateTicks
 public import Flapjack.Misc.ClockWeightInduction
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! Cases of environment extension for the BVL evaluator. -/

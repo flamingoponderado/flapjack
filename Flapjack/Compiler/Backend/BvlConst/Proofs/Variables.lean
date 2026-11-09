@@ -4,9 +4,6 @@ public import Flapjack.Compiler.Backend.BvlConst.Proofs.SmartOpCorrect
 public import Flapjack.Compiler.Backend.BvlConst.Proofs.Relations
 public import Flapjack.Compiler.Backend.BvlConst.Proofs.CompileProduction
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 @[expose] public section
 
 /-! Variable and force cases of constant-propagation simulation. -/

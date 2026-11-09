@@ -6,9 +6,6 @@ public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Function-call prerequisites over the factored source-to-flat relations.

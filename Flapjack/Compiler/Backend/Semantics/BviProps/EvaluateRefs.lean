@@ -4,8 +4,6 @@ public import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyRefs
 public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateClockFull
 public import Flapjack.Misc.ClockWeightInduction
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
 @[expose] public section
 
 /-! Reference-domain growth during BVI evaluation. -/

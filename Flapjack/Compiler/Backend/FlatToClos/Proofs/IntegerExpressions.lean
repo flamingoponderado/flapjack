@@ -7,11 +7,6 @@ public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyFlat
 public import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Integer-expression cases for flat-to-closure simulation. -/

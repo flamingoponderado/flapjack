@@ -3,8 +3,6 @@ module
 public import Flapjack.Compiler.Backend.BvlJump
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! Simulation facts for the balanced BVL dispatcher. The BVL evaluator and

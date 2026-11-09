@@ -4,9 +4,6 @@ public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationTotal
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsRelated
 public import Flapjack.FiniteMap.EmptyExact
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 

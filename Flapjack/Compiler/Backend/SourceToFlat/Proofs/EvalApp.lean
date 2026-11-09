@@ -9,9 +9,6 @@ public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalPattern
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
 public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Execution of the flat expression generated for source Eval. The

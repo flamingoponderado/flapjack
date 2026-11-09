@@ -3,8 +3,6 @@ module
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
 public import Flapjack.Misc.ClockWeightInduction
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! Successful-result length for the proof-side BVL evaluator. -/

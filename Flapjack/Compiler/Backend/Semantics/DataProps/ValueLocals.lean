@@ -2,8 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultAll
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
 @[expose] public section
 
 /-! Local-environment invariant for value-returning data evaluations. -/
