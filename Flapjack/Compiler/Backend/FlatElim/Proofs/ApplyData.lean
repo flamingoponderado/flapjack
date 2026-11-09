@@ -279,62 +279,6 @@ theorem doApp_some_flatStateRel_stringConcat {C F G : Type} (reachable : NumSet)
             by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, partsEq, joinedEq],
             resultSafe.1, resultSafe.2⟩
 
-/-- Encoding a list preserves its reachability and Eval-free invariants. -/
-theorem listToValue_invariants (values : List FlatSem.Value) (reachable : NumSet)
-    (closed : globalsWithin (findValuesGlobals values) reachable) (safe : valuesNoEval values) :
-    globalsWithin (findValueGlobals (FlatSem.listToValue values)) reachable ∧
-      valueHasEval (FlatSem.listToValue values) = false := by
-  induction values with
-  | nil =>
-    constructor
-    · simp [FlatSem.listToValue, findValueGlobals, findValuesGlobals, globalsWithin, sptMem, sptDomain]
-    · simp [FlatSem.listToValue, valueHasEval, valuesHaveEval]
-  | cons value rest ih =>
-    have parts := (globalsWithin_union _ _ _).mp (by simpa [findValuesGlobals] using closed)
-    have headSafe : valueHasEval value = false := safe value (by simp)
-    have tailSafe : valuesNoEval rest := by
-      intro item member
-      exact safe item (by simp [member])
-    obtain ⟨tailClosed, tailNoEval⟩ := ih parts.2 tailSafe
-    constructor
-    · simp only [FlatSem.listToValue, findValueGlobals, findValuesGlobals, globalsWithin_union]
-      exact ⟨parts.1, tailClosed, by simp [globalsWithin, sptMem, sptDomain]⟩
-    · simp [FlatSem.listToValue, valueHasEval, valuesHaveEval, headSafe, tailNoEval]
-
-/-- Decoding a flat list preserves reachability and the absence of Eval. -/
-theorem valueToList_invariants (value : FlatSem.Value) (values : List FlatSem.Value)
-    (reachable : NumSet) (decoded : FlatSem.valueToList value = some values)
-    (closed : globalsWithin (findValueGlobals value) reachable) (safe : valueHasEval value = false) :
-    globalsWithin (findValuesGlobals values) reachable ∧ valuesNoEval values := by
-  induction value using FlatSem.valueToList.induct generalizing values with
-  | case1 cid tid valid =>
-    simp [FlatSem.valueToList, valid] at decoded
-    subst values
-    constructor
-    · simp [findValuesGlobals, globalsWithin, sptMem, sptDomain]
-    · simp [valuesNoEval]
-  | case2 cid tid invalid => simp [FlatSem.valueToList, invalid] at decoded
-  | case3 cid tid head tail valid ih =>
-    cases tailDecoded : FlatSem.valueToList tail with
-    | none => simp [FlatSem.valueToList, valid, tailDecoded] at decoded
-    | some rest =>
-      simp [FlatSem.valueToList, valid, tailDecoded] at decoded
-      subst values
-      have parts : globalsWithin (findValueGlobals head) reachable ∧
-          globalsWithin (findValueGlobals tail) reachable := by
-        simp only [findValueGlobals, findValuesGlobals, globalsWithin_union] at closed
-        exact ⟨closed.1, closed.2.1⟩
-      have safeParts : valueHasEval head = false ∧ valueHasEval tail = false := by
-        simpa [valueHasEval, valuesHaveEval] using safe
-      obtain ⟨restClosed, restSafe⟩ := ih rest tailDecoded parts.2 safeParts.2
-      constructor
-      · simpa [findValuesGlobals, globalsWithin_union] using And.intro parts.1 restClosed
-      · simpa [valuesNoEval] using And.intro safeParts.1 restSafe
-  | case4 cid tid head tail invalid => simp [FlatSem.valueToList, invalid] at decoded
-  | case5 value noNil noCons =>
-    simp only [FlatSem.valueToList] at decoded
-    simp at decoded
-
 /-- Decoding a list cannot add global dependencies. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_v_globals_v_to_list"]
 theorem findValueGlobals_valueToList (value : FlatSem.Value) (reachable : NumSet)
@@ -461,7 +405,10 @@ theorem doApp_some_flatStateRel_stringExplode {C F G : Type} (reachable : NumSet
             intro value member
             obtain ⟨char, _, rfl⟩ := List.mem_map.mp member
             simp [valueHasEval]
-          obtain ⟨valueClosed, valueSafe⟩ := listToValue_invariants chars reachable charsClosed charsSafe
+          have valueClosed := findValueGlobals_listToValue chars reachable _ ⟨charsClosed, rfl⟩
+          have valueSafe : valueHasEval (FlatSem.listToValue chars) = false := by
+            rw [valueHasEval_listToValue]
+            exact (valuesHaveEval_eq_false_iff chars).mpr charsSafe
           have resultSafe := primitiveResult_value_invariants reachable (FlatSem.listToValue chars) valueClosed valueSafe
           exact ⟨target, related, by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData],
             resultSafe.1, resultSafe.2⟩
@@ -538,7 +485,9 @@ theorem doApp_some_flatStateRel_vectorFromList {C F G : Type} (reachable : NumSe
       | some items =>
         simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, decoded] at run
         rcases run with ⟨rfl, rfl⟩
-        obtain ⟨itemsClosed, itemsSafe⟩ := valueToList_invariants value items reachable decoded valueClosed valueSafe
+        have itemsClosed := findValueGlobals_valueToList value reachable items ⟨valueClosed, decoded⟩
+        have itemsSafe : valuesNoEval items :=
+          (valuesHaveEval_eq_false_iff items).mp (valueHasEval_valueToList value items decoded ▸ valueSafe)
         have vectorClosed : globalsWithin (findValueGlobals (.vectorv items)) reachable := by
           simpa [findValueGlobals] using itemsClosed
         have vectorSafe : valueHasEval (.vectorv items) = false := by
@@ -587,20 +536,22 @@ theorem doApp_some_flatStateRel_listAppend {C F G : Type} (reachable : NumSet)
           | some rightItems =>
             simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, leftDecoded, rightDecoded] at run
             rcases run with ⟨rfl, rfl⟩
-            obtain ⟨leftItemsClosed, leftItemsSafe⟩ := valueToList_invariants left leftItems reachable leftDecoded leftClosed leftSafe
-            obtain ⟨rightItemsClosed, rightItemsSafe⟩ := valueToList_invariants right rightItems reachable rightDecoded rightClosed rightSafe
-            have combinedClosed : globalsWithin (findValuesGlobals (leftItems ++ rightItems)) reachable := by
-              apply (findValuesGlobals_within_iff _ _).mpr
-              intro value member
-              rcases List.mem_append.mp member with leftMember | rightMember
-              · exact (findValuesGlobals_within_iff _ _).mp leftItemsClosed value leftMember
-              · exact (findValuesGlobals_within_iff _ _).mp rightItemsClosed value rightMember
+            have leftItemsClosed := findValueGlobals_valueToList left reachable leftItems ⟨leftClosed, leftDecoded⟩
+            have rightItemsClosed := findValueGlobals_valueToList right reachable rightItems ⟨rightClosed, rightDecoded⟩
+            have leftItemsSafe : valuesNoEval leftItems :=
+              (valuesHaveEval_eq_false_iff leftItems).mp (valueHasEval_valueToList left leftItems leftDecoded ▸ leftSafe)
+            have rightItemsSafe : valuesNoEval rightItems :=
+              (valuesHaveEval_eq_false_iff rightItems).mp (valueHasEval_valueToList right rightItems rightDecoded ▸ rightSafe)
             have combinedSafe : valuesNoEval (leftItems ++ rightItems) := by
               intro value member
               rcases List.mem_append.mp member with leftMember | rightMember
               · exact leftItemsSafe value leftMember
               · exact rightItemsSafe value rightMember
-            obtain ⟨resultClosed, resultNoEval⟩ := listToValue_invariants (leftItems ++ rightItems) reachable combinedClosed combinedSafe
+            have resultClosed := findValueGlobals_listToValue_append leftItems reachable rightItems
+              ⟨leftItemsClosed, rightItemsClosed⟩
+            have resultNoEval : valueHasEval (FlatSem.listToValue (leftItems ++ rightItems)) = false := by
+              rw [valueHasEval_listToValue]
+              exact (valuesHaveEval_eq_false_iff _).mpr combinedSafe
             have resultSafe := primitiveResult_value_invariants reachable (FlatSem.listToValue (leftItems ++ rightItems)) resultClosed resultNoEval
             exact ⟨target, related,
               by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, leftDecoded, rightDecoded],
