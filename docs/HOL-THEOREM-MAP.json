@@ -68323,11 +68323,27 @@
   },
   {
     "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LAPPEND_ASSOC",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lappendHOL_assoc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:843-845 Theorem LAPPEND_ASSOC: !ll1 ll2 ll3. LAPPEND (LAPPEND ll1 ll2) ll3 = LAPPEND ll1 (LAPPEND ll2 ll3). The Lean statement is the same equation with the same three universally quantified lists in the same order, LAPPEND read as lappendHOL. The proof is rep extensionality over the three firstNone cases of the left operands, the rep-level counterpart of HOL's LLIST_STRONG_BISIMULATION argument. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
     "hol_name": "LAPPEND_EQ_LNIL",
     "lean_path": "Flapjack/Misc/LList.lean",
     "lean_name": "lappendHOL_eq_lnil",
     "statement_status": "reviewed_exact",
     "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:836-837 Theorem LAPPEND_EQ_LNIL[simp]: (LAPPEND l1 l2 = [||]) <=> (l1 = [||]) /\\ (l2 = [||]). The Lean statement is the same biconditional (lappendHOL l1 l2 = lnil) <-> (l1 = lnil /\\ l2 = lnil) with the same two operands in HOL order and the same two conjuncts on the right; [||] is lnil and LAPPEND is the tagged lappendHOL (LAPPEND row). HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise. The proof splits on whether each operand's rep reaches a NONE (the rep-level counterpart of HOL's llist_CASES split) and uses only the tagged append equations."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LAPPEND11_FINITE1",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lappendHOL_left_cancel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:4023-4025 Theorem LAPPEND11_FINITE1: !l1 l2 l3. LFINITE l1 ==> (LAPPEND l1 l2 = LAPPEND l1 l3 <=> l2 = l3). The Lean statement has the same binders in HOL's order (l1, l2, l3) and the same LFINITE l1 hypothesis, then the same iff between append equality and l2 = l3; LFINITE is LFinite, LAPPEND is lappendHOL. The proof cancels the finite prefix by reading the representation from firstNone l1 onward. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
   },
   {
     "hol_path": "hol4/src/coalgebras/llistScript.sml",
@@ -68355,11 +68371,59 @@
   },
   {
     "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LFINITE_APPEND",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lfinite_lappendHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1048-1049 Theorem LFINITE_APPEND[simp]: !ll1 ll2. LFINITE (LAPPEND ll1 ll2) <=> LFINITE ll1 /\\ LFINITE ll2. The Lean statement is the same biconditional over the same two operands in HOL order, LFINITE read as LFinite and LAPPEND as lappendHOL. The proof uses firstNone_lappend and LFinite_of_rep_none. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LFINITE_LAPPEND_IMP_NIL",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lfinite_lappendHOL_imp_lnil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1094-1096 Theorem LFINITE_LAPPEND_IMP_NIL: !ll. LFINITE ll ==> !l2. (LAPPEND ll l2 = ll) ==> (l2 = [||]). The Lean statement keeps HOL's binder order (ll, then the LFINITE hypothesis, then l2, then the append-equation hypothesis) and concludes l2 = lnil; [||] is lnil. The proof uses rep_zero_ne_none_of_ne_lnil and firstNone_lappend. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "NOT_LFINITE_APPEND",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "not_lfinite_lappendHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1081-1082 Theorem NOT_LFINITE_APPEND: !ll1 ll2. ~LFINITE ll1 ==> (LAPPEND ll1 ll2 = ll1). The Lean statement is the same implication with the same two operands and no extra premise: an infinite left operand makes the append equal to it. The proof shows firstNone ll1 = none from the negated finiteness and reads the append pointwise. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LFLATTEN_EQ_NIL",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lflatten_eq_lnil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1999-2006 Theorem LFLATTEN_EQ_NIL: !ll. (LFLATTEN ll = LNIL) = LL_ALL ($= LNIL) ll. The Lean statement is the same equivalence for the same universally quantified lazy list of lazy lists: lflatten ll = lnil iff every member is lnil, with LL_ALL/every rendered by the rep quantification llistEvery (untagged infrastructure, since HOL's ~exists body needs the unported exists) and HOL's boolean = rendered as an iff, as this file already renders LPREFIX's boolean predicates. The proof shows that a nonempty member forces a value at flattening index 0 and conversely that no nonempty member forces firstNonempty to none. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
     "hol_name": "LFLATTEN_THM",
     "lean_path": "Flapjack/Misc/LList.lean",
     "lean_name": "lflattenHOL_THM",
     "statement_status": "reviewed_exact",
     "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1967-1971 Theorem LFLATTEN_THM[simp]: (LFLATTEN LNIL = LNIL) /\\ (!tl. LFLATTEN (LCONS LNIL t) = LFLATTEN t) /\\ (!h t tl. LFLATTEN (LCONS (LCONS h t) tl) = LCONS h (LFLATTEN (LCONS t tl))). The Lean theorem states the same three conjuncts in HOL's order over HolLList (a lazy list of lazy lists of alpha), with lnil/lcons standing for LNIL/LCONS and the same quantified shapes (none, one list, then element plus tail plus rest). The untagged definition lflatten is the rep-level LEAST-index flattening, the analogue of the llist_Axiom witness in HOL's own new_specification (:1895-1965); the raw LFLATTEN specification statement (whose guard uses LL_ALL) is not ported, so this row covers the characterising theorem only and claims no tag for the constant. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "every_thm",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "llistEvery_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1608-1612 Theorem every_thm[simp] (also exported as LL_ALL_THM): (every P [||] = T) /\\ (every P (h:::t) <=> P h /\\ every P t), with P, h, t free. The Lean statement has the same three parameters in the same order and the same conjunction of the empty case and the cons equivalence; every is llistEvery (untagged infrastructure rendering every/LL_ALL by the rep quantification, as HOL's ~exists body needs the unported exists), [||] is lnil and ::: is lcons, with HOL's boolean = T and <=> rendered as the conjunction and iff this file already uses for LPREFIX. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
+  },
+  {
+    "hol_path": "hol4/src/coalgebras/llistScript.sml",
+    "hol_name": "LPREFIX_APPEND",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "lprefix_append_iff",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:2797-2798 Theorem LPREFIX_APPEND: LPREFIX l1 l2 <=> ?ll. l2 = LAPPEND l1 ll. The Lean statement is the same biconditional with the same two operands in HOL order and the same existential on the right (l2 = lappendHOL l1 ll). The proof uses the file's rep characterization of lprefix (lprefix_rep and lprefix_of_rep_agree) rather than HOL's LTAKE/LDROP/LNTH route, and builds the witness from the right operand's representation beyond firstNone l1. HolLList is the original Nat-to-Option invariant subtype (lrep_ok_alt:36-57, llist_tydef:64); no extra hypothesis, side condition or finiteness premise."
   },
   {
     "hol_path": "hol4/src/coalgebras/llistScript.sml",
