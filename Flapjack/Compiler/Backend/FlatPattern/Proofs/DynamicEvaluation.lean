@@ -22,15 +22,24 @@ theorem installConfRel_compile {C : Type} (cfg : Config) (source target : FlatSe
   have h := congrFun (congrFun related.2 compilerState) declarations
   simpa [BackendProps.pureCc] using h
 
-/-- Dynamic evaluation returns translated declarations, the same unit value,
-and related shifted configurations whenever the source succeeds. -/
-theorem doEval_simulation {C : Type} (cfg : Config) (source target : FlatSem.InstallConfig C)
-    (sourceValues targetValues : List FlatSem.Value)
-    (valuesRel : List.Forall₂ ValueRel sourceValues targetValues) (configs : installConfRel cfg source target)
-    (declarations : List FlatLang.Exp) (sourceNext : FlatSem.InstallConfig C) (result : FlatSem.Value)
-    (run : FlatSem.doEval sourceValues source = some (declarations, sourceNext, result)) :
-    ∃ targetNext, FlatSem.doEval targetValues target = some (declarations.map (compileDec cfg), targetNext, result) ∧
-      installConfRel cfg sourceNext targetNext ∧ ValueRel result result := by
+/-- Successful dynamic evaluation transfers through the original state and
+value relations, producing the compiled declarations and related result. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "do_eval_thm"]
+theorem doEval_thm {C F : Type} (sourceValues : List FlatSem.Value)
+    (sourceState : FlatSem.State C F) (declarations : List FlatLang.Exp)
+    (sourceNext : FlatSem.InstallConfig C) (result : FlatSem.Value) (cfg : Config)
+    (targetState : FlatSem.State C F) (targetValues : List FlatSem.Value)
+    (premises : FlatSem.doEval sourceValues sourceState.evalConfig = some (declarations, sourceNext, result) ∧
+      StateRel cfg sourceState targetState ∧ List.Forall₂ ValueRel sourceValues targetValues) :
+    ∃ targetResult targetDeclarations targetNext,
+      FlatSem.doEval targetValues targetState.evalConfig = some (targetDeclarations, targetNext, targetResult) ∧
+      StateRel cfg { sourceState with evalConfig := sourceNext } { targetState with evalConfig := targetNext } ∧
+      ValueRel result targetResult ∧ targetDeclarations = declarations.map (compileDec cfg) := by
+  obtain ⟨run, states, valuesRel⟩ := premises
+  let source := sourceState.evalConfig
+  let target := targetState.evalConfig
+  have configs : installConfRel cfg source target := states.2.2.2.2
+  change FlatSem.doEval sourceValues source = some (declarations, sourceNext, result) at run
   cases sourceValues with
   | nil => simp [FlatSem.doEval] at run
   | cons byteValue rest =>
@@ -79,37 +88,16 @@ theorem doEval_simulation {C : Type} (cfg : Config) (source target : FlatSem.Ins
                         intro empty
                         exact accepted.2.2.1 (List.map_eq_nil_iff.mp empty)
                       let targetNext := { target with compileOracle := Flapjack.holShiftSeq 1 target.compileOracle }
-                      refine ⟨targetNext, ?_, installConfRel_shift cfg source target 1 configs, ?_⟩
-                      · simp [FlatSem.doEval, targetBytes, targetWords, targetOracle, targetCompilation,
+                      refine ⟨FlatSem.unitValue, declarations.map (compileDec cfg), targetNext, ?_, ?_, ?_, rfl⟩
+                      · change FlatSem.doEval [targetByte, targetWord] target =
+                          some (declarations.map (compileDec cfg), targetNext, FlatSem.unitValue)
+                        simp [FlatSem.doEval, targetBytes, targetWords, targetOracle, targetCompilation,
                           accepted.1, accepted.2.1, mappedNonempty, nextOracle, targetNext]
+                      · rcases states with ⟨clock, refs, ffi, globals, _⟩
+                        exact ⟨clock, refs, ffi, globals, installConfRel_shift cfg source target 1 configs⟩
                       · apply (valueRel_conv none [] _).2
                         exact ⟨[], rfl, .nil⟩
                     · simp [FlatSem.doEval, bytesRun, wordsRun, oracle, compilation, accepted] at run
-
-/-- Updating both related states with related installation configurations
-preserves the state relation. -/
-theorem stateRel_update_install {C F : Type} (cfg : Config) (source target : FlatSem.State C F)
-    (sourceNext targetNext : FlatSem.InstallConfig C) (states : StateRel cfg source target)
-    (configs : installConfRel cfg sourceNext targetNext) :
-    StateRel cfg { source with evalConfig := sourceNext } { target with evalConfig := targetNext } := by
-  rcases states with ⟨clock, refs, ffi, globals, _⟩
-  exact ⟨clock, refs, ffi, globals, configs⟩
-
-/-- Dynamic evaluation on related states yields translated declarations and
-related post-installation states. -/
-theorem doEval_state_simulation {C F : Type} (cfg : Config) (source target : FlatSem.State C F)
-    (sourceValues targetValues : List FlatSem.Value) (states : StateRel cfg source target)
-    (values : List.Forall₂ ValueRel sourceValues targetValues)
-    (declarations : List FlatLang.Exp) (sourceConfig : FlatSem.InstallConfig C) (result : FlatSem.Value)
-    (run : FlatSem.doEval sourceValues source.evalConfig = some (declarations, sourceConfig, result)) :
-    ∃ targetConfig targetResult,
-      FlatSem.doEval targetValues target.evalConfig = some (declarations.map (compileDec cfg), targetConfig, targetResult) ∧
-      StateRel cfg { source with evalConfig := sourceConfig } { target with evalConfig := targetConfig } ∧
-      ValueRel result targetResult := by
-  obtain ⟨targetConfig, targetRun, configs, resultRel⟩ :=
-    doEval_simulation cfg source.evalConfig target.evalConfig sourceValues targetValues values states.2.2.2.2
-      declarations sourceConfig result run
-  exact ⟨targetConfig, result, targetRun, stateRel_update_install cfg source target sourceConfig targetConfig states configs, resultRel⟩
 
 /-- Invalid dynamic-compiler inputs cause a type error. -/
 theorem evaluate_eval_bad {C F : Type} (env : FlatSem.Environment FlatSem.Value)

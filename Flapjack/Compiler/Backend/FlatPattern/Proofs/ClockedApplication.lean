@@ -376,9 +376,9 @@ theorem compile_eval_simulation_at_clock_boundedArgs {C F : Type} (cfg stateCfg 
         exact (safe (congrArg Prod.snd bad)).elim
       | some payload =>
         obtain ⟨declarations, sourceConfig, result⟩ := payload
-        obtain ⟨targetConfig, targetValue, targetDecoded, installedStates, valueRel⟩ :=
-          doEval_state_simulation stateCfg sourceFixed targetFixed sourceValues.reverse targetValues.reverse fixedStates
-            (List.forall₂_reverse_iff.mpr valuesRel) declarations sourceConfig result decoded
+        obtain ⟨targetValue, targetDecls, targetConfig, targetDecoded, installedStates, valueRel, rfl⟩ :=
+          doEval_thm sourceValues.reverse sourceFixed declarations sourceConfig result stateCfg targetFixed
+            targetValues.reverse ⟨decoded, fixedStates, List.forall₂_reverse_iff.mpr valuesRel⟩
         have targetClock : targetFixed.clock = sourceFixed.clock := fixedStates.1
         by_cases zero : sourceFixed.clock = 0
         · have targetZero : targetFixed.clock = 0 := by omega
