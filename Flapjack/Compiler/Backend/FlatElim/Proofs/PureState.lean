@@ -204,7 +204,7 @@ theorem pureEvaluation_list {C F : Type} (env : FlatSem.Environment FlatSem.Valu
     obtain ⟨heads, headRelated, headResultEq, headsSafe⟩ :=
       headIH headState headResult reachable target headEval headPure envSafe headSafe headEmpty related headNotTypeError
     subst headResult
-    obtain ⟨head, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source headState first heads headEval
+    obtain ⟨head, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source first headState heads headEval
     have clocks : source.clock = headState.clock := related.1.trans headRelated.1.symm
     simp only [clocks, Nat.min_self] at run
     cases tailEval : FlatSem.evaluate env headState (second :: rest) with

@@ -81,7 +81,7 @@ theorem compileExps_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
             stateRel_fixClock stateCfg source sourceNext target targetNext states nextStates, errorsRel⟩
         case val.val sourceValues targetValues =>
           have valuesRel := firstRelated
-          obtain ⟨value, valueEq⟩ := FlatProps.evaluate_sing sourceEnv source sourceNext first sourceValues firstRun
+          obtain ⟨value, valueEq⟩ := FlatProps.evaluate_sing sourceEnv source first sourceNext sourceValues firstRun
           subst sourceValues
           cases valuesRel with
           | cons valueRel tailRel =>

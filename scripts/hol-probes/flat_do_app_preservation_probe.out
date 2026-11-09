@@ -22,3 +22,4 @@ flat_build_rec_env_help_typed=∀(funs :(mlstring # α # β) list) (env :v envir
 flat_do_app_add_clock_typed=do_app (s :(α, 'ffi) state) (op :op) (es :v list) = SOME ((t :(α, 'ffi) state),(r :(v, v) result)) ⇒ do_app (s with clock := s.clock + (k :num)) op es = SOME (t with clock := t.clock + k,r)
 flat_do_app_add_clock_none_typed=do_app (s :(α, 'ffi) state) (op :op) (es :v list) = (NONE :((α, 'ffi) state # (v, v) result) option) ⇒ do_app (s with clock := s.clock + (k :num)) op es = (NONE :((α, 'ffi) state # (v, v) result) option)
 flat_with_clock_ffi_typed=((s :(β, α) state) with clock := (k :num)).ffi = s.ffi
+flat_evaluate_sing_typed=(evaluate (env :v environment) (s :(α, β) state) [(e :exp)] :(α, β) state # (v list, v) result) = ((s' :(α, β) state),(Rval (vs :v list) :(v list, v) result)) ⇒ ∃(y :v). vs = [y]

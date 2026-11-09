@@ -19109,16 +19109,18 @@
     "hol_name": "evaluate_length",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateLength.lean",
     "lean_name": "evaluate_length",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; full evaluator, carrier, and statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared flat_evaluate_length in flat_pattern_install_relation_probe.out: quantified order, successful evaluation premise and result length match the reviewed evaluator and carriers. Inherits the reals_as_rational_cuts assumption through evaluation."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
     "hol_name": "evaluate_sing",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateLength.lean",
     "lean_name": "evaluate_sing",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; full evaluator, carrier, and statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared flat_evaluate_sing_typed in flat_do_app_preservation_probe.out: free-variable order, successful singleton premise and existential singleton result match the reviewed evaluator and carriers. Inherits the reals_as_rational_cuts assumption through evaluation."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",

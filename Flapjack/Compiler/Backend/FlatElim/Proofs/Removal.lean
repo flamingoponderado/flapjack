@@ -33,7 +33,7 @@ theorem evaluate_sing_notKeep_flatStateRel {C F α : Type} (env : FlatSem.Enviro
       ⟨run, singletonPure expression pure, envSafe, singletonExpression_noEval expression safe,
         singletonLocations expression reachable empty, related, notTypeError⟩
   subst result
-  obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing (emptyEnvironment env) state next expression values run
+  obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing (emptyEnvironment env) state expression next values run
   exact ⟨nextRelated, value, rfl⟩
 
 /-- Evaluating a discarded declaration either yields unit or a type error;

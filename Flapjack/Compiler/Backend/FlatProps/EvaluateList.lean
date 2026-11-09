@@ -22,7 +22,7 @@ theorem evaluate_cons {C F : Type} (env : Environment Value) (state : State C F)
       cases result with
       | err error => rfl
       | val values =>
-        obtain ⟨value, rfl⟩ := evaluate_sing env state next e values run
+        obtain ⟨value, rfl⟩ := evaluate_sing env state e next values run
         cases tail : evaluate env next (second :: rest) with
         | mk last result => cases result <;> simp [tail, Flapjack.holHd]
 /-- Evaluation of appended expression lists sequences both evaluations. -/

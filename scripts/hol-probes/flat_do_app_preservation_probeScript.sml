@@ -49,3 +49,4 @@ val flat_do_app_add_clock_none = prove (
 val _ = show_thm "flat_do_app_add_clock_none_typed=" flat_do_app_add_clock_none;
 
 val _ = show_thm "flat_with_clock_ffi_typed=" flatPropsTheory.with_clock_ffi;
+val _ = show_thm "flat_evaluate_sing_typed=" flatPropsTheory.evaluate_sing;

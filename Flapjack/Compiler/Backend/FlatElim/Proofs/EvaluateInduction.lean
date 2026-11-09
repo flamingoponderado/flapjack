@@ -86,7 +86,7 @@ theorem evaluate_raise_simulation_step {C F : Type} (env : FlatSem.Environment F
       rcases run with ⟨rfl, rfl⟩
       exact ⟨targetBodyState, by simp [FlatSem.evaluate, targetBodyEval], bodyRelated, bodyResultClosed, bodyResultSafe⟩
     | val values =>
-      obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source bodyState body values bodyEval
+      obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source body bodyState values bodyEval
       simp at run
       rcases run with ⟨rfl, rfl⟩
       have valueClosed : globalsWithin (findValueGlobals value) reachable := by
@@ -148,7 +148,7 @@ theorem evaluate_list_simulation_step {C F : Type} (env : FlatSem.Environment Fl
         clampedRelated, headResultClosed, headResultSafe⟩
       simp [FlatSem.evaluate, targetHeadEval, FlatSem.fixClock]
     | val heads =>
-      obtain ⟨head, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source headState first heads headEval
+      obtain ⟨head, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source first headState heads headEval
       simp only at run
       cases tailEval : FlatSem.evaluate env { headState with clock := min source.clock headState.clock } (second :: rest) with
       | mk tailState tailResult =>
@@ -317,7 +317,7 @@ theorem evaluate_let_simulation_step {C F : Type} (env : FlatSem.Environment Fla
         clampedRelated, firstResultClosed, firstResultSafe⟩
       simp [FlatSem.evaluate, targetFirstEval, FlatSem.fixClock]
     | val values =>
-      obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source firstState first values firstEval
+      obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source first firstState values firstEval
       have valueClosed : globalsWithin (findValueGlobals value) reachable := by
         have h : globalsWithin (findValuesGlobals [value]) reachable := by
           simpa [findPrimitiveResultGlobals] using firstResultClosed
@@ -385,7 +385,7 @@ theorem evaluate_if_simulation_step {C F : Type} (env : FlatSem.Environment Flat
         clampedRelated, condResultClosed, condResultSafe⟩
       simp [FlatSem.evaluate, targetCondEval, FlatSem.fixClock]
     | val values =>
-      obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source condState cond values condEval
+      obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source cond condState values condEval
       simp only at run
       split at run
       · simp at run
@@ -488,7 +488,7 @@ theorem evaluate_mat_simulation_step {C F : Type} (env : FlatSem.Environment Fla
         clampedRelated, bodyResultClosed, bodyResultSafe⟩
       simp [FlatSem.evaluate, targetBodyEval, FlatSem.fixClock]
     | val values =>
-      obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source bodyState body values bodyEval
+      obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source body bodyState values bodyEval
       have valueClosed : globalsWithin (findValueGlobals value) reachable := by
         have h : globalsWithin (findValuesGlobals [value]) reachable := by
           simpa [findPrimitiveResultGlobals] using bodyResultClosed
