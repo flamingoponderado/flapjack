@@ -131057,5 +131057,13 @@
   "lean_name": "findValuesGlobals_map_snd_mem",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared exported find_v_globalsL_MEM typed capture: binders k, v, vs retain arbitrary key type α; MEM is list membership, MAP SND is map Prod.snd, and domain inclusion is pointwise implication over sptMem. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "find_loc_EVERY_isEmpty",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PureState.lean",
+  "lean_name": "findLoc_every_isEmpty",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared exported find_loc_EVERY_isEmpty typed capture: binders l and reachable:num_set; isEmpty is sptIsEmpty = true, EVERY is List.all = true, and find_locL is findGlobalsList destGlobalVarInit. Replaces the one-direction findLocList_disjoint. Independently source-reviewed."
 }
 ]

@@ -274,14 +274,35 @@ theorem findLocList_member (expressions : List FlatLang.Exp) (expression : FlatL
       exact Or.inl found
     · exact Or.inr (ih member)
 
-/-- If an expression list has no location in the reachable set, each member
-expression has the same property. -/
-theorem findLocList_disjoint (expressions : List FlatLang.Exp) (reachable : NumSet)
-    (empty : sptIsEmpty (sptInter (findGlobalsList destGlobalVarInit expressions) reachable) = true) :
-    ∀ expression ∈ expressions, sptIsEmpty (sptInter (findLoc expression) reachable) = true := by
-  intro expression member
-  apply (interEmpty_iff_disjoint _ _).mpr
-  intro key found reachableKey
-  exact (interEmpty_iff_disjoint _ _).mp empty key (findLocList_member expressions expression member key found) reachableKey
+/-- The list analysis is disjoint exactly when every expression is disjoint. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_loc_EVERY_isEmpty"]
+theorem findLoc_every_isEmpty (expressions : List FlatLang.Exp) (reachable : NumSet) :
+    expressions.all (fun e => sptIsEmpty (sptInter (findLoc e) reachable)) = true ↔
+      sptIsEmpty (sptInter (findGlobalsList destGlobalVarInit expressions) reachable) = true := by
+  constructor
+  · intro all
+    apply (interEmpty_iff_disjoint _ _).mpr
+    intro key found reachableKey
+    have locate : ∀ es : List FlatLang.Exp, sptMem key (findGlobalsList destGlobalVarInit es) →
+        ∃ e ∈ es, sptMem key (findLoc e) := by
+      intro es
+      induction es with
+      | nil => simp [findGlobalsList, sptMem, sptDomain]
+      | cons e es ih =>
+        intro present
+        simp only [findGlobalsList, sptMem_sptUnion] at present
+        rcases present with first | rest
+        · exact ⟨e, by simp, first⟩
+        · obtain ⟨e', mem, hit⟩ := ih rest
+          exact ⟨e', by simp [mem], hit⟩
+    obtain ⟨e, mem, hit⟩ := locate expressions found
+    exact (interEmpty_iff_disjoint _ _).mp ((List.all_eq_true.mp all) e mem) key hit reachableKey
+  · intro empty
+    apply List.all_eq_true.mpr
+    intro expression member
+    apply (interEmpty_iff_disjoint _ _).mpr
+    intro key found reachableKey
+    exact (interEmpty_iff_disjoint _ _).mp empty key
+      (findLocList_member expressions expression member key found) reachableKey
 
 end Flapjack.Compiler.Backend.FlatElim

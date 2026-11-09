@@ -168,3 +168,7 @@ val find_v_globals_el_trans_replay = prove (
   metis_tac [find_v_globalsL_EL, SUBSET_TRANS]);
 val _ = show_thm "find_v_globals_el_trans_typed=" find_v_globals_el_trans_replay;
 val _ = show_thm "find_v_globals_list_mem_typed=" flat_elimProofTheory.find_v_globalsL_MEM;
+val _ = show_thm "find_loc_every_empty_typed=" flat_elimProofTheory.find_loc_EVERY_isEmpty;
+val _ = show_thm "sum_map_v3_size_typed=" flat_elimProofTheory.SUM_MAP_v3_size;
+val _ = show_thm "flat_value_size_def_typed=" flatSemTheory.v_size_def;
+val _ = show_thm "mlstring_size_def_typed=" mlstringTheory.mlstring_size_def;
