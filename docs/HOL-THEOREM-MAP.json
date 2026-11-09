@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_common_inc_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CommonCompiler.lean", "lean_name": "compileCommonInc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_common_inc_def_typed and compile_common_inc_type: the configuration and callback binders, complete nested Nat/approximation-tree/call-set/compiler state, fixed word8 and word64 output lists, and the five composed incremental passes agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "compile_common_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Common.lean", "lean_name": "compileCommon",
   "statement_status": "reviewed_exact",

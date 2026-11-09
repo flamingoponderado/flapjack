@@ -277,7 +277,8 @@ the typed interpreter-attachment observational theorem. These captures support
 source review; they do not establish cross-language equivalence.
 
 `clos_to_bvl_state_relation_probe.out` captures the typed original state,
-closure, value and environment relations, whole-program closure preprocessing,
+closure, value and environment relations, whole-program closure preprocessing
+and its incremental callback composition,
 installed-code definitions, their
 supporting lemmas, the complete expression simulation, and program-level
 observational correctness. Regenerate with

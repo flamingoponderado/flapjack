@@ -1166,6 +1166,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ProgramCode
 import Flapjack.Compiler.Backend.ClosToBvl.FullIncremental
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FullIncremental
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Common
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CommonCompiler
 import Flapjack.Compiler.Backend.BvlConst.SourceCompile
 import Flapjack.Compiler.Backend.BvlConst.Proofs.SourceCompile
 import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
