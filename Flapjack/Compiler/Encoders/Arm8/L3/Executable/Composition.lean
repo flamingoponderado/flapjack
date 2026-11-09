@@ -288,4 +288,78 @@ theorem arm8Enc_inst_const_eq (destination : Nat) (value : BitVec 64) :
             (EncodeLogicalOp_ORR false)]
         simp
 
+/-- `.inst (.arith (.binop ... (.reg ...)))` lowers to the same register
+operation. -/
+theorem arm8Enc_inst_binop_reg_eq (bop : BinOp) (destination source right : Nat) :
+    Arm8.arm8Enc (.inst (.arith (.binop bop destination source (.reg right)))) =
+      arm8Enc (.inst (.arith (.binop bop destination source (.reg right)))) := by
+  simp only [Arm8.arm8Enc, Arm8.arm8Ast, Arm8.arm8Inst, arm8Enc, arm8Ast]
+  cases bop
+  case add =>
+    simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil,
+      encodeBytes_addSubShiftedRegister]
+    simp
+  case sub =>
+    simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil,
+      encodeBytes_addSubShiftedRegister]
+    simp
+  case and =>
+    simp only [bopEnc, arm8BopEnc, List.flatMap_cons, List.flatMap_nil,
+      List.append_nil,
+      encodeBytes_logicalShiftedRegister .and .LogicalOp_AND false false .lsl 0 right source destination 0
+        rfl (by decide) (by decide)]
+    simp
+  case or =>
+    simp only [bopEnc, arm8BopEnc, List.flatMap_cons, List.flatMap_nil,
+      List.append_nil,
+      encodeBytes_logicalShiftedRegister .orr .LogicalOp_ORR false false .lsl 0 right source destination 1
+        rfl (by decide) (by decide)]
+    simp
+  case xor =>
+    simp only [bopEnc, arm8BopEnc, List.flatMap_cons, List.flatMap_nil,
+      List.append_nil,
+      encodeBytes_logicalShiftedRegister .eor .LogicalOp_EOR false false .lsl 0 right source destination 2
+        rfl (by decide) (by decide)]
+    simp
+
+/-- `.inst (.arith (.binop ... (.imm ...)))` lowers to the same immediate
+operation, including the `xor -1` special case. -/
+theorem arm8Enc_inst_binop_imm_eq (bop : BinOp) (destination source : Nat)
+    (value : BitVec 64) :
+    Arm8.arm8Enc (.inst (.arith (.binop bop destination source (.imm value)))) =
+      arm8Enc (.inst (.arith (.binop bop destination source (.imm value)))) := by
+  simp only [Arm8.arm8Enc, Arm8.arm8Ast, Arm8.arm8Inst, arm8Enc, arm8Ast]
+  cases bop
+  case add =>
+    simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil,
+      encodeBytes_addSubImmediate]
+    simp
+  case sub =>
+    simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil,
+      encodeBytes_addSubImmediate]
+    simp
+  case xor =>
+    by_cases hv : value = -1
+    · simp only [hv, if_true, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+        encodeBytes_logicalShiftedRegister .orr .LogicalOp_ORR true false .lsl 0 source 31 destination 1
+          rfl (by decide) (by decide)]
+      simp
+    · simp only [hv, if_false, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+        encodeBytes_logicalImmediate .eor .LogicalOp_EOR false value source destination
+          (EncodeLogicalOp_EOR false)]
+      simp
+  case and =>
+    simp only [bopEnc, arm8BopEnc, List.flatMap_cons, List.flatMap_nil,
+      List.append_nil,
+      encodeBytes_logicalImmediate .and .LogicalOp_AND false value source destination
+        (EncodeLogicalOp_AND false)]
+    simp
+  case or =>
+    simp only [bopEnc, arm8BopEnc, List.flatMap_cons, List.flatMap_nil,
+      List.append_nil,
+      encodeBytes_logicalImmediate .orr .LogicalOp_ORR false value source destination
+        (EncodeLogicalOp_ORR false)]
+    simp
+
+
 end Flapjack.Compiler.Encoders.Arm8.L3
