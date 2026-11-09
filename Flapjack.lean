@@ -4180,6 +4180,8 @@ import Flapjack.Compiler.Encoders.Arm8.Machine.Agree
 import Flapjack.Compiler.Encoders.Arm8.Machine.StepAgree
 import Flapjack.Compiler.Encoders.Arm8.Machine.Simulate
 import Flapjack.Compiler.Encoders.Arm8.MaskConverses
+import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
+import Flapjack.Compiler.Encoders.Arm8.MemLemmas
 import Flapjack.Compiler.Encoders.Arm8.Machine.SkipCase
 import Flapjack.Compiler.Encoders.Arm8.Machine.ControlCase
 import Flapjack.Compiler.Encoders.Arm8.Machine.JumpCmpCase
@@ -4192,6 +4194,7 @@ import Flapjack.Compiler.Encoders.Arm8.Machine.Complete
 import Flapjack.Compiler.Encoders.Arm8.Machine.MemCaseFull
 import Flapjack.Compiler.Encoders.Arm8.Machine.MemCase
 import Flapjack.Compiler.Encoders.Arm8.Machine.TargetProof
+import Flapjack.Compiler.Encoders.Arm8.Machine.L3Link
 import Flapjack.Compiler.Encoders.Arm8.Machine.ExecuteProof
 import Flapjack.Compiler.Backend.Arm8Config.Names
 import Flapjack.Compiler.Backend.Arm8Config.BackendConfig

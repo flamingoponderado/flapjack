@@ -2,7 +2,8 @@ module
 
 public import Flapjack.Compiler.Encoders.Asm
 public import Mathlib.Data.BitVec
-public import Mathlib.Tactic
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
 
 @[expose] public section
 

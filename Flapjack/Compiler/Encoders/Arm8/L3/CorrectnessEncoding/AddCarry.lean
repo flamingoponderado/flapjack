@@ -1,6 +1,6 @@
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.Compare
 import Flapjack.Compiler.Encoders.Arm8.L3.CorrectnessEncoding.JumpCmp
-import Flapjack.Compiler.Encoders.Arm8.Machine.MulCarryCase
+import Flapjack.Compiler.Encoders.Arm8.ArithLemmas
 import Flapjack.HolRef
 
 set_option maxHeartbeats 12000000

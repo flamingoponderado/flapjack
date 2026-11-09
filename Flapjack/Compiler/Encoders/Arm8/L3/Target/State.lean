@@ -2,7 +2,6 @@ import Flapjack.Compiler.Encoders.Arm8.L3.Target
 import Flapjack.Compiler.Encoders.Arm8.L3.Configuration
 import Flapjack.Compiler.Encoders.Arm8.Configuration
 import Flapjack.Compiler.Encoders.AsmProps.Target
-import Flapjack.Compiler.Encoders.Arm8.Machine.TargetProof
 import Flapjack.HolArb
 
 /-!
