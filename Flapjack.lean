@@ -93,6 +93,7 @@ import Flapjack.Compiler.Backend.FlatProps.EvaluateList
 import Flapjack.Compiler.Backend.FlatProps.DoAppClock
 import Flapjack.Compiler.Backend.FlatProps.DoAppIO
 import Flapjack.Compiler.Backend.FlatProps.EvaluateClockShift
+import Flapjack.Compiler.Backend.FlatProps.EvaluateClockEvents
 import Flapjack.Compiler.Backend.FlatProps.EvaluateIO
 import Flapjack.Compiler.Backend.FlatProps.NoMat
 import Flapjack.Compiler.Backend.FlatProps.InstallConfig

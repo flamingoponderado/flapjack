@@ -57,3 +57,7 @@ val _ = show_thm "flat_evaluate_io_events_mono_typed=" flatPropsTheory.evaluate_
 val _ = show_thm "flat_evaluate_io_events_mono_imp_typed=" flatPropsTheory.evaluate_io_events_mono_IMP;
 val _ = show_thm "flat_evaluate_dec_io_events_mono_typed=" flatPropsTheory.evaluate_dec_io_events_mono;
 val _ = show_thm "flat_evaluate_decs_io_events_mono_typed=" flatPropsTheory.evaluate_decs_io_events_mono;
+
+val _ = show_thm "flat_evaluate_add_clock_io_events_mono_typed=" flatPropsTheory.evaluate_add_to_clock_io_events_mono;
+val _ = show_thm "flat_evaluate_dec_add_clock_io_events_mono_typed=" flatPropsTheory.evaluate_dec_add_to_clock_io_events_mono;
+val _ = show_thm "flat_evaluate_decs_add_clock_io_events_mono_typed=" flatPropsTheory.evaluate_decs_add_to_clock_io_events_mono;
