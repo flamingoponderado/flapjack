@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "oracle_monotonic_subset",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonic.lean", "lean_name": "oracleMonotonic_subset",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared oracle_monotonic_subset_typed and independent review: first-appearance binder order, three independent carriers, subset conjunction and curried oracle hypotheses agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_inc_monotonic",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalOracle.lean", "lean_name": "compileInc_monotonic",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_inc_monotonic_typed and independent review: polymorphic config, maxApp then initial and oracle, eta-expanded compositions and pureCo of the reviewed compiler agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "extract_name_code_locs",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "extractName_codeLocations",
   "statement_status": "reviewed_exact",
