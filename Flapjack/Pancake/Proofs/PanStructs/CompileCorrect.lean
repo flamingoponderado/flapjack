@@ -17,7 +17,6 @@ and invariant postconditions are not yet proved here.
 
 namespace Flapjack
 
-
 /-- Exact port of HOL `convert_v_def`
     (`cakeml/pancake/proofs/pan_structsProofScript.sml:31-37`):
     `convert_v (Val x) = Val x`,
@@ -182,22 +181,6 @@ theorem everyConvertVEq {width : Nat} [NeZero width] (vs : List (ValueHOL width)
     constructor
     · cases w <;> simp_all [convertV]
     · exact ih (fun x hx => h x (by simp [hx]))
-
-private theorem lookupInfo_mem_of_some [BEq κ] [LawfulBEq κ]
-    (key : κ) (entries : List (κ × β)) (value : β)
-    (hlookup : lookupInfo key entries = some value) :
-    key ∈ entries.map Prod.fst := by
-  induction entries with
-  | nil => simp [lookupInfo] at hlookup
-  | cons entry entries ih =>
-      obtain ⟨candidate, candidateValue⟩ := entry
-      by_cases hmatch : candidate == key
-      · have heq : candidate = key := LawfulBEq.eq_of_beq hmatch
-        simp [heq]
-      · simp only [lookupInfo, hmatch] at hlookup
-        have htail := ih hlookup
-        simp [htail]
-
 
 open Flapjack.Pancake.PanLang (MlS ShapeHOL StructInfoHOLExact StructContextExact)
 
@@ -429,7 +412,5 @@ decreasing_by
        have hsnd : sizeOf pair.snd < sizeOf pair := by cases pair; simp +arith
        have hlt := List.sizeOf_lt_of_mem hmem
        omega)
-
-
 
 end Flapjack

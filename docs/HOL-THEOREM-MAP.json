@@ -82198,14 +82198,6 @@
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
-    "lean_name": "resVarEq_update_of_lookup",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the `BEq`-update form of `resVarEq_updateEq_of_lookup`. No separate HOL declaration."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
     "lean_name": "stateRelFlagFalse_changeLocals",
     "hol_path": null,
     "hol_name": null,
@@ -88731,14 +88723,6 @@
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.3.74): exact port of HOL is_cont_res_eq_disj[local] (pan_structsProofScript.sml:999-1003), is_cont_res res = (res = NONE or res = SOME Break or res = SOME Continue). The Lean theorem isContResHOL_eqDisj is over the reviewed exact result carrier PanSemResultExact width (DecExact.lean:58, tagged reviewed_exact against panSemScript.sml:68-75), the same carrier used by the already-reviewed isContResHOL: for res : Option (PanSemResultExact width), (isContResHOL res = true) iff res = none or res = some .break or res = some .continue. The HOL Bool equality against a disjunction is rendered as the standard True-valued iff, and NONE/Break/Continue are translated to none/some .break/some .continue. Both sides coincide constructor by constructor: isContResHOL is true on exactly those three cases and false on Error/TimeOut/Return/Exception/FinalFFI. No payload is inspected, so the only differences from HOL are the already-reviewed result carrier and the standard Bool-to-Prop rendering of the disjunctive equality; no qualifier applies. [NeZero width] discharges HOL's positive dimindex and introduces no new word dimension; no finite-map field is traversed."
   },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
-    "lean_name": "lookupInfo_mem_of_some",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Generic Lean membership consequence of successful first-match lookup; used to show that a disjoint appended prefix cannot shadow a successful HOL context lookup."
-  },
 
 
 
@@ -91158,14 +91142,6 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "updatePanValueMap_fold_eq_FUPDATE_LIST",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Private Flapjack finite-map support equating folded source-local updates with FUPDATE_LIST; no standalone HOL theorem"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "withShapeGetElemMemOfSlotsMem",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack finite-list support: each withShape component contains only slots from the flat target slot list; used for generated ctxtFc ctxt_max."
@@ -91343,14 +91319,6 @@
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
     "lean_name": "cexpHeads_cons_singleton",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.10.2): Flapjack-specific list-level heads-correspondence infrastructure used by the exact compile_exp_val_rel Op/Panop cases; no HOL declaration corresponds directly."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
-    "lean_name": "cexpHeads_map_singleton",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.10.2): Flapjack-specific list-level heads-correspondence infrastructure used by the exact compile_exp_val_rel Op/Panop cases; no HOL declaration corresponds directly."
   },

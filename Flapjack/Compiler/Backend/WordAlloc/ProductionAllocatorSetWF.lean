@@ -185,10 +185,4 @@ theorem getClashTree_setsWf {width : Nat} [NeZero width]
       simp_all [WordAllocatorProgramSetsWf, StackOnlySetsWf, getClashTree,
         RegAlloc.NativeClashTreeSetsWf, sptWfUnion]
 
-private theorem productionNumSet_setsWf (names : List Nat) :
-    sptWf (LoopToWord.toNumSetHOL names) = true := by
-  induction names with
-  | nil => rfl
-  | cons name names ih => exact sptWfInsert _ _ _ ih
-
 end Flapjack.WordAlloc

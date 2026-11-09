@@ -54,21 +54,6 @@ private theorem loop_step_cut_some {L L' : NumSet} {B : HolLoopProg width}
   next X1' h => rw [hc] at h; simp at h
   next h => exact hc
 
-private theorem loop_step_none {L L' : NumSet} {B : HolLoopProg width}
-    {X X1 s2 : LoopSemStateFiniteExact width F}
-    (hc : LoopSemStateFiniteExact.cutRes L (none, X) = (none, X1))
-    (hb : LoopSemStateFiniteExact.evaluate B X1 = (none, s2)) :
-    LoopSemStateFiniteExact.evaluate (.loop L B L') X = LoopSemStateFiniteExact.evaluate (.loop L B L') s2 := by
-  rw [LoopSemStateFiniteExact.evaluate]
-  split
-  next X1' h =>
-    rw [hc] at h
-    simp only [Prod.mk.injEq, true_and] at h
-    subst h
-    split <;> rename_i h2 <;> rw [LoopSemStateFiniteExact.fix_clock_evaluate, hb] at h2 <;>
-      simp_all [LoopSemStateFiniteExact.exitLoop]
-  next h => exact absurd hc (h X1)
-
 private theorem loop_step_continue {L L' : NumSet} {B : HolLoopProg width}
     {X X1 s2 : LoopSemStateFiniteExact width F}
     (hc : LoopSemStateFiniteExact.cutRes L (none, X) = (none, X1))

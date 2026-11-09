@@ -295,14 +295,6 @@ theorem compileExpListValRelHOL {width : Nat} {σ : Type} [NeZero width]
                     rw [hwfouter, hheadRel.2.2.2, htailWf]
                     rfl
 
-/-- `cexpHeads` over a list of singleton lists. -/
-private theorem cexpHeads_map_singleton {β : Type} (l : List β) :
-    cexpHeads (l.map (fun b => [b])) = some l := by
-  induction l with
-  | nil => rfl
-  | cons b bs ih => simp only [List.map_cons, cexpHeads, ih]
-
-/-- `cexpHeads` prepends a singleton head. -/
 private theorem cexpHeads_cons_singleton {β : Type} (b : β) (l : List (List β))
     (heads : List β) (h : cexpHeads l = some heads) :
     cexpHeads ([b] :: l) = some (b :: heads) := by
@@ -1957,6 +1949,5 @@ theorem evalMapCompExpFlatEqHOL {width : Nat} {σ : Type} [NeZero width]
               have htail := ih values htailSource hlocalizedTail
               simp only [List.flatMap_cons, hcompile, List.map_append]
               rw [hhead.1, htail]
-
 
 end Flapjack

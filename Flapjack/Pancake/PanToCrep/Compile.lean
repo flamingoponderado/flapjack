@@ -1041,29 +1041,6 @@ private theorem declOfHOL_map_declToHOL_eq {width : Nat} [NeZero width]
         exact hdecls d (by simp [hd])
       simp [Flapjack.Pancake.PanLang.declOfHOL_declToHOL declaration hhead, ih htail]
 
-private theorem exceptionsHOL_names_of_exact_eq {width : Nat} [NeZero width]
-    (declarations : List (Decl (BitVec width)))
-    (hdecls : ∀ declaration ∈ declarations,
-      Flapjack.Pancake.PanLang.DeclByteRanged declaration) :
-    ((Flapjack.Pancake.PanLang.exceptionsHOL
-        (declarations.map Flapjack.Pancake.PanLang.declToHOL)).map
-          (fun entry => (Flapjack.Pancake.PanLang.paramOfHOL entry).1)) =
-      (exceptionEntries declarations).map Prod.fst := by
-  have hexact := Flapjack.Pancake.PanLang.exceptionsHOL_map_paramOfHOL
-    (declarations.map Flapjack.Pancake.PanLang.declToHOL)
-  calc
-    _ = ((Flapjack.Pancake.PanLang.exceptionsHOL
-        (declarations.map Flapjack.Pancake.PanLang.declToHOL)).map
-          Flapjack.Pancake.PanLang.paramOfHOL).map Prod.fst := by
-          rw [List.map_map]
-          rfl
-    _ = (exceptionEntries
-        ((declarations.map Flapjack.Pancake.PanLang.declToHOL).map
-          Flapjack.Pancake.PanLang.declOfHOL)).map Prod.fst := by
-          rw [hexact]
-    _ = (exceptionEntries declarations).map Prod.fst := by
-          rw [declOfHOL_map_declToHOL_eq declarations hdecls]
-
 /-! HOL `compile_to_crep_def` (`cakeml/pancake/pan_to_crepScript.sml:383-391`):
 
 ```

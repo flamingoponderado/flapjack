@@ -170,114 +170,6 @@ def compileProgTopHOLOfExact {width : Nat} [NeZero width]
     List (FunName × List Nat × CrepProg (BitVec width)) :=
   compileProgTopHOL (declarations.map declOfHOL)
 
-private theorem crepProgOfHOL_nestedDecsHOL {width : Nat} [NeZero width]
-    (names : List Nat) (values : List (CrepExpHOL width))
-    (body : CrepProgHOL width) :
-    crepProgOfHOL (nestedDecsHOL names values body) =
-      nestedDecs names (values.map crepExpOfHOL) (crepProgOfHOL body) := by
-  induction names generalizing values body with
-  | nil => cases values <;> simp [nestedDecsHOL, nestedDecs, crepProgOfHOL]
-  | cons name names ih =>
-      cases values <;> simp [nestedDecsHOL, nestedDecs, crepProgOfHOL, ih]
-
-private theorem crepProgOfHOL_storesHOL {width : Nat} [NeZero width]
-    (address : CrepExpHOL width) (values : List (CrepExpHOL width))
-    (offset : BitVec width) :
-    (storesHOL address values offset).map crepProgOfHOL =
-      stores (crepExpOfHOL address) (values.map crepExpOfHOL) offset
-        (BitVec.ofNat width (width / 8)) := by
-  induction values generalizing offset with
-  | nil => simp [storesHOL, stores]
-  | cons value values ih =>
-      simp only [storesHOL, List.map_cons, crepProgOfHOL, stores]
-      split <;> simp [crepExpOfHOL, ih]
-
-private theorem crepProgOfHOL_zipWith_assign {width : Nat} [NeZero width]
-    (names : List Nat) (expressions : List (CrepExpHOL width)) :
-    List.map crepProgOfHOL
-        (List.zipWith (fun name expression => CrepProgHOL.assign name expression)
-          names expressions) =
-      List.zipWith (fun name expression => CrepProg.assign name (crepExpOfHOL expression))
-        names expressions := by
-  rw [List.map_zipWith]
-  simp only [crepProgOfHOL]
-
-private theorem crepExpVarsW_flatMap_crepExpOfHOL {width : Nat} [NeZero width]
-    (expressions : List (CrepExpHOL width)) :
-    expressions.flatMap (fun expression => crepExpVarsW (crepExpOfHOL expression)) =
-      (expressions.map crepExpOfHOL).flatMap crepExpVars := by
-  simp only [crepExpVarsW]
-  rw [List.flatMap_map]
-
-/-- Source-reviewed HOL `ShMemStore` clause bridge (`pan_to_crepScript.sml`,
-    `compile_def`): its operands are positional `value` then `address`. The
-    production `Prog.shMemStore` names its two fields `address` and `value`,
-    but the compiler clause consumes those positions in HOL order: the first
-    operand is the stored expression and the second is the destination address.
-    The exact clause allocates from `FOLDR MAX 0 (var_cexp value)`; the
-    production clause's singleton `maxCrepExpVarHOL` is the same maximum. -/
-private theorem foldr_max_zero_eq_max_getD (xs : List Nat) :
-    xs.foldr max 0 = xs.max?.getD 0 := by
-  induction xs with
-  | nil => simp
-  | cons head tail ih =>
-      simp only [List.foldr_cons, List.max?_cons']
-      rw [List.foldl_max]
-      rw [ih]
-      cases hmax : tail.max? <;> simp <;> omega
-
-/-- Flapjack-specific helper: the codec image of the exact compiled argument
-    list equals the production `compileArgsHOL` when the paired `compile_exp`
-    codec holds for every argument. HOL has no separate list lemma here; the
-    source `Primitive` clause is `pan_to_crepScript.sml:164-175`. -/
-private theorem crepProgOfHOL_compileArgumentList_flatMap {width : Nat} [NeZero width]
-    (context : PanToCrepContextExact width) (arguments : List (Exp (BitVec width)))
-    (hcodec : ∀ expression ∈ arguments,
-      ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
-        shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2) =
-        compileExpHOL context.toProduction expression) :
-    ((compileExpExactHOLWList context (arguments.map expToHOL)).flatMap Prod.fst).map crepExpOfHOL =
-      compileArgsHOL context.toProduction arguments := by
-  induction arguments with
-  | nil => simp [compileExpExactHOLWList, compileArgsHOL]
-  | cons expression rest ih =>
-      have hexp :
-          (compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL =
-            (compileExpHOL context.toProduction expression).1 := by
-        have h := congrArg Prod.fst (hcodec expression (by simp))
-        simpa using h
-      simp only [List.map_cons, compileExpExactHOLWList, compileArgsHOL, List.flatMap_cons,
-        List.map_append]
-      rw [hexp]
-      rw [ih (fun e he => hcodec e (by simp [he]))]
-
-/-- The same argument-list codec when the production context is related to,
-    but not definitionally `context.toProduction`. This is needed after a
-    nested ranged variable update, where off-range map keys are intentionally
-    not equated. -/
-private theorem crepProgOfHOL_compileArgumentList_flatMapAt {width : Nat} [NeZero width]
-    (context : PanToCrepContextExact width)
-    (productionContext : PanToCrepHOLContext (BitVec width))
-    (arguments : List (Exp (BitVec width)))
-    (hcodec : ∀ expression ∈ arguments,
-      ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
-        shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2) =
-        compileExpHOL productionContext expression) :
-    ((compileExpExactHOLWList context (arguments.map expToHOL)).flatMap Prod.fst).map crepExpOfHOL =
-      compileArgsHOL productionContext arguments := by
-  induction arguments with
-  | nil => simp [compileExpExactHOLWList, compileArgsHOL]
-  | cons expression rest ih =>
-      have hexp :
-          (compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL =
-            (compileExpHOL productionContext expression).1 := by
-        have h := congrArg Prod.fst (hcodec expression (by simp))
-        simpa using h
-      simp only [List.map_cons, compileExpExactHOLWList, compileArgsHOL, List.flatMap_cons,
-        List.map_append]
-      rw [hexp]
-      rw [ih (fun e he => hcodec e (by simp [he]))]
-
 private theorem ofString_injective_on_ranged_names {left right : String}
     (hleft : Flapjack.Pancake.PanLang.NameRanged left)
     (hright : Flapjack.Pancake.PanLang.NameRanged right)
@@ -651,23 +543,6 @@ theorem exactToProduction_decCallContext_relation {width : Nat} [NeZero width]
   · exact Flapjack.Pancake.PanLang.shapeOfHOL_shapeToHOL shape hshape
   · exact sizeOfShapeHOL_shapeToHOL shape
 
-/-- Encoding an option of `(ShapeHOL, List Nat)` through `shapeOfHOL` preserves
-    the `wrap_rt` normalization: `wrapRtHOL` drops `some (.one, [])` while
-    `wrapRt` drops `some (Shape.one, [])`, and `shapeOfHOL` maps `.one` to
-    `Shape.one` and preserves every other shape. Hence the destination-name
-    projection of the production `wrapRt` on the encoded map equals that of the
-    exact `wrapRtHOL`. Flapjack proof infrastructure. -/
-private theorem wrapRt_map_shapeOfHOL_snd (n : Option (ShapeHOL × List Nat)) :
-    (wrapRt (n.map (fun pair =>
-      (Flapjack.Pancake.PanLang.shapeOfHOL pair.1, pair.2)))).map Prod.snd =
-      (wrapRtHOL n).map Prod.snd := by
-  cases n with
-  | none => rfl
-  | some pair =>
-      obtain ⟨shape, names⟩ := pair
-      cases shape <;> cases names <;>
-        simp [wrapRt, wrapRtHOL, Flapjack.Pancake.PanLang.shapeOfHOL]
-
 private theorem crepProgOfHOL_loadGlobalsHOL {width : Nat} [NeZero width]
     (address : BitVec 5) (count : Nat) :
     (loadGlobalsHOL (width := width) address count).map (crepExpOfHOL (width := width)) =
@@ -692,30 +567,6 @@ private theorem crepProgOfHOL_panMap2_assign {width : Nat} [NeZero width]
       | nil => simp [panMap2]
       | cons value values => simp [panMap2, crepProgOfHOL, ih]
 
-private theorem crepProgOfHOL_expHdlExact {width : Nat} [NeZero width]
-    (context : PanToCrepContextExact width) (v : String) :
-    crepProgOfHOL (expHdlExact (width := width) context.vars
-        (Flapjack.Basis.Pure.MlString.ofString v)) =
-      expHdlFiniteMap (α := BitVec width) context.toProduction.vars v := by
-  have hvars : context.toProduction.vars v =
-      (context.vars.lookup (Flapjack.Basis.Pure.MlString.ofString v)).map
-        (fun entry =>
-          (Flapjack.Pancake.PanLang.shapeOfHOL entry.1, entry.2)) := rfl
-  unfold expHdlExact expHdlFiniteMap
-  rw [FLOOKUP, hvars]
-  cases hlk : context.vars.lookup (Flapjack.Basis.Pure.MlString.ofString v) with
-  | none =>
-      simp only [Option.map_none, crepProgOfHOL]
-  | some entry =>
-      obtain ⟨shape, names⟩ := entry
-      simp only [Option.map_some]
-      rw [crepProgOfHOL_crepNestedSeqHOL, crepProgOfHOL_panMap2_assign,
-        crepProgOfHOL_loadGlobalsHOL]
-
-/-- The (at most one) exception-handler body carried by an exact `Call`
-metadata record, if any.  Used to state the assembled `Call` bridge with a
-premise about only the handler program actually present in `info`, rather
-than a universally quantified body premise. -/
 def callHandlerBody {width : Nat} [NeZero width]
     (info : Option (Option (VarKind × Flapjack.Basis.Pure.MlString.MlString) ×
       Option (Flapjack.Basis.Pure.MlString.MlString ×
@@ -742,66 +593,6 @@ theorem nameRanged_toStringOfBytes
   rw [Flapjack.Basis.Pure.MlString.ofNat_toNat_char byte]
   exact hb
 
-private theorem compFuncExactHOLW_productionContext_bridge
-    {width : Nat} [NeZero width]
-    (params : List (VarName × Shape))
-    (productionContext : PanToCrepHOLContext (BitVec width))
-    (evidence : PanToCrepContextProductionEvidence productionContext)
-    (hvarsSource : productionContext.vars = panToCrepMakeVmapHOL params)
-    (hvmaxSource : productionContext.vmax =
-      Shape.shapeSize (.comb (params.map Prod.snd)) - 1)
-    (hparams : ∀ p ∈ params,
-      Flapjack.Pancake.PanLang.NameRanged p.1 ∧
-        Flapjack.Pancake.PanLang.ShapeByteRanged p.2)
-    (body : Flapjack.Pancake.PanLang.ProgHOL width) :
-    compFuncExactHOLW
-        (panToCrepContextExactOfProduction productionContext evidence).funcs
-        (panToCrepContextExactOfProduction productionContext evidence).eids
-        (params.map fun (name, shape) =>
-          (Flapjack.Basis.Pure.MlString.ofString name,
-            Flapjack.Pancake.PanLang.shapeToHOL shape)) body =
-      compileProgExactHOLW
-        (panToCrepContextExactOfProduction productionContext evidence) body := by
-  let exactParams := params.map fun (name, shape) =>
-    (Flapjack.Basis.Pure.MlString.ofString name,
-      Flapjack.Pancake.PanLang.shapeToHOL shape)
-  let exactContext := panToCrepContextExactOfProduction productionContext evidence
-  have hvars : exactContext.vars = panToCrepMakeVmapHOLExact exactParams := by
-    apply holFiniteMapExact_ext_local
-    intro key
-    change exactContext.vars.lookup key = _
-    rw [panToCrepContextExactOfProduction_vars_lookup]
-    rw [hvarsSource]
-    exact (panToCrepMakeVmapHOLExactOfProductionParams params hparams key).symm
-  have hvmax : sizeOfShapeHOL (.comb (exactParams.map Prod.snd)) - 1 =
-      exactContext.vmax := by
-    calc
-      sizeOfShapeHOL (.comb (exactParams.map Prod.snd)) - 1 =
-          Shape.shapeSize (.comb (params.map Prod.snd)) - 1 := by
-        have hcombined : .comb (exactParams.map Prod.snd) =
-            Flapjack.Pancake.PanLang.shapeToHOL (.comb (params.map Prod.snd)) := by
-          simp [exactParams, Flapjack.Pancake.PanLang.shapeToHOL]
-        rw [hcombined, sizeOfShapeHOL_shapeToHOL]
-      _ = productionContext.vmax := hvmaxSource.symm
-      _ = exactContext.vmax := rfl
-  have hcontext :
-      mkCtxtExactHOL (panToCrepMakeVmapHOLExact exactParams)
-        exactContext.funcs (sizeOfShapeHOL (.comb (exactParams.map Prod.snd)) - 1)
-        exactContext.eids = exactContext := by
-    cases hExact : exactContext with
-    | mk vars funcs eids vmax =>
-        have hvars' : panToCrepMakeVmapHOLExact exactParams = vars := by
-          simpa only [hExact] using hvars.symm
-        have hvmax' : sizeOfShapeHOL (.comb (exactParams.map Prod.snd)) - 1 = vmax := by
-          simpa only [hExact] using hvmax
-        cases hvars'
-        cases hvmax'
-        rfl
-  simp only [compFuncExactHOLW]
-  rw [hcontext]
-
-/-- The exact-carrier `compile_prog` boundary agrees with the production
-    compiler on every byte-ranged declaration list. -/
 theorem compileProgTopHOLOfExact_declToHOL {width : Nat} [NeZero width]
     [BEq FunName] [LawfulBEq FunName]
     [LawfulHashable FunName] [OfNat (BitVec width) 0]

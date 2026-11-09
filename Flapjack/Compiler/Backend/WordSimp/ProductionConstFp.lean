@@ -51,10 +51,6 @@ private theorem lookup_filter {α : Type} (k : Nat) (p : Nat × α → Bool) :
       · have hne : (c == k) = false := by simpa using hck
         by_cases hp : p (c, v) <;> simp [List.filter, hp, lookupNatInfo, hne, ih]
 
-private theorem nodup_filter {α : Type} (p : Nat × α → Bool) (m : NatInfoMap α)
-    (nodup : (m.map Prod.fst).Nodup) : ((m.filter p).map Prod.fst).Nodup :=
-  (List.Sublist.map _ (List.filter_sublist)).nodup nodup
-
 theorem constRel_empty {width : Nat} : ConstRel ([] : NatInfoMap (BitVec width)) .ln :=
   ⟨List.nodup_nil, fun k => by simp [lookupNatInfo]⟩
 
