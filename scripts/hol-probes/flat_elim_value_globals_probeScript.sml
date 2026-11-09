@@ -135,3 +135,7 @@ val el_rep_none_some_replay = prove (
   rw [EL_APPEND_EQN] >> simp [EL_REPLICATE]);
 val _ = show_thm "el_rep_none_some_typed=" el_rep_none_some_replay;
 val _ = show_thm "flat_do_app_cases_typed=" flat_elimProofTheory.do_app_cases;
+
+(* Replay the local natural-order fact used in do_app_SOME_flat_state_rel. *)
+val not_le_less_replay = prove (``(~(x >= y)) ==> ((x :num) < y)``, simp []);
+val _ = show_thm "not_le_less_typed=" not_le_less_replay;

@@ -130961,5 +130961,13 @@
   "lean_name": "el_replicateNone_some",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared local EL_REP_NONE_SOME_trivia with typed replay el_rep_none_some_typed: binders n, xs, i, y; α option list without Nonempty α; HOL EL is holEl with unspecified out-of-range behavior, guarded as in HOL. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "not_LE_LESS_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Order.lean",
+  "lean_name": "not_ge_implies_lt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared local not_LE_LESS_IMP with typed replay not_le_less_typed: x and y are HOL nums rendered as Nat, and the negated greater-than-or-equal premise and less-than conclusion agree. Independently source-reviewed."
 }
 ]
