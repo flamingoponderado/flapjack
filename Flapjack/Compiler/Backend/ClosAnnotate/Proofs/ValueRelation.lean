@@ -162,7 +162,7 @@ theorem envOk_shiftedEnv (m l : Nat) (index : Spt Nat) (env nextEnv selected : L
     have selectedIndex : Flapjack.holEl position (filtered.map (getVar m l index)) = getVar m l index n := by
       rw [Flapjack.holEl_eq_getElem position _ (by simpa using bound), List.getElem_map, atPosition]
     have mapLookup : sptLookup n (shiftedEnv 0 filtered) = some position := by
-      have h := lookup_shiftedEnv_el filtered position 0 bound filteredDistinct
+      have h := lookup_shiftedEnv_el filtered position 0 ⟨bound, filteredDistinct⟩
       simpa [nth] using h
     obtain ⟨value, sourceLookup, selectedLookup⟩ :=
       lookupVars_position (filtered.map (getVar m l index)) nextEnv selected position (by simpa using bound) run

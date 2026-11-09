@@ -120,6 +120,12 @@
   "reviewer": "Compared shift_obeys_max_app_typed: the bound and all expression-list, natural and sparse-tree index variables are unrestricted. Both occurrences of EVERY are membership quantification over the reviewed obeysMaxApp predicate, and the conclusion uses original shiftSource."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "lookup_EL_shifted_env",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ShiftedEnv.lean", "lean_name": "lookup_shiftedEnv_el",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared lookup_EL_shifted_env_local_typed, replayed from the local source proof: unrestricted natural list, index and offset preserve binder order, the bound and distinctness conjunction, HOL EL and sparse-tree lookup, and the offset-plus-index conclusion."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "evaluate_shift_REPLICATE_const_0",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/PureBindings.lean", "lean_name": "evaluate_shift_replicate_const0",
   "statement_status": "reviewed_fmap_as_finite_support",

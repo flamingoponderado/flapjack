@@ -112,3 +112,12 @@ val no_overlap_has_var_replay = prove (
   >> Cases_on `x = n` >> fs []);
 val _ = show "no_overlap_has_var_IMP_local_typed=" no_overlap_has_var_replay;
 val _ = show "evaluate_shift_REPLICATE_const_0_typed=" clos_annotateProofTheory.evaluate_shift_REPLICATE_const_0;
+(* Replay the source-local shifted-environment lookup proof. *)
+val lookup_EL_shifted_env_replay = prove (
+  ``!y n k. n < LENGTH y /\ ALL_DISTINCT y ==>
+              (lookup (EL n y) (shifted_env k y) = SOME (k + n))``,
+  Induct >> full_simp_tac(srw_ss())[] >> Cases_on `n`
+  >> full_simp_tac(srw_ss())[shifted_env_def,sptreeTheory.lookup_insert]
+  >> SRW_TAC [] [ADD1,AC ADD_COMM ADD_ASSOC]
+  >> full_simp_tac(srw_ss())[MEM_EL] >> METIS_TAC []);
+val _ = show "lookup_EL_shifted_env_local_typed=" lookup_EL_shifted_env_replay;
