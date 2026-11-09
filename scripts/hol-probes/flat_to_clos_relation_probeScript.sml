@@ -190,3 +190,7 @@ val MAP_n2w_ORD_eq_replay = prove (
     arithmeticTheory.MOD_LESS, stringTheory.ORD_BOUND, stringTheory.ORD_11]);
 val _ = if null (hyp MAP_n2w_ORD_eq_replay) then () else raise Fail "hypotheses: MAP_n2w_ORD_eq";
 val _ = (print "MAP_n2w_ORD_eq_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl MAP_n2w_ORD_eq_replay); print "\n");
+val _ = if null (hyp op_eval) then () else raise Fail "hypotheses: op_eval";
+val _ = (print "op_eval_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl op_eval); print "\n");
+val _ = if null (hyp op_id) then () else raise Fail "hypotheses: op_id";
+val _ = (print "op_id_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl op_id); print "\n");
