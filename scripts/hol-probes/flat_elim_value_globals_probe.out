@@ -102,3 +102,10 @@ ast_thunk_op_size_def_typed=(∀(a :thunk_mode). thunk_op_size (AllocThunk a) = 
 ast_opb_size_def_typed=∀(x :opb). opb_size x = (0 :num)
 ast_test_size_def_typed=test_size Equal = (0 :num) ∧ (∀(a :opb). test_size (Compare a) = (1 :num) + opb_size a) ∧ ∀(a :opb). test_size (AltCompare a) = (1 :num) + opb_size a
 ast_prim_type_size_def_typed=prim_type_size BoolT = (0 :num) ∧ prim_type_size IntT = (0 :num) ∧ prim_type_size CharT = (0 :num) ∧ prim_type_size StrT = (0 :num) ∧ (∀(a :word_size). prim_type_size (WordT a) = (1 :num) + word_size_size a) ∧ prim_type_size Float64T = (0 :num)
+ast_op_size_arith=(2 :num)
+ast_op_size_from_to=(3 :num)
+ast_op_size_shift=(43 :num)
+ast_op_size_test=(3 :num)
+ast_op_size_thunk=(2 :num)
+ast_op_size_ffi=(5 :num)
+ast_op_size_nullary=(0 :num)
