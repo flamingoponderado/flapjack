@@ -191,7 +191,7 @@ theorem compileInc_bvlChain_installed (maxApp start : Nat) (expressions real : L
             (fun ((loc, arity, _), body) => (loc + numStubs maxApp, arity, body)) ++ outputAux) code := by
         have h : (chainSource ++ auxiliary).map (fun (_, _, exp) => exp) = chainExps ++ extraExps := by
           simp [chainExps, extraExps]
-        simpa [compileInc, extract, compileProgExpsHOL, chainSource, h, whole] using installed
+        simpa [compileInc, extractNameSource_eq_extractName, extract, compileProgExpsHOL, chainSource, h, whole] using installed
       rw [List.zip_append lengths, List.map_append, shape'] at installed'
       intro entry member
       apply installed' entry

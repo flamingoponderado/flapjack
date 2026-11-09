@@ -85,7 +85,7 @@ theorem compileInc_head (maxApp : Nat) (program : ClosSem.Program) :
     obtain ⟨body, tail, compiled⟩ := compileProgExps_head_zero maxApp start expression rest
     refine ⟨start, body, tail, ?_, ?_⟩
     · rfl
-    · simpa [compileInc, extract, chainEq] using compiled
+    · simpa [compileInc, extractNameSource_eq_extractName, extract, chainEq] using compiled
 
 /-- A source compiler result accepted by the installation oracle is also
 accepted by the target installer, with the incremental main entry returned. -/
@@ -361,7 +361,7 @@ theorem install_auxiliary_entry {C F : Type} (s : ClosSem.State C F) (t : BvlSem
   | mk start body =>
     have installed' : codeInstalled (compileProgExpsHOL s.maxApp (chainExps start body ++ auxiliary))
         (sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))) := by
-      simpa [compileInc, extract] using installed
+      simpa [compileInc, extractNameSource_eq_extractName, extract] using installed
     exact compileProgExps_entry_installed s.maxApp (chainExps start body ++ auxiliary) _ name arity source installed'
       (List.mem_append_right _ member)
 
@@ -632,7 +632,7 @@ theorem compileInc_original_aux_installed (maxApp : Nat) (expressions : List Clo
               (fun ((loc, args, _), exp) => (loc + numStubs maxApp, args, exp)) ++ finalAux) code := by
           have h : (chainExps start real ++ auxiliary).map (fun (_, _, exp) => exp) = chained ++ extra := by
             simp [chained, extra]
-          simp only [compileInc, extract, compileProgExpsHOL, h, whole] at installed
+          simp only [compileInc, extractNameSource_eq_extractName, extract, compileProgExpsHOL, h, whole] at installed
           exact installed
         have outputInstalled : codeInstalled finalAux code := by
           intro entry member

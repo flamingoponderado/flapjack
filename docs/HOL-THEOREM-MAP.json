@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "extract_name_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/ExtractName/Original.lean", "lean_name": "extractNameSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared extract_name_def_typed: empty and cons clauses, optional HOL choice over a nonnegative integer constant and the singleton test agree. holOptionSome is the reviewed HOL some translation; the predicate's selected number is unique."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "extract_name_pmatch",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/ExtractName/Original.lean", "lean_name": "extractNameSource_pmatch",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared extract_name_pmatch_typed: the empty and cons cases, integer constant match, negative test, Num of absolute value and singleton test agree. Lean Int.natAbs implements Num (ABS i) in the nonnegative branch."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml", "hol_name": "annotate_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Original.lean", "lean_name": "annotateSource",
   "statement_status": "reviewed_exact",
@@ -17408,8 +17420,8 @@
   "hol_name": "clos_to_bvl_compile_inc_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/FullIncremental.lean",
   "lean_name": "closToBvlCompileInc",
-  "statement_status": "documented_mismatch",
-  "reviewer": "The pass sequence matches clos_to_bvl_compile_inc_typed and source annotation is now literal, but the final closure-to-BVL pass uses executable entry extraction rather than HOL's separate choice-based definition. compileIncFuel_eq_source proves agreement with the executed fuelled compiler."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_to_bvl_compile_inc_typed and the original pass sequence: configuration and program carriers, conditional multi-argument pass, numbering, known and call passes, configuration updates, source annotation and final source closure-to-BVL compilation agree. compileIncFuel_eq_source proves agreement with the executed fuelled compiler."
 },
   {
     "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "calls_def",
@@ -116887,7 +116899,7 @@
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "extract_name_def",
     "statement_status": "documented_mismatch",
-    "reviewer": "Executable pattern matching follows extract_name_pmatch; HOL extract_name_def uses option choice. The separate choice-based definition and its equivalence remain open."
+    "reviewer": "Executable pattern matching follows extract_name_pmatch; HOL extract_name_def uses option choice. The separate source definition agrees by extractNameSource_eq_extractName."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Names.lean",
@@ -128238,8 +128250,8 @@
   "hol_name": "compile_inc_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/SourceInc.lean",
   "lean_name": "compileInc",
-  "statement_status": "documented_mismatch",
-  "reviewer": "This composition uses executable extractName rather than HOL's separate choice-based extraction; source definition and equivalence remain open."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_inc_def_typed: max application, expression and auxiliary code pair, original choice-based extraction, expression chaining and source compile_prog agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_spaceProofScript.sml",

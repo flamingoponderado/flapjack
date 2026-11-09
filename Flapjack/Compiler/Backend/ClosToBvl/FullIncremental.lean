@@ -9,8 +9,8 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Original
 /-! Source-shaped incremental composition of the closure-to-BVL passes. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
-/-- Thread the closure configuration through the incremental passes. HOL's
-final pass uses choice-based entry extraction, whose source port remains open. -/
+/-- Thread the closure configuration through the original incremental passes. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "clos_to_bvl_compile_inc_def"]
 noncomputable def closToBvlCompileInc (config : Config)
     (program : List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)) :
     Config × List (Nat × Nat × Bvl.Exp) :=

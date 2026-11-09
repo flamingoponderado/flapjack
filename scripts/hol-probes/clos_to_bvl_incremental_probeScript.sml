@@ -6,6 +6,15 @@ val _ = Globals.linewidth := 1000000;
 val _ = (print "clos_to_bvl_compile_inc_typed=";
   Lib.with_flag (Globals.show_types,true) print_term (concl clos_to_bvlTheory.clos_to_bvl_compile_inc_def);
   print "\n");
+val _ = (print "extract_name_def_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term (concl clos_to_bvlTheory.extract_name_def);
+  print "\n");
+val _ = (print "extract_name_pmatch_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term (concl clos_to_bvlTheory.extract_name_pmatch);
+  print "\n");
+val _ = (print "compile_inc_def_typed=";
+  Lib.with_flag (Globals.show_types,true) print_term (concl clos_to_bvlTheory.compile_inc_def);
+  print "\n");
 fun emit label tm =
   let val rewritten = rhs (concl (REWRITE_CONV
         [clos_to_bvlTheory.clos_to_bvl_compile_inc_def,
