@@ -440,8 +440,6 @@ theorem evaluateFfi_app {σ : Type} (st : State σ) (env : SemEnv Value)
   have clamp : fixClock st (evaluate st env args.reverse) = evaluate st env args.reverse :=
     fixClock_eq_of_bound st first firstBound
   simp only [evaluate, clamp]
-  change Relation.ReflTransGen callFFIRelHOL st.ffi
-    (match first.2 with | .err err => (first.1, Result.err (α := List Value) err) | .val _ => _).1.ffi
   cases hv : first.2 with
   | err err => simpa only [hv] using ihArgs
   | val values =>
@@ -462,20 +460,6 @@ theorem evaluateFfi_app {σ : Type} (st : State σ) (env : SemEnv Value)
           simpa only [decClock] using ihArgs.trans (ihFun first.1 values callEnv body firstEq hc happ nonzero)
     | force =>
       simp only
-      change Relation.ReflTransGen callFFIRelHOL st.ffi
-        (match destThunk values.reverse first.1.refs with
-          | .badRef | .notThunk => typeError first.1
-          | .isThunk .evaluated v => (first.1, Result.val (β := Value) [v])
-          | .isThunk .notEvaluated thunk => match doOpApp [thunk, .conv none []] with
-            | none => typeError first.1
-            | some (callEnv, body) =>
-              if first.1.clock = 0 then timeoutError first.1 else
-              let next := evaluate (decClock first.1) callEnv [body]
-              match next.2 with
-              | .err err => (next.1, Result.err (α := List Value) err)
-              | .val newValues => match updateThunk values.reverse next.1.refs newValues with
-                | none => typeError next.1
-                | some refs => ({ next.1 with refs }, Result.val (β := Value) newValues)).1.ffi
       cases hd : destThunk values.reverse first.1.refs with
       | badRef => simpa only [hd, typeError] using ihArgs
       | notThunk => simpa only [hd, typeError] using ihArgs
@@ -495,12 +479,6 @@ theorem evaluateFfi_app {σ : Type} (st : State σ) (env : SemEnv Value)
               let next := evaluate (decClock first.1) callEnv [body]
               have nextRel := ihForce first.1 values thunk callEnv body firstEq hc hd happ nonzero
               have total := ihArgs.trans nextRel
-              change Relation.ReflTransGen callFFIRelHOL st.ffi
-                (match next.2 with
-                  | .err err => (next.1, Result.err (α := List Value) err)
-                  | .val newValues => match updateThunk values.reverse next.1.refs newValues with
-                    | none => typeError next.1
-                    | some refs => ({ next.1 with refs }, Result.val (β := Value) newValues)).1.ffi
               cases hn : next.2 with
               | err err => simpa only [hn] using total
               | val newValues =>
@@ -542,15 +520,6 @@ theorem evaluateFfi_app {σ : Type} (st : State σ) (env : SemEnv Value)
             simpa only [hd] using (Prod.eta decoded).symm
           have nextRel := ihEval first.1 values decoded.1 evalEnv decs firstEq hc decodedEq nonzero
           have total := ihArgs.trans (by simpa only [decodedFfi] using nextRel)
-          change Relation.ReflTransGen callFFIRelHOL st.ffi
-            (match next.2 with
-              | .val newEnv => match declareEnv next.1.evalState (extendDecEnv newEnv evalEnv) with
-                | none => typeError next.1
-                | some (value, evalState) =>
-                  ({ next.1 with evalState := resetEnvGeneration first.1.evalState evalState }, Result.val (β := Value) [value])
-              | .err (.abort err) => (next.1, Result.err (α := List Value) (.abort err))
-              | .err err => ({ next.1 with evalState := resetEnvGeneration first.1.evalState next.1.evalState },
-                  Result.err (α := List Value) err)).1.ffi
           cases hn : next.2 with
           | val newEnv =>
             simp only
