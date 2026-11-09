@@ -268,4 +268,9 @@ theorem encodeBytes_branchConditional (imm : BitVec 64) (cond : Nat) :
     rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
     exact (arm8EncodeBytes_branchConditional_bad imm (BitVec.ofNat 4 cond) hl3).symm
 
+/-- The computable `cmpCond` is the L3 `arm8CmpCond` on the `BitVec 4` carrier. -/
+theorem arm8CmpCond_eq (c : Cmp) :
+    arm8CmpCond c = BitVec.ofNat 4 (cmpCond c) := by
+  cases c <;> rfl
+
 end Flapjack.Compiler.Encoders.Arm8.L3

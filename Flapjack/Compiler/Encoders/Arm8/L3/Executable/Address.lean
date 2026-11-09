@@ -93,4 +93,44 @@ theorem encodeBytes_address (imm : BitVec 64) (rd : Nat) :
     rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
     exact (arm8EncodeBytes_address_bad imm (BitVec.ofNat 5 rd) hl3).symm
 
+/-- The computable 20-bit `Loc` guard is exactly the L3 `arm8LocInRange`. -/
+theorem fitsSigned20_iff_arm8LocInRange (a : BitVec 64) :
+    fitsSigned 20 a = true ↔ arm8LocInRange a = true := by
+  rw [arm8LocInRange_iff]
+  constructor
+  · intro h
+    have htoInt : a.toInt = (BitVec.signExtend 64 (BitVec.setWidth 20 a)).toInt :=
+      congrArg BitVec.toInt ((fitsSigned_iff_signExtend 20 (by decide) (by decide) a).mp h)
+    rw [htoInt, BitVec.toInt_signExtend_eq_toNat_bmod, Nat.min_eq_right (by decide : 20 ≤ 64)]
+    have hb : 0 < 2 ^ 20 := by norm_num
+    have hle := Int.le_bmod (x := ((BitVec.setWidth 20 a).toNat : Int)) (m := 2 ^ 20) hb
+    have hlt := Int.bmod_le (x := ((BitVec.setWidth 20 a).toNat : Int)) (m := 2 ^ 20) hb
+    norm_num at hle hlt ⊢
+    exact ⟨hle, hlt⟩
+  · intro h
+    rw [fitsSigned_iff_signExtend 20 (by decide) (by decide)]
+    rw [← BitVec.toInt_inj]
+    rw [BitVec.toInt_signExtend_eq_toNat_bmod, Nat.min_eq_right (by decide : 20 ≤ 64)]
+    have hb : 0 < 2 ^ 20 := by norm_num
+    rw [eq_comm, Int.bmod_eq_iff hb]
+    refine ⟨?_, ?_, ?_⟩
+    · norm_num
+      exact h.1
+    · norm_num
+      omega
+    · have h1 : (2 ^ 20 : Int) ∣ (a.toInt - (a.toNat : Int)) := by
+        rw [BitVec.toInt_eq_toNat_bmod]
+        exact Int.dvd_trans (by norm_num : (2 ^ 20 : Int) ∣ (2 ^ 64 : Int))
+          Int.dvd_bmod_sub_self
+      have h2 : (2 ^ 20 : Int) ∣ ((a.toNat : Int) - ↑((BitVec.setWidth 20 a).toNat)) := by
+        rw [BitVec.toNat_setWidth]
+        rw [← Int.natCast_sub (Nat.mod_le _ _)]
+        exact Int.natCast_dvd_natCast.mpr (Nat.dvd_sub_mod (n := 2 ^ 20) a.toNat)
+      have h3 := Int.dvd_add h1 h2
+      have heq : a.toInt - (a.toNat : Int) + ((a.toNat : Int) -
+          ↑((BitVec.setWidth 20 a).toNat)) =
+          a.toInt - ↑((BitVec.setWidth 20 a).toNat) := by omega
+      rw [heq] at h3
+      exact h3
+
 end Flapjack.Compiler.Encoders.Arm8.L3

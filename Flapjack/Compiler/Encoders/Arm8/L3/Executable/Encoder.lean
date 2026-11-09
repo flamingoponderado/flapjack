@@ -306,4 +306,40 @@ theorem encodeBytes_branchRegister (rn : Nat) :
     rw [fields_branchRegister]
   rw [encodeBytes_eq_of_encodeInsn32 _ _ hw', arm8Encode, arm8Encode_branchRegister]
 
+/-- The computable `encMovImm` is the L3 `arm8EncMovImm` on the `BitVec` carrier,
+including the failure case. -/
+theorem encMovImm_eq (i : BitVec 64) :
+    (encMovImm i).map (fun p => (BitVec.ofNat 16 p.1, BitVec.ofNat 2 p.2)) =
+      arm8EncMovImm i := by
+  have hm1 : (~~~(0xFFFF : BitVec 64)) = (0xFFFFFFFFFFFF0000 : BitVec 64) := by decide
+  have hm2 : (~~~(0xFFFF0000 : BitVec 64)) = (0xFFFFFFFF0000FFFF : BitVec 64) := by decide
+  have hm3 : (~~~(0xFFFF00000000 : BitVec 64)) = (0xFFFF0000FFFFFFFF : BitVec 64) := by decide
+  have hm4 : (~~~(0xFFFF000000000000 : BitVec 64)) = (0x0000FFFFFFFFFFFF : BitVec 64) := by decide
+  have h16 : ∀ n : Nat, BitVec.ofNat 16 (n % 65536) = BitVec.ofNat 16 n := by
+    intro n
+    apply BitVec.eq_of_toNat_eq
+    simp [BitVec.toNat_ofNat]
+  have hi : i >>> (0 : Nat) = i := by simp
+  unfold encMovImm arm8EncMovImm
+  rw [hm1, hm2, hm3, hm4]
+  by_cases h1 : i &&& (0xFFFFFFFFFFFF0000 : BitVec 64) = 0
+  · simp only [if_pos h1, Option.map_some]
+    simp
+    rw [h16]
+    rfl
+  · by_cases h2 : i &&& (0xFFFFFFFF0000FFFF : BitVec 64) = 0
+    · simp only [if_neg h1, if_pos h2, Option.map_some]
+      simp
+      rw [h16]
+    · by_cases h3 : i &&& (0xFFFF0000FFFFFFFF : BitVec 64) = 0
+      · simp only [if_neg h1, if_neg h2, if_pos h3, Option.map_some]
+        simp
+        rw [h16]
+      · by_cases h4 : i &&& (0x0000FFFFFFFFFFFF : BitVec 64) = 0
+        · simp only [if_neg h1, if_neg h2, if_neg h3, if_pos h4, Option.map_some]
+          simp
+          rw [h16]
+        · simp only [if_neg h1, if_neg h2, if_neg h3, if_neg h4]
+          rfl
+
 end Flapjack.Compiler.Encoders.Arm8.L3
