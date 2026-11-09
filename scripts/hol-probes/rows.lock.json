@@ -428,7 +428,7 @@
     {"bytes": 153, "out": "finite_map_empty_probe.out", "rows": 2, "sha256": "99d2a5b19ff37182bbac8ef8b05d39e8a2658fd39c412215db2b58e686448e17"},
     {"bytes": 228, "out": "finite_map_union_probe.out", "rows": 8, "sha256": "9df93e08f2137b5180c972581a77fa17b58b34a87053825d96ce587699361820"},
     {"bytes": 19979, "out": "fixed_stubs_word_probe.out", "rows": 1, "sha256": "0d0dea949f9108bb5b13c64b48330b20be1bb8a2207bc01ef986042047d50156"},
-    {"bytes": 10098, "out": "flat_do_app_preservation_probe.out", "rows": 21, "sha256": "6bdc5c68b841453c2641b14ab77a89e51ea864e0a0945f8ab5a844d2cf3e2a01"},
+    {"bytes": 10562, "out": "flat_do_app_preservation_probe.out", "rows": 23, "sha256": "8468a9c3602625731756616e50050bac64c1cd1ef593306ebbaa8509ad3c11d6"},
     {"bytes": 20236, "out": "flat_elim_closure_probe.out", "rows": 37, "sha256": "99343408528d8b05302681d13cfba75108be69a18bae6f017752ca820e412117"},
     {"bytes": 24207, "out": "flat_elim_value_globals_probe.out", "rows": 56, "sha256": "2ef1e698bce3b887487ac5285a37542ac0a67cb5ef3734850f03afc1259d7a35"},
     {"bytes": 11498, "out": "flat_lang_probe.out", "rows": 13, "sha256": "177f1d35c7eb8d487a25533bd3fb0d389736a23e12a698457e52ee7e515327d3"},

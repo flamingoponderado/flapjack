@@ -90,6 +90,7 @@ import Flapjack.Compiler.Backend.FlatProps.PatternMatch
 import Flapjack.Compiler.Backend.FlatProps.PatternAppend
 import Flapjack.Compiler.Backend.FlatProps.PatternList
 import Flapjack.Compiler.Backend.FlatProps.EvaluateList
+import Flapjack.Compiler.Backend.FlatProps.DoAppClock
 import Flapjack.Compiler.Backend.FlatProps.NoMat
 import Flapjack.Compiler.Backend.FlatProps.InstallConfig
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation

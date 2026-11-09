@@ -1,4 +1,5 @@
-load "flatSemTheory"; load "flatPropsTheory";
+load "flatSemTheory"; load "flatPropsTheory"; load "preamble";
+open preamble flatSemTheory;
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun show_thm label th =
@@ -31,3 +32,18 @@ val flat_build_rec_env_help = prove (
       MAP (λ(fn,n,e). (fn, flatSem$Recclosure env funs' fn)) funs ++ env'``,
   Induct >> srw_tac[][] >> PairCases_on `h` >> srw_tac[][]);
 val _ = show_thm "flat_build_rec_env_help_typed=" flat_build_rec_env_help;
+
+val flat_do_app_add_clock = prove (
+  ``flatSem$do_app (s : ('a,'ffi) flatSem$state) op es = SOME (t,r) ⇒
+     flatSem$do_app (s with clock := s.clock + k) op es = SOME (t with clock := t.clock + k,r)``,
+  rw [Once flatSemTheory.do_app_def, AllCaseEqs(), semanticPrimitivesTheory.store_alloc_def] >> gvs []
+  >> simp [flatSemTheory.do_app_def, semanticPrimitivesTheory.store_alloc_def]);
+val _ = show_thm "flat_do_app_add_clock_typed=" flat_do_app_add_clock;
+val flat_do_app_add_clock_none = prove (
+  ``flatSem$do_app (s : ('a,'ffi) flatSem$state) op es = NONE ⇒
+     flatSem$do_app (s with clock := s.clock + k) op es = NONE``,
+  strip_tac >> Cases_on `op` >> TRY (Cases_on `o'`)
+  >> gvs [flatSemTheory.do_app_def,AllCaseEqs(),semanticPrimitivesTheory.store_alloc_def]
+  >> rw [] >> gvs []
+  >> fs [IS_SOME_EXISTS,CaseEq"option",CaseEq"store_v"]);
+val _ = show_thm "flat_do_app_add_clock_none_typed=" flat_do_app_add_clock_none;

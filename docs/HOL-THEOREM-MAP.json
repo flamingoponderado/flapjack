@@ -130505,16 +130505,18 @@
   "hol_name": "evaluate_cons",
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateList.lean",
   "lean_name": "evaluate_cons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared flat_evaluate_cons_typed in flat_do_app_preservation_probe.out: source variable order, sequencing, value append, and error propagation agree; complete evaluator and carrier correspondence remain pending review."
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_cons_typed in flat_do_app_preservation_probe.out: source variable order, sequencing, value append, error propagation, and reviewed flat evaluator and carriers agree. Inherits the reals_as_rational_cuts assumption through the evaluator."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
   "hol_name": "evaluate_append",
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateList.lean",
   "lean_name": "evaluate_append",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared flat_evaluate_append_typed in flat_do_app_preservation_probe.out: source variable order, state threading, value append and error propagation agree; complete evaluator and carrier correspondence remain pending review."
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_append_typed in flat_do_app_preservation_probe.out: source variable order, state threading, value append, error propagation, and reviewed flat evaluator and carriers agree. Inherits the reals_as_rational_cuts assumption through the evaluator."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -130523,5 +130525,23 @@
   "lean_name": "buildRecEnv_help",
   "statement_status": "reviewed_exact",
   "reviewer": "Replayed the original local proof with inferred types in flat_build_rec_env_help_typed, flat_do_app_preservation_probe.out: the free initial environment precedes the quantified bindings, environment and closure definitions; the second and third binding fields have independent types and are not identified with the closure fields."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "do_app_add_to_clock",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/DoAppClock.lean",
+  "lean_name": "doApp_addToClock",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Replayed the original local proof and compared flat_do_app_add_clock_typed in flat_do_app_preservation_probe.out: the source state, operation, values, target state, result and clock increment are independent and in source order; the successful premise and shifted target equality match. The dispatcher inherits the reviewed reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "do_app_add_to_clock_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/DoAppClock.lean",
+  "lean_name": "doApp_addToClock_none",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Replayed the original local proof and compared flat_do_app_add_clock_none_typed in flat_do_app_preservation_probe.out: the original failure premise and clock-shifted failure conclusion retain the same state, operation and values. The dispatcher inherits the reviewed reals_as_rational_cuts assumption."
 }
 ]

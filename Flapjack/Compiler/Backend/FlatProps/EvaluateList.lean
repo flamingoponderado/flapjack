@@ -2,8 +2,7 @@ import Flapjack.Compiler.Backend.FlatProps.EvaluateLength
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateSource
 namespace Flapjack.Compiler.Backend.FlatProps
 open Flapjack.Compiler.Backend.FlatSem
-/-- Evaluating a cons evaluates its head and tail in sequence, propagating errors.
-The evaluator and its carriers remain pending complete HOL correspondence review. -/
+/-- Evaluating a cons evaluates its head and tail in sequence, propagating errors. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "evaluate_cons"]
 theorem evaluate_cons {C F : Type} (env : Environment Value) (state : State C F) (e : FlatLang.Exp) (es : List FlatLang.Exp) :
     evaluate env state (e :: es) =
@@ -26,8 +25,7 @@ theorem evaluate_cons {C F : Type} (env : Environment Value) (state : State C F)
         obtain ⟨value, rfl⟩ := evaluate_sing env state next e values run
         cases tail : evaluate env next (second :: rest) with
         | mk last result => cases result <;> simp [tail, Flapjack.holHd]
-/-- Evaluation of appended expression lists sequences both evaluations.
-The evaluator and its carriers remain pending complete HOL correspondence review. -/
+/-- Evaluation of appended expression lists sequences both evaluations. -/
 @[hol "cakeml/compiler/backend/semantics/flatPropsScript.sml" "evaluate_append"]
 theorem evaluate_append {C F : Type} (env : Environment Value) (state : State C F) (left right : List FlatLang.Exp) :
     evaluate env state (left ++ right) =
