@@ -130553,5 +130553,23 @@
   "lean_name": "withClock_ffi",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared flat_with_clock_ffi_typed in flat_do_app_preservation_probe.out: the state and clock retain their source order and independent state payload types, and the clock update preserves exactly the FFI field."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_add_to_clock",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateClockShift.lean",
+  "lean_name": "evaluate_addToClock",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_add_clock_typed in flat_do_app_preservation_probe.out: the free clock increment and all three independently quantified expression, single-declaration and declaration-list conjuncts retain their original grouped evaluation and non-timeout premises and shifted-state conclusions. The evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+  "hol_name": "evaluate_decs_add_to_clock",
+  "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateClockShift.lean",
+  "lean_name": "evaluateDecs_addToClock",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared flat_evaluate_decs_add_clock_typed in flat_do_app_preservation_probe.out: the free clock increment, quantified declaration list and states, original non-timeout-first grouped premise and shifted result agree. The evaluator inherits the reals_as_rational_cuts assumption."
 }
 ]
