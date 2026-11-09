@@ -1384,13 +1384,13 @@ What is proved here: every leaf result preserves global shapes
 (`panValue*Result_globals_stable`), the leaf dispatcher
 (`evalPanValueFfiClockLeaf_globals_stable`), the projection and composition
 helpers (`panValueFfiClockGlobalsStable_*`), the validated-update lemma
-`assignPanValueCallResult_globals_stable`, and the verdict congruence
-`panValueAssignmentValid_global_congr`.
-
-Open: the fuel induction over the three mutual evaluators
-(`evalPanValueFfiClockCodeCall`, `...DecCall`, `...CodeProg`) that lifts the
-leaf and helper results to arbitrary programs and calls, and the DecCall
-corollary built on it.  The invariant is believed true: the only global
+`assignPanValueCallResult_globals_stable`, the verdict congruence
+`panValueAssignmentValid_global_congr`, the fuel induction over the three
+mutual evaluators (`evalPanValueFfiClockCode_globals_stable`), its DecCall
+corollary (`evalPanValueFfiClockCodeDecCall_globals_stable`), and the
+`Global`-destination verdict congruences for Call and DecCall
+(`evalPanValueFfiClockCodeCall_global_verdict_congr` and
+`evalPanValueFfiClockCodeDecCall_global_verdict_congr`).  The only global
 writes are a validated `Global` assignment, a `ShMemLoad` validated against
 `.word 0`, and the Call/DecCall `Global` destination, and every other clause
 passes the input globals through. -/
@@ -2206,19 +2206,23 @@ theorem panValueFfiClockGlobalsStable_none
   intro r hr
   simp at hr
 
-/-- A clocked result with a fixed outcome keeps the input globals shape-stable
-    when the outcome's own globals are. -/
-theorem panValueFfiClockGlobalsStable_some_outcome
+/-- The `some`-result normalisation for globals stability: a clocked result
+    `(outcome, clock)` keeps the input globals shape-stable exactly when the
+    outcome's globals component does. -/
+theorem panValueFfiClockGlobalsStable_some_iff
     (structs : StructContext) (globals : VarName → Option (PanValue α))
-    (outcome : PanValueFfiClockOutcome α σ) (clock : Nat)
-    (h : panValueGlobalsShapeStable structs globals (panValueFfiClockOutcomeGlobals outcome)) :
-    panValueFfiClockGlobalsStable structs globals (some (outcome, clock)) := by
-  intro r hr
-  obtain ⟨nextOutcome, nextClock⟩ := r
-  simp only [Option.some.injEq, Prod.mk.injEq] at hr
-  obtain ⟨hnext, _⟩ := hr
-  subst nextOutcome
-  simpa [panValueFfiClockResultGlobals] using h
+    (outcome : PanValueFfiClockOutcome α σ) (clock : Nat) :
+    panValueFfiClockGlobalsStable structs globals (some (outcome, clock)) ↔
+      panValueGlobalsShapeStable structs globals (panValueFfiClockOutcomeGlobals outcome) := by
+  constructor
+  · intro h
+    simpa [panValueFfiClockResultGlobals] using h (outcome, clock) rfl
+  · intro h r hr
+    obtain ⟨nextOutcome, nextClock⟩ := r
+    simp only [Option.some.injEq, Prod.mk.injEq] at hr
+    obtain ⟨hnext, _⟩ := hr
+    subst nextOutcome
+    simpa [panValueFfiClockResultGlobals] using h
 
 /-- Restoring an old local binding keeps the outcome's globals component. -/
 theorem panValueFfiClockOutcomeGlobals_restoreLocal [BEq String]
@@ -2447,6 +2451,630 @@ theorem evalPanValueFfiClockLeaf_globals_stable
       panValueFfiClockGlobalsStable]
   | decCall name shape function arguments body => simp [evalPanValueFfiClockLeaf,
       evalPanValueFfiLeafControl, panValueFfiClockGlobalsStable]
+
+local macro "globals_stable_refl" : tactic =>
+  `(tactic| simp [Option.pure_def, panValueFfiClockGlobalsStable_some_iff,
+    panValueFfiClockOutcomeGlobals, panValueFfiClockResultGlobals,
+    panValueControlGlobals, panValueGlobalsShapeStable])
+
+local macro "globals_stable_hb" h:term : tactic =>
+  `(tactic| simpa [Option.pure_def, panValueFfiClockGlobalsStable_some_iff,
+    panValueFfiClockOutcomeGlobals, panValueFfiClockResultGlobals,
+    panValueControlGlobals] using $h)
+
+/-- Every `some` result of the fuel-indexed code-map evaluator keeps the input
+    globals shape-stable: each clause passes the input globals through, performs
+    a validated `Global` assignment, or recurses on globals that are already
+    shape-stable.  This is the evaluator-level induction behind the
+    `Global`-destination verdict congruence; it is stated for an arbitrary
+    expression evaluator because expression evaluation never touches the clock
+    or the globals map. -/
+theorem evalPanValueFfiClockCode_globals_stable
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (code : PanSemCodeMap α) (exceptions : ExceptionId → Option Shape)
+    (base top bytes : α) (access : Option (PanValueMemoryAccess α))
+    (contracts : Option PanValueCallContracts)
+    (mh : Option (PanValueMemoryFfiHandler α σ)) :
+    ∀ fuel,
+      (∀ locals globals memory ffi clock info function arguments preserve
+          (evaluator : Option (PanExprEvaluator α)),
+        panValueFfiClockGlobalsStable structs globals
+          (evalPanValueFfiClockCodeCall context primitive handler structs code exceptions
+            base top bytes fuel locals globals memory ffi clock info function arguments
+            access contracts mh preserve evaluator)) ∧
+      (∀ locals globals memory ffi clock name shape function arguments body
+          (evaluator : Option (PanExprEvaluator α)),
+        panValueFfiClockGlobalsStable structs globals
+          (evalPanValueFfiClockCodeDecCall context primitive handler structs code exceptions
+            base top bytes fuel locals globals memory ffi clock name shape function arguments
+            body access contracts mh evaluator)) ∧
+      (∀ locals globals memory ffi clock program
+          (evaluator : Option (PanExprEvaluator α)),
+        panValueFfiClockGlobalsStable structs globals
+          (evalPanValueFfiClockCodeProg context primitive handler structs code exceptions
+            base top bytes fuel locals globals memory ffi clock program access contracts mh
+            evaluator)) := by
+  intro fuel
+  induction fuel with
+  | zero =>
+      refine ⟨?_, ?_, ?_⟩ <;>
+        intro <;>
+        simp [evalPanValueFfiClockCodeCall, evalPanValueFfiClockCodeDecCall,
+          evalPanValueFfiClockCodeProg, panValueFfiClockGlobalsStable]
+  | succ fuel ih =>
+      obtain ⟨ihCall, ihDecCall, ihProg⟩ := ih
+      refine ⟨?_, ?_, ?_⟩
+      · intro locals globals memory ffi clock info function arguments preserve evaluator
+        simp only [evalPanValueFfiClockCodeCall]
+        cases hargs : panValueCallArgumentsValue structs base top bytes locals globals memory
+            arguments access evaluator with
+        | none =>
+            simp only [Option.elim_none, Option.pure_def]
+            globals_stable_refl
+        | some argValues =>
+            simp only [Option.elim_some]
+            cases hlook : lookupPanSemCodeCall structs code function argValues with
+            | none =>
+                simp only [Option.elim_none, Option.pure_def]
+                globals_stable_refl
+            | some codeTarget =>
+                simp only [Option.elim_some]
+                obtain ⟨body, returnShape, calleeLocals⟩ := codeTarget
+                split
+                next =>
+                    simp only [panValueFfiClockTimeout, Option.pure_def]
+                    globals_stable_refl
+                next hclock =>
+                  cases hrec : evalPanValueFfiClockCodeProg context primitive handler structs
+                      code exceptions base top bytes fuel calleeLocals globals memory ffi
+                      (decPanClock clock) body access contracts mh evaluator with
+                  | none => exact panValueFfiClockGlobalsStable_none structs globals
+                  | some step =>
+                      obtain ⟨callOutcome, callClock⟩ := step
+                      have hb := ihProg calleeLocals globals memory ffi (decPanClock clock)
+                        body evaluator
+                      rw [hrec] at hb
+                      rw [panValueFfiClockGlobalsStable_some_iff] at hb
+                      simp only [Option.bind_eq_bind, Option.bind_some]
+                      cases callOutcome with
+                      | timeout timeoutLocals timeoutGlobals timeoutMemory timeoutFfi =>
+                          simp only [Option.pure_def]
+                          globals_stable_hb hb
+                      | control result =>
+                          cases result with
+                          | normal calleeLocals' calleeGlobals' calleeMemory' calleeFfi' =>
+                              simp only [Option.pure_def]
+                              globals_stable_hb hb
+                          | broke calleeLocals' calleeGlobals' calleeMemory' calleeFfi' =>
+                              simp only [Option.pure_def]
+                              globals_stable_hb hb
+                          | continued calleeLocals' calleeGlobals' calleeMemory' calleeFfi' =>
+                              simp only [Option.pure_def]
+                              globals_stable_hb hb
+                          | error calleeLocals' calleeGlobals' calleeMemory' calleeFfi' =>
+                              simp only [Option.pure_def]
+                              globals_stable_hb hb
+                          | returned calleeLocals' calleeGlobals' calleeMemory' calleeFfi'
+                              values =>
+                              simp only [Option.pure_def]
+                              cases values with
+                              | nil => globals_stable_hb hb
+                              | cons value rest =>
+                                  cases rest with
+                                  | nil =>
+                                      by_cases hvalid :
+                                          panShapeMatches (panValueShape structs value)
+                                            returnShape = true
+                                      · rw [if_pos hvalid]
+                                        cases info with
+                                        | none => globals_stable_hb hb
+                                        | some info' =>
+                                            obtain ⟨destination, _⟩ := info'
+                                            cases hassign : assignPanValueCallResult locals
+                                                calleeGlobals' destination [value]
+                                                (structs := structs) with
+                                            | none =>
+                                                simp only [hassign]
+                                                globals_stable_hb hb
+                                            | some caller =>
+                                                obtain ⟨callerLocals', callerGlobals'⟩ := caller
+                                                simp only [hassign,
+                                                  panValueFfiClockGlobalsStable_some_iff,
+                                                  panValueFfiClockOutcomeGlobals,
+                                                  panValueControlGlobals]
+                                                exact panValueGlobalsShapeStable_trans hb
+                                                  (assignPanValueCallResult_globals_stable structs
+                                                    locals calleeGlobals' destination [value]
+                                                    callerLocals' callerGlobals' hassign)
+                                      · rw [if_neg hvalid]
+                                        globals_stable_hb hb
+                                  | cons value' rest' => globals_stable_hb hb
+                          | raised calleeLocals' calleeGlobals' calleeMemory' calleeFfi'
+                              exception value =>
+                              simp only [Option.pure_def]
+                              cases info with
+                              | none => globals_stable_hb hb
+                              | some info' =>
+                                  obtain ⟨_, exceptionInfo⟩ := info'
+                                  cases exceptionInfo with
+                                  | none => globals_stable_hb hb
+                                  | some exceptionInfo' =>
+                                      obtain ⟨caught, handlerVariable, handlerProgram⟩ :=
+                                        exceptionInfo'
+                                      simp only []
+                                      by_cases hcaught : (caught == exception) = true
+                                      · rw [if_pos hcaught]
+                                        cases hexs : exceptions exception with
+                                        | none => globals_stable_hb hb
+                                        | some shape =>
+                                            simp only []
+                                            by_cases hcond :
+                                                (panShapeMatches (panValueShape structs value)
+                                                    shape &&
+                                                  panValueAssignmentValid structs locals
+                                                    (fun _ => none) .local handlerVariable
+                                                    value) = true
+                                            · rw [if_pos hcond]
+                                              cases hhandler :
+                                                      evalPanValueFfiClockCodeProg context primitive
+                                                        handler structs code exceptions base top
+                                                        bytes fuel
+                                                        (updatePanValueMap locals handlerVariable
+                                                          value)
+                                                        calleeGlobals' calleeMemory' calleeFfi'
+                                                        (min (decPanClock clock) callClock)
+                                                        handlerProgram access contracts mh
+                                                        evaluator with
+                                                  | none =>
+                                                      exact panValueFfiClockGlobalsStable_none
+                                                        structs globals
+                                                  | some step2 =>
+                                                      obtain ⟨handlerOutcome, handlerClock⟩ :=
+                                                        step2
+                                                      have hb2 := ihProg
+                                                        (updatePanValueMap locals handlerVariable
+                                                          value)
+                                                        calleeGlobals' calleeMemory' calleeFfi'
+                                                        (min (decPanClock clock) callClock)
+                                                        handlerProgram evaluator
+                                                      rw [hhandler] at hb2
+                                                      exact panValueFfiClockGlobalsStable_trans
+                                                        (first :=
+                                                          ((PanValueFfiClockOutcome.control
+                                                            (PanValueFfiControlResult.raised
+                                                              calleeLocals' calleeGlobals'
+                                                              calleeMemory' calleeFfi'
+                                                              exception value), callClock)))
+                                                        hb hb2
+                                            · rw [if_neg hcond]
+                                              globals_stable_hb hb
+                                      · rw [if_neg hcaught]
+                                        globals_stable_hb hb
+                          | finalFfi calleeLocals' calleeGlobals' calleeMemory' calleeFfi' event =>
+                              simp only [Option.pure_def]
+                              globals_stable_hb hb
+      · intro locals globals memory ffi clock name shape function arguments body evaluator
+        simp only [evalPanValueFfiClockCodeDecCall]
+        cases hcall : evalPanValueFfiClockCodeCall context primitive handler structs code
+            exceptions base top bytes fuel locals globals memory ffi clock none function
+            arguments access contracts mh true evaluator with
+        | none => exact panValueFfiClockGlobalsStable_none structs globals
+        | some step =>
+            obtain ⟨callOutcome, callClock⟩ := step
+            have hb := ihCall locals globals memory ffi clock none function arguments true evaluator
+            rw [hcall] at hb
+            rw [panValueFfiClockGlobalsStable_some_iff] at hb
+            simp only [Option.bind_eq_bind, Option.bind_some]
+            cases callOutcome with
+            | timeout nextLocals nextGlobals nextMemory nextFfi =>
+                simp only [Option.pure_def]
+                globals_stable_hb hb
+            | control result =>
+                cases result with
+                | returned nextLocals nextGlobals nextMemory nextFfi values =>
+                    simp only [Option.pure_def]
+                    cases values with
+                    | nil => exact panValueFfiClockGlobalsStable_none structs globals
+                    | cons value rest =>
+                        cases rest with
+                        | nil =>
+                            simp only []
+                            by_cases hvalid :
+                                panShapeMatches (panValueShape structs value) shape = true
+                            · rw [if_pos hvalid]
+                              cases hcont : evalPanValueFfiClockCodeProg context primitive
+                                    handler structs code exceptions base top bytes fuel
+                                    (updatePanValueMap locals name value) nextGlobals nextMemory
+                                    nextFfi callClock body access contracts mh evaluator with
+                                | none => exact panValueFfiClockGlobalsStable_none structs globals
+                                | some step2 =>
+                                    obtain ⟨bodyOutcome, bodyClock⟩ := step2
+                                    have hb2 := ihProg (updatePanValueMap locals name value)
+                                      nextGlobals nextMemory nextFfi callClock body evaluator
+                                    rw [hcont] at hb2
+                                    simp only [Option.bind_some]
+                                    exact panValueFfiClockGlobalsStable_some_restoreLocal structs
+                                      globals name (locals name) bodyOutcome bodyClock
+                                      (panValueGlobalsShapeStable_trans hb
+                                        (hb2 (bodyOutcome, bodyClock) rfl))
+                            · rw [if_neg hvalid]
+                              globals_stable_hb hb
+                        | cons value' rest' =>
+                            exact panValueFfiClockGlobalsStable_none structs globals
+                | raised nextLocals nextGlobals nextMemory nextFfi exception value =>
+                    simp only [Option.pure_def]
+                    globals_stable_hb hb
+                | normal nextLocals nextGlobals nextMemory nextFfi =>
+                    simp only [Option.pure_def]
+                    globals_stable_hb hb
+                | broke nextLocals nextGlobals nextMemory nextFfi =>
+                    simp only [Option.pure_def]
+                    globals_stable_hb hb
+                | continued nextLocals nextGlobals nextMemory nextFfi =>
+                    simp only [Option.pure_def]
+                    globals_stable_hb hb
+                | error nextLocals nextGlobals nextMemory nextFfi =>
+                    simp only [Option.pure_def]
+                    globals_stable_hb hb
+                | finalFfi nextLocals nextGlobals nextMemory nextFfi event =>
+                    simp only [Option.pure_def]
+                    globals_stable_hb hb
+      · intro locals globals memory ffi clock program evaluator
+        cases program with
+        | skip =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_globals_stable context primitive handler structs
+              base top bytes clock locals globals memory ffi .skip access contracts mh evaluator
+        | «break» =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_globals_stable context primitive handler structs
+              base top bytes clock locals globals memory ffi .break access contracts mh evaluator
+        | «continue» =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_globals_stable context primitive handler structs
+              base top bytes clock locals globals memory ffi .continue access contracts mh
+              evaluator
+        | annot tag text =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_globals_stable context primitive handler structs
+              base top bytes clock locals globals memory ffi (.annot tag text) access contracts mh
+              evaluator
+        | assign kind name value =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_globals_stable context primitive handler structs
+              base top bytes clock locals globals memory ffi (.assign kind name value) access
+              contracts mh evaluator
+        | primitive name operator args =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_globals_stable context primitive handler structs
+              base top bytes clock locals globals memory ffi (.primitive name operator args)
+              access contracts mh evaluator
+        | store address value =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_globals_stable context primitive handler structs
+              base top bytes clock locals globals memory ffi (.store address value) access
+              contracts mh evaluator
+        | store32 address value =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_globals_stable context primitive handler structs
+              base top bytes clock locals globals memory ffi (.store32 address value) access
+              contracts mh evaluator
+        | storeByte address value =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_globals_stable context primitive handler structs
+              base top bytes clock locals globals memory ffi (.storeByte address value) access
+              contracts mh evaluator
+        | extCall function configuration configurationLength array arrayLength =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_globals_stable context primitive handler structs
+              base top bytes clock locals globals memory ffi
+              (.extCall function configuration configurationLength array arrayLength) access
+              contracts mh evaluator
+        | «return» value =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_globals_stable context primitive handler structs
+              base top bytes clock locals globals memory ffi (.return value) access contracts mh
+              evaluator
+        | shMemLoad size kind name address =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_globals_stable context primitive handler structs
+              base top bytes clock locals globals memory ffi (.shMemLoad size kind name address)
+              access contracts mh evaluator
+        | shMemStore size address value =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_globals_stable context primitive handler structs
+              base top bytes clock locals globals memory ffi (.shMemStore size address value)
+              access contracts mh evaluator
+        | dec name shape value body =>
+            simp only [evalPanValueFfiClockCodeProg]
+            cases hdecAccept : panValueDecAcceptedValue structs base top bytes locals globals
+                memory value access shape evaluator with
+            | none =>
+                simp only [Option.elim_none, Option.pure_def]
+                globals_stable_refl
+            | some evaluated =>
+                simp only [Option.elim_some]
+                cases hrec : evalPanValueFfiClockCodeProg context primitive handler structs code
+                    exceptions base top bytes fuel (updatePanValueMap locals name evaluated) globals
+                    memory ffi clock body access contracts mh evaluator with
+                | none => exact panValueFfiClockGlobalsStable_none structs globals
+                | some step =>
+                    obtain ⟨nextOutcome, nextClock⟩ := step
+                    have hb := ihProg (updatePanValueMap locals name evaluated) globals memory
+                      ffi clock body evaluator
+                    rw [hrec] at hb
+                    exact panValueFfiClockGlobalsStable_some_restoreLocal structs globals name
+                      (locals name) nextOutcome nextClock (hb (nextOutcome, nextClock) rfl)
+        | seq first second =>
+            simp only [evalPanValueFfiClockCodeProg]
+            cases hfirst : evalPanValueFfiClockCodeProg context primitive handler structs code
+                exceptions base top bytes fuel locals globals memory ffi clock first access
+                contracts mh evaluator with
+            | none => exact panValueFfiClockGlobalsStable_none structs globals
+            | some step =>
+                obtain ⟨firstOutcome, firstClock⟩ := step
+                have hb := ihProg locals globals memory ffi clock first evaluator
+                rw [hfirst] at hb
+                rw [panValueFfiClockGlobalsStable_some_iff] at hb
+                simp only [Option.bind_eq_bind, Option.bind_some]
+                simp only [Option.pure_def]
+                cases firstOutcome with
+                | timeout firstLocals firstGlobals firstMemory firstFfi =>
+                    globals_stable_hb hb
+                | control result =>
+                    cases result with
+                    | normal nextLocals' nextGlobals' nextMemory' nextFfi' =>
+                        simp only []
+                        cases hsecond : evalPanValueFfiClockCodeProg context primitive handler
+                            structs code exceptions base top bytes fuel nextLocals' nextGlobals'
+                            nextMemory' nextFfi' (min clock firstClock) second access contracts mh
+                            evaluator with
+                        | none => exact panValueFfiClockGlobalsStable_none structs globals
+                        | some step2 =>
+                            obtain ⟨secondOutcome, secondClock⟩ := step2
+                            have hb2 := ihProg nextLocals' nextGlobals' nextMemory' nextFfi'
+                              (min clock firstClock) second evaluator
+                            rw [hsecond] at hb2
+                            rw [panValueFfiClockGlobalsStable_some_iff] at hb2
+                            rw [panValueFfiClockGlobalsStable_some_iff]
+                            exact panValueGlobalsShapeStable_trans hb hb2
+                    | broke nextLocals' nextGlobals' nextMemory' nextFfi' =>
+                        simp only []
+                        globals_stable_hb hb
+                    | continued nextLocals' nextGlobals' nextMemory' nextFfi' =>
+                        simp only []
+                        globals_stable_hb hb
+                    | error nextLocals' nextGlobals' nextMemory' nextFfi' =>
+                        simp only []
+                        globals_stable_hb hb
+                    | returned nextLocals' nextGlobals' nextMemory' nextFfi' values =>
+                        simp only []
+                        globals_stable_hb hb
+                    | raised nextLocals' nextGlobals' nextMemory' nextFfi' exception value =>
+                        simp only []
+                        globals_stable_hb hb
+                    | finalFfi nextLocals' nextGlobals' nextMemory' nextFfi' event =>
+                        simp only []
+                        globals_stable_hb hb
+        | ite condition thenBranch elseBranch =>
+            simp only [evalPanValueFfiClockCodeProg]
+            cases hcond : panValueIteConditionValue structs base top bytes locals globals memory
+                condition access evaluator with
+            | none =>
+                simp only [Option.elim_none, Option.pure_def]
+                globals_stable_refl
+            | some conditionValue =>
+                simp only [Option.elim_some]
+                split
+                next => exact ihProg locals globals memory ffi clock thenBranch evaluator
+                next => exact ihProg locals globals memory ffi clock elseBranch evaluator
+        | call info function arguments =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact ihCall locals globals memory ffi clock info function arguments false evaluator
+        | decCall name shape function arguments body =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact ihDecCall locals globals memory ffi clock name shape function arguments body
+              evaluator
+        | raise exception expression =>
+            simp only [evalPanValueFfiClockCodeProg]
+            cases hexp : evalPanValueExpWith evaluator structs locals globals memory base top bytes
+                expression access with
+            | none =>
+                simp only [Option.pure_def]
+                globals_stable_refl
+            | some value =>
+                simp only [Option.pure_def]
+                cases hexs : exceptions exception with
+                | none => globals_stable_refl
+                | some shape =>
+                    simp only []
+                    by_cases hcond :
+                        (panShapeMatches (panValueShape structs value) shape &&
+                          panValuePayloadWithinLimit structs value) = true
+                    · rw [if_pos hcond]
+                      globals_stable_refl
+                    · rw [if_neg hcond]
+                      globals_stable_refl
+        | «while» conditionExp body =>
+            simp only [evalPanValueFfiClockCodeProg]
+            cases hcond : panValueIteConditionValue structs base top bytes locals globals memory
+                conditionExp access evaluator with
+            | none =>
+                simp only [Option.elim_none, Option.pure_def]
+                globals_stable_refl
+            | some conditionValue =>
+                simp only [Option.elim_some]
+                split
+                next =>
+                    simp only [Option.pure_def]
+                    globals_stable_refl
+                next =>
+                    split
+                    next =>
+                        simp only [panValueFfiClockTimeout, Option.pure_def]
+                        globals_stable_refl
+                    next =>
+                        cases hbody : evalPanValueFfiClockCodeProg context primitive handler
+                            structs code exceptions base top bytes fuel locals globals memory ffi
+                            (decPanClock clock) body access contracts mh evaluator with
+                        | none => exact panValueFfiClockGlobalsStable_none structs globals
+                        | some step =>
+                            obtain ⟨bodyOutcome, bodyClock⟩ := step
+                            have hb := ihProg locals globals memory ffi (decPanClock clock) body
+                              evaluator
+                            rw [hbody] at hb
+                            rw [panValueFfiClockGlobalsStable_some_iff] at hb
+                            simp only [Option.bind_eq_bind, Option.bind_some]
+                            simp only [Option.pure_def]
+                            cases bodyOutcome with
+                            | timeout bodyLocals bodyGlobals bodyMemory bodyFfi =>
+                                globals_stable_hb hb
+                            | control result =>
+                                cases result with
+                                | normal nextLocals' nextGlobals' nextMemory' nextFfi' =>
+                                    simp only []
+                                    cases hrec : evalPanValueFfiClockCodeProg context primitive
+                                        handler structs code exceptions base top bytes fuel
+                                        nextLocals' nextGlobals' nextMemory' nextFfi'
+                                        (min (decPanClock clock) bodyClock)
+                                        (.while conditionExp body) access contracts mh evaluator
+                                        with
+                                    | none =>
+                                        exact panValueFfiClockGlobalsStable_none structs globals
+                                    | some step2 =>
+                                        obtain ⟨whileOutcome, whileClock⟩ := step2
+                                        have hb2 := ihProg nextLocals' nextGlobals' nextMemory'
+                                          nextFfi' (min (decPanClock clock) bodyClock)
+                                          (.while conditionExp body) evaluator
+                                        rw [hrec] at hb2
+                                        rw [panValueFfiClockGlobalsStable_some_iff] at hb2
+                                        rw [panValueFfiClockGlobalsStable_some_iff]
+                                        exact panValueGlobalsShapeStable_trans hb hb2
+                                | continued nextLocals' nextGlobals' nextMemory' nextFfi' =>
+                                    simp only []
+                                    cases hrec : evalPanValueFfiClockCodeProg context primitive
+                                        handler structs code exceptions base top bytes fuel
+                                        nextLocals' nextGlobals' nextMemory' nextFfi'
+                                        (min (decPanClock clock) bodyClock)
+                                        (.while conditionExp body) access contracts mh evaluator
+                                        with
+                                    | none =>
+                                        exact panValueFfiClockGlobalsStable_none structs globals
+                                    | some step2 =>
+                                        obtain ⟨whileOutcome, whileClock⟩ := step2
+                                        have hb2 := ihProg nextLocals' nextGlobals' nextMemory'
+                                          nextFfi' (min (decPanClock clock) bodyClock)
+                                          (.while conditionExp body) evaluator
+                                        rw [hrec] at hb2
+                                        rw [panValueFfiClockGlobalsStable_some_iff] at hb2
+                                        rw [panValueFfiClockGlobalsStable_some_iff]
+                                        exact panValueGlobalsShapeStable_trans hb hb2
+                                | broke nextLocals' nextGlobals' nextMemory' nextFfi' =>
+                                    simp only []
+                                    globals_stable_hb hb
+                                | _ =>
+                                    simp only []
+                                    globals_stable_hb hb
+        | tick =>
+            simp only [evalPanValueFfiClockCodeProg]
+            split
+            next =>
+                simp only [panValueFfiClockTimeout, Option.pure_def]
+                globals_stable_refl
+            next =>
+                simp only [Option.pure_def]
+                globals_stable_refl
+
+/-- The fuel induction's `DecCall` component: every `some` DecCall result keeps
+    the input globals shape-stable. -/
+theorem evalPanValueFfiClockCodeDecCall_globals_stable
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (code : PanSemCodeMap α) (exceptions : ExceptionId → Option Shape)
+    (base top bytes : α) (access : Option (PanValueMemoryAccess α))
+    (contracts : Option PanValueCallContracts)
+    (mh : Option (PanValueMemoryFfiHandler α σ))
+    (fuel : Nat) (locals globals memory ffi clock : _)
+    (name : VarName) (shape : Shape) (function : FunName) (arguments : List (Exp α))
+    (body : Prog α) (evaluator : Option (PanExprEvaluator α)) :
+    panValueFfiClockGlobalsStable structs globals
+      (evalPanValueFfiClockCodeDecCall context primitive handler structs code exceptions
+        base top bytes fuel locals globals memory ffi clock name shape function arguments
+        body access contracts mh evaluator) :=
+  (evalPanValueFfiClockCode_globals_stable context primitive handler structs code exceptions
+    base top bytes access contracts mh fuel).2.1 locals globals memory ffi clock name shape
+    function arguments body evaluator
+
+/-- On any `some` Call result, the `Global`-destination verdict against the
+    callee post-state globals equals the verdict against the caller globals:
+    HOL's `is_valid_value s Global ...` (`panSemScript.sml:469-474`) observes
+    only binding shapes, and every code-map evaluation preserves them.  This is
+    #1250 report item 7. -/
+theorem evalPanValueFfiClockCodeCall_global_verdict_congr
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (code : PanSemCodeMap α) (exceptions : ExceptionId → Option Shape)
+    (base top bytes : α) (access : Option (PanValueMemoryAccess α))
+    (contracts : Option PanValueCallContracts)
+    (mh : Option (PanValueMemoryFfiHandler α σ))
+    (fuel : Nat) (locals globals memory ffi clock : _)
+    (info : Option (Option (VarKind × VarName) × Option (ExceptionId × VarName × Prog α)))
+    (function : FunName) (arguments : List (Exp α)) (preserve : Bool)
+    (evaluator : Option (PanExprEvaluator α))
+    {outcome : PanValueFfiClockOutcome α σ} {resultClock : Nat}
+    (h : evalPanValueFfiClockCodeCall context primitive handler structs code exceptions
+      base top bytes fuel locals globals memory ffi clock info function arguments
+      access contracts mh preserve evaluator = some (outcome, resultClock))
+    (name : VarName) (value : PanValue α) :
+    panValueAssignmentValid structs locals (panValueFfiClockOutcomeGlobals outcome)
+        .global name value =
+      panValueAssignmentValid structs locals globals .global name value := by
+  have hstable := (evalPanValueFfiClockCode_globals_stable context primitive handler structs
+    code exceptions base top bytes access contracts mh fuel).1 locals globals memory ffi clock
+    info function arguments preserve evaluator
+  exact panValueAssignmentValid_global_congr structs locals globals
+    (panValueFfiClockOutcomeGlobals outcome)
+    (hstable (outcome, resultClock) h) name value
+
+/-- On any `some` DecCall result, the `Global`-destination verdict against the
+    result's globals equals the verdict against the caller globals. -/
+theorem evalPanValueFfiClockCodeDecCall_global_verdict_congr
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (code : PanSemCodeMap α) (exceptions : ExceptionId → Option Shape)
+    (base top bytes : α) (access : Option (PanValueMemoryAccess α))
+    (contracts : Option PanValueCallContracts)
+    (mh : Option (PanValueMemoryFfiHandler α σ))
+    (fuel : Nat) (locals globals memory ffi clock : _)
+    (name : VarName) (shape : Shape) (function : FunName) (arguments : List (Exp α))
+    (body : Prog α) (evaluator : Option (PanExprEvaluator α))
+    {outcome : PanValueFfiClockOutcome α σ} {resultClock : Nat}
+    (h : evalPanValueFfiClockCodeDecCall context primitive handler structs code exceptions
+      base top bytes fuel locals globals memory ffi clock name shape function arguments
+      body access contracts mh evaluator = some (outcome, resultClock))
+    (destination : VarName) (value : PanValue α) :
+    panValueAssignmentValid structs locals (panValueFfiClockOutcomeGlobals outcome)
+        .global destination value =
+      panValueAssignmentValid structs locals globals .global destination value := by
+  have hstable := (evalPanValueFfiClockCode_globals_stable context primitive handler structs
+    code exceptions base top bytes access contracts mh fuel).2.1 locals globals memory ffi clock
+    name shape function arguments body evaluator
+  exact panValueAssignmentValid_global_congr structs locals globals
+    (panValueFfiClockOutcomeGlobals outcome)
+    (hstable (outcome, resultClock) h) destination value
 
 /-! This declaration-boundary adapter exposes the executed source-owned call
     after declaration evaluation. It shares the exact code-map conversion,
