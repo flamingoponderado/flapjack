@@ -609,4 +609,60 @@ theorem arm8Enc_inst_loadStore16_store_eq (source base : Nat) (offset : W) :
   simp only [Arm8.arm8Enc, Arm8.arm8Ast, Arm8.arm8Inst, arm8Enc, arm8Ast]
   exact loadStoreAst16_store_eq source base offset
 
+/-! ## Assembly
+
+Every `arm8_ast` family has its own correspondence lemma above; the whole
+`HolAsm 64` case follows by pattern matching. -/
+
+/-- The computable `Arm8.arm8Enc` and the L3 `arm8Enc` agree on every
+`HolAsm 64`. -/
+theorem arm8Enc_eq : (a : HolAsm 64) → Arm8.arm8Enc a = arm8Enc a
+  | .inst .skip => arm8Enc_inst_skip_eq
+  | .inst (.const destination value) => arm8Enc_inst_const_eq destination value
+  | .inst (.arith (.binop operator destination source (.reg right))) =>
+      arm8Enc_inst_binop_reg_eq operator destination source right
+  | .inst (.arith (.binop operator destination source (.imm value))) =>
+      arm8Enc_inst_binop_imm_eq operator destination source value
+  | .inst (.arith (.shift operator destination source (.reg right))) =>
+      arm8Enc_inst_shiftReg_eq operator destination source right
+  | .inst (.arith (.shift operator destination source (.imm value))) =>
+      arm8Enc_inst_shiftImm_eq operator destination source value
+  | .inst (.arith (.div destination dividend divisor)) =>
+      arm8Enc_inst_div_eq destination dividend divisor
+  | .inst (.arith (.longMul dl dr sl sr)) =>
+      arm8Enc_inst_longMul_eq dl dr sl sr
+  | .inst (.arith (.longDiv dl dr sl sr quotient)) =>
+      arm8Enc_inst_longDiv_eq dl dr sl sr quotient
+  | .inst (.arith (.addCarry destination resultCarry sourceLeft sourceRight)) =>
+      arm8Enc_inst_addCarry_eq destination resultCarry sourceLeft sourceRight
+  | .inst (.arith (.addOverflow destination resultCarry sourceLeft sourceRight)) =>
+      arm8Enc_inst_addOverflow_eq destination resultCarry sourceLeft sourceRight
+  | .inst (.arith (.subOverflow destination resultCarry sourceLeft sourceRight)) =>
+      arm8Enc_inst_subOverflow_eq destination resultCarry sourceLeft sourceRight
+  | .inst (.mem .load destination (.addr base offset)) =>
+      arm8Enc_inst_loadStore64_load_eq destination base offset
+  | .inst (.mem .load32 destination (.addr base offset)) =>
+      arm8Enc_inst_loadStore32_load_eq destination base offset
+  | .inst (.mem .load16 destination (.addr base offset)) =>
+      arm8Enc_inst_loadStore16_load_eq destination base offset
+  | .inst (.mem .load8 destination (.addr base offset)) =>
+      arm8Enc_inst_load8_eq destination base offset
+  | .inst (.mem .store source (.addr base offset)) =>
+      arm8Enc_inst_loadStore64_store_eq source base offset
+  | .inst (.mem .store32 source (.addr base offset)) =>
+      arm8Enc_inst_loadStore32_store_eq source base offset
+  | .inst (.mem .store16 source (.addr base offset)) =>
+      arm8Enc_inst_loadStore16_store_eq source base offset
+  | .inst (.mem .store8 source (.addr base offset)) =>
+      arm8Enc_inst_store8_eq source base offset
+  | .inst (.fp operation) => arm8Enc_inst_fp_eq operation
+  | .jump target => arm8Enc_jump_eq target
+  | .jumpCmp operator source (.reg right) target =>
+      arm8Enc_jumpCmp_reg_eq operator source right target
+  | .jumpCmp operator source (.imm value) target =>
+      arm8Enc_jumpCmp_imm_eq operator source value target
+  | .call target => arm8Enc_call_eq target
+  | .jumpReg target => arm8Enc_jumpReg_eq target
+  | .loc register offset => arm8Enc_loc_eq register offset
+
 end Flapjack.Compiler.Encoders.Arm8.L3
