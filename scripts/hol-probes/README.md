@@ -100,8 +100,8 @@ the capture does not replay the local HOL proof.
 `clos_number_correctness_probe.out` captures the typed numbering traversal,
 incremental compiler, location bounds, function-location invariant, even
 alignment, value-relation rules, state relation,
-reference and finite-map relations, mutual evaluator simulation and
-whole-program semantics theorem. The
+reference and finite-map relations, a typed replay of the local closure
+rejection theorem, mutual evaluator simulation and whole-program semantics theorem. The
 traversal's recursive-binding helper is checked in Lean against the original
 map-and-zip shape. The captures support source review, not a proof of
 cross-language equivalence.

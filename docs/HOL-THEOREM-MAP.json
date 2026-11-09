@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml", "hol_name": "dest_closure_v_rel_none",
+  "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ClosureApplication.lean", "lean_name": "destClosure_related_none",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local theorem with dest_closure_v_rel_none_replay_typed, replayed using the original HOL proof. The free maximum, source binder order, grouped premise, list relation and NONE conclusion match; the value relation and closure evaluator carriers are reviewed exact."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml", "hol_name": "renumber_code_locs_inc",
   "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LocationInvariants.lean", "lean_name": "renumberCodeLocs_inc",
   "statement_status": "reviewed_exact",
