@@ -6,6 +6,16 @@ namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Compiler.Backend.ClosProps
 
+/-- Initializer code contains no application exceeding a positive limit. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "contains_App_SOME_compile_init" 2549]
+theorem containsAppSome_compileInit (maxApp : Nat) (b : Bool) :
+    1 ≤ maxApp → containsAppSome maxApp [ClosInterp.compileInit b] = False := by
+  intro positive
+  have safe : ∀ e ∈ [ClosInterp.compileInit b], noMti e := by
+    simpa using compileInit_noMti b
+  have absent := (noMtiList_syntactic maxApp positive _ safe).2
+  exact propext ⟨fun present => (absent present).elim, False.elim⟩
+
 private theorem compile_noMti (m : List (Option MlString)) (xs : List FlatLang.Exp) :
     ∀ e ∈ compile m xs, noMti e := by
   induction xs with

@@ -1,6 +1,15 @@
 [
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "contains_App_SOME_compile_init",
+  "hol_line": 2549,
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
+  "lean_name": "containsAppSome_compileInit",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the second local HOL declaration and its contains_App_SOME_compile_init_2549_replay with inferred types: the natural maximum, Boolean initializer flag, 1 <= maximum premise, and false application-predicate conclusion agree. Compared the initializer and closure syntax predicate with their HOL definitions; equality of propositions represents HOL Boolean equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "rel_update_thunk",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Thunk.lean",
   "lean_name": "relUpdateThunk",

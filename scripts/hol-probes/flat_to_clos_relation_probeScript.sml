@@ -111,6 +111,12 @@ val no_mti_compile_init_replay = Q.prove (
   Cases_on `b` >> fs [] >> EVAL_TAC);
 val _ = (print "no_mti_compile_init_replay="; Lib.with_flag (Globals.show_types,true) print_term (concl no_mti_compile_init_replay); print "\n");
 
+(* Replay the second local declaration of this duplicated HOL name. *)
+val contains_App_SOME_compile_init_2549_replay = Q.prove (
+  `1 <= max_app ==> closProps$contains_App_SOME max_app [clos_interp$compile_init b] = F`,
+  Cases_on `b` >> fs [] >> EVAL_TAC >> fs []);
+val _ = (print "contains_App_SOME_compile_init_2549_replay="; Lib.with_flag (Globals.show_types,true) print_term (concl contains_App_SOME_compile_init_2549_replay); print "\n");
+
 (* Replay the complete local callback-composition theorem. *)
 val inc_compile_decs_intro_replay = Q.prove (
   `backendProps$pure_co (clos_interp$insert_interp ## I) o
