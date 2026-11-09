@@ -685,4 +685,188 @@ theorem opRefs {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                                           Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
                                         exact ⟨updatedStates, (vRel_unit _).mpr rfl⟩
 
+/-- Vector length, reads and construction satisfy the original operator goal. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "op_vectors"
+  (fmap_as_finite_support := [refs, code])]
+theorem opVectors {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
+    (vs : List FlatSem.Value) (sourceNext : FlatSem.State C F)
+    (result : Result FlatSem.Value FlatSem.Value) (targetNext : ClosSem.State C F)
+    (xs : List ClosLang.Exp) (db : List ClosSem.Value) (target : ClosSem.State C F)
+    (ws : List ClosSem.Value) (trace : BackendCommon.Tra) :
+    (op = .src .vlength ∨ op = .src .vsub ∨ op = .src .vsubUnsafe ∨ op = .src .vfromList) →
+    FlatSem.doApp source op vs = some (sourceNext, result) ∧
+      StateRel source targetNext ∧ ClosSem.evaluate xs db target = (.val ws, targetNext) ∧
+      List.Forall₂ ValueRel vs ws.reverse ∧ xs.length = vs.length ∧
+      op ≠ .src .opapp ∧ op ≠ .src (.thunkOp .forceThunk) →
+    ∃ targetResult targetLast,
+      ClosSem.evaluate [compileOp trace op xs] db target = (targetResult, targetLast) ∧
+      StateRel sourceNext targetLast ∧
+      SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel
+        (Flapjack.EvaluateHOL.listResult result) targetResult := by
+  intro opCase premises
+  obtain ⟨applied, states, evaluated, related, length, _, _⟩ := premises
+  rcases opCase with rfl | rfl | rfl | rfl
+  case inl =>
+    cases vs with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+    | cons v rest =>
+      cases rest with
+      | cons z zs => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+      | nil =>
+        have wsLen : ws.length = 1 := by simpa using related.length_eq.symm
+        cases ws with
+        | nil => simp at wsLen
+        | cons w rest =>
+          cases rest with
+          | cons z zs => simp at wsLen
+          | nil =>
+            simp only [List.reverse_singleton] at related
+            cases related with
+            | cons valRel tail =>
+              cases valRel <;> simp [FlatSem.doApp, FlatSem.doAppNumeric,
+                FlatSem.doAppMemory, FlatSem.doAppData] at applied
+              case vector rel =>
+                obtain ⟨rfl, rfl⟩ := applied
+                have sameLength := rel.length_eq
+                simp only [compileOp]
+                rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+                simp [ClosSem.doApp, ClosSem.applyBlock, ← sameLength,
+                  Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                exact ⟨states, ValueRel.int _⟩
+  case inr.inr.inr =>
+    cases vs with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+    | cons v rest =>
+      cases rest with
+      | cons z zs => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+      | nil =>
+        have wsLen : ws.length = 1 := by simpa using related.length_eq.symm
+        cases ws with
+        | nil => simp at wsLen
+        | cons w rest =>
+          cases rest with
+          | cons z zs => simp at wsLen
+          | nil =>
+            simp only [List.reverse_singleton] at related
+            cases related with
+            | cons valRel tail =>
+              cases decoded : FlatSem.valueToList v with
+              | none => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                  FlatSem.doAppData, decoded] at applied
+              | some items =>
+                simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                  FlatSem.doAppData, decoded] at applied
+                obtain ⟨rfl, rfl⟩ := applied
+                obtain ⟨targetItems, targetDecoded, itemRel⟩ := valueToList_related v w items valRel decoded
+                simp only [compileOp]
+                rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+                simp [ClosSem.doApp, ClosSem.applyBlock, targetDecoded,
+                  Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                exact ⟨states, ValueRel.vector itemRel⟩
+  case inr.inr.inl =>
+    cases vs with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+    | cons v vs =>
+      cases vs with
+      | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+      | cons u rest =>
+        cases rest with
+        | cons z zs => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+        | nil =>
+          have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
+          cases ws with
+          | nil => simp at wsLen
+          | cons w rest =>
+            cases rest with
+            | nil => simp at wsLen
+            | cons t rest =>
+              cases rest with
+              | cons z zs => simp at wsLen
+              | nil =>
+                simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
+                cases related with
+                | cons relV tail =>
+                  cases tail with
+                  | cons relU tail =>
+                    cases relV <;> cases relU <;>
+                      simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                        FlatSem.doAppData] at applied
+                    case vector.int items targetItems itemRel index =>
+                      by_cases negative : index < 0
+                      · simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative] at applied
+                      · cases element : items[index.toNat]? with
+                        | none => simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, element] at applied
+                        | some value =>
+                          simp [FlatSem.readIndexed, negative, element] at applied
+                          obtain ⟨rfl, rfl⟩ := applied
+                          obtain ⟨targetValue, targetElement, valueRel⟩ :=
+                            forall₂_lookup itemRel index.toNat value element
+                          simp only [compileOp]
+                          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+                          simp [ClosSem.doApp, ClosSem.applyMemory, negative, targetElement,
+                            Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                          exact ⟨states, valueRel⟩
+  case inr.inl =>
+    cases vs with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+    | cons v vs =>
+      cases vs with
+      | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+      | cons u rest =>
+        cases rest with
+        | cons z zs => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
+        | nil =>
+          have wsLen : ws.length = 2 := by simpa using related.length_eq.symm
+          cases ws with
+          | nil => simp at wsLen
+          | cons w rest =>
+            cases rest with
+            | nil => simp at wsLen
+            | cons t rest =>
+              cases rest with
+              | cons z zs => simp at wsLen
+              | nil =>
+                simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at related
+                cases related with
+                | cons relV tail =>
+                  cases tail with
+                  | cons relU tail =>
+                    cases relV <;> cases relU <;>
+                      simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                        FlatSem.doAppData] at applied
+                    case vector.int items targetItems itemRel index =>
+                      by_cases negative : index < 0
+                      · simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative] at applied
+                        obtain ⟨rfl, rfl⟩ := applied
+                        have body := evaluate_checkedVectorRead_outOfBounds targetNext trace db targetItems index (Or.inl negative)
+                        simp only [compileOp]
+                        rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+                        simp [body, Flapjack.EvaluateHOL.listResult,
+                          SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+                        exact ⟨states, ValueRel.con .nil⟩
+                      · cases element : items[index.toNat]? with
+                        | none =>
+                          have bound : targetItems.length ≤ index.toNat := by
+                            have h := List.getElem?_eq_none_iff.mp element
+                            have same := itemRel.length_eq
+                            omega
+                          simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, element] at applied
+                          obtain ⟨rfl, rfl⟩ := applied
+                          have body := evaluate_checkedVectorRead_outOfBounds targetNext trace db targetItems index (Or.inr bound)
+                          simp only [compileOp]
+                          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+                          simp [body, Flapjack.EvaluateHOL.listResult,
+                            SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+                          exact ⟨states, ValueRel.con .nil⟩
+                        | some value =>
+                          simp [FlatSem.readIndexed, negative, element] at applied
+                          obtain ⟨rfl, rfl⟩ := applied
+                          obtain ⟨targetValue, targetElement, valueRel⟩ :=
+                            forall₂_lookup itemRel index.toNat value element
+                          have body := evaluate_checkedVectorRead_inBounds targetNext trace db targetItems index targetValue negative targetElement
+                          simp only [compileOp]
+                          rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+                          simp [body, Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+                          exact ⟨states, valueRel⟩
+
 end Flapjack.Compiler.Backend.FlatToClos

@@ -196,15 +196,35 @@ theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.
   | strsub => exact evaluate_checkedStringRead env names values source target trace args argsSim notTypeError
   | strlen => exact evaluate_stringLength env names values source target trace args argsSim notTypeError
   | strcat => exact evaluate_stringConcat env names values source target trace args argsSim notTypeError
-  | vfromList => exact evaluate_vectorFromList env names values source target trace args argsSim notTypeError
-  | vsub => exact evaluate_checkedVectorRead env names values source target trace args argsSim notTypeError
-  | vlength => exact evaluate_vectorLength env names values source target trace args argsSim notTypeError
+  | vfromList =>
+    apply evalSim_app_of_op env names values source target trace (.src .vfromList) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opVectors _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr rfl))) premises
+  | vsub =>
+    apply evalSim_app_of_op env names values source target trace (.src .vsub) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opVectors _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inl rfl)) premises
+  | vlength =>
+    apply evalSim_app_of_op env names values source target trace (.src .vlength) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opVectors _ s vs sNext result tNext xs db t ws tt (Or.inl rfl) premises
   | aalloc => exact evaluate_allocArray env names values source target trace args argsSim notTypeError
   | aallocFixed => exact evaluate_allocFixed env names values source target trace args argsSim notTypeError
   | asub => exact evaluate_checkedArrayRead env names values source target trace args argsSim notTypeError
   | alength => exact evaluate_arrayLength env names values source target trace args argsSim notTypeError
   | aupdate => exact evaluate_checkedArrayUpdate env names values source target trace args argsSim notTypeError
-  | vsubUnsafe => exact evaluate_uncheckedVectorRead env names values source target trace args argsSim notTypeError
+  | vsubUnsafe =>
+    apply evalSim_app_of_op env names values source target trace (.src .vsubUnsafe) args
+      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
+    · simp [destNop]
+    · intro s vs sNext result tNext xs db t ws tt premises
+      exact opVectors _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inl rfl))) premises
   | asubUnsafe => exact evaluate_uncheckedArrayRead env names values source target trace args argsSim notTypeError
   | aupdateUnsafe => exact evaluate_uncheckedArrayUpdate env names values source target trace args argsSim notTypeError
   | aw8subUnsafe => exact evaluate_uncheckedByteRead env names values source target trace args argsSim notTypeError
