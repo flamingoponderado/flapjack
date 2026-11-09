@@ -33,6 +33,7 @@ theorem compileIncFuel_eq_source (fuel : Nat) (config : Config) (program : ClosS
   simp only
   cases callFlag : config.doCall <;>
     simp [ClosCall.compileIncFuel_eq_compileInc, ClosCall.condCallCompileInc, callFlag,
-      compileInc, compileProg_checked_eq_original, closToBvlCompileInc, numberedEq, knownEq]
+      compileInc, compileProg_checked_eq_original, closToBvlCompileInc, numberedEq, knownEq,
+      ClosAnnotate.compileIncSource_eq_compileInc]
 
 end Flapjack.Compiler.Backend.ClosToBvl

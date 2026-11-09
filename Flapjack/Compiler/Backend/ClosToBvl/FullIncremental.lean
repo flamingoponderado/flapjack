@@ -4,14 +4,13 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
 import Flapjack.Compiler.Backend.ClosNumber
 import Flapjack.Compiler.Backend.ClosKnown.Compile
 import Flapjack.Compiler.Backend.ClosCall.Compile
-import Flapjack.Compiler.Backend.ClosAnnotate.Shift
+import Flapjack.Compiler.Backend.ClosAnnotate.Original
 
 /-! Source-shaped incremental composition of the closure-to-BVL passes. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
-/-- Thread the closure configuration through the incremental passes. The
-annotation stage uses the optimized traversal; HOL uses its separate source
-definition, proved equivalent by `compileIncSource_eq_compileInc`. -/
+/-- Thread the closure configuration through the incremental passes. HOL's
+final pass uses choice-based entry extraction, whose source port remains open. -/
 noncomputable def closToBvlCompileInc (config : Config)
     (program : List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)) :
     Config × List (Nat × Nat × Bvl.Exp) :=
@@ -24,7 +23,7 @@ noncomputable def closToBvlCompileInc (config : Config)
   let config := { config with knownConf := ClosKnown.optionUpdValSpt approximations config.knownConf }
   let (known, program) := ClosCall.condCallCompileInc config.doCall config.callState.1 program
   let config := { config with callState := (known, []) }
-  let program := ClosAnnotate.compileInc program
+  let program := ClosAnnotate.compileIncSource program
   let program := compileInc config.maxApp program
   (config, program)
 
