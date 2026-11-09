@@ -1492,6 +1492,19 @@ INFRASTRUCTURE_THEOREMS = {
         "observation and ordered field payload are replayed in "
         "pan_lang_exp_probe.out by PanLangExpHOLParity."
     ),
+
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'compileProgAsmWithReason_toOption'):
+        "Flapjack-only located-failure sibling agreement for the allocator-"
+        "parametric artifact compiler: the with-reason function succeeds "
+        "exactly when the reviewed compileProgAsmWith succeeds, with the same "
+        "tuple. No separately named HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileDefinitions.lean',
+     'compileProgAsmFastWithReason_toOption'):
+        "Flapjack-only located-failure sibling agreement for the ordinary "
+        "artifact compiler: the with-reason function succeeds exactly when the "
+        "reviewed compileProgAsmFast succeeds, with the same tuple. No "
+        "separately named HOL declaration.",
 }
 VALID_STATUSES = {
     "reviewed_exact",

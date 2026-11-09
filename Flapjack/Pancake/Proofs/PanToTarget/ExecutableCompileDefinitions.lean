@@ -78,4 +78,48 @@ def compileProgAsmFast {width : Nat} [NeZero width]
     Option (List (BitVec 8) × List (BitVec width) × Backend.Config) :=
   compileProgAsmWith Flapjack.RegAlloc.regAllocExecutable config asmConf program
 
+/-- Located sibling of `compileProgAsmWith`: the reviewed result on success, a
+structured lab-to-target failure otherwise. -/
+def compileProgAsmWithReason (ra : WordToWord.RegAllocFn) {width : Nat} [NeZero width]
+    (config : Flapjack.Compiler.Backend.Backend.Config) (asmConf : AsmConfigExact width)
+    (program : List (DeclHOL width)) :
+    Except Flapjack.Compiler.Backend.LabToTarget.LabLoweringFailure
+      (List (BitVec 8) × List (BitVec width) ×
+        Flapjack.Compiler.Backend.Backend.Config) :=
+  let program := panToWordCompileProgHOL asmConf.isa program
+  let (_coloring, wordProgram) :=
+    WordToWord.compileWith ra config.wordToWordConf asmConf program
+  let (bitmaps, _wordConfig, _frames, stackProgram) :=
+    WordToStack.Native.compileNative asmConf false wordProgram
+  Flapjack.Compiler.Backend.Backend.fromStackWithReason asmConf config .ln stackProgram bitmaps
+
+/-- The located sibling succeeds exactly when `compileProgAsmWith` succeeds,
+with the same tuple; proved from the definition. -/
+theorem compileProgAsmWithReason_toOption (ra : WordToWord.RegAllocFn)
+    {width : Nat} [NeZero width]
+    (config : Flapjack.Compiler.Backend.Backend.Config) (asmConf : AsmConfigExact width)
+    (program : List (DeclHOL width)) :
+    (compileProgAsmWithReason ra config asmConf program).toOption
+      = compileProgAsmWith ra config asmConf program := by
+  simp only [compileProgAsmWithReason, compileProgAsmWith]
+  exact Flapjack.Compiler.Backend.Backend.fromStackWithReason_toOption
+    asmConf config .ln _ _
+
+/-- Ordinary compilation with a located failure, using the proved executable
+allocator. -/
+def compileProgAsmFastWithReason {width : Nat} [NeZero width]
+    (config : Backend.Config) (asmConf : AsmConfigExact width)
+    (program : List (DeclHOL width)) :
+    Except Flapjack.Compiler.Backend.LabToTarget.LabLoweringFailure
+      (List (BitVec 8) × List (BitVec width) × Backend.Config) :=
+  compileProgAsmWithReason Flapjack.RegAlloc.regAllocExecutable config asmConf program
+
+/-- The located sibling agrees with `compileProgAsmFast` on success and failure. -/
+theorem compileProgAsmFastWithReason_toOption {width : Nat} [NeZero width]
+    (config : Backend.Config) (asmConf : AsmConfigExact width)
+    (program : List (DeclHOL width)) :
+    (compileProgAsmFastWithReason config asmConf program).toOption
+      = compileProgAsmFast config asmConf program :=
+  compileProgAsmWithReason_toOption Flapjack.RegAlloc.regAllocExecutable config asmConf program
+
 end Flapjack.Pancake.Proofs.PanToTarget
