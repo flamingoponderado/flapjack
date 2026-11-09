@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "get_code_labels_def", "hol_line": 3694,
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/CodeLabels.lean", "lean_name": "getCodeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all 11 original clauses and clos_get_code_labels_def_typed. getCodeLabelsList_eq and getCodeLabelsFuns_eq establish the source mapped unions; HOL count is Set.Iio on the natural-number set carrier."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml", "hol_name": "dest_closure_v_rel_none",
   "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ClosureApplication.lean", "lean_name": "destClosure_related_none",
   "statement_status": "reviewed_exact",
