@@ -118,3 +118,11 @@ backend_tra_size_nested=(18 :num)
 option_size_def_typed=(∀(f :α -> num). option_size f (NONE :α option) = (0 :num)) ∧ ∀(f :α -> num) (x :α). option_size f (SOME x) = (1 :num) + f x
 pair_size_def_typed=∀(f :α -> num) (g :β -> num) (x :α) (y :β). pair_size f g (x,y) = (1 :num) + (f x + g y)
 flat_pat_size_nested=(25 :num)
+flat_exp_size_letrec=(17 :num)
+flat_exp_size_branch=(19 :num)
+flat_exp_size_binding=(23 :num)
+bool_size_def_typed=∀(b :bool). bool_size b = (0 :num)
+flat_environment_size_def_typed=∀(f :φ -> num) (a :(mlstring # φ) list). environment_size f (environment a) = (1 :num) + list_size (pair_size mlstring_size f) a
+flat_value_size_closure=(1 :num) + (v1_size <|v := [(«a»,(Litv (IntLit (2 :int)) :v))]|> + (4 :num))
+flat_value_size_recclosure=(1 :num) + (v1_size <|v := ([] :(mlstring # v) list)|> + (11 :num))
+flat_value_size_vector=(17 :num)

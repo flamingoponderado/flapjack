@@ -131089,5 +131089,21 @@
   "lean_name": "pairSizeHOL",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the original pair-pattern definition and pair_size_def_typed capture: the component carriers are independent, both size functions are preserved, and the result retains HOL's addition nesting. Independently source-reviewed."
+},
+{
+  "hol_path": "HOL/src/num/theories/basicSizeScript.sml",
+  "hol_name": "bool_size_def",
+  "lean_path": "Flapjack/Misc/GeneratedSize.lean",
+  "lean_name": "boolSizeHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original Boolean size definition and bool_size_def_typed capture: HOL bool is Lean Bool and the result is constantly zero. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "SUM_MAP_v3_size",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GeneratedSize.lean",
+  "lean_name": "sumMapV3Size",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared sum_map_v3_size_typed: the list of mlstring/value pairs, component projections, sums, association and equality agree. The untagged HOL-generated value and expression sizes are transcribed from flat_value_size_def_typed and flat_exp_size_def_typed and checked against original HOL evaluations; Lean sizeOf is not used. Independently source-reviewed."
 }
 ]

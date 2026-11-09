@@ -6,6 +6,10 @@ public import Flapjack.HolRef
 
 namespace Flapjack
 
+/-- HOL's registered size for Boolean values. -/
+@[hol "HOL/src/num/theories/basicSizeScript.sml" "bool_size_def"]
+def boolSizeHOL (_ : Bool) : Nat := 0
+
 /-- HOL's size function for an option, with an explicit element measure. -/
 @[hol "HOL/src/num/theories/basicSizeScript.sml" "option_size_def"]
 def optionSizeHOL {α : Type} (f : α → Nat) : Option α → Nat

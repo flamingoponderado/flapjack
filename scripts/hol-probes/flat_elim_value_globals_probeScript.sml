@@ -207,3 +207,14 @@ val _ = show_eval "backend_tra_size_nested=" ``backend_common$tra_size (backend_
 val _ = show_thm "option_size_def_typed=" basicSizeTheory.option_size_def;
 val _ = show_thm "pair_size_def_typed=" basicSizeTheory.pair_size_def;
 val _ = show_eval "flat_pat_size_nested=" ``flatLang$pat_size (flatLang$Pcon (SOME (2,SOME (3,[(4,5)]))) [flatLang$Pany; flatLang$Plit (ast$IntLit (~2))])``;
+val _ = show_eval "flat_exp_size_letrec=" ``flatLang$exp_size (flatLang$Letrec (mlstring$implode [CHR 102]) [(mlstring$implode [CHR 103], mlstring$implode [CHR 120], flatLang$Lit backend_common$None (ast$IntLit 4))] (flatLang$App backend_common$None (flatLang$Src ast$Eval) [flatLang$Lit backend_common$None (ast$IntLit 2)]))``;
+val _ = show_eval "flat_exp_size_branch=" ``flatLang$exp_size (flatLang$Handle (backend_common$Cons backend_common$None 2) (flatLang$Raise backend_common$None (flatLang$Lit backend_common$None (ast$Char (CHR 65)))) [(flatLang$Pref flatLang$Pany, flatLang$Con backend_common$None (SOME (2,SOME 3)) [])])``;
+val _ = show_eval "flat_exp_size_binding=" ``flatLang$exp_size (flatLang$Let backend_common$None (SOME (mlstring$implode [CHR 120])) (flatLang$Var_local backend_common$None (mlstring$implode [CHR 120])) (flatLang$If backend_common$None (flatLang$Lit backend_common$None (ast$IntLit 1)) (flatLang$Fun (mlstring$implode []) (mlstring$implode [CHR 121]) (flatLang$Lit backend_common$None (ast$IntLit 2))) (flatLang$Mat backend_common$None (flatLang$Lit backend_common$None (ast$IntLit 3)) [(flatLang$Pany, flatLang$Lit backend_common$None (ast$IntLit 4))])))``;
+val _ = show_thm "bool_size_def_typed=" basicSizeTheory.bool_size_def;
+val _ = show_thm "flat_environment_size_def_typed=" flatSemTheory.environment_size_def;
+fun show_flat_value_size label tm =
+  let val th = (REWRITE_CONV [flatSemTheory.v_size_def] THENC EVAL) tm
+  in print label; print_term (rhs (concl th)); print "\n" end;
+val _ = show_flat_value_size "flat_value_size_closure=" ``flatSem$v_size (flatSem$Closure <|v := [(mlstring$implode [CHR 97],flatSem$Litv (ast$IntLit 2))]|> (mlstring$implode [CHR 120]) (flatLang$Lit backend_common$None (ast$IntLit 4)))``;
+val _ = show_flat_value_size "flat_value_size_recclosure=" ``flatSem$v_size (flatSem$Recclosure <|v := []|> [(mlstring$implode [CHR 102],mlstring$implode [CHR 120],flatLang$Lit backend_common$None (ast$IntLit 1))] (mlstring$implode [CHR 102]))``;
+val _ = show_eval "flat_value_size_vector=" ``flatSem$v_size (flatSem$Vectorv [flatSem$Conv (SOME (2,SOME 3)) [flatSem$Loc T 4]])``;
