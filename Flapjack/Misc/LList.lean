@@ -1467,6 +1467,115 @@ theorem lflattenHOL_THM :
         rw [hstep]
         simp [lcons]
 
+/-! ## Append algebra
+
+HOL's `LAPPEND_ASSOC` (`llistScript.sml:843`) and the finite facts about append
+used by `pan_itreeEquivProofScript.sml`. -/
+
+/-- Where `LAPPEND` stops: never when the left operand is infinite, at `k + j`
+    when the left stops at `k` and the right at `j`. Flapjack infrastructure for
+    the append laws below. -/
+theorem firstNone_lappend (l1 l2 : HolLList α) :
+    firstNone (lappendHOL l1 l2) =
+      (match firstNone l1 with
+       | none => none
+       | some k =>
+           match firstNone l2 with
+           | none => none
+           | some j => some (k + j)) := by
+  cases h1 : firstNone l1 with
+  | none =>
+      have hno := firstNone_none h1
+      rw [firstNone_eq_none_of_rep]
+      intro n
+      simp only [lappendHOL, lappendRep, h1]
+      exact hno n
+  | some k =>
+      obtain ⟨hk, hmin⟩ := firstNone_spec h1
+      cases h2 : firstNone l2 with
+      | none =>
+          have hno := firstNone_none h2
+          rw [firstNone_eq_none_of_rep]
+          intro n
+          simp only [lappendHOL, lappendRep, h1]
+          by_cases hn : n < k
+          · rw [if_pos hn]
+            exact hmin n hn
+          · rw [if_neg hn]
+            exact hno (n - k)
+      | some j =>
+          obtain ⟨hj, hmin2⟩ := firstNone_spec h2
+          have hrep_none : (lappendHOL l1 l2).rep (k + j) = none := by
+            simp only [lappendHOL, lappendRep, h1]
+            rw [if_neg (by omega)]
+            rw [show k + j - k = j from by omega]
+            exact hj
+          have hrep_min : ∀ m, m < k + j → (lappendHOL l1 l2).rep m ≠ none := by
+            intro m hm
+            simp only [lappendHOL, lappendRep, h1]
+            by_cases hmk : m < k
+            · rw [if_pos hmk]
+              exact hmin m hmk
+            · rw [if_neg hmk]
+              exact hmin2 (m - k) (by omega)
+          rw [firstNone_eq_some_of_rep hrep_none hrep_min]
+
+/-- The representation of an append, exposed for rewriting. -/
+theorem lappendRep_rep (l1 l2 : HolLList α) (n : Nat) :
+    (lappendHOL l1 l2).rep n = lappendRep l1 l2 n := rfl
+
+/-- An append whose left operand never stops copies that operand. -/
+theorem lappendRep_of_firstNone_none {l1 l2 : HolLList α} (h : firstNone l1 = none)
+    (n : Nat) : lappendRep l1 l2 n = l1.rep n := by
+  simp [lappendRep, h]
+
+/-- An append whose left operand stops at `k` copies it up to `k`, then the
+    right operand. -/
+theorem lappendRep_of_firstNone_some {l1 l2 : HolLList α} {k : Nat}
+    (h : firstNone l1 = some k) (n : Nat) :
+    lappendRep l1 l2 n = if n < k then l1.rep n else l2.rep (n - k) := by
+  simp [lappendRep, h]
+
+/-- HOL `LAPPEND_ASSOC` (`llistScript.sml:843-849`): append is associative. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LAPPEND_ASSOC"]
+theorem lappendHOL_assoc (ll1 ll2 ll3 : HolLList α) :
+    lappendHOL (lappendHOL ll1 ll2) ll3 = lappendHOL ll1 (lappendHOL ll2 ll3) := by
+  apply ext_of_rep
+  intro n
+  simp only [lappendRep_rep]
+  cases h1 : firstNone ll1 with
+  | none =>
+      have h12 : firstNone (lappendHOL ll1 ll2) = none := by
+        rw [firstNone_lappend, h1]
+      rw [lappendRep_of_firstNone_none h12, lappendRep_of_firstNone_none h1,
+        lappendRep_rep, lappendRep_of_firstNone_none h1]
+  | some k =>
+      cases h2 : firstNone ll2 with
+      | none =>
+          have h12 : firstNone (lappendHOL ll1 ll2) = none := by
+            rw [firstNone_lappend, h1, h2]
+          rw [lappendRep_of_firstNone_none h12, lappendRep_of_firstNone_some h1,
+            lappendRep_rep, lappendRep_of_firstNone_some h1]
+          by_cases hn : n < k
+          · rw [if_pos hn, if_pos hn]
+          · rw [if_neg hn, if_neg hn]
+            rw [lappendRep_rep, lappendRep_of_firstNone_none h2]
+      | some j =>
+          have h12 : firstNone (lappendHOL ll1 ll2) = some (k + j) := by
+            rw [firstNone_lappend, h1, h2]
+          rw [lappendRep_of_firstNone_some h12, lappendRep_of_firstNone_some h1,
+            lappendRep_rep, lappendRep_of_firstNone_some h1,
+            lappendRep_rep, lappendRep_of_firstNone_some h2]
+          by_cases hn : n < k
+          · rw [if_pos hn, if_pos hn, if_pos (by omega)]
+          · rw [if_neg hn, if_neg hn]
+            by_cases hnj : n - k < j
+            · simp only [if_pos (by omega : n < k + j), if_pos hnj]
+            · simp only [if_neg (by omega : ¬ n < k + j), if_neg hnj]
+              congr 1
+              omega
+
+
 end HolLList
 
 end Flapjack
