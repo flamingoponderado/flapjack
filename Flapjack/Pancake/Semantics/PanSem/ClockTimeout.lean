@@ -117,16 +117,18 @@ theorem evaluateHOLFiniteState_add_clock_or_timeout {width : Nat} {σ : Type} [N
     simpa only [hrecK, Option.map_some] using
       (evalPanSemRecursiveCallFiniteContext_projection p fcK).symm
   have hstate1 : outK.2.toExact.state = t'.toExact := by
-    change outK.2.state.toExact = t'.toExact; rw [houtK2]
+    change outK.2.state.toExact = t'.toExact
+    rw [houtK2]
   have hstate2 : out.2.toExact.state =
       ({ t with clock := 0 } : PanSemStateFiniteExact width σ).toExact := by
-    change out.2.state.toExact = _; rw [hout2]
+    change out.2.state.toExact = _
+    rw [hout2]
   by_cases hle : s.clock ≤ k
   · right
     have hstateA : (ctxAddClock fcS.toExact (k - s.clock)).state = fcK.toExact.state := by
       change stateAddClock s.toExact (k - s.clock) =
         ({ s with clock := k } : PanSemStateFiniteExact width σ).toExact
-      simp [stateAddClock, show s.clock + (k - s.clock) = k from by omega]
+      simp [stateAddClock, Nat.add_sub_of_le hle]
     have hHighA : evalPanSemRecursiveCallContextHOLExact p
         (ctxAddClock fcS.toExact (k - s.clock)) = some (outK.1, outK.2.toExact) :=
       (eval_context_state p (ctxAddClock fcS.toExact (k - s.clock)) fcK.toExact hstateA).trans
@@ -146,7 +148,7 @@ theorem evaluateHOLFiniteState_add_clock_or_timeout {width : Nat} {σ : Type} [N
         have h := congrArg PanSemExactEvalContext.state hres2
         change outK.2.toExact.state = stateAddClock out.2.toExact.state (k - s.clock) at h
         rw [hstate2] at h
-        exact h
+        simpa using h
       have hEq2 : t'.toExact =
           ({ t with clock := k - s.clock } : PanSemStateFiniteExact width σ).toExact := by
         simpa [stateAddClock] using hEq
@@ -159,7 +161,7 @@ theorem evaluateHOLFiniteState_add_clock_or_timeout {width : Nat} {σ : Type} [N
       have hstateB : (ctxAddClock fcK.toExact (s.clock - k)).state = fcS.toExact.state := by
         change stateAddClock ({ s with clock := k } : PanSemStateFiniteExact width σ).toExact
             (s.clock - k) = s.toExact
-        simp [stateAddClock, show k + (s.clock - k) = s.clock from by omega]
+        simp [stateAddClock, Nat.add_sub_of_le (Nat.le_of_lt hklt)]
       have hHighB : evalPanSemRecursiveCallContextHOLExact p
           (ctxAddClock fcK.toExact (s.clock - k)) = some (out.1, out.2.toExact) :=
         (eval_context_state p (ctxAddClock fcK.toExact (s.clock - k)) fcS.toExact hstateB).trans
