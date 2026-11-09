@@ -1153,6 +1153,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CodeLabels.CompileExps
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IncrementalAddresses
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IncrementalOracle
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotationAddresses
 import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLabels
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InitialCodeDomain
 import Flapjack.Compiler.Backend.BvlConst.SourceCompile

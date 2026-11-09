@@ -36,6 +36,17 @@ noncomputable def reqCompileIncAddrs {α : Type} (extra : List (Nat → Nat))
 def canExtract (exps : List ClosLang.Exp) : Prop :=
   ∃ tr n rest, exps = .op tr (.intOp (.const (Int.ofNat n))) [] :: rest
 
+/-- An extractable entry expression has either an empty or nonempty tail. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "can_extract_to_case"]
+theorem canExtract_to_case (exps : List ClosLang.Exp) :
+    canExtract exps →
+      (∃ tr n, exps = [.op tr (.intOp (.const (Int.ofNat n))) []]) ∨
+      (∃ tr n e rest, exps = .op tr (.intOp (.const (Int.ofNat n))) [] :: e :: rest) := by
+  rintro ⟨tr, n, rest, rfl⟩
+  cases rest with
+  | nil => exact Or.inl ⟨tr, n, rfl⟩
+  | cons e rest => exact Or.inr ⟨tr, n, e, rest, rfl⟩
+
 /-- Chained expression labels form the complete range, with one entry for an
 empty expression list. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "MAP_FST_chain_exps_any"]

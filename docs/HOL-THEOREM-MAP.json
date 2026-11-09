@@ -1,5 +1,35 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "subset_req_orac_to_oracle",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalOracle.lean", "lean_name": "subsetReqOrac_to_oracle",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared subset_req_orac_to_oracle_typed and independent review: five independent carriers, free-then-universal binder order, subset premise and eta-expanded oracle compositions agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "can_extract_to_case",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "canExtract_to_case",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared can_extract_to_case_typed: the source canExtract premise and both cases retain the existential order and Int.ofNat conversion."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "annotate_compile_code_locs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/AnnotationAddresses.lean", "lean_name": "annotateCompile_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared annotate_compile_code_locs_typed: polymorphic name carrier, source compile, projected body locations and both subset and distinctness conclusions match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "LENGTH_annotate",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/AnnotationAddresses.lean", "lean_name": "length_annotate",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared LENGTH_annotate_typed: free arity and expression-list binders and the source annotation length equality agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "annotate_Op_Const",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/AnnotationAddresses.lean", "lean_name": "annotate_opConst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared annotate_Op_Const_typed: binder order, arbitrary signed integer, leading operator and source list annotation agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "oracle_monotonic_subset",
   "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonic.lean", "lean_name": "oracleMonotonic_subset",
   "statement_status": "reviewed_exact",

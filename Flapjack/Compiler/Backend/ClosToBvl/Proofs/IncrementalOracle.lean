@@ -31,4 +31,32 @@ theorem compileInc_monotonic {C : Type} (maxApp : Nat) (initial : Set Nat)
   · intro n
     simpa [pureCo, Function.comp_def] using (compileInc_reqAddrs (oracle n).2 maxApp).2
 
+/-- A pointwise reduction of required addresses preserves oracle ordering,
+even when the two oracles carry different configurations and metadata. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "subset_req_orac_to_oracle"]
+theorem subsetReqOrac_to_oracle {C₁ C₂ M₁ M₂ L : Type}
+    (extra₂ : List (Nat → Nat)) (f : Nat → L) (relation : L → L → Prop) (initial : Set L)
+    (oracle₁ : Nat → C₁ × (List ClosLang.Exp × List (Nat × M₁ × ClosLang.Exp)))
+    (oracle₂ : Nat → C₂ × (List ClosLang.Exp × List (Nat × M₂ × ClosLang.Exp)))
+    (extra₁ : List (Nat → Nat)) :
+    ((∀ n, {x | x ∈ reqCompileIncAddrs extra₂ (oracle₂ n).2} ⊆
+      {x | x ∈ reqCompileIncAddrs extra₁ (oracle₁ n).2}) ∧
+      oracleMonotonic
+        (fun e : C₁ × (List ClosLang.Exp × List (Nat × M₁ × ClosLang.Exp)) =>
+          {x | x ∈ (reqCompileIncAddrs extra₁ e.2).map f}) relation initial oracle₁) →
+    oracleMonotonic
+      (fun e : C₂ × (List ClosLang.Exp × List (Nat × M₂ × ClosLang.Exp)) =>
+        {x | x ∈ (reqCompileIncAddrs extra₂ e.2).map f}) relation initial oracle₂ := by
+  intro h
+  apply oracleMonotonic_subset initial initial
+    (fun e : C₂ × (List ClosLang.Exp × List (Nat × M₂ × ClosLang.Exp)) =>
+      {x | x ∈ (reqCompileIncAddrs extra₂ e.2).map f}) oracle₂
+    (fun e : C₁ × (List ClosLang.Exp × List (Nat × M₁ × ClosLang.Exp)) =>
+      {x | x ∈ (reqCompileIncAddrs extra₁ e.2).map f}) oracle₁ relation ?_ h.2
+  constructor
+  · exact Set.Subset.rfl
+  · intro n x member
+    obtain ⟨a, mem, rfl⟩ := List.mem_map.mp member
+    exact List.mem_map.mpr ⟨a, h.1 n mem, rfl⟩
+
 end Flapjack.Compiler.Backend.ClosToBvl
