@@ -254,6 +254,15 @@ theorem findValuesGlobals_set_within (values : List FlatSem.Value) (index : Nat)
   · exact (findValuesGlobals_within_iff _ _).mp old item oldMember
   · exact new
 
+/-- An in-bounds list update preserves the original global-dependency bound. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_v_globalsL_LUPDATE"]
+theorem findValuesGlobals_LUPDATE (index : Nat) (values : List FlatSem.Value)
+    (reachable : NumSet) (value : FlatSem.Value)
+    (premises : index < values.length ∧ globalsWithin (findValuesGlobals values) reachable ∧
+      globalsWithin (findValueGlobals value) reachable) :
+    globalsWithin (findValuesGlobals (values.set index value)) reachable :=
+  findValuesGlobals_set_within values index value reachable premises.2.1 premises.2.2
+
 /-- Global dependencies held by a single store entry. -/
 def storeValueGlobals : StoreValue FlatSem.Value → NumSet
   | .refv value | .thunk _ value => findValueGlobals value

@@ -157,3 +157,4 @@ val _ = show_thm "find_v_globals_unit_typed=" flat_elimProofTheory.find_v_global
 val v_has_eval_unit_replay = EVAL ``v_has_Eval Unitv``;
 val _ = show_thm "v_has_eval_unit_typed=" v_has_eval_unit_replay;
 val _ = show_thm "v_has_eval_def_typed=" flat_elimProofTheory.v_has_Eval_def;
+val _ = show_thm "find_v_globals_list_update_typed=" flat_elimProofTheory.find_v_globalsL_LUPDATE;
