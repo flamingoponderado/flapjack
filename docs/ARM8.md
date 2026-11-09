@@ -10,7 +10,7 @@ proves `encoderCorrect arm8Target` for a closed ARMv8 execution model covering
 the emitted instruction subset, and instantiates the full
 Pancake-to-target theorem at that model. This is **not** a port of CakeML's full
 L3 ARMv8 semantics; the closed model and its limits are described below and in
-`docs/SOUNDNESS.md`; faithful-L3 follow-ups are tracked in issue #1229.
+`docs/SOUNDNESS.md`; the remaining L3 follow-ups are tracked in issue #1270.
 
 ## Code generation
 
@@ -915,14 +915,25 @@ Remaining assumptions and open items:
   the encoder never emits the affected words.  `reviewed_exact` and
   `reviewed_words_as_type_indexed_bitvec` here are declaration-level source
   comparisons, not formal cross-prover equivalence proofs.
+- The encoder bridge (`L3/Executable/`, PRs #1356–#1357) proves the computable
+  `Arm8.arm8Enc` equal to the L3 `arm8Enc` on every `HolAsm 64` (`arm8Enc_eq`)
+  and the computable `validImmediate` equal to the L3 `arm8ValidImmediate`
+  (`validImmediate_eq`).  The per-family lemmas are Flapjack-specific
+  infrastructure relating two Lean renderings, so none is tagged.  What remains
+  is the whole-record identity `arm8Config = arm8ConfigL3` and the `@[csimp]`
+  switch, tracked in #1270.
 - The closed-model and L3 proofs of `is_arm8_machine_config ⇒ mc_conf_ok` and
   `backend_config_ok` are near-duplicates that differ only in the target,
   configuration and `valid_imm`; making them generic is recorded as follow-up
   work rather than churned in this PR.
-- The executed compiler path (`Flapjack/Arm8/NativeSource.lean`) still uses the
-  closed `arm8Config` and its `validImmediate` (`encodeBitMask`, a `Nat`-valued
-  rendering), not `arm8ConfigL3`/`arm8ValidImmediate` (`EncodeBitMask`).  The
-  production replacement is tracked separately (#1229).
+- The executed compiler path (`Flapjack/Arm8/NativeSource.lean`) runs the
+  computable `arm8Config` of `Arm8/Configuration.lean`, not the closed machine
+  model and not `arm8ConfigL3`.  Its two differing fields are proved equal to the
+  L3 ones (`arm8Enc_eq` for `encode`, `validImmediate_eq` for `validImm`), so the
+  executed encoder emits exactly the L3 encoder's bytes.  What is not yet proved
+  is the whole-record identity `arm8Config = arm8ConfigL3` and the `@[csimp]`
+  switch that would make the executed configuration the L3 one; that replacement
+  is tracked in #1270.
 - ARM parity is compiler-output parity: `Flapjack/Test/Arm8Parity.lean` compares
   the executed driver's assembly and hex against the original CakeML Pancake
   compiler on fifteen checked-in cases, and all fifteen pass.  Compiler-output
