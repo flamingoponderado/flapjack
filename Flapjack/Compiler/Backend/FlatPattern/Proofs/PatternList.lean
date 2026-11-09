@@ -8,8 +8,9 @@ open Flapjack.SemanticPrimitivesHOL (MatchResult storeLookup)
 
 /-- Successful list matching consumes exactly one value per pattern. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "pmatch_list_Match_IMP_LENGTH"]
-theorem pmatchList_match_length {C F : Type} (state : FlatSem.State C F)
+theorem pmatchList_match_length {C F : Type}
     (patterns : List FlatLang.Pat) (values : List Value) (bindings result : List (VarN × Value))
+    (state : FlatSem.State C F)
     (matched : FlatSem.pmatchList state patterns values bindings = .match result) :
     patterns.length = values.length := by
   induction patterns generalizing values bindings with

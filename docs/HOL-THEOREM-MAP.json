@@ -3465,7 +3465,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/PatternList.lean",
   "lean_name": "pmatchList_match_length",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the typed pmatch_list_length capture in flat_pattern_install_relation_probe.out. The successful match premise and equal-length conclusion agree over reviewed FlatSem state, pattern, value and match-result carriers; the state parameters remain independent."
+  "reviewer": "Compared the typed pmatch_list_length capture in flat_pattern_install_relation_probe.out. Binder order, successful match premise and equal-length conclusion agree over reviewed state, pattern, value and match-result carriers; the state parameters remain independent. Independently source-reviewed."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
