@@ -111,3 +111,4 @@ val no_overlap_has_var_replay = prove (
   Induct >> fs [no_overlap_def] >> rw [] >> res_tac
   >> Cases_on `x = n` >> fs []);
 val _ = show "no_overlap_has_var_IMP_local_typed=" no_overlap_has_var_replay;
+val _ = show "evaluate_shift_REPLICATE_const_0_typed=" clos_annotateProofTheory.evaluate_shift_REPLICATE_const_0;

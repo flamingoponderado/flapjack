@@ -242,7 +242,7 @@ annotation invariants, the free-variable observation and its singleton, list,
 replication and source-component theorems,
 and the mutual value and
 environment relation rules with inferred types. It also replays the local
-default-environment, pair-fold and no-overlap bound proofs with inferred types. These captures support review;
+default-environment, pair-fold and no-overlap bound proofs and the zero-replacement evaluation theorem with inferred types. These captures support review;
 the factored Lean mutual relation records its representation with a qualifier.
 
 `db_vars_definitions_probe.out` captures the typed De Bruijn variable-set

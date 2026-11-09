@@ -2,12 +2,19 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Free.SourceEquations
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PureEvaluate
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 import Flapjack.Compiler.Backend.ClosAnnotate.Shift
+import Flapjack.Compiler.Backend.ClosAnnotate.Shift.OriginalEquivalence
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.EnvironmentExtension
 
 /-! Pure-binding replacement prerequisites for closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate
 open Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.ClosLang
 open Flapjack.Compiler.Backend.DbVars
+
+/-- The closure state uses the canonical finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
 
 /-- If none of the first `count` variables occurs, any present variable is
 outside that prefix. -/
@@ -37,11 +44,13 @@ theorem shiftList_replicate_const0 (count : Nat) (trace : BackendCommon.Tra)
     rfl
 
 /-- The replacement zeros evaluate to zeros without changing state. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "evaluate_shift_REPLICATE_const_0"
+  (fmap_as_finite_support := [refs, code])]
 theorem evaluate_shift_replicate_const0 {C F : Type} (count : Nat) (trace : BackendCommon.Tra)
     (m l : Nat) (index : Spt Nat) (env : List Value) (state : State C F) :
-    evaluate (shiftList (List.replicate count (const0 trace)) m l index) env state =
+    evaluate (shiftSource (List.replicate count (const0 trace)) m l index) env state =
       (.val (List.replicate count (.number 0)), state) := by
-  rw [shiftList_replicate_const0]
+  rw [shiftSource_eq_shiftList, shiftList_replicate_const0]
   induction count with
   | zero => simp [evaluate]
   | succ count ih =>

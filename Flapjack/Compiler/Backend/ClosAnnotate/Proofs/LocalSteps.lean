@@ -443,7 +443,9 @@ theorem evaluate_let_step {C F : Type} (trace : BackendCommon.Tra)
       refine ⟨targetResult, targetNext, ?_, resultRel, nextRel⟩
       rw [altFree_let, if_pos optimized]
       simp only [altFree_singleton, Flapjack.holHd, shiftList, shiftSing, List.length_replicate] at targetRun ⊢
-      rw [evaluate, fixClock_evaluate, evaluate_shift_replicate_const0]
+      rw [evaluate, fixClock_evaluate,
+        ← shiftSource_eq_shiftList (List.replicate bindings.length (const0 trace)) m l index,
+        evaluate_shift_replicate_const0]
       exact targetRun
   · have bindingsVars : ∀ n, altFv n bindings = true → EnvOk m l index env nextEnv n := by
       intro n present

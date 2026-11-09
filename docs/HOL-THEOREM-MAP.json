@@ -120,6 +120,14 @@
   "reviewer": "Compared shift_obeys_max_app_typed: the bound and all expression-list, natural and sparse-tree index variables are unrestricted. Both occurrences of EVERY are membership quantification over the reviewed obeysMaxApp predicate, and the conclusion uses original shiftSource."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "evaluate_shift_REPLICATE_const_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/PureBindings.lean", "lean_name": "evaluate_shift_replicate_const0",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_shift_REPLICATE_const_0_typed: the natural count and shifts, trace, sparse index, environment and state are unrestricted, and the original shift and clocked evaluator return the same replicated zero values and unchanged state. State refs and code use the reviewed finite-support representation. ClosSem.evaluate inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "no_overlap_has_var_IMP",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/PureBindings.lean", "lean_name": "noOverlap_hasVar_bound",
   "statement_status": "reviewed_exact",
