@@ -4,10 +4,6 @@ public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 
 @[expose] public section
 
--- Public declarations below use private helpers.
-set_option backward.privateInPublic true
-set_option backward.privateInPublic.warn false
-
 /-! Clocked closure evaluation without an external recursion bound. -/
 namespace Flapjack.Compiler.Backend.ClosSem
 open Flapjack.SemanticPrimitivesHOL
@@ -19,27 +15,6 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
       (∀ s : State C F, State.ofBroad s.toBroad = s) :=
   ClosSem.holFmapAsFiniteSupportWitness
 end EvaluatePort
-
-private noncomputable def headValue (values : List Value) : Value :=
-  @Flapjack.holHd Value ⟨unitValue⟩ values
-
-private noncomputable def lastValue (values : List Value) : Value :=
-  @Flapjack.holLast Value ⟨unitValue⟩ values
-
-private def typeError {C F : Type} (state : State C F) : EvalResult C F :=
-  (.err (.abort .typeError), state)
-
-private def timeoutError {C F : Type} (state : State C F) : EvalResult C F :=
-  (.err (.abort .timeoutError), state)
-
-@[simp] private theorem headValue_cons (value : Value) (tail : List Value) :
-    headValue (value :: tail) = value := rfl
-
-@[simp] private theorem typeError_eq {C F : Type} (state : State C F) :
-    typeError state = (.err (.abort .typeError), state) := rfl
-
-@[simp] private theorem timeoutError_eq {C F : Type} (state : State C F) :
-    timeoutError state = (.err (.abort .timeoutError), state) := rfl
 
 mutual
 /-- Evaluate closure expressions using the HOL clock. -/

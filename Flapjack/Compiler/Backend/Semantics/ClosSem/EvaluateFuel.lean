@@ -4,10 +4,6 @@ public import Flapjack.Compiler.Backend.Semantics.ClosSem.Measure
 
 @[expose] public section
 
--- Public declarations below use private helpers.
-set_option backward.privateInPublic true
-set_option backward.privateInPublic.warn false
-
 /-! Bounded approximation of closure evaluation. Exhausting the bound is
 separate from the original clock timeout. The unbounded HOL evaluator and its
 correspondence theorem remain open. -/
@@ -17,17 +13,30 @@ open Flapjack.SemanticPrimitivesHOL
 /-- Evaluation result in the same order as the HOL closure semantics. -/
 abbrev EvalResult (C F : Type) := Result (List Value) Value × State C F
 
-private noncomputable def headValue (values : List Value) : Value :=
+/-- Head of a value list, matching HOL's `hd` on the empty-list default. -/
+noncomputable def headValue (values : List Value) : Value :=
   @Flapjack.holHd Value ⟨unitValue⟩ values
 
-private noncomputable def lastValue (values : List Value) : Value :=
+/-- Last of a value list, matching HOL's `last` on the empty-list default. -/
+noncomputable def lastValue (values : List Value) : Value :=
   @Flapjack.holLast Value ⟨unitValue⟩ values
 
-private def typeError {C F : Type} (state : State C F) : EvalResult C F :=
+/-- The original closure evaluator's type-error outcome. -/
+def typeError {C F : Type} (state : State C F) : EvalResult C F :=
   (.err (.abort .typeError), state)
 
-private def timeoutError {C F : Type} (state : State C F) : EvalResult C F :=
+/-- The original closure evaluator's clock-timeout outcome. -/
+def timeoutError {C F : Type} (state : State C F) : EvalResult C F :=
   (.err (.abort .timeoutError), state)
+
+@[simp] theorem headValue_cons (value : Value) (tail : List Value) :
+    headValue (value :: tail) = value := rfl
+
+@[simp] theorem typeError_eq {C F : Type} (state : State C F) :
+    typeError state = (.err (.abort .typeError), state) := rfl
+
+@[simp] theorem timeoutError_eq {C F : Type} (state : State C F) :
+    timeoutError state = (.err (.abort .timeoutError), state) := rfl
 
 mutual
 /-- Closure evaluation with an extra recursion bound. `none` signals that

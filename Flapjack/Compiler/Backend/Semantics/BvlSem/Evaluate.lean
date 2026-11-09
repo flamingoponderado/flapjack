@@ -5,10 +5,6 @@ public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
--- Public declarations below use private helpers.
-set_option backward.privateInPublic true
-set_option backward.privateInPublic.warn false
-
 /-! Clocked BVL evaluation, retaining the original clock clamps. -/
 namespace Flapjack.Compiler.Backend.BvlSem
 open Flapjack.SemanticPrimitivesHOL
@@ -16,22 +12,25 @@ open Flapjack.SemanticPrimitivesHOL
 /-- The result and state pair returned by BVL evaluation. -/
 abbrev EvalResult (C F : Type) := Result (List Value) Value × State C F
 
-private noncomputable def headValue (values : List Value) : Value :=
+/-- Head of a value list, matching HOL's `hd` on the empty-list default. -/
+noncomputable def headValue (values : List Value) : Value :=
   @Flapjack.holHd Value ⟨unitValue⟩ values
 
-private def typeError {C F : Type} (state : State C F) : EvalResult C F :=
+/-- The original BVL evaluator's type-error outcome. -/
+def typeError {C F : Type} (state : State C F) : EvalResult C F :=
   (.err (.abort .typeError), state)
 
-private def timeoutError {C F : Type} (state : State C F) : EvalResult C F :=
+/-- The original BVL evaluator's clock-timeout outcome. -/
+def timeoutError {C F : Type} (state : State C F) : EvalResult C F :=
   (.err (.abort .timeoutError), state)
 
-@[simp] private theorem headValue_cons (value : Value) (tail : List Value) :
+@[simp] theorem headValue_cons (value : Value) (tail : List Value) :
     headValue (value :: tail) = value := rfl
 
-@[simp] private theorem timeoutError_eq {C F : Type} (state : State C F) :
+@[simp] theorem timeoutError_eq {C F : Type} (state : State C F) :
     timeoutError state = (.err (.abort .timeoutError), state) := rfl
 
-@[simp] private theorem typeError_eq {C F : Type} (state : State C F) :
+@[simp] theorem typeError_eq {C F : Type} (state : State C F) :
     typeError state = (.err (.abort .typeError), state) := rfl
 
 /-- Clocked, source-shaped BVL evaluation. This proof-side infrastructure is

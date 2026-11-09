@@ -5,10 +5,6 @@ public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
--- Public declarations below use private helpers.
-set_option backward.privateInPublic true
-set_option backward.privateInPublic.warn false
-
 /-! Clocked BVI evaluation with the source's explicit clock clamps. -/
 namespace Flapjack.Compiler.Backend.BviSem
 open Flapjack.Compiler.Backend.BvlSem (Value unitValue boolValue asBool findCode)
@@ -17,19 +13,22 @@ open Flapjack.SemanticPrimitivesHOL (Result)
 /-- Result and state returned by BVI evaluation. -/
 abbrev EvalResult (C F : Type) := BviResult × BviState C F
 
-private noncomputable def headValue (values : List Value) : Value :=
+/-- Head of a value list, matching HOL's `hd` on the empty-list default. -/
+noncomputable def headValue (values : List Value) : Value :=
   @Flapjack.holHd Value ⟨unitValue⟩ values
 
-private def typeError {C F : Type} (state : BviState C F) : EvalResult C F :=
+/-- The original BVI evaluator's type-error outcome. -/
+def typeError {C F : Type} (state : BviState C F) : EvalResult C F :=
   (.err (.abort .typeError), state)
 
-private def timeoutError {C F : Type} (state : BviState C F) : EvalResult C F :=
+/-- The original BVI evaluator's clock-timeout outcome. -/
+def timeoutError {C F : Type} (state : BviState C F) : EvalResult C F :=
   (.err (.abort .timeoutError), state)
 
-@[simp] private theorem typeError_eq {C F : Type} (state : BviState C F) :
+@[simp] theorem typeError_eq {C F : Type} (state : BviState C F) :
     typeError state = (.err (.abort .typeError), state) := rfl
 
-@[simp] private theorem timeoutError_eq {C F : Type} (state : BviState C F) :
+@[simp] theorem timeoutError_eq {C F : Type} (state : BviState C F) :
     timeoutError state = (.err (.abort .timeoutError), state) := rfl
 
 /-- Clocked, source-shaped BVI evaluation. This remains untagged while the
