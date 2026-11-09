@@ -198,3 +198,9 @@ val _ = show_eval "ast_op_size_test=" ``ast$op_size (ast$Test (ast$Compare ast$L
 val _ = show_eval "ast_op_size_thunk=" ``ast$op_size (ast$ThunkOp (ast$AllocThunk ast$Evaluated))``;
 val _ = show_eval "ast_op_size_ffi=" ``ast$op_size (ast$FFI (mlstring$implode [CHR 65; CHR 0; CHR 255]))``;
 val _ = show_eval "ast_op_size_nullary=" ``ast$op_size ast$Eval``;
+val _ = show_thm "flat_op_size_def_typed=" flatLangTheory.op_size_def;
+val _ = show_thm "backend_tra_size_def_typed=" backend_commonTheory.tra_size_def;
+val _ = show_eval "flat_op_size_src=" ``flatLang$op_size (flatLang$Src (ast$Shift ast$W64 ast$Ror 42))``;
+val _ = show_eval "flat_op_size_tag=" ``flatLang$op_size (flatLang$TagLenEq 3 5)``;
+val _ = show_eval "flat_op_size_id=" ``flatLang$op_size flatLang$Id``;
+val _ = show_eval "backend_tra_size_nested=" ``backend_common$tra_size (backend_common$Union (backend_common$SourceLoc 1 2 3 4) (backend_common$Cons backend_common$None 5))``;

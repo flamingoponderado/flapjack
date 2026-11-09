@@ -1659,6 +1659,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Config
 import Flapjack.Compiler.Backend.BackendCommon.Trace
 import Flapjack.Compiler.Backend.BackendCommon.BoolTags
 import Flapjack.Compiler.Backend.FlatLang
+import Flapjack.Compiler.Backend.FlatLang.GeneratedSize
 import Flapjack.NamespaceHOL
 import Flapjack.Compiler.Backend.PresLang.Config
 import Flapjack.Compiler.Backend.PresLang.Source
