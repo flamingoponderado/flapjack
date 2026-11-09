@@ -23,29 +23,6 @@ def StateRelFuel {C F : Type} (fuel : Nat) (g : State) (allowed : Set Nat)
     ClosMti.fmapRel (refRel (ValueRelFuel fuel g allowed target.code)) source.refs target.refs ∧
     source.code = HolFiniteMapExact.empty
 
-private theorem optionRel_mono {A B : Type} {R S : A → B → Prop} {x : Option A} {y : Option B}
-    (change : ∀ a b, R a b → S a b) (related : optionRel R x y) : optionRel S x y := by
-  cases x <;> cases y <;> simp_all [optionRel]
-
-/-- Extending the compiler state and permitted locations preserves the
-fuel-aware state relation for the same source and target states. -/
-theorem stateRelFuel_mono {C F : Type} {fuel : Nat} {g g' : State}
-    {allowed allowed' : Set Nat} {source : ClosSem.State (NumSet × C) F} {target : ClosSem.State C F}
-    (related : StateRelFuel fuel g allowed source target)
-    (stateGrowth : stateExtends g g') (allowedGrowth : allowed ⊆ allowed') :
-    StateRelFuel fuel g' allowed' source target := by
-  obtain ⟨ffi, clock, maxApp, globals, refs, sourceCode⟩ := related
-  have growValue : ∀ a b, ValueRelFuel fuel g allowed target.code a b →
-      ValueRelFuel fuel g' allowed' target.code a b := by
-    intro a b values
-    exact valueRelFuel_mono values stateGrowth allowedGrowth (fun _ _ h => h)
-  refine ⟨ffi, clock, maxApp, ?_, ?_, sourceCode⟩
-  · exact List.Forall₂.imp (fun _ _ h => optionRel_mono growValue h) globals
-  · refine ⟨refs.1, ?_⟩
-    intro key value lookup
-    obtain ⟨value', found, values⟩ := refs.2 key value lookup
-    exact ⟨value', found, refRel_mono growValue values⟩
-
 /-- Looking up a reference in related states yields related optional values. -/
 theorem stateRelFuel_lookupRefs {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
     {source : ClosSem.State (NumSet × C) F} {target : ClosSem.State C F}

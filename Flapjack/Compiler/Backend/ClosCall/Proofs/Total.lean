@@ -138,12 +138,6 @@ theorem callsListBounded_succeeds (fuel : Nat) (es : List Exp) (state : State) :
     obtain ⟨result, done⟩ := callsListFuel_succeeds (max fuel (listBudget es + 1)) es state bound
     exact ⟨result, by simp [callsListBounded, h, done]⟩
 
-/-- Retrying preserves every previously successful list traversal result. -/
-theorem callsListBounded_eq_of_success (fuel : Nat) (es : List Exp) (state : State)
-    (result : List Exp × State) (success : callsListFuel fuel es state = some result) :
-    callsListBounded fuel es state = some result := by
-  simp [callsListBounded, success]
-
 /-- The executable incremental direct-call step cannot exhaust traversal
 fuel. This establishes totality of the bounded adapter, not correspondence
 with HOL's unbounded `compile_inc`. -/

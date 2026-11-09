@@ -42,10 +42,6 @@ end
 @[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "fv1_def"]
 def freeVar (n : Nat) (e : Exp) : Prop := freeVars n [e]
 
-/-- The singleton traversal agrees with the expression helper. -/
-theorem freeVars_singleton (n : Nat) (e : Exp) : freeVars n [e] ↔ freeVarExp n e := by
-  simp [freeVars]
-
 /-- The recursive-group helper has the source predicate's existential form. -/
 theorem freeVarFuns_exists (n count : Nat) (fns : List (Nat × Exp)) :
     freeVarFuns n count fns ↔

@@ -95,39 +95,6 @@ theorem envRelFuel_exists_of_values (fuel : Nat) (g : State) (allowed : Set Nat)
   exact ⟨target, fun offset fns => (envRelFuel_iff fuel g allowed code env target offset fns).mpr
     (related offset fns)⟩
 
-/-- Related numbers have the same value. -/
-theorem valueRelFuel_number_iff (fuel : Nat) (g : State) (allowed : Set Nat)
-    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (n : Int) (target : ClosSem.Value) :
-    ValueRelFuel fuel g allowed code (.number n) target ↔ target = .number n := by
-  constructor
-  · intro related
-    cases related
-    rfl
-  · intro equal
-    subst target
-    exact .number n
-
-/-- The block case preserves its tag and relates the fields elementwise. -/
-theorem valueRelFuel_block_iff (fuel : Nat) (g : State) (allowed : Set Nat)
-    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (tag : Nat)
-    (fields : List ClosSem.Value) (target : ClosSem.Value) :
-    ValueRelFuel fuel g allowed code (.block tag fields) target ↔
-      ∃ fields', target = .block tag fields' ∧ List.Forall₂ (ValueRelFuel fuel g allowed code) fields fields' := by
-  constructor
-  · intro related
-    cases related with
-    | block values => exact ⟨_, rfl, values⟩
-  · rintro ⟨fields', rfl, values⟩
-    exact .block values
-
-/-- Closures without a numbered location cannot satisfy this relation. -/
-theorem valueRelFuel_noLocation (fuel : Nat) (g : State) (allowed : Set Nat)
-    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (xs env : List ClosSem.Value)
-    (arity : Nat) (body : ClosLang.Exp) (target : ClosSem.Value) :
-    ¬ValueRelFuel fuel g allowed code (.closure none xs env arity body) target := by
-  intro related
-  cases related
-
 /-- Extending compiler state, permitted locations and installed code preserves
 the fuel-aware value relation, including nested captured environments. -/
 theorem valueRelFuel_mono {fuel : Nat} {g g' : State} {allowed allowed' : Set Nat}
