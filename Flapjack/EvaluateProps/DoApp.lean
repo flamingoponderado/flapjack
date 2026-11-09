@@ -37,19 +37,13 @@ theorem doAppArith_callFFIRel {σ : Type} (store store' : Store Value)
     (values : List Value) (result : Result Value Value)
     (h : doApp (store, ffi) (.arith action typ) values = some ((store', ffi'), result)) :
     Relation.ReflTransGen callFFIRelHOL ffi ffi' := by
-  cases typ <;> simp only [doApp, doAppBasic] at h
-  case float64T =>
+  simp only [doApp] at h
+  split at h
+  ·
     simp only [Option.map_eq_some_iff] at h
-    obtain ⟨_, _, heq⟩ := h
-    cases heq
-    exact Relation.ReflTransGen.refl
-  all_goals
-    split at h <;> simp_all
-    have heq : ffi' = ffi := by
-      apply doAppNumericCore_ffi store store' ffi ffi' (.arith action _) values result
-      assumption
-    subst ffi'
-    exact Relation.ReflTransGen.refl
+    obtain ⟨result, _, heq⟩ := h
+    cases result <;> cases heq <;> exact Relation.ReflTransGen.refl
+  · simp at h
 
 /-- Flapjack operation-specific helper for the general FFI transition proof. -/
 theorem doAppFromTo_callFFIRel {σ : Type} (store store' : Store Value)

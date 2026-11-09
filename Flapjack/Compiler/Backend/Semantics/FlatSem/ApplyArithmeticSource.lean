@@ -23,7 +23,7 @@ theorem doApp_arithInt_source {C F : Type} (s : State C F)
         | _ => none
       | _ => none := by
   cases op <;> simp [doApp, doAppNumeric, applyNumericProjection,
-    SemanticPrimitivesHOL.doApp, doAppNumericCore]
+    SemanticPrimitivesHOL.doApp_arith_core, doAppNumericCore]
   all_goals repeat' first | split at * | simp_all [valueToFlat]
 
 /-- Eight-bit arithmetic checks both projected operands before applying the
@@ -37,7 +37,7 @@ theorem doApp_arithWord8_source {C F : Type} (s : State C F)
         (wordArith op x y).map fun result => (s, .val (.litv (.word8 result)))
       | _ => none := by
   cases op <;> simp [doApp, doAppNumeric, applyNumericProjection,
-    SemanticPrimitivesHOL.doApp, doAppNumericCore, wordArith]
+    SemanticPrimitivesHOL.doApp_arith_core, doAppNumericCore, wordArith]
   all_goals repeat' first | split at * | simp_all [valueToFlat]
 
 /-- Sixty-four-bit arithmetic checks both projected operands before applying
@@ -51,7 +51,7 @@ theorem doApp_arithWord64_source {C F : Type} (s : State C F)
         (wordArith op x y).map fun result => (s, .val (.litv (.word64 result)))
       | _ => none := by
   cases op <;> simp [doApp, doAppNumeric, applyNumericProjection,
-    SemanticPrimitivesHOL.doApp, doAppNumericCore, wordArith]
+    SemanticPrimitivesHOL.doApp_arith_core, doAppNumericCore, wordArith]
   all_goals repeat' first | split at * | simp_all [valueToFlat]
 
 /-- Floating arithmetic checks operand types and arities before applying the
@@ -77,7 +77,7 @@ theorem doApp_arithFloat64_source {C F : Type} (s : State C F)
       | _, _ => none := by
   generalize valuesEq : vs.map flatToValue = values
   simp only [doApp, doAppNumeric, applyNumericProjection,
-    SemanticPrimitivesHOL.doApp, valuesEq]
+    SemanticPrimitivesHOL.doApp_arith_core, valuesEq]
   clear valuesEq
   cases op <;> simp [floatArith]
   all_goals repeat' first | split at * | simp_all [valueToFlat]
@@ -94,7 +94,7 @@ theorem doApp_arithBool_source {C F : Type} (s : State C F)
       | _, _ => none := by
   generalize valuesEq : vs.map flatToValue = values
   simp only [doApp, doAppNumeric, applyNumericProjection,
-    SemanticPrimitivesHOL.doApp, doAppNumericCore, valuesEq]
+    SemanticPrimitivesHOL.doApp_arith_core, doAppNumericCore, valuesEq]
   clear valuesEq
   cases op <;> simp
   all_goals have distinct : ofString "False" ≠ ofString "True" := by decide
@@ -106,14 +106,16 @@ theorem doApp_arithBool_source {C F : Type} (s : State C F)
 theorem doApp_arithChar_source {C F : Type} (s : State C F)
     (op : Arith) (vs : List Value) :
     doApp s (.src (.arith op .charT)) vs = none := by
-  cases op <;> rfl
+  cases op <;> simp [doApp, doAppNumeric, applyNumericProjection,
+    SemanticPrimitivesHOL.doApp_arith_core, doAppNumericCore]
 
 /-- String arithmetic is not defined by the source primitive dispatcher. -/
 @[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_def"]
 theorem doApp_arithString_source {C F : Type} (s : State C F)
     (op : Arith) (vs : List Value) :
     doApp s (.src (.arith op .strT)) vs = none := by
-  cases op <;> rfl
+  cases op <;> simp [doApp, doAppNumeric, applyNumericProjection,
+    SemanticPrimitivesHOL.doApp_arith_core, doAppNumericCore]
 
 /-- Primitive conversions check the projected input type, preserve the word
 bit patterns and raise the character exception for out-of-range integers. -/

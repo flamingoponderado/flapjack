@@ -60,16 +60,13 @@ theorem doApp_refs_length {σ : Type} (refsFfi : Store Value × HolFfiState σ)
   rcases result with ⟨⟨store', ffi'⟩, result⟩
   cases op with
   | arith action typ =>
-    cases typ <;> simp only [doApp, doAppBasic] at h
-    case float64T =>
+    simp only [doApp] at h
+    split at h
+    ·
       simp only [Option.map_eq_some_iff] at h
-      obtain ⟨_, _, heq⟩ := h
-      cases heq
-      exact Nat.le_refl _
-    all_goals
-      split at h <;> simp_all
-      apply doAppNumericCore_refs store store' ffi ffi' (.arith action _) values result
-      assumption
+      obtain ⟨result, _, heq⟩ := h
+      cases result <;> cases heq <;> exact Nat.le_refl _
+    · simp at h
   | test test typ =>
     simp only [doApp] at h
     repeat' first | split at h | simp_all

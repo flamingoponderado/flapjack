@@ -6,6 +6,7 @@ selector_word8_definition=the_Litv_Word8 (Litv (Word8 (w :word8))) = w
 selector_word64_definition=the_Litv_Word64 (Litv (Word64 (w :word64))) = w
 selector_float64_definition=the_Litv_Float64 (Litv (Float64 (w :word64))) = w
 selector_char_definition=the_Litv_Char (Litv (Char (c :char))) = c
+selector_bool_definition=∀(v :v). the_Boolv v ⇔ v = Boolv T
 char_to_word8_definition=∀(c :char). char_to_word8 c = (n2w (ORD c) :word8)
 word8_to_char_definition=∀(w :word8). word8_to_char w = CHR (w2n w)
 opref_equation=∀(s :v store_v list) (t :'ffi ffi_state) (v :v). do_app (s,t) Opref [v] = SOME ((s ++ [Refv v],t),(Rval (Loc T (LENGTH s)) :(v, v) result))

@@ -29,8 +29,8 @@ theorem doApp_Arith {C F : Type} (genv : GlobalEnv)
       FlatSem.doApp flat (astOpToFlatOp (.arith action typ)) flatVs = some (flatState, flatResult) := by
   obtain ⟨run, stores, nonempty, values, ffi, ok, _, _⟩ := premises
   cases typ with
-  | charT => simp [doApp, doAppNumericCore] at run
-  | strT => simp [doApp, doAppNumericCore] at run
+  | charT => simp [doApp_arith_core, doAppNumericCore] at run
+  | strT => simp [doApp_arith_core, doAppNumericCore] at run
   | intT =>
     let source : SemanticPrimitivesHOL.State F := ⟨0, s1.1, s1.2, 0, 0, none⟩
     have successful : doApp (source.refs, source.ffi) (.arith action .intT) vs ≠ none := by
@@ -121,10 +121,10 @@ theorem doApp_Arith {C F : Type} (genv : GlobalEnv)
     cases action with
     | not =>
       cases vs with
-      | nil => simp [doApp, doAppNumericCore] at run
+      | nil => simp [doApp_arith_core, doAppNumericCore] at run
       | cons operand rest =>
         cases rest with
-        | cons second rest => simp [doApp, doAppNumericCore] at run
+        | cons second rest => simp [doApp_arith_core, doAppNumericCore] at run
         | nil =>
           let source : SemanticPrimitivesHOL.State F := ⟨0, s1.1, s1.2, 0, 0, none⟩
           have successful : doApp (source.refs, source.ffi) (.arith .not .boolT) [operand] ≠ none := by
@@ -143,13 +143,13 @@ theorem doApp_Arith {C F : Type} (genv : GlobalEnv)
             · simpa [refs] using stores
             · simpa [refs] using ffi
             · simp [astOpToFlatOp, FlatSem.doApp, flatRun]
-    | _ => simp [doApp, doAppNumericCore] at run
+    | _ => simp [doApp_arith_core, doAppNumericCore] at run
   | float64T =>
     let source : SemanticPrimitivesHOL.State F := ⟨0, s1.1, s1.2, 0, 0, none⟩
     have successful : doApp (source.refs, source.ffi) (.arith action .float64T) vs ≠ none := by
       simp [source, run]
     cases vs with
-    | nil => cases action <;> simp [doApp, floatArith] at run
+    | nil => cases action <;> simp [doApp_arith_core, floatArith] at run
     | cons first rest =>
       cases rest with
       | nil =>
@@ -237,7 +237,7 @@ theorem doApp_Arith {C F : Type} (genv : GlobalEnv)
                         · simpa [refs] using stores
                         · exact nextFfi.trans ffi
                         · simp [astOpToFlatOp, FlatSem.doApp, targetEq]
-            | _ => simp [doApp, floatArith] at run
-          | cons fourth rest => cases action <;> simp [doApp, floatArith] at run
+            | _ => simp [doApp_arith_core, floatArith] at run
+          | cons fourth rest => cases action <;> simp [doApp_arith_core, floatArith] at run
 
 end Flapjack.Compiler.Backend.SourceToFlat

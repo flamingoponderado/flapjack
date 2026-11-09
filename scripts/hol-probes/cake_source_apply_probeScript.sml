@@ -13,6 +13,7 @@ val _ = show_thm "selector_word8_definition=" semanticPrimitivesTheory.the_Litv_
 val _ = show_thm "selector_word64_definition=" semanticPrimitivesTheory.the_Litv_Word64_def;
 val _ = show_thm "selector_float64_definition=" semanticPrimitivesTheory.the_Litv_Float64_def;
 val _ = show_thm "selector_char_definition=" semanticPrimitivesTheory.the_Litv_Char_def;
+val _ = show_thm "selector_bool_definition=" semanticPrimitivesTheory.the_Boolv_def;
 val _ = show_thm "char_to_word8_definition=" mlstringTheory.char_to_word8_def;
 val _ = show_thm "word8_to_char_definition=" mlstringTheory.word8_to_char_def;
 val opref_equation = prove (

@@ -6,8 +6,11 @@ import Flapjack.SemanticPrimitivesHOL.PatternMatch
 import Flapjack.SemanticPrimitivesHOL.Operations
 import Flapjack.SemanticPrimitivesHOL.Conversions
 import Flapjack.SemanticPrimitivesHOL.NumericConversion
+import Flapjack.SemanticPrimitivesHOL.Arithmetic
 import Flapjack.SemanticPrimitivesProps.Conversion
+import Flapjack.SemanticPrimitivesProps.Arithmetic
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveConversion
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ArithmeticResults
 import Flapjack.SemanticPrimitivesHOL.Thunk
 import Flapjack.EvaluateHOL
 import Flapjack.EvaluateHOL.Definition

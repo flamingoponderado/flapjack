@@ -37,8 +37,9 @@ private theorem arithmeticResult_transport {F : Type} (es : EvalOracleState) (st
     xs.all (checkType typ) = true ∧ refs = state.1 ∧ ffi = state.2 ∧
     doApp target (.arith action typ) xs = some (target, result) ∧
     resultRel (ValueRel es) (ValueRel es) result result := by
+  rw [doApp_arith_core] at run ⊢
   cases typ <;> cases action <;>
-    simp only [doApp, doAppNumericCore, floatArith] at run ⊢ <;>
+    simp only [doAppNumericCore, floatArith, Option.getD_some] at run ⊢ <;>
     repeat' first | split at run | contradiction
   all_goals simp_all [wordArith, checkType]
   all_goals obtain ⟨_, rfl⟩ := run

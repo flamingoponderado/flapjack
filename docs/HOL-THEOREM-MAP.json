@@ -119031,7 +119031,7 @@
   "lean_name": "doApp",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared every typed do_app_definition case in cake_source_apply_probe.out with the assembled numeric and basic dispatchers, including argument shapes, guarded arithmetic and conversions, safe and unsafe bounds, byte and array copies, list encodings, Eval and Opapp fallback, thunk operations, and FFI return and final cases. The FromTo branch now executes the reviewed doConversion under the HOL type guard; doApp_fromTo_core proves agreement with the computable dispatcher. HOL characters and word8s use the reviewed identical eight-bit carrier; FFI state remains independently polymorphic. Independently source-reviewed after integration. The original proof and Lean source equations cover reference allocation, fixed array allocation and GC configuration. Floating operations inherit the rational-cut assumption in SOUNDNESS item 8; these checks do not prove cross-language correspondence. Inherits the reals_as_rational_cuts assumption through its dependencies."
+  "reviewer": "Compared every typed do_app_definition case in cake_source_apply_probe.out with the assembled numeric and basic dispatchers, including argument shapes, guarded arithmetic and conversions, safe and unsafe bounds, byte and array copies, list encodings, Eval and Opapp fallback, thunk operations, and FFI return and final cases. The Arith and FromTo branches now execute the reviewed doArith and doConversion under their HOL type guards; doApp_arith_core and doApp_fromTo_core prove agreement with the existing dispatchers. HOL characters and word8s use the reviewed identical eight-bit carrier; FFI state remains independently polymorphic. Independently source-reviewed after integration. The original proof and Lean source equations cover reference allocation, fixed array allocation and GC configuration. Floating operations inherit the rational-cut assumption in SOUNDNESS item 8; these checks do not prove cross-language correspondence. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -130687,6 +130687,58 @@
     "tys"
   ],
   "reviewer": "Compared typed HOL proof replay conversion_inr_typed in source_to_flat_init_probe.out, including binder order, grouped premise, conclusion and canonical GlobalEnv finite maps. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+  "hol_name": "the_Boolv_def",
+  "lean_path": "Flapjack/SemanticPrimitivesHOL/Arithmetic.lean",
+  "lean_name": "theBoolv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed selector_bool_definition in cake_source_apply_probe.out, including the complete Boolean equality. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+  "hol_name": "do_arith_def",
+  "lean_path": "Flapjack/SemanticPrimitivesHOL/Arithmetic.lean",
+  "lean_name": "doArith",
+  "statement_status": "reviewed_reals_as_rational_cuts",
+  "reals_as_rational_cuts": true,
+  "reviewer": "Compared typed do_arith_definition in cake_source_apply_probe.out, including unchecked selectors, all operation clauses and floating-point FMA order. Direct real renderings use reals_as_rational_cuts, documented in SOUNDNESS item 8. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",
+  "hol_name": "do_arith_check_type",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/Arithmetic.lean",
+  "lean_name": "doArith_checkType",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared semantic_do_arith_check_type_typed in flat_do_app_preservation_probe.out, including all free binders and the successful-result premise. Inherits reals_as_rational_cuts through doArith. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "do_arith_INL",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ArithmeticResults.lean",
+  "lean_name": "doArith_inl",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "c",
+    "tys"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed HOL proof replay arith_inl_typed in source_to_flat_init_probe.out, including binders, grouped premises, conclusion and canonical GlobalEnv finite maps. Inherits reals_as_rational_cuts through doArith. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "do_arith_INR",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ArithmeticResults.lean",
+  "lean_name": "doArith_inr",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "c",
+    "tys"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared typed HOL proof replay arith_inr_typed in source_to_flat_init_probe.out, including binders, grouped premises, conclusion and canonical GlobalEnv finite maps. Inherits reals_as_rational_cuts through doArith. Independently source-reviewed."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
