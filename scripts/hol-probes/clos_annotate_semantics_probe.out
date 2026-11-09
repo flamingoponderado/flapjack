@@ -65,3 +65,5 @@ env_ok_EXTEND_local_typed=LIST_REL v_rel (env1 :v list) (env2 :v list) ∧ (l1 :
 list_to_v_v_rel_typed=∀(xs :v list) (ys :v list). LIST_REL v_rel xs ys ⇒ v_rel (list_to_v xs) (list_to_v ys)
 v_rel_Number_local_typed=(v_rel (x :v) (Number (i :int)) ⇔ x = Number i) ∧ (v_rel (Number i) x ⇔ x = Number i) ∧ (v_rel (ByteVector (ws :word8 list)) x ⇔ x = ByteVector ws) ∧ (v_rel x (Word64 (w :word64) :v) ⇔ x = (Word64 w :v)) ∧ (v_rel (Word64 w :v) x ⇔ x = (Word64 w :v))
 v_to_list_local_typed=∀(h :v) (h' :v). v_rel h h' ⇒ v_to_list h = (NONE :v list option) ∧ v_to_list h' = (NONE :v list option) ∨ ∃(x :v list) (x' :v list). v_to_list h = SOME x ∧ v_to_list h' = SOME x' ∧ LIST_REL v_rel x x'
+v_to_bytes_typed=v_rel (x :v) (y :v) ⇒ v_to_bytes x = v_to_bytes y
+v_to_words_typed=v_rel (x :v) (y :v) ⇒ v_to_words x = v_to_words y

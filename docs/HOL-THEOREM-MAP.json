@@ -152,6 +152,20 @@
   "reviewer": "Compared FOLDR_mk_Union_local_typed, replayed with the original HOL proof: the list payload type is polymorphic, and the pair fold, seed, projections, append and variable-set fold have the same order and no premises."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "v_to_bytes",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/Install.lean", "lean_name": "valueToBytes_related",
+  "statement_status": "reviewed_nested_list_rel_as_mutual",
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "reviewer": "Source comparison with v_to_bytes_typed: the unrestricted related values imply equality of the reviewed byte decoder results, including failure. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "v_to_words",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/Install.lean", "lean_name": "valueToWords_related",
+  "statement_status": "reviewed_nested_list_rel_as_mutual",
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "reviewer": "Source comparison with v_to_words_typed: the unrestricted related values imply equality of the reviewed word decoder results, including failure. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "v_to_list",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/BlockLists.lean", "lean_name": "valueToList_relation",
   "statement_status": "reviewed_nested_list_rel_as_mutual",

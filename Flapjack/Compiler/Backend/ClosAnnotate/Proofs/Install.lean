@@ -34,39 +34,73 @@ theorem related_word_list (words : List (BitVec 64)) (values : List Value)
       simp only [List.map_cons, List.cons.injEq, true_and]
       exact ih _ tail
 
-/-- A valid byte payload decodes identically in a related value. -/
-theorem valueToBytes_related (value nextValue : Value) (bytes : List (BitVec 8))
-    (related : ValueRel value nextValue) (decoded : valueToBytes value = some bytes) :
-    valueToBytes nextValue = some bytes := by
-  have source := (valueToBytes_eq_some value bytes).mp decoded
-  have relation := valueToList_related value nextValue related
-  cases target : valueToList nextValue with
-  | none => simp [source, target, optionRel] at relation
-  | some values =>
-    have listRel : List.Forall₂ ValueRel (bytes.map (fun b => .number b.toNat)) values := by
-      simpa [source, target, optionRel] using relation
-    have same : values = bytes.map (fun b => .number b.toNat) := by
-      have listRel' : List.Forall₂ ValueRel
-          ((bytes.map (fun b => (b.toNat : Int))).map Value.number) values := by
-        simpa [List.map_map] using listRel
-      simpa [List.map_map, Function.comp_def] using related_number_list (bytes.map (fun b => (b.toNat : Int))) values listRel'
-    apply (valueToBytes_eq_some nextValue bytes).mpr
-    simpa [same] using target
+private theorem related_number_list_right (numbers : List Int) (values : List Value)
+    (related : List.Forall₂ ValueRel values (numbers.map Value.number)) :
+    values = numbers.map Value.number := by
+  induction numbers generalizing values with
+  | nil => cases related; rfl
+  | cons number numbers ih =>
+    cases related with
+    | cons head tail =>
+      cases head
+      simp only [List.map_cons, List.cons.injEq, true_and]
+      exact ih _ tail
 
-/-- A valid word payload decodes identically in a related value. -/
-theorem valueToWords_related (value nextValue : Value) (words : List (BitVec 64))
-    (related : ValueRel value nextValue) (decoded : valueToWords value = some words) :
-    valueToWords nextValue = some words := by
-  have source := (valueToWords_eq_some value words).mp decoded
-  have relation := valueToList_related value nextValue related
-  cases target : valueToList nextValue with
-  | none => simp [source, target, optionRel] at relation
-  | some values =>
-    have listRel : List.Forall₂ ValueRel (words.map Value.word64) values := by
-      simpa [source, target, optionRel] using relation
-    have same := related_word_list words values listRel
-    apply (valueToWords_eq_some nextValue words).mpr
-    simpa [same] using target
+private theorem related_word_list_right (words : List (BitVec 64)) (values : List Value)
+    (related : List.Forall₂ ValueRel values (words.map Value.word64)) :
+    values = words.map Value.word64 := by
+  induction words generalizing values with
+  | nil => cases related; rfl
+  | cons word words ih =>
+    cases related with
+    | cons head tail =>
+      cases head
+      simp only [List.map_cons, List.cons.injEq, true_and]
+      exact ih _ tail
+
+/-- Related values have equal byte-decoding results, including failure. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_to_bytes"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem valueToBytes_related (value nextValue : Value) (related : ValueRel value nextValue) :
+    valueToBytes value = valueToBytes nextValue := by
+  rcases valueToList_relation value nextValue related with ⟨left, right⟩ | ⟨xs, ys, left, right, lists⟩
+  · cases l : valueToBytes value <;> cases r : valueToBytes nextValue <;>
+      simp_all [valueToBytes_eq_some]
+  · apply Option.ext
+    intro bytes
+    rw [valueToBytes_eq_some, valueToBytes_eq_some, left, right]
+    simp only [Option.some.injEq]
+    constructor
+    · intro eq
+      subst xs
+      have listRel : List.Forall₂ ValueRel ((bytes.map (fun b => (b.toNat : Int))).map Value.number) ys := by
+        simpa [List.map_map] using lists
+      simpa [List.map_map, Function.comp_def] using related_number_list (bytes.map (fun b => (b.toNat : Int))) ys listRel
+    · intro eq
+      subst ys
+      have listRel : List.Forall₂ ValueRel xs ((bytes.map (fun b => (b.toNat : Int))).map Value.number) := by
+        simpa [List.map_map] using lists
+      simpa [List.map_map, Function.comp_def] using related_number_list_right (bytes.map (fun b => (b.toNat : Int))) xs listRel
+
+/-- Related values have equal word-decoding results, including failure. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_to_words"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem valueToWords_related (value nextValue : Value) (related : ValueRel value nextValue) :
+    valueToWords value = valueToWords nextValue := by
+  rcases valueToList_relation value nextValue related with ⟨left, right⟩ | ⟨xs, ys, left, right, lists⟩
+  · cases l : valueToWords value <;> cases r : valueToWords nextValue <;>
+      simp_all [valueToWords_eq_some]
+  · apply Option.ext
+    intro words
+    rw [valueToWords_eq_some, valueToWords_eq_some, left, right]
+    simp only [Option.some.injEq]
+    constructor
+    · intro eq
+      subst xs
+      exact related_word_list words ys lists
+    · intro eq
+      subst ys
+      exact related_word_list_right words xs lists
 
 /-- Updating a pair of related code lookups with corresponding annotated
 entries preserves their relation, including repeated keys. -/
@@ -136,8 +170,10 @@ theorem doInstall_related_nonType {C F : Type} (source target : State C F)
     | cons wordRel tail =>
       cases tail
       rename_i nextByte nextWord
-      have nextBytes := valueToBytes_related byteValue nextByte bytes byteRel bytesRun
-      have nextWords := valueToWords_related wordValue nextWord words wordRel wordsRun
+      have nextBytes : valueToBytes nextByte = some bytes := by
+        rw [← valueToBytes_related byteValue nextByte byteRel, bytesRun]
+      have nextWords : valueToWords nextWord = some words := by
+        rw [← valueToWords_related wordValue nextWord wordRel, wordsRun]
       have targetOracle : target.compileOracle 0 = (config, annotateList 0 expressions, compile auxiliary) := by
         rw [states.2.2.2.1]
         simp [oracleRun, pureCo, compileInc]

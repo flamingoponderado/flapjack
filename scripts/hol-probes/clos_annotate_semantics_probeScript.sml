@@ -234,3 +234,5 @@ val v_to_list_replay = prove (
   >> CCONTR_TAC >> RES_TAC >> full_simp_tac(srw_ss())[]
   >> RES_TAC >> full_simp_tac(srw_ss())[] >> SRW_TAC [] [] >> fs[]);
 val _ = show "v_to_list_local_typed=" v_to_list_replay;
+val _ = show "v_to_bytes_typed=" clos_annotateProofTheory.v_to_bytes;
+val _ = show "v_to_words_typed=" clos_annotateProofTheory.v_to_words;
