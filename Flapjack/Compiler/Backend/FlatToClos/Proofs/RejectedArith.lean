@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.BooleanExpressions
+import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyArithmeticSource
 
 /-! Unsupported arithmetic cases in flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -110,8 +111,7 @@ theorem floatArith_rejects {C F : Type} (state : FlatSem.State C F) (action : Ar
       action ≠ .sub ∧ action ≠ .mul ∧ action ≠ .div ∧ action ≠ .fma)
     (args : List FlatSem.Value) :
     (FlatSem.applyResult state (.src (.arith action .float64T)) args).2 = .err (.abort .typeError) := by
-  cases action <;> simp_all [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
-    FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp_arith_core, SemanticPrimitivesHOL.floatArith]
+  cases action <;> simp_all [FlatSem.applyResult, FlatSem.doApp_arithFloat64_source]
 
 /-- Unsupported floating-point arithmetic preserves argument errors. -/
 theorem evaluate_rejectedFloatArith {C F : Type} (env : FlatSem.Environment FlatSem.Value)

@@ -1,7 +1,6 @@
 import Flapjack.SemanticPrimitivesHOL.Arithmetic
-import Flapjack.SemanticPrimitivesHOL.FloatArithmetic
 
-/-! Agreement of the computable arithmetic dispatchers with HOL's guard. -/
+/-! Agreement of computable arithmetic with HOL's guard. -/
 namespace Flapjack.SemanticPrimitivesHOL
 open Flapjack.AstHOL Flapjack.Basis.Pure.MlString
 
@@ -113,45 +112,6 @@ private theorem word64Case {σ : Type} (state : Store Value × HolFfiState σ)
     cases action <;> simp only [doAppNumericCore]
     all_goals repeat' first | (split <;> simp_all [checkType]) | contradiction
 
-private theorem floatRoundtrip (values : List Value) (checked : values.all (checkType .float64T) = true) :
-    values.map (fun v => Value.litv (.float64 (theLitvFloat64 v))) = values := by
-  induction values with
-  | nil => rfl
-  | cons value rest ih =>
-    simp only [List.all_cons, Bool.and_eq_true] at checked
-    cases value <;> simp_all [checkType]
-    case litv lit => cases lit <;> simp_all [theLitvFloat64]
-
-private theorem floatCase {σ : Type} (state : Store Value × HolFfiState σ)
-    (action : Arith) (values : List Value) :
-    (if values.all (checkType .float64T) then
-      (doArith action .float64T values).map (fun result =>
-        match result with
-        | .inl error => (state, (Result.err (.raise error) : Result Value Value))
-        | .inr value => (state, (Result.val value : Result Value Value)))
-      else none) = (floatArith action values).map (fun result => (state, (Result.val result : Result Value Value))) := by
-  by_cases checked : values.all (checkType .float64T) = true
-  · let floats := values.map theLitvFloat64
-    have equal : values = floats.map (fun w => Value.litv (.float64 w)) := by
-      simpa [floats, List.map_map, Function.comp_def] using (floatRoundtrip values checked).symm
-    rw [equal]
-    cases action <;> cases floats with
-      | nil => simp [doArith, floatArith]
-      | cons first rest =>
-        cases rest with
-        | nil => simp [doArith, floatArith, checkType, theLitvFloat64, fpSemFpUopComp]
-        | cons second rest =>
-          cases rest with
-          | nil => simp [doArith, floatArith, checkType, theLitvFloat64, fpSemFpBopComp]
-          | cons third rest =>
-            cases rest <;> simp [doArith, floatArith, checkType, theLitvFloat64, fpSemFpfma]
-  · have unchecked : values.all (checkType .float64T) = false := by
-      cases h : values.all (checkType .float64T) <;> simp_all
-    simp only [unchecked, Bool.false_eq_true, if_false]
-    cases action <;> simp only [floatArith]
-    all_goals repeat' first | (split <;> simp_all [checkType]) | contradiction
-    all_goals simp_all
-
 private theorem boolCase {σ : Type} (state : Store Value × HolFfiState σ)
     (action : Arith) (values : List Value) :
     (if values.all (checkType .boolT) then
@@ -185,9 +145,9 @@ private theorem boolCase {σ : Type} (state : Store Value × HolFfiState σ)
                   simp [checkType, theBoolv, boolValue, boolTypeNum]
         | _ => simp [checkType]
 
-/-- The computable arithmetic dispatchers agree with the guarded HOL
-arithmetic operation for every argument list. This Flapjack correspondence
-lemma has no separate HOL declaration. -/
+/-- The computable non-float cases agree with guarded HOL arithmetic; the
+float case retains the HOL expression. This Flapjack correspondence lemma
+has no separate HOL declaration. -/
 theorem doAppArithCore {σ : Type} (state : Store Value × HolFfiState σ)
     (action : Arith) (typ : PrimType) (values : List Value) :
     (if values.all (checkType typ) then
@@ -197,7 +157,13 @@ theorem doAppArithCore {σ : Type} (state : Store Value × HolFfiState σ)
         | .inr value => (state, .val value))
       else none) =
       (match typ with
-       | .float64T => (floatArith action values).map (fun result => (state, .val result))
+       | .float64T =>
+         if values.all (checkType .float64T) then
+           (doArith action .float64T values).map (fun result =>
+             match result with
+             | .inl error => (state, .err (.raise error))
+             | .inr value => (state, .val value))
+         else none
        | _ => (doAppNumericCore state (.arith action typ) values).getD none) := by
   cases typ with
   | boolT => exact boolCase state action values
@@ -205,7 +171,7 @@ theorem doAppArithCore {σ : Type} (state : Store Value × HolFfiState σ)
   | wordT width => cases width with
     | w8 => exact word8Case state action values
     | w64 => exact word64Case state action values
-  | float64T => exact floatCase state action values
+  | float64T => rfl
   | charT => cases action <;> simp [doArith, doAppNumericCore]
   | strT => cases action <;> simp [doArith, doAppNumericCore]
 

@@ -221,8 +221,8 @@ theorem floatUnary_operand {F : Type} (source : SemanticPrimitivesHOL.State F)
   | litv lit =>
     cases lit with
     | float64 bits => exact ⟨bits, rfl⟩
-    | _ => cases action <;> simp [doApp_arith_core, floatArith] at successful
-  | _ => cases action <;> simp [doApp_arith_core, floatArith] at successful
+    | _ => cases action <;> simp [doApp_arith_core, checkType] at successful
+  | _ => cases action <;> simp [doApp_arith_core, checkType] at successful
 
 /-- Unary floating-point operations agree on literal operands. Their floating
 point functions retain the assumptions of the source evaluator. -/
@@ -236,7 +236,7 @@ theorem floatUnary_related {C F : Type} (genv : GlobalEnv)
         refs = source.refs ∧ ffi = source.ffi ∧ flatNext = flat ∧
           ResultRel ValueRel genv sourceResult flatResult
     | _, _ => False := by
-  cases action <;> simp [doApp_arith_core, floatArith, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
+  cases action <;> simp [doApp_arith_core, doArith, theLitvFloat64, checkType, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
     FlatSem.flatToValue, FlatSem.valueToFlat]
   all_goals exact ResultRel.value (.literal genv _)
 
@@ -254,10 +254,10 @@ theorem floatBinary_operands {F : Type} (source : SemanticPrimitivesHOL.State F)
       | litv secondLit =>
         cases secondLit with
         | float64 right => exact ⟨left, right, rfl⟩
-        | _ => cases action <;> simp [doApp_arith_core, floatArith] at successful
-      | _ => cases action <;> simp [doApp_arith_core, floatArith] at successful
-    | _ => cases action <;> simp [doApp_arith_core, floatArith] at successful
-  | _ => cases action <;> simp [doApp_arith_core, floatArith] at successful
+        | _ => cases action <;> simp [doApp_arith_core, checkType] at successful
+      | _ => cases action <;> simp [doApp_arith_core, checkType] at successful
+    | _ => cases action <;> simp [doApp_arith_core, checkType] at successful
+  | _ => cases action <;> simp [doApp_arith_core, checkType] at successful
 
 /-- Binary floating-point primitives preserve the factored value relation. -/
 theorem floatBinary_related {C F : Type} (genv : GlobalEnv)
@@ -272,7 +272,7 @@ theorem floatBinary_related {C F : Type} (genv : GlobalEnv)
         refs = source.refs ∧ ffi = source.ffi ∧ flatNext = flat ∧
           ResultRel ValueRel genv sourceResult flatResult
     | _, _ => False := by
-  cases action <;> simp [doApp_arith_core, floatArith, FlatSem.doAppNumeric,
+  cases action <;> simp [doApp_arith_core, doArith, theLitvFloat64, checkType, FlatSem.doAppNumeric,
     FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat]
   all_goals exact ResultRel.value (.literal genv _)
 
@@ -293,12 +293,12 @@ theorem floatFma_operands {F : Type} (source : SemanticPrimitivesHOL.State F)
           | litv thirdLit =>
             cases thirdLit with
             | float64 c => exact ⟨a, b, c, rfl, rfl, rfl⟩
-            | _ => simp [doApp_arith_core, floatArith] at successful
-          | _ => simp [doApp_arith_core, floatArith] at successful
-        | _ => simp [doApp_arith_core, floatArith] at successful
-      | _ => simp [doApp_arith_core, floatArith] at successful
-    | _ => simp [doApp_arith_core, floatArith] at successful
-  | _ => simp [doApp_arith_core, floatArith] at successful
+            | _ => simp [doApp_arith_core, checkType] at successful
+          | _ => simp [doApp_arith_core, checkType] at successful
+        | _ => simp [doApp_arith_core, checkType] at successful
+      | _ => simp [doApp_arith_core, checkType] at successful
+    | _ => simp [doApp_arith_core, checkType] at successful
+  | _ => simp [doApp_arith_core, checkType] at successful
 
 /-- Fused multiply-add preserves literal values in the factored relation. -/
 theorem floatFma_related {C F : Type} (genv : GlobalEnv)
@@ -313,7 +313,7 @@ theorem floatFma_related {C F : Type} (genv : GlobalEnv)
         refs = source.refs ∧ ffi = source.ffi ∧ flatNext = flat ∧
           ResultRel ValueRel genv sourceResult flatResult
     | _, _ => False := by
-  simp [doApp_arith_core, floatArith, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
+  simp [doApp_arith_core, doArith, theLitvFloat64, checkType, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
     FlatSem.flatToValue, FlatSem.valueToFlat]
   exact ResultRel.value (.literal genv _)
 

@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+import Flapjack.SemanticPrimitivesProps.Arithmetic
 
 /-! Source-shaped numeric application cases for the flat evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatSem
@@ -79,8 +80,31 @@ theorem doApp_arithFloat64_source {C F : Type} (s : State C F)
   simp only [doApp, doAppNumeric, applyNumericProjection,
     SemanticPrimitivesHOL.doApp_arith_core, valuesEq]
   clear valuesEq
-  cases op <;> simp [floatArith]
-  all_goals repeat' first | split at * | simp_all [valueToFlat]
+  by_cases checked : values.all (SemanticPrimitivesHOL.checkType .float64T) = true
+  · let bits := values.map theLitvFloat64
+    have equal : values = bits.map (fun w => SemanticPrimitivesHOL.Value.litv (.float64 w)) := by
+      simpa [bits, List.map_map, Function.comp_def] using
+        (Flapjack.SemanticPrimitivesProps.checkedFloatValues_roundtrip values checked).symm
+    rw [equal]
+    cases op <;> cases bits with
+      | nil => simp [doArith]
+      | cons first rest =>
+        cases rest with
+        | nil => simp [doArith, SemanticPrimitivesHOL.checkType, theLitvFloat64, valueToFlat,
+            fpSemFpUopComp]
+        | cons second rest =>
+          cases rest with
+          | nil => simp [doArith, SemanticPrimitivesHOL.checkType, theLitvFloat64, valueToFlat,
+              fpSemFpBopComp]
+          | cons third rest =>
+            cases rest <;> simp [doArith, SemanticPrimitivesHOL.checkType, theLitvFloat64, valueToFlat,
+              fpSemFpfma]
+  · have unchecked : values.all (SemanticPrimitivesHOL.checkType .float64T) = false := by
+      cases h : values.all (SemanticPrimitivesHOL.checkType .float64T) <;> simp_all
+    simp only [unchecked, Bool.false_eq_true, if_false]
+    cases op
+    all_goals repeat' first | (split <;> simp_all [SemanticPrimitivesHOL.checkType]) | contradiction
+    all_goals simp_all
 
 /-- Boolean negation accepts only the two source Boolean constructors. -/
 @[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_def"]

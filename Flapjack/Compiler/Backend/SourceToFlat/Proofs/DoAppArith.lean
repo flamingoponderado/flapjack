@@ -149,7 +149,7 @@ theorem doApp_Arith {C F : Type} (genv : GlobalEnv)
     have successful : doApp (source.refs, source.ffi) (.arith action .float64T) vs ≠ none := by
       simp [source, run]
     cases vs with
-    | nil => cases action <;> simp [doApp_arith_core, floatArith] at run
+    | nil => cases action <;> simp [doApp_arith_core, doArith] at run
     | cons first rest =>
       cases rest with
       | nil =>
@@ -237,7 +237,7 @@ theorem doApp_Arith {C F : Type} (genv : GlobalEnv)
                         · simpa [refs] using stores
                         · exact nextFfi.trans ffi
                         · simp [astOpToFlatOp, FlatSem.doApp, targetEq]
-            | _ => simp [doApp_arith_core, floatArith] at run
-          | cons fourth rest => cases action <;> simp [doApp_arith_core, floatArith] at run
+            | _ => simp [doApp_arith_core, doArith, theLitvFloat64, checkType] at run
+          | cons fourth rest => cases action <;> simp [doApp_arith_core, doArith, theLitvFloat64, checkType] at run
 
 end Flapjack.Compiler.Backend.SourceToFlat

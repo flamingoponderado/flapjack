@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.SourceEval.Proofs.SimulationPrerequisites
 import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
 import Flapjack.SemanticPrimitivesProps.ResultRelation
+import Flapjack.SemanticPrimitivesProps.Arithmetic
 
 /-! Arithmetic operand preservation for source evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
@@ -37,15 +38,32 @@ private theorem arithmeticResult_transport {F : Type} (es : EvalOracleState) (st
     xs.all (checkType typ) = true ∧ refs = state.1 ∧ ffi = state.2 ∧
     doApp target (.arith action typ) xs = some (target, result) ∧
     resultRel (ValueRel es) (ValueRel es) result result := by
-  rw [doApp_arith_core] at run ⊢
-  cases typ <;> cases action <;>
-    simp only [doAppNumericCore, floatArith, Option.getD_some] at run ⊢ <;>
-    repeat' first | split at run | contradiction
-  all_goals simp_all [wordArith, checkType]
-  all_goals obtain ⟨_, rfl⟩ := run
-  all_goals simp only [resultRel, excRel]
-  all_goals apply (valueRel_concrete es).1
-  all_goals simp [concreteValue, concreteValues, divExnV, boolValue]
+  simp only [doApp] at run
+  split at run
+  · rename_i checked
+    simp only [Option.map_eq_some_iff] at run
+    obtain ⟨out, evaluated, equal⟩ := run
+    cases out with
+    | inl exn =>
+      have exception := doArith_exception action typ xs exn evaluated
+      subst exn
+      simp only [Prod.mk.injEq] at equal
+      obtain ⟨same, rfl⟩ := equal
+      cases same
+      refine ⟨checked, rfl, rfl, ?_, ?_⟩
+      · simp [doApp, checked, evaluated]
+      · simp only [resultRel, excRel]
+        exact (valueRel_concrete es).1 divExnV (by simp [concreteValue, concreteValues, divExnV])
+    | inr value =>
+      have valueType := doArith_checkType action typ xs value evaluated
+      simp only [Prod.mk.injEq] at equal
+      obtain ⟨same, rfl⟩ := equal
+      cases same
+      refine ⟨checked, rfl, rfl, ?_, ?_⟩
+      · simp [doApp, checked, evaluated]
+      · simp only [resultRel]
+        exact (valueRel_concrete es).1 value (checkTypeConcrete typ value valueType)
+  · simp at run
 
 /-- A successful arithmetic application transports to related operands and a
 new state while preserving the result relation. HOL proves this step inside

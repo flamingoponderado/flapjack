@@ -1,16 +1,14 @@
-import Flapjack.SemanticPrimitivesHOL.FloatArithmetic
 import Flapjack.SemanticPrimitivesHOL.ConversionCorrespondence
 import Flapjack.SemanticPrimitivesHOL.ArithmeticCorrespondence
 
-/-! Source primitive floating arithmetic and the assembled application dispatcher. -/
+/-! Source primitive application dispatcher. -/
 namespace Flapjack.SemanticPrimitivesHOL
 open Flapjack.AstHOL Flapjack.Basis.Pure.MlString
 
 /-- Source primitive application. The `doAppBasic` and numeric cases together
 cover the original dispatch; `opapp` and `eval` are handled by the evaluator
 and return `none` here, as in HOL. Floating-point behavior inherits the
-rational-cut assumption used by
-`fpSemFpUopComp`, `fpSemFpBopComp`, `fpSemFpfma`, and `doTest`. -/
+rational-cut assumption used by `doArith` and `doTest`. -/
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "do_app_def"]
 noncomputable def doApp {σ : Type} (state : Store Value × HolFfiState σ) (op : Op)
     (values : List Value) : Option (BasicAppResult σ) :=
@@ -40,13 +38,20 @@ noncomputable def doApp {σ : Type} (state : Store Value × HolFfiState σ) (op 
     | some result => result
     | none => (doAppBasic state op values).getD none
 
-/-- The guarded HOL arithmetic agrees with the existing dispatchers. This
-Flapjack correspondence lemma has no separate HOL declaration. -/
+/-- Guarded HOL arithmetic agrees with the computable non-float dispatcher;
+the float case retains the HOL expression. This Flapjack correspondence lemma
+has no separate HOL declaration. -/
 theorem doApp_arith_core {σ : Type} (state : Store Value × HolFfiState σ)
     (action : Arith) (typ : PrimType) (values : List Value) :
     doApp state (.arith action typ) values =
       (match typ with
-       | .float64T => (floatArith action values).map (fun result => (state, .val result))
+       | .float64T =>
+         if values.all (checkType .float64T) then
+           (doArith action .float64T values).map (fun result =>
+             match result with
+             | .inl error => (state, .err (.raise error))
+             | .inr value => (state, .val value))
+         else none
        | _ => (doAppNumericCore state (.arith action typ) values).getD none) := by
   exact doAppArithCore state action typ values
 

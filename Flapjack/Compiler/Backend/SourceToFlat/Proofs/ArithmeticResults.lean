@@ -23,11 +23,7 @@ theorem doArith_inl (typ : PrimType) (values : List SemanticPrimitivesHOL.Value)
       ∃ e, doArith action typ (flatValues.map FlatSem.flatToValue) = some (.inl e) := by
   obtain ⟨checked, ok, related, evaluated⟩ := premises
   have equal := checked_flatToValue_list genv typ values flatValues ⟨checked, related, ok⟩
-  have exception : exn = divExnV := by
-    cases typ <;> try (rename_i width; cases width)
-    all_goals cases action <;> simp [doArith, wordArith] at evaluated
-    all_goals repeat' first | split at evaluated | contradiction
-    all_goals simp_all
+  have exception := Flapjack.SemanticPrimitivesProps.doArith_exception action typ values exn evaluated
   rw [equal]
   exact ⟨exception, checked, exn, evaluated⟩
 
