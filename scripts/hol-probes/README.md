@@ -248,6 +248,13 @@ the related list-encoding, byte/word decoding, compiler list-property and state-
 evaluation theorem with inferred types. These captures support review;
 the factored Lean mutual relation records its representation with a qualifier.
 
+`clos_annotate_shift_replay_probe.out` captures the typed local `shift_correct`
+theorem after replaying the original proof. Its driver extracts the pinned
+source through that theorem's `QED` and builds the extract in a temporary HOL
+theory; it does not change the CakeML or HOL checkouts. Regenerate it with
+`HOL_PROBE_ONLY=clos_annotate_shift_replay_probeScript.sml` and a prebuilt
+`CAKEML` oracle.
+
 `db_vars_definitions_probe.out` captures the typed De Bruijn variable-set
 operations used by closure annotation, including sparse-tree traversal order.
 
