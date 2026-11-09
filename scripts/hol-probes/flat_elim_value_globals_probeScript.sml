@@ -9,6 +9,11 @@ fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print
 val _ = show_thm "pure_every_eta=" flat_elimProofTheory.is_pure_EVERY_aconv;
 val _ = show_thm "value_globals=" flat_elimProofTheory.find_v_globals_def;
 val _ = show_thm "refs_globals=" flat_elimProofTheory.find_refs_globals_def;
+val _ = show_thm "lookups_append=" flat_elimProofTheory.find_lookupsL_APPEND;
+val _ = show_thm "value_globals_append=" flat_elimProofTheory.find_v_globalsL_APPEND;
+val _ = show_thm "refs_globals_append=" flat_elimProofTheory.find_refs_globals_APPEND;
+val _ = show_thm "value_globals_el=" flat_elimProofTheory.find_v_globalsL_EL;
+val _ = show_thm "refs_globals_el=" flat_elimProofTheory.find_refs_globals_EL;
 val _ = show_thm "env_globals=" flat_elimProofTheory.find_env_globals_def;
 val _ = show_thm "result_globals=" flat_elimProofTheory.find_result_globals_def;
 val _ = show_thm "primitive_result_globals=" flat_elimProofTheory.find_sem_prim_res_globals_def;

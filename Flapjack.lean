@@ -691,6 +691,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
 import Flapjack.Compiler.Backend.FlatElim.Reachability
 import Flapjack.Compiler.Backend.FlatElim.Proofs.Reachability
 import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
+import Flapjack.Compiler.Backend.FlatElim.Proofs.GlobalLists
 import Flapjack.Compiler.Backend.FlatElim.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatElim.Proofs.PatternRelation
 import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyMemory

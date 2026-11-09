@@ -130601,6 +130601,46 @@
   "reviewer": "Compared flat_store_v_vs_def_typed in flat_do_app_preservation_probe.out: the four store constructors retain their generic payload carrier and original returned lists. Independently source-reviewed."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "find_lookupsL_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalLists.lean",
+  "lean_name": "findLookupsList_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed lookups_append capture in flat_elim_value_globals_probe.out, including binders, dependencies, carriers and HOL list operations. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "find_v_globalsL_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalLists.lean",
+  "lean_name": "findValuesGlobals_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed value_globals_append capture in flat_elim_value_globals_probe.out, including binders, dependencies, carriers and HOL list operations. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "find_refs_globals_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalLists.lean",
+  "lean_name": "findRefsGlobals_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed refs_globals_append capture in flat_elim_value_globals_probe.out, including binders, dependencies, carriers and HOL list operations. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "find_v_globalsL_EL",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalLists.lean",
+  "lean_name": "findValuesGlobals_el",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed value_globals_el capture in flat_elim_value_globals_probe.out, including binders, dependencies, carriers and HOL list operations. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "find_refs_globals_EL",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalLists.lean",
+  "lean_name": "findRefsGlobals_el",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed refs_globals_el capture in flat_elim_value_globals_probe.out, including binders, dependencies, carriers and HOL list operations. Independently source-reviewed."
+},
+{
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
   "hol_name": "ctor_same_type_OPTREL",
   "lean_path": "Flapjack/Compiler/Backend/FlatProps/PatternStructure.lean",
