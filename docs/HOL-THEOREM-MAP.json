@@ -1,5 +1,23 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_free_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeMaxApp.lean", "lean_name": "altFreeSource_obeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alt_free_obeys_max_app_typed: the free bound precedes the quantified expression list and three independently polymorphic unused variables. Source free-variable discovery and both EVERY predicates agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "annotate_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeMaxApp.lean", "lean_name": "annotateSource_obeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared annotate_obeys_max_app_typed: free application bound, quantified annotation arity and expression list, original annotation and EVERY implication agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "obeys_max_app_ann",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeMaxApp.lean", "lean_name": "compileSource_obeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared obeys_max_app_ann_typed: the label carrier is polymorphic, free bound precedes quantified program, and both EVERY predicates map the third tuple component over the original program and original source compilation."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "shift_obeys_max_app",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/MaxApp.lean", "lean_name": "shiftSource_obeysMaxApp",
   "statement_status": "reviewed_exact",

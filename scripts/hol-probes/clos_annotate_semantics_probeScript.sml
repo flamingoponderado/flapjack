@@ -27,5 +27,8 @@ val _ = show "compile_inc_eq_typed=" clos_annotateTheory.compile_inc_eq;
 val _ = show "MAP_FST_compile_typed=" clos_annotateProofTheory.MAP_FST_compile;
 val _ = show "semantics_annotate_typed=" clos_annotateProofTheory.semantics_annotate;
 val _ = show "shift_obeys_max_app_typed=" clos_annotateProofTheory.shift_obeys_max_app;
+val _ = show "alt_free_obeys_max_app_typed=" clos_annotateProofTheory.alt_free_obeys_max_app;
+val _ = show "annotate_obeys_max_app_typed=" clos_annotateProofTheory.annotate_obeys_max_app;
+val _ = show "obeys_max_app_ann_typed=" clos_annotateProofTheory.obeys_max_app_ann;
 val _ = show "HD_annotate_SING_typed=" clos_annotateProofTheory.HD_annotate_SING;
 val _ = show "every_Fn_SOME_ann_typed=" clos_annotateProofTheory.every_Fn_SOME_ann;
