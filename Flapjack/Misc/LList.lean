@@ -1467,6 +1467,453 @@ theorem lflattenHOL_THM :
         rw [hstep]
         simp [lcons]
 
+/-! ## Append algebra
+
+HOL's `LAPPEND_ASSOC` (`llistScript.sml:843`) and the finite facts about append
+used by `pan_itreeEquivProofScript.sml`. -/
+
+/-- Where `LAPPEND` stops: never when the left operand is infinite, at `k + j`
+    when the left stops at `k` and the right at `j`. Flapjack infrastructure for
+    the append laws below. -/
+theorem firstNone_lappend (l1 l2 : HolLList α) :
+    firstNone (lappendHOL l1 l2) =
+      (match firstNone l1 with
+       | none => none
+       | some k =>
+           match firstNone l2 with
+           | none => none
+           | some j => some (k + j)) := by
+  cases h1 : firstNone l1 with
+  | none =>
+      have hno := firstNone_none h1
+      rw [firstNone_eq_none_of_rep]
+      intro n
+      simp only [lappendHOL, lappendRep, h1]
+      exact hno n
+  | some k =>
+      obtain ⟨hk, hmin⟩ := firstNone_spec h1
+      cases h2 : firstNone l2 with
+      | none =>
+          have hno := firstNone_none h2
+          rw [firstNone_eq_none_of_rep]
+          intro n
+          simp only [lappendHOL, lappendRep, h1]
+          by_cases hn : n < k
+          · rw [if_pos hn]
+            exact hmin n hn
+          · rw [if_neg hn]
+            exact hno (n - k)
+      | some j =>
+          obtain ⟨hj, hmin2⟩ := firstNone_spec h2
+          have hrep_none : (lappendHOL l1 l2).rep (k + j) = none := by
+            simp only [lappendHOL, lappendRep, h1]
+            rw [if_neg (by omega)]
+            rw [show k + j - k = j from by omega]
+            exact hj
+          have hrep_min : ∀ m, m < k + j → (lappendHOL l1 l2).rep m ≠ none := by
+            intro m hm
+            simp only [lappendHOL, lappendRep, h1]
+            by_cases hmk : m < k
+            · rw [if_pos hmk]
+              exact hmin m hmk
+            · rw [if_neg hmk]
+              exact hmin2 (m - k) (by omega)
+          rw [firstNone_eq_some_of_rep hrep_none hrep_min]
+
+/-- The representation of an append, exposed for rewriting. -/
+theorem lappendRep_rep (l1 l2 : HolLList α) (n : Nat) :
+    (lappendHOL l1 l2).rep n = lappendRep l1 l2 n := rfl
+
+/-- An append whose left operand never stops copies that operand. -/
+theorem lappendRep_of_firstNone_none {l1 l2 : HolLList α} (h : firstNone l1 = none)
+    (n : Nat) : lappendRep l1 l2 n = l1.rep n := by
+  simp [lappendRep, h]
+
+/-- An append whose left operand stops at `k` copies it up to `k`, then the
+    right operand. -/
+theorem lappendRep_of_firstNone_some {l1 l2 : HolLList α} {k : Nat}
+    (h : firstNone l1 = some k) (n : Nat) :
+    lappendRep l1 l2 n = if n < k then l1.rep n else l2.rep (n - k) := by
+  simp [lappendRep, h]
+
+/-- HOL `LAPPEND_ASSOC` (`llistScript.sml:843-849`): append is associative. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LAPPEND_ASSOC"]
+theorem lappendHOL_assoc (ll1 ll2 ll3 : HolLList α) :
+    lappendHOL (lappendHOL ll1 ll2) ll3 = lappendHOL ll1 (lappendHOL ll2 ll3) := by
+  apply ext_of_rep
+  intro n
+  simp only [lappendRep_rep]
+  cases h1 : firstNone ll1 with
+  | none =>
+      have h12 : firstNone (lappendHOL ll1 ll2) = none := by
+        rw [firstNone_lappend, h1]
+      rw [lappendRep_of_firstNone_none h12, lappendRep_of_firstNone_none h1,
+        lappendRep_rep, lappendRep_of_firstNone_none h1]
+  | some k =>
+      cases h2 : firstNone ll2 with
+      | none =>
+          have h12 : firstNone (lappendHOL ll1 ll2) = none := by
+            rw [firstNone_lappend, h1, h2]
+          rw [lappendRep_of_firstNone_none h12, lappendRep_of_firstNone_some h1,
+            lappendRep_rep, lappendRep_of_firstNone_some h1]
+          by_cases hn : n < k
+          · rw [if_pos hn, if_pos hn]
+          · rw [if_neg hn, if_neg hn]
+            rw [lappendRep_rep, lappendRep_of_firstNone_none h2]
+      | some j =>
+          have h12 : firstNone (lappendHOL ll1 ll2) = some (k + j) := by
+            rw [firstNone_lappend, h1, h2]
+          rw [lappendRep_of_firstNone_some h12, lappendRep_of_firstNone_some h1,
+            lappendRep_rep, lappendRep_of_firstNone_some h1,
+            lappendRep_rep, lappendRep_of_firstNone_some h2]
+          by_cases hn : n < k
+          · rw [if_pos hn, if_pos hn, if_pos (by omega)]
+          · rw [if_neg hn, if_neg hn]
+            by_cases hnj : n - k < j
+            · simp only [if_pos (by omega : n < k + j), if_pos hnj]
+            · simp only [if_neg (by omega : ¬ n < k + j), if_neg hnj]
+              congr 1
+              omega
+
+
+/-- A nonempty lazy list has an element at index zero: the coherence invariant
+    forbids a `none` at `0` followed by a `some`. -/
+theorem rep_zero_ne_none_of_ne_lnil {ll : HolLList α} (h : ll ≠ lnil) : ll.rep 0 ≠ none := by
+  intro h0
+  apply h
+  apply eq_lnil_of_rep_none
+  intro n
+  induction n with
+  | zero => exact h0
+  | succ n ih => exact rep_none_succ ll ih
+
+/-- HOL `LFINITE_APPEND` (`llistScript.sml:1048-1049`): an append is finite
+    exactly when both operands are. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LFINITE_APPEND"]
+theorem lfinite_lappendHOL (ll1 ll2 : HolLList α) :
+    LFinite (lappendHOL ll1 ll2) ↔ LFinite ll1 ∧ LFinite ll2 := by
+  constructor
+  · intro h
+    obtain ⟨n, hnrel⟩ := exists_LLengthRel_of_LFinite h
+    have hnone : (lappendHOL ll1 ll2).rep n = none :=
+      rep_none_of_LLengthRel hnrel n (Nat.le_refl n)
+    cases h1 : firstNone ll1 with
+    | none =>
+        have hn1 : ll1.rep n ≠ none := firstNone_none h1 n
+        simp only [lappendHOL, lappendRep, h1] at hnone
+        exact absurd hnone hn1
+    | some k =>
+        have hk : ll1.rep k = none := (firstNone_spec h1).1
+        refine ⟨LFinite_of_rep_none hk, ?_⟩
+        cases h2 : firstNone ll2 with
+        | none =>
+            have hn2 : ll2.rep (n - k) ≠ none := firstNone_none h2 (n - k)
+            by_cases hnk : n < k
+            · have hn1 : ll1.rep n ≠ none := (firstNone_spec h1).2 n hnk
+              simp only [lappendHOL, lappendRep, h1] at hnone
+              rw [if_pos hnk] at hnone
+              exact absurd hnone hn1
+            · simp only [lappendHOL, lappendRep, h1] at hnone
+              rw [if_neg hnk] at hnone
+              exact absurd hnone hn2
+        | some j =>
+            exact LFinite_of_rep_none (firstNone_spec h2).1
+  · rintro ⟨h1, h2⟩
+    obtain ⟨k, hk⟩ := exists_LLengthRel_of_LFinite h1
+    obtain ⟨j, hj⟩ := exists_LLengthRel_of_LFinite h2
+    have hkrep : ll1.rep k = none := rep_none_of_LLengthRel hk k (Nat.le_refl k)
+    have hjrep : ll2.rep j = none := rep_none_of_LLengthRel hj j (Nat.le_refl j)
+    cases hf1 : firstNone ll1 with
+    | none =>
+        exact absurd (firstNone_none hf1 k) (by rw [hkrep]; simp)
+    | some k' =>
+        cases hf2 : firstNone ll2 with
+        | none =>
+            exact absurd (firstNone_none hf2 j) (by rw [hjrep]; simp)
+        | some j' =>
+            have hfl : firstNone (lappendHOL ll1 ll2) = some (k' + j') := by
+              rw [firstNone_lappend, hf1, hf2]
+            exact LFinite_of_rep_none (firstNone_spec hfl).1
+
+/-- HOL `LFINITE_LAPPEND_IMP_NIL` (`llistScript.sml:1094-1096`): appending to a
+    finite list leaves it unchanged only if the appended list is empty. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LFINITE_LAPPEND_IMP_NIL"]
+theorem lfinite_lappendHOL_imp_lnil (ll : HolLList α) (hfin : LFinite ll) :
+    ∀ l2 : HolLList α, lappendHOL ll l2 = ll → l2 = lnil := by
+  intro l2 h
+  by_cases hnil : l2 = lnil
+  · exact hnil
+  · exfalso
+    have hrep0 : l2.rep 0 ≠ none := rep_zero_ne_none_of_ne_lnil hnil
+    obtain ⟨k, hk⟩ := exists_LLengthRel_of_LFinite hfin
+    have hkrep : ll.rep k = none := rep_none_of_LLengthRel hk k (Nat.le_refl k)
+    cases hf : firstNone ll with
+    | none =>
+        exact absurd (firstNone_none hf k) (by rw [hkrep]; simp)
+    | some k' =>
+        have hk' : ll.rep k' = none := (firstNone_spec hf).1
+        have hlhs : (lappendHOL ll l2).rep k' = l2.rep 0 := by
+          simp only [lappendRep_rep, lappendRep_of_firstNone_some hf]
+          rw [if_neg (by omega)]
+          rw [show k' - k' = 0 from by omega]
+        rw [h] at hlhs
+        exact absurd (hlhs.symm.trans hk') hrep0
+
+/-- HOL `LAPPEND11_FINITE1` (`llistScript.sml:4023-4025`): appending on the left
+    of a finite list is injective. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LAPPEND11_FINITE1"]
+theorem lappendHOL_left_cancel {l1 l2 l3 : HolLList α} (hfin : LFinite l1) :
+    lappendHOL l1 l2 = lappendHOL l1 l3 ↔ l2 = l3 := by
+  constructor
+  · intro h
+    obtain ⟨k, hk⟩ := exists_LLengthRel_of_LFinite hfin
+    have hkrep : l1.rep k = none := rep_none_of_LLengthRel hk k (Nat.le_refl k)
+    cases hf : firstNone l1 with
+    | none =>
+        exact absurd (firstNone_none hf k) (by rw [hkrep]; simp)
+    | some m =>
+        apply ext_of_rep
+        intro n
+        have hl : (lappendHOL l1 l2).rep (m + n) = l2.rep n := by
+          simp only [lappendRep_rep, lappendRep_of_firstNone_some hf]
+          rw [if_neg (by omega)]
+          rw [show m + n - m = n from by omega]
+        have hr : (lappendHOL l1 l3).rep (m + n) = l3.rep n := by
+          simp only [lappendRep_rep, lappendRep_of_firstNone_some hf]
+          rw [if_neg (by omega)]
+          rw [show m + n - m = n from by omega]
+        have := congrArg (fun ll => ll.rep (m + n)) h
+        rw [hl, hr] at this
+        exact this
+  · intro h
+    rw [h]
+
+
+/-- HOL `exists` (`llistScript.sml:1495-1498`, `Inductive exists`): some element
+    satisfies `P`. Like `LFinite` it carries no `@[hol]` tag: HOL's relation is
+    bool-valued (`exists P : 'a llist -> bool`) while the Lean rendering is a
+    Prop-valued inductive over the same `HolLList` carrier, with HOL's two rules
+    as the two constructors. The tagged `llistExists_iff` is HOL's `exists_LNTH`
+    characterization. -/
+inductive LExists (P : α → Prop) : HolLList α → Prop
+  | head (h : α) (t : HolLList α) : P h → LExists P (lcons h t)
+  | tail (h : α) (t : HolLList α) : LExists P t → LExists P (lcons h t)
+
+/-- The tail of a lazy list at the representation level. Flapjack infrastructure
+    for the `exists` induction; HOL takes `THE (LTL ll)`. -/
+def ltail (ll : HolLList α) : HolLList α :=
+  ⟨fun k => ll.rep (k + 1), fun k hk => ll.ok (k + 1) hk⟩
+
+/-- A lazy list with a value at index zero is its head consed onto its tail. -/
+theorem lcons_lhd_ltail {ll : HolLList α} {hd : α} (h : ll.rep 0 = some hd) :
+    ll = lcons hd (ltail ll) := by
+  apply ext_of_rep
+  intro m
+  cases m with
+  | zero => simp [lcons, h]
+  | succ k => simp [lcons, ltail]
+
+/-- The induction step of the representation reading of `exists`. -/
+theorem llistExists_of_lnth {P : α → Prop} :
+    ∀ (n : Nat) (ll : HolLList α) (x : α), lnth n ll = some x → P x → LExists P ll := by
+  intro n
+  induction n with
+  | zero =>
+      intro ll x hx hP
+      rw [lnth_eq_rep] at hx
+      rw [lcons_lhd_ltail hx]
+      exact LExists.head x (ltail ll) hP
+  | succ n ih =>
+      intro ll x hx hP
+      rw [lnth_eq_rep] at hx
+      have h0 : ll.rep 0 ≠ none := by
+        intro h0
+        rw [rep_none_of_le ll h0 (Nat.zero_le _)] at hx
+        exact absurd hx (by simp)
+      obtain ⟨hd, hhd⟩ := Option.ne_none_iff_exists'.mp h0
+      rw [lcons_lhd_ltail hhd]
+      have hx' : lnth n (ltail ll) = some x := by
+        rw [lnth_eq_rep]
+        exact hx
+      exact LExists.tail hd (ltail ll) (ih (ltail ll) x hx' hP)
+
+/-- HOL `exists_LNTH` (`llistScript.sml:1509-1510`): `exists` holds exactly at
+    some index. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "exists_LNTH"]
+theorem llistExists_iff (P : α → Prop) (ll : HolLList α) :
+    LExists P ll ↔ ∃ n x, lnth n ll = some x ∧ P x := by
+  constructor
+  · intro h
+    induction h with
+    | head h t hP =>
+        exact ⟨0, h, by simp [lnth_eq_rep, lcons], hP⟩
+    | tail h t _ ih =>
+        obtain ⟨n, x, hx, hP⟩ := ih
+        have hx' : t.rep n = some x := by
+          rw [lnth_eq_rep] at hx
+          exact hx
+        exact ⟨n + 1, x, by simp [lnth_eq_rep, lcons, hx'], hP⟩
+  · rintro ⟨n, x, hx, hP⟩
+    exact llistExists_of_lnth n ll x hx hP
+
+/-- HOL `every`/`LL_ALL` (`llistScript.sml:1591`, `Definition every_def`): every
+    element satisfies `P`. The body is HOL's `~exists ((~) o P) ll`, with `exists`
+    rendered by the untagged `LExists` inductive. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "every_def"]
+def llistEvery (P : α → Prop) (ll : HolLList α) : Prop :=
+  ¬ LExists (fun x => ¬ P x) ll
+
+/-- The representation characterization of `llistEvery`. Flapjack infrastructure:
+    it is `llistExists_iff` complemented. -/
+theorem llistEvery_iff (P : α → Prop) (ll : HolLList α) :
+    llistEvery P ll ↔ ∀ n x, ll.rep n = some x → P x := by
+  unfold llistEvery
+  rw [llistExists_iff]
+  constructor
+  · intro h n x hx
+    by_cases hP : P x
+    · exact hP
+    · exact absurd ⟨n, x, by rw [lnth_eq_rep]; exact hx, hP⟩ h
+  · intro h hex
+    obtain ⟨n, x, hx, hnP⟩ := hex
+    rw [lnth_eq_rep] at hx
+    exact hnP (h n x hx)
+
+/-- HOL `every_thm` (`llistScript.sml:1608-1612`), also exported as `LL_ALL_THM`:
+    the empty and cons equations. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "every_thm"]
+theorem llistEvery_thm (P : α → Prop) (h : α) (t : HolLList α) :
+    llistEvery P (lnil : HolLList α) ∧
+      (llistEvery P (lcons h t) ↔ P h ∧ llistEvery P t) := by
+  constructor
+  · rw [llistEvery_iff]
+    intro n x hx
+    simp [lnil] at hx
+  · rw [llistEvery_iff, llistEvery_iff]
+    constructor
+    · intro hP
+      refine ⟨hP 0 h (by simp [lcons]), ?_⟩
+      intro n x hx
+      exact hP (n + 1) x (by simp [lcons, hx])
+    · rintro ⟨hh, ht⟩ n x hx
+      cases n with
+      | zero =>
+          simp [lcons] at hx
+          rw [← hx]
+          exact hh
+      | succ n =>
+          exact ht n x (by simpa [lcons] using hx)
+
+/-- HOL `LFLATTEN_EQ_NIL` (`llistScript.sml:1999-2006`): flattening is empty
+    exactly when every member is empty. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LFLATTEN_EQ_NIL"]
+theorem lflatten_eq_lnil (ll : HolLList (HolLList α)) :
+    (lflatten ll = lnil) ↔ llistEvery (fun x => x = lnil) ll := by
+  constructor
+  · intro h
+    unfold llistEvery
+    intro hex
+    obtain ⟨k, inner, hk, hne⟩ :=
+      (llistExists_iff (P := fun x : HolLList α => ¬ x = lnil) ll).mp hex
+    rw [lnth_eq_rep] at hk
+    have h0 : inner.rep 0 ≠ none := rep_zero_ne_none_of_ne_lnil hne
+    have hex : ∃ j, ∃ inner' : HolLList α, ll.rep j = some inner' ∧
+        inner'.rep 0 ≠ none := ⟨k, inner, hk, h0⟩
+    obtain ⟨k', hfe⟩ : ∃ k', firstNonempty ll = some k' := by
+      cases hf : firstNonempty ll with
+      | none => exact absurd (firstNonempty_none hf k inner hk) h0
+      | some k' => exact ⟨k', rfl⟩
+    obtain ⟨⟨inner', hrep', hne'⟩, -⟩ := firstNonempty_spec hfe
+    have hl0 : (lflatten ll).rep 0 ≠ none := by
+      simp only [lflatten, lflattenRep, hfe, hrep']
+      exact hne'
+    rw [h] at hl0
+    exact hl0 rfl
+  · intro h
+    have hrep := (llistEvery_iff (P := fun x : HolLList α => x = lnil) ll).mp h
+    apply eq_lnil_of_rep_none
+    intro n
+    have hfe : firstNonempty ll = none := by
+      apply firstNonempty_eq_none_of
+      intro k inner hk
+      rw [hrep k inner hk]
+      rfl
+    cases n with
+    | zero => simp [lflatten, lflattenRep, hfe]
+    | succ n => simp [lflatten, lflattenRep, hfe]
+
+
+/-- HOL `NOT_LFINITE_APPEND` (`llistScript.sml:1081-1082`): appending to an
+    infinite list changes nothing. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "NOT_LFINITE_APPEND"]
+theorem not_lfinite_lappendHOL {ll1 ll2 : HolLList α} (h : ¬ LFinite ll1) :
+    lappendHOL ll1 ll2 = ll1 := by
+  have hf : firstNone ll1 = none :=
+    firstNone_eq_none_of_rep fun k hk => h (LFinite_of_rep_none hk)
+  apply ext_of_rep
+  intro n
+  simp only [lappendRep_rep, lappendRep_of_firstNone_none hf]
+
+/-- HOL `LPREFIX_APPEND` (`llistScript.sml:2797-2798`): one list is a prefix of
+    another exactly when the other is that list appended to something. -/
+@[hol "hol4/src/coalgebras/llistScript.sml" "LPREFIX_APPEND"]
+theorem lprefix_append_iff (l1 l2 : HolLList α) :
+    lprefix l1 l2 ↔ ∃ ll, l2 = lappendHOL l1 ll := by
+  constructor
+  · intro hp
+    cases hf : firstNone l1 with
+    | none =>
+        have hnotfin : ¬ LFinite l1 := by
+          intro hfin
+          obtain ⟨k, hk⟩ := exists_LLengthRel_of_LFinite hfin
+          exact absurd (firstNone_none hf k)
+            (by rw [rep_none_of_LLengthRel hk k (Nat.le_refl k)]; simp)
+        have h12 : l1 = l2 := by
+          unfold lprefix at hp
+          rw [show toList l1 = none from by simp [toList, hnotfin]] at hp
+          exact hp
+        exact ⟨lnil, by rw [lappendHOL_nil_2nd]; exact h12.symm⟩
+    | some k =>
+        obtain ⟨hk, hmin⟩ := firstNone_spec hf
+        have hok : HolLrepOk (fun m => l2.rep (k + m)) := by
+          intro m hm
+          have hm' : (l2.rep (k + (m + 1))).isSome = true := hm
+          rw [show k + (m + 1) = (k + m) + 1 from by omega] at hm'
+          exact l2.ok (k + m) hm'
+        refine ⟨⟨fun m => l2.rep (k + m), hok⟩, ?_⟩
+        apply ext_of_rep
+        intro n
+        simp only [lappendRep_rep, lappendRep_of_firstNone_some hf]
+        by_cases hn : n < k
+        · rw [if_pos hn]
+          have hne : l1.rep n ≠ none := hmin n hn
+          obtain ⟨x, hx⟩ := Option.ne_none_iff_exists'.mp hne
+          rw [hx]
+          exact lprefix_rep hp hx
+        · rw [if_neg hn]
+          rw [show k + (n - k) = n from by omega]
+  · rintro ⟨ll, rfl⟩
+    apply lprefix_of_rep_agree
+    intro n x hx
+    simp only [lappendRep_rep]
+    cases hf : firstNone l1 with
+    | none =>
+        rw [lappendRep_of_firstNone_none hf]
+        exact hx
+    | some k =>
+        rw [lappendRep_of_firstNone_some hf]
+        have hn : n < k := by
+          by_cases hnk : n < k
+          · exact hnk
+          · exfalso
+            have hnone : l1.rep n = none :=
+              rep_none_of_le l1 (firstNone_spec hf).1 (by omega)
+            rw [hnone] at hx
+            exact absurd hx (by simp)
+        rw [if_pos hn]
+        exact hx
+
+
 end HolLList
 
 end Flapjack
