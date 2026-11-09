@@ -48,52 +48,20 @@ theorem evaluate_operator {C F : Type} (env : FlatSem.Environment FlatSem.Value)
       (FlatSem.evaluateDecs next decs).2 ≠ some (.abort .typeError) → DecUnitSim next nextTarget decs)
     (notTypeError : (FlatSem.evaluate env source [.app trace op args]).2 ≠ .err (.abort .typeError)) :
     EvalSim env names values source target [.app trace op args] := by
-  have globalSim (category : (∃ n, op = .globalVarLookup n) ∨
-      (∃ n, op = .globalVarInit n) ∨ (∃ n, op = .globalVarAlloc n)) :
+  have flatSim (noNop : destNop op args = none) (notApp : op ≠ .src .opapp)
+      (notEval : op ≠ .src .eval) (notForce : op ≠ .src (.thunkOp .forceThunk)) :
       EvalSim env names values source target [.app trace op args] := by
-    have facts : destNop op args = none ∧ op ≠ .src .opapp ∧ op ≠ .src .eval ∧
-        op ≠ .src (.thunkOp .forceThunk) := by
-      rcases category with ⟨_, rfl⟩ | ⟨_, rfl⟩ | ⟨_, rfl⟩ <;> simp [destNop]
     apply evalSim_app_of_op env names values source target trace op args
-      facts.1 facts.2.1 facts.2.2.1 facts.2.2.2 ?_ argsSim notTypeError
+      noNop notApp notEval notForce ?_ argsSim notTypeError
     intro s vs sNext result tNext xs db t ws tt premises
-    exact opGlobals op s vs sNext result tNext xs db t ws tt category premises
-  have blockSim (category : (∃ tag n, op = .tagLenEq tag n) ∨
-      (∃ n, op = .lenEq n) ∨ op = .src .listAppend) :
-      EvalSim env names values source target [.app trace op args] := by
-    have facts : destNop op args = none ∧ op ≠ .src .opapp ∧ op ≠ .src .eval ∧
-        op ≠ .src (.thunkOp .forceThunk) := by
-      rcases category with ⟨_, _, rfl⟩ | ⟨_, rfl⟩ | rfl <;> simp [destNop]
-    apply evalSim_app_of_op env names values source target trace op args
-      facts.1 facts.2.1 facts.2.2.1 facts.2.2.2 ?_ argsSim notTypeError
-    intro s vs sNext result tNext xs db t ws tt premises
-    exact opBlocks op s vs sNext result tNext xs db t ws tt category premises
-  have refSim (category : op = .src .opref ∨ (∃ n, op = .el n) ∨
-      op = .src .opassign) : EvalSim env names values source target [.app trace op args] := by
-    have facts : destNop op args = none ∧ op ≠ .src .opapp ∧ op ≠ .src .eval ∧
-        op ≠ .src (.thunkOp .forceThunk) := by
-      rcases category with rfl | ⟨_, rfl⟩ | rfl <;> simp [destNop]
-    apply evalSim_app_of_op env names values source target trace op args
-      facts.1 facts.2.1 facts.2.2.1 facts.2.2.2 ?_ argsSim notTypeError
-    intro s vs sNext result tNext xs db t ws tt premises
-    exact opRefs op s vs sNext result tNext xs db t ws tt category premises
+    exact compileOpCorrect s op vs sNext result tNext xs db t ws tt premises
   cases op with
   | src op =>
     exact evaluate_sourceOp env names values source target trace op args states argsSim
       operandSim charInnerSim wordInnerSim bodySim
       (fun sv tv next nextTarget equal => forceSim sv tv next nextTarget (by cases equal; rfl))
       decsSim notTypeError
-  | globalVarAlloc count => exact globalSim (Or.inr (Or.inr ⟨count, rfl⟩))
-  | globalVarInit index => exact globalSim (Or.inr (Or.inl ⟨index, rfl⟩))
-  | globalVarLookup index => exact globalSim (Or.inl ⟨index, rfl⟩)
-  | tagLenEq tag length => exact blockSim (Or.inl ⟨tag, length, rfl⟩)
-  | lenEq length => exact blockSim (Or.inr (Or.inl ⟨length, rfl⟩))
-  | el index => exact refSim (Or.inr (Or.inl ⟨index, rfl⟩))
-  | id =>
-    apply evalSim_app_of_op env names values source target trace .id args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opId _ s vs sNext result tNext xs db t ws tt rfl premises
+  | globalVarAlloc _ | globalVarInit _ | globalVarLookup _ | tagLenEq _ _ | lenEq _ | el _ | id =>
+    apply flatSim <;> simp [destNop]
 
 end Flapjack.Compiler.Backend.FlatToClos

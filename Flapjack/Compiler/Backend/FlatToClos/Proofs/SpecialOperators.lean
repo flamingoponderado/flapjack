@@ -170,16 +170,17 @@ theorem evaluate_sourceOp {C F : Type} (env : FlatSem.Environment FlatSem.Value)
       (FlatSem.evaluateDecs next decs).2 ≠ some (.abort .typeError) → DecUnitSim next nextTarget decs)
     (notTypeError : (FlatSem.evaluate env source [.app trace (.src op) args]).2 ≠ .err (.abort .typeError)) :
     EvalSim env names values source target [.app trace (.src op) args] := by
-  rcases directSourceOp_or_special op with direct | rfl | rfl | rfl | rfl
-  · exact evaluate_directSourceOp env names values source target trace op args direct argsSim charInnerSim wordInnerSim notTypeError
-  · exact evaluate_application_any env names values source target trace args argsSim operandSim bodySim states notTypeError
-  · apply evalSim_app_of_op env names values source target trace (.src .opassign) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opRefs _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr rfl)) premises
-  · exact evaluate_eval_related env names values source target trace args argsSim decsSim notTypeError
-  · exact evaluate_force env names values source target trace args argsSim
+  by_cases app : op = .opapp
+  · subst op
+    exact evaluate_application_any env names values source target trace args argsSim operandSim bodySim states notTypeError
+  by_cases eval : op = .eval
+  · subst op
+    exact evaluate_eval_related env names values source target trace args argsSim decsSim notTypeError
+  by_cases force : op = .thunkOp .forceThunk
+  · subst op
+    exact evaluate_force env names values source target trace args argsSim
       (fun sourceValue targetValue next nextTarget => forceSim sourceValue targetValue next nextTarget rfl) notTypeError
+  exact evaluate_directSourceOp env names values source target trace op args ⟨app, eval, force⟩
+    argsSim charInnerSim wordInnerSim notTypeError
 
 end Flapjack.Compiler.Backend.FlatToClos

@@ -10,112 +10,13 @@ require additional induction hypotheses. This is not a reviewed HOL port. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL Flapjack.AstHOL Flapjack.Basis.Pure.MlString
 
-/-- Operators whose simulations require only argument evaluation, except
-for conversion's explicit nested-expression induction hypotheses. -/
-inductive DirectSourceOp : AstHOL.Op → Prop where
-  | arith (action : Arith) (typ : PrimType) : DirectSourceOp (.arith action typ)
-  | fromTo (a b : PrimType) : DirectSourceOp (.fromTo a b)
-  | shift (width : WordSize) (shift : Flapjack.Shift) (amount : Nat) : DirectSourceOp (.shift width shift amount)
-  | test (test : Test) (typ : PrimType) : DirectSourceOp (.test test typ)
-  | ffi (name : MlString) : DirectSourceOp (.ffi name)
-  | allocThunk (mode : ThunkMode) : DirectSourceOp (.thunkOp (.allocThunk mode))
-  | updateThunk (mode : ThunkMode) : DirectSourceOp (.thunkOp (.updateThunk mode))
-  | opderef : DirectSourceOp .opderef
-  | aallocEmpty : DirectSourceOp .aallocEmpty
-  | envId : DirectSourceOp .envId
-  | equality : DirectSourceOp .equality
-  | opref : DirectSourceOp .opref
-  | aw8alloc : DirectSourceOp .aw8alloc
-  | aw8sub : DirectSourceOp .aw8sub
-  | aw8length : DirectSourceOp .aw8length
-  | aw8update : DirectSourceOp .aw8update
-  | copyStrStr : DirectSourceOp .copyStrStr
-  | copyStrAw8 : DirectSourceOp .copyStrAw8
-  | copyAw8Str : DirectSourceOp .copyAw8Str
-  | copyAw8Aw8 : DirectSourceOp .copyAw8Aw8
-  | xorAw8StrUnsafe : DirectSourceOp .xorAw8StrUnsafe
-  | implode : DirectSourceOp .implode
-  | explode : DirectSourceOp .explode
-  | strsub : DirectSourceOp .strsub
-  | strlen : DirectSourceOp .strlen
-  | strcat : DirectSourceOp .strcat
-  | vfromList : DirectSourceOp .vfromList
-  | vsub : DirectSourceOp .vsub
-  | vlength : DirectSourceOp .vlength
-  | aalloc : DirectSourceOp .aalloc
-  | aallocFixed : DirectSourceOp .aallocFixed
-  | asub : DirectSourceOp .asub
-  | alength : DirectSourceOp .alength
-  | aupdate : DirectSourceOp .aupdate
-  | vsubUnsafe : DirectSourceOp .vsubUnsafe
-  | asubUnsafe : DirectSourceOp .asubUnsafe
-  | aupdateUnsafe : DirectSourceOp .aupdateUnsafe
-  | aw8subUnsafe : DirectSourceOp .aw8subUnsafe
-  | aw8updateUnsafe : DirectSourceOp .aw8updateUnsafe
-  | listAppend : DirectSourceOp .listAppend
-  | configGC : DirectSourceOp .configGC
-
-/-- Every source operator is either covered by the direct dispatcher or is
-one of the four cases requiring separate control-flow simulation. -/
-theorem directSourceOp_or_special (op : AstHOL.Op) :
-    DirectSourceOp op ∨ op = .opapp ∨ op = .opassign ∨ op = .eval ∨
-      op = .thunkOp .forceThunk := by
-  cases op with
-  | arith action typ => exact Or.inl (by constructor)
-  | fromTo a b => exact Or.inl (by constructor)
-  | shift width shift amount => exact Or.inl (by constructor)
-  | equality => exact Or.inl (.equality)
-  | test test typ => exact Or.inl (by constructor)
-  | opapp => exact Or.inr (by simp)
-  | opassign => exact Or.inr (by simp)
-  | opref => exact Or.inl (.opref)
-  | opderef => exact Or.inl (.opderef)
-  | aw8alloc => exact Or.inl (.aw8alloc)
-  | aw8sub => exact Or.inl (.aw8sub)
-  | aw8length => exact Or.inl (.aw8length)
-  | aw8update => exact Or.inl (.aw8update)
-  | copyStrStr => exact Or.inl (.copyStrStr)
-  | copyStrAw8 => exact Or.inl (.copyStrAw8)
-  | copyAw8Str => exact Or.inl (.copyAw8Str)
-  | copyAw8Aw8 => exact Or.inl (.copyAw8Aw8)
-  | xorAw8StrUnsafe => exact Or.inl (.xorAw8StrUnsafe)
-  | implode => exact Or.inl (.implode)
-  | explode => exact Or.inl (.explode)
-  | strsub => exact Or.inl (.strsub)
-  | strlen => exact Or.inl (.strlen)
-  | strcat => exact Or.inl (.strcat)
-  | vfromList => exact Or.inl (.vfromList)
-  | vsub => exact Or.inl (.vsub)
-  | vlength => exact Or.inl (.vlength)
-  | aalloc => exact Or.inl (.aalloc)
-  | aallocEmpty => exact Or.inl (.aallocEmpty)
-  | aallocFixed => exact Or.inl (.aallocFixed)
-  | asub => exact Or.inl (.asub)
-  | alength => exact Or.inl (.alength)
-  | aupdate => exact Or.inl (.aupdate)
-  | vsubUnsafe => exact Or.inl (.vsubUnsafe)
-  | asubUnsafe => exact Or.inl (.asubUnsafe)
-  | aupdateUnsafe => exact Or.inl (.aupdateUnsafe)
-  | aw8subUnsafe => exact Or.inl (.aw8subUnsafe)
-  | aw8updateUnsafe => exact Or.inl (.aw8updateUnsafe)
-  | thunkOp op =>
-    cases op with
-    | forceThunk => exact Or.inr (by simp)
-    | allocThunk mode => exact Or.inl (.allocThunk mode)
-    | updateThunk mode => exact Or.inl (.updateThunk mode)
-  | listAppend => exact Or.inl (.listAppend)
-  | configGC => exact Or.inl (.configGC)
-  | ffi _ => exact Or.inl (by constructor)
-  | eval => exact Or.inr (by simp)
-  | envId => exact Or.inl (.envId)
-
 /-- Ordinary source operator compilation preserves the proof-side evaluator
 relation, assuming the argument and nested conversion expressions simulate. -/
 theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (names : List (Option MlString)) (values : List ClosSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
     (trace : BackendCommon.Tra) (op : AstHOL.Op) (args : List FlatLang.Exp)
-    (direct : DirectSourceOp op)
+    (exclusions : op ≠ .opapp ∧ op ≠ .eval ∧ op ≠ .thunkOp .forceThunk)
     (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
       EvalSim env names values source target args.reverse)
     (charInnerSim : ∀ innerTrace inner,
@@ -129,280 +30,36 @@ theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.
     (notTypeError : (FlatSem.evaluate env source [.app trace (.src op) args]).2 ≠
       .err (.abort .typeError)) :
     EvalSim env names values source target [.app trace (.src op) args] := by
-  cases direct with
-  | arith action typ =>
-    apply evalSim_app_of_op env names values source target trace (.src (.arith action typ)) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opArith _ s vs sNext result tNext xs db t ws tt ⟨action, typ, rfl⟩ premises
-  | fromTo a b =>
-    cases found : destNop (.src (.fromTo a b)) args with
-    | none =>
-      apply evalSim_app_of_op env names values source target trace (.src (.fromTo a b)) args
-        found (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-      intro s vs sNext result tNext xs db t ws tt premises
-      exact opFromTo _ s vs sNext result tNext xs db t ws tt ⟨a, b, rfl⟩ premises
-    | some inner =>
-      rcases destNop_shape _ _ _ found with ⟨innerTrace, opEq, shape⟩ | ⟨innerTrace, opEq, shape⟩
-      · have innerNotTypeError : (FlatSem.evaluate env source [inner]).2 ≠ .err (.abort .typeError) := by
-          intro failed
-          apply notTypeError
-          cases opEq
-          rw [shape, evaluate_flat_conversion, evaluate_flat_conversion]
-          cases run : FlatSem.evaluate env source [inner] with
-          | mk next result => simp_all
-        have simulated := charInnerSim innerTrace inner shape innerNotTypeError
+  cases found : destNop (.src op) args with
+  | none =>
+    apply evalSim_app_of_op env names values source target trace (.src op) args
+      found (by simpa using exclusions.1) (by simpa using exclusions.2.1)
+      (by simpa using exclusions.2.2) ?_ argsSim notTypeError
+    intro s vs sNext result tNext xs db t ws tt premises
+    exact compileOpCorrect s _ vs sNext result tNext xs db t ws tt premises
+  | some inner =>
+    rcases destNop_shape _ _ _ found with ⟨innerTrace, opEq, shape⟩ | ⟨innerTrace, opEq, shape⟩
+    · have innerNotTypeError : (FlatSem.evaluate env source [inner]).2 ≠ .err (.abort .typeError) := by
+        intro failed
+        apply notTypeError
         cases opEq
-        subst args
-        exact evaluate_char_word_nop env names values source target trace innerTrace inner simulated notTypeError
-      · have innerNotTypeError : (FlatSem.evaluate env source [inner]).2 ≠ .err (.abort .typeError) := by
-          intro failed
-          apply notTypeError
-          cases opEq
-          rw [shape, evaluate_flat_conversion, evaluate_flat_conversion]
-          cases run : FlatSem.evaluate env source [inner] with
-          | mk next result => simp_all
-        have simulated := wordInnerSim innerTrace inner shape innerNotTypeError
+        rw [shape, evaluate_flat_conversion, evaluate_flat_conversion]
+        cases run : FlatSem.evaluate env source [inner] with
+        | mk next result => simp_all
+      have simulated := charInnerSim innerTrace inner shape innerNotTypeError
+      cases opEq
+      subst args
+      exact evaluate_char_word_nop env names values source target trace innerTrace inner simulated notTypeError
+    · have innerNotTypeError : (FlatSem.evaluate env source [inner]).2 ≠ .err (.abort .typeError) := by
+        intro failed
+        apply notTypeError
         cases opEq
-        subst args
-        exact evaluate_word_char_nop env names values source target trace innerTrace inner simulated notTypeError
-  | shift width shift amount =>
-    apply evalSim_app_of_op env names values source target trace (.src (.shift width shift amount)) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opShifts _ s vs sNext result tNext xs db t ws tt ⟨width, shift, amount, rfl⟩ premises
-  | test test typ =>
-    apply evalSim_app_of_op env names values source target trace (.src (.test test typ)) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opTest _ s vs sNext result tNext xs db t ws tt ⟨test, typ, rfl⟩ premises
-  | ffi name =>
-    apply evalSim_app_of_op env names values source target trace (.src (.ffi name)) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opFfi _ s vs sNext result tNext xs db t ws tt (⟨name, rfl⟩) premises
-  | allocThunk mode =>
-    apply evalSim_app_of_op env names values source target trace (.src (.thunkOp (.allocThunk mode))) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opThunk _ s vs sNext result tNext xs db t ws tt _ rfl premises
-  | updateThunk mode =>
-    apply evalSim_app_of_op env names values source target trace (.src (.thunkOp (.updateThunk mode))) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opThunk _ s vs sNext result tNext xs db t ws tt _ rfl premises
-  | opderef =>
-    apply evalSim_app_of_op env names values source target trace (.src .opderef) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
-        FlatSem.doAppData, FlatSem.doAppCopy] at premises
-  | aallocEmpty =>
-    apply evalSim_app_of_op env names values source target trace (.src .aallocEmpty) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
-        FlatSem.doAppData, FlatSem.doAppCopy] at premises
-  | envId =>
-    apply evalSim_app_of_op env names values source target trace (.src .envId) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
-        FlatSem.doAppData, FlatSem.doAppCopy] at premises
-  | equality =>
-    apply evalSim_app_of_op env names values source target trace (.src .equality) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opEqGc _ s vs sNext result tNext xs db t ws tt (Or.inr rfl) premises
-  | opref =>
-    apply evalSim_app_of_op env names values source target trace (.src .opref) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opRefs _ s vs sNext result tNext xs db t ws tt (Or.inl rfl) premises
-  | aw8alloc =>
-    apply evalSim_app_of_op env names values source target trace (.src .aw8alloc) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opByteArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inl rfl)) premises
-  | aw8sub =>
-    apply evalSim_app_of_op env names values source target trace (.src .aw8sub) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opByteArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inl rfl)))) premises
-  | aw8length =>
-    apply evalSim_app_of_op env names values source target trace (.src .aw8length) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opByteArrays _ s vs sNext result tNext xs db t ws tt (Or.inl rfl) premises
-  | aw8update =>
-    apply evalSim_app_of_op env names values source target trace (.src .aw8update) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opByteArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr rfl))))) premises
-  | copyStrStr =>
-    apply evalSim_app_of_op env names values source target trace (.src .copyStrStr) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opByteCopy _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inl rfl)))) premises
-  | copyStrAw8 =>
-    apply evalSim_app_of_op env names values source target trace (.src .copyStrAw8) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opByteCopy _ s vs sNext result tNext xs db t ws tt (Or.inl rfl) premises
-  | copyAw8Str =>
-    apply evalSim_app_of_op env names values source target trace (.src .copyAw8Str) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opByteCopy _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inl rfl)) premises
-  | copyAw8Aw8 =>
-    apply evalSim_app_of_op env names values source target trace (.src .copyAw8Aw8) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opByteCopy _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inl rfl))) premises
-  | xorAw8StrUnsafe =>
-    apply evalSim_app_of_op env names values source target trace (.src .xorAw8StrUnsafe) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opByteCopy _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inr rfl)))) premises
-  | implode =>
-    apply evalSim_app_of_op env names values source target trace (.src .implode) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opString _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inl rfl)) premises
-  | explode =>
-    apply evalSim_app_of_op env names values source target trace (.src .explode) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opString _ s vs sNext result tNext xs db t ws tt (Or.inl rfl) premises
-  | strsub =>
-    apply evalSim_app_of_op env names values source target trace (.src .strsub) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opString _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inl rfl)))) premises
-  | strlen =>
-    apply evalSim_app_of_op env names values source target trace (.src .strlen) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opString _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inl rfl))) premises
-  | strcat =>
-    apply evalSim_app_of_op env names values source target trace (.src .strcat) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opString _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inr rfl)))) premises
-  | vfromList =>
-    apply evalSim_app_of_op env names values source target trace (.src .vfromList) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opVectors _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr rfl))) premises
-  | vsub =>
-    apply evalSim_app_of_op env names values source target trace (.src .vsub) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opVectors _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inl rfl)) premises
-  | vlength =>
-    apply evalSim_app_of_op env names values source target trace (.src .vlength) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opVectors _ s vs sNext result tNext xs db t ws tt (Or.inl rfl) premises
-  | aalloc =>
-    apply evalSim_app_of_op env names values source target trace (.src .aalloc) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opArrays _ s vs sNext result tNext xs db t ws tt (Or.inl rfl) premises
-  | aallocFixed =>
-    apply evalSim_app_of_op env names values source target trace (.src .aallocFixed) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inl rfl)) premises
-  | asub =>
-    apply evalSim_app_of_op env names values source target trace (.src .asub) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inl rfl)))) premises
-  | alength =>
-    apply evalSim_app_of_op env names values source target trace (.src .alength) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl))))) premises
-  | aupdate =>
-    apply evalSim_app_of_op env names values source target trace (.src .aupdate) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (rfl))))))) premises
-  | vsubUnsafe =>
-    apply evalSim_app_of_op env names values source target trace (.src .vsubUnsafe) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opVectors _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inl rfl))) premises
-  | asubUnsafe =>
-    apply evalSim_app_of_op env names values source target trace (.src .asubUnsafe) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inl rfl))) premises
-  | aupdateUnsafe =>
-    apply evalSim_app_of_op env names values source target trace (.src .aupdateUnsafe) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl)))))) premises
-  | aw8subUnsafe =>
-    apply evalSim_app_of_op env names values source target trace (.src .aw8subUnsafe) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opByteArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inl rfl))) premises
-  | aw8updateUnsafe =>
-    apply evalSim_app_of_op env names values source target trace (.src .aw8updateUnsafe) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opByteArrays _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl))))) premises
-  | listAppend =>
-    apply evalSim_app_of_op env names values source target trace (.src .listAppend) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opBlocks _ s vs sNext result tNext xs db t ws tt (Or.inr (Or.inr rfl)) premises
-  | configGC =>
-    apply evalSim_app_of_op env names values source target trace (.src .configGC) args
-      ?_ (by simp) (by simp) (by simp) ?_ argsSim notTypeError
-    · simp [destNop]
-    · intro s vs sNext result tNext xs db t ws tt premises
-      exact opEqGc _ s vs sNext result tNext xs db t ws tt (Or.inl rfl) premises
+        rw [shape, evaluate_flat_conversion, evaluate_flat_conversion]
+        cases run : FlatSem.evaluate env source [inner] with
+        | mk next result => simp_all
+      have simulated := wordInnerSim innerTrace inner shape innerNotTypeError
+      cases opEq
+      subst args
+      exact evaluate_word_char_nop env names values source target trace innerTrace inner simulated notTypeError
 
 end Flapjack.Compiler.Backend.FlatToClos

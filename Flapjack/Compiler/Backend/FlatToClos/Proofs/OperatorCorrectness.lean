@@ -2614,4 +2614,43 @@ theorem opFromTo {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
     | boolT | strT =>
       cases toType <;> try simp [FlatSem.doApp_conversion_source, SemanticPrimitivesHOL.doConversion] at originalApplied
 
+/-- The original value-level operator correctness theorem. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_op_correct"
+  (fmap_as_finite_support := [refs, code])]
+theorem compileOpCorrect {C F : Type} (source : FlatSem.State C F) (op : FlatLang.Op)
+    (vs : List FlatSem.Value) (sourceNext : FlatSem.State C F)
+    (result : Result FlatSem.Value FlatSem.Value) (targetNext : ClosSem.State C F)
+    (xs : List ClosLang.Exp) (db : List ClosSem.Value) (target : ClosSem.State C F)
+    (ws : List ClosSem.Value) (trace : BackendCommon.Tra) :
+    FlatSem.doApp source op vs = some (sourceNext, result) ∧
+      StateRel source targetNext ∧ ClosSem.evaluate xs db target = (.val ws, targetNext) ∧
+      List.Forall₂ ValueRel vs ws.reverse ∧ xs.length = vs.length ∧
+      op ≠ .src .opapp ∧ op ≠ .src (.thunkOp .forceThunk) →
+    ∃ targetResult targetLast,
+      ClosSem.evaluate [compileOp trace op xs] db target = (targetResult, targetLast) ∧
+      StateRel sourceNext targetLast ∧
+      SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel
+        (Flapjack.EvaluateHOL.listResult result) targetResult := by
+  intro premises
+  cases op <;> try (rename_i x; cases x)
+  all_goals first
+    | (solve | apply opEval _ source vs sourceNext result targetNext xs db target ws trace <;> first | assumption | simp)
+    | (solve | apply opId _ source vs sourceNext result targetNext xs db target ws trace <;> first | assumption | simp)
+    | (solve | apply opShifts _ source vs sourceNext result targetNext xs db target ws trace <;> first | assumption | simp)
+    | (solve | apply opEqGc _ source vs sourceNext result targetNext xs db target ws trace <;> first | assumption | simp)
+    | (solve | apply opFfi _ source vs sourceNext result targetNext xs db target ws trace <;> first | assumption | simp)
+    | (solve | apply opGlobals _ source vs sourceNext result targetNext xs db target ws trace <;> first | assumption | simp)
+    | (solve | apply opBlocks _ source vs sourceNext result targetNext xs db target ws trace <;> first | assumption | simp)
+    | (solve | apply opRefs _ source vs sourceNext result targetNext xs db target ws trace <;> first | assumption | simp)
+    | (solve | apply opVectors _ source vs sourceNext result targetNext xs db target ws trace <;> first | assumption | simp)
+    | (solve | apply opString _ source vs sourceNext result targetNext xs db target ws trace <;> first | assumption | simp)
+    | (solve | apply opByteCopy _ source vs sourceNext result targetNext xs db target ws trace <;> first | assumption | simp)
+    | (solve | apply opByteArrays _ source vs sourceNext result targetNext xs db target ws trace <;> first | assumption | simp)
+    | (solve | apply opArrays _ source vs sourceNext result targetNext xs db target ws trace <;> first | assumption | simp)
+    | (solve | apply opTest _ source vs sourceNext result targetNext xs db target ws trace <;> first | assumption | simp)
+    | (solve | apply opArith _ source vs sourceNext result targetNext xs db target ws trace <;> first | assumption | simp)
+    | (solve | apply opFromTo _ source vs sourceNext result targetNext xs db target ws trace <;> first | assumption | simp)
+    | (solve | exact opThunk _ source vs sourceNext result targetNext xs db target ws trace _ rfl premises)
+    | simp_all [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy]
+
 end Flapjack.Compiler.Backend.FlatToClos

@@ -131374,6 +131374,16 @@
   "reviewer": "Compared op_from_to_typed: the existential source and target types, complete op_goal, shared compiler and FFI carriers, grouped premises and existential conclusion agree. Closure state uses canonical refs and code maps with a re-exported witness. FlatSem.doApp and ClosSem.evaluate inherit the reals_as_rational_cuts assumption (SOUNDNESS item 8). Independently source-reviewed."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "compile_op_correct",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/OperatorCorrectness.lean",
+  "lean_name": "compileOpCorrect",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared compile_op_correct_typed: the free variables and binder order, shared compiler and FFI carriers, grouped premises including the original control-flow exclusions, and existential result and state relation agree. Closure state uses canonical refs and code maps with a re-exported witness. FlatSem.doApp and ClosSem.evaluate inherit the reals_as_rational_cuts assumption (SOUNDNESS item 8). Independently source-reviewed."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "do_eval_thm",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DynamicEvaluation.lean",
