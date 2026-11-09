@@ -186,32 +186,6 @@ termination_by sizeOf functions
 
 end
 
-/-- Every expression produced by the executable list annotation has its
-closure-variable annotations filled. -/
-theorem annotateList_varsSome (arity : Nat) (expressions : List Exp) :
-    everyFnVarsSome (annotateList arity expressions) :=
-  shiftList_varsSome _ _ _ _
-
-/-- Every function body produced by the executable program annotation has its
-closure-variable annotations filled. -/
-theorem compile_varsSome (program : List (Nat × Nat × Exp)) :
-    ∀ name arity body, (name, arity, body) ∈ compile program → everyFnVarsSome [body] := by
-  intro name arity body member
-  obtain ⟨⟨n, args, exp⟩, sourceMember, equal⟩ := List.mem_map.mp member
-  simp only [Prod.mk.injEq] at equal
-  obtain ⟨rfl, rfl, rfl⟩ := equal
-  simpa [compile, annotateSing, everyFnVarsSome] using shiftSing_varsSome (altFreeSing exp).1 0 args .ln
-
-/-- Incremental annotation fills variable annotations in the main expression
-list and in every auxiliary function body. -/
-theorem compileInc_varsSome (program : List Exp × List (Nat × Nat × Exp)) :
-    everyFnVarsSome (compileInc program).1 ∧
-      ∀ entry ∈ (compileInc program).2, everyFnVarsSome [entry.2.2] := by
-  constructor
-  · exact annotateList_varsSome 0 program.1
-  · intro ⟨name, arity, body⟩ member
-    exact compile_varsSome program.2 name arity body member
-
 /-- Annotating an expression preserves its existing function locations. -/
 theorem annotateSing_locations (arity : Nat) (expression : Exp)
     (locations : fnLocationSomeExp expression) : fnLocationSomeExp (annotateSing arity expression) := by
@@ -223,30 +197,5 @@ theorem annotateList_locations (arity : Nat) (expressions : List Exp)
     (locations : everyFnLocationSome expressions) : everyFnLocationSome (annotateList arity expressions) := by
   apply (shiftList_locations (altFreeList expressions).1 0 arity .ln).2
   exact altFreeList_locations expressions locations
-
-/-- Program annotation preserves function locations in every compiled body. -/
-theorem compile_locations (program : List (Nat × Nat × Exp))
-    (locations : ∀ name arity body, (name, arity, body) ∈ program → everyFnLocationSome [body]) :
-    ∀ name arity body, (name, arity, body) ∈ compile program → everyFnLocationSome [body] := by
-  intro name arity body member
-  obtain ⟨⟨n, args, exp⟩, sourceMember, equal⟩ := List.mem_map.mp member
-  simp only [Prod.mk.injEq] at equal
-  obtain ⟨rfl, rfl, rfl⟩ := equal
-  have sourceLocations : fnLocationSomeExp exp := by
-    simpa [everyFnLocationSome] using locations n args exp sourceMember
-  simpa [everyFnLocationSome] using annotateSing_locations args exp sourceLocations
-
-/-- Incremental annotation preserves all source function locations. -/
-theorem compileInc_locations (program : List Exp × List (Nat × Nat × Exp))
-    (mainLocations : everyFnLocationSome program.1)
-    (auxLocations : ∀ entry ∈ program.2, everyFnLocationSome [entry.2.2]) :
-    everyFnLocationSome (compileInc program).1 ∧
-      ∀ entry ∈ (compileInc program).2, everyFnLocationSome [entry.2.2] := by
-  constructor
-  · exact annotateList_locations 0 program.1 mainLocations
-  · intro ⟨name, arity, body⟩ member
-    apply compile_locations program.2 ?_ name arity body member
-    intro n a e sourceMember
-    exact auxLocations (n, a, e) sourceMember
 
 end Flapjack.Compiler.Backend.ClosAnnotate

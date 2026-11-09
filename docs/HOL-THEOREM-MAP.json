@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "every_Fn_SOME_ann",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotationInvariants/Original.lean", "lean_name": "everyFnSome_ann",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_Fn_SOME_ann_typed: the label carrier is polymorphic, the premise and conclusion map the third tuple component over the original source program and compile, and everyFnLocationSome is the reviewed every_Fn_SOME predicate."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "extract_name_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/ExtractName/Original.lean", "lean_name": "extractNameSource",
   "statement_status": "reviewed_exact",

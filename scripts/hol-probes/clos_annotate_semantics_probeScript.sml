@@ -26,3 +26,4 @@ val _ = show "compile_inc_def_typed=" clos_annotateTheory.compile_inc_def;
 val _ = show "compile_inc_eq_typed=" clos_annotateTheory.compile_inc_eq;
 val _ = show "MAP_FST_compile_typed=" clos_annotateProofTheory.MAP_FST_compile;
 val _ = show "semantics_annotate_typed=" clos_annotateProofTheory.semantics_annotate;
+val _ = show "every_Fn_SOME_ann_typed=" clos_annotateProofTheory.every_Fn_SOME_ann;

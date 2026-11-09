@@ -369,7 +369,7 @@ run_probe finite_map_alist_probeScript.sml finite_map_alist_probe.out \
   "$hol_dir/src/finite_maps/alistScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_annotate_semantics_probeScript.sml clos_annotate_semantics_probe.out \
-  const_zero_typed no_overlap_typed alt_free_sing_typed alt_free_def_typed alt_free_sing_eq_typed get_var_typed shifted_env_typed shift_def_typed shift_sing_eq_typed shift_sing_typed annotate_def_typed annotate_sing_typed annotate_list_typed annotate_sing_eq_typed compile_def_typed compile_eq_typed compile_inc_def_typed compile_inc_eq_typed MAP_FST_compile_typed semantics_annotate_typed \
+  const_zero_typed no_overlap_typed alt_free_sing_typed alt_free_def_typed alt_free_sing_eq_typed get_var_typed shifted_env_typed shift_def_typed shift_sing_eq_typed shift_sing_typed annotate_def_typed annotate_sing_typed annotate_list_typed annotate_sing_eq_typed compile_def_typed compile_eq_typed compile_inc_def_typed compile_inc_eq_typed MAP_FST_compile_typed semantics_annotate_typed every_Fn_SOME_ann_typed \
   "$cake_dir/compiler/backend/proofs/clos_annotateProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_number_correctness_probeScript.sml clos_number_correctness_probe.out \
