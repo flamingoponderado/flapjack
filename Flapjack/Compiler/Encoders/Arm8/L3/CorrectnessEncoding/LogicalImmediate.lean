@@ -95,6 +95,31 @@ theorem DecodeLogicalOp_EncodeLogicalOp (opc : LogicalOp) (s : Bool) (o : BitVec
   all_goals rw [← h]
   all_goals simp [DecodeLogicalOp]
 
+/-- The rendered `e_data` body for `LogicalImmediate@64`: the word when both
+`EncodeBitMask` and `EncodeLogicalOp` succeed, and HOL's `BadCode` (with the
+`LogicalImmediate64` message) otherwise.  Flapjack infrastructure: a readable
+form of the mechanical `e_data` rendering, proved by `rfl`. -/
+theorem arm8EData_logicalImmediate (opc : LogicalOp) (s : Bool) (imm : BitVec 64)
+    (rn rd : BitVec 5) :
+    e_data (.«LogicalImmediate@64» (1, opc, s, imm, rn, rd)) =
+      (match EncodeBitMask (TN := 64) imm with
+      | none => MachineCode.BadCode [BitVec.ofNat 8 76, BitVec.ofNat 8 111,
+          BitVec.ofNat 8 103, BitVec.ofNat 8 105, BitVec.ofNat 8 99, BitVec.ofNat 8 97,
+          BitVec.ofNat 8 108, BitVec.ofNat 8 73, BitVec.ofNat 8 109, BitVec.ofNat 8 109,
+          BitVec.ofNat 8 101, BitVec.ofNat 8 100, BitVec.ofNat 8 105, BitVec.ofNat 8 97,
+          BitVec.ofNat 8 116, BitVec.ofNat 8 101, BitVec.ofNat 8 54, BitVec.ofNat 8 52]
+      | some v5 =>
+          match EncodeLogicalOp (opc, s) with
+          | none => MachineCode.BadCode [BitVec.ofNat 8 76, BitVec.ofNat 8 111,
+              BitVec.ofNat 8 103, BitVec.ofNat 8 105, BitVec.ofNat 8 99, BitVec.ofNat 8 97,
+              BitVec.ofNat 8 108, BitVec.ofNat 8 73, BitVec.ofNat 8 109, BitVec.ofNat 8 109,
+              BitVec.ofNat 8 101, BitVec.ofNat 8 100, BitVec.ofNat 8 105, BitVec.ofNat 8 97,
+              BitVec.ofNat 8 116, BitVec.ofNat 8 101, BitVec.ofNat 8 54, BitVec.ofNat 8 52]
+          | some opc2 =>
+              match v5 with
+              | (N, (imms, immr)) =>
+                  MachineCode.ARM8 (arm8LogicalImmediateWord opc2 N imms immr rn rd)) := rfl
+
 /-- `Encode` of an accepted `LogicalImmediate@64` is the documented word. -/
 theorem arm8Encode_logicalImmediate (opc : LogicalOp) (s : Bool) (imm : BitVec 64)
     (rn rd : BitVec 5) (N : BitVec 1) (imms immr : BitVec 6) (opc2 : BitVec 2)
