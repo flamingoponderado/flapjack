@@ -229,4 +229,63 @@ theorem arm8Enc_inst_fp_eq (operation : HolFp) :
     arm8EncodeFail, List.flatMap_cons, List.flatMap_nil, List.append_nil,
     encodeBytes_noOp]
 
+/-- The computable and L3 bitmask-success tests agree. -/
+theorem encodeBitMask_isSome_eq (imm : BitVec 64) :
+    (encodeBitMask imm).isSome = (EncodeBitMask (TN := 64) imm).isSome := by
+  rw [EncodeBitMask_eq_map]
+  cases encodeBitMask imm <;> rfl
+
+/-- `.inst (.const ...)` lowers to the same move-wide or logical-immediate
+sequence, in all four cases. -/
+theorem arm8Enc_inst_const_eq (destination : Nat) (value : BitVec 64) :
+    Arm8.arm8Enc (.inst (.const destination value)) =
+      arm8Enc (.inst (.const destination value)) := by
+  simp only [Arm8.arm8Enc, Arm8.arm8Ast, Arm8.arm8Inst, arm8Enc, arm8Ast]
+  have hmap := encMovImm_eq value
+  cases h1 : encMovImm value with
+  | some p =>
+    obtain ⟨imm16, hw⟩ := p
+    have h1' : arm8EncMovImm value =
+        some (BitVec.ofNat 16 imm16, BitVec.ofNat 2 hw) := by
+      rw [h1] at hmap
+      simpa using hmap.symm
+    simp only [h1', List.flatMap_cons, List.flatMap_nil, List.append_nil]
+    rw [encodeBytes_moveWide]
+    rfl
+  | none =>
+    have h1' : arm8EncMovImm value = none := by
+      rw [h1] at hmap
+      simpa using hmap.symm
+    have hmap2 := encMovImm_eq (~~~value)
+    cases h2 : encMovImm (~~~value) with
+    | some p =>
+      obtain ⟨imm16, hw⟩ := p
+      have h2' : arm8EncMovImm (~~~value) =
+          some (BitVec.ofNat 16 imm16, BitVec.ofNat 2 hw) := by
+        rw [h2] at hmap2
+        simpa using hmap2.symm
+      simp only [h1', h2', List.flatMap_cons, List.flatMap_nil, List.append_nil]
+      rw [encodeBytes_moveWide]
+      rfl
+    | none =>
+      have h2' : arm8EncMovImm (~~~value) = none := by
+        rw [h2] at hmap2
+        simpa using hmap2.symm
+      cases hb : (encodeBitMask value).isSome
+      · have hb' : (EncodeBitMask (TN := 64) value).isSome = false := by
+          rw [← encodeBitMask_isSome_eq]
+          exact hb
+        simp only [h1', h2', hb', Bool.false_eq_true, if_false,
+          List.flatMap_cons, List.flatMap_nil, List.append_nil,
+          encodeBytes_moveWide, ofNat16_mod]
+        simp
+      · have hb' : (EncodeBitMask (TN := 64) value).isSome = true := by
+          rw [← encodeBitMask_isSome_eq]
+          exact hb
+        simp only [h1', h2', hb', if_true,
+          List.flatMap_cons, List.flatMap_nil, List.append_nil,
+          encodeBytes_logicalImmediate .orr .LogicalOp_ORR false value 31 destination
+            (EncodeLogicalOp_ORR false)]
+        simp
+
 end Flapjack.Compiler.Encoders.Arm8.L3
