@@ -7,6 +7,12 @@ import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateLength
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
+/-- Flapjack alias for Mathlib's `List.rel_reverse`: a pairwise relation is
+preserved when both lists are reversed. No separately named HOL original. -/
+theorem reverse_related {α β : Type} {R : α → β → Prop} {xs : List α} {ys : List β}
+    (related : List.Forall₂ R xs ys) : List.Forall₂ R xs.reverse ys.reverse :=
+  List.rel_reverse related
+
 /-- Compose a successful singleton simulation with the simulation of a
 nonempty tail. The continuation is the tail induction hypothesis; it receives
 the state and environment relations established by the head. This is

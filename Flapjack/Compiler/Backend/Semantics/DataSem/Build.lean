@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.DataSem.State
+import Flapjack.Compiler.Backend.Semantics.NatListBounded
 import Mathlib.Data.Nat.Find
 
 /-! Timestamped values and constant construction in the data semantics. -/
@@ -17,18 +18,6 @@ def withFreshTimestamp {C F R : Type} (state : State C F) (count : Nat) (f : Nat
   match state.tstamps with
   | some timestamp => f timestamp { state with tstamps := some (timestamp + count) }
   | none => f 0 state
-
-private theorem natList_bounded (keys : List Nat) : ∃ bound, ∀ key ∈ keys, key < bound := by
-  induction keys with
-  | nil => exact ⟨0, by simp⟩
-  | cons first rest ih =>
-    obtain ⟨bound, h⟩ := ih
-    refine ⟨max first bound + 1, ?_⟩
-    intro key member
-    rcases List.mem_cons.mp member with rfl | member
-    · omega
-    · have := h key member
-      omega
 
 /-- Every sparse tree has an unallocated natural key. -/
 theorem unusedRef_exists {α : Type} (refs : Spt (BvlSem.Ref α)) : ∃ key, sptLookup key refs = none := by

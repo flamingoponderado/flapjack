@@ -1,5 +1,6 @@
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Prime
 import Flapjack.Pancake.Semantics.PanSem.Semantics
+import Flapjack.Pancake.Semantics.PanSem.TerminationWitness
 
 namespace Flapjack
 open Pancake.PanLang PanSemStateFiniteExact
@@ -13,24 +14,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
       PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
   PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
 
-/-- Flapjack predicate normalization: eliminate evaluator pair aliases from
-HOL's classical termination-choice predicate. No independent HOL declaration. -/
-private theorem terminationWitnessReduced {width : Nat} {σ : Type} [NeZero width]
-    (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ)
-    (outcomeRelation : Option (PanSemResultExact width) → HolOutcome → Prop)
-    (behaviour : HolBehaviour) :
-    (∃ post result outcome, run = (result,post) ∧
-      outcomeRelation result outcome ∧
-      behaviour = HolBehaviour.terminate outcome post.ffi.ioEvents) ↔
-    (∃ outcome, outcomeRelation run.1 outcome ∧
-      behaviour = HolBehaviour.terminate outcome run.2.ffi.ioEvents) := by
-  rcases run with ⟨result,post⟩
-  constructor
-  · rintro ⟨post',result',outcome,hpair,houtcome,hbehaviour⟩
-    obtain ⟨rfl,rfl⟩ := Prod.mk.inj hpair
-    exact ⟨outcome,houtcome,hbehaviour⟩
-  · rintro ⟨outcome,houtcome,hbehaviour⟩
-    exact ⟨post,result,outcome,rfl,houtcome,hbehaviour⟩
 end FpermSemanticsSupport
 
 /-- Original semantics_fperm: swapping function names in the complete code map
@@ -72,6 +55,6 @@ theorem semanticsFpermHOL {width : Nat} {σ : Type} [NeZero width]
     exact h
   unfold semantics
   dsimp only
-  simp only [FpermSemanticsSupport.terminationWitnessReduced, results, events]
+  simp only [terminationWitnessReduced, results, events]
 
 end Flapjack

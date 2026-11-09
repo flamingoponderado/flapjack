@@ -110,19 +110,6 @@ theorem evaluate_worker_frame {C F : Type} (dest tag ptr : Nat) (left right : Li
   dsimp only [fresh, newBlock] at mapComm
   rw [mapComm]
 
-private theorem reverse_related (f : HolFiniteMapExact Nat Nat) {xs ys : List Value}
-    (related : List.Forall₂ (valueRel f) xs ys) : List.Forall₂ (valueRel f) xs.reverse ys.reverse := by
-  induction related with
-  | nil => exact .nil
-  | cons head tail ih =>
-    have appendRelated : ∀ {a b c d : List Value}, List.Forall₂ (valueRel f) a b →
-        List.Forall₂ (valueRel f) c d → List.Forall₂ (valueRel f) (a ++ c) (b ++ d) := by
-      intro a b c d first second
-      induction first with
-      | nil => exact second
-      | cons h t rest => exact .cons h rest
-    simpa using appendRelated ih (.cons head .nil)
-
 /-- Flapjack infrastructure: the optimized worker constructor case follows
 from auxiliary simulation of its child and the smaller-clock body hypothesis.
 The other call-block conclusions and the original measure are omitted. -/
@@ -219,7 +206,8 @@ theorem evaluate_worker_frame_core {C F : Type} (loc dest tag ptr : Nat) (left r
         (right.map (fun n => holEl n env2)).reverse (left.map (fun n => holEl n env2)).reverse
         (right.map (fun n => holEl n env1)).reverse (left.map (fun n => holEl n env1)).reverse
         sourceValue targetValue returnedHole.2 different (Set.Subset.rfl) freshOutside unchanged
-        (by simpa using singleHole) childBlocks (reverse_related g rightNext) (reverse_related g leftNext)
+        (by simpa using singleHole) childBlocks (List.rel_reverse rightNext)
+          (List.rel_reverse leftNext)
       have workerHole := alloc_hole_as_worker f env1 env2 next.refs ptr idx (.refPtr false (leastUnusedRef target.refs))
         hole.1 pointer index returnedHole.1
       simp [childRun, holHd] at run

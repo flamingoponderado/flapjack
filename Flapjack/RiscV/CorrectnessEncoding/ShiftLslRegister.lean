@@ -19,29 +19,6 @@ private theorem shift_low (rd rs1 rs2 : BitVec 5) :
     BitVec.getLsbD_append]
   simp
 
-private theorem reg_nonzero (r : Nat) (guard : asmRegOkExact r riscvConfig = true) :
-    BitVec.ofNat 5 r ≠ 0#5 := by
-  have g : r < 32 ∧ r ≠ 0 := by
-    have g := guard
-    simp [asmRegOkExact, riscvConfig] at g
-    exact ⟨of_decide_eq_true g.1, g.2.1⟩
-  intro eq
-  have n := congrArg BitVec.toNat eq
-  simp only [BitVec.toNat_ofNat] at n
-  norm_num at n
-  rw [Nat.mod_eq_of_lt g.1] at n
-  exact g.2 n
-
-private theorem reg_read (r : Nat) (s : AsmState 64) (ms : riscv_state)
-    (guard : asmRegOkExact r riscvConfig = true)
-    (rel : targetStateRel riscvTarget s ms) :
-    GPR (BitVec.ofNat 5 r) ms = readReg r s := by
-  have g : r < riscvConfig.regCount ∧ riscvConfig.avoidRegs.contains r = false := by
-    simpa [asmRegOkExact] using guard
-  have before := rel.2.2.2.1 r g
-  change ms.c_gpr ms.procID (BitVec.ofNat 5 r) = s.regs r at before
-  simpa [GPR, gpr, reg_nonzero r guard, readReg] using before
-
 /-- Original Shift Reg/Lsl case560-620. Sole original asmStep/initial relation
 and full existential/interference/asserts/asserts2 conclusion are retained.
 The source count bound and actual fetched Decode/Run/Next are derived, never

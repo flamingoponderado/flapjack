@@ -523,7 +523,7 @@ theorem callInvalidReturnShape_eq :
     (by simp [badReturnShapeState, invalidReturnCode, evalPanValueFfiClockCodeProg,
       evalPanValueFfiClockLeaf, evalPanValueFfiLeafControl, panValueReturnResult,
       evalPanValueExpWith, evalPanValueExp, panValuePayloadWithinLimit,
-      panValuePayloadSizeFuel, decPanClock,
+      panValuePayloadSize, decPanClock,
       panSemCodeEvaluateFuel, panSemProgFuel, panSemCodeBodyFuel,
       panSemExpListFuel, panSemExpFuel, panSemCallInfoFuel])
     (by simp [badReturnShapeState, invalidReturnCode, panValueShape, panShapeMatches])

@@ -1,4 +1,3 @@
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.Conventions
 import Flapjack.RiscV.PipelineDiagnostics
 import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Output

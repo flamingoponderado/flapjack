@@ -1,5 +1,6 @@
 import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.ClosLang.Budget
+import Flapjack.Compiler.Backend.ListFoldTotal
 
 /-! Structural budget facts for closure-language traversals. These are
 Flapjack infrastructure, not HOL theorem ports. -/

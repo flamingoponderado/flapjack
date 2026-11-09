@@ -348,6 +348,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.WordTest
 import Flapjack.Compiler.Backend.DataToWord.Proofs.ThunkBits
 import Flapjack.Compiler.Backend.DataToWord.Proofs.ValueLoc
 import Flapjack.Compiler.Backend.DataToWord.Proofs.JumpExc
+import Flapjack.Compiler.Backend.Semantics.NatListBounded
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.StoreEach
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorFree
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorHeap
@@ -840,6 +841,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallLookup
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallClock
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
+import Flapjack.Compiler.Backend.ListFoldTotal
 import Flapjack.Compiler.Backend.BvlInline.Proofs.StateRel
 import Flapjack.Compiler.Backend.BvlInline.Proofs.ApplySimulation
 import Flapjack.Compiler.Backend.BvlInline.Proofs.RemoveTicksSimulation
@@ -1740,6 +1742,7 @@ import Flapjack.RiscV.L3.Step.UpdatePC
 import Flapjack.RiscV.L3.Step.AvoidSignalAddressException
 import Flapjack.RiscV.L3.Step.RegisterALUStep
 import Flapjack.RiscV.L3.Step.ImmediateALUStep
+import Flapjack.RiscV.L3.Step.ComparisonMode
 import Flapjack.RiscV.L3.Step.ImmediateComparison
 import Flapjack.RiscV.L3.Step.ImmediateComparisonNop
 import Flapjack.RiscV.L3.Step.UpperImmediateStep
@@ -1991,6 +1994,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSetup
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeConstChain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALoopSemanticHelpers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticShareInst
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticCut
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticFFI
 import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceR
 import Flapjack.Misc.BalancedMap.RotationCorrect.RotateL
@@ -2674,6 +2678,7 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionInitialSeed
 import Flapjack.Compiler.Backend.RegAlloc.ProductionStackTransition
 import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTransition
 import Flapjack.Compiler.Backend.RegAlloc.ProductionDegreeTraversal
+import Flapjack.Compiler.Backend.RegAlloc.ProductionLookupFirst
 import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyCache
 import Flapjack.Compiler.Backend.RegAlloc.ProductionAdjacencyQuery
 import Flapjack.Compiler.Backend.RegAlloc.ProductionMoveRevival
@@ -2998,6 +3003,7 @@ import Flapjack.Compiler.Backend.Semantics.TargetSem.State
 import Flapjack.Compiler.Encoders.AsmProps.Target
 import Flapjack.Compiler.Encoders.AsmSem.State
 import Flapjack.Compiler.Encoders.AsmProps.Memory
+import Flapjack.Compiler.Encoders.MemBytes
 import Flapjack.Compiler.Encoders.AsmSem.MemOps
 import Flapjack.Compiler.Encoders.AsmSem.Step
 import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
@@ -3336,6 +3342,7 @@ import Flapjack.Pancake.Semantics.PanSem.StateExact
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 import Flapjack.Pancake.Semantics.PanSem.EvalInd
 import Flapjack.Pancake.Semantics.PanSem.Semantics
+import Flapjack.Pancake.Semantics.PanSem.TerminationWitness
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
 import Flapjack.Pancake.Semantics.PanSem.EvalExecutedBridge

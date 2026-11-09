@@ -7,24 +7,6 @@ open Flapjack.Compiler.Backend.StackProps Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.WordToStackRegFormat
 open Flapjack.WordToStackProofs.AsmRemoveHelpers
 
-/-- Flapjack-specific implication between the two full native predicates.
-No separate HOL declaration names this stronger uniform transport; it discharges
-only register-name obligations that the complete register bound already checks. -/
-private theorem removeOfBound {configWidth : Nat} {width : Nat} [NeZero configWidth] [NeZero width]
-    (conf : AsmConfigExact configWidth) (program : HolProg width) (bound : Nat)
-    (bounded : regBound program bound)
-    (room : bound ≤ conf.regCount - conf.avoidRegs.length) : stackAsmRemove conf program := by
-  set_option tactic.fun_induction.unfolding false in
-  fun_induction regBound program bound with
-  | case15 returns target handler bound ih =>
-      rcases returns with _ | ⟨body, register, l1, l2⟩ <;>
-        rcases handler with _ | ⟨hbody, h1, h2⟩ <;>
-        grind only [regBound, stackAsmRemove]
-  | case11 cmp register right first second bound ihFirst ihSecond =>
-      cases right <;> grind only [regBound, stackAsmRemove, regName]
-  | _ => grind only [regBound, stackAsmRemove, regName]
-
-
 /-- Flapjack-only instruction calculation: removal checks introduced loads
 and stores, without the original instruction's register-bound obligations. -/
 private theorem instRemove {width : Nat} [NeZero width]

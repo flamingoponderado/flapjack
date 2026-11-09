@@ -59,4 +59,23 @@ There is no extra HOL declaration for exposing this alias to Lean notation. -/
 theorem llookupEqNative {α : Type} (xs : List α) (n : Nat) :
     llookup xs n = xs[n]? := rfl
 
+/-- Membership of a key/value pair in a list with distinct keys determines
+`List.lookup`. HOL's library fact `ALOOKUP_ALL_DISTINCT_MEM`; no CakeML
+declaration is claimed. Shared by the PanGlobals and PanToCrep proofs, which
+previously carried private copies. -/
+theorem listLookupOfMemNodup {α β : Type} [BEq α] [LawfulBEq α]
+    (l : List (α × β)) (k : α) (v : β) (hmem : (k, v) ∈ l) (hnd : (l.map Prod.fst).Nodup) :
+    List.lookup k l = some v := by
+  induction l with
+  | nil => simp at hmem
+  | cons e l ih =>
+    obtain ⟨a, b⟩ := e
+    simp only [List.map_cons, List.nodup_cons] at hnd
+    rcases List.mem_cons.mp hmem with h | h
+    · cases h; simp
+    · have hka : k ≠ a := by
+        intro hk; subst hk; exact hnd.1 (List.mem_map.mpr ⟨(k, v), h, rfl⟩)
+      have : (k == a) = false := by simp [hka]
+      simp [List.lookup_cons, this, ih h hnd.2]
+
 end Flapjack.Misc

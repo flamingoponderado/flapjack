@@ -6,18 +6,6 @@ import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyErrorCases
 namespace Flapjack.Compiler.Backend.BviTmc.OperationSimulation
 open BviTmc BviSem BvlSem SemanticPrimitivesProps ResultRelation ListSimulation IfWorker OperationError
 
-private theorem reverse_related (f : HolFiniteMapExact Nat Nat) (xs ys : List Value)
-    (related : List.Forall₂ (valueRel f) xs ys) : List.Forall₂ (valueRel f) xs.reverse ys.reverse := by
-  have appendRel : ∀ {a b c d : List Value}, List.Forall₂ (valueRel f) a b →
-      List.Forall₂ (valueRel f) c d → List.Forall₂ (valueRel f) (a ++ c) (b ++ d) := by
-    intro a b c d first second
-    induction first with
-    | nil => exact second
-    | cons head tail ih => exact .cons head ih
-  induction related with
-  | nil => exact .nil
-  | cons head tail ih => simpa using appendRel ih (.cons head .nil)
-
 /-- Flapjack infrastructure: ordinary operation simulation from the argument
 list induction hypothesis. The source measure and safety premises on the
 argument expressions are omitted. -/
@@ -53,7 +41,7 @@ theorem evaluate_op_core {C F : Type} (op : ClosLang.Op) (args : List Bvi.Exp)
       | err error => simp [resultRel] at related
       | val values' =>
         have reversed : List.Forall₂ (valueRel g) values.reverse values'.reverse :=
-          reverse_related g values values' related
+          List.rel_reverse related
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun] at run
         cases appRun : BviSem.doApp op values.reverse middle with
         | err error =>

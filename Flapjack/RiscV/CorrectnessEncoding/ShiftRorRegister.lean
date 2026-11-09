@@ -10,29 +10,6 @@ set_option autoImplicit false
 set_option maxRecDepth 200000
 set_option maxHeartbeats 2000000
 
-private theorem reg_nonzero (r : Nat) (guard : asmRegOkExact r riscvConfig = true) :
-    BitVec.ofNat 5 r ≠ 0#5 := by
-  have g : r < 32 ∧ r ≠ 0 := by
-    have g := guard
-    simp [asmRegOkExact, riscvConfig] at g
-    exact ⟨of_decide_eq_true g.1, g.2.1⟩
-  intro eq
-  have n := congrArg BitVec.toNat eq
-  simp only [BitVec.toNat_ofNat] at n
-  norm_num at n
-  rw [Nat.mod_eq_of_lt g.1] at n
-  exact g.2 n
-
-private theorem reg_read (r : Nat) (s : AsmState 64) (ms : riscv_state)
-    (guard : asmRegOkExact r riscvConfig = true)
-    (rel : targetStateRel riscvTarget s ms) :
-    GPR (BitVec.ofNat 5 r) ms = readReg r s := by
-  have g : r < riscvConfig.regCount ∧ riscvConfig.avoidRegs.contains r = false := by
-    simpa [asmRegOkExact] using guard
-  have before := rel.2.2.2.1 r g
-  change ms.c_gpr ms.procID (BitVec.ofNat 5 r) = s.regs r at before
-  simpa [GPR, gpr, reg_nonzero r guard, readReg] using before
-
 
 private theorem reg_scratch (r : Nat) (guard : asmRegOkExact r riscvConfig = true) :
     BitVec.ofNat 5 r ≠ 31#5 := by
@@ -174,16 +151,6 @@ private theorem nonzero (rd rs rc : Nat)
   · simp [rorDestination]
   · simpa [rorDestination] using reg_nonzero rd guard
   · simpa [rorDestination,constDestination] using reg_nonzero rd guard
-
-private theorem bytes_from_domain (pc : BitVec 64) (bs : List (BitVec 8))
-    (m1 m2 : BitVec 64 → BitVec 8) (d : BitVec 64 → Prop)
-    (bytes : bytesInMemoryHOL pc bs m1 d)
-    (agree : ∀ a, d a → m2 a = m1 a) : bytesInMemoryHOL pc bs m2 d := by
-  induction bs generalizing pc with
-  | nil => trivial
-  | cons b bs ih =>
-    exact ⟨(agree pc bytes.2.1).trans bytes.1, bytes.2.1,
-      ih (pc + 1) bytes.2.2⟩
 
 /-- Full original Shift Reg/Ror constructor (560-620), including the actual five-instruction ORI31/SUB31/SLL31/SRLrd/ORrd lowering. Source count/avoid-register guards, every fetch/Next, scratch effect, PC coverage and both full original assertions are derived. This case inherits reals_as_rational_cuts, SOUNDNESS8. riscv_encoder_correct_shift (Shift.lean) assembles the full Shift constructor; whole-encoder and compiler assembly is separate. Original source step and initial target
 relation only; every original environment and both assertion predicates retained. -/

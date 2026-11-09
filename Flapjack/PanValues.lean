@@ -1213,25 +1213,32 @@ structure PanValueCallContracts where
   exceptionShapes : InfoMap Shape
   parameterShapes : InfoMap (List (VarName × Shape)) := []
 
-def panValuePayloadSizeFuel : Nat → StructContext → PanValue α → Nat
-  | 0, _, _ => 0
-  | _fuel + 1, _, .word _ => 1
-  | fuel + 1, context, .rStruct fields =>
-      panValuePayloadSizeFieldsFuel fuel context fields
-  | _fuel + 1, context, .nStruct name _ =>
-      (lookupInfo name context).map StructInfo.size |>.getD 1
+/-- CakeML's payload word count for a value, computed structurally from the
+    value tree: `.word` is one word, `.rStruct` sums its fields, and `.nStruct`
+    uses the declared structure size, matching HOL
+    `size_of_sh_with_ctxt (Named name)` (`panLangScript.sml:164-172`).
+
+    The former fuel-indexed version (`panValuePayloadSizeFuel`) charged two
+    units per `RStruct` nesting level while `panValueFlatValueFuel` counts one
+    per node, so deeply nested records were under-counted and the clocked
+    `Return`/`Raise` 32-word check could accept payloads HOL rejects (#1250).
+    This structural version has no fuel argument, so every level contributes
+    exactly one unit. -/
+def panValuePayloadSize (context : StructContext) : PanValue α → Nat
+  | .word _ => 1
+  | .rStruct fields => panValuePayloadSizeFields context fields
+  | .nStruct name _ => (lookupInfo name context).map StructInfo.size |>.getD 1
 where
-  panValuePayloadSizeFieldsFuel : Nat → StructContext → List (PanValue α) → Nat
-    | _, _, [] => 0
-    | 0, _, _ :: _ => 0
-    | fuel + 1, context, value :: values =>
-        panValuePayloadSizeFuel fuel context value +
-          panValuePayloadSizeFieldsFuel fuel context values
+  panValuePayloadSizeFields (context : StructContext) :
+      List (PanValue α) → Nat
+    | [] => 0
+    | value :: values =>
+        panValuePayloadSize context value + panValuePayloadSizeFields context values
 
 /-- CakeML limits returned and raised structured values to 32 words. -/
 def panValuePayloadWithinLimit (structs : StructContext)
     (value : PanValue α) : Bool :=
-  Nat.ble (panValuePayloadSizeFuel (panValueFlatValueFuel value + 1) structs value) 32
+  Nat.ble (panValuePayloadSize structs value) 32
 
 def panValueValuesWithinLimit (structs : StructContext) :
     List (PanValue α) → Bool
@@ -1243,7 +1250,7 @@ def panValueValuesWithinLimit (structs : StructContext) :
 @[simp] theorem panValuePayloadWithinLimit_word (structs : StructContext)
     (value : α) :
     panValuePayloadWithinLimit structs (.word value) = true := by
-  simp [panValuePayloadWithinLimit, panValuePayloadSizeFuel]
+  simp [panValuePayloadWithinLimit, panValuePayloadSize]
 
 @[simp] theorem panValueValuesWithinLimit_word_singleton (structs : StructContext)
     (value : α) :
@@ -1253,9 +1260,8 @@ def panValueValuesWithinLimit (structs : StructContext) :
 @[simp] theorem panValuePayloadWithinLimit_rStruct_two_words
     (structs : StructContext) (left right : α) :
     panValuePayloadWithinLimit structs (.rStruct [.word left, .word right]) = true := by
-  simp [panValuePayloadWithinLimit, panValuePayloadSizeFuel,
-    panValuePayloadSizeFuel.panValuePayloadSizeFieldsFuel,
-    panValueFlatValueFuel, panValueFlatValueFuel.panValueFlatValueListFuel]
+  simp [panValuePayloadWithinLimit, panValuePayloadSize,
+    panValuePayloadSize.panValuePayloadSizeFields]
 
 def panValueReturnValid (structs : StructContext)
     (contracts : Option PanValueCallContracts) (function : FunName)

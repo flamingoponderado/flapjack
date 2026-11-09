@@ -10,7 +10,10 @@ open Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
 private theorem starEmptyRight {α : Type} (p : (α → Prop) → Prop) : SetSep.star p SetSep.emp = p := by
   rw [SetSep.starComm, StackRemove.StackHeap.starEmptyLeft]
 
-private theorem shiftedForward_isForward {width : Nat} [NeZero width] (value : BitVec width) :
+/-- Shifting a value left by two sets the forward-pointer marker. Shared by
+the copying, major and partial collector move proofs; no separately named HOL
+original. -/
+theorem shiftedForward_isForward {width : Nat} [NeZero width] (value : BitVec width) :
     wordSemIsFwdPtr (.word (value <<< (2 : Nat))) = true := by
   simp only [wordSemIsFwdPtr, decide_eq_true_eq]
   apply BitVec.eq_of_getLsbD_eq

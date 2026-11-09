@@ -350,6 +350,15 @@ def panSemEvaluateWithFuel
     (memoryAccess := state.memoryAccess) (contracts := state.contracts)
     (memoryHandler := state.memoryHandler)
 
+/-- Compatibility evaluator entry point: `panSemEvaluate` runs the
+    functions-list compatibility evaluator (`evalPanValueFfiClockProg`), whose
+    `Call`/`DecCall` clauses use `evalPanValueFfiClockCall`.  That path has no
+    source `returnShape` in its function entries, so it cannot perform HOL's
+    `return_sh` check, and it reads exception validity from the detached
+    optional `contracts` table rather than the state-owned code and exception
+    maps.  Do not cite it for source `Call`/`Raise` semantics; use the code-map
+    runner (`panSemEvaluateCodeStateWithFuel` / `evalPanValueFfiClockCodeProg`)
+    for that. -/
 def panSemEvaluate
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1335,6 +1344,15 @@ theorem panSemEvaluateExact_uses_memory_access
         { state with memoryAccess := some memoryAccess } program := by
   rfl
 
+/-- Exact source entry point over the structured state.  "Exact" refers only
+    to the memory-access boundary: `PanSemExactState` supplies the explicit
+    Cake memory operations, but evaluation still runs `panSemEvaluate`, whose
+    `Call`/`DecCall` clauses use the compatibility path
+    (`evalPanValueFfiClockCall`) with no HOL `return_sh` check and a detached
+    exception table.  This entry point therefore must not be cited for source
+    `Call`/`Raise` semantics; use the code-map runner
+    (`panSemEvaluateCodeStateWithFuel` / `evalPanValueFfiClockCodeProg`) for
+    those. -/
 def panSemEvaluateExactState
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1348,7 +1366,7 @@ def panSemEvaluateExactState
 
 /-! Exact source `Return` Error paths: an expression that fails to evaluate and
     a payload that exceeds the 32-word limit both yield `SOME Error` with the
-    full unchanged state (HOL `panSemScript.sml:633-640`). -/
+    full unchanged state (HOL `panSemScript.sml:638-644`). -/
 theorem panSemEvaluateExactState_return_error_of_eval_none
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1394,7 +1412,7 @@ theorem panSemEvaluateExactState_return_error_of_oversized
 
 /-! Exact source `Raise` Error paths: an expression that fails to evaluate and
     a payload that fails the exception-shape or size check both yield
-    `SOME Error` with the full unchanged state (HOL `panSemScript.sml:641-650`). -/
+    `SOME Error` with the full unchanged state (HOL `panSemScript.sml:645-652`). -/
 theorem panSemEvaluateExactState_raise_error_of_eval_none
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]

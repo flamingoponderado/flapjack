@@ -628,53 +628,6 @@ def cutRes {width : Nat} [NeZero width] {F : Type} (live : NumSet)
 
 end LoopSemStateFiniteExact
 
-private theorem loopSetVars_sptAlistInsert_map {α β : Type} (f : α → β)
-    (names : List Nat) (values : List α) (tree : Spt α) :
-    loopSetVars (fun key => (sptLookup key tree).map f) names (values.map f) =
-      fun key => (sptLookup key
-        (LoopSemStateFiniteExact.sptAlistInsert names values tree)).map f := by
-  induction names generalizing values tree with
-  | nil =>
-      funext key
-      simp [loopSetVars, lookupFirst, LoopSemStateFiniteExact.sptAlistInsert]
-  | cons name names ih =>
-      cases values with
-      | nil =>
-          funext key
-          simp [loopSetVars, lookupFirst, LoopSemStateFiniteExact.sptAlistInsert]
-      | cons value values =>
-          funext key
-          by_cases hkey : key = name
-          · subst key
-            simp [loopSetVars, lookupFirst, List.zip_cons_cons,
-              LoopSemStateFiniteExact.sptAlistInsert,
-              sptLookup_sptInsert_same]
-          · have htail := ih values tree
-            calc
-              loopSetVars (fun k => (sptLookup k tree).map f)
-                  (name :: names) (f value :: values.map f) key =
-                loopSetVars (fun k => (sptLookup k tree).map f)
-                  names (values.map f) key := by
-                    simp [loopSetVars, lookupFirst, List.zip_cons_cons, hkey]
-              _ = (sptLookup key
-                    (LoopSemStateFiniteExact.sptAlistInsert names values tree)).map f :=
-                    congrFun htail key
-              _ = (sptLookup key
-                    (LoopSemStateFiniteExact.sptAlistInsert (name :: names)
-                      (value :: values) tree)).map f := by
-                    simp only [LoopSemStateFiniteExact.sptAlistInsert]
-                    rw [sptLookup_sptInsert_ne name key value
-                      (LoopSemStateFiniteExact.sptAlistInsert names values tree) hkey]
-
-/-- Source-shaped `find_code` (`loopSemScript.sml:147-163`) reading the exact
-    `code` `sptree$num_map` through `sptLookup`.  The code-table representation
-    (`Spt` versus the production association list) and the program carrier
-    (`HolLoopProg` versus `LoopProg`) are the only differences from
-    `Flapjack.findLoopCode`; the argument and local-environment word-location
-    values are the executable `LoopValue` mirror on both sides, so the shared
-    `loopSetVars` overlay is used verbatim.  Flapjack bridge infrastructure
-    (no `@[hol]` tag): it is the exact `code`-table reading used to relate the
-    production association-list lookup to the HOL `num_map` lookup. -/
 def findLoopCodeSpt {width : Nat} [NeZero width]
     (label : Option Nat) (args : List (LoopValue (BitVec width)))
     (code : Spt (List Nat × HolLoopProg width)) :

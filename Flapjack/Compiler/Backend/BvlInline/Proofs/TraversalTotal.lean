@@ -1,21 +1,11 @@
 import Flapjack.Misc.Option.MapM
 import Flapjack.Compiler.Backend.BvlInline
+import Flapjack.Compiler.Backend.ListFoldTotal
 
 /-! Structural sufficiency for BVL expression traversals. These lemmas are
 Flapjack infrastructure, not HOL pass-correctness ports. -/
 namespace Flapjack.Compiler.Backend.BvlInline
 open Bvl BvlToBvi
-
-private theorem member_budget_lt (xs : List Exp) (e : Exp) (h : e ∈ xs) :
-    expBudget e < listBudget xs := by
-  induction xs with
-  | nil => simp at h
-  | cons x xs ih =>
-    simp only [List.mem_cons] at h
-    simp only [listBudget]
-    rcases h with rfl | h
-    · omega
-    · have := ih h; omega
 
 /-- Inlining succeeds under a structural bound, for arbitrary caches. -/
 theorem inlineExpFuel_succeeds (fuel : Nat) (cache : Spt (Nat × Exp)) (e : Exp)

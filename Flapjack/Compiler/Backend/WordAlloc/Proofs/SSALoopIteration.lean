@@ -169,24 +169,6 @@ private theorem evaluateBodyFinal {width : Nat} [NeZero width] {C F : Type}
     rw [run]
     cases result <;> rfl
 
-/-- Original recursive clock measure, including the NONE reconciliation path.
-The actual body run and preserved reconciliation frame derive strict decrease. -/
-private theorem recursiveClockDecrease {width : Nat} [NeZero width] {C F : Type}
-    (body : WordLangProgHOL (BitVec width))
-    (before bodyAfter after : WordSemStateFiniteExact width C F)
-    (result : Option (WordSemResult width))
-    (run : WordSemStateFiniteExact.evaluate body before = (result,bodyAfter))
-    (frame : Flapjack.WordAlloc.wordStateEqRel bodyAfter after)
-    (nonzero : after.clock ≠ 0) :
-    (WordSemStateFiniteExact.decClock after).clock < before.clock := by
-  have bound := (WordSemStateFiniteExact.evaluate_clock body before result bodyAfter run).1
-  have clock : after.clock = bodyAfter.clock := frame.2.2.2.2.2.2.2.2.2.2.2.2.1
-  simp only [WordSemStateFiniteExact.decClock]
-  omega
-
-/-- Full original body-IH entry assembly (original7136-7205). Cut transport,
-locals/frame/map/table facts are proved here; the universal body IH is exactly
-the original recursive program hypothesis. No target body execution is assumed. -/
 private theorem loopBodyEntry {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F) (ssa : Spt Nat) (next : Nat)
     (names exits : Spt Unit) (body : WordLangProgHOL (BitVec width))

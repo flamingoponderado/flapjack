@@ -33,6 +33,10 @@ class ComparisonGuard(unittest.TestCase):
         self.mutate('Flapjack/RiscV/L3/Step/ImmediateComparison.lean',
                     '(holWordExtract 32 31 0 (s.c_gpr s.procID rs1)).signExtend 64',
                     '(holWordExtract 32 31 0 (s.c_gpr s.procID rs1)).setWidth 64')
+    def test_moved_mode_rewrite_drift(self):
+        self.mutate('Flapjack/RiscV/L3/Step/ComparisonMode.lean',
+                    'mcpuid.ArchBase == 0#2',
+                    'mcpuid.ArchBase == 2#2')
     def test_missing_typed_sentinel(self):
         self.mutate('scripts/hol-probes/regenerate.sh', 'sltiu_types', '')
 if __name__ == '__main__':

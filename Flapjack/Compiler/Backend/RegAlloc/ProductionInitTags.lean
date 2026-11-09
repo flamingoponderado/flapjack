@@ -1,19 +1,8 @@
 import Flapjack.Compiler.Backend.RegAlloc.ProductionExtraction
+import Flapjack.Compiler.Backend.RegAlloc.ProductionLookupFirst
 
 namespace Flapjack.RegAlloc
 open RiscV RiscV.CakeRegAlloc Translator.Monadic.MonadBase
-
-private theorem lookup_first (key : Nat) (entries : NatInfoMap Nat) :
-    lookupNatInfo key entries = sptAListLookup key entries := by
-  induction entries with
-  | nil => rfl
-  | cons entry rest ih =>
-    obtain ⟨other, value⟩ := entry
-    simp only [lookupNatInfo, sptAListLookup, Bool.beq_eq_decide_eq]
-    by_cases equal : key = other
-    · subst other
-      simp
-    · simp [equal, Ne.symm equal, ih]
 
 private theorem find_lookup (entries : NatInfoMap Nat) (key : Nat) :
     (entries.find? (fun entry => entry.1 == key)).map Prod.snd = lookupNatInfo key entries := by

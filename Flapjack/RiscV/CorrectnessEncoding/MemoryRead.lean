@@ -7,6 +7,7 @@ Source assertions are preserved in the executed readMemWord; value extraction
 is valid even when they fail. No successful native run or postrelation is assumed. -/
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 Compiler.Encoders.Asm Compiler.Encoders.AsmSem
+open Flapjack.RiscV.L3.Step.ByteMemory
 set_option autoImplicit false
 
 /-- Literal value recursion of original read_mem_word, independent of its
@@ -79,7 +80,7 @@ theorem native_raw_read_bit (p : BitVec 64) (t : riscv_state) (n j : Nat)
   let index : Fin 8 := ⟨offset + j / 8, indexBound⟩
   have bytes := memory_read_word_byte (RiscV.L3.holWordExtract 61 63 3 p) t index
   have address :
-      ((RiscV.L3.holWordExtract 61 63 3 p).setWidth 64 <<< 3) +
+      ((RiscV.L3.holWordExtract 61 63 3 p).setWidth 64 <<< (3 : Nat)) +
           BitVec.ofNat 64 index.val = p + BitVec.ofNat 64 (j / 8) := by
     dsimp [index]
     rw [BitVec.ofNat_add, ← BitVec.add_assoc]

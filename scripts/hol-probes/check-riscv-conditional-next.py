@@ -3,7 +3,7 @@
 from pathlib import Path
 import hashlib
 ROOT=Path(__file__).resolve().parents[2]
-CHECKS={'Flapjack/RiscV/CorrectnessEncoding/JumpCmp/Native.lean': '96c1ba6baa1b7195b126346f1fd8a39c2c0ff43dafbe733d9d84492601de96cd', 'scripts/hol-probes/riscv_conditional_next_probeScript.sml': '0ad98483ca9e9521a8bd94ce92e809340ef99ed61fb5154e56bcf7aa1f3445a1'}
+CHECKS={'Flapjack/RiscV/CorrectnessEncoding/JumpCmp/Native.lean': 'c445d12cd7acdeaf3b6cf72a0bd62802d0383ce0bd6027ae8d465ec0f211d09b', 'Flapjack/RiscV/CorrectnessEncoding/Skip.lean': 'e56e0994f81d6eb49d2874cf9f3029cc57378168b8d3951261d0bcb919d75fa0', 'scripts/hol-probes/riscv_conditional_next_probeScript.sml': '0ad98483ca9e9521a8bd94ce92e809340ef99ed61fb5154e56bcf7aa1f3445a1'}
 CHECKS['scripts/hol-probes/riscv_conditional_next_probe.out']='21d65648e3422dd77b3c36cbada1bbce4e141e2f67f35e80f16788bab4775bd5'
 OPS=('beq','bne','blt','bltu','bge','bgeu')
 SUFFIXES=('zero','alias_sign','odd_taken','odd_reverse','signed_boundary')

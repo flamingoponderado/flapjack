@@ -15,6 +15,9 @@ with `python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-p
 This compares complete compiler output, diagnostics, and exit status; it is
 not a general equivalence proof.
 
+At Flapjack commit `05992bd4b9`, all 143 fixed corpus cases matched the
+compiler built from the pinned CakeML submodule revision `857f0d98da8f`.
+
 After replacing the data-to-word option-valued calls with the proved-total
 operation, the 143 fixed corpus cases, 60 structured-option cases with seed
 `11051109`, and 40 nested programs with seed `11050731` matched the pinned

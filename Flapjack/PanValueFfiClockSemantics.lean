@@ -767,6 +767,547 @@ mutual
     termination_by fuel _ _ _ _ _ _ _ _ _ _ => fuel
 end
 
+/-- A result clock is at most the input clock; `none` results are unconstrained.
+
+    This is the clock bound that HOL proves in `evaluate_clock`
+    (`panSemScript.sml:752-760`) for the shared `evaluate` relation: every
+    evaluator result clock is at most the input clock.  HOL's
+    `fix_clock_evaluate` (`panSemScript.sml:772-778`) then turns the bound into
+    `fix_clock` being the identity on results. -/
+def panValueFfiClockBounded {α : Type u} {σ : Type v}
+    (clock : Nat) : Option (PanValueFfiClockResult α σ) → Prop
+  | none => True
+  | some (_, clock') => clock' ≤ clock
+
+@[simp] theorem panValueFfiClockBounded_none {α : Type u} {σ : Type v} (clock : Nat) :
+    panValueFfiClockBounded (α := α) (σ := σ) clock none := by
+  simp [panValueFfiClockBounded]
+
+@[simp] theorem panValueFfiClockBounded_some {α : Type u} {σ : Type v}
+    (clock : Nat) (outcome : PanValueFfiClockOutcome α σ) (clock' : Nat) :
+    panValueFfiClockBounded clock (some (outcome, clock')) ↔ clock' ≤ clock := by
+  simp [panValueFfiClockBounded]
+
+@[simp] theorem panValueFfiClockBounded_pure {α : Type u} {σ : Type v}
+    (clock : Nat) (outcome : PanValueFfiClockOutcome α σ) (clock' : Nat) :
+    panValueFfiClockBounded clock (pure (outcome, clock')) ↔ clock' ≤ clock := by
+  simp [panValueFfiClockBounded]
+
+@[simp] theorem panValueFfiClockBounded_some_of_le {α : Type u} {σ : Type v}
+    (clock : Nat) (outcome : PanValueFfiClockOutcome α σ) (clock' : Nat)
+    (h : clock' ≤ clock) :
+    panValueFfiClockBounded clock (some (outcome, clock')) :=
+  Iff.mpr (panValueFfiClockBounded_some clock outcome clock') h
+
+theorem panValueFfiClockBounded_pure_of_le {α : Type u} {σ : Type v}
+    (clock : Nat) (outcome : PanValueFfiClockOutcome α σ) (clock' : Nat)
+    (h : clock' ≤ clock) :
+    panValueFfiClockBounded clock (pure (outcome, clock')) :=
+  (panValueFfiClockBounded_pure clock outcome clock').mpr h
+
+theorem panValueFfiClockBounded_mono {α : Type u} {σ : Type v}
+    {x : Option (PanValueFfiClockResult α σ)} {c c' : Nat}
+    (h : c' ≤ c) (hb : panValueFfiClockBounded c' x) :
+    panValueFfiClockBounded c x := by
+  cases x with
+  | none => exact panValueFfiClockBounded_none c
+  | some p =>
+      obtain ⟨o, k⟩ := p
+      simp only [panValueFfiClockBounded_some] at hb ⊢
+      omega
+
+@[simp] theorem panValueFfiClockTimeout_snd {α : Type u} {σ : Type v}
+    (globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ) (clock : Nat) :
+    (panValueFfiClockTimeout globals memory ffi clock).2 = clock := rfl
+
+private theorem evalPanValueFfiClockLeaf_bounded
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (base top bytes : α) (clock : Nat)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ) (program : Prog α)
+    (access : Option (PanValueMemoryAccess α)) (contracts : Option PanValueCallContracts)
+    (mh : Option (PanValueMemoryFfiHandler α σ))
+    (evaluator : Option (PanExprEvaluator α)) :
+    panValueFfiClockBounded clock
+      (evalPanValueFfiClockLeaf context primitive handler structs base top bytes clock
+        locals globals memory ffi program access contracts mh evaluator) := by
+  simp only [evalPanValueFfiClockLeaf]
+  cases hleaf : evalPanValueFfiLeafControl context primitive handler structs base top bytes
+      locals globals memory ffi program access contracts mh evaluator with
+  | none =>
+      show panValueFfiClockBounded clock none
+      exact panValueFfiClockBounded_none clock
+  | some outcome =>
+      exact panValueFfiClockBounded_some_of_le clock _ clock (Nat.le_refl clock)
+
+/-- Every code-map evaluator result clock is at most the input clock, for
+    calls, DecCall, and programs.  This mirrors HOL `evaluate_clock`
+    (`panSemScript.sml:752-760`): each recursive step either returns the
+    current clock, decrements it with `decPanClock`, or propagates a callee
+    clock that is already bounded. -/
+theorem evalPanValueFfiClockCode_clock_bounded
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (code : PanSemCodeMap α) (exceptions : ExceptionId → Option Shape)
+    (base top bytes : α) (access : Option (PanValueMemoryAccess α))
+    (contracts : Option PanValueCallContracts)
+    (mh : Option (PanValueMemoryFfiHandler α σ)) :
+    ∀ fuel,
+      (∀ locals globals memory ffi clock info function arguments preserve
+          (evaluator : Option (PanExprEvaluator α)),
+        panValueFfiClockBounded clock
+          (evalPanValueFfiClockCodeCall context primitive handler structs code exceptions
+            base top bytes fuel locals globals memory ffi clock info function arguments
+            access contracts mh preserve evaluator)) ∧
+      (∀ locals globals memory ffi clock name shape function arguments body
+          (evaluator : Option (PanExprEvaluator α)),
+        panValueFfiClockBounded clock
+          (evalPanValueFfiClockCodeDecCall context primitive handler structs code exceptions
+            base top bytes fuel locals globals memory ffi clock name shape function arguments
+            body access contracts mh evaluator)) ∧
+      (∀ locals globals memory ffi clock program
+          (evaluator : Option (PanExprEvaluator α)),
+        panValueFfiClockBounded clock
+          (evalPanValueFfiClockCodeProg context primitive handler structs code exceptions
+            base top bytes fuel locals globals memory ffi clock program access contracts mh
+            evaluator)) := by
+  intro fuel
+  induction fuel with
+  | zero =>
+      refine ⟨?_, ?_, ?_⟩ <;>
+        intro <;>
+        simp [evalPanValueFfiClockCodeCall, evalPanValueFfiClockCodeDecCall,
+          evalPanValueFfiClockCodeProg]
+  | succ fuel ih =>
+      obtain ⟨ihCall, ihDecCall, ihProg⟩ := ih
+      refine ⟨?_, ?_, ?_⟩
+      · intro locals globals memory ffi clock info function arguments preserve evaluator
+        have hdec : decPanClock clock ≤ clock := by simp [decPanClock]
+        simp only [evalPanValueFfiClockCodeCall]
+        cases hargs : panValueCallArgumentsValue structs base top bytes locals globals memory
+            arguments access evaluator with
+        | none =>
+            simp only [Option.elim_none]
+            simp [panValueFfiClockBounded]
+        | some argValues =>
+            simp only [Option.elim_some]
+            cases hlook : lookupPanSemCodeCall structs code function argValues with
+            | none =>
+                simp only [Option.elim_none]
+                simp [panValueFfiClockBounded]
+            | some codeTarget =>
+                simp only [Option.elim_some]
+                obtain ⟨body, returnShape, calleeLocals⟩ := codeTarget
+                split
+                next => simp [panValueFfiClockBounded]
+                next hclock =>
+                  cases hrec : evalPanValueFfiClockCodeProg context primitive handler structs
+                      code exceptions base top bytes fuel calleeLocals globals memory ffi
+                      (decPanClock clock) body access contracts mh evaluator with
+                  | none => simp [panValueFfiClockBounded]
+                  | some step =>
+                      obtain ⟨callOutcome, callClock⟩ := step
+                      have hb := ihProg calleeLocals globals memory ffi (decPanClock clock) body
+                        evaluator
+                      rw [hrec] at hb
+                      simp only [panValueFfiClockBounded_some] at hb
+                      simp only [Option.bind_eq_bind, Option.bind_some]
+                      split
+                      next => simp [panValueFfiClockBounded] <;> omega
+                      next result =>
+                        split
+                        next => simp [panValueFfiClockBounded] <;> omega
+                        next => simp [panValueFfiClockBounded] <;> omega
+                        next => simp [panValueFfiClockBounded] <;> omega
+                        next => simp [panValueFfiClockBounded] <;> omega
+                        next calleeLocals' calleeGlobals' calleeMemory' calleeFfi' values' =>
+                          split
+                          next =>
+                            split
+                            next =>
+                              split
+                              next => simp [panValueFfiClockBounded] <;> omega
+                              next destination =>
+                                split
+                                next callerLocals' callerGlobals' =>
+                                  simp [panValueFfiClockBounded] <;> omega
+                                next => simp [panValueFfiClockBounded] <;> omega
+                            next => simp [panValueFfiClockBounded] <;> omega
+                          next => simp [panValueFfiClockBounded] <;> omega
+                        next calleeLocals' calleeGlobals' calleeMemory' calleeFfi'
+                            exception' value' =>
+                          split
+                          next caught' handlerVariable' handlerProgram' =>
+                            split
+                            next h =>
+                              split
+                              next shape' =>
+                                split
+                                next =>
+                                  cases hhandler : evalPanValueFfiClockCodeProg context primitive
+                                      handler structs code exceptions base top bytes fuel
+                                      (updatePanValueMap locals handlerVariable' value')
+                                      calleeGlobals' calleeMemory' calleeFfi'
+                                      (min (decPanClock clock) callClock) handlerProgram'
+                                      access contracts mh evaluator with
+                                  | none => simp [panValueFfiClockBounded]
+                                  | some step2 =>
+                                      obtain ⟨handlerOutcome, handlerClock⟩ := step2
+                                      have hb2 := ihProg
+                                        (updatePanValueMap locals handlerVariable' value')
+                                        calleeGlobals' calleeMemory' calleeFfi'
+                                        (min (decPanClock clock) callClock) handlerProgram'
+                                        evaluator
+                                      rw [hhandler] at hb2
+                                      simp only [panValueFfiClockBounded_some] at hb2
+                                      simp [panValueFfiClockBounded] <;> omega
+                                next => simp [panValueFfiClockBounded] <;> omega
+                              next => simp [panValueFfiClockBounded] <;> omega
+                            next => simp [panValueFfiClockBounded] <;> omega
+                          next => simp [panValueFfiClockBounded] <;> omega
+                        next calleeLocals' calleeGlobals' calleeMemory' calleeFfi' event' =>
+                          simp [panValueFfiClockBounded] <;> omega
+      · intro locals globals memory ffi clock name shape function arguments body evaluator
+        have hdec : decPanClock clock ≤ clock := by simp [decPanClock]
+        simp only [evalPanValueFfiClockCodeDecCall]
+        cases hcall : evalPanValueFfiClockCodeCall context primitive handler structs code exceptions
+            base top bytes fuel locals globals memory ffi clock none function arguments access
+            contracts mh true evaluator with
+        | none => simp [panValueFfiClockBounded]
+        | some step =>
+            obtain ⟨callOutcome, callClock⟩ := step
+            have hb := ihCall locals globals memory ffi clock none function arguments true evaluator
+            rw [hcall] at hb
+            simp only [panValueFfiClockBounded_some] at hb
+            simp only [Option.bind_eq_bind, Option.bind_some]
+            split
+            next nextLocals' nextGlobals' nextMemory' nextFfi' value' =>
+              split
+              next =>
+                cases hcont : evalPanValueFfiClockCodeProg context primitive handler structs
+                    code exceptions base top bytes fuel
+                    (updatePanValueMap locals name value') nextGlobals' nextMemory' nextFfi'
+                    callClock body access contracts mh evaluator with
+                | none => simp [panValueFfiClockBounded]
+                | some step2 =>
+                    obtain ⟨bodyOutcome, bodyClock⟩ := step2
+                    have hb2 := ihProg (updatePanValueMap locals name value') nextGlobals'
+                      nextMemory' nextFfi' callClock body evaluator
+                    rw [hcont] at hb2
+                    simp only [panValueFfiClockBounded_some] at hb2
+                    simp only [Option.bind_some]
+                    simp [panValueFfiClockBounded] <;> omega
+              next => simp [panValueFfiClockBounded] <;> omega
+            next => simp [panValueFfiClockBounded] <;> omega
+            next => simp [panValueFfiClockBounded] <;> omega
+            next => simp [panValueFfiClockBounded] <;> omega
+            next => simp [panValueFfiClockBounded] <;> omega
+            next => simp [panValueFfiClockBounded] <;> omega
+            next => simp [panValueFfiClockBounded] <;> omega
+            next => simp [panValueFfiClockBounded] <;> omega
+            next => simp [panValueFfiClockBounded] <;> omega
+      · intro locals globals memory ffi clock program evaluator
+        have hdec : decPanClock clock ≤ clock := by simp [decPanClock]
+        cases program with
+        | skip =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_bounded context primitive handler structs base top bytes
+              clock locals globals memory ffi .skip access contracts mh evaluator
+        | «break» =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_bounded context primitive handler structs base top bytes
+              clock locals globals memory ffi .break access contracts mh evaluator
+        | «continue» =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_bounded context primitive handler structs base top bytes
+              clock locals globals memory ffi .continue access contracts mh evaluator
+        | annot tag text =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_bounded context primitive handler structs base top bytes
+              clock locals globals memory ffi (.annot tag text) access contracts mh evaluator
+        | assign kind name value =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_bounded context primitive handler structs base top bytes
+              clock locals globals memory ffi (.assign kind name value) access contracts mh
+                evaluator
+        | primitive name operator args =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_bounded context primitive handler structs base top bytes
+              clock locals globals memory ffi (.primitive name operator args) access contracts mh
+                evaluator
+        | store address value =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_bounded context primitive handler structs base top bytes
+              clock locals globals memory ffi (.store address value) access contracts mh evaluator
+        | store32 address value =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_bounded context primitive handler structs base top bytes
+              clock locals globals memory ffi (.store32 address value) access contracts mh evaluator
+        | storeByte address value =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_bounded context primitive handler structs base top bytes
+              clock locals globals memory ffi (.storeByte address value) access contracts mh
+                evaluator
+        | extCall function config configLength array arrayLength =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_bounded context primitive handler structs base top bytes
+              clock locals globals memory ffi
+              (.extCall function config configLength array arrayLength) access contracts mh
+                evaluator
+        | «return» value =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_bounded context primitive handler structs base top bytes
+              clock locals globals memory ffi (.return value) access contracts mh evaluator
+        | shMemLoad size kind name address =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_bounded context primitive handler structs base top bytes
+              clock locals globals memory ffi (.shMemLoad size kind name address)
+                access contracts mh evaluator
+        | shMemStore size address value =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact evalPanValueFfiClockLeaf_bounded context primitive handler structs base top bytes
+              clock locals globals memory ffi (.shMemStore size address value) access contracts mh
+                evaluator
+        | dec name shape value body =>
+            simp only [evalPanValueFfiClockCodeProg]
+            cases hdecAccept : panValueDecAcceptedValue structs base top bytes locals globals memory
+                value access shape evaluator with
+            | none =>
+                simp only [Option.elim_none]
+                simp [panValueFfiClockBounded]
+            | some evaluated =>
+                simp only [Option.elim_some]
+                cases hrec : evalPanValueFfiClockCodeProg context primitive handler structs code
+                    exceptions base top bytes fuel (updatePanValueMap locals name evaluated)
+                    globals memory ffi clock body access contracts mh evaluator with
+                | none => simp [panValueFfiClockBounded]
+                | some step =>
+                    obtain ⟨nextOutcome, nextClock⟩ := step
+                    have hb := ihProg (updatePanValueMap locals name evaluated) globals memory ffi
+                      clock body evaluator
+                    rw [hrec] at hb
+                    simp only [panValueFfiClockBounded_some] at hb
+                    simp only [Option.bind_eq_bind, Option.bind_some]
+                    simp [panValueFfiClockBounded] <;> omega
+        | seq first second =>
+            simp only [evalPanValueFfiClockCodeProg]
+            cases hfirst : evalPanValueFfiClockCodeProg context primitive handler structs code
+                exceptions base top bytes fuel locals globals memory ffi clock first access
+                contracts mh evaluator with
+            | none => simp [panValueFfiClockBounded]
+            | some step =>
+                obtain ⟨firstOutcome, firstClock⟩ := step
+                have hb := ihProg locals globals memory ffi clock first evaluator
+                rw [hfirst] at hb
+                simp only [panValueFfiClockBounded_some] at hb
+                simp only [Option.bind_eq_bind, Option.bind_some]
+                split
+                next nextLocals' nextGlobals' nextMemory' nextFfi' =>
+                  cases hsecond : evalPanValueFfiClockCodeProg context primitive handler structs
+                      code exceptions base top bytes fuel nextLocals' nextGlobals' nextMemory'
+                      nextFfi' (min clock firstClock) second access contracts mh evaluator with
+                  | none => simp [panValueFfiClockBounded]
+                  | some step2 =>
+                      obtain ⟨secondOutcome, secondClock⟩ := step2
+                      have hb2 := ihProg nextLocals' nextGlobals' nextMemory' nextFfi'
+                        (min clock firstClock) second evaluator
+                      rw [hsecond] at hb2
+                      simp only [panValueFfiClockBounded_some] at hb2
+                      simp [panValueFfiClockBounded] <;> omega
+                next => simp [panValueFfiClockBounded] <;> omega
+        | ite condition thenBranch elseBranch =>
+            simp only [evalPanValueFfiClockCodeProg]
+            cases hcond : panValueIteConditionValue structs base top bytes locals globals memory
+                condition access evaluator with
+            | none =>
+                simp only [Option.elim_none]
+                simp [panValueFfiClockBounded]
+            | some conditionValue =>
+                simp only [Option.elim_some]
+                split
+                next => exact ihProg locals globals memory ffi clock thenBranch evaluator
+                next => exact ihProg locals globals memory ffi clock elseBranch evaluator
+        | call info function arguments =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact ihCall locals globals memory ffi clock info function arguments false evaluator
+        | decCall name shape function arguments body =>
+            simp only [evalPanValueFfiClockCodeProg]
+            exact ihDecCall locals globals memory ffi clock name shape function arguments body
+              evaluator
+        | raise exception expression =>
+            simp only [evalPanValueFfiClockCodeProg]
+            cases hexp : evalPanValueExpWith evaluator structs locals globals memory base top bytes
+                expression access with
+            | none => simp [panValueFfiClockBounded]
+            | some value =>
+                split
+                next => simp [panValueFfiClockBounded]
+                next =>
+                  split
+                  next shape' =>
+                    split
+                    next => simp [panValueFfiClockBounded]
+                    next => simp [panValueFfiClockBounded] <;> omega
+                  next => simp [panValueFfiClockBounded]
+        | «while» conditionExp body =>
+            simp only [evalPanValueFfiClockCodeProg]
+            cases hcond : panValueIteConditionValue structs base top bytes locals globals memory
+                conditionExp access evaluator with
+            | none =>
+                simp only [Option.elim_none]
+                simp [panValueFfiClockBounded]
+            | some conditionValue =>
+                simp only [Option.elim_some]
+                split
+                next => simp [panValueFfiClockBounded]
+                next =>
+                  split
+                  next => simp [panValueFfiClockBounded]
+                  next =>
+                    cases hbody : evalPanValueFfiClockCodeProg context primitive handler structs
+                        code exceptions base top bytes fuel locals globals memory ffi
+                        (decPanClock clock) body access contracts mh evaluator with
+                    | none => simp [panValueFfiClockBounded]
+                    | some step =>
+                        obtain ⟨bodyOutcome, bodyClock⟩ := step
+                        have hb := ihProg locals globals memory ffi (decPanClock clock) body
+                          evaluator
+                        rw [hbody] at hb
+                        simp only [panValueFfiClockBounded_some] at hb
+                        simp only [Option.bind_eq_bind, Option.bind_some]
+                        split
+                        next nextLocals' nextGlobals' nextMemory' nextFfi' =>
+                          cases hrec : evalPanValueFfiClockCodeProg context primitive handler
+                              structs code exceptions base top bytes fuel nextLocals' nextGlobals'
+                              nextMemory' nextFfi' (min (decPanClock clock) bodyClock)
+                              (.while conditionExp body) access contracts mh evaluator with
+                          | none => simp [panValueFfiClockBounded]
+                          | some step2 =>
+                              obtain ⟨whileOutcome, whileClock⟩ := step2
+                              have hb2 := ihProg nextLocals' nextGlobals' nextMemory' nextFfi'
+                                (min (decPanClock clock) bodyClock) (.while conditionExp body)
+                                evaluator
+                              rw [hrec] at hb2
+                              simp only [panValueFfiClockBounded_some] at hb2
+                              simp [panValueFfiClockBounded] <;> omega
+                        next nextLocals' nextGlobals' nextMemory' nextFfi' =>
+                          cases hrec : evalPanValueFfiClockCodeProg context primitive handler
+                              structs code exceptions base top bytes fuel nextLocals' nextGlobals'
+                              nextMemory' nextFfi' (min (decPanClock clock) bodyClock)
+                              (.while conditionExp body) access contracts mh evaluator with
+                          | none => simp [panValueFfiClockBounded]
+                          | some step2 =>
+                              obtain ⟨whileOutcome, whileClock⟩ := step2
+                              have hb2 := ihProg nextLocals' nextGlobals' nextMemory' nextFfi'
+                                (min (decPanClock clock) bodyClock) (.while conditionExp body)
+                                evaluator
+                              rw [hrec] at hb2
+                              simp only [panValueFfiClockBounded_some] at hb2
+                              simp [panValueFfiClockBounded] <;> omega
+                        next => simp [panValueFfiClockBounded] <;> omega
+                        next => simp [panValueFfiClockBounded] <;> omega
+        | tick =>
+            simp only [evalPanValueFfiClockCodeProg]
+            split
+            next => simp [panValueFfiClockBounded]
+            next => simp [panValueFfiClockBounded] <;> omega
+
+/-- `fixPanClock` clamps to the smaller of the old clock and the result clock;
+    when the result clock is already at most the old clock the clamp is the
+    identity, mirroring HOL `fix_clock_evaluate` (`panSemScript.sml:772-778`). -/
+theorem fixPanClock_eq_self {β : Type u} (oldClock : Nat) (outcome : β) (newClock : Nat)
+    (h : newClock ≤ oldClock) :
+    fixPanClock oldClock (outcome, newClock) = (outcome, newClock) := by
+  simp [fixPanClock, Nat.min_eq_right h]
+
+/-- The pair form of `evalPanValueFfiClockCode_clock_bounded`: whenever a
+    code-map evaluator call, DecCall, or program returns `some (result, clock')`,
+    the result clock is at most the input clock. -/
+theorem evalPanValueFfiClockCode_clock_le
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (code : PanSemCodeMap α) (exceptions : ExceptionId → Option Shape)
+    (base top bytes : α) (access : Option (PanValueMemoryAccess α))
+    (contracts : Option PanValueCallContracts)
+    (mh : Option (PanValueMemoryFfiHandler α σ)) (fuel : Nat) :
+    (∀ locals globals memory ffi clock info function arguments preserve
+        (evaluator : Option (PanExprEvaluator α))
+        (result : PanValueFfiClockResult α σ),
+      evalPanValueFfiClockCodeCall context primitive handler structs code exceptions base top
+        bytes fuel locals globals memory ffi clock info function arguments access contracts mh
+        preserve evaluator = some result → result.2 ≤ clock) ∧
+    (∀ locals globals memory ffi clock name shape function arguments body
+        (evaluator : Option (PanExprEvaluator α))
+        (result : PanValueFfiClockResult α σ),
+      evalPanValueFfiClockCodeDecCall context primitive handler structs code exceptions base
+        top bytes fuel locals globals memory ffi clock name shape function arguments body
+        access contracts mh evaluator = some result → result.2 ≤ clock) ∧
+    (∀ locals globals memory ffi clock program
+        (evaluator : Option (PanExprEvaluator α))
+        (result : PanValueFfiClockResult α σ),
+      evalPanValueFfiClockCodeProg context primitive handler structs code exceptions base top
+        bytes fuel locals globals memory ffi clock program access contracts mh evaluator = some
+        result → result.2 ≤ clock) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro locals globals memory ffi clock info function arguments preserve evaluator result h
+    obtain ⟨outcome, clock'⟩ := result
+    have hb := (evalPanValueFfiClockCode_clock_bounded context primitive handler structs code
+      exceptions base top bytes access contracts mh fuel).1 locals globals memory ffi clock info
+      function arguments preserve evaluator
+    rw [h] at hb
+    exact (panValueFfiClockBounded_some clock outcome clock').mp hb
+  · intro locals globals memory ffi clock name shape function arguments body evaluator result h
+    obtain ⟨outcome, clock'⟩ := result
+    have hb := (evalPanValueFfiClockCode_clock_bounded context primitive handler structs code
+      exceptions base top bytes access contracts mh fuel).2.1 locals globals memory ffi clock
+      name shape function arguments body evaluator
+    rw [h] at hb
+    exact (panValueFfiClockBounded_some clock outcome clock').mp hb
+  · intro locals globals memory ffi clock program evaluator result h
+    obtain ⟨outcome, clock'⟩ := result
+    have hb := (evalPanValueFfiClockCode_clock_bounded context primitive handler structs code
+      exceptions base top bytes access contracts mh fuel).2.2 locals globals memory ffi clock
+      program evaluator
+    rw [h] at hb
+    exact (panValueFfiClockBounded_some clock outcome clock').mp hb
+
+/-- The clock clamp applied by the code-map evaluator's `Seq`/`While`/`Call`
+    clauses is the identity on every returned program result, mirroring HOL
+    `fix_clock_evaluate` (`panSemScript.sml:772-778`). -/
+theorem evalPanValueFfiClockCodeProg_fixPanClock_eq
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (code : PanSemCodeMap α) (exceptions : ExceptionId → Option Shape)
+    (base top bytes : α) (access : Option (PanValueMemoryAccess α))
+    (contracts : Option PanValueCallContracts)
+    (mh : Option (PanValueMemoryFfiHandler α σ)) (fuel : Nat)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ) (clock : Nat) (program : Prog α)
+    (evaluator : Option (PanExprEvaluator α)) (result : PanValueFfiClockResult α σ)
+    (h : evalPanValueFfiClockCodeProg context primitive handler structs code exceptions base top
+      bytes fuel locals globals memory ffi clock program access contracts mh evaluator = some
+      result) :
+    fixPanClock clock result = result := by
+  obtain ⟨outcome, clock'⟩ := result
+  have hle := (evalPanValueFfiClockCode_clock_le context primitive handler structs code exceptions
+    base top bytes access contracts mh fuel).2.2 locals globals memory ffi clock program
+    evaluator (outcome, clock') h
+  exact fixPanClock_eq_self clock outcome clock' hle
+
 /-- A pointwise-correct expression route preserves complete code-map
     evaluation for calls, DecCall, and programs. This covers results, clocks,
     and all state components, including failure and FFI outcomes. -/
@@ -966,6 +1507,117 @@ theorem evalPanValueFfiClockCodeCall_callee_returnedShapeMismatch_error
           min (decPanClock clock) calleeClock) := by
   simp [evalPanValueFfiClockCodeCall, panValueCallArgumentsValue, Option.elim_some,
     harguments, hlookup, hclock, hbody, hmismatch, decPanClock]
+
+/-- State-owned code-map Call step for a callee whose own evaluation finished
+    with `Error`.  Cake's catch-all `(res,st) => (res, empty_locals st)`
+    (`panSemScript.sml:690`) clears the callee locals, so this is the one
+    `Error` origin whose call result carries `fun _ => none`; the callee
+    globals, memory and FFI state are kept and the clock is HOL's `fix_clock`
+    clamp `min (decPanClock clock) calleeClock`.  The fall-through,
+    `break`, `continue`, return-shape rejection and handler-invalid steps
+    deliberately preserve the callee locals instead.  Untagged because the
+    result is the reduced structured pair, not HOL's `result option × state`
+    pair. -/
+theorem evalPanValueFfiClockCodeCall_callee_error_error
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α)
+    (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ)
+    (structs : StructContext) (code : PanSemCodeMap α)
+    (exceptionShapes : ExceptionId → Option Shape)
+    (baseAddress topAddress bytesInWord : α)
+    (fuel : Nat)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (clock : Nat)
+    (info : Option (Option (VarKind × VarName) ×
+      Option (ExceptionId × VarName × Prog α)))
+    (function : FunName) (arguments : List (Exp α))
+    (values : List (PanValue α)) (calleeBody : Prog α) (returnShape : Shape)
+    (calleeLocals finalLocals finalGlobals : VarName → Option (PanValue α))
+    (finalMemory : α → Option (PanValue α)) (finalFfi : FfiState σ)
+    (calleeClock : Nat)
+    (access : Option (PanValueMemoryAccess α) := none)
+    (contracts : Option PanValueCallContracts := none)
+    (mh : Option (PanValueMemoryFfiHandler α σ) := none)
+    (preserveReturnLocals : Bool := false)
+    (evaluator : Option (PanExprEvaluator α) := none)
+    (harguments : panValueCallArgumentsValue structs baseAddress topAddress bytesInWord
+      locals globals memory arguments access evaluator = some values)
+    (hlookup : lookupPanSemCodeCall structs code function values =
+      some (calleeBody, returnShape, calleeLocals))
+    (hclock : clock ≠ 0)
+    (hbody : evalPanValueFfiClockCodeProg context primitive handler structs code
+      exceptionShapes baseAddress topAddress bytesInWord fuel calleeLocals globals memory ffi
+      (decPanClock clock) calleeBody
+      (memoryAccess := access) (contracts := contracts) (memoryHandler := mh)
+      (evaluator := evaluator) =
+        some (.control (.error finalLocals finalGlobals finalMemory finalFfi), calleeClock)) :
+    evalPanValueFfiClockCodeCall context primitive handler structs code exceptionShapes
+      baseAddress topAddress bytesInWord (fuel + 1) locals globals memory ffi clock info
+      function arguments (memoryAccess := access) (contracts := contracts)
+      (memoryHandler := mh) (preserveReturnLocals := preserveReturnLocals)
+      (evaluator := evaluator) =
+        some (.control (.error (fun _ => none) finalGlobals finalMemory finalFfi),
+          min (decPanClock clock) calleeClock) := by
+  simp [evalPanValueFfiClockCodeCall, Option.elim_some, harguments, hlookup, hclock, hbody,
+    decPanClock]
+
+/-- State-owned `DecCall` forwards a callee-side `Error` as Cake's catch-all
+    `(res,st) => (res, empty_locals st)` (`panSemScript.sml:713`): the code-map
+    call helper already replaces the callee locals with `fun _ => none` (see
+    `evalPanValueFfiClockCodeCall_callee_error_error`), and `DecCall`'s
+    `.error` branch preserves that map unchanged, so the forwarded error is
+    HOL's cleared-locals catch-all state.  The continuation body is not run on
+    this path.  `DecCall` consumes one fuel step before dispatching the inner
+    call, hence the `fuel + 2` entry point for a callee evaluated at `fuel`.
+    This is the syntactic form of the extensional equality noted in the #1250
+    review (report item 6). -/
+theorem evalPanValueFfiClockCodeDecCall_callee_error_error
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α)
+    (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ)
+    (structs : StructContext) (code : PanSemCodeMap α)
+    (exceptionShapes : ExceptionId → Option Shape)
+    (baseAddress topAddress bytesInWord : α)
+    (fuel : Nat)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (clock : Nat)
+    (name : VarName) (shape : Shape) (function : FunName)
+    (arguments : List (Exp α)) (body : Prog α)
+    (values : List (PanValue α)) (calleeBody : Prog α) (returnShape : Shape)
+    (calleeLocals finalLocals finalGlobals : VarName → Option (PanValue α))
+    (finalMemory : α → Option (PanValue α)) (finalFfi : FfiState σ)
+    (calleeClock : Nat)
+    (access : Option (PanValueMemoryAccess α) := none)
+    (contracts : Option PanValueCallContracts := none)
+    (mh : Option (PanValueMemoryFfiHandler α σ) := none)
+    (evaluator : Option (PanExprEvaluator α) := none)
+    (harguments : panValueCallArgumentsValue structs baseAddress topAddress bytesInWord
+      locals globals memory arguments access evaluator = some values)
+    (hlookup : lookupPanSemCodeCall structs code function values =
+      some (calleeBody, returnShape, calleeLocals))
+    (hclock : clock ≠ 0)
+    (hbody : evalPanValueFfiClockCodeProg context primitive handler structs code
+      exceptionShapes baseAddress topAddress bytesInWord fuel calleeLocals globals memory ffi
+      (decPanClock clock) calleeBody
+      (memoryAccess := access) (contracts := contracts) (memoryHandler := mh)
+      (evaluator := evaluator) =
+        some (.control (.error finalLocals finalGlobals finalMemory finalFfi), calleeClock)) :
+    evalPanValueFfiClockCodeDecCall context primitive handler structs code exceptionShapes
+      baseAddress topAddress bytesInWord (fuel + 2) locals globals memory ffi clock
+      name shape function arguments body (memoryAccess := access) (contracts := contracts)
+      (memoryHandler := mh) (evaluator := evaluator) =
+        some (.control (.error (fun _ => none) finalGlobals finalMemory finalFfi),
+          min (decPanClock clock) calleeClock) := by
+  simp [evalPanValueFfiClockCodeDecCall, evalPanValueFfiClockCodeCall, Option.elim_some,
+    harguments, hlookup, hclock, hbody, decPanClock]
 
 /-! This declaration-boundary adapter exposes the executed source-owned call
     after declaration evaluation. It shares the exact code-map conversion,

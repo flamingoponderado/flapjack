@@ -5,10 +5,31 @@ import Flapjack.RiscV.L3.Step.Evaluation
 import Flapjack.RiscV.L3.Step.FetchTheorems
 
 /-! Full native Skip case of the original encoder correctness proof. Native
-byte fetch, complete decoder and Run are used directly; no target run is assumed. -/
+byte fetch, complete decoder and Run are used directly; no target run is assumed.
+The instruction-byte fetch composition below is shared by the memory, jump, call
+and conditional-branch encodings; it has no separately named HOL original. -/
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm
   Compiler.Encoders.AsmProps Compiler.Encoders.AsmSem Compiler.Encoders.RiscV.Target
+
+/-- Alignment arithmetic shared by the native instruction steps: advancing by
+four bytes preserves two-byte alignment. This is Flapjack infrastructure with
+no separately named HOL original. -/
+theorem aligned_add_four (pc : BitVec 64) (h : holAligned 2 pc = true) :
+    holAligned 2 (pc + 4) = true := by
+  have he := congrArg BitVec.toNat (of_decide_eq_true h)
+  rw [holAlign_eq_div] at he
+  simp only [BitVec.toNat_ofNat] at he
+  change decide (holAlign 2 (pc + 4) = pc + 4) = true
+  apply decide_eq_true
+  apply BitVec.eq_of_toNat_eq
+  rw [holAlign_eq_div]
+  simp only [BitVec.toNat_ofNat, BitVec.toNat_add]
+  have four : (4 : BitVec 64).toNat = 4 := by decide
+  rw [four]
+  norm_num at *
+  have bound := pc.isLt
+  omega
 
 /-- Actual emitted native Skip bytes; Flapjack infrastructure. -/
 private theorem skip_encoding : riscvEnc (.inst .skip) = [19, 0, 0, 0] := by
@@ -36,6 +57,62 @@ private theorem skip_fetch (ms : riscv_state)
   rw [fetch_bare ms vm]
   simp [rawReadInst, boolify8, b0, b1, b2, b3, «write'Skip»]
 
+/-- Flapjack proof infrastructure: each byte of a 32-bit instruction word is
+the corresponding low extraction. No separately named HOL original. -/
+theorem holWordExtract_byte0 (w : BitVec 32) :
+    RiscV.L3.holWordExtract 8 7 0 w = BitVec.extractLsb' 0 8 w := by
+  apply BitVec.eq_of_toNat_eq
+  simp [RiscV.L3.holWordExtract, BitVec.extractLsb'_toNat]
+
+theorem holWordExtract_byte1 (w : BitVec 32) :
+    RiscV.L3.holWordExtract 8 15 8 w = BitVec.extractLsb' 8 8 w := by
+  apply BitVec.eq_of_toNat_eq
+  simp [RiscV.L3.holWordExtract, BitVec.extractLsb'_toNat]
+
+theorem holWordExtract_byte2 (w : BitVec 32) :
+    RiscV.L3.holWordExtract 8 23 16 w = BitVec.extractLsb' 16 8 w := by
+  apply BitVec.eq_of_toNat_eq
+  simp [RiscV.L3.holWordExtract, BitVec.extractLsb'_toNat]
+
+theorem holWordExtract_byte3 (w : BitVec 32) :
+    RiscV.L3.holWordExtract 8 31 24 w = BitVec.extractLsb' 24 8 w := by
+  apply BitVec.eq_of_toNat_eq
+  simp [RiscV.L3.holWordExtract, BitVec.extractLsb'_toNat]
+
+theorem holWordExtract_reassemble (w : BitVec 32) :
+    RiscV.L3.holWordExtract 8 31 24 w ++
+      (RiscV.L3.holWordExtract 8 23 16 w ++
+        (RiscV.L3.holWordExtract 8 15 8 w ++
+          RiscV.L3.holWordExtract 8 7 0 w)) = w := by
+  rw [holWordExtract_byte0, holWordExtract_byte1,
+    holWordExtract_byte2, holWordExtract_byte3]
+  apply BitVec.eq_of_getLsbD_eq_iff.mpr
+  intro i hi
+  simp only [BitVec.getLsbD_append, BitVec.getLsbD_extractLsb']
+  interval_cases i <;> simp
+
+/-- Native byte fetch composition: four literal instruction bytes and both low
+opcode-bit guards give the complete Skip4 fetch. Shared by the memory, jump,
+call and conditional-branch encodings; no separately named HOL original. -/
+theorem encoded_fetch (ms : riscv_state) (w : BitVec 32)
+    (vm : (ms.c_MCSR ms.procID).mstatus.VM = 0)
+    (low0 : w.getLsbD 0 = true) (low1 : w.getLsbD 1 = true)
+    (b0 : ms.MEM8 (ms.c_PC ms.procID) = RiscV.L3.holWordExtract 8 7 0 w)
+    (b1 : ms.MEM8 (ms.c_PC ms.procID + 1) = RiscV.L3.holWordExtract 8 15 8 w)
+    (b2 : ms.MEM8 (ms.c_PC ms.procID + 2) = RiscV.L3.holWordExtract 8 23 16 w)
+    (b3 : ms.MEM8 (ms.c_PC ms.procID + 3) = RiscV.L3.holWordExtract 8 31 24 w) :
+    Fetch ms = (.Word w, {ms with c_Skip := holUpdate ms.procID 4 ms.c_Skip}) := by
+  change ms.MEM8 (ms.c_PC ms.procID + 1#64) = _ at b1
+  change ms.MEM8 (ms.c_PC ms.procID + 2#64) = _ at b2
+  change ms.MEM8 (ms.c_PC ms.procID + 3#64) = _ at b3
+  rw [fetch_bare ms vm]
+  have lo0 : (RiscV.L3.holWordExtract 8 7 0 w).getLsbD 0 = true := by
+    simpa [holWordExtract_byte0] using low0
+  have lo1 : (RiscV.L3.holWordExtract 8 7 0 w).getLsbD 1 = true := by
+    simpa [holWordExtract_byte0] using low1
+  simp [rawReadInst, boolify8, b0, b1, b2, b3, lo0, lo1, «write'Skip»]
+  exact holWordExtract_reassemble w
+
 /-- Full native post-record for actual Skip execution, with all other fields retained. -/
 private def skipPost (ms : riscv_state) : riscv_state :=
   { ms with
@@ -57,23 +134,6 @@ private theorem skip_next (ms : riscv_state) (ok : riscvOk ms = true)
     {ms with c_Skip := holUpdate ms.procID 4 ms.c_Skip}
     ⟨hf, skip_decode, skip_run _, fields.2.2.2.1, fields.2.2.1⟩
   simpa [update_pc, «write'PC», Skip, PC, holUpdate, skipPost] using hn
-
-/-- Flapjack source-alignment arithmetic used only to discharge post-state validity. -/
-private theorem aligned_add_four (pc : BitVec 64) (h : holAligned 2 pc = true) :
-    holAligned 2 (pc + 4) = true := by
-  have he := congrArg BitVec.toNat (of_decide_eq_true h)
-  rw [holAlign_eq_div] at he
-  simp only [BitVec.toNat_ofNat] at he
-  change decide (holAlign 2 (pc + 4) = pc + 4) = true
-  apply decide_eq_true
-  apply BitVec.eq_of_toNat_eq
-  rw [holAlign_eq_div]
-  simp only [BitVec.toNat_ofNat, BitVec.toNat_add]
-  have four : (4 : BitVec 64).toNat = 4 := by decide
-  rw [four]
-  norm_num at *
-  have bound := pc.isLt
-  omega
 
 /-- Flapjack intermediate native post-relation, derived rather than assumed. -/
 private theorem skip_post_rel (s : AsmState 64) (ms : riscv_state)

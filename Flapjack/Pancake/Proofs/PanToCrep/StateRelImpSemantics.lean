@@ -1,3 +1,4 @@
+import Flapjack.Misc.ListLookup
 import Flapjack.HolRef
 import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
 import Flapjack.Pancake.PanToCrep.ContextExact
@@ -379,23 +380,6 @@ private theorem list_lookup_isSome_iff {α β : Type} [BEq α] [LawfulBEq α]
     · have : (k == a) = false := by simp [h]
       simp [List.lookup_cons, this, ih, h]
 
-/-- Membership of a key/value pair in a list with distinct keys determines
-    `List.lookup`. -/
-private theorem list_lookup_of_mem_nodup {α β : Type} [BEq α] [LawfulBEq α]
-    (l : List (α × β)) (k : α) (v : β) (hmem : (k, v) ∈ l) (hnd : (l.map Prod.fst).Nodup) :
-    List.lookup k l = some v := by
-  induction l with
-  | nil => simp at hmem
-  | cons e l ih =>
-    obtain ⟨a, b⟩ := e
-    simp only [List.map_cons, List.nodup_cons] at hnd
-    rcases List.mem_cons.mp hmem with h | h
-    · cases h; simp
-    · have hka : k ≠ a := by
-        intro hk; subst hk; exact hnd.1 (List.mem_map.mpr ⟨(k, v), h, rfl⟩)
-      have : (k == a) = false := by simp [hka]
-      simp [List.lookup_cons, this, ih h hnd.2]
-
 /-- `List.lookup` returns an entry of the list. -/
 private theorem list_lookup_mem {α β : Type} [BEq α] [LawfulBEq α]
     (l : List (α × β)) (k : α) (v : β) (h : List.lookup k l = some v) : (k, v) ∈ l := by
@@ -421,10 +405,11 @@ private theorem list_lookup_reverse_of_nodup {α β : Type} [BEq α] [LawfulBEq 
     | none => rfl
     | some v =>
       have hm := list_lookup_mem _ _ _ h'
-      have := list_lookup_of_mem_nodup l k v (List.mem_reverse.mp hm) hnd
+      have := Flapjack.Misc.listLookupOfMemNodup l k v (List.mem_reverse.mp hm) hnd
       rw [h] at this; cases this
   | some v =>
-    exact list_lookup_of_mem_nodup _ k v (List.mem_reverse.mpr (list_lookup_mem _ _ _ h)) hnd'
+    exact Flapjack.Misc.listLookupOfMemNodup _ k v
+      (List.mem_reverse.mpr (list_lookup_mem _ _ _ h)) hnd'
 
 /-- `FUPDATE_LIST FEMPTY` of a list is `List.lookup` on its reverse. -/
 private theorem fupdateList_empty_eq_lookup {α β : Type} [BEq α] [LawfulBEq α]

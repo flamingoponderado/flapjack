@@ -76,4 +76,34 @@ theorem bytesInMemoryHOL_domain {width : Nat} [NeZero width]
     ∀ j, j < bs.length → d (a + BitVec.ofNat width j) :=
   fun j hj => Flapjack.Compiler.Encoders.AsmProps.byteOffsetInDomain bs a m d h j hj
 
+/-- The immediate of one `enc_mov_imm`/`arm8EncMovImm` branch reproduces the
+masked word: if every bit of `v` outside the 16-bit block at position `k` is
+zero and `imm16` is the block's value, then `imm16 <<< k` is `v`.  Shared by the
+ARM8 machine `const` case and the L3 `const` encoder-correctness case. -/
+theorem movWideImm_value (v : BitVec 64) (k imm16 : Nat) (hk : k ≤ 48)
+    (hflag : v &&& ~~~(BitVec.ofNat 64 (0xFFFF <<< k)) = 0)
+    (himm : imm16 = (v >>> k).toNat % 65536) :
+    BitVec.ofNat 64 imm16 <<< k = v := by
+  have hM := and_not_eq_zero_eq v (BitVec.ofNat 64 (0xFFFF <<< k)) hflag
+  have hto : v.toNat &&& (BitVec.ofNat 64 (0xFFFF <<< k)).toNat = v.toNat := by
+    have h := congrArg BitVec.toNat hM
+    simpa using h
+  have hmask : (BitVec.ofNat 64 (0xFFFF <<< k)).toNat = (2 ^ 16 - 1) * 2 ^ k := by
+    rw [BitVec.toNat_ofNat, Nat.shiftLeft_eq]
+    have hlt : 65535 * 2 ^ k < 2 ^ 64 := by
+      have h2 : (2 : Nat) ^ k ≤ 2 ^ 48 := Nat.pow_le_pow_right (by decide) hk
+      have h3 : (65535 : Nat) * 2 ^ 48 < 2 ^ 64 := by norm_num
+      have := Nat.mul_le_mul_left 65535 h2
+      omega
+    rw [Nat.mod_eq_of_lt hlt]
+    norm_num
+  rw [hmask] at hto
+  obtain ⟨h1, h2⟩ := blockDiv v.toNat k hto
+  have hdiv : (v >>> k).toNat % 65536 = v.toNat / 2 ^ k := by
+    rw [BitVec.toNat_ushiftRight, Nat.shiftRight_eq_div_pow]
+    exact h1
+  rw [himm, hdiv]
+  apply BitVec.eq_of_toNat_eq
+  rw [toNat_ofNat_shiftLeft, h2, Nat.mod_eq_of_lt v.isLt]
+
 end Flapjack.Compiler.Encoders.Arm8

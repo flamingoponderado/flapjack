@@ -15,18 +15,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
       PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
   PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
 
-/-- Flapjack-only transport of reviewed expression freshness to this state. -/
-private theorem evalFreshUpdate {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) (expression : ExpHOL width)
-    (name : MlS) (value : ValueHOL width) (fresh : name ∉ varExpHOL expression) :
-    @evalHOLExact width σ _
-      ({state with locals := state.locals.updateEq (name,value)} : PanSemStateFiniteExact width σ).toExact
-      (fun a => Classical.propDecidable (state.memaddrs a)) expression =
-      @evalHOLExact width σ _ state.toExact
-        (fun a => Classical.propDecidable (state.memaddrs a)) expression := by
-  classical
-  exact evalHOLExact_updLocals_not_mem state.toExact name value expression fresh
-
 /-- Flapjack-only pointwise map algebra: a later update shadows the same key. -/
 private theorem updateSame {width : Nat} [NeZero width]
     (locals : HolFiniteMapExact MlS (ValueHOL width)) (name : MlS)
@@ -84,7 +72,7 @@ theorem evaluateFreshLocal_Dec {width : Nat} {σ : Type} [NeZero width]
     intro hm
     apply hfresh
     simp [freeVarIdsHOL, hm]
-  have hinitEq := evalFreshUpdate state initializer name value hinitFresh
+  have hinitEq := evalFreshUpdate state name value initializer hinitFresh
   rw [evaluateHOLFiniteState_dec_total] at hev ⊢
   dsimp only at hev ⊢
   simp only [setVarEq] at hev ⊢

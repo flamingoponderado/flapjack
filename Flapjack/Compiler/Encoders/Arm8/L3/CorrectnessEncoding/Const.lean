@@ -29,33 +29,6 @@ open Flapjack.Compiler.Encoders.Arm8.L3.Target
 
 /-! ## Reconstructing a word from its `arm8EncMovImm` chunk -/
 
-/-- The immediate of one `arm8EncMovImm` branch reproduces the masked word. -/
-theorem arm8MovWideImm_value (v : BitVec 64) (k imm16 : Nat) (hk : k ≤ 48)
-    (hflag : v &&& ~~~(BitVec.ofNat 64 (0xFFFF <<< k)) = 0)
-    (himm : imm16 = (v >>> k).toNat % 65536) :
-    BitVec.ofNat 64 imm16 <<< k = v := by
-  have hM := and_not_eq_zero_eq v (BitVec.ofNat 64 (0xFFFF <<< k)) hflag
-  have hto : v.toNat &&& (BitVec.ofNat 64 (0xFFFF <<< k)).toNat = v.toNat := by
-    have h := congrArg BitVec.toNat hM
-    simpa using h
-  have hmask : (BitVec.ofNat 64 (0xFFFF <<< k)).toNat = (2 ^ 16 - 1) * 2 ^ k := by
-    rw [BitVec.toNat_ofNat, Nat.shiftLeft_eq]
-    have hlt : 65535 * 2 ^ k < 2 ^ 64 := by
-      have h2 : (2 : Nat) ^ k ≤ 2 ^ 48 := Nat.pow_le_pow_right (by decide) hk
-      have h3 : (65535 : Nat) * 2 ^ 48 < 2 ^ 64 := by norm_num
-      have := Nat.mul_le_mul_left 65535 h2
-      omega
-    rw [Nat.mod_eq_of_lt hlt]
-    norm_num
-  rw [hmask] at hto
-  obtain ⟨h1, h2⟩ := blockDiv v.toNat k hto
-  have hdiv : (v >>> k).toNat % 65536 = v.toNat / 2 ^ k := by
-    rw [BitVec.toNat_ushiftRight, Nat.shiftRight_eq_div_pow]
-    exact h1
-  rw [himm, hdiv]
-  apply BitVec.eq_of_toNat_eq
-  rw [toNat_ofNat_shiftLeft, h2, Nat.mod_eq_of_lt v.isLt]
-
 /-- `arm8EncMovImm` returns the immediate that reconstructs its argument. -/
 theorem arm8EncMovImm_value (v : BitVec 64) (imm16 : BitVec 16) (hw : BitVec 2)
     (h : arm8EncMovImm v = some (imm16, hw)) :
@@ -70,7 +43,8 @@ theorem arm8EncMovImm_value (v : BitVec 64) (imm16 : BitVec 16) (hw : BitVec 2)
     rw [hk]
     have hm : ~~~(BitVec.ofNat 64 (0xFFFF <<< 0)) = (0xFFFFFFFFFFFF0000 : BitVec 64) := by
       decide
-    exact arm8MovWideImm_value v 0 (BitVec.ofNat 16 ((v >>> 0).toNat)).toNat (by decide) (by rw [hm]; exact h0) (by simp [BitVec.toNat_ofNat])
+    exact movWideImm_value v 0 (BitVec.ofNat 16 ((v >>> 0).toNat)).toNat
+      (by decide) (by rw [hm]; exact h0) (by simp [BitVec.toNat_ofNat])
   · split at h
     · rename_i h1
       simp only [Option.some.injEq, Prod.mk.injEq] at h
@@ -80,7 +54,8 @@ theorem arm8EncMovImm_value (v : BitVec 64) (imm16 : BitVec 16) (hw : BitVec 2)
       rw [hk]
       have hm : ~~~(BitVec.ofNat 64 (0xFFFF <<< 16)) = (0xFFFFFFFF0000FFFF : BitVec 64) := by
         decide
-      exact arm8MovWideImm_value v 16 (BitVec.ofNat 16 ((v >>> 16).toNat)).toNat (by decide) (by rw [hm]; exact h1) (by simp [BitVec.toNat_ofNat])
+      exact movWideImm_value v 16 (BitVec.ofNat 16 ((v >>> 16).toNat)).toNat
+        (by decide) (by rw [hm]; exact h1) (by simp [BitVec.toNat_ofNat])
     · split at h
       · rename_i h2
         simp only [Option.some.injEq, Prod.mk.injEq] at h
@@ -90,7 +65,8 @@ theorem arm8EncMovImm_value (v : BitVec 64) (imm16 : BitVec 16) (hw : BitVec 2)
         rw [hk]
         have hm : ~~~(BitVec.ofNat 64 (0xFFFF <<< 32)) = (0xFFFF0000FFFFFFFF : BitVec 64) := by
           decide
-        exact arm8MovWideImm_value v 32 (BitVec.ofNat 16 ((v >>> 32).toNat)).toNat (by decide) (by rw [hm]; exact h2) (by simp [BitVec.toNat_ofNat])
+        exact movWideImm_value v 32 (BitVec.ofNat 16 ((v >>> 32).toNat)).toNat
+          (by decide) (by rw [hm]; exact h2) (by simp [BitVec.toNat_ofNat])
       · split at h
         · rename_i h3
           simp only [Option.some.injEq, Prod.mk.injEq] at h
@@ -100,7 +76,8 @@ theorem arm8EncMovImm_value (v : BitVec 64) (imm16 : BitVec 16) (hw : BitVec 2)
           rw [hk]
           have hm : ~~~(BitVec.ofNat 64 (0xFFFF <<< 48)) = (0x0000FFFFFFFFFFFF : BitVec 64) := by
             decide
-          exact arm8MovWideImm_value v 48 (BitVec.ofNat 16 ((v >>> 48).toNat)).toNat (by decide) (by rw [hm]; exact h3) (by simp [BitVec.toNat_ofNat])
+          exact movWideImm_value v 48 (BitVec.ofNat 16 ((v >>> 48).toNat)).toNat
+            (by decide) (by rw [hm]; exact h3) (by simp [BitVec.toNat_ofNat])
         · simp at h
 
 /-- `arm8EncMovImm` on the complement returns the immediate whose negation is

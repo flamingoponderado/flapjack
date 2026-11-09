@@ -74,18 +74,6 @@ termination_by program => sizeOf program
 decreasing_by
   all_goals decreasing_trivial
 
-/-! Kernel-checked port of CakeML's
-    `not_has_return_imp_not_branch_ret` (`crep_inlineProofScript.sml:1758`):
-    a program with no return cannot acquire a return through a branching
-    construct.  The handler case is included because handlers are recursive
-    Crep programs rather than opaque metadata. -/
-private theorem crepHasReturn_false_imp_notBranchRet_aux :
-    (program : CrepProg α) →
-      crepHasReturn program = false → crepNotBranchRet program = true := by
-  intro program
-  fun_induction crepHasReturn program with
-  | _ => grind only [crepNotBranchRet, crepHasReturn]
-
 inductive CrepEarlyExit where
   | exception
   | return
@@ -320,27 +308,5 @@ def crepUnreachElim : CrepProg α → CrepProg α × Option CrepEarlyExit
 termination_by program => sizeOf program
 decreasing_by
   all_goals first | decreasing_trivial | simp_wf
-
-/-! Kernel-checked port of CakeML's
-    `not_has_return_imp_unreach_elim` (`crep_inlineProofScript.sml:1765`):
-    `unreach_elim` cannot report a return for a program whose executable
-    return analysis is false.  The private statement is slightly stronger
-    than Cake's self-equality formulation and makes the recursive argument
-    explicit; the public theorem below recovers the original statement. -/
-private theorem crepHasReturn_false_imp_unreachElim_notReturn_aux :
-    (program : CrepProg α) →
-      crepHasReturn program = false →
-      (crepUnreachElim program).2 ≠ some .return := by
-  intro program
-  fun_induction crepHasReturn program with
-  | case3 condition left right ihLeft ihRight =>
-      intro h
-      have hLeft := ihLeft (Bool.or_eq_false_iff.mp h).1
-      have hRight := ihRight (Bool.or_eq_false_iff.mp h).2
-      rcases hl : (crepUnreachElim left).2 with _ | ⟨_ | _ | _⟩ <;>
-        rcases hr : (crepUnreachElim right).2 with _ | ⟨_ | _ | _⟩ <;>
-        simp_all [crepUnreachElim, crepMergeExit]
-  | case9 program => cases program <;> simp_all [crepUnreachElim]
-  | _ => grind only [crepUnreachElim, crepMergeExit, crepHasReturn]
 
 end Flapjack
