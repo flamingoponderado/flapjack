@@ -19179,16 +19179,16 @@
     "hol_name": "decs_closed_reduce",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/StateRelation.lean",
     "lean_name": "decsClosed_tail",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed HOL tail statement captured; complete closed-declaration and RTC correspondence review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed closed_tail capture and complete decsClosed premise and reachability carriers with HOL: binder order, sole premise and tail conclusion agree. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "decs_closed_reduce_HD",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/StateRelation.lean",
     "lean_name": "decsClosed_head",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed HOL singleton-head statement captured; complete closed-declaration and RTC correspondence review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed closed_head capture and complete decsClosed premise and reachability carriers with HOL: binder order, sole premise and singleton conclusion agree. Independently source-reviewed."
   },
   {
     "hol_path": "HOL/examples/algorithms/spt_closureScript.sml",
@@ -19203,8 +19203,8 @@
     "hol_name": "is_reachable_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Reachability.lean",
     "lean_name": "isReachable",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed HOL probe captured RTC over adjacency; full relation-carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed is_reachable capture in flat_elim_closure_probe.out: reflexive transitive closure of the reviewed isAdjacent relation on num_set trees, with identical source and target carriers. Independently source-reviewed."
   },
   {
     "hol_path": "HOL/examples/algorithms/spt_closureScript.sml",
@@ -19227,8 +19227,8 @@
     "hol_name": "decs_closed_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/StateRelation.lean",
     "lean_name": "decsClosed",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed declaration condition captured in flat_elim_value_globals_probe.out; complete reachability and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed declarations_closed in flat_elim_value_globals_probe.out: analysis equality, set inclusion, grouped reachability premise and binder order agree. Domain membership uses the lookup-based sptMem set convention; domain_def itself remains a documented mismatch. Independently source-reviewed."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",

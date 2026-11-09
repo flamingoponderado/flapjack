@@ -12,7 +12,7 @@ program's dependency graph. -/
 def decsClosed (reachable : NumSet) (decs : List FlatLang.Exp) : Prop :=
   ∀ roots tree, analyseCode decs = (roots, tree) →
     (∀ key, sptMem key roots → sptMem key reachable) ∧
-    ∀ source target, sptMem source reachable → isReachable tree source target → sptMem target reachable
+    ∀ source target, sptMem source reachable ∧ isReachable tree source target → sptMem target reachable
 
 /-- A closed declaration sequence remains closed after removing its head. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "decs_closed_reduce"]
@@ -28,8 +28,8 @@ theorem decsClosed_tail (reachable : NumSet) (head : FlatLang.Exp) (tail : List 
     constructor
     · intro key member
       exact rootsClosed key ((sptMem_sptUnion _ _ _).mpr (Or.inr member))
-    · intro source target member path
-      apply pathsClosed source target member
+    · intro source target ⟨member, path⟩
+      apply pathsClosed source target ⟨member, ?_⟩
       rw [numSetTreeUnion_sym]
       exact isReachable_union tree headTree source target path
 
@@ -55,8 +55,8 @@ theorem decsClosed_head (reachable : NumSet) (head : FlatLang.Exp) (tail : List 
       constructor
       · intro key member
         exact rootsClosed key ((sptMem_sptUnion _ _ _).mpr (Or.inl member))
-      · intro source target member path
-        exact pathsClosed source target member (isReachable_union _ tailTree source target path)
+      · intro source target ⟨member, path⟩
+        exact pathsClosed source target ⟨member, isReachable_union _ tailTree source target path⟩
 
 /-- The calculated closure satisfies the original closed-declaration
 condition for the program it analyses. This is a helper for the elimination
@@ -72,7 +72,7 @@ theorem decsClosed_analysisClosure (decs : List FlatLang.Exp) (roots : NumSet) (
     change sptDomain (closureTotal roots tree) key
     rw [domain]
     exact ⟨key, member, .refl⟩
-  · intro source target member path
+  · intro source target ⟨member, path⟩
     change sptDomain (closureTotal roots tree) source at member
     rw [domain] at member
     obtain ⟨root, rootMem, prior⟩ := member
