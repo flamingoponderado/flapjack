@@ -1,5 +1,23 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "code_locs_const_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations/Original.lean", "lean_name": "codeLocs_const0",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_locs_const_0_typed: the trace, original zero constant, singleton input and empty code-location list agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_free_code_locs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations/Original.lean", "lean_name": "altFree_codeLocs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local HOL source statement and typed replay of its original proof: the quantified expression list, original free-variable first projection and location-set subset agree. The local theorem is replayed in the probe because it is not exported."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_free_code_locs_distinct",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations/Original.lean", "lean_name": "altFree_codeLocs_distinct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local HOL source statement and typed replay of its original proof: the quantified expression list, input ALL_DISTINCT premise, source free-variable first projection and result ALL_DISTINCT agree. The local theorem is replayed in the probe because it is not exported."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "code_locs_REP_const_0",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations.lean", "lean_name": "codeLocations_replicate_const0",
   "statement_status": "reviewed_exact",

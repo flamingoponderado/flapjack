@@ -1,6 +1,8 @@
 (* Typed source statements for closure annotation correctness. *)
 load "clos_annotateProofTheory";
+load "preamble";
 open HolKernel Parse boolLib bossLib;
+open preamble clos_annotateTheory closPropsTheory;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
 fun show label th = if null (hyp th) then
@@ -41,6 +43,38 @@ val _ = show "code_locs_shift_typed=" clos_annotateProofTheory.code_locs_shift;
 val _ = show "code_locs_alt_free_typed=" clos_annotateProofTheory.code_locs_alt_free;
 val _ = show "code_locs_annotate_typed=" clos_annotateProofTheory.code_locs_annotate;
 val _ = show "annotate_code_locs_typed=" clos_annotateProofTheory.annotate_code_locs;
+val _ = show "code_locs_const_0_typed=" clos_annotateProofTheory.code_locs_const_0;
+(* Replay the original local proofs: local declarations are not exported by
+   clos_annotateProofTheory, so bind the first replay explicitly for the second. *)
+val alt_free_code_locs_replay = prove (
+  ``!xs. set (code_locs (FST (alt_free xs))) SUBSET set (code_locs xs)``,
+  ho_match_mp_tac clos_annotateTheory.alt_free_ind
+  >> simp[alt_free_def,code_locs_def,UNCURRY] >> rw[]
+  >> Cases_on `alt_free [x]` >> full_simp_tac(srw_ss())[code_locs_append,HD_FST_alt_free]
+  >> Cases_on `alt_free [x1]` >> full_simp_tac(srw_ss())[code_locs_append,HD_FST_alt_free]
+  >> Cases_on `alt_free [x2]` >> full_simp_tac(srw_ss())[code_locs_append,HD_FST_alt_free]
+  >> Cases_on `alt_free xs` >> full_simp_tac(srw_ss())[code_locs_append,HD_FST_alt_free]
+  >> fs[MAP_MAP_o,o_DEF,SUBSET_DEF,code_locs_def,GSYM MAP_K_REPLICATE]
+  >> ONCE_REWRITE_TAC [code_locs_map]
+  >> simp[MEM_FLAT,MEM_GENLIST,MEM_MAP,PULL_EXISTS,UNCURRY,HD_FST_alt_free]
+  >> metis_tac[HD_FST_alt_free,FST,PAIR]);
+val _ = show "alt_free_code_locs_local_typed=" alt_free_code_locs_replay;
+val alt_free_code_locs_distinct_replay = prove (
+  ``!xs. ALL_DISTINCT (code_locs xs) ==> ALL_DISTINCT (code_locs (FST (alt_free xs)))``,
+  recInduct alt_free_ind
+  >> rw[alt_free_def,code_locs_def]
+  >> rpt(pairarg_tac >> fs[])
+  >> fs[code_locs_append,ALL_DISTINCT_APPEND,code_locs_def] >> rw[]
+  >> fs[code_locs_append,ALL_DISTINCT_APPEND,code_locs_def,GSYM MAP_K_REPLICATE,code_locs_map,FLAT_MAP_NIL]
+  >> TRY (
+    rename1`GENLIST`
+    >> fs[MEM_GENLIST,MAP_MAP_o,o_DEF,UNCURRY,HD_FST_alt_free,PULL_EXISTS]
+    >> imp_res_tac alt_free_SING >> fs[] >> rveq
+    >> fs[ALL_DISTINCT_FLAT,EL_MAP]
+    >> fs[MEM_FLAT,MEM_MAP,PULL_EXISTS,EXISTS_PROD] >> rw[]
+    >> metis_tac[SUBSET_DEF,alt_free_code_locs_replay,FST] )
+  >> metis_tac[SUBSET_DEF,alt_free_code_locs_replay,FST,alt_free_SING,HD]);
+val _ = show "alt_free_code_locs_distinct_local_typed=" alt_free_code_locs_distinct_replay;
 val _ = show "code_locs_REP_const_0_typed=" clos_annotateProofTheory.code_locs_REP_const_0;
 val _ = show "EVERY_shift_sing_typed=" clos_annotateProofTheory.EVERY_shift_sing;
 val _ = show "HD_annotate_SING_typed=" clos_annotateProofTheory.HD_annotate_SING;

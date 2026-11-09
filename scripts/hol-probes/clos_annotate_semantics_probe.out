@@ -33,6 +33,9 @@ code_locs_shift_typed=∀(xs :closLang$exp list) (k1 :num) (k2 :num) (k3 :num sp
 code_locs_alt_free_typed=∀(xs :closLang$exp list) (r1 :closLang$exp list) (r2 :db_var_set). alt_free xs = (r1,r2) ⇒ set (code_locs r1) ⊆ set (code_locs xs)
 code_locs_annotate_typed=∀(n :num) (xs :closLang$exp list). set (code_locs (annotate n xs)) ⊆ set (code_locs xs)
 annotate_code_locs_typed=∀(n :num) (ls :closLang$exp list). set (code_locs (annotate n ls)) ⊆ set (code_locs ls) ∧ (ALL_DISTINCT (code_locs ls) ⇒ ALL_DISTINCT (code_locs (annotate n ls)))
+code_locs_const_0_typed=code_locs [const_0 (t :tra)] = ([] :num list)
+alt_free_code_locs_local_typed=∀(xs :closLang$exp list). set (code_locs (FST (alt_free xs))) ⊆ set (code_locs xs)
+alt_free_code_locs_distinct_local_typed=∀(xs :closLang$exp list). ALL_DISTINCT (code_locs xs) ⇒ ALL_DISTINCT (code_locs (FST (alt_free xs)))
 code_locs_REP_const_0_typed=code_locs (REPLICATE (n :num) (const_0 (t :tra))) = ([] :num list)
 EVERY_shift_sing_typed=EVERY (f :closLang$exp -> bool) (shift [(y :closLang$exp)] (x1 :num) (x2 :num) (x3 :num sptree$num_map)) ⇔ f (HD (shift [y] x1 x2 x3))
 HD_annotate_SING_typed=[HD (annotate (x :num) [(y :closLang$exp)])] = annotate x [y]

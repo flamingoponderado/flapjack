@@ -11,6 +11,27 @@ theorem mapFst_compile {α : Type} (program : List (α × Nat × Exp)) :
     (compileSource program).map Prod.fst = program.map Prod.fst := by
   simp [compileSource, List.map_map]
 
+/-- A zero constant contains no code locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "code_locs_const_0"]
+theorem codeLocs_const0 (trace : BackendCommon.Tra) :
+    codeLocations [const0 trace] = [] := by
+  simpa using codeLocations_replicate_const0 1 trace
+
+/-- Original free-variable discovery introduces no code locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "alt_free_code_locs"]
+theorem altFree_codeLocs (expressions : List Exp) :
+    codeLocations (altFreeSource expressions).1 ⊆ codeLocations expressions := by
+  rw [altFreeSource_sing_eq.2.1]
+  exact altFreeList_codeLocations expressions
+
+/-- Original free-variable discovery preserves distinct code locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "alt_free_code_locs_distinct"]
+theorem altFree_codeLocs_distinct (expressions : List Exp)
+    (distinct : (codeLocations expressions).Nodup) :
+    (codeLocations (altFreeSource expressions).1).Nodup := by
+  rw [altFreeSource_sing_eq.2.1]
+  exact (altFreeList_codeLocations_sublist expressions).nodup distinct
+
 /-- Source shifting preserves the complete ordered list of code locations. -/
 @[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "code_locs_shift"]
 theorem codeLocs_shift (expressions : List Exp) (m l : Nat) (i : Spt Nat) :
