@@ -183,3 +183,11 @@ val _ = show_eval "ast_lit_size_string=" ``ast$lit_size (ast$StrLit (mlstring$im
 val _ = show_eval "ast_lit_size_word8=" ``ast$lit_size (ast$Word8 (255w :word8))``;
 val _ = show_eval "ast_lit_size_word64=" ``ast$lit_size (ast$Word64 (4294967297w :word64))``;
 val _ = show_eval "ast_lit_size_float64=" ``ast$lit_size (ast$Float64 (9223372036854775808w :word64))``;
+val _ = show_thm "ast_shift_size_def_typed=" astTheory.shift_size_def;
+val _ = show_thm "ast_arith_size_def_typed=" astTheory.arith_size_def;
+val _ = show_thm "ast_word_size_size_def_typed=" astTheory.word_size_size_def;
+val _ = show_thm "ast_thunk_mode_size_def_typed=" astTheory.thunk_mode_size_def;
+val _ = show_thm "ast_thunk_op_size_def_typed=" astTheory.thunk_op_size_def;
+val _ = show_thm "ast_opb_size_def_typed=" astTheory.opb_size_def;
+val _ = show_thm "ast_test_size_def_typed=" astTheory.test_size_def;
+val _ = show_thm "ast_prim_type_size_def_typed=" astTheory.prim_type_size_def;
