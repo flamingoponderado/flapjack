@@ -13,6 +13,14 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   ClosSem.holFmapAsFiniteSupportWitness
 end CompileCorrectPort
 
+/-- Singleton compilation admits the original deep-introduction rule. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_single_DEEP_INTRO"]
+theorem compileSingle_deepIntro (names : List (Option MlString)) (exp : FlatLang.Exp)
+    (P : List ClosLang.Exp → Prop) :
+    (∀ exp2, compile names [exp] = [exp2] → P [exp2]) → P (compile names [exp]) := by
+  intro h
+  simpa [compile, compileExps] using h (compileExp names exp) (by simp [compile, compileExps])
+
 /-- The specialized expression relation implies the source result relation. -/
 theorem evalResultRel_to_source {source target}
     (related : EvalResultRel source target) :

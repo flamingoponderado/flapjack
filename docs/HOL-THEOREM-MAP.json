@@ -131384,6 +131384,14 @@
   "reviewer": "Compared compile_op_correct_typed: the free variables and binder order, shared compiler and FFI carriers, grouped premises including the original control-flow exclusions, and existential result and state relation agree. Closure state uses canonical refs and code maps with a re-exported witness. FlatSem.doApp and ClosSem.evaluate inherit the reals_as_rational_cuts assumption (SOUNDNESS item 8). Independently source-reviewed."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "compile_single_DEEP_INTRO",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/CompileCorrectShape.lean",
+  "lean_name": "compileSingle_deepIntro",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_single_DEEP_INTRO_typed: names and expression precede the universally quantified predicate, the singleton equation and implication match, and HOL bool is rendered as Prop for the proposition-only predicate. The proof unfolds singleton compilation. Independently source-reviewed."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
   "hol_name": "do_eval_thm",
   "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DynamicEvaluation.lean",

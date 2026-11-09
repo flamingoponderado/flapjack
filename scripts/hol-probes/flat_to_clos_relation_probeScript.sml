@@ -230,3 +230,6 @@ val _ = (print "op_test_typed="; Lib.with_flag (Globals.show_types,true) print_t
 
 val _ = if null (hyp op_arith) then () else raise Fail "hypotheses: op_arith";
 val _ = (print "op_arith_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl op_arith); print "\n");
+
+val _ = if null (hyp compile_single_DEEP_INTRO) then () else raise Fail "hypotheses: compile_single_DEEP_INTRO";
+val _ = (print "compile_single_DEEP_INTRO_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl compile_single_DEEP_INTRO); print "\n");
