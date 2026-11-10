@@ -9479,3 +9479,8 @@ run_probe bvi_tailrec_proof_source_probeScript.sml bvi_tailrec_proof_source_prob
   free_names_def_typed namespace_rel_def_typed from_op_to_op_typed list_to_v_simp_typed list_to_v_imp_typed op_id_val_def_typed ty_rel_def_typed ty_rel_APPEND_typed ty_rel_decide_ty_typed \
   "$cake_dir/compiler/backend/proofs/bvi_tailrecProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe data_sem_control_probeScript.sml data_sem_control_probe.out \
+  push_env_clock_typed pop_env_clock_typed do_stack_clock_typed vb_size_def_typed \
+  "$cake_dir/compiler/backend/semantics/dataSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"

@@ -128644,8 +128644,8 @@
   "hol_name": "pop_env_clock",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "popEnv_clock",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the source statement of the [local] theorem pop_env_clock (dataSemScript.sml:1299-1300; not exported, so data_sem_control_probe replays it typed: `∀s s1 :(α,β) state. pop_env s = SOME s1 ⇒ s1.clock = s.clock`) with popEnv_clock (state next : State C F) (run : popEnv state = some next) : next.clock = state.clock; popEnv and State are the reviewed pop_env_def and state ports."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128660,8 +128660,8 @@
   "hol_name": "push_env_clock",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Control.lean",
   "lean_name": "pushEnv_clock",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the source statement of the [local] theorem push_env_clock (dataSemScript.sml:1307-1308; not exported, so data_sem_control_probe replays it typed: `∀env :v sptree$num_map. ∀b :bool. ∀s :(α,β) state. (push_env env b s).clock = s.clock`) with pushEnv_clock (env : Spt Value) (handler : Bool) (state : State C F) : (pushEnv env handler state).clock = state.clock; pushEnv and State are the reviewed push_env_def and state ports."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -128901,40 +128901,44 @@
   "hol_name": "compute_limits_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Semantics.lean",
   "lean_name": "computeLimits",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed data_sem_semantics_probe capture (`compute_limits len_bits a64 fpops fptops stack_heap_limit = <|stack_limit := FST stack_heap_limit; heap_limit := SND ...; length_limit := len_bits; arch_64_bit := a64; has_fp_ops := fpops; has_fp_tops := fptops|>`) with computeLimits returning ⟨stackHeapLimit.2, lengthBits, stackHeapLimit.1, arch64, fpOps, fpTops⟩; Lean's Limits field order is heapLimit, lengthLimit, stackLimit, arch64Bit, hasFpOps, hasFpTops (reviewed limits port), so .2/.1 are HOL's SND/FST and every field is the same source field."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "data_lang_safe_for_space_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Semantics.lean",
   "lean_name": "dataLangSafeForSpace",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed data_sem_semantics_probe capture (`data_lang_safe_for_space init_ffi code lims ss start ⇔ ∀ck. let p = Call NONE (SOME start) [] NONE; init = initial_state init_ffi code ARB ARB T lims ss in ... s.safe_for_space`) with dataLangSafeForSpace: the same Call/initialState/clock quantification and the same safeForSpace test (= true); HOL's two ARB arguments at the `(unit,'ffi) state` instantiation are rendered as holArb at CompileOracle Unit and Compiler Unit, matching the typed capture's ARB types. It inherits reals_as_rational_cuts through evaluation; see SOUNDNESS item 8.",
+    "inherits_reals_as_rational_cuts": true
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "evaluate_peak_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Semantics.lean",
   "lean_name": "evaluatePeak",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed data_sem_semantics_probe capture (`evaluate_peak c s = let (x,s1) = evaluate (c,s) in s1.peak_heap_length`) with evaluatePeak (program) (state) : Nat := (evaluate program state).2.peakHeapLength; evaluate and State are the reviewed evaluate_def and state ports and the pair projection is the let-destructuring. It inherits reals_as_rational_cuts through evaluation; see SOUNDNESS item 8.",
+    "inherits_reals_as_rational_cuts": true
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "evaluate_safe_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Semantics.lean",
   "lean_name": "evaluateSafe",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed data_sem_semantics_probe capture (`evaluate_safe c s ⇔ let (x,s1) = evaluate (c,s) in s1.safe_for_space`) with evaluateSafe (program) (state) : Bool := (evaluate program state).2.safeForSpace; the HOL bool-valued formula is the Lean Bool result. It inherits reals_as_rational_cuts through evaluation; see SOUNDNESS item 8.",
+    "inherits_reals_as_rational_cuts": true
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
   "hol_name": "semantics_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Semantics.lean",
   "lean_name": "semantics",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed data_sem_semantics_probe capture (`semantics init_ffi code coracle cc lims ss start = let p = Call NONE (SOME start) [] NONE; init = initial_state ... in if ∃k. case FST(evaluate (p,init k)) of NONE => T | SOME (Rval _) => F | SOME (Rerr e) => e ≠ Rabort Rtimeout_error ∧ ∀f. e ≠ Rabort (Rffi_error f) then Fail else case some res. ∃k s r outcome. evaluate (p,init k) = (SOME r,s) ∧ (case r of ...) ∧ res = Terminate outcome s.ffi.io_events of NONE => Diverge (build_lprefix_lub (IMAGE ... UNIV)) | SOME res => res`) with semantics: the same fail test (none => True, .err non-timeout non-ffiError, otherwise False), the same some-witness body factored as terminatingObservation with holOptionSome (the reviewed some_def port), and the same least-upper-bound fallback with the image rendered as a set predicate; HolBehaviour/HolLList/HolFfiState are the reviewed ports. It inherits reals_as_rational_cuts through evaluation; see SOUNDNESS item 8.",
+    "inherits_reals_as_rational_cuts": true
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -129253,8 +129257,8 @@
   "hol_name": "do_stack_clock",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Stack.lean",
   "lean_name": "doStack_clock",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed data_sem_control_probe capture (`(do_stack (op :closLang$op) (args :v list) (s1 :(α,β) state)).clock = s1.clock`) with doStack_clock (op) (values) (state) : (doStack op values state).clock = state.clock; doStack is the reviewed do_stack_def port."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
@@ -129277,8 +129281,8 @@
   "hol_name": "vb_size_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataSem/Stack.lean",
   "lean_name": "valueBlockSize",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed data_sem_control_probe capture (`vb_size (Block ts t ls) = 1 + t + SUM (MAP vb_size ls) + LENGTH ls ∧ vb_size (Number v) = 1 ∧ ... all other constructors = 1`) with valueBlockSize: the block clause is 1 + tag + sum of children sizes + length, with Lean's `.block` first field the timestamp and second the tag (reviewed DataSem v port), and the wildcard `_ => 1` covers the four non-block constructors exactly as HOL's `vb_size _ = 1n`."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
