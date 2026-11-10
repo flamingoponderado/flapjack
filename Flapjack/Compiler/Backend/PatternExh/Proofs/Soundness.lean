@@ -897,7 +897,7 @@ theorem expand_thm :
 
 /-- Each expanded matrix row originates in one input row and one of its
 expanded patterns. This Flapjack helper replaces the HOL proofs' row induction. -/
-theorem orRows_member {α : Type} (rows : List (Pat × α)) (row : List Pat) (member : row ∈ orRows rows) :
+private theorem orRows_member {α : Type} (rows : List (Pat × α)) (row : List Pat) (member : row ∈ orRows rows) :
     ∃ pattern index, (pattern, index) ∈ rows ∧
       ∃ expanded ∈ expand pattern, row = [expanded] := by
   induction rows with

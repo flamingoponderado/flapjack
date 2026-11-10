@@ -14,7 +14,7 @@ open Flapjack.SemanticPrimitivesHOL Flapjack.AstHOL Flapjack.Basis.Pure.MlString
 
 /-- Singleton evaluation is simulated for match-free expressions under the
 proof-side state and environment relations. -/
-theorem evaluate_singleton_simulation {C F : Type}
+private theorem evaluate_singleton_simulation {C F : Type}
     (env : FlatSem.Environment FlatSem.Value) (names : List (Option MlString)) (values : List ClosSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F) (expression : FlatLang.Exp)
     (states : StateRel source target) (environments : EnvRel env names values)

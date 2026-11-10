@@ -21,7 +21,7 @@ open Flapjack.SemanticPrimitivesHOL Flapjack.Basis.Pure.MlString
 
 /-- The compiled initializer allocates global zero and installs the expected
 interpreter closure or unit, without changing the remaining state. -/
-theorem evaluate_compileInit {C F : Type} (interpreter : Bool) (ffi : Flapjack.HolFfiState F)
+private theorem evaluate_compileInit {C F : Type} (interpreter : Bool) (ffi : Flapjack.HolFfiState F)
     (maxApp clock : Nat) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
     (oracle : ClosSem.CompileOracle C) (compiler : ClosSem.Compiler C) (positive : 0 < maxApp) :
     ClosSem.evaluate [ClosInterp.compileInit interpreter] []
