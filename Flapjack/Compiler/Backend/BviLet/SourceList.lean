@@ -126,12 +126,12 @@ theorem compile_eq_compileList (env : List Nat) (d : Nat) (xs : List Exp) :
   case case7 env d xs hne last ih2 ih1 =>
     cases xs with
     | nil => exact absurd rfl hne
-    | cons head tail => simp [compileSing, compileList, Flapjack.holHd, last]
+    | cons head tail => simp [compileSing, last]
   case case8 env d xs v hne h ih2 ih1 =>
     cases xs with
     | nil => exact absurd rfl hne
     | cons head tail =>
-      simp [compileSing, compileList, Flapjack.holHd]
+      simp [compileSing, compileList]
       intro hv
       have hlen : (head :: tail).length = tail.length + 1 := by simp
       have hvk : v = (head :: tail).length - 1 := by omega
@@ -139,7 +139,7 @@ theorem compile_eq_compileList (env : List Nat) (d : Nat) (xs : List Exp) :
   case case9 env d xs other hne h ih2 ih1 =>
     cases xs with
     | nil => exact absurd rfl hne
-    | cons head tail => simp [compileSing, compileList, Flapjack.holHd, h]
+    | cons head tail => simp [compileSing, compileList]
 
 /-- HOL's compile_sing theorem: singleton compilation and the list rewrite. -/
 @[hol "cakeml/compiler/backend/bvi_letScript.sml" "compile_sing"]

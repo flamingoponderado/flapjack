@@ -40,9 +40,9 @@ theorem compileFuel_agrees (fuel n : Nat) (env : List Nat) (tail : Bool)
     | var v => cases tail <;> simp [compileFuel, compileSing]
     | force loc v => simp [compileFuel, compileSing]
     | ifThenElse x y z =>
-      have bx : Bvi.expBudget x < fuel := by simp_all [Bvi.expBudget] <;> omega
-      have byBound : Bvi.expBudget y < fuel := by simp_all [Bvi.expBudget] <;> omega
-      have bz : Bvi.expBudget z < fuel := by simp_all [Bvi.expBudget] <;> omega
+      have bx : Bvi.expBudget x < fuel := by simp_all [Bvi.expBudget]; omega
+      have byBound : Bvi.expBudget y < fuel := by simp_all [Bvi.expBudget]; omega
+      have bz : Bvi.expBudget z < fuel := by simp_all [Bvi.expBudget]; omega
       obtain ⟨⟨cx, vx, n1⟩, hx⟩ := compileFuel_succeeds fuel n env false live x bx
       obtain ⟨⟨cy, vy, n2⟩, hy⟩ := compileFuel_succeeds fuel n1 env tail live y byBound
       obtain ⟨⟨cz, vz, n3⟩, hz⟩ := compileFuel_succeeds fuel n2 env tail live z bz
@@ -52,8 +52,8 @@ theorem compileFuel_agrees (fuel n : Nat) (env : List Nat) (tail : Bool)
       simp only [Option.some.injEq] at ex ey ez
       cases tail <;> simp [compileFuel, compileSing, hx, hy, hz, ex, ey, ez]
     | «let» xs body =>
-      have bx : Bvi.listBudget xs < fuel := by simp_all [Bvi.expBudget] <;> omega
-      have bb : Bvi.expBudget body < fuel := by simp_all [Bvi.expBudget] <;> omega
+      have bx : Bvi.listBudget xs < fuel := by simp_all [Bvi.expBudget]; omega
+      have bb : Bvi.expBudget body < fuel := by simp_all [Bvi.expBudget]; omega
       obtain ⟨⟨c, vs, n1⟩, hc⟩ := compileListFuel_succeeds fuel n env live xs bx
       obtain ⟨⟨body', v, n2⟩, hb⟩ := compileFuel_succeeds fuel n1 (vs ++ env) tail live body bb
       have ec := (compileListFuel_agrees fuel n env live xs bx).symm.trans hc
@@ -61,25 +61,25 @@ theorem compileFuel_agrees (fuel n : Nat) (env : List Nat) (tail : Bool)
       simp only [Option.some.injEq] at ec eb
       simp [compileFuel, compileSing, hc, hb, ec, eb]
     | raise x =>
-      have bx : Bvi.expBudget x < fuel := by simp_all [Bvi.expBudget] <;> omega
+      have bx : Bvi.expBudget x < fuel := by simp_all [Bvi.expBudget]; omega
       obtain ⟨⟨c, v, n1⟩, hc⟩ := compileFuel_succeeds fuel n env false live x bx
       have ec := (compileFuel_agrees fuel n env false live x bx).symm.trans hc
       simp only [Option.some.injEq] at ec
       simp [compileFuel, compileSing, hc, ec]
     | tick x =>
-      have bx : Bvi.expBudget x < fuel := by simp_all [Bvi.expBudget] <;> omega
+      have bx : Bvi.expBudget x < fuel := by simp_all [Bvi.expBudget]; omega
       obtain ⟨⟨c, v, n1⟩, hc⟩ := compileFuel_succeeds fuel n env tail live x bx
       have ec := (compileFuel_agrees fuel n env tail live x bx).symm.trans hc
       simp only [Option.some.injEq] at ec
       simp [compileFuel, compileSing, hc, ec]
     | «return» xs =>
-      have bx : Bvi.listBudget xs < fuel := by simp_all [Bvi.expBudget] <;> omega
+      have bx : Bvi.listBudget xs < fuel := by simp_all [Bvi.expBudget]; omega
       obtain ⟨⟨c, vs, n1⟩, hc⟩ := compileListFuel_succeeds fuel n env live xs bx
       have ec := (compileListFuel_agrees fuel n env live xs bx).symm.trans hc
       simp only [Option.some.injEq] at ec
       simp [compileFuel, compileSing, hc, ec]
     | op op xs =>
-      have bx : Bvi.listBudget xs < fuel := by simp_all [Bvi.expBudget] <;> omega
+      have bx : Bvi.listBudget xs < fuel := by simp_all [Bvi.expBudget]; omega
       obtain ⟨⟨c, vs, n1⟩, hc⟩ := compileListFuel_succeeds fuel n env live xs bx
       have ec := (compileListFuel_agrees fuel n env live xs bx).symm.trans hc
       simp only [Option.some.injEq] at ec
@@ -92,14 +92,14 @@ theorem compileFuel_agrees (fuel n : Nat) (env : List Nat) (tail : Bool)
       cases handler with
       | none => simp [compileFuel, compileSing, hc, ec]
       | some h =>
-        have bh : Bvi.expBudget h < fuel := by simp_all [Bvi.expBudget] <;> omega
+        have bh : Bvi.expBudget h < fuel := by simp_all [Bvi.expBudget]; omega
         obtain ⟨⟨h', v, n2⟩, hh⟩ := compileFuel_succeeds fuel (n1 + 1) (n1 :: env) false live h bh
         have eh := (compileFuel_agrees fuel (n1 + 1) (n1 :: env) false live h bh).symm.trans hh
         simp only [Option.some.injEq] at eh
         simp [compileFuel, compileSing, hc, hh, ec, eh]
     | letCall rets ticks dest xs body =>
-      have bx : Bvi.listBudget xs < fuel := by simp_all [Bvi.expBudget] <;> omega
-      have bb : Bvi.expBudget body < fuel := by simp_all [Bvi.expBudget] <;> omega
+      have bx : Bvi.listBudget xs < fuel := by simp_all [Bvi.expBudget]; omega
+      have bb : Bvi.expBudget body < fuel := by simp_all [Bvi.expBudget]; omega
       obtain ⟨⟨c, vs, n1⟩, hc⟩ := compileListFuel_succeeds fuel n env live xs bx
       have ec := (compileListFuel_agrees fuel n env live xs bx).symm.trans hc
       simp only [Option.some.injEq] at ec
@@ -130,8 +130,8 @@ theorem compileListFuel_agrees (fuel n : Nat) (env live : List Nat)
     cases xs with
     | nil => simp [compileListFuel, compileList]
     | cons x xs =>
-      have bx : Bvi.expBudget x < fuel := by simp_all [Bvi.listBudget] <;> omega
-      have bxs : Bvi.listBudget xs < fuel := by simp_all [Bvi.listBudget] <;> omega
+      have bx : Bvi.expBudget x < fuel := by simp_all [Bvi.listBudget]; omega
+      have bxs : Bvi.listBudget xs < fuel := by simp_all [Bvi.listBudget]; omega
       obtain ⟨⟨c, v, n1⟩, hc⟩ := compileFuel_succeeds fuel n env false live x bx
       have ec := (compileFuel_agrees fuel n env false live x bx).symm.trans hc
       simp only [Option.some.injEq] at ec
