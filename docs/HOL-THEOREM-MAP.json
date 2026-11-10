@@ -132,6 +132,25 @@
   "reviewer": "Compared syntax_oracle_ok_start_typed and independent review: binder order c, c', f, es, co and polymorphic oracle payload match; the start update is f c'.start and HOL boolean equality is rendered as iff."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "chain_installed_cons",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SourceChain.lean", "lean_name": "chainInstalled_cons",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared the HOL source and chain_installed_cons_typed with independent review: binder order, complete iff including the conditional head, and canonical finite-map code parameter with its lookup and support codec witness match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "chain_installed_SUBMAP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SourceChain.lean", "lean_name": "chainInstalled_submap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["code", "nextCode"],
+  "reviewer": "Compared the HOL source and chain_installed_submap_typed with independent review: binder order, grouped premise and conclusion match. HOL SUBMAP_DEF is equivalent on canonical finite maps to the CodeSubmap lookup implication, and both code parameters have codec witnesses."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "chain_installed_chain_exps",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainInstalled.lean", "lean_name": "chainInstalled_chainExps",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.alistToFmap"],
+  "reviewer": "Typed HOL capture and independent review confirm both quantified binders and the complete chain-installed conclusion. The imported reviewed alistToFmap producer gives the canonical finite-map result and first-occurrence lookup behavior."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "syntax_oracle_ok_call_FST_monotonic",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallOracle.lean", "lean_name": "syntaxOracleOk_callFst_monotonic",
   "statement_status": "reviewed_exact",

@@ -46,11 +46,14 @@ theorem holFmapAsFiniteSupportParamWitness_chainInstalled_code
   exact ⟨rfl, rfl, rfl⟩
 
 /-- A source-code extension retains all installed chain entries. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_installed_SUBMAP"
+  (fmap_as_finite_support_parameters := [code, nextCode])]
 theorem chainInstalled_submap (start : Nat) (expressions : List ClosLang.Exp)
-    (code nextCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
-    (installed : chainInstalled start expressions code)
-    (submap : ∀ key value, code.lookup key = some value → nextCode.lookup key = some value) :
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (nextCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (h : chainInstalled start expressions code ∧ CodeSubmap code nextCode) :
     chainInstalled start expressions nextCode := by
+  obtain ⟨installed, submap⟩ := h
   intro i bound
   have found := installed i bound
   unfold findCode at found ⊢
@@ -60,7 +63,25 @@ theorem chainInstalled_submap (start : Nat) (expressions : List ClosLang.Exp)
     have nextLookup := submap _ _ lookup
     simpa [lookup, nextLookup] using found
 
+/-- The first code-map parameter has the canonical finite-map codec. -/
+theorem holFmapAsFiniteSupportParamWitness_chainInstalled_submap_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_chainInstalled_code code key
+
+/-- The second code-map parameter has the canonical finite-map codec. -/
+theorem holFmapAsFiniteSupportParamWitness_chainInstalled_submap_nextCode
+    (nextCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad nextCode) nextCode.finiteSupport).lookup key = nextCode.lookup key ∧
+    (ofBroad (toBroad nextCode) nextCode.finiteSupport).finiteSupport = nextCode.finiteSupport ∧
+    ofBroad (toBroad nextCode) nextCode.finiteSupport = nextCode :=
+  holFmapAsFiniteSupportParamWitness_chainInstalled_code nextCode key
+
 /-- Split the head entry from the remainder of an installed chain. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_installed_cons"
+  (fmap_as_finite_support_parameters := [code])]
 theorem chainInstalled_cons (start : Nat) (first : ClosLang.Exp) (rest : List ClosLang.Exp)
     (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) :
     chainInstalled start (first :: rest) code ↔
@@ -84,6 +105,14 @@ theorem chainInstalled_cons (start : Nat) (first : ClosLang.Exp) (rest : List Cl
       have arithmetic : i + 2 < rest.length + 1 ↔ i + 1 < rest.length := by omega
       simpa [holEl_cons_succ, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm, arithmetic] using found
 
+/-- The code-map parameter of the chain decomposition has the canonical codec. -/
+theorem holFmapAsFiniteSupportParamWitness_chainInstalled_cons_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_chainInstalled_code code key
+
 /-- The source association-list map selects the first entry at a key. -/
 theorem initialSourceCode_cons_lookup (name arity : Nat) (body : ClosLang.Exp)
     (rest : List (Nat × Nat × ClosLang.Exp)) (key : Nat) :
@@ -99,8 +128,8 @@ theorem chainInstalled_after_evaluate {C F : Type} (start : Nat) (chain evaluate
     (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
     (installed : chainInstalled start chain source.code) (run : evaluate evaluated env source = (result, next)) :
     chainInstalled start chain next.code :=
-  chainInstalled_submap start chain source.code next.code installed
-    (evaluate_code_growth.1 evaluated env source next result run)
+  chainInstalled_submap start chain source.code next.code
+    ⟨installed, evaluate_code_growth.1 evaluated env source next result run⟩
 
 /-- A generated chain discards all but the last successful value and
 preserves errors. -/
