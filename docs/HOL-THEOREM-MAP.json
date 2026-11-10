@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_includes_SUBMAP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeIncludes.lean", "lean_name": "codeIncludes_submap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["y1", "y2"],
+  "reviewer": "Compared code_includes_submap_replay_type in clos_call_code_list_probe.out, replayed from the local HOL source statement and proof: independent key and value types, the original inclusion and SUBMAP premises, and the full inclusion conclusion agree. Both finite-map parameters use canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "make_g_IMP_subg",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeState.lean", "lean_name": "makeState_imp_subg",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",

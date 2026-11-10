@@ -106,16 +106,14 @@ theorem recClosureRel_mono (g g' : State) (allowed allowed' : Nat → Prop)
     obtain ⟨out, ext, subset, includes⟩ := branch
     refine ⟨out, stateExtends_trans _ _ _ ext stateSub, ?_, ?_⟩
     · exact fun x member => allowedSub x (subset member)
-    · intro key value found
-      exact codeSub key value (includes key value found)
+    · exact codeIncludes_submap _ code code' ⟨includes, codeSub⟩
   next condition =>
     simp only [condition, ↓reduceIte]
     obtain ⟨out, ext, subset, group, includes⟩ := branch
     refine ⟨out, stateExtends_trans _ _ _ ext stateSub, ?_, ?_, ?_⟩
     · exact fun x member => allowedSub x (subset member)
     · exact fun x member => allowedSub x (group member)
-    · intro key value found
-      exact codeSub key value (includes key value found)
+    · exact codeIncludes_submap _ code code' ⟨includes, codeSub⟩
 
 /-- The state reached by a recursive-closure relation has distinct labels,
 so it extends itself. Used in the HOL code-submap preservation proof. -/

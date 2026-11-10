@@ -21,6 +21,11 @@ val _ = (print "make_g_subg_type="; Lib.with_flag (Globals.show_types,true) prin
 val _ = (print "make_g_make_g_eq_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.make_g_make_g_eq); print "\n");
 val _ = (print "make_g_imp_subg_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.make_g_IMP_subg); print "\n");
 val _ = (print "alookup_all_distinct_mem_type="; Lib.with_flag (Globals.show_types,true) print_term (concl alistTheory.ALOOKUP_ALL_DISTINCT_MEM); print "\n");
+(* The source declaration is local, so replay its statement and original proof. *)
+val code_includes_submap_replay = prove
+  (``clos_callProof$code_includes x y1 /\ y1 SUBMAP y2 ==> clos_callProof$code_includes x y2``,
+   fs [clos_callProofTheory.code_includes_def, finite_mapTheory.SUBMAP_DEF, finite_mapTheory.FLOOKUP_DEF] \\ metis_tac []);
+val _ = (print "code_includes_submap_replay_type="; Lib.with_flag (Globals.show_types,true) print_term (concl code_includes_submap_replay); print "\n");
 val _ = (print "dest_closure_v_rel_lookup_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.dest_closure_v_rel_lookup); print "\n");
 val _ = (print "dest_closure_v_rel_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.dest_closure_v_rel); print "\n");
 val _ = (print "dest_closure_partial_wfv_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.dest_closure_partial_wfv); print "\n");
