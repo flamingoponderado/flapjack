@@ -9,8 +9,7 @@ public import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
 
 @[expose] public section
 
-/-! Reference and array simulation over the factored source-to-flat relations.
-The complete primitive-application theorem remains open. -/
+/-! Reference and array simulation over the reviewed source-to-flat relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.SemanticPrimitivesHOL
 

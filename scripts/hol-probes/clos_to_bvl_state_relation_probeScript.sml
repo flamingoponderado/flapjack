@@ -205,6 +205,7 @@ val _ = show "compile_all_distinct_locs_typed=" clos_to_bvlProofTheory.compile_a
 val _ = show "perm_imp_from_alist_eq_typed=" clos_to_bvlProofTheory.PERM_IMP_fromAList_EQ_fromAList;
 val _ = show "from_alist_code_sort_typed=" clos_to_bvlProofTheory.fromAList_code_sort;
 val _ = show "syntax_oracle_ok_start_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_start;
+val _ = show "syntax_oracle_ok_call_fst_monotonic_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_call_FST_monotonic;
 val _ = show "toaList_domain_typed=" miscTheory.toAList_domain;
 val _ = show "sptree_domain_lookup_typed=" sptreeTheory.domain_lookup;
 val _ = show "known_compile_is_some_typed=" clos_knownProofTheory.known_compile_IS_SOME;

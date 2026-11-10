@@ -1072,6 +1072,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CallBounds
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CommonLabelBound
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CommonLookup
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SyntaxOracle
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CallOracle
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownOracleFacts
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.StateRelation
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateVar

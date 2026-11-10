@@ -7,8 +7,7 @@ public import Flapjack.SemanticPrimitivesHOL.Thunk
 
 @[expose] public section
 
-/-! Thunk simulation over the factored source-to-flat value and state relations.
-Full HOL correspondence of those relations remains open. -/
+/-! Thunk simulation over the reviewed source-to-flat value and state relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.SemanticPrimitivesHOL
 
