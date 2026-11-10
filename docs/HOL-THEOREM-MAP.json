@@ -116993,16 +116993,16 @@
     "lean_name": "pSeq",
     "hol_path": "cakeml/compiler/backend/data_simpScript.sml",
     "hol_name": "pSeq_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed data_simp_probe capture (`\u2200c1 c2. pSeq c1 c2 = if c2 = Skip then c1 else Seq c1 c2`) with pSeq: Lean matches on the second program, returning the first for .skip and .seq p q otherwise, exactly HOL's Skip test."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataSimp.lean",
     "lean_name": "simp",
     "hol_path": "cakeml/compiler/backend/data_simpScript.sml",
     "hol_name": "simp_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed data_simp_probe capture clause by clause with simp: Skip c = c, Return n c = Return n, Raise n c = Raise n, Seq c1 c2 c = simp c1 (simp c2 c), If n c2 c3 c = pSeq (If n (simp c2 Skip) (simp c3 Skip)) c, Call ret dest args (SOME (v,handler)) c = pSeq (Call ret dest args (SOME (v, simp handler Skip))) c, and the final pSeq fallback for every other program."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataLive.lean",

@@ -9534,3 +9534,8 @@ run_probe data_live_compile_probeScript.sml data_live_compile_probe.out \
   is_pure_def_typed compile_def_typed \
   "$cake_dir/compiler/backend/data_liveScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe data_simp_probeScript.sml data_simp_probe.out \
+  pSeq_def_typed simp_def_typed \
+  "$cake_dir/compiler/backend/data_simpScript.sml" \
+  "$cake_dir/compiler/backend"
