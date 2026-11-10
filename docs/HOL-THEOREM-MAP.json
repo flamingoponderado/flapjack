@@ -116953,8 +116953,8 @@
     "lean_name": "mkTicks",
     "hol_path": "cakeml/compiler/backend/dataLangScript.sml",
     "hol_name": "mk_ticks_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source syntax or clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed mk_ticks_def capture: mk_ticks n e = FUNPOW (Seq Tick) n e. Lean's mkTicks recurses on the Nat fuel prepending .seq .tick, which is definitionally FUNPOW with the same fuel-then-program argument order."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataSpace/Requirements.lean",
