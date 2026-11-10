@@ -1,9 +1,9 @@
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
 import Flapjack.Test.CakeMLFlatOracle
-import Flapjack.Test.InlineCakeBviOracle
+import Flapjack.Test.EmptyCakeBviOracle
 import Flapjack.Compiler.Backend.SourceToFlat.ToWord
-import Flapjack.Test.FullInlineCakeWordOracle
+import Flapjack.Test.FullCakeWordOracle
 
 /-! Original wrapper-inlining and full-program observations. -/
 namespace Flapjack.Test.BviInlineParity
@@ -27,13 +27,13 @@ private def wrapper : Bvi.Exp :=
 private def noOpts : ClosToBvl.Config :=
   { ClosToBvl.defaultConfig with maxApp := 0, doMti := false, doCall := false, knownConf := none }
 #guard match SourceToFlat.compileCakeToBviInlineFuel 100 SourceToFlat.emptyConfig noOpts [] with
-  | some (_, _, _, code, _, _) => Flapjack.Test.InlineCakeBviOracle.matchesCaptured code
+  | some (_, _, _, code, _, _) => Flapjack.Test.EmptyCakeBviOracle.matchesCaptured code
   | none => false
 
 private def wordConfig : DataToWord.Config :=
   ⟨1, 2, 3, 16, false, false, false, false, false, false, .simple⟩
 #guard match SourceToFlat.compileCakeToWordWithStubsAndNames64InlineFuel 100 SourceToFlat.emptyConfig noOpts wordConfig [] with
-  | some (_, _, _, code, _, _) => Flapjack.Test.FullInlineCakeWordOracle.matchesCaptured
+  | some (_, _, _, code, _, _) => Flapjack.Test.FullCakeWordOracle.matchesCaptured
       (code.map fun (loc, arity, body) => (loc, arity, body, 0))
   | none => false
 

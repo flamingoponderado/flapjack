@@ -237,17 +237,52 @@ end Flapjack.Test.{namespace}
 '''
 
 
+def normalize(text, namespace):
+    """Erase the namespace so identical captures can share one generated module."""
+    return text.replace(f"namespace Flapjack.Test.{namespace}", "namespace Flapjack.Test.<NS>").replace(
+        f"end Flapjack.Test.{namespace}", "end Flapjack.Test.<NS>")
+
+
+def alias_render(canonical, alias):
+    return f'''-- Generated alias from the pinned original HOL compiler; do not edit.
+-- This configuration's captured output is identical to `{canonical}`.
+import Flapjack.Test.{canonical}
+
+namespace Flapjack.Test.{alias}
+
+/-- Alias of `{canonical}.matchesCaptured`; the captured output is identical. -/
+abbrev matchesCaptured := Flapjack.Test.{canonical}.matchesCaptured
+
+end Flapjack.Test.{alias}
+'''
+
+
+def expected_modules():
+    """Group configs whose captures are identical onto one module; the rest become aliases."""
+    rendered = {}
+    canonical = {}
+    for input_path, _, namespace, width in CASES:
+        rendered[namespace] = render(input_path, namespace, width)
+        canonical.setdefault(normalize(rendered[namespace], namespace), namespace)
+    plan = []
+    for _, output_path, namespace, width in CASES:
+        shared = canonical[normalize(rendered[namespace], namespace)]
+        plan.append((output_path, rendered[namespace] if shared == namespace else alias_render(shared, namespace)))
+    return plan
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    for input_path, output_path, namespace, width in CASES:
-        expected = render(input_path, namespace, width)
-        if args.check:
+    plan = expected_modules()
+    if args.check:
+        for output_path, expected in plan:
             if not output_path.exists() or output_path.read_text() != expected:
                 raise SystemExit(f"{output_path} is stale; regenerate it from the HOL capture")
-            print(f"{namespace} matches the captured HOL output")
-        else:
+            print(f"{output_path.name} matches the captured HOL output")
+    else:
+        for output_path, expected in plan:
             output_path.write_text(expected)
 
 
