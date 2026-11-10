@@ -46,18 +46,6 @@ theorem valueRel_conv (stamp : Option (FlatLang.CtorId × FlatLang.TypeId))
   · rintro ⟨values', rfl, contents⟩
     exact .basic ⟨values', rfl⟩ contents
 
-/-- Vector relatedness is pointwise on the contained values. -/
-theorem valueRel_vector (values : List Value) (right : Value) :
-    ValueRel (.vectorv values) right ↔ ∃ values', right = .vectorv values' ∧ List.Forall₂ ValueRel values values' := by
-  constructor
-  · intro h
-    cases h with
-    | basic shape contents =>
-      obtain ⟨values', rfl⟩ := shape
-      exact ⟨values', rfl, contents⟩
-  · rintro ⟨values', rfl, contents⟩
-    exact .basic ⟨values', rfl⟩ contents
-
 /-- A related closure has the corresponding compiled body and a related
 captured environment. -/
 theorem valueRel_closure (left : Environment Value) (name : Flapjack.AstHOL.VarN)
@@ -139,12 +127,14 @@ theorem valueRel_leftCases (right : Value) :
     · intro h; subst right; simp [valueContainerXs]
     · exact And.left
   · intro values
-    rw [valueRel_vector]
     constructor
-    · rintro ⟨values', rfl, rel⟩
-      exact ⟨⟨values', rfl⟩, rel⟩
-    · rintro ⟨⟨values', rfl⟩, rel⟩
-      exact ⟨values', rfl, rel⟩
+    · intro related
+      cases related with
+      | basic shape contents =>
+        obtain ⟨values', rfl⟩ := shape
+        exact ⟨⟨values', rfl⟩, contents⟩
+    · rintro ⟨⟨values', rfl⟩, contents⟩
+      exact .basic ⟨values', rfl⟩ contents
 
 /-- Bounded environment relatedness is monotone in the name bound. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "env_rel_mono"]
