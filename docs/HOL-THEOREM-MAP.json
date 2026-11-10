@@ -128322,56 +128322,56 @@
   "hol_name": "closure_code_installed_subspt",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode.lean",
   "lean_name": "closureCodeInstalled_subspt",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed clos_to_bvl_proof_relations_probe capture (`closure_code_installed a code1 b c \u2227 subspt code1 code2 \u21d2 closure_code_installed a code2 b c`, with b : ((num # closLang$exp) # num) list and c : closSem$v list) with closureCodeInstalled_subspt (installed) (sub : sptSubspt code1 code2) : closureCodeInstalled maxApp code2 entries env. sptSubspt is the untagged Flapjack rendering of HOL subspt (forall k, k IN domain sp1 implies k IN domain sp2 and lookup k sp2 = lookup k sp1, matching sptreeScript subspt_def) and closureCodeInstalled is the reviewed closure_code_installed_def port."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "compile_exps_IMP_code_installed",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode.lean",
   "lean_name": "compileExps_codeInstalled",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the source statement of the [local] theorem compile_exps_IMP_code_installed (clos_to_bvlProofScript.sml:1901-1904; not exported, so clos_to_bvl_proof_relations_probe replays it typed: `\u2200max_app xs aux c aux1 code. compile_exps max_app xs aux = (c,aux1) \u2227 code_installed aux1 code \u21d2 code_installed aux code`, with aux/aux1 : (num # num # bvl$exp) list and code : (num # bvl$exp) num_map) with compileExps_codeInstalled (run : compileExpsHOL maxApp expressions aux = (compiled, finalAux)) (installed : codeInstalled finalAux code) : codeInstalled aux code; compileExpsHOL and codeInstalled are the reviewed compile_exps_def and code_installed_def ports."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "compile_oracle_inv_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Oracle.lean",
   "lean_name": "compileOracleInv",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed clos_to_bvl_proof_relations_probe capture clause by clause with compileOracleInv: s_cc = pure_cc (compile_inc max_app) t_cc and t_co = pure_co (compile_inc max_app) \u2218 s_co (pureCc/pureCo/compileInc reviewed); \u2200n cfg ps. t_co n = (cfg,ps) \u21d2 ALL_DISTINCT (MAP FST ps) as \u2200n, (targetOracle n).2.map Prod.fst Nodup; DISJOINT (domain (union t_code (nth_code t_co n))) (set (MAP FST (SND (t_co n)))) as \u2200n p, sptMem p (sptUnion targetCode (nthCode targetOracle n)) \u2192 p \u2209 (targetOracle n).2.map Prod.fst (sets as predicates, domain membership as sptMem); and \u2200n cfg e ps. s_co n = (cfg,e,ps) \u21d2 every_Fn_SOME e \u2227 every_Fn_vs_SOME e \u2227 EVERY (every_Fn_SOME [SND (SND p)]) ps \u2227 EVERY (every_Fn_vs_SOME [SND (SND p)]) ps as the four conjuncts over (sourceOracle n).2.1/.2.2 with EVERY rendered as \u2200 entry \u2208 ps. HOL's clos_prog pair is (exp list # entries), matching Lean's Program abbrev; the cfg binders are vacuous in the conclusions and are omitted. everyFnLocationSome and everyFnVarsSome are the reviewed every_Fn_SOME_def and every_Fn_vs_SOME_def ports."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "nth_code_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Oracle.lean",
   "lean_name": "nthCode",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed clos_to_bvl_proof_relations_probe capture (`\u2200t_co :num -> \u03b2 # (num # \u03b1) list. isEmpty (nth_code t_co 0)` \u2014 HOL's pretty-printer renders `nth_code t_co 0 = LN` as isEmpty \u2014 and `nth_code t_co (SUC n) = union (fromAList (SND (t_co 0))) (nth_code (shift_seq 1 t_co) n)`) with nthCode's two clauses: 0 => .ln and n+1 => sptUnion (sptFromAList (oracle 0).2) (nthCode (fun i => oracle (i + 1)) n). SND is .2, shift_seq 1 is fun i => oracle (i+1), and union/fromAList/LN are the reviewed sptUnion/sptFromAList/.ln ports."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "global_table_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/StateRelation.lean",
   "lean_name": "globalTable",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed clos_to_bvl_proof_relations_probe capture (`global_table max_app = Block tuple_tag (FLAT (GENLIST (\u03bbtot. GENLIST (\u03bbprev. CodePtr (partial_app_fn_location max_app tot prev)) tot) max_app))`) with globalTable maxApp := .block 0 (((List.range maxApp).map fun total => (List.range total).map fun previous => .codePtr (partialAppFnLocation maxApp total previous)).flatten). tuple_tag is 0 (backend_commonScript tuple_tag_def), GENLIST/FLAT are List.range/map/flatten, CodePtr is .codePtr, and partialAppFnLocation is the reviewed partial_app_fn_location_def port."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "ref_rel_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/StateRelation.lean",
   "lean_name": "refRel",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed clos_to_bvl_proof_relations_probe capture (ValueArray iff LIST_REL R vs ws; Thunk iff m1 = m2 \u2227 R v w; ByteArray iff \u00acg \u2227 as = bs; every other constructor pair, including MutBlock, iff F) with refRel's three clauses and its wildcard `_, _ => False`; the typed capture expands the wildcard into all nine mismatched constructor pairs, each F, matching the Lean catch-all. Ref on both carriers and ThunkMode are the reviewed ref and thunk_mode ports."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "ref_rel_simp",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/StateRelation.lean",
   "lean_name": "refRel_simp",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed clos_to_bvl_proof_relations_probe capture (`(ref_rel R (ValueArray vs) y \u21d4 \u2203ws. y = ValueArray ws \u2227 LIST_REL R vs ws) \u2227 (ref_rel R (Thunk m v) y \u21d4 \u2203w. y = Thunk m w \u2227 R v w) \u2227 (ref_rel R (ByteArray bs) y \u21d4 y = ByteArray F bs)`) with refRel_simp: the same three iff conjuncts, with ByteArray F rendered as .byteArray false and LIST_REL as List.Forall\u2082."
 },
 {
   "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",

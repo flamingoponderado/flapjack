@@ -9489,3 +9489,8 @@ run_probe bvi_to_data_value_probeScript.sml bvi_to_data_value_probe.out \
   data_to_bvi_v_def_typed data_to_bvi_v_Unit_typed data_to_bvi_v_Boolv_typed data_to_bvi_ref_def_typed v_to_bytes_eq_typed v_to_words_eq_typed data_to_bvi_v_list_to_v_Nil_typed \
   "$cake_dir/compiler/backend/proofs/bvi_to_dataProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_to_bvl_proof_relations_probeScript.sml clos_to_bvl_proof_relations_probe.out \
+  global_table_def_typed ref_rel_def_typed ref_rel_simp_typed nth_code_def_typed compile_oracle_inv_def_typed closure_code_installed_subspt_typed compile_exps_IMP_code_installed_typed \
+  "$cake_dir/compiler/backend/proofs/clos_to_bvlProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
