@@ -12,3 +12,7 @@ fun show label th = if null (hyp th) then
 val _ = show "extract_def_typed" bvi_letTheory.extract_def;
 val _ = show "extract_list_def_typed" bvi_letTheory.extract_list_def;
 val _ = show "delete_var_def_typed" bvi_letTheory.delete_var_def;
+val _ = show "compile_def_typed" bvi_letTheory.compile_def;
+val _ = show "compile_exp_def_typed" bvi_letTheory.compile_exp_def;
+val _ = show "compile_sing_typed" bvi_letTheory.compile_sing;
+val _ = show "compile_exp_eq_typed" bvi_letTheory.compile_exp_eq;

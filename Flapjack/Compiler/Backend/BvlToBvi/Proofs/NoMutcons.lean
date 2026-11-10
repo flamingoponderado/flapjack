@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TmcNames
+public import Flapjack.Compiler.Backend.BviLet.SourceList
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteCorrespondence
 
 @[expose] public section
@@ -145,17 +146,20 @@ theorem let_compile_noMutcons :
     rintro _ ⟨e, member, rfl⟩
     exact let_compileSing_noMutcons env d e (safe e member)
 
-/-- The singleton-threaded let pass at empty environment preserves the
-invariant. HOL's `bvi_let_compile_exp_no_mutcons` is stated over
-`bvi_let$compile_exp`, whose source definition takes the head of the
-list-recursive `compile`; this Lean statement is about the singleton-threaded
-`compileSing [] 0`, which HOL's `compile_exp_eq` (itself resting on
-`compile_sing`) identifies with `compile_exp`. That equality is not established
-in Lean and neither `compile` nor `compile_exp` is ported, so the `@[hol]` tag
-is withdrawn and the exact port remains open. -/
-theorem let_compileExp_noMutcons (expression : Bvi.Exp) (safe : noMutcons expression) :
+/-- The executed singleton-threaded form preserves the invariant. -/
+theorem let_compileSing_zero_noMutcons (expression : Bvi.Exp) (safe : noMutcons expression) :
     noMutcons (BviLet.compileSing [] 0 expression) :=
   let_compileSing_noMutcons [] 0 expression safe
+
+/-- HOL's `bvi_let_compile_exp_no_mutcons`: the source single-expression
+compiler preserves the absence of mutable-block allocation, via
+`compile_exp_eq`. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "bvi_let_compile_exp_no_mutcons"]
+theorem let_compileExp_noMutcons (expression : Bvi.Exp) (safe : noMutcons expression) :
+    noMutcons (BviLet.compileExp expression) := by
+  rw [BviLet.compileExp_eq]
+  exact let_compileSing_noMutcons [] 0 expression safe
+
 
 /-- Every successful run of the executable let pass preserves the invariant. -/
 theorem let_compileBounded_noMutcons (fuel : Nat) (env : List Nat) (d : Nat)
@@ -209,7 +213,7 @@ private theorem auxNoMutcons_append {a b : AppList (Nat × Nat × Bvi.Exp)}
 
 private theorem auxNoMutcons_fresh (n arity : Nat) (body : Bvi.Exp) (safe : noMutcons body) :
     auxNoMutcons (compileAuxSource (n, arity, body)) := by
-  simp [auxNoMutcons, compileAuxSource, appListAppend, appendAux, let_compileExp_noMutcons body safe]
+  simp [auxNoMutcons, compileAuxSource, appListAppend, appendAux, let_compileSing_zero_noMutcons body safe]
 
 private theorem destLetBudget' (exp : Bvl.Exp) :
     listBudget (destLet exp).1 ≤ expBudget exp ∧ expBudget (destLet exp).2 ≤ expBudget exp := by
@@ -336,7 +340,7 @@ theorem compileSingleSource_noMutcons (n : Nat) (program : Nat × Nat × Bvl.Exp
   simp only [h] at safe
   have main : auxNoMutcons (.list [(bvlNumStubs + bvlToBviNamespaces * name, arity,
       BviLet.compileSing [] 0 converted)]) := by
-    simp [auxNoMutcons, appListAppend, appendAux, let_compileExp_noMutcons converted safe.1]
+    simp [auxNoMutcons, appListAppend, appendAux, let_compileSing_zero_noMutcons converted safe.1]
   have both := auxNoMutcons_append main safe.2
   simp [compileSingleSource, h] at run
   obtain ⟨rfl, _⟩ := run

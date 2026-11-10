@@ -125111,6 +125111,38 @@
   "reviewer": "Compared the list clauses of the typed original mutual definition in bvi_let_compile_probe.out: the empty list and recursive head-and-tail traversal call compileSing with the unchanged environment and offset."
 },
 {
+  "hol_path": "cakeml/compiler/backend/bvi_letScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BviLet/SourceList.lean",
+  "hol_name": "compile_def",
+  "statement_status": "reviewed_exact",
+  "lean_name": "compile",
+  "reviewer": "Compared the typed compile_def_typed capture in bvi_let_helpers_probe.out: the empty list; x::y::xs split into [x] and y::xs with append; and the ten singleton clauses (Var lookup, If with HD of each nested compile, Let with the empty case, the tail-position LAST/BUTLAST case and delete_var, Raise, Op, Tick, Force lookup, Call with the handler case, Return, LetCall). Lean's compile has the same clauses, with Option matching for HOL's case and holHd for HD; the traversal terminates by sizeOf."
+},
+{
+  "hol_path": "cakeml/compiler/backend/bvi_letScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BviLet/SourceList.lean",
+  "hol_name": "compile_exp_def",
+  "statement_status": "reviewed_exact",
+  "lean_name": "compileExp",
+  "reviewer": "Compared the typed compile_exp_def_typed capture: compile_exp x = case compile [] 0 [x] of y::_ => y | _ => Var 0. Lean's compileExp has the same head-of-list form with the Var 0 fallback."
+},
+{
+  "hol_path": "cakeml/compiler/backend/bvi_letScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BviLet/SourceList.lean",
+  "hol_name": "compile_sing",
+  "statement_status": "reviewed_exact",
+  "lean_name": "compile_sing",
+  "reviewer": "Compared the typed compile_sing_typed capture: (forall n d e. compile n d [e] = [compile_sing n d e]) and (forall n d xs. compile_list n d xs = compile n d xs). Lean's compile_sing proves both conjuncts (the list equality with the sides swapped) through compile_eq_compileList, which inducts over the source traversal."
+},
+{
+  "hol_path": "cakeml/compiler/backend/bvi_letScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BviLet/SourceList.lean",
+  "hol_name": "compile_exp_eq",
+  "statement_status": "reviewed_exact",
+  "lean_name": "compileExp_eq",
+  "reviewer": "Compared the typed compile_exp_eq_typed capture: compile_exp x = compile_sing [] 0 x. Lean proves it from compile_sing and compileExp's head projection."
+},
+{
   "hol_path": "cakeml/misc/miscScript.sml",
   "lean_path": "Flapjack/Misc/AppList.lean",
   "hol_name": "SmartAppend_def",
@@ -127937,11 +127969,11 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
-  "hol_name": "bvi_let_compile_exp_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
+  "hol_name": "bvi_let_compile_exp_no_mutcons",
+  "statement_status": "reviewed_exact",
   "lean_name": "let_compileExp_noMutcons",
-  "statement_status": "documented_mismatch",
-  "reviewer": "documented_mismatch. Compared the replayed typed original bvi_let_compile_exp_no_mutcons_typed (bvl_to_bvi_proof_source_probe.out) with the source at bvl_to_bviProofScript.sml:4840-4843: HOL states no_mutcons x ⇒ no_mutcons (bvi_let$compile_exp x), and compile_exp is defined as the head of the list-recursive compile (bvi_letScript.sml:197-201) with compile_exp_eq resting on compile_sing. The Lean declaration let_compileExp_noMutcons states no_mutcons (BviLet.compileSing [] 0 expression), i.e. the singleton-threaded compile_sing form; Lean ports neither compile nor compile_exp and establishes no compile_exp_eq. Equivalent via HOL only, so the @[hol] tag is withdrawn and the exact port remains open."
+  "reviewer": "Compared the replayed typed original bvi_let_compile_exp_no_mutcons_typed in bvl_to_bvi_proof_source_probe.out: no_mutcons x implies no_mutcons (bvi_let$compile_exp x). Lean states the same implication over the reviewed compileExp and proves it with compileExp_eq and let_compileSing_noMutcons, mirroring HOL's proof."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",

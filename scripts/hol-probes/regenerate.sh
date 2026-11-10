@@ -9517,6 +9517,7 @@ run_probe bvl_handle_proof_shape_probeScript.sml bvl_handle_proof_shape_probe.ou
 
 run_probe bvi_let_helpers_probeScript.sml bvi_let_helpers_probe.out \
   extract_def_typed extract_list_def_typed delete_var_def_typed \
+  compile_def_typed compile_exp_def_typed compile_sing_typed compile_exp_eq_typed \
   "$cake_dir/compiler/backend/bvi_letScript.sml" \
   "$cake_dir/compiler/backend"
 
