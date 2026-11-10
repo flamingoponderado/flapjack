@@ -3368,8 +3368,8 @@
   "hol_name": "domain_lookup",
   "lean_path": "Flapjack/Misc/Sptree.lean",
   "lean_name": "sptMem_iff_lookup",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared the typed sptree_domain_lookup capture: membership in the lookup-defined sptDomain is equivalent to existence of a successful sptLookup. The domain definition itself is pending source-shape and set-representation review."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed flat_pattern_global_flag_probe capture (`\u2200t k. k \u2208 domain t \u21d4 \u2203v. lookup k t = SOME v`) with sptMem_iff_lookup : sptMem key tree \u2194 \u2203 v, sptLookup key tree = some v. sptMem is HOL's `k IN domain t` under the documented lookup-based rendering of domain (sptDomain tree key = (lookup key tree).isSome), so the statement is exactly HOL's domain_lookup; the domain definition's own source-shape mismatch is recorded on the sptDomain row."
 },
 {
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
