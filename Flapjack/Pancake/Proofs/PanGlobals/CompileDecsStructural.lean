@@ -159,46 +159,36 @@ theorem compile_decs_EVERYHOL {width : Nat} [NeZero width] (P : DeclHOL width �
             P (.function { fi with body := compileProgExactHOL ctxt fi.body })) →
       ∀ d ∈ funs, P d := by
   intro ctxt decs
-  induction decs generalizing ctxt with
-  | nil =>
-      intro decls funs exns ctxt' ⟨h, _⟩
-      simp only [compileDecsExactHOL, Prod.mk.injEq] at h
-      obtain ⟨_, rfl, _, _⟩ := h
-      simp
-  | cons d ds ih =>
-      intro decls funs exns ctxt' ⟨h, hall⟩
-      have htail : ∀ e ∈ ds, ∀ (fi : FunDeclHOL width) (ctxt : PanGlobalsContextExact width),
-          e = .function fi →
-            P (.function { fi with body := compileProgExactHOL ctxt fi.body }) :=
-        fun e he => hall e (by simp [he])
-      cases d with
-      | function fi =>
-          simp only [compileDecsExactHOL] at h
-          generalize hr : compileDecsExactHOL (width := width) _ ds = r at h
-          obtain ⟨a, b, c, e⟩ := r
-          simp only [Prod.mk.injEq] at h
-          obtain ⟨_, rfl, _, _⟩ := h
-          intro x hx
-          rcases List.mem_cons.mp hx with rfl | hx
-          · exact hall _ (by simp) fi ctxt rfl
-          · exact ih _ a b c e ⟨hr, htail⟩ x hx
-      | decl shape name value =>
-          simp only [compileDecsExactHOL] at h
-          generalize hr : compileDecsExactHOL (width := width) _ ds = r at h
-          obtain ⟨a, b, c, e⟩ := r
-          simp only [Prod.mk.injEq] at h
-          obtain ⟨_, rfl, _, _⟩ := h
-          exact ih _ a b c e ⟨hr, htail⟩
-      | exnDecl name shape =>
-          simp only [compileDecsExactHOL] at h
-          generalize hr : compileDecsExactHOL (width := width) _ ds = r at h
-          obtain ⟨a, b, c, e⟩ := r
-          simp only [Prod.mk.injEq] at h
-          obtain ⟨_, rfl, _, _⟩ := h
-          exact ih _ a b c e ⟨hr, htail⟩
-      | name name fields =>
-          simp only [compileDecsExactHOL] at h
-          exact ih _ _ _ _ _ ⟨h, htail⟩
+  fun_induction compileDecsExactHOL ctxt decs with
+  | case1 =>
+    intro decls funs exns ctxt' ⟨h, hall⟩ d hd
+    simp only [Prod.mk.injEq] at h
+    obtain ⟨_, rfl, _, _⟩ := h
+    simp at hd
+  | case2 =>
+    rename_i xh ih
+    intro decls funs exns ctxt' ⟨h, hall⟩ d hd
+    simp only [Prod.mk.injEq] at h
+    obtain ⟨_, rfl, _, _⟩ := h
+    exact ih _ _ _ _ ⟨xh, fun e he => hall e (List.mem_cons_of_mem _ he)⟩ d hd
+  | case3 =>
+    rename_i xh ih
+    intro decls funs exns ctxt' ⟨h, hall⟩ d hd
+    simp only [Prod.mk.injEq] at h
+    obtain ⟨_, rfl, _, _⟩ := h
+    rcases List.mem_cons.mp hd with rfl | hd
+    · exact hall _ (by simp) _ _ rfl
+    · exact ih _ _ _ _ ⟨xh, fun e he => hall e (List.mem_cons_of_mem _ he)⟩ d hd
+  | case4 =>
+    rename_i xh ih
+    intro decls funs exns ctxt' ⟨h, hall⟩ d hd
+    simp only [Prod.mk.injEq] at h
+    obtain ⟨_, rfl, _, _⟩ := h
+    exact ih _ _ _ _ ⟨xh, fun e he => hall e (List.mem_cons_of_mem _ he)⟩ d hd
+  | case5 =>
+    rename_i ih
+    intro decls funs exns ctxt' ⟨h, hall⟩ d hd
+    exact ih _ _ _ _ ⟨h, fun e he => hall e (List.mem_cons_of_mem _ he)⟩ d hd
 
 /-- Exact HOL `compile_decls_append` (`pan_globalsProofScript.sml:1997-2004`). -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "compile_decls_append"
