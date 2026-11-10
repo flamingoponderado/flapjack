@@ -1,5 +1,19 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "LIST_REL_v_rel_SUBMAP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "listValueRel_submap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code", "codeNext"],
+  "reviewer": "Source comparison: compared clos_call_LIST_REL_v_rel_SUBMAP_typed: six quantified binders, the grouped list-relation and code-submap premise, and the resulting list relation match. Both finite maps use canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "env_rel_SUBMAP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "envValueRel_submap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code", "codeNext"],
+  "reviewer": "Source comparison: compared clos_call_env_rel_SUBMAP_typed: both code binders precede state, allowed set, environments, offset and functions; the grouped premise and environment-relation conclusion match. Both finite maps use canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "code_locs_append",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/CodeLocations.lean", "lean_name": "codeLocations_append",
   "statement_status": "reviewed_exact",

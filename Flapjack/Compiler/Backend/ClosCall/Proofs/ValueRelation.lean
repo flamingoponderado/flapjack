@@ -310,4 +310,61 @@ theorem envValueRel_subg (g : State) (allowed : Nat → Prop)
   exact valueRel_submapSubg g allowed code x y codeNext allowedNext gNext
     ⟨related, h.2.2.2, h.2.2.1, h.2.1⟩
 
+/-- Canonical code-map codec for list relation preservation. -/
+theorem holFmapAsFiniteSupportParamWitness_listValueRel_submap_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code code key
+
+/-- Canonical extended code-map codec for list relation preservation. -/
+theorem holFmapAsFiniteSupportParamWitness_listValueRel_submap_codeNext
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).lookup key = codeNext.lookup key ∧
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).finiteSupport = codeNext.finiteSupport ∧
+    ofBroad (toBroad codeNext) codeNext.finiteSupport = codeNext :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code codeNext key
+
+/-- Extending the code map preserves related value lists. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "LIST_REL_v_rel_SUBMAP"
+  (fmap_as_finite_support_parameters := [code, codeNext])]
+theorem listValueRel_submap (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (xs ys : List Value)
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (h : List.Forall₂ (valueRel g allowed code) xs ys ∧ code.submap codeNext) :
+    List.Forall₂ (valueRel g allowed codeNext) xs ys := by
+  apply h.1.imp
+  intro x y related
+  exact valueRel_submap g allowed code x y codeNext ⟨related, h.2⟩
+
+/-- Canonical code-map codec for environment relation preservation. -/
+theorem holFmapAsFiniteSupportParamWitness_envValueRel_submap_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code code key
+
+/-- Canonical extended code-map codec for environment relation preservation. -/
+theorem holFmapAsFiniteSupportParamWitness_envValueRel_submap_codeNext
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).lookup key = codeNext.lookup key ∧
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).finiteSupport = codeNext.finiteSupport ∧
+    ofBroad (toBroad codeNext) codeNext.finiteSupport = codeNext :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code codeNext key
+
+/-- Extending the code map preserves related environments. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "env_rel_SUBMAP"
+  (fmap_as_finite_support_parameters := [code, codeNext])]
+theorem envValueRel_submap (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (g : State) (allowed : Nat → Prop) (env1 env2 : List Value)
+    (offset : Nat) (fns : List (Nat × ClosLang.Exp))
+    (h : envRel (valueRel g allowed code) env1 env2 offset fns ∧ code.submap codeNext) :
+    envRel (valueRel g allowed codeNext) env1 env2 offset fns := by
+  apply envRel_mono ?_ h.1
+  intro x y ⟨_, _, related⟩
+  exact valueRel_submap g allowed code x y codeNext ⟨related, h.2⟩
+
 end Flapjack.Compiler.Backend.ClosCall

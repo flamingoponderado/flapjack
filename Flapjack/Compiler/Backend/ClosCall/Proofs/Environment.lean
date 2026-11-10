@@ -63,26 +63,4 @@ theorem envRel_congr {A B : Type} {R R' : A → B → Prop} {env1 : List A} {env
     intro x y ⟨hx, hy, rel⟩
     exact (same x hx y hy).mpr rel
 
-/-- A used variable that is present in the source environment has a related
-value at the same index in the target environment, even when the two
-environments have different lengths. -/
-theorem envRel_lookup {A B : Type} {R : A → B → Prop} {env1 : List A} {env2 : List B}
-    {offset x : Nat} {fns : List (Nat × Exp)} {value : A}
-    (related : envRel R env1 env2 offset fns)
-    (used : ∃ fn ∈ fns, freeVar (fn.1 + offset + x) fn.2)
-    (lookup : env1[x]? = some value) : ∃ value', env2[x]? = some value' ∧ R value value' := by
-  obtain ⟨left, leftEq⟩ := List.getElem?_eq_some_iff.mp lookup
-  unfold envRel at related
-  by_cases same : env1.length = env2.length
-  · simp only [same, ↓reduceIte] at related
-    have right : x < env2.length := by omega
-    refine ⟨env2[x], List.getElem?_eq_getElem right, ?_⟩
-    have values := related.get left right
-    change R env1[x] env2[x] at values
-    simpa only [leftEq] using values
-  · simp only [same, ↓reduceIte] at related
-    obtain ⟨_, right, values⟩ := related x used
-    refine ⟨env2[x], List.getElem?_eq_getElem right, ?_⟩
-    simpa only [leftEq] using values
-
 end Flapjack.Compiler.Backend.ClosCall
