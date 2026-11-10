@@ -126954,8 +126954,8 @@
   "hol_name": "input_condition_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeNames.lean",
   "lean_name": "inputCondition",
-  "statement_status": "documented_mismatch",
-  "reviewer": "documented_mismatch. Compared input_condition_def_typed with source lines 120-127: HOL types the program as (num # \u03b1 # bvi$exp) list, so input_condition is polymorphic in the middle arity component, while Lean inputCondition fixes that component to Nat. The conjuncts themselves match (EVERY free_names, EVERY no_mutcons, ALL_DISTINCT on the label projection, the namespace-three filter over labels at or above bvl_num_stubs, and bvl_num_stubs <= next with next in namespace three), but the Lean declaration is a specialization of the HOL constant, not an exact port; the @[hol] tag is withdrawn and a faithful polymorphic port is still missing."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared input_condition_def_typed with source lines 120-127: HOL types the program as (num # \u03b1 # bvi$exp) list, so input_condition is polymorphic in the middle arity component; Lean inputCondition keeps that polymorphic \u03b1. The conjuncts match: EVERY free_names and EVERY no_mutcons over all entries, ALL_DISTINCT on the label projection, the namespace-three exclusion over the filtered non-stub labels, and bvl_num_stubs <= next with next in namespace three."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
