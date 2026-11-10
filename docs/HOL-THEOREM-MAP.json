@@ -18,6 +18,42 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "every_Fn_SOME_EVERY",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/FnAnnotations.lean", "lean_name": "everyFnLocationSome_every",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_fn_some_every_typed and independent review: quantified expression list, singleton predicate, and EVERY as bounded forall match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "every_Fn_vs_SOME_EVERY",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/FnAnnotations.lean", "lean_name": "everyFnVarsSome_every",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_fn_vs_some_every_typed and independent review: quantified expression list, singleton predicate, and EVERY as bounded forall match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "SND_SND_ignore_table",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberOracle.lean", "lean_name": "snd_snd_ignoreTable",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared snd_snd_ignore_table_typed and independent review: f, st, p order, all five independent type roles, and preserved auxiliary projection match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "FST_SND_ignore_table",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberOracle.lean", "lean_name": "fst_snd_ignoreTable",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fst_snd_ignore_table_typed and independent review: f, st, p order, all five independent type roles, and transformed main-program projection match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "SND_cond_mti_compile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiInvariants.lean", "lean_name": "snd_condMtiCompileInc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared snd_cond_mti_compile_inc_typed and independent review: enabled, maxApp, polymorphic program order, and both conditional branches match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "renumber_code_locs_monotonic",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberOracle.lean", "lean_name": "renumberCodeLocs_monotonic",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared renumber_code_locs_monotonic_typed and independent review: co, n, exps order, independent oracle carriers, grouped premise, reversed greater-than rendering, code-location sets and state oracle match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_common_MAP_FST_compile_prog",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CommonLabelBound.lean", "lean_name": "compileCommon_mapFst_compileProg",
   "statement_status": "reviewed_exact",

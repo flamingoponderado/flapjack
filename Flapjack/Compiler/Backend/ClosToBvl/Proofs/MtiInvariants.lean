@@ -8,6 +8,14 @@ public import Flapjack.Compiler.Backend.ClosMti.Proofs.Syntactic
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open ClosLang ClosProps
 
+/-- The optional multi-argument pass clears auxiliary code only when enabled. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "SND_cond_mti_compile_inc"]
+theorem snd_condMtiCompileInc {α : Type} (enabled : Bool) (maxApp : Nat)
+    (program : List Exp × List α) :
+    (ClosMti.condCompileInc enabled maxApp program).2 =
+      (if enabled then [] else program.2) := by
+  cases enabled <;> rfl
+
 /-- Uncurrying applies a binary function to the components of its argument. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "UNCURRY_EQ"]
 theorem uncurry_eq {α β γ : Type} (f : α → β → γ) :

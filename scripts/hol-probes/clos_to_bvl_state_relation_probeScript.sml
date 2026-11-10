@@ -156,6 +156,12 @@ val _ = show "compile_common_map_fst_compile_prog_typed=" clos_to_bvlProofTheory
 val _ = show "clos_bvl_syntax_oracle_ok_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_def;
 val _ = show "syntax_oracle_ok_to_oracle_inv_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_to_oracle_inv;
 val _ = show "compile_oracle_inv_typed=" clos_to_bvlProofTheory.compile_oracle_inv_def;
+val _ = show "every_fn_some_every_typed=" closPropsTheory.every_Fn_SOME_EVERY;
+val _ = show "every_fn_vs_some_every_typed=" closPropsTheory.every_Fn_vs_SOME_EVERY;
+val _ = show "snd_snd_ignore_table_typed=" clos_to_bvlProofTheory.SND_SND_ignore_table;
+val _ = show "fst_snd_ignore_table_typed=" clos_to_bvlProofTheory.FST_SND_ignore_table;
+val _ = show "snd_cond_mti_compile_inc_typed=" clos_to_bvlProofTheory.SND_cond_mti_compile_inc;
+val _ = show "renumber_code_locs_monotonic_typed=" clos_to_bvlProofTheory.renumber_code_locs_monotonic;
 val _ = show "length_remove_ticks_typed=" clos_ticksTheory.LENGTH_remove_ticks;
 val _ = show "length_let_op_typed=" clos_letopTheory.LENGTH_let_op;
 val _ = show "known_length_eq_e_typed=" clos_knownTheory.known_LENGTH_EQ_E;
