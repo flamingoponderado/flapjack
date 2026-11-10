@@ -123,4 +123,16 @@ theorem envRel_drop {A B : Type} (R : A → B → Prop) (x : Nat) (l1 : List A) 
       have shift : x + (i - x) = i := Nat.add_sub_of_le (Nat.le_of_not_gt prior)
       simpa [shift] using rel
 
+/-- Restore an argument prefix while shifting the singleton function arity. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "env_rel_DROP_args"]
+theorem envRel_dropArgs {A B : Type} (R : A → B → Prop) (n : Nat) (l1 : List A) (l2 : List B)
+    (a : Nat) (e : Exp)
+    (h : envRel R (l1.drop n) (l2.drop n) a [(n, e)] ∧
+      List.Forall₂ R (l1.take n) (l2.take n) ∧ n ≤ l1.length ∧ n ≤ l2.length) :
+    envRel R l1 l2 a [(0, e)] := by
+  have tail : envRel R (l1.drop n) (l2.drop n) n [(a, e)] := by
+    simpa [envRel, Nat.add_comm] using h.1
+  have all := envRel_drop R n l1 l2 [(a, e)] ⟨tail, h.2⟩
+  simpa [envRel] using all
+
 end Flapjack.Compiler.Backend.ClosCall

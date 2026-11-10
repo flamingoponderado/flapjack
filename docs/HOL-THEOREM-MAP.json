@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "env_rel_DROP_args",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Environment.lean", "lean_name": "envRel_dropArgs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared env_rel_drop_args in clos_call_env_rel_probe.out and HOL source: relation domain and codomain remain independent, and the original singleton shifted-function environment relation, related prefixes and both length bounds imply the original whole-environment relation with zero function arity."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "env_rel_DROP",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Environment.lean", "lean_name": "envRel_drop",
   "statement_status": "reviewed_exact",
