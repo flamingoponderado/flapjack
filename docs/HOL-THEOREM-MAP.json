@@ -119,6 +119,12 @@
   "reviewer": "Compared clos_call_insert_each_subspt_typed: the position, count and state occur in the original order, the state payload is independently polymorphic, and the original sparse num_set is a subspt of the resulting first component."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_subspt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateGrowth.lean", "lean_name": "calls_subspt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_call_calls_subspt_typed: input list, initial state, output list and final state retain the HOL order and carriers; the original calls equality implies the original subspt relation on first components."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "do_app_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/DoApp.lean", "lean_name": "doApp_correct",
   "statement_status": "reviewed_fmap_as_finite_support_relation",
