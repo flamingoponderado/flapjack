@@ -14,13 +14,6 @@ open OracleGlobals OracleMonotonic UniqueGlobalsPort StateOracleDisjoint SubsptC
 open Relations Relations.StateRelation Relations.StateRelation.Oracle
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
-private theorem subsptTrans {A : Type} (a b c : Spt A)
-    (h1 : sptSubspt a b) (h2 : sptSubspt b c) : sptSubspt a c := by
-  intro k member
-  obtain ⟨mid, e1⟩ := h1 k member
-  obtain ⟨last, e2⟩ := h2 k mid
-  exact ⟨last, e2.trans e1⟩
-
 /-- After successful argument evaluation, the source induction hypotheses
 simulate the function evaluation, including errors. This Flapjack helper also
 preserves the approximation of any resulting runtime function. -/
@@ -91,8 +84,8 @@ theorem applicationPrefixSimulation {C F : Type} (trace : BackendCommon.Tra)
     omega
   have ⟨subArgs, subFn⟩ := subsptKnownElistGlobals c xs aenv g0 argsEas g1
     [x] aenv [(fnExp, fnApprox)] g2 ⟨argsKnown, fnKnown, sub0, bagDisjoint⟩
-  have subArgsNext := subsptTrans g1 g2 (nextG s0) subFn sub1
-  have startSub := subsptTrans g0 g2 (nextG s0) sub0 sub1
+  have subArgsNext := sptSubsptTrans g1 g2 (nextG s0) ⟨subFn, sub1⟩
+  have startSub := sptSubsptTrans g0 g2 (nextG s0) ⟨sub0, sub1⟩
   have startApprox := stateGlobalsApproxSubspt g0 (nextG s0) s0 ⟨startSub, globals⟩
   have startOracle := oracleGapproxDisjointSubspt g0 (nextG s0) s0.compileOracle ⟨startSub, oracle⟩
   have argsApprox := CorrectApprox.Total.knownCorrectApprox c xs aenv g0 argsEas g1 env1 xenv1 s0
@@ -133,7 +126,7 @@ theorem applicationPrefixSimulation {C F : Type} (trace : BackendCommon.Tra)
     have fnStep := fnIH fnResult next env1 xenv1 env2 xenv2 targetMiddle c g1 g2 aenv [(fnExp, fnApprox)]
       ⟨fnRun, fnKnown, midState, syntaxParts.1, nextCoSyntax, nextDisjoint, midOracle,
         nextStateOracleDisjoint, fnSafe, safety.1, envSafe, approxRel, nextOracleSafe,
-        optimizerSafe.2.2, approxSafe, midGlobals, subFn, subsptTrans g2 (nextG s0) (nextG middle) sub1 nextTree,
+        optimizerSafe.2.2, approxSafe, midGlobals, subFn, sptSubsptTrans g2 (nextG s0) (nextG middle) ⟨sub1, nextTree⟩,
         nextMono, freeParts.1, nextRel, nextUnique, midStateOracle, envEq, fnNoType⟩
     obtain ⟨targetFnResult, targetNext, targetFnRun, fnRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩ := fnStep
     have fnTree := nextGEvaluateSubspt [x] env1full middle fnResult next ⟨nextMono, fnRun⟩

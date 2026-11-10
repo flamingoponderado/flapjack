@@ -11,12 +11,6 @@ public import Flapjack.Misc.Sptree.Subspt
 namespace Flapjack.Compiler.Backend.ClosCall
 open Flapjack ClosLang
 
-private theorem sizeOf_map_snd_le (xs : List (Nat × Exp)) :
-    sizeOf (xs.map Prod.snd) ≤ sizeOf xs := by
-  induction xs with
-  | nil => simp
-  | cons x xs ih => cases x; simp_wf; omega
-
 private def Grows (s t : State) : Prop :=
   sptSubspt s.1 t.1 ∧ s.2 <:+ t.2
 
@@ -25,14 +19,6 @@ private theorem refl (s : State) : Grows s s :=
 
 private theorem trans {s t u : State} (h : Grows s t) (h' : Grows t u) : Grows s u :=
   ⟨sptSubsptTrans _ _ _ ⟨h.1, h'.1⟩, h.2.trans h'.2⟩
-
-private theorem insertEach_snd (loc count : Nat) (state : State) :
-    (insertEachSource loc count state).2 = state.2 := by
-  induction count generalizing loc state with
-  | zero => rfl
-  | succ count ih =>
-    cases state with
-    | mk known code => simpa [insertEachSource] using ih (loc + 2) (sptInsert loc () known, code)
 
 private theorem insert_growth (loc count : Nat) (s : State) :
     Grows s (insertEachSource loc count s) := by

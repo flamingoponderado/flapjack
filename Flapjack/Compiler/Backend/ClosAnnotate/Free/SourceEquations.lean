@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.CodeLocations
+public import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
 public import Flapjack.Misc.ListEl
 
 @[expose] public section
@@ -13,9 +14,6 @@ open ClosLang DbVars
 The separate original recursion and its equivalence are in `Free.Original`
 and `Free.OriginalEquivalence`. -/
 def altFree (expressions : List Exp) : List Exp × DbVarSet := altFreeList expressions
-
-private theorem mkUnion_empty_right (set : DbVarSet) : mkUnion set .empty = set := by
-  cases set <;> rfl
 
 /-- A singleton is transformed into exactly one expression. -/
 theorem altFree_singleton (expression : Exp) :

@@ -39,11 +39,6 @@ theorem envRel_length (live : DbVarSet) (source target : List Value)
 theorem envRel_refl (live : DbVarSet) (env : List Value) : envRel live env env := by
   exact ⟨rfl, fun _ _ _ => rfl⟩
 
-/-- Membership in a smart union is membership in either operand. -/
-theorem hasVar_mkUnion (index : Nat) (left right : DbVarSet) :
-    hasVar index (mkUnion left right) = (hasVar index left || hasVar index right) := by
-  cases left <;> cases right <;> simp [mkUnion, hasVar]
-
 /-- Agreement on a union of live variables is agreement on both sets. -/
 theorem envRel_mkUnion (left right : DbVarSet) (source target : List Value) :
     envRel (mkUnion left right) source target ↔ envRel left source target ∧ envRel right source target := by

@@ -45,12 +45,6 @@ private theorem domainBound_insert (s : State) (loc n : Nat) :
     exact ⟨i, hi, by omega⟩
   · exact Or.inl old
 
-private theorem sizeOf_map_snd_le (xs : List (Nat × Exp)) :
-    sizeOf (xs.map Prod.snd) ≤ sizeOf xs := by
-  induction xs with
-  | nil => simp
-  | cons x xs ih => cases x; simp_wf; omega
-
 mutual
 private theorem domainBound_expr (e : Exp) (s : State) :
     DomainBound s (callsSing e s).2 (codeLocationsExp e) := by

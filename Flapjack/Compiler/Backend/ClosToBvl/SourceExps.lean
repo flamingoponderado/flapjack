@@ -16,10 +16,12 @@ noncomputable section
 private abbrev Aux := List (Nat × Nat × Bvl.Exp)
 instance sourceExpsInst1 : Nonempty Bvl.Exp := ⟨.var 0⟩
 
-private theorem option_size_pos {α : Type} [SizeOf α] (x : Option α) : 0 < sizeOf x := by
+/-- Lean structural termination measure for option-valued fields. -/
+theorem option_size_pos {α : Type} [SizeOf α] (x : Option α) : 0 < sizeOf x := by
   cases x <;> simp_wf <;> omega
 
-private theorem trace_size_pos (x : BackendCommon.Tra) : 0 < sizeOf x := by
+/-- Lean structural termination measure for trace fields. -/
+theorem trace_size_pos (x : BackendCommon.Tra) : 0 < sizeOf x := by
   cases x <;> simp_wf <;> omega
 
 mutual

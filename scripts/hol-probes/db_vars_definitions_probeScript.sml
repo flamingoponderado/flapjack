@@ -14,3 +14,4 @@ val _ = show "vars_to_list_typed=" db_varsTheory.vars_to_list_def;
 val _ = show "vars_from_list_typed=" db_varsTheory.vars_from_list_def;
 val _ = show "vars_flatten_typed=" db_varsTheory.vars_flatten_def;
 val _ = show "has_var_typed=" db_varsTheory.has_var_def;
+val _ = show "has_var_mk_union_typed=" db_varsTheory.has_var_mk_Union;

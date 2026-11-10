@@ -13,13 +13,6 @@ open OracleGlobals OracleMonotonic UniqueGlobalsPort StateOracleDisjoint SubsptC
 open Relations Relations.StateRelation Relations.StateRelation.Oracle
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
-private theorem subsptTrans {A : Type} (a b c : Spt A)
-    (h1 : sptSubspt a b) (h2 : sptSubspt b c) : sptSubspt a c := by
-  intro k member
-  obtain ⟨mid, e1⟩ := h1 k member
-  obtain ⟨last, e2⟩ := h2 k mid
-  exact ⟨last, e2.trans e1⟩
-
 /-- Simulation of an application selected for inlining, including failures in
 argument and function evaluation. The decision premise makes this a Flapjack
 case helper, not the full HOL induction case. -/
@@ -93,7 +86,7 @@ theorem inlineApplicationSimulation {C F : Type} (trace : BackendCommon.Tra)
     omega
   have ⟨subArgs, subFn⟩ := subsptKnownElistGlobals c (first :: rest) aenv g0 argsEas g1
     [x] aenv [(fnExp, fnApprox)] g2 ⟨argsKnown, fnKnown, sub0, bagDisjoint⟩
-  have subArgsNext := subsptTrans g1 g2 (nextG s0) subFn sub1
+  have subArgsNext := sptSubsptTrans g1 g2 (nextG s0) ⟨subFn, sub1⟩
   have argsOptimizer := PreserveSafety.knownPreservesEsgcFree c (first :: rest) aenv g0 argsEas g1
     ⟨argsKnown, safeParts.2, approxSafe, globalSafe⟩
   have fnSafe : ∀ e ∈ [x], esgcFree e := by simpa using safeParts.1
@@ -182,8 +175,8 @@ theorem inlineApplicationSimulation {C F : Type} (trace : BackendCommon.Tra)
                 have tree1 := nextGEvaluateSubspt (first :: rest) env1full s0 (.val values) middle ⟨mono, argsRun⟩
                 have mono1 := oracleGapproxSubsptEvaluate () (first :: rest) env1full s0 (.val values) middle ⟨mono, argsRun⟩
                 have tree2 := nextGEvaluateSubspt [x] env1full middle (.val [fn]) next ⟨mono1, fnRun⟩
-                have subNext := subsptTrans g2 (nextG s0) (nextG next) sub1
-                  (subsptTrans (nextG s0) (nextG middle) (nextG next) tree1 tree2)
+                have subNext := sptSubsptTrans g2 (nextG s0) (nextG next) ⟨sub1,
+                  sptSubsptTrans (nextG s0) (nextG middle) (nextG next) ⟨tree1, tree2⟩⟩
                 have targetUnchanged : ClosLang.pure x = true → targetNext = targetMiddle := by
                   intro hp
                   obtain ⟨_, _, _, _, _, targetEq, _⟩ := InlinePureEvaluation.pureFunctionEvaluation
