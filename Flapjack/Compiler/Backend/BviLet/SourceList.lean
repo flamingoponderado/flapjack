@@ -146,12 +146,13 @@ theorem compile_eq_compileList (env : List Nat) (d : Nat) (xs : List Exp) :
 @[hol "cakeml/compiler/backend/bvi_letScript.sml" "compile_sing"]
 theorem compile_sing :
     (∀ env d e, compile env d [e] = [compileSing env d e]) ∧
-    (∀ env d xs, compile env d xs = compileList env d xs) := by
+    (∀ env d xs, compileList env d xs = compile env d xs) := by
   constructor
   · intro env d e
     have := compile_eq_compileList env d [e]
     simpa [compileList] using this
-  · exact compile_eq_compileList
+  · intro env d xs
+    exact (compile_eq_compileList env d xs).symm
 
 /-- HOL's compile_exp_eq: the single-expression compiler is the singleton rewrite. -/
 @[hol "cakeml/compiler/backend/bvi_letScript.sml" "compile_exp_eq"]
