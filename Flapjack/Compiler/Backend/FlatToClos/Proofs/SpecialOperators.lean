@@ -6,11 +6,6 @@ public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Force
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvalInstall
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Special operator cases for the proof-side evaluator simulation. These

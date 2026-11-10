@@ -2,8 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ExpressionCases
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Ordered expression-list simulation for the flat pattern compiler. -/

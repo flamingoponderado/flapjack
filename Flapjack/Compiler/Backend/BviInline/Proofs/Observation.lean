@@ -1,6 +1,11 @@
-import Flapjack.Compiler.Backend.BviInline.Proofs.WholeProgramSimulation
-import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateEventsClockFull
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteSimulation
+module
+
+public import Flapjack.Compiler.Backend.BviInline.Proofs.WholeProgramSimulation
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateEventsClockFull
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteSimulation
+
+@[expose] public section
+
 
 /-! Whole-program observation support for the BVI inliner. -/
 namespace Flapjack.Compiler.Backend.BviInline.Observation

@@ -1,6 +1,11 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationTotal
-import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsRelated
-import Flapjack.FiniteMap.EmptyExact
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationTotal
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsRelated
+public import Flapjack.FiniteMap.EmptyExact
+
+@[expose] public section
+
 
 /-! Observational correctness of known-function optimization. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Semantics

@@ -6,10 +6,6 @@ public import Flapjack.Misc.OptBind
 
 @[expose] public section
 
--- Public declarations below use private helpers.
-set_option backward.privateInPublic true
-set_option backward.privateInPublic.warn false
-
 /-! Clocked flat evaluation without an extra fuel parameter. Lean currently
 fails to derive the generated functional induction principle for this mutual
 well-founded definition; `EvaluateClock` proves clock preservation using an
@@ -20,19 +16,25 @@ open Flapjack.Basis.Pure.MlString
 
 /-- The HOL `HD` cons equation at flat values, used as a simp rule for the
 evaluator. This is proof infrastructure, not a separate HOL declaration. -/
-@[simp] private theorem holHd_value_cons (value : Value) (tail : List Value) :
+@[simp] theorem holHd_value_cons (value : Value) (tail : List Value) :
     @Flapjack.holHd Value ⟨unitValue⟩ (value :: tail) = value := rfl
 
-private def typeError {C F : Type} (state : State C F) : EvalResult C F :=
-  (state, .err (.abort .typeError))
+/-- Head of a value list, matching HOL's `hd` on the empty-list default. -/
+noncomputable def headValue (values : List Value) : Value :=
+  @Flapjack.holHd Value ⟨unitValue⟩ values
 
-private def timeoutError {C F : Type} (state : State C F) : EvalResult C F :=
-  (state, .err (.abort .timeoutError))
+/-- Unfold the evaluator's private head wrapper to the shared HOL head model.
+This is Flapjack proof infrastructure, not a separate HOL declaration. -/
+theorem headValue_eq_holHd (values : List Value) :
+    headValue values = @Flapjack.holHd Value ⟨unitValue⟩ values := rfl
 
-@[simp] private theorem typeError_eq {C F : Type} (state : State C F) :
+@[simp] theorem headValue_cons (value : Value) (tail : List Value) :
+    headValue (value :: tail) = value := rfl
+
+@[simp] theorem typeError_eq {C F : Type} (state : State C F) :
     typeError state = (state, .err (.abort .typeError)) := rfl
 
-@[simp] private theorem timeoutError_eq {C F : Type} (state : State C F) :
+@[simp] theorem timeoutError_eq {C F : Type} (state : State C F) :
     timeoutError state = (state, .err (.abort .timeoutError)) := rfl
 
 /-- Lift a primitive operation's result into the evaluator's singleton-result

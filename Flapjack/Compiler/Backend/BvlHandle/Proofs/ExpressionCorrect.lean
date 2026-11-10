@@ -1,7 +1,12 @@
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileCases
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyFull
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.ConstantComposition
-import Flapjack.Compiler.Backend.BvlConst.Proofs.Simulation
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileCases
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyFull
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.ConstantComposition
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.Simulation
+
+@[expose] public section
+
 
 /-! End-to-end expression preservation for the executed BVL handler stage. -/
 namespace Flapjack.Compiler.Backend.BvlHandle.Proofs

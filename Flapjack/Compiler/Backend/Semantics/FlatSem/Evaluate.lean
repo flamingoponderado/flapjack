@@ -7,10 +7,6 @@ public import Flapjack.Misc.OptBind
 
 @[expose] public section
 
--- Public declarations below use private helpers.
-set_option backward.privateInPublic true
-set_option backward.privateInPublic.warn false
-
 /-! A fuel-bounded version of the original flat evaluator. Fuel exhaustion is
 represented separately from the original clock timeout. The unbounded HOL
 evaluator and the proof that sufficient fuel exists remain open. -/
@@ -20,10 +16,12 @@ open Flapjack.Basis.Pure.MlString
 
 abbrev EvalResult (C F : Type) := State C F × Result (List Value) Value
 
-private def typeError {C F : Type} (state : State C F) : EvalResult C F :=
+/-- The original flat evaluator's type-error outcome. -/
+def typeError {C F : Type} (state : State C F) : EvalResult C F :=
   (state, .err (.abort .typeError))
 
-private def timeoutError {C F : Type} (state : State C F) : EvalResult C F :=
+/-- The original flat evaluator's clock-timeout outcome. -/
+def timeoutError {C F : Type} (state : State C F) : EvalResult C F :=
   (state, .err (.abort .timeoutError))
 
 /-- Select a row and reject duplicate pattern bindings. -/

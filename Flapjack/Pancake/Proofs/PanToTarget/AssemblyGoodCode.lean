@@ -1,13 +1,18 @@
-import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
-import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
-import Flapjack.Compiler.Backend.BackendProof.ConfigOk
-import Flapjack.Compiler.Backend.Proofs.WordConventions
-import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmConventions
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.AsmNames
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.Conventions
-import Flapjack.Compiler.Backend.StackRemove.Proofs.AsmName
-import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Assembly
-import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
+public import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
+public import Flapjack.Compiler.Backend.BackendProof.ConfigOk
+public import Flapjack.Compiler.Backend.Proofs.WordConventions
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmConventions
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.AsmNames
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.Conventions
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.AsmName
+public import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Assembly
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
+
+@[expose] public section
+
 
 /-!
 # `pan_to_target_compile_semantics` assembly, stage A2 (`good_code`)

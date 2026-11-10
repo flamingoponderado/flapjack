@@ -4,11 +4,6 @@ public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
 public import Flapjack.Misc.RichList
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Array-store prerequisites for flat-to-closure simulation. -/

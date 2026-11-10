@@ -7,11 +7,6 @@ public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateLength
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
 public import Mathlib.Data.List.Forall2
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Initial cases of the proof-side flat-to-closure evaluator simulation. -/

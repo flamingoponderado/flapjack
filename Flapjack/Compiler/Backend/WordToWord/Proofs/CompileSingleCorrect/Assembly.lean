@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Call
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Install
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Call
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Install
+
+@[expose] public section
+
 
 /-!
 # `word_to_wordProof` `compile_single_correct`: the induction

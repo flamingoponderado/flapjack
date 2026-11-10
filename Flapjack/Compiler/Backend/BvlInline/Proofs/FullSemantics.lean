@@ -1,6 +1,11 @@
-import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpSemantics
-import Flapjack.Compiler.Backend.BvlInline.Proofs.ProductionSemantics
-import Flapjack.Compiler.Backend.BvlInline.SourceCompile
+module
+
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpSemantics
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.ProductionSemantics
+public import Flapjack.Compiler.Backend.BvlInline.SourceCompile
+
+@[expose] public section
+
 
 /-! Production correspondence and behavior for the complete BVL optimizer. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs

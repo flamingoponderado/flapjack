@@ -7,8 +7,6 @@ public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.AllocDefsLookup
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateEmptyDeclarations
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Declaration simulation for simple source aliases. The factored value and

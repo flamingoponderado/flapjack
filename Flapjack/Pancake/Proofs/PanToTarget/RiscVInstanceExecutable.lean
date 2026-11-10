@@ -1,5 +1,10 @@
-import Flapjack.Pancake.Proofs.PanToTarget.RiscVInstance
-import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.RiscVInstance
+public import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
+
+@[expose] public section
+
 
 /-!
 # The RISC-V Pancake theorem against the callable compiler

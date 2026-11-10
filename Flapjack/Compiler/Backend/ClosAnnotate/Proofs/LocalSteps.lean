@@ -5,9 +5,6 @@ public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.RecursiveFunctions
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Control
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.PureBindings
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 /-! State-local steps for the evaluator induction. -/

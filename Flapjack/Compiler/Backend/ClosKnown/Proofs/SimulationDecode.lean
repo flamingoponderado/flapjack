@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationBool
-import Flapjack.Compiler.Backend.Semantics.ClosProps.DecodeRelations
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationBool
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.DecodeRelations
+
+@[expose] public section
+
 
 /-! Installation-value decoding in the known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Relations

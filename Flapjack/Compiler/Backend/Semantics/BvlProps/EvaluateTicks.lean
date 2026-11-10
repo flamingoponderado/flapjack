@@ -2,8 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! Evaluation of repeated BVL ticks. -/

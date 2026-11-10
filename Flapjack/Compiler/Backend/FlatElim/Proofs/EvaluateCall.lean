@@ -2,9 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateControl
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Clock induction step for function application in the flat evaluation

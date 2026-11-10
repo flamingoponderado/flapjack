@@ -4,9 +4,6 @@ public import Flapjack.Compiler.Backend.FlatToClos.Helpers
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
 public import Batteries.Data.List.Basic
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 /-! Constructor-folding prerequisites for the flat-to-closure simulation. -/

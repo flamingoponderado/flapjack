@@ -742,56 +742,32 @@ theorem decodePattern_canonical (s : Sexp) : ∀ p, decodePattern s = some p →
       (motive2 := fun x => ∀ ps, decodePatternList x = some ps → listsexp (ps.map patsexp) = x) with
   | case1 bytes =>
     intro p h
-    cases hd : destString (.str bytes) with
-    | none => simp [decodePattern, hd] at h
-    | some name =>
-      simp [decodePattern, hd] at h
-      subst p
-      have enc := (destString_some (.str bytes) name).1.mp hd
-      simpa [patsexp] using enc.symm
+    simp_all [decodePattern, destString_some]
+    rcases h with ⟨a, hs, rfl⟩
+    simp [patsexp, hs]
   | case2 name terminator hn =>
     intro p h
-    simp [decodePattern, hn] at h
+    simp_all [decodePattern, Bool.and_eq_true, beq_iff_eq]
     subst p
-    simp only [Bool.and_eq_true, beq_iff_eq] at hn
-    simp [patsexp, listsexp, hn.1, hn.2]
+    simp [patsexp, listsexp]
     constructor <;> rfl
-  | case3 name terminator hn =>
-    intro p h
-    simp [decodePattern, hn] at h
-  | case4 name a terminator ht =>
-    intro p h
-    simp [decodePattern, ht] at h
+  | case3 name terminator hn => intro p h; simp_all [decodePattern, Bool.and_eq_true, beq_iff_eq]
+  | case4 name a terminator ht => intro p h; simp_all [decodePattern, bne_iff_ne]
   | case5 name a terminator ht hn =>
     intro p h
-    cases ha : decodeLiteral a with
-    | none => simp [decodePattern, ht, hn, ha] at h
-    | some lit =>
-      simp [decodePattern, ht, hn, ha] at h
-      subst p
-      have ea := (decodeLiteral_some a lit).1.mp ha
-      simp only [beq_iff_eq] at hn
-      simp only [bne_iff_ne, not_not] at ht
-      simp [patsexp, listsexp, ea, hn, ht]
-      constructor <;> rfl
+    simp_all [decodePattern, decodeLiteral_some, beq_iff_eq, bne_iff_ne]
+    rcases h with ⟨lit, hs, rfl⟩
+    rw [← hs]
+    simp [patsexp, listsexp]
+    constructor <;> rfl
   | case6 name a terminator ht hnot hn ih =>
     intro p h
-    cases ha : decodePattern a with
-    | none => simp [decodePattern, ht, hnot, hn, ha] at h
-    | some pat =>
-      simp [decodePattern, ht, hnot, hn, ha] at h
-      subst p
-      have ea := ih pat ha
-      simp only [beq_iff_eq] at hn
-      simp only [bne_iff_ne, not_not] at ht
-      simp [patsexp, listsexp, ea, hn, ht]
-      constructor <;> rfl
-  | case7 name a terminator ht hnot hn =>
-    intro p h
-    simp [decodePattern, ht, hnot, hn] at h
-  | case8 name a b terminator ht =>
-    intro p h
-    simp [decodePattern, ht] at h
+    simp_all [decodePattern, beq_iff_eq, bne_iff_ne]
+    rcases h with ⟨pat, hd, rfl⟩
+    simp [patsexp, listsexp, ih pat hd]
+    constructor <;> rfl
+  | case7 name a terminator ht hnot hn => intro p h; simp_all [decodePattern, beq_iff_eq, bne_iff_ne]
+  | case8 name a b terminator ht => intro p h; simp_all [decodePattern, bne_iff_ne]
   | case9 name a b terminator ht hn ih =>
     intro p h
     cases ha : decodeOption (decodeId destString) a with
@@ -841,37 +817,18 @@ theorem decodePattern_canonical (s : Sexp) : ∀ p, decodePattern s = some p →
         simp only [bne_iff_ne, not_not] at ht
         simp [patsexp, listsexp, ea, eb, hn, ht]
         constructor <;> rfl
-  | case12 name a b terminator ht hnot1 hnot2 hn =>
-    intro p h
-    simp [decodePattern, ht, hnot1, hnot2, hn] at h
-  | case13 x h1 h2 h3 h4 =>
-    intro p h
-    rw [decodePattern.eq_def] at h
-    split at h <;> simp_all
+  | case12 name a b terminator ht hnot1 hnot2 hn => intro p h; simp_all [decodePattern, beq_iff_eq]
+  | case13 x h1 h2 h3 h4 => intro p h; simp_all [decodePattern]
   | case14 head tail ihh iht ps h =>
-    cases hh : decodePattern head with
-    | none => simp [decodePatternList, hh] at h
-    | some p =>
-      cases ht : decodePatternList tail with
-      | none => simp [decodePatternList, hh, ht] at h
-      | some rest =>
-        simp [decodePatternList, hh, ht] at h
-        subst ps
-        have eh := ihh p hh
-        have et := iht rest ht
-        simp only [listsexp] at et
-        simp [listsexp, eh, et]
+    simp_all [decodePatternList, Option.bind_eq_some_iff]
+    rcases h with ⟨p, hd, rest, ht', rfl⟩
+    simp [listsexp]
+    exact ⟨ihh p hd, by simpa [listsexp] using iht rest ht'⟩
   | case15 name hn ps h =>
-    simp [decodePatternList, hn] at h
-    subst ps
-    simp only [beq_iff_eq] at hn
-    simp [listsexp, hn]
+    simp_all [decodePatternList]
     rfl
-  | case16 name hn ps h =>
-    simp [decodePatternList, hn] at h
-  | case17 x h1 h2 ps h =>
-    rw [decodePatternList.eq_def] at h
-    split at h <;> simp_all
+  | case16 name hn ps h => simp_all [decodePatternList]
+  | case17 x h1 h2 ps h => simp_all [decodePatternList]
 
 /-- Pattern decoding succeeds exactly on the canonical encoding, in both
 orientations of option equality. -/

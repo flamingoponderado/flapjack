@@ -5,6 +5,10 @@ public import Flapjack.Misc.Sptree.Map
 
 @[expose] public section
 
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
+
 /-! Exact analysis-only input compression. Instructions ignored by callGraph
 are discarded from this separate input, while the executed backend retains the
 original Word program. No HOL declaration is replaced or independently tagged. -/

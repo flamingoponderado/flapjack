@@ -2,9 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClock
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 /-! Cross-clock control-flow trace comparisons for the proof-side evaluator. -/

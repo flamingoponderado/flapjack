@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApprox
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownUnchanged
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApprox
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownUnchanged
+
+@[expose] public section
+
 
 /-! Closure-creation case of known-function approximation correctness. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.CorrectApprox.Fn

@@ -1,13 +1,18 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Correctness
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.NoMat
-import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileSemantics
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.NoMat
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.InstallPipeline
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemantics
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.NoMti
-import Flapjack.Compiler.Backend.ClosMti.Proofs.Semantics
-import Flapjack.FiniteMap.EmptyExact
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Correctness
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.NoMat
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileSemantics
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.NoMat
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.InstallPipeline
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemantics
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.NoMti
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.Semantics
+public import Flapjack.FiniteMap.EmptyExact
+
+@[expose] public section
+
 
 /-! Connecting the proof-side declaration simulation to the initializer used
 by the executed flat-to-closure compilation. This is Flapjack infrastructure. -/

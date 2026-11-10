@@ -1,16 +1,21 @@
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyMemory
-import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
-import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
-import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
-import Mathlib.Data.BitVec
-import Mathlib.Tactic.Abel
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordLemmas
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
-import Flapjack.Compiler.Backend.BackendProof.MachineInit
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitMemory
-import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
-import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
-import Flapjack.Compiler.Backend.LabToTarget.InstMem
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyMemory
+public import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
+public import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
+public import Mathlib.Data.BitVec
+public import Mathlib.Tactic.Abel
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordLemmas
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
+public import Flapjack.Compiler.Backend.BackendProof.MachineInit
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitMemory
+public import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
+public import Flapjack.Compiler.Backend.LabToTarget.InstMem
+
+@[expose] public section
+
 
 /-!
 # `pan_to_target_compile_semantics` assembly, pan_to_word stage

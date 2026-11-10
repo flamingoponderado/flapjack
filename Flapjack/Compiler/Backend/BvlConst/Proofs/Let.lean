@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.BvlConst.Proofs.Conditional
-import Flapjack.Compiler.Backend.BvlConst.Proofs.DeleteVar
+module
+
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.Conditional
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.DeleteVar
+
+@[expose] public section
+
 
 /-! Let-binding case of constant-propagation simulation. -/
 namespace Flapjack.Compiler.Backend.BvlConst.Proofs

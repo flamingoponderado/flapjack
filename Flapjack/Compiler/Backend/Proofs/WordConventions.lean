@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Output
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Output
+
+@[expose] public section
+
 
 /-! Original backend compiler-result conventions. -/
 namespace Flapjack.Compiler.Backend.BackendProof

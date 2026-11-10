@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TailrecNames
-import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeNames
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TailrecNames
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeNames
+
+@[expose] public section
+
 
 /-! Name conditions between BVI tail-recursion and tail-modulo-cons passes. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

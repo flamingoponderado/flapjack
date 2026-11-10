@@ -2,8 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ValueOk
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 -- Public declarations below use private helpers.

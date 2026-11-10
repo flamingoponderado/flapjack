@@ -11,9 +11,6 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 /-! Evaluator cases for free-variable removal correctness. -/

@@ -188,85 +188,16 @@ theorem esgcFree_compilePatBindings_hol (trace : Tra) (base : Nat)
     (todo : List (FlatLang.Pat × Nat × FlatLang.Exp)) (body : FlatLang.Exp)
     (safe : esgcFree body ∧ ∀ binding ∈ todo, esgcFree binding.2.2) :
     esgcFree (compilePatBindings trace base todo body).2 := by
-  have bodySafe := safe.1
-  have todoSafe : ∀ pattern index expression, (pattern, index, expression) ∈ todo →
-      esgcFree expression := by
-    intro pattern index expression member
-    exact safe.2 (pattern, index, expression) member
-  clear safe
-  revert todoSafe
-  induction base, todo using compilePatBindings.induct trace body with
-  | case1 i =>
-    intro _
-    simpa [compilePatBindings] using bodySafe
-  | case2 i key expression rest ih =>
-    intro safe
-    rw [compilePatBindings]
-    apply ih
-    intro p k e member
-    exact safe p k e (by simp [member])
-  | case3 i key expression rest lit ih =>
-    intro safe
-    rw [compilePatBindings]
-    apply ih
-    intro p k e member
-    exact safe p k e (by simp [member])
-  | case4 i key expression rest name used continuation compiled ih =>
-    intro safe
-    have valueSafe := safe (.pvar name) key expression (by simp)
-    have restSafe : ∀ p k e, (p, k, e) ∈ rest → esgcFree e := by
-      intro p k e member
-      exact safe p k e (by simp [member])
-    have next := ih restSafe
-    rw [compiled] at next
-    simp [compilePatBindings, compiled, esgcFree, valueSafe, next]
-  | case5 i key expression rest stamp patterns entries used continuation compiled ih =>
-    dsimp only [entries] at compiled
-    intro safe
-    have valueSafe := safe (.pcon stamp patterns) key expression (by simp)
-    have restSafe : ∀ p k e, (p, k, e) ∈ rest → esgcFree e := by
-      intro p k e member
-      exact safe p k e (by simp [member])
-    have allSafe : ∀ p k e, (p, k, e) ∈ (patternEntries trace i 0 patterns).map Prod.snd ++ rest →
-        esgcFree e := by
-      intro p k e member
-      rcases List.mem_append.mp member with member | member
-      · exact esgcFree_patternEntries trace i 0 patterns p k e member
-      · exact restSafe p k e member
-    have next := ih allSafe
-    rw [compiled] at next
-    simp only [compilePatBindings, compiled]
-    exact esgcFree_projectionFold trace expression continuation _ valueSafe next
-  | case6 i key expression rest pattern name generated used continuation compiled ih =>
-    dsimp only [generated] at compiled
-    intro safe
-    have valueSafe := safe (.pas pattern name) key expression (by simp)
-    have allSafe : ∀ p k e, (p, k, e) ∈
-        (pattern, i + 1, .varLocal trace (encNumToName (i + 1))) :: rest →
-        esgcFree e := by
-      intro p k e member
-      simp only [List.mem_cons, Prod.mk.injEq] at member
-      rcases member with ⟨_, _, rfl⟩ | member
-      · simp [esgcFree]
-      · exact safe p k e (by simp [member])
-    have next := ih allSafe
-    rw [compiled] at next
-    simp [compilePatBindings, compiled, esgcFree, valueSafe, next]
-  | case7 i key expression rest pattern generated used continuation compiled ih =>
-    dsimp only [generated] at compiled
-    intro safe
-    have valueSafe := safe (.pref pattern) key expression (by simp)
-    have allSafe : ∀ p k e, (p, k, e) ∈
-        (pattern, i + 1, .varLocal trace (encNumToName (i + 1))) :: rest →
-        esgcFree e := by
-      intro p k e member
-      simp only [List.mem_cons, Prod.mk.injEq] at member
-      rcases member with ⟨_, _, rfl⟩ | member
-      · simp [esgcFree]
-      · exact safe p k e (by simp [member])
-    have next := ih allSafe
-    rw [compiled] at next
-    simp [compilePatBindings, compiled, esgcFree, esgcFreeList, valueSafe, next]
+  obtain ⟨bodySafe, safe⟩ := safe
+  fun_induction compilePatBindings trace base todo body
+  all_goals simp_all [esgcFree, esgcFreeList]
+  case case5 i k x rest a ps entries used exp2 eq selected exp3 used2 ih =>
+    refine esgcFree_projectionFold trace x exp2 selected safe.1 (ih ?_)
+    intro a_1 a_2 b member
+    rcases member with ⟨a_3, b_1, hmem⟩ | hmem
+    · exact esgcFree_patternEntries trace i 0 ps a_1 a_2 b (by
+        simp only [List.mem_map]; exact ⟨((a_3, b_1), a_1, a_2, b), hmem, rfl⟩)
+    · exact safe.2 a_1 a_2 b hmem
 
 private theorem setGlobals_mkBool (t : Tra) (b : Bool) :
     setGlobals (mkBool t b) = emptyGlobalBag := by

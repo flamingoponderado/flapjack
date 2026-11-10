@@ -7,10 +7,6 @@ public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Ffi
 
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Dispatcher for ordinary source operators in the proof-side simulation.

@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationCons
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationCons
+
+@[expose] public section
+
 
 /-! Exception-handler case of the known-function semantic simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Handle

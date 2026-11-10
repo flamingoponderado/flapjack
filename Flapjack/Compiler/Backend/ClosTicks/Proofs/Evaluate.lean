@@ -4,9 +4,6 @@ public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Relations
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 public import Mathlib.Tactic
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 /-! Evaluator infrastructure for closure tick-removal correctness. -/

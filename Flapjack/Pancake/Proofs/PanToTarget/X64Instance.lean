@@ -1,6 +1,11 @@
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTop
-import Flapjack.Compiler.Backend.X64Config.BackendProof
-import Flapjack.Compiler.Backend.X64Config.Proofs
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTop
+public import Flapjack.Compiler.Backend.X64Config.BackendProof
+public import Flapjack.Compiler.Backend.X64Config.Proofs
+
+@[expose] public section
+
 
 /-!
 # `pan_to_target_compile_semantics` at the closed x86-64 target

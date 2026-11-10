@@ -1,7 +1,12 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallSimulationFull
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
-import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallSimulationFull
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
+
+@[expose] public section
+
 
 /-! Interpreter insertion observations for the proof-side closure evaluator.
 The evaluator and its state carriers await HOL correspondence review. -/

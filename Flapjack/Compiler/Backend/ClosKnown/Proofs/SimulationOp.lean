@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpGlobal
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationInstallDispatch
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpGlobal
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationInstallDispatch
+
+@[expose] public section
+
 
 /-! Complete operation induction case for known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Op

@@ -1,5 +1,10 @@
-import Flapjack.Pancake.Proofs.PanToTarget.NativeSourceCorrect
-import Flapjack.RiscV.NativeCLIAdapter
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.NativeSourceCorrect
+public import Flapjack.RiscV.NativeCLIAdapter
+
+@[expose] public section
+
 
 /-!
 # Correctness of the default `flapjack-compile` output

@@ -3,9 +3,6 @@ module
 public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
 public import Flapjack.Misc.ClockWeightInduction
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Successful-result length properties for the clocked flat evaluator. -/

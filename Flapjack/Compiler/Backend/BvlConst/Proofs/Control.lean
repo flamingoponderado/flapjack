@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.BvlConst.Proofs.Sequence
+module
+
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.Sequence
+
+@[expose] public section
+
 /-! Clock, exception and call cases of constant-propagation simulation. -/
 namespace Flapjack.Compiler.Backend.BvlConst.Proofs
 open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BvlProps

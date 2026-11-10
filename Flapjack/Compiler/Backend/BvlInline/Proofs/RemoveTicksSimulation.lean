@@ -6,8 +6,6 @@ public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateClockShift
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 public import Flapjack.Misc.ClockWeightInduction
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! Case factoring for the BVL tick-removal evaluator simulation. The full

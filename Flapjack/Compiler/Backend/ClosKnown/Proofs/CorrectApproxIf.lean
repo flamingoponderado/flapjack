@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxHandle
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxHandle
+
+@[expose] public section
+
 
 /-! Conditional case of known-function approximation correctness. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.CorrectApprox.If

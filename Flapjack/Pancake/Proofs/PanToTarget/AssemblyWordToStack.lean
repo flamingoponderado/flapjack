@@ -1,18 +1,23 @@
-import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
-import Flapjack.Compiler.Backend.Proofs.WordConventions
-import Flapjack.Pancake.Proofs.PanToWord.LabPres
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInit
-import Flapjack.Compiler.Backend.StackToLab.Proofs.EncodingInitState
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileBitmaps
-import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileSemantics
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSemantics
-import Flapjack.SemanticsProps.Implements
-import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInitSemantics
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyStackToLab
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyMemory
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
+public import Flapjack.Compiler.Backend.Proofs.WordConventions
+public import Flapjack.Pancake.Proofs.PanToWord.LabPres
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInit
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.EncodingInitState
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileBitmaps
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileSemantics
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSemantics
+public import Flapjack.SemanticsProps.Implements
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInitSemantics
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyStackToLab
+public import Flapjack.Pancake.Proofs.PanToTarget.AssemblyMemory
+
+@[expose] public section
+
 
 /-!
 # `pan_to_target_compile_semantics` assembly, word-to-stack stage facts

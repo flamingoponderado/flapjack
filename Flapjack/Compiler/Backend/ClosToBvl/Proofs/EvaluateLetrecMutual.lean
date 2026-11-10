@@ -4,10 +4,6 @@ public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveFill
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateLet
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateLetrec
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 /-! Mutual recursive-binding case of the closure-to-BVL simulation candidate. -/

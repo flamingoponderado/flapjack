@@ -1,7 +1,16 @@
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.Executable
-import Flapjack.Compiler.Backend.FlatToClos.Proofs.CompileCorrectShape
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemanticsSource
-import Flapjack.FiniteMap.EmptyExact
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Executable
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.CompileCorrectShape
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemanticsSource
+public import Flapjack.FiniteMap.EmptyExact
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
+
 
 /-!
 Observational composition of the flat-to-closure evaluator and interpreter

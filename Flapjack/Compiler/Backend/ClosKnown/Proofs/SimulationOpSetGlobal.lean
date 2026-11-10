@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpOrdinary
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpOrdinary
+
+@[expose] public section
+
 
 /-! Global-write case of known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.SetGlobal

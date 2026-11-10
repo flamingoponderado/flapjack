@@ -1,10 +1,15 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.InstallGlobals
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.ClosureGlobals
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.PrimitiveGlobals
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.InstallGlobals
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ClosureGlobals
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.PrimitiveGlobals
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
+
+@[expose] public section
+
 
 /-! Global-write safety during closure evaluation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown

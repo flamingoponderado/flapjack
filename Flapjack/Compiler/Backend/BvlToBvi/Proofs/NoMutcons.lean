@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TmcNames
-import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteCorrespondence
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TmcNames
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteCorrespondence
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Absence of TMC's mutable-block primitive before the TMC pass. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs

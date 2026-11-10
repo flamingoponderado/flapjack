@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.ExpressionCorrect
-import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateExpandEnv
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.ExpressionCorrect
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateExpandEnv
+
+@[expose] public section
+
 
 /-! Preservation for the handler compiler's sequence splitting. -/
 namespace Flapjack.Compiler.Backend.BvlHandle.Proofs

@@ -8,9 +8,6 @@ import all Flapjack.Compiler.Backend.ClosToBvl.Proofs.Accumulator
 import all Flapjack.Compiler.Backend.ClosToBvl.Proofs.ExpsEquivalence
 import all Flapjack.Compiler.Backend.ClosToBvl.SourceCompile
 import all Flapjack.Compiler.Backend.ClosToBvl.SourceExps
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
-import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 @[expose] public section
 
 /-! Direct-call cases of the closure-to-BVL simulation candidate. -/

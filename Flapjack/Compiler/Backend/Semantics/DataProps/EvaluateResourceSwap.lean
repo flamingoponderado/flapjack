@@ -5,8 +5,6 @@ public import Flapjack.Compiler.Backend.Semantics.DataProps.CutSwap
 public import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
 public import Flapjack.Misc.ClockWeightInduction
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
 @[expose] public section
 
 /-! Resource-field variation for data-language evaluation. -/

@@ -1,6 +1,11 @@
-import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsm
-import Flapjack.Pancake.PanToTarget.MainFirstSemantics
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsm
+public import Flapjack.Pancake.PanToTarget.MainFirstSemantics
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+
+@[expose] public section
+
 
 /-!
 # Source-level RISC-V Pancake theorem for the CLI compiler call

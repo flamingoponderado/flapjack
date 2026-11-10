@@ -5,8 +5,6 @@ public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 public import Flapjack.Misc.Option
 public import Mathlib.Data.Set.Basic
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Evaluation of generated pattern-binding lets. -/

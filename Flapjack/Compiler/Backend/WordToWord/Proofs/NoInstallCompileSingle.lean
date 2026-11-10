@@ -1,6 +1,11 @@
-import Flapjack.Compiler.Backend.WordToWord.Proofs.Syntactic
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallEvaluate
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateConsts
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.Syntactic
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallEvaluate
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateConsts
+
+@[expose] public section
+
 
 /-!
 # `word_to_wordProof`: `no_install_no_alloc_compile_single_correct`

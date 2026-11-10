@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxEvaluate
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateOracleAdvance
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxEvaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateOracleAdvance
+
+@[expose] public section
+
 
 /-! Disjointness of approximation domains from future oracle writes. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.OracleGlobals

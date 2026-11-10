@@ -1,8 +1,13 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineFreeVars
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.ValueRelation
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownUnchanged
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppPrefix
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.TicksEvaluate
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineFreeVars
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownUnchanged
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppPrefix
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.TicksEvaluate
+
+@[expose] public section
+
 
 /-! Constructing the synthetic target closure for an inlined application. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.InlineClosureRelation

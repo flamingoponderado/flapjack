@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxCall
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxCall
+
+@[expose] public section
+
 
 /-! Installation case of known-function approximation correctness. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.CorrectApprox.Install

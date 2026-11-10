@@ -4,9 +4,6 @@ public import Flapjack.Compiler.Backend.FlatProps.EvaluateList
 public import Flapjack.Compiler.Backend.FlatProps.DoAppClock
 public import Flapjack.Compiler.Backend.FlatProps.PatternMatch
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Shared evaluator equations used in the clock-extension and event proofs. -/

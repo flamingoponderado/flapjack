@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalLocations
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SyntaxOracle
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalLocations
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SyntaxOracle
+
+@[expose] public section
+
 
 /-! Assembling optimizer annotation preservation over the complete traversal. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.TraversalLocations

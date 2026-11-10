@@ -1,8 +1,13 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracle
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracleDisjoint
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownSubspt
-import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
-import Flapjack.SemanticPrimitivesProps.ResultRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracle
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracleDisjoint
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownSubspt
+public import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+
+@[expose] public section
+
 
 /-! Source-shaped induction predicates for the known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation

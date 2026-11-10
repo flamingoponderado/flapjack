@@ -1,5 +1,10 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationInstall
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationForceArgs
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationInstall
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationForceArgs
+
+@[expose] public section
+
 
 /-! Installation outcomes in the known-function simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Install

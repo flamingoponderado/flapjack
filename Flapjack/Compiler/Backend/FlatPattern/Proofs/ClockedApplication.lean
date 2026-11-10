@@ -6,9 +6,6 @@ public import Flapjack.Compiler.Backend.FlatPattern.Proofs.SourceApplication
 public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ThunkEvaluation
 public import Flapjack.Compiler.Backend.FlatPattern.Proofs.DynamicEvaluation
 
--- Proofs below unfold private helpers of these modules.
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 @[expose] public section
 
 /-! Clock-bounded application simulation for the flat pattern pass. -/

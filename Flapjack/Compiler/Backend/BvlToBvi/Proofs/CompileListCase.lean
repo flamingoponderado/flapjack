@@ -8,8 +8,6 @@ public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateClockShift
 
 -- Proofs below unfold private helpers of these modules.
 import all Flapjack.Compiler.Backend.BvlToBvi.SourceSing
-import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
-import all Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 @[expose] public section
 
 /-! Non-singleton expression-list case of BVL-to-BVI simulation. -/

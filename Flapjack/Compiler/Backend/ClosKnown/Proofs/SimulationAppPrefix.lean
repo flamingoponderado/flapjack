@@ -1,6 +1,11 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLet
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxApp
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApplyPartial
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLet
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxApp
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApplyPartial
+
+@[expose] public section
+
 
 /-! Successful argument and function evaluation in the application case. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.AppPrefix

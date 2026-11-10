@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallAppRelation
+module
+
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallAppRelation
+
+@[expose] public section
+
 
 /-! Mutual equal-clock no-install simulation for the proof-side evaluator.
 The evaluator and state carriers await HOL correspondence review. -/

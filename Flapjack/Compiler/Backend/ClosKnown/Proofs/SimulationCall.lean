@@ -1,4 +1,9 @@
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.Simulation
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Simulation
+
+@[expose] public section
+
 
 /-! Direct-call case of the known-function semantic simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Call

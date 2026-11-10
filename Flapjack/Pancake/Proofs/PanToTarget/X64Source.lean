@@ -1,6 +1,11 @@
-import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsm
-import Flapjack.Pancake.Proofs.PanToTarget.X64InstanceExecutable
-import Flapjack.Pancake.PanToTarget.MainFirstSemantics
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsm
+public import Flapjack.Pancake.Proofs.PanToTarget.X64InstanceExecutable
+public import Flapjack.Pancake.PanToTarget.MainFirstSemantics
+
+@[expose] public section
+
 
 /-!
 # Source-level x86-64 Pancake theorem for the CLI compiler call
