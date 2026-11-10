@@ -10,6 +10,28 @@ import Mathlib.Data.List.Perm.Subperm
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open ClosLang ClosProps
 
+/-- Conditional direct-call conversion preserves absent variable annotations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "every_Fn_vs_NONE_cond_call_compile_inc"]
+theorem everyFnVarsNone_condCallCompileInc (program : List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp))
+    (enabled : Bool) (known : NumSet) :
+    (everyFnVarsNone program.1 →
+      everyFnVarsNone (ClosCall.condCallCompileInc enabled known program).2.1) ∧
+    (everyFnVarsNone program.1 ∧ everyFnVarsNone (program.2.map (fun p => p.2.2)) →
+      everyFnVarsNone ((ClosCall.condCallCompileInc enabled known program).2.2.map (fun p => p.2.2))) := by
+  cases enabled with
+  | false => simp [ClosCall.condCallCompileInc]
+  | true =>
+    cases hrun : ClosCall.calls program.1 (known, []) with
+    | mk output state =>
+      have preserve := ClosCall.calls_preserves_everyFnVarsNone program.1 (known, []) output state hrun
+      simp only [ClosCall.condCallCompileInc, ↓reduceIte,
+        ClosCall.compileInc, hrun]
+      constructor
+      · intro h
+        exact (preserve ⟨h, by simp [everyFnVarsNone]⟩).1
+      · intro h
+        exact (preserve ⟨h.1, by simp [everyFnVarsNone]⟩).2
+
 /-- Optional direct-call conversion preserves locations in both the program
     and its auxiliary code. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "every_Fn_SOME_cond_call_compile_inc"]

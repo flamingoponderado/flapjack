@@ -30,6 +30,18 @@
   "reviewer": "Compared calls_preserves_every_fn_some_typed and independent review: binder order, grouped premise and conclusion match; proof covers closed and non-closed Fn and Letrec cases."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_preserves_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "calls_preserves_everyFnVarsNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_preserves_every_Fn_vs_NONE_typed and HOL source: quantified inputs, state and outputs, evaluation equation, grouped syntax premise and both conclusions match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_vs_NONE_cond_call_compile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallAddresses.lean", "lean_name": "everyFnVarsNone_condCallCompileInc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_Fn_vs_NONE_cond_call_compile_inc_typed and HOL source: free variables program, enabled, known, the state carriers, both implication premises and conclusions match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_SOME_cond_call_compile_inc",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallAddresses.lean", "lean_name": "everyFnLocationSome_condCallCompileInc",
   "statement_status": "reviewed_exact",

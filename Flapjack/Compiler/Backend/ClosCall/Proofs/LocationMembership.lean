@@ -311,6 +311,189 @@ theorem calls_preserves_everyFnLocationSome (xs : List Exp) (g0 : State)
   change callsSingList xs g0 = (ys, g) at run
   simpa [run] using ih
 
+mutual
+private theorem callsSing_varsNone (e : Exp) (s : State) :
+    (fnVarsNoneExp e ∧ everyFnVarsNone (s.2.map (fun p => p.2.2))) →
+    fnVarsNoneExp (callsSing e s).1 ∧
+      everyFnVarsNone ((callsSing e s).2.2.map (fun p => p.2.2)) := by
+  intro h
+  cases e with
+  | var tr v => simpa [callsSing, fnVarsNoneExp] using h
+  | raise tr body =>
+    have ih := callsSing_varsNone body s (by simpa [fnVarsNoneExp] using h)
+    cases hr : callsSing body s with
+    | mk out st => simpa [callsSing, hr, fnVarsNoneExp] using ih
+  | tick tr body =>
+    have ih := callsSing_varsNone body s (by simpa [fnVarsNoneExp] using h)
+    cases hr : callsSing body s with
+    | mk out st => simpa [callsSing, hr, fnVarsNoneExp] using ih
+  | ifThenElse tr a b c =>
+    simp only [fnVarsNoneExp] at h
+    cases ha : callsSing a s with
+    | mk oa sa =>
+      have h1 := callsSing_varsNone a s ⟨h.1.1, h.2⟩
+      simp only [ha] at h1
+      cases hb : callsSing b sa with
+      | mk ob sb =>
+        have h2 := callsSing_varsNone b sa ⟨h.1.2.1, h1.2⟩
+        simp only [hb] at h2
+        cases hc : callsSing c sb with
+        | mk oc sc =>
+          have h3 := callsSing_varsNone c sb ⟨h.1.2.2, h2.2⟩
+          simp only [hc] at h3
+          simpa [callsSing, ha, hb, hc, fnVarsNoneExp] using
+            And.intro (And.intro h1.1 (And.intro h2.1 h3.1)) h3.2
+  | «let» tr args body =>
+    simp only [fnVarsNoneExp] at h
+    cases ha : callsSingList args s with
+    | mk oa sa =>
+      have h1 := callsSingList_varsNone args s ⟨h.1.2, h.2⟩
+      simp only [ha] at h1
+      have h2 := callsSing_varsNone body sa ⟨h.1.1, h1.2⟩
+      cases hb : callsSing body sa with
+      | mk ob sb =>
+        simp only [hb] at h2
+        simpa [callsSing, ha, hb, fnVarsNoneExp] using ⟨⟨h2.1, h1.1⟩, h2.2⟩
+  | handle tr body handler =>
+    simp only [fnVarsNoneExp] at h
+    cases ha : callsSing body s with
+    | mk oa sa =>
+      have h1 := callsSing_varsNone body s ⟨h.1.1, h.2⟩
+      simp only [ha] at h1
+      have h2 := callsSing_varsNone handler sa ⟨h.1.2, h1.2⟩
+      cases hb : callsSing handler sa with
+      | mk ob sb =>
+        simp only [hb] at h2
+        simpa [callsSing, ha, hb, fnVarsNoneExp] using ⟨⟨h1.1, h2.1⟩, h2.2⟩
+  | call tr ticks dest args =>
+    have ih := callsSingList_varsNone args s (by simpa [fnVarsNoneExp] using h)
+    cases hr : callsSingList args s with
+    | mk out st => simpa [callsSing, hr, fnVarsNoneExp] using ih
+  | op tr op args =>
+    have ih := callsSingList_varsNone args s (by simpa [fnVarsNoneExp] using h)
+    cases hr : callsSingList args s with
+    | mk out st => simpa [callsSing, hr, fnVarsNoneExp] using ih
+  | app tr loc body args =>
+    simp only [fnVarsNoneExp] at h
+    cases ha : callsSingList args s with
+    | mk oa sa =>
+      have h1 := callsSingList_varsNone args s ⟨h.1.2, h.2⟩
+      simp only [ha] at h1
+      cases hb : callsSing body sa with
+      | mk ob sb =>
+        have h2 := callsSing_varsNone body sa ⟨h.1.1, h1.2⟩
+        simp only [hb] at h2
+        simp only [callsSing, ha, hb]
+        cases loc with
+        | none => simpa [fnVarsNoneExp] using And.intro (And.intro h2.1 h1.1) h2.2
+        | some loc =>
+          cases hl : (sptLookup loc sb.1).isSome <;> cases hp : ClosLang.pure body <;>
+            simp_all [fnVarsNoneExp, varsNone_append, everyFnVarsNone,
+              (everyFn_variables oa.length 2 BackendCommon.Tra.none).2, h1.1, h2.1, h2.2]
+  | fn name loc vs arity body =>
+    simp only [fnVarsNoneExp] at h
+    let fresh := insertEachSource (loc.getD 0) 1 s
+    have haux : everyFnVarsNone (fresh.2.map (fun p => p.2.2)) := by
+      simpa [fresh, insertEach_snd] using h.2
+    cases hf : callsSing body fresh with
+    | mk out st =>
+      have ih := callsSing_varsNone body fresh ⟨h.1.2, haux⟩
+      simp only [hf] at ih
+      dsimp [fresh] at hf
+      simp only [callsSing, hf]
+      split
+      · simp [fnVarsNoneExp, everyFnVarsNone,
+          (everyFn_variables arity 1 BackendCommon.Tra.none).2, h.1.1, ih.1, ih.2]
+      · cases hr : callsSing body s with
+        | mk out st =>
+          have ih := callsSing_varsNone body s ⟨h.1.2, h.2⟩
+          simp only [hr] at ih
+          simpa [hr, fnVarsNoneExp, h.1.1] using ih
+  | letrec names loc vs fns body =>
+    simp only [fnVarsNoneExp, fnVarsNoneFuns_eq_map] at h
+    let fresh := insertEachSource (loc.getD 0) fns.length s
+    have haux : everyFnVarsNone (fresh.2.map (fun p => p.2.2)) := by
+      simpa [fresh, insertEach_snd] using h.2
+    cases hf : callsSingList (fns.map Prod.snd) fresh with
+    | mk bodies st =>
+      have ihF := callsSingList_varsNone (fns.map Prod.snd) fresh ⟨h.1.2.1, haux⟩
+      simp only [hf] at ihF
+      have hlen : bodies.length = fns.length := by
+        have len := callsSingList_length (fns.map Prod.snd) fresh
+        simpa [hf] using len
+      have hzip : ((fns.map Prod.fst).zip bodies).map Prod.snd = bodies := by
+        simp [List.map_snd_zip, hlen]
+      dsimp [fresh] at hf
+      simp only [callsSing, hf]
+      split
+      · have hcode : everyFnVarsNone
+            ((codeListSource (loc.getD 0) ((fns.map Prod.fst).zip bodies) st).2.map
+              (fun p => p.2.2)) := by
+          rw [(everyFn_codeList _ _ _).2, hzip]
+          exact ⟨ihF.1, ihF.2⟩
+        cases hb : callsSing body
+            (codeListSource (loc.getD 0) ((fns.map Prod.fst).zip bodies) st) with
+        | mk out final =>
+          have ihB := callsSing_varsNone body _ ⟨h.1.2.2, hcode⟩
+          simp only [hb] at ihB
+          have stubs := (everyFn_callsList fns (loc.getD 0) 1 BackendCommon.Tra.none).2
+          simp [fnVarsNoneExp, fnVarsNoneFuns_eq_map, h.1.1, stubs, ihB.1, ihB.2]
+      · cases hg : callsSingList (fns.map Prod.snd) s with
+        | mk bodies st =>
+          have ihG := callsSingList_varsNone (fns.map Prod.snd) s ⟨h.1.2.1, h.2⟩
+          simp only [hg] at ihG
+          have hlen : bodies.length = fns.length := by
+            have len := callsSingList_length (fns.map Prod.snd) s
+            simpa [hg] using len
+          have hzip : ((fns.map Prod.fst).zip bodies).map Prod.snd = bodies := by
+            simp [List.map_snd_zip, hlen]
+          cases hb : callsSing body st with
+          | mk out final =>
+            have ihB := callsSing_varsNone body st ⟨h.1.2.2, ihG.2⟩
+            simp only [hb] at ihB
+            simp [fnVarsNoneExp, fnVarsNoneFuns_eq_map,
+              hzip, h.1.1, ihG.1, ihB.1, ihB.2]
+termination_by sizeOf e
+decreasing_by
+  all_goals subst_vars
+  all_goals simp_wf
+  all_goals try omega
+  all_goals try have bound := sizeOf_map_snd_le fns
+  all_goals omega
+
+private theorem callsSingList_varsNone (es : List Exp) (s : State) :
+    (everyFnVarsNone es ∧ everyFnVarsNone (s.2.map (fun p => p.2.2))) →
+    everyFnVarsNone (callsSingList es s).1 ∧
+      everyFnVarsNone ((callsSingList es s).2.2.map (fun p => p.2.2)) := by
+  intro h
+  cases es with
+  | nil => simpa [callsSingList, everyFnVarsNone] using h.2
+  | cons e es =>
+    simp only [everyFnVarsNone] at h
+    cases he : callsSing e s with
+    | mk out mid =>
+      cases hs : callsSingList es mid with
+      | mk outs final =>
+        have h1 := callsSing_varsNone e s ⟨h.1.1, h.2⟩
+        have h2 := callsSingList_varsNone es mid ⟨h.1.2, by simpa [he] using h1.2⟩
+        simpa [callsSingList, he, hs, everyFnVarsNone] using
+          And.intro (And.intro (by simpa [he] using h1.1) (by simpa [hs] using h2.1))
+            (by simpa [hs] using h2.2)
+termination_by sizeOf es
+decreasing_by all_goals subst_vars; all_goals simp_wf <;> omega
+end
+
+/-- Direct-call conversion preserves absent function-variable annotations in the output and
+    in the accumulated auxiliary code. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_preserves_every_Fn_vs_NONE"]
+theorem calls_preserves_everyFnVarsNone (xs : List Exp) (g0 : State)
+    (ys : List Exp) (g : State) (run : calls xs g0 = (ys, g))
+    (h : everyFnVarsNone xs ∧ everyFnVarsNone (g0.2.map (fun p => p.2.2))) :
+    everyFnVarsNone ys ∧ everyFnVarsNone (g.2.map (fun p => p.2.2)) := by
+  have ih := callsSingList_varsNone xs g0 h
+  change callsSingList xs g0 = (ys, g) at run
+  simpa [run] using ih
+
 private theorem locations_flatMap (xs : List Exp) :
     codeLocations xs = xs.flatMap codeLocationsExp := by
   induction xs with
