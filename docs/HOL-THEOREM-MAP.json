@@ -1,5 +1,19 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_to_list_wfv",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueWellFormed.lean", "lean_name": "valueToList_wellFormed",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Source comparison: compared clos_call_v_to_list_wfv_typed: free state, allowed set and code precede quantified value and decoded list; the grouped decoding and well-formedness premise implies every decoded element is well formed. The code map uses canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfv_Boolv",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueWellFormed.lean", "lean_name": "valueWellFormed_boolUnit",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Source comparison: compared clos_call_wfv_Boolv_typed: free state, allowed set, code and Boolean are in occurrence order; both Boolean and unit well-formedness conclusions are retained in source order. The code map uses canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_to_bytes_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "valueToBytes_thm",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",

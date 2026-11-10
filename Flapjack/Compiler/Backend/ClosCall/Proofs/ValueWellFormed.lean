@@ -306,4 +306,71 @@ theorem stateValuesWellFormed_submap {C F : Type} (g : State) (allowed : Nat →
     intro value safe
     exact valueWellFormed_submap g allowed code value codeNext ⟨safe, codeSub⟩
 
+/-- Canonical code-map codec for decoded-list well-formedness. -/
+theorem holFmapAsFiniteSupportParamWitness_valueToList_wellFormed_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueWellFormed_code code key
+
+/-- Decoding a well-formed value as a list yields well-formed elements. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "v_to_list_wfv"
+  (fmap_as_finite_support_parameters := [code])]
+theorem valueToList_wellFormed (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (h : Value) (x : List Value)
+    (assumptions : valueToList h = some x ∧ valueWellFormed g allowed code h) :
+    ∀ v ∈ x, valueWellFormed g allowed code v := by
+  cases h with
+  | block tag values =>
+    cases values with
+    | nil =>
+      simp only [valueToList] at assumptions
+      split at assumptions <;> simp_all
+    | cons first tail =>
+      cases tail with
+      | nil => simp [valueToList] at assumptions
+      | cons last tail =>
+        cases tail with
+        | cons extra rest => simp [valueToList] at assumptions
+        | nil =>
+          simp only [valueToList] at assumptions
+          split at assumptions <;> simp_all
+          cases decoded : valueToList last with
+          | none => simp [decoded] at assumptions
+          | some xs =>
+            simp only [decoded, Option.some.injEq] at assumptions
+            obtain ⟨⟨_, rfl, rfl⟩, safe⟩ := assumptions
+            simp only [valueWellFormed, List.mem_cons, forall_eq_or_imp] at safe
+            have tailSafe := valueToList_wellFormed g allowed code last xs ⟨decoded, safe.2.1⟩
+            simp only [List.mem_cons, forall_eq_or_imp]
+            exact ⟨safe.1, tailSafe⟩
+  | number n => simp [valueToList] at assumptions
+  | word64 w => simp [valueToList] at assumptions
+  | byteVector bytes => simp [valueToList] at assumptions
+  | refPtr b n => simp [valueToList] at assumptions
+  | closure loco values env arity body => simp [valueToList] at assumptions
+  | recclosure loco values env fns index => simp [valueToList] at assumptions
+termination_by sizeOf h
+decreasing_by
+  subst_vars
+  simp_wf
+  omega
+
+/-- Canonical code-map codec for Boolean and unit well-formedness. -/
+theorem holFmapAsFiniteSupportParamWitness_valueWellFormed_boolUnit_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueWellFormed_code code key
+
+/-- Boolean values and unit are well formed. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "wfv_Boolv"
+  (fmap_as_finite_support_parameters := [code])]
+theorem valueWellFormed_boolUnit (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (b : Bool) :
+    valueWellFormed g allowed code (boolValue b) ∧ valueWellFormed g allowed code unitValue := by
+  simp [boolValue, unitValue, valueWellFormed]
+
 end Flapjack.Compiler.Backend.ClosCall
