@@ -1,13 +1,5 @@
-module
+import Flapjack.Pancake.CrepInline.Pass
 
-public import Flapjack.Pancake.CrepInline.Pass
-
-import all Flapjack.Pancake.CrepInline.Pass
-
-public meta import Flapjack.Pancake.CrepInline.Pass
-public meta import Flapjack.Basis.Pure.MlString
-
-@[expose] public section
 /-! Regression for the duplicate-free finite-map representation and the
 `inline_prog` port (`flapjack-pxn.18.5.5.7`).
 
@@ -26,25 +18,25 @@ namespace Flapjack.Test.CrepInlineFmapParity
 open Flapjack
 open Flapjack.Basis.Pure.MlString
 
-abbrev ExactName := Flapjack.Basis.Pure.MlString.MlString
-def exactKey (s : String) : ExactName := ofString s
+private abbrev ExactName := Flapjack.Basis.Pure.MlString.MlString
+private def exactKey (s : String) : ExactName := ofString s
 
-def exactRows :
+private def exactRows :
     List (ExactName × (List Nat × CrepProgHOL 8)) :=
   [(exactKey "other", ([], .skip)),
    (exactKey "f", ([7], .skip)),
    (exactKey "f", ([9], .tick))]
 
-def exactSelectedRows :=
+private def exactSelectedRows :=
   crepInlineSelectedHOLRows [exactKey "f"] exactRows
 
-def exactMap := crepInlineMapHOL [exactKey "f"] exactRows
+private def exactMap := crepInlineMapHOL [exactKey "f"] exactRows
 
-def exactSingleMap : CrepInlineFmapHOL 8 :=
+private def exactSingleMap : CrepInlineFmapHOL 8 :=
   crepInlineMapHOL [exactKey "f"]
     [(exactKey "f", ([7], CrepProgHOL.skip))]
 
-def exactBothMap :=
+private def exactBothMap :=
   crepInlineMapHOL [exactKey "f", exactKey "g"]
     ((exactKey "g", ([], CrepProgHOL.skip)) :: exactRows)
 
@@ -103,7 +95,7 @@ theorem exactFiniteSupportDomsub :
       (exactBothMap.toHolFiniteMapExact).eraseEq (exactKey "f") := by
   exact CrepInlineFmapHOL.toHolFiniteMapExact_remove exactBothMap (exactKey "f")
 
-theorem exactBothMapLookupG :
+private theorem exactBothMapLookupG :
     exactBothMap.lookup (exactKey "g") = some ([], CrepProgHOL.skip) := by
   rw [exactBothMap, crepInlineMapHOL, CrepInlineFmapHOL.lookup_ofAList]
   simp [crepInlineSelectedHOLRows, exactRows, exactKey]
@@ -139,7 +131,7 @@ theorem exactFiniteSupportCardIsDomainSize : exactBothMap.card = exactBothMap.do
 /-- Exact-syntax recursive core: a finite-map hit inserts the inlined body,
     and recursive self-calls are left untouched after DOMSUB removes the
     callee from the map. -/
-def exactRecursiveRows : CrepInlineFmapHOL 8 :=
+private def exactRecursiveRows : CrepInlineFmapHOL 8 :=
   CrepInlineFmapHOL.insert (exactKey "f") ([], .call none (exactKey "f") [])
     CrepInlineFmapHOL.empty
 
@@ -251,7 +243,7 @@ theorem helperTailP :
 
 /-- Exact-carrier regression for `inline_tail_def`, matching the direct HOL
     `tail_p` row in `crep_inline_helper_probe.out` at width 8. -/
-def helperExactP : CrepProgHOL 8 :=
+private def helperExactP : CrepProgHOL 8 :=
   .seq (.dec 1 (.const 1) (.return [.var 2])) .skip
 
 theorem helperTailExactP :
@@ -261,7 +253,7 @@ theorem helperTailExactP :
 
 /-- Exact-carrier regression for `arg_load_def`, matching the direct HOL
     `argload_p` row in `crep_inline_helper_probe.out` at width 8. -/
-def helperExactBody : CrepProgHOL 8 :=
+private def helperExactBody : CrepProgHOL 8 :=
   .dec 1 (.const 1) .skip
 
 theorem helperArgLoadExactP :
@@ -271,7 +263,7 @@ theorem helperArgLoadExactP :
 
 /-- Exact width-indexed `has_return_def` and `not_branch_ret_def` clauses:
     an If branch Return is detected by the first and rejected by the second. -/
-def exactBranchReturn : CrepProgHOL 8 :=
+private def exactBranchReturn : CrepProgHOL 8 :=
   .ite (.const 1) (.return [.var 2]) .skip
 
 theorem helperHasReturnHOLExact : hasReturnHOLExact exactBranchReturn = true := by
