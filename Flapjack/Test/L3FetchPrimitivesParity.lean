@@ -1,5 +1,9 @@
-import Flapjack.RiscV.L3.Step.Fetch
-import Flapjack.RiscV.L3.Defs.ReadInst
+module
+
+public import Flapjack.RiscV.L3.Step.Fetch
+public import Flapjack.RiscV.L3.Defs.ReadInst
+
+@[expose] public section
 namespace Flapjack.Test
 open Flapjack.RiscV.L3
 -- Original pc_generic_equation, for every complete native state.

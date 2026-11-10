@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.StackToLab
+module
+
+public import Flapjack.Compiler.Backend.StackToLab
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.LabLang
+public meta import Flapjack.Compiler.Backend.StackLang
+public meta import Flapjack.Compiler.Backend.StackToLab
+@[expose] public section
 
 namespace Flapjack.Test.StackToLab
 

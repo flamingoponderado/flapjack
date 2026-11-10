@@ -1,6 +1,14 @@
-import Flapjack.RiscV.Ffi
-import Flapjack.Ffi
-import Flapjack.PanValueFfiCore
+module
+
+public import Flapjack.RiscV.Ffi
+public import Flapjack.Ffi
+public import Flapjack.PanValueFfiCore
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Ffi
+public meta import Flapjack.PanValueFfiCore
+public meta import Flapjack.RiscV.Ffi
+@[expose] public section
 
 namespace Flapjack
 

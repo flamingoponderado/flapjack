@@ -1,5 +1,12 @@
-import Flapjack.PanValues
-import Flapjack.Pancake.Semantics.PanProps
+module
+
+public import Flapjack.PanValues
+public import Flapjack.Pancake.Semantics.PanProps
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanValues
+public meta import Flapjack.Pancake.Semantics.PanProps
+@[expose] public section
 
 namespace Flapjack.Test.PanValueWfParity
 

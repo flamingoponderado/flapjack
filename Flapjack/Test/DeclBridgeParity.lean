@@ -1,4 +1,12 @@
-import Flapjack.Pancake.Semantics.PanSem.NameDeclBridge
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.NameDeclBridge
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.RiscV.RegisterNames
+public meta import Flapjack.Test.LoopFfi
+public meta import Flapjack.Pancake.Semantics.PanSemStateEval
+@[expose] public section
 
 /-! Kernel regressions for the declarator/expression bridge theorems in
 `Flapjack.Pancake.Semantics.PanSem.NameDeclBridge`.

@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvLemma
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvLemma
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvLemma
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Kernel-only instantiation of the exact HOL `cut_env_lemma`

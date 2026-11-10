@@ -1,4 +1,8 @@
-import Flapjack.Misc.BytesInMem.Imp
+module
+
+public import Flapjack.Misc.BytesInMem.Imp
+
+@[expose] public section
 namespace Flapjack.Test.MiscBytesInMemImpParity
 open Flapjack
 example {width : Nat} [NeZero width] (values : List (BitVec 8))

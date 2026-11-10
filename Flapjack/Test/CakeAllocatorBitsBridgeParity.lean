@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CakeAllocatorBitsBridge
-import Flapjack.Compiler.Backend.WordToStack
+module
+
+public import Flapjack.RiscV.CakeAllocatorBitsBridge
+public import Flapjack.Compiler.Backend.WordToStack
+
+@[expose] public section
 
 /-!
 # Executable Cake bitmap recursion ↔ tagged `bitsToWordW`/`wordListW`

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyArithmeticSource
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyArithmeticSource
+
+@[expose] public section
 
 /-! Matched observations from `cake_flat_sem_apply_probe.out`, through the
 assembled dispatcher. -/

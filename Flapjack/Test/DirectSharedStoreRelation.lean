@@ -1,4 +1,8 @@
-import Flapjack.Test.SharedLoadSpillRelation
+module
+
+public import Flapjack.Test.SharedLoadSpillRelation
+
+@[expose] public section
 
 /-! Regression coverage for public shared-memory stores with spilled addresses. -/
 

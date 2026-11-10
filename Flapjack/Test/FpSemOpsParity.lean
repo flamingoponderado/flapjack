@@ -1,5 +1,9 @@
-import Flapjack.FpSemHOL
-import Flapjack.Misc.MachineIeee
+module
+
+public import Flapjack.FpSemHOL
+public import Flapjack.Misc.MachineIeee
+
+@[expose] public section
 
 /-!
 # Parity for the ported `fpSem` operation tables (`Flapjack.FpSemHOL`)

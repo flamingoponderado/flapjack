@@ -1,5 +1,13 @@
-import Flapjack.Pancake.LoopLang
-import Flapjack.Test.PanValueFfiCore
+module
+
+public import Flapjack.Pancake.LoopLang
+public import Flapjack.Test.PanValueFfiCore
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Parity checks for the exact `loopLang$prog` carrier `HolLoopProg`, compared

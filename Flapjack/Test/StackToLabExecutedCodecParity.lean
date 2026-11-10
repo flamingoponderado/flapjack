@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.Native
-import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Native
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+
+@[expose] public section
 namespace Flapjack.Test.StackToLabExecutedCodecParity
 open Flapjack Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem

@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs
+module
+
+public import Flapjack.RiscV.L3.Defs
+
+@[expose] public section
 
 /-! Kernel replay of original full FP write/flag update observations, including
 current/other-core separation, preserved flags, registerzero and Delta.data1.

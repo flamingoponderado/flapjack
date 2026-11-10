@@ -1,4 +1,14 @@
-import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+module
+
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Pancake.LoopLang
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.Semantics.LoopSemStateExact
+public meta import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+@[expose] public section
 
 /-!
 # Exact loopSem `evaluate` against HOL oracle rows

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.InitCode
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.InitCode
+
+@[expose] public section
 set_option maxRecDepth 4096
 namespace Flapjack.Test.StackRemoveInitCode
 open Flapjack.Compiler.Backend.StackRemove Flapjack.Compiler.Backend.StackLang

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordConvs.NameMonotonicity
+module
+
+public import Flapjack.Pancake.WordConvs.NameMonotonicity
+
+@[expose] public section
 namespace Flapjack.Test.WordConvsNameMonoParity
 private def nm_empty : WordLangCutsetsHOL := (.ln, .ln)
 example : everyNameHOL (fun x => decide (x ≤ 0)) nm_empty = true ∧

@@ -1,8 +1,19 @@
-import Flapjack.Compiler.Backend.PresLang.Flat
-import Flapjack.Compiler.Backend.SourceLet
-import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
-import Flapjack.Compiler.Backend.Backend.PrimSrcConfig.Executable
-import Flapjack.CakeParser.Frontend
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Flat
+public import Flapjack.Compiler.Backend.SourceLet
+public import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
+public import Flapjack.Compiler.Backend.Backend.PrimSrcConfig.Executable
+public import Flapjack.CakeParser.Frontend
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CakeParser.Frontend
+public meta import Flapjack.Compiler.Backend.Backend.PrimSrcConfig.Executable
+public meta import Flapjack.Compiler.Backend.BackendCommon.Trace
+public meta import Flapjack.Compiler.Backend.PresLang.Flat
+public meta import Flapjack.Compiler.Backend.SourceLet
+public meta import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
+@[expose] public section
 
 /-! The expected output is the `after source_to_flat` stage from the pinned
 CakeML compiler with `--explore --exclude_prelude=true`. -/

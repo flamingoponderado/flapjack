@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.StepMapInj
+module
+
+public import Flapjack.Compiler.Backend.Parmove.StepMapInj
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmoveStepMapInjParity
 open Compiler.Backend.Parmove

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.PmovFinal
+module
+
+public import Flapjack.Compiler.Backend.Parmove.PmovFinal
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveFinalParity
 open Flapjack.Compiler.Backend.Parmove
 -- pv_final_terminal=([],[],[(SOME 7,NONE)])

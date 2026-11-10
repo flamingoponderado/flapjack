@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordCse.ListOrder
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
-import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
-import Std.Data.TreeMap
+module
+
+public import Flapjack.Compiler.Backend.WordCse.ListOrder
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+public import Std.Data.TreeMap
+
+@[expose] public section
 
 /-! Same-input original instruction-key observations at the actual executed
 CSE call sites. Overflow and FP native rows have no production carrier and are

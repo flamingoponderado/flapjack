@@ -1,4 +1,14 @@
-import Flapjack.Pancake.PanLang.Shape
+module
+
+public import Flapjack.Pancake.PanLang.Shape
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang.Shape
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Exact HOL `size_of_shape` parity

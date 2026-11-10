@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.BvlConst
+module
+
+public import Flapjack.Compiler.Backend.BvlConst
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.ClosLang.Syntax
+public meta import Flapjack.Compiler.Backend.Bvl.Syntax
+public meta import Flapjack.Compiler.Backend.BvlConst
+@[expose] public section
 
 /-! Replay cases captured in `bvl_const_frontend_probe.out`. -/
 namespace Flapjack.Test.BvlConstParity

@@ -1,4 +1,16 @@
-import Flapjack.Compiler.Backend.WordDepth
+module
+
+public import Flapjack.Compiler.Backend.WordDepth
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Compiler.Backend.StackRawCall
+public meta import Flapjack.Compiler.Backend.WordDepth
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Kernel replays of twelve fresh original HOL EVAL rows in word_depth_probe.out.
 Lookup misses and Unknown retain NONE; nested calls retain all frame additions. -/

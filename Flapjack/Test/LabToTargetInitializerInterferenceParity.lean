@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.Initialization.InterferenceCases
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization.InterferenceCases
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetInitializerInterferenceParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabLang

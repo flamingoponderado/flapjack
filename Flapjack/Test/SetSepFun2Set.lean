@@ -1,4 +1,8 @@
-import Flapjack.Misc.SetSep
+module
+
+public import Flapjack.Misc.SetSep
+
+@[expose] public section
 
 namespace Flapjack.Test.SetSepFun2Set
 open Flapjack.SetSep

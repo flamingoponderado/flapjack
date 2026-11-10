@@ -9,8 +9,19 @@
   `AddCarry` result matches the HOL `pan_primop` result for the probe inputs
   (`RStruct [ValWord 3w; ValWord 0w]`).
 -/
-import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Test.PanValueFfiCore
+module
+
+public import Flapjack.Pancake.Semantics.PanSem
+public import Flapjack.Test.PanValueFfiCore
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Parser
+public meta import Flapjack.Test.PanValueFfiCore
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.PanSemPrimitiveParity
 

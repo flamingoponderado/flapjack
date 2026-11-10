@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompLn
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompLn
+
+@[expose] public section
 /-! Generic identity consumer and complete original paired-tree observations. -/
 namespace Flapjack.Test.StackRawCallLnParity
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackRawCall

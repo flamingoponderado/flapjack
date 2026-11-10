@@ -1,4 +1,8 @@
-import Flapjack.Pancake.LoopLang
+module
+
+public import Flapjack.Pancake.LoopLang
+
+@[expose] public section
 
 /-! Focused constructor and rejection fixtures for the width-indexed
 executable/exact Loop expression codec. -/

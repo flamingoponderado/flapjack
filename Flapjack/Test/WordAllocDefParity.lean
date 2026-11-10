@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.WordAllocDef
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.WordAllocDef
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocDefParity
 open Flapjack Flapjack.WordAlloc Flapjack.RegAlloc Flapjack.Compiler.Encoders.Asm

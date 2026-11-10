@@ -1,4 +1,8 @@
-import Flapjack.PanSemWriteBytearray
+module
+
+public import Flapjack.PanSemWriteBytearray
+
+@[expose] public section
 
 /-!
 # Parity checks for `panSem$write_bytearray_def`

@@ -1,5 +1,15 @@
-import Flapjack.Pancake.Semantics.CrepSem
-import Flapjack.RiscV.PanMemory
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem
+public import Flapjack.RiscV.PanMemory
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.RiscV.Model
+public meta import Flapjack.PanValues
+public meta import Flapjack.Pancake.CrepLang
+public meta import Flapjack.Pancake.Semantics.CrepSem
+public meta import Flapjack.RiscV.PanMemory
+@[expose] public section
 
 /-!
 Direct width-8 word-result constructor checks matching

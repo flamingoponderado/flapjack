@@ -1,4 +1,8 @@
-import Flapjack.RiscV.WordToStack
+module
+
+public import Flapjack.RiscV.WordToStack
+
+@[expose] public section
 
 /-!
 Original oracle: scripts/hol-probes/word_to_stack_tail_handler_probeScript.sml,

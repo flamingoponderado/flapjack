@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.ExtCallCase
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.ExtCallCase
+
+@[expose] public section
 
 /-! The exact finite-carrier ExtCall equation remains in the test import graph.
 The direct original-HOL rows and concrete error/final/return guards are in

@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.WordCse.FactProducers
-import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
-import Flapjack.Misc.BalancedMap.InsertCorrect
-import Flapjack.Misc.BalancedMap.LookupSemantics
-import Flapjack.Compiler.Backend.WordCse.ProductionRegisterData
-import Flapjack.Pancake.LoopToWord
+module
+
+public import Flapjack.Compiler.Backend.WordCse.FactProducers
+public import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
+public import Flapjack.Misc.BalancedMap.InsertCorrect
+public import Flapjack.Misc.BalancedMap.LookupSemantics
+public import Flapjack.Compiler.Backend.WordCse.ProductionRegisterData
+public import Flapjack.Pancake.LoopToWord
+
+@[expose] public section
 
 namespace Flapjack.Test.WordCseProductionFactAuxParity
 open Flapjack RiscV Compiler.Backend.WordCse

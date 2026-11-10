@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Arithmetic
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Arithmetic
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocLimitArithmeticParity
 

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.ArithmeticNames
+module
+
+public import Flapjack.Compiler.Backend.StackProps.ArithmeticNames
+
+@[expose] public section
 namespace Flapjack.Test.StackPropsArithmeticNames
 open Flapjack.Compiler.Backend.StackProps Flapjack.Compiler.Encoders.Asm
 -- Original HOL or_exception=T

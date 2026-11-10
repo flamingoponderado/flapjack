@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.RegisterBounds
+module
+
+public import Flapjack.Compiler.Backend.StackProps.RegisterBounds
+
+@[expose] public section
 open Flapjack Flapjack.Compiler.Backend.StackProps Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm
 
 -- rb_exp_0_3_1

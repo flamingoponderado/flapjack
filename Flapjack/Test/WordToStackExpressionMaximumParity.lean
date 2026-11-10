@@ -1,5 +1,9 @@
-import Flapjack.RiscV.Allocator
-import Flapjack.Pancake.WordLang.MaxVarExp
+module
+
+public import Flapjack.RiscV.Allocator
+public import Flapjack.Pancake.WordLang.MaxVarExp
+
+@[expose] public section
 
 /-! Kernel replay of the eight freshly rerun original
 `word_lang_max_var_exp_probe` inputs, through the actual production maximum

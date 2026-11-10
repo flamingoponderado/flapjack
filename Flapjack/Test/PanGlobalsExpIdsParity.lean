@@ -1,4 +1,10 @@
-import Flapjack.Pancake.PanGlobals
+module
+
+public import Flapjack.Pancake.PanGlobals
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanGlobals
+@[expose] public section
 
 /-!
 # Original-domain parity for `pan_to_word$exp_ids_compile_globals`

@@ -1,4 +1,10 @@
-import Flapjack.RiscV.Lab
+module
+
+public import Flapjack.RiscV.Lab
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.RiscV.Lab
+@[expose] public section
 
 namespace Flapjack.RiscV
 

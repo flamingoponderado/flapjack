@@ -1,4 +1,11 @@
-import Flapjack.LoopFfi
+module
+
+public import Flapjack.LoopFfi
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.MemOp
+public meta import Flapjack.LoopFfi
+@[expose] public section
 
 /-!
 # Original-domain parity for `loopSem$sh_mem_op`

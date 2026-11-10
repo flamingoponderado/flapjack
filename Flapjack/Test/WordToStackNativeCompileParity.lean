@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackNativeCompileParity
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.StackLang

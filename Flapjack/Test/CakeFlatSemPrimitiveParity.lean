@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
+
+@[expose] public section
 
 /-! Observations matched with `source_to_flat_primitive_type_probe.out`. -/
 namespace Flapjack.Test.CakeFlatSemPrimitiveParity

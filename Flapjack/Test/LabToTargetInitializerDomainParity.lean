@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.Initialization.DomainCodeCase
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization.DomainCodeCase
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetInitializerDomainParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabLang

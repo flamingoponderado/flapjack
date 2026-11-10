@@ -1,4 +1,8 @@
-import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+module
+
+public import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+
+@[expose] public section
 
 /-!
 # Width-specialized Loop program codec fixtures

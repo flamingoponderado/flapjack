@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabProps.SectionEnd
+module
+
+public import Flapjack.Compiler.Backend.LabProps.SectionEnd
+
+@[expose] public section
 
 /-! Native kernel replays of lab_props_sec_ends_label_probe.out. -/
 namespace Flapjack.Test.LabSectionEndParity

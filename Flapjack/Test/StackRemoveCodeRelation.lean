@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.CodeRelation
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.CodeRelation
+
+@[expose] public section
 
 namespace Flapjack.Test.StackRemoveCodeRelation
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackRemove

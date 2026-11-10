@@ -1,8 +1,27 @@
-import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Pancake.Semantics.PanSem.PrimitiveProductionBridge
-import Flapjack.Pancake.Semantics.PanSem.TotalSteps
-import Flapjack.Pancake.Semantics.ByteAlignBridge
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Pancake.Semantics.PanSem.PrimitiveProductionBridge
+public import Flapjack.Pancake.Semantics.PanSem.TotalSteps
+public import Flapjack.Pancake.Semantics.ByteAlignBridge
+public import Flapjack.Pancake.WordLang
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.WordToStack.Guard
+public meta import Flapjack.PanValues
+public meta import Flapjack.Pancake.Semantics.ByteAlignBridge
+public meta import Flapjack.Pancake.Semantics.LoopSem
+public meta import Flapjack.Pancake.Semantics.PanSem.PrimitiveProductionBridge
+public meta import Flapjack.Pancake.Semantics.PanSem.TotalSteps
+public meta import Flapjack.Pancake.Semantics.PanSemStateEval
+public meta import Flapjack.Pancake.WordLang
+public meta import Flapjack.RiscV.Model
+public meta import Flapjack.RiscV.PanMemory
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! The expected values are recorded by direct HOL EVAL of the source
 `panSem$eval` probe. The Lean cases exercise the state-derived word and memory

@@ -1,4 +1,8 @@
-import Flapjack.StackAlloc.CollectorSemantics
+module
+
+public import Flapjack.StackAlloc.CollectorSemantics
+
+@[expose] public section
 
 /-!
 API regression for the complete bitmap-root/heap-scan collector boundary.

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.SeqsemUnchanged
+module
+
+public import Flapjack.Compiler.Backend.Parmove.SeqsemUnchanged
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmoveSeqsemUnchangedParity
 open Flapjack.Compiler.Backend.Parmove

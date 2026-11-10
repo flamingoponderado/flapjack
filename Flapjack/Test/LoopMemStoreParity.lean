@@ -1,4 +1,8 @@
-import Flapjack.LoopMemStore
+module
+
+public import Flapjack.LoopMemStore
+
+@[expose] public section
 
 /-!
 # Original-domain parity for `loopSem.mem_store`

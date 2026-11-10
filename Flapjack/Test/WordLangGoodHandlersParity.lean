@@ -4,7 +4,17 @@
   The oracle rows come from `scripts/hol-probes/word_convs_good_handlers_probe.out`,
   produced by evaluating HOL `good_handlers 5` on the corresponding programs.
 -/
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Pancake.WordConvs
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.WordConvs
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.WordLangGoodHandlersParity
 

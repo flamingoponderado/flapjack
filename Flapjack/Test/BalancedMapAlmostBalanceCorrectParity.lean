@@ -1,4 +1,8 @@
-import Flapjack.Misc.BalancedMap.AlmostBalanceCorrect
+module
+
+public import Flapjack.Misc.BalancedMap.AlmostBalanceCorrect
+
+@[expose] public section
 namespace Flapjack.Test.BalancedMapAlmostBalanceCorrectParity
 open Flapjack.Misc.BalancedMap
 example : almostBalancedL 0 0 ∧ almostBalancedL 1 0 ∧ almostBalancedL 0 0 :=

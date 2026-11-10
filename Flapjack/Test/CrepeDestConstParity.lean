@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.CrepArith
+module
+
+public import Flapjack.Pancake.Proofs.CrepArith
+
+@[expose] public section
 
 namespace Flapjack.Test.CrepeDestConstParity
 

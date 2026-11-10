@@ -1,4 +1,8 @@
-import Flapjack.FiniteMap.UnionExact
+module
+
+public import Flapjack.FiniteMap.UnionExact
+
+@[expose] public section
 
 namespace Flapjack.Test.FiniteMapUnionExact
 open HolFiniteMapExact

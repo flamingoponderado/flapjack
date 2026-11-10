@@ -1,5 +1,9 @@
-import Flapjack.StackAlloc.FrameMachine
-import Flapjack.StackAlloc.Runtime
+module
+
+public import Flapjack.StackAlloc.FrameMachine
+public import Flapjack.StackAlloc.Runtime
+
+@[expose] public section
 
 namespace Flapjack.RiscV
 

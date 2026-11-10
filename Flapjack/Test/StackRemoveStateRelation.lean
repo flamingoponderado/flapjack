@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.StateRelation
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.StateRelation
+
+@[expose] public section
 
 /-! Kernel regression checks for the full native state relation. These
 specialized exclusions are Flapjack-specific tests, not separately named HOL

@@ -1,5 +1,12 @@
-import Flapjack.Pancake.Semantics.PanSem.EvalRuntimeRoute
-import Flapjack.Test.PanSemStateEvalParity
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.EvalRuntimeRoute
+public import Flapjack.Test.PanSemStateEvalParity
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.EvalRuntimeRoute
+public meta import Flapjack.Test.PanSemStateEvalParity
+@[expose] public section
 
 /-! Exercise the selected expression route through the code-map program runner.
 The changing test route distinguishes actual dispatch from a proof-only bridge. -/

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.Correct
+module
+
+public import Flapjack.Compiler.Backend.Parmove.Correct
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmoveCorrectParity
 open Flapjack.Compiler.Backend.Parmove

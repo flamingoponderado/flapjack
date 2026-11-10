@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.StateConstants
+module
+
+public import Flapjack.Compiler.Backend.StackProps.StateConstants
+
+@[expose] public section
 
 /-! Generic kernel fixtures for the original independently typed FFI update.
 No HOL declaration is duplicated here; these exercise the corrected published

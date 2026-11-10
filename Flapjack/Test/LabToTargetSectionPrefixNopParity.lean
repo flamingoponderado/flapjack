@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.SectionNopEncoding
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SectionNopEncoding
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetSectionPrefixNopParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabToTarget

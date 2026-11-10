@@ -1,4 +1,8 @@
-import Flapjack.Byte.WordOfBytes
+module
+
+public import Flapjack.Byte.WordOfBytes
+
+@[expose] public section
 set_option maxRecDepth 32768
 namespace Flapjack.Test.ByteDecoder
 open Flapjack.HolByte

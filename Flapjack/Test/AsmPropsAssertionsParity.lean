@@ -1,5 +1,9 @@
-import Mathlib.Logic.Function.Iterate
-import Flapjack.Compiler.Encoders.AsmProps.Assertions
+module
+
+public import Mathlib.Logic.Function.Iterate
+public import Flapjack.Compiler.Encoders.AsmProps.Assertions
+
+@[expose] public section
 
 /-! Sixteen direct original asmProps observations, including a Bool state
 and independent Nat-state/Bool-intermediate iterations. Regressions do not prove HOL-to-Lean equivalence. -/

@@ -1,6 +1,14 @@
-import Flapjack.HolRef
-import Flapjack.Basis.Pure.MlString
-import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.HolRef
+public meta import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+@[expose] public section
 
 /-!
 # Direct original-HOL parity for the exact `panSem$v`, `flatten_def`, `pan_primop_def`

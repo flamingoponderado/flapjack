@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality
+@[expose] public section
 
 /-! Original CakeML/HOL EVAL results are captured in
 `scripts/hol-probes/data_to_word_memory_repr_probe.out` under the

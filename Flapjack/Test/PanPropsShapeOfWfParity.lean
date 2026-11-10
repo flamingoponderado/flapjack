@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanProps
+module
+
+public import Flapjack.Pancake.Semantics.PanProps
+
+@[expose] public section
 
 /-! Exact-carrier parity for HOL `panProps$is_wf_shape_of_v`
 (`panPropsScript.sml:38`, bead flapjack-4ac.4.6). -/

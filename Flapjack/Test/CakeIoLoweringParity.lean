@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.DataToWord.Control
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Control
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.AstHOL
+public meta import Flapjack.Compiler.Backend.ClosLang.Syntax
+public meta import Flapjack.Compiler.Backend.DataToWord.Control
+public meta import Flapjack.FpSemHOL
+public meta import Flapjack.Misc.Sptree
+@[expose] public section
 
 /-! Pinned HOL lowering cases for integer comparison, modulo, byte bounds,
 and FFI calls. -/

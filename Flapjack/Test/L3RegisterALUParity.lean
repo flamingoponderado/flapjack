@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.RegisterALU
+module
+
+public import Flapjack.RiscV.L3.Defs.RegisterALU
+
+@[expose] public section
 
 namespace Flapjack.Test.L3RegisterALUParity
 open Flapjack.RiscV.L3

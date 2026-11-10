@@ -1,6 +1,16 @@
-import Flapjack.Compiler.Backend.PresLang.Data
-import Flapjack.Compiler.Backend.BvlToBvi.Stubs
-import Flapjack.Compiler.Backend.BviToData.Compile
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Data
+public import Flapjack.Compiler.Backend.BvlToBvi.Stubs
+public import Flapjack.Compiler.Backend.BviToData.Compile
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.DataLang.Syntax
+public meta import Flapjack.Compiler.Backend.BviToData.Compile
+public meta import Flapjack.Compiler.Backend.BvlToBvi.Stubs
+public meta import Flapjack.Compiler.Backend.PresLang.Data
+public meta import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+@[expose] public section
 
 /-! First `after bvi_to_data` function from the pinned CakeML explorer
 regression program. The function is generated from the actual BVI stub. -/

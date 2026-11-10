@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueEquality
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ValueEquality
+
+@[expose] public section
 
 /-! Results captured under `vb_eq_size_*` in the HOL memory representation probe. -/
 namespace Flapjack.Test.DataToWordValueEqualityParity

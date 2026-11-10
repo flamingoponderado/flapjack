@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.Remap
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Remap
+
+@[expose] public section
 
 namespace Flapjack.Test.RegAllocRemapParity
 open Flapjack Flapjack.RegAlloc

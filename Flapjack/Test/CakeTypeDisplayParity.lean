@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Inference.InferT.Display
+module
+
+public import Flapjack.Compiler.Inference.InferT.Display
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Inference.InferT
+public meta import Flapjack.Compiler.Inference.InferT.Display
+@[expose] public section
 
 /-! Type rendering examples captured from the pinned HOL `infer_t` script. -/
 namespace Flapjack.Test.CakeTypeDisplayParity

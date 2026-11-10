@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Pancake.Proofs.PanGlobals.ShapeInfrastructure
+module
+
+public import Flapjack.Pancake.Semantics.PanSem
+public import Flapjack.Pancake.Proofs.PanGlobals.ShapeInfrastructure
+
+@[expose] public section
 
 /-!
 # `panSem$evaluate_decls` parity

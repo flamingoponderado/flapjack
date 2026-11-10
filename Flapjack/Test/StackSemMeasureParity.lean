@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Measure.CallSites
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Measure.CallSites
+
+@[expose] public section
 
 /-! Kernel replay of the untagged recursion/clock certificate for the
 forthcoming total StackSem `evaluate_def` dispatcher

@@ -1,4 +1,13 @@
-import Flapjack.CakeParser.LexerImpl
+module
+
+public import Flapjack.CakeParser.LexerImpl
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CakeParser.Tokens
+public meta import Flapjack.Misc.Location
+public meta import Flapjack.CakeParser.LexerImpl
+public meta import Flapjack.CakeParser.PegEval
+@[expose] public section
 
 /-! Replay the token and location rows of `cake_lexer_probe.out`. -/
 namespace Flapjack.Test.CakeLexerParity

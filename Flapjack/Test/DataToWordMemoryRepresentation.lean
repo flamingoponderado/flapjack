@@ -1,8 +1,14 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdate
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Store
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Abstract
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.ValueInv.Reference
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.ByteUpdate
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.DataToWord.Bytes
+@[expose] public section
 
 /-! Original HOL observations for pointer-tag and heap representation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Memory

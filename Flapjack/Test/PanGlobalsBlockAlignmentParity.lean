@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals.GlobalBlockAlignment
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.GlobalBlockAlignment
+
+@[expose] public section
 open Flapjack
 
 /- Kernel replay of original alignmentTheory observations in

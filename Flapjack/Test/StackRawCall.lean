@@ -1,4 +1,8 @@
-import Flapjack.RiscV.Lab
+module
+
+public import Flapjack.RiscV.Lab
+
+@[expose] public section
 
 namespace Flapjack.Test.StackRawCall
 

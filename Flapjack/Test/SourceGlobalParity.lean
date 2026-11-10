@@ -1,4 +1,8 @@
-import Flapjack.Test.PipelineDiagnostics
+module
+
+public import Flapjack.Test.PipelineDiagnostics
+
+@[expose] public section
 
 /-!
 # Original-Pancake global source parity fixtures

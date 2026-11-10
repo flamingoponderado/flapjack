@@ -1,5 +1,13 @@
-import Flapjack.LoopArith
-import Flapjack.Word
+module
+
+public import Flapjack.LoopArith
+public import Flapjack.Word
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.LoopArith
+public meta import Flapjack.Pancake.LoopLive
+public meta import Flapjack.Word
+@[expose] public section
 
 /-!
 Parity test for the faithful `loop_arith` port.

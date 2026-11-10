@@ -1,5 +1,9 @@
-import Flapjack.Misc.FindIndex.SuccessfulMembership
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+module
+
+public import Flapjack.Misc.FindIndex.SuccessfulMembership
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+
+@[expose] public section
 
 namespace Flapjack.Test.MiscFindIndexSuccessfulMemParity
 open Flapjack Flapjack.Misc

@@ -1,4 +1,12 @@
-import Flapjack.SemanticPrimitivesHOL.Thunk
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Thunk
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.AstHOL.BackendOperators
+public meta import Flapjack.SemanticPrimitivesHOL
+public meta import Flapjack.SemanticPrimitivesHOL.Thunk
+@[expose] public section
 
 /-! Source thunk observations captured from pinned HOL. -/
 namespace Flapjack.Test.CakeSourceThunkParity

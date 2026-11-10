@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeHandlers
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeHandlers
+
+@[expose] public section
 
 /-! Complete output equality observations from original HOL over heterogeneous
 unused frame carriers. These are regressions, not cross-language equivalence. -/

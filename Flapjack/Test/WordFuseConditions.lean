@@ -1,4 +1,8 @@
-import Flapjack.RiscV.WordFuseConditions
+module
+
+public import Flapjack.RiscV.WordFuseConditions
+
+@[expose] public section
 
 open Flapjack Flapjack.RiscV
 

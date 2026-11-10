@@ -1,7 +1,16 @@
-import Flapjack.RiscV.CakeStackReseat
-import Flapjack.RiscV.Lab
-import Flapjack.RiscV.RegisterNames
-import Flapjack.RiscV.RegisterTransfer
+module
+
+public import Flapjack.RiscV.CakeStackReseat
+public import Flapjack.RiscV.Lab
+public import Flapjack.RiscV.RegisterNames
+public import Flapjack.RiscV.RegisterTransfer
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.RiscV.CakeStackReseat
+public meta import Flapjack.RiscV.Lab
+public meta import Flapjack.RiscV.RegisterNames
+public meta import Flapjack.RiscV.RegisterTransfer
+@[expose] public section
 
 /-!
 # Byte preservation of the Cake register map at the Lab boundary

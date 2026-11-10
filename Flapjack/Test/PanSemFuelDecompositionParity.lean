@@ -4,8 +4,12 @@
   handler and continuation programs are evaluated at a fuel derived from
   `panSemCodeEvaluateFuel`, not supplied as an `hsourceFuel` premise.
 -/
-import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Test.PanValueFfiCore
+module
+
+public import Flapjack.Pancake.Semantics.PanSem
+public import Flapjack.Test.PanValueFfiCore
+
+@[expose] public section
 
 namespace Flapjack.Test.PanSemFuelDecompositionParity
 

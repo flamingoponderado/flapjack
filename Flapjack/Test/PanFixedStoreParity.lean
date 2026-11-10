@@ -1,4 +1,11 @@
-import Flapjack.RiscV.PanMemory
+module
+
+public import Flapjack.RiscV.PanMemory
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanValues
+public meta import Flapjack.RiscV.PanMemory
+@[expose] public section
 
 /-!
 # Fixed-width Pancake store parity

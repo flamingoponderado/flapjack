@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.AsmSem.Step
+module
+
+public import Flapjack.Compiler.Encoders.AsmSem.Step
+
+@[expose] public section
 
 /-! Kernel replay of `scripts/hol-probes/asm_sem_step_probe.out`: original HOL `asm` on every
 assembly clause and on instruction clauses over an 8-bit state, and the projection of

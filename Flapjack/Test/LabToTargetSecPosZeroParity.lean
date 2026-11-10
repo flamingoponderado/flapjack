@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.PositionValues.ZeroLabels
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.PositionValues.ZeroLabels
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetSecPosZeroParity
 open Flapjack.Compiler.Backend.LabProps
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang

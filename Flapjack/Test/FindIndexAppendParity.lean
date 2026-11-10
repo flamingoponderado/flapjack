@@ -1,4 +1,8 @@
-import Flapjack.Misc.FindIndex.Append
+module
+
+public import Flapjack.Misc.FindIndex.Append
+
+@[expose] public section
 
 namespace Flapjack.Misc
 

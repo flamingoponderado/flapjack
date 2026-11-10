@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.BackendPasses.Word
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
-import Flapjack.CakeParser.Frontend
+module
+
+public import Flapjack.Compiler.Backend.BackendPasses.Word
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+public import Flapjack.CakeParser.Frontend
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CakeParser.Frontend
+public meta import Flapjack.Compiler.Backend.BackendPasses.Word
+public meta import Flapjack.Compiler.Backend.RiscVConfig.Executable
+@[expose] public section
 
 /-! The full original comparison is `scripts/check-cake-word-explore.py`.
 This check compares the captured WordLang functions with the ordinary

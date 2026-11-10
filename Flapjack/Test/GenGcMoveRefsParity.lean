@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveRefs
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveRefs
+
+@[expose] public section
 
 /-! Kernel replay of five original HOL generational reference-block rows from
 `stack_alloc_gen_refs_statement_probe.out`. Observations include collector

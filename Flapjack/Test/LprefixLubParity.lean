@@ -1,4 +1,8 @@
-import Flapjack.Misc.LprefixLub
+module
+
+public import Flapjack.Misc.LprefixLub
+
+@[expose] public section
 
 /-!
 # HOL `lprefix_lub` chain/equality lemma checks

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Nonrecursive
+module
+
+public import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Nonrecursive
+
+@[expose] public section
 
 namespace Flapjack.Test.StackCodeBitmapsNonrecursiveParity
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm

@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.WordInst.ExecutablePullExp
+module
+
+public import Flapjack.Compiler.Backend.WordInst.ExecutablePullExp
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Independent original-HOL pull_exp regression cases. Every expected native
 expression below is transcribed from the fresh registered HOL EVAL output;

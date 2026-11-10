@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 /-! # `pre_alloc_conventions` / `post_alloc_conventions` oracle parity
 

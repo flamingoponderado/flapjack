@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
+
+@[expose] public section
 
 /-! Original handler_val observations using independent non-word carriers.
 The function-valued fixtures also check that no equality or decidability

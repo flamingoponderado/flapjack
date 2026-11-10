@@ -1,4 +1,14 @@
-import Flapjack.Pancake.Semantics.PanSemStateEval
+module
+
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSemStateEval
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Direct HOL oracle parity for the exact panSem `mem_store`/`mem_stores`
     ports.  The tagged definitions `panMemStoreHOL` (`mem_store_def`) and

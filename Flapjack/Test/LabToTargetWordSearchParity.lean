@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.WordSearch
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.WordSearch
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetWordSearchParity
 open Flapjack.Misc Flapjack.Compiler.Backend.LabToTarget
 example {width : Nat} [NeZero width] (values : List (BitVec width))

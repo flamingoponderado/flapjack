@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.ColourExtraction
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoAlloc1Success
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.ColourExtraction
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoAlloc1Success
+
+@[expose] public section
 namespace Flapjack.Test.RegAllocGenericCarrierRepair
 open Flapjack Flapjack.RegAlloc Flapjack.Translator.Monadic.MonadBase
 example {α : Type} (ls : List (α × Nat)) (s : State)

@@ -1,4 +1,11 @@
-import Flapjack.Pancake.Semantics.PanSemStateEval
+module
+
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanValues
+public meta import Flapjack.Pancake.Semantics.PanSemStateEval
+@[expose] public section
 
 /-!
 # Store32 endianness parity (production and exact) against HOL `mem_store_32`

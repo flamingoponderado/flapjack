@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCopy
+module
+
+public import Flapjack.Compiler.Backend.WordCopy
+
+@[expose] public section
 
 namespace Flapjack.Test.WordCopyDefParity
 open Flapjack Flapjack.Compiler.Backend.WordCopy

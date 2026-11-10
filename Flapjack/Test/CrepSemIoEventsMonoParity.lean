@@ -1,4 +1,14 @@
-import Flapjack.Pancake.Semantics.CrepProps
+module
+
+public import Flapjack.Pancake.Semantics.CrepProps
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.CrepProps
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Direct kernel-checked observations for the exact FFI event-prefix theorem
 `Flapjack.crepPropsEvaluateIoEventsMono` (HOL

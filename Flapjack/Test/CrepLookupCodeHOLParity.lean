@@ -1,7 +1,14 @@
-import Flapjack.Pancake.Semantics.CrepSem.LookupCode
-import Flapjack.Pancake.CrepLang.Prog
-import Flapjack.Pancake.CrepLang
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.LookupCode
+public import Flapjack.Pancake.CrepLang.Prog
+public import Flapjack.Pancake.CrepLang
+public import Flapjack.Basis.Pure.MlString
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem
+public meta import Flapjack.Pancake.Semantics.CrepSem.LookupCode
+@[expose] public section
 
 /-! Parity fixture for the exact MlString-keyed `crepSem$lookup_code_def` port
 (`Flapjack/Pancake/Semantics/CrepSem/LookupCode.lean`), mirroring the direct HOL

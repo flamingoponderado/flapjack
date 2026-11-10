@@ -1,6 +1,10 @@
-import Flapjack.Misc.MachineIeee.Convert
-import Flapjack.Misc.BinaryIeeeDirectedFp32
-import Flapjack.Misc.BinaryIeeeDirectedFp64
+module
+
+public import Flapjack.Misc.MachineIeee.Convert
+public import Flapjack.Misc.BinaryIeeeDirectedFp32
+public import Flapjack.Misc.BinaryIeeeDirectedFp64
+
+@[expose] public section
 
 /-! Fresh original rows in machine_ieee_cross_format_probe.out.
 NaN rows observe all six flags, not an unspecified choice payload. Finite tie

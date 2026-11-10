@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.WfDataPreservation
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.WfDataPreservation
+
+@[expose] public section
 
 namespace Flapjack.Test.WordCseProductionMemoryParity
 open Flapjack RiscV Compiler.Backend.WordCse Compiler.Encoders.Asm

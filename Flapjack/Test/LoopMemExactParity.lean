@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Semantics.LoopSem
+module
+
+public import Flapjack.Pancake.Semantics.LoopSem
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.LoopSem
+@[expose] public section
 
 /-!
 # Width-generic memory helper parity

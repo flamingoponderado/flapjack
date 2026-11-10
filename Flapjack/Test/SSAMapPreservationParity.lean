@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapPreservation
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapPreservation
+
+@[expose] public section
 namespace Flapjack.Test.SSAMapPreservationParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 private theorem emptyOK (n : Nat) : ssaMapOK n .ln := by simp [ssaMapOK, sptLookup]

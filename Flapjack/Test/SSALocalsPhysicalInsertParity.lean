@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalInsert
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalInsert
+
+@[expose] public section
 namespace Flapjack.Test.SSALocalsPhysicalInsertParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 

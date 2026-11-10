@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
+
+@[expose] public section
 
 open Flapjack Flapjack.StackSemAllocation
 

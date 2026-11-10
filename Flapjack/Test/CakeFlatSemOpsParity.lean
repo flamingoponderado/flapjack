@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-! Matched observations from `cake_flat_sem_ops_probe.out`. -/
 namespace Flapjack.Test.CakeFlatSemOpsParity

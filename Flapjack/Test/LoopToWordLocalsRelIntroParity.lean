@@ -1,4 +1,14 @@
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelIntro
+module
+
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelIntro
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelIntro
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Original-domain parity for `loop_to_wordProof$locals_rel_intro`

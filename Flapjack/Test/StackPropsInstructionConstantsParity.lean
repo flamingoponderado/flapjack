@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.InstructionConstants
+module
+
+public import Flapjack.Compiler.Backend.StackProps.InstructionConstants
+
+@[expose] public section
 
 /-! Kernel replays of ten original clock/FFI-update instruction observations.
 The arbitrary base state preserves independent compile and FFI carriers. -/

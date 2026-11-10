@@ -1,5 +1,14 @@
-import Flapjack.Compiler.Inference.Infer.Diagnostics
-import Flapjack.CakeParser.Frontend
+module
+
+public import Flapjack.Compiler.Inference.Infer.Diagnostics
+public import Flapjack.CakeParser.Frontend
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.Compiler.Inference.Infer.Core
+public meta import Flapjack.Compiler.Inference.Infer.Diagnostics
+public meta import Flapjack.CakeParser.Frontend
+@[expose] public section
 
 /-! Original inferencer message and source-location formatting for undefined
 variables and selected built-in type mismatches. -/

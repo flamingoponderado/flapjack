@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+module
+
+public import Flapjack.Compiler.Encoders.AsmProps.EncoderCorrect
+
+@[expose] public section
 
 namespace Flapjack.Test.AsmPropsEncoderCorrectParity
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem

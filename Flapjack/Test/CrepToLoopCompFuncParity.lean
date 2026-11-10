@@ -1,4 +1,14 @@
-import Flapjack.Pancake.CrepToLoop.ContextExact
+module
+
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CakeParser.FromSexp
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Direct HOL oracle parity for exact `crep_to_loop$comp_func_def`

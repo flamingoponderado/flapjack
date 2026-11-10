@@ -1,4 +1,8 @@
-import Flapjack.PanHProgCond
+module
+
+public import Flapjack.PanHProgCond
+
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `h_prog_cond_def`

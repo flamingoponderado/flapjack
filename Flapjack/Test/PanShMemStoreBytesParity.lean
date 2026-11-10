@@ -1,5 +1,11 @@
-import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Pancake.Semantics.PanSem.ShMemExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Pancake.Semantics.PanSem.ShMemExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.ShMemExact
+@[expose] public section
 
 /-!
 # Shared-store byte payload parity against HOL `sh_mem_store`

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LinearScan.Steps
-import Flapjack.Compiler.Backend.LinearScan.Sorting
+module
+
+public import Flapjack.Compiler.Backend.LinearScan.Steps
+public import Flapjack.Compiler.Backend.LinearScan.Sorting
+
+@[expose] public section
 namespace Flapjack.Test.LinearScanMonadParity
 open RegAlloc LinearScan Translator.Monadic.MonadBase
 -- Full-value replay of the thirty-four original linear_scan_monad_probe rows on a

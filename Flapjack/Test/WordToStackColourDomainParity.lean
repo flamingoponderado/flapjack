@@ -1,5 +1,9 @@
-import Flapjack.RiscV.Allocator
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+module
+
+public import Flapjack.RiscV.Allocator
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+
+@[expose] public section
 
 /-! Kernel replay of fresh original colouring equations, plus full-domain
 and guard sentinels. HOL has no production memory guard or five-register

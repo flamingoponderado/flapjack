@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.GcFunOk
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.GcFunOk
+
+@[expose] public section
 
 namespace Flapjack.Test.WordGcFunOkParity
 

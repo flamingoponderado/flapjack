@@ -1,4 +1,14 @@
-import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Parity of the exact `panSem$isValWord` over `ValueHOL`

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
+
+@[expose] public section
 namespace Flapjack.Test.WordAllocMaxVarExpParity
 open Flapjack.Compiler.Backend.WordAlloc
 -- Original me_const

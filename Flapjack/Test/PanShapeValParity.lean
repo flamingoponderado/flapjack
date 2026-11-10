@@ -1,4 +1,10 @@
-import Flapjack.Parser.Conversion
+module
+
+public import Flapjack.Parser.Conversion
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang.Exp
+@[expose] public section
 
 /-!
 # Original-domain parity for `panLang$shape_val`

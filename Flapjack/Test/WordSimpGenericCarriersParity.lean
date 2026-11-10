@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordSimp.Proofs.GcConsts
+module
+
+public import Flapjack.Compiler.Backend.WordSimp.Proofs.GcConsts
+
+@[expose] public section
 
 namespace Flapjack.Test.WordSimpGenericCarriersParity
 open Flapjack Flapjack.WordSemStateFiniteExact Flapjack.Compiler.Backend.WordSimp

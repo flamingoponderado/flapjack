@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.ControlFetch
+module
+
+public import Flapjack.RiscV.L3.Defs.ControlFetch
+
+@[expose] public section
 
 namespace Flapjack.Test.L3ControlFetchParity
 open Flapjack.RiscV.L3

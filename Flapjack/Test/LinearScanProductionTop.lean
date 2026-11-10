@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.LinearScan.ProductionTopLevel
+module
+
+public import Flapjack.Compiler.Backend.LinearScan.ProductionTopLevel
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Translator.Monadic.MonadBase
+public meta import Flapjack.Compiler.Backend.RegAlloc.ClashTree
+public meta import Flapjack.Compiler.Backend.RegAlloc.Exceptions
+public meta import Flapjack.Compiler.Backend.LinearScan.ProductionTopLevel
+@[expose] public section
 
 /-! The array-backed allocator replays representative full outputs captured
 from the original HOL allocator, including spills and physical registers. -/

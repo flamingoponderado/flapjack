@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRawCall
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall
+
+@[expose] public section
 
 /-! Complete outputs captured independently from original stack_rawcall compile.
 These kernel fixtures do not establish executed routing or full simulation. -/

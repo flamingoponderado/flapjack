@@ -6,7 +6,17 @@ The three guards replay the direct original-HOL rows
 `extcall_clause_returned`, `extcall_clause_bad_read`, and
 `extcall_clause_final` in `scripts/hol-probes/pan_sem_e2e_probe.out`.
 -/
-import Flapjack.Pancake.Semantics.PanSem.ExtCallExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.ExtCallExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.ExtCallExact
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.PanSemExtCallExactParity
 

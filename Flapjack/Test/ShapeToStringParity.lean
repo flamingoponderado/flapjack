@@ -1,4 +1,10 @@
-import Flapjack.Pancake.PanLang
+module
+
+public import Flapjack.Pancake.PanLang
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang
+@[expose] public section
 
 /-! Parity checks for Pancake `shape_to_str_def`, backed by
     `scripts/hol-probes/shape_to_str_probe.out`. -/

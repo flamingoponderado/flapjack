@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveDomains
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveDomains
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
+
+@[expose] public section
 namespace Flapjack.Test.SSAMergeMovesParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 -- Complete results match original merge_moves, including both resulting trees.

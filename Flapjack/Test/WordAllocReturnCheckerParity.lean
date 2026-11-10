@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ReturnNoHandler
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Leaves
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ReturnNoHandler
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Leaves
+
+@[expose] public section
 namespace Flapjack.Test.WordAllocReturnCheckerParity
 open Flapjack Flapjack.WordAlloc Flapjack.RegAlloc
 /-! Same-input kernel replay of original returning Call checker equations.

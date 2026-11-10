@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.SectionLabelExtraction
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SectionLabelExtraction
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetSectionLabelExtractionParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarInst
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarInst
+
+@[expose] public section
 namespace Flapjack.Test.WordAllocMaxVarInstParity
 open Flapjack.Compiler.Backend.WordAlloc
 -- Original mi_skip

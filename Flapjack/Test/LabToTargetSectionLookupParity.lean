@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
+
+@[expose] public section
 
 namespace Flapjack.Test.LabToTargetSectionLookupParity
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem

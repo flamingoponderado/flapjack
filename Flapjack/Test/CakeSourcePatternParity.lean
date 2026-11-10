@@ -1,4 +1,12 @@
-import Flapjack.SemanticPrimitivesHOL.PatternMatch
+module
+
+public import Flapjack.SemanticPrimitivesHOL.PatternMatch
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.AstHOL.LitOp
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.SemanticPrimitivesHOL.PatternMatch
+@[expose] public section
 
 /-! Pattern-matching observations captured from pinned HOL. -/
 namespace Flapjack.Test.CakeSourcePatternParity

@@ -1,4 +1,8 @@
-import Flapjack.RiscV.CakeRegAlloc
+module
+
+public import Flapjack.RiscV.CakeRegAlloc
+
+@[expose] public section
 
 /-! RISC-V `get_forced` traversal checks against the direct HOL oracle in
     `scripts/hol-probes/get_forced_probe.out`. -/

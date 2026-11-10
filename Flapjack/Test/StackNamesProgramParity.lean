@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackNames.ProgramNames
+module
+
+public import Flapjack.Compiler.Backend.StackNames.ProgramNames
+
+@[expose] public section
 namespace Flapjack.Test.StackNamesProgramParity
 open Flapjack.Compiler.Backend.StackNames Flapjack.Compiler.Backend.StackLang
 private def names : Flapjack.Spt Nat := Flapjack.sptInsert 3 7 .ln

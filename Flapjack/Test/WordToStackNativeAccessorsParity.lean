@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeAccessors
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeAccessors
+
+@[expose] public section
 open Flapjack
 set_option maxRecDepth 8192
 private def wordBase {width : Nat} [NeZero width] : WordSemStateFiniteExact width Unit Nat where

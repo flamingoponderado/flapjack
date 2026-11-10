@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
+
+@[expose] public section
 
 /-! Independent original initializer projections, including complete frame-size
 Spt trees and compilation callback outputs. Regression evidence only. -/

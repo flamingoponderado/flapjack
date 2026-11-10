@@ -7,8 +7,19 @@ Rows reproduce `scripts/hol-probes/pan_globals_mem_functions_probe.out`:
   functions_empty=[] functions_function=[(«f»,[(«x»,One)],Skip,One)]
   functions_global=[] mem_function_entry=T
 -/
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.Pancake.Proofs.PanGlobals
+module
+
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.Proofs.PanGlobals
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang.Decl
+public meta import Flapjack.Pancake.Proofs.PanGlobals
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.PanGlobalsMemFunctionsHOLParity
 

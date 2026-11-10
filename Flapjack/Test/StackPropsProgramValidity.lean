@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.ProgramValidity
+module
+
+public import Flapjack.Compiler.Backend.StackProps.ProgramValidity
+
+@[expose] public section
 namespace Flapjack.Test.StackPropsProgramValidity
 open Flapjack.Compiler.Backend.StackProps Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm
 -- Original HOL inst_good=T

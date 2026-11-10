@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.ConditionalBranch
+module
+
+public import Flapjack.RiscV.L3.Defs.ConditionalBranch
+
+@[expose] public section
 
 set_option maxRecDepth 20000
 

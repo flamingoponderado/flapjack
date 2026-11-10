@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.EndingLabels
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.EndingLabels
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetEndingLabelsParity
 open Flapjack Flapjack.Misc Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Encoders.Asm

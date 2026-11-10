@@ -1,4 +1,10 @@
-import Flapjack.PanExt
+module
+
+public import Flapjack.PanExt
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanExt
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `ext_def`

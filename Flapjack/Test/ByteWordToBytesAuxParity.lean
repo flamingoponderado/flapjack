@@ -1,4 +1,8 @@
-import Flapjack.Byte
+module
+
+public import Flapjack.Byte
+
+@[expose] public section
 namespace Flapjack.Test.ByteWordToBytesAuxParity
 open Flapjack.HolByte
 example : wordToBytesAux 5 (4660 : BitVec 16) false = [52,18,52,18,52] := by decide +kernel

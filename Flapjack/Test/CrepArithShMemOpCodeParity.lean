@@ -1,4 +1,11 @@
-import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
+module
+
+public import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.MemOp
+public meta import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+@[expose] public section
 
 /-!
 Regression for the tagged exact HOL `crep_arithProofScript.sml:173-180`

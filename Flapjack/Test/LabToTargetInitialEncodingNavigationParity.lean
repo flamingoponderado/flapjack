@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingNavigation
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingNavigation
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetInitialEncodingNavigationParity
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

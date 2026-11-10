@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.CSRDispatch
+module
+
+public import Flapjack.RiscV.L3.Defs.CSRDispatch
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 namespace Flapjack.Test.L3CSRDispatchParity

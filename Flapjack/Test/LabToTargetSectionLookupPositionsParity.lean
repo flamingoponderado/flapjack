@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPositions
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPositions
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetSectionLookupPositionsParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps

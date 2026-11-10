@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.PresLang.Stack
-import Flapjack.Compiler.Backend.WordToStack.NativeStubs
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Stack
+public import Flapjack.Compiler.Backend.WordToStack.NativeStubs
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.PresLang.Stack
+public meta import Flapjack.Compiler.Backend.StackLang
+public meta import Flapjack.Compiler.Backend.WordToStack.NativeStubs
+@[expose] public section
 
 /-! The first two functions in pinned CakeML's `after word_to_stack` stage.
 The inputs are the actual width-indexed stack stubs. -/

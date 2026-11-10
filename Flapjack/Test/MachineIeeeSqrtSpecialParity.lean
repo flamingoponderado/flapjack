@@ -1,4 +1,8 @@
-import Flapjack.Misc.BinaryIeeeSqrt
+module
+
+public import Flapjack.Misc.BinaryIeeeSqrt
+
+@[expose] public section
 
 /-!
 Direct HOL oracle rows for the choice-free branches of binary64 `fp64_sqrt`

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.DecodedFrameShape
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.DecodedFrameShape
+
+@[expose] public section
 open Flapjack Flapjack.WordToStackProofs
 set_option maxRecDepth 8192
 

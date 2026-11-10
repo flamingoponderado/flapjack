@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.StackAlloc
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.StackAlloc
+@[expose] public section
 
 namespace Flapjack.Test.StackAlloc
 

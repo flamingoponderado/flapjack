@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
+@[expose] public section
 
 /-!
 # Direct-HOL parity for the exact `panSem` local/global update helpers

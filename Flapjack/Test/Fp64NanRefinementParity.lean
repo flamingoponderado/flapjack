@@ -1,4 +1,8 @@
-import Flapjack.Misc.Fp64NanRefinement
+module
+
+public import Flapjack.Misc.Fp64NanRefinement
+
+@[expose] public section
 
 /-!
 Kernel replay of the binary64 quiet-NaN refinement facts (bead

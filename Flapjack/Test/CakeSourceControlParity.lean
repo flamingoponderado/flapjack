@@ -1,4 +1,14 @@
-import Flapjack.SemanticPrimitivesHOL.Control
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Control
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.AstHOL.LitOp
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.SemanticPrimitivesHOL
+public meta import Flapjack.SemanticPrimitivesHOL.Control
+public meta import Flapjack.SemanticPrimitivesHOL.Thunk
+@[expose] public section
 
 /-! Source control and declaration observations captured from pinned HOL. -/
 namespace Flapjack.Test.CakeSourceControlParity

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundRecursive
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundRecursive
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackRegRecursiveParity
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackProps

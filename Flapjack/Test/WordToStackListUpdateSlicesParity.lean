@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdateSlices
-import Init.Data.Prod
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdateSlices
+public import Init.Data.Prod
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Independent whole-output observations regenerated from original HOL.
 Empty/duplicate lists, suffix boundaries, ignored writes, and 70-bit indices.

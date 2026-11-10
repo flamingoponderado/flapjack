@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.MapBitmap
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.MapBitmap
+
+@[expose] public section
 open Flapjack.StackSem Flapjack.Compiler.Backend.WordToStack
 
 -- mb_output_0_0_0

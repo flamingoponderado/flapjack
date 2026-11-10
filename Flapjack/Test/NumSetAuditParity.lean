@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
 
 /-!
 # Regression for the `num_set` audit bridge

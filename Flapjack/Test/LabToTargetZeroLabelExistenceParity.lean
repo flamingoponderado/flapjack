@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.ZeroLabelExistence
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ZeroLabelExistence
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetZeroLabelExistenceParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

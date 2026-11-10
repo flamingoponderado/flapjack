@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
+module
+
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Compiler regression for the original tagged backend constant. This def
 failed dependsOnNoncomputable before the unconditional compiler realization;

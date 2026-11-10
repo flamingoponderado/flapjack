@@ -1,4 +1,10 @@
-import Flapjack.PanItreeTracePrefix
+module
+
+public import Flapjack.PanItreeTracePrefix
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanItreeTracePrefix
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `trace_prefix_def`

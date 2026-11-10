@@ -1,4 +1,10 @@
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Basis.Pure.MlString
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Basis.Pure.MlString
+@[expose] public section
 
 namespace Flapjack.Test.MlStringParity
 

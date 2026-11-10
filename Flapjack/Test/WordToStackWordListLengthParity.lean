@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.WordListLength
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.WordListLength
+
+@[expose] public section
 open Flapjack.Compiler.Backend.WordToStack
 set_option maxRecDepth 8192
 

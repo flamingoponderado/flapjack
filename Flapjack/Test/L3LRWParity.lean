@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.LRSC
+module
+
+public import Flapjack.RiscV.L3.Defs.LRSC
+
+@[expose] public section
 set_option maxRecDepth 200000
 namespace Flapjack.Test.L3LRWParity
 open Flapjack.RiscV.L3

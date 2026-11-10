@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Inference.Infer.Core
-import Flapjack.CakeParser.Frontend
+module
+
+public import Flapjack.Compiler.Inference.Infer.Core
+public import Flapjack.CakeParser.Frontend
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Inference.Infer.Core
+public meta import Flapjack.Compiler.Inference.InferT
+public meta import Flapjack.CakeParser.Frontend
+@[expose] public section
 
 /-! Replay original HOL expression/pattern inference with state. -/
 namespace Flapjack.Test.CakeInferCoreParity

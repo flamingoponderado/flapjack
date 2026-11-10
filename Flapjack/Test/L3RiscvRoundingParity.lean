@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs
+module
+
+public import Flapjack.RiscV.L3.Defs
+
+@[expose] public section
 
 /-! Kernel replay of all original static rounding inputs and all dynamic FRM
 inputs, plus all six L3 rounding constructors. Only procID and UCSR.fpcsr.FRM

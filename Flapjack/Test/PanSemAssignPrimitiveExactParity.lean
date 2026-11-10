@@ -1,5 +1,12 @@
-import Flapjack.Pancake.Semantics.PanSem.AssignPrimitiveExact
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.AssignPrimitiveExact
+public import Flapjack.Basis.Pure.MlString
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.Pancake.Semantics.PanSem.AssignPrimitiveExact
+@[expose] public section
 
 /-!
 # Parity for the exact `Assign`/`Primitive` clause steps

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.CrepNonFailStartLookup
-import Flapjack.Pancake.Semantics.CrepSem.CrepObservationalSemantics
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.CrepNonFailStartLookup
+public import Flapjack.Pancake.Semantics.CrepSem.CrepObservationalSemantics
+
+@[expose] public section
 
 /-!
 # Concrete regression for `crepSemantics_ne_fail_imp_holAlookup`

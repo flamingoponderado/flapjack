@@ -1,4 +1,14 @@
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Pancake.WordLang
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.WordLang
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Exact width-indexed `word_loc` parity

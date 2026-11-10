@@ -1,5 +1,9 @@
-import Mathlib.Data.Set.Insert
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
+module
+
+public import Mathlib.Data.Set.Insert
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
+
+@[expose] public section
 
 /-! Identical-input replay of original HOL complete-set observations.
 These regressions do not prove cross-language equivalence. -/

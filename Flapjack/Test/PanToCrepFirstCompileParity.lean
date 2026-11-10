@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Proofs.PanToCrep.FirstCompileProgAllDistinct
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep.FirstCompileProgAllDistinct
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.PanToCrep.FirstCompileProgAllDistinct
+@[expose] public section
 
 /-! Direct HOL oracle rows for `first_compile_prog_all_distinct`
 (`scripts/hol-probes/pan_to_crep_first_compile_oracle_probe.out`): the source

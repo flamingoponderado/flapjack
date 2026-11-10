@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Parmove.EnvironmentChange
+module
+
+public import Flapjack.Compiler.Backend.Parmove.EnvironmentChange
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.Parmove.Semantics
+@[expose] public section
 namespace Flapjack.Test.ParmoveEnvironmentParity
 open Flapjack.Compiler.Backend.Parmove
 private def first (r : Nat) := r + 10

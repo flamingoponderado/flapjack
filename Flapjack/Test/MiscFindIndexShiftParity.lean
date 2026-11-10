@@ -1,5 +1,9 @@
-import Flapjack.Misc.FindIndex.Shift
-import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
+module
+
+public import Flapjack.Misc.FindIndex.Shift
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
+
+@[expose] public section
 namespace Flapjack.Test.MiscFindIndexShiftParity
 open Flapjack Flapjack.Misc Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem

@@ -1,5 +1,15 @@
-import Flapjack.CakeParser.PtreeConversion
-import Flapjack.CakeParser.PegEval
+module
+
+public import Flapjack.CakeParser.PtreeConversion
+public import Flapjack.CakeParser.PegEval
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CakeParser.Nonterminal
+public meta import Flapjack.CakeParser.PtreeConversion
+public meta import Flapjack.CakeParser.Tokens
+public meta import Flapjack.CakeParser.PegActions
+public meta import Flapjack.CakeParser.PegEval
+@[expose] public section
 
 /-! Replay original PEG plus pattern conversion on list/constructor and
 annotated-variable patterns. -/

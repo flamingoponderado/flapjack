@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.LabelValidity
-import Flapjack.Compiler.Backend.LabProps.LabelSets
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.LabelValidity
+public import Flapjack.Compiler.Backend.LabProps.LabelSets
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetLabelValidityParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabProps

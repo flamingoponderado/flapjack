@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs
+module
+
+public import Flapjack.RiscV.L3.Defs
+
+@[expose] public section
 
 /-! Kernel replays of complete original FCLASS state observations. This is
 regression evidence, not a HOL-to-Lean equivalence theorem. -/

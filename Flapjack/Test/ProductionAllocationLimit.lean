@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionLimitVar
-import Flapjack.Compiler.Backend.WordAlloc.ProductionRemoveDead
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionLimitVar
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionRemoveDead
+
+@[expose] public section
 
 namespace Flapjack.Test.ProductionAllocationLimit
 open Flapjack Flapjack.RiscV.CakeRegAlloc

@@ -1,4 +1,10 @@
-import Flapjack.Pancake.CrepToLoop
+module
+
+public import Flapjack.Pancake.CrepToLoop
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.CrepToLoop
+@[expose] public section
 
 /-!
 # Original-domain parity for `crep_to_loop$compile` cutset threading

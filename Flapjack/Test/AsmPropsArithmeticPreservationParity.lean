@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
+module
+
+public import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
+
+@[expose] public section
 
 /-! Original ASM invariant observations, including failed arithmetic writes. -/
 namespace Flapjack.Test.AsmPropsArithmeticPreservationParity

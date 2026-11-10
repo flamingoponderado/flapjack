@@ -1,13 +1,17 @@
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Int
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Equality
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
-import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
-import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
-import Flapjack.Compiler.Backend.Semantics.BvlSem.MemoryChoice
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Int
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Equality
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Call
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Build
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.MemoryChoice
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
+
+@[expose] public section
 
 /-! Kernel replay of representative original BVL semantic observations. -/
 namespace Flapjack.Test.BvlSemValuesParity

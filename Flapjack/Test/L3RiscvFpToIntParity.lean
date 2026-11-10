@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs
+module
+
+public import Flapjack.RiscV.L3.Defs
+
+@[expose] public section
 
 /-! Native kernel replays of full original L3 float-to-integer conversions.
 The fixed-width inputs, GPR destination, preserved source FP register/NV and

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.MlStringBridge
+module
+
+public import Flapjack.Compiler.Backend.MlStringBridge
+
+@[expose] public section
 
 /-!
 # `String` <-> `mlstring` bridge parity checks

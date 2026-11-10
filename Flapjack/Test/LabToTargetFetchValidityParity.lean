@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.FetchValidity
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.FetchValidity
+
+@[expose] public section
 
 namespace Flapjack.Test.LabToTargetFetchValidityParity
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang

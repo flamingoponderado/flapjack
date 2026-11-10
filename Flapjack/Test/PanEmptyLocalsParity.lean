@@ -1,4 +1,10 @@
-import Flapjack.PanEmptyLocals
+module
+
+public import Flapjack.PanEmptyLocals
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanEmptyLocals
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `empty_locals_def`

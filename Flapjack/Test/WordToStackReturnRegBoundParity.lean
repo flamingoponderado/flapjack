@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnRegisterBounds
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnRegisterBounds
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackReturnRegBoundParity
 open Flapjack Flapjack.Compiler.Backend.WordToStack.Native

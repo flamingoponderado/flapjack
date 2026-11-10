@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToWord.ExecutableCompile
-import Flapjack.Test.WordInstSelectExactParity
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.ExecutableCompile
+public import Flapjack.Test.WordInstSelectExactParity
+
+@[expose] public section
 
 /-! Original full native WordToWord EVAL regressions. Complete expected programs
 are transcribed from word_to_word_executable_probe.out, never derived from Lean

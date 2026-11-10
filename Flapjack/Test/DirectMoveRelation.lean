@@ -1,4 +1,8 @@
-import Flapjack.Test.SpillRelation
+module
+
+public import Flapjack.Test.SpillRelation
+
+@[expose] public section
 
 /-! Regression coverage for public variable moves with mapped spilled values. -/
 

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanToCrep
+module
+
+public import Flapjack.Pancake.PanToCrep
+
+@[expose] public section
 
 /-!
 # Pancake `shape_vars` parity

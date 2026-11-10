@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
+
+@[expose] public section
 
 namespace Flapjack.Test.LabToTargetLabsDomainParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget

@@ -1,5 +1,13 @@
-import Flapjack.Misc.ShiftSeq
-import Flapjack.Compiler.Backend.Semantics.WordSem.Domain
+module
+
+public import Flapjack.Misc.ShiftSeq
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Domain
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Direct HOL oracle rows for the wordSem `evaluate_def` prerequisites

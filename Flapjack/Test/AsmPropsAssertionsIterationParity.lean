@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.AsmProps.Assertions.Iteration
+module
+
+public import Flapjack.Compiler.Encoders.AsmProps.Assertions.Iteration
+
+@[expose] public section
 
 /-! Non-vacuous applications of all six full original assertion theorems.
 Inputs agree with the direct original ASM assertion observations. -/

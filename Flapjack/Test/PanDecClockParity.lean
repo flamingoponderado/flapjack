@@ -1,4 +1,8 @@
-import Flapjack.PanValueFfiClockSemantics
+module
+
+public import Flapjack.PanValueFfiClockSemantics
+
+@[expose] public section
 
 /-!
 # Original-domain parity for `panSem.dec_clock_def`

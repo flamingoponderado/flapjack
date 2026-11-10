@@ -1,6 +1,14 @@
-import Flapjack.Pancake.PanGlobals
-import Flapjack.Pancake.PanGlobals.CompileExpExact
-import Flapjack.Pancake.PanGlobals.CompileExpExactRoute
+module
+
+public import Flapjack.Pancake.PanGlobals
+public import Flapjack.Pancake.PanGlobals.CompileExpExact
+public import Flapjack.Pancake.PanGlobals.CompileExpExactRoute
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanGlobals
+public meta import Flapjack.Pancake.PanGlobals.CompileExpExact
+public meta import Flapjack.Pancake.PanGlobals.CompileExpExactRoute
+@[expose] public section
 
 namespace Flapjack.Test.PanGlobalsCompileExpExactParity
 

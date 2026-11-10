@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapBounds
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapBounds
+
+@[expose] public section
 
 namespace Flapjack.Test.SSAMapBoundsParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc

@@ -1,4 +1,11 @@
-import Flapjack.Pancake.Semantics.CrepSem.TotalEval
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.TotalEval
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.CrepSem
+public meta import Flapjack.Pancake.Semantics.CrepSem.TotalEval
+@[expose] public section
 
 /-! Direct regression cases for the supported source-code-map Call fragment.
     Oracle rows come from crep_total_call_eval_probeScript.sml. -/

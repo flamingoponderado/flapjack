@@ -1,5 +1,9 @@
-import Flapjack.Pancake.WordConvs.CodeLabels
-import Mathlib.Data.Set.Insert
+module
+
+public import Flapjack.Pancake.WordConvs.CodeLabels
+public import Mathlib.Data.Set.Insert
+
+@[expose] public section
 
 /-! Same-input kernel replay of the twelve original complete label sets in
 scripts/hol-probes/wordconvs_code_labels_probe.out. -/

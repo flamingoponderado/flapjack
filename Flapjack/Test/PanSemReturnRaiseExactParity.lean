@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem.ReturnRaiseExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.ReturnRaiseExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.ReturnRaiseExact
+@[expose] public section
 
 /-!
 # Direct-HOL-row parity for the exact `Return`/`Raise` clause fragments

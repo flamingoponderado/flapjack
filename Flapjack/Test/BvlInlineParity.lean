@@ -1,9 +1,20 @@
-import Flapjack.Compiler.Backend.BvlInline
-import Flapjack.Compiler.Backend.BvlInline.TickInline
-import Flapjack.Compiler.Backend.BvlInline.Small
-import Flapjack.Compiler.Backend.BvlInline.Recursion
-import Flapjack.Compiler.Backend.BvlInline.Program
-import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineStateRel
+module
+
+public import Flapjack.Compiler.Backend.BvlInline
+public import Flapjack.Compiler.Backend.BvlInline.TickInline
+public import Flapjack.Compiler.Backend.BvlInline.Small
+public import Flapjack.Compiler.Backend.BvlInline.Recursion
+public import Flapjack.Compiler.Backend.BvlInline.Program
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineStateRel
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.Bvl.Syntax
+public meta import Flapjack.Compiler.Backend.BvlInline
+public meta import Flapjack.Compiler.Backend.BvlInline.Recursion
+public meta import Flapjack.Compiler.Backend.BvlInline.Small
+public meta import Flapjack.Compiler.Backend.ClosLang.Syntax
+public meta import Flapjack.Compiler.Backend.BvlInline.Program
+@[expose] public section
 
 /-! Replay `bvl_inline_frontend_probe.out` from pinned CakeML/HOL. -/
 namespace Flapjack.Test.BvlInlineParity

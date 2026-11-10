@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.MmioIndex
+
+@[expose] public section
 namespace Flapjack.Test.MmioIndex
 open Flapjack
 private instance : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩

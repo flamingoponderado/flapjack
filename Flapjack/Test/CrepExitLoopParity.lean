@@ -1,4 +1,10 @@
-import Flapjack.CrepExitLoop
+module
+
+public import Flapjack.CrepExitLoop
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CrepExitLoop
+@[expose] public section
 
 /-!
 # Parity checks for Crepe `exit_loop_def`

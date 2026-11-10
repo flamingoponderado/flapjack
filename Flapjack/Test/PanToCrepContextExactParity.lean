@@ -1,6 +1,10 @@
-import Flapjack.Pancake.PanToCrep.ContextBridge
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.Pancake.Proofs.PanToCrep
+module
+
+public import Flapjack.Pancake.PanToCrep.ContextBridge
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.Proofs.PanToCrep
+
+@[expose] public section
 
 /-!
 Kernel checks for the exact Pan-to-Crep context's finite-map fields and the

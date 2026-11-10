@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Heap
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Heap
+
+@[expose] public section
 
 /-! Heap-space accounting on shared blocks and cyclic references. -/
 namespace Flapjack.Test.DataSemHeap

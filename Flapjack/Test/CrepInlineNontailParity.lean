@@ -1,4 +1,14 @@
-import Flapjack.Pancake.CrepInline.Pass
+module
+
+public import Flapjack.Pancake.CrepInline.Pass
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.CrepInline.Pass
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Direct HOL-EVAL guards for `inline_nontail_def` on the exact Crep carriers,
 including initialization, argument setup, MAP2 truncation and Skip from a

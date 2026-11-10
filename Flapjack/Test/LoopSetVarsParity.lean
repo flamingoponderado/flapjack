@@ -1,4 +1,10 @@
-import Flapjack.LoopSetVars
+module
+
+public import Flapjack.LoopSetVars
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.LoopSetVars
+@[expose] public section
 
 /-!
 # Original-domain parity for `set_vars` / `loopSetVars`

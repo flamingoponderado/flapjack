@@ -1,4 +1,8 @@
-import Flapjack.PanHProgStore32
+module
+
+public import Flapjack.PanHProgStore32
+
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `h_prog_store_32_def`

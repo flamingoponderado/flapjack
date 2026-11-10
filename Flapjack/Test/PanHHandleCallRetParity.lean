@@ -1,4 +1,11 @@
-import Flapjack.PanHHandleCallRet
+module
+
+public import Flapjack.PanHHandleCallRet
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanHHandleCallRet
+public meta import Flapjack.RiscV.Model
+@[expose] public section
 
 /-!
 # Parity checks for Pancake h_handle_call_ret_def

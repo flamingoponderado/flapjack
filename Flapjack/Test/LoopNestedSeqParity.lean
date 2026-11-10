@@ -1,4 +1,11 @@
-import Flapjack.Pancake.LoopLang
+module
+
+public import Flapjack.Pancake.LoopLang
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.LoopLang
+public meta import Flapjack.Pancake.LoopLive
+@[expose] public section
 
 /-!
 # Original-domain parity for `nested_seq`

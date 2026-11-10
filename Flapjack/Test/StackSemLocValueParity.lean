@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.LocValueCase
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.LocValueCase
+
+@[expose] public section
 open Flapjack Flapjack.StackSem Flapjack.StackSemLocValueCase
 open Flapjack.Compiler.Backend.StackLang
 

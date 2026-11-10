@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordCompare
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordCompare
+
+@[expose] public section
 
 /-! The `mw_cmp_*32` results are captured from the pinned HOL implementation. -/
 namespace Flapjack.Test.DataToWordMultiwordCompareParity

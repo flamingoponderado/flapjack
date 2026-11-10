@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTransport
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTransport
+
+@[expose] public section
 
 /-! Fresh original wLive outcomes captured in word_to_stack_bitmap_index_probe.out.
 These kernel regressions cover whole program/state pairs, and separately the

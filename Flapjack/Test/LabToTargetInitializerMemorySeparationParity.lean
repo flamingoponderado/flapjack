@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.Initialization.MemorySeparationCases
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization.MemorySeparationCases
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetInitializerMemorySeparationParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabLang

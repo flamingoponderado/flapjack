@@ -1,4 +1,14 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.Primop
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.Primop
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.CrepToLoop.Proofs.Primop
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # `crep_primop_loop_primop` replay fixtures

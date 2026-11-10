@@ -1,4 +1,8 @@
-import Flapjack.RiscV.Lab
+module
+
+public import Flapjack.RiscV.Lab
+
+@[expose] public section
 
 /-!
 # Far-jump and far-branch lowering against `riscv_ast`

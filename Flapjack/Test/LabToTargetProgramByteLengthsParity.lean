@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.ProgramByteLengths
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ProgramByteLengths
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetProgramByteLengthsParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps

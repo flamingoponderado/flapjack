@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.LoopToWord.LastNAddCons
+module
+
+public import Flapjack.Pancake.Proofs.LoopToWord.LastNAddCons
+
+@[expose] public section
 
 /-!
 # Regression for the exact Loop-to-Word `LASTN_ADD_CONS` port

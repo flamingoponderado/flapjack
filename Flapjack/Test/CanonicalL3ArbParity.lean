@@ -1,6 +1,10 @@
-import Flapjack.Misc.ListEl
-import Flapjack.RiscV.L3.Defs
-import Flapjack.Pancake.WordConvs.NotCreated
+module
+
+public import Flapjack.Misc.ListEl
+public import Flapjack.RiscV.L3.Defs
+public import Flapjack.Pancake.WordConvs.NotCreated
+
+@[expose] public section
 
 /-! Flapjack regression checks for canonical arbitrary-value sharing. These
 are supplemental kernel checks, not new HOL theorem ports or a chosen ARB value. -/

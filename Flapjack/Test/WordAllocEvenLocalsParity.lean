@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvenStartingLocals
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvenStartingLocals
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocEvenLocalsParity
 open Flapjack

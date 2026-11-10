@@ -1,4 +1,10 @@
-import Flapjack.Pancake.PanLang.Prog
+module
+
+public import Flapjack.Pancake.PanLang.Prog
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang.Prog
+@[expose] public section
 
 /-!
 Parity fixture for the exact `panLang$prog` carrier

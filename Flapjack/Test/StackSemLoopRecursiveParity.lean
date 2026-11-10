@@ -1,5 +1,16 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.ControlCases
-import Flapjack.Compiler.Backend.Semantics.StackSem.LeafTransfers
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.ControlCases
+public import Flapjack.Compiler.Backend.Semantics.StackSem.LeafTransfers
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.Semantics.StackSem.ControlCases
+public meta import Flapjack.Compiler.Backend.Semantics.StackSem.LeafTransfers
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Test-only recursive Loop evaluator over real leaf bodies. Re-entry runs
 again with the decremented clock; no callback fabricates a terminal timeout.

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeReturn
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
-import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeReturn
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
+public import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackCopyRetCarriersParity
 open Flapjack.Compiler.Backend.StackLang

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.HeuCounters
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.HeuCounters
+
+@[expose] public section
 
 namespace Flapjack.Test.HeuCountersParity
 open Flapjack Flapjack.WordAlloc

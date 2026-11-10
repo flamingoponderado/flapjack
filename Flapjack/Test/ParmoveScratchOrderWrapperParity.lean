@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Parmove
+module
+
+public import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Parmove
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmoveScratchOrderWrapperParity
 open Compiler.Backend.Parmove Misc

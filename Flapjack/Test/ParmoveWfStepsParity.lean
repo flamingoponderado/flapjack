@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.Invariants.Preservation
+module
+
+public import Flapjack.Compiler.Backend.Parmove.Invariants.Preservation
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveWfStepsParity
 open Flapjack.Compiler.Backend.Parmove
 -- pw_remove_pre=T

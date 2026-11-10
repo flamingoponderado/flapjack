@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.NavigationBounds
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.NavigationBounds
+
+@[expose] public section
 
 namespace Flapjack.Test.LabToTargetNavigationBoundsParity
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem

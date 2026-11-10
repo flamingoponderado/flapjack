@@ -13,7 +13,11 @@ ported theorem at a concrete `ShMemLoad` program and concrete finite state,
 checking the code-permuted target/post-state equality.  No oracle row is
 fabricated.
 -/
-import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ShMemLoad
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ShMemLoad
+
+@[expose] public section
 
 namespace Flapjack.Test.PanGlobalsFpermShMemLoadParity
 

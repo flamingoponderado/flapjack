@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.SurvivesMapiAssign
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.SurvivesMapiAssign
+
+@[expose] public section
 
 namespace Flapjack.Test
 

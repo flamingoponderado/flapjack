@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem.StateExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.StateExact
+@[expose] public section
 
 /-!
 # Sampled original-HOL observations for `panSem$empty_locals`

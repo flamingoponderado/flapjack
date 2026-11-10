@@ -1,4 +1,12 @@
-import Flapjack.FfiBridge
+module
+
+public import Flapjack.FfiBridge
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Production `FfiState` / exact `HolFfiState` bridge regression

@@ -1,4 +1,10 @@
-import Flapjack.PanHProgExtCall
+module
+
+public import Flapjack.PanHProgExtCall
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanHProgExtCall
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `h_prog_ext_call_def`

@@ -1,4 +1,8 @@
-import Flapjack.EvaluateHOL
+module
+
+public import Flapjack.EvaluateHOL
+
+@[expose] public section
 
 /-! Proof-side Eval observations captured from pinned HOL. -/
 namespace Flapjack.Test.CakeSourceEvalParity

@@ -1,4 +1,12 @@
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Regression rows for the `Primitive` clause and the `Call` exception-handler

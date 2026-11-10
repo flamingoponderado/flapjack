@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.GetPrefs
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.GetPrefs
+
+@[expose] public section
 namespace Flapjack.Test.WordAllocGetPrefsParity
 open Flapjack Flapjack.WordAlloc
 abbrev P := WordLangProgHOL (BitVec 64)

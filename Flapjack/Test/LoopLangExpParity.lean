@@ -1,4 +1,12 @@
-import Flapjack.Test.PanValueFfiCore
+module
+
+public import Flapjack.Test.PanValueFfiCore
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Regression checks for the faithful width-indexed `loopLang$exp` carrier

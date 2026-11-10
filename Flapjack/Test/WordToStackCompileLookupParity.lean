@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
+
+@[expose] public section
 
 /-! Kernel replay of original lookup probes. Finite observations do not prove
 cross-language equivalence. Duplicate identifiers intentionally remain present. -/

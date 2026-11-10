@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.FPBits
+module
+
+public import Flapjack.RiscV.L3.Defs.FPBits
+
+@[expose] public section
 set_option maxRecDepth 20000
 namespace Flapjack.Test.L3FPBitsParity
 open Flapjack.RiscV.L3

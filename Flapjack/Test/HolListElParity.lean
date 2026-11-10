@@ -1,4 +1,8 @@
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 namespace Flapjack.Test.HolListElParity
 open Flapjack

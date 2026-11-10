@@ -1,4 +1,14 @@
-import Flapjack.Pancake.CrepInline.Pass
+module
+
+public import Flapjack.Pancake.CrepInline.Pass
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.CrepInline.Pass
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Direct HOL-EVAL guards for the structural clauses of `inline_prog_def`.
 The exact-carrier helper is only a partial assembly utility: these fixtures use

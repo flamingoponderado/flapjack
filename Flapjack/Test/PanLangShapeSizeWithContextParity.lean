@@ -5,7 +5,18 @@ Parity fixtures for the exact port of HOL `panLang$size_of_sh_with_ctxt`
 flapjack-pxn.18.5.17.1.3.1).  Rows mirror
 `scripts/hol-probes/pan_lang_size_of_sh_with_ctxt_probe.out`.
 -/
-import Flapjack.Pancake.PanLang.Decl
+module
+
+public import Flapjack.Pancake.PanLang.Decl
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.BviInline
+public meta import Flapjack.Pancake.PanLang.Decl
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.PanLangShapeSizeWithContextParity
 

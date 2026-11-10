@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.MapFst
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.MapFst
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackMapFstParity
 open Flapjack.WordToStackProofs

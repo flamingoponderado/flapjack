@@ -1,4 +1,10 @@
-import Flapjack.LoopSemantics
+module
+
+public import Flapjack.LoopSemantics
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.LoopSemantics
+@[expose] public section
 
 /-!
 # Original-domain parity for `set_globals` / `updateLoopGlobal`

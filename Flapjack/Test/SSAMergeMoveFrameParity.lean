@@ -1,5 +1,9 @@
-import Flapjack.Test.SSAMergeMovesParity
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveFrame
+module
+
+public import Flapjack.Test.SSAMergeMovesParity
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveFrame
+
+@[expose] public section
 
 namespace Flapjack.Test.SSAMergeMoveFrameParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc

@@ -1,4 +1,10 @@
-import Flapjack.Parser
+module
+
+public import Flapjack.Parser
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Parser
+@[expose] public section
 
 /-!
 The Pancake static-checker examples, as a parser corpus.

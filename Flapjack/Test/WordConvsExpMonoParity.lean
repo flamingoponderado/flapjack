@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
+module
+
+public import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
+
+@[expose] public section
 namespace Flapjack.Test.WordConvsExpMonoParity
 -- Original em_var
 private def em_var : WordLangExpHOL (BitVec 64) := .var 3

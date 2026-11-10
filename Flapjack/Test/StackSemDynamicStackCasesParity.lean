@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.DynamicStackCases
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.DynamicStackCases
+
+@[expose] public section
 open Flapjack Flapjack.StackSemDynamicStackCases
 
 /- Kernel replay of scripts/hol-probes/stacksem_dynamic_stack_probe.out.
