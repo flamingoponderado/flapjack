@@ -128268,8 +128268,8 @@
   "hol_name": "assign_get_code_label_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosLang/CodeLabels.lean",
   "lean_name": "assignGetCodeLabel",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed assign_get_code_label_def capture: HOL's two-clause definition is exported as per-constructor clauses, Label x -> {x} and every other op constructor -> {}. Lean's match has .label -> {label} and _ -> \u2205 over ClosLang.Op with the same constructors."
 },
 {
   "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
