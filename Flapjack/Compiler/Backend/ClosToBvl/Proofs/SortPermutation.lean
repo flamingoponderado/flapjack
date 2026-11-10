@@ -2,6 +2,8 @@ module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Sort
 public import Mathlib.Data.List.Permutation
+public import Flapjack.Misc.Sptree.Wf
+import Mathlib.Data.List.Nodup
 
 @[expose] public section
 
@@ -62,6 +64,46 @@ theorem codeSort_perm {α : Type} (xs : List (Nat × α)) : (codeSort xs).Perm x
 theorem codeSort_allDistinct {α : Type} (xs : List (Nat × α)) :
     ((codeSort xs).map Prod.fst).Nodup ↔ (xs.map Prod.fst).Nodup := by
   exact ((codeSort_perm xs).map Prod.fst).nodup_iff
+
+
+private theorem lookup_of_member {α : Type} (ls : List (Nat × α))
+    (distinct : (ls.map Prod.fst).Nodup) (k : Nat) (v : α) (member : (k, v) ∈ ls) :
+    sptAListLookup k ls = some v := by
+  apply sptAListLookup_eq_of_mem_unique k v ls member
+  intro other otherMem
+  have eq : (k, other) = (k, v) := List.inj_on_of_nodup_map distinct otherMem member rfl
+  exact congrArg Prod.snd eq
+
+/-- A permutation with distinct keys builds the same sparse code tree. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "PERM_IMP_fromAList_EQ_fromAList"]
+theorem perm_fromAList {α : Type} (xs ys : List (Nat × α))
+    (perm : xs.Perm ys) (distinct : (xs.map Prod.fst).Nodup) :
+    sptFromAList xs = sptFromAList ys := by
+  have distinctY : (ys.map Prod.fst).Nodup := ((perm.map Prod.fst).nodup_iff).mp distinct
+  apply (sptEqThm _ _ ⟨sptWfFromAList xs, sptWfFromAList ys⟩).2
+  intro k
+  rw [sptLookup_sptFromAList, sptLookup_sptFromAList]
+  cases hx : sptAListLookup k xs with
+  | none =>
+    cases hy : sptAListLookup k ys with
+    | none => rfl
+    | some v =>
+      have memY := sptAListLookup_mem k ys v hy
+      have memX : (k, v) ∈ xs := perm.mem_iff.mpr memY
+      have eq := lookup_of_member xs distinct k v memX
+      simp [hx] at eq
+  | some v =>
+    have memX := sptAListLookup_mem k xs v hx
+    have memY : (k, v) ∈ ys := perm.mem_iff.mp memX
+    exact (lookup_of_member ys distinctY k v memY).symm
+
+/-- Sorting distinct-key code leaves the resulting sparse tree unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "fromAList_code_sort"]
+theorem sort_fromAList {α : Type} (xs : List (Nat × α))
+    (distinct : (xs.map Prod.fst).Nodup) :
+    sptFromAList (codeSort xs) = sptFromAList xs := by
+  apply perm_fromAList (codeSort xs) xs (codeSort_perm xs)
+  exact (codeSort_allDistinct xs).mpr distinct
 
 
 end Flapjack.Compiler.Backend.ClosToBvl

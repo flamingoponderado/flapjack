@@ -114,6 +114,18 @@
   "reviewer": "Compared compile_all_distinct_locs_typed and independent review: binders c, e, c', p, n and Spt MlString output carrier match; proof covers compile_def's initial, force, globals and compiled-code blocks."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "PERM_IMP_fromAList_EQ_fromAList",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SortPermutation.lean", "lean_name": "perm_fromAList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared perm_imp_from_alist_eq_typed and independent review: separate curried premises and polymorphic payload match; structural Spt equality follows from spt_eq_thm and wf_fromAList."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "fromAList_code_sort",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SortPermutation.lean", "lean_name": "sort_fromAList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared from_alist_code_sort_typed and independent review: polymorphic payload, distinctness premise and structural Spt equality match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "every_Fn_calls_list",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "everyFn_callsList",
   "statement_status": "reviewed_exact",

@@ -153,6 +153,8 @@ imp_perm_code_merge_typed=∀(xs :(num # α) list) (ys :(num # α) list) (zs :(n
 perm_code_sort_typed=∀(xs :(num # α) list). PERM (code_sort xs) xs
 all_distinct_code_sort_typed=ALL_DISTINCT (MAP (FST :num # α -> num) (code_sort (xs :(num # α) list))) ⇔ ALL_DISTINCT (MAP (FST :num # α -> num) xs)
 compile_all_distinct_locs_typed=(compile (c :config) (e :closLang$exp list) :config # (num # num # bvl$exp) list # mlstring sptree$num_map) = ((c' :config),(p :(num # num # bvl$exp) list),(n :mlstring sptree$num_map)) ⇒ ALL_DISTINCT (MAP (FST :num # num # bvl$exp -> num) p)
+perm_imp_from_alist_eq_typed=∀(xs :(num # α) list) (ys :(num # α) list). PERM xs ys ⇒ ALL_DISTINCT (MAP (FST :num # α -> num) xs) ⇒ fromAList xs = fromAList ys
+from_alist_code_sort_typed=ALL_DISTINCT (MAP (FST :num # α -> num) (xs :(num # α) list)) ⇒ fromAList (code_sort xs) = fromAList xs
 toaList_domain_typed=∀(x :num). MEM x (MAP (FST :num # α -> num) (toAList (t :α sptree$num_map))) ⇔ x ∈ (domain t :num -> bool)
 sptree_domain_lookup_typed=∀(t :α sptree$num_map) (k :num). k ∈ (domain t :num -> bool) ⇔ ∃(v :α). lookup k t = SOME v
 known_compile_is_some_typed=(compile (kc :clos_known$config option) (es :closLang$exp list) :clos_known$config option # closLang$exp list) = ((kc' :clos_known$config option),(es' :closLang$exp list)) ⇒ (IS_SOME kc' ⇔ IS_SOME kc)

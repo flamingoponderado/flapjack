@@ -6,9 +6,9 @@ public import Flapjack.Misc.ClockWeightInduction
 
 @[expose] public section
 
-/-! Clock-and-weight induction for the proof-side flat-to-closure evaluator.
-The semantic carriers and relations remain under HOL correspondence review;
-these declarations are not tagged as HOL theorem ports. -/
+/-! Internal clock-and-weight simulation used to prove the tagged
+flat-to-closure correctness theorem. These supporting declarations are not
+separate HOL theorem ports. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL Flapjack.AstHOL Flapjack.Basis.Pure.MlString
 
