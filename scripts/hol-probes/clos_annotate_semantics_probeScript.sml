@@ -47,6 +47,17 @@ val _ = show "app_call_dests_def_typed=" closPropsTheory.app_call_dests_def;
 val _ = show "app_call_dests_append_typed=" closPropsTheory.app_call_dests_append;
 val _ = show "call_dests_shift_typed=" clos_annotateProofTheory.call_dests_shift;
 val _ = show "code_locs_shift_typed=" clos_annotateProofTheory.code_locs_shift;
+(* Replay the local shift theorem and its source proof. *)
+val IF_MAP_EQ_replay = MAP_EQ_f |> SPEC_ALL |> EQ_IMP_RULE |> snd;
+val shift_code_locs_replay = prove (
+  ``!xs env s1 env'. code_locs (shift xs env s1 env') = code_locs xs``,
+  ho_match_mp_tac shift_ind
+  >> simp[shift_def,code_locs_def,shift_LENGTH_LEMMA]
+  >> srw_tac[][code_locs_append]
+  >> full_simp_tac(srw_ss())[MAP_MAP_o,o_DEF]
+  >> ONCE_REWRITE_TAC [code_locs_map]
+  >> AP_TERM_TAC >> MATCH_MP_TAC IF_MAP_EQ_replay >> full_simp_tac(srw_ss())[FORALL_PROD]);
+val _ = show "shift_code_locs_local_typed=" shift_code_locs_replay;
 val _ = show "code_locs_alt_free_typed=" clos_annotateProofTheory.code_locs_alt_free;
 val _ = show "code_locs_annotate_typed=" clos_annotateProofTheory.code_locs_annotate;
 val _ = show "annotate_code_locs_typed=" clos_annotateProofTheory.annotate_code_locs;
@@ -296,6 +307,21 @@ val state_rel_opt_rel_refs_replay = prove (
        ?r1. FLOOKUP s1.refs n = r1 /\ OPTREL (ref_rel v_rel) r1 r2)``,
   rw [] >> gvs [clos_annotateProofTheory.state_rel_def, FLOOKUP_DEF] >> rw []);
 val _ = show "state_rel_opt_rel_refs_local_typed=" state_rel_opt_rel_refs_replay;
+val rel_update_thunk_replay = prove (
+  ``state_rel s1 s2 /\ LIST_REL v_rel vs ys ==>
+    (update_thunk [RefPtr v ptr] s1.refs vs = SOME refs1 ==>
+      ?refs2. update_thunk [RefPtr v ptr] s2.refs ys = SOME refs2 /\
+        state_rel (s1 with refs := refs1) (s2 with refs := refs2))``,
+  rw []
+  >> gvs [oneline update_thunk_def, AllCaseEqs()] >> rw []
+  >> gvs [oneline dest_thunk_def, AllCaseEqs(), PULL_EXISTS]
+  >> (gvs [Once clos_annotateProofTheory.v_rel_cases, oneline store_thunk_def, AllCaseEqs(), PULL_EXISTS]
+      >> rpt (imp_res_tac state_rel_opt_rel_refs_replay >> rw []
+              >> gvs [oneline OPTREL_THM] >> FULL_CASE_TAC >> gvs [])
+      >> gvs [clos_annotateProofTheory.state_rel_def, FLOOKUP_UPDATE] >> rw []
+      >> simp [ref_rel_def, Once clos_annotateProofTheory.v_rel_cases]
+      >> metis_tac []));
+val _ = show "rel_update_thunk_local_typed=" rel_update_thunk_replay;
 (* Replay the source-local theorem, which is not exported by the theory. *)
 val state_rel_clocks_eqs_replay = prove (
   ``state_rel s t ==> s.clock = t.clock``,

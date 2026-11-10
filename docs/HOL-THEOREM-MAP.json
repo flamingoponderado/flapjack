@@ -1600,6 +1600,12 @@
   "reviewer": "Compared FOLDR_mk_Union_local_typed, replayed with the original HOL proof: the list payload type is polymorphic, and the pair fold, seed, projections, append and variable-set fold have the same order and no premises."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "shift_code_locs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations.lean", "lean_name": "shiftSource_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared shift_code_locs_local_typed, replayed with the original HOL proof: the universally quantified expression list, two natural-number indices and sparse-tree map retain their types and order, and source-shaped shifting preserves exactly the code-location list."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "state_rel_opt_rel_refs",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/StateRelation/Original.lean", "lean_name": "stateRelSource_optRelRefs",
   "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
