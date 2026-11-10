@@ -125,6 +125,18 @@
   "reviewer": "Compared clos_call_calls_subspt_typed: input list, initial state, output list and final state retain the HOL order and carriers; the original calls equality implies the original subspt relation on first components."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_IS_SUFFIX",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateGrowth.lean", "lean_name": "calls_suffix",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_call_calls_IS_SUFFIX_typed: the expression lists and state carriers retain HOL's binder order, and the initial auxiliary list is a suffix of the final list (Lean suffix notation reverses HOL IS_SUFFIX's argument order)."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_subg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CallsExtension.lean", "lean_name": "calls_subg",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_call_calls_subg_typed: the original input and output carriers and order, successful calls equation, two distinctness requirements, disjointness condition and full subg conclusion are retained. Disjointness is expressed pointwise."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "do_app_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/DoApp.lean", "lean_name": "doApp_correct",
   "statement_status": "reviewed_fmap_as_finite_support_relation",

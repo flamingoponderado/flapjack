@@ -833,6 +833,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.StateRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DoApp
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InsertDomain
 import Flapjack.Compiler.Backend.ClosCall.Proofs.StateGrowth
+import Flapjack.Compiler.Backend.ClosCall.Proofs.CallsExtension
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DomainLocations
 import Flapjack.Compiler.Backend.ClosCall.Proofs.MakeState
 import Flapjack.Compiler.Backend.ClosCall.Proofs.OracleInvariant

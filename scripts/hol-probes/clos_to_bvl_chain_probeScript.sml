@@ -63,6 +63,8 @@ val _ = show_thm "clos_call_do_app_thm_typed=" clos_callProofTheory.do_app_thm;
 val _ = show_thm "clos_call_domain_FST_insert_each_typed=" clos_callProofTheory.domain_FST_insert_each;
 val _ = show_thm "clos_call_insert_each_subspt_typed=" clos_callProofTheory.insert_each_subspt;
 val _ = show_thm "clos_call_calls_subspt_typed=" clos_callProofTheory.calls_subspt;
+val _ = show_thm "clos_call_calls_IS_SUFFIX_typed=" clos_callProofTheory.calls_IS_SUFFIX;
+val _ = show_thm "clos_call_calls_subg_typed=" clos_callProofTheory.calls_subg;
 val _ = show_thm "clos_call_calls_domain_locs_typed=" clos_callProofTheory.calls_domain_locs;
 val _ = show_thm "clos_call_NOT_IN_domain_FST_g_typed=" clos_callProofTheory.NOT_IN_domain_FST_g;
 val _ = show_thm "clos_call_wfg_insert_each_typed=" clos_callProofTheory.wfg'_insert_each;
