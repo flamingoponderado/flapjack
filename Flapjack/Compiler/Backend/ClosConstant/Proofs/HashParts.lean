@@ -103,12 +103,14 @@ theorem addParts_thm :
       aux.map (updateTag ∘ Prod.fst) = acc ∧ goodHashTable tree aux →
       n1 = n2 ∧ rs1 = rs2 ∧ aux1.map (updateTag ∘ Prod.fst) = acc1 ∧ goodHashTable tree1 aux1) := by
   constructor
-  · intro constant index tree acc n1 α unused r1 tree1 acc1 aux n2 r2 aux1 ⟨targetRun, sourceRun, accEq, good⟩
+  · intro constant index tree acc n1 α unused r1 tree1 acc1 aux n2 r2 aux1
+      ⟨targetRun, sourceRun, accEq, good⟩
     subst acc
     have result := addParts_related constant index tree aux good
     rw [targetRun, sourceRun] at result
     exact result
-  · intro constants index tree acc n1 β unused rs1 tree1 acc1 aux n2 rs2 aux1 ⟨targetRun, sourceRun, accEq, good⟩
+  · intro constants index tree acc n1 β unused rs1 tree1 acc1 aux n2 rs2 aux1
+      ⟨targetRun, sourceRun, accEq, good⟩
     subst acc
     have result := addPartsList_related constants index tree aux good
     rw [targetRun, sourceRun] at result
