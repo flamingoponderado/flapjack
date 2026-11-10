@@ -1,5 +1,15 @@
-import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
-import Flapjack.Test.LabToTargetRemoveLabelsParity
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
+public import Flapjack.Test.LabToTargetRemoveLabelsParity
+import all Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
+import all Flapjack.Test.LabToTargetRemoveLabelsParity
+import all Flapjack.Compiler.Encoders.Asm
+import all Flapjack.Compiler.Backend.LabToTarget.Encoding
+import all Flapjack.Compiler.Backend.LabLang
+import all Init.Data.Sum.Basic
+
+@[expose] public section
 
 /-!
 # Native kernel replays of `lab_to_target_shmeminfo_probe.out`
