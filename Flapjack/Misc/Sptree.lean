@@ -241,11 +241,10 @@ theorem sptMem_bs {α : Type} (left : Spt α) (value : α) (right : Spt α) (key
           subst this; simpa using hm
 
 /-- Predicate rendering of HOL sptree `subspt`
-(`HOL/src/finite_maps/sptreeScript.sml:1737-1741`,
-`subspt sp1 sp2 <=> !k. k IN domain sp1 ==> k IN domain sp2 /\
-lookup k sp2 = lookup k sp1`). The HOL source lives in the HOL installation's
-`src/finite_maps`, outside `cakeml/`, so this rendering is untagged Flapjack
-infrastructure; it reuses the `sptMem` rendering of `domain`/`IN`. -/
+(`hol4/src/finite_maps/sptreeScript.sml`, `subspt_def`). This predicate is
+an untagged rendering of the characterization, not the HOL structural
+definition; `sptSubsptDef` in `Sptree/Subspt.lean` ports the characterization.
+It reuses the `sptMem` rendering of `domain`/`IN`. -/
 def sptSubspt {α : Type} (sp1 sp2 : Spt α) : Prop :=
   ∀ k, sptMem k sp1 → sptMem k sp2 ∧ sptLookup k sp2 = sptLookup k sp1
 
