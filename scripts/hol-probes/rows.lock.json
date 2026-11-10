@@ -189,7 +189,7 @@
     {"bytes": 121, "out": "cexp_heads_probe.out", "rows": 5, "sha256": "6008ea6cbd045b498a9b2ab282fbd0734ddd6c4760faa5e59cd7aa29a438f184"},
     {"bytes": 45950, "out": "clos_annotate_semantics_probe.out", "rows": 92, "sha256": "e1d7de74097c1ed95a41405bceb0aabb8930e9f3ba41d314754c5924c9365be0"},
     {"bytes": 1812, "out": "clos_annotate_shift_replay_probe.out", "rows": 1, "sha256": "208a635be0e6cf3ec2b8ba6efa1a54d55a9a4570a520193b01ba4b085642a42d"},
-    {"bytes": 2791, "out": "clos_call_code_list_probe.out", "rows": 12, "sha256": "18284bf78637bf952ea5c1df7d1b6b6960c4950097f1c956e4fbc1e38b0ef328"},
+    {"bytes": 3176, "out": "clos_call_code_list_probe.out", "rows": 13, "sha256": "58bd3649cc1678df16717578bcdda4885059b5fa7843a6d040889b99b1ea6895"},
     {"bytes": 3774, "out": "clos_call_env_rel_probe.out", "rows": 14, "sha256": "21268424aae4542c87558eb7f272fc2d7f08a8c9b194ec50ccec89391553f2e3"},
     {"bytes": 4043, "out": "clos_call_free_correct_probe.out", "rows": 7, "sha256": "9c52c487fcb02db9198e449a65055bd4e308f4fd90e4de572c2a6ee70109d965"},
     {"bytes": 12976, "out": "clos_call_frontend_probe.out", "rows": 15, "sha256": "5ba874fcb34c381c4f312a2d38e217fea489ddd6fc0c328861b39058ac01647f"},

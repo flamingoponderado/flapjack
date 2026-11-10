@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_replace_SND",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/SuffixReplacement.lean", "lean_name": "calls_replace_snd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_replace_snd_type in clos_call_code_list_probe.out and source: all six inputs retain their original order and state/code carriers; the calls equation, equality of initial first components and output suffix equation imply the complete replacement calls equation."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_fv1_subset",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FreeVarsPreservation.lean", "lean_name": "calls_freeVar_subset",
   "statement_status": "reviewed_exact",
