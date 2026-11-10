@@ -1,6 +1,17 @@
-import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
-import Flapjack.Test.LabToTargetPaddingParity
-import Flapjack.Test.Fixtures.LabToTarget
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
+public import Flapjack.Test.LabToTargetPaddingParity
+public import Flapjack.Test.Fixtures.LabToTarget
+import all Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
+import all Flapjack.Test.LabToTargetPaddingParity
+import all Flapjack.Test.Fixtures.LabToTarget
+import all Flapjack.Compiler.Encoders.Asm
+import all Flapjack.Compiler.Backend.LabToTarget.Encoding
+import all Flapjack.Compiler.Backend.LabLang
+import all Init.Data.Sum.Basic
+
+@[expose] public section
 
 /-!
 # Native kernel replays of `lab_to_target_removelabels_probe.out`
