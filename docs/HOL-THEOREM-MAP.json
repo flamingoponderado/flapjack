@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "FST_insert_each_same",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertDomain.lean", "lean_name": "insertEach_fst_same",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_call_FST_insert_each_same_typed: the two state payload types remain independent, binders retain HOL order, and equality of initial first components implies equality of the inserted first components."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "insert_each_pair_arg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertDomain.lean", "lean_name": "insertEach_pair_arg",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_call_insert_each_pair_arg_typed: location, count, sparse set and both independently polymorphic payloads retain HOL order; the whole-pair equality is unchanged."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/db_varsScript.sml", "hol_name": "has_var_mk_Union",
   "lean_path": "Flapjack/Compiler/Backend/DbVars/Proofs/Lookup.lean", "lean_name": "hasVarMkUnion",
   "statement_status": "reviewed_exact",

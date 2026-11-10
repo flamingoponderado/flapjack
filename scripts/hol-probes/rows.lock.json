@@ -222,7 +222,7 @@
     {"bytes": 3500, "out": "clos_sem_thunk_probe.out", "rows": 14, "sha256": "9571b8061a963b3dcf34c6f3e005fea1bd08c6b91f9f32b4d7d8382239b7f2d8"},
     {"bytes": 17975, "out": "clos_sem_word_probe.out", "rows": 13, "sha256": "c61b66ff497423d7d68d13333af95455817fabe56c717255a46d59b12d4d326e"},
     {"bytes": 17484, "out": "clos_ticks_source_probe.out", "rows": 40, "sha256": "cf888d58b6fec9382816b6b14ea9c249f6031abe7e4a7f8c4713418e3952c3d8"},
-    {"bytes": 43806, "out": "clos_to_bvl_chain_probe.out", "rows": 99, "sha256": "31b508cd800084e6c54d9abf5bf883c36373a52e214911201e69602596396128"},
+    {"bytes": 44130, "out": "clos_to_bvl_chain_probe.out", "rows": 101, "sha256": "1ced552a048a92b6b8d30071a0aa9d14b9f557bd9b4f55b02a582704ba3050ea"},
     {"bytes": 831, "out": "clos_to_bvl_config_probe.out", "rows": 9, "sha256": "2a7c016a3f9936aa89f1e3dadf3697eb7f560c3ae208a859a9a373300b56203b"},
     {"bytes": 3488, "out": "clos_to_bvl_incremental_probe.out", "rows": 13, "sha256": "a9fa14e8649e4ad8c66615d2544fc7b5a32239432a0e555ebadfcd0b90b4d20b"},
     {"bytes": 15391, "out": "clos_to_bvl_recursive_types_probe.out", "rows": 12, "sha256": "95089028d6046d20954119127da63b7ec29d9ecbc110afd622de853ac6f282fa"},

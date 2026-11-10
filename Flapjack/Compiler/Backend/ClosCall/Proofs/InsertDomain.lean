@@ -20,6 +20,30 @@ theorem insertEach_snd {A : Type} (loc count : Nat) (state : NumSet × A) :
     | mk known payload =>
       exact ih (loc + 2) (sptInsert loc () known, payload)
 
+/-- The location component does not depend on either state payload. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "FST_insert_each_same"]
+theorem insertEach_fst_same {A B : Type} (loc count : Nat) (g0 : NumSet × A) (g1 : NumSet × B)
+    (same : g0.1 = g1.1) : (insertEachSource loc count g0).1 = (insertEachSource loc count g1).1 := by
+  induction count generalizing loc g0 g1 with
+  | zero => exact same
+  | succ count ih =>
+    cases g0 with
+    | mk known payload =>
+      cases g1 with
+      | mk known' payload' =>
+        simp only at same
+        subst known'
+        exact ih (loc + 2) (sptInsert loc () known, payload) (sptInsert loc () known, payload') rfl
+
+/-- Inserting locations uses only the first component of the input pair. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "insert_each_pair_arg"]
+theorem insertEach_pair_arg {A B : Type} (loc count : Nat) (known : NumSet) (payload : A) (other : B) :
+    insertEachSource loc count (known, payload) =
+      ((insertEachSource loc count (known, other)).1, payload) := by
+  apply Prod.ext
+  · exact insertEach_fst_same loc count _ _ rfl
+  · exact insertEach_snd loc count _
+
 /-- Inserting the successive locations adds exactly their generated set to
 the known-location domain. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "domain_FST_insert_each"]
