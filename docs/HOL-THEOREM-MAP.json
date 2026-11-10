@@ -42,6 +42,13 @@
   "reviewer": "Compared every_Fn_vs_NONE_cond_call_compile_inc_typed and HOL source: free variables program, enabled, known, the state carriers, both implication premises and conclusions match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "recclosure_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/RecClosureRelation.lean", "lean_name": "recClosureRel",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Source comparison: compared recclosure_rel_def_typed and both branches: well-formed compiler state, disjoint labels, source calls and free-variable condition, emitted stubs or transformed functions, state extension, permitted locations and included code. The code parameter uses the canonical finite-support lookup codec."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "kcompile_inc_uncurry",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownAddresses.lean", "lean_name": "kcompileInc_uncurry",
   "statement_status": "reviewed_exact",
