@@ -118495,8 +118495,8 @@
     "lean_name": "applySubst",
     "hol_path": "cakeml/compiler/inference/unifyScript.sml",
     "hol_name": "capply_subst_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Inference carrier or substitution transcribed against pinned HOL; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed capply_subst_def capture: Tuvar n = case lookup n s (getD), Tapp ts tc = Tapp (MAP (capply_subst s) ts) tc, and Tvar_db n unchanged. Lean's applySubst has the same three clauses (order differs), with applySubstList as the MAP traversal (Flapjack infrastructure with no HOL original) and sptLookup/getD for the lookup."
   },
   {
     "lean_path": "Flapjack/Compiler/Inference/Infer.lean",
