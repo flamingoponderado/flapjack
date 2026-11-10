@@ -67,4 +67,69 @@ theorem stateRel_lookupRefs {C F : Type} (g : State) (allowed : Nat → Prop)
   | none => simp [optionRel, found] at rel
   | some value' => exact ⟨value', rfl, by simpa [optionRel, found] using rel⟩
 
+/-- Fixing the target code makes direct-call state correspondence satisfy the
+generic primitive-operation simulation. HOL proves these clauses inline in
+do_app_thm. -/
+theorem stateRel_simple {C F : Type} (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) :
+    ClosProps.simpleStateRel (valueRel g allowed code)
+      (fun (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F) =>
+        stateRel g allowed source target ∧ target.code = code) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro s t ptr ⟨missing, rel, eq⟩
+    have cells := rel.2.2.2.2.1 ptr
+    rw [missing] at cells
+    cases found : s.refs.lookup ptr <;> simp_all [optionRel]
+  · intro bytes t s ptr ⟨found, rel, eq⟩
+    have cells := rel.2.2.2.2.1 ptr
+    rw [found] at cells
+    cases lookup : s.refs.lookup ptr with
+    | none => simp [optionRel, lookup] at cells
+    | some cell =>
+      cases cell <;> simp_all [optionRel, ClosProps.refRel]
+  · intro values t s ptr ⟨found, rel, eq⟩
+    have cells := rel.2.2.2.2.1 ptr
+    rw [found, eq] at cells
+    cases lookup : s.refs.lookup ptr with
+    | none => simp [optionRel, lookup] at cells
+    | some cell =>
+      cases cell <;> simp_all [optionRel, ClosProps.refRel]
+  · intro mode value t s ptr ⟨found, rel, eq⟩
+    have cells := rel.2.2.2.2.1 ptr
+    rw [found, eq] at cells
+    cases lookup : s.refs.lookup ptr with
+    | none => simp [optionRel, lookup] at cells
+    | some cell =>
+      cases cell <;> simp_all [optionRel, ClosProps.refRel]
+  · intro s t ⟨rel, eq⟩
+    refine ⟨rel.1, ?_, ?_⟩
+    · intro ptr
+      have cells := rel.2.2.2.2.1 ptr
+      cases left : s.refs.lookup ptr <;> cases right : t.refs.lookup ptr <;>
+        simp_all [optionRel]
+    · simpa [eq] using rel.2.2.2.1
+  · intro ffi s t ⟨rel, eq⟩
+    exact ⟨⟨rfl, rel.2⟩, eq⟩
+  · intro bytes s t ptr ⟨rel, eq⟩
+    refine ⟨⟨rel.1, rel.2.1, rel.2.2.1, rel.2.2.2.1, ?_, rel.2.2.2.2.2⟩, eq⟩
+    intro key
+    by_cases same : key = ptr
+    · subst key; simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, optionRel, ClosProps.refRel]
+    · simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using rel.2.2.2.2.1 key
+  · intro s t ptr xs ys ⟨⟨rel, eq⟩, related⟩
+    refine ⟨⟨rel.1, rel.2.1, rel.2.2.1, rel.2.2.2.1, ?_, rel.2.2.2.2.2⟩, eq⟩
+    intro key
+    by_cases same : key = ptr
+    · subst key; simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, optionRel, ClosProps.refRel, eq] using related
+    · simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using rel.2.2.2.2.1 key
+  · intro s t ptr mode v w ⟨⟨rel, eq⟩, related⟩
+    refine ⟨⟨rel.1, rel.2.1, rel.2.2.1, rel.2.2.2.1, ?_, rel.2.2.2.2.2⟩, eq⟩
+    intro key
+    by_cases same : key = ptr
+    · subst key; simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, optionRel, ClosProps.refRel, eq] using related
+    · simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using rel.2.2.2.2.1 key
+  · intro s t xs ys ⟨⟨rel, eq⟩, related⟩
+    refine ⟨⟨rel.1, rel.2.1, rel.2.2.1, ?_, rel.2.2.2.2⟩, eq⟩
+    simpa [eq] using related
+
 end Flapjack.Compiler.Backend.ClosCall

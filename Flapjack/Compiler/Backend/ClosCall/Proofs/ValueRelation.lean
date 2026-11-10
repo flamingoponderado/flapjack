@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
 public import Flapjack.Compiler.Backend.Semantics.ClosSem
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.SimpleRelations
 
 @[expose] public section
 
@@ -538,5 +539,35 @@ theorem valueRel_listAppend (g : State) (allowed : Nat → Prop)
     simp only [List.cons_append, listToValue]
     apply (valueRel_sourceEquations g allowed code).1 _ _ _ |>.mpr
     exact ⟨_, rfl, .cons head (.cons ih .nil)⟩
+
+/-- The direct-call value relation satisfies the generic primitive-operation
+simulation's value conditions. HOL proves these clauses inline in do_app_thm. -/
+theorem valueRel_simple (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) :
+    ClosProps.simpleValRel (valueRel g allowed code) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro x n
+    cases x <;> simp [valueRel, eq_comm]
+  · intro x fields tag
+    cases x with
+    | block sourceTag sourceFields =>
+      simp only [(valueRel_sourceEquations g allowed code).1]
+      simp [eq_comm]
+    | number n => simp [valueRel]
+    | word64 n => simp [valueRel]
+    | byteVector bytes => simp [valueRel]
+    | refPtr b n => simp [valueRel]
+    | closure loco values env arity body => simp [valueRel]
+    | recclosure loco values env fns index => simp [valueRel]
+  · intro x p
+    cases x <;> simp [valueRel, eq_comm]
+  · intro x p
+    cases x <;> simp [valueRel, eq_comm]
+  · intro x p b
+    cases x <;> simp [valueRel, eq_comm]
+  · intro body arity env args loc x related
+    cases x <;> simp_all [valueRel, ClosProps.isClos]
+  · intro index fns env args loc x related
+    cases x <;> simp_all [valueRel, ClosProps.isClos]
 
 end Flapjack.Compiler.Backend.ClosCall
