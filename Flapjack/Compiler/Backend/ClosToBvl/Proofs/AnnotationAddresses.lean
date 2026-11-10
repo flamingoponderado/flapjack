@@ -3,12 +3,28 @@ module
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IncrementalAddresses
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.CodeLocations
 public import Flapjack.Compiler.Backend.ClosAnnotate.Original
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants
 
 @[expose] public section
 
 /-! Closure annotation address preservation for incremental compilation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open ClosLang ClosProps
+
+/-- Annotated program bodies all have captured-variable annotations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "annotate_compile_every_Fn_vs_SOME"]
+theorem annotateCompile_everyFnVarsSome {α : Type} (es : List (α × Nat × ClosLang.Exp)) :
+    everyFnVarsSome ((ClosAnnotate.compileSource es).map (fun entry => entry.2.2)) := by
+  rw [ClosAnnotate.compileSource_eq]
+  induction es with
+  | nil => simp [everyFnVarsSome]
+  | cons entry rest ih =>
+    obtain ⟨name, arity, body⟩ := entry
+    have annotated : everyFnVarsSome (ClosAnnotate.annotateSource arity [body]) := by
+      rw [(ClosAnnotate.annotateSource_sing_eq arity body [body]).2]
+      exact ClosAnnotate.shiftList_varsSome _ 0 arity .ln
+    rw [(ClosAnnotate.annotateSource_sing_eq arity body []).1] at annotated
+    simpa [everyFnVarsSome] using And.intro annotated ih
 
 private theorem annotateCompile_codeLocations_sublist {α : Type}
     (xs : List (α × Nat × ClosLang.Exp)) :

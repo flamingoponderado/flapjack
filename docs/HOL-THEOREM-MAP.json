@@ -18,6 +18,24 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "annotate_compile_every_Fn_vs_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/AnnotationAddresses.lean", "lean_name": "annotateCompile_everyFnVarsSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared annotate_compile_every_fn_vars_some_typed and independent review: polymorphic label carrier, compiled program body projection and unconditional annotation conclusion match."
+ },
+ {
+  "hol_path": "cakeml/misc/miscScript.sml", "hol_name": "toAList_domain",
+  "lean_path": "Flapjack/Misc/Sptree/ToAList.lean", "lean_name": "sptMemMapFstToAList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared toaList_domain_typed and independent review: free tree followed by quantified key, mapped association-list keys and tree domain match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml", "hol_name": "known_compile_IS_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileLength.lean", "lean_name": "compile_isSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_compile_is_some_typed and independent review: config, input, output config and program order, equation premise and output-to-input presence equivalence match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "known_co_facts",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownOracleFacts.lean", "lean_name": "knownCo_facts",
   "statement_status": "reviewed_exact",
@@ -4550,9 +4568,9 @@
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
   "hol_name": "domain_lookup",
   "lean_path": "Flapjack/Misc/Sptree.lean",
-  "lean_name": "sptMem_iff_lookup",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared the typed sptree_domain_lookup capture: membership in the lookup-defined sptDomain is equivalent to existence of a successful sptLookup. The domain definition itself is pending source-shape and set-representation review."
+  "lean_name": "sptDomain_iff_lookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared sptree_domain_lookup_typed and independent review: tree then key, domain membership through reviewed sptDomain_def, and successful sptLookup existential match. The sptMem argument-order form remains untagged convenience."
 },
 {
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml",

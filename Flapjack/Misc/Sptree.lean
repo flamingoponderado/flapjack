@@ -144,15 +144,17 @@ def sptDomain {α : Type} (tree : Spt α) : Nat → Prop :=
 def sptMem {α : Type} (key : Nat) (tree : Spt α) : Prop :=
   sptDomain tree key
 
-/-- Exact port of HOL sptree `domain_lookup`
-(`HOL/src/finite_maps/sptreeScript.sml:620`): `k IN domain t` holds iff
-`lookup k t` returns some value. The result follows from the lookup-based
-definition of `sptDomain` for every tree. -/
+/-- Domain membership holds exactly when lookup returns a value. -/
 @[hol "hol4/src/finite_maps/sptreeScript.sml" "domain_lookup"]
-theorem sptMem_iff_lookup {α : Type} (key : Nat) (tree : Spt α) :
-    sptMem key tree ↔ ∃ v, sptLookup key tree = some v := by
-  unfold sptMem sptDomain
+theorem sptDomain_iff_lookup {α : Type} (tree : Spt α) (key : Nat) :
+    sptDomain tree key ↔ ∃ v, sptLookup key tree = some v := by
+  unfold sptDomain
   exact Option.isSome_iff_exists
+
+/-- Flapjack convenience form of `domain_lookup` in `sptMem` argument order. -/
+theorem sptMem_iff_lookup {α : Type} (key : Nat) (tree : Spt α) :
+    sptMem key tree ↔ ∃ v, sptLookup key tree = some v :=
+  sptDomain_iff_lookup tree key
 
 /-- No key is a member of the empty tree. -/
 @[simp] theorem sptMem_ln {α : Type} (key : Nat) :

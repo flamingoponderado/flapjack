@@ -157,6 +157,11 @@ val _ = show "clos_bvl_syntax_oracle_ok_typed=" clos_to_bvlProofTheory.syntax_or
 val _ = show "set_of_bag_typed=" bagTheory.SET_OF_BAG;
 val _ = show "syntax_oracle_ok_to_oracle_inv_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_to_oracle_inv;
 val _ = show "compile_inc_post_kcompile_typed=" clos_to_bvlProofTheory.compile_inc_post_kcompile_def;
+val _ = show "annotate_compile_every_fn_vars_some_typed=" clos_to_bvlProofTheory.annotate_compile_every_Fn_vs_SOME;
+val _ = show "every_fn_some_cond_call_typed=" clos_to_bvlProofTheory.every_Fn_SOME_cond_call_compile_inc;
+val _ = show "toaList_domain_typed=" miscTheory.toAList_domain;
+val _ = show "sptree_domain_lookup_typed=" sptreeTheory.domain_lookup;
+val _ = show "known_compile_is_some_typed=" clos_knownProofTheory.known_compile_IS_SOME;
 val _ = show "fst_known_co_typed=" clos_to_bvlProofTheory.FST_known_co;
 val _ = show "known_co_facts_typed=" clos_to_bvlProofTheory.known_co_facts;
 val _ = show "known_state_oracle_globals_approx_typed=" clos_to_bvlProofTheory.known_state_oracle_globals_approx;
