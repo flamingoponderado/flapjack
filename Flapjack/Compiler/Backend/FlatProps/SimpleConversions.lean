@@ -17,54 +17,35 @@ theorem simpleValueToCharList (relation : Value → Value → Prop)
     (chars : List Flapjack.Basis.Pure.MlString.HolChar)
     (related : relation left right) (decoded : valueToCharList left = some chars) :
     valueToCharList right = some chars := by
-  cases left with
-  | litv _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
-    simp [valueToCharList] at decoded
-  | conv stamp fields =>
+  revert right chars decoded
+  fun_induction valueToCharList left <;> simp_all [valueToCharList]
+  case case1 =>
+    rename_i cid tid h
+    intro right related
     have info := (simple.2 _ _ (by simp [isClosure])).1 related
     obtain ⟨targetFields, rfl⟩ := info.1
-    have fieldsRel : List.Forall₂ relation fields targetFields := by
+    have fieldsRel : List.Forall₂ relation [] targetFields := by
       simpa [valueContainerXs] using info.2
-    cases fields with
-    | nil =>
-      cases fieldsRel
-      exact decoded
-    | cons head rest =>
-      cases rest with
-      | nil => simp [valueToCharList] at decoded
-      | cons tail more =>
-        cases more with
-        | cons _ _ => simp [valueToCharList] at decoded
-        | nil =>
-          cases fieldsRel with
-          | cons headRel tailRel =>
-            cases tailRel with
-            | cons tailRel remaining =>
-              cases remaining
-              cases head with
-              | litv literal =>
-                have headInfo := (simple.2 _ _ (by simp [isClosure])).1 headRel
-                have headEq := headInfo.1
-                simp only [simpleBasicValRel] at headEq
-                subst_vars
-                cases literal with
-                | char char =>
-                  cases stamp with
-                  | none => simp [valueToCharList] at decoded
-                  | some stamp =>
-                    obtain ⟨tag, typeId⟩ := stamp
-                    by_cases valid : tag = BackendCommon.consTag ∧ typeId = some listId
-                    · cases tailDecoded : valueToCharList tail with
-                      | none => simp [valueToCharList, valid, tailDecoded] at decoded
-                      | some tailChars =>
-                        have targetTail := simpleValueToCharList relation simple tail _ tailChars tailRel tailDecoded
-                        simpa [valueToCharList, valid, tailDecoded, targetTail] using decoded
-                    · simp [valueToCharList, valid] at decoded
-                | intLit _ | word8 _ | word64 _ | strLit _ | float64 _ =>
-                  simp [valueToCharList] at decoded
-              | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
-                simp [valueToCharList] at decoded
-termination_by sizeOf left
+    cases fieldsRel
+    simp [valueToCharList]
+  case case3 =>
+    rename_i cid tid head tail h ih
+    intro right chars related x tailDecoded hchars
+    have info := (simple.2 _ _ (by simp [isClosure])).1 related
+    obtain ⟨targetFields, rfl⟩ := info.1
+    have fieldsRel : List.Forall₂ relation [.litv (.char head), tail] targetFields := by
+      simpa [valueContainerXs] using info.2
+    cases fieldsRel with
+    | cons headRel tailRel =>
+      cases tailRel with
+      | cons tailRel remaining =>
+        cases remaining
+        have headInfo := (simple.2 _ _ (by simp [isClosure])).1 headRel
+        have headEq := headInfo.1
+        simp only [simpleBasicValRel] at headEq
+        subst_vars
+        have targetTail := ih _ _ tailRel tailDecoded
+        simp [valueToCharList, targetTail]
 
 set_option maxRecDepth 4096 in
 /-- Decoding related flat lists produces pointwise related elements. -/
