@@ -27,14 +27,13 @@ theorem everyExp_letrec (predicate : AstHOL.Exp → Bool)
         funs.all (fun (_, _, expr) => everyExp predicate expr)) := by
   simp [everyExp, everyExpFuns_eq_all, Bool.and_assoc]
 
-/-- Flapjack helper stating evaluation of an anonymous let as equality of the
-two evaluator results. The result-shaped HOL case is proved below. -/
-theorem evaluateLiftLet_anonymous {F : Type} (state : State F) (env : SemEnv Value)
-    (loc : Flapjack.Misc.Location.Locs) (pat : Pat) (first body : AstHOL.Exp)
-    (safe : (EvaluateHOL.evaluateDecs state env [.dlet loc pat (.let_ none first body)]).2 ≠
+/-- Equality of source and lifted let evaluation for either optional binder. -/
+private theorem evaluateLiftLet_option {F : Type} (state : State F) (env : SemEnv Value)
+    (loc : Flapjack.Misc.Location.Locs) (pat : Pat) (name : Option VarN) (first body : AstHOL.Exp)
+    (safe : (EvaluateHOL.evaluateDecs state env [.dlet loc pat (.let_ name first body)]).2 ≠
       .err (.abort .typeError)) :
-    EvaluateHOL.evaluateDecs state env [.dlocal [.dlet loc .pany first] [.dlet loc pat body]] =
-      EvaluateHOL.evaluateDecs state env [.dlet loc pat (.let_ none first body)] := by
+    EvaluateHOL.evaluateDecs state env [.dlocal [.dlet loc (match name with | none => .pany | some n => .pvar n) first] [.dlet loc pat body]] =
+      EvaluateHOL.evaluateDecs state env [.dlet loc pat (.let_ name first body)] := by
   have hp : (patBindings pat).Nodup := by
     by_cases h : (patBindings pat).Nodup
     · exact h
@@ -47,78 +46,34 @@ theorem evaluateLiftLet_anonymous {F : Type} (state : State F) (env : SemEnv Val
     cases h : everyExp (oneConCheck env.c) body with
     | true => rfl
     | false => simp [EvaluateHOL.evaluateDecs, everyExp, oneConCheck, h, EvaluateHOL.typeError] at safe
-  have localEq : EvaluateHOL.evaluateDecs state env [.dlocal [.dlet loc .pany first] [.dlet loc pat body]] =
-      (let result := EvaluateHOL.evaluateDecs state env [.dlet loc .pany first]
+  have localEq : EvaluateHOL.evaluateDecs state env [.dlocal [.dlet loc (match name with | none => .pany | some n => .pvar n) first] [.dlet loc pat body]] =
+      (let result := EvaluateHOL.evaluateDecs state env [.dlet loc (match name with | none => .pany | some n => .pvar n) first]
        match result.2 with
        | .err err => (result.1, .err err)
        | .val inner => EvaluateHOL.evaluateDecs result.1 (extendDecEnv inner env) [.dlet loc pat body]) := by
     conv =>
       lhs
-      rw [EvaluateHOL.evaluateDecs, (EvaluateHOL.fixClockEvaluate state env [] [.dlet loc .pany first]).2]
+      rw [EvaluateHOL.evaluateDecs, (EvaluateHOL.fixClockEvaluate state env [] [.dlet loc (match name with | none => .pany | some n => .pvar n) first]).2]
     rfl
   rw [localEq]
-  simp only [EvaluateHOL.evaluateDecs, everyExp, oneConCheck, Bool.true_and, hp, decide_true,
-    hf, hb, Bool.and_self, ↓reduceIte, patBindings, List.nodup_nil, pmatch]
-  conv =>
-    rhs
-    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate state env [first] []).1]
-  cases run : EvaluateHOL.evaluate state env [first] with
-  | mk next result =>
-    cases result with
-    | err error => simp
-    | val values =>
-      cases env with
-      | mk variables constructors =>
-        cases variables
-        cases constructors
-        simp_all [nsOptBind, extendDecEnv, alistToNs, nsAppend, nsEmpty]
-
-/-- Flapjack equality helper for named lets, including shadowing of an
-existing binding. The result-shaped HOL case is proved below. -/
-theorem evaluateLiftLet_named {F : Type} (state : State F) (env : SemEnv Value)
-    (loc : Flapjack.Misc.Location.Locs) (pat : Pat) (name : VarN) (first body : AstHOL.Exp)
-    (safe : (EvaluateHOL.evaluateDecs state env [.dlet loc pat (.let_ (some name) first body)]).2 ≠
-      .err (.abort .typeError)) :
-    EvaluateHOL.evaluateDecs state env [.dlocal [.dlet loc (.pvar name) first] [.dlet loc pat body]] =
-      EvaluateHOL.evaluateDecs state env [.dlet loc pat (.let_ (some name) first body)] := by
-  have hp : (patBindings pat).Nodup := by
-    by_cases h : (patBindings pat).Nodup
-    · exact h
-    · simp [EvaluateHOL.evaluateDecs, everyExp, oneConCheck, h, EvaluateHOL.typeError] at safe
-  have hf : everyExp (oneConCheck env.c) first = true := by
-    cases h : everyExp (oneConCheck env.c) first with
-    | true => rfl
-    | false => simp [EvaluateHOL.evaluateDecs, everyExp, oneConCheck, h, EvaluateHOL.typeError] at safe
-  have hb : everyExp (oneConCheck env.c) body = true := by
-    cases h : everyExp (oneConCheck env.c) body with
-    | true => rfl
-    | false => simp [EvaluateHOL.evaluateDecs, everyExp, oneConCheck, h, EvaluateHOL.typeError] at safe
-  have localEq : EvaluateHOL.evaluateDecs state env [.dlocal [.dlet loc (.pvar name) first] [.dlet loc pat body]] =
-      (let result := EvaluateHOL.evaluateDecs state env [.dlet loc (.pvar name) first]
-       match result.2 with
-       | .err err => (result.1, .err err)
-       | .val inner => EvaluateHOL.evaluateDecs result.1 (extendDecEnv inner env) [.dlet loc pat body]) := by
+  cases name <;> (
+    simp only [EvaluateHOL.evaluateDecs, everyExp, oneConCheck, Bool.true_and, hp, decide_true,
+      hf, hb, Bool.and_self, ↓reduceIte, patBindings, List.nodup_cons, List.not_mem_nil,
+      not_false_eq_true, List.nodup_nil, pmatch]
     conv =>
-      lhs
-      rw [EvaluateHOL.evaluateDecs, (EvaluateHOL.fixClockEvaluate state env [] [.dlet loc (.pvar name) first]).2]
-    rfl
-  rw [localEq]
-  simp only [EvaluateHOL.evaluateDecs, everyExp, oneConCheck, Bool.true_and, hp, decide_true,
-    hf, hb, Bool.and_self, ↓reduceIte, patBindings, List.nodup_cons, List.not_mem_nil,
-    not_false_eq_true, List.nodup_nil, pmatch]
-  conv =>
-    rhs
-    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate state env [first] []).1]
-  cases run : EvaluateHOL.evaluate state env [first] with
-  | mk next result =>
-    cases result with
-    | err error => simp
-    | val values =>
-      cases env with
-      | mk variables constructors =>
-        cases variables
-        cases constructors
-        simp_all [nsOptBind, nsBind, extendDecEnv, alistToNs, nsAppend, nsEmpty]
+      rhs
+      rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate state env [first] []).1]
+    cases run : EvaluateHOL.evaluate state env [first] with
+    | mk next result =>
+      cases result with
+      | err error => simp
+      | val values =>
+        cases env with
+        | mk variables constructors =>
+          cases variables
+          cases constructors
+          simp_all [nsOptBind, nsBind, extendDecEnv, alistToNs, nsAppend, nsEmpty]
+  )
 
 /-- Flapjack equality helper for lifting recursive bindings. The result-shaped
 HOL case is proved below. -/
@@ -193,11 +148,11 @@ theorem evaluate_lift_let {F : Type} (state : State F) (env : SemEnv Value) (d :
       | none =>
         simp only [liftLet, Option.some.injEq, Prod.mk.injEq] at lifted
         obtain ⟨rfl, rfl⟩ := lifted
-        rw [evaluateLiftLet_anonymous state env loc pat first body safe', source]
+        rw [evaluateLiftLet_option state env loc pat none first body safe', source]
       | some name =>
         simp only [liftLet, Option.some.injEq, Prod.mk.injEq] at lifted
         obtain ⟨rfl, rfl⟩ := lifted
-        rw [evaluateLiftLet_named state env loc pat name first body safe', source]
+        rw [evaluateLiftLet_option state env loc pat (some name) first body safe', source]
     | letrec funs body =>
       simp only [liftLet, Option.some.injEq, Prod.mk.injEq] at lifted
       obtain ⟨rfl, rfl⟩ := lifted
