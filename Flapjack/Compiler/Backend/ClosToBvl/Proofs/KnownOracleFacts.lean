@@ -7,6 +7,7 @@ public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CodeLocations
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.SyntaxOk
 public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Syntax
 public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Syntax
+public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Syntax
 
 @[expose] public section
 
@@ -14,6 +15,52 @@ public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Syntax
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open ClosLang ClosProps BackendProps ClosKnown
 local instance : Nonempty ClosKnown.Config := ⟨ClosKnown.defaultConfig 0⟩
+
+/-- The known-function oracle preserves absent variable annotations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "every_Fn_vs_NONE_known_co"]
+theorem everyFnVarsNone_knownCo {α : Type}
+    (f : Nat → (Spt ValApprox × α) × ClosSem.Program) (n : Nat) (conf : Option ClosKnown.Config) :
+    (everyFnVarsNone (f n).2.1 ∧ globalsApproxVarsNone (f n).1.1 →
+      everyFnVarsNone (ClosKnown.knownCo conf f n).2.1) ∧
+    (everyFnVarsNone ((f n).2.2.map (fun p => p.2.2)) →
+      everyFnVarsNone ((ClosKnown.knownCo conf f n).2.2.map (fun p => p.2.2))) := by
+  cases conf with
+  | none => simp [ClosKnown.knownCo, stateCo]; tauto
+  | some c =>
+    have preserve (h : everyFnVarsNone (f n).2.1 ∧ globalsApproxVarsNone (f n).1.1) :=
+      TraversalSyntax.knownEveryFnVarsNone (resetInlineFactor c)
+        (ClosFvs.compile (f n).2.1) [] (f n).1.1
+        ⟨by simpa [ClosFvs.compile, ClosFvs.removeList_varsNone] using h.1, by simp, h.2⟩
+    simp only [ClosKnown.knownCo, Function.comp_apply, pureCo, stateCo,
+      ClosFvs.compileInc, ClosKnown.compileInc, ClosTicks.compileInc, ClosLetop.compileInc]
+    constructor
+    · intro h
+      simpa [ClosLetop.compileList_varsNone, ClosTicks.removeList_varsNone] using (preserve h).1
+    · intro _
+      simp [everyFnVarsNone]
+
+/-- The known-function oracle preserves present function locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "every_Fn_SOME_known_co"]
+theorem everyFnLocationSome_knownCo {α : Type}
+    (f : Nat → (Spt ValApprox × α) × ClosSem.Program) (n : Nat) (conf : Option ClosKnown.Config) :
+    (everyFnLocationSome (f n).2.1 ∧ globalsApproxLocations (f n).1.1 →
+      everyFnLocationSome (ClosKnown.knownCo conf f n).2.1) ∧
+    (everyFnLocationSome ((f n).2.2.map (fun p => p.2.2)) →
+      everyFnLocationSome ((ClosKnown.knownCo conf f n).2.2.map (fun p => p.2.2))) := by
+  cases conf with
+  | none => simp [ClosKnown.knownCo, stateCo]; tauto
+  | some c =>
+    have preserve (h : everyFnLocationSome (f n).2.1 ∧ globalsApproxLocations (f n).1.1) :=
+      TraversalLocations.knownEveryFnLocations (resetInlineFactor c)
+        (ClosFvs.compile (f n).2.1) [] (f n).1.1
+        ⟨by simpa [ClosFvs.compile, ClosFvs.removeList_locations] using h.1, by simp, h.2⟩
+    simp only [ClosKnown.knownCo, Function.comp_apply, pureCo, stateCo,
+      ClosFvs.compileInc, ClosKnown.compileInc, ClosTicks.compileInc, ClosLetop.compileInc]
+    constructor
+    · intro h
+      simpa [ClosLetop.compileList_locations, ClosTicks.removeList_locations] using (preserve h).1
+    · intro _
+      simp [everyFnLocationSome]
 
 /-- Every known-function oracle state preserves both global annotation invariants. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "known_state_oracle_globals_approx"]

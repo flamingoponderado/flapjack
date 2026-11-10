@@ -42,6 +42,18 @@
   "reviewer": "Compared every_Fn_vs_NONE_cond_call_compile_inc_typed and HOL source: free variables program, enabled, known, the state carriers, both implication premises and conclusions match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_vs_NONE_known_co",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownOracleFacts.lean", "lean_name": "everyFnVarsNone_knownCo",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_Fn_vs_NONE_known_co_typed and source: free variables f, n, conf retain their order; the expression/global premise and auxiliary-code premise separately imply the corresponding transformed oracle invariants."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_SOME_known_co",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownOracleFacts.lean", "lean_name": "everyFnLocationSome_knownCo",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_Fn_SOME_known_co_typed and source: free variables f, n, conf retain their order; the expression/global premise and auxiliary-code premise separately imply the corresponding transformed oracle invariants."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_SOME_cond_call_compile_inc",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallAddresses.lean", "lean_name": "everyFnLocationSome_condCallCompileInc",
   "statement_status": "reviewed_exact",
