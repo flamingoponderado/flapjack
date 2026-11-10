@@ -119832,32 +119832,36 @@
     "hol_name": "evaluate_prog_events_determ",
     "lean_path": "Flapjack/SemanticsProps/Clock.lean",
     "lean_name": "evaluateProg_eventsDeterm",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL statement captured in semantics_props_implements_probe; source evaluator, lazy-list representation and carrier review remain pending, including inherited rational-cut floating-point assumption."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the complete source statement (semanticsPropsScript.sml:10-15) with the typed semantics_props_implements_probe capture: the same st/env/k/p/k' binders, the same LENGTH premise on FST(evaluate_prog_with_clock st env k p).io_events and the same io_events conclusion, with the reviewed evaluate_prog_with_clock_def port rendered as evaluateProgWithClock and FST as .1. Carriers are the reviewed State/SemEnv/Value/Dec/HolFfiState/HolIoEvent ports. It inherits reals_as_rational_cuts through evaluation; see SOUNDNESS item 8.",
+    "inherits_reals_as_rational_cuts": true
   },
   {
     "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
     "hol_name": "evaluate_prog_io_events_chain",
     "lean_path": "Flapjack/SemanticsProps/Clock.lean",
     "lean_name": "evaluateProg_ioEventsChain",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL statement captured in semantics_props_implements_probe; source evaluator, lazy-list representation and carrier review remain pending, including inherited rational-cut floating-point assumption."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the complete source statement (semanticsPropsScript.sml:27-28) with the typed semantics_props_implements_probe capture: HOL's lprefix_chain (IMAGE (λk. fromList (FST (evaluate_prog_with_clock st env k prog)).io_events) UNIV) is rendered with the set-as-predicate form lprefixChain (fun events => ∃ k, fromList ... = events), which denotes the same image; lprefixChain, fromList and LPREFIX are the reviewed lprefix_lubScript/llistScript ports, and evaluateProgWithClock is the reviewed evaluate_prog_with_clock_def port. It inherits reals_as_rational_cuts through evaluation; see SOUNDNESS item 8.",
+    "inherits_reals_as_rational_cuts": true
   },
   {
     "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
     "hol_name": "semantics_prog_total",
     "lean_path": "Flapjack/SemanticsProps/Clock.lean",
     "lean_name": "semanticsProg_total",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL statement captured in semantics_props_implements_probe; source evaluator, lazy-list representation and carrier review remain pending, including inherited rational-cut floating-point assumption."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the complete source statement (semanticsPropsScript.sml:38-39) with the typed semantics_props_implements_probe capture: HOL's ∀s e p. ∃b. semantics_prog s e p b is rendered as the same universally quantified st/env/prog with the same existential behaviour, using the reviewed semantics_prog_def port as a function HolBehaviour → Prop (equivalent to HOL's relation). Carriers are the reviewed State/SemEnv/Value/Dec/HolBehaviour ports. It inherits reals_as_rational_cuts through evaluation; see SOUNDNESS item 8.",
+    "inherits_reals_as_rational_cuts": true
   },
   {
     "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
     "hol_name": "semantics_prog_deterministic",
     "lean_path": "Flapjack/SemanticsProps/Determinism.lean",
     "lean_name": "semanticsProg_deterministic",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL statement captured in semantics_props_implements_probe; source evaluator, lazy-list representation and carrier review remain pending, including inherited rational-cut floating-point assumption."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the complete source statement (semanticsPropsScript.sml:84-88) with the typed semantics_props_implements_probe capture: the same ∀s e p b b'. semantics_prog s e p b ∧ semantics_prog s e p b' ⇒ b = b' shape, with the reviewed semantics_prog_def port as a function HolBehaviour → Prop. Carriers are the reviewed State/SemEnv/Value/Dec/HolBehaviour ports. It inherits reals_as_rational_cuts through evaluation; see SOUNDNESS item 8.",
+    "inherits_reals_as_rational_cuts": true
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
