@@ -24,11 +24,14 @@ private theorem holEl_append_right (front tail : List Value) (index : Nat) (boun
 
 /-- Adding equal-length prefixes preserves an environment relation beyond
 the prefixes, without requiring their elements to be related. -/
-theorem envOk_extend_ignore (m l : Nat) (index : Spt Nat)
-    (front nextFront env nextEnv : List Value) (n : Nat)
-    (sameLength : nextFront.length = front.length) (beyond : front.length ≤ n)
-    (related : EnvOk m l index env nextEnv (n - front.length)) :
-    EnvOk m (l + front.length) index (front ++ env) (nextFront ++ nextEnv) n := by
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "env_ok_EXTEND_IGNORE"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem envOk_extend_ignore (nextFront front : List Value) (n prefixLength m l : Nat) (index : Spt Nat)
+    (env nextEnv : List Value)
+    (h : nextFront.length = front.length ∧ front.length ≤ n ∧ prefixLength = front.length ∧
+      EnvOk m l index env nextEnv (n - prefixLength)) :
+    EnvOk m (l + prefixLength) index (front ++ env) (nextFront ++ nextEnv) n := by
+  obtain ⟨sameLength, beyond, rfl, related⟩ := h
   have decomposition : n = front.length + (n - front.length) := by omega
   rw [decomposition]
   cases related with
@@ -43,9 +46,9 @@ theorem envOk_extend_ignore (m l : Nat) (index : Spt Nat)
       exact valueRel
     · simp only [List.length_append]; omega
     · simp only [List.length_append]; omega
-  | captured _ _ _ _ _ _ compact above below lookup sourceBound targetBound valueRel =>
+  | captured _ _ _ _ _ _ compact above below _ lookup sourceBound targetBound valueRel =>
     apply EnvOk.captured m (l + front.length) index (front ++ env) (nextFront ++ nextEnv)
-      (front.length + _) compact (by omega) (by omega)
+      (front.length + _) compact (by omega) (by omega) (by omega)
     · have sameIndex : front.length + (n - front.length) - (l + front.length) = n - front.length - l := by omega
       simpa [sameIndex] using lookup
     · simp only [List.length_append]; omega
@@ -68,11 +71,14 @@ private theorem forall₂_holEl {front nextFront : List Value}
 
 /-- Prepending related bindings extends the local prefix while preserving
 the compact mapping of all previously bound variables. -/
-theorem envOk_extend (m l : Nat) (index : Spt Nat)
-    (front nextFront env nextEnv : List Value) (n : Nat)
-    (frontRel : List.Forall₂ ValueRel front nextFront)
-    (tailRel : front.length ≤ n → EnvOk m l index env nextEnv (n - front.length)) :
-    EnvOk m (l + front.length) index (front ++ env) (nextFront ++ nextEnv) n := by
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "env_ok_EXTEND"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem envOk_extend (front nextFront : List Value) (prefixLength n m l : Nat) (index : Spt Nat)
+    (env nextEnv : List Value)
+    (h : List.Forall₂ ValueRel front nextFront ∧ prefixLength = front.length ∧
+      (prefixLength ≤ n → EnvOk m l index env nextEnv (n - prefixLength))) :
+    EnvOk m (l + prefixLength) index (front ++ env) (nextFront ++ nextEnv) n := by
+  obtain ⟨frontRel, rfl, tailRel⟩ := h
   have sameLength : nextFront.length = front.length := frontRel.length_eq.symm
   by_cases inFront : n < front.length
   · have targetBound : n < nextFront.length := by omega
@@ -81,6 +87,7 @@ theorem envOk_extend (m l : Nat) (index : Spt Nat)
       exact forall₂_holEl frontRel n inFront
     · simp only [List.length_append]; omega
     · simp only [List.length_append]; omega
-  · exact envOk_extend_ignore m l index front nextFront env nextEnv n sameLength (by omega) (tailRel (by omega))
+  · exact envOk_extend_ignore nextFront front n front.length m l index env nextEnv
+      ⟨sameLength, by omega, rfl, tailRel (by omega)⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate

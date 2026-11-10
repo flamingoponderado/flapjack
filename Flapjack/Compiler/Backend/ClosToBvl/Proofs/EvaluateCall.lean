@@ -137,7 +137,7 @@ theorem evaluatePost_call_body {C F : Type} (s sMiddle sFinal : ClosSem.State C 
     have clockEq : sMiddle.clock + clock2 - (ticks + 1) = sMiddle.clock - (ticks + 1) + clock2 := by omega
     have targetEnough : ¬ sMiddle.clock + clock2 < ticks + 1 := by omega
     refine ⟨clock1 + clock2, result2, tFinal, fFinal, ?_, ?_, state2,
-      relocationSubmap_trans map1 map2, unmappedRefsSubmap_trans refs1 refs2, annotations2, clocks2⟩
+      HolFiniteMapExact.submap_trans map1 map2, unmappedRefsSubmap_trans refs1 refs2, annotations2, clocks2⟩
     · rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, runArgs]
       simp only [targetFound', targetEnough, ↓reduceIte]
       simpa [ClosSem.decClock, BvlSem.decClock, clockEq] using targetRun2

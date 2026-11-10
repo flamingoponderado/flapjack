@@ -55,12 +55,6 @@ def encodeRefs {C F : Type} (state : FlatSem.State C F) : HolFiniteMapExact Nat 
         omega
       simp [absent] at present
 
-/-- Encoded reference lookup agrees with the original flat store lookup. -/
-theorem encodeRefs_lookup {C F : Type} (state : FlatSem.State C F) (index : Nat) :
-    (encodeRefs state).lookup index = match storeLookup index state.refs with
-      | some (.refv value) => some (encodeValue value)
-      | _ => none := rfl
-
 /-- HOL-shaped FUN_FMAP lookup: its domain contains bounded reference entries,
 and its value function retains HOL's arbitrary non-reference fallback. -/
 noncomputable def encodeRefsRaw {C F : Type} (state : FlatSem.State C F) (index : Nat) : Option PatternSemantics.Term := by

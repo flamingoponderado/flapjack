@@ -6,10 +6,12 @@ val _ = Globals.show_types := true;
 fun show label th = if null (hyp th) then
   (print label; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
+val _ = show "remove_typed=" clos_fvsTheory.remove_fvs_def;
 val _ = show "remove_sing_typed=" clos_fvsTheory.remove_fvs_sing_def;
 val _ = show "remove_sing_eq_typed=" clos_fvsTheory.remove_fvs_sing_eq;
 val _ = show "remove_length_typed=" clos_fvsTheory.LENGTH_remove_fvs;
 val _ = show "compile_typed=" clos_fvsTheory.compile_def;
+val _ = show "compile_eq_typed=" clos_fvsTheory.compile_eq;
 val _ = show "compile_inc_typed=" clos_fvsTheory.compile_inc_def;
 val _ = show "code_rel_typed=" clos_fvsProofTheory.code_rel_def;
 val _ = show "function_rel_typed=" clos_fvsProofTheory.f_rel_def;

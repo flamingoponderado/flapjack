@@ -85,15 +85,15 @@ theorem primitiveSimulation_global {C F : Type} (index : Nat) :
       | number number =>
         by_cases negative : number < 0
         · refine ⟨.err (.abort .typeError), ?_, ?_⟩ <;>
-            simp [doApp, applyGlobal, negative, AppResultRel, ResultRel]
+            simp [doApp, applyGlobal, negative, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]
         · obtain ⟨outcome, nextRun, rel⟩ := global_read_result source target states number.toNat
           refine ⟨outcome, ?_, ?_⟩
           · cases h : (getGlobal number.toNat target.globals).join <;> simpa [doApp, applyGlobal, negative, h] using nextRun
           · cases h : (getGlobal number.toNat source.globals).join <;> simpa [doApp, applyGlobal, negative, h] using rel
       | _ =>
-        exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel]⟩
+        exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons head tail =>
-      exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel]⟩
+      exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- Writing related values to the same empty global slot preserves states. -/
 theorem global_set_result {C F : Type} (source target : State C F) (states : StateRel source target)
@@ -107,7 +107,7 @@ theorem global_set_result {C F : Type} (source target : State C F) (states : Sta
     cases right : getGlobal index target.globals with
     | none =>
       exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal, right], by
-        simp [doApp, applyGlobal, left, AppResultRel, ResultRel]⟩
+        simp [doApp, applyGlobal, left, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | some x => simp [left, right, optionRel] at lookup
   | some x =>
     cases right : getGlobal index target.globals with
@@ -130,7 +130,7 @@ theorem global_set_result {C F : Type} (source target : State C F) (states : Sta
         | none => simp [left, right, optionRel] at lookup
         | some nextValue =>
           exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal, right], by
-            simp [doApp, applyGlobal, left, AppResultRel, ResultRel]⟩
+            simp [doApp, applyGlobal, left, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- Global writes preserve the primitive relation for every argument list. -/
 theorem primitiveSimulation_setGlobal {C F : Type} (index : Nat) :
@@ -138,12 +138,12 @@ theorem primitiveSimulation_setGlobal {C F : Type} (index : Nat) :
   intro values nextValues source target valuesRel states
   cases valuesRel with
   | nil =>
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons head tail =>
     cases tail with
     | nil => exact global_set_result source target states index _ _ head
     | cons first rest =>
-      exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel]⟩
+      exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- Appending equally many empty global slots preserves state relatedness. -/
 theorem stateRel_allocGlobals {C F : Type} (source target : State C F) (states : StateRel source target)
@@ -162,7 +162,7 @@ theorem primitiveSimulation_allocGlobal {C F : Type} :
   intro values nextValues source target valuesRel states
   cases valuesRel with
   | nil =>
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons head tail =>
     cases tail with
     | nil =>
@@ -170,15 +170,15 @@ theorem primitiveSimulation_allocGlobal {C F : Type} :
       | number number =>
         by_cases negative : number < 0
         · exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal, negative], by
-            simp [doApp, applyGlobal, negative, AppResultRel, ResultRel]⟩
+            simp [doApp, applyGlobal, negative, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
         · refine ⟨.val (unitValue, { target with globals := target.globals ++ List.replicate number.toNat none }), ?_, ?_⟩
           · simp [doApp, applyGlobal, negative]
           · simpa [doApp, applyGlobal, negative, AppResultRel, unitValue] using
               And.intro (ValueRel.block 0 [] [] .nil) (stateRel_allocGlobals source target states number.toNat)
       | _ =>
-        exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel]⟩
+        exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons first rest =>
-      exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel]⟩
+      exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- Every global operation preserves the candidate primitive simulation. -/
 theorem primitiveSimulation_globalOp {C F : Type} (op : ClosLang.GlobOp) :
@@ -189,6 +189,6 @@ theorem primitiveSimulation_globalOp {C F : Type} (op : ClosLang.GlobOp) :
   | allocGlobal => exact primitiveSimulation_allocGlobal
   | globalsPtr | setGlobalsPtr =>
     intro values nextValues source target valuesRel states
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyGlobal], by simp [doApp, applyGlobal, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate

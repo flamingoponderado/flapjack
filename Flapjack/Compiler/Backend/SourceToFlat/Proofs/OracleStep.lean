@@ -400,9 +400,9 @@ noncomputable def srcOracInvs {C : Type} [Nonempty C]
   (fmap_as_finite_support := [c, tys])]
 theorem srcOracInvs_growth {C : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (old new : GlobalEnv) (evalState : Option EvalState)
-    (premises : srcOracInvs interp transform old evalState ∧ finiteSubmap old.c new.c ∧
-      finiteSubmap old.tys new.tys ∧ subglobals old.v new.v) :
+    (old : GlobalEnv) (evalState : Option EvalState) (new : GlobalEnv)
+    (premises : srcOracInvs interp transform old evalState ∧ old.c.submap new.c ∧
+      old.tys.submap new.tys ∧ subglobals old.v new.v) :
     srcOracInvs interp transform new evalState := by
   obtain ⟨⟨steps, envs, gen⟩, constructors, types, slots⟩ := premises
   have growth := GlobalGrowth.ofSubglobals old new slots constructors types

@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Bvl.Syntax
 public import Flapjack.Misc.ListEl
+public import Flapjack.Compiler.Backend.BackendCommon.ClosTags
 
 @[expose] public section
 
@@ -52,12 +53,12 @@ def buildAux (i : Nat) : List (Nat × Bvl.Exp) → List (Nat × Nat × Bvl.Exp) 
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "recc_Let_def"]
 def reccLet (n numArgs i : Nat) : Bvl.Exp :=
   .let [mkElemAt (.var 0) 2]
-    (.let [.op (.blockOp (.cons 30)) [.var 0, mkConst (numArgs - 1), mkLabel n]]
+    (.let [.op (.blockOp (.cons BackendCommon.closureTag)) [.var 0, mkConst (numArgs - 1), mkLabel n]]
       (.let [.op (.memOp .update) [.var 0, mkConst i, .var 1]] (.var 1)))
 
 /-- Source-shaped recursive closure layout. HOL leaves `HD []` unspecified;
 the executed checked builder agrees when enough arities are supplied, as
-proved in `Proofs/Total.lean`. Full carrier correspondence remains under review. -/
+proved in `Proofs/Total.lean`. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "recc_Lets_def"]
 noncomputable def reccLetsHOL (n : Nat) (args : List Nat) : Nat → Bvl.Exp → Bvl.Exp
   | 0, body => body
@@ -68,7 +69,7 @@ noncomputable def reccLetsHOL (n : Nat) (args : List Nat) : Nat → Bvl.Exp → 
 /-- Build the first recursive closure, whose environment is already in scope. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "recc_Let0_def"]
 def reccLet0 (n numArgs i : Nat) : Bvl.Exp :=
-  .let [.op (.blockOp (.cons 30)) [.var 0, mkConst (numArgs - 1), mkLabel n]]
+  .let [.op (.blockOp (.cons BackendCommon.closureTag)) [.var 0, mkConst (numArgs - 1), mkLabel n]]
     (.let [.op (.memOp .update) [.var 0, mkConst i, .var 1]] (.var 1))
 
 /-- Source-shaped initial recursive closure layout, including HOL's
@@ -104,7 +105,7 @@ def numStubs (maxApp : Nat) : Nat := maxApp + maxApp * (maxApp - 1) / 2 + 1 + 1
 
 /-- Location of a generic-application stub. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "generic_app_fn_location_def"]
-def genericAppFnLocation (n : Nat) : Nat := n
+def genericAppFnLocation {α : Type} (n : α) : α := n
 
 /-- Location of a partial-application stub. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "partial_app_fn_location_def"]
@@ -127,6 +128,16 @@ def mkClCall (cl : Bvl.Exp) (args : List Bvl.Exp) : Bvl.Exp :=
   .ifThenElse (.op (.blockOp (.equalConst (.int (Int.ofNat arity)))) [mkElemAt cl 1])
     (.call arity none (args ++ [cl, mkElemAt cl 0]))
     (.call 0 (some (genericAppFnLocation arity)) (args ++ [cl]))
+
+/-- HOL-shaped append grouping for `mkClCall`; this Flapjack-specific
+equation records the associativity used by its executable definition. -/
+theorem mkClCall_hol (cl : Bvl.Exp) (args : List Bvl.Exp) :
+    mkClCall cl args =
+      let arity := args.length - 1
+      .ifThenElse (.op (.blockOp (.equalConst (.int (Int.ofNat arity)))) [mkElemAt cl 1])
+        (.call arity none ((args ++ [cl]) ++ [mkElemAt cl 0]))
+        (.call 0 (some (genericAppFnLocation arity)) (args ++ [cl])) := by
+  simp [mkClCall, List.append_assoc]
 
 /-- Emit the function that completes a partial closure application. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "generate_partial_app_closure_fn_def"]

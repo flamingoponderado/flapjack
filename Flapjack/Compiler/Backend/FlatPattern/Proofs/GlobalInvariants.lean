@@ -64,9 +64,15 @@ theorem esgcFree_children (trace : Tra) (value : FlatLang.Exp) (patterns : List 
 
 /-- Naive matching generates a global-initialization-safe guard when each worklist value is
 global-initialization-safe. -/
-theorem esgcFree_naivePatternMatch (trace : Tra) (todo : List (FlatLang.Pat × FlatLang.Exp))
-    (safe : ∀ pattern expression, (pattern, expression) ∈ todo → esgcFree expression) :
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "esgc_free_naive_pattern_match"]
+theorem esgcFree_naivePatternMatch_hol (trace : Tra) (todo : List (FlatLang.Pat × FlatLang.Exp))
+    (safeMapped : ∀ exp ∈ todo.map Prod.snd, esgcFree exp) :
     esgcFree (naivePatternMatch trace todo) := by
+  have safe : ∀ pattern expression, (pattern, expression) ∈ todo → esgcFree expression := by
+    intro pattern expression member
+    apply safeMapped expression
+    exact List.mem_map.mpr ⟨(pattern, expression), member, rfl⟩
+  clear safeMapped
   induction todo using naivePatternMatch.induct trace with
   | case1 => simpa [naivePatternMatch] using esgcFree_mkBool trace true
   | case2 value rest ih | case3 value rest _ ih =>
@@ -123,21 +129,27 @@ theorem esgcFree_naivePatternMatch (trace : Tra) (todo : List (FlatLang.Pat × F
 
 /-- Naive branch chains are global-initialization-safe when their value, default, and
 branch expressions are global-initialization-safe. -/
-theorem esgcFree_naivePatternMatches (trace : Tra) (value default : FlatLang.Exp) (rows : List (FlatLang.Pat × FlatLang.Exp))
-    (valueSafe : esgcFree value) (defaultSafe : esgcFree default)
-    (branchesSafe : ∀ pattern body, (pattern, body) ∈ rows → esgcFree body) :
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "esgc_free_naive_pattern_matches"]
+theorem esgcFree_naivePatternMatches_hol (trace : Tra) (value : FlatLang.Exp)
+    (rows : List (FlatLang.Pat × FlatLang.Exp)) (default : FlatLang.Exp)
+    (safe : ∀ exp ∈ value :: default :: rows.map Prod.snd, esgcFree exp) :
     esgcFree (naivePatternMatches trace value rows default) := by
+  have valueSafe : esgcFree value := safe value (by simp)
+  have defaultSafe : esgcFree default := safe default (by simp)
+  have branchesSafe : ∀ pattern body, (pattern, body) ∈ rows → esgcFree body := by
+    intro pattern body member
+    apply safe body
+    simp only [List.mem_cons, List.mem_map]
+    exact Or.inr (Or.inr ⟨(pattern, body), member, rfl⟩)
+  clear safe
   induction rows with
   | nil => exact defaultSafe
   | cons row rest ih =>
     obtain ⟨pattern, body⟩ := row
     simp only [naivePatternMatches]
     apply esgcFree_smartIf
-    · apply esgcFree_naivePatternMatch
-      intro pat expression member
-      simp only [List.mem_singleton, Prod.mk.injEq] at member
-      obtain ⟨_, rfl⟩ := member
-      exact valueSafe
+    · apply esgcFree_naivePatternMatch_hol
+      simpa using valueSafe
     · exact branchesSafe pattern body (by simp)
     · apply ih
       intro pat expression member
@@ -239,7 +251,7 @@ theorem setGlobals_children (trace : Tra) (value : FlatLang.Exp) (patterns : Lis
 
 /-- Naive matching generates a global-initialization-safe guard when each worklist value is
 global-initialization-safe. -/
-theorem setGlobals_naivePatternMatch_aux (trace : Tra) (todo : List (FlatLang.Pat × FlatLang.Exp))
+private theorem setGlobals_naivePatternMatch_aux (trace : Tra) (todo : List (FlatLang.Pat × FlatLang.Exp))
     (safe : ∀ pattern expression, (pattern, expression) ∈ todo → setGlobals expression = emptyGlobalBag) :
     setGlobals (naivePatternMatch trace todo) = emptyGlobalBag := by
   induction todo using naivePatternMatch.induct trace with
@@ -365,7 +377,7 @@ private theorem setGlobals_projectionFold (trace : Tra) (value body : FlatLang.E
     simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, ih, Flapjack.bagUnion_empty_left, Flapjack.bagUnion_empty_right]
 
 /-- Pattern binding preserves the global bag when worklist values have empty bags. -/
-theorem setGlobals_compilePatBindings_aux (trace : Tra) (base : Nat)
+private theorem setGlobals_compilePatBindings_aux (trace : Tra) (base : Nat)
     (todo : List (FlatLang.Pat × Nat × FlatLang.Exp)) (body : FlatLang.Exp)
     (todoSafe : ∀ pattern index expression, (pattern, index, expression) ∈ todo →
       setGlobals expression = emptyGlobalBag) :
@@ -594,33 +606,13 @@ theorem esgcFree_compilePats (cfg : Config) (naive : Bool) (trace : Tra) (base :
     exact eq.mp member
   | true =>
     simp only [compilePats, ↓reduceIte]
-    apply esgcFree_naivePatternMatches trace value default _ valueSafe defaultSafe
-    intro pattern branch member
-    exact branchesSafe branch (List.of_mem_zip member).2
-
-
-
-@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "esgc_free_naive_pattern_match"]
-theorem esgcFree_naivePatternMatch_hol (t : Tra) (xs : List (FlatLang.Pat × FlatLang.Exp))
-    (safe : ∀ exp ∈ xs.map Prod.snd, esgcFree exp) :
-    esgcFree (naivePatternMatch t xs) := by
-  apply esgcFree_naivePatternMatch
-  intro pat exp mem
-  apply safe exp
-  exact List.mem_map.mpr ⟨(pat, exp), mem, rfl⟩
-
-@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "esgc_free_naive_pattern_matches"]
-theorem esgcFree_naivePatternMatches_hol (t : Tra) (x : FlatLang.Exp)
-    (xs : List (FlatLang.Pat × FlatLang.Exp)) (dflt : FlatLang.Exp)
-    (safe : ∀ exp ∈ x :: dflt :: xs.map Prod.snd, esgcFree exp) :
-    esgcFree (naivePatternMatches t x xs dflt) := by
-  apply esgcFree_naivePatternMatches t x dflt xs
-  · exact safe x (by simp)
-  · exact safe dflt (by simp)
-  · intro pat exp mem
-    apply safe exp
-    simp only [List.mem_cons, List.mem_map]
-    exact Or.inr (Or.inr ⟨(pat, exp), mem, rfl⟩)
+    apply esgcFree_naivePatternMatches_hol trace value _ default
+    intro exp member
+    simp only [List.mem_cons, List.mem_map] at member
+    rcases member with rfl | rfl | ⟨⟨pattern, branch⟩, row, rfl⟩
+    · exact valueSafe
+    · exact defaultSafe
+    · exact branchesSafe branch (List.of_mem_zip row).2
 
 /-- Compiling match branches on a local scrutinee preserves the invariant. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "esgc_free_compile_pats"]

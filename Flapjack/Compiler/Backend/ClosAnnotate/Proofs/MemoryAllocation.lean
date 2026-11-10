@@ -54,11 +54,11 @@ theorem primitiveSimulation_refArray {C F : Type} :
   intro values nextValues source target valuesRel states
   cases valuesRel with
   | nil =>
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons countRel rest =>
     cases rest with
     | nil =>
-      exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+      exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons valueRel rest =>
       cases rest with
       | nil =>
@@ -66,7 +66,7 @@ theorem primitiveSimulation_refArray {C F : Type} :
         | number count =>
           by_cases negative : count < 0
           · exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory, negative], by
-              simp [doApp, applyMemory, negative, AppResultRel, ResultRel]⟩
+              simp [doApp, applyMemory, negative, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
           · rename_i value nextValue
             let index := leastUnusedRef source.refs
             have fresh : leastUnusedRef target.refs = index := (stateRel_leastUnusedRef source target states).symm
@@ -81,9 +81,9 @@ theorem primitiveSimulation_refArray {C F : Type} :
               refine ⟨.refPtr true index, ?_⟩
               simpa [index, states.2.1] using nextStates
         | _ =>
-          exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+          exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
       | cons third rest =>
-        exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+        exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- Byte-array allocation has matching validation and preserves byte contents. -/
 theorem primitiveSimulation_refByte {C F : Type} (flag : Bool) :
@@ -91,15 +91,15 @@ theorem primitiveSimulation_refByte {C F : Type} (flag : Bool) :
   intro values nextValues source target valuesRel states
   cases flag with
   | true =>
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | false =>
     cases valuesRel with
     | nil =>
-      exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+      exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons countRel rest =>
       cases rest with
       | nil =>
-        exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+        exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
       | cons byteRel rest =>
         cases rest with
         | nil =>
@@ -109,11 +109,11 @@ theorem primitiveSimulation_refByte {C F : Type} (flag : Bool) :
             | number byte =>
               by_cases negative : count < 0
               · exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory, negative], by
-                  simp [doApp, applyMemory, negative, AppResultRel, ResultRel]⟩
+                  simp [doApp, applyMemory, negative, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
               · cases decoded : intToByte byte with
                 | none =>
                   exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory, negative, decoded], by
-                    simp [doApp, applyMemory, negative, decoded, AppResultRel, ResultRel]⟩
+                    simp [doApp, applyMemory, negative, decoded, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
                 | some b =>
                   let index := leastUnusedRef source.refs
                   let bytes := List.replicate count.toNat b
@@ -127,10 +127,10 @@ theorem primitiveSimulation_refByte {C F : Type} (flag : Bool) :
                     refine ⟨.refPtr true index, ?_⟩
                     simpa [index, bytes, states.2.1] using nextStates
             | _ =>
-              exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+              exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
           | _ => cases byteRel <;>
-              exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+              exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
         | cons third rest =>
-          exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+          exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate

@@ -25,7 +25,7 @@ def syntaxOracleOk {C : Type} (c : Config) (xs : List ClosLang.Exp)
     (conf : Spt ValApprox) : Prop :=
   syntaxOk xs ∧
   isStateOracle (compileInc (α := List (Nat × Nat × ClosLang.Exp)) c)
-    (pureCo (ClosFvs.compileInc (β := Nat × Nat × ClosLang.Exp)) ∘ co) ∧
+    (pureCo (ClosFvs.compileIncSource (β := Nat × Nat × ClosLang.Exp)) ∘ co) ∧
   conf = (co 0).1.1 ∧
   oracleMonotonic (fun entry => {i | elistGlobals entry.2.1 i ≠ 0}) (· < ·)
     {i | elistGlobals xs i ≠ 0} co ∧
@@ -38,8 +38,9 @@ theorem syntaxOracleOk_stateSgcFree {C : Type} (c : Config) (xs : List ClosLang.
     (co : Nat → (Spt ValApprox × C) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
     (g : Spt ValApprox) (ys : List (ClosLang.Exp × ValApprox))
     (oracle : syntaxOracleOk c xs co g)
-    (known : knownListTotal c (ClosFvs.compile xs) [] .ln = (ys, g)) :
+    (known : knownListTotal c (ClosFvs.compileSource xs) [] .ln = (ys, g)) :
     oracleStateSgcFree co := by
+  simp only [ClosFvs.compileSource_eq_compile] at known
   obtain ⟨initial, recurrence, first, _, programs⟩ := oracle
   intro n
   induction n with
@@ -166,8 +167,9 @@ theorem syntaxOracleOk_gapproxSubspt {C : Type} (c : Config) (xs : List ClosLang
     (co : Nat → (Spt ValApprox × C) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
     (g : Spt ValApprox) (ys : List (ClosLang.Exp × ValApprox))
     (oracle : syntaxOracleOk c xs co g)
-    (known : knownListTotal c (ClosFvs.compile xs) [] .ln = (ys, g)) :
+    (known : knownListTotal c (ClosFvs.compileSource xs) [] .ln = (ys, g)) :
     oracleGapproxSubspt co := by
+  simp only [ClosFvs.compileSource_eq_compile] at known
   obtain ⟨_, recurrence, first, ordered, _⟩ := oracle
   have initial : oracleGapproxDisjoint g co := by
     apply monotonicGapproxDisjoint c (ClosFvs.compile xs) [] ys g co (elistGlobals xs) known ordered
@@ -220,19 +222,19 @@ prefix. This is a Lean helper for connecting the cleanup and optimizer. -/
 theorem fvsOraclePrefixGlobals {A B D : Type}
     (co : Nat → A × (List ClosLang.Exp × B)) (n : Nat) :
     elistGlobals (List.flatten (firstNExps
-      (pureCo (ClosFvs.compileInc (β := D)) ∘ co) n)) =
+      (pureCo (ClosFvs.compileIncSource (β := D)) ∘ co) n)) =
       elistGlobals (List.flatten (firstNExps co n)) := by
   induction n with
   | zero => simp [firstNExps]
   | succ n ih =>
     have src := firstNExpsShiftSeq co 1 n
-    have dst := firstNExpsShiftSeq (pureCo (ClosFvs.compileInc (β := D)) ∘ co) 1 n
+    have dst := firstNExpsShiftSeq (pureCo (ClosFvs.compileIncSource (β := D)) ∘ co) 1 n
     simp only [Nat.add_comm 1 n] at src dst
     rw [src, dst]
     have srcOne : firstNExps (Flapjack.holShiftSeq n co) 1 = [(co n).2.1] := by
       simp [firstNExps, List.ofFn_succ, Flapjack.holShiftSeq]
     have dstOne : firstNExps
-        (Flapjack.holShiftSeq n (pureCo (ClosFvs.compileInc (β := D)) ∘ co)) 1 =
+        (Flapjack.holShiftSeq n (pureCo (ClosFvs.compileIncSource (β := D)) ∘ co)) 1 =
         [ClosFvs.compile (co n).2.1] := by
       simp [firstNExps, List.ofFn_succ, Flapjack.holShiftSeq, pureCo, ClosFvs.compileInc]
     rw [srcOne, dstOne]
@@ -257,8 +259,9 @@ theorem syntaxOracleOk_fvsKnownPremises {C : Type} (c : Config) (xs : List ClosL
       (∀ e ∈ fxs, esgcFree e) ∧ fvMax 0 fxs ∧ (fco 0).1.1 = g ∧
       oracleGapproxDisjoint g fco ∧ knownListTotal c fxs [] .ln = (ys, g) := by
   have ⟨input, recurrence, first, ordered, programs⟩ := oracle
-  have mono := syntaxOracleOk_gapproxSubspt c xs co g ys oracle known
-  have safe := syntaxOracleOk_stateSgcFree c xs co g ys oracle known
+  simp only [ClosFvs.compileIncSource_eq] at recurrence
+  have mono := syntaxOracleOk_gapproxSubspt c xs co g ys oracle (by simpa using known)
+  have safe := syntaxOracleOk_stateSgcFree c xs co g ys oracle (by simpa using known)
   have unique := monotonicUniqueSetGlobals xs co ordered ⟨input.2.1, fun n => (programs n).1.2.1⟩
   have disjoint := monotonicGapproxDisjoint c (ClosFvs.compile xs) [] ys g co (elistGlobals xs)
     known ordered (by simpa [ClosFvs.compile] using (ClosFvs.removeList_globals xs 0).symm)
@@ -289,8 +292,10 @@ theorem syntaxOracleOk_fvsKnownPremises {C : Type} (c : Config) (xs : List ClosL
   · simpa [oracleStateSgcFree, pureCo] using safe
   · intro n key
     have bound := unique n key
+    have fvsPrefix := fvsOraclePrefixGlobals (D := Nat × Nat × ClosLang.Exp) co n
+    simp only [ClosFvs.compileIncSource_eq] at fvsPrefix
     simpa [elistGlobals_append, ClosFvs.compile, ClosFvs.removeList_globals,
-      fvsOraclePrefixGlobals] using bound
+      fvsPrefix] using bound
   · have safety := (ClosFvs.removeList_esgcFree xs 0).mpr
       (by simpa [esgcFreeList_iff] using input.2.2)
     exact (esgcFreeList_iff _).mp safety

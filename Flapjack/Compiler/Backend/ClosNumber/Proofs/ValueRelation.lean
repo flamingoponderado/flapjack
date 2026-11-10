@@ -160,43 +160,4 @@ decreasing_by
   have bound := List.sizeOf_lt_of_mem contained
   omega
 
-/-- Invert the closure case without requiring the two location annotations to
-coincide. -/
-theorem valueRel_closure_iff (maxApp : Nat) (location : Option Nat) (args env : List Value)
-    (arity : Nat) (body : ClosLang.Exp) (target : Value) :
-    ValueRel maxApp (.closure location args env arity body) target ↔
-      ∃ nextLocation nextArgs nextEnv start,
-        target = .closure nextLocation nextArgs nextEnv arity (renumber start body).2 ∧
-        List.Forall₂ (ValueRel maxApp) env nextEnv ∧
-        List.Forall₂ (ValueRel maxApp) args nextArgs ∧
-        ¬ ClosProps.containsAppSome maxApp [body] := by
-  constructor
-  · intro related
-    cases related with
-    | closure _ nextLocation _ nextArgs _ nextEnv _ start _ nextBody envRel argsRel safe bodyEq =>
-      subst nextBody
-      exact ⟨nextLocation, nextArgs, nextEnv, start, rfl, envRel, argsRel, safe⟩
-  · rintro ⟨nextLocation, nextArgs, nextEnv, start, rfl, envRel, argsRel, safe⟩
-    exact .closure location nextLocation args nextArgs env nextEnv arity start body _ envRel argsRel safe rfl
-
-/-- Invert recursive closures, retaining the source ordering and arities of
-the numbered function bundle. -/
-theorem valueRel_recclosure_iff (maxApp : Nat) (location : Option Nat) (args env : List Value)
-    (functions : List (Nat × ClosLang.Exp)) (index : Nat) (target : Value) :
-    ValueRel maxApp (.recclosure location args env functions index) target ↔
-      ∃ nextLocation nextArgs nextEnv start,
-        target = .recclosure nextLocation nextArgs nextEnv
-          ((functions.map Prod.fst).zip (renumberList start (functions.map Prod.snd)).2) index ∧
-        List.Forall₂ (ValueRel maxApp) env nextEnv ∧
-        List.Forall₂ (ValueRel maxApp) args nextArgs ∧
-        ¬ ClosProps.containsAppSome maxApp (functions.map Prod.snd) := by
-  constructor
-  · intro related
-    cases related with
-    | recclosure _ nextLocation _ nextArgs _ nextEnv _ nextFunctions _ start envRel argsRel safe functionsEq =>
-      subst nextFunctions
-      exact ⟨nextLocation, nextArgs, nextEnv, start, rfl, envRel, argsRel, safe⟩
-  · rintro ⟨nextLocation, nextArgs, nextEnv, start, rfl, envRel, argsRel, safe⟩
-    exact .recclosure location nextLocation args nextArgs env nextEnv functions _ index start envRel argsRel safe rfl
-
 end Flapjack.Compiler.Backend.ClosNumber

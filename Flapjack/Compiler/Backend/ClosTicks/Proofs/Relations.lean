@@ -11,7 +11,7 @@ open Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.BackendProps
 
 /-- Target code removes the source ticks. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "code_rel_def"]
-def CodeRel (source target : List ClosLang.Exp) : Prop := target = removeList source
+def CodeRel (source target : List ClosLang.Exp) : Prop := target = removeSource source
 
 /-- Related recursive function bodies retain their arity. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "f_rel_def"]
@@ -65,14 +65,14 @@ def StateRel {C F : Type} (source target : State C F) : Prop :=
   target.maxApp = source.maxApp ∧ 1 ≤ source.maxApp ∧ target.clock = source.clock ∧
   target.ffi = source.ffi ∧ List.Forall₂ (Flapjack.optionRel ValueRel) source.globals target.globals ∧
   (∀ key, Flapjack.optionRel RefRel (source.refs.lookup key) (target.refs.lookup key)) ∧
-  source.compile = pureCc compileInc target.compile ∧
-  target.compileOracle = pureCo compileInc ∘ source.compileOracle
+  source.compile = pureCc compileIncSource target.compile ∧
+  target.compileOracle = pureCo compileIncSource ∘ source.compileOracle
 
 /-- Related code lists have equal length. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "code_rel_IMP_LENGTH"]
 theorem code_rel_IMP_LENGTH (source target : List ClosLang.Exp) (related : CodeRel source target) :
     source.length = target.length := by
-  change target = removeList source at related
+  change target = removeSource source at related
   subst target
   simp [removeList_eq_map]
 

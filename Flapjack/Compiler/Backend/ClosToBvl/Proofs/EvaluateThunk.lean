@@ -52,9 +52,9 @@ theorem evaluatePost_allocThunk_success {C F : Type} (s sMiddle sLast : ClosSem.
       change _ ∧ BvlSem.doApp (.thunkOp (.allocThunk mode)) [_] tMiddle =
         .val (.refPtr false targetPtr, _) ∧ stateRel newMap _ _ ∧
         vRel sMiddle.maxApp newMap _ _ (.refPtr false sourcePtr) (.refPtr false targetPtr) ∧
-        relocationSubmap fMiddle newMap ∧ unmappedRefsSubmap tMiddle.refs _ fMiddle newMap at allocated
+        fMiddle.submap newMap ∧ unmappedRefsSubmap tMiddle.refs _ fMiddle newMap at allocated
       refine ⟨clock, .val [.refPtr false targetPtr], _, newMap, ?_, ?_, allocated.2.2.1,
-        relocationSubmap_trans map allocated.2.2.2.2.1,
+        HolFiniteMapExact.submap_trans map allocated.2.2.2.2.1,
         unmappedRefsSubmap_trans refs allocated.2.2.2.2.2, annotations, clocks⟩
       · rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, targetRun]
         simp [reversed, allocated.2.1]

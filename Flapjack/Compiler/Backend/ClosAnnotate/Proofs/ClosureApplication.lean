@@ -32,6 +32,8 @@ theorem functionsRel_getElem (env nextEnv : List Value) (count : Nat)
       obtain ⟨nextArity, nextBody⟩ := right
       simp only at equalArity shifted
       subst nextArity
+      simp only [shiftSource_eq_shiftList, altFreeSource_eq_altFree] at shifted
+      simp only [altFvSource_eq_altFv, and_imp] at live
       exact ⟨nextBody, m, index, by simp, shifted, live, safe, length⟩
     | succ i =>
       have rest : functions[i]? = some (arity, body) := by simpa using found
@@ -55,9 +57,9 @@ theorem envOk_application_body (body : ClosLang.Exp) (m localCount : Nat) (index
       EnvOk m 0 index env nextEnv (n - localCount)) :
     ∀ n, altFv n [body] = true → EnvOk m localCount index (front ++ env) (nextFront ++ nextEnv) n := by
   intro n present
-  have extended := envOk_extend m 0 index front nextFront env nextEnv n frontRel (by
+  have extended := envOk_extend front nextFront front.length n m 0 index env nextEnv ⟨frontRel, rfl, by
     intro bound
-    simpa [frontLength] using live n present (by simpa [frontLength] using bound))
+    simpa [frontLength] using live n present (by simpa [frontLength] using bound)⟩
   simpa [frontLength] using extended
 
 /-- Full applications expose an annotated body together with matching
@@ -76,6 +78,8 @@ theorem destClosure_related_full (maxApp : Nat) (requested : Option Nat)
   cases related with
   | number _ | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ => simp [destClosure] at run
   | closure location supplied nextSupplied env nextEnv arity m original nextBody index shifted live safe length suppliedRel =>
+    simp only [shiftSource_eq_shiftList, altFreeSource_eq_altFree] at shifted
+    simp only [altFvSource_eq_altFv, and_imp] at live
     have argsLen := argsRel.length_eq
     have suppliedLen := suppliedRel.length_eq
     by_cases valid : checkLoc maxApp requested location arity args.length supplied.length && supplied.length < arity
@@ -253,7 +257,7 @@ theorem evaluateApp_empty {C F : Type} (requested : Option Nat) (function nextFu
       StateRel (evaluateApp requested function [] source).2 targetNext := by
   refine ⟨.val [nextFunction], target, ?_, ?_, ?_⟩
   · rw [evaluateApp]
-  · simpa [evaluateApp, ResultRel] using List.Forall₂.cons related .nil
+  · simpa [evaluateApp, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel] using List.Forall₂.cons related .nil
   · simpa [evaluateApp] using states
 
 /-- A failed closure lookup produces the type error excluded by the
@@ -357,7 +361,7 @@ theorem evaluateApp_full {C F : Type} (requested : Option Nat) (function nextFun
           rw [bodyRun] at run
           cases run
           cases targetBodyResult with
-          | val values => cases error <;> simp [ResultRel] at bodyRel
+          | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at bodyRel
           | err targetError =>
             refine ⟨.err targetError, targetLast, ?_, bodyRel, lastRel⟩
             rw [evaluateApp, targetFound]
@@ -373,7 +377,7 @@ theorem evaluateApp_full {C F : Type} (requested : Option Nat) (function nextFun
             | cons value' tail => simp at size
             | nil =>
               cases targetBodyResult with
-              | err error => cases error <;> simp [ResultRel] at bodyRel
+              | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at bodyRel
               | val targetValues =>
                 cases bodyRel with
                 | cons valueRel tailRel =>

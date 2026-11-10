@@ -264,7 +264,7 @@ theorem evaluate_aux_call_from_worker {C F : Type} (ticks dest : Nat) (indices :
       (decClock (ticks + 1) target) ptr sourceResult sourceFinal) :
     ∃ result next g, evaluate [optimiseCallSource ticks dest indices ptrExp idxExp] env target = (result, next) ∧
       ResultRelation.optResRel g sourceResult result ∧ stateRel g sourceFinal next ∧
-      finiteSubmap f g ∧ onlyFresh f g target.refs ∧
+      f.submap g ∧ onlyFresh f g target.refs ∧
       holesUnchangedExcept f target.refs next.refs {ptr} ∧ holesStillNotFinalised f target.refs next.refs ∧
       ∀ sourceValue, sourceResult = .val [sourceValue] →
         ∃ targetValue, mutableBlockRel g oldRefs (next.refs.eraseEq ptr) sourceValue targetValue ∧
@@ -325,7 +325,7 @@ theorem evaluate_aux_rcall_from_body {C F : Type} (loc workerLoc ticks : Nat) (i
       evaluate [workerAuxSource (shiftBlock extras.length (.rCall ticks indices)) workerLoc slot idx]
         (extras ++ env2) target = (result, next) ∧
       ResultRelation.optResRel g sourceResult result ∧ stateRel g sourceFinal next ∧
-      finiteSubmap f g ∧ onlyFresh f g target.refs ∧
+      f.submap g ∧ onlyFresh f g target.refs ∧
       holesUnchangedExcept f target.refs next.refs {ptr} ∧ holesStillNotFinalised f target.refs next.refs ∧
       ∀ sourceValue, sourceResult = .val [sourceValue] →
         ∃ targetValue, mutableBlockRel g oldRefs (next.refs.eraseEq ptr) sourceValue targetValue ∧
@@ -415,7 +415,7 @@ theorem evaluate_aux_rcall {C F : Type} (loc workerLoc ticks : Nat) (indices : L
       evaluate [workerAuxSource (shiftBlock extras.length (.rCall ticks indices)) workerLoc slot idx]
         (extras ++ env2) target = (targetResult, next) ∧
       ResultRelation.optResRel g result targetResult ∧ stateRel g final next ∧
-      finiteSubmap f g ∧ onlyFresh f g target.refs ∧
+      f.submap g ∧ onlyFresh f g target.refs ∧
       holesUnchangedExcept f target.refs next.refs {ptr} ∧ holesStillNotFinalised f target.refs next.refs ∧
       ∀ sourceValue, result = .val [sourceValue] →
         ∃ targetValue, mutableBlockRel g oldRefs (next.refs.eraseEq ptr) sourceValue targetValue ∧

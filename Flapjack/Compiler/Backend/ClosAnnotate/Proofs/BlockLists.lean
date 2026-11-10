@@ -9,15 +9,16 @@ namespace Flapjack.Compiler.Backend.ClosAnnotate
 open Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.ClosProps
 
 /-- Related lists encode to related closure-language list values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "list_to_v_v_rel"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
 theorem listToValue_related (left right : List Value) (related : List.Forall₂ ValueRel left right) :
     ValueRel (listToValue left) (listToValue right) := by
   induction related with
   | nil => exact .block _ [] [] .nil
   | cons head tail ih => exact .block _ _ _ (.cons head (.cons ih .nil))
 
-/-- Decoding related values either fails on both sides or returns lists with
-pointwise-related elements. This remains a candidate until the HOL value and
-evaluator carriers are reviewed. -/
+/-- This option-relation reformulation is Flapjack infrastructure for the
+recursive proof and its consumers; the HOL disjunction is stated below. -/
 theorem valueToList_related (left right : Value) (related : ValueRel left right) :
     optionRel (List.Forall₂ ValueRel) (valueToList left) (valueToList right) := by
   cases related with
@@ -51,6 +52,20 @@ theorem valueToList_related (left right : Value) (related : ValueRel left right)
 termination_by sizeOf left
 decreasing_by simp_wf; omega
 
+/-- Related values decode either to two failures or to related lists. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_to_list"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem valueToList_relation (left right : Value) (related : ValueRel left right) :
+    (valueToList left = none ∧ valueToList right = none) ∨
+      ∃ xs ys, valueToList left = some xs ∧ valueToList right = some ys ∧
+        List.Forall₂ ValueRel xs ys := by
+  have decoded := valueToList_related left right related
+  cases leftRun : valueToList left with
+  | none =>
+    cases rightRun : valueToList right <;> simp_all [optionRel]
+  | some xs =>
+    cases rightRun : valueToList right <;> simp_all [optionRel]
+
 /-- Converting a closure-language list into a tagged block preserves its
 fields and agrees on malformed inputs. -/
 theorem primitiveSimulation_fromList {C F : Type} (tag : Nat) :
@@ -58,7 +73,7 @@ theorem primitiveSimulation_fromList {C F : Type} (tag : Nat) :
   intro values nextValues source target valuesRel states
   cases valuesRel with
   | nil =>
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons head tail =>
     cases tail with
     | nil =>
@@ -69,7 +84,7 @@ theorem primitiveSimulation_fromList {C F : Type} (tag : Nat) :
         cases rightRun : valueToList right with
         | none =>
           exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock, rightRun], by
-            simp [doApp, applyBlock, leftRun, AppResultRel, ResultRel]⟩
+            simp [doApp, applyBlock, leftRun, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
         | some ys => simp [leftRun, rightRun, optionRel] at decoded
       | some xs =>
         cases rightRun : valueToList right with
@@ -80,7 +95,7 @@ theorem primitiveSimulation_fromList {C F : Type} (tag : Nat) :
           · simp [doApp, applyBlock, rightRun]
           · simpa [doApp, applyBlock, leftRun, AppResultRel] using And.intro (ValueRel.block tag xs ys fields) states
     | cons first rest =>
-      exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+      exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- Appending two encoded lists preserves their related elements and agrees
 on decoding failures. -/
@@ -89,11 +104,11 @@ theorem primitiveSimulation_listAppend {C F : Type} :
   intro values nextValues source target valuesRel states
   cases valuesRel with
   | nil =>
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons first rest =>
     cases rest with
     | nil =>
-      exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+      exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons second rest =>
       cases rest with
       | nil =>
@@ -105,7 +120,7 @@ theorem primitiveSimulation_listAppend {C F : Type} :
           cases nextFirstRun : valueToList nextLeft with
           | none =>
             exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock, nextFirstRun], by
-              simp [doApp, applyBlock, firstRun, AppResultRel, ResultRel]⟩
+              simp [doApp, applyBlock, firstRun, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
           | some xs => simp [firstRun, nextFirstRun, optionRel] at firstDecoded
         | some xs =>
           cases nextFirstRun : valueToList nextLeft with
@@ -118,7 +133,7 @@ theorem primitiveSimulation_listAppend {C F : Type} :
               cases nextSecondRun : valueToList nextRight with
               | none =>
                 exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock, nextFirstRun, nextSecondRun], by
-                  simp [doApp, applyBlock, firstRun, secondRun, AppResultRel, ResultRel]⟩
+                  simp [doApp, applyBlock, firstRun, secondRun, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
               | some ys => simp [secondRun, nextSecondRun, optionRel] at secondDecoded
             | some ys =>
               cases nextSecondRun : valueToList nextRight with
@@ -133,6 +148,6 @@ theorem primitiveSimulation_listAppend {C F : Type} :
                 · simpa [doApp, applyBlock, firstRun, secondRun, AppResultRel] using
                     And.intro (listToValue_related _ _ appended) states
       | cons third rest =>
-        exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+        exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate

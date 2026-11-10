@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Pancake.PanLang
 public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Basis.Pure.MlString.Size
 public import Flapjack.Misc.List.Size
 
 @[expose] public section
@@ -404,18 +405,8 @@ shape1_size [] = 0
 shape1_size (a0::a1) = 1 + (shape_size a0 + shape1_size a1)
 ```
 
-They are transcribed below so that `memImpShapeSizeHOL` has HOL's exact
-statement. -/
-
-/-- HOL `char_size` (`HOL/src/string/stringScript.sml:179`): `char_size c = 0`
-    for every `char`.  Needed only to spell HOL's generated `mlstring_size`. -/
-def holCharSize (_ : Flapjack.Basis.Pure.MlString.HolChar) : Nat := 0
-
-/-- HOL's generated `mlstring_size` (for `Datatype: mlstring = implode string`,
-    `cakeml/basis/pure/mlstringScript.sml:19-21`):
-    `mlstring_size (implode a) = 1 + list_size char_size a`. -/
-def mlstringSizeHOL : MlS → Nat
-  | .implode data => 1 + listSizeHOL holCharSize data
+They are transcribed below and in the shared string-size module so that
+`memImpShapeSizeHOL` has HOL's exact statement. -/
 
 mutual
   /-- HOL's generated `shape_size`. -/

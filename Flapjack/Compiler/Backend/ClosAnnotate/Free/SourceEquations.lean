@@ -9,10 +9,9 @@ public import Flapjack.Misc.ListEl
 namespace Flapjack.Compiler.Backend.ClosAnnotate
 open ClosLang DbVars
 
-/-- List form of the free-variable pass. The HOL source specifies this by
-equations on singleton and longer lists; the production implementation uses
-the optimized mutually recursive functions. Its source correspondence is
-supported by the equations below and remains untagged pending review. -/
+/-- Auxiliary alias for source-shaped equations of the optimized traversal.
+The separate original recursion and its equivalence are in `Free.Original`
+and `Free.OriginalEquivalence`. -/
 def altFree (expressions : List Exp) : List Exp × DbVarSet := altFreeList expressions
 
 private theorem mkUnion_empty_right (set : DbVarSet) : mkUnion set .empty = set := by
@@ -22,12 +21,6 @@ private theorem mkUnion_empty_right (set : DbVarSet) : mkUnion set .empty = set 
 theorem altFree_singleton (expression : Exp) :
     altFree [expression] = ([(altFreeSing expression).1], (altFreeSing expression).2) := by
   simp [altFree, altFreeList, mkUnion_empty_right]
-
-/-- The head of a singleton transformation is its transformed expression;
-the unspecified empty-list case of HOL `HD` is never reached. -/
-theorem altFree_singleton_hd (expression : Exp) :
-    @Flapjack.holHd Exp ⟨.var .none 0⟩ (altFree [expression]).1 = (altFreeSing expression).1 := by
-  simp [altFree_singleton, Flapjack.holHd]
 
 /-- The source's non-singleton list equation. -/
 theorem altFree_cons_cons (first second : Exp) (rest : List Exp) :
@@ -135,22 +128,5 @@ theorem altFree_letrec (names : List Flapjack.Basis.Pure.MlString.MlString)
         (@Flapjack.holHd Exp ⟨.var .none 0⟩ (altFree [body]).1)],
        mkUnion live (.shift functions.length (altFree [body]).2)) := by
   simp [altFree_singleton, altFreeSing, Flapjack.holHd, altFreeFuns_as_map]
-
-/-- The list and recursive-function traversals agree with the optimized
-singleton pass, matching the three-part structure used by the source proof. -/
-theorem altFree_sing_eq :
-    (∀ expression, altFree [expression] =
-      ([(altFreeSing expression).1], (altFreeSing expression).2)) ∧
-    (∀ expressions, altFree expressions = altFreeList expressions) ∧
-    (∀ count functions, (∀ entry ∈ functions, altFree [entry.2] =
-        ([(altFreeSing entry.2).1], (altFreeSing entry.2).2)) ∧
-      altFreeFuns count functions = functions.map (fun (arity, body) =>
-        ((arity, (altFreeSing body).1), DbVarSet.shift (arity + count) (altFreeSing body).2))) := by
-  refine ⟨altFree_singleton, fun _ => rfl, ?_⟩
-  intro count functions
-  constructor
-  · intro entry _
-    exact altFree_singleton entry.2
-  · simpa [altFree_singleton, Flapjack.holHd] using altFreeFuns_as_map count functions
 
 end Flapjack.Compiler.Backend.ClosAnnotate

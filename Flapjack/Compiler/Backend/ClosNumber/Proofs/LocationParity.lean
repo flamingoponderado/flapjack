@@ -1,165 +1,157 @@
 module
 
-public import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationBounds
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
 
 @[expose] public section
 
-/-! Parity of the code locations allocated by closure numbering. -/
+/-! Parity of locations assigned by closure numbering. -/
 namespace Flapjack.Compiler.Backend.ClosNumber
 open ClosLang ClosProps
 
 mutual
-/-- Numbering changes the state by an even amount. -/
-theorem renumber_state_parity (expression : Exp) (start : Nat) :
-    (renumber start expression).1 % 2 = start % 2 := by
-  cases expression with
-  | var => rfl
-  | ifThenElse tr x y z =>
-    simp only [renumber]
-    rw [renumber_state_parity z, renumber_state_parity y, renumber_state_parity x]
-  | «let» tr xs x =>
-    simp only [renumber]
-    rw [renumber_state_parity x, renumberList_state_parity xs]
-  | raise tr x | tick tr x => exact renumber_state_parity x start
-  | handle tr x y =>
-    simp only [renumber]
-    rw [renumber_state_parity y, renumber_state_parity x]
-  | call tr ticks dest xs | op tr dest xs => exact renumberList_state_parity xs start
-  | app tr dest x xs =>
-    simp only [renumber]
-    rw [renumberList_state_parity xs, renumber_state_parity x]
-  | fn name dest vars arity body =>
-    simp only [renumber]
-    have h := renumber_state_parity body start
-    omega
-  | letrec names dest vars fns body =>
-    simp only [renumber]
-    rw [renumber_state_parity body]
-    have h := renumberFuns_state_parity fns start
-    omega
-termination_by sizeOf expression
+private theorem evenExpr (e : Exp) (n : Nat) (hn : n % 2 = 0) :
+    (renumber n e).1 % 2 = 0 ∧ ∀ x ∈ codeLocationsExp (renumber n e).2, x % 2 = 0 := by
+  cases e with
+  | var tr v => simp [renumber, codeLocationsExp, hn]
+  | raise tr e =>
+    have ih := evenExpr e n hn
+    cases h : renumber n e with
+    | mk m out => simpa [renumber, h, codeLocationsExp] using ih
+  | tick tr e =>
+    have ih := evenExpr e n hn
+    cases h : renumber n e with
+    | mk m out => simpa [renumber, h, codeLocationsExp] using ih
+  | ifThenElse tr a b c =>
+    cases ha : renumber n a with
+    | mk na oa =>
+      have h1 := evenExpr a n hn
+      simp only [ha] at h1
+      cases hb : renumber na b with
+      | mk nb ob =>
+        have h2 := evenExpr b na h1.1
+        simp only [hb] at h2
+        cases hc : renumber nb c with
+        | mk nc oc =>
+          have h3 := evenExpr c nb h2.1
+          simp only [hc] at h3
+          simpa [renumber, ha, hb, hc, codeLocationsExp, List.forall_mem_append, or_imp, forall_and] using
+            And.intro h3.1 (And.intro h1.2 (And.intro h2.2 h3.2))
+  | «let» tr args body =>
+    cases ha : renumberList n args with
+    | mk na oa =>
+      have h1 := evenList args n hn
+      simp only [ha] at h1
+      cases hb : renumber na body with
+      | mk nb ob =>
+        have h2 := evenExpr body na h1.1
+        simp only [hb] at h2
+        simpa [renumber, ha, hb, codeLocationsExp, List.forall_mem_append, or_imp, forall_and] using
+          And.intro h2.1 (And.intro h1.2 h2.2)
+  | handle tr a b =>
+    cases ha : renumber n a with
+    | mk na oa =>
+      have h1 := evenExpr a n hn
+      simp only [ha] at h1
+      cases hb : renumber na b with
+      | mk nb ob =>
+        have h2 := evenExpr b na h1.1
+        simp only [hb] at h2
+        simpa [renumber, ha, hb, codeLocationsExp, List.forall_mem_append, or_imp, forall_and] using
+          And.intro h2.1 (And.intro h1.2 h2.2)
+  | call tr ticks loc args =>
+    have ih := evenList args n hn
+    cases h : renumberList n args with
+    | mk m out => simpa [renumber, h, codeLocationsExp] using ih
+  | op tr op args =>
+    have ih := evenList args n hn
+    cases h : renumberList n args with
+    | mk m out => simpa [renumber, h, codeLocationsExp] using ih
+  | app tr loc f args =>
+    cases hf : renumber n f with
+    | mk nf ofun =>
+      have h1 := evenExpr f n hn
+      simp only [hf] at h1
+      cases ha : renumberList nf args with
+      | mk na oa =>
+        have h2 := evenList args nf h1.1
+        simp only [ha] at h2
+        simpa [renumber, hf, ha, codeLocationsExp, List.forall_mem_append, or_imp, forall_and] using
+          And.intro h2.1 (And.intro h1.2 h2.2)
+  | fn name loc vs arity body =>
+    have ih := evenExpr body n hn
+    cases h : renumber n body with
+    | mk m out =>
+      simp only [h] at ih
+      simp only [renumber, h, codeLocationsExp, Option.getD_some, List.forall_mem_append,
+        List.forall_mem_singleton]
+      exact ⟨by omega, ih.2, ih.1⟩
+  | letrec names loc vs fs body =>
+    cases hf : renumberFuns n fs with
+    | mk m outFuns =>
+      have h1 := evenFuns fs n hn
+      simp only [hf] at h1
+      have startEven : (m + 2 * outFuns.length) % 2 = 0 := by omega
+      cases hb : renumber (m + 2 * outFuns.length) body with
+      | mk next outBody =>
+        have h2 := evenExpr body (m + 2 * outFuns.length) startEven
+        simp only [hb] at h2
+        have rangeEven : ∀ x ∈ (List.range outFuns.length).map (fun i => m + 2 * i), x % 2 = 0 := by
+          intro x hx
+          obtain ⟨i, _, rfl⟩ := List.mem_map.mp hx
+          omega
+        simpa [renumber, hf, hb, codeLocationsExp, List.forall_mem_append, or_imp, forall_and] using
+          And.intro h2.1 (And.intro h1.2 (And.intro rangeEven h2.2))
+termination_by sizeOf e
 
-/-- List numbering preserves the state parity. -/
-theorem renumberList_state_parity (expressions : List Exp) (start : Nat) :
-    (renumberList start expressions).1 % 2 = start % 2 := by
-  cases expressions with
-  | nil => rfl
-  | cons first rest =>
-    simp only [renumberList]
-    rw [renumberList_state_parity rest, renumber_state_parity first]
-termination_by sizeOf expressions
+private theorem evenList (es : List Exp) (n : Nat) (hn : n % 2 = 0) :
+    (renumberList n es).1 % 2 = 0 ∧ ∀ x ∈ codeLocations (renumberList n es).2, x % 2 = 0 := by
+  cases es with
+  | nil => simp [renumberList, codeLocations, hn]
+  | cons e es =>
+    cases he : renumber n e with
+    | mk ne oe =>
+      have h1 := evenExpr e n hn
+      simp only [he] at h1
+      cases hs : renumberList ne es with
+      | mk ns os =>
+        have h2 := evenList es ne h1.1
+        simp only [hs] at h2
+        simpa [renumberList, he, hs, codeLocations, List.forall_mem_append, or_imp, forall_and] using
+          And.intro h2.1 (And.intro h1.2 h2.2)
+termination_by sizeOf es
 
-/-- Function-group numbering preserves the state parity. -/
-theorem renumberFuns_state_parity (functions : List (Nat × Exp)) (start : Nat) :
-    (renumberFuns start functions).1 % 2 = start % 2 := by
-  cases functions with
-  | nil => rfl
-  | cons first rest =>
-    cases first with
-    | mk arity body =>
-      simp only [renumberFuns]
-      rw [renumberFuns_state_parity rest, renumber_state_parity body]
-termination_by sizeOf functions
+private theorem evenFuns (fs : List (Nat × Exp)) (n : Nat) (hn : n % 2 = 0) :
+    (renumberFuns n fs).1 % 2 = 0 ∧ ∀ x ∈ codeLocationsFuns (renumberFuns n fs).2, x % 2 = 0 := by
+  cases fs with
+  | nil => simp [renumberFuns, codeLocationsFuns, hn]
+  | cons f fs =>
+    obtain ⟨arity, body⟩ := f
+    cases hb : renumber n body with
+    | mk nb ob =>
+      have h1 := evenExpr body n hn
+      simp only [hb] at h1
+      cases hs : renumberFuns nb fs with
+      | mk ns os =>
+        have h2 := evenFuns fs nb h1.1
+        simp only [hs] at h2
+        simpa [renumberFuns, hb, hs, codeLocationsFuns, List.forall_mem_append, or_imp, forall_and] using
+          And.intro h2.1 (And.intro h1.2 h2.2)
+termination_by sizeOf fs
 decreasing_by all_goals subst_vars; simp_wf <;> omega
 end
 
-mutual
-/-- Every location emitted by numbering has the input state's parity. -/
-theorem renumber_location_parity (expression : Exp) (start location : Nat)
-    (member : location ∈ codeLocationsExp (renumber start expression).2) :
-    location % 2 = start % 2 := by
-  cases expression with
-  | var trace n => simp [renumber, codeLocationsExp] at member
-  | ifThenElse trace condition yes no =>
-    simp only [renumber, codeLocationsExp, List.mem_append] at member
-    rcases member with (h | h) | h
-    · exact renumber_location_parity condition start location h
-    · have p := renumber_location_parity yes (renumber start condition).1 location h
-      rw [renumber_state_parity condition] at p
-      exact p
-    · have p := renumber_location_parity no (renumber (renumber start condition).1 yes).1 location h
-      rw [renumber_state_parity yes, renumber_state_parity condition] at p
-      exact p
-  | «let» trace bindings body =>
-    simp only [renumber, codeLocationsExp, List.mem_append] at member
-    cases member with
-    | inl h => exact renumberList_location_parity bindings start location h
-    | inr h =>
-      have p := renumber_location_parity body (renumberList start bindings).1 location h
-      rw [renumberList_state_parity bindings] at p
-      exact p
-  | raise trace body | tick trace body =>
-    exact renumber_location_parity body start location (by simpa [renumber, codeLocationsExp] using member)
-  | handle trace body handler =>
-    simp only [renumber, codeLocationsExp, List.mem_append] at member
-    cases member with
-    | inl h => exact renumber_location_parity body start location h
-    | inr h =>
-      have p := renumber_location_parity handler (renumber start body).1 location h
-      rw [renumber_state_parity body] at p
-      exact p
-  | call trace ticks dest args | op trace dest args =>
-    exact renumberList_location_parity args start location (by simpa [renumber, codeLocationsExp] using member)
-  | app trace dest function args =>
-    simp only [renumber, codeLocationsExp, List.mem_append] at member
-    cases member with
-    | inl h => exact renumber_location_parity function start location h
-    | inr h =>
-      have p := renumberList_location_parity args (renumber start function).1 location h
-      rw [renumber_state_parity function] at p
-      exact p
-  | fn name dest vars arity body =>
-    simp only [renumber, codeLocationsExp, List.mem_append, List.mem_singleton, Option.getD_some] at member
-    cases member with
-    | inl h => exact renumber_location_parity body start location h
-    | inr h =>
-      subst location
-      exact renumber_state_parity body start
-  | letrec names dest vars functions body =>
-    simp only [renumber, codeLocationsExp, List.mem_append, List.mem_map, List.mem_range, Option.getD_some] at member
-    rcases member with (h | ⟨index, indexBound, rfl⟩) | h
-    · exact renumberFuns_location_parity functions start location h
-    · have p := renumberFuns_state_parity functions start
-      omega
-    · have p := renumber_location_parity body ((renumberFuns start functions).1 + 2 * (renumberFuns start functions).2.length) location h
-      have q := renumberFuns_state_parity functions start
-      omega
-termination_by sizeOf expression
-
-/-- List numbering emits locations with the input state's parity. -/
-theorem renumberList_location_parity (expressions : List Exp) (start location : Nat)
-    (member : location ∈ codeLocations (renumberList start expressions).2) :
-    location % 2 = start % 2 := by
-  cases expressions with
-  | nil => simp [renumberList, codeLocations] at member
-  | cons first rest =>
-    simp only [renumberList, codeLocations, List.mem_append] at member
-    cases member with
-    | inl h => exact renumber_location_parity first start location h
-    | inr h =>
-      have p := renumberList_location_parity rest (renumber start first).1 location h
-      rw [renumber_state_parity first] at p
-      exact p
-termination_by sizeOf expressions
-
-/-- Function-group numbering emits locations with the input state's parity. -/
-theorem renumberFuns_location_parity (functions : List (Nat × Exp)) (start location : Nat)
-    (member : location ∈ codeLocationsFuns (renumberFuns start functions).2) :
-    location % 2 = start % 2 := by
-  cases functions with
-  | nil => simp [renumberFuns, codeLocationsFuns] at member
-  | cons first rest =>
-    cases first with
-    | mk arity body =>
-      simp only [renumberFuns, codeLocationsFuns, List.mem_append] at member
-      cases member with
-      | inl h => exact renumber_location_parity body start location h
-      | inr h =>
-        have p := renumberFuns_location_parity rest (renumber start body).1 location h
-        rw [renumber_state_parity body] at p
-        exact p
-termination_by sizeOf functions
-decreasing_by all_goals subst_vars; simp_wf <;> omega
-end
+/-- Numbering from an even location yields an even next location and assigns
+only even code locations, for lists and individual expressions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "renumber_code_locs_EVEN"]
+theorem renumberCodeLocs_even :
+    (∀ n es, n % 2 = 0 → (renumberList n es).1 % 2 = 0 ∧
+      ∀ x ∈ codeLocations (renumberList n es).2, x % 2 = 0) ∧
+    (∀ n e, n % 2 = 0 → (renumber n e).1 % 2 = 0 ∧
+      ∀ x ∈ codeLocations [(renumber n e).2], x % 2 = 0) := by
+  constructor
+  · intro n es hn
+    exact evenList es n hn
+  · intro n e hn
+    simpa [codeLocations_singleton] using evenExpr e n hn
 
 end Flapjack.Compiler.Backend.ClosNumber

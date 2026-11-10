@@ -1008,7 +1008,7 @@ theorem doEval_correct {C F Fin : Type} [Nonempty C] [Nonempty Fin]
           ⟨0, config.envs.next, .ln⟩ decs).2.2.2.1 after ∧
         GlobalEnvInv genv' (lookupEnvId envId config.envs) (fun _ => False) env ∧
         srcOracNextCfg interp after = some next ∧ idxPrev finish next.next ∧
-        finiteSubmap genv.c genv'.c ∧ finiteSubmap genv.tys genv'.tys ∧ subglobals genv.v genv'.v ∧
+        genv.c.submap genv'.c ∧ genv.tys.submap genv'.tys ∧ subglobals genv.v genv'.v ∧
         oracConfigEnvsSubspt interp source.evalState after ∧
         (match source.evalState with
          | some (.evalOracle prior) => ∃ state', after = some (.evalOracle state') ∧

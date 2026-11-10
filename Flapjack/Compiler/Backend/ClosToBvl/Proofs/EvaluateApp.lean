@@ -107,7 +107,7 @@ theorem evaluatePost_app_function_error {C F : Type}
           (.val targetValues, { tMiddle with clock := sMiddle.clock + clock2 }) := by
         simpa [Nat.add_assoc, clocks1] using shifted
       refine ⟨clock1 + clock2, .err targetError, tFinal, fFinal, ?_, ?_, state2,
-        relocationSubmap_trans map1 map2, unmappedRefsSubmap_trans frame1 frame2, annotations2, clocks2⟩
+        HolFiniteMapExact.submap_trans map1 map2, unmappedRefsSubmap_trans frame1 frame2, annotations2, clocks2⟩
       · exact evaluate_appTarget_function_error _ _ _ _ _ _ _ _ _ _ runArgs run2
       · simpa [maxApp] using related2
 
@@ -678,7 +678,7 @@ theorem evaluatePost_app_generic_success {C F : Type}
             (.val [targetClosure], { tFunction with clock := sFunction.clock + clock3 }) := by
           simpa [Nat.add_assoc, clocks2] using shiftFunction
         refine ⟨clock1 + clock2 + clock3, targetResult, tFinal, fFinal, ?_, ?_, states3,
-          relocationSubmap_trans (relocationSubmap_trans map1 map2) map3,
+          HolFiniteMapExact.submap_trans (HolFiniteMapExact.submap_trans map1 map2) map3,
           unmappedRefsSubmap_trans (unmappedRefsSubmap_trans frame1 frame2) frame3, annotations3, clocks3⟩
         · rw [evaluate_appTarget_generic _ _ _ _ _ _ _ _ _ runArgs runFunction]
           simpa [targetLength] using targetCallRun
@@ -1273,9 +1273,9 @@ theorem evaluate_genericApp_partial_branch {C F : Type} (s : BvlSem.State C F)
 
 /-- The repeated tick sequence consumes its requested clock or times out at
 zero before entering its body. -/
-theorem evaluate_genericAppTicks {C F : Type} (n : Nat) (body : Bvl.Exp)
+theorem evaluate_mkTick {C F : Type} (n : Nat) (body : Bvl.Exp)
     (env : List BvlSem.Value) (s : BvlSem.State C F) :
-    BvlSem.evaluate [genericAppTicks n body] env s =
+    BvlSem.evaluate [Bvl.mkTick n body] env s =
       if s.clock < n then (.err (.abort .timeoutError), { s with clock := 0 })
       else BvlSem.evaluate [body] env (BvlSem.decClock n s) := by
   induction n generalizing s with
@@ -1284,7 +1284,7 @@ theorem evaluate_genericAppTicks {C F : Type} (n : Nat) (body : Bvl.Exp)
     cases s
     rfl
   | succ n ih =>
-    change BvlSem.evaluate [.tick (genericAppTicks n body)] env s = _
+    change BvlSem.evaluate [.tick (Bvl.mkTick n body)] env s = _
     rw [BvlSem.evaluate]
     by_cases empty : s.clock = 0
     · cases s
@@ -1311,19 +1311,19 @@ def genericAppPartialChoice (maxApp n : Nat) : Bvl.Exp :=
 
 /-- Stripping a generated tick sequence recovers its body. -/
 theorem stripGenericAppTicks_generated (n : Nat) (body : Bvl.Exp) :
-    stripGenericAppTicks n (genericAppTicks n body) = body := by
+    stripGenericAppTicks n (Bvl.mkTick n body) = body := by
   induction n with
   | zero => rfl
   | succ n ih =>
-    change stripGenericAppTicks n (genericAppTicks n body) = body
+    change stripGenericAppTicks n (Bvl.mkTick n body) = body
     exact ih
 
 /-- The partial branch consists of its arity-dependent ticks followed by the
 closure-tag choice. -/
 theorem genericAppPartialBranch_ticks (maxApp n : Nat) :
-    genericAppPartialBranch maxApp n = genericAppTicks n (genericAppPartialChoice maxApp n) := by
+    genericAppPartialBranch maxApp n = Bvl.mkTick n (genericAppPartialChoice maxApp n) := by
   unfold genericAppPartialChoice genericAppPartialBranch generateGenericApp
-  change genericAppTicks n _ = genericAppTicks n (stripGenericAppTicks n (genericAppTicks n _))
+  change Bvl.mkTick n _ = Bvl.mkTick n (stripGenericAppTicks n (Bvl.mkTick n _))
   rw [stripGenericAppTicks_generated]
 
 /-- Selecting the partial branch and consuming its ticks either times out or
@@ -1338,7 +1338,7 @@ theorem evaluate_genericApp_partial_ticks {C F : Type} (s : BvlSem.State C F)
       (.number (Int.ofNat total - Int.ofNat (n + 1)) ::
         (args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fields)])) (BvlSem.decClock n s) := by
   rw [evaluate_genericApp_partial_branch s maxApp n total tag args fields ptr length bound,
-    genericAppPartialBranch_ticks, evaluate_genericAppTicks]
+    genericAppPartialBranch_ticks, evaluate_mkTick]
 
 /-- The generated branch that constructs a partial closure from a previously
 unapplied closure. -/
@@ -1355,7 +1355,7 @@ theorem genericAppPartialChoice_shape (maxApp n : Nat) :
   have shape : ∃ normal other, genericAppPartialChoice maxApp n =
       .ifThenElse (.op (.blockOp (.tagEq 30)) [.var (n + 2)]) normal other := by
     unfold genericAppPartialChoice genericAppPartialBranch generateGenericApp
-    change ∃ normal other, stripGenericAppTicks n (genericAppTicks n
+    change ∃ normal other, stripGenericAppTicks n (Bvl.mkTick n
         (.ifThenElse (.op (.blockOp (.tagEq 30)) [.var (n + 2)]) _ _)) = _
     rw [stripGenericAppTicks_generated]
     exact ⟨_, _, rfl⟩
@@ -1418,7 +1418,7 @@ theorem genericAppPartialNormal_shape (maxApp n : Nat) :
           (partialAppFnLocationCode maxApp (.op (.blockOp (.elemAt 1)) [.var (n + 2)]) (mkConst n)) ::
         .var 0 :: .var (n + 2) :: (List.range (n + 1)).map (fun i => .var (i + 1))).reverse) := by
   unfold genericAppPartialNormal genericAppPartialChoice genericAppPartialBranch generateGenericApp
-  change (match stripGenericAppTicks n (genericAppTicks n
+  change (match stripGenericAppTicks n (Bvl.mkTick n
       (.ifThenElse (.op (.blockOp (.tagEq 30)) [.var (n + 2)]) _ _)) with
       | .ifThenElse _ normal _ => normal
       | _ => .var 0) = _
@@ -1812,7 +1812,7 @@ theorem genericAppPartialExisting_shape (maxApp n : Nat) :
       .ifThenElse (.op (.blockOp (.tagEq 30)) [.var (n + 2)]) normal
         (.let [.op (.intOp .sub) [mkConst 3, .op (.blockOp .lengthBlock) [.var (n + 2)]]] body) := by
     unfold genericAppPartialChoice genericAppPartialBranch generateGenericApp
-    change ∃ normal body, stripGenericAppTicks n (genericAppTicks n
+    change ∃ normal body, stripGenericAppTicks n (Bvl.mkTick n
       (.ifThenElse (.op (.blockOp (.tagEq 30)) [.var (n + 2)]) _ _)) = _
     rw [stripGenericAppTicks_generated]
     exact ⟨_, _, rfl⟩
@@ -1895,7 +1895,7 @@ theorem genericAppPartialExistingBody_shape (maxApp n : Nat) :
         (List.range (n + 1)).map (fun i => .var (i + 2))).reverse) := by
   unfold genericAppPartialExistingBody genericAppPartialExisting genericAppPartialChoice
     genericAppPartialBranch generateGenericApp
-  change (match (match stripGenericAppTicks n (genericAppTicks n
+  change (match (match stripGenericAppTicks n (Bvl.mkTick n
       (.ifThenElse (.op (.blockOp (.tagEq 30)) [.var (n + 2)]) _ _)) with
       | .ifThenElse _ _ existing => existing | _ => .var 0) with
       | .let _ body => body | _ => .var 0) = _
@@ -4905,7 +4905,7 @@ theorem evaluatePost_mkClCall_over_compose {C F : Type}
       (fMiddle : HolFiniteMapExact Nat Nat),
       stateRel fMiddle sMiddle tMiddle →
       vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code value targetValue →
-      relocationSubmap f fMiddle → unmappedRefsSubmap t.refs tMiddle.refs f fMiddle →
+      f.submap fMiddle → unmappedRefsSubmap t.refs tMiddle.refs f fMiddle →
       codeAnnotations sMiddle → sptSubspt t.code tMiddle.code →
       evaluatePost sMiddle sFinal tMiddle
         (targetValue :: .number (Int.ofNat total) :: .number (Int.ofNat total - Int.ofNat (n + 1)) ::
@@ -4944,7 +4944,7 @@ theorem evaluatePost_mkClCall_over_compose {C F : Type}
             (s.clock - (total + 1) + clock1) + clock2 := by omega
         simpa [BvlSem.decClock, ClosSem.decClock, clockEq, clocks1] using shiftedBody
       refine ⟨clock1 + clock2 + 1, targetFinal, tFinal, fFinal, ?_, ?_, states2,
-        relocationSubmap_trans map1 map2, unmappedRefsSubmap_trans refs1 refs2, annotations2, clocks2⟩
+        HolFiniteMapExact.submap_trans map1 map2, unmappedRefsSubmap_trans refs1 refs2, annotations2, clocks2⟩
       · rw [evaluate_mkClCall_over_step _ s.maxApp n total tag address args fields rest body length over totalBound
           (by simpa using genericLookup) (by simpa using lookup)]
         have targetEnough : ¬s.clock + (clock1 + clock2 + 1) < total + 2 := by omega
@@ -5039,7 +5039,7 @@ theorem evaluateApp_ordinary_over_success {C F : Type}
       ClosSem.evaluateApp none value (args.take (args.length - arity)) sMiddle = (result, sFinal) →
       stateRel fMiddle sMiddle tMiddle →
       vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code value targetValue →
-      relocationSubmap f fMiddle → unmappedRefsSubmap t.refs tMiddle.refs f fMiddle →
+      f.submap fMiddle → unmappedRefsSubmap t.refs tMiddle.refs f fMiddle →
       codeAnnotations sMiddle → sptSubspt t.code tMiddle.code →
       evaluatePost sMiddle sFinal tMiddle
         (targetValue :: .number (Int.ofNat (arity - 1)) ::

@@ -131,7 +131,7 @@ theorem applicationSimulation_any {C F : Type}
           (targetResult, tFinal)) ∧
       resultRel (List.Forall₂ (vRel s.maxApp fFinal tFinal.refs tFinal.code))
         (vRel s.maxApp fFinal tFinal.refs tFinal.code) result targetResult ∧
-      stateRel fFinal sFinal tFinal ∧ relocationSubmap f fFinal ∧
+      stateRel fFinal sFinal tFinal ∧ f.submap fFinal ∧
       unmappedRefsSubmap t.refs tFinal.refs f fFinal ∧ codeAnnotations sFinal ∧ sFinal.clock = tFinal.clock := by
   cases args with
   | nil =>
@@ -216,7 +216,7 @@ theorem compileExpsCorrect_source {C F : Type} :
         BvlSem.evaluate ys env' { t1 with clock := s1.clock + ck } = (res', t2) ∧
         resultRel (List.Forall₂ (vRel s1.maxApp f2 t2.refs t2.code))
           (vRel s1.maxApp f2 t2.refs t2.code) res res' ∧
-        stateRel f2 s2 t2 ∧ relocationSubmap f1 f2 ∧
+        stateRel f2 s2 t2 ∧ f1.submap f2 ∧
         unmappedRefsSubmap t1.refs t2.refs f1 f2 ∧
         (∀ name arity body, s2.code.lookup name = some (arity, body) → ClosProps.everyFnLocationSome [body]) ∧
         (∀ name arity body, s2.code.lookup name = some (arity, body) → ClosProps.everyFnVarsSome [body]) ∧
@@ -245,7 +245,7 @@ theorem compileExpsCorrect_source {C F : Type} :
             (res', t2)) ∧
         resultRel (List.Forall₂ (vRel s1.maxApp f2 t2.refs t2.code))
           (vRel s1.maxApp f2 t2.refs t2.code) res res' ∧
-        stateRel f2 s2 t2 ∧ relocationSubmap f1 f2 ∧
+        stateRel f2 s2 t2 ∧ f1.submap f2 ∧
         unmappedRefsSubmap t1.refs t2.refs f1 f2 ∧
         (∀ name arity body, s2.code.lookup name = some (arity, body) → ClosProps.everyFnLocationSome [body]) ∧
         (∀ name arity body, s2.code.lookup name = some (arity, body) → ClosProps.everyFnVarsSome [body]) ∧

@@ -98,9 +98,10 @@ the capture does not replay the local HOL proof.
 `clos_known_syntax_probe.out` captures the optimizer safety theorem, its consequences, the source induction rule, and tick-write preservation. These typed captures support source review, not cross-language equivalence.
 
 `clos_number_correctness_probe.out` captures the typed numbering traversal,
-incremental compiler, even alignment, value-relation rules, state relation,
-reference and finite-map relations, mutual evaluator simulation and
-whole-program semantics theorem. The
+incremental compiler, location bounds, list length and distinctness,
+function-location and even-location invariants, even alignment, value-relation rules, state relation,
+reference and finite-map relations, a typed replay of the local closure
+rejection theorem, mutual evaluator simulation and whole-program semantics theorem. The
 traversal's recursive-binding helper is checked in Lean against the original
 map-and-zip shape. The captures support source review, not a proof of
 cross-language equivalence.
@@ -236,7 +237,24 @@ definition and its cons and lookup equations, including first-entry behavior.
 
 `clos_annotate_semantics_probe.out` captures the typed whole-program annotation
 statement, its annotation and shift traversals, and the source's optimized
-singleton/list equations, including arbitrary installed code.
+singleton/list equations, including arbitrary installed code. It also captures
+the inferred source statements for function-location and free-variable
+annotation invariants, the free-variable observation and its singleton, list,
+replication and source-component theorems,
+and the mutual value and
+environment relation rules with inferred types. It also replays the local
+default-environment, pair-fold, no-overlap bound, shifted-environment lookup,
+elementwise shift, environment-compaction, environment-extension, primitive-value inversion and list-decoding proofs,
+the related list-encoding, byte/word decoding, compiler list-property and state-relation statements, and the zero-replacement
+evaluation theorem with inferred types. These captures support review;
+the factored Lean mutual relation records its representation with a qualifier.
+
+`clos_annotate_shift_replay_probe.out` captures the typed local `shift_correct`
+theorem after replaying the original proof. Its driver extracts the pinned
+source through that theorem's `QED` and builds the extract in a temporary HOL
+theory; it does not change the CakeML or HOL checkouts. Regenerate it with
+`HOL_PROBE_ONLY=clos_annotate_shift_replay_probeScript.sml` and a prebuilt
+`CAKEML` oracle.
 
 `db_vars_definitions_probe.out` captures the typed De Bruijn variable-set
 operations used by closure annotation, including sparse-tree traversal order.
@@ -260,9 +278,15 @@ the typed interpreter-attachment observational theorem. These captures support
 source review; they do not establish cross-language equivalence.
 
 `clos_to_bvl_state_relation_probe.out` captures the typed original state,
-closure, value and environment relations, installed-code definitions, their
+closure, value and environment relations, whole-program closure preprocessing
+and its incremental callback composition,
+installed-code definitions, their
 supporting lemmas, the complete expression simulation, and program-level
-observational correctness. Regenerate with
+observational correctness. It also captures operator-label preservation,
+closure and BVL label collection, compiler label-correctness statements,
+singleton compilation, auxiliary membership, recursive-closure labels,
+initial-stub domains, and their source definitions.
+Regenerate with
 `HOL_PROBE_ONLY=clos_to_bvl_state_relation_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source review, not cross-language equivalence.
 
@@ -507,7 +531,7 @@ The same flat-pattern probe captures the typed position, test, guard and decisio
 `cake_flat_sem_apply_probe.out` captures the complete typed original flat primitive-application equations and observations for globals, constructor tests, field access, identity, reference and array operations, strings, vectors, copying, thunks, and shifts. Lean fixtures cover the matching cases through the assembled dispatcher; its complete source and carrier review and the original do_app simulation remain incomplete.
 `cake_flat_sem_evaluate_probe.out` captures original flat evaluation of literals, missing locals, calls and clock timeout, exceptions, right-to-left constructor arguments with store effects, pattern failure, thunk forcing, and unit/non-unit declarations. Lean fixtures run the fuel-bounded evaluator and corresponding cases of the well-founded clocked evaluator. These observations do not establish full correspondence with the HOL evaluator.
 `cake_flat_sem_eval_probe.out` additionally captures the original typed evaluator-clock and clock-clamp theorems. The corresponding Lean properties are kernel-checked over the current untagged flat evaluator, whose complete source and carrier review remains open.
-`cake_source_evaluate_length_probe.out` captures the original typed source-evaluator length and singleton theorems. They identify the missing general singleton invariant used explicitly by the current source-to-flat expression composition lemmas; the probe is not a Lean proof of that invariant.
+`cake_source_evaluate_length_probe.out` captures the original typed source-evaluator length and singleton theorems. Their Lean ports are proved in `Flapjack/EvaluateProps/Length.lean` and used by the source-to-flat expression composition proofs; the probe itself is not a cross-language equivalence proof.
 
 `cake_flat_sem_thunk_probe.out` captures typed flat thunk definitions and original cases for invalid addresses, reference flags, ordinary references, and successful or nested updates. Lean fixtures match these cases; source-to-flat thunk simulation uses the still-unreviewed factored relations.
 
@@ -9886,3 +9910,8 @@ evaluation and semantics correctness theorems, plus typed replays of the
 original local annotation-collection statements and proofs. Regenerate with
 `HOL_PROBE_ONLY=clos_mti_correct_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean correspondence.
+
+`clos_to_bvl_state_relation_probe.out` replays the original local
+`code_locs_code_list_ALL_DISTINCT` proof and captures its independent
+polymorphic metadata and state types for statement comparison. It also captures
+the known-oracle address invariant and its entry-marker and length prerequisites.

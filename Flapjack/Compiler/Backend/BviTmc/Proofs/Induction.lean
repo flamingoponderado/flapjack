@@ -140,7 +140,7 @@ theorem evaluate_rewrite_tmc_assembled {C F : Type} (xs : List Bvi.Exp)
     ∃ (next : BviState C F) (nextMap : HolFiniteMapExact Nat Nat) (nextResult : BviResult),
       evaluate xs env2 target = (nextResult, next) ∧
       resultRel (List.Forall₂ (valueRel nextMap)) (eorRel nextMap) result nextResult ∧
-      stateRel nextMap final next ∧ finiteSubmap f nextMap ∧
+      stateRel nextMap final next ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs next.refs ∅ ∧
       holesStillNotFinalised f target.refs next.refs ∧
       (∀ locOpt, optimisedCode loc locOpt source.code target.code →
@@ -149,7 +149,7 @@ theorem evaluate_rewrite_tmc_assembled {C F : Type} (xs : List Bvi.Exp)
           ∃ (wrapState : BviState C F) (wrapMap : HolFiniteMapExact Nat Nat) (wrapResult : BviResult),
             evaluate [wrap] env2 target = (wrapResult, wrapState) ∧
             resultRel (List.Forall₂ (valueRel wrapMap)) (eorRel wrapMap) result wrapResult ∧
-            stateRel wrapMap final wrapState ∧ finiteSubmap f wrapMap ∧
+            stateRel wrapMap final wrapState ∧ f.submap wrapMap ∧
             onlyFresh f wrapMap target.refs ∧ holesUnchangedExcept f target.refs wrapState.refs ∅ ∧
             holesStillNotFinalised f target.refs wrapState.refs) ∧
         (opt = true → ∀ i j holePtr work,
@@ -160,7 +160,7 @@ theorem evaluate_rewrite_tmc_assembled {C F : Type} (xs : List Bvi.Exp)
           ∃ (workResult : BviResult) (workMap : HolFiniteMapExact Nat Nat) (workState : BviState C F),
             evaluate [work] env2 target = (workResult, workState) ∧
             optResRel workMap result workResult ∧ stateRel workMap final workState ∧
-            finiteSubmap f workMap ∧ onlyFresh f workMap target.refs ∧
+            f.submap workMap ∧ onlyFresh f workMap target.refs ∧
             holesUnchangedExcept f target.refs workState.refs {holePtr} ∧
             holesStillNotFinalised f target.refs workState.refs ∧
             ∀ resValue, result = .val [resValue] →

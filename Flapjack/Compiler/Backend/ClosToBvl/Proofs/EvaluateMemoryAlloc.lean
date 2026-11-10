@@ -46,10 +46,10 @@ theorem evaluatePost_ref_success {C F : Type} (s sMiddle : ClosSem.State C F)
     let targetNext := { tMiddle with refs := tMiddle.refs.updateEq (targetPtr, .valueArray targetValues.reverse) }
     change _ ∧ BvlSem.doApp (.memOp .ref) targetValues.reverse tMiddle = .val (.refPtr true targetPtr, targetNext) ∧
       stateRel newMap _ targetNext ∧ vRel sMiddle.maxApp newMap targetNext.refs targetNext.code
-        (.refPtr true sourcePtr) (.refPtr true targetPtr) ∧ relocationSubmap fMiddle newMap ∧
+        (.refPtr true sourcePtr) (.refPtr true targetPtr) ∧ fMiddle.submap newMap ∧
         unmappedRefsSubmap tMiddle.refs targetNext.refs fMiddle newMap at allocated
     refine ⟨clock, .val [.refPtr true targetPtr], targetNext, newMap, ?_, ?_, allocated.2.2.1,
-      relocationSubmap_trans map allocated.2.2.2.2.1,
+      HolFiniteMapExact.submap_trans map allocated.2.2.2.2.1,
       unmappedRefsSubmap_trans refs allocated.2.2.2.2.2, annotations, clocks⟩
     · rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, targetRun]
       simp [allocated.2.1]
@@ -155,9 +155,9 @@ theorem evaluatePost_refArray_success {C F : Type} (s sMiddle sLast : ClosSem.St
             change _ ∧ BvlSem.doApp (.memOp .refArray) [.number count, targetInitial] tMiddle =
               .val (.refPtr true targetPtr, targetNext) ∧ stateRel newMap _ targetNext ∧
               vRel sMiddle.maxApp newMap targetNext.refs targetNext.code (.refPtr true sourcePtr) (.refPtr true targetPtr) ∧
-              relocationSubmap fMiddle newMap ∧ unmappedRefsSubmap tMiddle.refs targetNext.refs fMiddle newMap at allocated
+              fMiddle.submap newMap ∧ unmappedRefsSubmap tMiddle.refs targetNext.refs fMiddle newMap at allocated
             refine ⟨clock, .val [.refPtr true targetPtr], targetNext, newMap, ?_, ?_, allocated.2.2.1,
-              relocationSubmap_trans map allocated.2.2.2.2.1,
+              HolFiniteMapExact.submap_trans map allocated.2.2.2.2.1,
               unmappedRefsSubmap_trans refs allocated.2.2.2.2.2, annotations, clocks⟩
             · rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, targetRun]
               simp [reversed, allocated.2.1]
@@ -276,9 +276,9 @@ theorem evaluatePost_refByte_success {C F : Type} (s sMiddle sLast : ClosSem.Sta
             change _ ∧ BvlSem.doApp (.memOp (.refByte false)) [.number count, .number number] tMiddle =
               .val (.refPtr true targetPtr, targetNext) ∧ stateRel newMap _ targetNext ∧
               vRel sMiddle.maxApp newMap targetNext.refs targetNext.code (.refPtr true sourcePtr) (.refPtr true targetPtr) ∧
-              relocationSubmap fMiddle newMap ∧ unmappedRefsSubmap tMiddle.refs targetNext.refs fMiddle newMap at allocated
+              fMiddle.submap newMap ∧ unmappedRefsSubmap tMiddle.refs targetNext.refs fMiddle newMap at allocated
             refine ⟨clock, .val [.refPtr true targetPtr], targetNext, newMap, ?_, ?_, allocated.2.2.1,
-              relocationSubmap_trans map allocated.2.2.2.2.1,
+              HolFiniteMapExact.submap_trans map allocated.2.2.2.2.1,
               unmappedRefsSubmap_trans refs allocated.2.2.2.2.2, annotations, clocks⟩
             · rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, targetRun]
               simp [reversed, allocated.2.1]

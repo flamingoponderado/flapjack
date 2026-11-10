@@ -135,9 +135,8 @@ library. HOL sets are rendered as predicates, matching the
 `domain t1 SUBSET domain t2` is `forall k, sptMem k t1 -> sptMem k t2`. -/
 
 /-- Lookup-based predicate for the tree domain. HOL defines `domain` by
-recursive set clauses; a reviewed representation of sets and a source-shaped
-definition are still needed before this can be tagged as `domain_def`. The
-membership clauses `sptMem_*` below establish this predicate's behavior. -/
+recursive set clauses; `FromList/Domain.lean` proves those complete equations
+for this predicate. This definition itself retains the lookup-based form. -/
 def sptDomain {α : Type} (tree : Spt α) : Nat → Prop :=
   fun key => (sptLookup key tree).isSome
 
@@ -145,15 +144,17 @@ def sptDomain {α : Type} (tree : Spt α) : Nat → Prop :=
 def sptMem {α : Type} (key : Nat) (tree : Spt α) : Prop :=
   sptDomain tree key
 
-/-- Exact port of HOL sptree `domain_lookup`
-(`HOL/src/finite_maps/sptreeScript.sml:620`): `k IN domain t` holds iff
-`lookup k t` returns some value. The result follows from the lookup-based
-definition of `sptDomain` for every tree. -/
+/-- Domain membership holds exactly when lookup returns a value. -/
 @[hol "hol4/src/finite_maps/sptreeScript.sml" "domain_lookup"]
-theorem sptMem_iff_lookup {α : Type} (key : Nat) (tree : Spt α) :
-    sptMem key tree ↔ ∃ v, sptLookup key tree = some v := by
-  unfold sptMem sptDomain
+theorem sptDomain_iff_lookup {α : Type} (tree : Spt α) (key : Nat) :
+    sptDomain tree key ↔ ∃ v, sptLookup key tree = some v := by
+  unfold sptDomain
   exact Option.isSome_iff_exists
+
+/-- Flapjack convenience form of `domain_lookup` in `sptMem` argument order. -/
+theorem sptMem_iff_lookup {α : Type} (key : Nat) (tree : Spt α) :
+    sptMem key tree ↔ ∃ v, sptLookup key tree = some v :=
+  sptDomain_iff_lookup tree key
 
 /-- No key is a member of the empty tree. -/
 @[simp] theorem sptMem_ln {α : Type} (key : Nat) :
@@ -240,11 +241,10 @@ theorem sptMem_bs {α : Type} (left : Spt α) (value : α) (right : Spt α) (key
           subst this; simpa using hm
 
 /-- Predicate rendering of HOL sptree `subspt`
-(`HOL/src/finite_maps/sptreeScript.sml:1737-1741`,
-`subspt sp1 sp2 <=> !k. k IN domain sp1 ==> k IN domain sp2 /\
-lookup k sp2 = lookup k sp1`). The HOL source lives in the HOL installation's
-`src/finite_maps`, outside `cakeml/`, so this rendering is untagged Flapjack
-infrastructure; it reuses the `sptMem` rendering of `domain`/`IN`. -/
+(`hol4/src/finite_maps/sptreeScript.sml`, `subspt_def`). This predicate is
+an untagged rendering of the characterization, not the HOL structural
+definition; `sptSubsptDef` in `Sptree/Subspt.lean` ports the characterization.
+It reuses the `sptMem` rendering of `domain`/`IN`. -/
 def sptSubspt {α : Type} (sp1 sp2 : Spt α) : Prop :=
   ∀ k, sptMem k sp1 → sptMem k sp2 ∧ sptLookup k sp2 = sptLookup k sp1
 

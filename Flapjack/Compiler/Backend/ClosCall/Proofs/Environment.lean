@@ -19,26 +19,8 @@ def envRel {A B : Type} (R : A → B → Prop) (env1 : List A) (env2 : List B)
     ∀ x, (∃ fn ∈ fns, freeVar (fn.1 + offset + x) fn.2) →
       ∃ (left : x < env1.length) (right : x < env2.length), R env1[x] env2[x]
 
-/-- If every source value has a related target value, construct one
-pointwise-related environment that works for any requested function bodies.
-This generic helper does not establish the well-formedness premise used by
-the HOL theorem. -/
-theorem envRel_exists_of_values {A B : Type} (R : A → B → Prop) (env : List A)
-    (related : ∀ value ∈ env, ∃ target, R value target) :
-    ∃ target, ∀ offset fns, envRel R env target offset fns := by
-  have pointwise : ∃ target, List.Forall₂ R env target := by
-    induction env with
-    | nil => exact ⟨[], .nil⟩
-    | cons value rest ih =>
-      obtain ⟨target, head⟩ := related value (by simp)
-      obtain ⟨tail, tailRel⟩ := ih (by
-        intro item member
-        exact related item (by simp [member]))
-      exact ⟨target :: tail, .cons head tailRel⟩
-  obtain ⟨target, values⟩ := pointwise
-  exact ⟨target, fun _ _ => by simp [envRel, values.length_eq, values]⟩
-
-private theorem forall₂_mono_members {A B : Type} {R R' : A → B → Prop}
+/-- Flapjack infrastructure for lifting a relation between members of two lists. -/
+theorem forall₂_mono_members {A B : Type} {R R' : A → B → Prop}
     {xs : List A} {ys : List B} (related : List.Forall₂ R xs ys)
     (change : ∀ x ∈ xs, ∀ y ∈ ys, R x y → R' x y) : List.Forall₂ R' xs ys := by
   induction related with
@@ -81,26 +63,24 @@ theorem envRel_congr {A B : Type} {R R' : A → B → Prop} {env1 : List A} {env
     intro x y ⟨hx, hy, rel⟩
     exact (same x hx y hy).mpr rel
 
-/-- A used variable that is present in the source environment has a related
-value at the same index in the target environment, even when the two
-environments have different lengths. -/
-theorem envRel_lookup {A B : Type} {R : A → B → Prop} {env1 : List A} {env2 : List B}
-    {offset x : Nat} {fns : List (Nat × Exp)} {value : A}
-    (related : envRel R env1 env2 offset fns)
-    (used : ∃ fn ∈ fns, freeVar (fn.1 + offset + x) fn.2)
-    (lookup : env1[x]? = some value) : ∃ value', env2[x]? = some value' ∧ R value value' := by
-  obtain ⟨left, leftEq⟩ := List.getElem?_eq_some_iff.mp lookup
-  unfold envRel at related
-  by_cases same : env1.length = env2.length
-  · simp only [same, ↓reduceIte] at related
-    have right : x < env2.length := by omega
-    refine ⟨env2[x], List.getElem?_eq_getElem right, ?_⟩
-    have values := related.get left right
-    change R env1[x] env2[x] at values
-    simpa only [leftEq] using values
-  · simp only [same, ↓reduceIte] at related
-    obtain ⟨_, right, values⟩ := related x used
-    refine ⟨env2[x], List.getElem?_eq_getElem right, ?_⟩
-    simpa only [leftEq] using values
+/-- The Install operation uses the same environment variables as its argument
+expressions, so either function-list form induces the same relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "env_rel_Op_Install"]
+theorem envRel_opInstall {A B : Type} (r : A → B → Prop) (env : List A) (env2 : List B)
+    (trace : BackendCommon.Tra) (es : List Exp) :
+    envRel r env env2 0 [(0, .op trace .install es)] ↔
+      envRel r env env2 0 (es.map (fun e => (0, e))) := by
+  have freeVarsExists : ∀ (n : Nat) (xs : List Exp),
+      freeVars n xs ↔ ∃ e ∈ xs, freeVarExp n e := by
+    intro n xs
+    induction xs with
+    | nil => simp [freeVars]
+    | cons e es ih => simp [freeVars, ih]
+  unfold envRel
+  split
+  · rfl
+  · simp only [freeVar, freeVars, freeVarExp, Nat.zero_add, List.mem_singleton,
+      exists_eq_left, List.mem_map, exists_exists_and_eq_and]
+    simp only [freeVarsExists, or_false]
 
 end Flapjack.Compiler.Backend.ClosCall

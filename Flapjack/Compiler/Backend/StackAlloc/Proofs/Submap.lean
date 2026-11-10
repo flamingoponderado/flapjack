@@ -11,7 +11,7 @@ public import Flapjack.Pancake.Proofs.CrepInline
 `SUBMAP_DOMSUB_both` and `SUBMAP_FUPDATE_both` of
 `cakeml/compiler/backend/proofs/stack_allocProofScript.sml`, over the canonical
 finite-support carrier and its untagged `submap` rendering of HOL `SUBMAP`
-(`Flapjack/Pancake/Proofs/CrepInline.lean`).  HOL `\\` and `|+` are the
+(`Flapjack/FiniteMap/SubmapExact.lean`).  HOL `\\` and `|+` are the
 HOL-equality `eraseEq`/`updateEq`. `[DecidableEq κ]` supplies lawful Lean
 equality for those operations, not a Boolean-equality assumption or key
 restriction: every key type admits it through Classical.decEq, matching HOL's

@@ -421,7 +421,7 @@ theorem callNontail
     exact ⟨a, b, c, d, by simp [decClockCrepSemHOL, e], f, g, h, i⟩
   obtain ⟨t1, ht1, hrel1, hci1, _⟩ := ihB q st inlFs
     { decClockCrepSemHOL t with locals := HolFiniteMapExact.empty.updateList (ns.zip vs) }
-    (inlBag.erase fname) hb hqne hsub (submap_trans' (submap_erase _ _) hbag) hsrD rfl
+    (inlBag.erase fname) hb hqne hsub (HolFiniteMapExact.submap_trans (submap_erase _ _) hbag) hsrD rfl
     (codeInl_of_code_eq rfl rfl hci)
   have hu := CrepInlineUnreachElimEvaluate.unreachElimCorrect _ _ _ _ _ _ ⟨ht1, hqne, rfl⟩
   rw [updateList_eq_updateListEq] at hu

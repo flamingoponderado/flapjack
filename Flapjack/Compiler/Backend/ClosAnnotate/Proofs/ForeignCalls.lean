@@ -13,7 +13,7 @@ open Flapjack Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.ClosPr
 /-- Updating corresponding references and the shared FFI state preserves the
 candidate state relation. -/
 theorem stateRel_updateRefFfi {C F : Type} (source target : State C F) (states : StateRel source target)
-    (index : Nat) (left right : Ref Value) (refsRel : RefRel left right) (ffi : HolFfiState F) :
+    (index : Nat) (left right : Ref Value) (refsRel : (ClosProps.refRel ValueRel) left right) (ffi : HolFfiState F) :
     StateRel { source with refs := source.refs.updateEq (index, left), ffi := ffi }
       { target with refs := target.refs.updateEq (index, right), ffi := ffi } := by
   refine ⟨states.1, rfl, states.2.2.1, states.2.2.2.1, states.2.2.2.2.1,
@@ -31,11 +31,11 @@ theorem primitiveSimulation_ffi {C F : Type} (name : Basis.Pure.MlString.MlStrin
   intro values nextValues source target valuesRel states
   cases valuesRel with
   | nil =>
-    exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons first rest =>
     cases rest with
     | nil =>
-      exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel]⟩
+      exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons second rest =>
       cases rest with
       | nil =>
@@ -49,26 +49,26 @@ theorem primitiveSimulation_ffi {C F : Type} (name : Basis.Pure.MlString.MlStrin
               cases targetRef : target.refs.lookup index with
               | none =>
                 exact ⟨.err (.abort .typeError), by simp [doApp, targetRef], by
-                  simp [doApp, sourceRef, AppResultRel, ResultRel]⟩
+                  simp [doApp, sourceRef, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
               | some ref => simp [sourceRef, targetRef, optionRel] at refRel
             | some ref =>
               cases targetRef : target.refs.lookup index with
               | none => simp [sourceRef, targetRef, optionRel] at refRel
               | some nextRef =>
-                have refs : RefRel ref nextRef := by simpa [sourceRef, targetRef, optionRel] using refRel
+                have refs : (ClosProps.refRel ValueRel) ref nextRef := by simpa [sourceRef, targetRef, optionRel] using refRel
                 cases ref with
                 | valueArray fields =>
-                  cases nextRef <;> simp [RefRel] at refs
+                  cases nextRef <;> simp [ClosProps.refRel] at refs
                   exact ⟨.err (.abort .typeError), by simp [doApp, targetRef], by
-                    simp [doApp, sourceRef, AppResultRel, ResultRel]⟩
+                    simp [doApp, sourceRef, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
                 | thunk mode value =>
-                  cases nextRef <;> simp [RefRel] at refs
+                  cases nextRef <;> simp [ClosProps.refRel] at refs
                   exact ⟨.err (.abort .typeError), by simp [doApp, targetRef], by
-                    simp [doApp, sourceRef, AppResultRel, ResultRel]⟩
+                    simp [doApp, sourceRef, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
                 | byteArray bytes =>
                   cases nextRef with
-                  | valueArray fields => simp [RefRel] at refs
-                  | thunk mode value => simp [RefRel] at refs
+                  | valueArray fields => simp [ClosProps.refRel] at refs
+                  | thunk mode value => simp [ClosProps.refRel] at refs
                   | byteArray nextBytes =>
                     have sameBytes : bytes = nextBytes := refs
                     subst nextBytes
@@ -77,7 +77,7 @@ theorem primitiveSimulation_ffi {C F : Type} (name : Basis.Pure.MlString.MlStrin
                     | final event =>
                       refine ⟨.err (.abort (.ffiError event)), ?_, ?_⟩
                       · simp [doApp, targetRef, ← sameFfi, call]
-                      · simp [doApp, sourceRef, call, AppResultRel, ResultRel]
+                      · simp [doApp, sourceRef, call, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]
                     | ret nextFfi updated =>
                       have updatedStates := stateRel_updateRefFfi source target states index
                         (.byteArray updated) (.byteArray updated) rfl nextFfi
@@ -85,15 +85,15 @@ theorem primitiveSimulation_ffi {C F : Type} (name : Basis.Pure.MlString.MlStrin
                       · simp [doApp, targetRef, ← sameFfi, call]
                       · simp only [doApp, sourceRef, call, AppResultRel]
                         exact ⟨.block _ [] [] .nil, updatedStates⟩
-          | _ => exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel]⟩
-        | _ => cases second <;> exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel]⟩
+          | _ => exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
+        | _ => cases second <;> exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
       | cons third rest =>
-        exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel]⟩
+        exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- The current proof-side dispatcher rejects labels on both sides. -/
 theorem primitiveSimulation_label {C F : Type} (label : Nat) :
     PrimitiveSimulation (C := C) (F := F) (.label label) := by
   intro values nextValues source target valuesRel states
-  exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel]⟩
+  exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate

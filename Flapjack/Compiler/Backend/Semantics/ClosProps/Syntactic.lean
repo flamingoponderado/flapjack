@@ -74,6 +74,14 @@ def fnVarsNoneFuns : List (Nat × ClosLang.Exp) → Prop
 termination_by fs => sizeOf fs
 end
 
+/-- Absent captured-variable annotations hold exactly for each singleton. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "every_Fn_vs_NONE_EVERY"]
+theorem everyFnVarsNone_every (xs : List ClosLang.Exp) :
+    everyFnVarsNone xs ↔ ∀ e ∈ xs, everyFnVarsNone [e] := by
+  induction xs with
+  | nil => simp [everyFnVarsNone]
+  | cons e es ih => simp [everyFnVarsNone, ih]
+
 /-- The function helper is the source's mapped body list. -/
 theorem fnVarsNoneFuns_eq_map (fs : List (Nat × ClosLang.Exp)) :
     fnVarsNoneFuns fs ↔ everyFnVarsNone (fs.map Prod.snd) := by

@@ -33,7 +33,8 @@ theorem constructorLocations (tra : BackendCommon.Tra) (constructor : Option (Fl
   have argsEmpty : sptIsEmpty (sptInter (findGlobalsList destGlobalVarInit args) reachable) = true := by
     simpa [findLoc, findGlobals] using empty
   intro expression member
-  exact findLocList_disjoint args reachable argsEmpty expression (by simpa using member)
+  exact List.all_eq_true.mp ((findLoc_every_isEmpty args reachable).mpr argsEmpty)
+    expression (by simpa using member)
 
 /-- Constructor evaluation satisfies the pure-evaluation induction step. -/
 theorem pureEvaluation_con {C F : Type} (env : FlatSem.Environment FlatSem.Value)

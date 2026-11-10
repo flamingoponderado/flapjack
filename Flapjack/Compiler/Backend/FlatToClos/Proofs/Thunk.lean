@@ -10,6 +10,28 @@ public import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL
 
+/-- Allocating related thunk payloads preserves the corresponding stores. -/
+theorem storeRel_allocThunk (refs : Store FlatSem.Value)
+    (targetRefs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value)) (mode : Flapjack.AstHOL.ThunkMode)
+    (value : FlatSem.Value) (targetValue : ClosSem.Value)
+    (stores : StoreRel refs targetRefs) (related : ValueRel value targetValue) :
+    StoreRel (refs ++ [.thunk mode value])
+      (targetRefs.updateEq (refs.length, .thunk mode targetValue)) := by
+  intro index
+  have original := stores index
+  by_cases same : index = refs.length
+  · subst index
+    simp [HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL, related]
+  · have different : refs.length ≠ index := Ne.symm same
+    by_cases bound : index < refs.length
+    · simpa [List.getElem?_append, bound, HolFiniteMapExact.lookup_updateEq,
+        Flapjack.FUPDATE_HOL, same, different] using original
+    · have past : refs.length + 1 ≤ index := by omega
+      have originalNone : refs[index]? = none := List.getElem?_eq_none (by omega)
+      have originalFree : targetRefs.lookup index = none := by simpa [originalNone] using original
+      simpa [List.getElem?_append, bound, past, HolFiniteMapExact.lookup_updateEq,
+        Flapjack.FUPDATE_HOL, same, different] using originalFree
+
 /-- Correspondence of thunk inspection results. -/
 inductive ThunkResultRel : FlatSem.DestThunkResult → ClosSem.DestThunkResult → Prop where
   | badRef : ThunkResultRel .badRef .badRef
@@ -183,18 +205,54 @@ theorem updateThunk_success_related (targets : List FlatSem.Value) (targetTarget
         obtain ⟨_, targetRun, related⟩ := updateThunk_related refs targetRefs index old value _ stores valueRel found safe
         exact ⟨_, targetRun, related⟩
 
-/-- A successful flat thunk update can be mirrored in the closure state. -/
-theorem stateRel_updateThunk {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F)
-    (sourceTargets : List FlatSem.Value) (targetTargets : List ClosSem.Value)
-    (sourceValues : List FlatSem.Value) (targetValues : List ClosSem.Value) (updated : Store FlatSem.Value)
-    (states : StateRel source target) (targetsRel : List.Forall₂ ValueRel sourceTargets targetTargets)
-    (valuesRel : List.Forall₂ ValueRel sourceValues targetValues)
-    (run : FlatSem.updateThunk sourceTargets source.refs sourceValues = some updated) :
-    ∃ targetUpdated, ClosSem.updateThunk targetTargets target.refs targetValues = some targetUpdated ∧
+namespace ThunkPort
+/-- The target state roundtrips through its finite-map carrier. -/
+theorem holFmapAsFiniteSupportRelationWitness_ClosSem.State {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  Flapjack.Compiler.Backend.FlatToClos.holFmapAsFiniteSupportRelationWitness_State
+end ThunkPort
+
+/-- The broad lookup and finite-support view of an existential target store. -/
+structure ThunkReferenceMapBroad where
+  lookup : Nat → Option (ClosSem.Ref ClosSem.Value)
+  finiteSupport : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys
+
+namespace ThunkReferenceMapBroad
+
+def toBroad (map : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value)) : ThunkReferenceMapBroad :=
+  ⟨map.lookup, map.finiteSupport⟩
+
+def ofBroad (map : ThunkReferenceMapBroad) : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value) :=
+  ⟨map.lookup, map.finiteSupport⟩
+
+end ThunkReferenceMapBroad
+
+/-- The existential target store preserves lookup and finite support. -/
+theorem holFmapAsFiniteSupportExistentialWitness_relUpdateThunk_targetUpdated
+    (targetUpdated : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value)) :
+    (ThunkReferenceMapBroad.ofBroad (ThunkReferenceMapBroad.toBroad targetUpdated)).lookup = targetUpdated.lookup ∧
+    (ThunkReferenceMapBroad.ofBroad (ThunkReferenceMapBroad.toBroad targetUpdated)).finiteSupport = targetUpdated.finiteSupport ∧
+    ThunkReferenceMapBroad.ofBroad (ThunkReferenceMapBroad.toBroad targetUpdated) = targetUpdated := by
+  cases targetUpdated
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- The original local thunk-update relation for corresponding pointers. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "rel_update_thunk"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code])
+  (fmap_as_finite_support_existentials := [targetUpdated])]
+theorem relUpdateThunk {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (sourceValues : List FlatSem.Value) (targetValues : List ClosSem.Value)
+    (flag : Bool) (index : Nat) (updated : Store FlatSem.Value) :
+    StateRel source target ∧ List.Forall₂ ValueRel sourceValues targetValues →
+    FlatSem.updateThunk [.loc flag index] source.refs sourceValues = some updated →
+    ∃ targetUpdated : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value),
+      ClosSem.updateThunk [.refPtr flag index] target.refs targetValues = some targetUpdated ∧
       StateRel { source with refs := updated } { target with refs := targetUpdated } := by
+  intro ⟨states, valuesRel⟩ run
   obtain ⟨targetUpdated, targetRun, stores⟩ :=
-    updateThunk_success_related sourceTargets targetTargets source.refs updated target.refs sourceValues targetValues
-      targetsRel valuesRel states.2.2.2.1 run
+    updateThunk_success_related [.loc flag index] [.refPtr flag index] source.refs updated target.refs
+      sourceValues targetValues (.cons (ValueRel.loc flag index) .nil) valuesRel states.2.2.2.1 run
   rcases states with ⟨maxApp, ffi, clock, _, globals, values, install⟩
   exact ⟨targetUpdated, targetRun, maxApp, ffi, clock, stores, globals, values, install⟩
 

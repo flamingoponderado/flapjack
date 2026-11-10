@@ -89,7 +89,7 @@ theorem compileInc_head (maxApp : Nat) (program : ClosSem.Program) :
     obtain ⟨body, tail, compiled⟩ := compileProgExps_head_zero maxApp start expression rest
     refine ⟨start, body, tail, ?_, ?_⟩
     · rfl
-    · simpa [compileInc, extract, chainEq] using compiled
+    · simpa [compileInc, extractNameSource_eq_extractName, extract, chainEq] using compiled
 
 /-- A source compiler result accepted by the installation oracle is also
 accepted by the target installer, with the incremental main entry returned. -/
@@ -365,7 +365,7 @@ theorem install_auxiliary_entry {C F : Type} (s : ClosSem.State C F) (t : BvlSem
   | mk start body =>
     have installed' : codeInstalled (compileProgExpsHOL s.maxApp (chainExps start body ++ auxiliary))
         (sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))) := by
-      simpa [compileInc, extract] using installed
+      simpa [compileInc, extractNameSource_eq_extractName, extract] using installed
     exact compileProgExps_entry_installed s.maxApp (chainExps start body ++ auxiliary) _ name arity source installed'
       (List.mem_append_right _ member)
 
@@ -432,7 +432,7 @@ theorem install_stateRel {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State 
   have growth : sptSubspt t.code (sptUnion t.code added) := sptSubsptUnion _ _
   have valuesGrow : ∀ a b, vRel s.maxApp f t.refs t.code a b → vRel s.maxApp f t.refs (sptUnion t.code added) a b := by
     intro a b related
-    exact vRel_subspt f t.refs related growth
+    exact vRel_subspt f t.refs ⟨related, growth⟩
   have shift := compileOracleInv_shift s.maxApp s.code (s.code.updateListEq auxiliary)
     s.compile s.compileOracle t.code t.compile t.compileOracle oracle
   have oracleHead : t.compileOracle 0 = (config, compileInc s.maxApp (expressions, auxiliary)) := by
@@ -466,11 +466,11 @@ theorem install_codeAnnotations {C F : Type} (s : ClosSem.State C F) (t : BvlSem
     (annotations : codeAnnotations s)
     (oracle : compileOracleInv s.maxApp s.code s.compile s.compileOracle t.code t.compile t.compileOracle) :
     codeAnnotations { s with code := s.code.updateListEq auxiliary } := by
-  have oracleAnnotations := oracle.2.2.2.2 0
+  have oracleAnnotations := oracle.2.2.2.2 0 config expressions auxiliary sourceHead
   have newLocations : ∀ entry ∈ auxiliary, ClosProps.everyFnLocationSome [entry.2.2] := by
-    simpa [sourceHead] using oracleAnnotations.2.2.1
+    exact oracleAnnotations.2.2.1
   have newVars : ∀ entry ∈ auxiliary, ClosProps.everyFnVarsSome [entry.2.2] := by
-    simpa [sourceHead] using oracleAnnotations.2.2.2
+    exact oracleAnnotations.2.2.2
   constructor
   · intro name arity body found
     cases install_source_lookup s.code auxiliary name arity body found with
@@ -636,7 +636,7 @@ theorem compileInc_original_aux_installed (maxApp : Nat) (expressions : List Clo
               (fun ((loc, args, _), exp) => (loc + numStubs maxApp, args, exp)) ++ finalAux) code := by
           have h : (chainExps start real ++ auxiliary).map (fun (_, _, exp) => exp) = chained ++ extra := by
             simp [chained, extra]
-          simp only [compileInc, extract, compileProgExpsHOL, h, whole] at installed
+          simp only [compileInc, extractNameSource_eq_extractName, extract, compileProgExpsHOL, h, whole] at installed
           exact installed
         have outputInstalled : codeInstalled finalAux code := by
           intro entry member

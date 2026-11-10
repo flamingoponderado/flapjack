@@ -35,7 +35,7 @@ theorem evaluate_ordinary_op_step {C F : Type} (trace : BackendCommon.Tra) (op :
         argsIH env nextEnv target (.err error) sourceNext m l index argsRun noType length argsVars
           argsSafe code oracle states
       cases targetResult with
-      | val values => cases error <;> simp [ResultRel] at resultRel
+      | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
       | err targetError =>
         refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
         rw [altFree_op]
@@ -47,7 +47,7 @@ theorem evaluate_ordinary_op_step {C F : Type} (trace : BackendCommon.Tra) (op :
         argsIH env nextEnv target (.val values) middle m l index argsRun valuesNoType length argsVars
           argsSafe code oracle states
       cases targetResult with
-      | err error => cases error <;> simp [ResultRel] at resultRel
+      | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
       | val targetValues =>
         obtain ⟨outcome, appRun, appRel⟩ := primitive values.reverse targetValues.reverse middle targetMiddle
           (List.forall₂_reverse_iff.mpr resultRel) middleRel
@@ -106,7 +106,7 @@ theorem evaluate_raise_step {C F : Type} (trace : BackendCommon.Tra) (body : Clo
         bodyIH env nextEnv target (.err error) bodyNext m l index
           bodyRun noType length bodyVars bodySafe code oracle states
       cases targetResult with
-      | val values => cases error <;> simp [ResultRel] at resultRel
+      | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
       | err targetError =>
         refine ⟨.err targetError, targetNext, ?_, resultRel, nextRel⟩
         simp only [altFree_singleton, shiftList] at targetRun
@@ -124,7 +124,7 @@ theorem evaluate_raise_step {C F : Type} (trace : BackendCommon.Tra) (body : Clo
         | cons first rest => simp at valueLength
         | nil =>
           cases targetResult with
-          | err error => cases error <;> simp [ResultRel] at resultRel
+          | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
           | val targetValues =>
             cases resultRel with
             | cons valueRel restRel =>
@@ -252,7 +252,7 @@ theorem evaluate_handle_step {C F : Type} (trace : BackendCommon.Tra) (body hand
     cases bodyResult with
     | val values =>
       cases targetResult with
-      | err error => cases error <;> simp [ResultRel] at resultRel
+      | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
       | val targetValues =>
         rw [evaluate, fixClock_evaluate, bodyRun] at run
         cases run
@@ -264,10 +264,10 @@ theorem evaluate_handle_step {C F : Type} (trace : BackendCommon.Tra) (body hand
       cases error with
       | abort reason =>
         cases targetResult with
-        | val values => simp [ResultRel] at resultRel
+        | val values => simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
         | err targetError =>
           cases targetError with
-          | raise value => simp [ResultRel] at resultRel
+          | raise value => simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel] at resultRel
           | abort targetReason =>
             rw [evaluate, fixClock_evaluate, bodyRun] at run
             cases run
@@ -277,23 +277,23 @@ theorem evaluate_handle_step {C F : Type} (trace : BackendCommon.Tra) (body hand
             rw [evaluate, fixClock_evaluate, targetRun]
       | raise value =>
         cases targetResult with
-        | val values => simp [ResultRel] at resultRel
+        | val values => simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
         | err targetError =>
           cases targetError with
-          | abort reason => simp [ResultRel] at resultRel
+          | abort reason => simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel] at resultRel
           | raise targetValue =>
             have valueRel : ValueRel value targetValue := resultRel
             have handlerVars : ∀ n, altFv n [handler] = true →
                 EnvOk m (l + 1) index (value :: env) (targetValue :: nextEnv) n := by
               intro n present
               have headRel : List.Forall₂ ValueRel [value] [targetValue] := .cons valueRel .nil
-              have extended := envOk_extend m l index [value] [targetValue] env nextEnv n headRel
-                (by
+              have extended := envOk_extend [value] [targetValue] 1 n m l index env nextEnv
+                ⟨headRel, rfl, by
                   intro lower
                   apply vars (n - 1)
                   rw [altFv_handle]
-                  have equal : n - 1 + 1 = n := by simp at lower; omega
-                  simp [equal, present])
+                  have equal : n - 1 + 1 = n := by omega
+                  simp [equal, present]⟩
               simpa using extended
             have handlerLength : (value :: env).length = m + (l + 1) := by simp; omega
             have middleSafety := (evaluate_preserves_safe.1 [body]) env source (.err (.raise value)) middle
@@ -344,7 +344,7 @@ theorem evaluate_if_step {C F : Type} (trace : BackendCommon.Tra) (condition yes
         conditionIH env nextEnv target (.err error) middle m l index conditionRun
           noType length condVars safeParts.1 code oracle states
       cases targetResult with
-      | val values => cases error <;> simp [ResultRel] at resultRel
+      | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
       | err targetError =>
         refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
         simp only [altFree_singleton, shiftList] at targetRun
@@ -363,7 +363,7 @@ theorem evaluate_if_step {C F : Type} (trace : BackendCommon.Tra) (condition yes
             conditionIH env nextEnv target (.val [value]) middle m l index conditionRun
               condNoType length condVars safeParts.1 code oracle states
           cases targetResult with
-          | err error => cases error <;> simp [ResultRel] at resultRel
+          | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
           | val targetValues =>
             cases resultRel with
             | cons valueRel restRel =>
@@ -447,7 +447,9 @@ theorem evaluate_let_step {C F : Type} (trace : BackendCommon.Tra)
       refine ⟨targetResult, targetNext, ?_, resultRel, nextRel⟩
       rw [altFree_let, if_pos optimized]
       simp only [altFree_singleton, Flapjack.holHd, shiftList, shiftSing, List.length_replicate] at targetRun ⊢
-      rw [evaluate, fixClock_evaluate, evaluate_shift_replicate_const0]
+      rw [evaluate, fixClock_evaluate,
+        ← shiftSource_eq_shiftList (List.replicate bindings.length (const0 trace)) m l index,
+        evaluate_shift_replicate_const0]
       exact targetRun
   · have bindingsVars : ∀ n, altFv n bindings = true → EnvOk m l index env nextEnv n := by
       intro n present
@@ -465,7 +467,7 @@ theorem evaluate_let_step {C F : Type} (trace : BackendCommon.Tra)
           bindingsIH env nextEnv target (.err error) middle m l index bindingsRun
             noType length bindingsVars safeParts.1 code oracle states
         cases targetResult with
-        | val values => cases error <;> simp [ResultRel] at resultRel
+        | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
         | err targetError =>
           refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
           rw [altFree_let, if_neg optimized]
@@ -478,18 +480,18 @@ theorem evaluate_let_step {C F : Type} (trace : BackendCommon.Tra)
           bindingsIH env nextEnv target (.val values) middle m l index bindingsRun
             bindingNoType length bindingsVars safeParts.1 code oracle states
         cases targetResult with
-        | err error => cases error <;> simp [ResultRel] at resultRel
+        | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
         | val targetValues =>
           have bodyVars : ∀ n, altFv n [body] = true →
               EnvOk m (l + bindings.length) index (values ++ env) (targetValues ++ nextEnv) n := by
             intro n present
-            have extended := envOk_extend m l index values targetValues env nextEnv n resultRel (by
+            have extended := envOk_extend values targetValues values.length n m l index env nextEnv ⟨resultRel, rfl, by
               intro lower
               apply vars (n - values.length)
               rw [altFv_let]
               have shifted : n - values.length + bindings.length = n := by omega
               have noOpt : (noOverlap bindings.length (altFreeList [body]).2 && pureList bindings) ≠ true := optimized
-              simp [noOpt, shifted, present])
+              simp [noOpt, shifted, present]⟩
             simpa [valuesLength] using extended
           have bodyLength : (values ++ env).length = m + (l + bindings.length) := by
             simp only [List.length_append, valuesLength, length]; omega
@@ -537,7 +539,7 @@ theorem evaluate_cons_step {C F : Type} (first second : ClosLang.Exp) (rest : Li
         firstIH env nextEnv target (.err error) sourceNext m l index
           firstRun noType length firstVars safety.1 code oracle states
       cases targetResult with
-      | val values => cases error <;> simp [ResultRel] at resultRel
+      | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
       | err targetError =>
         refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
         simp only [altFree_singleton, shiftList] at targetRun
@@ -556,7 +558,7 @@ theorem evaluate_cons_step {C F : Type} (first second : ClosLang.Exp) (rest : Li
             firstIH env nextEnv target (.val [value]) middle m l index
               firstRun firstNoType length firstVars safety.1 code oracle states
           cases targetResult with
-          | err error => cases error <;> simp [ResultRel] at resultRel
+          | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
           | val targetValues =>
             cases resultRel with
             | cons valueRel tailRel =>
@@ -576,7 +578,7 @@ theorem evaluate_cons_step {C F : Type} (first second : ClosLang.Exp) (rest : Li
                     (restIH middle (by have h := evaluate_clock_le [first] env source; simpa [firstRun] using h)) env nextEnv targetMiddle (.err error) sourceNext m l index
                       restRun noType length restVars safety.2 middleSafety.1 middleSafety.2 middleRel
                   cases targetRestResult with
-                  | val values => cases error <;> simp [ResultRel] at restRel
+                  | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at restRel
                   | err targetError =>
                     refine ⟨.err targetError, targetLast, ?_, restRel, lastRel⟩
                     simp only [altFree_singleton, shiftList] at targetRun
@@ -592,7 +594,7 @@ theorem evaluate_cons_step {C F : Type} (first second : ClosLang.Exp) (rest : Li
                     (restIH middle (by have h := evaluate_clock_le [first] env source; simpa [firstRun] using h)) env nextEnv targetMiddle (.val values) sourceNext m l index
                       restRun restNoType length restVars safety.2 middleSafety.1 middleSafety.2 middleRel
                   cases targetRestResult with
-                  | err error => cases error <;> simp [ResultRel] at restRel
+                  | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at restRel
                   | val targetValues =>
                     refine ⟨.val (targetValue :: targetValues), targetLast, ?_, .cons valueRel restRel, lastRel⟩
                     simp only [altFree_singleton, shiftList] at targetRun

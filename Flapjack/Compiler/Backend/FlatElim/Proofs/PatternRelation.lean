@@ -78,7 +78,7 @@ theorem bindingsWithin_cons (name : VarN) (value : FlatSem.Value)
   simp [bindingsWithin, findValuesGlobals, globalsWithin_union]
 
 /-- A successful match preserves the reachability bound on bindings. -/
-theorem pmatchReachable_aux {C F : Type} (state : FlatSem.State C F) (reachable : NumSet) :
+private theorem pmatchReachable_aux {C F : Type} (state : FlatSem.State C F) (reachable : NumSet) :
     (∀ pattern value bindings result, FlatSem.pmatch state pattern value bindings = .match result →
       globalsWithin (findValueGlobals value) reachable → bindingsWithin bindings reachable →
       globalsWithin (findRefsGlobals state.refs) reachable → bindingsWithin result reachable) ∧
@@ -200,6 +200,16 @@ the corresponding `EVERY` expression and has no separate declaration. -/
 def valuesNoEval (values : List FlatSem.Value) : Prop :=
   ∀ value ∈ values, valueHasEval value = false
 
+/-- An in-bounds element of an Eval-free value list is Eval-free. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "not_v_has_Eval_EVERY_EL"]
+theorem notValueHasEval_every_el (xs : List FlatSem.Value) (i : Nat)
+    (premises : xs.all (fun value => !valueHasEval value) = true ∧ i < xs.length) :
+    valueHasEval (@holEl FlatSem.Value ⟨.litv (.intLit 0)⟩ i xs) = false := by
+  rw [@holEl_eq_getElem FlatSem.Value ⟨.litv (.intLit 0)⟩ i xs premises.2]
+  have hall : ∀ v ∈ xs, valueHasEval v = false := by
+    simpa [List.all_eq_true] using premises.1
+  exact hall _ (List.getElem_mem premises.2)
+
 /-- Replacing a list element with an Eval-free value preserves the invariant. -/
 theorem valuesNoEval_set (values : List FlatSem.Value) (index : Nat) (value : FlatSem.Value)
     (old : valuesNoEval values) (new : valueHasEval value = false) :
@@ -225,7 +235,7 @@ theorem valuesHaveEval_eq_false_iff (values : List FlatSem.Value) :
     exact ih
 
 /-- A successful match preserves the absence of dynamic evaluation. -/
-theorem pmatchNoEval_aux {C F : Type} (state : FlatSem.State C F) :
+private theorem pmatchNoEval_aux {C F : Type} (state : FlatSem.State C F) :
     (∀ pattern value bindings result, FlatSem.pmatch state pattern value bindings = .match result →
       valueHasEval value = false → storeHasNoEval state.refs → bindingsNoEval bindings →
       bindingsNoEval result) ∧

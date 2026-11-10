@@ -118,11 +118,6 @@ theorem freeBounded_succeeds (fuel : Nat) (e : Exp) :
     obtain ⟨result, done⟩ := freeFuel_succeeds (max fuel (expBudget e + 1)) e bound
     exact ⟨result, by simp [freeBounded, h, done]⟩
 
-/-- Retrying preserves all previously successful free-variable results. -/
-theorem freeBounded_eq_of_success (fuel : Nat) (e : Exp) (result : Exp × DbVarSet)
-    (success : freeFuel fuel e = some result) : freeBounded fuel e = some result := by
-  simp [freeBounded, success]
-
 /-- Closedness checks cannot fail from free-variable traversal fuel. -/
 theorem closedFuel_succeeds (fuel : Nat) (e : Exp) : ∃ result, closedFuel fuel e = some result := by
   obtain ⟨⟨e', free⟩, h⟩ := freeBounded_succeeds fuel e

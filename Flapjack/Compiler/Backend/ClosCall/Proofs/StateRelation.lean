@@ -1,133 +1,135 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
-public import Flapjack.Compiler.Backend.Semantics.ClosProps.SimpleRelations
-public import Flapjack.Compiler.Backend.ClosMti.Proofs.StateRelation
+public import Flapjack.Misc.Option.Rel
 
 @[expose] public section
 
-/-! Fuel-aware closure-state relation for direct-call conversion. -/
+/-! Direct-call simulation relation between closure states. -/
 namespace Flapjack.Compiler.Backend.ClosCall
-open Flapjack ClosSem ClosProps
+open Flapjack
 
-/-- States related by direct-call conversion: observable state agrees,
-globals and references contain related values, and the source code map is
-empty. The source compiler configuration retains the known-location set.
-This is untagged because its value relation uses bounded direct-call
-traversals rather than HOL's total `calls`. -/
-def StateRelFuel {C F : Type} (fuel : Nat) (g : State) (allowed : Set Nat)
+/-- Closure-state finite maps roundtrip through their lookup/support view. -/
+theorem holFmapAsFiniteSupportRelationWitness_ClosSem.State {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- Source and target states agree on observations and contain related
+globals and reference cells; the source code map is empty. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "state_rel_def"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code])]
+def stateRel {C F : Type} (g : State) (allowed : Nat → Prop)
     (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F) : Prop :=
   source.ffi = target.ffi ∧ source.clock = target.clock ∧ source.maxApp = target.maxApp ∧
-    List.Forall₂ (optionRel (ValueRelFuel fuel g allowed target.code)) source.globals target.globals ∧
-    ClosMti.fmapRel (refRel (ValueRelFuel fuel g allowed target.code)) source.refs target.refs ∧
-    source.code = HolFiniteMapExact.empty
+  List.Forall₂ (optionRel (valueRel g allowed target.code)) source.globals target.globals ∧
+  (∀ key, optionRel (ClosProps.refRel (valueRel g allowed target.code))
+    (source.refs.lookup key) (target.refs.lookup key)) ∧
+  source.code = HolFiniteMapExact.empty
 
-private theorem optionRel_mono {A B : Type} {R S : A → B → Prop} {x : Option A} {y : Option B}
-    (change : ∀ a b, R a b → S a b) (related : optionRel R x y) : optionRel S x y := by
-  cases x <;> cases y <;> simp_all [optionRel]
+/-- Related states have the same maximum application arity. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "state_rel_max_app"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code])]
+theorem stateRel_maxApp {C F : Type} (g : State) (allowed : Nat → Prop)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (h : stateRel g allowed source target) : source.maxApp = target.maxApp := h.2.2.1
 
-/-- Extending the compiler state and permitted locations preserves the
-fuel-aware state relation for the same source and target states. -/
-theorem stateRelFuel_mono {C F : Type} {fuel : Nat} {g g' : State}
-    {allowed allowed' : Set Nat} {source : ClosSem.State (NumSet × C) F} {target : ClosSem.State C F}
-    (related : StateRelFuel fuel g allowed source target)
-    (stateGrowth : stateExtends g g') (allowedGrowth : allowed ⊆ allowed') :
-    StateRelFuel fuel g' allowed' source target := by
-  obtain ⟨ffi, clock, maxApp, globals, refs, sourceCode⟩ := related
-  have growValue : ∀ a b, ValueRelFuel fuel g allowed target.code a b →
-      ValueRelFuel fuel g' allowed' target.code a b := by
-    intro a b values
-    exact valueRelFuel_mono values stateGrowth allowedGrowth (fun _ _ h => h)
-  refine ⟨ffi, clock, maxApp, ?_, ?_, sourceCode⟩
-  · exact List.Forall₂.imp (fun _ _ h => optionRel_mono growValue h) globals
-  · refine ⟨refs.1, ?_⟩
-    intro key value lookup
-    obtain ⟨value', found, values⟩ := refs.2 key value lookup
-    exact ⟨value', found, refRel_mono growValue values⟩
+/-- Related states have the same clock. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "state_rel_clock"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code])]
+theorem stateRel_clock {C F : Type} (g : State) (allowed : Nat → Prop)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (h : stateRel g allowed source target) : source.clock = target.clock := h.2.1
 
-/-- Looking up a reference in related states yields related optional values. -/
-theorem stateRelFuel_lookupRefs {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
-    {source : ClosSem.State (NumSet × C) F} {target : ClosSem.State C F}
-    (related : StateRelFuel fuel g allowed source target) (key : Nat) :
-    Flapjack.optionRel (refRel (ValueRelFuel fuel g allowed target.code))
-      (source.refs.lookup key) (target.refs.lookup key) :=
-  ClosMti.fmapRel_lookup related.2.2.2.2.1 key
+/-- Setting both clocks to the same value preserves the relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "state_rel_with_clock"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code])]
+theorem stateRel_withClock {C F : Type} (g : State) (allowed : Nat → Prop)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (clock : Nat) (h : stateRel g allowed source target) :
+    stateRel g allowed { source with clock := clock } { target with clock := clock } := by
+  exact ⟨h.1, rfl, h.2.2⟩
 
-/-- Updating both reference stores with related references preserves the
-fuel-aware state relation. -/
-theorem stateRelFuel_updateRefs {C F : Type} {fuel : Nat} {g : State} {allowed : Set Nat}
-    {source : ClosSem.State (NumSet × C) F} {target : ClosSem.State C F}
-    (related : StateRelFuel fuel g allowed source target) (key : Nat)
-    (left right : ClosSem.Ref ClosSem.Value)
-    (values : refRel (ValueRelFuel fuel g allowed target.code) left right) :
-    StateRelFuel fuel g allowed { source with refs := source.refs.updateEq (key, left) }
-      { target with refs := target.refs.updateEq (key, right) } := by
-  obtain ⟨ffi, clock, maxApp, globals, refs, sourceCode⟩ := related
-  exact ⟨ffi, clock, maxApp, globals, ClosMti.fmapRel_update refs key left right values, sourceCode⟩
+/-- A source reference in related states has a related target reference. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "state_rel_flookup_refs"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code])]
+theorem stateRel_lookupRefs {C F : Type} (g : State) (allowed : Nat → Prop)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (key : Nat) (value : ClosSem.Ref ClosSem.Value)
+    (h : stateRel g allowed source target ∧ source.refs.lookup key = some value) :
+    ∃ value', target.refs.lookup key = some value' ∧
+      ClosProps.refRel (valueRel g allowed target.code) value value' := by
+  have rel := h.1.2.2.2.2.1 key
+  rw [h.2] at rel
+  cases found : target.refs.lookup key with
+  | none => simp [optionRel, found] at rel
+  | some value' => exact ⟨value', rfl, by simpa [optionRel, found] using rel⟩
 
-/-- Fixing the target code map makes the fuel-aware state relation satisfy
-the generic primitive-operation simulation interface. -/
-theorem stateRelFuel_simple {C F : Type} (fuel : Nat) (g : State) (allowed : Set Nat)
+/-- Fixing the target code makes direct-call state correspondence satisfy the
+generic primitive-operation simulation. HOL proves these clauses inline in
+do_app_thm. -/
+theorem stateRel_simple {C F : Type} (g : State) (allowed : Nat → Prop)
     (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) :
-    simpleStateRel (ValueRelFuel fuel g allowed code)
+    ClosProps.simpleStateRel (valueRel g allowed code)
       (fun (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F) =>
-        target.code = code ∧ StateRelFuel fuel g allowed source target) := by
+        stateRel g allowed source target ∧ target.code = code) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · intro s t ptr ⟨missing, codeEq, states⟩
-    have lookup := stateRelFuel_lookupRefs states ptr
-    cases left : s.refs.lookup ptr <;> simp_all [Flapjack.optionRel]
-  · intro bytes t s ptr ⟨found, codeEq, states⟩
-    have lookup := stateRelFuel_lookupRefs states ptr
-    rw [found] at lookup
-    cases left : s.refs.lookup ptr with
-    | none => simp [Flapjack.optionRel, left] at lookup
-    | some value =>
-      have refs : refRel (ValueRelFuel fuel g allowed code) value (.byteArray bytes) := by
-        simpa [Flapjack.optionRel, left, codeEq] using lookup
-      cases value <;> simp_all [refRel]
-  · intro values t s ptr ⟨found, codeEq, states⟩
-    have lookup := stateRelFuel_lookupRefs states ptr
-    rw [found] at lookup
-    cases left : s.refs.lookup ptr with
-    | none => simp [Flapjack.optionRel, left] at lookup
-    | some value =>
-      have refs : refRel (ValueRelFuel fuel g allowed code) value (.valueArray values) := by
-        simpa [Flapjack.optionRel, left, codeEq] using lookup
-      cases value with
-      | valueArray xs => exact ⟨xs, rfl, refs⟩
-      | byteArray bytes => exact refs.elim
-      | thunk mode v => exact refs.elim
-  · intro mode value t s ptr ⟨found, codeEq, states⟩
-    have lookup := stateRelFuel_lookupRefs states ptr
-    rw [found] at lookup
-    cases left : s.refs.lookup ptr with
-    | none => simp [Flapjack.optionRel, left] at lookup
-    | some old =>
-      have refs : refRel (ValueRelFuel fuel g allowed code) old (.thunk mode value) := by
-        simpa [Flapjack.optionRel, left, codeEq] using lookup
-      cases old with
-      | valueArray xs => exact refs.elim
-      | byteArray bytes => exact refs.elim
-      | thunk mode' v =>
-        obtain ⟨rfl, valueRel⟩ := refs
-        exact ⟨v, rfl, valueRel⟩
-  · intro s t ⟨codeEq, states⟩
-    exact ⟨states.1, states.2.2.2.2.1.1, by simpa [codeEq] using states.2.2.2.1⟩
-  · intro ffi s t ⟨codeEq, states⟩
-    obtain ⟨_, clock, maxApp, globals, refs, sourceCode⟩ := states
-    exact ⟨codeEq, rfl, clock, maxApp, globals, refs, sourceCode⟩
-  · intro bytes s t ptr ⟨codeEq, states⟩
-    exact ⟨codeEq, stateRelFuel_updateRefs states ptr _ _ rfl⟩
-  · intro s t ptr xs ys ⟨⟨codeEq, states⟩, values⟩
-    refine ⟨codeEq, stateRelFuel_updateRefs states ptr _ _ ?_⟩
-    simpa [refRel, codeEq] using values
-  · intro s t ptr mode v w ⟨⟨codeEq, states⟩, values⟩
-    refine ⟨codeEq, stateRelFuel_updateRefs states ptr _ _ ?_⟩
-    simpa [refRel, codeEq] using values
-  · intro s t xs ys ⟨⟨codeEq, states⟩, values⟩
-    obtain ⟨ffi, clock, maxApp, _, refs, sourceCode⟩ := states
-    refine ⟨codeEq, ffi, clock, maxApp, ?_, refs, sourceCode⟩
-    simpa [codeEq] using values
+  · intro s t ptr ⟨missing, rel, eq⟩
+    have cells := rel.2.2.2.2.1 ptr
+    rw [missing] at cells
+    cases found : s.refs.lookup ptr <;> simp_all [optionRel]
+  · intro bytes t s ptr ⟨found, rel, eq⟩
+    have cells := rel.2.2.2.2.1 ptr
+    rw [found] at cells
+    cases lookup : s.refs.lookup ptr with
+    | none => simp [optionRel, lookup] at cells
+    | some cell =>
+      cases cell <;> simp_all [optionRel, ClosProps.refRel]
+  · intro values t s ptr ⟨found, rel, eq⟩
+    have cells := rel.2.2.2.2.1 ptr
+    rw [found, eq] at cells
+    cases lookup : s.refs.lookup ptr with
+    | none => simp [optionRel, lookup] at cells
+    | some cell =>
+      cases cell <;> simp_all [optionRel, ClosProps.refRel]
+  · intro mode value t s ptr ⟨found, rel, eq⟩
+    have cells := rel.2.2.2.2.1 ptr
+    rw [found, eq] at cells
+    cases lookup : s.refs.lookup ptr with
+    | none => simp [optionRel, lookup] at cells
+    | some cell =>
+      cases cell <;> simp_all [optionRel, ClosProps.refRel]
+  · intro s t ⟨rel, eq⟩
+    refine ⟨rel.1, ?_, ?_⟩
+    · intro ptr
+      have cells := rel.2.2.2.2.1 ptr
+      cases left : s.refs.lookup ptr <;> cases right : t.refs.lookup ptr <;>
+        simp_all [optionRel]
+    · simpa [eq] using rel.2.2.2.1
+  · intro ffi s t ⟨rel, eq⟩
+    exact ⟨⟨rfl, rel.2⟩, eq⟩
+  · intro bytes s t ptr ⟨rel, eq⟩
+    refine ⟨⟨rel.1, rel.2.1, rel.2.2.1, rel.2.2.2.1, ?_, rel.2.2.2.2.2⟩, eq⟩
+    intro key
+    by_cases same : key = ptr
+    · subst key; simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, optionRel, ClosProps.refRel]
+    · simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using rel.2.2.2.2.1 key
+  · intro s t ptr xs ys ⟨⟨rel, eq⟩, related⟩
+    refine ⟨⟨rel.1, rel.2.1, rel.2.2.1, rel.2.2.2.1, ?_, rel.2.2.2.2.2⟩, eq⟩
+    intro key
+    by_cases same : key = ptr
+    · subst key; simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, optionRel, ClosProps.refRel, eq] using related
+    · simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using rel.2.2.2.2.1 key
+  · intro s t ptr mode v w ⟨⟨rel, eq⟩, related⟩
+    refine ⟨⟨rel.1, rel.2.1, rel.2.2.1, rel.2.2.2.1, ?_, rel.2.2.2.2.2⟩, eq⟩
+    intro key
+    by_cases same : key = ptr
+    · subst key; simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, optionRel, ClosProps.refRel, eq] using related
+    · simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using rel.2.2.2.2.1 key
+  · intro s t xs ys ⟨⟨rel, eq⟩, related⟩
+    refine ⟨⟨rel.1, rel.2.1, rel.2.2.1, ?_, rel.2.2.2.2⟩, eq⟩
+    simpa [eq] using related
 
 end Flapjack.Compiler.Backend.ClosCall

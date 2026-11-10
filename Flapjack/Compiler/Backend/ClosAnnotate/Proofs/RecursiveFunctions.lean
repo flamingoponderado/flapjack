@@ -25,8 +25,9 @@ theorem functionsRel_annotate (env captured : List Value) (count m : Nat) (index
     obtain ⟨arity, body⟩ := first
     simp only [altFreeFuns, List.map_cons, shiftFuns]
     apply FunctionsRel.cons env captured count arity m body _ index rest _
-    · simp [altFree_singleton, shiftList, Nat.add_comm]
-    · exact live arity body (by simp)
+    · simp [shiftSource_eq_shiftList, altFreeSource_eq_altFree, altFree_singleton, shiftList, Nat.add_comm]
+    · intro n ⟨present, bound⟩
+      exact live arity body (by simp) n (by simpa only [altFvSource_eq_altFv] using present) bound
     · exact safe arity body (by simp)
     · exact length
     · apply ih
@@ -60,14 +61,14 @@ theorem envOk_recursive_body (names : List Flapjack.Basis.Pure.MlString.MlString
       (((List.range functions.length).map (fun i => Value.recclosure location [] env functions i)) ++ env)
       (((List.range functions.length).map (fun i => Value.recclosure location [] captured nextFunctions i)) ++ nextEnv) n := by
   have frontRel := recursiveValues_related location env captured functions nextFunctions related
-  have extended := envOk_extend m l index _ _ env nextEnv n frontRel (by
+  have extended := envOk_extend _ _ _ n m l index env nextEnv ⟨frontRel, rfl, by
     intro lower
     have lower' : functions.length ≤ n := by simpa using lower
     simp only [List.length_map, List.length_range]
     apply vars (n - functions.length)
     rw [altFv_letrec]
     have shifted : n - functions.length + functions.length = n := by omega
-    simp [shifted, present])
+    simp [shifted, present]⟩
   simpa using extended
 
 /-- The recursive group's live-variable set can be selected from the target
@@ -114,8 +115,8 @@ theorem recursiveFunctions_capture (names : List Flapjack.Basis.Pure.MlString.Ml
     refine ⟨(arity, exp), member, ?_⟩
     have equal : n - (arity + functions.length) + arity + functions.length = n := by omega
     simpa [equal] using present
-  exact envOk_shiftedEnv m l index env nextEnv captured _ live (liveVars _ liveMember)
-    liveMember distinct captureRun
+  exact envOk_shiftedEnv m l index env nextEnv _ live captured
+    ⟨liveVars _ liveMember, liveMember, distinct, captureRun⟩
 
 /-- Related recursive function lists have the same arities in the same order. -/
 theorem functionsRel_arities (env captured : List Value) (count : Nat)

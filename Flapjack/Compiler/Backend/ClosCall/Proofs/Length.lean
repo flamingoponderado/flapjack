@@ -28,20 +28,6 @@ theorem callsListFuel_length (fuel : Nat) (es : List Exp) (initial final : State
       simp only [List.length_cons]
       exact congrArg Nat.succ (ih es s1 s2 es' hs)
 
-/-- Retrying with the structural budget preserves the same length invariant. -/
-theorem callsListBounded_length (fuel : Nat) (es : List Exp) (initial final : State)
-    (out : List Exp) (run : callsListBounded fuel es initial = some (out, final)) :
-    out.length = es.length := by
-  unfold callsListBounded at run
-  cases first : callsListFuel fuel es initial with
-  | some result =>
-    simp only [first, Option.some.injEq] at run
-    subst result
-    exact callsListFuel_length fuel es initial final out first
-  | none =>
-    simp only [first] at run
-    exact callsListFuel_length _ es initial final out run
-
 /-- In a mutually recursive group, pairing converted bodies with their
 original arities retains the original number of auxiliary functions. -/
 theorem convertedFunctions_length (fuel : Nat) (fns : List (Nat × Exp))
@@ -51,15 +37,5 @@ theorem convertedFunctions_length (fuel : Nat) (fns : List (Nat × Exp))
   have length := callsListFuel_length fuel (fns.map Prod.snd) initial final bodies run
   simp only [List.length_map] at length
   simp [List.length_zip, length]
-
-/-- The auxiliary-label range for a converted recursive group has precisely
-the size of the input function group. -/
-theorem convertedFunctions_labels (fuel loc : Nat) (fns : List (Nat × Exp))
-    (initial final : State) (bodies : List Exp)
-    (run : callsListFuel fuel (fns.map Prod.snd) initial = some (bodies, final)) :
-    (codeList loc ((fns.map Prod.fst).zip bodies) final).2.map Prod.fst =
-      ((List.range fns.length).map (fun i => loc + i * 2 + 1)).reverse ++
-        final.2.map Prod.fst := by
-  rw [codeList_labels, convertedFunctions_length fuel fns initial final bodies run]
 
 end Flapjack.Compiler.Backend.ClosCall

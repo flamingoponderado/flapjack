@@ -11,8 +11,7 @@ public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
 
 @[expose] public section
 
-/-! Execution of the flat expression generated for source Eval. The
-proof-side evaluators and factored relations remain under HOL review. -/
+/-! Execution of the flat expression generated for source Eval. These internal simulations use the reviewed source-to-flat relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.Basis.Pure.MlString
 open Flapjack.EvaluateHOL (evaluate_sourceEval_success evaluate_sourceEval_timeout evaluate_sourceEval_declaration_error evaluate_eval_args_error evaluate_eval_decode_failure evaluate_eval_success)
@@ -690,7 +689,7 @@ theorem eval_declarations_factored {C F : Type} [Nonempty C]
 
 /-- Successful dynamic declarations and environment restoration follow from
 the declaration induction hypothesis and related operands. No flat declaration
-run is assumed. The factored relations remain pending HOL correspondence review. -/
+run is assumed. -/
 theorem eval_success_from_declarations {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (oldGen : EnvironmentGenerationStore) (oldGenv : GlobalEnv)

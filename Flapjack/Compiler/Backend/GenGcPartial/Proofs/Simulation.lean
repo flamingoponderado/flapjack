@@ -1,5 +1,7 @@
 module
 
+public import Flapjack.FiniteMap.BroadCodec
+
 public import Flapjack.Compiler.Backend.GenGcPartial
 public import Flapjack.Compiler.Backend.GenGc
 public import Mathlib.Data.List.Basic
@@ -2976,15 +2978,24 @@ theorem partialGc_combinedMapRelated {α β : Type} (conf : Config β)
       exact partialGc_currentObjectRelated conf roots roots1 heap old current refs state f run original valid invariant empty
         segment related ptr children len data defined found lower upper
 
+/-- Canonical codec for the existential forwarding map. -/
+theorem holFmapAsFiniteSupportExistentialWitness_partialGc_related_f
+    (f : HolFiniteMapExact Nat Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup = f.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f := by
+  cases f
+  exact ⟨rfl, rfl, rfl⟩
+
 /-- Partial collection preserves roots and heap through an existential
 canonical finite-support forwarding map. -/
 @[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "partial_gc_related"
-  (fmap_as_finite_support_relation := [f])]
+  (fmap_as_finite_support_existentials := [f])]
 theorem partialGc_related {α β : Type} (conf : Config β)
     (roots : List (HeapAddress α)) (heap : List (HeapElement α β))
     (validRoots : rootsOk roots heap) (validHeap : heapOk heap conf.limit)
     (generations : heapGenOk heap conf) :
-    ∃ (state : GcState α β) (f : HolFiniteMapExact Nat Nat),
+    ∃ state : GcState α β, ∃ f : HolFiniteMapExact Nat Nat,
       partialGc conf (roots, heap) = (addrMap (holFapply f) roots, state) ∧
       (∀ ptr value, .pointer ptr value ∈ roots → f.lookup ptr ≠ none) ∧
       heapOk (state.old ++ state.h1 ++ heapExpand state.n ++ state.r1) conf.limit ∧

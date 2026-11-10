@@ -16,7 +16,7 @@ def refLength (byte : Bool) : Option (Ref Value) → Option Value
 
 /-- Related reference payloads have identical valid length observations. -/
 theorem refLength_related (byte : Bool) (left right : Option (Ref Value))
-    (related : optionRel RefRel left right) : optionRel ValueRel (refLength byte left) (refLength byte right) := by
+    (related : optionRel (ClosProps.refRel ValueRel) left right) : optionRel ValueRel (refLength byte left) (refLength byte right) := by
   cases left with
   | none => cases right <;> simp_all [optionRel, refLength]
   | some leftRef =>
@@ -29,16 +29,16 @@ theorem refLength_related (byte : Bool) (left right : Option (Ref Value))
         | valueArray nextFields =>
           have len := related.length_eq
           cases byte <;> simp [refLength, optionRel, ← len, ValueRel.number]
-        | _ => simp [optionRel, RefRel] at related
+        | _ => simp [optionRel, ClosProps.refRel] at related
       | byteArray bytes =>
         cases rightRef with
         | byteArray nextBytes =>
           have same : bytes = nextBytes := related
           subst nextBytes
           cases byte <;> simp [refLength, optionRel, ValueRel.number]
-        | _ => simp [optionRel, RefRel] at related
+        | _ => simp [optionRel, ClosProps.refRel] at related
       | thunk mode value =>
-        cases rightRef <;> simp_all [optionRel, RefRel, refLength]
+        cases rightRef <;> simp_all [optionRel, ClosProps.refRel, refLength]
 
 /-- The length cases of the dispatcher expose the reference observation. -/
 theorem applyMemory_refLength {C F : Type} (byte flag : Bool) (index : Nat) (state : State C F) :
@@ -55,7 +55,7 @@ theorem primitiveSimulation_refLength {C F : Type} (byte : Bool) :
   intro values nextValues source target valuesRel states
   cases valuesRel with
   | nil => cases byte <;>
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons head tail =>
     cases tail with
     | nil =>
@@ -72,9 +72,9 @@ theorem primitiveSimulation_refLength {C F : Type} (byte : Bool) :
         · cases h : refLength byte (source.refs.lookup index) <;>
             simpa [doApp, sourceEquation, h] using rel
       | _ => cases byte <;>
-          exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+          exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons first rest => cases byte <;>
-        exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+        exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- Extract a value array from an optional reference. -/
 def refValueArray : Option (Ref Value) → Option (List Value)
@@ -82,14 +82,14 @@ def refValueArray : Option (Ref Value) → Option (List Value)
   | _ => none
 
 /-- Related references contain related value arrays or both fail extraction. -/
-theorem refValueArray_related (left right : Option (Ref Value)) (related : optionRel RefRel left right) :
+theorem refValueArray_related (left right : Option (Ref Value)) (related : optionRel (ClosProps.refRel ValueRel) left right) :
     optionRel (List.Forall₂ ValueRel) (refValueArray left) (refValueArray right) := by
   cases left with
   | none => cases right <;> simp_all [optionRel, refValueArray]
   | some leftRef =>
     cases right with
     | none => simp [optionRel] at related
-    | some rightRef => cases leftRef <;> cases rightRef <;> simp_all [optionRel, RefRel, refValueArray]
+    | some rightRef => cases leftRef <;> cases rightRef <;> simp_all [optionRel, ClosProps.refRel, refValueArray]
 
 /-- An indexed value observation from a block or value-array reference. -/
 def valueAt (value : Value) (index : Int) (refs : HolFiniteMapExact Nat (Ref Value)) : Option Value :=
@@ -127,7 +127,7 @@ theorem applyMemory_valueAt {C F : Type} (value : Value) (index : Int) (state : 
     applyMemory .el [value, .number index] state = (valueAt value index state.refs).map (fun x => (x, state)) := by
   cases value with
   | block tag fields =>
-    by_cases negative : index < 0 <;> simp [applyMemory, valueAt, negative, Option.map_eq_bind, Function.comp_def]
+    by_cases negative : index < 0 <;> simp [applyMemory, valueAt, negative, Option.map_eq_bind]
   | refPtr flag ptr =>
     cases h : state.refs.lookup ptr with
     | none => simp [applyMemory, valueAt, refValueArray, h]
@@ -135,7 +135,7 @@ theorem applyMemory_valueAt {C F : Type} (value : Value) (index : Int) (state : 
       cases ref with
       | valueArray fields =>
         by_cases negative : index < 0 <;> simp [applyMemory, valueAt, refValueArray, h, negative,
-          Option.map_eq_bind, Function.comp_def]
+          Option.map_eq_bind]
       | _ => simp [applyMemory, valueAt, refValueArray, h]
   | _ => simp [applyMemory, valueAt]
 
@@ -143,10 +143,10 @@ theorem applyMemory_valueAt {C F : Type} (value : Value) (index : Int) (state : 
 theorem primitiveSimulation_el {C F : Type} : PrimitiveSimulation (C := C) (F := F) (.memOp .el) := by
   intro values nextValues source target valuesRel states
   cases valuesRel with
-  | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+  | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons first rest =>
     cases rest with
-    | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+    | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons second rest =>
       cases rest with
       | nil =>
@@ -161,8 +161,8 @@ theorem primitiveSimulation_el {C F : Type} : PrimitiveSimulation (C := C) (F :=
           · cases h : valueAt value index source.refs <;>
               simpa [doApp, applyMemory_valueAt, h] using rel
         | _ => cases first <;>
-            exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+            exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
       | cons third rest =>
-        exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+        exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate

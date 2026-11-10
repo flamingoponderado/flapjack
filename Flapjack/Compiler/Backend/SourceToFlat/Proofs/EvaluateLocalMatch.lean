@@ -5,8 +5,8 @@ public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateMatch
 
 @[expose] public section
 
-/-! Pattern row evaluation with growing global environments. These are
-preliminary simulations over relations pending HOL correspondence review. -/
+/-! Pattern row evaluation with growing global environments, using the reviewed
+source-to-flat relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant

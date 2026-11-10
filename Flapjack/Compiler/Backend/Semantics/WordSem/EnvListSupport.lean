@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+public import Flapjack.Misc.Sptree.ToAList
 
 @[expose] public section
 
@@ -184,29 +185,6 @@ theorem wordSemEnvToList_mem_iff {width : Nat} [NeZero width]
   simp [wordSemEnvToList, wordSemListRearrange_mem_iff,
     wordSemSort_mem_iff]
 
-/-- An association emitted by the exact HOL Sptree `toAList` traversal is
-exactly a successful lookup. The proof uses the external HOL Sptree
-`foldi`/`spt_acc` address argument, rendered untagged in `Misc.Sptree`. -/
-theorem sptToAList_mem_iff_lookup {α : Type} (tree : Spt α)
-    (key : Nat) (value : α) :
-    (key, value) ∈ sptToAList tree ↔ sptLookup key tree = some value := by
-  constructor
-  · intro hmem
-    have hfold :
-        (key, value) ∈
-          sptFoldi (fun k v entries => (k, v) :: entries) 0 [] tree := by
-      simpa [sptToAList] using hmem
-    rcases sptFoldi_mem_address tree 0 [] key value hfold with hacc |
-      ⟨localKey, haddr, hlookup⟩
-    · simp at hacc
-    · have hkey : key = localKey := by
-        simpa [sptAcc_eq, lrNext] using haddr
-      subst localKey
-      exact hlookup
-  · intro hlookup
-    have hfold := sptFoldi_lookup_mem tree 0 [] key value hlookup
-    simpa [sptToAList, sptAcc_eq, lrNext] using hfold
-
 /-- Exact HOL `env_to_list_lookup_equiv` from
 `cakeml/compiler/backend/semantics/wordPropsScript.sml:4636-4663`. Given the
 HOL environment-list result equation, both source conclusions are preserved:
@@ -237,7 +215,7 @@ theorem wordSemEnvToListLookupEquiv {width : Nat} [NeZero width]
           have hsourceMem :=
             (wordSemEnvToList_mem_iff env bijSeq (key, value)).mp hpipeline
           have hsourceLookup :=
-            (sptToAList_mem_iff_lookup env key value).mp hsourceMem
+            (sptMemToAList env key value).mp hsourceMem
           rw [hnone] at hsourceLookup
           cases hsourceLookup
     · have hexists : ∃ value, sptLookup key env = some value := by
@@ -246,7 +224,7 @@ theorem wordSemEnvToListLookupEquiv {width : Nat} [NeZero width]
         | some value => exact ⟨value, rfl⟩
       obtain ⟨value, hlookup⟩ := hexists
       have hsourceMem : (key, value) ∈ sptToAList env :=
-        (sptToAList_mem_iff_lookup env key value).mpr hlookup
+        (sptMemToAList env key value).mpr hlookup
       have hpipeline :=
         (wordSemEnvToList_mem_iff env bijSeq (key, value)).mpr hsourceMem
       have hqmem : (key, value) ∈ entries := by
@@ -259,7 +237,7 @@ theorem wordSemEnvToListLookupEquiv {width : Nat} [NeZero width]
         have hotherSourceMem :=
           (wordSemEnvToList_mem_iff env bijSeq (key, other)).mp hotherPipeline
         have hotherLookup :=
-          (sptToAList_mem_iff_lookup env key other).mp hotherSourceMem
+          (sptMemToAList env key other).mp hotherSourceMem
         rw [hlookup] at hotherLookup
         injection hotherLookup with hvalue
         exact hvalue.symm
@@ -272,6 +250,6 @@ theorem wordSemEnvToListLookupEquiv {width : Nat} [NeZero width]
       simpa [hentries] using hqmem
     have hsourceMem :=
       (wordSemEnvToList_mem_iff env bijSeq (key, value)).mp hpipeline
-    exact (sptToAList_mem_iff_lookup env key value).mp hsourceMem
+    exact (sptMemToAList env key value).mp hsourceMem
 
 end Flapjack

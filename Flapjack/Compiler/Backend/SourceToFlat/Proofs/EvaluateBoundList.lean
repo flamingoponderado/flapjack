@@ -9,8 +9,7 @@ public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveArith
 
 @[expose] public section
 
-/-! Growing argument lists in local environments. The factored relations
-remain pending HOL correspondence review. -/
+/-! Growing argument lists in local environments using the reviewed relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant

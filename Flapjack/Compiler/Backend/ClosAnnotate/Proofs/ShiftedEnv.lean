@@ -9,11 +9,12 @@ public import Flapjack.Misc.ListEl
 namespace Flapjack.Compiler.Backend.ClosAnnotate
 
 /-- Looking up an element of a distinct live-variable list returns its
-position plus the starting offset. This source-shaped helper remains untagged
-pending comparison of the local HOL declaration's inferred types. -/
+position plus the starting offset. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "lookup_EL_shifted_env"]
 theorem lookup_shiftedEnv_el (variables : List Nat) (index offset : Nat)
-    (bound : index < variables.length) (distinct : variables.Nodup) :
+    (h : index < variables.length ∧ variables.Nodup) :
     sptLookup (Flapjack.holEl index variables) (shiftedEnv offset variables) = some (offset + index) := by
+  obtain ⟨bound, distinct⟩ := h
   induction variables generalizing index offset with
   | nil => simp at bound
   | cons first rest ih =>

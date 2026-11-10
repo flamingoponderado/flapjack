@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateVar
+public import Flapjack.FiniteMap.SubmapExact
 public import Flapjack.SemanticPrimitivesProps.ResultRelation
 
 @[expose] public section
@@ -9,10 +10,6 @@ public import Flapjack.SemanticPrimitivesProps.ResultRelation
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 open Flapjack.Compiler.Backend.ClosProps
-
-/-- Lookup characterization of finite-map extension, used for the relocation map. -/
-def relocationSubmap (old new : HolFiniteMapExact Nat Nat) : Prop :=
-  ∀ key value, old.lookup key = some value → new.lookup key = some value
 
 /-- Lookup characterization of the source's submap between reference stores
 after removing the respective relocation-map ranges. -/
@@ -38,7 +35,7 @@ def evaluatePost {C F : Type} (s sNext : ClosSem.State C F) (t : BvlSem.State C 
     BvlSem.evaluate compiled targetEnv { t with clock := s.clock + extraClock } = (targetResult, tNext) ∧
     resultRel (List.Forall₂ (vRel s.maxApp fNext tNext.refs tNext.code))
       (vRel s.maxApp fNext tNext.refs tNext.code) result targetResult ∧
-    stateRel fNext sNext tNext ∧ relocationSubmap f fNext ∧
+    stateRel fNext sNext tNext ∧ f.submap fNext ∧
     unmappedRefsSubmap t.refs tNext.refs f fNext ∧ codeAnnotations sNext ∧
     sNext.clock = tNext.clock
 

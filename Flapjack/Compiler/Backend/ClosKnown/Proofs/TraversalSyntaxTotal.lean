@@ -1,7 +1,6 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalSyntax
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SyntaxOracle
 
 @[expose] public section
 
@@ -172,46 +171,5 @@ theorem knownEveryFnVarsNone (c : Config) (xs : List ClosLang.Exp)
     have result := knownVarsAll c xs env globals eas next ⟨run, h.1, h.2.1, h.2.2⟩
     simpa [run] using result
 
-open ClosProps BackendProps Relations.StateRelation.Oracle
-
-/-- The source syntax oracle and the initial optimizer run establish that
-both the optimized program and every incremental output lack annotations. -/
-theorem syntaxOracleOk_outputVarsNone {C : Type} (c : Config) (xs : List ClosLang.Exp)
-    (co : Nat → (Spt ValApprox × C) × (List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)))
-    (g : Spt ValApprox) (ys : List (ClosLang.Exp × ValApprox))
-    (oracle : syntaxOracleOk c xs co g)
-    (known : knownListTotal c (ClosFvs.compile xs) [] .ln = (ys, g)) :
-    everyFnVarsNone (ys.map Prod.fst) ∧
-      ∀ n, everyFnVarsNone (stateCo (compileInc c)
-        (pureCo (ClosFvs.compileInc (β := Nat × Nat × ClosLang.Exp)) ∘ co) n).2.1 := by
-  obtain ⟨initial, recurrence, first, _, programs⟩ := oracle
-  have initialSafe : everyFnVarsNone (ClosFvs.compile xs) := by
-    simpa [ClosFvs.compile] using (ClosFvs.removeList_varsNone xs 0).mpr initial.1
-  have firstRun := knownVarsAll c (ClosFvs.compile xs) [] .ln ys g
-    ⟨known, initialSafe, by simp, by simp [globalsApproxVarsNone, sptLookup]⟩
-  have globalsSafe : ∀ n, globalsApproxVarsNone (co n).1.1 := by
-    intro n
-    induction n with
-    | zero => simpa [first] using firstRun.2.2
-    | succ n ih =>
-      have input : everyFnVarsNone (ClosFvs.compile (co n).2.1) := by
-        simpa [ClosFvs.compile] using
-          (ClosFvs.removeList_varsNone (co n).2.1 0).mpr (programs n).1.1
-      cases hk : knownListTotal (resetInlineFactor c) (ClosFvs.compile (co n).2.1) []
-          (co n).1.1 with
-      | mk eas next =>
-        have safe := knownVarsAll (resetInlineFactor c) (ClosFvs.compile (co n).2.1)
-          [] (co n).1.1 eas next ⟨hk, input, by simp, ih⟩
-        have eq := recurrence n
-        simp [pureCo, ClosFvs.compileInc, compileInc, hk] at eq
-        simpa [eq] using safe.2.2
-  refine ⟨firstRun.1, ?_⟩
-  intro n
-  have input : everyFnVarsNone (ClosFvs.compile (co n).2.1) := by
-    simpa [ClosFvs.compile] using
-      (ClosFvs.removeList_varsNone (co n).2.1 0).mpr (programs n).1.1
-  have safe := knownEveryFnVarsNone (resetInlineFactor c) (ClosFvs.compile (co n).2.1)
-    [] (co n).1.1 ⟨input, by simp, globalsSafe n⟩
-  simpa [stateCo, pureCo, ClosFvs.compileInc, compileInc] using safe.1
 
 end Flapjack.Compiler.Backend.ClosKnown.TraversalSyntax

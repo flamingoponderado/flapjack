@@ -36,6 +36,14 @@ def fnLocationSomeFuns : List (Nat × ClosLang.Exp) → Prop
 termination_by fs => sizeOf fs
 end
 
+/-- Function-location annotations hold exactly when they hold for each singleton. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "every_Fn_SOME_EVERY"]
+theorem everyFnLocationSome_every (xs : List ClosLang.Exp) :
+    everyFnLocationSome xs ↔ ∀ e ∈ xs, everyFnLocationSome [e] := by
+  induction xs with
+  | nil => simp [everyFnLocationSome]
+  | cons e es ih => simp [everyFnLocationSome, ih]
+
 /-- Flapjack infrastructure: the recursive-group helper equals the
 predicate applied to the source's mapped function bodies. -/
 theorem fnLocationSomeFuns_eq_map (fs : List (Nat × ClosLang.Exp)) :
@@ -74,6 +82,14 @@ def fnVarsSomeFuns : List (Nat × ClosLang.Exp) → Prop
   | (_, body) :: rest => fnVarsSomeExp body ∧ fnVarsSomeFuns rest
 termination_by fs => sizeOf fs
 end
+
+/-- Captured-variable annotations hold exactly when they hold for each singleton. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "every_Fn_vs_SOME_EVERY"]
+theorem everyFnVarsSome_every (xs : List ClosLang.Exp) :
+    everyFnVarsSome xs ↔ ∀ e ∈ xs, everyFnVarsSome [e] := by
+  induction xs with
+  | nil => simp [everyFnVarsSome]
+  | cons e es ih => simp [everyFnVarsSome, ih]
 
 /-- Flapjack infrastructure: the recursive-group helper equals the
 predicate applied to the source's mapped function bodies. -/

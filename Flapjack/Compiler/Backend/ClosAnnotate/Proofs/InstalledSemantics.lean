@@ -2,6 +2,8 @@ module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotationCodeSemantics
 public import Flapjack.FiniteMap.AlistExact
+public import Flapjack.Compiler.Backend.ClosAnnotate.Original
+
 
 @[expose] public section
 
@@ -39,15 +41,20 @@ theorem semanticsAnnotate_sourceShape {C F : Type} (ffi : HolFfiState F) (maxApp
     (code : List (Nat × Nat × ClosLang.Exp)) (oracle : CompileOracle C) (compiler : Compiler C)
     (program : List ClosLang.Exp)
     (notFail : semantics ffi maxApp (Flapjack.HolFiniteMapExact.alistToFmap code)
-      oracle (pureCc compileInc compiler) program ≠ .fail)
+      oracle (pureCc compileIncSource compiler) program ≠ .fail)
     (safe : everyFnVarsNone program ∧
       everyFnVarsNone (code.map (fun (_, _, body) => body)) ∧
       ∀ n, everyFnVarsNone (oracle n).2.1 ∧
         everyFnVarsNone ((oracle n).2.2.map (fun (_, _, body) => body))) :
-    semantics ffi maxApp (Flapjack.HolFiniteMapExact.alistToFmap (compile code))
-      (pureCo compileInc ∘ oracle) compiler (annotateList 0 program) =
+    semantics ffi maxApp (Flapjack.HolFiniteMapExact.alistToFmap (compileSource code))
+      (pureCo compileIncSource ∘ oracle) compiler (annotateSource 0 program) =
     semantics ffi maxApp (Flapjack.HolFiniteMapExact.alistToFmap code)
-      oracle (pureCc compileInc compiler) program := by
+      oracle (pureCc compileIncSource compiler) program := by
+  have incEq : @compileIncSource Nat = @compileInc Nat := by
+    funext p
+    exact compileIncSource_eq_compileInc p
+  rw [incEq] at notFail ⊢
+  rw [compileSource_eq_compile, (annotateSource_sing_eq 0 (.var .none 0) program).2]
   have codeSafe : ∀ name arity body, (name, arity, body) ∈ code → everyFnVarsNone [body] := by
     intro name arity body member
     apply everyFnVarsNone_member _ safe.2.1 body

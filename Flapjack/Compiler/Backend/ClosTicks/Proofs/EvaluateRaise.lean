@@ -13,12 +13,12 @@ open Flapjack.SemanticPrimitivesHOL (Result)
 /-- A raise produced by tick removal came from a raise under leading ticks. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_Raise_IMP_mk_Ticks"]
 theorem remove_ticks_Raise_IMP_mk_Ticks (expression : ClosLang.Exp) (trace : BackendCommon.Tra)
-    (body : ClosLang.Exp) (removed : [ClosLang.Exp.raise trace body] = removeList [expression]) :
+    (body : ClosLang.Exp) (removed : [ClosLang.Exp.raise trace body] = removeSource [expression]) :
     ∃ traces sourceBody, expression = mkTicks traces (.raise trace sourceBody) ∧
-      [body] = removeList [sourceBody] := by
+      [body] = removeSource [sourceBody] := by
   cases expression
   case tick outer inner =>
-    have innerRemoved : [ClosLang.Exp.raise trace body] = removeList [inner] := by
+    have innerRemoved : [ClosLang.Exp.raise trace body] = removeSource [inner] := by
       simpa [removeList, removeSing] using removed
     obtain ⟨traces, sourceBody, equal, bodyEqual⟩ :=
       remove_ticks_Raise_IMP_mk_Ticks inner trace body innerRemoved

@@ -55,7 +55,7 @@ Intended HOL counterpart, pending statement and finite-map carrier source review
 Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_submap" (fmap_as_finite_support_parameters := [f, fNext, refs])] -/
 theorem holeHasVal_submap (f : HolFiniteMapExact Nat Nat) (fNext : HolFiniteMapExact Nat Nat)
     (env1 env2 : List Value) (refs : HolFiniteMapExact Nat (Ref Value)) (c : Value)
-    (hole : holeHasVal fNext env1 env2 refs c) (submap : finiteSubmap f fNext) :
+    (hole : holeHasVal fNext env1 env2 refs c) (submap : f.submap fNext) :
     holeHasVal f env1 env2 refs c := by
   obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, outside, found⟩ := hole
   refine ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, ?_, found⟩
@@ -495,7 +495,7 @@ theorem holesUnchanged_trans (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapEx
     (refs : HolFiniteMapExact Nat (Ref Value)) (middle : HolFiniteMapExact Nat (Ref Value))
     (final : HolFiniteMapExact Nat (Ref Value)) (changed : Set Nat)
     (first : holesUnchangedExcept f refs middle changed) (second : holesUnchangedExcept g middle final changed)
-    (fresh : onlyFresh f g refs) (_submap : finiteSubmap f g) : holesUnchangedExcept f refs final changed := by
+    (fresh : onlyFresh f g refs) (_submap : f.submap g) : holesUnchangedExcept f refs final changed := by
   intro ptr tag finalised left child right outside found
   obtain ⟨middleFinalised, middleChild, middleFound, same1⟩ := first ptr tag finalised left child right outside found
   have allocated : ptr ∈ refs.domain := by simp [HolFiniteMapExact.domain, found]
@@ -587,7 +587,7 @@ theorem holesStill_trans {α : Type} (f : HolFiniteMapExact Nat Nat) (g : HolFin
     (refs : HolFiniteMapExact Nat (Ref Value)) (middle : HolFiniteMapExact Nat (Ref Value))
     (final : HolFiniteMapExact Nat (Ref Value)) (_changed : α)
     (first : holesStillNotFinalised f refs middle) (second : holesStillNotFinalised g middle final)
-    (fresh : onlyFresh f g refs) (_submap : finiteSubmap f g) : holesStillNotFinalised f refs final := by
+    (fresh : onlyFresh f g refs) (_submap : f.submap g) : holesStillNotFinalised f refs final := by
   intro ptr outside hole
   have allocated : ptr ∈ refs.domain := by
     obtain ⟨tag, left, child, right, found⟩ := hole

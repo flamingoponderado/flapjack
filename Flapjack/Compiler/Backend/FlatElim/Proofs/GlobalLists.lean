@@ -61,6 +61,14 @@ theorem findRefsGlobals_append (refs new : List (StoreValue FlatSem.Value)) :
   | nil => simp [findRefsGlobals, sptUnion]
   | cons first rest ih => cases first <;> simp [findRefsGlobals, ih, sptUnion_assoc]
 
+/-- A binding's value dependencies occur in the analysis of all bindings. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_v_globalsL_MEM"]
+theorem findValuesGlobals_map_snd_mem {α : Type} (k : α) (v : FlatSem.Value)
+    (vs : List (α × FlatSem.Value)) (member : (k, v) ∈ vs) :
+    ∀ key, sptMem key (findValueGlobals v) →
+      sptMem key (findValuesGlobals (vs.map Prod.snd)) := by
+  exact findValuesGlobals_member (vs.map Prod.snd) v (List.mem_map.mpr ⟨(k, v), member, rfl⟩)
+
 /-- Every in-bounds value's dependencies occur in the list analysis. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_v_globalsL_EL"]
 theorem findValuesGlobals_el (n : Nat) (values : List FlatSem.Value) (bound : n < values.length) :
@@ -68,6 +76,14 @@ theorem findValuesGlobals_el (n : Nat) (values : List FlatSem.Value) (bound : n 
       sptMem key (findValuesGlobals values) := by
   rw [@Flapjack.holEl_eq_getElem FlatSem.Value ⟨FlatSem.unitValue⟩ n values bound]
   exact findValuesGlobals_member values values[n] (List.getElem_mem bound)
+
+/-- An in-bounds value inherits any bound on the list's global dependencies. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_v_globalsL_EL_trans"]
+theorem findValuesGlobals_el_trans (n : Nat) (values : List FlatSem.Value) (R : Nat → Prop)
+    (premises : n < values.length ∧ ∀ key, sptMem key (findValuesGlobals values) → R key) :
+    ∀ key, sptMem key (findValueGlobals (@Flapjack.holEl FlatSem.Value ⟨FlatSem.unitValue⟩ n values)) → R key := by
+  intro key member
+  exact premises.2 key (findValuesGlobals_el n values premises.1 key member)
 
 /-- A bounded store analysis bounds the dependencies of its indexed entry. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_refs_globals_EL"]

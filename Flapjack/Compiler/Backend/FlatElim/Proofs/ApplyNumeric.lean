@@ -11,11 +11,12 @@ open Flapjack.SemanticPrimitivesHOL
 
 /-- Every value produced by the flat numeric projection is a literal, a
 Boolean, or an empty vector, so it is closed and cannot contain Eval. -/
-theorem valueToFlat_invariants (reachable : NumSet) (value : SemanticPrimitivesHOL.Value) :
-    globalsWithin (findValueGlobals (FlatSem.valueToFlat value)) reachable ∧
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "fvg_v_to_flat"]
+theorem valueToFlat_invariants {α : Type} (value : SemanticPrimitivesHOL.Value) (reachable : Spt α) :
+    (∀ key, sptMem key (findValueGlobals (FlatSem.valueToFlat value)) → sptMem key reachable) ∧
       valueHasEval (FlatSem.valueToFlat value) = false := by
   cases value <;> simp [FlatSem.valueToFlat, findValueGlobals, findValuesGlobals,
-    valueHasEval, valuesHaveEval, globalsWithin, sptMem, sptDomain]
+    valueHasEval, valuesHaveEval, sptMem, sptDomain]
   case conv stamp values =>
     repeat' split
     all_goals simp_all [FlatSem.boolValue, findValueGlobals, findValuesGlobals, valueHasEval, valuesHaveEval]
@@ -53,7 +54,7 @@ theorem applyNumericProjection_related {C F : Type} (reachable : NumSet)
     | val value =>
       simp [FlatSem.applyNumericProjection, call] at run
       rcases run with ⟨rfl, rfl⟩
-      obtain ⟨closed, safe⟩ := valueToFlat_invariants reachable value
+      obtain ⟨closed, safe⟩ := valueToFlat_invariants value reachable
       have resultSafe := primitiveResult_value_invariants reachable (FlatSem.valueToFlat value) closed safe
       exact ⟨target, related, by simp [FlatSem.applyNumericProjection, ← ffiEq, call], resultSafe.1, resultSafe.2⟩
     | err error =>

@@ -181,30 +181,6 @@ termination_by 2 * sizeOf fs + 1
 decreasing_by all_goals simp_wf <;> omega
 end
 
-/-- A singleton list uses precisely the source singleton clause. -/
-theorem compileExps_singleton (maxApp : Nat) (e : ClosLang.Exp) (aux : Aux) :
-    compileExpsHOL maxApp [e] aux = compileExpsSingletonHOL maxApp e aux := by
-  cases h : compileExpsSingletonHOL maxApp e aux with
-  | mk result aux' => simp [compileExpsHOL, h]
-
-/-- The original multi-element recursion compiles the first singleton before
-the remaining expressions. -/
-theorem compileExps_cons (maxApp : Nat) (e : ClosLang.Exp) (es : List ClosLang.Exp) (aux : Aux) :
-    compileExpsHOL maxApp (e :: es) aux =
-      let (first, aux') := compileExpsHOL maxApp [e] aux
-      let (rest, aux'') := compileExpsHOL maxApp es aux'
-      (first ++ rest, aux'') := by
-  simp only [compileExps_eq_list]
-  cases h : compileExpHOL maxApp e aux with
-  | mk result aux' =>
-    cases hs : compileExpListHOL maxApp es aux' with
-    | mk rest aux'' => simp [compileExpListHOL, h, hs]
-
-/-- The factored body traversal is the source's mapped list conversion. -/
-theorem compileExpsFuns_eq_map (maxApp : Nat) (fs : List (Nat × ClosLang.Exp)) (aux : Aux) :
-    compileExpsFunsHOL maxApp fs aux = compileExpsHOL maxApp (fs.map Prod.snd) aux := by
-  rw [compileExpsFuns_eq_list, compileExps_eq_list]
-
 /-- The original singleton and list forms agree with the reformulation. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "compile_exp_sing_eq"]
 theorem compileExpSing_eq :
@@ -216,20 +192,6 @@ theorem compileExpSing_eq :
     have h := compileExps_eq_list n [e] aux
     simpa [compileExpListHOL] using h
   · exact compileExps_eq_list
-
-/-- The program's zip-and-map helper has the source MAP2 shape. -/
-theorem compileProgExps_map2 (maxApp : Nat) (prog : List (Nat × Nat × ClosLang.Exp)) :
-    compileProgExpsHOL maxApp prog =
-      let (exps, aux) := compileExpsHOL maxApp (prog.map (fun (_, _, exp) => exp)) []
-      List.zipWith (fun (item : Nat × Nat × ClosLang.Exp) exp =>
-        (item.1 + numStubs maxApp, item.2.1, exp)) prog exps ++ aux := by
-  unfold compileProgExpsHOL
-  cases h : compileExpsHOL maxApp (prog.map (fun (_, _, exp) => exp)) [] with
-  | mk exps aux =>
-    simp only
-    have correspondence := map_zip_eq_zipWith
-      (fun (item : Nat × Nat × ClosLang.Exp) exp => (item.1 + numStubs maxApp, item.2.1, exp)) prog exps
-    simpa using congrArg (fun xs => xs ++ aux) correspondence
 
 /-- The source-shaped reformulated program converter equals the original
 list-valued program converter. -/

@@ -32,7 +32,7 @@ theorem evaluate_call_step {C F : Type} (trace : BackendCommon.Tra) (ticks locat
         argsIH env nextEnv target (.err error) middle m l index argsRun noType length argsVars
           argsSafe code oracle states
       cases targetResult with
-      | val values => cases error <;> simp [ResultRel] at resultRel
+      | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
       | err targetError =>
         refine ⟨.err targetError, targetMiddle, ?_, resultRel, middleRel⟩
         rw [altFree_call]
@@ -44,7 +44,7 @@ theorem evaluate_call_step {C F : Type} (trace : BackendCommon.Tra) (ticks locat
         argsIH env nextEnv target (.val values) middle m l index argsRun valuesNoType length argsVars
           argsSafe code oracle states
       cases targetResult with
-      | err error => cases error <;> simp [ResultRel] at resultRel
+      | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
       | val nextValues =>
         have middleSafe := (evaluate_preserves_safe.1 args) env source (.val values) middle argsRun code oracle
         have middleClock : middle.clock ≤ source.clock := by

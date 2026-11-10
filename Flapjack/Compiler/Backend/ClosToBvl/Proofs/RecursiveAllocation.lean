@@ -44,7 +44,7 @@ theorem recursiveValues_allocate {C F : Type} (s : ClosSem.State C F) (t : BvlSe
     (¬ ∃ sourcePtr, f.lookup sourcePtr = some ptr) ∧
     newRefs.lookup ptr = some (.valueArray (targets ++ targetValues)) at allocated
   obtain ⟨nextState, frame, fresh, stored⟩ := allocated
-  have submap : relocationSubmap f f := by intro key value found; exact found
+  have submap : f.submap f := by intro key value found; exact found
   have newValuesRel : List.Forall₂ (vRel s.maxApp f newRefs t.code) sourceValues targetValues :=
     valuesRel.imp (fun _ _ related => vRel_grow_refs related submap frame)
   have codeInstalled' : closureCodeInstalled s.maxApp t.code entries sourceValues := by

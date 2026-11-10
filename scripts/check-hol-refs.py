@@ -323,6 +323,9 @@ FMAP_AS_FINITE_SUPPORT_FUNCTION_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_TUPLE_RE = re.compile(
     r'\(\s*fmap_as_finite_support_tuple\s*:=\s*\[([^]]*)\]\s*\)'
 )
+NESTED_LIST_REL_AS_MUTUAL_RE = re.compile(
+    r'\(\s*nested_list_rel_as_mutual\s*:=\s*\[([^]]*)\]\s*\)'
+)
 FMAP_AS_FINITE_SUPPORT_HETEROGENEOUS_FUNCTION_RE = re.compile(
     r'\(\s*fmap_as_finite_support_heterogeneous_function\s*:=\s*\[([^]]*)\]\s*\)'
 )
@@ -550,6 +553,11 @@ def find_lean_decl(lines: list[str], start: int) -> str:
 FMAP_RESULT_OBSERVATIONS_RE = re.compile(
     r"\(\s*fmap_as_finite_support_result_observations\s*:=\s*\[([^]]*)\]\s*\)"
 )
+FMAP_PARAMETER_OBSERVATIONS_RE = re.compile(
+    r"\(\s*fmap_as_finite_support_parameter_observations\s*:=\s*"
+    r"\(\s*map_parameters\s*:=\s*\[([^]]*)\]\s*\)\s*"
+    r"\(\s*map_producers\s*:=\s*\[([^]]*)\]\s*\)\s*\)"
+)
 
 
 def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = False,
@@ -560,7 +568,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_fmap_as_finite_support_equality: bool = False,
                         include_result_observations: bool = False,
                         include_word_dimensions_widths: bool = False,
-                        include_fmap_tuple: bool = False):
+                        include_fmap_tuple: bool = False,
+                        include_nested_list_rel: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -587,6 +596,7 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
         attribute = " ".join(chunks)
         if "hol " in attribute:
             for hol_path, hol_name, hol_line in ATTR_RE.findall(attribute):
+                combined = FMAP_PARAMETER_OBSERVATIONS_RE.search(attribute)
                 def fields_for(pattern: re.Pattern[str]) -> tuple[str, ...]:
                     qualifier = pattern.search(attribute)
                     return tuple(
@@ -619,7 +629,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     relation_fields_for(),
                     bool(FMAP_AS_FINITE_SUPPORT_EQUALITIES_RE.search(attribute)),
                     bool(WORDS_AS_TYPE_INDEXED_BITVEC_RE.search(attribute)),
-                    fields_for(FMAP_AS_FINITE_SUPPORT_PARAMS_RE),
+                    fields_for(FMAP_AS_FINITE_SUPPORT_PARAMS_RE) + (
+                        tuple(field.strip() for field in combined.group(1).split(",")) if combined else ()),
                 )
                 if include_fmap_existentials:
                     site += (fields_for(FMAP_AS_FINITE_SUPPORT_EXISTENTIALS_RE),)
@@ -641,7 +652,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                 if include_fmap_as_finite_support_equality:
                     site += (bool(FMAP_AS_FINITE_SUPPORT_EQUALITY_RE.search(attribute)),)
                 if include_result_observations:
-                    observations = fields_for(FMAP_RESULT_OBSERVATIONS_RE)
+                    observations = fields_for(FMAP_RESULT_OBSERVATIONS_RE) + (
+                        tuple(field.strip() for field in combined.group(2).split(",")) if combined else ())
                     if FMAP_RESULT_OBSERVATIONS_RE.search(attribute) and not observations:
                         observations = ("",)
                     site += (observations,)
@@ -659,6 +671,12 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     if len(matches) > 1:
                         positions += ("",)
                     site += (positions,)
+                if include_nested_list_rel:
+                    matches = list(NESTED_LIST_REL_AS_MUTUAL_RE.finditer(attribute))
+                    names = tuple(field.strip() for match in matches for field in match.group(1).split(","))
+                    if len(matches) > 1:
+                        names += ("",)
+                    site += (names,)
                 yield site
         start = None
         chunks = []
@@ -1499,6 +1517,14 @@ def fmap_as_finite_support_relation_errors(
                 f"fmap_as_finite_support_relation bare entry `{name}` must be a "
                 "plain finite-map parameter name"
             )
+        elif re.search(
+            r"(?:∃!?\s*(?:\([^()]*\)\s*)*|\bExists\s*\(?\s*fun\s*)\(?\s*"
+            + re.escape(name) + r"\s*:\s*HolFiniteMapExact\b", declaration_text
+        ):
+            errors.append(
+                f"fmap_as_finite_support_relation bare entry `{name}` is existential; "
+                "use fmap_as_finite_support_existentials with its required witness"
+            )
         elif not parameter_has_hol_finite_map_binder(declaration_text, name):
             errors.append(
                 f"fmap_as_finite_support_relation bare entry `{name}` must be a "
@@ -1880,6 +1906,59 @@ def lean_namespace_prefix(lines: list[str], upto: int) -> str:
     return ".".join(part for part in namespaces if part is not None)
 
 
+def observer_type_source(declaration_text: str) -> str:
+    """Find the declaration type, excluding attributes and the definition body.
+
+    A theorem type may itself contain named arguments, record updates, and
+    let-bindings. Their assignments are not the declaration's proof separator.
+    Unbalanced or incomplete syntax fails closed by returning an empty type.
+    """
+    source = re.sub(r'"(?:\\.|[^"\\])*"', '""', strip_lean_comments(declaration_text))
+    declaration = re.search(r"\b(?:theorem|lemma|def|abbrev|instance|structure)\s+", source)
+    if declaration is None:
+        return ""
+    source = source[declaration.start():]
+    delimiters = {"(": ")", "[": "]", "{": "}", "⦃": "⦄", "⟨": "⟩"}
+    stack: list[str] = []
+    pending_lets: list[int] = []
+    equation_declaration = re.match(r"(?:def|abbrev)\b", source) is not None
+    tokens = re.compile(r"(?<![A-Za-z0-9_'.])(?:letI?|haveI?)\b|:=|[()\[\]{}⦃⦄⟨⟩|]")
+    for match in tokens.finditer(source):
+        token = match.group()
+        if token in ("let", "letI", "have", "haveI"):
+            pending_lets.append(len(stack))
+        elif token in delimiters:
+            stack.append(delimiters[token])
+        elif token in delimiters.values():
+            if not stack or stack.pop() != token:
+                return ""
+        elif token == ":=":
+            if pending_lets and pending_lets[-1] == len(stack):
+                pending_lets.pop()
+            elif not stack:
+                return "" if pending_lets else source[:match.start()]
+        elif (token == "|" and equation_declaration and not stack and
+              not source[source.rfind("\n", 0, match.start()) + 1:match.start()].strip()):
+            # Equation-style definitions start their bodies at a top-level |.
+            return "" if pending_lets else source[:match.start()]
+    return source if not stack and not pending_lets else ""
+
+
+def observer_name_is_bound(signature: str, name: str) -> bool:
+    """Conservatively reject binder forms that can shadow a producer name."""
+    name_pattern = r"(?<![A-Za-z0-9_'.])" + re.escape(name) + r"(?![A-Za-z0-9_'])"
+    # Parenthesised, implicit, strict-implicit and instance binder groups.
+    groups = re.findall(r"[({\[⦃]\s*([^(){}\[\]⦃⦄:]+):", signature)
+    # Binder lists after quantifiers and lambda, up to their type or body.
+    groups += re.findall(r"(?:∀ᶠ|∃ᶠ|∀|∃!?|Σ|⋃|⋂|⨆|⨅|∑|∏|\bfun\b|λ)\s*([^,:⇒↦∈∉<>≤≥⊆]+?)(?=\s*(?:,|:|=>|⇒|↦|∈|∉|<|>|≤|≥|⊆))", signature)
+    groups += re.findall(r"(?:\bfun\b|λ)\s*([\s\S]*?)(?:=>|⇒|↦)", signature)
+    groups += re.findall(r"\{\s*([^{}|:]+?)\s*\|", signature)
+    # Let and match patterns can bind identifiers within nested patterns.
+    groups += re.findall(r"(?<![A-Za-z0-9_'.])(?:letI?|haveI?)\b([\s\S]*?):=", signature)
+    groups += re.findall(r"\|([^|\n]*?)=>", signature)
+    return any(re.search(name_pattern, group) for group in groups)
+
+
 def fmap_result_observation_errors(
     lines: list[str], module: str, declaration_text: str,
     producers: tuple[str, ...], records: list[dict], root: Path = ROOT,
@@ -1888,6 +1967,9 @@ def fmap_result_observation_errors(
 
     This checks representation evidence only. Source comparison of the entire
     observer remains mandatory; a producer review is not an observer review.
+    Use a qualified application when dot notation would obscure its owner.
+    Short-name resolution is syntactic; source review must verify the Lean
+    name resolves to the listed producer, including names from external imports.
     """
     errors: list[str] = []
     if not producers or len(set(producers)) != len(producers):
@@ -1895,7 +1977,7 @@ def fmap_result_observation_errors(
     stack = list(IMPORT_RE.findall(strip_lean_comments("\n".join(lines))))
     seen: set[str] = set()
     candidates: dict[str, list[tuple[str, str, list[str], str, bool]]] = {}
-    imported_declarations: dict[str, set[str]] = {}
+    imported_declarations: dict[str, set[tuple[str, int]]] = {}
     while stack:
         imported = stack.pop()
         if imported in seen:
@@ -1906,8 +1988,8 @@ def fmap_result_observation_errors(
             continue
         clean = strip_lean_comments(info.text)
         stack.extend(IMPORT_RE.findall(clean))
-        for declared in re.findall(r"^\s*(?:noncomputable\s+)?(?:private\s+|protected\s+)?(?:def|abbrev|opaque|theorem|lemma)\s+([A-Za-z0-9_'.]+)", clean, re.M):
-            imported_declarations.setdefault(declared.rsplit(".", 1)[-1], set()).add(imported)
+        for index, declared in enumerate(re.findall(r"^\s*(?:noncomputable\s+)?(?:private\s+|protected\s+)?(?:def|abbrev|opaque|theorem|lemma)\s+([A-Za-z0-9_'.]+)", clean, re.M)):
+            imported_declarations.setdefault(declared.rsplit(".", 1)[-1], set()).add((imported, index))
         for site in hol_attribute_sites(info.lines):
             number = site[0]
             name = find_lean_decl(info.lines, number - 1)
@@ -1920,17 +2002,39 @@ def fmap_result_observation_errors(
                          tagged_declaration_source(info.lines, number), bool(site[8]))
             for alias in set((name, full_name)):
                 candidates.setdefault(alias, []).append(candidate)
-    signature = re.sub(r'"(?:\\.|[^"\\])*"', '""', strip_lean_comments(declaration_text))
+    signature = observer_type_source(declaration_text)
     for producer in producers:
         short_name = producer.rsplit(".", 1)[-1]
         local_source = strip_lean_comments("\n".join(lines))
-        if re.search(r"\b(?:def|abbrev|opaque|theorem|lemma)\s+" + re.escape(short_name) + r"\b", local_source):
+        if re.search(r"\b(?:def|abbrev|opaque|theorem|lemma|instance|structure)\s+(?:[A-Za-z0-9_']+\.)*" + re.escape(short_name) + r"\b", local_source):
             errors.append(f"result observation producer {producer} is shadowed by a local declaration")
-        if re.search(r"[({]\s*" + re.escape(producer) + r"\s*:", signature):
+        ambient_commands = re.findall(r"(?m)^\s*(?:variables?|include|omit|export|open\b[^\n]*\brenaming)\b[^\n]*(?:\n[ \t]+[^\n]*)*", local_source)
+        local_syntax = re.findall(
+            r"(?m)^\s*(?:@\[[^\]]*\]\s*)?(?:(?:private|protected)\s+)?(?:(?:local|scoped)(?:\[[^\]]*\])?\s+)?"
+            r"(?:notation\d*|infix[lr]?|prefix|postfix|macro|macro_rules|syntax|elab|elab_rules|term_elab)\b[^\n]*",
+            local_source)
+        if (observer_name_is_bound(signature, short_name) or
+                any(re.search(r"(?<![A-Za-z0-9_'])" + re.escape(short_name) + r"(?![A-Za-z0-9_'])", cmd)
+                    for cmd in ambient_commands + local_syntax)):
             errors.append(f"result observation producer {producer} is shadowed by an observer binder")
-        if not re.search(r"(?<![A-Za-z0-9_'.])" + re.escape(producer) +
-                         r"(?![A-Za-z0-9_'.])", signature):
-            errors.append(f"result observation producer {producer} is unused in observer type")
+        parts = producer.split(".")
+        aliases = [producer]
+        for i in range(1, len(parts) - 1):
+            suffix = ".".join(parts[i:])
+            owners = {(candidate[0], candidate[1]) for full, entries in candidates.items()
+                      if "." in full and (full == suffix or full.endswith("." + suffix))
+                      for candidate in entries}
+            if len(owners) == 1 and len(imported_declarations.get(short_name, set())) <= 1:
+                aliases.append(suffix)
+        if local_syntax:
+            # User notation or macros can change the meaning of abbreviated
+            # identifiers; require the exact qualified producer spelling.
+            aliases = [producer] if "." in producer else []
+        elif len(imported_declarations.get(short_name, set())) <= 1:
+            aliases.append(short_name)
+        if not any(re.search(r"(?<![A-Za-z0-9_'.])" + re.escape(alias) +
+                             r"(?![A-Za-z0-9_'.])", signature) for alias in aliases):
+            errors.append(f"result observation producer {producer} is unused in observer type; use its fully qualified name when spelling is ambiguous")
         if "." not in producer and len(imported_declarations.get(short_name, set())) > 1:
             errors.append(f"result observation producer {producer} is ambiguous among imported declarations")
         matches = candidates.get(producer, [])
@@ -2028,6 +2132,39 @@ def fmap_as_finite_support_parameters_errors(
                 f"`{witness}` must state the canonical lookup/finiteSupport "
                 f"toBroad/ofBroad roundtrip for `{parameter}`"
             )
+    return errors
+
+
+def fmap_parameter_observations_errors(
+    lines: list[str], module: str, declaration_text: str, decl_name: str,
+    parameters: tuple[str, ...], producers: tuple[str, ...], records: list[dict],
+) -> list[str]:
+    """Validate both finite-map translations without silently covering other maps."""
+    errors = fmap_as_finite_support_parameters_errors(lines, module, declaration_text, decl_name, parameters)
+    errors.extend(fmap_result_observation_errors(lines, module, declaration_text, producers, records))
+    if not parameters or not producers:
+        errors.append("parameter observations require nonempty parameter and producer lists")
+    if any(not producer.startswith("Flapjack.") for producer in producers):
+        errors.append("parameter observation producers must be fully qualified Flapjack names")
+    if set(parameters) & {producer.rsplit(".", 1)[-1] for producer in producers}:
+        errors.append("a parameter shadows an observed producer")
+    signature = observer_type_source(declaration_text)
+    # Every syntactically visible canonical-map carrier must be one of the
+    # explicitly listed input binders. Nested maps and quantified map binders
+    # are rejected rather than implicitly covered by this narrow qualifier.
+    map_types = list(re.finditer(r"(?<![A-Za-z0-9_'])HolFiniteMapExact\b(?!\.)", signature))
+    direct = re.findall(r"[({]\s*([A-Za-z_][A-Za-z0-9_']*)\s*:\s*(?:Flapjack\.)?HolFiniteMapExact\b", signature)
+    if len(map_types) != len(parameters) or sorted(direct) != sorted(parameters):
+        errors.append("parameter observations must account for every canonical finite-map binder")
+    structures = structure_field_types(lines)
+    imported = imported_structure_field_types(module, str(ROOT))
+    mapped_carriers = {name for name, fields in structures.items()
+                       if any("HolFiniteMapExact" in typ for typ in fields.values())}
+    mapped_carriers.update(name for name, declarations in imported.items()
+                           if any("HolFiniteMapExact" in typ
+                                  for _, _, fields in declarations for typ in fields.values()))
+    if any(identifier_token_occurs(signature, name) for name in mapped_carriers):
+        errors.append("parameter observations cannot cover finite-map fields in a carrier")
     return errors
 
 
@@ -4838,6 +4975,42 @@ def hol_ref_error(
     return None
 
 
+def nested_list_rel_errors(lines: list[str], rel: str, number: int, hol_path: str,
+                           hol_name: str, fields: tuple[str, ...]) -> list[str]:
+    """Check the reviewed relation peers and the observer's written signature.
+
+    Lean's attribute and export additionally check fully resolved constants.
+    """
+    errors = []
+    declaration = find_lean_decl(lines, number - 1)
+    relation_file = "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ValueRelation.lean"
+    relation_path = "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml"
+    relation = hol_path == relation_path and hol_name == "v_rel"
+    if fields != ("FunctionsRel",) or (relation and
+            (rel != relation_file or declaration not in {"ValueRel", "EnvOk"})):
+        errors.append("nested relation qualifier is restricted to the reviewed mutual relation")
+    peer_lines = lines if rel == relation_file else (ROOT / relation_file).read_text(encoding="utf-8").splitlines()
+    peers = [site for site in hol_attribute_sites(peer_lines, include_nested_list_rel=True)
+             if site[1:3] == (relation_path, "v_rel") and site[-1] == ("FunctionsRel",)]
+    if {find_lean_decl(peer_lines, site[0] - 1) for site in peers} != {"ValueRel", "EnvOk"} or len(peers) != 2:
+        errors.append("both mutual relation members require the same qualifier")
+    if not relation:
+        source = tagged_declaration_text(lines, number)
+        source = re.split(r"\b(?:theorem|lemma|def|abbrev)\s+" + re.escape(declaration) + r"\b", source, maxsplit=1)[-1]
+        if (not rel.startswith("Flapjack/Compiler/Backend/ClosAnnotate/") or
+                hol_path not in {relation_path, "cakeml/compiler/backend/clos_annotateScript.sml"} or
+                re.search(r"\bFunctionsRel\b", source)):
+            errors.append("observer has invalid scope or exposes FunctionsRel")
+    return errors
+
+
+def nested_list_combination_allowed(fmap_fields: tuple[str, ...], producer: bool,
+                                    other_qualifiers: bool) -> bool:
+    """Permit only reviewed observer combinations with the closure state maps."""
+    return (not other_qualifiers and fmap_fields in ((), ("refs", "code"))
+            and not (producer and fmap_fields))
+
+
 def main(argv: list[str]) -> int:
     want_mapping = "--mapping" in argv
     want_orphans = "--orphans" in argv
@@ -4867,7 +5040,7 @@ def main(argv: list[str]) -> int:
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-             fmap_equality, result_observations, dimension_widths, fmap_tuple) in hol_attribute_sites(
+             fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -4877,8 +5050,20 @@ def main(argv: list[str]) -> int:
                 include_result_observations=True,
                 include_word_dimensions_widths=True,
                 include_fmap_tuple=True,
+                include_nested_list_rel=True,
              ):
             where = f"{rel}:{number}"
+            if nested_list_rel:
+                errors.extend(f"{where}: {error}" for error in nested_list_rel_errors(
+                    lines, rel, number, hol_path, hol_name, nested_list_rel))
+                producer = (hol_path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" and
+                            hol_name == "v_rel")
+                other = bool(list_fields or names_fields or boundary_fields or fmap_result or fmap_relation or
+                             fmap_equalities or words_bitvec or fmap_parameters or fmap_existentials or dimension_width or
+                             fmap_function_positions or fmap_heterogeneous_function_positions or reals_cuts or fmap_equality or
+                             result_observations or dimension_widths or fmap_tuple)
+                if not nested_list_combination_allowed(fmap_fields, producer, other):
+                    errors.append(f"{where}: nested relation qualifier cannot combine with other qualifiers")
             if fmap_tuple:
                 if rel != "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/ValueInv.lean":
                     errors.append(f"{where}: tuple maps require the reviewed value-invariant module")
@@ -4893,14 +5078,30 @@ def main(argv: list[str]) -> int:
                 errors.extend(f"{where}: {error}" for error in fmap_value_context_tuple_errors(
                     lines, tagged_declaration_source(lines, number), fmap_tuple, (hol_path, hol_name)))
             if result_observations:
+                declaration_source = tagged_declaration_source(lines, number)
+                composite_matches = list(FMAP_PARAMETER_OBSERVATIONS_RE.finditer(declaration_source))
+                combined = bool(fmap_parameters and composite_matches)
+                if fmap_parameters and len(composite_matches) != 1:
+                    errors.append(f"{where}: map parameters and observations require one combined qualifier")
+                if combined and (FMAP_AS_FINITE_SUPPORT_PARAMS_RE.search(declaration_source) or
+                                 FMAP_RESULT_OBSERVATIONS_RE.search(declaration_source)):
+                    errors.append(f"{where}: combined parameter observations cannot mix with standalone qualifiers")
                 if (list_fields or names_fields or fmap_fields or fmap_result or fmap_relation or
-                    fmap_equalities or words_bitvec or fmap_parameters or fmap_existentials or
+                    fmap_equalities or words_bitvec or (fmap_parameters and not combined) or fmap_existentials or
                     dimension_width or dimension_widths or fmap_function_positions or fmap_heterogeneous_function_positions or
                     reals_cuts or fmap_equality):
                     errors.append(f"{where}: result observations cannot combine with other representation qualifiers")
-                errors.extend(f"{where}: {error}" for error in fmap_result_observation_errors(
-                    lines, module, tagged_declaration_text(lines, number),
-                    result_observations, observation_records))
+                if combined:
+                    if (hol_path != "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" or
+                            hol_name not in {"chain_exps_semantics", "chain_exps_semantics_call"} or
+                            rel != "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainSemantics.lean"):
+                        errors.append(f"{where}: combined parameter observations are restricted to the reviewed closure-chain semantics declarations")
+                    errors.extend(f"{where}: {error}" for error in fmap_parameter_observations_errors(
+                        lines, module, declaration_source, find_lean_decl(lines, number - 1),
+                        fmap_parameters, result_observations, observation_records))
+                else:
+                    errors.extend(f"{where}: {error}" for error in fmap_result_observation_errors(
+                        lines, module, declaration_source, result_observations, observation_records))
             errors.extend(
                 f"{where}: {error}"
                 for error in reals_as_rational_cuts_errors(

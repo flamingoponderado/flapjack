@@ -39,7 +39,7 @@ theorem matEquation {C F : Type} (env : Environment Value) (state : State C F)
   cases result with
   | err error => rfl
   | val values =>
-    simp only [headValue_eq_holHd]
+    dsimp only
     cases selectRow next rows (@Flapjack.holHd Value ⟨unitValue⟩ values) bindExnV <;> rfl
 
 /-- Flapjack proof infrastructure: Expose the handler case through the evaluator row-selection helper. -/

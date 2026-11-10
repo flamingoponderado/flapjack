@@ -74,12 +74,12 @@ theorem primitiveSimulation_word {C F : Type} (op : ClosLang.WordOp) :
     have nextResult : doWordApp op nextValues = none := by rw [← same, result]
     refine ⟨.err (.abort .typeError), ?_, ?_⟩
     · simp [doApp, applyNumeric, nextResult]
-    · simp [doApp, applyNumeric, result, AppResultRel, ResultRel]
+    · simp [doApp, applyNumeric, result, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]
   | some value =>
     have nextResult : doWordApp op nextValues = some value := by rw [← same, result]
     refine ⟨.val (value, target), ?_, ?_⟩
     · simp [doApp, applyNumeric, nextResult]
-    · simpa [doApp, applyNumeric, result, AppResultRel] using
+    · simpa [doApp, applyNumeric, result, AppResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel] using
         And.intro (doWordApp_result_related op values value result) states
 
 end Flapjack.Compiler.Backend.ClosAnnotate

@@ -55,7 +55,7 @@ theorem evaluate_let_op_force {C F : Type} (trace : BackendCommon.Tra)
   | mk argsResult middle =>
     obtain ⟨targetArgsResult, targetMiddle, targetArgsRun, argsRel, middleRel⟩ :=
       argsIH argsResult middle (compileList args) nextEnv target
-        ⟨argsRun, envRel, states, rfl⟩
+        ⟨argsRun, envRel, states, by simp [CodeRel]⟩
     cases argsResult with
     | err error =>
       rw [evaluate, fixClock_evaluate, argsRun] at run

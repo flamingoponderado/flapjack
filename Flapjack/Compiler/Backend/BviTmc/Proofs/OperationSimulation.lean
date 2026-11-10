@@ -69,7 +69,7 @@ theorem evaluate_op_core {C F : Type} (op : ClosLang.Op) (args : List Bvi.Exp)
             appFresh, appUnchanged, appStill⟩ :=
             doApp_op_rel g op values.reverse values'.reverse middle final middleTarget value
               appRun safeOp reversed middleStates
-          have submap : finiteSubmap f h := by
+          have submap : f.submap h := by
             intro k v found; exact appExtension k v (extension k v found)
           have domain := BviProps.evaluate_refs_subset args env2 target middleTarget (.val values') targetRun
           have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh appFresh domain

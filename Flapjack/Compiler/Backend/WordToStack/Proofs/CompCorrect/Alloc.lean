@@ -50,7 +50,7 @@ theorem allocConventions {width : Nat} [NeZero width] (k dest : Nat)
   have key : ∀ (t : Spt Unit) x, sptDomain t x → x ∈ (sptToAList t).map Prod.fst := by
     intro t x hx
     obtain ⟨u, hu⟩ := Option.isSome_iff_exists.mp hx
-    exact List.mem_map.mpr ⟨(x, u), (sptToAList_mem_iff_lookup t x u).mpr hu, rfl⟩
+    exact List.mem_map.mpr ⟨(x, u), (sptMemToAList t x u).mpr hu, rfl⟩
   refine ⟨hdest, fun x hx => ⟨?_, hs1 x (key _ x hx)⟩, fun x hx => ⟨?_, hs2 x (key _ x hx)⟩⟩
   · have := hv1 x (key _ x hx); simpa [isPhyVar] using this
   · have := hv2 x (key _ x hx); simpa [isPhyVar] using this
@@ -174,7 +174,7 @@ theorem compCorrectAlloc {width : Nat} [NeZero width] {C F : Type}
       · intro hx
         obtain ⟨u, hu⟩ := Option.isSome_iff_exists.mp hx
         have hm := maxList_ge_of_mem ((sptToAList t).map Prod.fst) x
-          (List.mem_map.mpr ⟨(x, u), (sptToAList_mem_iff_lookup t x u).mpr hu, rfl⟩)
+          (List.mem_map.mpr ⟨(x, u), (sptMemToAList t x u).mpr hu, rfl⟩)
         have := hge x hx
         omega
       · exact False.elim

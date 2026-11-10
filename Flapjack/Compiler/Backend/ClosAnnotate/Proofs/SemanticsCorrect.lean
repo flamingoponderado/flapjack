@@ -25,16 +25,16 @@ theorem resultRel_observations (left right : Result (List Value) Value) (related
   cases left with
   | val values => cases right with
     | val nextValues => simp [resultOutcome]
-    | err error => cases error <;> simp [ResultRel] at related
+    | err error => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at related
   | err error =>
     cases right with
-    | val values => cases error <;> simp [ResultRel] at related
+    | val values => cases error <;> simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel] at related
     | err nextError =>
       cases error with
-      | raise value => cases nextError <;> simp_all [ResultRel, resultOutcome]
+      | raise value => cases nextError <;> simp_all [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel, resultOutcome]
       | abort abort =>
         cases nextError with
-        | raise value => simp [ResultRel] at related
+        | raise value => simp [ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel] at related
         | abort nextAbort =>
           have equal : abort = nextAbort := related
           subst nextAbort
@@ -113,28 +113,5 @@ theorem semantics_eq_of_related {C F : Type} (ffi : HolFfiState F) (maxApp : Nat
   unfold semantics
   simp only [failureEq]
   rw [terminatingEq, tracesEq]
-
-/-- Closure annotation preserves the proof-side observable behavior for a
-safe program and oracle when the source semantics does not fail. The
-evaluation model is not yet reviewed as a HOL port. -/
-theorem annotate_semantics_correct {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
-    (oracle : CompileOracle C) (compiler : Compiler C) (program : List ClosLang.Exp)
-    (safe : everyFnVarsNone program)
-    (oracleSafe : ∀ n, everyFnVarsNone (oracle n).2.1 ∧
-      everyFnVarsNone ((oracle n).2.2.map (fun (_, _, body) => body)))
-    (notFail : semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) program ≠ .fail) :
-    semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) program =
-      semantics ffi maxApp HolFiniteMapExact.empty (pureCo compileInc ∘ oracle) compiler (annotateList 0 program) := by
-  apply semantics_eq_of_related
-  intro clock
-  let source := initialState ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) clock
-  let outcome := evaluate program [] source
-  have noType : outcome.1 ≠ .err (.abort .typeError) := by
-    exact (semantics_ne_fail_iff ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) program).mp notFail clock
-  obtain ⟨targetResult, targetNext, targetRun, results, nextRel⟩ :=
-    initial_evaluate_annotated ffi maxApp clock oracle compiler program outcome.1 outcome.2
-      (by exact Prod.eta _) noType safe oracleSafe
-  rw [targetRun]
-  exact ⟨results, nextRel.2.1⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate

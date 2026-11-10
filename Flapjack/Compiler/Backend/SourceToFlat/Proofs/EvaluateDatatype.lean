@@ -1214,7 +1214,7 @@ theorem allocTags_invariant {C F : Type} [Nonempty C]
       GlobalEnvInv genv compMap (fun _ => False) env ∧
       (constructors.map Prod.fst).Nodup ∧ idx.tidx + 1 ≤ finish.tidx) :
     ∃ nextGenv,
-      finiteSubmap genv.c nextGenv.c ∧ finiteSubmap genv.tys nextGenv.tys ∧ nextGenv.v = genv.v ∧
+      genv.c.submap nextGenv.c ∧ genv.tys.submap nextGenv.tys ∧ nextGenv.v = genv.v ∧
       factoredInvariant interp transform gen nextGenv ({ idx with tidx := idx.tidx + 1 }, finish, other)
         { source with nextTypeStamp := source.nextTypeStamp + 1 } flat ∧
       (let buildEnv : SemEnv Value :=

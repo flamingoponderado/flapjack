@@ -54,8 +54,7 @@ theorem evaluate_installed_program {C F : Type} (number : Nat) (expressions : Li
       | .val left, .val right =>
         ValueRel source.maxApp (@holLast Value ⟨unitValue⟩ left) (@holLast Value ⟨unitValue⟩ right)
       | _, _ => False := by
-  let start := let next := number + max expressions.length 1
-    if next % 2 = 0 then next else next + 1
+  let start := makeEven (number + max expressions.length 1)
   obtain ⟨targetResult, targetFinal, targetRun, resultRel, finalRel⟩ :=
     programIH [] [] target result final start run notType safe .nil states
   have numbered : (compileInc number expressions).2 =

@@ -10,11 +10,9 @@ public import Mathlib.Data.List.Nodup
 /-! Origins of labels in closure-to-BVL program conversion. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
-private abbrev Aux := List (Nat × Nat × Bvl.Exp)
-
 /-- Recursive-group construction prepends the reserved labels in reverse
 order, while leaving the input accumulator suffix intact. -/
-theorem buildAux_label_list (entries : List (Nat × Bvl.Exp)) (start : Nat) (aux : Aux) :
+theorem buildAux_label_list (entries : List (Nat × Bvl.Exp)) (start : Nat) (aux : List (Nat × Nat × Bvl.Exp)) :
     (buildAux start entries aux).2.map Prod.fst =
       ((List.range entries.length).map (fun index => start + 2 * index)).reverse ++ aux.map Prod.fst := by
   induction entries generalizing start aux with
@@ -34,7 +32,7 @@ mutual
 
 /-- Compiling an expression prepends its closure labels, shifted by the stub
 prefix and in reverse traversal order, to the auxiliary accumulator. -/
-theorem compileExp_aux_labels (maxApp : Nat) (expression : ClosLang.Exp) (aux : Aux) :
+theorem compileExp_aux_labels (maxApp : Nat) (expression : ClosLang.Exp) (aux : List (Nat × Nat × Bvl.Exp)) :
     (compileExpHOL maxApp expression aux).2.map Prod.fst =
       ((ClosProps.codeLocationsExp expression).reverse.map (fun location => location + numStubs maxApp)) ++
         aux.map Prod.fst := by
@@ -87,7 +85,7 @@ termination_by sizeOf expression
 decreasing_by all_goals subst_vars; simp_wf <;> omega
 
 /-- Expression-list compilation emits the same auxiliary labels. -/
-theorem compileExpList_aux_labels (maxApp : Nat) (expressions : List ClosLang.Exp) (aux : Aux) :
+theorem compileExpList_aux_labels (maxApp : Nat) (expressions : List ClosLang.Exp) (aux : List (Nat × Nat × Bvl.Exp)) :
     (compileExpListHOL maxApp expressions aux).2.map Prod.fst =
       ((ClosProps.codeLocations expressions).reverse.map (fun location => location + numStubs maxApp)) ++
         aux.map Prod.fst := by
@@ -100,7 +98,7 @@ termination_by sizeOf expressions
 decreasing_by all_goals (simp_wf; omega)
 
 /-- Recursive bodies emit the same auxiliary labels. -/
-theorem compileExpFuns_aux_labels (maxApp : Nat) (functions : List (Nat × ClosLang.Exp)) (aux : Aux) :
+theorem compileExpFuns_aux_labels (maxApp : Nat) (functions : List (Nat × ClosLang.Exp)) (aux : List (Nat × Nat × Bvl.Exp)) :
     (compileExpFunsHOL maxApp functions aux).2.map Prod.fst =
       ((ClosProps.codeLocationsFuns functions).reverse.map (fun location => location + numStubs maxApp)) ++
         aux.map Prod.fst := by
@@ -114,6 +112,20 @@ termination_by sizeOf functions
 decreasing_by all_goals (simp_wf; omega)
 
 end
+
+/-- The newly emitted auxiliary labels are the shifted, reversed source
+closure locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_exps_code_locs"]
+theorem compileExps_codeLocs (maxApp : Nat) (expressions : List ClosLang.Exp)
+    (aux : List (Nat × Nat × Bvl.Exp)) (compiled : List Bvl.Exp) (emitted : List (Nat × Nat × Bvl.Exp)) :
+    compileExpsHOL maxApp expressions aux = (compiled, emitted ++ aux) →
+      emitted.map Prod.fst =
+        (ClosProps.codeLocations expressions).reverse.map (fun location => numStubs maxApp + location) := by
+  intro run
+  have labels := compileExpList_aux_labels maxApp expressions aux
+  rw [← compileExps_eq_list, run, List.map_append] at labels
+  simp only [List.append_cancel_right_eq] at labels
+  simpa [Nat.add_comm] using labels
 
 /-- Zipping one compiled expression per source entry retains exactly the
 source entry labels, shifted by the runtime-stub prefix. -/
@@ -131,39 +143,43 @@ private theorem zip_entry_labels (offset : Nat) (program : List (Nat × Nat × C
       simp only [List.length_cons, Nat.succ.injEq] at lengthEq
       simp [ih remaining lengthEq]
 
-/-- Program conversion's entry labels are precisely its shifted input labels;
-all other labels are those generated in its auxiliary accumulator. -/
-theorem compileProgHOL_label_origins (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp)) :
-    (compileProgHOL maxApp program).map Prod.fst =
-      program.map (fun entry => entry.1 + numStubs maxApp) ++
-        ((compileExpListHOL maxApp (program.map (fun (_, _, body) => body)) []).2.map Prod.fst) := by
-  have lengthEq := compileExpList_length maxApp (program.map (fun (_, _, body) => body)) []
-  simp only [List.length_map] at lengthEq
-  simp only [compileProgHOL, List.map_append]
-  rw [zip_entry_labels (numStubs maxApp) program _ lengthEq]
-
-/-- The same label decomposition holds for the checked converter actually
-used by preprocessing. -/
-theorem compileProg_checked_label_origins (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp))
-    (compiled : Aux) (run : compileProg? maxApp program = some compiled) :
-    compiled.map Prod.fst =
-      program.map (fun entry => entry.1 + numStubs maxApp) ++
-        ((compileExpListHOL maxApp (program.map (fun (_, _, body) => body)) []).2.map Prod.fst) := by
-  have exactRun := compileProg_checked_eq maxApp program
-  have equal : compiled = compileProgHOL maxApp program := Option.some.inj (run.symm.trans exactRun)
-  rw [equal]
-  exact compileProgHOL_label_origins maxApp program
-
-/-- The executed checked converter's complete label list consists of shifted
-entry labels followed by shifted, reversed source closure locations. This is
-source-shaped proof infrastructure pending HOL carrier and statement review. -/
-theorem compileProg_checked_codeLocations (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp))
-    (compiled : Aux) (run : compileProg? maxApp program = some compiled) :
-    compiled.map Prod.fst =
-      program.map (fun entry => entry.1 + numStubs maxApp) ++
+/-- Program conversion emits shifted entry labels followed by the shifted,
+reversed closure locations of the source bodies. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_prog_code_locs"]
+theorem compileProg_codeLocs (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp)) :
+    (compileProgExpsHOL maxApp program).map Prod.fst =
+      program.map (fun entry => numStubs maxApp + entry.1) ++
         ((ClosProps.codeLocations (program.map (fun (_, _, body) => body))).reverse.map
-          (fun location => location + numStubs maxApp)) := by
-  rw [compileProg_checked_label_origins maxApp program compiled run]
-  simp [compileExpList_aux_labels]
+          (fun location => numStubs maxApp + location)) := by
+  cases run : compileExpsHOL maxApp (program.map (fun (_, _, body) => body)) [] with
+  | mk compiled emitted =>
+    have lengthEq := compileExps_length maxApp (program.map (fun (_, _, body) => body)) [] compiled emitted run
+    have labels := compileExps_codeLocs maxApp (program.map (fun (_, _, body) => body)) [] compiled emitted
+      (by simpa using run)
+    simp only [List.length_map] at lengthEq
+    simp only [compileProgExpsHOL, run, List.map_append]
+    rw [zip_entry_labels (numStubs maxApp) program compiled lengthEq, labels]
+    simp [Nat.add_comm]
+
+/-- Program conversion labels are the shifted source entry and closure labels. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "MAP_FST_compile_prog"]
+theorem map_fst_compileProg (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp)) :
+    (compileProgExpsHOL maxApp program).map Prod.fst =
+      (program.map Prod.fst ++
+        (ClosProps.codeLocations (program.map (fun entry => entry.2.2))).reverse).map
+          (fun label => numStubs maxApp + label) := by
+  simpa [List.map_append, List.map_map, Function.comp_def] using compileProg_codeLocs maxApp program
+
+/-- Shifting a set bounded by a difference stays below the original bound. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "IMAGE_ADD_SUBSET_count"]
+theorem image_add_subset_count (A : Set Nat) (n m : Nat)
+    (h : A ⊆ {x | x < n - m}) :
+    Set.image (fun x => m + x) A ⊆ {x | x < n} := by
+  intro x hx
+  obtain ⟨y, hy, rfl⟩ := hx
+  have bound := h hy
+  change y < n - m at bound
+  change m + y < n
+  omega
 
 end Flapjack.Compiler.Backend.ClosToBvl

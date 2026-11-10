@@ -1,7 +1,9 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.SourceExps
+public import Flapjack.Compiler.Backend.ClosToBvl.ExtractName.Original
 public import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
+
 
 @[expose] public section
 
@@ -12,7 +14,7 @@ namespace Flapjack.Compiler.Backend.ClosToBvl
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "compile_inc_def"]
 noncomputable def compileInc (maxApp : Nat) (program : List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)) :
     List (Nat × Nat × Bvl.Exp) :=
-  let (start, expressions) := extractName program.1
+  let (start, expressions) := extractNameSource program.1
   compileProgExpsHOL maxApp (chainExps start expressions ++ program.2)
 
 end Flapjack.Compiler.Backend.ClosToBvl

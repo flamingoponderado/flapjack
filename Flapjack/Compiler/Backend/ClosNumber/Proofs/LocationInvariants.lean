@@ -58,8 +58,6 @@ decreasing_by all_goals subst_vars; simp_wf <;> omega
 
 end
 
-mutual
-
 /-- Numbering preserves the length of an expression list. -/
 theorem renumberList_length (expressions : List Exp) (start : Nat) :
     (renumberList start expressions).2.length = expressions.length := by
@@ -68,17 +66,13 @@ theorem renumberList_length (expressions : List Exp) (start : Nat) :
   | cons first rest => simp [renumberList, renumberList_length rest]
 termination_by sizeOf expressions
 
-/-- Numbering preserves the number of recursive function bodies. -/
-theorem renumberFuns_length (functions : List (Nat × Exp)) (start : Nat) :
-    (renumberFuns start functions).2.length = functions.length := by
-  cases functions with
-  | nil => simp [renumberFuns]
-  | cons first rest =>
-    cases first with
-    | mk arity body => simp [renumberFuns, renumberFuns_length rest]
-termination_by sizeOf functions
-
-end
+/-- An explicitly returned numbered list has the original length. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "renumber_code_locs_list_IMP_LENGTH"]
+theorem renumberList_imp_length (start : Nat) (expressions : List Exp)
+    (next : Nat) (output : List Exp) (run : renumberList start expressions = (next, output)) :
+    output.length = expressions.length := by
+  have length := renumberList_length expressions start
+  simpa [run] using length
 
 mutual
 
@@ -151,9 +145,28 @@ decreasing_by all_goals subst_vars; simp_wf <;> omega
 
 end
 
+/-- Numbering never decreases the next location, for both source traversals. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "renumber_code_locs_inc"]
+theorem renumberCodeLocs_inc :
+    (∀ n es, n ≤ (renumberList n es).1) ∧
+    (∀ n e, n ≤ (renumber n e).1) :=
+  ⟨fun n es => renumberList_start_le es n, fun n e => renumber_start_le e n⟩
+
+/-- The same lower bound expressed for explicitly returned state pairs. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "renumber_code_locs_imp_inc"]
+theorem renumberCodeLocs_imp_inc (n : Nat) (es : List Exp) (m : Nat) (vs : List Exp)
+    (e : Exp) (z : Nat) (v : Exp) :
+    (renumberList n es = (m, vs) → n ≤ m) ∧
+    (renumber n e = (z, v) → n ≤ z) := by
+  constructor
+  · intro h
+    simpa [h] using renumberCodeLocs_inc.1 n es
+  · intro h
+    simpa [h] using renumberCodeLocs_inc.2 n e
+
 /-- Closure numbering fills every function-code location, both for expression
-lists and for individual expressions. This source-shaped statement is untagged
-pending typed HOL and numbering-carrier review. -/
+lists and for individual expressions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "renumber_code_locs_every_Fn_SOME"]
 theorem renumberCodeLocs_everyFnSome :
     (∀ start expressions, everyFnLocationSome (renumberList start expressions).2) ∧
     (∀ start expression, everyFnLocationSome [(renumber start expression).2]) := by

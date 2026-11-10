@@ -34,11 +34,11 @@ private theorem toAListKeysDomain (t : NumSet) (k : Nat) :
   simp only [List.mem_map, sptDomain]
   constructor
   · rintro ⟨⟨a, v⟩, hm, rfl⟩
-    simp [(sptToAList_mem_iff_lookup t a v).mp hm]
+    simp [(sptMemToAList t a v).mp hm]
   · intro h
     cases hk : sptLookup k t with
     | none => simp [hk] at h
-    | some v => exact ⟨(k, v), (sptToAList_mem_iff_lookup t k v).mpr hk, rfl⟩
+    | some v => exact ⟨(k, v), (sptMemToAList t k v).mpr hk, rfl⟩
 
 /-- HOL `list_remap_domain` (`reg_allocProofScript.sml:802-812`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "list_remap_domain"]

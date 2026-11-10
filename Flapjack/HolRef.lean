@@ -216,6 +216,9 @@ structure HolRef where
       The syntactic checker does not prove cross-language equivalence; source
       review must compare the complete observer, not infer it from the producer. -/
   fmapAsFiniteSupportResultObservations : Array String := #[]
+  /-- A single reviewed representation for named finite-map parameters and
+      imported map-result producers observed in the same declaration type. -/
+  fmapAsFiniteSupportParameterObservations : Bool := false
   /-- Existentially bound standalone finite maps represented by
       HolFiniteMapExact. Each named binder must be an explicit existential at
       that carrier and have a same-module
@@ -290,6 +293,10 @@ structure HolRef where
       with HOL's real-number specification remains the documented external
       assumption. -/
   realsAsRationalCuts : Bool := false
+  /-- The reviewed recursive-closure list relation is factored through the
+      named mutually inductive auxiliary relation. This records only that
+      factoring; constructor and witness checks do not prove HOL correspondence. -/
+  nestedListRelAsMutual : Array String := #[]
   deriving Inhabited, Repr, BEq
 
 open Lean Meta
@@ -305,6 +312,9 @@ syntax "(" "fmap_as_finite_support_heterogeneous_function" ":=" "[" ident,+ "]" 
 syntax "(" "fmap_as_finite_support_result" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_parameters" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_result_observations" ":=" "[" ident,+ "]" ")" : holQualifier
+syntax "(" "fmap_as_finite_support_parameter_observations" ":="
+  "(" "map_parameters" ":=" "[" ident,+ "]" ")"
+  "(" "map_producers" ":=" "[" ident,+ "]" ")" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_existentials" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_relation" ":=" "[" ident,* "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_equalities" ")" : holQualifier
@@ -313,6 +323,7 @@ syntax "(" "words_as_type_indexed_bitvec" ")" : holQualifier
 syntax "(" "word_dimension_as_width" ":=" ident ")" : holQualifier
 syntax "(" "word_dimensions_as_widths" ":=" "[" ident,* "]" ")" : holQualifier
 syntax "(" "reals_as_rational_cuts" ")" : holQualifier
+syntax "(" "nested_list_rel_as_mutual" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax (name := hol) "hol " str str (num)? holQualifier* : attr
 
 private def checkedHolRef (path name : String) (line? : Option Nat := none)
@@ -330,7 +341,9 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     (realsAsRationalCuts : Bool := false)
     (fmapAsFiniteSupportResultObservations : Array String := #[])
     (wordDimensionsAsWidths : Array String := #[])
-    (fmapAsFiniteSupportTuple : Array String := #[]) : CoreM HolRef := do
+    (fmapAsFiniteSupportTuple : Array String := #[])
+    (nestedListRelAsMutual : Array String := #[])
+    (fmapAsFiniteSupportParameterObservations : Bool := false) : CoreM HolRef := do
   unless (path.startsWith "cakeml/" && path.endsWith ".sml" ||
       -- Pinned upstream HOL submodule; `scripts/check-hol-refs.py` verifies the
       -- gitlink, checkout commit and blob of every cited `HOL/...` file.
@@ -404,14 +417,38 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     throwError "@[hol]: fmap_as_finite_support_equality is mutually exclusive with other finite-map qualifiers"
   if fmapAsFiniteSupportResultObservations.toList.eraseDups.length != fmapAsFiniteSupportResultObservations.size then
     throwError "@[hol]: fmap_as_finite_support_result_observations producers must be distinct"
+  if fmapAsFiniteSupportParameterObservations &&
+      (fmapAsFiniteSupportParameters.isEmpty || fmapAsFiniteSupportResultObservations.isEmpty) then
+    throwError "@[hol]: parameter observations require parameters and producers"
+  if fmapAsFiniteSupportParameterObservations then
+    unless path == "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" &&
+        (name == "chain_exps_semantics" || name == "chain_exps_semantics_call") do
+      throwError "@[hol]: parameter observations are restricted to the reviewed closure-chain semantics declarations"
+    unless fmapAsFiniteSupportResultObservations.all (fun p => p.startsWith "Flapjack.") do
+      throwError "@[hol]: parameter observation producers must use fully qualified Flapjack names"
+    if fmapAsFiniteSupportResultObservations.any (fun p =>
+        fmapAsFiniteSupportParameters.contains ((p.splitOn ".").getLast!)) then
+      throwError "@[hol]: parameter names must not shadow observed producers"
   if !fmapAsFiniteSupportResultObservations.isEmpty &&
       (!listAsArray.isEmpty || !namesAsString.isEmpty || wordsAsTypeIndexedBitvec ||
        wordDimensionAsWidth.isSome || realsAsRationalCuts || !fmapAsFiniteSupport.isEmpty || fmapAsFiniteSupportResult ||
        !fmapAsFiniteSupportFunction.isEmpty || !fmapAsFiniteSupportHeterogeneousFunction.isEmpty ||
-       !fmapAsFiniteSupportParameters.isEmpty || !fmapAsFiniteSupportExistentials.isEmpty ||
+       (!fmapAsFiniteSupportParameters.isEmpty && !fmapAsFiniteSupportParameterObservations) || !fmapAsFiniteSupportExistentials.isEmpty ||
        !fmapAsFiniteSupportRelation.isEmpty || fmapAsFiniteSupportEqualities || fmapAsFiniteSupportEquality) then
     throwError "@[hol]: fmap_as_finite_support_result_observations is mutually exclusive with other finite-map qualifiers"
-  pure { fmapAsFiniteSupportTuple, fmapAsFiniteSupportResultObservations, path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportFunction, fmapAsFiniteSupportHeterogeneousFunction, fmapAsFiniteSupportParameters, fmapAsFiniteSupportExistentials, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, fmapAsFiniteSupportEquality, wordsAsTypeIndexedBitvec, wordDimensionAsWidth, wordDimensionsAsWidths, realsAsRationalCuts }
+  if !nestedListRelAsMutual.isEmpty then
+    unless nestedListRelAsMutual == #["FunctionsRel"] do
+      throwError "@[hol]: nested_list_rel_as_mutual is restricted to the reviewed closure relation"
+    if !listAsArray.isEmpty || !namesAsString.isEmpty || !namesAsStringBoundary.isEmpty ||
+        (!fmapAsFiniteSupport.isEmpty && fmapAsFiniteSupport != #["refs", "code"]) || fmapAsFiniteSupportResult ||
+        !fmapAsFiniteSupportFunction.isEmpty || !fmapAsFiniteSupportTuple.isEmpty ||
+        !fmapAsFiniteSupportHeterogeneousFunction.isEmpty || !fmapAsFiniteSupportParameters.isEmpty ||
+        !fmapAsFiniteSupportExistentials.isEmpty || !fmapAsFiniteSupportRelation.isEmpty ||
+        fmapAsFiniteSupportEqualities || fmapAsFiniteSupportEquality ||
+        !fmapAsFiniteSupportResultObservations.isEmpty || wordsAsTypeIndexedBitvec ||
+        wordDimensionAsWidth.isSome || !wordDimensionsAsWidths.isEmpty || realsAsRationalCuts then
+      throwError "@[hol]: nested_list_rel_as_mutual cannot combine with other qualifiers"
+  pure { nestedListRelAsMutual, fmapAsFiniteSupportTuple, fmapAsFiniteSupportResultObservations, fmapAsFiniteSupportParameterObservations, path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportFunction, fmapAsFiniteSupportHeterogeneousFunction, fmapAsFiniteSupportParameters, fmapAsFiniteSupportExistentials, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, fmapAsFiniteSupportEquality, wordsAsTypeIndexedBitvec, wordDimensionAsWidth, wordDimensionsAsWidths, realsAsRationalCuts }
 
 private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × Bool × Array (String × String)) := do
   match stx with
@@ -437,6 +474,11 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
   | `(holQualifier| (fmap_as_finite_support_result_observations := [$producers:ident,*])) =>
       pure ("fmap_as_finite_support_result_observations", producers.getElems.map
         (fun producer => producer.getId.eraseMacroScopes.toString), false, #[])
+  | `(holQualifier| (fmap_as_finite_support_parameter_observations :=
+        (map_parameters := [$parameters:ident,*]) (map_producers := [$producers:ident,*]))) =>
+      pure ("fmap_as_finite_support_parameter_observations", parameters.getElems.map
+        (fun parameter => parameter.getId.eraseMacroScopes.toString), false,
+        producers.getElems.map (fun producer => (producer.getId.eraseMacroScopes.toString, "")))
   | `(holQualifier| (fmap_as_finite_support_existentials := [$binders:ident,*])) =>
       pure ("fmap_as_finite_support_existentials", binders.getElems.map
         (fun binder => binder.getId.eraseMacroScopes.toString), false, #[])
@@ -463,6 +505,8 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
         (fun width => width.getId.eraseMacroScopes.toString), false, #[])
   | `(holQualifier| (reals_as_rational_cuts)) =>
       pure ("reals_as_rational_cuts", #[], true, #[])
+  | `(holQualifier| (nested_list_rel_as_mutual := [$names:ident,*])) =>
+      pure ("nested_list_rel_as_mutual", names.getElems.map (fun name => name.getId.eraseMacroScopes.toString), false, #[])
   | _ => throwError "@[hol]: malformed qualifier"
 
 private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
@@ -485,7 +529,9 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut wordDimensionsAsWidths : Array String := #[]
     let mut seenWordDimensionsAsWidths := false
     let mut fmapAsFiniteSupportResultObservations : Array String := #[]
+    let mut parameterObservations := false
     let mut realsAsRationalCuts : Bool := false
+    let mut nestedListRelAsMutual : Array String := #[]
     for qualifier in qualifiers do
       let (kind, fields, isResult, pairs) ← parseHolQualifier qualifier
       if kind == "list_as_array" then listAsArray := listAsArray ++ fields
@@ -495,8 +541,21 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
       else if kind == "fmap_as_finite_support_function" then fmapAsFiniteSupportFunction := fmapAsFiniteSupportFunction ++ fields
       else if kind == "fmap_as_finite_support_tuple" then fmapAsFiniteSupportTuple := fmapAsFiniteSupportTuple ++ fields
       else if kind == "fmap_as_finite_support_heterogeneous_function" then fmapAsFiniteSupportHeterogeneousFunction := fmapAsFiniteSupportHeterogeneousFunction ++ fields
-      else if kind == "fmap_as_finite_support_parameters" then fmapAsFiniteSupportParameters := fmapAsFiniteSupportParameters ++ fields
-      else if kind == "fmap_as_finite_support_result_observations" then fmapAsFiniteSupportResultObservations := fmapAsFiniteSupportResultObservations ++ fields
+      else if kind == "fmap_as_finite_support_parameters" then
+        if parameterObservations then
+          throwError "@[hol]: parameter observations cannot combine with map parameters"
+        fmapAsFiniteSupportParameters := fmapAsFiniteSupportParameters ++ fields
+      else if kind == "fmap_as_finite_support_result_observations" then
+        if parameterObservations then
+          throwError "@[hol]: parameter observations cannot combine with map observations"
+        fmapAsFiniteSupportResultObservations := fmapAsFiniteSupportResultObservations ++ fields
+      else if kind == "fmap_as_finite_support_parameter_observations" then
+        if parameterObservations || !fmapAsFiniteSupportParameters.isEmpty ||
+            !fmapAsFiniteSupportResultObservations.isEmpty then
+          throwError "@[hol]: parameter observations cannot combine with other map parameter or observation qualifiers"
+        parameterObservations := true
+        fmapAsFiniteSupportParameters := fields
+        fmapAsFiniteSupportResultObservations := pairs.map Prod.fst
       else if kind == "fmap_as_finite_support_existentials" then fmapAsFiniteSupportExistentials := fmapAsFiniteSupportExistentials ++ fields
       else if kind == "fmap_as_finite_support_relation" then fmapAsFiniteSupportRelation := fmapAsFiniteSupportRelation ++ pairs
       else if kind == "fmap_as_finite_support_equalities" then fmapAsFiniteSupportEqualities := isResult
@@ -520,8 +579,10 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
         if realsAsRationalCuts then
           throwError "@[hol]: reals_as_rational_cuts may appear only once"
         realsAsRationalCuts := true
+      else if kind == "nested_list_rel_as_mutual" then
+        nestedListRelAsMutual := nestedListRelAsMutual ++ fields
       else fmapAsFiniteSupport := fmapAsFiniteSupport ++ fields
-    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportFunction fmapAsFiniteSupportHeterogeneousFunction fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities fmapAsFiniteSupportEquality wordsAsTypeIndexedBitvec wordDimensionAsWidth realsAsRationalCuts fmapAsFiniteSupportResultObservations wordDimensionsAsWidths fmapAsFiniteSupportTuple
+    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportFunction fmapAsFiniteSupportHeterogeneousFunction fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities fmapAsFiniteSupportEquality wordsAsTypeIndexedBitvec wordDimensionAsWidth realsAsRationalCuts fmapAsFiniteSupportResultObservations wordDimensionsAsWidths fmapAsFiniteSupportTuple nestedListRelAsMutual parameterObservations
   match stx with
   | `(attr| hol $path:str $name:str $line:num $qualifiers:holQualifier*) =>
       parse path.getString name.getString (some line.getNat) qualifiers
@@ -673,12 +734,108 @@ private def resultObservationProblems (type : Expr) (producers : Array String) :
     if producerMatches.size == 1 then none else
       some s!"producer {producer} must resolve to exactly one constant in the elaborated observer type"
 
+/-- Check the elaborated top-level map binders as well as their written names.
+    In particular, a reducible type alias must not hide an additional map. -/
+private def parameterObservationProblems (type : Expr) (parameters : Array String) :
+    MetaM (Array String) := do
+  forallTelescope type fun args _ => do
+    let mut seen : Array String := #[]
+    for arg in args do
+      let localDecl ← arg.fvarId!.getDecl
+      let binderType ← whnf localDecl.type
+      if let .const name _ := binderType.getAppFn then
+        if name.toString == "Flapjack.HolFiniteMapExact" then
+          seen := seen.push localDecl.userName.toString
+    let missing := parameters.filter (fun name => !seen.contains name)
+    let extra := seen.filter (fun name => !parameters.contains name)
+    if missing.isEmpty && extra.isEmpty then
+      return #[]
+    return #[s!"elaborated map binders {seen} do not match named parameters {parameters}"]
+
+/-- Inspect the public closure-relation dependency without descending through
+its reviewed mutual implementation. Definition bodies, but not theorem proofs,
+participate in the closure. -/
+def nestedListRelationDependenciesCached (env : Environment) (root : ConstantInfo)
+    (cache : Std.HashMap Name (Bool × Bool)) : (Bool × Bool) × Std.HashMap Name (Bool × Bool) := Id.run do
+  unless env.contains `Flapjack.Compiler.Backend.ClosAnnotate.ValueRel ||
+      env.contains `Flapjack.Compiler.Backend.ClosAnnotate.EnvOk ||
+      env.contains `Flapjack.Compiler.Backend.ClosAnnotate.FunctionsRel do
+    return ((false, false), cache)
+  let edges (info : ConstantInfo) : Array Name :=
+    let fromType := info.type.getUsedConstants
+    match info with
+    | .defnInfo value => fromType ++ value.value.getUsedConstants
+    | .opaqueInfo value => fromType ++ value.value.getUsedConstants
+    | .inductInfo value => fromType ++ value.ctors.toArray
+    | _ => fromType
+  let mut pending := edges root
+  let mut seen : NameSet := {}
+  let mut observes := false
+  let mut exposes := false
+  while !pending.isEmpty do
+    let current := pending.back!
+    pending := pending.pop
+    if seen.contains current then continue
+    seen := seen.insert current
+    if current == `Flapjack.Compiler.Backend.ClosAnnotate.ValueRel ||
+        current == `Flapjack.Compiler.Backend.ClosAnnotate.EnvOk then
+      observes := true
+      continue
+    if current == `Flapjack.Compiler.Backend.ClosAnnotate.FunctionsRel then
+      exposes := true
+      continue
+    if let some (knownObserves, knownExposes) := cache.get? current then
+      observes := observes || knownObserves
+      exposes := exposes || knownExposes
+      continue
+    match env.getModuleIdxFor? current with
+    | some idx =>
+      if env.header.moduleNames[idx.toNat]!.getRoot != `Flapjack then continue
+    | none => pure ()
+    match env.find? current with
+    | some info => pending := pending ++ edges info
+    | none => pure ()
+  let result := (observes, exposes)
+  let mut cache := cache.insert root.name result
+  -- If the whole traversal found neither boundary, every visited node also
+  -- has an empty closure. Do not cache individual nodes after a positive
+  -- traversal: cycles make their individual results potentially different.
+  if !observes && !exposes then
+    for name in seen.toList do
+      cache := cache.insert name (false, false)
+  return (result, cache)
+
+def nestedListRelationDependencies (env : Environment) (root : ConstantInfo) : Bool × Bool :=
+  (nestedListRelationDependenciesCached env root {}).1
+
 initialize holRefAttribute : ParametricAttribute HolRef ←
   registerParametricAttribute {
     name := `hol
     descr := "original HOL4 declaration (file path and declaration name) ported by this Lean declaration"
     getParam := fun _ stx => parseHolRefAttribute stx
     afterSet := fun decl ref => do
+      let isRelation := ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" &&
+        ref.name == "v_rel" &&
+        (decl == `Flapjack.Compiler.Backend.ClosAnnotate.ValueRel ||
+         decl == `Flapjack.Compiler.Backend.ClosAnnotate.EnvOk)
+      if ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" &&
+          ref.name == "v_rel" && !isRelation then
+        logError m!"{decl}: v_rel qualifier is restricted to the reviewed relation members"
+      if isRelation && !ref.fmapAsFiniteSupport.isEmpty then
+        logError m!"{decl}: nested-list relation producers cannot combine finite-map qualifiers"
+      let env ← getEnv
+      match env.find? decl with
+      | some info =>
+        let (observes, exposes) := nestedListRelationDependencies env info
+        if !ref.nestedListRelAsMutual.isEmpty then
+          let observerScope := decl.toString.startsWith "Flapjack.Compiler.Backend.ClosAnnotate." &&
+            (ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" ||
+             ref.path == "cakeml/compiler/backend/clos_annotateScript.sml")
+          unless isRelation || (observerScope && observes && !exposes) do
+            logError m!"{decl}: nested-list observer must use ValueRel or EnvOk without exposing FunctionsRel"
+        else if isRelation || observes || exposes then
+          logError m!"{decl}: tagged nested-list observer requires nested_list_rel_as_mutual"
+      | none => logError m!"{decl}: missing tagged declaration"
       if !ref.fmapAsFiniteSupportResultObservations.isEmpty then
         let env ← getEnv
         match env.find? decl with
@@ -687,6 +844,15 @@ initialize holRefAttribute : ParametricAttribute HolRef ←
               ref.fmapAsFiniteSupportResultObservations).run'
             for problem in problems do
               logError m!"{decl}: (fmap_as_finite_support_result_observations) {problem}"
+        | none => logError m!"{decl}: missing elaborated observer declaration"
+      if ref.fmapAsFiniteSupportParameterObservations then
+        let env ← getEnv
+        match env.find? decl with
+        | some info =>
+            let problems ← (parameterObservationProblems info.type
+              ref.fmapAsFiniteSupportParameters).run'
+            for problem in problems do
+              logError m!"{decl}: (fmap_as_finite_support_parameter_observations) {problem}"
         | none => logError m!"{decl}: missing elaborated observer declaration"
       if ref.wordsAsTypeIndexedBitvec then
         let env ← getEnv
@@ -715,7 +881,7 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (fmap_as_finite_support_tuple := [{String.intercalate ", " ref.fmapAsFiniteSupportTuple.toList}])"
   let fmapAsFiniteSupportHeterogeneousFunction := if ref.fmapAsFiniteSupportHeterogeneousFunction.isEmpty then "" else
     s!" (fmap_as_finite_support_heterogeneous_function := [{String.intercalate ", " ref.fmapAsFiniteSupportHeterogeneousFunction.toList}])"
-  let fmapAsFiniteSupportParameters := if ref.fmapAsFiniteSupportParameters.isEmpty then "" else
+  let fmapAsFiniteSupportParameters := if ref.fmapAsFiniteSupportParameters.isEmpty || ref.fmapAsFiniteSupportParameterObservations then "" else
     s!" (fmap_as_finite_support_parameters := [{String.intercalate ", " ref.fmapAsFiniteSupportParameters.toList}])"
   let fmapAsFiniteSupportExistentials := if ref.fmapAsFiniteSupportExistentials.isEmpty then "" else
     s!" (fmap_as_finite_support_existentials := [{String.intercalate ", " ref.fmapAsFiniteSupportExistentials.toList}])"
@@ -733,14 +899,33 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (word_dimensions_as_widths := [{String.intercalate ", " ref.wordDimensionsAsWidths.toList}])"
   let realsAsRationalCuts := if ref.realsAsRationalCuts then
     " (reals_as_rational_cuts)" else ""
-  let observations := if ref.fmapAsFiniteSupportResultObservations.isEmpty then "" else
+  let observations := if ref.fmapAsFiniteSupportParameterObservations then
+    s!" (fmap_as_finite_support_parameter_observations := (map_parameters := [{String.intercalate ", " ref.fmapAsFiniteSupportParameters.toList}]) (map_producers := [{String.intercalate ", " ref.fmapAsFiniteSupportResultObservations.toList}]))"
+    else if ref.fmapAsFiniteSupportResultObservations.isEmpty then "" else
     s!" (fmap_as_finite_support_result_observations := [{String.intercalate ", " ref.fmapAsFiniteSupportResultObservations.toList}])"
-  observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++ fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++ fmapAsFiniteSupportParameters ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++ realsAsRationalCuts
+  let nested := if ref.nestedListRelAsMutual.isEmpty then "" else
+    s!" (nested_list_rel_as_mutual := [{String.intercalate ", " ref.nestedListRelAsMutual.toList}])"
+  observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++ fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++ fmapAsFiniteSupportParameters ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++ realsAsRationalCuts ++ nested
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not
 add test declarations to the HOL-reference inventory. -/
 run_cmd do
+  let nestedSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel"
+    (nested_list_rel_as_mutual := [FunctionsRel]))
+  let nestedRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute nestedSyntax)
+  unless nestedRef.nestedListRelAsMutual == #["FunctionsRel"] &&
+      nestedRef.qualifierSuffix == " (nested_list_rel_as_mutual := [FunctionsRel])" do
+    throwError "@[hol] nested-list relation qualifier syntax regression"
+  let badNestedSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel"
+    (nested_list_rel_as_mutual := [FunctionsRel]) (list_as_array := [fields]))
+  let badNestedRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute badNestedSyntax
+      pure false
+    catch _ => pure true
+  unless badNestedRejected do
+    throwError "@[hol] nested-list relation qualifier must reject combinations"
   let plainSyntax ← `(attr| hol "cakeml/pancake/panLangScript.sml" "varname" 7)
   let plain ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute plainSyntax)
   unless plain.line? == some 7 && plain.listAsArray.isEmpty && plain.namesAsString.isEmpty &&
@@ -1025,6 +1210,37 @@ run_cmd do
       HolRef.qualifierSuffix observationRef ==
         " (fmap_as_finite_support_result_observations := [BalancedMap.toFmap])" do
     throwError "@[hol] result observation syntax regression"
+  let combinedSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_exps_semantics"
+    (fmap_as_finite_support_parameter_observations :=
+      (map_parameters := [code]) (map_producers := [Flapjack.HolFiniteMapExact.alistToFmap])))
+  let combinedRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute combinedSyntax)
+  unless combinedRef.fmapAsFiniteSupportParameterObservations &&
+      combinedRef.fmapAsFiniteSupportParameters == #["code"] &&
+      combinedRef.fmapAsFiniteSupportResultObservations == #["Flapjack.HolFiniteMapExact.alistToFmap"] &&
+      HolRef.qualifierSuffix combinedRef ==
+        " (fmap_as_finite_support_parameter_observations := (map_parameters := [code]) (map_producers := [Flapjack.HolFiniteMapExact.alistToFmap]))" do
+    throwError "@[hol] combined parameter observation syntax regression"
+  let combinedConflictSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_exps_semantics"
+    (fmap_as_finite_support_parameter_observations :=
+      (map_parameters := [code]) (map_producers := [Flapjack.HolFiniteMapExact.alistToFmap]))
+    (fmap_as_finite_support_parameters := [extra]))
+  let combinedConflictRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute combinedConflictSyntax
+      pure false
+    catch _ => pure true
+  unless combinedConflictRejected do
+    throwError "@[hol] combined parameter observations must reject other map qualifiers"
+  let combinedWrongSourceSyntax ← `(attr| hol "cakeml/pancake/semantics/panSemScript.sml" "set_var_def"
+    (fmap_as_finite_support_parameter_observations :=
+      (map_parameters := [code]) (map_producers := [Flapjack.HolFiniteMapExact.alistToFmap])))
+  let combinedWrongSourceRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute combinedWrongSourceSyntax
+      pure false
+    catch _ => pure true
+  unless combinedWrongSourceRejected do
+    throwError "@[hol] combined parameter observations must reject unreviewed source declarations"
   let duplicateObservationSyntax ← `(attr| hol "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "to_fmap_key_set"
     (fmap_as_finite_support_result_observations := [toFmap, toFmap]))
   let duplicateObservationRejected ← Lean.Elab.Command.liftCoreM do

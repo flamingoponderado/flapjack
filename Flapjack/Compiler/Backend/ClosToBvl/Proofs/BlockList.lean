@@ -10,44 +10,6 @@ namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.Compiler.Backend.BackendCommon
 open Flapjack.SemanticPrimitivesHOL
 
-/-- Decoding a source list recovers its canonical encoding. -/
-theorem sourceList_inverse (value : ClosSem.Value) (values : List ClosSem.Value)
-    (decode : ClosSem.valueToList value = some values) : ClosSem.listToValue values = value := by
-  cases value with
-  | block tag fields =>
-    cases fields with
-    | nil =>
-      simp only [ClosSem.valueToList] at decode
-      split at decode
-      · rename_i equal
-        simp only [Option.some.injEq] at decode
-        subst values
-        subst tag
-        rfl
-      · contradiction
-    | cons head tail =>
-      cases tail with
-      | nil => simp [ClosSem.valueToList] at decode
-      | cons next rest =>
-        cases rest with
-        | cons other rest => simp [ClosSem.valueToList] at decode
-        | nil =>
-          simp only [ClosSem.valueToList] at decode
-          split at decode
-          · rename_i equal
-            cases nextDecode : ClosSem.valueToList next with
-            | none => simp [nextDecode] at decode
-            | some vs =>
-              simp [nextDecode] at decode
-              subst values
-              have ih := sourceList_inverse next vs nextDecode
-              subst tag
-              simp [ClosSem.listToValue, ih]
-          · contradiction
-  | _ => simp [ClosSem.valueToList] at decode
-termination_by sizeOf value
-
-
 /-- Encoding pointwise related lists produces related list values. -/
 theorem listToValue_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
@@ -88,7 +50,7 @@ theorem decodedList_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     (source : ClosSem.Value) (target : BvlSem.Value) (xs : List ClosSem.Value)
     (related : vRel maxApp f refs code source target) (decode : ClosSem.valueToList source = some xs) :
     ∃ ys, BvlSem.valueToList target = some ys ∧ List.Forall₂ (vRel maxApp f refs code) xs ys := by
-  have sourceEq := sourceList_inverse source xs decode
+  have sourceEq := ClosSem.listToValue_valueToList source xs decode
   rw [← sourceEq] at related
   exact valueToList_related xs target related
 

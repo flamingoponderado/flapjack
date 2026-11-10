@@ -13,12 +13,12 @@ open Flapjack.SemanticPrimitivesHOL (Result)
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_Fn_IMP_mk_Ticks"]
 theorem remove_ticks_Fn_IMP_mk_Ticks (expression : ClosLang.Exp) (name : Flapjack.AstHOL.VarN)
     (location : Option Nat) (selected : Option (List Nat)) (arity : Nat) (body : ClosLang.Exp)
-    (removed : [ClosLang.Exp.fn name location selected arity body] = removeList [expression]) :
+    (removed : [ClosLang.Exp.fn name location selected arity body] = removeSource [expression]) :
     ∃ traces sourceBody, expression = mkTicks traces (.fn name location selected arity sourceBody) ∧
-      [body] = removeList [sourceBody] := by
+      [body] = removeSource [sourceBody] := by
   cases expression
   case tick outer inner =>
-    have innerRemoved : [ClosLang.Exp.fn name location selected arity body] = removeList [inner] := by
+    have innerRemoved : [ClosLang.Exp.fn name location selected arity body] = removeSource [inner] := by
       simpa [removeList, removeSing] using removed
     obtain ⟨traces, sourceBody, equal, bodyEqual⟩ :=
       remove_ticks_Fn_IMP_mk_Ticks inner name location selected arity body innerRemoved

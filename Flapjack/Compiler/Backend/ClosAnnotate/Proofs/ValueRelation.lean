@@ -1,11 +1,14 @@
 module
 
-public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables.Original
+public import Flapjack.Compiler.Backend.ClosAnnotate.Shift.OriginalEquivalence
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ShiftedEnv
 public import Flapjack.Compiler.Backend.Semantics.ClosSem
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
 public import Mathlib.Data.List.Forall2
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.FreeVariables
+
 
 @[expose] public section
 
@@ -14,9 +17,11 @@ namespace Flapjack.Compiler.Backend.ClosAnnotate
 open Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.ClosProps
 
 mutual
-/-- Relate source and annotated closure values. The mutually inductive
-relation follows the source cases, but is untagged until the evaluator and
-value carriers have been reviewed against HOL. -/
+/-- Relate source and annotated closure values. HOL's nested list relation is
+factored into the mutually inductive `FunctionsRel`, characterized by
+`functionsRel_iff` below. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
 inductive ValueRel : Value → Value → Prop where
   | number (value : Int) : ValueRel (.number value) (.number value)
   | word64 (value : BitVec 64) : ValueRel (.word64 value) (.word64 value)
@@ -26,8 +31,8 @@ inductive ValueRel : Value → Value → Prop where
   | refPtr (flag : Bool) (address : Nat) : ValueRel (.refPtr flag address) (.refPtr flag address)
   | closure (location : Option Nat) (args nextArgs env nextEnv : List Value)
       (arity m : Nat) (body nextBody : ClosLang.Exp) (index : Spt Nat) :
-      shiftList (altFree [body]).1 m arity index = [nextBody] →
-      (∀ n, altFv n [body] = true → arity ≤ n → EnvOk m 0 index env nextEnv (n - arity)) →
+      shiftSource (altFreeSource [body]).1 m arity index = [nextBody] →
+      (∀ n, altFvSource n [body] = true ∧ arity ≤ n → EnvOk m 0 index env nextEnv (n - arity)) →
       everyFnVarsNone [body] → env.length = m → List.Forall₂ ValueRel args nextArgs →
       ValueRel (.closure location args env arity body) (.closure location nextArgs nextEnv arity nextBody)
   | recclosure (location : Option Nat) (args nextArgs env nextEnv : List Value)
@@ -44,8 +49,8 @@ inductive FunctionsRel : List Value → List Value → Nat →
   | nil (env nextEnv : List Value) (count : Nat) : FunctionsRel env nextEnv count [] []
   | cons (env nextEnv : List Value) (count arity m : Nat) (body nextBody : ClosLang.Exp)
       (index : Spt Nat) (functions nextFunctions : List (Nat × ClosLang.Exp)) :
-      shiftList (altFree [body]).1 m (count + arity) index = [nextBody] →
-      (∀ n, altFv n [body] = true → arity + count ≤ n →
+      shiftSource (altFreeSource [body]).1 m (count + arity) index = [nextBody] →
+      (∀ n, altFvSource n [body] = true ∧ arity + count ≤ n →
         EnvOk m 0 index env nextEnv (n - (arity + count))) →
       everyFnVarsNone [body] → env.length = m →
       FunctionsRel env nextEnv count functions nextFunctions →
@@ -53,6 +58,8 @@ inductive FunctionsRel : List Value → List Value → Nat →
 
 /-- Relate an environment slot through a compacting sparse map. Slots beyond
 the tracked source environment impose no value relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
 inductive EnvOk : Nat → Nat → Spt Nat → List Value → List Value → Nat → Prop where
   | outside (m l : Nat) (index : Spt Nat) (env nextEnv : List Value) (n : Nat) :
       l + m ≤ n → EnvOk m l index env nextEnv n
@@ -60,11 +67,32 @@ inductive EnvOk : Nat → Nat → Spt Nat → List Value → List Value → Nat 
       n < l → ValueRel (@Flapjack.holEl Value ⟨unitValue⟩ n env) (@Flapjack.holEl Value ⟨unitValue⟩ n nextEnv) →
       n < env.length → n < nextEnv.length → EnvOk m l index env nextEnv n
   | captured (m l : Nat) (index : Spt Nat) (env nextEnv : List Value) (n compact : Nat) :
-      l ≤ n → n < l + m → sptLookup (n - l) index = some compact →
+      l ≤ n → n < l + m → n < l + m → sptLookup (n - l) index = some compact →
       n < env.length → l + compact < nextEnv.length →
       ValueRel (@Flapjack.holEl Value ⟨unitValue⟩ n env) (@Flapjack.holEl Value ⟨unitValue⟩ (l + compact) nextEnv) →
       EnvOk m l index env nextEnv n
 end
+
+/-- Primitive numeric and byte-vector values relate only to themselves. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel_Number"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem valueRel_primitive (x : Value) (i : Int) (ws : List (BitVec 8)) (w : BitVec 64) :
+    (ValueRel x (.number i) ↔ x = .number i) ∧
+    (ValueRel (.number i) x ↔ x = .number i) ∧
+    (ValueRel (.byteVector ws) x ↔ x = .byteVector ws) ∧
+    (ValueRel x (.word64 w) ↔ x = .word64 w) ∧
+    (ValueRel (.word64 w) x ↔ x = .word64 w) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> constructor
+  all_goals intro h
+  all_goals first | (cases h; rfl) | (subst x; constructor)
+
+/-- Every set of variables is valid in an empty source environment. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "env_set_default"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem envSetDefault (vars : Set Nat) (targetEnv : List Value) :
+    vars ⊆ {n | EnvOk 0 0 .ln [] targetEnv n} := by
+  intro n _
+  exact .outside 0 0 .ln [] targetEnv n (Nat.zero_le n)
 
 /-- The inductive recursive-bundle relation is exactly the pointwise list
 relation used in the source definition. -/
@@ -73,8 +101,8 @@ theorem functionsRel_iff (env nextEnv : List Value) (count : Nat)
     FunctionsRel env nextEnv count functions nextFunctions ↔
       List.Forall₂ (fun left right => ∃ m i,
         right.1 = left.1 ∧
-        shiftList (altFree [left.2]).1 m (count + left.1) i = [right.2] ∧
-        (∀ n, altFv n [left.2] = true → left.1 + count ≤ n →
+        shiftSource (altFreeSource [left.2]).1 m (count + left.1) i = [right.2] ∧
+        (∀ n, altFvSource n [left.2] = true ∧ left.1 + count ≤ n →
           EnvOk m 0 i env nextEnv (n - (left.1 + count))) ∧
         everyFnVarsNone [left.2] ∧ env.length = m) functions nextFunctions := by
   constructor
@@ -107,7 +135,7 @@ theorem envOk_getVar (m l : Nat) (index : Spt Nat) (env nextEnv : List Value) (n
   | outside _ _ _ _ _ _ beyond => omega
   | «local» _ _ _ _ _ _ below valueRel sourceBound targetBound =>
     simpa [getVar, below] using And.intro sourceBound (And.intro targetBound valueRel)
-  | captured _ _ _ _ _ _ compact above below lookup sourceBound targetBound valueRel =>
+  | captured _ _ _ _ _ _ compact above below _ lookup sourceBound targetBound valueRel =>
     have notBelow : ¬ n < l := by omega
     simpa [getVar, notBelow, lookup] using And.intro sourceBound (And.intro targetBound valueRel)
 
@@ -136,11 +164,14 @@ theorem lookupVars_position {α : Type} (indices : List Nat) (env values : List 
 
 /-- Restricting an environment to its distinct live slots preserves the
 source relation at every live variable. -/
-theorem envOk_shiftedEnv (m l : Nat) (index : Spt Nat) (env nextEnv selected : List Value)
-    (n : Nat) (live : List Nat) (related : EnvOk m l index env nextEnv n)
-    (member : n ∈ live) (distinct : live.Nodup)
-    (run : lookupVars ((live.filter (· < m + l)).map (getVar m l index)) nextEnv = some selected) :
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "env_ok_shifted_env"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem envOk_shiftedEnv (m l : Nat) (index : Spt Nat) (env nextEnv : List Value)
+    (n : Nat) (live : List Nat) (selected : List Value)
+    (h : EnvOk m l index env nextEnv n ∧ n ∈ live ∧ live.Nodup ∧
+      lookupVars ((live.filter (· < m + l)).map (getVar m l index)) nextEnv = some selected) :
     EnvOk (m + l) 0 (shiftedEnv 0 (live.filter (· < m + l))) env selected n := by
+  obtain ⟨related, member, distinct, run⟩ := h
   let _ : Nonempty Value := ⟨unitValue⟩
   by_cases tracked : n < m + l
   · let filtered := live.filter (· < m + l)
@@ -153,7 +184,7 @@ theorem envOk_shiftedEnv (m l : Nat) (index : Spt Nat) (env nextEnv selected : L
     have selectedIndex : Flapjack.holEl position (filtered.map (getVar m l index)) = getVar m l index n := by
       rw [Flapjack.holEl_eq_getElem position _ (by simpa using bound), List.getElem_map, atPosition]
     have mapLookup : sptLookup n (shiftedEnv 0 filtered) = some position := by
-      have h := lookup_shiftedEnv_el filtered position 0 bound filteredDistinct
+      have h := lookup_shiftedEnv_el filtered position 0 ⟨bound, filteredDistinct⟩
       simpa [nth] using h
     obtain ⟨value, sourceLookup, selectedLookup⟩ :=
       lookupVars_position (filtered.map (getVar m l index)) nextEnv selected position (by simpa using bound) run
@@ -167,7 +198,7 @@ theorem envOk_shiftedEnv (m l : Nat) (index : Spt Nat) (env nextEnv selected : L
       rw [Flapjack.holEl_eq_getElem _ _ selectedInfo.1]
       exact selectedInfo.2
     have sourceRelated := envOk_getVar m l index env nextEnv n related (by omega)
-    apply EnvOk.captured (m + l) 0 (shiftedEnv 0 filtered) env selected n position (by omega) (by omega)
+    apply EnvOk.captured (m + l) 0 (shiftedEnv 0 filtered) env selected n position (by omega) (by omega) (by omega)
     · simpa using mapLookup
     · exact sourceRelated.1
     · simpa using selectedInfo.1

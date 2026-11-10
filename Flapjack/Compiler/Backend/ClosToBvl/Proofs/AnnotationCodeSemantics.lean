@@ -96,10 +96,17 @@ theorem annotation_installed_semantics {C F : Type} (ffi : HolFfiState F) (maxAp
     exact (semantics_ne_fail_iff ffi maxApp (initialSourceCode code) oracle
       (pureCc ClosAnnotate.compileInc compiler) program).mp nonfail clock
   obtain ⟨targetResult, targetNext, targetRun, results, nextRel⟩ :=
-    ClosAnnotate.annotate_correct program source target [] outcome.1 outcome.2 (by exact Prod.eta _) noType safe
-      (initialSourceCode_annotationSafe ffi maxApp clock code oracle (pureCc ClosAnnotate.compileInc compiler) codeSafe)
-      oracleSafe (initialState_annotated_code_related ffi maxApp clock code oracle compiler)
+    ClosAnnotate.annotate_correct program source outcome.1 outcome.2 target []
+      ⟨by exact Prod.eta _, noType, safe,
+       (by
+         intro key entry found
+         obtain ⟨arity, body⟩ := entry
+         exact initialSourceCode_annotationSafe ffi maxApp clock code oracle
+           (pureCc ClosAnnotate.compileInc compiler) codeSafe key arity body found),
+       oracleSafe, (ClosAnnotate.stateRelSource_iff source target).mpr
+         (initialState_annotated_code_related ffi maxApp clock code oracle compiler)⟩
+  rw [(ClosAnnotate.annotateSource_sing_eq 0 (.var .none 0) program).2] at targetRun
   rw [targetRun]
-  exact ⟨results, nextRel.2.1⟩
+  exact ⟨results, ((ClosAnnotate.stateRelSource_iff outcome.2 targetNext).mp nextRel).2.1⟩
 
 end Flapjack.Compiler.Backend.ClosToBvl

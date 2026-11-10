@@ -15,11 +15,36 @@ def oracleMonotonic {A B : Type} (names : A → Set B) (relation : B → B → P
   (∀ i j x y, i < j → x ∈ names (oracle i) → y ∈ names (oracle j) → relation x y) ∧
   (∀ i x y, x ∈ initial → y ∈ names (oracle i) → relation x y)
 
+/-- Oracle monotonicity is preserved when the initial set and each entry's
+observed set are replaced by subsets. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "oracle_monotonic_subset"]
+theorem oracleMonotonic_subset {α β γ : Type} (small large : Set α)
+    (f' : β → Set α) (co' : Nat → β) (f : γ → Set α) (co : Nat → γ)
+    (relation : α → α → Prop) :
+    (small ⊆ large ∧ ∀ n, f' (co' n) ⊆ f (co n)) →
+      oracleMonotonic f relation large co → oracleMonotonic f' relation small co' := by
+  intro subsets ordered
+  constructor
+  · intro i j x y lt hx hy
+    exact ordered.1 i j x y lt (subsets.2 i hx) (subsets.2 j hy)
+  · intro i x y hx hy
+    exact ordered.2 i x y (subsets.1 hx) (subsets.2 i hy)
+
 /-- Each entry's next compiler state equals the next oracle entry's state. -/
 @[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "is_state_oracle_def"]
 def isStateOracle {S C P Q : Type} (compile : S → P → S × Q)
     (oracle : Nat → (S × C) × P) : Prop :=
   ∀ n, (oracle (n + 1)).1.1 = (compile (oracle n).1.1 (oracle n).2).1
+
+/-- Each state-oracle entry exposes its state, configuration and program. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "is_state_oracle_k"]
+theorem isStateOracle_k {S C P Q : Type} (compile : S → P → S × Q)
+    (oracle : Nat → (S × C) × P) :
+    ∀ k, isStateOracle compile oracle →
+      ∃ st other prog, oracle k = ((st, other), prog) ∧
+        (oracle (k + 1)).1.1 = (compile st prog).1 := by
+  intro k h
+  exact ⟨(oracle k).1.1, (oracle k).1.2, (oracle k).2, by cases oracle k; rfl, h k⟩
 
 /-- An invariant and a monotone state bound order generated oracle identifiers. -/
 @[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "oracle_monotonic_state_with_inv"]

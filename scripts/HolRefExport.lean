@@ -179,6 +179,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterFlip
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapExtend
 import Flapjack
+import Flapjack.Test.NestedRelationAudit
 import Flapjack.Compiler.Backend.WordAlloc.Instructions
 import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
 import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConstsGuard
@@ -269,10 +270,37 @@ elab "#emit_hol_ref_export" : command => do
   let realsTagged : NameSet := (HolRef.all env).foldl
     (fun acc (entry : Name × HolRef) => if entry.2.realsAsRationalCuts then acc.insert entry.1 else acc) {}
   let mut known : Std.HashMap Name Bool := {}
+  let mut nestedKnown : Std.HashMap Name (Bool × Bool) := {}
   for (name, ref) in HolRef.all env do
+    if !ref.nestedListRelAsMutual.isEmpty then
+      let marker := ``Flapjack.Test.nestedRelationAudit_passed
+      match env.getModuleIdxFor? marker with
+      | some idx =>
+        unless env.header.moduleNames[idx.toNat]! == `Flapjack.Test.NestedRelationAudit do
+          throwError "nested-list relation audit marker has the wrong defining module"
+      | none => throwError "missing elaborated audit marker for nested-list relation {name}"
     match env.find? name with
     | none => throwError "missing declaration {name}"
-    | some _ =>
+    | some info =>
+        let isRelation := ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" &&
+          ref.name == "v_rel" &&
+          (name == `Flapjack.Compiler.Backend.ClosAnnotate.ValueRel ||
+           name == `Flapjack.Compiler.Backend.ClosAnnotate.EnvOk)
+        if ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" &&
+            ref.name == "v_rel" && !isRelation then
+          throwError "invalid nested-list relation producer {name}"
+        if isRelation && !ref.fmapAsFiniteSupport.isEmpty then
+          throwError "nested-list relation producer has finite-map qualifier {name}"
+        let ((observes, exposes), nestedKnown') := nestedListRelationDependenciesCached env info nestedKnown
+        nestedKnown := nestedKnown'
+        if !ref.nestedListRelAsMutual.isEmpty then
+          let observerScope := name.toString.startsWith "Flapjack.Compiler.Backend.ClosAnnotate." &&
+            (ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" ||
+             ref.path == "cakeml/compiler/backend/clos_annotateScript.sml")
+          unless isRelation || (observerScope && observes && !exposes) do
+            throwError "invalid nested-list relation observer {name}"
+        else if isRelation || observes || exposes then
+          throwError "missing nested-list relation qualifier on {name}"
         let mut qualifiers : List (String × Json) := [
           ("list_as_array", toJson ref.listAsArray),
           ("names_as_string", toJson ref.namesAsString),
@@ -289,6 +317,8 @@ elab "#emit_hol_ref_export" : command => do
           ("words_as_type_indexed_bitvec", toJson ref.wordsAsTypeIndexedBitvec)]
         if ref.fmapAsFiniteSupportEquality then
           qualifiers := qualifiers ++ [("fmap_as_finite_support_equality", toJson true)]
+        if ref.fmapAsFiniteSupportParameterObservations then
+          qualifiers := qualifiers ++ [("fmap_as_finite_support_parameter_observations", toJson true)]
         if !ref.fmapAsFiniteSupportHeterogeneousFunction.isEmpty then
           qualifiers := qualifiers ++ [
             ("fmap_as_finite_support_heterogeneous_function",
@@ -296,6 +326,8 @@ elab "#emit_hol_ref_export" : command => do
         if !ref.fmapAsFiniteSupportTuple.isEmpty then
           qualifiers := qualifiers ++ [
             ("fmap_as_finite_support_tuple", toJson ref.fmapAsFiniteSupportTuple)]
+        if !ref.nestedListRelAsMutual.isEmpty then
+          qualifiers := qualifiers ++ [("nested_list_rel_as_mutual", toJson ref.nestedListRelAsMutual)]
         if let some width := ref.wordDimensionAsWidth then
           qualifiers := qualifiers ++ [("word_dimension_as_width", toJson width)]
         if !ref.wordDimensionsAsWidths.isEmpty then
