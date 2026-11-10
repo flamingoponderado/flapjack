@@ -96,4 +96,48 @@ theorem numberCompileInc_req {α : Type} (n : Nat)
     · simp only [ClosNumber.compileInc]
       exact ⟨.none, n, (ClosNumber.renumberList
         (makeEven (n + max es.length 1)) es).2, rfl⟩
+/-- Every required numbered address lies between the input and output counters. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "MEM_number_req"]
+theorem mem_number_req {α : Type} (x n : Nat)
+    (prog : List ClosLang.Exp × List (Nat × α × ClosLang.Exp))
+    (h : x ∈ reqCompileIncAddrs [Nat.succ]
+      (ClosNumber.ignoreTable ClosNumber.compileInc n prog).2 ∧ prog.2 = []) :
+    n ≤ x ∧ x < (ClosNumber.compileInc n prog.1).1 := by
+  obtain ⟨es, code⟩ := prog
+  obtain ⟨member, empty⟩ := h
+  simp only at empty
+  subst code
+  let reserve := max 1 es.length
+  let aligned := makeEven (n + reserve)
+  cases hr : ClosNumber.renumberList aligned es with
+  | mk finish ys =>
+    have hr' : ClosNumber.renumberList (makeEven (n + max es.length 1)) es = (finish, ys) := by
+      simpa [aligned, reserve, Nat.max_comm] using hr
+    have len := ClosNumber.renumberList_imp_length aligned es finish ys hr
+    have locs := ClosNumber.renumberList_codeLocations_distinct aligned es
+    simp only [hr] at locs
+    have even := ClosNumber.renumberCodeLocs_even.1 aligned es (even_makeEven (n + reserve))
+    simp only [hr] at even
+    have alignBound : n + reserve ≤ aligned := by
+      simp only [aligned, makeEven]
+      split <;> omega
+    have nextBound := ClosNumber.renumberList_start_le es aligned
+    simp only [hr] at nextBound
+    simp only [ClosNumber.ignoreTable, ClosNumber.compileInc, hr', reqCompileIncAddrs,
+      List.map_nil, List.flatten_nil, List.map_cons, List.flatten_cons, List.append_nil,
+      codeLocations, codeLocationsExp, List.mem_append] at member ⊢
+    rw [extracted_marker] at member
+    simp only [len, List.mem_map, List.mem_range, List.not_mem_nil, false_or,
+      List.nil_append] at member
+    rcases member with (⟨i, hi, rfl⟩ | hx) | ⟨i, hi, rfl⟩
+    · change i < reserve at hi
+      omega
+    · have low := locs.2.1 x hx
+      have high := locs.2.2 x hx
+      omega
+    · have low := locs.2.1 i hi
+      have high := locs.2.2 i hi
+      have ei := even.2 i hi
+      have ef := even.1
+      omega
 end Flapjack.Compiler.Backend.ClosToBvl

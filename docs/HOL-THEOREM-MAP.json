@@ -18,6 +18,12 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "MEM_number_req",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberAddresses.lean", "lean_name": "mem_number_req",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared mem_number_req_typed and independent source review: address, counter and polymorphic program binders, grouped membership and empty-code premise, and both bounds using the original compileInc counter match HOL."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "number_compile_inc_req",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberAddresses.lean", "lean_name": "numberCompileInc_req",
   "statement_status": "reviewed_exact",
