@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_rel_exists",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueExistence.lean", "lean_name": "valueRel_exists",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared v_rel_exists_type in clos_call_code_list_probe.out and HOL source: for arbitrary compiler state, allowed locations, finite code map and source value, the original well-formedness premise yields an existential target satisfying the full value relation. The code parameter uses canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_el_sing",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/IndexedCalls.lean", "lean_name": "calls_el_sing",
   "statement_status": "reviewed_exact",
