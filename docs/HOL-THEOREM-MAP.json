@@ -42,6 +42,13 @@
   "reviewer": "Compared every_Fn_vs_NONE_cond_call_compile_inc_typed and HOL source: free variables program, enabled, known, the state carriers, both implication premises and conclusions match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfv_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueWellFormed.lean", "lean_name": "valueWellFormed",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Source comparison: compared clos_call_wfv_def_typed and all nine source equations: absent closure locations are false, located closures recursively require both value lists and the original recursive-closure relation, blocks recursively require their elements, and all other value constructors are true. The code parameter uses the canonical finite-support lookup codec."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "recclosure_rel_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/RecClosureRelation.lean", "lean_name": "recClosureRel",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
