@@ -5,7 +5,7 @@ Lean checks proofs; these pins do not prove cross-language equivalence.
 from pathlib import Path
 import hashlib
 ROOT = Path(__file__).resolve().parents[2]
-CHECKS = {'Flapjack/RiscV/CorrectnessEncoding/RorStep.lean': '4cb16167c643013923fe2b26d005fc3a2ff9541006161dcf0e36ebcfa0846716', 'scripts/hol-probes/riscv_ror_step_probeScript.sml': 'c295fea900ef3b08be9d86a6ede3c090f85954398ba967ce6ac54a1829a8eac9', 'scripts/hol-probes/riscv_ror_step_probe.out': '048e4aeb2baa534fc1d31e18028bf7c4b64f19c5247f5aa775a5f34a7ff42055'}
+CHECKS = {'Flapjack/RiscV/CorrectnessEncoding/RorStep.lean': '936f86fb2668f57021d0ed06e420dce560bfb2d903f3148fbd824327d320d286', 'scripts/hol-probes/riscv_ror_step_probeScript.sml': 'c295fea900ef3b08be9d86a6ede3c090f85954398ba967ce6ac54a1829a8eac9', 'scripts/hol-probes/riscv_ror_step_probe.out': '048e4aeb2baa534fc1d31e18028bf7c4b64f19c5247f5aa775a5f34a7ff42055'}
 LABELS = ['ror_run_srli_clause', 'ror_run_srli_types', 'ror_run_srli_hypotheses', 'ror_run_sll_clause', 'ror_run_sll_types', 'ror_run_sll_hypotheses', 'ror_run_srl_clause', 'ror_run_srl_types', 'ror_run_srl_hypotheses', 'ror_run_sub_clause', 'ror_run_sub_types', 'ror_run_sub_hypotheses', 'ror_next_srli_zero', 'ror_next_srli_all_ones', 'ror_next_sll_zero', 'ror_next_sll_all_ones', 'ror_next_srl_zero', 'ror_next_srl_all_ones', 'ror_next_sub_zero', 'ror_next_sub_all_ones']
 def check(root=ROOT):
     for path, expected in CHECKS.items():
