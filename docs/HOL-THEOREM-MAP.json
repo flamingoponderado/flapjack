@@ -127778,64 +127778,64 @@
   "hol_name": "data_to_bvi_v_list_to_v_Nil",
   "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Build.lean",
   "lean_name": "dataToBviValue_listToValue_nil",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_to_data_value_probe capture (`\u2200z :v list. \u2200ts :num. data_to_bvi_v (list_to_v ts Block_nil z) = list_to_v (MAP data_to_bvi_v z)`) with dataToBviValue_listToValue_nil (values : List DataSem.Value) (timestamp : Nat) : dataToBviValue (DataSem.listToValue timestamp (.block 0 nilTag []) values) = BvlSem.listToValue (values.map dataToBviValue); HOL's Block_nil overload is exactly Block 0 nil_tag [] (dataSemScript.sml:534) and both list_to_v definitions are the reviewed list_to_v_def ports."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
   "hol_name": "v_to_bytes_eq",
   "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Conversions.lean",
   "lean_name": "valueToBytes_projection",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_to_data_value_probe capture (`\u2200x :v. v_to_bytes (data_to_bvi_v x) = v_to_bytes x`) with valueToBytes_projection (value : DataSem.Value) : BvlSem.valueToBytes (dataToBviValue value) = DataSem.valueToBytes value; valueToBytes on both sides is the reviewed v_to_bytes_def port."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
   "hol_name": "v_to_words_eq",
   "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Conversions.lean",
   "lean_name": "valueToWords_projection",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_to_data_value_probe capture (`\u2200x :v. v_to_words (data_to_bvi_v x) = v_to_words x`) with valueToWords_projection (value : DataSem.Value) : BvlSem.valueToWords (dataToBviValue value) = DataSem.valueToWords value; valueToWords on both sides is the reviewed v_to_words_def port."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
   "hol_name": "code_rel_def",
   "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/State.lean",
   "lean_name": "codeRel",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_to_data_state_probe capture (`code_rel bvi_code data_code \u21d4 wf bvi_code \u2227 wf data_code \u2227 domain bvi_code = domain data_code \u2227 \u2200n exp arg_count. lookup n bvi_code = SOME (arg_count,exp) \u21d2 lookup n data_code = SOME (arg_count,compile_exp arg_count exp)`) with codeRel over the reviewed Spt port: wf is rendered as sptWf = true (the reviewed wf_def port), domain equality as equality of the lookup-based sptDomain predicates (HOL sets as membership predicates; the membership characterisation is the reviewed domain_lookup theorem sptMem_iff_lookup), and the lookup/compile_exp clause is clause-identical with compileExp the reviewed compile_exp_def port."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
   "hol_name": "data_to_bvi_ref_def",
   "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Value.lean",
   "lean_name": "dataToBviRef",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_to_data_value_probe capture of the four clauses (ValueArray maps the projection, ByteArray is unchanged, Thunk projects the value, MutBlock projects left/current/right) with dataToBviRef's four clauses; Ref on both carriers is the reviewed ref port and ThunkMode the reviewed thunk_mode port."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
   "hol_name": "data_to_bvi_v_def",
   "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Value.lean",
   "lean_name": "dataToBviValue",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_to_data_value_probe capture of all five clauses (`Number i`, `Word64 w`, `CodePtr p`, `RefPtr b r` unchanged; `Block v0 tag l` -> `Block tag (MAP data_to_bvi_v l)`, erasing the timestamp) with dataToBviValue; clause order differs but every clause is the same. DataSem.Value and BvlSem.Value are the reviewed v ports."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
   "hol_name": "data_to_bvi_v_Boolv",
   "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Value.lean",
   "lean_name": "dataToBviValue_bool",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_to_data_value_probe capture (`\u2200b. data_to_bvi_v (Boolv b) = Boolv b`) with dataToBviValue_bool (b : Bool) : dataToBviValue (DataSem.boolValue b) = BvlSem.boolValue b; boolValue is the reviewed Boolv_def port on both carriers."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
   "hol_name": "data_to_bvi_v_Unit",
   "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Value.lean",
   "lean_name": "dataToBviValue_unit",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_to_data_value_probe capture (`data_to_bvi_v Unit = Unit`) with dataToBviValue_unit : dataToBviValue DataSem.unitValue = BvlSem.unitValue; unitValue on both sides is the reviewed Unit_def port."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml",

@@ -9484,3 +9484,8 @@ run_probe data_sem_control_probeScript.sml data_sem_control_probe.out \
   push_env_clock_typed pop_env_clock_typed do_stack_clock_typed vb_size_def_typed \
   "$cake_dir/compiler/backend/semantics/dataSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
+
+run_probe bvi_to_data_value_probeScript.sml bvi_to_data_value_probe.out \
+  data_to_bvi_v_def_typed data_to_bvi_v_Unit_typed data_to_bvi_v_Boolv_typed data_to_bvi_ref_def_typed v_to_bytes_eq_typed v_to_words_eq_typed data_to_bvi_v_list_to_v_Nil_typed \
+  "$cake_dir/compiler/backend/proofs/bvi_to_dataProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
