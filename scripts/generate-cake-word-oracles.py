@@ -178,7 +178,7 @@ def parse_entries(input_path, fragments=None):
     return entries
 
 
-def render(input_path, namespace, width):
+def render_parts(input_path, namespace, width):
     fragments = []
     entries = parse_entries(input_path, fragments if namespace in ("BignumWordOracle", "FullCakeWordOracle", "FullInlineCakeWordOracle", "FullMtiInlineCakeWordOracle", "FullBvlOptimizedCakeWordOracle", "FullClosCallCakeWordOracle", "FullClosKnownCakeWordOracle", "FullDefaultFrontendWordOracle") else None)
     all_sets = {name: keys for _, sets, _ in entries for name, keys in sets}
@@ -196,22 +196,22 @@ def render(input_path, namespace, width):
             checks.append(f"matches_{name} {name}")
         return " &&\n      ".join(checks) or "true"
 
-    definitions = []
+    fragment_defs = []
     for name, pattern in fragments:
         checks = pattern_checks(pattern)
-        definitions.append(f'''private def matches_{name} (entry : Flapjack.WordLangProgHOL (BitVec {width})) : Bool :=
+        fragment_defs.append((f"matches_{name}", f'''private def matches_{name} (entry : Flapjack.WordLangProgHOL (BitVec {width})) : Bool :=
   match entry with
   | {pattern} =>
       {checks}
-  | _ => false''')
+  | _ => false'''))
+    match_defs = []
     for index, (pattern, _, _) in enumerate(entries):
         checks = pattern_checks(pattern)
-        definitions.append(f'''private def matches{index} (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec {width}) × Nat)) : Bool :=
+        match_defs.append((f"matches{index}", f'''private def matches{index} (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec {width}) × Nat)) : Bool :=
   match entry with
   | {pattern} =>
       {checks}
-  | _ => false''')
-    definitions = "\n\n".join(definitions)
+  | _ => false'''))
     entry_names = ", ".join(f"entry{index}" for index in range(len(entries)))
     entry_checks = " &&\n      ".join(f"matches{index} entry{index}" for index in range(len(entries))) or "true"
     if len(entries) > 32:
@@ -222,19 +222,127 @@ def render(input_path, namespace, width):
         body = f"  code.length == {len(entries)} &&\n    {checks}"
     else:
         body = f"  match code with\n  | [{entry_names}] =>\n      {entry_checks}\n  | _ => false"
-    return f'''-- Generated from the pinned original HOL compiler; do not edit.
-import Flapjack.Pancake.WordLang
+    return fragment_defs, match_defs, body
 
+
+HELPER_NAME = re.compile(r"\b(matches_fragment\d+|matches\d+)\b")
+
+
+def rewrite(text, mapping):
+    return HELPER_NAME.sub(lambda m: mapping.get(m.group(0), m.group(0)), text)
+
+
+def helper_defs(parts):
+    return parts[0] + parts[1]
+
+
+def assemble(namespace, width, definitions, body, shared):
+    imports = "import Flapjack.Pancake.WordLang\n"
+    head = ""
+    if shared:
+        imports += "import Flapjack.Test.CakeWordOracleHelpers\n"
+        head = "open Flapjack.Test.CakeWordOracleHelpers\n\n"
+    text = "\n\n".join(definition for _, definition in definitions)
+    body_block = f"{text}\n\n" if text else ""
+    return f'''-- Generated from the pinned original HOL compiler; do not edit.
+{imports}
 namespace Flapjack.Test.{namespace}
 
-{definitions}
-
-/-- Match every captured function, including every live set and next label. -/
+{head}{body_block}/-- Match every captured function, including every live set and next label. -/
 def matchesCaptured (code : List (Nat × Nat × (Flapjack.WordLangProgHOL (BitVec {width}) × Nat))) : Bool :=
 {body}
 
 end Flapjack.Test.{namespace}
 '''
+
+
+def render(input_path, namespace, width):
+    return assemble(namespace, width, helper_defs(render_parts(input_path, namespace, width)), render_parts(input_path, namespace, width)[2], False)
+
+
+def share(parts_by_module):
+    """Share helper definitions whose text and dependency closure are identical.
+
+    Returns the canonical name of every shareable text, its occurrences, the
+    per-module definitions and the first-occurrence order."""
+    defs = {ns: helper_defs(parts) for ns, parts in parts_by_module.items()}
+    bytext = {}
+    order = []
+    for ns in parts_by_module:
+        for name, text in defs[ns]:
+            if text not in bytext:
+                bytext[text] = []
+                order.append(text)
+            bytext[text].append((ns, name))
+    candidates = {text for text, occurrences in bytext.items() if len(occurrences) > 1}
+    changed = True
+    while changed:
+        changed = False
+        for text in list(candidates):
+            modules = {ns for ns, _ in bytext[text]}
+            ok = True
+            for ref in set(HELPER_NAME.findall(text)):
+                texts = set()
+                for ns in modules:
+                    found = [value for (name, value) in defs[ns] if name == ref]
+                    if not found:
+                        ok = False
+                        break
+                    texts.add(found[0])
+                if not ok:
+                    break
+                if len(texts) != 1 or next(iter(texts)) not in candidates:
+                    ok = False
+                    break
+            if not ok:
+                candidates.discard(text)
+                changed = True
+    canonical = {}
+    used = set()
+    for text in order:
+        if text not in candidates:
+            continue
+        base = "shared_" + bytext[text][0][1]
+        name = base
+        suffix = 2
+        while name in used:
+            name = f"{base}_{suffix}"
+            suffix += 1
+        used.add(name)
+        canonical[text] = name
+    return canonical, bytext, defs, order
+
+
+def shared_module_render(canonical, bytext, defs, order):
+    definitions = []
+    for text in order:
+        if text not in canonical:
+            continue
+        name = canonical[text]
+        module, original = bytext[text][0]
+        refs = {}
+        for ref in set(HELPER_NAME.findall(text)) - {original}:
+            ref_text = [value for (n, value) in defs[module] if n == ref][0]
+            refs[ref] = canonical[ref_text]
+        rewritten = text.replace(f"private def {original} ", f"def {name} ", 1)
+        rewritten = rewrite(rewritten, refs)
+        definitions.append((name, rewritten))
+    return f'''-- Generated shared oracle helpers from the pinned original HOL compiler; do not edit.
+import Flapjack.Pancake.WordLang
+
+namespace Flapjack.Test.CakeWordOracleHelpers
+
+{"\n\n".join(d for _, d in definitions)}
+
+end Flapjack.Test.CakeWordOracleHelpers
+'''
+
+
+def module_with_sharing(namespace, width, parts, canonical, defs):
+    mapping = {name: canonical[text] for name, text in defs[namespace] if text in canonical}
+    definitions = [(name, rewrite(text, mapping)) for name, text in defs[namespace] if text not in canonical]
+    body = rewrite(parts[2], mapping)
+    return assemble(namespace, width, definitions, body, bool(mapping))
 
 
 def normalize(text, namespace):
@@ -258,16 +366,29 @@ end Flapjack.Test.{alias}
 
 
 def expected_modules():
-    """Group configs whose captures are identical onto one module; the rest become aliases."""
-    rendered = {}
+    """Group identical captures onto one module and share identical helper rows."""
+    parts = {}
+    widths = {}
+    for input_path, _, namespace, width in CASES:
+        parts[namespace] = render_parts(input_path, namespace, width)
+        widths[namespace] = width
     canonical = {}
     for input_path, _, namespace, width in CASES:
-        rendered[namespace] = render(input_path, namespace, width)
-        canonical.setdefault(normalize(rendered[namespace], namespace), namespace)
+        text = assemble(namespace, width, helper_defs(parts[namespace]), parts[namespace][2], False)
+        canonical.setdefault(normalize(text, namespace), namespace)
+    full = set(canonical.values())
+    shared_names, bytext, defs, order = share({namespace: parts[namespace] for _, _, namespace, _ in CASES if namespace in full})
     plan = []
+    if shared_names:
+        plan.append((ROOT / "Flapjack/Test/CakeWordOracleHelpers.lean",
+                     shared_module_render(shared_names, bytext, defs, order)))
     for _, output_path, namespace, width in CASES:
-        shared = canonical[normalize(rendered[namespace], namespace)]
-        plan.append((output_path, rendered[namespace] if shared == namespace else alias_render(shared, namespace)))
+        text = assemble(namespace, width, helper_defs(parts[namespace]), parts[namespace][2], False)
+        shared = canonical[normalize(text, namespace)]
+        if shared != namespace:
+            plan.append((output_path, alias_render(shared, namespace)))
+        else:
+            plan.append((output_path, module_with_sharing(namespace, width, parts[namespace], shared_names, defs)))
     return plan
 
 
