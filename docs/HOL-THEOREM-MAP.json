@@ -119470,16 +119470,18 @@
     "hol_name": "add_to_sem_env_def",
     "lean_path": "Flapjack/PrimTypesHOL.lean",
     "lean_name": "addToSemEnv",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (pending complete source evaluator and carrier review): pinned HOL types captured in prim_sem_env_probe; inherits the floating-point rational-cut assumption."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed prim_sem_env_probe capture (`add_to_sem_env (st,env) prog = case evaluate_decs st env prog of (st, Rval env') => SOME (st, env' +++ env) | (st, Rerr _) => NONE`) with addToSemEnv: the same evaluate_decs on the pair components, the same Rval branch returning the state with the extended environment (extendDecEnv is the reviewed extend_dec_env_def port, HOL's +++), and the same NONE on any error. State/SemEnv/Value and evaluateDecs are the reviewed ports. It inherits reals_as_rational_cuts through the evaluator; see SOUNDNESS item 8.",
+    "inherits_reals_as_rational_cuts": true
   },
   {
     "hol_path": "cakeml/semantics/primTypesScript.sml",
     "hol_name": "prim_sem_env_def",
     "lean_path": "Flapjack/PrimTypesHOL.lean",
     "lean_name": "primSemEnv",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (pending complete source evaluator and carrier review): pinned HOL types captured in prim_sem_env_probe; inherits the floating-point rational-cut assumption."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed prim_sem_env_probe capture (`prim_sem_env ffi = add_to_sem_env (<|clock := 0; ffi := ffi; refs := []; next_type_stamp := 0; next_exn_stamp := 0; eval_state := NONE|>, <|v := nsEmpty; c := nsEmpty|>) prim_types_program`) with primSemEnv: the same initial state field values (clock 0, refs [], stamps 0, eval_state NONE, the given ffi), the same empty v/c namespaces and the reviewed prim_types_program port. It inherits reals_as_rational_cuts through addToSemEnv's evaluator; see SOUNDNESS item 8.",
+    "inherits_reals_as_rational_cuts": true
   },
   {
     "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
@@ -120143,16 +120145,16 @@
     "hol_name": "prim_tenv_def",
     "lean_path": "Flapjack/PrimTypesHOL/Types.lean",
     "lean_name": "primTenv",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: source declarations and relevant typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed cake_type_env_probe capture of prim_tenv_def with primTenv: v := nsEmpty; c := alist_to_ns (REVERSE [...]) and t := alist_to_ns (REVERSE [...]) are rendered as alistToNs ([...].reverse) with the same entry order and the same 8 constructor / 14 type-abbreviation entries; every numeric type identifier matches (Texn_num 3, Tbool_num 1, Tlist_num 6, Tarray_num 0, Tdouble_num 14, Ttup_num 9, etc.), Tvar \u00ab'a\u00bb is SemanticT.var, Tlist (Tvar \u00ab'a\u00bb) is .app [var] 6 and Tapp [Tvar \u00ab'a\u00bb] n is .app [var] n. alistToNs and nsEmpty are the reviewed alist_to_ns_def and nsEmpty_def ports."
   },
   {
     "hol_path": "cakeml/semantics/primTypesScript.sml",
     "hol_name": "prim_type_ids_def",
     "lean_path": "Flapjack/PrimTypesHOL/Types.lean",
     "lean_name": "primTypeIds",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: source declarations and relevant typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed cake_type_env_probe capture (`prim_type_ids = set (Tlist_num::Tbool_num::prim_type_nums)`) with primTypeIds id := id \u2208 6 :: 1 :: primTypeNums: HOL's set is rendered as the membership predicate, Tlist_num is 6 and Tbool_num is 1, and primTypeNums is the reviewed prim_type_nums_def port."
   },
   {
     "hol_path": "cakeml/semantics/semanticsScript.sml",
