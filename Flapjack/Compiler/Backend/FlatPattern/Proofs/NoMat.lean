@@ -140,29 +140,17 @@ theorem noMat_naivePatternMatches (trace : Tra) (value : FlatLang.Exp)
     (rows : List (FlatLang.Pat × FlatLang.Exp)) (default : FlatLang.Exp)
     (safe : ∀ expression ∈ value :: default :: rows.map Prod.snd, FlatProps.noMat expression = true) :
     FlatProps.noMat (naivePatternMatches trace value rows default) = true := by
-  have valueSafe := safe value (by simp)
-  have defaultSafe := safe default (by simp)
-  have branchesSafe : ∀ pattern body, (pattern, body) ∈ rows → FlatProps.noMat body = true := by
-    intro pattern body member
-    apply safe body
-    simp only [List.mem_cons, List.mem_map]
-    exact Or.inr (Or.inr ⟨(pattern, body), member, rfl⟩)
-  clear safe
-  induction rows with
-  | nil => exact defaultSafe
-  | cons row rest ih =>
-    obtain ⟨pattern, body⟩ := row
-    simp only [naivePatternMatches]
+  fun_induction naivePatternMatches trace value rows default <;> simp_all
+  case case2 =>
+    rename_i ih
     apply noMat_smartIf
     · apply noMat_naivePatternMatch
       intro item member
       simp only [List.mem_singleton] at member
       subst item
-      exact valueSafe
-    · exact branchesSafe pattern body (by simp)
-    · apply ih
-      intro pat expression member
-      exact branchesSafe pat expression (by simp [member])
+      exact safe.1
+    · exact safe.2.2.1
+    · exact ih
 
 /-- Generated binding work items refer only to fresh local variables. -/
 theorem noMat_patternEntries (trace : Tra) (base start : Nat) (patterns : List FlatLang.Pat) :
