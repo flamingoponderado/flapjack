@@ -1191,7 +1191,7 @@
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_ALL_DISTINCT",
-  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LabelsOriginal.lean", "lean_name": "calls_allDistinct",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LabelDistinct.lean", "lean_name": "calls_allDistinct",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared calls_ALL_DISTINCT_typed and source: quantified binders, grouped equation and distinctness premises, pointwise ordered disjointness, and final label distinctness agree."
  },

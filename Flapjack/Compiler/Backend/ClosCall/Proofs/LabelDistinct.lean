@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelOrigins
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.TotalCorrespondence
 
 @[expose] public section
 
@@ -9,7 +10,7 @@ namespace Flapjack.Compiler.Backend.ClosCall
 open ClosLang ClosProps
 
 /-- None of the successor labels of these input locations is already emitted. -/
-def LabelsFresh (locations : List Nat) (state : State) : Prop :=
+private def LabelsFresh (locations : List Nat) (state : State) : Prop :=
   ∀ loc ∈ locations, loc + 1 ∉ state.2.map Prod.fst
 
 private theorem fresh_subset {xs ys : List Nat} {state : State}
@@ -237,7 +238,7 @@ termination_by fuel
 end
 
 /-- The production retry wrapper preserves label distinctness. -/
-theorem callsListBounded_labelsDistinct (fuel : Nat) (es : List Exp) (initial final : State)
+private theorem callsListBounded_labelsDistinct (fuel : Nat) (es : List Exp) (initial final : State)
     (out : List Exp) (run : callsListBounded fuel es initial = some (out, final))
     (distinct : (codeLocations es).Nodup) (fresh : LabelsFresh (codeLocations es) initial)
     (oldDistinct : (initial.2.map Prod.fst).Nodup) : (final.2.map Prod.fst).Nodup := by
@@ -250,5 +251,23 @@ theorem callsListBounded_labelsDistinct (fuel : Nat) (es : List Exp) (initial fi
   | none =>
     simp only [first] at run
     exact callsListFuel_labelsDistinct _ es initial final out run distinct fresh oldDistinct
+
+/-- Direct-call conversion preserves distinctness of auxiliary labels under
+the source location and disjointness conditions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_ALL_DISTINCT"]
+theorem calls_allDistinct (xs : List Exp) (initial : State) (ys : List Exp)
+    (final : State) (h : calls xs initial = (ys, final) ∧
+      (initial.2.map Prod.fst).Nodup ∧ (codeLocations xs).Nodup ∧
+      (∀ label, ¬ (label ∈ Nat.succ '' {x | x ∈ codeLocations xs} ∧
+        label ∈ initial.2.map Prod.fst))) :
+    (final.2.map Prod.fst).Nodup := by
+  have bounded := callsListBounded_correct 0 xs initial
+  have run : callsSingList xs initial = (ys, final) := h.1
+  rw [run] at bounded
+  apply callsListBounded_labelsDistinct 0 xs initial final ys bounded h.2.2.1 ?_ h.2.1
+  intro loc locMem labelMem
+  apply h.2.2.2 (Nat.succ loc)
+  exact ⟨⟨loc, locMem, rfl⟩, by simpa [Nat.succ_eq_add_one] using labelMem⟩
+
 
 end Flapjack.Compiler.Backend.ClosCall
