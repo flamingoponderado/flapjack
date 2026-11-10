@@ -2,6 +2,10 @@ module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotationAddresses
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationMembership
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.SyntaxOk
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationDistinct
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.VarsNone
 import Mathlib.Data.List.Perm.Subperm
 
 @[expose] public section
@@ -9,6 +13,32 @@ import Mathlib.Data.List.Perm.Subperm
 /-! Address preservation for conditional direct-call conversion. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open ClosLang ClosProps
+
+/-- Numbering produces valid direct-call syntax from unannotated inputs. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "renumber_code_locs_list_csyntax_ok"]
+theorem renumberList_callSyntaxOk (n : Nat) (es : List ClosLang.Exp) (k : Nat) (out : List ClosLang.Exp)
+    (h : ClosNumber.renumberList n es = (k, out) ∧ everyFnVarsNone es) :
+    ClosCall.syntaxOk out := by
+  have locations := ClosNumber.renumberCodeLocs_everyFnSome.1 n es
+  have vars := (ClosNumber.renumberCodeLocs_everyFnVarsNone.1 n es).2 h.2
+  have distinct := (ClosNumber.renumberList_codeLocations_distinct n es).1
+  simpa [ClosCall.syntaxOk, h.1] using And.intro locations (And.intro vars distinct)
+
+/-- Direct-call compilation retains absent variable annotations in both outputs. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "calls_compile_csyntax_ok"]
+theorem callsCompile_callSyntaxOk (enabled : Bool) (xs ys : List ClosLang.Exp) (g : NumSet)
+    (aux : List (Nat × Nat × ClosLang.Exp)) (run : ClosCall.compile enabled xs = (ys, (g, aux)))
+    (safe : ClosCall.syntaxOk xs) :
+    everyFnVarsNone ys ∧ everyFnVarsNone (aux.map (fun p => p.2.2)) := by
+  cases enabled with
+  | false =>
+    simp [ClosCall.compile] at run
+    obtain ⟨rfl, _, rfl⟩ := run
+    simpa [everyFnVarsNone] using safe.2.1
+  | true =>
+    apply ClosCall.calls_preserves_everyFnVarsNone xs (.ln, []) ys (g, aux)
+      (by simpa [ClosCall.compile] using run)
+    simpa [everyFnVarsNone] using safe.2.1
 
 /-- Conditional direct-call conversion preserves absent variable annotations. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "every_Fn_vs_NONE_cond_call_compile_inc"]

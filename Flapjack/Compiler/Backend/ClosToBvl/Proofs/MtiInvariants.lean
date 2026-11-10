@@ -31,6 +31,12 @@ theorem length_fst_condMtiCompileInc {α : Type} (enabled : Bool) (maxApp : Nat)
   cases enabled <;> simp [ClosMti.condCompileInc, ClosMti.compileInc, ClosMti.introList_length]
 
 /-- The optional multi-argument pass preserves the function-annotation invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_every_Fn_vs_NONE"]
+theorem compile_everyFnVarsNone (enabled : Bool) (maxApp : Nat) (es : List Exp) :
+    everyFnVarsNone (ClosMti.compile enabled maxApp es) ↔ everyFnVarsNone es := by
+  cases enabled <;> simp [ClosMti.compile, ClosMti.introList_varsNone]
+
+/-- The incremental optional pass preserves the same function-annotation invariant. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "every_Fn_vs_NONE_cond_mti_compile_inc"]
 theorem everyFnVarsNone_condMtiCompileInc {α : Type} (enabled : Bool) (maxApp : Nat)
     (program : List Exp × List α) :

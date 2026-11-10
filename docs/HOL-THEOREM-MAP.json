@@ -42,6 +42,24 @@
   "reviewer": "Compared every_Fn_vs_NONE_cond_call_compile_inc_typed and HOL source: free variables program, enabled, known, the state carriers, both implication premises and conclusions match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "renumber_code_locs_list_csyntax_ok",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallAddresses.lean", "lean_name": "renumberList_callSyntaxOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared renumber_code_locs_list_csyntax_ok_typed and HOL source: numbering equation and absent-variable invariant are grouped in one premise, and the full call syntax condition is the conclusion."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiInvariants.lean", "lean_name": "compile_everyFnVarsNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_every_Fn_vs_NONE_typed: the enabled flag, maximum arity and expression list occur in source order, and the absent-annotation predicate is equivalent before and after compilation."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "calls_compile_csyntax_ok",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallAddresses.lean", "lean_name": "callsCompile_callSyntaxOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_compile_csyntax_ok_typed: the compile equation and source syntax condition are separate premises, with absent annotations on both output expressions and auxiliary-code bodies."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_vs_NONE_known_co",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownOracleFacts.lean", "lean_name": "everyFnVarsNone_knownCo",
   "statement_status": "reviewed_exact",
