@@ -1600,6 +1600,14 @@
   "reviewer": "Compared FOLDR_mk_Union_local_typed, replayed with the original HOL proof: the list payload type is polymorphic, and the pair fold, seed, projections, append and variable-set fold have the same order and no premises."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "state_rel_clocks_eqs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/StateRelation/Original.lean", "lean_name": "stateRelSource_clocks",
+  "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
+  "fmap_as_finite_support": ["refs", "code"],
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "reviewer": "Source comparison with state_rel_clocks_eqs_local_typed, replayed using the original HOL proof: the two states share unrestricted compiler and FFI carriers, and the state relation implies equality of their clocks. fmap_as_finite_support records the canonical refs and code fields; nested_list_rel_as_mutual records the value relation witnessed by functionsRel_iff."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "state_rel_max_app",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/StateRelation/Original.lean", "lean_name": "stateRelSource_maxApp",
   "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",

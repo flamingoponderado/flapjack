@@ -36,6 +36,13 @@ def StateRelSource {C F : Type} (source target : State C F) : Prop :=
     ∃ nextBody, shiftSource (altFreeSource [body]).1 0 arity .ln = [nextBody] ∧
       target.code.lookup key = some (arity, nextBody))
 
+/-- Related annotation states have the same clock. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "state_rel_clocks_eqs"
+  (nested_list_rel_as_mutual := [FunctionsRel]) (fmap_as_finite_support := [refs, code])]
+theorem stateRelSource_clocks {C F : Type} (source target : State C F)
+    (related : StateRelSource source target) : source.clock = target.clock :=
+  related.1
+
 /-- Related annotation states have the same maximum application arity. -/
 @[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "state_rel_max_app"
   (nested_list_rel_as_mutual := [FunctionsRel]) (fmap_as_finite_support := [refs, code])]
