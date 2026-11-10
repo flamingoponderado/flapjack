@@ -117009,16 +117009,16 @@
     "lean_name": "isPure",
     "hol_path": "cakeml/compiler/backend/data_liveScript.sml",
     "hol_name": "is_pure_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed data_live_compile_probe capture of is_pure_def (37 false clauses printed one per operation, then the wildcard) with isPure: every false clause matches (FFI, the seven int operations Add/Sub/Mult/Div/Mod/Less/LessEq, the seven word operations WordOpw W64/WordShift W64/WordFromInt/WordToInt/WordFromWord/FP_uop/FP_bop/FP_top, the six block operations, SetGlobal/SetGlobalsPtr, the twelve memory operations including ConfigGC, Install and ThunkOp) and the Lean wildcard `_ => true` is HOL's `is_pure _ = T`. ClosLang.Op is the reviewed op port."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataLive.lean",
     "lean_name": "compile",
     "hol_path": "cakeml/compiler/backend/data_liveScript.sml",
     "hol_name": "compile_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed data_live_compile_probe capture clause by clause with compile: Skip, Return (list_insert ns LN), Raise (insert n () LN), Move (insert n2 () (delete n1 live)), Seq (compile c2 then c1, returning l1), Tick, MakeSpace (inter names live), Assign NONE (the IS_NONE/is_pure Skip case and the list_insert/delete case), Assign SOME (inter names (delete v live), list_insert vs l1), If (compile c3 then c2, insert n () (union l2 l3)), Force NONE and Force SOME, Call NONE (list_to_num_set vs, rendered by the Flapjack namesOfList helper for HOL's list_to_num_set), Call SOME NONE and Call SOME handler (the same inter/list_delete/union/delete/list_insert chain). sptInter/sptInsert/sptDelete/sptUnion/sptListInsert/sptListDelete and namesOfList are the reviewed sptree helpers and the documented list_to_num_set rendering."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataSpace/Compile.lean",

@@ -9529,3 +9529,8 @@ run_probe data_to_word_ops_probeScript.sml data_to_word_ops_probe.out \
   word_op_type_axiom_typed lookup_word_op_def_typed stub_names_def_typed \
   "$cake_dir/compiler/backend/data_to_wordScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe data_live_compile_probeScript.sml data_live_compile_probe.out \
+  is_pure_def_typed compile_def_typed \
+  "$cake_dir/compiler/backend/data_liveScript.sml" \
+  "$cake_dir/compiler/backend"
