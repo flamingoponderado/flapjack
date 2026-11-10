@@ -31,26 +31,6 @@ private theorem bagEmpty_of_bound (out input : GlobalBag)
   simp only [empty, emptyGlobalBag, Flapjack.emptyBag] at h ⊢
   omega
 
-private theorem compileFuns_bagBounds (cfg : Config)
-    (fs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp)) :
-    ∀ key, funGlobals (compileFuns cfg fs).2.2 key ≤ funGlobals fs key := by
-  induction fs with
-  | nil => simp [compileFuns, funGlobals]
-  | cons row fs ih =>
-    obtain ⟨f, v, e⟩ := row
-    cases he : compileExp cfg e with
-    | mk i rest =>
-      obtain ⟨sg, y⟩ := rest
-      cases hfs : compileFuns cfg fs with
-      | mk j rest =>
-        obtain ⟨sgs, ys⟩ := rest
-        intro key
-        have h1 := compileExp_setGlobals.1 cfg e i sg y he key
-        have h2 := ih key
-        simp only [hfs] at h2
-        simp only [compileFuns, he, hfs, funGlobals, unionGlobalBag, Flapjack.bagUnion]
-        omega
-
 /-- The source expression, list, and row safety theorem. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_exp_esgc_free"]
 theorem compileExp_esgcFree :
@@ -100,7 +80,10 @@ theorem compileExp_esgcFree :
       constructor
       · simpa [eq] using ih safe.1
       · apply bagEmpty_of_bound _ _ _ safe.2
-        simpa only [eqf] using compileFuns_bagBounds cfg fs
+        let literal := FlatLang.Exp.lit .none (.intLit 0)
+        have bound := compileExp_setGlobals.1 cfg (.letrec t fs literal) j sgfs (.letrec t fs2 literal)
+          (by simp [literal, compileExp, eqf])
+        simpa [literal, setGlobals, unionGlobalBag, emptyGlobalBag, Flapjack.bagUnion_empty_left] using bound
     case case10 =>
       intro t x1 x2 x3 i sg1 y1 eq1 j sg2 y2 eq2 k sg3 y3 eq3 ih1 ih2 ih3
       simp only [esgcFree, compileExp, eq1, eq2, eq3]
