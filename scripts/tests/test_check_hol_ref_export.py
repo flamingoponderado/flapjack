@@ -46,6 +46,13 @@ class HolRefExportTest(unittest.TestCase):
             {"fmap_as_finite_support_result_observations": ["different"]},
         )
 
+    def test_parameter_observations_require_elaborated_combined_marker(self):
+        fields = {"fmap_as_finite_support_parameters": ["code"],
+                  "fmap_as_finite_support_result_observations": ["Flapjack.Map.make"]}
+        self.check_qualifier(
+            "reviewed_fmap_as_finite_support_parameter_observations", fields,
+            {**fields, "fmap_as_finite_support_parameter_observations": True}, fields)
+
     def test_nested_list_qualifier_must_match_both_directions(self):
         self.check_qualifier(
             "reviewed_nested_list_rel_as_mutual",

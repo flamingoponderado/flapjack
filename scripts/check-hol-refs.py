@@ -553,6 +553,11 @@ def find_lean_decl(lines: list[str], start: int) -> str:
 FMAP_RESULT_OBSERVATIONS_RE = re.compile(
     r"\(\s*fmap_as_finite_support_result_observations\s*:=\s*\[([^]]*)\]\s*\)"
 )
+FMAP_PARAMETER_OBSERVATIONS_RE = re.compile(
+    r"\(\s*fmap_as_finite_support_parameter_observations\s*:=\s*"
+    r"\(\s*map_parameters\s*:=\s*\[([^]]*)\]\s*\)\s*"
+    r"\(\s*map_producers\s*:=\s*\[([^]]*)\]\s*\)\s*\)"
+)
 
 
 def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = False,
@@ -591,6 +596,7 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
         attribute = " ".join(chunks)
         if "hol " in attribute:
             for hol_path, hol_name, hol_line in ATTR_RE.findall(attribute):
+                combined = FMAP_PARAMETER_OBSERVATIONS_RE.search(attribute)
                 def fields_for(pattern: re.Pattern[str]) -> tuple[str, ...]:
                     qualifier = pattern.search(attribute)
                     return tuple(
@@ -623,7 +629,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     relation_fields_for(),
                     bool(FMAP_AS_FINITE_SUPPORT_EQUALITIES_RE.search(attribute)),
                     bool(WORDS_AS_TYPE_INDEXED_BITVEC_RE.search(attribute)),
-                    fields_for(FMAP_AS_FINITE_SUPPORT_PARAMS_RE),
+                    fields_for(FMAP_AS_FINITE_SUPPORT_PARAMS_RE) + (
+                        tuple(field.strip() for field in combined.group(1).split(",")) if combined else ()),
                 )
                 if include_fmap_existentials:
                     site += (fields_for(FMAP_AS_FINITE_SUPPORT_EXISTENTIALS_RE),)
@@ -645,7 +652,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                 if include_fmap_as_finite_support_equality:
                     site += (bool(FMAP_AS_FINITE_SUPPORT_EQUALITY_RE.search(attribute)),)
                 if include_result_observations:
-                    observations = fields_for(FMAP_RESULT_OBSERVATIONS_RE)
+                    observations = fields_for(FMAP_RESULT_OBSERVATIONS_RE) + (
+                        tuple(field.strip() for field in combined.group(2).split(",")) if combined else ())
                     if FMAP_RESULT_OBSERVATIONS_RE.search(attribute) and not observations:
                         observations = ("",)
                     site += (observations,)
@@ -2116,6 +2124,39 @@ def fmap_as_finite_support_parameters_errors(
                 f"`{witness}` must state the canonical lookup/finiteSupport "
                 f"toBroad/ofBroad roundtrip for `{parameter}`"
             )
+    return errors
+
+
+def fmap_parameter_observations_errors(
+    lines: list[str], module: str, declaration_text: str, decl_name: str,
+    parameters: tuple[str, ...], producers: tuple[str, ...], records: list[dict],
+) -> list[str]:
+    """Validate both finite-map translations without silently covering other maps."""
+    errors = fmap_as_finite_support_parameters_errors(lines, module, declaration_text, decl_name, parameters)
+    errors.extend(fmap_result_observation_errors(lines, module, declaration_text, producers, records))
+    if not parameters or not producers:
+        errors.append("parameter observations require nonempty parameter and producer lists")
+    if any(not producer.startswith("Flapjack.") for producer in producers):
+        errors.append("parameter observation producers must be fully qualified Flapjack names")
+    if set(parameters) & {producer.rsplit(".", 1)[-1] for producer in producers}:
+        errors.append("a parameter shadows an observed producer")
+    signature = observer_type_source(declaration_text)
+    # Every syntactically visible canonical-map carrier must be one of the
+    # explicitly listed input binders. Nested maps and quantified map binders
+    # are rejected rather than implicitly covered by this narrow qualifier.
+    map_types = list(re.finditer(r"(?<![A-Za-z0-9_'])HolFiniteMapExact\b(?!\.)", signature))
+    direct = re.findall(r"[({]\s*([A-Za-z_][A-Za-z0-9_']*)\s*:\s*(?:Flapjack\.)?HolFiniteMapExact\b", signature)
+    if len(map_types) != len(parameters) or sorted(direct) != sorted(parameters):
+        errors.append("parameter observations must account for every canonical finite-map binder")
+    structures = structure_field_types(lines)
+    imported = imported_structure_field_types(module, str(ROOT))
+    mapped_carriers = {name for name, fields in structures.items()
+                       if any("HolFiniteMapExact" in typ for typ in fields.values())}
+    mapped_carriers.update(name for name, declarations in imported.items()
+                           if any("HolFiniteMapExact" in typ
+                                  for _, _, fields in declarations for typ in fields.values()))
+    if any(identifier_token_occurs(signature, name) for name in mapped_carriers):
+        errors.append("parameter observations cannot cover finite-map fields in a carrier")
     return errors
 
 
@@ -5029,14 +5070,30 @@ def main(argv: list[str]) -> int:
                 errors.extend(f"{where}: {error}" for error in fmap_value_context_tuple_errors(
                     lines, tagged_declaration_source(lines, number), fmap_tuple, (hol_path, hol_name)))
             if result_observations:
+                declaration_source = tagged_declaration_source(lines, number)
+                composite_matches = list(FMAP_PARAMETER_OBSERVATIONS_RE.finditer(declaration_source))
+                combined = bool(fmap_parameters and composite_matches)
+                if fmap_parameters and len(composite_matches) != 1:
+                    errors.append(f"{where}: map parameters and observations require one combined qualifier")
+                if combined and (FMAP_AS_FINITE_SUPPORT_PARAMS_RE.search(declaration_source) or
+                                 FMAP_RESULT_OBSERVATIONS_RE.search(declaration_source)):
+                    errors.append(f"{where}: combined parameter observations cannot mix with standalone qualifiers")
                 if (list_fields or names_fields or fmap_fields or fmap_result or fmap_relation or
-                    fmap_equalities or words_bitvec or fmap_parameters or fmap_existentials or
+                    fmap_equalities or words_bitvec or (fmap_parameters and not combined) or fmap_existentials or
                     dimension_width or dimension_widths or fmap_function_positions or fmap_heterogeneous_function_positions or
                     reals_cuts or fmap_equality):
                     errors.append(f"{where}: result observations cannot combine with other representation qualifiers")
-                errors.extend(f"{where}: {error}" for error in fmap_result_observation_errors(
-                    lines, module, tagged_declaration_source(lines, number),
-                    result_observations, observation_records))
+                if combined:
+                    if (hol_path != "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" or
+                            hol_name not in {"chain_exps_semantics", "chain_exps_semantics_call"} or
+                            rel != "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainSemantics.lean"):
+                        errors.append(f"{where}: combined parameter observations are restricted to the reviewed closure-chain semantics declarations")
+                    errors.extend(f"{where}: {error}" for error in fmap_parameter_observations_errors(
+                        lines, module, declaration_source, find_lean_decl(lines, number - 1),
+                        fmap_parameters, result_observations, observation_records))
+                else:
+                    errors.extend(f"{where}: {error}" for error in fmap_result_observation_errors(
+                        lines, module, declaration_source, result_observations, observation_records))
             errors.extend(
                 f"{where}: {error}"
                 for error in reals_as_rational_cuts_errors(

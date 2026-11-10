@@ -1569,6 +1569,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_result",
     "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_result_observations",
+    "reviewed_fmap_as_finite_support_parameter_observations",
     "reviewed_fmap_as_finite_support_parameters",
     "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_existentials",
@@ -2162,15 +2163,23 @@ def validate_inventory(
             errors.append(f"{key[0]}:{key[1]}: tuple-map review must name the source and both positions")
         manifest_observations = tuple(record.get("fmap_as_finite_support_result_observations", ()))
         observation_status = "reviewed_fmap_as_finite_support_result_observations"
+        combined_observation_status = "reviewed_fmap_as_finite_support_parameter_observations"
         if manifest_observations != result_observations:
             errors.append(f"{key[0]}:{key[1]}: manifest result observation producers do not match @[hol] tag")
-        if bool(result_observations) != (status == observation_status):
+        if bool(result_observations) != (status in {observation_status, combined_observation_status}):
             errors.append(f"{key[0]}:{key[1]}: result observations require matching reviewed result-observation status")
         if result_observations:
-            if any(tag[2:17]):
+            if any(value for index, value in enumerate(tag[2:17], start=2)
+                   if not (status == combined_observation_status and index == 10)):
                 errors.append(f"{key[0]}:{key[1]}: result observations cannot combine with other representation qualifiers")
             if not isinstance(reviewer, str) or not reviewer.strip():
                 errors.append(f"{key[0]}:{key[1]}: result observations require source-comparison note")
+        if status == combined_observation_status:
+            if not fmap_parameters or not result_observations:
+                errors.append(f"{key[0]}:{key[1]}: combined parameter observations require both lists")
+            if not isinstance(reviewer, str) or "source" not in reviewer.lower() or any(
+                    name not in reviewer for name in (*fmap_parameters, *result_observations)):
+                errors.append(f"{key[0]}:{key[1]}: combined observation review must name source, parameters and producers")
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))
@@ -2555,6 +2564,7 @@ def validate_inventory(
         if fmap_parameters and status not in {
             "reviewed_fmap_as_finite_support_parameters",
             combined_parameter_words_status,
+            combined_observation_status,
         }:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_parameters needs reviewed_fmap_as_finite_support_parameters status"

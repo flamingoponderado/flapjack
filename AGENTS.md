@@ -487,6 +487,26 @@ elaborated-attribute export checks manifest agreement and Lean checks the
 witness. None establishes cross-language correspondence. Complete source
 review of both the producer and observer remains required.
 
+**Qualify map parameters and observed map results together.** Use the single
+`(fmap_as_finite_support_parameter_observations :=
+  (map_parameters := [code, ...]) (map_producers := [Flapjack.Producer, ...]))`
+qualifier when the same declaration needs both translations. Both lists are
+nonempty and distinct; producer names are fully qualified. It cannot combine
+with another representation qualifier. Every input map binder must be named,
+have the same canonical parameter witness as the standalone parameter qualifier,
+and no carrier with finite-map fields is covered. Each producer must meet all
+requirements of the observation qualifier, including imported reviewed status,
+its witness, and occurrence in the elaborated type. Use manifest status
+`reviewed_fmap_as_finite_support_parameter_observations` with both existing
+parameter and producer lists. The source-review note names every listed input
+and producer and compares the entire HOL declaration, including all computed
+maps. Syntactic and elaborated checks do not establish HOL correspondence.
+The initial checker supports only `chain_exps_semantics` and
+`chain_exps_semantics_call` in their closure-to-BVL counterpart module; expand
+that scope only after adding checks and source review for the new carrier shape.
+The elaborated binder guard examines top-level map binders after reduction; it
+does not inspect maps nested inside binder types or within propositions.
+
 **Qualify the factored closure list relation.** The narrowly scoped
 `(nested_list_rel_as_mutual := [FunctionsRel])` qualifier records the
 recursive-closure `LIST_REL` factoring in `clos_annotateProof$v_rel` into the

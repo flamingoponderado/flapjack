@@ -64,6 +64,7 @@ ALLOWED_QUALIFIERS = {
     "fmap_as_finite_support_tuple",
     "fmap_as_finite_support_heterogeneous_function",
     "fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_parameter_observations",
     "fmap_as_finite_support_parameters",
     "fmap_as_finite_support_existentials",
     "fmap_as_finite_support_relation", "fmap_as_finite_support_equalities",
@@ -77,6 +78,7 @@ BOOLEAN_QUALIFIERS = {
     "fmap_as_finite_support_result", "fmap_as_finite_support_equalities",
     "fmap_as_finite_support_equality", "words_as_type_indexed_bitvec",
     "reals_as_rational_cuts",
+    "fmap_as_finite_support_parameter_observations",
 }
 
 
@@ -149,6 +151,8 @@ def manifest_qualifiers(record: dict[str, Any]) -> dict[str, Any]:
         "names_as_string_boundary": list(record.get("names_as_string_boundary", ())),
         "fmap_as_finite_support": list(record.get("fmap_as_finite_support", ())),
     }
+    if record.get("statement_status") == "reviewed_fmap_as_finite_support_parameter_observations":
+        qualifiers["fmap_as_finite_support_parameter_observations"] = True
     for key in (
         "fmap_as_finite_support_relation",
         "fmap_as_finite_support_function",

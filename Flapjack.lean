@@ -1302,6 +1302,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.CodeExtensionEvaluate
 import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateCodeSubmap
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SourceChain
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainInstalled
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainSemantics
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotationCodeSemantics
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainSyntactic
 import Flapjack.Compiler.Backend.ClosAnnotate.Free.OriginalEquivalence

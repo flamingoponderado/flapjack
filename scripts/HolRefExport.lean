@@ -317,6 +317,8 @@ elab "#emit_hol_ref_export" : command => do
           ("words_as_type_indexed_bitvec", toJson ref.wordsAsTypeIndexedBitvec)]
         if ref.fmapAsFiniteSupportEquality then
           qualifiers := qualifiers ++ [("fmap_as_finite_support_equality", toJson true)]
+        if ref.fmapAsFiniteSupportParameterObservations then
+          qualifiers := qualifiers ++ [("fmap_as_finite_support_parameter_observations", toJson true)]
         if !ref.fmapAsFiniteSupportHeterogeneousFunction.isEmpty then
           qualifiers := qualifiers ++ [
             ("fmap_as_finite_support_heterogeneous_function",

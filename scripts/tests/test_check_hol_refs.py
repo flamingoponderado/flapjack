@@ -3999,6 +3999,46 @@ class FmapResultObservationTest(unittest.TestCase):
         self.assertEqual(("BalancedMap.toFmap",), next(SITES(source, include_result_observations=True))[-1])
 
 
+class FmapParameterObservationTest(unittest.TestCase):
+    def test_scanner_retains_both_lists(self):
+        lines = ['@[hol "cakeml/exampleScript.sml" "result"',
+                 ' (fmap_as_finite_support_parameter_observations :=',
+                 '  (map_parameters := [code]) (map_producers := [Flapjack.Map.make]))]',
+                 'theorem result : True := by trivial']
+        row = next(SITES(lines, include_result_observations=True))
+        self.assertEqual(("code",), row[12])
+        self.assertEqual(("Flapjack.Map.make",), row[-1])
+
+    def test_reject_unlisted_and_nested_maps_and_map_owners(self):
+        validate = CHECKER["fmap_parameter_observations_errors"]
+        globals_ = validate.__globals__
+        mocks = {"fmap_as_finite_support_parameters_errors": lambda *args: [],
+                 "fmap_result_observation_errors": lambda *args: [],
+                 "structure_field_types": lambda *args: {},
+                 "imported_structure_field_types": lambda *args: {}}
+        producer = ("Flapjack.Map.make",)
+        def errors(source):
+            return validate([], "Fixture", source, "observer", ("code",), producer, [])
+        with patch.dict(globals_, mocks):
+            self.assertEqual([], errors("theorem observer (code : HolFiniteMapExact Nat Nat) : True := by trivial"))
+            self.assertTrue(errors("theorem observer (code : HolFiniteMapExact Nat Nat) (extra : HolFiniteMapExact Nat Nat) : True := by trivial"))
+            self.assertTrue(errors("theorem observer (code : HolFiniteMapExact Nat Nat) (extra : List (HolFiniteMapExact Nat Nat)) : True := by trivial"))
+            self.assertTrue(errors("theorem observer (code : HolFiniteMapExact Nat Nat) : ∀ m : HolFiniteMapExact Nat Nat, True := by trivial"))
+            globals_["structure_field_types"] = lambda *args: {"State": {"code": "HolFiniteMapExact Nat Nat"}}
+            self.assertTrue(errors("theorem observer (code : HolFiniteMapExact Nat Nat) (s : State) : True := by trivial"))
+
+    def test_requires_qualified_unshadowed_producers(self):
+        validate = CHECKER["fmap_parameter_observations_errors"]
+        mocks = {"fmap_as_finite_support_parameters_errors": lambda *args: [],
+                 "fmap_result_observation_errors": lambda *args: [],
+                 "structure_field_types": lambda *args: {},
+                 "imported_structure_field_types": lambda *args: {}}
+        source = "theorem observer (code : HolFiniteMapExact Nat Nat) : True := by trivial"
+        with patch.dict(validate.__globals__, mocks):
+            self.assertTrue(validate([], "Fixture", source, "observer", ("code",), ("make",), []))
+            self.assertTrue(validate([], "Fixture", source, "observer", ("code",), ("Flapjack.Map.code",), []))
+
+
 class FmapResultObservationShadowTest(unittest.TestCase):
     def test_observer_binder_cannot_impersonate_producer(self):
         fixture = FmapResultObservationTest()

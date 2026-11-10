@@ -1333,6 +1333,28 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "chain_exps_semantics",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainSemantics.lean",
+  "lean_name": "chainExps_semantics",
+  "statement_status": "reviewed_fmap_as_finite_support_parameter_observations",
+  "fmap_as_finite_support_parameters": ["code"],
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.alistToFmap", "Flapjack.HolFiniteMapExact.union"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared chain_exps_semantics_typed and source: code is the canonical input finite map, Flapjack.HolFiniteMapExact.alistToFmap and Flapjack.HolFiniteMapExact.union are reviewed computed maps in left-biased order; the grouped premises, independent FFI/configuration carriers, existential body, semantics equality and lookup conclusion match HOL, including empty expressions. Inherits reals_as_rational_cuts and the SOUNDNESS item 8 assumption through ClosSem.semantics."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "chain_exps_semantics_call",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainSemantics.lean",
+  "lean_name": "chainExps_semantics_call",
+  "statement_status": "reviewed_fmap_as_finite_support_parameter_observations",
+  "fmap_as_finite_support_parameters": ["code"],
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.alistToFmap", "Flapjack.HolFiniteMapExact.union"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared chain_exps_semantics_call_typed and source: code is the canonical input finite map, Flapjack.HolFiniteMapExact.alistToFmap and Flapjack.HolFiniteMapExact.union are reviewed computed maps in left-biased order; the grouped premises, independent FFI/configuration carriers, direct-call expression and behavior equality match HOL, including empty expressions. Inherits reals_as_rational_cuts and the SOUNDNESS item 8 assumption through ClosSem.semantics."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "chain_exps_every_Fn_SOME",
   "hol_line": 8596,
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainSyntactic.lean",

@@ -2265,6 +2265,21 @@ class FmapResultObservationInventoryTest(unittest.TestCase):
                         dict(record, reviewer="")]:
             self.assertTrue(MAP["validate_inventory"]([changed], set(), tags, set()))
 
+    def test_parameter_observations_require_both_reviewed_lists(self):
+        record, tags = self.fixture()
+        record.update(statement_status="reviewed_fmap_as_finite_support_parameter_observations",
+                      fmap_as_finite_support_parameters=["code"],
+                      reviewer="Source comparison of code and toFmap.")
+        key = next(iter(tags))
+        tag = list(tags[key])
+        tag[10] = ("code",)
+        tags[key] = tuple(tag)
+        self.assertEqual([], MAP["validate_inventory"]([record], set(), tags, set()))
+        bad = dict(record, reviewer="Source comparison of code only.")
+        self.assertTrue(MAP["validate_inventory"]([bad], set(), tags, set()))
+        bad = dict(record, fmap_as_finite_support_parameters=[])
+        self.assertTrue(MAP["validate_inventory"]([bad], set(), tags, set()))
+
     def test_status_cannot_be_used_without_qualifier(self):
         record, tags = self.fixture()
         key = next(iter(tags))
