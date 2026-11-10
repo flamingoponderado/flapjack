@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "make_g_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeState.lean", "lean_name": "makeState",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Source comparison: compared clos_call_make_g_def_typed: sparse-tree payload A and finite-map payload B are independent HOL types, with B inhabited for HOL THE; the successor-domain inclusion guard and ordered toAList mapping to successor keys and THE lookups match. The input code map uses canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "env_rel_Op_Install",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Environment.lean", "lean_name": "envRel_opInstall",
   "statement_status": "reviewed_exact",
