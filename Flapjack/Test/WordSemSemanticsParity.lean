@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Exact wordSem `semantics_def` observations

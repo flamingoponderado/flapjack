@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ALookupMap
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ALookupMap
+
+@[expose] public section
 open Flapjack Flapjack.WordAlloc Flapjack.WordToStackProofs
 -- am_any_nat_0_0_0
 example : (keyLookup ([]:List (Nat × Nat)) 0, keyLookup (([]:List (Nat × Nat)).map (fun p:Nat × Nat => ((fun x:Nat => x) p.1, (fun k:Nat => fun y:Nat => k+2*y) ((fun x:Nat => x) p.1) p.2))) ((fun x:Nat => x) 0), (keyLookup ([]:List (Nat × Nat)) 0).map ((fun k:Nat => fun y:Nat => k+2*y) ((fun x:Nat => x) 0)), ([0]:List Nat).all (fun p => ([0]:List Nat).all (fun q => decide ((fun x:Nat => x) p = (fun x:Nat => x) q → p=q)))) = (none, none, none, true) := by simp [keyLookup, holAlookup]

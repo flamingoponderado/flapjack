@@ -1,4 +1,8 @@
-import Flapjack.PanValues
+module
+
+public import Flapjack.PanValues
+
+@[expose] public section
 
 /-!
 Parity test for the faithful source `set_var`.

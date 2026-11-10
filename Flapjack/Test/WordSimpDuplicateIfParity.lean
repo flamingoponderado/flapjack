@@ -1,4 +1,8 @@
-import Flapjack.RiscV.WordFuseConditions
+module
+
+public import Flapjack.RiscV.WordFuseConditions
+
+@[expose] public section
 
 /-! Complete original compile_exp output trees and helper boundaries from
 word_simp_duplicate_if_source_probe.out. Expected trees are independent

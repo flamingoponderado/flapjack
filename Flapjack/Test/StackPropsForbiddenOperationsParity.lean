@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
+module
+
+public import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
+
+@[expose] public section
 
 /-! Same-input original StackProps predicate regressions. All constructor
 families and both independent optional Call bodies are covered. These kernel

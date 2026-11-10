@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreUpdate
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreUpdate
+
+@[expose] public section
 
 /-! Matched original HOL observations from `source_to_flat_state_pattern_probe.out`. -/
 namespace Flapjack.Test.CakeStoreUpdateParity

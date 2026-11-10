@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordUnreach.ProductionDecoderDomain
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.Domain
+module
+
+public import Flapjack.Compiler.Backend.WordUnreach.ProductionDecoderDomain
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.Domain
+
+@[expose] public section
 
 /-! Actual partial encoder/native cleanup/decoder boundaries. These kernel
 checks distinguish encoding rejection from proven native output acceptance,

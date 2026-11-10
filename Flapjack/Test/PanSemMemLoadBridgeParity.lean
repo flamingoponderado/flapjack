@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
+
+@[expose] public section
 
 /-!
 Concrete instances of the production-to-exact `mem_load_def` codec theorem.

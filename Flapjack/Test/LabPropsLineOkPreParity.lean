@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.LabProps
+module
+
+public import Flapjack.Compiler.Backend.LabProps
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Cake labProps `line_ok_pre` over a concrete `AsmConfig`

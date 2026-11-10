@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmConventions
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmConventions
+
+@[expose] public section
 namespace Flapjack.Test.WordToStackAsmConventionsParity
 open Flapjack Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Backend.WordToStack.Native

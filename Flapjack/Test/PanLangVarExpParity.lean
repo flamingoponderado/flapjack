@@ -1,6 +1,15 @@
-import Flapjack.Pancake.PanLang
-import Flapjack.Pancake.PanLang.Exp
-import Flapjack.Pancake.PanLang.Prog
+module
+
+public import Flapjack.Pancake.PanLang
+public import Flapjack.Pancake.PanLang.Exp
+public import Flapjack.Pancake.PanLang.Prog
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.PanLang.Exp
+public meta import Flapjack.Pancake.PanLang.Prog
+@[expose] public section
 
 /-!
 # Pancake local/global expression-variable parity

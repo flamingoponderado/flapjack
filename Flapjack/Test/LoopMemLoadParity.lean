@@ -1,4 +1,10 @@
-import Flapjack.LoopMemLoad
+module
+
+public import Flapjack.LoopMemLoad
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.LoopMemLoad
+@[expose] public section
 
 /-!
 # Original-domain parity for `loopSem.mem_load`

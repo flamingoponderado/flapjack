@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanProps
+module
+
+public import Flapjack.Pancake.Semantics.PanProps
+
+@[expose] public section
 
 /-! Exact-carrier parity for HOL `panProps$exps_of`
 (`cakeml/pancake/semantics/panPropsScript.sml:1336-1358`, bead flapjack-4ac.4.69).

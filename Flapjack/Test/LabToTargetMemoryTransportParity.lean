@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.MemoryTransport
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.MemoryTransport
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetMemoryTransportParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget
 example {width : Nat} [NeZero width] {machine projection : Type}

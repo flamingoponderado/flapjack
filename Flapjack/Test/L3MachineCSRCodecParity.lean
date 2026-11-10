@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.MachineCSRCodec
+module
+
+public import Flapjack.RiscV.L3.Defs.MachineCSRCodec
+
+@[expose] public section
 namespace Flapjack.Test.L3MachineCSRCodecParity
 open Flapjack.RiscV.L3
 private def observation_mcpuid (x : BitVec 64) :=

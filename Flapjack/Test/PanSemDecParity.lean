@@ -1,5 +1,15 @@
-import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Test.PanValueFfiCore
+module
+
+public import Flapjack.Pancake.Semantics.PanSem
+public import Flapjack.Test.PanValueFfiCore
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.PanValueFfiCore
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Parity for the Pancake `Dec` equation

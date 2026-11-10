@@ -1,4 +1,8 @@
-import Flapjack.CrepeExpressionStability
+module
+
+public import Flapjack.CrepeExpressionStability
+
+@[expose] public section
 
 namespace Flapjack.Test.CrepeExpressionStabilityParity
 

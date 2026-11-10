@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
+
+@[expose] public section
 
 /-! Original HOL rows in word_to_stack_stack_size_rel_probe.out, regenerated
 from prebuilt word_to_stackProofTheory; these check the exact tagged predicate. -/

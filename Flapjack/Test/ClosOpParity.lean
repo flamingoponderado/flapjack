@@ -1,4 +1,13 @@
-import Flapjack.Compiler.Backend.ClosOp
+module
+
+public import Flapjack.Compiler.Backend.ClosOp
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.BackendCommon.Trace
+public meta import Flapjack.Compiler.Backend.ClosLang.Syntax
+public meta import Flapjack.Compiler.Backend.ClosOp
+public meta import Flapjack.Misc.AppList
+@[expose] public section
 
 /-! Replay complete `clos_op_frontend_probe.out` examples. -/
 namespace Flapjack.Test.ClosOpParity

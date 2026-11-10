@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackNoShmemopHandlersParity
 open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackProps

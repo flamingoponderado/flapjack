@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.WordBignum.CompileExp
+module
+
+public import Flapjack.Compiler.Backend.WordBignum.CompileExp
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.WordLang
+public meta import Flapjack.Word
+public meta import Flapjack.Compiler.Backend.WordBignum.CompileExp
+@[expose] public section
 
 /-! Replay the pinned HOL expression-translation probe. -/
 namespace Flapjack.Test.WordBignumCompileExpParity

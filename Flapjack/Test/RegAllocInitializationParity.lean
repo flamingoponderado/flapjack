@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.Initialization
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Initialization
+
+@[expose] public section
 
 /-! Same-input kernel replay of eight fresh generated-runner observations.
 The seed deliberately has inconsistent dimensions and independent lengths. -/

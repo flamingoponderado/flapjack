@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.ZeroPreservation
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ZeroPreservation
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetZeroPreservationParity
 open Flapjack Flapjack.Misc Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

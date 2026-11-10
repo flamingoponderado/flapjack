@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearray
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearray
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.Parmove.Semantics
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.StackRemoveWriteBytearrayParity
 open Flapjack

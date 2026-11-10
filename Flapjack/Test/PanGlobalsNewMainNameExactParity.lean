@@ -1,6 +1,14 @@
-import Flapjack.Pancake.PanGlobals
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.Pancake.PanLang.Prog
+module
+
+public import Flapjack.Pancake.PanGlobals
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.PanLang.Prog
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanGlobals
+public meta import Flapjack.Pancake.PanLang.Decl
+public meta import Flapjack.Pancake.PanLang.Prog
+@[expose] public section
 
 namespace Flapjack.Test.PanGlobalsNewMainNameExactParity
 

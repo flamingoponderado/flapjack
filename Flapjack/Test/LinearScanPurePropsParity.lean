@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LinearScan
-import Flapjack.Misc.Sptree.ToAList
+module
+
+public import Flapjack.Compiler.Backend.LinearScan
+public import Flapjack.Misc.Sptree.ToAList
+
+@[expose] public section
 namespace Flapjack.Test.LinearScanPurePropsParity
 open RegAlloc LinearScan
 -- Replay of the eighteen original linear_scan_pure_props_probe rows for the

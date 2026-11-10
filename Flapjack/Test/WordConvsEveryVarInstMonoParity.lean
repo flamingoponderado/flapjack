@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordConvs.EveryVarInstMono
+module
+
+public import Flapjack.Pancake.WordConvs.EveryVarInstMono
+
+@[expose] public section
 
 namespace Flapjack.Test.WordConvsEveryVarInstMonoParity
 open Flapjack

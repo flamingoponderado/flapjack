@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.WordArithmetic
+module
+
+public import Flapjack.RiscV.L3.Defs.WordArithmetic
+
+@[expose] public section
 set_option maxRecDepth 20000
 namespace Flapjack.Test.L3WordArithmeticParity
 open Flapjack.RiscV.L3

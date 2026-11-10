@@ -1,7 +1,21 @@
-import Flapjack.Compiler.Backend.WordToStack
-import Flapjack.Compiler.Backend.WordToStackRegFormat
-import Flapjack.RiscV.CakeAllocatorCore
-import Flapjack.RiscV.CakeAllocatorBitsBridge
+module
+
+public import Flapjack.Compiler.Backend.WordToStack
+public import Flapjack.Compiler.Backend.WordToStackRegFormat
+public import Flapjack.RiscV.CakeAllocatorCore
+public import Flapjack.RiscV.CakeAllocatorBitsBridge
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.WordToStack
+public meta import Flapjack.Compiler.Backend.WordToStackRegFormat
+public meta import Flapjack.RiscV.CakeAllocatorBitsBridge
+public meta import Flapjack.RiscV.CakeAllocatorCore
+public meta import Flapjack.Test.OriginalPancakeProbes
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Word-to-Stack `bits_to_word` parity

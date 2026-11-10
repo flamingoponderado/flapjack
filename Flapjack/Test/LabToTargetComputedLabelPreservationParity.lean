@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPreservation
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPreservation
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetComputedLabelPreservationParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

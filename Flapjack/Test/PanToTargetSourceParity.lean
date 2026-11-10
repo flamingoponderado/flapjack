@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanToTarget
+module
+
+public import Flapjack.Pancake.PanToTarget
+
+@[expose] public section
 /-!
 Kernel replay of the eight original HOL control observations in
 `scripts/hol-probes/pan_to_target_source_probe.out`. The main-name oracle

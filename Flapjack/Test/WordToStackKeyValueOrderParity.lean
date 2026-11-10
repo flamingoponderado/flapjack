@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.KeyValueOrder
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.KeyValueOrder
+
+@[expose] public section
 open Flapjack Flapjack.Compiler.Backend.WordToStack
 
 -- kv_value_0_0_1

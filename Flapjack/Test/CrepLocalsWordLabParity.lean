@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Semantics.CrepSem
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.CrepSem
+@[expose] public section
 
 /-!
 Direct runtime checks against `scripts/hol-probes/crep_locals_wordlab_probe.out`.

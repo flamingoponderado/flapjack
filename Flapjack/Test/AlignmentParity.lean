@@ -1,4 +1,8 @@
-import Flapjack.Misc.Alignment
+module
+
+public import Flapjack.Misc.Alignment
+
+@[expose] public section
 
 namespace Flapjack.Test.AlignmentParity
 open Flapjack

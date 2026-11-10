@@ -1,6 +1,10 @@
-import Flapjack.Pancake.WordLang.OccurrencesExact
-import Flapjack.Compiler.Backend.WordAlloc.LimitVar
-import Flapjack.Compiler.Backend.RegAlloc
+module
+
+public import Flapjack.Pancake.WordLang.OccurrencesExact
+public import Flapjack.Compiler.Backend.WordAlloc.LimitVar
+public import Flapjack.Compiler.Backend.RegAlloc
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocLimitVar
 open Flapjack Flapjack.Compiler.Backend.WordAlloc

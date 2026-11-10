@@ -1,4 +1,13 @@
-import Flapjack.SemanticPrimitivesHOL.Primitives
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Primitives
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.AstHOL
+public meta import Flapjack.AstHOL.BackendOperators
+public meta import Flapjack.AstHOL.LitOp
+public meta import Flapjack.SemanticPrimitivesHOL.Primitives
+@[expose] public section
 
 /-! Source type and word-shift observations captured from pinned HOL. -/
 namespace Flapjack.Test.CakeSourcePrimitiveParity

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
+
+@[expose] public section
 open Flapjack Compiler.Encoders.Asm Compiler.Backend.WordCse WordSemStateFiniteExact
 
 -- del_arith_0_77_1

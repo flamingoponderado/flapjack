@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
+module
+
+public import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
+
+@[expose] public section
 
 namespace Flapjack.Test.StackEvaluateClockNeutralParity
 open Flapjack Flapjack.Compiler.Backend.StackLang

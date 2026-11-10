@@ -1,4 +1,12 @@
-import Flapjack.Misc.BytesInMemory.Domain
+module
+
+public import Flapjack.Misc.BytesInMemory.Domain
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.BytesInMemoryDomainParity
 open Flapjack
@@ -6,11 +14,11 @@ open Flapjack
 private def region {width : Nat} (address query : BitVec width) : Prop :=
   query = address ∨ query = address + 1 ∨ query = address + 2
 
-private instance regionDecidable {width : Nat} (address query : BitVec width) :
+instance regionDecidable {width : Nat} (address query : BitVec width) :
     Decidable (region address query) := inferInstanceAs (Decidable
       (query = address ∨ query = address + 1 ∨ query = address + 2))
 
-private instance memoryDecidable {width : Nat} [NeZero width]
+instance memoryDecidable {width : Nat} [NeZero width]
     (address : BitVec width) (bytes : List (BitVec 8))
     (memory : BitVec width → BitVec 8) (domain : BitVec width → Prop)
     [domainDecide : DecidablePred domain] : Decidable (bytesInMemoryHOL address bytes memory domain) :=

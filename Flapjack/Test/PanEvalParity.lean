@@ -1,5 +1,12 @@
-import Flapjack.PanEval
-import Flapjack.Pancake.Semantics.PanSem
+module
+
+public import Flapjack.PanEval
+public import Flapjack.Pancake.Semantics.PanSem
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanEval
+public meta import Flapjack.Pancake.Semantics.PanSem
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `eval_def`

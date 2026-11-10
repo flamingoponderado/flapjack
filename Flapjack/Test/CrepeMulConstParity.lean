@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.CrepArith
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Pancake.Proofs.CrepArith
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 namespace Flapjack.Test.CrepeMulConstParity
 
 -- Exact HOL evaluator replay of crep_arith_eval_mul_const_probe.out.

@@ -1,4 +1,8 @@
-import Flapjack.Misc.BinaryIeeeDirectedFp64
+module
+
+public import Flapjack.Misc.BinaryIeeeDirectedFp64
+
+@[expose] public section
 
 /-! Kernel directed tie regressions. These are not original HOL oracle rows;
 the pinned original lacks finite upward/downward conversion. -/

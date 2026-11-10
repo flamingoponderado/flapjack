@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.Reservation
+module
+
+public import Flapjack.RiscV.L3.Defs.Reservation
+
+@[expose] public section
 namespace Flapjack.Test.L3ReservationParity
 open Flapjack.RiscV.L3
 

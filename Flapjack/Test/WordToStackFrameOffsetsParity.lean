@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.FrameOffsets
-import Mathlib.Data.List.Forall2
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.FrameOffsets
+public import Mathlib.Data.List.Forall2
+
+@[expose] public section
 open Flapjack Flapjack.WordToStackProofs
 set_option maxRecDepth 8192
 

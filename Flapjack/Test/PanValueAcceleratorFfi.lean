@@ -1,4 +1,10 @@
-import Flapjack.PanValueFfiCore
+module
+
+public import Flapjack.PanValueFfiCore
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanValues
+@[expose] public section
 
 /-! The accelerator-style ExtCall handler is independent of the CakeML
 stateful FFI. In particular, it must still run when a byte-granular

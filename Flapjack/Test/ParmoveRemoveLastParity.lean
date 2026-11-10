@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.StepSem.RemoveSelfEmitLast
+module
+
+public import Flapjack.Compiler.Backend.Parmove.StepSem.RemoveSelfEmitLast
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveRemoveLastParity
 open Flapjack.Compiler.Backend.Parmove
 private def env : Option Nat → Nat := fun x => match x with

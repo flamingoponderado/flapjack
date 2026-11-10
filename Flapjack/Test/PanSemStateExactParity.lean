@@ -1,4 +1,11 @@
-import Flapjack.Pancake.Semantics.PanSem.StateExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.Semantics.PanSem.StateExact
+@[expose] public section
 
 /-!
 # Direct-HOL parity for the exact `panSem$state` helpers

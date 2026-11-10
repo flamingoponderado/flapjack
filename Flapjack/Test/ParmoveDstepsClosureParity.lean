@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Parmove.PmovDsteps
-import Flapjack.Test.ParmoveFinalParity
+module
+
+public import Flapjack.Compiler.Backend.Parmove.PmovDsteps
+public import Flapjack.Test.ParmoveFinalParity
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmoveDstepsClosureParity
 open Flapjack.Compiler.Backend.Parmove

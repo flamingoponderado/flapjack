@@ -1,4 +1,8 @@
-import Flapjack.RiscV.WordToStack
+module
+
+public import Flapjack.RiscV.WordToStack
+
+@[expose] public section
 
 /-! Regression coverage for the CakeML `LocValue` lowering boundary. -/
 

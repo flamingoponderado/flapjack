@@ -1,4 +1,11 @@
-import Flapjack.RiscV.RegisterTransfer
+module
+
+public import Flapjack.RiscV.RegisterTransfer
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.RiscV.RegisterNames
+public meta import Flapjack.RiscV.RegisterTransfer
+@[expose] public section
 
 /-!
 # RISC-V register-transfer bridge tests

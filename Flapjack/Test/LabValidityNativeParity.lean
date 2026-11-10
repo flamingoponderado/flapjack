@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabProps.Native
+module
+
+public import Flapjack.Compiler.Backend.LabProps.Native
+
+@[expose] public section
 namespace Flapjack.Test.LabValidityNativeParity
 
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabProps

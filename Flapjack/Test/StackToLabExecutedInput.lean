@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackToLab.ExecutedInput
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedInput
+
+@[expose] public section
 
 namespace Flapjack.Test.StackToLabExecutedInput
 open Flapjack Flapjack.Compiler.Encoders.Asm

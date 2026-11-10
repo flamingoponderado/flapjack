@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.AllDistinct.Steps
+module
+
+public import Flapjack.Compiler.Backend.Parmove.AllDistinct.Steps
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmoveAllDistinctStepsParity
 open Flapjack.Compiler.Backend.Parmove

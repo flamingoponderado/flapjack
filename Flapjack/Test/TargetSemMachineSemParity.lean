@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.MachineSem
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.MachineSem
+
+@[expose] public section
 
 namespace Flapjack.Test.TargetSemMachineSemParity
 open Flapjack

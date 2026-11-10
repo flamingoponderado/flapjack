@@ -1,5 +1,11 @@
-import Flapjack.LoopSemantics
-import Flapjack.RiscV.Model
+module
+
+public import Flapjack.LoopSemantics
+public import Flapjack.RiscV.Model
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.LoopLang
+@[expose] public section
 
 /-!
 # Source parity for Pancake `loopSem$eval`

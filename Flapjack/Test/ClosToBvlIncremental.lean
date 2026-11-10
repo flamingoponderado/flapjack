@@ -1,5 +1,15 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Incremental
-import Flapjack.Compiler.Backend.ClosToBvl.ToBviIncremental
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Incremental
+public import Flapjack.Compiler.Backend.ClosToBvl.ToBviIncremental
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.BackendCommon.Trace
+public meta import Flapjack.Compiler.Backend.ClosLang.Syntax
+public meta import Flapjack.Compiler.Backend.ClosToBvl.Config
+public meta import Flapjack.Compiler.Backend.Bvl.Syntax
+public meta import Flapjack.Compiler.Backend.ClosToBvl.ToBviIncremental
+@[expose] public section
 
 /-! Original-output checks of the full incremental wrapper. -/
 namespace Flapjack.Test.ClosToBvlIncremental

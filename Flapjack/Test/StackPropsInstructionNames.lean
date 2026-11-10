@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.InstructionNames
+module
+
+public import Flapjack.Compiler.Backend.StackProps.InstructionNames
+
+@[expose] public section
 
 namespace Flapjack.Test.StackPropsInstructionNames
 open Flapjack.Compiler.Backend.StackProps Flapjack.Compiler.Encoders.Asm

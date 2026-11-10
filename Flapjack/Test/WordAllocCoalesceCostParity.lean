@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocCoalesceCostParity
 open Flapjack Flapjack.WordAlloc

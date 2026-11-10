@@ -1,5 +1,12 @@
-import Flapjack.Pancake.PanLang
-import Flapjack.Pancake.PanLang.Decl
+module
+
+public import Flapjack.Pancake.PanLang
+public import Flapjack.Pancake.PanLang.Decl
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.PanLang.Decl
+@[expose] public section
 
 /-! Parity guard for `panLang$inlinable` from
     `cakeml/pancake/panLangScript.sml:389-391`. -/

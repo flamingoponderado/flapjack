@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.PresLang.Lab
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Lab
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.PresLang.Asm
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Compiler.Backend.PresLang.Lab
+@[expose] public section
 
 /-! Prefix of `_Init@0` after `stack_to_lab` in the pinned CakeML explorer.
 The reduced section uses the same instructions as that original prefix. -/

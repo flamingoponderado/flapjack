@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramCodeLabels
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramCodeLabels
+
+@[expose] public section
 
 /-! Same-input original whole-program observations; kernel regression evidence,
 not a HOL-to-Lean equivalence proof. -/

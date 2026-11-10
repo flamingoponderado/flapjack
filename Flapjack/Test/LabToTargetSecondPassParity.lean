@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.SecondPass
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SecondPass
+
+@[expose] public section
 
 /-! The exact `HolAsm`/`HolInst`/`HolArith`/`HolAddr`/`HolRegImm` carriers expose
 only `Repr`, so `decide +kernel` cannot compare the whole `Line`/`Section`

@@ -1,4 +1,8 @@
-import Flapjack.LoopFfi
+module
+
+public import Flapjack.LoopFfi
+
+@[expose] public section
 
 namespace Flapjack
 

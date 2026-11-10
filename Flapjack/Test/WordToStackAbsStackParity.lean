@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
+
+@[expose] public section
 /-! Kernel replay of all eleven fresh original abstraction branch equations. -/
 namespace Flapjack.Test.WordToStackAbsStackParity
 open Flapjack.WordToStackProofs

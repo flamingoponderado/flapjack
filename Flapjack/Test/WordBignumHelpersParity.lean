@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.WordBignum.Helpers
+module
+
+public import Flapjack.Compiler.Backend.WordBignum.Helpers
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Pancake.WordLang
+public meta import Flapjack.Word
+public meta import Flapjack.Compiler.Backend.WordBignum.Helpers
+public meta import Flapjack.Compiler.Backend.WordBignum.Mini
+@[expose] public section
 
 /-! Replay the pinned HOL bignum helper probe. -/
 namespace Flapjack.Test.WordBignumHelpersParity

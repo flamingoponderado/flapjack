@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.IntegerLoad
+module
+
+public import Flapjack.RiscV.L3.Defs.IntegerLoad
+
+@[expose] public section
 set_option maxRecDepth 200000
 set_option maxErrors 5
 namespace Flapjack.Test.L3IntegerLoadParity

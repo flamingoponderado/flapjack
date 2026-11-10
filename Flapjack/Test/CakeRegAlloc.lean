@@ -1,9 +1,24 @@
-import Flapjack.RiscV.CakeRegAlloc
-import Flapjack.Compiler.Backend.WordUnreach
-import Flapjack.Compiler.Backend.WordCse.ListOrder
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
-import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
-import Flapjack.Compiler.Backend.RegAlloc.ProductionHandledColourReads
+module
+
+public import Flapjack.RiscV.CakeRegAlloc
+public import Flapjack.Compiler.Backend.WordUnreach
+public import Flapjack.Compiler.Backend.WordCse.ListOrder
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionHandledColourReads
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.RegAlloc.ProductionHandledColourReads
+public meta import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+public meta import Flapjack.Compiler.Backend.WordCse.ListOrder
+public meta import Flapjack.Compiler.Backend.WordCse.RegisterUses
+public meta import Flapjack.Compiler.Backend.WordUnreach
+public meta import Flapjack.RiscV.CakeRegAlloc
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Cake register-allocation stack-only analysis parity

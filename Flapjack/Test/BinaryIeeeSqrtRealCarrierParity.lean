@@ -1,5 +1,9 @@
-import Flapjack.Misc.MachineIeee.SqrtReal
-import Flapjack.Misc.BinaryIeeeSqrtFp64
+module
+
+public import Flapjack.Misc.MachineIeee.SqrtReal
+public import Flapjack.Misc.BinaryIeeeSqrtFp64
+
+@[expose] public section
 
 /-!
 # Original `fp64_sqrt` rows through the literal real-carrier `float_sqrt`

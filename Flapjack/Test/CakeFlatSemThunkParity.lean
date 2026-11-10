@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Thunk
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Thunk
+
+@[expose] public section
 
 /-! Matched original HOL observations from `cake_flat_sem_thunk_probe.out`. -/
 namespace Flapjack.Test.CakeFlatSemThunkParity

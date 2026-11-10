@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.StackNames.NamesOk
+module
+
+public import Flapjack.Compiler.Backend.StackNames.NamesOk
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.StackNames.NamesOk
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.StackNamesParity
 

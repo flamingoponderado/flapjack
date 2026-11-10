@@ -1,4 +1,8 @@
-import Flapjack.Pancake.LoopToWord.CompFuncExact
+module
+
+public import Flapjack.Pancake.LoopToWord.CompFuncExact
+
+@[expose] public section
 
 /-!
 # Original HOL parity for the exact `loop_to_word$comp_func` / `compile_prog` / `compile`

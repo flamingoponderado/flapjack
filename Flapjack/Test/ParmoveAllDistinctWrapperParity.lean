@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.AllDistinct.Parmove
+module
+
+public import Flapjack.Compiler.Backend.Parmove.AllDistinct.Parmove
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmoveAllDistinctWrapperParity
 open Compiler.Backend.Parmove

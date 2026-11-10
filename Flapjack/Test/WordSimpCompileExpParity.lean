@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordSimp
+module
+
+public import Flapjack.Compiler.Backend.WordSimp
+
+@[expose] public section
 
 /-!
 # `word_simp$compile_exp` replay of fresh original HOL evaluations

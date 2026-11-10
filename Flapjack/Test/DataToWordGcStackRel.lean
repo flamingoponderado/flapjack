@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRel
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.StackRel
+
+@[expose] public section
 
 /-! Boundary checks for the data-to-word stack-frame relation. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

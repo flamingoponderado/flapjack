@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.StoreListCode
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.StoreListCode
+
+@[expose] public section
 
 /-! Full original output observations captured by store_list_code_probeScript.sml.
 Explicit native trees preserve terminal Skip, right-nested sequences, temporary

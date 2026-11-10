@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanProps
+module
+
+public import Flapjack.Pancake.Semantics.PanProps
+
+@[expose] public section
 
 /-! Exact-carrier parity for HOL `panProps$localised_exp`,
 `panProps$nameless_exp`, `panProps$localised_prog`, and the `[local]` helper

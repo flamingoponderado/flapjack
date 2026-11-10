@@ -1,4 +1,14 @@
-import Flapjack.Pancake.CrepInline.Pass
+module
+
+public import Flapjack.Pancake.CrepInline.Pass
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.CrepInline.Pass
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Direct HOL-EVAL guards for every clause of `transform_eoc_def` on the exact
 width-indexed Crep carriers. -/

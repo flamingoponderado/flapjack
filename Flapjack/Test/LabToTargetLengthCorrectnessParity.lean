@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.LengthCorrectness
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.LengthCorrectness
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetLengthCorrectnessParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabToTarget

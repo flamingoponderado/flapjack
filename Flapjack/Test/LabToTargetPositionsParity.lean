@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.Positions
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Positions
+
+@[expose] public section
 
 /-!
 # Native kernel replays of `lab_to_target_positions_probe.out`

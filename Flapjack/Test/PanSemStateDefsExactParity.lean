@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem.StateDefsExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateDefsExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.StateDefsExact
+@[expose] public section
 
 /-!
 # Parity for the exact `kvar_defs` state-accessor bundle

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.StubNames
-import Flapjack.Compiler.Backend.StackAlloc.StubNames
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.StubNames
+public import Flapjack.Compiler.Backend.StackAlloc.StubNames
+
+@[expose] public section
 namespace Flapjack.Test.BackendRuntimeStubNamesParity
 open Flapjack.Basis.Pure.MlString
 private def wordNames := Flapjack.Compiler.Backend.WordToStack.stubNames ()

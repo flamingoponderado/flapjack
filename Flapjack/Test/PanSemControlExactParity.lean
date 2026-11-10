@@ -1,5 +1,16 @@
-import Flapjack.Pancake.Semantics.PanSem.ControlExact
-import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.ControlExact
+public import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.ControlExact
+public meta import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! # Parity for the exact HOL panSem control-flow clause steps
 

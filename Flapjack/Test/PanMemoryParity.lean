@@ -1,4 +1,8 @@
-import Flapjack.PanMemory
+module
+
+public import Flapjack.PanMemory
+
+@[expose] public section
 
 /-!
 # `panSem$mem_load` parity

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
+module
+
+public import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
+
+@[expose] public section
 namespace Flapjack.Test.WordSimpSmartSeqParity
 open Flapjack.Compiler.Backend.WordSimp
 private def call : WordLangProgHOL (BitVec 8) :=

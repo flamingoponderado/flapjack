@@ -1,4 +1,10 @@
-import Flapjack.PanSemSetGlobal
+module
+
+public import Flapjack.PanSemSetGlobal
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanSemSetGlobal
+@[expose] public section
 
 /-!
 # Parity checks for `panSem$set_global_def`

@@ -1,4 +1,8 @@
-import Flapjack.RiscV.OracleAllocator
+module
+
+public import Flapjack.RiscV.OracleAllocator
+
+@[expose] public section
 
 namespace Flapjack
 

@@ -1,5 +1,9 @@
-import Flapjack.Misc.BalancedMap.Invariants
-import Mathlib.Tactic.NormNum
+module
+
+public import Flapjack.Misc.BalancedMap.Invariants
+public import Mathlib.Tactic.NormNum
+
+@[expose] public section
 
 namespace Flapjack.Test.BalancedMapInvariants
 open Misc.BalancedMap

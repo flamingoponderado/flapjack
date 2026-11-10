@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
+
+@[expose] public section
 
 namespace Flapjack.Test.RegAllocConsideredVarParity
 open Flapjack.RegAlloc Flapjack.Translator.Monadic.MonadBase

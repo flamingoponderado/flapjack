@@ -1,4 +1,10 @@
-import Flapjack.LoopFindCode
+module
+
+public import Flapjack.LoopFindCode
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.LoopFindCode
+@[expose] public section
 
 /-!
 Parity test for the faithful `find_code` port.

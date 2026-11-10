@@ -1,4 +1,8 @@
-import Flapjack.RiscV.CorrectnessColour
+module
+
+public import Flapjack.RiscV.CorrectnessColour
+
+@[expose] public section
 
 /-! Regression for the live-set assignment case of CakeML's
     `evaluate_apply_colour`: a source and destination may share one colour

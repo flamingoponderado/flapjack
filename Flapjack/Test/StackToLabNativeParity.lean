@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackToLab.Native
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Native
+
+@[expose] public section
 namespace Flapjack.Test.StackToLabNativeParity
 
 open Flapjack Flapjack.Compiler.Backend.StackToLab

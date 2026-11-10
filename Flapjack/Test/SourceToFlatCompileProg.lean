@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
+
+@[expose] public section
 
 namespace Flapjack.Test.SourceToFlatCompileProg
 

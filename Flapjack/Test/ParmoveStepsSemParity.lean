@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.StepsSem
+module
+
+public import Flapjack.Compiler.Backend.Parmove.StepsSem
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveStepsSemParity
 open Flapjack.Compiler.Backend.Parmove
 private def initial : State Nat := ([],[(some 1,some 2),(some 2,some 1)],[])

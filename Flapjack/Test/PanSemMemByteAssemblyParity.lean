@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem.MemByteAssembly
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.MemByteAssembly
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.MemByteAssembly
+@[expose] public section
 
 namespace Flapjack.Test.PanSemMemByteAssemblyParity
 

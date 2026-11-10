@@ -1,4 +1,10 @@
-import Flapjack.PanHProgLoad
+module
+
+public import Flapjack.PanHProgLoad
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanHProgLoad
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `h_prog_sh_mem_load_def`

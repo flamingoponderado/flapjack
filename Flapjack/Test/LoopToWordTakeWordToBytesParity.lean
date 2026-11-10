@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Proofs.LoopToWord.WordToBytes
+module
+
+public import Flapjack.Pancake.Proofs.LoopToWord.WordToBytes
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.LoopToWord.WordToBytes
+@[expose] public section
 
 /-!
 # Kernel replay for `loop_to_wordProof$TAKE_1_word_to_bytes`

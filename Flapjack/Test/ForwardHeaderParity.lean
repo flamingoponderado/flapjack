@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Heap
+
+@[expose] public section
 
 /-! Replay the one-bit forwarding-header shift from
 `word_gc_functions_probe.out`, through the actual heap assertion. -/

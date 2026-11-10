@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordUnreach
-import Flapjack.RiscV.CakeRegAlloc
-import Flapjack.Compiler.Backend.WordCse.ListOrder
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
-import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+module
+
+public import Flapjack.Compiler.Backend.WordUnreach
+public import Flapjack.RiscV.CakeRegAlloc
+public import Flapjack.Compiler.Backend.WordCse.ListOrder
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+
+@[expose] public section
 
 /-! Kernel applications at the actual BitVec caller boundary. These are
 carrier/guard certificates; native program-max correspondence and compiler

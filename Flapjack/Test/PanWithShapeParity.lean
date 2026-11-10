@@ -1,8 +1,19 @@
-import Flapjack.Pancake.PanLang
-import Flapjack.Pancake.Proofs.CrepInline
-import Flapjack.Pancake.Proofs.PanGlobals
-import Flapjack.Pancake.Semantics.PanCommonProps
-import Flapjack.Pancake.Semantics.PanProps
+module
+
+public import Flapjack.Pancake.PanLang
+public import Flapjack.Pancake.Proofs.CrepInline
+public import Flapjack.Pancake.Proofs.PanGlobals
+public import Flapjack.Pancake.Semantics.PanCommonProps
+public import Flapjack.Pancake.Semantics.PanProps
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.PanLang.Decl
+public meta import Flapjack.Pancake.Proofs.CrepInline
+public meta import Flapjack.Pancake.Proofs.PanGlobals
+public meta import Flapjack.Pancake.Semantics.PanCommonProps
+public meta import Flapjack.Pancake.Semantics.PanProps
+@[expose] public section
 
 /-!
 # Original-domain parity for `panLang$with_shape`

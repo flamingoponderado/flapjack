@@ -1,7 +1,21 @@
-import Flapjack.LoopGetVarImm
-import Flapjack.Pancake.Semantics.LoopSem
-import Flapjack.Pancake.Semantics.LoopProps
-import Flapjack.Pancake.Semantics.LoopSemStateExact
+module
+
+public import Flapjack.LoopGetVarImm
+public import Flapjack.Pancake.Semantics.LoopSem
+public import Flapjack.Pancake.Semantics.LoopProps
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.MemOp
+public meta import Flapjack.Pancake.LoopLang
+public meta import Flapjack.Pancake.WordLang
+public meta import Flapjack.LoopGetVarImm
+public meta import Flapjack.Pancake.Semantics.LoopSemStateExact
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Original-domain parity for `loopSem.get_var_imm`

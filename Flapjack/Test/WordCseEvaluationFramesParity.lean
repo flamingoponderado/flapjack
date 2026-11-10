@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
+
+@[expose] public section
 namespace Flapjack.Test.WordCseEvaluationFramesParity
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.WordCse WordSemStateFiniteExact
 -- fr_write_0_99_1

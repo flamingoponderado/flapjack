@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.ProductionCutsetMaximum
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.ProductionCutsetMaximum
+
+@[expose] public section
 
 /-! Same-input kernel replay of twelve original cutset maximum observations.
 Includes duplicate/root keys, differing list orders, overlap and unbounded

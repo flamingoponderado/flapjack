@@ -1,4 +1,8 @@
-import Flapjack.Misc.BalancedMap.BalanceArithmetic
+module
+
+public import Flapjack.Misc.BalancedMap.BalanceArithmetic
+
+@[expose] public section
 
 namespace Flapjack.Test.BalancedMapBalanceArithmeticParity
 open Flapjack.Misc.BalancedMap

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.FixedStackCases
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.FixedStackCases
+
+@[expose] public section
 open Flapjack Flapjack.StackSemFixedStackCases
 
 /- Original observations: scripts/hol-probes/stacksem_fixed_stack_probe.out.

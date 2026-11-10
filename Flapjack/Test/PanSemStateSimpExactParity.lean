@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem.StateSimpExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateSimpExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.StateSimpExact
+@[expose] public section
 
 /-!
 # Parity for the exact `panSem` state-accessor simplification lemmas

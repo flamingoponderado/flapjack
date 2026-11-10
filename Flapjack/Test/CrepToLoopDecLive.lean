@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepToLoop
+module
+
+public import Flapjack.Pancake.CrepToLoop
+
+@[expose] public section
 
 /-!
 `crep_to_loop$compile (Dec v e prog)` (`crep_to_loopScript.sml:409-415`)

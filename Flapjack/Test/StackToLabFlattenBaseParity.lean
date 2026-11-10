@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabProps
+module
+
+public import Flapjack.Compiler.Backend.LabProps
+
+@[expose] public section
 
 namespace Flapjack.Test.StackToLabFlattenBaseParity
 

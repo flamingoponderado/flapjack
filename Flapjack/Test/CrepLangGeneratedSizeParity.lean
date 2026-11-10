@@ -1,4 +1,10 @@
-import Flapjack.Pancake.CrepLang.GeneratedSize
+module
+
+public import Flapjack.Pancake.CrepLang.GeneratedSize
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.CrepLang.GeneratedSize
+@[expose] public section
 
 /-!
 # Generated `crepLang` datatype size parity

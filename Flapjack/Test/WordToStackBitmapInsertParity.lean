@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapInsert
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapInsert
+
+@[expose] public section
 open Flapjack Flapjack.Compiler.Backend.WordToStack
 
 -- bi_decode_0_0_0_1

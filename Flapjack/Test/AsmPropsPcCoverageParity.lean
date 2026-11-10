@@ -1,5 +1,9 @@
-import Mathlib.Data.Set.Insert
-import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
+module
+
+public import Mathlib.Data.Set.Insert
+public import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
+
+@[expose] public section
 
 /-! Kernel replays of direct original asmProps stride PC observations. -/
 namespace Flapjack.Test.AsmPropsPcCoverageParity

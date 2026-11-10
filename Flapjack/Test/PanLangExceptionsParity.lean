@@ -1,5 +1,12 @@
-import Flapjack.Pancake.PanGlobals
-import Flapjack.Pancake.PanLang.Decl
+module
+
+public import Flapjack.Pancake.PanGlobals
+public import Flapjack.Pancake.PanLang.Decl
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanGlobals
+public meta import Flapjack.Pancake.PanLang.Decl
+@[expose] public section
 
 /-!
 # Pancake `exceptions` parity

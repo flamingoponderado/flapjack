@@ -1,4 +1,10 @@
-import Flapjack.LoopMemoryState
+module
+
+public import Flapjack.LoopMemoryState
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.LoopMemoryState
+@[expose] public section
 
 /-!
 # Exact Loop memory-state adapter checks

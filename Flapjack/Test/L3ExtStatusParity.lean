@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.SupervisorCSR
+module
+
+public import Flapjack.RiscV.L3.Defs.SupervisorCSR
+
+@[expose] public section
 namespace Flapjack.Test.L3ExtStatusParity
 open Flapjack.RiscV.L3
 -- Independent original encodings for all constructors.

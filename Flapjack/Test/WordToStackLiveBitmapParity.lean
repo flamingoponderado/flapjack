@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
+public meta import Flapjack.Misc.AppList
+@[expose] public section
 
 /-! Replays existing original HOL write_bitmap rows against the actual Spt
 carrier. wLive checks additionally pin cutset selection, frame-zero behavior,

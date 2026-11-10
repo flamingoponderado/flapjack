@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.FirstIndex
+module
+
+public import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.FirstIndex
+
+@[expose] public section
 
 /-! Same-input kernel replay of original predicate and both first-index observations. -/
 namespace Flapjack.Test.ParmoveFirstIndexParity

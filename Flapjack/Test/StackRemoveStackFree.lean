@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackRemove.StackFree
-import Flapjack.Compiler.Backend.StackToLab.ExecutedInput
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.StackFree
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedInput
+
+@[expose] public section
 
 /-! Kernel replays of fresh original native stack_free constructors, including
 chunk boundaries, exact Seq association and wrapped word offsets. This is

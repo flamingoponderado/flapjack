@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
+
+@[expose] public section
 namespace Flapjack.Test.StackToLabFullEncodingParity
 open Flapjack Flapjack.Compiler.Backend.StackToLab
 open Flapjack.Compiler.Backend.StackToLab.Proofs

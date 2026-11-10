@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Semantics.CrepSem.TotalEval
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.TotalEval
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.CrepSem.TotalEval
+@[expose] public section
 
 /-! Direct HOL-EVAL observations for `crepSem$evaluate_def` are recorded in
 `scripts/hol-probes/crep_ext_call_eval_probe.out`. These guards exercise the

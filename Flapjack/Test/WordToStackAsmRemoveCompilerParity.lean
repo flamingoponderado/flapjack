@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmRemoveCompiler
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmRemoveCompiler
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackAsmRemoveCompilerParity
 open Flapjack Flapjack.Compiler.Backend.StackProps

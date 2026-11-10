@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalWeakening
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalWeakening
+
+@[expose] public section
 
 /-! Kernel checks for the slot behavior captured by the pinned HOL probe. -/
 namespace Flapjack.Test.CakeSubglobalsParity

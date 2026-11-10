@@ -1,4 +1,12 @@
-import Flapjack.Pancake.Proofs.PanToCrep
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem
+public meta import Flapjack.Parser.ParseTree
+public meta import Flapjack.Pancake.Semantics.CrepSem
+@[expose] public section
 
 /-!
 Direct checks against `scripts/hol-probes/crep_mem_load_probe.out`.

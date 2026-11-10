@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 /-! Kernel replay of the four original pre-allocation rows from
 word_convs_alloc_conventions_probe.out, using exact Spt cutsets. -/

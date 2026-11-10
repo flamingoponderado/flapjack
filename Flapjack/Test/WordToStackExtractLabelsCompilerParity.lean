@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ExtractLabelsCompiler
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ExtractLabelsCompiler
+
+@[expose] public section
 
 /-! Independent complete original comp/list/top label projections.
 Generic theorem applications and axiom audits are separate from captured outputs.

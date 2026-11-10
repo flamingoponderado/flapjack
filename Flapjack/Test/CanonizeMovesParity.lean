@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
+
+@[expose] public section
 
 namespace Flapjack.Test.CanonizeMovesParity
 open Flapjack.WordAlloc

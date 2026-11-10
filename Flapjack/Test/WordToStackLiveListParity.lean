@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveListSupport
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveListSupport
+
+@[expose] public section
 open Flapjack.Compiler.Backend.WordToStack
 
 -- ll_prefix_0_0_0

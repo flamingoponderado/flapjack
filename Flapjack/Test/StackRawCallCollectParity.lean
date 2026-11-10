@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRawCall
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall
+
+@[expose] public section
 namespace Flapjack.Test.StackRawCallCollectParity
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackRawCall
 example : seqStackAlloc (.stackAlloc 4 : HolProg 64) = none := rfl

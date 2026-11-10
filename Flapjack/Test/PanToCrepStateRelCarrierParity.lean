@@ -1,9 +1,25 @@
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.CrepLang.Exp
-import Flapjack.Pancake.Semantics.PanSem.ValueHOL
-import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
-import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
+module
+
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.CrepLang.Exp
+public import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+public import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+public import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.CrepLang.Exp
+public meta import Flapjack.Pancake.PanLang.Decl
+public meta import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
+public meta import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+public meta import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public meta import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Direct carrier checks paired with `pan_to_crep_state_rel_carrier_probe.out`.

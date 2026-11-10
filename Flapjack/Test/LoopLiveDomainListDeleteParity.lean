@@ -1,4 +1,14 @@
-import Flapjack.Pancake.Proofs.LoopLive.CompileCorrect
+module
+
+public import Flapjack.Pancake.Proofs.LoopLive.CompileCorrect
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.LoopLive.CompileCorrect
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Direct parity for HOL `domain_list_delete`
 (`cakeml/pancake/proofs/loop_liveProofScript.sml:561-562`) against the tagged

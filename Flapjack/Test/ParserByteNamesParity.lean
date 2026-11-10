@@ -1,4 +1,15 @@
-import Flapjack.Parser
+module
+
+public import Flapjack.Parser
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem
+public meta import Flapjack.Parser
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Direct oracle parity for the byte-faithful PanLexer (bead

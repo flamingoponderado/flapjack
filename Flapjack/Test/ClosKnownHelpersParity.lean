@@ -1,7 +1,18 @@
-import Flapjack.Compiler.Backend.ClosFvs
-import Flapjack.Compiler.Backend.ClosTicks
-import Flapjack.Compiler.Backend.ClosLetop
-import Flapjack.Compiler.Backend.ClosKnown.Inline
+module
+
+public import Flapjack.Compiler.Backend.ClosFvs
+public import Flapjack.Compiler.Backend.ClosTicks
+public import Flapjack.Compiler.Backend.ClosLetop
+public import Flapjack.Compiler.Backend.ClosKnown.Inline
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.ClosKnown.Config
+public meta import Flapjack.Compiler.Backend.ClosLang.Syntax
+public meta import Flapjack.Compiler.Backend.ClosFvs
+public meta import Flapjack.Compiler.Backend.ClosKnown.Inline
+public meta import Flapjack.Compiler.Backend.ClosLetop
+public meta import Flapjack.Compiler.Backend.ClosTicks
+@[expose] public section
 
 /-! Replay `clos_known_helpers_probe.out` from pinned HOL. -/
 namespace Flapjack.Test.ClosKnownHelpersParity

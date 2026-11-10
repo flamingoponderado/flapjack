@@ -1,3 +1,7 @@
+module
+
+@[expose] public section
+
 /-!
 # Cake frame-occupancy bitmap vector oracle
 

@@ -1,5 +1,11 @@
-import Flapjack.Pancake.Proofs.PanToCrep
-import Flapjack.Pancake.Semantics.CrepSem.ExecutedWordLabBridge
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep
+public import Flapjack.Pancake.Semantics.CrepSem.ExecutedWordLabBridge
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.CrepSem
+@[expose] public section
 
 /-!
 Direct runtime checks against `scripts/hol-probes/crep_replicate_const_probe.out`.

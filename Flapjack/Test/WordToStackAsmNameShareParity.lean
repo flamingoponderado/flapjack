@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameShare
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.AsmNameShare
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackAsmNameShareParity
 open Flapjack Flapjack.Compiler.Backend.StackLang

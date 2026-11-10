@@ -1,4 +1,15 @@
-import Flapjack.Pancake.Semantics.LoopProps.EveryProg
+module
+
+public import Flapjack.Pancake.Semantics.LoopProps.EveryProg
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.LoopLang
+public meta import Flapjack.Pancake.LoopLive
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Direct Lean replay of the original HOL EVAL cases in

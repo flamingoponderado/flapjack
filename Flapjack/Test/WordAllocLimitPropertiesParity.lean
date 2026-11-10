@@ -1,5 +1,9 @@
-import Flapjack.Test.WordAllocLimitVarParity
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Properties
+module
+
+public import Flapjack.Test.WordAllocLimitVarParity
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Properties
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocLimitPropertiesParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc

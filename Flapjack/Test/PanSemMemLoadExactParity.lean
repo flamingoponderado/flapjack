@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
+
+@[expose] public section
 
 /-!
 Parity fixtures for the exact `panSem$mem_load` port `memLoadHOLExact`

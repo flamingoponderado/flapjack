@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedAList
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedAList
+
+@[expose] public section
 open Flapjack Flapjack.WordToStackProofs Flapjack.Compiler.Backend.WordToStack
 set_option maxRecDepth 8192
 

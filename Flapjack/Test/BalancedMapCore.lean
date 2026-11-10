@@ -1,4 +1,8 @@
-import Flapjack.Misc.BalancedMap.Core
+module
+
+public import Flapjack.Misc.BalancedMap.Core
+
+@[expose] public section
 
 namespace Flapjack.Test.BalancedMapCore
 open Misc.BalancedMap

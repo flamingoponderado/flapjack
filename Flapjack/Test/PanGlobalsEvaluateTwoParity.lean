@@ -12,7 +12,15 @@ applies, and `evaluateHOLFiniteState` is a classical noncomputable evaluator, so
 statement kernel-checked with concrete clock values plus `example`s that apply
 the ported theorems.  No oracle row is fabricated.
 -/
-import Flapjack.Pancake.Proofs.PanGlobals
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.PanGlobalsEvaluateTwoParity
 

@@ -1,4 +1,10 @@
-import Flapjack.Pancake.LoopLive
+module
+
+public import Flapjack.Pancake.LoopLive
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.LoopLive
+@[expose] public section
 
 /-! Direct parity for `loop_live$arith_vars_def` at
 `cakeml/pancake/loop_liveScript.sml:50`. -/

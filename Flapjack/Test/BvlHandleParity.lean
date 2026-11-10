@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
+module
+
+public import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.Bvl.Syntax
+public meta import Flapjack.Compiler.Backend.BvlHandle
+public meta import Flapjack.Compiler.Backend.DbVars
+public meta import Flapjack.Compiler.Backend.BvlHandle.Compile
+public meta import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
+@[expose] public section
 
 /-! Replay examples from `bvl_handle_frontend_probe.out`. -/
 namespace Flapjack.Test.BvlHandleParity

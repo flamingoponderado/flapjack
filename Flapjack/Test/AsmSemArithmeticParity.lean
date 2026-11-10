@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.AsmUpdates
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.AsmUpdates
+
+@[expose] public section
 
 /-! Direct original asmSem oracle replays. Other state fields are arbitrary;
 no compiler callback or alternate arithmetic evaluator supplies the results. -/

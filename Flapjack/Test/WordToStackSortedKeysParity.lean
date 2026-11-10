@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedKeys
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedKeys
+
+@[expose] public section
 open Flapjack.Compiler.Backend.WordToStack
 
 -- sk_sorted_0

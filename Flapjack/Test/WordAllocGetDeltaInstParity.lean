@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.ClashTreeInst
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ClashTreeInst
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocGetDeltaInstParity
 

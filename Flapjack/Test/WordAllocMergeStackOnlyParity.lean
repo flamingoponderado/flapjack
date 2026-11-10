@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.StackOnly
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.StackOnly
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocMergeStackOnlyParity
 open Flapjack Flapjack.WordAlloc

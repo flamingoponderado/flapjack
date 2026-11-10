@@ -1,4 +1,11 @@
-import Flapjack.Pancake.LoopLive
+module
+
+public import Flapjack.Pancake.LoopLive
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.LoopLang
+public meta import Flapjack.Pancake.LoopLive
+@[expose] public section
 
 namespace Flapjack.Test.LoopLiveCompParity
 

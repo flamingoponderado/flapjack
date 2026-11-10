@@ -1,4 +1,12 @@
-import Flapjack.Pancake.WordConvs.FullInstOkLess
+module
+
+public import Flapjack.Pancake.WordConvs.FullInstOkLess
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Kernel-checked and executed regression for fullInstOkLessExact and its

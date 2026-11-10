@@ -1,5 +1,13 @@
-import Flapjack.Misc.ListLookup
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Misc.ListLookup
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Full original optional-index/list-update observations, checked independently
 from generic theorem applications and replayed by the compiled test driver. -/

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.AllocArg
+module
+
+public import Flapjack.Compiler.Backend.StackProps.AllocArg
+
+@[expose] public section
 namespace Flapjack.Test.StackPropsAllocArg
 open Flapjack.Compiler.Backend.StackProps Flapjack.Compiler.Backend.StackLang
 -- Original HOL one=T

@@ -1,4 +1,8 @@
-import Flapjack.RiscV.CakeRegAlloc
+module
+
+public import Flapjack.RiscV.CakeRegAlloc
+
+@[expose] public section
 
 namespace Flapjack.Test.RegAllocSortMovesRouteParity
 open Flapjack.RiscV.CakeRegAlloc

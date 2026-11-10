@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.HandlerLabels
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.HandlerLabels
+
+@[expose] public section
 
 /-! Same-input original actual-compiler guard/handler-safety observations.
 These kernel regressions do not establish cross-language equivalence. -/

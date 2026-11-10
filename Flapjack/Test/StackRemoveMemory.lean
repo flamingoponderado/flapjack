@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
+
+@[expose] public section
 
 namespace Flapjack.Test.StackRemoveMemory
 open Flapjack.SetSep Flapjack.Compiler.Backend.StackRemove

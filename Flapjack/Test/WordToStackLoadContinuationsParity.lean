@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadContinuations
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadContinuations
+
+@[expose] public section
 
 /-! Same-input whole-AST and label observations captured from original HOL.
 The packets retain all continuation constructors; they are regression evidence,

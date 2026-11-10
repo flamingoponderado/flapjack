@@ -1,4 +1,11 @@
-import Flapjack.Pancake.CrepLang
+module
+
+public import Flapjack.Pancake.CrepLang
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.MemOp
+public meta import Flapjack.Pancake.CrepLang
+@[expose] public section
 
 /-!
 # Original-domain parity for `crepLang$exps`

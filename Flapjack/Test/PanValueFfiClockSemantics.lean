@@ -1,5 +1,12 @@
-import Flapjack.PanValueFfiClockSemantics
-import Flapjack.Test.PanValueFfiCore
+module
+
+public import Flapjack.PanValueFfiClockSemantics
+public import Flapjack.Test.PanValueFfiCore
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanValueFfiClockSemantics
+public meta import Flapjack.Test.PanValueFfiCore
+@[expose] public section
 
 /-! Executable regressions for the CakeML clock boundary.  Every fixture runs
     the state-owned code-map evaluator; the compatibility functions-list

@@ -1,5 +1,12 @@
-import Flapjack.RiscV.PanMemory
-import Flapjack.PanValueFfiCore
+module
+
+public import Flapjack.RiscV.PanMemory
+public import Flapjack.PanValueFfiCore
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanValueFfiCore
+public meta import Flapjack.RiscV.PanMemory
+@[expose] public section
 
 /-!
 Executable regressions for the shared Pancake word-cell memory model.

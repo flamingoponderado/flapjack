@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
+
+@[expose] public section
 
 namespace Flapjack.Test.RegAllocSplitDegreeParity
 open Flapjack.RegAlloc Flapjack.Translator.Monadic.MonadBase

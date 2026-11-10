@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.StackRemove
+module
+
+public import Flapjack.Compiler.Backend.StackRemove
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.StackRemove
+@[expose] public section
 
 /-!
 # `stack_remove` compiler value-helper parity

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveReconstruction
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveReconstruction
+
+@[expose] public section
 open Flapjack Flapjack.WordAlloc Flapjack.WordToStackProofs
 set_option maxRecDepth 8192
 -- The complete eight-component packet needs a larger equality-instance search.

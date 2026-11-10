@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Parmove.UpdateLemmas
+module
+
+public import Flapjack.Compiler.Backend.Parmove.UpdateLemmas
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.Parmove.Semantics
+@[expose] public section
 
 namespace Flapjack.Test.ParmoveUpdateLemmasParity
 open Flapjack.Compiler.Backend.Parmove

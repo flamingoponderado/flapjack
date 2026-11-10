@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.HeuCall
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.HeuCall
+
+@[expose] public section
 
 namespace Flapjack.Test.HeuCallParity
 open Flapjack Flapjack.WordAlloc

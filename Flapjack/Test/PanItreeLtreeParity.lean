@@ -1,4 +1,10 @@
-import Flapjack.PanItreeLtree
+module
+
+public import Flapjack.PanItreeLtree
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanItreeLtree
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `ltree_def`

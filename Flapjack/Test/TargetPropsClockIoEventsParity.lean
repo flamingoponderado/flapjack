@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsMono
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClockIoEventsMono
+
+@[expose] public section
 namespace Flapjack.Test.TargetPropsClockIoEventsParity
 open Flapjack
 -- Original tp_clock_io_full_statement=T: full statement, sole clock-order premise.

@@ -1,5 +1,14 @@
-import Flapjack.CakeParser.Frontend
-import Flapjack.CakeParser.Diagnostics
+module
+
+public import Flapjack.CakeParser.Frontend
+public import Flapjack.CakeParser.Diagnostics
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.CakeParser.Frontend
+public meta import Flapjack.Misc.Location
+public meta import Flapjack.CakeParser.Diagnostics
+@[expose] public section
 
 /-! Parse source bytes end to end and compare with the original HOL lexer,
 PEG, and top-level conversion captures. -/

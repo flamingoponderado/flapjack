@@ -1,4 +1,11 @@
-import Flapjack.Pancake.LoopToWord
+module
+
+public import Flapjack.Pancake.LoopToWord
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Pancake.LoopToWord
+@[expose] public section
 
 /-!
 # Original HOL parity for the total exact `loop_to_word$comp`

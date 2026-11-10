@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceSequence
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceSequence
+
+@[expose] public section
 
 namespace Flapjack.Test.TargetInterferenceSequenceParity
 open Flapjack Flapjack.Compiler.Backend.Semantics.TargetProps

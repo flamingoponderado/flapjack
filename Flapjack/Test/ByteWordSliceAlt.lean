@@ -1,4 +1,8 @@
-import Flapjack.Byte.WordSliceAlt
+module
+
+public import Flapjack.Byte.WordSliceAlt
+
+@[expose] public section
 set_option maxRecDepth 2048
 namespace Flapjack.Test.ByteWordSliceAlt
 open Flapjack.HolByte

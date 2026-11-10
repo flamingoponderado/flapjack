@@ -1,4 +1,11 @@
-import Flapjack.CakeParser.PegChecks
+module
+
+public import Flapjack.CakeParser.PegChecks
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.CakeParser.PegChecks
+@[expose] public section
 
 /-! Replay `cake_peg_checks_probe.out` from pinned HOL. -/
 namespace Flapjack.Test.CakePegChecksParity

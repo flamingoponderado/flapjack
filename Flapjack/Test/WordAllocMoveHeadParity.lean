@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.MoveHead
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.MoveHead
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocMoveHeadParity
 

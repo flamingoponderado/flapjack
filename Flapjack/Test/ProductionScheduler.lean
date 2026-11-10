@@ -1,5 +1,9 @@
-import Flapjack.RiscV.WordToStack
-import Flapjack.Compiler.Backend.WordToStack.NativeMoves
+module
+
+public import Flapjack.RiscV.WordToStack
+public import Flapjack.Compiler.Backend.WordToStack.NativeMoves
+
+@[expose] public section
 
 namespace Flapjack.Test.ProductionScheduler
 open Flapjack RiscV

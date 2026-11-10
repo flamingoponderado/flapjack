@@ -1,5 +1,9 @@
-import Mathlib.Data.Set.Insert
-import Flapjack.Compiler.Backend.LabToTarget.LabelExistence
+module
+
+public import Mathlib.Data.Set.Insert
+public import Flapjack.Compiler.Backend.LabToTarget.LabelExistence
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetLabelExistenceParity
 open Flapjack Flapjack.Misc Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

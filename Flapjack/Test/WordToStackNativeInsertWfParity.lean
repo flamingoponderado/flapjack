@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeInsertWf
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeInsertWf
+
+@[expose] public section
 open Flapjack Flapjack.WordToStackProofs
 -- iw_insert_num_0_0_0
 example : (LoopSemStateFiniteExact.sptAlistInsert [] ([]:List Nat) .ln, sptWf (.ln:Spt Nat), sptWf (LoopSemStateFiniteExact.sptAlistInsert [] ([]:List Nat) .ln)) = (.ln, true, true) := by decide +kernel

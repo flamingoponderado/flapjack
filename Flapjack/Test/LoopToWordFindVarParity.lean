@@ -1,4 +1,14 @@
-import Flapjack.Pancake.Proofs.LoopToWord.FindVar
+module
+
+public import Flapjack.Pancake.Proofs.LoopToWord.FindVar
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.LoopToWord.FindVar
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Original-domain parity for `loop_to_wordProof$find_var_neq_0` /

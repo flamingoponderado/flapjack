@@ -1,13 +1,17 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
-import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
-import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosure
-import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeIncludes
-import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
-import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
-import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
-import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
-import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallLookup
-import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallClock
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosure
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeIncludes
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.PrimitiveEquality
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallLookup
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.DirectCallClock
+
+@[expose] public section
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity

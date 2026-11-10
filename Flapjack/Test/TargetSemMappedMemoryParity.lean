@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.MappedMemory
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.MappedMemory
+
+@[expose] public section
 
 /-! Identical original mapped-template byte/domain observations, checked in the kernel. -/
 namespace Flapjack.Test.TargetSemMappedMemoryParity

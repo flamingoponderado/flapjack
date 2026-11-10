@@ -1,4 +1,10 @@
-import Flapjack.Misc.LList
+module
+
+public import Flapjack.Misc.LList
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Misc.LList
+@[expose] public section
 
 /-!
 # HOL `llist` rendering checks

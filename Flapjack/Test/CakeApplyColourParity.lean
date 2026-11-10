@@ -1,9 +1,13 @@
-import Flapjack.RiscV.OracleAllocator
-import Flapjack.Compiler.Backend.WordUnreach
-import Flapjack.RiscV.CakeRegAlloc
-import Flapjack.Compiler.Backend.WordCse.ListOrder
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
-import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+module
+
+public import Flapjack.RiscV.OracleAllocator
+public import Flapjack.Compiler.Backend.WordUnreach
+public import Flapjack.RiscV.CakeRegAlloc
+public import Flapjack.Compiler.Backend.WordCse.ListOrder
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+
+@[expose] public section
 
 /-! Direct HOL parity for CakeML `total_colour` followed by `apply_colour`.
     The source fixture is `scripts/hol-probes/apply_colour_probe.out`. -/

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.FilterBitmap
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.FilterBitmap
+
+@[expose] public section
 open Flapjack.StackSem Flapjack.Compiler.Backend.WordToStack Flapjack.WordToStackProofs
 
 -- fb_output_0_0

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Space
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Space
+
+@[expose] public section
 
 /-! Boundary cases in data-language allocation bounds. -/
 namespace Flapjack.Test.DataSemSpace

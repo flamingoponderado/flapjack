@@ -1,5 +1,9 @@
-import Mathlib.Data.Set.Insert
-import Flapjack.Compiler.Backend.BackendProps
+module
+
+public import Mathlib.Data.Set.Insert
+public import Flapjack.Compiler.Backend.BackendProps
+
+@[expose] public section
 
 /-! Identical-input replay of original backendProps nonzero-label observations.
 Finite examples and the two UNIV membership checks do not establish

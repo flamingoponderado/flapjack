@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
+
+@[expose] public section
 
 namespace Flapjack.Test.TargetInitializationContractsParity
 open Flapjack

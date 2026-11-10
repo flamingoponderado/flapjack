@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.TagColour
-import Flapjack.Compiler.Backend.RegAlloc.MoveTable
-import Flapjack.RiscV.CakeRegAlloc
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.TagColour
+public import Flapjack.Compiler.Backend.RegAlloc.MoveTable
+public import Flapjack.RiscV.CakeRegAlloc
+
+@[expose] public section
 
 namespace Flapjack.Test.RegAllocMoveTableParity
 open Flapjack Flapjack.RegAlloc Flapjack.RiscV.CakeRegAlloc

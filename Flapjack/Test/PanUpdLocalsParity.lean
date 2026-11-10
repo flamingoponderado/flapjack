@@ -1,4 +1,10 @@
-import Flapjack.PanValues
+module
+
+public import Flapjack.PanValues
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanValues
+@[expose] public section
 
 /-!
 # Original-domain parity for `panSem.upd_locals_def`

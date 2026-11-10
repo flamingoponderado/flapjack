@@ -1,4 +1,8 @@
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.Domain
+module
+
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.Domain
+
+@[expose] public section
 
 /-! Exact same-input kernel replay of eight fresh original full SSA equations.
 Separate domain sentinels exercise the production-only five-register primitive

@@ -1,6 +1,17 @@
-import Flapjack.Parser
-import Flapjack.Pancake.PanStatic
-import Flapjack.Pancake.PanToCrep.Compile
+module
+
+public import Flapjack.Parser
+public import Flapjack.Pancake.PanStatic
+public import Flapjack.Pancake.PanToCrep.Compile
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.PanStatic
+public meta import Flapjack.Pancake.PanToCrep.Compile
+public meta import Flapjack.Parser
+public meta import Flapjack.Parser.Lexer
+public meta import Flapjack.RiscV.PanMemory
+@[expose] public section
 
 /-!
 Parser tests.

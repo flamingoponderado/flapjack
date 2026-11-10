@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Direct HOL oracle rows for the exact wordSem state accessors

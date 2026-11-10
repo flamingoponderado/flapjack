@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeNopEncoding
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeNopEncoding
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetCodeNopEncodingParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabToTarget

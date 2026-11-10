@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreGlob
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreGlob
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-!
 # Exact-carrier parity for the `StoreGlob` case of `simp_prog_correct`

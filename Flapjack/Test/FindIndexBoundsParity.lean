@@ -1,4 +1,8 @@
-import Flapjack.Misc.FindIndex.Bounds
+module
+
+public import Flapjack.Misc.FindIndex.Bounds
+
+@[expose] public section
 
 namespace Flapjack.Test.FindIndexBoundsParity
 open Flapjack.Misc

@@ -1,4 +1,10 @@
-import Flapjack.Misc.BinaryIeeeSqrtExec
+module
+
+public import Flapjack.Misc.BinaryIeeeSqrtExec
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Misc.BinaryIeeeSqrtExec
+@[expose] public section
 
 /-!
 The executable binary64 square root `execFp64Sqrt` against the direct HOL

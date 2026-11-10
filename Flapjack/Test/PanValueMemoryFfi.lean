@@ -1,4 +1,11 @@
-import Flapjack.PanValueFfiCore
+module
+
+public import Flapjack.PanValueFfiCore
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.StackLang
+public meta import Flapjack.PanValueFfiCore
+@[expose] public section
 
 /-! Regression for the bare-metal accelerator FFI boundary.  Unlike the
     CakeML byte-array FFI, the handler receives the source memory map and can

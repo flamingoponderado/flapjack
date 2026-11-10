@@ -1,5 +1,16 @@
-import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
-import Flapjack.Pancake.Semantics.CrepProps
+module
+
+public import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
+public import Flapjack.Pancake.Semantics.CrepProps
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
+public meta import Flapjack.Pancake.Semantics.CrepProps
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.CrepHolStateParity
 

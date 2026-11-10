@@ -1,4 +1,14 @@
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Basis.Pure.MlString
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Basis.Pure.MlString
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Regression for the untagged Lean `String` <-> exact `mlstring` byte codec in
 `Flapjack/Basis/Pure/MlString.lean` (bead `flapjack-pxn.18.5.15.3.11.2.3`).

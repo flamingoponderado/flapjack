@@ -1,6 +1,10 @@
-import Flapjack.FiniteMap
-import Flapjack.Pancake.Semantics.CrepSem
-import Flapjack.Pancake.Semantics.PanCommonProps
+module
+
+public import Flapjack.FiniteMap
+public import Flapjack.Pancake.Semantics.CrepSem
+public import Flapjack.Pancake.Semantics.PanCommonProps
+
+@[expose] public section
 
 /-!
 Regressions for the faithful finite-map layer used by

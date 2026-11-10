@@ -1,4 +1,13 @@
-import Flapjack.Compiler.Backend.BviTailrec.Rewrite
+module
+
+public import Flapjack.Compiler.Backend.BviTailrec.Rewrite
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.Bvi.Syntax
+public meta import Flapjack.Compiler.Backend.BviTailrec.Analysis
+public meta import Flapjack.Compiler.Backend.ClosLang.Syntax
+public meta import Flapjack.Compiler.Backend.BviTailrec.Rewrite
+@[expose] public section
 
 /-! Replay the `cases` rows of `bvi_tailrec_frontend_probe.out`. -/
 namespace Flapjack.Test.BviTailrecParity

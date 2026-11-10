@@ -1,4 +1,10 @@
-import Flapjack.PanValueEvaluatorStability
+module
+
+public import Flapjack.PanValueEvaluatorStability
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanValueEvaluatorStability
+@[expose] public section
 
 namespace Flapjack.Test.PanValueEvaluatorStability
 

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+
+@[expose] public section
 
 namespace Flapjack.Test.RegAllocStateForeachParity
 open Flapjack.RegAlloc Flapjack.Translator.Monadic.MonadBase

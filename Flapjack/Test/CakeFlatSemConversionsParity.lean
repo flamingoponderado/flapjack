@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
+
+@[expose] public section
 
 /-! Matched observations from `cake_flat_sem_conversions_probe.out`. -/
 namespace Flapjack.Test.CakeFlatSemConversionsParity

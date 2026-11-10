@@ -1,6 +1,16 @@
-import Flapjack.RiscV.PanMemory
-import Flapjack.Pancake.Semantics.CrepSem.Eval
-import Flapjack.Pancake.Semantics.PanSem.ShMemExact
+module
+
+public import Flapjack.RiscV.PanMemory
+public import Flapjack.Pancake.Semantics.CrepSem.Eval
+public import Flapjack.Pancake.Semantics.PanSem.ShMemExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.Semantics.CrepSem.Eval
+public meta import Flapjack.Pancake.Semantics.PanSem.ShMemExact
+public meta import Flapjack.Pancake.Semantics.PanSemStateEval
+public meta import Flapjack.RiscV.PanMemory
+@[expose] public section
 
 /-!
 # Fixed-width Pancake load parity

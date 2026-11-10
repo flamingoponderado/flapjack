@@ -1,4 +1,10 @@
-import Flapjack.Pancake.PanToCrep.MakeVmapHOL
+module
+
+public import Flapjack.Pancake.PanToCrep.MakeVmapHOL
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanToCrep.MakeVmapHOL
+@[expose] public section
 
 /-!
 # `pan_to_crep$make_vmap` exact finite-map parity

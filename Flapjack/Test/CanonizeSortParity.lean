@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.CanonizeSort
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.CanonizeSort
+
+@[expose] public section
 
 namespace Flapjack.Test.CanonizeSortParity
 open Flapjack Flapjack.WordAlloc

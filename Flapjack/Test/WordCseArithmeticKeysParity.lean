@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.ArithmeticKeys
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.ArithmeticKeys
+
+@[expose] public section
 namespace Flapjack.Test.WordCseArithmeticKeysParity
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.WordCse WordSemStateFiniteExact
 -- ak_0_1

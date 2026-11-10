@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWordLemmas
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWordLemmas
+
+@[expose] public section
 open Flapjack.Compiler.Backend.WordToStack
 
 -- bw_max_0_0

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepToLoop.ContextExact
+module
+
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+
+@[expose] public section
 
 /-! Direct parity for `crep_to_loop$ocompile` (`crep_to_loopScript.sml:216`).
 The expected shapes are copied from `scripts/hol-probes/ocompile_probe.out`;

@@ -1,4 +1,14 @@
-import Flapjack.Pancake.Semantics.PanSem.MemStore32Alt
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.MemStore32Alt
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.MemStore32Alt
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Parity for the exact `panSem$mem_store_32_alt` OR/shift assembly

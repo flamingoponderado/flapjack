@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.RegAlloc
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.RegAlloc
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Parity checks for the CakeML register-allocation partition predicates and
 the partition lemma, matched against the direct HOL EVAL oracle

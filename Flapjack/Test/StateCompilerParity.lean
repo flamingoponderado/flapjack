@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+module
+
+public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+@[expose] public section
 
 /-! Replays successful and failing callback observations from the pinned HOL
 backend-oracle probe. -/

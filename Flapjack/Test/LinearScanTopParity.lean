@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LinearScan.TopLevel
+module
+
+public import Flapjack.Compiler.Backend.LinearScan.TopLevel
+
+@[expose] public section
 namespace Flapjack.Test.LinearScanTopParity
 open RegAlloc LinearScan Translator.Monadic.MonadBase
 -- Full-value replay of the fourteen original linear_scan_top_probe rows, including six

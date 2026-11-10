@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem
-import Flapjack.Pancake.Semantics.LoopSemStateExact
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.Semantics.WordSem
+public meta import Flapjack.Pancake.Semantics.LoopSemStateExact
+public meta import Flapjack.Pancake.WordLang
+@[expose] public section
 
 /-!
 # Exact wordSem memory helpers and loopSem `exit_loop` against HOL oracle rows

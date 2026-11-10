@@ -8,7 +8,13 @@
   `is_valid_value_mismatch=F`, `is_valid_value_missing=F`), with the base state
   `locals = |+ ("x", ValWord 5w)`, `globals = |+ ("g", ValWord 7w)`.
 -/
-import Flapjack.Pancake.Semantics.PanSem.IsValidValueExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.IsValidValueExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.IsValidValueExact
+@[expose] public section
 
 namespace Flapjack.Test.PanSemIsValidValueExactParity
 

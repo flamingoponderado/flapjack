@@ -1,7 +1,19 @@
-import Flapjack.CakeParser.CfgGrammar
-import Flapjack.CakeParser.CfgLocation
-import Flapjack.CakeParser.Lexer
-import Flapjack.CakeParser.PegEval
+module
+
+public import Flapjack.CakeParser.CfgGrammar
+public import Flapjack.CakeParser.CfgLocation
+public import Flapjack.CakeParser.Lexer
+public import Flapjack.CakeParser.PegEval
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.CakeParser.CfgGrammar
+public meta import Flapjack.CakeParser.CfgLocation
+public meta import Flapjack.CakeParser.Lexer
+public meta import Flapjack.CakeParser.PegEval
+public meta import Flapjack.CakeParser.Tokens
+public meta import Flapjack.Compiler.Backend.SourceToFlat.FromText
+@[expose] public section
 
 /-! Representative CFG productions from the pinned `cmlG_def` capture. -/
 namespace Flapjack.Test.CakeCfgGrammarParity

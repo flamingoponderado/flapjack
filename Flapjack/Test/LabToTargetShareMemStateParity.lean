@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.ShareMemState
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ShareMemState
+
+@[expose] public section
 
 namespace Flapjack.Test.LabToTargetShareMemStateParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget

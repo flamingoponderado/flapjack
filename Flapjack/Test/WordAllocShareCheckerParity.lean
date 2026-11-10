@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ShareInst
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ShareInst
+
+@[expose] public section
 namespace Flapjack.Test.WordAllocShareCheckerParity
 open Flapjack Flapjack.WordAlloc Flapjack.RegAlloc
 /-! Same-input kernel replay of eight fresh original HOL checker equations.

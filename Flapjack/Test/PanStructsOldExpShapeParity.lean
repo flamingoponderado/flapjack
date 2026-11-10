@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanStructs.OldExpShapeExact
+module
+
+public import Flapjack.Pancake.PanStructs.OldExpShapeExact
+
+@[expose] public section
 
 namespace Flapjack.Test.PanStructsOldExpShapeExactParity
 open Flapjack.Pancake.PanLang

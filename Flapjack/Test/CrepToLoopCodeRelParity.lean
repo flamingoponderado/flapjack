@@ -1,5 +1,12 @@
-import Flapjack.Pancake.CrepToLoop.StateRel
-import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+module
+
+public import Flapjack.Pancake.CrepToLoop.StateRel
+public import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.CrepToLoop.StateRel
+public meta import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+@[expose] public section
 
 /-!
 Kernel-checked replay of the direct original-HOL EVAL rows of

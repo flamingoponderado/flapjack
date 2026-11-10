@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordConvs.PredicateEquations
+module
+
+public import Flapjack.Pancake.WordConvs.PredicateEquations
+
+@[expose] public section
 
 namespace Flapjack.Test.WordConvsNoAllocDefParity
 open Flapjack

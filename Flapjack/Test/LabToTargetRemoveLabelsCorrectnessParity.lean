@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsCorrectness
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetRemoveLabelsCorrectnessParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps

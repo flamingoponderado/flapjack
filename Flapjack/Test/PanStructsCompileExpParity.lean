@@ -1,7 +1,11 @@
-import Flapjack.Pancake.PanStructs.CompileDeclsExact
-import Flapjack.Pancake.PanStructs.CompileProgExact
-import Flapjack.Pancake.PanStructs.CompileExpExact
-import Flapjack.Pancake.Proofs.PanStructs
+module
+
+public import Flapjack.Pancake.PanStructs.CompileDeclsExact
+public import Flapjack.Pancake.PanStructs.CompileProgExact
+public import Flapjack.Pancake.PanStructs.CompileExpExact
+public import Flapjack.Pancake.Proofs.PanStructs
+
+@[expose] public section
 
 namespace Flapjack.Test.PanStructsCompileExpExactParity
 open Flapjack.Pancake.PanLang

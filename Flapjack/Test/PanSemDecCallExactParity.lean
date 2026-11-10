@@ -7,8 +7,15 @@
   `deccall_clause_clock_zero`, `deccall_clause_bad_shape`,
   `deccall_clause_missing_function`).
 -/
-import Flapjack.Pancake.Semantics.PanSem.DecCallExact
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+public meta import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+@[expose] public section
 
 namespace Flapjack.Test.PanSemDecCallExactParity
 

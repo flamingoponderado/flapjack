@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexListLemmas
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexListLemmas
+
+@[expose] public section
 namespace Flapjack.Test.WordToStackIndexListParity
 open Flapjack.WordToStackProofs
 example : indexList ([] : List Nat) 5 = [] := by cbv

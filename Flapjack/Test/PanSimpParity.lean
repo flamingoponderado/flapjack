@@ -1,6 +1,14 @@
-import Flapjack.Pancake.PanSimp
-import Flapjack.Pancake.Proofs.PanSimp
-import Flapjack.Pancake.PanGlobals
+module
+
+public import Flapjack.Pancake.PanSimp
+public import Flapjack.Pancake.Proofs.PanSimp
+public import Flapjack.Pancake.PanGlobals
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanGlobals
+public meta import Flapjack.Pancake.PanSimp
+public meta import Flapjack.Pancake.Proofs.PanSimp
+@[expose] public section
 
 namespace Flapjack.Test.PanSimpParity
 

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.Max3
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.Max3
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocMax3Parity
 

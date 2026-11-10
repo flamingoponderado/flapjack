@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
+
+@[expose] public section
 
 /-! Full native top-level tuples, with identical original HOL inputs. -/
 namespace Flapjack.Test.WordToStackNativeTopParity

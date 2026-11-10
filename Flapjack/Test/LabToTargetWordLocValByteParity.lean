@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.WordLocValByte
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.WordLocValByte
+
+@[expose] public section
 
 namespace Flapjack.Test.LabToTargetWordLocValByteParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget

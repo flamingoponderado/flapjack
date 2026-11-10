@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepToLoop
+module
+
+public import Flapjack.Pancake.CrepToLoop
+
+@[expose] public section
 
 /-! Direct parity for `crep_to_loop$compile_crepop` at line 42. -/
 namespace Flapjack.Test.CompileCrepOpParity

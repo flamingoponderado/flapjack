@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.StateFilter
-import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
-import Flapjack.RiscV.CakeRegAlloc
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.StateFilter
+public import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
+public import Flapjack.RiscV.CakeRegAlloc
+
+@[expose] public section
 
 namespace Flapjack.Test.RegAllocListHelpersParity
 open Flapjack.RegAlloc Flapjack.Translator.Monadic.MonadBase Flapjack.RiscV.CakeRegAlloc

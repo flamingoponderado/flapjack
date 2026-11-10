@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.LabProps
+module
+
+public import Flapjack.Compiler.Backend.LabProps
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.LabLang
+public meta import Flapjack.Compiler.Backend.LabProps
+@[expose] public section
 
 namespace Flapjack.Test.LabProps
 

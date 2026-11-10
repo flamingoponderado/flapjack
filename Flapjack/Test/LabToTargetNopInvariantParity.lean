@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.NopInvariant
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.NopInvariant
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetNopInvariantParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabToTarget

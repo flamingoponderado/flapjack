@@ -1,4 +1,8 @@
-import Flapjack.Misc.BinaryIeeeDirectedFp32
+module
+
+public import Flapjack.Misc.BinaryIeeeDirectedFp32
+
+@[expose] public section
 
 /-! Kernel replay of50 freshly captured original binary32 toward-zero outputs.
 Each proof rewrites the complete choice specification through its full-domain

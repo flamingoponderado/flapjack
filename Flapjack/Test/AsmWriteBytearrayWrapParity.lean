@@ -1,4 +1,10 @@
-import Flapjack.Misc.AsmWriteBytearray
+module
+
+public import Flapjack.Misc.AsmWriteBytearray
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Misc.AsmWriteBytearray
+@[expose] public section
 
 /-!
 Kernel-checked wrap cases for `Flapjack.asmWriteBytearrayHOL`

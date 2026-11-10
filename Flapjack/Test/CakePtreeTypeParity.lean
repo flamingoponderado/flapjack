@@ -1,5 +1,15 @@
-import Flapjack.CakeParser.PtreeConversion
-import Flapjack.CakeParser.PegEval
+module
+
+public import Flapjack.CakeParser.PtreeConversion
+public import Flapjack.CakeParser.PegEval
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.AstHOL.Syntax
+public meta import Flapjack.CakeParser.Nonterminal
+public meta import Flapjack.CakeParser.PegActions
+public meta import Flapjack.CakeParser.PegEval
+public meta import Flapjack.CakeParser.PtreeConversion
+@[expose] public section
 
 /-! Parse and convert the type captured from the pinned HOL parser and
 `ptree_Type`; this exercises the actual generated grammar and conversion. -/

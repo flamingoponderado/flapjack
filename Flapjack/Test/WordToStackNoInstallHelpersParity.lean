@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstall
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstall
+
+@[expose] public section
 
 /-! Same-input kernel applications of the original no-install helper observations.
 These checks do not establish cross-language equivalence or compiler correctness. -/

@@ -1,4 +1,12 @@
-import Flapjack.Misc.BinaryIeeeArithFp64
+module
+
+public import Flapjack.Misc.BinaryIeeeArithFp64
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 The probe fixture (`scripts/hol-probes/machine_ieee_fp64_arith_nan_probe.out`)

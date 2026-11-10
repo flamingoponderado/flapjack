@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Proofs.PanToCrep
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.PanToCrep
+@[expose] public section
 
 /-! Nonvacuous checks for the assembled canonical-target `ExtCall` dispatch and
 its source/target simulation step in `Flapjack/Pancake/Semantics/CrepRuntimeTarget.lean`

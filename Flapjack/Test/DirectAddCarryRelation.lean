@@ -1,4 +1,8 @@
-import Flapjack.Test.AddCarrySpillRelation
+module
+
+public import Flapjack.Test.AddCarrySpillRelation
+
+@[expose] public section
 
 /-! Regression coverage for public fully spilled AddCarry lowering. -/
 

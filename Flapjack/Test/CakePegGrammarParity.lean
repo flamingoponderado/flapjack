@@ -1,4 +1,13 @@
-import Flapjack.CakeParser.PegEval
+module
+
+public import Flapjack.CakeParser.PegEval
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CakeParser.ParseTree
+public meta import Flapjack.CakeParser.PegActions
+public meta import Flapjack.CakeParser.PegSyntax
+public meta import Flapjack.CakeParser.PegEval
+@[expose] public section
 
 /-! Replay successful trees from the pinned HOL PEG machine. The direct
 interpreter intentionally does not expose the HOL machine's diagnostic value. -/

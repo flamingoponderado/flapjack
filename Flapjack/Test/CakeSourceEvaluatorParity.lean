@@ -1,4 +1,8 @@
-import Flapjack.EvaluateHOL.Definition
+module
+
+public import Flapjack.EvaluateHOL.Definition
+
+@[expose] public section
 
 /-! Concrete observations from the pinned CakeML source evaluator. -/
 namespace Flapjack.Test.CakeSourceEvaluatorParity

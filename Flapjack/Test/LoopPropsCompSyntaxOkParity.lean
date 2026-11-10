@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOk
+module
+
+public import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOk
+
+@[expose] public section
 
 namespace Flapjack
 

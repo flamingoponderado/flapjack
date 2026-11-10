@@ -1,4 +1,10 @@
-import Flapjack.SemanticPrimitivesHOL.Operations
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Operations
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.SemanticPrimitivesHOL.Operations
+@[expose] public section
 
 /-! Source equality and application observations captured from pinned HOL. -/
 namespace Flapjack.Test.CakeSourceOpsParity

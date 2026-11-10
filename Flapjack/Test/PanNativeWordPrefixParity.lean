@@ -1,17 +1,21 @@
-import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
-import Flapjack.Pancake.PanGlobalsByteRanged
-import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
-import Flapjack.CompileFunctionDistinct
-import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
-import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
-import Flapjack.Pancake.CrepInline.InlineRouteNames
-import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
-import Flapjack.RiscV.WordDiagnostics
-import Flapjack.RiscV.WordFuseConditions
-import Flapjack.RiscV.WordUnreach
-import Flapjack.RiscV.Lab
-import Flapjack.Display
-import Flapjack.Pancake.PanToWord
+module
+
+public import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
+public import Flapjack.Pancake.PanGlobalsByteRanged
+public import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
+public import Flapjack.CompileFunctionDistinct
+public import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
+public import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
+public import Flapjack.Pancake.CrepInline.InlineRouteNames
+public import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+public import Flapjack.RiscV.WordDiagnostics
+public import Flapjack.RiscV.WordFuseConditions
+public import Flapjack.RiscV.WordUnreach
+public import Flapjack.RiscV.Lab
+public import Flapjack.Display
+public import Flapjack.Pancake.PanToWord
+
+@[expose] public section
 
 namespace Flapjack.Test.PanNativeWordPrefixParity
 open Flapjack Pancake.PanLang

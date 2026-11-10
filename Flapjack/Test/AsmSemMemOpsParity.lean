@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.AsmSem.MemOps
+module
+
+public import Flapjack.Compiler.Encoders.AsmSem.MemOps
+
+@[expose] public section
 
 /-! Kernel replay of `scripts/hol-probes/asm_sem_mem_ops_probe.out`: the original HOL
 `mem_load`, `mem_store` and `mem_op` results on an 8-bit state, with the positive `LOG2` values

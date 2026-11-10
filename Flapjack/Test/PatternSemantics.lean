@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.PatternSemantics.Semantics
+module
+
+public import Flapjack.Compiler.Backend.PatternSemantics.Semantics
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.PatternSemantics
+public meta import Flapjack.Compiler.Backend.PatternSemantics.Semantics
+@[expose] public section
 
 /-! Focused checks of the pattern compiler's abstract semantics. -/
 namespace Flapjack.Test.PatternSemantics

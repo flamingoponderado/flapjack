@@ -7,7 +7,18 @@ The rows below reproduce the direct HOL EVAL oracle
 `scripts/hol-probes/crep_lang_prog_probe.out`, which pins the word payloads,
 `MlString` name lengths, and constructor arities at the HOL numeral word type 8.
 -/
-import Flapjack.Pancake.CrepLang.Prog
+module
+
+public import Flapjack.Pancake.CrepLang.Prog
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CakeParser.SexpPrint
+public meta import Flapjack.Pancake.CrepLang.Prog
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.CrepProgHOLParity
 

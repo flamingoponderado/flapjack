@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanStatic
+module
+
+public import Flapjack.Pancake.PanStatic
+
+@[expose] public section
 
 /-!
 # `panLang$size_of_sh_with_ctxt` parity

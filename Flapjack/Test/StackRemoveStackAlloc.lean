@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.StackAlloc
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.StackAlloc
+
+@[expose] public section
 
 /-! Kernel replay of original native allocation constructors, including both check modes. -/
 

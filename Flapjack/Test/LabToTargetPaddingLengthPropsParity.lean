@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.PaddingLengthProps
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.PaddingLengthProps
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetPaddingLengthPropsParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabToTarget

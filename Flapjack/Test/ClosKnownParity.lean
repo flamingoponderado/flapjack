@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.ClosKnown.Compile
+module
+
+public import Flapjack.Compiler.Backend.ClosKnown.Compile
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.BackendCommon.Trace
+public meta import Flapjack.Compiler.Backend.ClosKnown.Compile
+public meta import Flapjack.Compiler.Backend.ClosKnown.Config
+public meta import Flapjack.Compiler.Backend.ClosLang.Syntax
+public meta import Flapjack.Misc.Sptree
+@[expose] public section
 
 /-! Replay approximation and compilation rows captured from pinned HOL. -/
 namespace Flapjack.Test.ClosKnownParity

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Equality
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Equality
+
+@[expose] public section
 
 /-! Regression cases for data-language equality. -/
 namespace Flapjack.Test.DataSemEquality

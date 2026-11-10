@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.CallNone
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.CallNone
+
+@[expose] public section
 
 namespace Flapjack.Test.ClashTreeCallNoneParity
 open Flapjack Flapjack.WordAlloc Flapjack.RegAlloc

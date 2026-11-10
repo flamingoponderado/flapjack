@@ -1,5 +1,9 @@
-import Flapjack.Misc.BalancedMap.InvariantSemantics
-import Flapjack.Misc.BalancedMap.LookupSemantics
+module
+
+public import Flapjack.Misc.BalancedMap.InvariantSemantics
+public import Flapjack.Misc.BalancedMap.LookupSemantics
+
+@[expose] public section
 
 namespace Flapjack.Test.BalancedMapInvariantEqParity
 open Flapjack.Misc.BalancedMap

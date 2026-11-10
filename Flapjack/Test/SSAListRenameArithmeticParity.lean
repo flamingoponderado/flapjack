@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
+
+@[expose] public section
 
 namespace Flapjack.Test.SSAListRenameArithmetic
 open Flapjack Flapjack.Compiler.Backend.WordAlloc

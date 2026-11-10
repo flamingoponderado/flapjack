@@ -1,4 +1,8 @@
-import Flapjack.Misc.Words.Replicate
+module
+
+public import Flapjack.Misc.Words.Replicate
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

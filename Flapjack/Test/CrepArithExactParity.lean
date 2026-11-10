@@ -1,5 +1,18 @@
-import Flapjack.Pancake.CrepArith
-import Flapjack.Misc.Words.Log2
+module
+
+public import Flapjack.Pancake.CrepArith
+public import Flapjack.Misc.Words.Log2
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.CrepArith
+public meta import Flapjack.Pancake.CrepLang.Exp
+public meta import Flapjack.Pancake.CrepLang.Prog
+public meta import Flapjack.Pancake.Semantics.PanSem
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Exact-carrier parity for the `crep_arith` ports

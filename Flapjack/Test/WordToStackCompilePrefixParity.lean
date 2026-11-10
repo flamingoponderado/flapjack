@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompilePrefix
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompilePrefix
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackCompilePrefixParity
 open Flapjack Flapjack.Compiler.Backend.WordToStack.Native

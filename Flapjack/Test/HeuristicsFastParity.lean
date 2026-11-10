@@ -1,4 +1,10 @@
-import Flapjack.RiscV.SpillCosts
+module
+
+public import Flapjack.RiscV.SpillCosts
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.NatDedup
+@[expose] public section
 
 /-!
 Parity regressions for the hashed heuristic state.

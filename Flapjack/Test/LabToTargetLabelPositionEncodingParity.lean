@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.LabelPositionEncoding
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.LabelPositionEncoding
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetLabelPositionEncodingParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

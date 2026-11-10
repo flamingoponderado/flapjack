@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.PrefixPaddingLength
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.PrefixPaddingLength
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetPrefixPaddingLengthParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

@@ -1,7 +1,16 @@
-import Flapjack.Pancake.Proofs.PanStructs
-import Flapjack.Pancake.Proofs.PanStructs.CompileShapeExact
-import Flapjack.Pancake.PanStructs.CompileShapeExact
-import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs
+public import Flapjack.Pancake.Proofs.PanStructs.CompileShapeExact
+public import Flapjack.Pancake.PanStructs.CompileShapeExact
+public import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanStructs.CompileShapeExact
+public meta import Flapjack.Pancake.Proofs.PanStructs
+public meta import Flapjack.Pancake.Proofs.PanStructs.CompileShapeExact
+public meta import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
+@[expose] public section
 
 namespace Flapjack.Test.PanStructsCompileShapeParity
 

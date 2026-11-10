@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LinearScan
+module
+
+public import Flapjack.Compiler.Backend.LinearScan
+
+@[expose] public section
 namespace Flapjack.Test.LinearScanPureDefsParity
 open RegAlloc LinearScan
 -- Full-value replay of the fifteen original linear_scan_pure_defs_probe rows

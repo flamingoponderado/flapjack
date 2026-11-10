@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.EncodingInvariant
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.EncodingInvariant
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetEncd0Parity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Encoders.Asm

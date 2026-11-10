@@ -1,4 +1,10 @@
-import Flapjack.PanSemIsValidValue
+module
+
+public import Flapjack.PanSemIsValidValue
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanSemIsValidValue
+@[expose] public section
 
 /-!
 # Parity checks for `panSem$is_valid_value_def`
