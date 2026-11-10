@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "pure_correct_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/PureCorrect.lean", "lean_name": "pureCorrectEq",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared pure_correct_eq_type and the source: expression, environment, independently polymorphic state carriers, result and final state have the original order; the singleton evaluation and purity premises imply the complete value, raise and abort cases. Closure state refs and code use canonical finite support. The faithful evaluator inherits reals_as_rational_cuts and SOUNDNESS item 8."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "mk_code_g_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeCodeState.lean", "lean_name": "mkCodeG",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["code"],
