@@ -57,25 +57,6 @@ theorem localEnvBounded_patternBody {C F : Type} [Nonempty C]
     (by simpa [← nsAppend_assoc] using safe)
   simpa [← nsAppend_assoc, List.map_append, bindingNames, ← mapBind] using result
 
-/-- A type error during source row selection is also a type error in the
-source match evaluator, including when an earlier row has duplicate names. -/
-theorem sourcePmatchRows_typeError_evaluateMatch {F : Type} (source : State F)
-    (env : SemEnv Value) (value errorValue : Value) (rows : List (Pat × AstHOL.Exp))
-    (bad : sourcePmatchRows env source value rows = .typeError) :
-    EvaluateHOL.evaluateMatch source env value rows errorValue = (source, .err (.abort .typeError)) := by
-  induction rows with
-  | nil => simp [sourcePmatchRows] at bad
-  | cons row rest ih =>
-    obtain ⟨pattern, body⟩ := row
-    by_cases distinct : (patBindings pattern).Nodup
-    ·
-      cases matched : pmatch env.c source.refs pattern value [] with
-      | typeError => simp [EvaluateHOL.evaluateMatch, distinct, matched, EvaluateHOL.typeError]
-      | «match» bindings => simp [sourcePmatchRows, matched] at bad
-      | noMatch =>
-        simpa [EvaluateHOL.evaluateMatch, distinct, matched] using ih (by simpa [sourcePmatchRows, matched] using bad)
-    · simp [EvaluateHOL.evaluateMatch, distinct, EvaluateHOL.typeError]
-
 /-- Match simulation using the compiled-row safety premise, without an
 all-source-rows compatibility premise. -/
 theorem boundedEvaluateMatch_related_flatSafe {C F : Type} [Nonempty C]
@@ -113,19 +94,19 @@ theorem boundedEvaluateMatch_related_flatSafe {C F : Type} [Nonempty C]
   have rowInv := globalEnvInv_local_for_patterns genv baseMap baseEnv sourceLocal flatEnv.v localRel envInv
   have rowRel := pmatchRows_related_of_flatSafe genv compMap baseMap trace sourceEnv source flat (fun _ => True)
     rowInv rfl invariant.1 invariant.2.1 states value flatValue valueRel rows flatSafe
-  have sourceSafe : sourcePmatchRows sourceEnv source value rows ≠ .typeError := by
-    intro bad
-    apply safe source
-    exact sourcePmatchRows_typeError_evaluateMatch source sourceEnv value errorValue rows bad
+  have sourceRun := evaluateMatch_of_sourcePmatchRows source sourceEnv value errorValue rows
   cases sourceSelected : sourcePmatchRows sourceEnv source value rows with
-  | typeError => exact (sourceSafe sourceSelected).elim
+  | typeError =>
+    rw [sourceSelected] at sourceRun
+    exact (safe source sourceRun).elim
   | noMatch =>
+    rw [sourceSelected] at sourceRun
     rw [sourceSelected] at rowRel
     cases flatSelected : FlatSem.pmatchRows (compilePes trace compMap rows) flat flatValue with
     | typeError => simp [flatSelected, MatchRowsRel] at rowRel
     | «match» pair => simp [flatSelected, MatchRowsRel] at rowRel
     | noMatch =>
-      have sourceRun := evaluateMatch_noMatch source sourceEnv value errorValue rows safe sourceSelected
+      have sourceRun := sourceRun safe
       dsimp only [sourceEnv] at sourceRun
       dsimp only [compMap] at flatSelected
       refine ⟨genv, ?_, ?_⟩
@@ -136,7 +117,7 @@ theorem boundedEvaluateMatch_related_flatSafe {C F : Type} [Nonempty C]
             (And.intro generation (oracForwardRel_refl interp source.evalState)))
   | «match» selected =>
     obtain ⟨bindings, pattern, body⟩ := selected
-    rw [sourceSelected] at rowRel
+    rw [sourceSelected] at sourceRun rowRel
     cases flatSelected : FlatSem.pmatchRows (compilePes trace compMap rows) flat flatValue with
     | typeError => simp [flatSelected, MatchRowsRel] at rowRel
     | noMatch => simp [flatSelected, MatchRowsRel] at rowRel
@@ -147,8 +128,7 @@ theorem boundedEvaluateMatch_related_flatSafe {C F : Type} [Nonempty C]
       simp only [flatSelected, MatchRowsRel] at rowRel
       obtain ⟨bindingsRel, rfl, rfl⟩ := rowRel
       have names : flatBindings.map Prod.fst = patBindings pattern := by simpa [compilePat_bindings] using names
-      obtain ⟨distinct, sourceRun⟩ := evaluateMatch_selected source sourceEnv value errorValue rows
-        bindings pattern body safe sourceSelected
+      obtain ⟨distinct, sourceRun⟩ := sourceRun safe
       have member := sourcePmatchRows_mem sourceEnv source value rows bindings pattern body sourceSelected
       have bodySafe : ∀ last, EvaluateHOL.evaluate source
           { baseEnv with v := nsAppend (alistToNs bindings) (nsAppend sourceLocal baseEnv.v) } [body] ≠
