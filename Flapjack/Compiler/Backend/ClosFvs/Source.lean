@@ -45,6 +45,13 @@ def removeFuns (count captured : Nat) : List (Nat × Exp) → List (Nat × Exp)
       (arity, removeSing (arity + count + captured) body) :: removeFuns count captured rest
 end
 
+/-- Removing free variables leaves a recursive function list's length intact. This Lean helper supports the recursive cleanup proofs. -/
+theorem removeFuns_length (count captured : Nat) (functions : List (Nat × ClosLang.Exp)) :
+    (removeFuns count captured functions).length = functions.length := by
+  induction functions with
+  | nil => rfl
+  | cons function rest ih => cases function; simp [removeFuns, ih]
+
 /-- Free-variable removal preserves list length. -/
 @[hol "cakeml/compiler/backend/clos_fvsScript.sml" "LENGTH_remove_fvs"]
 theorem removeList_length (bound : Nat) (xs : List Exp) : (removeList bound xs).length = xs.length := by

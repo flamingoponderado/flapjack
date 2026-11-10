@@ -207,12 +207,6 @@ termination_by sizeOf expressions
 
 end
 
-private theorem removeFuns_length (count captured : Nat) (functions : List (Nat × Exp)) :
-    (removeFuns count captured functions).length = functions.length := by
-  induction functions with
-  | nil => rfl
-  | cons first rest ih => cases first; simp [removeFuns, ih]
-
 mutual
 
 /-- Cleanup bounds the free variables of an expression with absent capture

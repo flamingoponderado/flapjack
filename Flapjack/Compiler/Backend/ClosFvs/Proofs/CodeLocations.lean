@@ -9,12 +9,6 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
 namespace Flapjack.Compiler.Backend.ClosFvs
 open ClosLang ClosProps
 
-private theorem removeFuns_length (count captured : Nat) (fns : List (Nat × Exp)) :
-    (removeFuns count captured fns).length = fns.length := by
-  induction fns with
-  | nil => rfl
-  | cons first rest ih => cases first; simp [removeFuns, ih]
-
 mutual
 /-- Cleanup preserves the closure-code locations of an expression. This structural helper has no standalone HOL declaration. -/
 theorem removeSing_codeLocations (e : Exp) (bound : Nat) :
