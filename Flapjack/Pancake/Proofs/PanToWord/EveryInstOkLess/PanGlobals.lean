@@ -207,28 +207,10 @@ theorem every_inst_ok_less_pan_globals_compile_decs_init {width : Nat} [NeZero w
       pan_code.all goodPanopsHOL = true →
         ((compileDecsExactHOL ctxt pan_code).1.map expsOfHOL).all
           (everyExpListHOL panopArityTwoHOL) = true := by
-  intro ctxt pan_code
-  induction pan_code generalizing ctxt with
-  | nil => simp [compileDecsExactHOL]
-  | cons d ds ih =>
-      intro h
-      simp only [List.all_cons, Bool.and_eq_true] at h
-      cases d with
-      | decl sh v e =>
-          simp only [compileDecsExactHOL, List.map_cons, List.all_cons, Bool.and_eq_true]
-          refine ⟨?_, ih _ h.2⟩
-          simp only [goodPanopsHOL] at h
-          simp [expsOfHOL, everyExpListHOL, everyExpHOL, panopArityTwoHOL,
-            compileExp_every ctxt e h.1]
-      | function fi =>
-          simp only [compileDecsExactHOL]
-          exact ih _ h.2
-      | exnDecl eid sh =>
-          simp only [compileDecsExactHOL]
-          exact ih _ h.2
-      | name nm flds =>
-          simp only [compileDecsExactHOL]
-          exact ih _ h.2
+  intro ctxt pan_code h
+  fun_induction compileDecsExactHOL ctxt pan_code <;>
+    simp_all [goodPanopsHOL, expsOfHOL, everyExpListHOL, everyExpHOL, panopArityTwoHOL,
+      compileExp_every]
 
 /-- Full original `every_inst_ok_less_fperm`:
 `∀f g code. EVERY (every_exp P) (exps_of code) ⇒ EVERY (every_exp P) (exps_of (fperm f g code))`;
