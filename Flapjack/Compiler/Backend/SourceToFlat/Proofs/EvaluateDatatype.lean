@@ -311,8 +311,8 @@ theorem allocatedConstructorEntries_find {M A : Type} (constructors : List (ConN
   subst entryName'
   obtain ⟨args', sourceMember, length⟩ :=
     zipConstructor_member_arity constructors _ (allocTags1_arities (M := M) constructors) name tag arity entryMember
-  have found := lookup_of_mem_nodup constructors name args member distinct
-  have found' := lookup_of_mem_nodup constructors name args' sourceMember distinct
+  have found := holALookup_of_distinct_member constructors name args ⟨distinct, member⟩
+  have found' := holALookup_of_distinct_member constructors name args' ⟨distinct, sourceMember⟩
   have same : args' = args := Option.some.inj (found'.symm.trans found)
   subst args'
   subst arity
@@ -973,9 +973,11 @@ theorem globalEnvInv_allocTags (genv : GlobalEnv) (idx stamp : Nat)
       have compilerMember : (constructorName, (tag, some (idx, tags))) ∈
           entries.map (fun (name, tag, _) => (name, (tag, some (idx, tags)))) :=
         List.mem_map.mpr ⟨(constructorName, tag, args.length), entryMember, rfl⟩
-      have compilerLookup := lookup_of_mem_nodup _ constructorName (tag, some (idx, tags)) compilerMember compilerNames
+      have compilerLookup := holALookup_of_distinct_member _ constructorName (tag, some (idx, tags))
+        ⟨compilerNames, compilerMember⟩
       refine ⟨tag, some (idx, tags), ?_, ?_, ?_⟩
       · rw [allocTags_namespace_entries]
+        rw [holALookup_eq_lookup] at compilerLookup
         exact compilerLookup
       · exact installAllocatedConstructor_lookup idx stamp constructors constructorName tag args.length entryMember reserved
       · intro tyId ctors same

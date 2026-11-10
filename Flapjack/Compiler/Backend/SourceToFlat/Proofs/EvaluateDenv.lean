@@ -221,8 +221,8 @@ theorem invariantMakeVarls {C F : Type} [Nonempty C]
     intro i bound
     have h : i < env.v.reverse.length := by simpa [values] using bound
     have member : env.v.reverse[i]'h ∈ env.v := List.mem_reverse.mp (List.getElem_mem h)
-    have found := lookup_of_mem_nodup env.v _ _ member distinct
-    simpa [names, values, List.get_eq_getElem] using found
+    have found := holALookup_of_distinct_member env.v _ _ ⟨distinct, member⟩
+    simpa [names, values, List.get_eq_getElem, holALookup_eq_lookup] using found
   have run := evaluate_makeVarls env names values
     (lookup_forall₂_of_indices env names values (by simp [names, values]) lookups)
     pre post flat n trace (by simpa [names, values] using flatSlots)
