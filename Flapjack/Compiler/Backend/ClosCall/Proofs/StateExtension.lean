@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.Wellformed
+public import Flapjack.FiniteMap.AlistExact.Lookup
 
 @[expose] public section
 
@@ -8,25 +9,14 @@ public import Flapjack.Compiler.Backend.ClosCall.Proofs.Wellformed
 namespace Flapjack.Compiler.Backend.ClosCall
 open Flapjack
 
-/-- HOL association-list lookup uses logical equality for an arbitrary key
-type. This proof-side rendering is noncomputable because no equality
-instance is assumed. -/
-noncomputable def logicalAssocLookup {K V : Type} (key : K) (entries : List (K × V)) : Option V := by
-  classical
-  exact (entries.find? (fun entry => decide (key = entry.1))).map Prod.snd
-
-/-- The empty association list has no binding. -/
-theorem logicalAssocLookup_nil {K V : Type} (key : K) :
-    logicalAssocLookup key ([] : List (K × V)) = none := rfl
-
 /-- The new state extends the old sparse map and preserves each old lookup;
 its auxiliary labels are distinct. Key, payload and sparse-map value types
 remain independent as in HOL. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "subg_def"]
 def stateExtends {A K V : Type} (g0 g1 : Spt A × List (K × V)) : Prop :=
   sptSubspt g0.1 g1.1 ∧
-    (∀ key value, logicalAssocLookup key g0.2 = some value →
-      logicalAssocLookup key g1.2 = some value) ∧
+    (∀ key value, holALookup g0.2 key = some value →
+      holALookup g1.2 key = some value) ∧
     (g1.2.map Prod.fst).Nodup
 
 /-- A state with distinct labels extends itself. -/

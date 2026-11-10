@@ -53,8 +53,8 @@ example : stateExtends ((.ln, [(1, 2)]) : Flapjack.Spt Unit × List (Nat × Nat)
   · intro key value lookup
     by_cases equal : key = 1
     · subst key
-      simpa [logicalAssocLookup, List.find?] using lookup
-    · simp [logicalAssocLookup, List.find?, equal] at lookup
+      simpa [Flapjack.holALookup] using lookup
+    · simp [Flapjack.holALookup, equal] at lookup
 
 example : ¬stateExtends ((.ln, [(1, 2)]) : Flapjack.Spt Unit × List (Nat × Nat))
     (.ln, [(1, 3), (1, 2)]) := by
@@ -64,7 +64,7 @@ example : ¬stateExtends ((.ln, [(1, 2)]) : Flapjack.Spt Unit × List (Nat × Na
     (.ln, [(1, 3)]) := by
   intro extension
   have lookup := extension.2.1 1 2
-  simp [logicalAssocLookup, List.find?] at lookup
+  simp [Flapjack.holALookup] at lookup
 
 -- `clos_call_wfg_probe.out`: nested locations precede the group's range,
 -- followed by the enclosing body; missing locations use the source default.
@@ -93,29 +93,29 @@ example : codeIncludes [(1, 2)] singletonCode := by
   intro key value lookup
   by_cases eq : key = 1
   · subst key
-    simpa [logicalAssocLookup, List.find?, singletonCode, Flapjack.HolFiniteMapExact.update,
+    simpa [Flapjack.holALookup, singletonCode, Flapjack.HolFiniteMapExact.update,
       Flapjack.FUPDATE] using lookup
-  · simp [logicalAssocLookup, List.find?, eq] at lookup
+  · simp [Flapjack.holALookup, eq] at lookup
 
 example : ¬codeIncludes [(1, 3)] singletonCode := by
   intro included
   have lookup := included 1 3
-  simp [logicalAssocLookup, List.find?, singletonCode, Flapjack.HolFiniteMapExact.update,
+  simp [Flapjack.holALookup, singletonCode, Flapjack.HolFiniteMapExact.update,
     Flapjack.FUPDATE] at lookup
 
 example : codeIncludes [(1, 2), (1, 3)] singletonCode := by
   intro key value lookup
   by_cases eq : key = 1
   · subst key
-    simpa [logicalAssocLookup, List.find?, singletonCode, Flapjack.HolFiniteMapExact.update,
+    simpa [Flapjack.holALookup, singletonCode, Flapjack.HolFiniteMapExact.update,
       Flapjack.FUPDATE] using lookup
-  · simp [logicalAssocLookup, List.find?, eq] at lookup
+  · simp [Flapjack.holALookup, eq] at lookup
 
 -- A generated entry takes precedence over an older entry with the same label.
-example : logicalAssocLookup 11
-    (codeList 10 [(1, .var .none 0)] (.ln, [(11, 2, .var .none 9)])).2 =
+example : Flapjack.holALookup
+    (codeList 10 [(1, .var .none 0)] (.ln, [(11, 2, .var .none 9)])).2 11 =
     some (1, .var .none 0) := by
-  simp [codeList, logicalAssocLookup]
+  simp [codeList, Flapjack.holALookup]
 
 -- `clos_call_env_rel_probe.out`: reference relations preserve heterogeneous
 -- element relations and reject different thunk modes or constructors.

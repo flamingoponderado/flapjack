@@ -32,6 +32,39 @@ Key and value types are independent; lookup uses HOL logical equality. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "code_includes_def"
   (fmap_as_finite_support_parameters := [code])]
 def codeIncludes {K V : Type} (al : List (K × V)) (code : HolFiniteMapExact K V) : Prop :=
-  ∀ key value, logicalAssocLookup key al = some value → code.lookup key = some value
+  ∀ key value, holALookup al key = some value → code.lookup key = some value
+
+/-- Canonical lookup codec for the map in the state-extension theorem. -/
+theorem holFmapAsFiniteSupportParamWitness_codeIncludes_subg_code {K V : Type}
+    (code : HolFiniteMapExact K V) (key : K) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_codeIncludes_code code key
+
+/-- Code inclusion is inherited by the earlier compiler state. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "code_includes_subg"
+  (fmap_as_finite_support_parameters := [code])]
+theorem codeIncludes_subg {A K V : Type} (g1 g2 : Spt A × List (K × V))
+    (code : HolFiniteMapExact K V) (extended : stateExtends g1 g2)
+    (included : codeIncludes g2.2 code) : codeIncludes g1.2 code := by
+  intro key value found
+  exact included key value (extended.2.1 key value found)
+
+/-- Canonical lookup codec for the association-list lookup theorem. -/
+theorem holFmapAsFiniteSupportParamWitness_codeIncludes_lookup_code {K V : Type}
+    (code : HolFiniteMapExact K V) (key : K) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_codeIncludes_code code key
+
+/-- A binding included from an association list is present in the code map. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "code_includes_ALOOKUP"
+  (fmap_as_finite_support_parameters := [code])]
+theorem codeIncludes_lookup {K V : Type} (al : List (K × V)) (code : HolFiniteMapExact K V)
+    (loc : K) (result : V)
+    (h : codeIncludes al code ∧ holALookup al loc = some result) :
+    code.lookup loc = some result := h.1 loc result h.2
 
 end Flapjack.Compiler.Backend.ClosCall

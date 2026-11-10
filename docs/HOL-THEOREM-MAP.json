@@ -42,6 +42,20 @@
   "reviewer": "Compared every_Fn_vs_NONE_cond_call_compile_inc_typed and HOL source: free variables program, enabled, known, the state carriers, both implication premises and conclusions match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_includes_subg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeIncludes.lean", "lean_name": "codeIncludes_subg",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Source comparison: compared clos_call_code_includes_subg_typed: sparse-map values, association-list keys and payloads are independent, and state extension and later code inclusion are separate premises. The code map uses canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_includes_ALOOKUP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeIncludes.lean", "lean_name": "codeIncludes_lookup",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Source comparison: compared clos_call_code_includes_ALOOKUP_typed: the association list, code map, lookup key and result retain their independent polymorphic types and order, and both premises are grouped. ALOOKUP is the reviewed holALookup; the code map uses canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfv_SUBMAP",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueWellFormed.lean", "lean_name": "valueWellFormed_submap",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
@@ -127728,7 +127742,7 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateExtension.lean",
   "lean_name": "stateExtends",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared source lines 126-130 and inferred types in clos_call_wfg_probe.out: three independent sparse-map value, association key and association payload types; exact Spt and lookup-based subspt relation; logicalAssocLookup_nil/cons establish first-match logical-equality ALOOKUP with no extra equality instance; target-label distinctness preserved. Lean checks the proofs; source comparison does not establish cross-language equivalence."
+  "reviewer": "Compared source lines 126-130 and inferred types in clos_call_wfg_probe.out: three independent sparse-map value, association key and association payload types; exact Spt and lookup-based subspt relation; the reviewed holALookup implements first-match logical-equality ALOOKUP with no extra equality instance; target-label distinctness preserved. Lean checks the proofs; source comparison does not establish cross-language equivalence."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
@@ -127771,7 +127785,7 @@
   "fmap_as_finite_support_parameters": [
     "code"
   ],
-  "reviewer": "Compared source lines 261-263 and inferred definition in clos_call_wfg_probe.out: key and value types remain independently polymorphic, with the same universally quantified association lookup implication. logicalAssocLookup implements HOL ALOOKUP with logical equality and no extra equality instance. The finite-map input uses the canonical finite-support representation and same-module lookup/support roundtrip witness. Lean checks the witness, not cross-language equivalence."
+  "reviewer": "Compared source lines 261-263 and inferred definition in clos_call_wfg_probe.out: key and value types remain independently polymorphic, with the same universally quantified association lookup implication. the reviewed holALookup implements HOL ALOOKUP with logical equality and no extra equality instance. The finite-map input uses the canonical finite-support representation and same-module lookup/support roundtrip witness. Lean checks the witness, not cross-language equivalence."
 },
 {
   "hol_path": "cakeml/compiler/backend/clos_callScript.sml",
