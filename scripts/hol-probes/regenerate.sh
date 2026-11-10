@@ -9544,3 +9544,8 @@ run_probe tokens_carriers_probeScript.sml tokens_carriers_probe.out \
   path_axiom_typed token_axiom_typed \
   "$cake_dir/semantics/tokensScript.sml" \
   "$cake_dir/semantics"
+
+run_probe bvl_jump_probeScript.sml bvl_jump_probe.out \
+  JumpList_def_typed Jump_def_typed \
+  "$cake_dir/compiler/backend/bvl_jumpScript.sml" \
+  "$cake_dir/compiler/backend"

@@ -117459,16 +117459,16 @@
     "lean_name": "jumpList",
     "hol_path": "cakeml/compiler/backend/bvl_jumpScript.sml",
     "hol_name": "JumpList_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed bvl_jump_probe capture of JumpList_def clause by clause with jumpList: LENGTH xs = 0 gives Op (IntOp (Const 0)) [], LENGTH = 1 gives HD xs, and the general case takes k = l DIV 2, ys = TAKE k xs, zs = DROP k xs, the lt expression choosing LessConstSmall (n+k) [Var 0] when n + l < 1000000 and n + k < 1000000 and otherwise IntOp Less [Const (&(n+k)) []; Var 0], then If lt (JumpList n ys) (JumpList (n + k) zs). The Lean match on []/[x]/x::y::rest, xs.length / 2, xs.take/drop and Int.ofNat (n + k) are exactly those clauses and values."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlJump.lean",
     "lean_name": "jump",
     "hol_path": "cakeml/compiler/backend/bvl_jumpScript.sml",
     "hol_name": "Jump_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed bvl_jump_probe capture (`Jump x xs = Let [x] (JumpList 0 xs)`) with jump x xs := .let [x] (jumpList 0 xs)."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Stubs.lean",
