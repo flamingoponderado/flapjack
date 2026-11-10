@@ -132,6 +132,19 @@
   "reviewer": "Compared syntax_oracle_ok_start_typed and independent review: binder order c, c', f, es, co and polymorphic oracle payload match; the start update is f c'.start and HOL boolean equality is rendered as iff."
  },
  {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "SUBMAP_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/SubmapRel.lean", "lean_name": "CodeExtension",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared HOL submap_rel_def_typed and independent review: state record equality, SUBMAP_DEF lookup condition, oracle label projection, and FDOM as HolFiniteMapExact.domain match. The refs and code fields use the canonical finite-map carrier and checked state roundtrip witness."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_code_SUBMAP",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/EvaluateCodeSubmap.lean", "lean_name": "evaluate_codeSubmap",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared HOL evaluate_code_submap_typed and independently reviewed both complete quantified conjuncts: the unused s2 binders have independent inhabited types, the tuple premise and non-type-error condition are retained, and both state maps use the canonical carrier and checked witness. ClosSem.evaluate inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "chain_installed_cons",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SourceChain.lean", "lean_name": "chainInstalled_cons",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["code"],

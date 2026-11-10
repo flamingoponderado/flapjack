@@ -10,9 +10,8 @@ namespace Flapjack.Compiler.Backend.ClosSem
 open Flapjack Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-/-- Safe code extensions preserve every non-type-error evaluation and its
-result, and remain safe after evaluation. This proof-side result is untagged
-pending review of its HOL carriers and source statement. -/
+/-- Clock-indexed infrastructure for the source-shaped code-extension theorem:
+safe extensions preserve non-type-error evaluations and their results. -/
 theorem evaluate_codeExtension {C F : Type} :
     (∀ expressions (source : State C F), EvalCodeExtensionAt source expressions) ∧
     (∀ clock, AppCodeExtensionBelow (C := C) (F := F) clock) := by
