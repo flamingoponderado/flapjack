@@ -128442,8 +128442,8 @@
   "hol_name": "every_Fn_vs_SOME_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/FnAnnotations.lean",
   "lean_name": "everyFnVarsSome",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed clos_op_lift_proof_probe capture of every_Fn_vs_SOME_def (the []/x::y::xs list clauses and the twelve singleton constructor clauses, with IS_SOME on Fn/Letrec vs_opt and every_Fn_vs_SOME (MAP SND fns) for Letrec) and of every_Fn_vs_SOME_EVERY (`\u2200ls. every_Fn_vs_SOME ls \u21d4 EVERY (\u03bbx. every_Fn_vs_SOME [x]) ls`) with everyFnVarsSome. The Lean list clause is the EVERY form licensed by that HOL theorem (the same rendering already accepted for everyFnLocationSome), and the singleton clauses live in the Flapjack helper fnVarsSomeExp: Var True, If/Handle conjunction, Let body \u2227 bindings, Raise/Tick body, Op/Call args, App fn \u2227 args, Fn vs_opt.isSome \u2227 body, Letrec vs_opt.isSome \u2227 fnVarsSomeFuns bindings \u2227 body, where fnVarsSomeFuns is proved equal to everyFnVarsSome (MAP SND fns) by the Flapjack lemma fnVarsSomeFuns_eq_map."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
