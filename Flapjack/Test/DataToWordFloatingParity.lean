@@ -1,6 +1,13 @@
-import Flapjack.Compiler.Backend.DataToWord.Control
-import Flapjack.Test.DataToWordFp32Oracle
-import Flapjack.Test.DataToWordFp64Oracle
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Control
+public import Flapjack.Test.DataToWordFp32Oracle
+public import Flapjack.Test.DataToWordFp64Oracle
+public meta import Flapjack.Test.DataToWordFp64Oracle
+public meta import Flapjack.Compiler.Backend.DataToWord.Control
+public meta import Flapjack.Test.DataToWordFp32Oracle
+
+@[expose] public section
 
 /-! Exact data-to-word floating-point lowering observations from pinned HOL. -/
 namespace Flapjack.Test.DataToWordFloatingParity
