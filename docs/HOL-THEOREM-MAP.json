@@ -1719,6 +1719,30 @@
   "reviewer": "Source comparison with list_to_v_v_rel_typed: both unrestricted value lists, their pointwise relation premise and the related list-encoding conclusion agree. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "no_Labels_GENLIST_Var",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubInvariants.lean", "lean_name": "noLabels_variables",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared no_Labels_GENLIST_Var_typed: the universally quantified trace, index and count retain their order and types, and EVERY no_Labels is the bounded universal over the source variable generator."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "no_Labels_calls_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubInvariants.lean", "lean_name": "noLabels_callsList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared no_Labels_calls_list_typed: trace, two indices and function list retain their order; the ignored payload type remains polymorphic, and EVERY no_Labels over mapped SND is a bounded universal over the source stub generator."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "obeys_max_app_GENLIST_Var",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubInvariants.lean", "lean_name": "obeysMaxApp_variables",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared obeys_max_app_GENLIST_Var_typed: the free application limit and quantified trace, index and count retain their types and order, and EVERY obeys_max_app is a bounded universal over the source variable generator."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "obeys_max_app_calls_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubInvariants.lean", "lean_name": "obeysMaxApp_callsList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared obeys_max_app_calls_list_typed: the free application limit and quantified trace, two indices and function list retain their order; the ignored payload type remains polymorphic, and EVERY obeys_max_app over mapped SND is a bounded universal over the source stub generator."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "EVERY_pure_correct",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/PureEvaluate.lean", "lean_name": "everyPureCorrect",
   "statement_status": "reviewed_fmap_as_finite_support",

@@ -7,5 +7,9 @@ val _ = (print "variables_def="; Lib.with_flag (Globals.show_types,true) print_t
 val _ = (print "calls_list_type="; print_type (type_of ``clos_call$calls_list``); print "\n");
 val _ = (print "calls_list_def="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.calls_list_def); print "\n");
 val _ = (print "calls_list_mapi="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_list_MAPi); print "\n");
+val _ = (print "no_Labels_GENLIST_Var_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.no_Labels_GENLIST_Var); print "\n");
+val _ = (print "no_Labels_calls_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.no_Labels_calls_list); print "\n");
+val _ = (print "obeys_max_app_GENLIST_Var_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.obeys_max_app_GENLIST_Var); print "\n");
+val _ = (print "obeys_max_app_calls_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.obeys_max_app_calls_list); print "\n");
 val cases = EVAL ``(clos_call$GENLIST_Var None 7 3, clos_call$calls_list None 4 10 [(2,T);(0,F);(1,T)])``;
 val _ = (print "cases="; print_term (rhs (concl cases)); print "\n");

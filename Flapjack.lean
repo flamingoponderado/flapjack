@@ -821,6 +821,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.Length
 import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelOrigins
 import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelsOriginal
 import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationMembership
+import Flapjack.Compiler.Backend.ClosCall.Proofs.StubInvariants
 import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelDistinct
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Wellformed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
