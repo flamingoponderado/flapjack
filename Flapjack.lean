@@ -829,6 +829,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeIncludes
 import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueWellFormed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
+import Flapjack.Compiler.Backend.ClosCall.Proofs.StateRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
