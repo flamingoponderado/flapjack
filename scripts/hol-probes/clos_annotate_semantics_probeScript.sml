@@ -268,6 +268,17 @@ val do_app_lemma_replay = prove (
   >> rfs [] >> fs [FAPPLY_FUPDATE_THM] >> rveq
   >> fs [ref_rel_def] >> rw []);
 val _ = show "do_app_lemma_local_typed=" do_app_lemma_replay;
+val do_app_thm_replay = prove (
+  ``state_rel s1 t1 /\ EVERY2 v_rel xs ys /\
+    (do_app op xs s1 = Rval (v,s2)) ==>
+    ?w t2. (do_app op ys t1 = Rval (w,t2)) /\
+      v_rel v w /\ state_rel s2 t2``,
+  rpt strip_tac
+  >> drule (GEN_ALL do_app_lemma_replay)
+  >> disch_then drule
+  >> disch_then (qspec_then `op` mp_tac) >> fs []
+  >> rpt strip_tac >> fs []);
+val _ = show "do_app_thm_local_typed=" do_app_thm_replay;
 (* Replay the source-local theorem, which is not exported by the theory. *)
 val state_rel_clocks_eqs_replay = prove (
   ``state_rel s t ==> s.clock = t.clock``,
