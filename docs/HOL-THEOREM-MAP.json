@@ -36,6 +36,12 @@
   "reviewer": "Compared every_fn_some_cond_call_typed and independent review: first-appearance order program, enabled, known and both distinct implication hypotheses match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "ccompile_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallBounds.lean", "lean_name": "ccompile_everyFnLocationSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared ccompile_every_fn_some_typed and independent review: first-appearance binder order, grouped premise and both conclusion conjuncts match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "every_Fn_calls_list",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "everyFn_callsList",
   "statement_status": "reviewed_exact",

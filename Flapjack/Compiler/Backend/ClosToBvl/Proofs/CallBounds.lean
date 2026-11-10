@@ -10,6 +10,24 @@ public import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationMembership
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open ClosLang ClosProps
 
+/-- Whole-program direct-call conversion preserves function locations in the
+    transformed expressions and generated auxiliary code. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "ccompile_every_Fn_SOME"]
+theorem ccompile_everyFnLocationSome (es : List Exp) (doCall : Bool)
+    (es' : List Exp) (g : NumSet) (aux : List (Nat × Nat × Exp))
+    (h : everyFnLocationSome es ∧ ClosCall.compile doCall es = (es', g, aux)) :
+    everyFnLocationSome es' ∧ everyFnLocationSome (aux.map (fun p => p.2.2)) := by
+  cases doCall with
+  | false =>
+    simp [ClosCall.compile] at h
+    obtain ⟨annotated, rfl, _, rfl⟩ := h
+    simpa [everyFnLocationSome] using annotated
+  | true =>
+    have run : ClosCall.calls es (.ln, []) = (es', g, aux) := by
+      simpa [ClosCall.compile] using h.2
+    have result := ClosCall.calls_preserves_everyFnLocationSome es (.ln, []) es' (g, aux) run
+    simpa [everyFnLocationSome] using result ⟨h.1, by simp [everyFnLocationSome]⟩
+
 /-- Emitted auxiliary labels are successors of input code locations. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "ccompile_aux_subset"]
 theorem ccompile_aux_subset (c : Config) (exps exps' : List Exp) (g : NumSet)
