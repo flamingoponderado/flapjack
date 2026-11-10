@@ -61,6 +61,7 @@ val _ = show_thm "clos_call_vrel_list_to_v_typed=" clos_callProofTheory.vrel_lis
 val _ = show_thm "clos_call_wfv_v2l_typed=" clos_callProofTheory.wfv_v2l;
 val _ = show_thm "clos_call_do_app_thm_typed=" clos_callProofTheory.do_app_thm;
 val _ = show_thm "clos_call_domain_FST_insert_each_typed=" clos_callProofTheory.domain_FST_insert_each;
+val _ = show_thm "clos_call_SND_insert_each_typed=" clos_callProofTheory.SND_insert_each;
 val _ = show_thm "clos_call_insert_each_subspt_typed=" clos_callProofTheory.insert_each_subspt;
 val _ = show_thm "clos_call_calls_subspt_typed=" clos_callProofTheory.calls_subspt;
 val _ = show_thm "clos_call_calls_IS_SUFFIX_typed=" clos_callProofTheory.calls_IS_SUFFIX;

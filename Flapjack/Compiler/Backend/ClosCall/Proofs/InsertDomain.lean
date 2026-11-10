@@ -9,6 +9,17 @@ public import Mathlib.Data.Set.Defs
 namespace Flapjack.Compiler.Backend.ClosCall
 open Flapjack
 
+/-- Inserting known locations leaves the state payload unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "SND_insert_each"]
+theorem insertEach_snd {A : Type} (loc count : Nat) (state : NumSet × A) :
+    (insertEachSource loc count state).2 = state.2 := by
+  induction count generalizing loc state with
+  | zero => rfl
+  | succ count ih =>
+    cases state with
+    | mk known payload =>
+      exact ih (loc + 2) (sptInsert loc () known, payload)
+
 /-- Inserting the successive locations adds exactly their generated set to
 the known-location domain. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "domain_FST_insert_each"]
