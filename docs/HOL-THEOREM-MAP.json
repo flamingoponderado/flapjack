@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "dest_closure_v_rel_lookup",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ClosureLookup.lean", "lean_name": "destClosure_valueRel_lookup",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared dest_closure_v_rel_lookup_type in clos_call_code_list_probe.out and HOL source: the actual source closure run, value and environment relations, state well-formedness, known location and exclusion imply all original witnesses, source and target applications, converted bodies, state extension, code lookup and inclusion. The unused HOL existential retains its independent inhabited type; the code parameter uses canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_includes_SUBMAP",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeIncludes.lean", "lean_name": "codeIncludes_submap",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",

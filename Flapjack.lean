@@ -836,6 +836,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueWellFormed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueExistence
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ClosureWellFormed
+import Flapjack.Compiler.Backend.ClosCall.Proofs.ClosureLookup
 import Flapjack.Compiler.Backend.ClosCall.Proofs.StateRelation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DoApp
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InsertDomain
