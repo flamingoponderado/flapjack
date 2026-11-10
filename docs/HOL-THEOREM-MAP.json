@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "ALOOKUP_code_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeLookup.lean", "lean_name": "codeListSource_alookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alookup_code_list_type in clos_call_code_list_probe.out and source: location, generic function pairs, independent state payload and key retain their HOL order. HOL's optional choice is holOptionSome, and fEL is HOL EL rendered by holEl with inhabited pair carrier; both the indexed result and fallback lookup are unchanged."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_list_MAPi",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubInvariants.lean", "lean_name": "callsListSource_mapIdx",
   "statement_status": "reviewed_exact",

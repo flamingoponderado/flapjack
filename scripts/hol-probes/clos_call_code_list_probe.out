@@ -4,5 +4,6 @@ fst_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list). FST (
 snd_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list) (g' :'d # (num # 'a # 'b) list). SND g = SND g' ==> SND (code_list loc fns g) = SND (code_list loc fns g')
 map_fst_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list). MAP (FST :num # 'a # 'b -> num) (SND (code_list loc fns g)) = REVERSE (GENLIST (\(i :num). loc + i * (2 :num) + (1 :num)) (LENGTH fns)) ++ MAP (FST :num # 'a # 'b -> num) (SND g)
 snd_zip_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list). SND (code_list loc fns g) = REVERSE (ZIP (GENLIST ($+ (loc + (1 :num)) o $* (2 :num)) (LENGTH fns),fns)) ++ SND g
+alookup_code_list_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list) (k :num). ALOOKUP (SND (code_list loc fns g)) k = case some(i :num). i < LENGTH fns /\ k = loc + (2 :num) * i + (1 :num) of (NONE :num option) => ALOOKUP (SND g) k | SOME i => SOME (fEL fns i)
 suffix_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list). IS_SUFFIX (SND (code_list loc fns g)) (SND g)
 example=(LN,[(15,1,Var None 2); (13,0,Var None 9); (11,2,Var None 4); (90,3,Var None 0)])

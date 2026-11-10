@@ -8,6 +8,7 @@ val _ = (print "fst_type="; Lib.with_flag (Globals.show_types,true) print_term (
 val _ = (print "snd_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.SND_code_list_change); print "\n");
 val _ = (print "map_fst_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.MAP_FST_code_list); print "\n");
 val _ = (print "snd_zip_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.SND_code_list_ZIP); print "\n");
+val _ = (print "alookup_code_list_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.ALOOKUP_code_list); print "\n");
 val _ = (print "suffix_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.code_list_IS_SUFFIX); print "\n");
 val entry = EVAL ``clos_call$code_list 10 [(2,closLang$Var None 4);(0,closLang$Var None 9);(1,closLang$Var None 2)] (sptree$LN,[(90,3,closLang$Var None 0)])``;
 val _ = (print "example="; print_term (rhs (concl entry)); print "\n");
