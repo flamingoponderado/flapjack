@@ -690,7 +690,7 @@ run_probe clos_call_code_list_probeScript.sml clos_call_code_list_probe.out \
   code_list_type insert_each_typed fst_type snd_type map_fst_type snd_zip_type alookup_code_list_type code_list_replace_snd_type calls_code_subset_type suffix_type example "$cake_dir/compiler/backend/clos_callScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_call_wfg_probeScript.sml clos_call_wfg_probe.out \
-  subg_type subg_def subg_refl subg_trans calls_subg code_locs_type code_locs_def recclosure_wf_def code_includes_type code_includes_def wfg_type wfg_prime_type wfg_def wfg_prime_def wfg_prime_code_type calls_wfg_type subg_cases location_cases recclosure_cases code_includes_cases "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" "$cake_dir/compiler/backend/proofs"
+  subg_type subg_def subg_refl subg_trans calls_subg code_locs_type code_locs_def recclosure_wf_def code_includes_type code_includes_def wfg_type wfg_prime_type wfg_def wfg_prime_def wfg_prime_code_type calls_wfg_type calls_wfg_prime_type subg_cases location_cases recclosure_cases code_includes_cases "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_call_env_rel_probeScript.sml clos_call_env_rel_probe.out \
   fv_type fv1_type fv_def fv1_def ref_rel_type ref_rel_def env_rel_type env_rel_def env_rel_mono env_rel_cong fv_cases fv_negative env_cases ref_cases "$cake_dir/compiler/backend/semantics/closPropsScript.sml" "$cake_dir/compiler/backend/proofs"

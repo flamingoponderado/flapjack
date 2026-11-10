@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_wfg'",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CallsWellformed.lean", "lean_name": "calls_weaklyWellFormed",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_wfg_prime_type in clos_call_wfg_probe.out and source: input expressions, initial state, output expressions and final state remain in order; the total calls equation, every-function-location condition and initial one-sided invariant imply the unchanged final invariant."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_code_subset",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateGrowth.lean", "lean_name": "calls_codeSubset",
   "statement_status": "reviewed_exact",
