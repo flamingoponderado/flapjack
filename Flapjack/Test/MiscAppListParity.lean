@@ -1,7 +1,11 @@
-import Flapjack.Misc.AppList
-import Flapjack.Misc.FlatReplicate
-import Flapjack.Misc.Uncurry
-import Flapjack.Misc.OptMmapCong
+module
+
+public import Flapjack.Misc.AppList
+public import Flapjack.Misc.FlatReplicate
+public import Flapjack.Misc.Uncurry
+public import Flapjack.Misc.OptMmapCong
+
+@[expose] public section
 
 /-! Lean regression for the HOL `misc$app_list`/`append` oracle
 (`scripts/hol-probes/misc_app_list_probe.out`). -/

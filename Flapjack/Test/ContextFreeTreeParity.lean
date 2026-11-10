@@ -1,5 +1,9 @@
-import Flapjack.Misc.Grammar
-import Flapjack.CakeParser.ParseTree.Grammar
+module
+
+public import Flapjack.Misc.Grammar
+public import Flapjack.CakeParser.ParseTree.Grammar
+
+@[expose] public section
 
 /-! Examples captured from the pinned HOL context-free grammar script. -/
 namespace Flapjack.Test.ContextFreeTreeParity

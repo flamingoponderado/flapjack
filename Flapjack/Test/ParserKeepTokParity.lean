@@ -1,4 +1,12 @@
-import Flapjack.Parser.ParseTree
+module
+
+public import Flapjack.Parser.ParseTree
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.LoopLang
+public meta import Flapjack.Parser.Lexer
+public meta import Flapjack.Parser.ParseTree
+@[expose] public section
 
 namespace Flapjack.Test.ParserKeepTokParity
 

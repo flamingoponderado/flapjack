@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove
+module
+
+public import Flapjack.Compiler.Backend.StackRemove
+
+@[expose] public section
 
 namespace Flapjack.Test.StackRemoveWordSelector
 open Flapjack Flapjack.Compiler.Backend.StackRemove

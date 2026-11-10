@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Semantics.PanProps
+module
+
+public import Flapjack.Pancake.Semantics.PanProps
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanProps
+@[expose] public section
 
 /-!
 # Direct-HOL parity for the exact `panProps` shape/`res_var` lemmas

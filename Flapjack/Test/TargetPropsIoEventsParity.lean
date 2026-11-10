@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateIoEventsMono
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateIoEventsMono
+
+@[expose] public section
 namespace Flapjack.Test.TargetPropsIoEventsParity
 open Flapjack
 -- Original tp_io_full_statement=T: entire quantified statement, no premise.

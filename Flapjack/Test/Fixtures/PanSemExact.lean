@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanSem.StateExact
-import Flapjack.Pancake.Semantics.PanSemStateEval
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateExact
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+
+@[expose] public section
 
 /-!
 # Shared exact PanSem parity fixtures

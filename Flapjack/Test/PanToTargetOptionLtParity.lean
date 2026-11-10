@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Proofs.PanToTarget
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.PanToTarget
+@[expose] public section
 
 /-! Kernel replay of the six fresh boundary rows in the explicitly identified
 literal HOL source replay pan_to_target_option_lt_source_replay_probe.out.

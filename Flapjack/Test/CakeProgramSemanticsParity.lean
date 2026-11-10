@@ -1,5 +1,9 @@
-import Flapjack.SemanticsHOL
-import Flapjack.PrimTypesHOL
+module
+
+public import Flapjack.SemanticsHOL
+public import Flapjack.PrimTypesHOL
+
+@[expose] public section
 
 /-! Basic observations of the clock-indexed CakeML source semantics. -/
 namespace Flapjack.Test.CakeProgramSemanticsParity

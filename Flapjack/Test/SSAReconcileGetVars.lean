@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileGetVars
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAReconcileGetVars
+
+@[expose] public section
 
 /-! Native reconciliation reads allow aliased SSA destinations and do not
 require lookup success in the SSA tree itself. Flapjack-specific kernel

@@ -1,4 +1,12 @@
-import Flapjack.SemanticPrimitivesHOL.Compare
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Compare
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.AstHOL
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.SemanticPrimitivesHOL.Compare
+@[expose] public section
 
 /-! Source numeric and string-comparison observations captured from pinned HOL. -/
 namespace Flapjack.Test.CakeSourceCompareParity

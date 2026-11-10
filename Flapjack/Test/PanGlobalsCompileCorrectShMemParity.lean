@@ -1,5 +1,12 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ShMem
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ShMemGlobal
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ShMem
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ShMemGlobal
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ShMem
+public meta import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ShMemGlobal
+@[expose] public section
 
 /-!
 # pan_globals `compile_correct` `ShMemLoad`/`ShMemStore` regression

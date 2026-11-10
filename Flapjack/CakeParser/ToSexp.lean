@@ -1,6 +1,14 @@
-import Flapjack.CakeParser.FromSexp.Ast
-import Flapjack.CakeParser.SexpPrint
-import Flapjack.CakeParser.FromSexp.Encode
+module
+
+public import Flapjack.CakeParser.FromSexp.Ast
+public import Flapjack.CakeParser.SexpPrint
+public import Flapjack.CakeParser.FromSexp.Encode
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! CakeML AST encoding for the S-expression output path. The executable
 aliases use the source-reviewed definitions in `FromSexp.Encode`; the whole

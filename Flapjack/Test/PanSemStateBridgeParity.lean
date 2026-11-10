@@ -1,8 +1,21 @@
-import Flapjack.Pancake.Semantics.PanSem.StateBridge
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
-import Flapjack.Pancake.Semantics.PanSem.EvalRuntimeRoute
-import Flapjack.Pancake.Semantics.PanSemStateEval
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateBridge
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
+public import Flapjack.Pancake.Semantics.PanSem.EvalRuntimeRoute
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanBst
+public meta import Flapjack.PanValues
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.PanLang.Exp
+public meta import Flapjack.Pancake.Semantics.PanSem.EvalExecutedBridge
+public meta import Flapjack.Pancake.Semantics.PanSem.EvalRuntimeRoute
+public meta import Flapjack.Pancake.Semantics.PanSem.StateBridge
+public meta import Flapjack.RiscV.Model
+@[expose] public section
 
 /-!
 # Regression examples for the production/exact `PanSemState` bridge

@@ -1,4 +1,14 @@
-import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
+module
+
+public import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.CrepToLoopOriginalNamesProductionParity
 open Flapjack CrepToLoopProduction

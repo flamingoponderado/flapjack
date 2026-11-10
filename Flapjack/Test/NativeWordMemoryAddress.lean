@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
+module
 
-import Flapjack.RiscV.WordToStack
+public import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
+
+public import Flapjack.RiscV.WordToStack
+
+@[expose] public section
 
 /-! Fresh original native Addr/wInst fixtures and executed static-address boundary checks. No additional HOL port claimed. -/
 

@@ -1,4 +1,8 @@
-import Flapjack.RiscV.WordDiagnostics
+module
+
+public import Flapjack.RiscV.WordDiagnostics
+
+@[expose] public section
 
 namespace Flapjack.Test.WordDiagnosticLeaves
 open RiscV

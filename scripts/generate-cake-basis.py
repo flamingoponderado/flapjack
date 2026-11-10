@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 """Translate the pinned HOL basis AST into constructor-for-constructor Lean."""
+import sys
+from pathlib import Path as _Path
+sys.path.insert(0, str(_Path(__file__).resolve().parent))
+from lean_module_header import to_module  # noqa: E402
 import argparse
 import json
 import re
@@ -134,6 +138,7 @@ def generate():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(); parser.add_argument('--check', action='store_true'); args = parser.parse_args()
     result = generate()
+    result = to_module(result, private_in_public=True)
     if args.check:
         if not OUTPUT.exists() or OUTPUT.read_text() != result: raise SystemExit('basis rendering is stale')
         print('CakeML basis matches the captured HOL AST')

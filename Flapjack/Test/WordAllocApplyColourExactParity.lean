@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.Colour
-import Flapjack.RiscV.OracleAllocator
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Colour
+public import Flapjack.RiscV.OracleAllocator
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.WordAlloc.Colour
+public meta import Flapjack.RiscV.OracleAllocator
+@[expose] public section
 
 /-! Direct HOL parity for the tagged exact `applyColour` (`apply_colour_def`)
     over `WordLangProgHOL (BitVec 64)`. Every row is an original HOL `EVAL`

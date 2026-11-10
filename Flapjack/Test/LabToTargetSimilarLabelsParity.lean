@@ -1,5 +1,9 @@
-import Mathlib.Data.Set.Insert
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelSets
+module
+
+public import Mathlib.Data.Set.Insert
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelSets
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetSimilarLabelsParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabProps.LabelSets

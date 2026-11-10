@@ -1,10 +1,23 @@
-import Flapjack.Compiler.Backend.WordToStack.Guard
-import Flapjack.Compiler.Backend.LabToTarget.EncodingGuard
-import Flapjack.Compiler.Encoders.RiscV.Unsupported
-import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileDefinitions
-import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
-import Flapjack.RiscV.NativeSource
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Guard
+public import Flapjack.Compiler.Backend.LabToTarget.EncodingGuard
+public import Flapjack.Compiler.Encoders.RiscV.Unsupported
+public import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileDefinitions
+public import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+public import Flapjack.RiscV.NativeSource
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.LabToTarget.EncodingGuard
+public meta import Flapjack.Compiler.Backend.WordToStack.Guard
+public meta import Flapjack.Compiler.Encoders.Asm
+public meta import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+public meta import Flapjack.Compiler.Encoders.RiscV.Unsupported
+public meta import Flapjack.MemOp
+public meta import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileDefinitions
+public meta import Flapjack.RiscV.NativeSource
+@[expose] public section
 
 /-!
 # Word-to-stack and register-range guard tests

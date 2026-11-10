@@ -1,4 +1,12 @@
-import Flapjack.Pancake.Proofs.CrepInline
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Lean replays of direct HOL rows in

@@ -1,5 +1,16 @@
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
-import Flapjack.Test.Fixtures.PanGlobals
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Test.Fixtures.PanGlobals
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public meta import Flapjack.Test.Fixtures.PanGlobals
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # `panSem$evaluate_decls` canonical finite-map parity

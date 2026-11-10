@@ -1,5 +1,12 @@
-import Flapjack.RiscV.L3.Defs.IntegerLoad
-import Flapjack.Test.Fixtures.L3
+module
+
+public import Flapjack.RiscV.L3.Defs.IntegerLoad
+public import Flapjack.Test.Fixtures.L3
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.L3
+@[expose] public section
+
 set_option maxRecDepth 200000
 set_option maxErrors 5
 namespace Flapjack.Test.L3IntegerLoadParity

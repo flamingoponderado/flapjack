@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
+
+@[expose] public section
 namespace Flapjack.Test.WordToStackFramesParity
 open Flapjack.WordToStackProofs
 private abbrev AbstractFrame :=

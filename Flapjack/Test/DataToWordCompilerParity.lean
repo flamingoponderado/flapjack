@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Control
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Control
+
+@[expose] public section
 
 /-! These cases mirror `data_to_word_fragment_comp_probe.out` and
 `data_to_word_config_probe.out`. Some expected programs reuse compiler helpers,

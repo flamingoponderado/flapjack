@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.SetLess
+module
+
+public import Flapjack.RiscV.L3.Defs.SetLess
+
+@[expose] public section
 
 set_option maxRecDepth 20000
 namespace Flapjack.Test.L3SetLessParity

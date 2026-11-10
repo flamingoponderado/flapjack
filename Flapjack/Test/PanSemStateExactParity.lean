@@ -1,5 +1,13 @@
-import Flapjack.Pancake.Semantics.PanSem.StateExact
-import Flapjack.Test.Fixtures.PanSemExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateExact
+public import Flapjack.Test.Fixtures.PanSemExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.Semantics.PanSem.StateExact
+public meta import Flapjack.Test.Fixtures.PanSemExact
+@[expose] public section
 
 /-!
 # Direct-HOL parity for the exact `panSem$state` helpers

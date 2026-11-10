@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.WordLocation
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.WordLocation
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetWordLocationParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget
 private def labs : Spt (Spt Nat) := sptInsert 1 (sptInsert 5 20 .ln) .ln

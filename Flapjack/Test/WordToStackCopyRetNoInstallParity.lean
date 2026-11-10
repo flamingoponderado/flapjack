@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstall
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstall
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackCopyRetNoInstallParity
 open Flapjack.Compiler.Backend.StackLang

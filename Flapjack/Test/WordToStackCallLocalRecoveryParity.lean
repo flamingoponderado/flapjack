@@ -1,6 +1,13 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallLocalRecovery
-import Flapjack.Test.Fixtures.WordToStack
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallLocalRecovery
+public import Flapjack.Test.Fixtures.WordToStack
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.WordToStack
+@[expose] public section
 open Flapjack Flapjack.WordToStackProofs Flapjack.Test.Fixtures.WordToStack
+
 set_option maxRecDepth 8192
 -- cl_read_1_0_0_0
 example : (fun s : WordSemStateFiniteExact 1 Unit Unit => (WordSemStateFiniteExact.getVars [] s, (WordSemStateFiniteExact.getVars [] s).map (fun xs => [0, 1, 2, 3, 99, 900].map (fun n => sptLookup n (sptFromList2 xs))), [0, 1, 2, 3, 99, 900].map (fun n => sptLookup n s.locals))) ({ (base : WordSemStateFiniteExact 1 Unit Unit) with locals := .ln }) = (some [], some [none, none, none, none, none, none], [none, none, none, none, none, none]) := by decide +kernel

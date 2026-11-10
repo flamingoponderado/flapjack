@@ -1,4 +1,8 @@
-import Flapjack.Misc.Sptree.UnionAlgebra
+module
+
+public import Flapjack.Misc.Sptree.UnionAlgebra
+
+@[expose] public section
 
 /-! Same-input original tree-algebra observations, including malformed trees. -/
 namespace Flapjack.Test.SptUnionAlgebraParity

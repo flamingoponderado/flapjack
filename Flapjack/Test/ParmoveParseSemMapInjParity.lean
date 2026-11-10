@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.ParseSemMapInj
+module
+
+public import Flapjack.Compiler.Backend.Parmove.ParseSemMapInj
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmoveParseSemMapInjParity
 open Flapjack.Compiler.Backend.Parmove

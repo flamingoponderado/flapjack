@@ -1,5 +1,14 @@
-import Flapjack.CakeParser.PtreeConversion
-import Flapjack.CakeParser.PegEval
+module
+
+public import Flapjack.CakeParser.PtreeConversion
+public import Flapjack.CakeParser.PegEval
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CakeParser.PtreeConversion
+public meta import Flapjack.Misc.Location
+public meta import Flapjack.CakeParser.PegActions
+public meta import Flapjack.CakeParser.PegEval
+@[expose] public section
 
 /-! Replay complete expression trees and source annotations from pinned HOL. -/
 namespace Flapjack.Test.CakePtreeExprParity

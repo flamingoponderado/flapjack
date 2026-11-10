@@ -1,5 +1,9 @@
-import Flapjack.Misc.BalancedMap.RotationCorrect.SingleR
-import Flapjack.Misc.BalancedMap.LookupSemantics
+module
+
+public import Flapjack.Misc.BalancedMap.RotationCorrect.SingleR
+public import Flapjack.Misc.BalancedMap.LookupSemantics
+
+@[expose] public section
 
 namespace Flapjack.Test.BalancedMapSingleRParity
 open Flapjack.Misc.BalancedMap

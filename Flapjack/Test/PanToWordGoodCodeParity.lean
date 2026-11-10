@@ -1,6 +1,16 @@
-import Flapjack.Pancake.Proofs.PanToWord
-import Flapjack.Pancake.Proofs.PanToTarget
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Pancake.Proofs.PanToWord
+public import Flapjack.Pancake.Proofs.PanToTarget
+public import Flapjack.Basis.Pure.MlString
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Misc.Sptree
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Kernel replay for the exact `pan_to_word` good-code predicates

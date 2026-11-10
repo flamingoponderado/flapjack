@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnvConditions
+
+@[expose] public section
 
 /-! Empty-map observations from `source_to_flat_global_env_probe.out`. -/
 namespace Flapjack.Test.CakeGlobalEnvConditionsParity

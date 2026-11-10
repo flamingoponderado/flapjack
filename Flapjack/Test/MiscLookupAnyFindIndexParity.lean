@@ -1,6 +1,10 @@
-import Flapjack.Misc.LookupAny
-import Flapjack.Misc.Sptree
-import Flapjack.Misc.FindIndex
+module
+
+public import Flapjack.Misc.LookupAny
+public import Flapjack.Misc.Sptree
+public import Flapjack.Misc.FindIndex
+
+@[expose] public section
 
 /-! Kernel replay of the direct original-HOL `EVAL` rows in
 `scripts/hol-probes/misc_lookup_any_find_index_probe.out` for the misc

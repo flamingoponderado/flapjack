@@ -1,4 +1,8 @@
-import Flapjack.RiscV.WordExpressionFlatten
+module
+
+public import Flapjack.RiscV.WordExpressionFlatten
+
+@[expose] public section
 
 /-! Original HOL Seq_assoc clauses and whole output trees captured in
 word_simp_seq_assoc_source_probe.out. The earlier alternate Lean traversal

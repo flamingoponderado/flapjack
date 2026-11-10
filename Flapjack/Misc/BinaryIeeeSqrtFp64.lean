@@ -1,5 +1,9 @@
-import Flapjack.Misc.BinaryIeeeSqrt
-import Flapjack.Misc.BinaryIeeeRoundFp64
+module
+
+public import Flapjack.Misc.BinaryIeeeSqrt
+public import Flapjack.Misc.BinaryIeeeRoundFp64
+
+@[expose] public section
 
 /-!
 # Computable binary64 square root, proved equal to the sqrt specification

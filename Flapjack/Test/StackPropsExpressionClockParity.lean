@@ -1,5 +1,11 @@
-import Flapjack.Compiler.Backend.StackProps.ExpressionClock
-import Flapjack.Test.Fixtures.StackExpressions
+module
+
+public import Flapjack.Compiler.Backend.StackProps.ExpressionClock
+public import Flapjack.Test.Fixtures.StackExpressions
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.StackExpressions
+@[expose] public section
 
 open Flapjack Flapjack.StackSemExpressions
 open Flapjack.Test.Fixtures.StackExpressions

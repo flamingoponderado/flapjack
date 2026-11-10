@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.Steps
+module
+
+public import Flapjack.Compiler.Backend.Parmove.Steps
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveStepsParity
 open Flapjack.Compiler.Backend.Parmove
 example : Step ([(some (1 : Nat),some 1)],[],[]) ([],[],[]) := Step.removeSelf _ [] [] [] []

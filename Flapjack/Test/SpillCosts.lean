@@ -1,4 +1,8 @@
-import Flapjack.RiscV.SpillCosts
+module
+
+public import Flapjack.RiscV.SpillCosts
+
+@[expose] public section
 
 /-! Regression coverage for CakeML spill costs and canonicalized moves. -/
 

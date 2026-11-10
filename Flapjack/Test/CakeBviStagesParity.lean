@@ -1,6 +1,15 @@
-import Flapjack.Compiler.Backend.BackendPasses.Bvi
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
-import Flapjack.CakeParser.Frontend
+module
+
+public import Flapjack.Compiler.Backend.BackendPasses.Bvi
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+public import Flapjack.CakeParser.Frontend
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CakeParser.Frontend
+public meta import Flapjack.Compiler.Backend.BackendCommon.Trace
+public meta import Flapjack.Compiler.Backend.BackendPasses.Bvi
+public meta import Flapjack.Compiler.Backend.RiscVConfig.Executable
+@[expose] public section
 
 /-! The complete byte output is compared against pinned CakeML by
 `scripts/check-cake-bvi-explore.py`. This checks that capture succeeds and

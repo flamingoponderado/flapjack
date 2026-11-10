@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.PrefixPreservation
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.PrefixPreservation
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetPrefixPreservationParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabToTarget

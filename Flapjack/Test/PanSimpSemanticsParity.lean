@@ -1,4 +1,8 @@
-import Flapjack.PanSimpSemantics
+module
+
+public import Flapjack.PanSimpSemantics
+
+@[expose] public section
 
 /-!
 Focused regressions for the evaluator-level `pan_simp` sequence lemmas:

@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
-import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
-import Flapjack.Compiler.Backend.FlatToClos.Compile
-import Flapjack.Compiler.Backend.SourceToSource
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
+public import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
+public import Flapjack.Compiler.Backend.FlatToClos.Compile
+public import Flapjack.Compiler.Backend.SourceToSource
+
+@[expose] public section
 
 /-! Source declarations through the bounded flat stages to closure language. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

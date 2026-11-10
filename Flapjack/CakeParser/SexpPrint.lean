@@ -1,4 +1,12 @@
-import Flapjack.CakeParser.Sexp
+module
+
+public import Flapjack.CakeParser.Sexp
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Byte-oriented S-expression rendering for the CakeML `--print_sexp` path.
 The executable uses this renderer; correspondence with HOL's printer has not

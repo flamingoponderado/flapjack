@@ -1,5 +1,9 @@
-import Flapjack.StackAlloc.Runtime
-import Flapjack.RiscV.WordToStack
+module
+
+public import Flapjack.StackAlloc.Runtime
+public import Flapjack.RiscV.WordToStack
+
+@[expose] public section
 
 /-! Regression coverage for public arithmetic division with spilled operands. -/
 

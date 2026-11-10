@@ -5,7 +5,18 @@
 
   The programs are built at the HOL word width `8 word` (`BitVec 8`).
 -/
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Pancake.WordConvs
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanValues
+public meta import Flapjack.Pancake.WordConvs
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.WordLangFlatExpParity
 

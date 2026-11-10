@@ -1,5 +1,9 @@
-import Flapjack.Misc.MachineIeee.Arith
-import Flapjack.Misc.BinaryIeeeArith.RealCarrier
+module
+
+public import Flapjack.Misc.MachineIeee.Arith
+public import Flapjack.Misc.BinaryIeeeArith.RealCarrier
+
+@[expose] public section
 
 /-!
 # `machine_ieee` fp64 arithmetic and comparison over Mathlib reals

@@ -1,7 +1,18 @@
-import Flapjack.Compiler.Backend.ClosCall.Stubs
-import Flapjack.Compiler.Backend.ClosCall.Calls
-import Flapjack.Compiler.Backend.ClosCall.Compile
-import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Stubs
+public import Flapjack.Compiler.Backend.ClosCall.Calls
+public import Flapjack.Compiler.Backend.ClosCall.Compile
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.BackendCommon.Trace
+public meta import Flapjack.Compiler.Backend.ClosCall
+public meta import Flapjack.Compiler.Backend.ClosLang.Syntax
+public meta import Flapjack.Compiler.Backend.ClosCall.Calls
+public meta import Flapjack.Compiler.Backend.ClosCall.Compile
+public meta import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
+@[expose] public section
 
 /-! Replay original `clos_call_frontend_probe.out` cases. -/
 namespace Flapjack.Test.ClosCallParity

@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.LabProps.Native
-import Flapjack.Test.Fixtures.LabToTarget
+module
+
+public import Flapjack.Compiler.Backend.LabProps.Native
+public import Flapjack.Test.Fixtures.LabToTarget
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.LabToTarget
+@[expose] public section
+
 namespace Flapjack.Test.LabValidityNativeParity
 
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabProps

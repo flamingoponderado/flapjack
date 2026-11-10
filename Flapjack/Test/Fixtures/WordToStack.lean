@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.State
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.State
+
+@[expose] public section
 
 /-!
 # Shared WordToStack oracle fixture

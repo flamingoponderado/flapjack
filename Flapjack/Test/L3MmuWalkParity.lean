@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.MMU.Walk
+module
+
+public import Flapjack.RiscV.L3.Defs.MMU.Walk
+
+@[expose] public section
 namespace Flapjack.Test
 open Flapjack.RiscV.L3
 set_option maxRecDepth 200000

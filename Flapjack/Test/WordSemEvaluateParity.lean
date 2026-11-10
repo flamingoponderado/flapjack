@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 set_option linter.unusedSimpArgs false
 

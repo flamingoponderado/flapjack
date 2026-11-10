@@ -1,5 +1,9 @@
-import Mathlib.Data.Set.Insert
-import Flapjack.Compiler.Backend.StackProps.CodeLabels
+module
+
+public import Mathlib.Data.Set.Insert
+public import Flapjack.Compiler.Backend.StackProps.CodeLabels
+
+@[expose] public section
 
 /-! Same-input kernel replay of complete sets observed from original
 StackProps in scripts/hol-probes/stackprops_code_labels_probe.out.

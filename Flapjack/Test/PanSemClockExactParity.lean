@@ -1,4 +1,13 @@
-import Flapjack.Pancake.Semantics.PanSem.ClockExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.ClockExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.ClockExact
+public meta import Flapjack.Pancake.Semantics.PanSem.StateExact
+public meta import Flapjack.Pancake.Semantics.PanSem.TickShMemExact
+public meta import Flapjack.Pancake.WordConvs
+@[expose] public section
 
 /-!
 # Parity for the exact `panSem` clock bounds (`flapjack-pxn.18.3.6.9.23`)

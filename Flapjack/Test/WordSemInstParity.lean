@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
-import Flapjack.Misc.BinaryIeeeArithFp64
-import Flapjack.Misc.BinaryIeeeSqrtFp64
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+public import Flapjack.Misc.BinaryIeeeArithFp64
+public import Flapjack.Misc.BinaryIeeeSqrtFp64
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Direct HOL oracle rows for wordSem `inst_def`

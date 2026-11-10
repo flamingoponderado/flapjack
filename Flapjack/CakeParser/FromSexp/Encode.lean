@@ -1,5 +1,13 @@
-import Flapjack.CakeParser.Sexp
-import Flapjack.AstHOL.Syntax
+module
+
+public import Flapjack.CakeParser.Sexp
+public import Flapjack.AstHOL.Syntax
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! CakeML's byte-oriented S-expression string encoding. -/
 namespace Flapjack.CakeParser.FromSexp

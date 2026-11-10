@@ -13,7 +13,18 @@
   The programs are built at the HOL width `8 word` (`BitVec 8`), matching the
   direct oracle probe.
 -/
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Pancake.WordConvs
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.WordConvs
+public meta import Flapjack.Pancake.WordLang
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 open Flapjack
 

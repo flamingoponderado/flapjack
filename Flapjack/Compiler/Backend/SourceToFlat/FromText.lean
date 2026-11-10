@@ -1,7 +1,11 @@
-import Flapjack.CakeParser.Frontend
-import Flapjack.Basis.BasisProg
-import Flapjack.Compiler.Backend.SourceToFlat.ToRiscV
-import Flapjack.Compiler.Inference.Infer.Core
+module
+
+public import Flapjack.CakeParser.Frontend
+public import Flapjack.Basis.BasisProg
+public import Flapjack.Compiler.Backend.SourceToFlat.ToRiscV
+public import Flapjack.Compiler.Inference.Infer.Core
+
+@[expose] public section
 
 /-! Experimental composition of the source parser with the restricted backend.
 This bypasses CakeML's type inference and initial basis, and the backend still

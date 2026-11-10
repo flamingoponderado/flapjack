@@ -1,4 +1,11 @@
-import Flapjack.LoopCallEnv
+module
+
+public import Flapjack.LoopCallEnv
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.LoopCallEnv
+public meta import Flapjack.LoopFindCode
+@[expose] public section
 
 /-!
 # Original-domain parity for `loopSem.call_env`

@@ -1,5 +1,11 @@
-import Flapjack.Semantics
-import Flapjack.PanMemory
+module
+
+public import Flapjack.Semantics
+public import Flapjack.PanMemory
+-- The native decision below compiles `evalPanFlatProgWithCallsAndFfi`.
+public meta import Flapjack.PanMemory
+
+@[expose] public section
 
 /-!
 Small correctness bridges for the CakeML-faithful flat source memory model.

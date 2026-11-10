@@ -1,5 +1,9 @@
-import Flapjack.Translator.Monadic.MonadBase.Arrays
-import Flapjack.Compiler.Backend.RegAlloc.StateMap
+module
+
+public import Flapjack.Translator.Monadic.MonadBase.Arrays
+public import Flapjack.Compiler.Backend.RegAlloc.StateMap
+
+@[expose] public section
 namespace Flapjack.Test.MonadArraysParity
 open Translator.Monadic.MonadBase RegAlloc
 -- Replay of the eleven original monad_arrays_probe rows (HOL `FST` getter and

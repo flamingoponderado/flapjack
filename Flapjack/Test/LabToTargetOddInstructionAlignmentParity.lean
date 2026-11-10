@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.OddInstructionAlignment
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.OddInstructionAlignment
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetOddInstructionAlignmentParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps

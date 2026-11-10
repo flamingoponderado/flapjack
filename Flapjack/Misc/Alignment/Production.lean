@@ -1,5 +1,9 @@
-import Flapjack.Misc.Alignment
-import Flapjack.Pancake.Semantics.CrepSem.Log2ZeroParametric
+module
+
+public import Flapjack.Misc.Alignment
+public import Flapjack.Pancake.Semantics.CrepSem.Log2ZeroParametric
+
+@[expose] public section
 
 /-!
 # HOL `byte_align` against the Flapjack alignment renderings

@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+module
+
+public import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.LoopLang
+@[expose] public section
 
 /-!
 # Exact loopLang `locals_touched` against HOL oracle rows

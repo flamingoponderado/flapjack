@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordInst.ExecutableInstSelect
-import Flapjack.Test.WordInstSelectExactParity
-import Flapjack.Pancake.LoopToWord
+module
+
+public import Flapjack.Compiler.Backend.WordInst.ExecutableInstSelect
+public import Flapjack.Test.WordInstSelectExactParity
+public import Flapjack.Pancake.LoopToWord
+
+@[expose] public section
 
 /-! Fresh original selector regressions. Inputs and complete expected native
 programs are transcribed from word_inst_selector_executable_probe.out. Kernel

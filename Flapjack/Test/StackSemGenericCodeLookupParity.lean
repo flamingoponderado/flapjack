@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+
+@[expose] public section
 
 /-! Original generic-register-key observations from
 stackprops_ordered_code_labels_probe.out. Bool/list keys, independent word

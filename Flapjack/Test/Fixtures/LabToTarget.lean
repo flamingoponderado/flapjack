@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.Asm
+module
+
+public import Flapjack.Compiler.Encoders.Asm
+
+@[expose] public section
 
 /-!
 # Shared LabToTarget oracle fixture

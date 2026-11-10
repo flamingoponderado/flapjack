@@ -1,4 +1,10 @@
-import Flapjack.Pancake.CrepInline
+module
+
+public import Flapjack.Pancake.CrepInline
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.CrepInline
+@[expose] public section
 
 namespace Flapjack
 

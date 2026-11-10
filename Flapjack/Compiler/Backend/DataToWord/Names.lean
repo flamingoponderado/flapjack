@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.DataToWord.Locations
-import Flapjack.Basis.Pure.MlString
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Locations
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Names for fixed and generated data-to-word stubs. -/
 namespace Flapjack.Compiler.Backend.DataToWord

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocArgs.Flat
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocArgs.Flat
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackAllocFlatParity
 

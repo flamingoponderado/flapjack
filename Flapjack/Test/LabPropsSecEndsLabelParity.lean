@@ -1,5 +1,16 @@
-import Flapjack.Compiler.Backend.LabProps
-import Flapjack.Compiler.Backend.LabSem
+module
+
+public import Flapjack.Compiler.Backend.LabProps
+public import Flapjack.Compiler.Backend.LabSem
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.LabProps
+public meta import Flapjack.Compiler.Backend.LabSem
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # LabLang `is_Label` / `sec_ends_with_label` parity

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.L3.Target
-import Flapjack.Compiler.Encoders.Arm8.Machine.State
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.L3.Target
+public import Flapjack.Compiler.Encoders.Arm8.Machine.State
+
+@[expose] public section
 
 /-!
 # The closed-model validity link to the L3 gate

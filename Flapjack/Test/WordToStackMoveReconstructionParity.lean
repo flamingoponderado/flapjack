@@ -1,6 +1,13 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveReconstruction
-import Flapjack.Test.Fixtures.WordToStack
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveReconstruction
+public import Flapjack.Test.Fixtures.WordToStack
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.WordToStack
+@[expose] public section
 open Flapjack Flapjack.WordAlloc Flapjack.WordToStackProofs Flapjack.Test.Fixtures.WordToStack
+
 set_option maxRecDepth 8192
 -- The complete eight-component packet needs a larger equality-instance search.
 set_option synthInstance.maxSize 512

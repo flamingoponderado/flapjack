@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.GraphConstruction
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.GraphConstruction
+
+@[expose] public section
 
 namespace Flapjack.Test.RegAllocGraphConstructionParity
 open Flapjack Flapjack.RegAlloc Flapjack.Translator.Monadic.MonadBase

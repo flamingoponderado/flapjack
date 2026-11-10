@@ -1,4 +1,10 @@
-import Flapjack.LoopStateResult
+module
+
+public import Flapjack.LoopStateResult
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.LoopStateResult
+@[expose] public section
 
 /-!
 Parity test for the faithful Loop state/result boundary.

@@ -1,6 +1,10 @@
-import Flapjack.CakeParser.FromSexp.Control.Canonical
-import Flapjack.CakeParser.FromSexp.Operators
-import Flapjack.CakeParser.FromSexp.Ast
+module
+
+public import Flapjack.CakeParser.FromSexp.Control.Canonical
+public import Flapjack.CakeParser.FromSexp.Operators
+public import Flapjack.CakeParser.FromSexp.Ast
+
+@[expose] public section
 
 /-! S-expression list, option and identifier encoder correspondence. -/
 namespace Flapjack.CakeParser.FromSexp

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordLang.OccurrencesExact
+module
+
+public import Flapjack.Pancake.WordLang.OccurrencesExact
+
+@[expose] public section
 
 /-! Fresh original WordLangTheory rows from
 word_lang_occurrences_exact_probe.out. Every example invokes a newly tagged

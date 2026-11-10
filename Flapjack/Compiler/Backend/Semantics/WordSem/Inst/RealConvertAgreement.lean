@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
-import Flapjack.Misc.MachineIeee.ConvertReal
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+public import Flapjack.Misc.MachineIeee.ConvertReal
+
+@[expose] public section
 
 namespace Flapjack.WordSemStateFiniteExact
 

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedRelations
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedRelations
+
+@[expose] public section
 open Flapjack.Compiler.Backend.WordToStack
 
 -- sr_weaken_0_0

@@ -1,4 +1,8 @@
-import Flapjack.Misc.BinaryIeeeRoundFp32
+module
+
+public import Flapjack.Misc.BinaryIeeeRoundFp32
+
+@[expose] public section
 
 /-! Kernel replay of50 freshly captured original binary32 nearest-even outputs.
 Each proof rewrites the complete choice specification through its full-domain

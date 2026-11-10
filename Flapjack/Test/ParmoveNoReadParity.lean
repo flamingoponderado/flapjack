@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Parmove.NoRead
+module
+
+public import Flapjack.Compiler.Backend.Parmove.NoRead
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.Parmove.Semantics
+@[expose] public section
 namespace Flapjack.Test.ParmoveNoReadParity
 open Flapjack.Compiler.Backend.Parmove
 private def env (r : Nat) := r + 10

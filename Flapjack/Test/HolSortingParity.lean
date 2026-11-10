@@ -1,4 +1,8 @@
-import Flapjack.Misc.Sorting
+module
+
+public import Flapjack.Misc.Sorting
+
+@[expose] public section
 
 namespace Flapjack.Test.HolSortingParity
 open Flapjack

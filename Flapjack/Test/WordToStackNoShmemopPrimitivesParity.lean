@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
+
+@[expose] public section
 namespace Flapjack.Test.WordToStackNoShmemopPrimitivesParity
 open Flapjack Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Backend.StackProps

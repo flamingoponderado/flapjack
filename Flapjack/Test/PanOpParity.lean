@@ -1,4 +1,8 @@
-import Flapjack.Semantics
+module
+
+public import Flapjack.Semantics
+
+@[expose] public section
 
 /-!
 # `panSem$pan_op_def` parity

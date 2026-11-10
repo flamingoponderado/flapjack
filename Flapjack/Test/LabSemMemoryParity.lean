@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabSem.Memory
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Memory
+
+@[expose] public section
 
 /-! Native direct kernel replays of labsem_memory_probe.out. All8 mem_op cases,
 raw failing writes, narrow alignment/domain/type errors, endian/resizing,

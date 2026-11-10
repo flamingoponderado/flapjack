@@ -1,4 +1,8 @@
-import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceR
+module
+
+public import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceR
+
+@[expose] public section
 namespace Flapjack.Test.BalancedMapBalanceREqParity
 open Flapjack.Misc.BalancedMap
 private def cmp (x y : Fin 7) : Ordering := compare x.val y.val

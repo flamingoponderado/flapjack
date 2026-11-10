@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+
+@[expose] public section
 
 namespace Flapjack.Test.LabToTargetMmioClassificationParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget

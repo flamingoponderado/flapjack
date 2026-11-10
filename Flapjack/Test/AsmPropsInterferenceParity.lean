@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.AsmProps.Interference
+module
+
+public import Flapjack.Compiler.Encoders.AsmProps.Interference
+
+@[expose] public section
 namespace Flapjack.Test.AsmPropsInterferenceParity
 open Flapjack
 example {S P : Type} (env : Nat → S → S) (proj : S → P) :

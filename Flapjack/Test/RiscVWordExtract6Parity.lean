@@ -1,4 +1,8 @@
-import Flapjack.RiscV.CorrectnessEncoding
+module
+
+public import Flapjack.RiscV.CorrectnessEncoding
+
+@[expose] public section
 
 /-! The checked HOL oracle values are in
     `scripts/hol-probes/riscv_word_extract_6_probe.out`.  These guards pin the

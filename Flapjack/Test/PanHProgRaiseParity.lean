@@ -1,4 +1,10 @@
-import Flapjack.PanHProgRaise
+module
+
+public import Flapjack.PanHProgRaise
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanHProgRaise
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `h_prog_raise_def`

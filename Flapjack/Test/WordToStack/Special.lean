@@ -1,5 +1,9 @@
-import Flapjack.RiscV.WordToStack
-import Flapjack.RiscV.Backend
+module
+
+public import Flapjack.RiscV.WordToStack
+public import Flapjack.RiscV.Backend
+
+@[expose] public section
 
 namespace Flapjack.RiscV
 

@@ -1,5 +1,12 @@
-import Flapjack.Pancake.PanGlobals
-import Flapjack.Pancake.PanGlobals.CompileExpExact
+module
+
+public import Flapjack.Pancake.PanGlobals
+public import Flapjack.Pancake.PanGlobals.CompileExpExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanGlobals
+public meta import Flapjack.Pancake.PanGlobals.CompileExpExact
+@[expose] public section
 
 namespace Flapjack.Test.PanGlobalsCompileParity
 

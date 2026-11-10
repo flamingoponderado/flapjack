@@ -1,5 +1,12 @@
-import Flapjack.Pancake.PanLang.Shape
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Pancake.PanLang.Shape
+public import Flapjack.Basis.Pure.MlString
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.Pancake.PanLang.Shape
+@[expose] public section
 
 /-!
 Parity fixture for the exact `panLang$shape` carrier

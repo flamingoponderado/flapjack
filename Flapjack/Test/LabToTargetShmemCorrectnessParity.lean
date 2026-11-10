@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 namespace Flapjack.Test.LabToTargetShmemCorrectnessParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps

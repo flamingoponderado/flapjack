@@ -1,4 +1,14 @@
-import Flapjack.FiniteMap.Basic
+module
+
+public import Flapjack.FiniteMap.Basic
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanCommonProps
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Regression checks for the external HOL theorem

@@ -1,6 +1,10 @@
-import Flapjack.RiscV.L3.Defs
-import Flapjack.Misc.BinaryIeeeDirectedFp32
-import Flapjack.Misc.BinaryIeeeDirectedFp64
+module
+
+public import Flapjack.RiscV.L3.Defs
+public import Flapjack.Misc.BinaryIeeeDirectedFp32
+public import Flapjack.Misc.BinaryIeeeDirectedFp64
+
+@[expose] public section
 
 /-! All33 original cross-precision full-state observations from
 l3_riscv_cross_format_probe.out. Unobserved ARB fields instantiate defaults.

@@ -1,5 +1,9 @@
-import Flapjack.Misc.BalancedMap.Domain
-import Flapjack.Misc.BalancedMap.KeySetComparison
+module
+
+public import Flapjack.Misc.BalancedMap.Domain
+public import Flapjack.Misc.BalancedMap.KeySetComparison
+
+@[expose] public section
 
 namespace Flapjack.Test.BalancedMapHeterogeneousParity
 open Flapjack Flapjack.Misc.BalancedMap

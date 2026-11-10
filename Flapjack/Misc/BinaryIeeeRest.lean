@@ -1,5 +1,9 @@
-import Flapjack.Misc.BinaryIeeeArith
-import Flapjack.Misc.BinaryIeeeSqrt.RealCarrier
+module
+
+public import Flapjack.Misc.BinaryIeeeArith
+public import Flapjack.Misc.BinaryIeeeSqrt.RealCarrier
+
+@[expose] public section
 
 /-!
 # HOL `binary_ieee` definitions not reached by `wordSem`

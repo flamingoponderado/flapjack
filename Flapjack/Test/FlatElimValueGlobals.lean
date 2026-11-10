@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.BackendCommon.Trace
+public meta import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
+public meta import Flapjack.Misc.Sptree
+@[expose] public section
 
 /-! Finite regression observations captured from the original HOL analysis. -/
 namespace Flapjack.Test.FlatElimValueGlobals

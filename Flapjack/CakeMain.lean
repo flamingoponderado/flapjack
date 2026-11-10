@@ -1,14 +1,22 @@
-import Flapjack.Compiler.Backend.SourceToFlat.FromText
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
-import Flapjack.RiscV.CakeArtifactFormat
-import Flapjack.Compiler.Inference.Infer.Diagnostics
-import Flapjack.Compiler.Inference.Infer.TypesOutput
-import Flapjack.CakeParser.Diagnostics
-import Flapjack.CakeHelp
-import Flapjack.CakeFeatures
-import Flapjack.CakeParser.FromSexp.Ast
-import Flapjack.CakeParser.ToSexp
-import Flapjack.Compiler.Backend.BackendPasses.Stack
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.FromText
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+public import Flapjack.RiscV.CakeArtifactFormat
+public import Flapjack.Compiler.Inference.Infer.Diagnostics
+public import Flapjack.Compiler.Inference.Infer.TypesOutput
+public import Flapjack.CakeParser.Diagnostics
+public import Flapjack.CakeHelp
+public import Flapjack.CakeFeatures
+public import Flapjack.CakeParser.FromSexp.Ast
+public import Flapjack.CakeParser.ToSexp
+public import Flapjack.Compiler.Backend.BackendPasses.Stack
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Experimental CakeML source-to-RISC-V command. The frontend and backend
 are still bounded ports, the original diagnostics and full CLI are incomplete,

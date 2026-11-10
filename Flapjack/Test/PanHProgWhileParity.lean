@@ -1,4 +1,8 @@
-import Flapjack.PanHProgWhile
+module
+
+public import Flapjack.PanHProgWhile
+
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `h_prog_while_def`

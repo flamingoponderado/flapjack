@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
+
+@[expose] public section
 
 /-! Original HOL observations with genuinely distinct saved-frame and
 bitmap/target-stack word dimensions. Saved locals and predicted frame sizes

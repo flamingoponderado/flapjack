@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+
+@[expose] public section
 /-! Source-shaped string and byte-copy cases of flat primitive application. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.SemanticPrimitivesHOL Flapjack.AstHOL

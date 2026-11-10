@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.StepsCorrect
+module
+
+public import Flapjack.Compiler.Backend.Parmove.StepsCorrect
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveStepsCorrectParity
 open Flapjack.Compiler.Backend.Parmove
 private def cyclePending : List (Move Nat) := [(some 1,some 2),(some 2,some 1)]

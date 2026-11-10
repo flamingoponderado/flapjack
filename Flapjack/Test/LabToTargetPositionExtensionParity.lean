@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.PositionExtension
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.PositionExtension
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetPositionExtensionParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps

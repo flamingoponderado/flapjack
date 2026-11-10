@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ExtractLabelsHelpers
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ExtractLabelsHelpers
+
+@[expose] public section
 
 /-! Independent original ordered-list observations and full helper applications.
 Regression evidence does not establish cross-language equivalence. -/

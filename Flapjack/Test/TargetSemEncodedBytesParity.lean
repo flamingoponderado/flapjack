@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.EncodedBytes
-import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
-import Flapjack.Misc.BytesInMemory
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.EncodedBytes
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
+public import Flapjack.Misc.BytesInMemory
+
+@[expose] public section
 
 /-!
 Kernel exercise for the exact targetSem prerequisites `apply_oracle_def`,

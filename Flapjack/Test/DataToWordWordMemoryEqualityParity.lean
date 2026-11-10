@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordMemoryEquality
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordMemoryEquality
+
+@[expose] public section
 
 /-! Mixed-width results captured by the HOL memory representation probe. -/
 namespace Flapjack.Test.DataToWordWordMemoryEqualityParity

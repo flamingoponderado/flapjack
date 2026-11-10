@@ -1,19 +1,15 @@
-/-
-Parity for the exact HOL `pan_globalsProof$evaluate_two` / `num_cases_lemma`
-pure-clock slice (`cakeml/pancake/proofs/pan_globalsProofScript.sml:2631-2657`):
-the ports `evaluateTwo` and `numCasesLemma` over the reviewed finite-support
-carrier.
+module
 
-`evaluate_two` is a conditional statement about two arbitrary clock-bounded runs
-of an arbitrary `ProgHOL`, so no concrete original-HOL `EVAL` oracle row
-applies, and `evaluateHOLFiniteState` is a classical noncomputable evaluator, so
-`#guard` cannot compute its result.  As for the sibling
-`PanGlobalsResortDeclsEvaluateParity`, this module therefore replays each HOL
-statement kernel-checked with concrete clock values plus `example`s that apply
-the ported theorems.  No oracle row is fabricated.
--/
-import Flapjack.Pancake.Proofs.PanGlobals
-import Flapjack.Test.Fixtures.PanGlobals
+public import Flapjack.Pancake.Proofs.PanGlobals
+public import Flapjack.Test.Fixtures.PanGlobals
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.PanGlobals
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.PanGlobalsEvaluateTwoParity
 

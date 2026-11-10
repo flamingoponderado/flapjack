@@ -1,5 +1,12 @@
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
-import Flapjack.Test.Fixtures.PanProps
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
+public import Flapjack.Test.Fixtures.PanProps
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
+public meta import Flapjack.Test.Fixtures.PanProps
+@[expose] public section
 
 /-! Lean cases paired with `scripts/hol-probes/pan_structs_value_validity_probe.out`. -/
 

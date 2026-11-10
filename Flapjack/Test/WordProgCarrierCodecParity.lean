@@ -1,4 +1,8 @@
-import Flapjack.Pancake.LoopToWord
+module
+
+public import Flapjack.Pancake.LoopToWord
+
+@[expose] public section
 
 /-!
 # Exact WordLang program carrier fixtures

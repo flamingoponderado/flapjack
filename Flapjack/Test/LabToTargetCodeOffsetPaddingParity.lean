@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeOffsetPadding
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeOffsetPadding
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetCodeOffsetPaddingParity
 open Flapjack Flapjack.Misc Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

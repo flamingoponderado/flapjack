@@ -1,4 +1,14 @@
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
+module
+
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Direct comparison rows for HOL `locals_rel_get_var`/`locals_rel_get_vars`

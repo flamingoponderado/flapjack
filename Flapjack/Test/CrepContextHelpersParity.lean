@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepToLoop
+module
+
+public import Flapjack.Pancake.CrepToLoop
+
+@[expose] public section
 
 /-! Direct parity for `gen_temps`, `rt_var`, and `rt_vars`
 (`crep_to_loopScript.sml:101-118`). -/

@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Proofs.PanToCrep.Primop
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep.Primop
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.PanToCrep.Primop
+@[expose] public section
 
 namespace Flapjack.Test.PanCrepPrimopParity
 

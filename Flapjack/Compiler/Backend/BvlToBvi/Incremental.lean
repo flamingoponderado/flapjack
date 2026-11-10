@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Config
-import Flapjack.Compiler.Backend.BvlToBvi.Compile
-import Flapjack.Compiler.Backend.BvlInline
-import Flapjack.Compiler.Backend.BviTailrec.Rewrite
-import Flapjack.Compiler.Backend.BviTmc
-import Flapjack.Compiler.Backend.BviInline
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Config
+public import Flapjack.Compiler.Backend.BvlToBvi.Compile
+public import Flapjack.Compiler.Backend.BvlInline
+public import Flapjack.Compiler.Backend.BviTailrec.Rewrite
+public import Flapjack.Compiler.Backend.BviTmc
+public import Flapjack.Compiler.Backend.BviInline
+
+@[expose] public section
 
 /-! Checked incremental BVL-to-BVI optimization pipeline. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi

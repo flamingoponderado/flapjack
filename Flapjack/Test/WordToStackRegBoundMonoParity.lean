@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundMono
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundMono
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackRegBoundMonoParity
 open Flapjack Flapjack.Compiler.Backend.StackProps Flapjack.Compiler.Backend.StackLang

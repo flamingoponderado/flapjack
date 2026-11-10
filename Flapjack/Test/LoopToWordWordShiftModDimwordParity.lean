@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.LoopToWord.WordShiftModDimword
+module
+
+public import Flapjack.Pancake.Proofs.LoopToWord.WordShiftModDimword
+
+@[expose] public section
 
 /-!
 # Regression for the exact Loop-to-Word `word_sh_SOME_MOD_dimword` port

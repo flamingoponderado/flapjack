@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetUpdateSimilarityParity
 open Flapjack Flapjack.Misc Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Encoders.Asm

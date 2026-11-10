@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordUnreach
-import Flapjack.RiscV.WordUnreach
+module
+
+public import Flapjack.Compiler.Backend.WordUnreach
+public import Flapjack.RiscV.WordUnreach
+
+@[expose] public section
 
 namespace Flapjack.Test.WordUnreachDefParity
 open Flapjack Flapjack.Compiler.Backend.WordUnreach

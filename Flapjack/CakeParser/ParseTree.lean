@@ -1,6 +1,10 @@
-import Flapjack.CakeParser.Nonterminal
-import Flapjack.CakeParser.Tokens
-import Flapjack.Misc.Location
+module
+
+public import Flapjack.CakeParser.Nonterminal
+public import Flapjack.CakeParser.Tokens
+public import Flapjack.Misc.Location
+
+@[expose] public section
 
 /-! CakeML's instantiated grammar parse trees. These declarations specialize
 HOL's polymorphic grammar carrier to CakeML and are infrastructure rather

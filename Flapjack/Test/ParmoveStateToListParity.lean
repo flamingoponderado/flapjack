@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.StateToList
+module
+
+public import Flapjack.Compiler.Backend.Parmove.StateToList
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveStateToListParity
 open Flapjack.Compiler.Backend.Parmove
 example : stateToList (([],[],[]) : List (Nat) × List (Nat) × List (Nat)) = [] := by rfl

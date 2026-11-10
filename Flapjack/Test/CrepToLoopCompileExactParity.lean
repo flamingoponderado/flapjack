@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepToLoop.ContextExact
+module
+
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+
+@[expose] public section
 
 /-! Exact-carrier source equations for every constructor of
 `crep_to_loop$compile_def`, checked against the direct HOL EVAL fixture

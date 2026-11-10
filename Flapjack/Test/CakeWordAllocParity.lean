@@ -1,6 +1,10 @@
-import Flapjack.RiscV.CakeRegAlloc
-import Flapjack.RiscV.LinearScan
-import Flapjack.RiscV.LinearScanSource
+module
+
+public import Flapjack.RiscV.CakeRegAlloc
+public import Flapjack.RiscV.LinearScan
+public import Flapjack.RiscV.LinearScanSource
+
+@[expose] public section
 
 /-!
 # Direct Cake `word_alloc` output parity

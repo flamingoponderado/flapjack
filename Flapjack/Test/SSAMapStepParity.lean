@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapStep
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapStep
+
+@[expose] public section
 
 namespace Flapjack.Test.SSAMapStepParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc

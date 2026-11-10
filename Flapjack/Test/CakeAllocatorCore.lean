@@ -1,4 +1,11 @@
-import Flapjack.RiscV.CakeAllocatorCore
+module
+
+public import Flapjack.RiscV.CakeAllocatorCore
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.RiscV.ArtifactFormat
+public meta import Flapjack.RiscV.CakeAllocatorCore
+@[expose] public section
 
 /-!
 # Executable checks for the CakeML IRC allocator core

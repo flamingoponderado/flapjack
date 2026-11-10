@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.StoreInit
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.StoreInit
+
+@[expose] public section
 
 /-! Fresh original store_init full definition/type and complete output snapshots
 are recorded in store_init_probe.out. Every monomorphic constructor is observed,

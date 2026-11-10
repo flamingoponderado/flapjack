@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeMoves
-import Flapjack.Compiler.Backend.MlStringBridge
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
-import Flapjack.RiscV.Lab
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeMoves
+public import Flapjack.Compiler.Backend.MlStringBridge
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+public import Flapjack.RiscV.Lab
+
+@[expose] public section
 
 /-! Flapjack implementation correspondence for actual move materialization.
 There is no HOL declaration for this production AST projection. The existing

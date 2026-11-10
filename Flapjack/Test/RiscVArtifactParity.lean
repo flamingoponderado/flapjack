@@ -1,7 +1,11 @@
-import Flapjack.RiscV.PipelineDiagnostics
-import Flapjack.RiscV.ArtifactFormat
-import Flapjack.Test.OriginalPancakeProbes
-import Flapjack.RiscV.RuntimeBytes
+module
+
+public import Flapjack.RiscV.PipelineDiagnostics
+public import Flapjack.RiscV.ArtifactFormat
+public import Flapjack.Test.OriginalPancakeProbes
+public import Flapjack.RiscV.RuntimeBytes
+
+@[expose] public section
 
 /-!
 # Exact RISC-V artifact parity for the `dec_clock` fixture

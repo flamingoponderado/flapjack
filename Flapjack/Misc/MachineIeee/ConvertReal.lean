@@ -1,6 +1,10 @@
-import Flapjack.Misc.MachineIeee.Convert
-import Flapjack.Misc.MachineIeee.ConvertInt
-import Flapjack.Misc.BinaryIeeeSqrt.RealCarrier
+module
+
+public import Flapjack.Misc.MachineIeee.Convert
+public import Flapjack.Misc.MachineIeee.ConvertInt
+public import Flapjack.Misc.BinaryIeeeSqrt.RealCarrier
+
+@[expose] public section
 
 /-!
 # Arbitrary-real machine IEEE conversion wrappers

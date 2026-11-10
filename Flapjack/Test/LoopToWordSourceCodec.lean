@@ -1,6 +1,10 @@
-import Flapjack.Pancake.LoopToWord.CompFuncExact
-import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.Domain
+module
+
+public import Flapjack.Pancake.LoopToWord.CompFuncExact
+public import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.Domain
+
+@[expose] public section
 
 namespace Flapjack.Test.LoopToWordSourceCodec
 open Flapjack

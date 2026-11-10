@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
+
+@[expose] public section
 
 /-! Original padding observations, including nonempty accumulators and nops. -/
 namespace Flapjack.Test.LabToTargetPaddingSimilarityParity

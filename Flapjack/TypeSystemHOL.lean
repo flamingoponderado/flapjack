@@ -1,4 +1,8 @@
-import Flapjack.AstHOL.LitOp
+module
+
+public import Flapjack.AstHOL.LitOp
+
+@[expose] public section
 
 /-! CakeML semantic type carrier used by inference. -/
 namespace Flapjack.TypeSystemHOL

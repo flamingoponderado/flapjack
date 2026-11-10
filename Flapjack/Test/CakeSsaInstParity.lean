@@ -1,4 +1,8 @@
-import Flapjack.RiscV.Allocator
+module
+
+public import Flapjack.RiscV.Allocator
+
+@[expose] public section
 
 /-! Direct Cake parity for ordinary `ssa_cc_trans_inst` rows from
     `cakeml/compiler/backend/word_allocScript.sml:137-230`.  The exact shapes

@@ -1,4 +1,10 @@
-import Flapjack.Display
+module
+
+public import Flapjack.Display
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Display
+@[expose] public section
 
 namespace Flapjack.Test.DisplayParity
 

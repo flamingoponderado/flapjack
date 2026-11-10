@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.EvenColour
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.EvenColour
+
+@[expose] public section
 
 /-! Original physical/virtual, sparse-tree and duplicate-entry observations. -/
 namespace Flapjack.Test.WordAllocEvenColourParity

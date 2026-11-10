@@ -1,4 +1,8 @@
-import Flapjack.Misc.Mergesort
+module
+
+public import Flapjack.Misc.Mergesort
+
+@[expose] public section
 
 namespace Flapjack.Test.HolMergesortParity
 open Flapjack.Mergesort

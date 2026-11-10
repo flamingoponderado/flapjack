@@ -1,4 +1,8 @@
-import Flapjack.Misc.BalancedMap.NullSemantics
+module
+
+public import Flapjack.Misc.BalancedMap.NullSemantics
+
+@[expose] public section
 namespace Flapjack.Test.BalancedMapNullParity
 open Flapjack Flapjack.Misc.BalancedMap
 example {κ ι ν : Type} (cmp : κ → ι → Ordering) (tree : Map κ ν) :

@@ -1,4 +1,11 @@
-import Flapjack.CompileFunctionDistinct
+module
+
+public import Flapjack.CompileFunctionDistinct
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CompileFunctionDistinct
+public meta import Flapjack.Pancake.PanToCrep.Compile
+@[expose] public section
 
 namespace Flapjack
 

@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Semantics.CrepRuntimeTarget
+module
+
+public import Flapjack.Pancake.Semantics.CrepRuntimeTarget
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.CrepRuntimeTarget
+@[expose] public section
 
 /-!
 # Canonical RISC-V 64 Crep runtime target and word/byte memory boundary

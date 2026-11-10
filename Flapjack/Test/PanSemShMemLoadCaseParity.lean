@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
+
+@[expose] public section
 
 /-!
 # Finite-carrier ShMemLoad case guards

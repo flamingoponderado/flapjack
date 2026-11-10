@@ -1,6 +1,19 @@
-import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Test.Fixtures.PanSemExact
-import Flapjack.Test.PanValueFfiCore
+module
+
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Test.PanValueFfiCore
+public import Flapjack.Test.Fixtures.PanSemExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Parser
+public meta import Flapjack.Test.PanValueFfiCore
+public meta import Flapjack.Pancake.Semantics.PanSemStateEval
+public meta import Flapjack.Test.Fixtures.PanSemExact
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Direct regression for the source `PanSemState` code-map `Return`/`Raise`

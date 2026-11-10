@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.PaddingLabels
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.PaddingLabels
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetPaddingCodeLabelsParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString Flapjack.Compiler.Backend.LabSem

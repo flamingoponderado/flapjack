@@ -1,4 +1,8 @@
-import Flapjack.RiscV.RegAlloc
+module
+
+public import Flapjack.RiscV.RegAlloc
+
+@[expose] public section
 
 /-!
 # Linear-scan live trees

@@ -1,7 +1,16 @@
-import Flapjack.Compiler.Backend.LabToTarget.Diagnostics
-import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
-import Flapjack.RiscV.NativeSource
-import Flapjack.RiscV.NativeCLIAdapter
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Diagnostics
+public import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+public import Flapjack.RiscV.NativeSource
+public import Flapjack.RiscV.NativeCLIAdapter
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.LabToTarget.Diagnostics
+public meta import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+public meta import Flapjack.RiscV.NativeSource
+public meta import Flapjack.RiscV.PipelineDiagnostics
+@[expose] public section
 
 /-!
 # Located backend-failure diagnostics

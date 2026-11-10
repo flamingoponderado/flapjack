@@ -1,4 +1,8 @@
-import Flapjack.Misc.BinaryIeeeRound
+module
+
+public import Flapjack.Misc.BinaryIeeeRound
+
+@[expose] public section
 
 /-!
 Direct HOL oracle rows for the binary64 rounding constants

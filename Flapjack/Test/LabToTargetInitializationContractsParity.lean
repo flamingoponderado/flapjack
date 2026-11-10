@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
+
+@[expose] public section
 
 namespace Flapjack.Test.LabToTargetInitializationContractsParity
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabToTarget

@@ -1,4 +1,8 @@
-import Flapjack.Translator.Monadic.MonadBase.ArrayLength
+module
+
+public import Flapjack.Translator.Monadic.MonadBase.ArrayLength
+
+@[expose] public section
 
 namespace Flapjack.Test.MonadArrayLengthParity
 open Flapjack.Translator.Monadic.MonadBase

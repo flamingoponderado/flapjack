@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
+
+@[expose] public section
 
 /-! Original closure evaluator clock statements over the reviewed state. -/
 namespace Flapjack.Compiler.Backend.ClosSem

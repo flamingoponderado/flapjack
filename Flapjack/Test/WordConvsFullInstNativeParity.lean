@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordConvs.FullInstOkLess
+module
+
+public import Flapjack.Pancake.WordConvs.FullInstOkLess
+
+@[expose] public section
 
 namespace Flapjack.Test.WordConvsFullInstNativeParity
 open Flapjack Flapjack.Compiler.Encoders.Asm

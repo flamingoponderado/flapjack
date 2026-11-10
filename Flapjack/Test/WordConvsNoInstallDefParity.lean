@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordConvs.NoInstall
+module
+
+public import Flapjack.Pancake.WordConvs.NoInstall
+
+@[expose] public section
 
 namespace Flapjack.Test.WordConvsNoInstallDefParity
 open Flapjack

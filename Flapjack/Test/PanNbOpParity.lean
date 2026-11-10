@@ -1,6 +1,15 @@
-import Flapjack.PanNbOp
-import Flapjack.PanValueFfiCore
-import Flapjack.Pancake.Semantics.PanSemStateEval
+module
+
+public import Flapjack.PanNbOp
+public import Flapjack.PanValueFfiCore
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanNbOp
+public meta import Flapjack.PanValueFfiCore
+public meta import Flapjack.Pancake.PanStatic
+public meta import Flapjack.Pancake.Semantics.PanSemStateEval
+@[expose] public section
 
 /-!
 # Parity checks for `panSem$nb_op_def`

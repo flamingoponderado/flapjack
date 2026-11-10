@@ -1,4 +1,14 @@
-import Flapjack.Pancake.PanToCrep.CompileExact
+module
+
+public import Flapjack.Pancake.PanToCrep.CompileExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanToCrep.CompileExact
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Exact-carrier regressions for original HOL `comp_func_def` rows in
 `scripts/hol-probes/pan_to_crep_comp_func_probe.out`. -/

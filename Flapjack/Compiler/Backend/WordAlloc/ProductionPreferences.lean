@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionCutsetContext
-import Flapjack.Compiler.Backend.WordAlloc.ProductionCallInputs
-import Flapjack.Compiler.Backend.RegAlloc.ProductionWrapper
-import Flapjack.Compiler.Backend.WordAlloc.GetPrefs
-import Flapjack.RiscV.SpillCosts
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionCutsetContext
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionCallInputs
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionWrapper
+public import Flapjack.Compiler.Backend.WordAlloc.GetPrefs
+public import Flapjack.RiscV.SpillCosts
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open RiscV Compiler.Encoders.Asm

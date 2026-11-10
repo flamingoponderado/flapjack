@@ -1,4 +1,8 @@
-import Flapjack.Misc.Bit
+module
+
+public import Flapjack.Misc.Bit
+
+@[expose] public section
 
 namespace Flapjack.Test.LogrootParity
 open Flapjack

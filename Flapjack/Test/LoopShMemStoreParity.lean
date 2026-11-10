@@ -1,5 +1,12 @@
-import Flapjack.LoopFfi
-import Flapjack.Test.Fixtures.Loop
+module
+
+public import Flapjack.LoopFfi
+public import Flapjack.Test.Fixtures.Loop
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.LoopFfi
+public meta import Flapjack.Test.Fixtures.Loop
+@[expose] public section
 
 /-!
 # Original-domain parity for `loopSem$sh_mem_store`

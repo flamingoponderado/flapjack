@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackNames.OperandNames
+module
+
+public import Flapjack.Compiler.Backend.StackNames.OperandNames
+
+@[expose] public section
 namespace Flapjack.Test.StackNamesOperandParity
 open Flapjack.Compiler.Backend.StackNames
 open Flapjack.Compiler.Encoders.Asm

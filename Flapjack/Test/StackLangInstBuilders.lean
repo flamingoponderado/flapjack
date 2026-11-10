@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackLang.InstBuilders
+module
+
+public import Flapjack.Compiler.Backend.StackLang.InstBuilders
+
+@[expose] public section
 
 /-! Kernel fixtures of original native helper constructors; no additional HOL theorem claimed. -/
 

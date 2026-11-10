@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
+
+@[expose] public section
 
 /-! Regression cases for the arbitrary HOL payload of force_rename.
 These are Flapjack fixtures, not additional HOL theorem ports. -/

@@ -1,5 +1,11 @@
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Test.Fixtures.PanProps
+module
+
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Test.Fixtures.PanProps
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.PanProps
+@[expose] public section
 
 /-! Exact-carrier parity for HOL `panProps$is_wf_shape_of_v`
 (`panPropsScript.sml:38`, bead flapjack-4ac.4.6). -/

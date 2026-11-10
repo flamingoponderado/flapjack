@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.ExtractLabels
+module
+
+public import Flapjack.Compiler.Backend.StackProps.ExtractLabels
+
+@[expose] public section
 
 /-! Same-input kernel replay of fresh original ordered label observations.
 These regressions do not establish cross-language equivalence. -/

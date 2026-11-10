@@ -1,4 +1,15 @@
-import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
+module
+
+public import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.LoopFfi
+public meta import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Original HOL parity for `loop_to_wordProof$globals_rel`

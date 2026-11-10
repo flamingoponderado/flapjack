@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
+
+@[expose] public section
 open Flapjack.Compiler.Backend.WordCse
 
 -- lo_value_0_0

@@ -1,4 +1,14 @@
-import Flapjack.Pancake.Semantics.CrepSem.StateExact
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.StateExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.CrepSem.StateExact
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Direct HOL-row fixtures for the finite-support-carrier CrepSem state helpers.

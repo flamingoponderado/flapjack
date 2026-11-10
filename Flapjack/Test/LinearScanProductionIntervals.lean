@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.LinearScan.ProductionIntervals
+module
+
+public import Flapjack.Compiler.Backend.LinearScan.ProductionIntervals
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Translator.Monadic.MonadBase
+public meta import Flapjack.Compiler.Backend.LinearScan.HiddenState
+public meta import Flapjack.Compiler.Backend.RegAlloc.ClashTree
+public meta import Flapjack.Compiler.Backend.RegAlloc.Exceptions
+public meta import Flapjack.Compiler.Backend.LinearScan.ProductionIntervals
+@[expose] public section
 
 /-! Executable checks of the array-backed interval traversal, including the
 out-of-range behavior of the source monad. -/

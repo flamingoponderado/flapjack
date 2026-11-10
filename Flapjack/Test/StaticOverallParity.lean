@@ -1,4 +1,11 @@
-import Flapjack.Pancake.PanStatic
+module
+
+public import Flapjack.Pancake.PanStatic
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.PanStatic
+@[expose] public section
 
 namespace Flapjack
 

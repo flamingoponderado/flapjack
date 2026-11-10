@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Steps
+module
+
+public import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Steps
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveTempStepsParity
 open Flapjack.Compiler.Backend.Parmove
 private def removeSource : State Nat := ([(some 1,some 1)],[],[])

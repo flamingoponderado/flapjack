@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.RemoveNames
+module
+
+public import Flapjack.Compiler.Backend.StackProps.RemoveNames
+
+@[expose] public section
 namespace Flapjack.Test.StackPropsRemoveNames
 open Flapjack.Compiler.Backend.StackProps Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm
 -- Original HOL get_last=T

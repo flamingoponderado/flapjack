@@ -1,5 +1,12 @@
-import Flapjack.RiscV.CakeAllocatorCore
-import Flapjack.RiscV.WordToStack
+module
+
+public import Flapjack.RiscV.CakeAllocatorCore
+public import Flapjack.RiscV.WordToStack
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.RiscV.CakeAllocatorCore
+public meta import Flapjack.RiscV.WordToStack
+@[expose] public section
 
 /-!
 # CakeML Word-to-Stack frame policy checks

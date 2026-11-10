@@ -1,5 +1,9 @@
-import Flapjack.PanValues
-import Flapjack.Pancake.Semantics.PanSem
+module
+
+public import Flapjack.PanValues
+public import Flapjack.Pancake.Semantics.PanSem
+
+@[expose] public section
 
 /-!
 # `panSem$shape_of` parity

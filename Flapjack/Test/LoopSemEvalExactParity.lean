@@ -1,4 +1,18 @@
-import Flapjack.Pancake.Semantics.LoopSemStateExact
+module
+
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.AstHOL
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Pancake.LoopLang
+public meta import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public meta import Flapjack.Pancake.Semantics.LoopSemStateExact
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Direct HOL parity for the exact loopSem `eval`, `mem_load`, `mem_store` and
     `loop_arith` of `Flapjack/Pancake/Semantics/LoopSemStateExact.lean`.  Each

@@ -1,4 +1,13 @@
-import Flapjack.Compiler.Backend.WordBignum.Compile
+module
+
+public import Flapjack.Compiler.Backend.WordBignum.Compile
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.WordBignum.Compile
+public meta import Flapjack.Compiler.Backend.WordBignum.Mini
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Word
+@[expose] public section
 
 /-! Replay pinned HOL mini-language compiler examples. -/
 namespace Flapjack.Test.WordBignumCompileParity

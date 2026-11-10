@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.RegisterNames
+module
+
+public import Flapjack.Compiler.Backend.StackProps.RegisterNames
+
+@[expose] public section
 namespace Flapjack.Test.StackPropsRegImmName
 open Flapjack.Compiler.Backend.StackProps Flapjack.Compiler.Encoders.Asm
 example {width : Nat} [NeZero width] (c : AsmConfigExact width)

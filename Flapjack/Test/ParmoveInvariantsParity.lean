@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.Invariants
+module
+
+public import Flapjack.Compiler.Backend.Parmove.Invariants
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmoveInvariantsParity
 open Flapjack.Compiler.Backend.Parmove

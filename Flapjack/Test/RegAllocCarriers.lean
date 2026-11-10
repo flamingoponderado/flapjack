@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.Carriers
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Carriers
+
+@[expose] public section
 
 namespace Flapjack.RegAlloc
 

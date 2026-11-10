@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.LabToTarget.Encoding
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Encoding
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Native kernel replays of `lab_to_target_encoding_probe.out`

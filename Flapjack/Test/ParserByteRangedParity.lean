@@ -1,7 +1,11 @@
-import Flapjack.Parser.ByteRanged
-import Flapjack.Parser.ConversionByteRanged
-import Flapjack.Parser.GrammarByteRanged
-import Flapjack.Parser.ParseTopDecsByteRanged
+module
+
+public import Flapjack.Parser.ByteRanged
+public import Flapjack.Parser.ConversionByteRanged
+public import Flapjack.Parser.GrammarByteRanged
+public import Flapjack.Parser.ParseTopDecsByteRanged
+
+@[expose] public section
 
 /-! Kernel checks for the byte-rangedness foundation (bead
     `flapjack-pxn.18.3.5.8.7.1`).  These are the reusable lemmas the parser

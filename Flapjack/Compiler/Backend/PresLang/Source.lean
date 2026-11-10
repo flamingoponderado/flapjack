@@ -1,5 +1,13 @@
-import Flapjack.AstHOL.Syntax
-import Flapjack.Display
+module
+
+public import Flapjack.AstHOL.Syntax
+public import Flapjack.Display
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! CakeML source-language presentation for the compiler explorer, following
 `cakeml/compiler/backend/presLangScript.sml`'s `id_to_display_def`,

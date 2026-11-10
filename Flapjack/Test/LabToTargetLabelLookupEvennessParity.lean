@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.LabelLookupEvenness
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.LabelLookupEvenness
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetLabelLookupEvennessParity
 open Flapjack Flapjack.Misc Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Encoders.Asm

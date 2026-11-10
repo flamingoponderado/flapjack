@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelDomain
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelDomain
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetComputedLabelDomainParity
 open Flapjack Flapjack.Misc Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Encoders.Asm

@@ -1,4 +1,14 @@
-import Flapjack.Pancake.Semantics.PanSem.EvalExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.EvalExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.EvalExact
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Parity of the exact `panSem$theValWord` over `ValueHOL`

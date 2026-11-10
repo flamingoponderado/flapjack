@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.PresLang.Clos
-import Flapjack.Compiler.Backend.DataLang.Syntax
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Clos
+public import Flapjack.Compiler.Backend.DataLang.Syntax
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Data-language explorer display corresponding to `data_seqs_def`,
 `data_prog_to_display_def`, `data_fun_to_display_def` and `data_to_strs_def`

@@ -1,4 +1,10 @@
-import Flapjack.PanHHandleDecCallRet
+module
+
+public import Flapjack.PanHHandleDecCallRet
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanHHandleDecCallRet
+@[expose] public section
 
 /-!
 # Parity checks for Pancake h_handle_deccall_ret_def

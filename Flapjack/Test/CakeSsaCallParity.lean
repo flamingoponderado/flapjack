@@ -1,9 +1,13 @@
-import Flapjack.RiscV.Allocator
-import Flapjack.RiscV.CakeRegAlloc
-import Flapjack.Compiler.Backend.WordUnreach
-import Flapjack.Compiler.Backend.WordCse.ListOrder
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
-import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+module
+
+public import Flapjack.RiscV.Allocator
+public import Flapjack.RiscV.CakeRegAlloc
+public import Flapjack.Compiler.Backend.WordUnreach
+public import Flapjack.Compiler.Backend.WordCse.ListOrder
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+
+@[expose] public section
 
 /-! Direct Cake parity for the returning `Call` equations in
     `cakeml/compiler/backend/word_allocScript.sml:494-535`.  These cases were

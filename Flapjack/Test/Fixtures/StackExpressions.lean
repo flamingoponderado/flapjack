@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
+
+@[expose] public section
 
 /-!
 # Shared stackSem expression fixtures

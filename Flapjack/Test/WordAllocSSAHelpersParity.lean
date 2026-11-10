@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocSSAHelpersParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc

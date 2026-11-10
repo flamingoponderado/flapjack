@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTransport
-import Flapjack.Compiler.Backend.StackLang.WordPayloads
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTransport
+public import Flapjack.Compiler.Backend.StackLang.WordPayloads
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackStoreConstsCaller
 open Flapjack RiscV Compiler.Backend.StackLang

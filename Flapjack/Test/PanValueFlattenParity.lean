@@ -1,4 +1,8 @@
-import Flapjack.PanValueFlatten
+module
+
+public import Flapjack.PanValueFlatten
+
+@[expose] public section
 
 /-!
 # Original-domain parity for HOL `panSem$flatten`

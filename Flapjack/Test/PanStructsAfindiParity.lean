@@ -1,6 +1,18 @@
-import Flapjack.PanStructsAfindi
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
+module
+
+public import Flapjack.PanStructsAfindi
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanStructsAfindi
+public meta import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
+public meta import Flapjack.Pancake.Semantics.PanProps
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.PanStructsAfindiParity
 

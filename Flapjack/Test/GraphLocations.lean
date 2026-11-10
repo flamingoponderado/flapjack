@@ -1,4 +1,8 @@
-import Flapjack.RiscV.AllocatorCorrectness
+module
+
+public import Flapjack.RiscV.AllocatorCorrectness
+
+@[expose] public section
 
 /-! Regression coverage for graph-allocation source locations. -/
 

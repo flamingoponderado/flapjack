@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.PositionValues
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.PositionValues
+
+@[expose] public section
 
 namespace Flapjack.Test.LabToTargetPositionValuesParity
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem

@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.LabToTarget.SectionNopEncoding
-import Flapjack.Test.Fixtures.LabToTargetSectionNop
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SectionNopEncoding
+public import Flapjack.Test.Fixtures.LabToTargetSectionNop
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.LabToTargetSectionNop
+@[expose] public section
+
 namespace Flapjack.Test.LabToTargetSectionAlignedNopParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabToTarget

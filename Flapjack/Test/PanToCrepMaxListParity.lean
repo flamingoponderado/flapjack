@@ -1,5 +1,11 @@
-import Flapjack.PanToCrepMaxList
-import Flapjack.Misc.FoldrMaxList
+module
+
+public import Flapjack.PanToCrepMaxList
+public import Flapjack.Misc.FoldrMaxList
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanToCrepMaxList
+@[expose] public section
 
 /-!
 # Original-domain parity for HOL `rich_list$MAX_LIST`

@@ -1,6 +1,14 @@
-import Flapjack.Pancake.PanToCrep
-import Flapjack.Pancake.Proofs.PanToCrep
-import Flapjack.CrepeCompileExpVariables
+module
+
+public import Flapjack.Pancake.PanToCrep
+public import Flapjack.Pancake.Proofs.PanToCrep
+public import Flapjack.CrepeCompileExpVariables
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CrepeCompileExpVariables
+public meta import Flapjack.Pancake.PanToCrep
+public meta import Flapjack.Pancake.Proofs.PanToCrep
+@[expose] public section
 
 /-!
 # Original-domain parity for `pan_to_crep$comp_field`

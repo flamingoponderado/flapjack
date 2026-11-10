@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordConvs.LabelSafety
+module
+
+public import Flapjack.Pancake.WordConvs.LabelSafety
+
+@[expose] public section
 
 /-! Same-input original source predicate regressions, not cross-language
  equivalence. Infinite external sets and duplicate program keys remain allowed. -/

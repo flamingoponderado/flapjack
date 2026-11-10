@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionInitTags
-import Flapjack.Compiler.Backend.WordAlloc.ProductionCutsetContext
-import Flapjack.Misc.SptreeLookup
-import Flapjack.Compiler.Backend.WordAlloc.StackOnly
-import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionInitTags
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionCutsetContext
+public import Flapjack.Misc.SptreeLookup
+public import Flapjack.Compiler.Backend.WordAlloc.StackOnly
+public import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open RiscV

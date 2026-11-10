@@ -1,4 +1,10 @@
-import Flapjack.PanBStateEmptyLocals
+module
+
+public import Flapjack.PanBStateEmptyLocals
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanBStateEmptyLocals
+@[expose] public section
 
 /-!
 # Parity checks for interaction-tree `empty_locals_def`

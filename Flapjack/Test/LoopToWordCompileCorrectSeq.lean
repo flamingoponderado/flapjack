@@ -1,4 +1,8 @@
-import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Seq
+module
+
+public import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Seq
+
+@[expose] public section
 
 /-!
 # Loop-to-Word `compile_correct` Seq regression

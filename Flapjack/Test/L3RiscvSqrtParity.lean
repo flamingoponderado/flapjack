@@ -1,5 +1,12 @@
-import Flapjack.RiscV.L3.Defs
-import Flapjack.Test.Fixtures.L3
+module
+
+public import Flapjack.RiscV.L3.Defs
+public import Flapjack.Test.Fixtures.L3
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.L3
+@[expose] public section
+
 /-! Complete original square-root state equations; finite rounding and NaN
 choices remain symbolic. Numerical special/trap fixtures are appended from the
 fresh original capture. Rational cuts retain docs/SOUNDNESS.md item 8. -/

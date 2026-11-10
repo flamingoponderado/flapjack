@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.MmioShmem
-import Flapjack.Compiler.Backend.LabSem.State
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.MmioShmem
+public import Flapjack.Compiler.Backend.LabSem.State
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetMmioShmemParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps

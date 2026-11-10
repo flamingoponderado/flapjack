@@ -1,8 +1,18 @@
-import Flapjack.Pancake.CrepToLoop
-import Flapjack.Pancake.CrepToLoop.StateRel
-import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
-import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Pancake.CrepToLoop
+public import Flapjack.Pancake.CrepToLoop.StateRel
+public import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
+public import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
+public import Flapjack.Misc.Sptree
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Pancake.CrepToLoop
+public meta import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
+public meta import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
+public meta import Flapjack.Pancake.CrepToLoop.StateRel
+@[expose] public section
 
 /-!
 Direct parity for `crep_to_loop$compile` (`crep_to_loopScript.sml:120`).

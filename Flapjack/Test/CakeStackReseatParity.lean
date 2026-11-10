@@ -1,4 +1,11 @@
-import Flapjack.RiscV.CakeStackReseat
+module
+
+public import Flapjack.RiscV.CakeStackReseat
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.RiscV.CakeStackReseat
+public meta import Flapjack.RiscV.RegisterMap
+@[expose] public section
 
 /-!
 # Parity test for the CakeML stack-register reseat

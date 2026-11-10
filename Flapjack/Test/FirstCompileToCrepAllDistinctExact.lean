@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanToCrep
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep
+
+@[expose] public section
 
 /-! Exact-carrier regression for `first_compile_to_crep_all_distinct`:
 the fixture is paired with direct HOL EVAL row `distinct_function_names` in

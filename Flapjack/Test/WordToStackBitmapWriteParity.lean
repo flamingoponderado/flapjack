@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWrite
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWrite
+
+@[expose] public section
 open Flapjack Flapjack.Compiler.Backend.WordToStack
 set_option maxRecDepth 8192
 

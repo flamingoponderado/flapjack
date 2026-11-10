@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Incremental
-import Flapjack.Compiler.Backend.BvlToBvi.Incremental
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Incremental
+public import Flapjack.Compiler.Backend.BvlToBvi.Incremental
+
+@[expose] public section
 
 /-! Checked incremental closure-to-BVI composition. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl

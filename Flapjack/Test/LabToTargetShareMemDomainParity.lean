@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.ShareMemDomain
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ShareMemDomain
+
+@[expose] public section
 
 namespace Flapjack.Test.LabToTargetShareMemDomainParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget

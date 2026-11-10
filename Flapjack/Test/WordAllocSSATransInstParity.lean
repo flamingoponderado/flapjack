@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.SSATransInst
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SSATransInst
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocSSATransInstParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc

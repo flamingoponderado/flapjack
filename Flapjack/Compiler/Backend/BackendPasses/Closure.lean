@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.BackendPasses.Frontend
-import Flapjack.Compiler.Backend.PresLang.Bvl
-import Flapjack.Compiler.Backend.ClosToBvl.Prepared
+module
+
+public import Flapjack.Compiler.Backend.BackendPasses.Frontend
+public import Flapjack.Compiler.Backend.PresLang.Bvl
+public import Flapjack.Compiler.Backend.ClosToBvl.Prepared
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Capture the closure and BVL stages from `backend_passesScript.sml`.
 The bounded optimizers can report exhaustion. Display carriers and complete

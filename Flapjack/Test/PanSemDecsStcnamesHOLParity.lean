@@ -1,5 +1,16 @@
-import Flapjack.Pancake.Proofs.PanToCrep
-import Flapjack.Pancake.Semantics.PanSem.EntryState
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep
+public import Flapjack.Pancake.Semantics.PanSem.EntryState
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.PanToCrep
+public meta import Flapjack.Pancake.Semantics.PanSem.EntryState
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Parity checks for the exact `decs_stcnames` port

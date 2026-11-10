@@ -1,4 +1,8 @@
-import Flapjack.Pancake.LoopToWord.Proofs.LabelHandlers
+module
+
+public import Flapjack.Pancake.LoopToWord.Proofs.LabelHandlers
+
+@[expose] public section
 
 namespace Flapjack.Test.LoopToWordLabelHandlersParity
 open Flapjack Flapjack.LoopToWord

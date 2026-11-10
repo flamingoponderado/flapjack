@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases
+
+@[expose] public section
 open Flapjack Flapjack.StackSemSizeBitmapCases
 /- Original observations: scripts/hol-probes/stacksem_size_bitmap_probe.out.
 RHS assembly replay, not a total evaluator theorem. -/

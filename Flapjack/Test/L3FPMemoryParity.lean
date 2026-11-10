@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.FPMemory
+module
+
+public import Flapjack.RiscV.L3.Defs.FPMemory
+
+@[expose] public section
 
 namespace Flapjack.Test.L3FPMemoryParity
 open Flapjack.RiscV.L3

@@ -1,5 +1,14 @@
-import Flapjack.PanValueFfiCore
-import Flapjack.RiscV.PanMemory
+module
+
+public import Flapjack.PanValueFfiCore
+public import Flapjack.RiscV.PanMemory
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanValues
+public meta import Flapjack.PanValueFfiCore
+public meta import Flapjack.CakeParser.SexpPrint
+public meta import Flapjack.RiscV.PanMemory
+@[expose] public section
 
 /-!
 Fixtures for the stateful FFI tests: a little-endian oracle that returns a

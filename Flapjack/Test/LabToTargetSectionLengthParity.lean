@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.SectionLength
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SectionLength
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetSectionLengthParity
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

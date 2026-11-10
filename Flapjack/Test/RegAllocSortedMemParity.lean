@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.SortedMem
-import Flapjack.RiscV.CakeRegAlloc
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.SortedMem
+public import Flapjack.RiscV.CakeRegAlloc
+
+@[expose] public section
 
 namespace Flapjack.Test.RegAllocSortedMemParity
 open Flapjack.RegAlloc

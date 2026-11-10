@@ -1,4 +1,8 @@
-import Flapjack.CrepeCompileExpVariables
+module
+
+public import Flapjack.CrepeCompileExpVariables
+
+@[expose] public section
 
 namespace Flapjack.Test.CrepeCompileExpVariablesParity
 

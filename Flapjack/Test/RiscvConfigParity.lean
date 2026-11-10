@@ -1,4 +1,18 @@
-import Flapjack.Compiler.Backend.LabProps
+module
+
+public import Flapjack.Compiler.Backend.LabProps
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Parser.Basic
+public meta import Flapjack.LoopGetVarImm
+public meta import Flapjack.Pancake.WordLang
+public meta import Flapjack.Compiler.Encoders.Asm
+public meta import Flapjack.Compiler.Backend.LabProps
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # RISC-V assembler configuration parity

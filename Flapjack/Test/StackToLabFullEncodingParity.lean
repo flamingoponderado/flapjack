@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
-import Flapjack.Test.Fixtures.LabToTarget
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
+public import Flapjack.Test.Fixtures.LabToTarget
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.LabToTarget
+@[expose] public section
+
 namespace Flapjack.Test.StackToLabFullEncodingParity
 open Flapjack Flapjack.Compiler.Backend.StackToLab
 open Flapjack.Compiler.Backend.StackToLab.Proofs

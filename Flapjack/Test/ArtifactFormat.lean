@@ -1,4 +1,12 @@
-import Flapjack.RiscV.ArtifactFormat
+module
+
+public import Flapjack.RiscV.ArtifactFormat
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Pancake.CrepLang
+public meta import Flapjack.RiscV.ArtifactFormat
+@[expose] public section
 
 /-!
 # RISC-V artifact-format regressions

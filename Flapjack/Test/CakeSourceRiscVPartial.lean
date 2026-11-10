@@ -1,5 +1,15 @@
-import Flapjack.Compiler.Backend.SourceToFlat.FromText
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.FromText
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.SourceToFlat.FromText
+public meta import Flapjack.CakeParser.Frontend
+public meta import Flapjack.Compiler.Inference.Infer
+public meta import Flapjack.Pancake.Semantics.PanSem.TotalEval
+public meta import Flapjack.Compiler.Backend.RiscVConfig.Executable
+@[expose] public section
 
 /-! This verifies only the experimental parser-to-backend composition. It does
 not establish correspondence to the complete CakeML executable. -/

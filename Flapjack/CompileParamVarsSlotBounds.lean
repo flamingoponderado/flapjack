@@ -1,4 +1,8 @@
-import Flapjack.CompileParamVarsBounds
+module
+
+public import Flapjack.CompileParamVarsBounds
+
+@[expose] public section
 
 /-!
 Lower bounds for slots allocated by `compileParamVars`.

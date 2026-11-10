@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.CrepSem
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem
+
+@[expose] public section
 
 /-!
 # Shared crepSem oracle fixture

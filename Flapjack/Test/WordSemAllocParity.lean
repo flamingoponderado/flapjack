@@ -1,5 +1,16 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
-import Flapjack.Test.Fixtures.WordSem
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+public import Flapjack.Test.Fixtures.WordSem
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+public meta import Flapjack.Test.Fixtures.WordSem
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Direct HOL oracle rows for the exact wordSem code lookup, GC and allocation

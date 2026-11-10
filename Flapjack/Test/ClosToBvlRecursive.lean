@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Total
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Total
+
+@[expose] public section
 
 /-! Replays the recursive-closure layout observations captured from the
 pinned HOL compiler; these finite examples do not establish equivalence. -/

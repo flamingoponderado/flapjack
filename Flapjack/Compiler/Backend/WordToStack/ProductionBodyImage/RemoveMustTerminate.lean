@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
-import Flapjack.Compiler.Backend.WordRemove
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
+public import Flapjack.Compiler.Backend.WordRemove
+
+@[expose] public section
 
 /-! Native compiler infrastructure for the actual post-allocation removal pass.
 HOL's `full_compile_single` applies this pass before WordToStack. These compiler

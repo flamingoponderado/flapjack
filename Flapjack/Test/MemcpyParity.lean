@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordGcFunctions
+module
+
+public import Flapjack.Compiler.Backend.WordGcFunctions
+
+@[expose] public section
 
 /-! Replay the original collector copy with independent word widths and a
 natural-valued memory, from `word_gc_functions_probe.out`. -/

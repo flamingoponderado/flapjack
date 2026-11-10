@@ -1,5 +1,16 @@
-import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Test.PanValueFfiCore
+module
+
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Test.PanValueFfiCore
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSemStateEval
+public meta import Flapjack.Test.PanValueFfiCore
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Exact HOL `mem_store_32` parity

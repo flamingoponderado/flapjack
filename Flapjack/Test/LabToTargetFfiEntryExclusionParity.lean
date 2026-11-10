@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.FfiEntryExclusion
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.FfiEntryExclusion
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetFfiEntryExclusionParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem

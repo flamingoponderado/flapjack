@@ -1,5 +1,12 @@
-import Flapjack.RiscV.L3.Defs.LRSC
-import Flapjack.Test.Fixtures.L3
+module
+
+public import Flapjack.RiscV.L3.Defs.LRSC
+public import Flapjack.Test.Fixtures.L3
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.L3
+@[expose] public section
+
 set_option maxRecDepth 200000
 namespace Flapjack.Test.L3SCWParity
 open Flapjack.RiscV.L3

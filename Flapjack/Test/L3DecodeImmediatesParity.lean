@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.DecodeImmediates
+module
+
+public import Flapjack.RiscV.L3.Defs.DecodeImmediates
+
+@[expose] public section
 
 namespace Flapjack.Test.L3DecodeImmediatesParity
 open Flapjack.RiscV.L3

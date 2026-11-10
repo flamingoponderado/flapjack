@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackAbsStackPrefixParity
 open Flapjack.WordToStackProofs

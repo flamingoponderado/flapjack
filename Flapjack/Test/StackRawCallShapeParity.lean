@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompSeqShape
+
+@[expose] public section
 
 /-! Source theorem application and independent original branch observations.
 No fixture or consumer assumes the shape conclusion. -/

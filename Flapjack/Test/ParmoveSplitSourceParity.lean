@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.SplitSource
+module
+
+public import Flapjack.Compiler.Backend.Parmove.SplitSource
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveSplitSourceParity
 open Flapjack.Compiler.Backend.Parmove
 -- pv_split_empty=([],[])

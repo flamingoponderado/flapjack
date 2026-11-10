@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.ConfigDecidableEq
-import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
-import Flapjack.RiscV.NativeSource
+module
+
+public import Flapjack.Compiler.Backend.ConfigDecidableEq
+public import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
+public import Flapjack.RiscV.NativeSource
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Regression for issue #1226: `Backend.Config`, its nested pass configurations
 and the complete compiler artifact type have computable `DecidableEq`

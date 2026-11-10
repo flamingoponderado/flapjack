@@ -1,5 +1,9 @@
-import Flapjack.Misc.FindIndex.Membership
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+module
+
+public import Flapjack.Misc.FindIndex.Membership
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+
+@[expose] public section
 namespace Flapjack.Test.MiscFindIndexMemParity
 open Flapjack Flapjack.Misc
 example {α : Type} [DecidableEq α] [Nonempty α] (values : List α)

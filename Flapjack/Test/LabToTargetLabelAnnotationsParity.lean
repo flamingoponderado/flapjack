@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.LabelAnnotations
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetLabelAnnotationsParity
 open Flapjack Flapjack.Misc Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Encoders.Asm

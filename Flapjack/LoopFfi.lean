@@ -1,5 +1,9 @@
-import Flapjack.Ffi
-import Flapjack.LoopSemantics
+module
+
+public import Flapjack.Ffi
+public import Flapjack.LoopSemantics
+
+@[expose] public section
 
 /-!
 # Observable Loop FFI operations

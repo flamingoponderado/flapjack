@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.SourceFrameSize
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.SourceFrameSize
+
+@[expose] public section
 open Flapjack Flapjack.WordToStackProofs Flapjack.WordSemStateFiniteExact
 set_option maxRecDepth 8192
 

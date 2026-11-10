@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocMergeStackSetsParity
 open Flapjack Flapjack.WordAlloc

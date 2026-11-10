@@ -1,6 +1,18 @@
-import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Test.PanValueFfiCore
-import Flapjack.Test.Fixtures.PanSem
+module
+
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Test.PanValueFfiCore
+public import Flapjack.Test.Fixtures.PanSem
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.PanValueFfiCore
+public meta import Flapjack.Pancake.Semantics.PanSemStateEval
+public meta import Flapjack.Test.Fixtures.PanSem
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Exact-source PanSem `Store32`/`StoreByte` Error parity

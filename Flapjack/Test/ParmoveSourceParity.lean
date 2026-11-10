@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.SourceMembership
+module
+
+public import Flapjack.Compiler.Backend.Parmove.SourceMembership
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveSourceParity
 open Flapjack.Compiler.Backend.Parmove
 -- pv_source_terminal

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstMemoryAppend
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstMemoryAppend
+
+@[expose] public section
 open Flapjack
 set_option maxRecDepth 8192
 -- cm_memory_1_0_0_0

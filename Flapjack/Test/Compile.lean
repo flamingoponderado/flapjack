@@ -1,4 +1,14 @@
-import Flapjack.Test.Basics
+module
+
+public import Flapjack.Test.Basics
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.MemOp
+public meta import Flapjack.Pancake.CrepLang
+public meta import Flapjack.Pancake.LoopLang
+public meta import Flapjack.Pancake.PanToCrep.Compile
+public meta import Flapjack.Pancake.LoopLive
+@[expose] public section
 
 namespace Flapjack
 

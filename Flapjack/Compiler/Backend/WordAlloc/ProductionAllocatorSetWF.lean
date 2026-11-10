@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.GetStackOnly
-import Flapjack.Misc.Sptree.Wf
-import Flapjack.Compiler.Backend.RegAlloc.ProductionInputCodec
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
-import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorInputs
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.GetStackOnly
+public import Flapjack.Misc.Sptree.Wf
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionInputCodec
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorInputs
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

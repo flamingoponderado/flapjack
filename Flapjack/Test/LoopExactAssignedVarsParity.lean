@@ -1,6 +1,19 @@
-import Flapjack.Pancake.LoopLang.AssignedVars
-import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
-import Flapjack.Pancake.CrepToLoop.Proofs.AssignedVars
+module
+
+public import Flapjack.Pancake.LoopLang.AssignedVars
+public import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
+public import Flapjack.Pancake.CrepToLoop.Proofs.AssignedVars
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.PresLang.Clos
+public meta import Flapjack.Pancake.CrepToLoop.Proofs.AssignedVars
+public meta import Flapjack.Pancake.LoopLang.AssignedVars
+public meta import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Direct fixtures replaying `loop_props_assigned_vars_probe.out` rows

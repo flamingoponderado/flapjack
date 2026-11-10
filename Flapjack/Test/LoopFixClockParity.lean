@@ -1,5 +1,13 @@
-import Flapjack.LoopFfi
-import Flapjack.Test.LoopFfi
+module
+
+public import Flapjack.LoopFfi
+public import Flapjack.Test.LoopFfi
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.LoopFfi
+public meta import Flapjack.Pancake.Semantics.PanSem.TotalEval
+public meta import Flapjack.Test.LoopFfi
+@[expose] public section
 
 /-!
 # Original-domain parity for `fix_clock`

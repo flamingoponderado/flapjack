@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.StackLengths
+module
+
+public import Flapjack.Compiler.Backend.StackProps.StackLengths
+
+@[expose] public section
 
 namespace Flapjack.Test.StackPropsStackLengthsParity
 open Flapjack StackSem StackPropsStackLengths

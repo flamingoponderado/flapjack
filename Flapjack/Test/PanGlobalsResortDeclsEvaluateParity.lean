@@ -1,22 +1,18 @@
-/-
-Parity for the exact HOL `pan_globalsProof$resort_decls_evaluate` cluster
-(`cakeml/pancake/proofs/pan_globalsProofScript.sml:1854-1950`): the ports
-`evaluateDeclsOneFunLast`, `resortDeclsEvaluate`, and
-`resortDeclsEvaluateImp` over the reviewed finite-support carrier.
+module
 
-There is no direct original-HOL `EVAL` oracle row for these *theorems*: the HOL
-statements quantify over an arbitrary state and declaration list, and the
-`scripts/hol-probes` harness records concrete evaluator values, not proof-engine
-theorem instances.  This module therefore replays each HOL statement
-kernel-checked against a concrete declaration list (`resortOrderGuard` shows
-`resort_decls` moving the `ExnDecl` before the `Decl` before the `Function`,
-and the `example`s apply the ported theorems to concrete lists), plus `#guard`
-rows that the concrete `evaluate_decls` results agree on both orderings.  No
-oracle row is fabricated.
--/
-import Flapjack.Pancake.Proofs.PanGlobals
-import Flapjack.Test.Fixtures.PanGlobals
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Pancake.Proofs.PanGlobals
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Test.Fixtures.PanGlobals
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.PanGlobals
+public meta import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public meta import Flapjack.Test.Fixtures.PanGlobals
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.PanGlobalsResortDeclsEvaluateParity
 

@@ -7,7 +7,17 @@ Bead flapjack-pxn.18.3.5.8.7.1.1: the executable lexer replaced the original
 keyword if-chain with the ordered `keywordTable`; these rows pin the exact
 production output for every table entry plus the fallbacks.
 -/
-import Flapjack.Parser.Lexer
+module
+
+public import Flapjack.Parser.Lexer
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Parser.Lexer
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.ParserKeywordParity
 

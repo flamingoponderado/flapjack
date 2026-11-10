@@ -1,6 +1,10 @@
-import Flapjack.RiscV.Backend
-import Flapjack.RiscV.Calls
-import Flapjack.RiscV.RegisterTransfer
+module
+
+public import Flapjack.RiscV.Backend
+public import Flapjack.RiscV.Calls
+public import Flapjack.RiscV.RegisterTransfer
+
+@[expose] public section
 
 /-!
 # Backend correctness through the CakeML `riscv_names` map

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
+
+@[expose] public section
 
 /-! Installation and outer dispatcher edge cases. -/
 namespace Flapjack.Test.DataSemInstall

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Semantics
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Semantics
+
+@[expose] public section
 
 /-! Whole-program data semantics boundary cases. -/
 namespace Flapjack.Test.DataSemSemantics

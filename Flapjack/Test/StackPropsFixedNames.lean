@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.FixedNames
+module
+
+public import Flapjack.Compiler.Backend.StackProps.FixedNames
+
+@[expose] public section
 namespace Flapjack.Test.StackPropsFixedNames
 open Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.Asm
 example {width : Nat} [NeZero width] (names : Flapjack.Spt Nat)

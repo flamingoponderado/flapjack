@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Test.PanValueFfiCore
+module
+
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Test.PanValueFfiCore
+
+@[expose] public section
 
 /-!
 # Shared PanSem oracle fixtures

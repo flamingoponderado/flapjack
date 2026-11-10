@@ -1,5 +1,9 @@
-import Flapjack.PrimTypesHOL
-import Flapjack.TypeSystemHOL.Declarations
+module
+
+public import Flapjack.PrimTypesHOL
+public import Flapjack.TypeSystemHOL.Declarations
+
+@[expose] public section
 
 /-! Initial declarative type environment from the CakeML primitive-types
 script. The type-environment carrier remains pending full source review. -/

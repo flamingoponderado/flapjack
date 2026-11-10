@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Inference.InferT.Display
+module
+
+public import Flapjack.Compiler.Inference.InferT.Display
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Byte-oriented output for CakeML's `--types` mode. The combined traversal
 is Flapjack infrastructure: HOL separately nubs namespaces, flattens them,

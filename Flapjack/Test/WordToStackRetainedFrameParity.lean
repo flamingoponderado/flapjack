@@ -1,4 +1,8 @@
-import Flapjack.RiscV.PipelineDiagnostics
+module
+
+public import Flapjack.RiscV.PipelineDiagnostics
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackRetainedFrameParity
 open Flapjack Flapjack.RiscV Flapjack.RiscV.CakeRegAlloc

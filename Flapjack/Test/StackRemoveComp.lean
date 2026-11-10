@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.Comp
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Comp
+
+@[expose] public section
 
 /-! All-constructor original comp regression fixtures. Expected clause trees are independent literals; previously checked native builders retain their original trees. -/
 

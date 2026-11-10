@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.PanObservationalSemantics
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.PanObservationalSemantics
+
+@[expose] public section
 
 /-!
 # Source parity for the clock-indexed `panSem$semantics_def` observations

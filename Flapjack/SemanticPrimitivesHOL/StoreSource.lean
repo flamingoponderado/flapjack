@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL
+module
+
+public import Flapjack.SemanticPrimitivesHOL
+
+@[expose] public section
 
 /-! Guarded source equations for the shared source and flat stores. -/
 namespace Flapjack.SemanticPrimitivesHOL

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.Independence
+module
+
+public import Flapjack.Compiler.Backend.Parmove.Independence
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveIndependenceParity
 open Flapjack.Compiler.Backend.Parmove
 

@@ -1,4 +1,8 @@
-import Flapjack.RiscV.Allocator
+module
+
+public import Flapjack.RiscV.Allocator
+
+@[expose] public section
 
 /-! Direct Cake parity for the remaining memory-shaped `ssa_cc_trans` rows.
     The expected forms are the source equations in CakeML's

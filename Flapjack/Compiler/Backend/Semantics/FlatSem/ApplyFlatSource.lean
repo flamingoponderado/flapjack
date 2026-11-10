@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+
+@[expose] public section
 
 /-! Flat-specific primitive cases and the source-operation fallback. -/
 namespace Flapjack.Compiler.Backend.FlatSem

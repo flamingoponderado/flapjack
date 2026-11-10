@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.Transform
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Transform
+
+@[expose] public section
 
 namespace Flapjack.Test.WordCseProductionAssignParity
 open Flapjack RiscV Compiler.Backend.WordCse

@@ -1,4 +1,17 @@
-import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
+module
+
+public import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.AstHOL.BackendOperators
+public meta import Flapjack.AstHOL.LitOp
+public meta import Flapjack.AstHOL.Syntax
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.SemanticPrimitivesHOL
+public meta import Flapjack.SemanticPrimitivesHOL.Apply
+public meta import Flapjack.SemanticPrimitivesHOL.Conversions
+public meta import Flapjack.SemanticPrimitivesHOL.ApplyNumericCore
+@[expose] public section
 
 /-! Store observations captured from the pinned CakeML source semantics. -/
 namespace Flapjack.Test.CakeSourceStoreParity

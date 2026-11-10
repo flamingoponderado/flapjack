@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.SystemSignals
+module
+
+public import Flapjack.RiscV.L3.Defs.SystemSignals
+
+@[expose] public section
 namespace Flapjack.Test.L3SystemSignalsParity
 open Flapjack.RiscV.L3
 /-! Flapjack-only whole-frame regressions from original HOL observations.

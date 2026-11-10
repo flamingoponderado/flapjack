@@ -1,4 +1,8 @@
-import Flapjack.RiscV.Allocator
+module
+
+public import Flapjack.RiscV.Allocator
+
+@[expose] public section
 
 /-! Small source-shaped adapters for the CakeML allocator entry boundary.
 

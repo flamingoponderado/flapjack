@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramBitmaps
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramBitmaps
+
+@[expose] public section
 
 /-! Kernel replay of the ten original rows in
 scripts/hol-probes/word_to_stack_program_bitmaps_probe.out.

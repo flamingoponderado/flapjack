@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.SectionNopEncoding
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SectionNopEncoding
+
+@[expose] public section
 
 /-!
 # Shared LabToTarget section-alignment fixtures

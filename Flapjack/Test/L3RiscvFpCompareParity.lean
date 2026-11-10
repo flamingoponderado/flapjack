@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs
+module
+
+public import Flapjack.RiscV.L3.Defs
+
+@[expose] public section
 
 /-! Native kernel replays of original L3 FP comparison transitions. Fixture
 fields match the original oracle; untouched ARB fields use native defaults.

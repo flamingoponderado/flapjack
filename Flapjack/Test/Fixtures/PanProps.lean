@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanProps
+module
+
+public import Flapjack.Pancake.Semantics.PanProps
+
+@[expose] public section
 
 /-!
 # Shared `panProps` oracle fixtures

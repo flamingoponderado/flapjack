@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
-import Flapjack.Misc.LprefixLub
-import Flapjack.HolArb
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+public import Flapjack.Misc.LprefixLub
+public import Flapjack.HolArb
+
+@[expose] public section
 
 /-! Whole-program observations of the data-language evaluator. -/
 namespace Flapjack.Compiler.Backend.DataSem

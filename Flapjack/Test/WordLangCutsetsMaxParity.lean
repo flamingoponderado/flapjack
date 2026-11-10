@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordLang.CutsetsMax
+module
+
+public import Flapjack.Pancake.WordLang.CutsetsMax
+
+@[expose] public section
 
 namespace Flapjack.Test.WordLangCutsetsMaxParity
 open Flapjack

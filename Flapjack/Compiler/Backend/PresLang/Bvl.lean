@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.PresLang.Clos
-import Flapjack.Compiler.Backend.Bvl.Syntax
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Clos
+public import Flapjack.Compiler.Backend.Bvl.Syntax
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! BVL explorer display following `bvl_to_display_def`,
 `bvl_fun_to_display_def`, and `bvl_to_strs_def` in `presLangScript.sml`.

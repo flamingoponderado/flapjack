@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanGlobals
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals
+
+@[expose] public section
 
 /-!
 # Shared pan_globals parity fixtures

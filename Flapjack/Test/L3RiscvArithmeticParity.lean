@@ -1,7 +1,13 @@
-import Flapjack.RiscV.L3.Defs
-import Flapjack.Test.Fixtures.L3
-import Flapjack.Misc.BinaryIeeeDirectedFp32
-import Flapjack.Misc.BinaryIeeeDirectedFp64
+module
+
+public import Flapjack.RiscV.L3.Defs
+public import Flapjack.Misc.BinaryIeeeDirectedFp32
+public import Flapjack.Misc.BinaryIeeeDirectedFp64
+public import Flapjack.Test.Fixtures.L3
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.L3
+@[expose] public section
 
 /-! All140 original arithmetic regressions from l3_riscv_arithmetic_probe.out.
 132 full ten-field numeric tuples and8 complete symbolic invalid-division state

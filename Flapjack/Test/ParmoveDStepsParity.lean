@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.DSteps
+module
+
+public import Flapjack.Compiler.Backend.Parmove.DSteps
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmoveDStepsParity
 open Flapjack.Compiler.Backend.Parmove

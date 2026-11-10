@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProgramWrites
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProgramWrites
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocProgramWritesParity
 open WordAlloc

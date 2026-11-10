@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyFlat
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyFlat
+
+@[expose] public section
 
 /-! Matched original HOL observations from `cake_flat_sem_apply_probe.out`. -/
 namespace Flapjack.Test.CakeFlatSemApplyParity

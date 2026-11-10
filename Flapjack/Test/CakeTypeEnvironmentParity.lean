@@ -1,5 +1,16 @@
-import Flapjack.TypeSystemHOL.Declarations
-import Flapjack.PrimTypesHOL.Types
+module
+
+public import Flapjack.TypeSystemHOL.Declarations
+public import Flapjack.PrimTypesHOL.Types
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.AstHOL.Syntax
+public meta import Flapjack.TypeSystemHOL
+public meta import Flapjack.TypeSystemHOL.Values
+public meta import Flapjack.PrimTypesHOL.Types
+public meta import Flapjack.TypeSystemHOL.Environments
+public meta import Flapjack.TypeSystemHOL.TypeNames
+@[expose] public section
 
 /-! Representative cases captured from the pinned HOL type-system definitions.
 The capture is regression evidence, not a cross-language equivalence proof. -/

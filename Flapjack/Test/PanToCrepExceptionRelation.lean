@@ -1,4 +1,8 @@
-import Flapjack.PanToCrepExceptionRelation
+module
+
+public import Flapjack.PanToCrepExceptionRelation
+
+@[expose] public section
 
 namespace Flapjack.Test.PanToCrepExceptionRelation
 

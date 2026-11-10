@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.ByteIntervalDistinct
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ByteIntervalDistinct
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetByteIntervalDistinctParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps

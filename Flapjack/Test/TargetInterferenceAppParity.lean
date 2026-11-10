@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceApp
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceApp
+
+@[expose] public section
 namespace Flapjack.Test.TargetInterferenceAppParity
 open Flapjack.Compiler.Backend.Semantics.TargetProps
 example {w : Nat} [NeZero w] {S : Type} (i : Nat) (bs : List (BitVec 8)) (pre post : S) :

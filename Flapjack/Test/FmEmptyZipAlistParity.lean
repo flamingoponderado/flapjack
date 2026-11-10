@@ -1,5 +1,13 @@
-import Flapjack.Pancake.Semantics.PanCommonProps
-import Flapjack.Pancake.Semantics.PanProps
+module
+
+public import Flapjack.Pancake.Semantics.PanCommonProps
+public import Flapjack.Pancake.Semantics.PanProps
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.FiniteMap.Basic
+public meta import Flapjack.Pancake.Semantics.PanCommonProps
+public meta import Flapjack.Pancake.Semantics.PanProps
+@[expose] public section
 
 /-!
 Parity checks for the exact ports of HOL `fm_empty_zip_alist` and

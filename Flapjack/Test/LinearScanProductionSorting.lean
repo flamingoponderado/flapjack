@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.LinearScan.ProductionSorting
+module
+
+public import Flapjack.Compiler.Backend.LinearScan.ProductionSorting
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Translator.Monadic.MonadBase
+public meta import Flapjack.Compiler.Backend.LinearScan.ProductionSorting
+@[expose] public section
 
 /-! Executable coverage for register and move sorting and bounds failures. -/
 namespace Flapjack.Test.LinearScanProductionSorting

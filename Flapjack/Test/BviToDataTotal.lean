@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.BviToData.Proofs.State
-import Flapjack.Compiler.Backend.BviToData.Proofs.CompileAgreement
+module
+
+public import Flapjack.Compiler.Backend.BviToData.Proofs.State
+public import Flapjack.Compiler.Backend.BviToData.Proofs.CompileAgreement
+
+@[expose] public section
 
 /-! Original observations for total BVI-to-data lowering. -/
 namespace Flapjack.Test.BviToDataTotal

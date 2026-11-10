@@ -1,4 +1,8 @@
-import Flapjack.Misc.BalancedMap.Membership
+module
+
+public import Flapjack.Misc.BalancedMap.Membership
+
+@[expose] public section
 
 namespace Flapjack.Test.BalancedMapMembershipParity
 open Flapjack.Misc.BalancedMap

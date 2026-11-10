@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallArgsCompiler
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallArgsCompiler
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackCallArgsCompilerParity
 open Flapjack Flapjack.Compiler.Backend.WordToStack.Native

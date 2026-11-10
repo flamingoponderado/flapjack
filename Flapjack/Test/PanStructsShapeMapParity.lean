@@ -1,4 +1,11 @@
-import Flapjack.Pancake.Proofs.PanStructs.ShapeMap
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.ShapeMap
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Encoders.Asm
+public meta import Flapjack.Pancake.Proofs.PanStructs.ShapeMap
+@[expose] public section
 
 namespace Flapjack.Test.PanStructsShapeMapParity
 open Flapjack.Pancake.PanLang

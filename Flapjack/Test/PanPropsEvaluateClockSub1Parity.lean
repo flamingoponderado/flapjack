@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSub1
+module
+
+public import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSub1
+
+@[expose] public section
 
 /-!
 # Parity for the exact `panProps` `evaluate_clock_sub1`

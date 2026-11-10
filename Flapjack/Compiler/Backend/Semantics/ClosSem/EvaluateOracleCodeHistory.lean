@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateOracleAdvance
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateOracleAdvance
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
+
+@[expose] public section
 
 /-! Code/oracle history for the proof-side closure evaluator. -/
 namespace Flapjack.Compiler.Backend.ClosSem

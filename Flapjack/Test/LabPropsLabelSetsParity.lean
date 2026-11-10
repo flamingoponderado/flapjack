@@ -1,5 +1,9 @@
-import Mathlib.Data.Set.Insert
-import Flapjack.Compiler.Backend.LabProps.LabelSets
+module
+
+public import Mathlib.Data.Set.Insert
+public import Flapjack.Compiler.Backend.LabProps.LabelSets
+
+@[expose] public section
 namespace Flapjack.Test.LabPropsLabelSetsParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.LabProps.LabelSets

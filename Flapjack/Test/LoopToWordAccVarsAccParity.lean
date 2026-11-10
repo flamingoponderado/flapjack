@@ -1,4 +1,14 @@
-import Flapjack.Pancake.Proofs.LoopToWord.AccVarsAcc
+module
+
+public import Flapjack.Pancake.Proofs.LoopToWord.AccVarsAcc
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.LoopToWord.AccVarsAcc
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Regression for the exact Loop-to-Word `acc_vars_acc'` port

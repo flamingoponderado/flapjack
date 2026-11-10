@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.FpRegisterInstructions
-import Flapjack.Misc.MachineIeee.ConvertReal
-import Flapjack.Misc.MachineIeee.SqrtReal
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.FpRegisterInstructions
+public import Flapjack.Misc.MachineIeee.ConvertReal
+public import Flapjack.Misc.MachineIeee.SqrtReal
+
+@[expose] public section
 
 /-!
 # StackSem real-conversion `inst_def` cases over the arbitrary-real IEEE ports

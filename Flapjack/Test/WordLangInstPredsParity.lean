@@ -1,4 +1,14 @@
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Pancake.WordConvs
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.WordConvs
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Kernel-checked parity for the backend `wordConvs` instruction predicates

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnHandler
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnHandler
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackCallReturnHandlerParity
 open Flapjack Flapjack.WordToStackProofs

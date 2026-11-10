@@ -1,5 +1,9 @@
-import Flapjack.Arm8.NativeSource
-import Flapjack.RiscV.NativeCLIAdapter
+module
+
+public import Flapjack.Arm8.NativeSource
+public import Flapjack.RiscV.NativeCLIAdapter
+
+@[expose] public section
 
 /-! # Rendering the ARMv8 (AArch64) compiler result
 

@@ -1,7 +1,13 @@
-import Flapjack.Test.CrepArithExactParity
-import Flapjack.Pancake.Proofs.CrepArith
-import Flapjack.Pancake.Semantics.CrepSem.LookupCode
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Test.CrepArithExactParity
+public import Flapjack.Pancake.Proofs.CrepArith
+public import Flapjack.Pancake.Semantics.CrepSem.LookupCode
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.CrepSem
+@[expose] public section
 
 /-! Direct original-HOL boundary for the local `lookup_code` theorem used by
 `crep_arithProofScript.sml:simp_prog_correct`. The HOL fixture simplifies an

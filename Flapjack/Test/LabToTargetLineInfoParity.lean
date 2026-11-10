@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.LineInfo
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.LineInfo
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetLineInfoParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps

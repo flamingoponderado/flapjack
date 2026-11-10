@@ -1,9 +1,20 @@
-import Flapjack.Compiler.Backend.PresLang.Clos
-import Flapjack.Compiler.Backend.SourceLet
-import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
-import Flapjack.Compiler.Backend.FlatToClos.Compile
-import Flapjack.Compiler.Backend.Backend.PrimSrcConfig.Executable
-import Flapjack.CakeParser.Frontend
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Clos
+public import Flapjack.Compiler.Backend.SourceLet
+public import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
+public import Flapjack.Compiler.Backend.FlatToClos.Compile
+public import Flapjack.Compiler.Backend.Backend.PrimSrcConfig.Executable
+public import Flapjack.CakeParser.Frontend
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CakeParser.Frontend
+public meta import Flapjack.Compiler.Backend.Backend.PrimSrcConfig.Executable
+public meta import Flapjack.Compiler.Backend.FlatToClos.Compile
+public meta import Flapjack.Compiler.Backend.PresLang.Clos
+public meta import Flapjack.Compiler.Backend.SourceLet
+public meta import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
+@[expose] public section
 
 /-! `after flat_to_clos` from pinned CakeML's explorer for a source program
 with a datatype and a recursive function. -/

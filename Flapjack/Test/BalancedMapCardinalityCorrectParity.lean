@@ -1,4 +1,8 @@
-import Flapjack.Misc.BalancedMap.CardinalityCorrect
+module
+
+public import Flapjack.Misc.BalancedMap.CardinalityCorrect
+
+@[expose] public section
 namespace Flapjack.Test.BalancedMapCardinalityCorrectParity
 open Flapjack.Misc.BalancedMap
 private def cmp (x y : Fin 7) : Ordering := compare x.val y.val

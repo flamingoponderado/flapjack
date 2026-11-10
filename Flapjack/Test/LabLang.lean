@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabLang
+module
+
+public import Flapjack.Compiler.Backend.LabLang
+
+@[expose] public section
 
 namespace Flapjack.Test.LabLang
 

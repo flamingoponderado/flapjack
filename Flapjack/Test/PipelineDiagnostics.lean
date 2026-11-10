@@ -1,4 +1,10 @@
-import Flapjack.RiscV.PipelineDiagnostics
+module
+
+public import Flapjack.RiscV.PipelineDiagnostics
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Stack
+@[expose] public section
 
 namespace Flapjack
 

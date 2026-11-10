@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.StubNames
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.StubNames
+
+@[expose] public section
 namespace Flapjack.Test.StackRemoveStubNamesParity
 open Flapjack.Compiler.Backend.StackRemove
 open Flapjack.Basis.Pure.MlString

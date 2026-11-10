@@ -1,4 +1,8 @@
-import Flapjack.Misc.BalancedMap.Rotations
+module
+
+public import Flapjack.Misc.BalancedMap.Rotations
+
+@[expose] public section
 
 namespace Flapjack.Test.BalancedMapRotations
 open Misc.BalancedMap

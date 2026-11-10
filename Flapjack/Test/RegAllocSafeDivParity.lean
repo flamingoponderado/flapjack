@@ -1,4 +1,8 @@
-import Flapjack.RiscV.CakeRegAlloc
+module
+
+public import Flapjack.RiscV.CakeRegAlloc
+
+@[expose] public section
 
 /-! Same-input kernel replay of fourteen fresh original safe_div equations. -/
 namespace Flapjack.Test.RegAllocSafeDivParity

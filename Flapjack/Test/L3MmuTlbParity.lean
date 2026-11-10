@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.MMU.TLB
+module
+
+public import Flapjack.RiscV.L3.Defs.MMU.TLB
+
+@[expose] public section
 namespace Flapjack.Test
 
 open Flapjack.RiscV.L3

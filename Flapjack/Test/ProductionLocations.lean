@@ -1,9 +1,13 @@
-import Flapjack.RiscV.CakeRegAlloc
-import Flapjack.Compiler.Backend.WordToStackRegFormat
-import Flapjack.Compiler.Backend.WordUnreach
-import Flapjack.Compiler.Backend.WordCse.ListOrder
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
-import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+module
+
+public import Flapjack.RiscV.CakeRegAlloc
+public import Flapjack.Compiler.Backend.WordToStackRegFormat
+public import Flapjack.Compiler.Backend.WordUnreach
+public import Flapjack.Compiler.Backend.WordCse.ListOrder
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+
+@[expose] public section
 
 namespace Flapjack.Test.ProductionLocations
 open Flapjack RiscV RiscV.CakeRegAlloc

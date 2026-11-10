@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Parmove.Invariants
-import Flapjack.Compiler.Backend.Parmove.Semantics
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Compiler.Backend.Parmove.Invariants
+public import Flapjack.Compiler.Backend.Parmove.Semantics
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-!
 # parmove path lemmas

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocCheckerAssemblyParity
 open Flapjack Flapjack.WordAlloc Flapjack.RegAlloc

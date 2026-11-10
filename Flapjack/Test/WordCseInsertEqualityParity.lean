@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.InsertEquality
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.InsertEquality
+
+@[expose] public section
 namespace Flapjack.Test.WordCseInsertEqualityParity
 open Flapjack Flapjack.Compiler.Backend.WordCse
 -- ie_0_7

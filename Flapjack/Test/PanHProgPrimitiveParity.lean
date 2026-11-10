@@ -1,4 +1,10 @@
-import Flapjack.PanHProgPrimitive
+module
+
+public import Flapjack.PanHProgPrimitive
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanHProgPrimitive
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `h_prog_primitive_def`

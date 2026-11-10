@@ -1,4 +1,8 @@
-import Flapjack.CompileParamVarsBounds
+module
+
+public import Flapjack.CompileParamVarsBounds
+
+@[expose] public section
 
 /-!
 Equations for the formal-parameter metadata produced by `compileParamVars`.

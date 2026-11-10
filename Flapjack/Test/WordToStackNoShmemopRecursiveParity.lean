@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopRecursive
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopRecursive
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackNoShmemopRecursiveParity
 open Flapjack Flapjack.Compiler.Backend.StackLang

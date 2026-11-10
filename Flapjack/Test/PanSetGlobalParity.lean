@@ -1,4 +1,10 @@
-import Flapjack.PanSetGlobal
+module
+
+public import Flapjack.PanSetGlobal
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanSetGlobal
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `set_global_def`

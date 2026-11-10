@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.InjOnState
+module
+
+public import Flapjack.Compiler.Backend.Parmove.InjOnState
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmoveInjOnStateParity
 open Compiler.Backend.Parmove

@@ -1,4 +1,15 @@
-import Flapjack.Pancake.LoopLive
+module
+
+public import Flapjack.Pancake.LoopLive
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.DataToWord.Control
+public meta import Flapjack.Pancake.LoopLive
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Direct parity for the exact `markAllHOL` port of `loop_live$mark_all`
     (`loop_liveScript.sml:189`).  Each row matches a committed original-HOL

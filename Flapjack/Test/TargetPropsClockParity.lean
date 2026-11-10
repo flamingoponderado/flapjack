@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClock
-import Flapjack.Test.TargetSemEvaluateParity
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClock
+public import Flapjack.Test.TargetSemEvaluateParity
+
+@[expose] public section
 
 namespace Flapjack.Test.TargetPropsClockParity
 open Flapjack

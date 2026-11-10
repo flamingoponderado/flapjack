@@ -1,5 +1,16 @@
-import Flapjack.Pancake.Semantics.PanSem.TotalEval
-import Flapjack.Test.PanValueFfiCore
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.TotalEval
+public import Flapjack.Test.PanValueFfiCore
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.PanValueFfiCore
+public meta import Flapjack.Pancake.Semantics.PanSem.TotalEval
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Parity for the measured total `panSemTotalEvaluate`

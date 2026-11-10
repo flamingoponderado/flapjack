@@ -1,36 +1,43 @@
-import Flapjack.Pancake.PanLang
-import Flapjack.Pancake.PanSimp
-import Flapjack.Pancake.PanStructs
-import Flapjack.Pancake.PanGlobals
-import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
-import Flapjack.Pancake.PanGlobalsByteRanged
-import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
-import Flapjack.Pancake.PanStructs.CompileDeclsExact
-import Flapjack.Pancake.PanToCrep.Compile
-import Flapjack.CompileFunctionDistinct
-import Flapjack.Pancake.CrepToLoop
-import Flapjack.Pancake.LoopLive
-import Flapjack.Pancake.LoopLang
-import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
-import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
-import Flapjack.Pancake.CrepInline.InlineRouteNames
-import Flapjack.Pancake.LoopToWord.CompFuncExact
-import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
-import Flapjack.Word
-import Flapjack.RiscV.WordDiagnostics
-import Flapjack.RiscV.WordFuseConditions
-import Flapjack.RiscV.WordUnreach
-import Flapjack.RiscV.Backend
-import Flapjack.RiscV.Calls
-import Flapjack.RiscV.Lab
-import Flapjack.Display
-import Flapjack.Pancake.PanStatic
-import Flapjack.Pancake.PanToCrep
-import Flapjack.Semantics
-import Flapjack.PanValues
-import Flapjack.PanMemory
-import Flapjack.RiscV.Model
-import Flapjack.LoopSemantics
+module
+
+public import Flapjack.Pancake.PanLang
+public import Flapjack.Pancake.PanSimp
+public import Flapjack.Pancake.PanStructs
+public import Flapjack.Pancake.PanGlobals
+public import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
+public import Flapjack.Pancake.PanGlobalsByteRanged
+public import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
+public import Flapjack.Pancake.PanStructs.CompileDeclsExact
+public import Flapjack.Pancake.PanToCrep.Compile
+public import Flapjack.CompileFunctionDistinct
+public import Flapjack.Pancake.CrepToLoop
+public import Flapjack.Pancake.LoopLive
+public import Flapjack.Pancake.LoopLang
+public import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
+public import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
+public import Flapjack.Pancake.CrepInline.InlineRouteNames
+public import Flapjack.Pancake.LoopToWord.CompFuncExact
+public import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+public import Flapjack.Word
+public import Flapjack.RiscV.WordDiagnostics
+public import Flapjack.RiscV.WordFuseConditions
+public import Flapjack.RiscV.WordUnreach
+public import Flapjack.RiscV.Backend
+public import Flapjack.RiscV.Calls
+public import Flapjack.RiscV.Lab
+public import Flapjack.Display
+public import Flapjack.Pancake.PanStatic
+public import Flapjack.Pancake.PanToCrep
+public import Flapjack.Semantics
+public import Flapjack.PanValues
+public import Flapjack.PanMemory
+public import Flapjack.RiscV.Model
+public import Flapjack.LoopSemantics
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.PanStatic
+@[expose] public section
 
 namespace Flapjack
 

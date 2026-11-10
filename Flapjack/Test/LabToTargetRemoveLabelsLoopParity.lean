@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.RemoveLabelsLoop
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetRemoveLabelsLoopParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps

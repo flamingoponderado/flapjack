@@ -1,4 +1,13 @@
-import Flapjack.Parser
+module
+
+public import Flapjack.Parser
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Parser.Lexer
+public meta import Flapjack.Parser.ParseTree
+public meta import Flapjack.Parser
+@[expose] public section
 
 /-!
   `try_default_def` parity.
