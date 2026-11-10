@@ -117995,192 +117995,192 @@
     "lean_name": "tokcheck",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "tokcheck_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed tokcheck_def_typed in cml_ptree_conversion_source_probe.out: tokcheck pt tok ⇔ OPTION_BIND (destLf pt) destTOK = SOME tok. Lean pt.token == some tok where ParseTree.token is exactly OPTION_BIND destLf destTOK (some only for a terminal leaf), so the equality is the same."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "longShort",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "Long_Short_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed Long_Short_def_typed: Long_Short End s = Short s and Long_Short (Mod x xs) s = Long x (Long_Short xs s). Lean's two clauses match over the same path and mlstring carriers."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeUQTyop",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_UQTyop_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed ptree_UQTyop_def_typed: Lf → NONE; Nd nt args → if FST nt ≠ mkNT nUQTyOp then NONE else case args of [] → NONE | [pt] → OPTION_BIND (destLf pt) (λlf. OPTION_BIND (destTOK lf) (λtk. OPTION_CHOICE (destSymbolT tk) (destAlphaT tk))) | _ → NONE. Lean's children .nUQTyOp / singleton / leaf.token / symbolT-alphaT clauses implement the same branches."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeTyvarN",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_TyvarN_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed ptree_TyvarN_def_typed: Nd with FST = mkNT nTyvarN and [tyv] → destTyvarPT tyv, all else NONE. Lean's tyvar helper is destTyvarPT (token = TyvarT s → SOME s) applied to the single child."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeTyop",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_Tyop_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed ptree_Tyop_def_typed: Nd with FST = mkNT nTyOp and [pt] → OPTION_CHOICE (OPTION_BIND (OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destLongidT) (λ(xs,s). SOME (Long_Short xs s))) (OPTION_BIND (ptree_UQTyop pt) (λnm. SOME (Short nm))); all else NONE. Lean matches with child.token longidT and (ptreeUQTyop child).map Ident.short."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeV",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_V_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed ptree_V_def_typed: Nd guarded by FST nt = mkNT nV, then [] → NONE | [pt] → OPTION_BIND (OPTION_BIND (destLf pt) destTOK) (λt. OPTION_CHOICE (destAlphaT t) (destSymbolT t)) | _ → NONE. Lean's children .nV and singleton alphaT-symbolT clauses match."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeFQV",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_FQV_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed ptree_FQV_def_typed: [pt] → OPTION_CHOICE (OPTION_MAP Short (ptree_V pt)) (OPTION_BIND (OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destLongidT) (λ(xs,s). SOME (Long_Short xs s))). Lean's match on ptreeV first and the longidT fallback match."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "tuplify",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "tuplify_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed tuplify_def_typed: tuplify [] = NONE; tuplify [ty] = SOME ty; tuplify (v::v4::v5) = SOME (Attup (v::v4::v5)). Lean's three clauses match over ast_t."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeUQConstructorName",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_UQConstructorName_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against pinned pattern and literal conversion using specialized CakeML carriers; complete source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed ptree_UQConstructorName_def_typed: Nd with FST = mkNT nUQConstructorName and [pt] → OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destAlphaT; all else NONE. Lean's children/singleton/alphaT clause matches."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeConstructorName",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_ConstructorName_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against pinned pattern and literal conversion using specialized CakeML carriers; complete source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed ptree_ConstructorName_def_typed: Nd with FST = mkNT nConstructorName and [pt] → OPTION_CHOICE (OPTION_BIND (ptree_UQConstructorName pt) (λs. SOME (Short s))) (OPTION_BIND (OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destLongidT) (λ(xs,s). SOME (Long_Short xs s))); all else NONE. Lean matches."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeOpID",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_OpID_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against pinned pattern and literal conversion using specialized CakeML carriers; complete source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed ptree_OpID_def_typed: Nd with FST = mkNT nOpID and [Lf (TK tk)] → OPTION_CHOICE chain: destAlphaT tk with isConstructor (explode s) choosing Con (Short s) [] or Var (Short s); destSymbolT tk with isSymbolicConstructor choosing Con or Var; destLongidT tk with isConstructor choosing Con (Long_Short path s) [] or Var; then StarT via isSymbolicConstructor \"*\" (false, so Var (Short «*»)), EqualsT → Var (Short «=»), else NONE. Lean's constructorName = (s == \"::\" || uppercase s) implements isConstructor (isSymbolicConstructor or upper-alpha head), and the symbol/longid/star/equals clauses match."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "etoPat",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "EtoPat_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against pinned pattern and literal conversion using specialized CakeML carriers; complete source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed EtoPat_def_typed: Con x args → if NULL args then SOME (Pcon x []) else NONE; Var (Short n') → SOME (Pvar n'); Var (Long str n) → SOME (Pcon (SOME (Long str n)) []); the other twelve constructors → NONE. Lean's clauses plus the wildcard cover exactly these cases."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "papply",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "Papply_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against pinned pattern and literal conversion using specialized CakeML carriers; complete source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed Papply_def_typed: Pcon cn args → Pcon cn (args ++ [arg]); every other pattern → pat. Lean's two clauses match."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "maybeHandleRef",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "maybe_handleRef_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against pinned pattern and literal conversion using specialized CakeML carriers; complete source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed maybe_handleRef_def_typed expands to: Pcon (SOME (Short «Ref»)) [pat] → Pref pat, and every other pattern (including Ref with zero or two-plus arguments and all other names/constructors) is returned unchanged. Lean's single clause tests s == \"Ref\" on a one-argument pcon and returns .pref, with the wildcard identity for everything else."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeEliteral",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_Eliteral_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against pinned pattern and literal conversion using specialized CakeML carriers; complete source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed ptree_Eliteral_def_typed: Nd guarded by LENGTH subs = 1 ∧ FST nt = mkNT nEliteral, then destIntT → Lit (IntLit i), destCharT → Lit (Char c), destStringT → Lit (StrLit s), destWordT → Lit (Word64 (n2w n)), destFFIT → App (FFI s) []; all else NONE. Lean's singleton/leaf.token clauses match, with BitVec.ofNat 64 n for n2w n."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeOp",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_Op_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed ptree_Op_def_typed: nMultOps → StarT → Short «*», AlphaT «mod»/«div» → those, else singleSymP (validMultSym o explode) subs; nAddOps/nListOps → singleSymP validAddSym/validListSym; nRelOps → OPTION_CHOICE (singleSymP validRelSym subs) (EqualsT → Short «=»); nCompOps → SymbolT «:=» → «:=», AlphaT «o» → «o»; else NONE. Lean's ptreeOp branches and symOp helper (singleton symbol leaf with the predicate on explode) match each case."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "mkBinop",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "mk_binop_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed mk_binop_def_typed: if a_op = Short «::» then Con (SOME (Short «::»)) [a1; a2] else App Opapp [App Opapp [Var a_op; a1]; a2]. Lean is clause-identical."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "bindLoc",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "bind_loc_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed bind_loc_def_typed: bind_loc (Lannot e l) l' = Lannot e l, and for each of the other fourteen constructors bind_loc e l = Lannot e l. Lean's match returns the expression unchanged for lannot and wraps everything else."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "stripLocExpr",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "strip_loc_expr_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed strip_loc_expr_def_typed: Lannot e l → (strip_loc_expr e).1 with SOME l; every other constructor → (e, NONE). Lean's two clauses match."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "mkAstApp",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "mkAst_App_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed mkAst_App_def_typed: strip the head location, then dest_Conk a10: Con nm args → if nm = SOME (Short «Ref») ∧ NULL args then App Opref [a2] else strip the argument location and optLannot (merge_locsopt loc1 loc2) (Con nm (args ++ [a2'])); fallback App opn args with destFFIop opn = SOME s → App opn (args ++ [a2]); all other fallbacks → App Opapp [a1; a2]. Lean's match implements the same Con/Ref/FFI/default branches with optLannot and merge_locsopt inlined."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "dePat",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "dePat_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed dePat_def_typed: Pvar v → (v, b); Pany/Plit/Pcon/Pref/Pas/Ptannot → («», Mat (Var (Short «»)) [(p,b)]). Lean's pvar clause and wildcard match."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "mkFun",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "mkFun_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed mkFun_def_typed: mkFun p b = UNCURRY Fun (dePat p b). Lean destructures dePat and applies .fn, the same pair."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "letFromPat",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "letFromPat_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed letFromPat_def_typed: Pany → Let NONE rhs body; Pvar v → Let (SOME v) rhs body; every other pattern → Mat rhs [(p,body)]. Lean's three clauses match."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeStructName",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_StructName_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed ptree_StructName_def_typed: Nd with FST = mkNT nStructName and [pt] → OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destAlphaT; all else NONE. Lean's children/singleton/alphaT clause matches."
   },
   {
     "lean_path": "Flapjack/TypeSystemHOL.lean",
