@@ -13,37 +13,14 @@ statement kernel-checked with concrete clock values plus `example`s that apply
 the ported theorems.  No oracle row is fabricated.
 -/
 import Flapjack.Pancake.Proofs.PanGlobals
+import Flapjack.Test.Fixtures.PanGlobals
 
 namespace Flapjack.Test.PanGlobalsEvaluateTwoParity
 
 open Flapjack
 open Flapjack.Pancake.PanLang
 open Flapjack.PanSemStateFiniteExact
-
-private abbrev emptyValues : HolFiniteMapExact MlS (ValueHOL 8) :=
-  HolFiniteMapExact.empty
-
-private abbrev emptyShapes : HolFiniteMapExact MlS ShapeHOL :=
-  HolFiniteMapExact.empty
-
-private abbrev emptyCode :
-    HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL 8 × ShapeHOL) :=
-  HolFiniteMapExact.empty
-
-abbrev state0 : PanSemStateFiniteExact 8 Unit :=
-  { locals := emptyValues
-    globals := emptyValues
-    structs := []
-    code := emptyCode
-    eshapes := emptyShapes
-    memory := fun _ => .word 0
-    memaddrs := fun _ => False
-    shMemaddrs := fun _ => False
-    clock := 5
-    be := false
-    ffi := { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
-    baseAddr := 0
-    topAddr := 100 }
+open Flapjack.Test.Fixtures.PanGlobals
 
 /-- `num_cases_lemma[local]` (`pan_globalsProofScript.sml:2654-2657`): from a
     predicate holding at every `num`, it holds at `0` and at every `SUC x`. -/

@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+import Flapjack.Test.Fixtures.PanGlobals
 
 /-!
 # `panSem$evaluate_decls` canonical finite-map parity
@@ -21,35 +22,9 @@ namespace Flapjack.Test.PanSemEvaluateDeclsFiniteParity
 open Flapjack
 open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL DeclHOL ProgHOL FunDeclHOL)
 open Flapjack.PanSemStateFiniteExact
+open Flapjack.Test.Fixtures.PanGlobals
 
-abbrev ml (s : String) : MlS := Flapjack.Basis.Pure.MlString.ofString s
 
-private abbrev Word8 := RiscV.Word 8
-
-private abbrev emptyValues : HolFiniteMapExact MlS (ValueHOL 8) :=
-  HolFiniteMapExact.empty
-
-private abbrev emptyShapes : HolFiniteMapExact MlS ShapeHOL :=
-  HolFiniteMapExact.empty
-
-private abbrev emptyCode :
-    HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL 8 × ShapeHOL) :=
-  HolFiniteMapExact.empty
-
-abbrev state0 : PanSemStateFiniteExact 8 Unit :=
-  { locals := emptyValues
-    globals := emptyValues
-    structs := []
-    code := emptyCode
-    eshapes := emptyShapes
-    memory := fun _ => .word 0
-    memaddrs := fun _ => False
-    shMemaddrs := fun _ => False
-    clock := 5
-    be := false
-    ffi := { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
-    baseAddr := 0
-    topAddr := 100 }
 
 abbrev stateLoad : PanSemStateFiniteExact 8 Unit :=
   { state0 with

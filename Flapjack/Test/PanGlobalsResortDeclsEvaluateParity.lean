@@ -15,6 +15,7 @@ rows that the concrete `evaluate_decls` results agree on both orderings.  No
 oracle row is fabricated.
 -/
 import Flapjack.Pancake.Proofs.PanGlobals
+import Flapjack.Test.Fixtures.PanGlobals
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 
 namespace Flapjack.Test.PanGlobalsResortDeclsEvaluateParity
@@ -22,35 +23,9 @@ namespace Flapjack.Test.PanGlobalsResortDeclsEvaluateParity
 open Flapjack
 open Flapjack.Pancake.PanLang
 open Flapjack.PanSemStateFiniteExact
+open Flapjack.Test.Fixtures.PanGlobals
 
-private abbrev Word8 := RiscV.Word 8
 
-abbrev ml (s : String) : MlS := Flapjack.Basis.Pure.MlString.ofString s
-
-private abbrev emptyValues : HolFiniteMapExact MlS (ValueHOL 8) :=
-  HolFiniteMapExact.empty
-
-private abbrev emptyShapes : HolFiniteMapExact MlS ShapeHOL :=
-  HolFiniteMapExact.empty
-
-private abbrev emptyCode :
-    HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL 8 × ShapeHOL) :=
-  HolFiniteMapExact.empty
-
-abbrev state0 : PanSemStateFiniteExact 8 Unit :=
-  { locals := emptyValues
-    globals := emptyValues
-    structs := []
-    code := emptyCode
-    eshapes := emptyShapes
-    memory := fun _ => .word 0
-    memaddrs := fun _ => False
-    shMemaddrs := fun _ => False
-    clock := 5
-    be := false
-    ffi := { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
-    baseAddr := 0
-    topAddr := 100 }
 
 abbrev functionDecl : FunDeclHOL 8 :=
   { name := ml "f"
