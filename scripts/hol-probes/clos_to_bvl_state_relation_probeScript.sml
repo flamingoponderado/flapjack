@@ -197,6 +197,7 @@ val code_installed_from_alist_strong_replay = prove(
 val _ = show "code_installed_from_alist_strong_replay_typed=" code_installed_from_alist_strong_replay;
 val _ = show "code_installed_union_typed=" clos_to_bvlProofTheory.code_installed_union;
 val _ = show "code_installed_union1_typed=" clos_to_bvlProofTheory.code_installed_union1;
+val _ = show "alookup_compile_common_typed=" clos_to_bvlProofTheory.ALOOKUP_compile_common;
 val _ = show "toaList_domain_typed=" miscTheory.toAList_domain;
 val _ = show "sptree_domain_lookup_typed=" sptreeTheory.domain_lookup;
 val _ = show "known_compile_is_some_typed=" clos_knownProofTheory.known_compile_IS_SOME;

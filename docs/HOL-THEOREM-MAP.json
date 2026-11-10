@@ -84,6 +84,12 @@
   "reviewer": "Compared code_installed_union1_typed and independent review: binder order and left-biased union preserve installed left-tree code."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "ALOOKUP_compile_common",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CommonLookup.lean", "lean_name": "alookup_compileCommon",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alookup_compile_common_typed and independent review: binder and existential order, grouped premise and input c.maxApp match; HOL ALOOKUP, compile_prog, fromAList and code_installed use holALookup, compileProgExpsHOL, sptFromAList and codeInstalled."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "every_Fn_calls_list",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "everyFn_callsList",
   "statement_status": "reviewed_exact",
