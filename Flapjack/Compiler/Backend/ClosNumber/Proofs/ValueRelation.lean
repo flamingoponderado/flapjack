@@ -45,17 +45,42 @@ the corresponding HOL declaration is ported as the tagged ClosMti
 `simpleValRel`. -/
 theorem simpleValRel (maxApp : Nat) : ClosProps.simpleValRel (ValueRel maxApp) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · intro x n; refine ⟨fun h => by cases h; rfl, fun h => by subst x; exact .number n⟩
-  · intro x fields tag; refine ⟨?_, ?_⟩
-    · intro h; cases h with | block _ left _ rel => exact ⟨left, rfl, rel⟩
-    · rintro ⟨left, rfl, rel⟩; exact .block tag left fields rel
-  · intro x word; refine ⟨fun h => by cases h; rfl, fun h => by subst x; exact .word64 word⟩
+  · intro x n
+    refine ⟨fun h => by
+      cases h
+      rfl, fun h => by
+      subst x
+      exact .number n⟩
+  · intro x fields tag
+    refine ⟨?_, ?_⟩
+    · intro h
+      cases h with | block _ left _ rel => exact ⟨left, rfl, rel⟩
+    · rintro ⟨left, rfl, rel⟩
+      exact .block tag left fields rel
+  · intro x word
+    refine ⟨fun h => by
+      cases h
+      rfl, fun h => by
+      subst x
+      exact .word64 word⟩
   · intro x bytes
-    refine ⟨fun h => by cases h; rfl, fun h => by subst x; exact .byteVector bytes⟩
+    refine ⟨fun h => by
+      cases h
+      rfl, fun h => by
+      subst x
+      exact .byteVector bytes⟩
   · intro x address flag
-    refine ⟨fun h => by cases h; rfl, fun h => by subst x; exact .refPtr flag address⟩
-  · intro body arity env args loc x h; cases h; trivial
-  · intro index funs env args loc x h; cases h; trivial
+    refine ⟨fun h => by
+      cases h
+      rfl, fun h => by
+      subst x
+      exact .refPtr flag address⟩
+  · intro body arity env args loc x h
+    cases h
+    trivial
+  · intro index funs env args loc x h
+    cases h
+    trivial
 
 /-- Numbered values preserve scalar constructors and their payloads. -/
 theorem valueRel_number_iff (maxApp : Nat) (number : Int) (target : Value) :
