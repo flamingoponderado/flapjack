@@ -1517,6 +1517,14 @@ def fmap_as_finite_support_relation_errors(
                 f"fmap_as_finite_support_relation bare entry `{name}` must be a "
                 "plain finite-map parameter name"
             )
+        elif re.search(
+            r"(?:∃!?\s*(?:\([^()]*\)\s*)*|\bExists\s*\(?\s*fun\s*)\(?\s*"
+            + re.escape(name) + r"\s*:\s*HolFiniteMapExact\b", declaration_text
+        ):
+            errors.append(
+                f"fmap_as_finite_support_relation bare entry `{name}` is existential; "
+                "use fmap_as_finite_support_existentials with its required witness"
+            )
         elif not parameter_has_hol_finite_map_binder(declaration_text, name):
             errors.append(
                 f"fmap_as_finite_support_relation bare entry `{name}` must be a "

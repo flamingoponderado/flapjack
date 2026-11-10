@@ -1138,6 +1138,26 @@ End
         )
         self.assertEqual(errors, [])
 
+    def test_fmap_as_finite_support_relation_rejects_existential_binder(self):
+        for statement in (
+            "theorem t : ∃ code2 : HolFiniteMapExact Nat Nat, True",
+            "theorem t : ∃ (d : Nat) (code2 : HolFiniteMapExact Nat Nat), True",
+            "theorem t : Exists fun (code2 : HolFiniteMapExact Nat Nat) => True",
+            "theorem t : Exists (fun (code2 : HolFiniteMapExact Nat Nat) => True)",
+            "theorem t : ∃! (code2 : HolFiniteMapExact Nat Nat), True",
+        ):
+            errors = CHECKER["fmap_as_finite_support_relation_errors"](
+                [], (("code2", ""),), "Example.lean", statement,
+            )
+            self.assertTrue(any("existential" in error for error in errors), errors)
+
+    def test_fmap_as_finite_support_relation_accepts_nested_universal_binder(self):
+        statement = "theorem t (ih : ∀ (code2 : HolFiniteMapExact Nat Nat), True) : True"
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            [], (("code2", ""),), "Example.lean", statement,
+        )
+        self.assertEqual(errors, [])
+
     def test_fmap_as_finite_support_relation_rejects_raw_parameter(self):
         lines = ["def localsRel (sourceLocals : MlS \u2192 Option (ValueHOL width)) : Prop := True"]
         errors = CHECKER["fmap_as_finite_support_relation_errors"](

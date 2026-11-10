@@ -1,5 +1,7 @@
 module
 
+public import Flapjack.FiniteMap.BroadCodec
+
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationPrimitive
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
 
@@ -154,10 +156,20 @@ theorem holFmapAsFiniteSupportRelationWitness_State {C F : Type} :
       (∀ s : State C F, State.ofBroad s.toBroad = s) :=
   ClosSem.holFmapAsFiniteSupportWitness
 
+/-- Canonical codec for the existential reference-map witness. -/
+theorem holFmapAsFiniteSupportExistentialWitness_relUpdateThunk_targetRefs
+    (targetRefs : HolFiniteMapExact Nat (Ref Value)) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetRefs)).lookup = targetRefs.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetRefs)).finiteSupport = targetRefs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetRefs) = targetRefs := by
+  cases targetRefs
+  exact ⟨rfl, rfl, rfl⟩
+
 /-- A successful source thunk update has a corresponding target update and
 preserves the optimizer's state relation. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "rel_update_thunk"
-  (fmap_as_finite_support_relation := [State.refs, State.code, sourceRefs, targetRefs])]
+  (fmap_as_finite_support_relation := [State.refs, State.code, sourceRefs])
+  (fmap_as_finite_support_existentials := [targetRefs])]
 theorem relUpdateThunk {C F : Type} (c : Config) (g : Spt ValApprox)
     (source : State (Spt ValApprox × C) F) (target : State C F)
     (left right : List Value) (flag : Bool) (key : Nat)

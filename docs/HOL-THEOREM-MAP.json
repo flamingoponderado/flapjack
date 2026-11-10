@@ -1,5 +1,27 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "co_ok_IMP_full_gs_eq_shift_seq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/OracleInvariant.lean", "lean_name": "oracleOk_fullState",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Source comparison: compared clos_call_co_ok_IMP_full_gs_eq_shift_seq_typed: all five quantified arguments retain order and the unused g has an independent polymorphic type; the full shifted-oracle state equality follows from the original invariant premise. The input code uses canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "co_ok_IMP_wfg_full_gs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/OracleInvariant.lean", "lean_name": "oracleOk_wellFormed",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Source comparison: compared clos_call_co_ok_IMP_wfg_full_gs_typed: all five quantified arguments retain order and the unused g has an independent polymorphic type; the invariant implies full state well-formedness at k. The input code uses canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "co_ok_IMP_make_g",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/OracleInvariant.lean", "lean_name": "oracleOk_makeState",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+  "fmap_as_finite_support_relation": ["code"],
+  "fmap_as_finite_support_existentials": ["code2"],
+  "reviewer": "Source comparison: compared clos_call_co_ok_IMP_make_g_typed: all five quantified inputs retain order, including the independently polymorphic unused g; the conclusion existentially quantifies a sparse tree and finite map yielding the full state. Both code and existential code2 use canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "co_ok_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/OracleInvariant.lean", "lean_name": "oracleOk",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
@@ -5691,11 +5713,9 @@
   "hol_name": "partial_gc_related",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "partialGc_related",
-  "statement_status": "reviewed_fmap_as_finite_support_relation",
-  "fmap_as_finite_support_relation": [
-    "f"
-  ],
-  "reviewer": "Source comparison: Compared partial_gc_related_typed, including the original roots and heap validity premises, existential state and map, root renaming, root-domain inclusion, output heap validity, full gcRelated relation, and success. The HOL existential finite map is represented by the canonical finite-support binder f."
+  "statement_status": "reviewed_fmap_as_finite_support_existentials",
+  "fmap_as_finite_support_existentials": ["f"],
+  "reviewer": "Existential f uses the canonical finite-support codec and a same-module roundtrip witness. Source comparison: Compared partial_gc_related_typed, including the original roots and heap validity premises, existential state and map, root renaming, root-domain inclusion, output heap validity, full gcRelated relation, and success. The HOL existential finite map is represented by the canonical finite-support binder f."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
@@ -10969,9 +10989,10 @@
     "hol_name": "rel_update_thunk",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Force.lean",
     "lean_name": "rel_update_thunk",
-    "statement_status": "reviewed_fmap_as_finite_support_relation",
-    "fmap_as_finite_support_relation": ["State.refs", "State.code", "targetRefs", "sourceRefs"],
-    "reviewer": "Compared the original local theorem and rel_update_thunk_replay_typed HOL replay: target update failure implies source failure, and a target update success yields a source update and related resulting states. The original pointer, values and related-state premises and independent compiler and FFI carriers are retained. State refs and code and the two standalone result maps use canonical finite maps with the local state roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
+    "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+    "fmap_as_finite_support_relation": ["State.refs", "State.code", "targetRefs"],
+    "fmap_as_finite_support_existentials": ["sourceRefs"],
+    "reviewer": "Existential sourceRefs uses the canonical finite-support codec and a same-module roundtrip witness. Compared the original local theorem and rel_update_thunk_replay_typed HOL replay: target update failure implies source failure, and a target update success yields a source update and related resulting states. The original pointer, values and related-state premises and independent compiler and FFI carriers are retained. State refs and code and the two standalone result maps use canonical finite maps with the local state roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
   "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
@@ -11754,9 +11775,10 @@
     "hol_name": "rel_update_thunk",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Force.lean",
     "lean_name": "rel_update_thunk",
-    "statement_status": "reviewed_fmap_as_finite_support_relation",
-    "fmap_as_finite_support_relation": ["State.refs", "State.code", "sourceRefs", "targetRefs"],
-    "reviewer": "Compared the local source statement and update_thunk_statement_typed, an inferred-type capture of its transcription. Both states share independent compiler and FFI carriers; the state and value-list premises, singleton pointer, failure implication, successful source map premise, existential target map and updated-state relation are retained. State fields and standalone reference-map binders use canonical finite support with a local state roundtrip witness. The typed transcription is not a replay of the local HOL proof; source review and Lean checking do not establish cross-language equivalence."
+    "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+    "fmap_as_finite_support_relation": ["State.refs", "State.code", "sourceRefs"],
+    "fmap_as_finite_support_existentials": ["targetRefs"],
+    "reviewer": "Existential targetRefs uses the canonical finite-support codec and a same-module roundtrip witness. Compared the local source statement and update_thunk_statement_typed, an inferred-type capture of its transcription. Both states share independent compiler and FFI carriers; the state and value-list premises, singleton pointer, failure implication, successful source map premise, existential target map and updated-state relation are retained. State fields and standalone reference-map binders use canonical finite support with a local state roundtrip witness. The typed transcription is not a replay of the local HOL proof; source review and Lean checking do not establish cross-language equivalence."
   },
   {
   "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
@@ -15083,18 +15105,20 @@
     "hol_name": "rel_update_thunk",
     "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationForce.lean",
     "lean_name": "relUpdateThunk",
-    "statement_status": "reviewed_fmap_as_finite_support_relation",
-    "fmap_as_finite_support_relation": ["State.refs", "State.code", "sourceRefs", "targetRefs"],
-    "reviewer": "Compared the local HOL theorem and inferred-type replay rel_update_thunk_statement_typed: the source compiler carrier is an approximation tree paired with the target compiler carrier, with a shared independent FFI carrier. Both state and value relations, pointer flag and index, source success premise, existential target map and resulting state relation agree. The state fields and reference-map binders use canonical finite support, with the local state roundtrip witness. Reviewed the singleton, thunk inspection and unevaluated-store guards against closure semantics; the proof uses the same state and value relations. This source comparison is not a cross-language equivalence proof."
+    "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+    "fmap_as_finite_support_relation": ["State.refs", "State.code", "sourceRefs"],
+    "fmap_as_finite_support_existentials": ["targetRefs"],
+    "reviewer": "Existential targetRefs uses the canonical finite-support codec and a same-module roundtrip witness. Compared the local HOL theorem and inferred-type replay rel_update_thunk_statement_typed: the source compiler carrier is an approximation tree paired with the target compiler carrier, with a shared independent FFI carrier. Both state and value relations, pointer flag and index, source success premise, existential target map and resulting state relation agree. The state fields and reference-map binders use canonical finite support, with the local state roundtrip witness. Reviewed the singleton, thunk inspection and unevaluated-store guards against closure semantics; the proof uses the same state and value relations. This source comparison is not a cross-language equivalence proof."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "rel_update_thunk",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/StateRelation.lean",
     "lean_name": "relUpdateThunk",
-    "statement_status": "reviewed_fmap_as_finite_support_relation",
-    "fmap_as_finite_support_relation": ["State.refs", "State.code", "targetRefs", "sourceRefs"],
-    "reviewer": "Compared the original local theorem and hypothesis-free typed replay in clos_mti_install_probe.out: the shared compiler and FFI carriers, state and value relations, singleton pointer, failure implication, target-map success implication and existential source map/state update are unchanged. The state fields and standalone reference maps use canonical finite support. Compared the specialized updateThunk and storeThunk branches with the typed closure semantics: pointer flag and singleton guards, thunk inspection, unevaluated-store guard and HOL-equality update agree for these Nat/closure-value carriers. The state roundtrip witnesses the two state fields; this is source comparison, not a cross-language equivalence proof."
+    "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+    "fmap_as_finite_support_relation": ["State.refs", "State.code", "targetRefs"],
+    "fmap_as_finite_support_existentials": ["sourceRefs"],
+    "reviewer": "Existential sourceRefs uses the canonical finite-support codec and a same-module roundtrip witness. Compared the original local theorem and hypothesis-free typed replay in clos_mti_install_probe.out: the shared compiler and FFI carriers, state and value relations, singleton pointer, failure implication, target-map success implication and existential source map/state update are unchanged. The state fields and standalone reference maps use canonical finite support. Compared the specialized updateThunk and storeThunk branches with the typed closure semantics: pointer flag and singleton guards, thunk inspection, unevaluated-store guard and HOL-equality update agree for these Nat/closure-value carriers. The state roundtrip witnesses the two state fields; this is source comparison, not a cross-language equivalence proof."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
@@ -128379,14 +128403,10 @@
   "hol_name": "rel_update_thunk",
   "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Force.lean",
   "lean_name": "rel_update_thunk",
-  "statement_status": "reviewed_fmap_as_finite_support_relation",
-  "fmap_as_finite_support_relation": [
-    "State.refs",
-    "State.code",
-    "sourceRefs",
-    "targetRefs"
-  ],
-  "reviewer": "Compared the typed replay of the original local proof in clos_letop_source_probe.out. The original pointer, related-state and value-list premises, source-update failure and success implications, existential target map, updated-state relation, and shared independent compiler and FFI carriers agree. State refs and code and standalone result maps use canonical finite maps with the local state roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+  "fmap_as_finite_support_relation": ["State.refs", "State.code", "sourceRefs"],
+  "fmap_as_finite_support_existentials": ["targetRefs"],
+  "reviewer": "Existential targetRefs uses the canonical finite-support codec and a same-module roundtrip witness. Compared the typed replay of the original local proof in clos_letop_source_probe.out. The original pointer, related-state and value-list premises, source-update failure and success implications, existential target map, updated-state relation, and shared independent compiler and FFI carriers agree. State refs and code and standalone result maps use canonical finite maps with the local state roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
