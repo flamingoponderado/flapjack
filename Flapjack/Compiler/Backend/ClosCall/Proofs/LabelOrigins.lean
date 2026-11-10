@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.Length
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.TotalCorrespondence
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
 
 @[expose] public section
@@ -180,7 +181,7 @@ termination_by fuel
 end
 
 /-- The production retry wrapper satisfies the same origin bound. -/
-theorem callsListBounded_labelsBound (fuel : Nat) (es : List Exp) (initial final : State)
+private theorem callsListBounded_labelsBound (fuel : Nat) (es : List Exp) (initial final : State)
     (out : List Exp) (run : callsListBounded fuel es initial = some (out, final)) :
     LabelsBound initial final (codeLocations es) := by
   unfold callsListBounded at run
@@ -192,5 +193,22 @@ theorem callsListBounded_labelsBound (fuel : Nat) (es : List Exp) (initial final
   | none =>
     simp only [first] at run
     exact callsListFuel_labelsBound _ es initial final out run
+
+/-- Every emitted auxiliary label is old or the successor of an input
+closure location. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_add_SUC_code_locs"]
+theorem calls_addSucc_codeLocations (xs : List Exp) (initial : State) (ys : List Exp)
+    (final : State) (run : calls xs initial = (ys, final)) :
+    {x | x ∈ final.2.map Prod.fst} ⊆
+      {x | x ∈ initial.2.map Prod.fst} ∪ Nat.succ '' {x | x ∈ codeLocations xs} := by
+  have bounded := callsListBounded_correct 0 xs initial
+  change callsSingList xs initial = (ys, final) at run
+  rw [run] at bounded
+  have bound := callsListBounded_labelsBound 0 xs initial final ys bounded
+  intro label member
+  rcases bound label member with old | ⟨loc, inLocations, eq⟩
+  · exact Or.inl old
+  · exact Or.inr ⟨loc, inLocations, by simpa [Nat.succ_eq_add_one] using eq.symm⟩
+
 
 end Flapjack.Compiler.Backend.ClosCall

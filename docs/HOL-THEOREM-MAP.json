@@ -1191,7 +1191,7 @@
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_add_SUC_code_locs",
-  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LabelsOriginal.lean", "lean_name": "calls_addSucc_codeLocations",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LabelOrigins.lean", "lean_name": "calls_addSucc_codeLocations",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared calls_add_SUC_code_locs_typed and independent review: quantified binders, sparse-tree state, calls equation and old-or-successor label set inclusion agree."
  },
