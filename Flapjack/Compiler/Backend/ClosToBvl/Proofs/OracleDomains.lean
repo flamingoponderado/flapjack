@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Oracle
 public import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
 public import Flapjack.Compiler.Backend.ClosMti.Proofs.GlobalTraversal
 public import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.GlobalInvariants
 public import Flapjack.Misc.Bag
 import Flapjack.Misc.Sptree.ToAList
 import Mathlib.Data.Set.Lattice
@@ -91,5 +92,42 @@ theorem condMti_monotonic_elistGlobals {α β : Type} (es : List ClosLang.Exp)
     cases enabled <;>
       simpa [Function.comp_def, pureCo, ClosMti.condCompileInc, ClosMti.compileInc,
         ClosMti.intro_multi_preserves_elist_globals] using hx
+
+/-- Flapjack proof infrastructure: the preceding constant contributes no
+global write, so the reviewed numbering bag theorem applies to the oracle. -/
+private theorem numberCompileInc_globals (start : Nat) (es : List ClosLang.Exp) :
+    elistGlobals (ClosNumber.compileInc start es).2 = elistGlobals es := by
+  have h := ClosNumber.renumberCodeLocs_elistGlobals.1
+    (makeEven (start + max es.length 1)) es
+    (ClosNumber.renumberList (makeEven (start + max es.length 1)) es).1
+    (ClosNumber.renumberList (makeEven (start + max es.length 1)) es).2 (Prod.eta _).symm
+  simp [ClosNumber.compileInc, elistGlobals, setGlobals, opGlobalBag,
+    FlatProps.emptyGlobalBag, FlatProps.unionGlobalBag, h]
+  funext key
+  simp [bagUnion, emptyBag]
+
+/-- Incremental numbering preserves closure global-write safety. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "number_compile_inc_esgc_free"]
+theorem numberCompileInc_esgcFree (es : List ClosLang.Exp) (start : Nat) :
+    (∀ e ∈ es, esgcFree e) → ∀ e ∈ (ClosNumber.compileInc start es).2, esgcFree e := by
+  intro input
+  have h := ClosNumber.renumberCodeLocs_esgcFree.1
+    (makeEven (start + max es.length 1)) es
+    (ClosNumber.renumberList (makeEven (start + max es.length 1)) es).1
+    (ClosNumber.renumberList (makeEven (start + max es.length 1)) es).2 ⟨(Prod.eta _).symm, input⟩
+  simpa [ClosNumber.compileInc, esgcFree, esgcFreeList] using h
+
+/-- Incremental numbering preserves the global-write oracle order. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "number_monotonic_elist_globals"]
+theorem numberMonotonic_elistGlobals {α β : Type} (St : Set Nat)
+    (co : Nat → (Nat × α) × (List ClosLang.Exp × β))
+    (h : oracleMonotonic (fun entry => setOfBag (elistGlobals entry.2.1)) (· < ·) St co) :
+    oracleMonotonic (fun entry => setOfBag (elistGlobals entry.2.1)) (· < ·) St
+      (stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) co) := by
+  apply oracleMonotonic_subset _ _ _ _ _ _ _ ?_ h
+  constructor
+  · exact fun _ hx => hx
+  · intro n x hx
+    simpa [stateCo, ClosNumber.ignoreTable, numberCompileInc_globals] using hx
 
 end Flapjack.Compiler.Backend.ClosToBvl

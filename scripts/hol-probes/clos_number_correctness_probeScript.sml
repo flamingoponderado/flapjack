@@ -23,6 +23,8 @@ val _ = show "renumber_list_distinct_typed=" clos_numberProofTheory.renumber_cod
 val _ = show "renumber_distinct_typed=" clos_numberProofTheory.renumber_code_locs_distinct;
 val _ = show "renumber_even_typed=" clos_numberProofTheory.renumber_code_locs_EVEN;
 val _ = show "renumber_vars_none_typed=" clos_numberProofTheory.renumber_code_locs_every_Fn_vs_NONE;
+val _ = show "renumber_elist_globals_typed=" clos_numberProofTheory.renumber_code_locs_elist_globals;
+val _ = show "renumber_esgc_free_typed=" clos_numberProofTheory.renumber_code_locs_esgc_free;
 val _ = show "every_fn_vs_none_every_typed=" closPropsTheory.every_Fn_vs_NONE_EVERY;
 val _ = show "renumber_code_locs_every_Fn_SOME_typed=" clos_numberProofTheory.renumber_code_locs_every_Fn_SOME;
 open closLangTheory clos_numberTheory clos_numberProofTheory closSemTheory closPropsTheory

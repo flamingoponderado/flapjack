@@ -327,6 +327,18 @@
   "reviewer": "Compared clos_bvl_syntax_oracle_ok_typed and independent review: c, c', es, co order; independent oracle payload; all guarded clauses, state-oracle compositions, bag conditions, holThe and fixed free-variable pass instantiation match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml", "hol_name": "renumber_code_locs_elist_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/GlobalInvariants.lean", "lean_name": "renumberCodeLocs_elistGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared renumber_elist_globals_typed and source: both list and expression conjuncts, quantified binder order, numbering-result premises and global-write bag equalities match. The reviewed renumberFuns traversal corresponds to HOL's map-and-zip recursive bodies."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml", "hol_name": "renumber_code_locs_esgc_free",
+  "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/GlobalInvariants.lean", "lean_name": "renumberCodeLocs_esgcFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared renumber_esgc_free_typed and source: both list and expression conjuncts, quantified binder order, grouped numbering and safety premises, and EVERY safety conclusions match. The reviewed renumberFuns traversal preserves HOL's map-and-zip bodies."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml", "hol_name": "renumber_code_locs_every_Fn_vs_NONE",
   "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/VarsNone.lean", "lean_name": "renumberCodeLocs_everyFnVarsNone",
   "statement_status": "reviewed_exact",
@@ -439,6 +451,18 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean", "lean_name": "disjoint_le_gt",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared DISJOINT_LE_GT_typed and source: the free variables A, n, B occur in order, with natural-number set carriers, the grouped bounds, and pointwise DISJOINT conclusion matching HOL."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "number_compile_inc_esgc_free",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean", "lean_name": "numberCompileInc_esgcFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared number_compile_inc_esgc_free_typed and source: free variables expressions and start occur in order, EVERY is bounded quantification, and the numbering result's second component preserves the same closure safety predicate with no extra premise."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "number_monotonic_elist_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean", "lean_name": "numberMonotonic_elistGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared number_monotonic_elist_globals_typed and source: free variables St and co occur in order, the oracle configuration and auxiliary carriers are independent, and the same name composite is instantiated separately for input and output entry types. The initial set, strict relation and stateCo/ignoreTable numbering composition match HOL."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cond_mti_monotonic_elist_globals",
