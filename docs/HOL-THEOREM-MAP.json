@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "make_g_IMP_subg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeState.lean", "lean_name": "makeState_imp_subg",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared make_g_imp_subg_type in clos_call_code_list_probe.out and HOL source: both sparse num_sets, code payload, constructed states and program list retain their carriers; both successful make_g results, disjointness, distinctness, subspt and generated-label inclusion imply the full subg conclusion. The code parameter and its HOL-equality update list use canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "make_g_make_g_eq",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeState.lean", "lean_name": "makeState_eq",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",

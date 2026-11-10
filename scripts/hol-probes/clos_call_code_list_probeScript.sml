@@ -19,6 +19,7 @@ val _ = (print "v_rel_exists_type="; Lib.with_flag (Globals.show_types,true) pri
 val _ = (print "is_recclosure_def_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.is_Recclosure_def); print "\n");
 val _ = (print "make_g_subg_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.make_g_subg); print "\n");
 val _ = (print "make_g_make_g_eq_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.make_g_make_g_eq); print "\n");
+val _ = (print "make_g_imp_subg_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.make_g_IMP_subg); print "\n");
 val _ = (print "alookup_all_distinct_mem_type="; Lib.with_flag (Globals.show_types,true) print_term (concl alistTheory.ALOOKUP_ALL_DISTINCT_MEM); print "\n");
 val _ = (print "dest_closure_v_rel_lookup_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.dest_closure_v_rel_lookup); print "\n");
 val _ = (print "dest_closure_v_rel_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.dest_closure_v_rel); print "\n");

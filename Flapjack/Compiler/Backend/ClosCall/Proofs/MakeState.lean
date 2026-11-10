@@ -192,4 +192,125 @@ theorem makeState_eq {A B : Type} [Nonempty B]
   have same := (extension.2.1 _ _ lookup0).symm.trans lookup1
   exact congrArg (fun value => (k + 1, value)) (Option.some.inj same)
 
+private theorem makeState_get {A B : Type} [Nonempty B] (tree : Spt A)
+    (code : HolFiniteMapExact Nat B) (state : Spt A × List (Nat × B))
+    (index : Nat) (value : B) (run : makeState tree code = some state)
+    (inTree : sptDomain tree index) (found : code.lookup (index + 1) = some value) :
+    holALookup state.2 (index + 1) = some value := by
+  classical
+  have well := makeState_wellFormed tree code state run
+  unfold makeState at run
+  split at run <;> try contradiction
+  simp only [Option.some.injEq] at run
+  subst state
+  obtain ⟨sparseValue, sparseLookup⟩ := (sptDomain_iff_lookup tree index).1 inTree
+  apply holALookup_of_distinct_member
+  refine ⟨well.2, ?_⟩
+  apply List.mem_map.mpr
+  refine ⟨(index, sparseValue), (sptMemToAList tree index sparseValue).2 sparseLookup, ?_⟩
+  change (index + 1, holThe (code.lookup (index + 1))) = (index + 1, value)
+  rw [found]
+  rfl
+
+private theorem makeState_code {A B : Type} [Nonempty B] (tree : Spt A)
+    (code : HolFiniteMapExact Nat B) (state : Spt A × List (Nat × B))
+    (key : Nat) (value : B) (run : makeState tree code = some state)
+    (found : holALookup state.2 key = some value) : code.lookup key = some value := by
+  classical
+  unfold makeState at run
+  split at run
+  next valid =>
+    simp only [Option.some.injEq] at run
+    subst state
+    have member := holALookup_member _ key value found
+    obtain ⟨⟨index, sparseValue⟩, inList, pairEq⟩ := List.mem_map.mp member
+    have inTree : sptDomain tree index :=
+      (sptDomain_iff_lookup tree index).2 ⟨sparseValue, (sptMemToAList tree index sparseValue).1 inList⟩
+    have inCode : index + 1 ∈ code.domain := valid ⟨index, inTree, by omega⟩
+    have ⟨rfl, rfl⟩ := Prod.mk.inj pairEq
+    change code.lookup (index + 1) ≠ none at inCode
+    cases h : code.lookup (index + 1) with
+    | none => contradiction
+    | some v => simp [holThe]
+  next invalid => simp at run
+/-- Canonical finite-map codec for the source code map. -/
+theorem holFmapAsFiniteSupportParamWitness_makeState_imp_subg_code {B : Type}
+    (code : HolFiniteMapExact Nat B) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_makeState_code code key
+
+/-- New disjoint code and an extended sparse tree produce a state extending
+both the new programs and the earlier constructed state. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "make_g_IMP_subg"
+  (fmap_as_finite_support_parameters := [code])]
+theorem makeState_imp_subg {B : Type} [Nonempty B] (r0 : NumSet)
+    (code : HolFiniteMapExact Nat B) (g0 : NumSet × List (Nat × B))
+    (progs1 : List (Nat × B)) (r1 : NumSet) (g1 : NumSet × List (Nat × B))
+    (h : makeState r0 code = some g0 ∧
+      (∀ k, ¬ (k ∈ code.domain ∧ k ∈ progs1.map Prod.fst)) ∧
+      (progs1.map Prod.fst).Nodup ∧
+      makeState r1 (code.updateListEq progs1) = some g1 ∧
+      sptSubspt r0 r1 ∧
+      (∀ k ∈ progs1.map Prod.fst, k ∈ Set.image Nat.succ (sptDomain r1))) :
+    stateExtends (r1, progs1 ++ g0.2) g1 := by
+  classical
+  obtain ⟨run0, disjoint, distinct, run1, sub, inDomain⟩ := h
+  have well0 := makeState_wellFormed r0 code g0 run0
+  have well1 := makeState_wellFormed r1 (code.updateListEq progs1) g1 run1
+  have tree1 : g1.1 = r1 := by
+    unfold makeState at run1
+    split at run1
+    next _ =>
+      simp only [Option.some.injEq] at run1
+      exact (congrArg Prod.fst run1).symm
+    next _ => simp at run1
+  refine ⟨?_, ?_, well1.2⟩
+  · rw [tree1]
+    exact fun key member => ⟨member, rfl⟩
+  · intro key value found
+    rw [holALookup_append] at found
+    cases program : holALookup progs1 key with
+    | some v =>
+      simp [program] at found
+      subst v
+      have pair := holALookup_member progs1 key value program
+      have mem : key ∈ progs1.map Prod.fst := List.mem_map.mpr ⟨(key, value), pair, rfl⟩
+      obtain ⟨index, inTree, keyEq⟩ := inDomain key mem
+      have lookup : (code.updateListEq progs1).lookup key = some value :=
+        fupdateList_of_distinct_member code.lookup progs1 key value ⟨distinct, pair⟩
+      have keyEq' : index + 1 = key := by omega
+      rw [← keyEq'] at lookup ⊢
+      exact makeState_get r1 _ g1 index value run1 inTree lookup
+    | none =>
+      simp [program] at found
+      have oldLookup := makeState_code r0 code g0 key value run0 found
+      have oldKey : key ∈ g0.2.map Prod.fst :=
+        List.mem_map.mpr ⟨(key, value), holALookup_member g0.2 key value found, rfl⟩
+      have oldDomain : key ∈ Set.image Nat.succ (sptDomain g0.1) := by rw [← well0.1]; exact oldKey
+      have tree0 : g0.1 = r0 := by
+        unfold makeState at run0
+        split at run0
+        next _ =>
+          simp only [Option.some.injEq] at run0
+          exact (congrArg Prod.fst run0).symm
+        next _ => simp at run0
+      rw [tree0] at oldDomain
+      obtain ⟨index, oldTree, keyEq⟩ := oldDomain
+      have newTree : sptDomain r1 index := (sub index oldTree).1
+      have notProgram : key ∉ progs1.map Prod.fst := by
+        intro mem
+        have codeMem : key ∈ code.domain := by simp [HolFiniteMapExact.domain, oldLookup]
+        exact disjoint key ⟨codeMem, mem⟩
+      have lookup : (code.updateListEq progs1).lookup key = some value := by
+        change FUPDATE_LIST_HOL code.lookup progs1 key = some value
+        have eq := FLOOKUP_FUPDATE_LIST_HOL_not_mem code.lookup progs1 key notProgram
+        change FUPDATE_LIST_HOL code.lookup progs1 key = code.lookup key at eq
+        exact eq.trans oldLookup
+      have keyEq' : index + 1 = key := by omega
+      rw [← keyEq'] at lookup ⊢
+      exact makeState_get r1 _ g1 index value run1 newTree lookup
+
+
 end Flapjack.Compiler.Backend.ClosCall
