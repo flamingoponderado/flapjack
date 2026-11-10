@@ -2998,7 +2998,7 @@ theorem handlerCallerPayloadPositive {width : Nat} [NeZero width]
   obtain ⟨key,present⟩ := nonempty
   obtain ⟨nameValue,keyLookup⟩ := Option.isSome_iff_exists.mp present
   have member : key ∈ (sptToAList names.1).map Prod.fst :=
-    List.mem_map.mpr ⟨(key,nameValue),(sptToAList_mem_iff_lookup names.1 key nameValue).mpr keyLookup,rfl⟩
+    List.mem_map.mpr ⟨(key,nameValue),(sptMemToAList names.1 key nameValue).mpr keyLookup,rfl⟩
   simp only [postAllocConventionsHOL,Bool.and_eq_true] at conventions
   have stackNames := conventions.2.1
   simp only [everyStackVarHOL,Bool.and_eq_true] at stackNames

@@ -78,7 +78,7 @@ theorem evaluatePost_cons_success {C F : Type}
           rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, runHead]
           cases result2 <;> (simp only at *; rw [runTail]; try rfl)
       refine ⟨clock1 + clock2, _, tFinal, fFinal, targetSequence, ?_, state2,
-        relocationSubmap_trans map1 map2, unmappedRefsSubmap_trans refs1 refs2,
+        HolFiniteMapExact.submap_trans map1 map2, unmappedRefsSubmap_trans refs1 refs2,
         annotations2, clocks2⟩
       cases tailResult with
       | err error =>

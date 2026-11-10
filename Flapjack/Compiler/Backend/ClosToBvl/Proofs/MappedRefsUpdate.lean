@@ -32,7 +32,7 @@ theorem stateRel_update_mapped {C F : Type} (s : ClosSem.State C F) (t : BvlSem.
     stateRel f { s with refs := s.refs.updateEq (sourcePtr, sourceCell) }
       { t with refs := t.refs.updateEq (targetPtr, targetCell) } := by
   have frame := mappedUpdate_frame f t.refs sourcePtr targetPtr mapped targetCell
-  have submap : relocationSubmap f f := by intro key val found; exact found
+  have submap : f.submap f := by intro key val found; exact found
   obtain ⟨ffi, globals, table, injective, noFrozen, sourceDomain, targetDomain, cells,
     generic, partialCode, force, oracle, code⟩ := states
   have grow : ∀ a b, vRel s.maxApp f t.refs t.code a b →
@@ -191,7 +191,7 @@ theorem doApp_updateArray_related {C F : Type} (s : ClosSem.State C F) (t : BvlS
   obtain ⟨targetFields, targetFound, fieldsRel⟩ := stateRel_array_lookup states sourcePtr targetPtr fields mapped found
   let newCell := BvlSem.Ref.valueArray (targetFields.set index.toNat targetValue)
   have frame := mappedUpdate_frame f t.refs sourcePtr targetPtr mapped newCell
-  have submap : relocationSubmap f f := by intro key val lookup; exact lookup
+  have submap : f.submap f := by intro key val lookup; exact lookup
   have grownFields := fieldsRel.imp (fun _ _ rel => vRel_grow_refs rel submap frame)
   have grownValue := vRel_grow_refs valueRel submap frame
   have targetBound : ¬ index.toNat ≥ targetFields.length := by

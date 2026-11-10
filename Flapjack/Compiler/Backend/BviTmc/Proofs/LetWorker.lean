@@ -93,7 +93,7 @@ theorem evaluate_let_worker {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.E
           bodyIH values values' middle g middleTarget bindingsRun run
             (envRel_append true g env1 env2 values values' (envRel_submap true f g env1 env2 environments extension) valuesRelated)
             middleStates extendedHole nextNotFinal extendedPointer nextCode
-        have submap : finiteSubmap f h := by
+        have submap : f.submap h := by
           intro k v found; exact bodyExtension k v (extension k v found)
         have domain := BviProps.evaluate_refs_subset bindings env2 target middleTarget (.val values') targetRun
         have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh domain

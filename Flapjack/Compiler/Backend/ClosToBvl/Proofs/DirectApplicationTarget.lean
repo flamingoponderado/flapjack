@@ -363,7 +363,7 @@ theorem evaluatePost_app_direct_success {C F : Type}
             (.val [targetClosure], { tFunction with clock := sFunction.clock + clock3 }) := by
           simpa [Nat.add_assoc, clocks2] using shiftFunction
         refine ⟨clock1 + clock2 + clock3, targetResult, tFinal, fFinal, ?_, ?_, states3,
-          relocationSubmap_trans (relocationSubmap_trans map1 map2) map3,
+          HolFiniteMapExact.submap_trans (HolFiniteMapExact.submap_trans map1 map2) map3,
           unmappedRefsSubmap_trans (unmappedRefsSubmap_trans frame1 frame2) frame3, annotations3, clocks3⟩
         · obtain ⟨entry, targetFound⟩ := vRel_direct_findCode headRel argsRel2 selected
           have targetNonempty : targetValues ≠ [] := by

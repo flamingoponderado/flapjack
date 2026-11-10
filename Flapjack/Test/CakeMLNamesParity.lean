@@ -48,7 +48,7 @@ open Flapjack.Compiler.Backend
 private def noOpts : ClosToBvl.Config :=
   { ClosToBvl.defaultConfig with maxApp := 0, doMti := false, doCall := false, knownConf := none }
 
-#guard match SourceToFlat.compileCakeToBviWithNamesNoOptsFuel 100 SourceToFlat.emptyConfig noOpts [] with
+#guard match SourceToFlat.compileCakeToBviBeforeOptimizationsFuel 100 SourceToFlat.emptyConfig noOpts [] with
   | some (_, _, _, _, _, names) =>
       let names := SourceToFlat.backendNames names
       ([0, 1, 2, 3, 4, 5, 6, 7, 9, 39, 61, 62, 63, 64, 65, 69, 70, 72, 76, 80, 84, 88].map fun n =>

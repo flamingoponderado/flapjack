@@ -68,6 +68,45 @@ theorem valueToList_listToValue (values : List Value) :
   | nil => simp [listToValue, valueToList]
   | cons head tail ih => simp [listToValue, valueToList, ih]
 
+/-- Decoding a source list recovers its canonical encoding. Flapjack uses this
+shared inverse in compiler-pass proofs; HOL unfolds the list functions there. -/
+theorem listToValue_valueToList (value : Value) (values : List Value)
+    (decode : valueToList value = some values) : listToValue values = value := by
+  cases value with
+  | block tag fields =>
+    cases fields with
+    | nil =>
+      simp only [valueToList] at decode
+      split at decode
+      · rename_i equal
+        simp only [Option.some.injEq] at decode
+        subst values
+        subst tag
+        rfl
+      · contradiction
+    | cons head tail =>
+      cases tail with
+      | nil => simp [valueToList] at decode
+      | cons next rest =>
+        cases rest with
+        | cons other rest => simp [valueToList] at decode
+        | nil =>
+          simp only [valueToList] at decode
+          split at decode
+          · rename_i equal
+            cases nextDecode : valueToList next with
+            | none => simp [nextDecode] at decode
+            | some vs =>
+              simp [nextDecode] at decode
+              subst values
+              have ih := listToValue_valueToList next vs nextDecode
+              subst tag
+              simp [listToValue, ih]
+          · contradiction
+  | _ => simp [valueToList] at decode
+termination_by sizeOf value
+
+
 mutual
 /-- Compare closure-language values with HOL's closure and type-error cases. -/
 @[hol "cakeml/compiler/backend/semantics/closSemScript.sml" "do_eq_def"]

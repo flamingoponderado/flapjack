@@ -95,9 +95,4 @@ theorem removeBounded_succeeds (fuel depth : Nat) (e : Exp) :
     obtain ⟨result, done⟩ := removeFuel_succeeds (max fuel (expBudget e + 1)) depth e bound
     exact ⟨result, by simp [removeBounded, h, done]⟩
 
-/-- Retrying preserves every previously successful free-variable cleanup result. -/
-theorem removeBounded_eq_of_success (fuel depth : Nat) (e result : Exp)
-    (success : removeFuel fuel depth e = some result) : removeBounded fuel depth e = some result := by
-  simp [removeBounded, success]
-
 end Flapjack.Compiler.Backend.ClosFvs

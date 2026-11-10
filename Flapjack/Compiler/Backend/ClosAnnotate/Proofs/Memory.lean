@@ -41,9 +41,9 @@ theorem primitiveSimulation_memory {C F : Type} (op : ClosLang.MemOp) :
   | configGC => exact primitiveSimulation_configGC
   | mutCons tag len =>
     intro args nextArgs source target argsRel states
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | updateCons | finaliseCons =>
     intro args nextArgs source target argsRel states
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyMemory], by simp [doApp, applyMemory, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate

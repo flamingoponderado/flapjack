@@ -8,7 +8,7 @@ public import Flapjack.Compiler.Backend.WordBignum.Generate
 
 @[expose] public section
 
-/-! Restricted source-to-word composition. -/
+/-! Source-to-word compositions at intermediate and configured stages. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 
 /-- Flapjack's checked per-function composition retains the next local label
@@ -19,7 +19,7 @@ def compileCakeToWordWithNamesAndLabelsNoOptsFuel {width : Nat} [NeZero width]
     (word : DataToWord.Config) (decls : List AstHOL.Dec) :
     Option (Config × ClosToBvl.Config × Nat ×
       List (Nat × Nat × (WordLangProgHOL (BitVec width) × Nat)) × Nat × Spt Basis.Pure.MlString.MlString) := do
-  let (source, closure, start, code, next, names) ← compileCakeToDataWithNamesNoOptsFuel fuel source closure decls
+  let (source, closure, start, code, next, names) ← compileCakeToDataBeforeOptimizationsFuel fuel source closure decls
   let code := code.map fun (name, args, body) =>
     (name, args, DataToWord.compileControl word name 2 body)
   pure (source, closure, start, code, next, names)
@@ -46,7 +46,7 @@ def compileCakeToWordNoOptsFuel {width : Nat} [NeZero width]
   pure (source, closure, start, code.map fun (name, args, body, _) => (name, args + 1, body), next)
 
 /-- Add fixed data-to-word stubs and generated 64-bit bignum stubs to the
-restricted source-to-word composition. This remains partial and stops before
+pre-optimization source-to-word composition. This remains partial and stops before
 word-to-word optimization. -/
 def compileCakeToWordWithStubs64NoOptsFuel
     (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
@@ -57,20 +57,7 @@ def compileCakeToWordWithStubs64NoOptsFuel
   let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
   pure (source, closure, start, fixed ++ bignum ++ code, next)
 
-/-- As above, retaining the BVI symbol-name map for the backend. -/
-def compileCakeToWordWithStubsAndNames64NoOptsFuel
-    (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
-    (word : DataToWord.Config) (decls : List AstHOL.Dec) :
-    Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × WordLangProgHOL (BitVec 64)) × Nat ×
-      Spt Basis.Pure.MlString.MlString) := do
-  let (source, closure, start, code, next, names) ←
-    compileCakeToWordWithNamesAndLabelsNoOptsFuel fuel source closure word decls
-  let fixed ← DataToWord.fixedStubs? word
-  let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
-  let code := code.map fun (name, args, body, _) => (name, args + 1, body)
-  pure (source, closure, start, fixed ++ bignum ++ code, next, names)
-
-/-- Continue the checked multi-argument and BVI-inlining route to the 64-bit
+/-- Continue the checked closure and BVI-inlining route to the 64-bit
 word stage. Unsupported upstream operations and exhausted fuel return `none`. -/
 def compileCakeToWordWithStubsAndNames64InlineFuel
     (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)

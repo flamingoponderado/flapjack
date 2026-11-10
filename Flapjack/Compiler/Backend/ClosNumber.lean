@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosLang.Syntax
+public import Flapjack.Misc.MakeEven
 
 @[expose] public section
 
@@ -73,7 +74,7 @@ locations, then prepend the source's embedded original location. -/
 @[hol "cakeml/compiler/backend/clos_numberScript.sml" "compile_inc_def"]
 def compileInc (n : Nat) (xs : List Exp) : Nat × List Exp :=
   let next := n + max xs.length 1
-  let aligned := if next % 2 = 0 then next else next + 1
+  let aligned := makeEven next
   let (m, ys) := renumberList aligned xs
   (m, .op .none (.intOp (.const (Int.ofNat n))) [] :: ys)
 

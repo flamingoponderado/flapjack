@@ -73,6 +73,7 @@ theorem altFreeFuns_length (functions : List (Nat × Exp)) (count : Nat) :
   | cons first rest ih => cases first; simp [altFreeFuns, ih]
 
 /-- Replicated zero expressions carry no closure locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "code_locs_REP_const_0"]
 theorem codeLocations_replicate_const0 (count : Nat) (trace : BackendCommon.Tra) :
     codeLocations (List.replicate count (const0 trace)) = [] := by
   induction count with
@@ -232,52 +233,6 @@ theorem annotateList_codeLocations_sublist (arity : Nat) (expressions : List Exp
     List.Sublist (codeLocations (annotateList arity expressions)) (codeLocations expressions) := by
   simpa [annotateList, shiftList_codeLocations] using altFreeList_codeLocations_sublist expressions
 
-/-- If the input locations are distinct, list annotation keeps them distinct. -/
-theorem annotateList_codeLocations_nodup (arity : Nat) (expressions : List Exp)
-    (distinct : (codeLocations expressions).Nodup) :
-    (codeLocations (annotateList arity expressions)).Nodup :=
-  (annotateList_codeLocations_sublist arity expressions).nodup distinct
-
-/-- Single-expression annotation preserves the order of surviving locations. -/
-theorem annotateSing_codeLocations_sublist (arity : Nat) (expression : Exp) :
-    List.Sublist (codeLocationsExp (annotateSing arity expression)) (codeLocationsExp expression) := by
-  simpa [annotateSing, shiftSing_codeLocations] using altFreeSing_codeLocations_sublist expression
-
-/-- Program annotation preserves the order of surviving body locations. -/
-theorem compile_codeLocations_sublist (program : List (Nat × Nat × Exp)) :
-    List.Sublist (codeLocations ((compile program).map (fun (_, _, body) => body)))
-      (codeLocations (program.map (fun (_, _, body) => body))) := by
-  induction program with
-  | nil => simp [compile, codeLocations]
-  | cons first rest ih =>
-    obtain ⟨name, arity, body⟩ := first
-    simpa only [compile, List.map_cons, codeLocations] using
-      (annotateSing_codeLocations_sublist arity body).append ih
-
-/-- Annotation can erase unused code but introduces no closure location. -/
-theorem annotateList_codeLocations (arity : Nat) (expressions : List Exp) :
-    codeLocations (annotateList arity expressions) ⊆ codeLocations expressions := by
-  simpa [annotateList, shiftList_codeLocations] using altFreeList_codeLocations expressions
-
-/-- Annotation of a single expression introduces no closure location. -/
-theorem annotateSing_codeLocations (arity : Nat) (expression : Exp) :
-    codeLocationsExp (annotateSing arity expression) ⊆ codeLocationsExp expression := by
-  simpa [annotateSing, shiftSing_codeLocations] using altFreeSing_codeLocations expression
-
-/-- Annotating labeled functions introduces no location in their bodies. -/
-theorem compile_codeLocations (program : List (Nat × Nat × Exp)) :
-    codeLocations ((compile program).map (fun (_, _, body) => body)) ⊆
-      codeLocations (program.map (fun (_, _, body) => body)) := by
-  intro location member
-  induction program with
-  | nil => simp [compile, codeLocations] at member
-  | cons first rest ih =>
-    obtain ⟨name, arity, body⟩ := first
-    simp only [compile, List.map_cons, codeLocations, List.mem_append] at member ⊢
-    cases member with
-    | inl h => exact Or.inl (annotateSing_codeLocations arity body h)
-    | inr h => exact Or.inr (ih h)
-
 /-- Free-variable discovery preserves the number of top-level expressions. -/
 theorem altFreeList_length (expressions : List Exp) :
     (altFreeList expressions).1.length = expressions.length := by
@@ -296,11 +251,5 @@ theorem shiftList_length (expressions : List Exp) (m l : Nat) (index : Spt Nat) 
 theorem annotateList_length (arity : Nat) (expressions : List Exp) :
     (annotateList arity expressions).length = expressions.length := by
   simp [annotateList, shiftList_length, altFreeList_length]
-
-/-- The incremental integer name marker survives annotation unchanged. -/
-theorem annotateList_name_marker (start : Nat) (expressions : List Exp) :
-    annotateList 0 (.op .none (.intOp (.const (Int.ofNat start))) [] :: expressions) =
-      .op .none (.intOp (.const (Int.ofNat start))) [] :: annotateList 0 expressions := by
-  simp [annotateList, altFreeList, altFreeSing, shiftList, shiftSing]
 
 end Flapjack.Compiler.Backend.ClosAnnotate

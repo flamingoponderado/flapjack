@@ -248,13 +248,6 @@ theorem genvAllocatedIndices_fillSlot (genv : GlobalEnv) (idx : Nat) (value : Fl
   | «type» => simp [genvAllocatedIndices]
   | «exception» => simp [genvAllocatedIndices]
 
-/-- Shrinking the first of four disjoint sets preserves their disjointness. -/
-theorem allDisjoint_shrinkFirst {α : Type} (block remaining future other allocated : Set α)
-    (old : allDisjoint [block, future, other, allocated]) (subset : remaining ⊆ block) :
-    allDisjoint [remaining, future, other, allocated] :=
-  allDisjoint_subsets _ _ ⟨old, .cons subset (.cons (fun _ h => h)
-    (.cons (fun _ h => h) (.cons (fun _ h => h) .nil)))⟩
-
 /-- Moving a single point from a reserved block into the allocated set
 preserves four-way disjointness when the remaining block excludes it. -/
 theorem allDisjoint_consume {α : Type} (block remaining future other allocated : Set α) (point : α)

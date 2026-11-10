@@ -14,6 +14,11 @@ namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 open Flapjack.Basis.Pure.MlString
 
+/-- The HOL `HD` cons equation at flat values, used as a simp rule for the
+evaluator. This is proof infrastructure, not a separate HOL declaration. -/
+@[simp] theorem holHd_value_cons (value : Value) (tail : List Value) :
+    @Flapjack.holHd Value ⟨unitValue⟩ (value :: tail) = value := rfl
+
 /-- Head of a value list, matching HOL's `hd` on the empty-list default. -/
 noncomputable def headValue (values : List Value) : Value :=
   @Flapjack.holHd Value ⟨unitValue⟩ values
@@ -56,7 +61,7 @@ noncomputable def evaluate {C F : Type} (env : Environment Value) (state : State
       let last := evaluate env firstResult.1 (second :: rest)
       match last.2 with
       | .err error => (last.1, .err error)
-      | .val tail => (last.1, .val (headValue values :: tail))
+      | .val tail => (last.1, .val (@Flapjack.holHd Value ⟨unitValue⟩ values :: tail))
   | [expression] => match expression with
     | .lit _ lit => (state, .val [.litv lit])
     | .varLocal _ name => match env.v.lookup name with
@@ -67,7 +72,7 @@ noncomputable def evaluate {C F : Type} (env : Environment Value) (state : State
       let next := evaluate env state [body]
       match next.2 with
       | .err error => (next.1, .err error)
-      | .val values => (next.1, .err (.raise (headValue values)))
+      | .val values => (next.1, .err (.raise (@Flapjack.holHd Value ⟨unitValue⟩ values)))
     | .handle _ body rows =>
       let next := fixClock state (evaluate env state [body])
       match next.2 with
@@ -115,14 +120,14 @@ noncomputable def evaluate {C F : Type} (env : Environment Value) (state : State
       let next := fixClock state (evaluate env state [cond])
       match next.2 with
       | .err error => (next.1, .err error)
-      | .val values => match _selected : doIf (headValue values) yes no with
+      | .val values => match _selected : doIf (@Flapjack.holHd Value ⟨unitValue⟩ values) yes no with
         | none => typeError next.1
         | some body => evaluate env next.1 [body]
     | .mat _ body rows =>
       let next := fixClock state (evaluate env state [body])
       match next.2 with
       | .err error => (next.1, .err error)
-      | .val values => match _selected : selectRow next.1 rows (headValue values) bindExnV with
+      | .val values => match _selected : selectRow next.1 rows (@Flapjack.holHd Value ⟨unitValue⟩ values) bindExnV with
         | .error error => (next.1, .err error)
         | .ok (bindings, body) => evaluate { env with v := bindings ++ env.v } next.1 [body]
     | .let_ _ name first body =>
@@ -130,7 +135,7 @@ noncomputable def evaluate {C F : Type} (env : Environment Value) (state : State
       match next.2 with
       | .err error => (next.1, .err error)
       | .val values =>
-        let bindings := optBind name (headValue values) env.v
+        let bindings := optBind name (@Flapjack.holHd Value ⟨unitValue⟩ values) env.v
         evaluate { env with v := bindings } next.1 [body]
     | .letrec _ funs body =>
       if (funs.map Prod.fst).Nodup then

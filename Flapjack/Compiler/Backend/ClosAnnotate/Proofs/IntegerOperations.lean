@@ -56,12 +56,12 @@ theorem primitiveSimulation_int {C F : Type} (op : ClosLang.IntOp) :
     have nextResult : doIntApp op nextValues = none := by rw [← same, result]
     refine ⟨.err (.abort .typeError), ?_, ?_⟩
     · simp [doApp, applyNumeric, nextResult]
-    · simp [doApp, applyNumeric, result, AppResultRel, ResultRel]
+    · simp [doApp, applyNumeric, result, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]
   | some value =>
     have nextResult : doIntApp op nextValues = some value := by rw [← same, result]
     refine ⟨.val (value, target), ?_, ?_⟩
     · simp [doApp, applyNumeric, nextResult]
-    · simpa [doApp, applyNumeric, result, AppResultRel] using
+    · simpa [doApp, applyNumeric, result, AppResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel] using
         And.intro (doIntApp_result_related op values value result) states
 
 end Flapjack.Compiler.Backend.ClosAnnotate

@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.InstallGrowth
+public import Flapjack.FiniteMap.SubmapExact
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
@@ -11,37 +12,24 @@ public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
 namespace Flapjack.Compiler.Backend.ClosSem
 open Flapjack.SemanticPrimitivesHOL
 
-/-- Every entry in the first code map is preserved in the second. -/
-def CodeSubmap (left right : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) : Prop :=
-  ∀ key entry, left.lookup key = some entry → right.lookup key = some entry
-
-theorem codeSubmap_refl (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) : CodeSubmap code code := by
-  intro _ _ found
-  exact found
-
-theorem codeSubmap_trans {left middle right : HolFiniteMapExact Nat (Nat × ClosLang.Exp)}
-    (first : CodeSubmap left middle) (second : CodeSubmap middle right) : CodeSubmap left right := by
-  intro key entry found
-  exact second key entry (first key entry found)
-
 /-- The expression evaluator preserves the original code entries. -/
 def EvaluateCodeGrowthAt {C F : Type} (source : State C F) (expressions : List ClosLang.Exp) : Prop :=
   ∀ (env : List Value) (result : Result (List Value) Value) (next : State C F),
-    evaluate expressions env source = (result, next) → CodeSubmap source.code next.code
+    evaluate expressions env source = (result, next) → source.code.submap next.code
 
 /-- Empty expression lists preserve their code map. -/
 theorem evaluate_nil_codeGrowth {C F : Type} (source : State C F) : EvaluateCodeGrowthAt source [] := by
   intro env result next run
   simp [evaluate] at run
   obtain ⟨_, rfl⟩ := run
-  exact codeSubmap_refl _
+  exact HolFiniteMapExact.submap_refl _
 
 /-- Variable evaluation preserves the code map. -/
 theorem evaluate_var_codeGrowth {C F : Type} (trace : BackendCommon.Tra) (index : Nat)
     (source : State C F) : EvaluateCodeGrowthAt source [.var trace index] := by
   intro env result next run
   simp only [evaluate] at run
-  split at run <;> simp_all [codeSubmap_refl]
+  split at run <;> simp_all [HolFiniteMapExact.submap_refl]
 
 /-- Closure creation preserves the code map. -/
 theorem evaluate_fn_codeGrowth {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
@@ -50,7 +38,7 @@ theorem evaluate_fn_codeGrowth {C F : Type} (name : Flapjack.Basis.Pure.MlString
   intro env result next run
   rw [evaluate.eq_def] at run
   dsimp only at run
-  repeat' split at run <;> simp_all [codeSubmap_refl]
+  repeat' split at run <;> simp_all [HolFiniteMapExact.submap_refl]
 
 /-- Sequencing composes the code-growth relations of its two evaluations. -/
 theorem evaluate_cons_codeGrowth {C F : Type} (first second : ClosLang.Exp) (rest : List ClosLang.Exp)
@@ -74,7 +62,7 @@ theorem evaluate_cons_codeGrowth {C F : Type} (first second : ClosLang.Exp) (res
       | mk restResult last =>
         have restGrowth := restIH middle middleClock env restResult last restRun
         rw [restRun] at run
-        cases restResult <;> cases run <;> exact codeSubmap_trans firstGrowth restGrowth
+        cases restResult <;> cases run <;> exact HolFiniteMapExact.submap_trans firstGrowth restGrowth
 
 /-- Raising a value retains the operand's code growth. -/
 theorem evaluate_raise_codeGrowth {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
@@ -96,7 +84,7 @@ theorem evaluate_tick_codeGrowth {C F : Type} (trace : BackendCommon.Tra) (body 
   by_cases zero : source.clock = 0
   · simp [evaluate, zero] at run
     obtain ⟨_, rfl⟩ := run
-    exact codeSubmap_refl _
+    exact HolFiniteMapExact.submap_refl _
   · have bodyRun : evaluate [body] env (decClock 1 source) = (result, next) := by
       simpa [evaluate, zero] using run
     simpa [decClock] using bodyIH env result next bodyRun
@@ -118,7 +106,7 @@ theorem evaluate_let_codeGrowth {C F : Type} (trace : BackendCommon.Tra)
     rw [bindingsRun] at run
     cases bindingsResult with
     | err error => cases run; exact growth
-    | val values => exact codeSubmap_trans growth (bodyIH middle middleClock (values ++ env) result next run)
+    | val values => exact HolFiniteMapExact.submap_trans growth (bodyIH middle middleClock (values ++ env) result next run)
 
 /-- Handlers preserve code across both the body and a raised-value handler. -/
 theorem evaluate_handle_codeGrowth {C F : Type} (trace : BackendCommon.Tra)
@@ -139,7 +127,7 @@ theorem evaluate_handle_codeGrowth {C F : Type} (trace : BackendCommon.Tra)
     | err error =>
       cases error with
       | abort reason => cases run; exact growth
-      | raise value => exact codeSubmap_trans growth (handlerIH middle middleClock (value :: env) result next run)
+      | raise value => exact HolFiniteMapExact.submap_trans growth (handlerIH middle middleClock (value :: env) result next run)
 
 /-- Conditionals preserve code through the condition and the selected branch. -/
 theorem evaluate_if_codeGrowth {C F : Type} (trace : BackendCommon.Tra)
@@ -162,8 +150,8 @@ theorem evaluate_if_codeGrowth {C F : Type} (trace : BackendCommon.Tra)
       dsimp only at run
       split at run
       · cases run; exact growth
-      · exact codeSubmap_trans growth (yesIH middle middleClock env result next run)
-      · exact codeSubmap_trans growth (noIH middle middleClock env result next run)
+      · exact HolFiniteMapExact.submap_trans growth (yesIH middle middleClock env result next run)
+      · exact HolFiniteMapExact.submap_trans growth (noIH middle middleClock env result next run)
 
 /-- Recursive closure creation leaves code alone before evaluating its body. -/
 theorem evaluate_letrec_codeGrowth {C F : Type} (names : List Flapjack.AstHOL.VarN)
@@ -174,7 +162,7 @@ theorem evaluate_letrec_codeGrowth {C F : Type} (names : List Flapjack.AstHOL.Va
   rw [evaluate.eq_def] at run
   dsimp only at run
   repeat' split at run
-  all_goals try (simp_all [codeSubmap_refl]; done)
+  all_goals try (simp_all [HolFiniteMapExact.submap_refl]; done)
   all_goals exact bodyIH _ result next run
 
 /-- Ordinary operations preserve code after their arguments have evaluated. -/
@@ -225,11 +213,11 @@ theorem evaluate_install_codeGrowth {C F : Type} (trace : BackendCommon.Tra)
       dsimp only at run
       cases installRun : doInstall values.reverse middle with
       | mk installResult installed =>
-        have installedGrowth : CodeSubmap middle.code installed.code :=
+        have installedGrowth : middle.code.submap installed.code :=
           doInstall_code_submap values.reverse middle installed installResult installRun
         rw [installRun] at run
         cases installResult with
-        | err error => cases run; exact codeSubmap_trans growth installedGrowth
+        | err error => cases run; exact HolFiniteMapExact.submap_trans growth installedGrowth
         | val program =>
           dsimp only at run
           cases programRun : evaluate program [] installed with
@@ -239,7 +227,7 @@ theorem evaluate_install_codeGrowth {C F : Type} (trace : BackendCommon.Tra)
             have finalGrowth := programIH program installed smaller [] programResult final programRun
             rw [programRun] at run
             cases programResult <;> cases run <;>
-              exact codeSubmap_trans growth (codeSubmap_trans installedGrowth finalGrowth)
+              exact HolFiniteMapExact.submap_trans growth (HolFiniteMapExact.submap_trans installedGrowth finalGrowth)
 
 /-- A forced thunk preserves argument code growth and any code installed by
 its generated call. -/
@@ -273,22 +261,22 @@ theorem evaluate_force_codeGrowth {C F : Type} (trace : BackendCommon.Tra) (args
             have lastGrowth := forceIH middle middleClock [value] forceResult last forceRun
             rw [forceRun] at run
             cases forceResult with
-            | err error => cases run; exact codeSubmap_trans growth lastGrowth
+            | err error => cases run; exact HolFiniteMapExact.submap_trans growth lastGrowth
             | val forced =>
               dsimp only at run
               cases update : updateThunk values last.refs forced with
-              | none => simp [update] at run; obtain ⟨_, rfl⟩ := run; exact codeSubmap_trans growth lastGrowth
+              | none => simp [update] at run; obtain ⟨_, rfl⟩ := run; exact HolFiniteMapExact.submap_trans growth lastGrowth
               | some refs =>
                 simp [update] at run
                 obtain ⟨_, rfl⟩ := run
-                exact codeSubmap_trans growth lastGrowth
+                exact HolFiniteMapExact.submap_trans growth lastGrowth
 
 /-- Application code-growth hypotheses at clocks below a bound. -/
 def AppCodeGrowthBelow {C F : Type} (clock : Nat) : Prop :=
   ∀ (location : Option Nat) (function : Value) (args : List Value)
     (source next : State C F) (result : Result (List Value) Value),
     source.clock < clock → evaluateApp location function args source = (result, next) →
-    CodeSubmap source.code next.code
+    source.code.submap next.code
 
 /-- One closure application composes body and remaining-argument growth at
 smaller clocks. -/
@@ -297,21 +285,21 @@ theorem evaluateApp_codeGrowth {C F : Type} (location : Option Nat) (function : 
     (run : evaluateApp location function args source = (result, next))
     (bodyIH : ∀ (body : ClosLang.Exp) (env : List Value) (start final : State C F)
       (result : Result (List Value) Value), start.clock < source.clock →
-      evaluate [body] env start = (result, final) → CodeSubmap start.code final.code)
-    (appIH : AppCodeGrowthBelow (C := C) (F := F) source.clock) : CodeSubmap source.code next.code := by
+      evaluate [body] env start = (result, final) → start.code.submap final.code)
+    (appIH : AppCodeGrowthBelow (C := C) (F := F) source.clock) : source.code.submap next.code := by
   cases args with
-  | nil => simp [evaluateApp] at run; obtain ⟨_, rfl⟩ := run; exact codeSubmap_refl _
+  | nil => simp [evaluateApp] at run; obtain ⟨_, rfl⟩ := run; exact HolFiniteMapExact.submap_refl _
   | cons first rest =>
     rw [evaluateApp] at run
     cases found : destClosure source.maxApp location function (first :: rest) with
-    | none => rw [found] at run; cases run; exact codeSubmap_refl _
+    | none => rw [found] at run; cases run; exact HolFiniteMapExact.submap_refl _
     | some kind =>
       rw [found] at run
       cases kind with
       | partialApp value =>
         dsimp only at run
         split at run <;> simp [decClock] at run <;>
-          obtain ⟨_, rfl⟩ := run <;> exact codeSubmap_refl _
+          obtain ⟨_, rfl⟩ := run <;> exact HolFiniteMapExact.submap_refl _
       | fullApp body env remaining =>
         dsimp only at run
         let cost := (first :: rest).length - remaining.length
@@ -319,12 +307,12 @@ theorem evaluateApp_codeGrowth {C F : Type} (location : Option Nat) (function : 
         split at run
         · simp at run
           obtain ⟨_, rfl⟩ := run
-          exact codeSubmap_refl _
+          exact HolFiniteMapExact.submap_refl _
         · have smaller : (decClock cost source).clock < source.clock := by simp [decClock]; omega
           rw [fixClock_evaluate] at run
           cases bodyRun : evaluate [body] env (decClock cost source) with
           | mk bodyResult middle =>
-            have bodyGrowth : CodeSubmap source.code middle.code := by
+            have bodyGrowth : source.code.submap middle.code := by
               simpa [decClock] using bodyIH body env (decClock cost source) middle bodyResult smaller bodyRun
             have clockLe : middle.clock ≤ (decClock cost source).clock := by
               have h := evaluate_clock_le [body] env (decClock cost source)
@@ -338,7 +326,7 @@ theorem evaluateApp_codeGrowth {C F : Type} (location : Option Nat) (function : 
               | cons value tail =>
                 cases tail with
                 | nil =>
-                  exact codeSubmap_trans bodyGrowth (appIH location value remaining middle next result (by omega) run)
+                  exact HolFiniteMapExact.submap_trans bodyGrowth (appIH location value remaining middle next result (by omega) run)
                 | cons other tail => cases run; exact bodyGrowth
 
 /-- Application expressions retain code through argument, function and
@@ -351,7 +339,7 @@ theorem evaluate_app_codeGrowth {C F : Type} (trace : BackendCommon.Tra) (locati
     EvaluateCodeGrowthAt source [.app trace location function args] := by
   intro env result next run
   cases args with
-  | nil => simp [evaluate] at run; obtain ⟨_, rfl⟩ := run; exact codeSubmap_refl _
+  | nil => simp [evaluate] at run; obtain ⟨_, rfl⟩ := run; exact HolFiniteMapExact.submap_refl _
   | cons first rest =>
     rw [evaluate, fixClock_evaluate] at run
     simp only [List.isEmpty_cons, Bool.false_eq_true, ↓reduceIte] at run
@@ -371,13 +359,13 @@ theorem evaluate_app_codeGrowth {C F : Type} (trace : BackendCommon.Tra) (locati
           have lastGrowth := functionIH middle middleClock env functionResult last functionRun
           rw [functionRun] at run
           cases functionResult with
-          | err error => cases run; exact codeSubmap_trans growth lastGrowth
+          | err error => cases run; exact HolFiniteMapExact.submap_trans growth lastGrowth
           | val functions =>
             have lastClock : last.clock ≤ source.clock := by
               have h := evaluate_clock_le [function] env middle
               simp only [functionRun] at h
               omega
-            exact codeSubmap_trans growth (codeSubmap_trans lastGrowth
+            exact HolFiniteMapExact.submap_trans growth (HolFiniteMapExact.submap_trans lastGrowth
               (appIH location _ values last next result (by omega) run))
 
 /-- A direct call retains code through its arguments and its selected body. -/
@@ -408,24 +396,24 @@ theorem evaluate_call_codeGrowth {C F : Type} (trace : BackendCommon.Tra) (ticks
         · simp at run; obtain ⟨_, rfl⟩ := run; exact growth
         · have smaller : (decClock (ticks + 1) middle).clock < source.clock := by simp [decClock]; omega
           have bodyGrowth := bodyIH body (decClock (ticks + 1) middle) smaller bodyEnv result next run
-          exact codeSubmap_trans growth (by simpa [decClock] using bodyGrowth)
+          exact HolFiniteMapExact.submap_trans growth (by simpa [decClock] using bodyGrowth)
 
 /-- Evaluation and application retain all code entries, even on errors.
 This proof-side result remains untagged pending HOL carrier review. -/
 theorem evaluate_code_growth {C F : Type} :
     (∀ expressions env (source next : State C F) result,
-      evaluate expressions env source = (result, next) → CodeSubmap source.code next.code) ∧
+      evaluate expressions env source = (result, next) → source.code.submap next.code) ∧
     (∀ clock, AppCodeGrowthBelow (C := C) (F := F) clock) := by
   have all : ∀ clock : Nat,
       (∀ source : State C F, source.clock = clock → ∀ location function args next result,
-        evaluateApp location function args source = (result, next) → CodeSubmap source.code next.code) ∧
+        evaluateApp location function args source = (result, next) → source.code.submap next.code) ∧
       (∀ weight expressions (source : State C F),
         source.clock = clock → expsWeight expressions = weight → EvaluateCodeGrowthAt source expressions) := by
     intro clock
     induction clock using Nat.strongRecOn with
     | ind clock clockIH =>
       have appAll : ∀ source : State C F, source.clock = clock → ∀ location function args next result,
-          evaluateApp location function args source = (result, next) → CodeSubmap source.code next.code := by
+          evaluateApp location function args source = (result, next) → source.code.submap next.code := by
         intro source clockEq location function args next result run
         apply evaluateApp_codeGrowth location function args source next result run
         · intro body env start final result smaller bodyRun

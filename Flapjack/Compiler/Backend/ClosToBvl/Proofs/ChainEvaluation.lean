@@ -9,25 +9,6 @@ public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
-/-- Both closure annotation checks are preserved in either direction by
-building the installed expression chain. This conjunction is Flapjack proof
-infrastructure used to combine the location and variable checks. -/
-theorem chainExps_annotations (start : Nat) (expressions : List ClosLang.Exp) :
-    (ClosProps.everyFnLocationSome ((chainExps start expressions).map (fun (_, _, exp) => exp)) ↔
-      ClosProps.everyFnLocationSome expressions) ∧
-    (ClosProps.everyFnVarsSome ((chainExps start expressions).map (fun (_, _, exp) => exp)) ↔
-      ClosProps.everyFnVarsSome expressions) := by
-  induction expressions generalizing start with
-  | nil => simp [chainExps, ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp,
-      ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp]
-  | cons first rest ih =>
-    cases rest with
-    | nil => simp [chainExps, ClosProps.everyFnLocationSome, ClosProps.everyFnVarsSome]
-    | cons second tail =>
-      have step := ih (start + 1)
-      simp [chainExps, ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp,
-        ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp, step.1, step.2]
-
 /-- Target code for a nonempty sequence: each intermediate result is discarded
 and the next zero-argument code entry is called. -/
 def bvlChain (start : Nat) : List Bvl.Exp → List (Nat × Nat × Bvl.Exp)
@@ -214,7 +195,7 @@ theorem compileInc_bvlChain_installed (maxApp start : Nat) (expressions real : L
             (fun ((loc, arity, _), body) => (loc + numStubs maxApp, arity, body)) ++ outputAux) code := by
         have h : (chainSource ++ auxiliary).map (fun (_, _, exp) => exp) = chainExps ++ extraExps := by
           simp [chainExps, extraExps]
-        simpa [compileInc, extract, compileProgExpsHOL, chainSource, h, whole] using installed
+        simpa [compileInc, extractNameSource_eq_extractName, extract, compileProgExpsHOL, chainSource, h, whole] using installed
       rw [List.zip_append lengths, List.map_append, shape'] at installed'
       intro entry member
       apply installed' entry
@@ -461,7 +442,7 @@ theorem install_success_body_simulation {C F : Type}
         (vRel s.maxApp fFinal targetFinal.refs targetFinal.code)
         (match result with | .err error => .err error | .val values => .val [Flapjack.holLast values])
         (chainResult targetResult) ∧
-      stateRel fFinal finalSource targetFinal ∧ relocationSubmap f fFinal ∧
+      stateRel fFinal finalSource targetFinal ∧ f.submap fFinal ∧
       unmappedRefsSubmap t.refs targetFinal.refs f fFinal ∧ codeAnnotations finalSource ∧
       finalSource.clock = targetFinal.clock := by
   have successClock := ClosSem.doInstall_success_clock sourceValues s installedSource expressions installRun
@@ -474,9 +455,9 @@ theorem install_success_body_simulation {C F : Type}
   have oracle := states.2.2.2.2.2.2.2.2.2.2.2.1
   have installedStates := install_stateRel s t f config expressions auxiliary sourceHead states
   have installedAnnotations := install_codeAnnotations s t config expressions auxiliary sourceHead annotations oracle
-  have mainAnnotations := oracle.2.2.2.2 0
-  have locations : ClosProps.everyFnLocationSome expressions := by simpa [sourceHead] using mainAnnotations.1
-  have vars : ClosProps.everyFnVarsSome expressions := by simpa [sourceHead] using mainAnnotations.2.1
+  have mainAnnotations := oracle.2.2.2.2 0 config expressions auxiliary sourceHead
+  have locations : ClosProps.everyFnLocationSome expressions := mainAnnotations.1
+  have vars : ClosProps.everyFnVarsSome expressions := mainAnnotations.2.1
   let targetNext := { t with
     code := sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))
     compileOracle := fun n => t.compileOracle (n + 1) }

@@ -416,6 +416,15 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Compiler/Backend/ClosFvs/Source.lean", "compile"): ("cakeml/compiler/backend/clos_fvsScript.sml", "compile_def", "The executable uses removeList; compileSource is the source-shaped definition and compileSource_eq_compile proves agreement."),
+    ("Flapjack/Compiler/Backend/ClosFvs/Source.lean", "compileInc"): ("cakeml/compiler/backend/clos_fvsScript.sml", "compile_inc_def", "The executable uses compile; compileIncSource is the source-shaped definition and compileIncSource_eq_compileInc proves agreement."),
+    ("Flapjack/Compiler/Backend/ClosKnown/Compile.lean", "knownCompileInc"): ("cakeml/compiler/backend/clos_knownScript.sml", "known_compile_inc_def", "The executable uses the total traversals; knownCompileIncSource is the source-shaped definition and knownCompileIncSource_eq proves agreement."),
+    ("Flapjack/Compiler/Backend/ClosLetop/Source.lean", "compileInc"): ("cakeml/compiler/backend/clos_letopScript.sml", "compile_inc_def", "The executable uses compileList; compileIncSource is the source-shaped definition and compileIncSource_eq_compileInc proves agreement."),
+    ("Flapjack/Compiler/Backend/ClosTicks/Source.lean", "compileInc"): ("cakeml/compiler/backend/clos_ticksScript.sml", "compile_inc_def", "The executable uses removeList; compileIncSource is the source-shaped definition and compileIncSource_eq_compileInc proves agreement."),
+    ("Flapjack/Compiler/Backend/ClosKnown/Compile.lean", "compile"): ("cakeml/compiler/backend/clos_knownScript.sml", "compile_def", "The executable uses singleton-derived traversals; compileSource is the source-shaped definition and compileSource_eq_compile proves agreement."),
+    ("Flapjack/Compiler/Backend/ClosToBvl/ExtractName.lean", "extractName"): ("cakeml/compiler/backend/clos_to_bvlScript.sml", "extract_name_def", "The executable pattern match follows extract_name_pmatch; HOL's original definition uses option choice and agrees by extractNameSource_eq_extractName."),
+    ("Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean", "compile"): ("cakeml/compiler/backend/clos_annotateScript.sml", "compile_def", "The executable uses annotateSing, whereas HOL's original definition takes the head of the separate list-shaped annotate. The source definition agrees by compileSource_eq_compile."),
+    ("Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean", "compileInc"): ("cakeml/compiler/backend/clos_annotateScript.sml", "compile_inc_def", "The executable uses annotateList and optimized compile, whereas HOL uses its separate source annotate and compile. The source definition agrees by compileIncSource_eq_compileInc."),
     ("Flapjack/Misc/Sptree.lean", "sptDomain"): ("hol4/src/finite_maps/sptreeScript.sml", "domain_def", "HOL defines domain with recursive set clauses; the Lean lookup predicate is extensionally characterized by its membership lemmas, but is not the source definition. The source-shaped definition and set representation remain open."),
     ("Flapjack/Compiler/Backend/PatternSemantics/Semantics.lean", "isSibling"): ("cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml", "is_sibling_def", "The executed operation specializes HOL's polymorphic element type to Nat pairs. isSiblingHOL is the unrestricted port, and isSibling_eq_HOL checks agreement at this specialization."),
     ('Flapjack/Compiler/Backend/PatternExh/Matrix.lean', 'ctorInter'): ('cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml', 'ctor_inter_def', 'HOL infers an arbitrary element type; the executed ctorInter specializes it to Ctor and is not tagged as the generic source declaration. ctorInterHOL is the unrestricted HOL-shaped port; a kernel-checked equality connects its Ctor specialization to the executed operation.'),
@@ -1552,6 +1561,8 @@ INFRASTRUCTURE_THEOREMS = {
 }
 VALID_STATUSES = {
     "reviewed_exact",
+    "reviewed_nested_list_rel_as_mutual",
+    "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
     "reviewed_list_as_array",
     "reviewed_names_as_string",
     "reviewed_list_as_array_names_as_string",
@@ -1564,11 +1575,13 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_result",
     "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_result_observations",
+    "reviewed_fmap_as_finite_support_parameter_observations",
     "reviewed_fmap_as_finite_support_parameters",
     "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_existentials",
     "reviewed_fmap_as_finite_support_existentials_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_relation_existentials_words_as_type_indexed_bitvec",
+    "reviewed_fmap_as_finite_support_relation_existentials",
     "reviewed_fmap_as_finite_support_relation",
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_equalities",
@@ -1737,7 +1750,7 @@ def tagged_declarations(
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions,
              fmap_heterogeneous_function_positions, reals_cuts,
-             fmap_equality, result_observations, dimension_widths, fmap_tuple) in HOL_ATTRIBUTE_SITES(
+             fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
@@ -1747,6 +1760,7 @@ def tagged_declarations(
                  include_result_observations=True,
                  include_word_dimensions_widths=True,
                  include_fmap_tuple=True,
+                 include_nested_list_rel=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1757,7 +1771,7 @@ def tagged_declarations(
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
                      fmap_existentials, dimension_width, fmap_function_positions,
-                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations, dimension_widths, fmap_tuple)
+                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1773,7 +1787,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
         fmap_existentials, dimension_width,
         fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-        fmap_equality, result_observations, dimension_widths, fmap_tuple,
+        fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1797,6 +1811,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support_function"] = list(fmap_function_positions)
         if fmap_tuple:
             entry["fmap_as_finite_support_tuple"] = list(fmap_tuple)
+        if nested_list_rel:
+            entry["nested_list_rel_as_mutual"] = list(nested_list_rel)
         if fmap_heterogeneous_function_positions:
             entry["fmap_as_finite_support_heterogeneous_function"] = list(
                 fmap_heterogeneous_function_positions
@@ -2128,6 +2144,20 @@ def validate_inventory(
         result_observations = tag[17] if tag is not None and len(tag) > 17 else ()
         dimension_widths = tag[18] if tag is not None and len(tag) > 18 else ()
         fmap_tuple = tag[19] if tag is not None and len(tag) > 19 else ()
+        nested_list_rel = tag[20] if tag is not None and len(tag) > 20 else ()
+        if tuple(record.get("nested_list_rel_as_mutual", ())) != nested_list_rel:
+            errors.append(f"{key[0]}:{key[1]}: nested-list relation qualifier does not match @[hol] tag")
+        nested_combined_status = "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual"
+        expected_nested_status = nested_combined_status if fmap_fields else "reviewed_nested_list_rel_as_mutual"
+        if bool(nested_list_rel) != (status in {"reviewed_nested_list_rel_as_mutual", nested_combined_status}):
+            errors.append(f"{key[0]}:{key[1]}: nested-list relation requires its reviewed status")
+        if nested_list_rel and status != expected_nested_status:
+            errors.append(f"{key[0]}:{key[1]}: nested-list relation and finite-map qualifiers require matching combined status")
+        if status == nested_combined_status and tuple(fmap_fields) != ("refs", "code"):
+            errors.append(f"{key[0]}:{key[1]}: combined nested-list qualifier requires refs and code fields")
+        if nested_list_rel and (not isinstance(reviewer, str) or "functionsRel_iff" not in reviewer or
+                                "nested_list_rel_as_mutual" not in reviewer or "source" not in reviewer.lower()):
+            errors.append(f"{key[0]}:{key[1]}: nested-list relation review must cite qualifier, source and functionsRel_iff")
         tuple_status = "reviewed_fmap_as_finite_support_tuple_words_as_type_indexed_bitvec"
         if tuple(record.get("fmap_as_finite_support_tuple", ())) != fmap_tuple:
             errors.append(f"{key[0]}:{key[1]}: tuple-map positions do not match @[hol] tag")
@@ -2139,15 +2169,23 @@ def validate_inventory(
             errors.append(f"{key[0]}:{key[1]}: tuple-map review must name the source and both positions")
         manifest_observations = tuple(record.get("fmap_as_finite_support_result_observations", ()))
         observation_status = "reviewed_fmap_as_finite_support_result_observations"
+        combined_observation_status = "reviewed_fmap_as_finite_support_parameter_observations"
         if manifest_observations != result_observations:
             errors.append(f"{key[0]}:{key[1]}: manifest result observation producers do not match @[hol] tag")
-        if bool(result_observations) != (status == observation_status):
+        if bool(result_observations) != (status in {observation_status, combined_observation_status}):
             errors.append(f"{key[0]}:{key[1]}: result observations require matching reviewed result-observation status")
         if result_observations:
-            if any(tag[2:17]):
+            if any(value for index, value in enumerate(tag[2:17], start=2)
+                   if not (status == combined_observation_status and index == 10)):
                 errors.append(f"{key[0]}:{key[1]}: result observations cannot combine with other representation qualifiers")
             if not isinstance(reviewer, str) or not reviewer.strip():
                 errors.append(f"{key[0]}:{key[1]}: result observations require source-comparison note")
+        if status == combined_observation_status:
+            if not fmap_parameters or not result_observations:
+                errors.append(f"{key[0]}:{key[1]}: combined parameter observations require both lists")
+            if not isinstance(reviewer, str) or "source" not in reviewer.lower() or any(
+                    name not in reviewer for name in (*fmap_parameters, *result_observations)):
+                errors.append(f"{key[0]}:{key[1]}: combined observation review must name source, parameters and producers")
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))
@@ -2383,6 +2421,10 @@ def validate_inventory(
         combined_existential_words_status = (
             "reviewed_fmap_as_finite_support_existentials_words_as_type_indexed_bitvec"
         )
+        # Both map translations retain their separate witness and review rules.
+        combined_relation_existential_status = (
+            "reviewed_fmap_as_finite_support_relation_existentials"
+        )
         combined_relation_existential_words_status = (
             "reviewed_fmap_as_finite_support_relation_existentials_words_as_type_indexed_bitvec"
         )
@@ -2528,6 +2570,7 @@ def validate_inventory(
         if fmap_parameters and status not in {
             "reviewed_fmap_as_finite_support_parameters",
             combined_parameter_words_status,
+            combined_observation_status,
         }:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_parameters needs reviewed_fmap_as_finite_support_parameters status"
@@ -2545,6 +2588,11 @@ def validate_inventory(
                 errors.append(
                     f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_parameters requires a source-comparison note"
                 )
+        if status == combined_relation_existential_status and not (fmap_relation and fmap_existentials):
+            errors.append(
+                f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_relation_existentials "
+                "needs both relation and existential qualifiers"
+            )
         if fmap_existentials and status == "reviewed_exact":
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_existentials @[hol] tag cannot have "
@@ -2553,6 +2601,7 @@ def validate_inventory(
         if fmap_existentials and status not in {
             "reviewed_fmap_as_finite_support_existentials",
             combined_existential_words_status,
+            combined_relation_existential_status,
             combined_relation_existential_words_status,
         }:
             errors.append(
@@ -2563,6 +2612,7 @@ def validate_inventory(
         if not fmap_existentials and status in {
             "reviewed_fmap_as_finite_support_existentials",
             combined_existential_words_status,
+            combined_relation_existential_status,
             combined_relation_existential_words_status,
         }:
             errors.append(
@@ -2572,7 +2622,7 @@ def validate_inventory(
         if fmap_existentials:
             reviewer_text = reviewer.lower() if isinstance(reviewer, str) else ""
             if "source" not in reviewer_text or any(
-                binder not in reviewer_text for binder in fmap_existentials
+                binder.lower() not in reviewer_text for binder in fmap_existentials
             ):
                 errors.append(
                     f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_existentials requires "
@@ -2586,6 +2636,7 @@ def validate_inventory(
         if fmap_relation and status not in {
             "reviewed_fmap_as_finite_support_relation",
             combined_relation_words_status,
+            combined_relation_existential_status,
             combined_relation_existential_words_status,
         }:
             errors.append(
@@ -2767,7 +2818,8 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: {status} needs a matching "
                 "fmap_as_finite_support_heterogeneous_function @[hol] tag"
             )
-        if fmap_fields and status != "reviewed_fmap_as_finite_support" and status != combined_words_status and status != combined_relation_words_status:
+        if fmap_fields and status not in {"reviewed_fmap_as_finite_support", combined_words_status,
+                                          combined_relation_words_status, nested_combined_status}:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support @[hol] tag needs a reviewed "
                 "source classification (reviewed_fmap_as_finite_support, or the combined "

@@ -12,7 +12,7 @@ open Flapjack.SemanticPrimitivesHOL (Result)
 /-- Removing ticks cannot produce a singleton headed by a tick. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_Tick"]
 theorem remove_ticks_Tick (expression : ClosLang.Exp) (trace : BackendCommon.Tra) (body : ClosLang.Exp) :
-    ¬ ([ClosLang.Exp.tick trace body] = removeList [expression]) := by
+    ¬ ([ClosLang.Exp.tick trace body] = removeSource [expression]) := by
   cases expression
   case tick outer inner =>
     intro removed

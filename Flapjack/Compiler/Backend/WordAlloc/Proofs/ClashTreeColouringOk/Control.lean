@@ -63,10 +63,10 @@ theorem mem_sptToAList_keys {α : Type} (x : Spt α) (k : Nat) :
   simp only [List.mem_map]
   constructor
   · rintro ⟨⟨a, v⟩, hm, rfl⟩
-    simp [(sptToAList_mem_iff_lookup x a v).mp hm]
+    simp [(sptMemToAList x a v).mp hm]
   · intro hk
     obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hk
-    exact ⟨(k, v), (sptToAList_mem_iff_lookup x k v).mpr hv, rfl⟩
+    exact ⟨(k, v), (sptMemToAList x k v).mpr hv, rfl⟩
 
 /-- Inserting the keys of `difference o2 o1` into `o1` is `union o1 o2` on
 well-formed sets (the HOL `If` step with `spt_eq_thm`, `lookup_difference` and

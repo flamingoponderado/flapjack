@@ -90,7 +90,7 @@ theorem holLast_append_unit (values : List ClosSem.Value) :
 
 /-- Successful flat Eval and closure Install requests execute related
 unit-terminated declarations and produce related results. The declaration
-simulation is the induction hypothesis; semantic correspondence remains open. -/
+simulation is supplied by the enclosing correctness induction. -/
 theorem eval_install_related {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F)
     (sourceValues : List FlatSem.Value) (targetValues : List ClosSem.Value)
     (decs : List FlatLang.Exp) (config : FlatSem.InstallConfig C) (value : FlatSem.Value)

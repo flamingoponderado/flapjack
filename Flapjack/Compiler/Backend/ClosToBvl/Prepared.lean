@@ -19,8 +19,8 @@ open Flapjack.Basis.Pure.MlString
 
 /-- Assemble a prepared closure program with its application, force and
 initialization stubs. The caller supplies the result of HOL's `compile_common`;
-checked expression lowering succeeds by `Proofs/Total.lean`, but correspondence
-of preprocessing remains unproved, so this is not the full HOL `compile` definition. -/
+checked expression lowering succeeds by `Proofs/Total.lean`. This assembly helper
+is not the full HOL `compile` definition. -/
 def compilePrepared? (original current : Config) (es : List ClosLang.Exp)
     (prog : List (Nat × Nat × ClosLang.Exp)) :
     Option (Config × List (Nat × Nat × Bvl.Exp) × Spt MlString) := do
@@ -30,37 +30,6 @@ def compilePrepared? (original current : Config) (es : List ClosLang.Exp)
   let all := initial ++ [(n - 2, 2, forceThunkCode), (n - 1, 0, initGlobals current.maxApp (n + current.start))] ++ compiled
   let names := makeNameAlist (all.map (fun (loc, _, _) => loc)) prog n original.nextLoc es.length
   pure ({ current with start := n - 1 }, codeSort all, names)
-
-/-- Checked source-shaped closure preprocessing when all three optional
-optimizations are disabled. Other configurations fail explicitly; this is not
-the unrestricted HOL `compile_common`. -/
-def compileCommonNoOpts? (c : Config) (es : List ClosLang.Exp) :
-    Option (Config × List (Nat × Nat × ClosLang.Exp)) := do
-  if c.doMti || c.doCall then none else
-  match c.knownConf with
-  | some _ => none
-  | none =>
-      let next := c.nextLoc + max 1 es.length
-      let aligned := if next % 2 = 0 then next else next + 1
-      let (next, es) := ClosNumber.renumberList aligned es
-      let prog := ClosAnnotate.compile (chainExps c.nextLoc es)
-      some ({ c with start := c.nextLoc, nextLoc := next, knownConf := none, callState := (.ln, []) }, prog)
-
-/-- Checked whole closure-to-BVL compilation in the explicitly disabled
-optimization configuration. Other configurations are rejected. -/
-def compileNoOpts? (c : Config) (es : List ClosLang.Exp) :
-    Option (Config × List (Nat × Nat × Bvl.Exp) × Spt MlString) := do
-  let (current, prog) ← compileCommonNoOpts? c es
-  compilePrepared? c current es prog
-
-/-- Checked closure compilation with multi-argument introduction enabled or
-disabled. Known-function and call optimizations are still rejected; the
-multi-argument traversal has a proved sufficient structural retry bound. -/
-def compileMtiOnlyFuel? (fuel : Nat) (c : Config) (es : List ClosLang.Exp) :
-    Option (Config × List (Nat × Nat × Bvl.Exp) × Spt MlString) := do
-  let es' ← ClosMti.compileFuel fuel c.doMti c.maxApp es
-  let (current, prog) ← compileCommonNoOpts? { c with doMti := false } es'
-  compilePrepared? c { current with doMti := c.doMti } es' prog
 
 /-- Checked closure compilation with multi-argument introduction,
 known-function optimization and direct-call conversion. -/

@@ -382,12 +382,6 @@ theorem knownLocationsApp (c : Config) (trace : BackendCommon.Tra) (loc : Option
           simp [everyFnLocationSome, fnLocationSomeExp] at tickSafe rBody ⊢
           exact ⟨⟨tickSafe, argSafe⟩, rBody.2.1, rFun.2.2⟩
 
-private theorem everyFnLocationSome_iff (xs : List ClosLang.Exp) :
-    everyFnLocationSome xs ↔ ∀ e ∈ xs, everyFnLocationSome [e] := by
-  induction xs with
-  | nil => simp [everyFnLocationSome]
-  | cons x xs ih => simp [everyFnLocationSome, ih]
-
 /-- Recursive-closure case of the source optimizer annotation invariant. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_every_Fn_SOME"]
 theorem knownLocationsLetrec (c : Config) (names : List Basis.Pure.MlString.MlString)
@@ -421,7 +415,7 @@ theorem knownLocationsLetrec (c : Config) (names : List Basis.Pure.MlString.MlSt
     · exact closSafe a mem
     · exact safe a mem
   have originalBodies : ∀ e ∈ fns.map Prod.snd, everyFnLocationSome [e] :=
-    (everyFnLocationSome_iff _).mp ((fnLocationSomeFuns_eq_map fns).mp parts.2.1)
+    (everyFnLocationSome_every _).mp ((fnLocationSomeFuns_eq_map fns).mp parts.2.1)
   have newBodies : ∀ e ∈ newFns.map Prod.snd, everyFnLocationSome [e] := by
     intro transformed member
     obtain ⟨entry, inNew, valueEq⟩ := List.mem_map.mp member
@@ -446,7 +440,7 @@ theorem knownLocationsLetrec (c : Config) (names : List Basis.Pure.MlString.MlSt
       subst entry
       subst transformed
       simpa [← List.append_assoc, he, knownSourceHead] using result.1
-  have newFnsSafe : fnLocationSomeFuns newFns := (fnLocationSomeFuns_eq_map _).mpr ((everyFnLocationSome_iff _).mpr newBodies)
+  have newFnsSafe : fnLocationSomeFuns newFns := (fnLocationSomeFuns_eq_map _).mpr ((everyFnLocationSome_every _).mpr newBodies)
   cases hb : knownListTotal c [body] (clos ++ env) globals with
   | mk ea gb =>
     obtain ⟨bodyExpr, bodyApprox, bodyEq⟩ := knownListTotal_single_result c body (clos ++ env) globals gb ea hb

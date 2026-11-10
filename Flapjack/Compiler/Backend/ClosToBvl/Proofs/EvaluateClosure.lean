@@ -69,21 +69,6 @@ theorem evaluate_vars {C F : Type} (indices : List Nat) (env : List BvlSem.Value
           rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, headRun, tailRun]
           rfl
 
-/-- The original lookup fact used by closure compilation: source capture
-selection yields a related target selection whose BVL variable evaluation is
-independent of the target state. This candidate is untagged pending HOL
-inferred-carrier and evaluator review. -/
-theorem lookupVars_simulation {C F : Type} {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    (indices : List Nat) (env : List ClosSem.Value) (targetEnv : List BvlSem.Value)
-    (values : List ClosSem.Value) (related : envRel maxApp f refs code env targetEnv)
-    (lookup : ClosSem.lookupVars indices env = some values) :
-    ∃ targetValues, (∀ state : BvlSem.State C F,
-      BvlSem.evaluate (indices.map Bvl.Exp.var) targetEnv state = (.val targetValues, state)) ∧
-      List.Forall₂ (vRel maxApp f refs code) values targetValues ∧ indices.length = values.length := by
-  obtain ⟨targetValues, targetLookup, valuesRel, lengthEq⟩ := lookupVars_related indices env targetEnv values related lookup
-  exact ⟨targetValues, fun state => evaluate_vars indices targetEnv state targetValues targetLookup, valuesRel, lengthEq⟩
-
 /-- Successful environment selections compose over concatenated indices. -/
 theorem lookupVars_append {α : Type} (first second : List Nat) (env : List α)
     (values more : List α) (firstLookup : ClosSem.lookupVars first env = some values)

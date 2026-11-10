@@ -57,7 +57,7 @@ theorem evaluate_let_to_core {C F : Type} (bindings : List Bvi.Exp) (body target
           bodyIH values values' middle g middleTarget run valuesRelated
             (envRel_submap opt f g env1 env2 environments extension) middleStates
             bindingsRun targetRun
-        have submap : finiteSubmap f h := by
+        have submap : f.submap h := by
           intro k v found; exact bodyExtension k v (extension k v found)
         have domain := BviProps.evaluate_refs_subset bindings env2 target middleTarget (.val values') targetRun
         have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh domain

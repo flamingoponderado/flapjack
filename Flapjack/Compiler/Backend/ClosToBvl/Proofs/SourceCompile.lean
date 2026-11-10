@@ -177,23 +177,6 @@ theorem compileExpFunsHOL_eq_map (maxApp : Nat) (functions : List (Nat × ClosLa
         simp only [hr] at restEq
         simp [compileExpFunsHOL, compileExpListHOL, h, restEq, hr]
 
-private theorem map_zip_eq_zipWith {α β γ : Type} (f : α → β → γ) (xs : List α) (ys : List β) :
-    (xs.zip ys).map (fun (x, y) => f x y) = List.zipWith f xs ys := by
-  induction xs generalizing ys with
-  | nil => cases ys <;> rfl
-  | cons x xs ih => cases ys <;> simp [ih]
-
-/-- The recursive-group code cases are exactly the source's MAP2 of original
-arities and the separately compiled function bodies. -/
-theorem compileExpFunsHOL_cases (maxApp n : Nat) (functions : List (Nat × ClosLang.Exp))
-    (aux : List (Nat × Nat × Bvl.Exp)) :
-    ((compileExpFunsHOL maxApp functions aux).1.map (fun (arity, body) => codeForReccCase n arity body)) =
-      List.zipWith (codeForReccCase n) (functions.map Prod.fst)
-        (compileExpListHOL maxApp (functions.map Prod.snd) aux).1 := by
-  rw [compileExpFunsHOL_eq_map]
-  cases h : compileExpListHOL maxApp (functions.map Prod.snd) aux with
-  | mk bodies aux' => simp [map_zip_eq_zipWith]
-
 /-- The executed program converter returns the source-shaped result. -/
 theorem compileProg_checked_eq (maxApp : Nat) (prog : List (Nat × Nat × ClosLang.Exp)) :
     compileProg? maxApp prog = some (compileProgHOL maxApp prog) := by

@@ -59,14 +59,14 @@ theorem evaluate_fn {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
     have bodyRel : ValueRel (.closure location [] env arity body) (.closure location [] captured arity nextBody) := by
       apply ValueRel.closure location [] [] env captured arity (m + l) body nextBody
         (shiftedEnv 0 (live.filter (· < m + l)))
-      · simp [nextBody, altFree_singleton, shiftList]
-      · intro n present above
+      · simp [nextBody, shiftSource_eq_shiftList, altFreeSource_eq_altFree, altFree_singleton, shiftList]
+      · intro n ⟨present, above⟩
         have member : n - arity ∈ live := by
           apply (memVarsToList _ _).mpr
           have equal : n - arity + arity = n := by omega
-          simpa [altFv, hasVar, equal] using present
-        exact envOk_shiftedEnv m l index env nextEnv captured (n - arity) live
-          (liveVars _ member) member distinct captureRun
+          simpa [altFvSource_eq_altFv, altFv, hasVar, equal] using present
+        exact envOk_shiftedEnv m l index env nextEnv (n - arity) live captured
+          ⟨liveVars _ member, member, distinct, captureRun⟩
       · exact safeParts.2
       · omega
       · exact .nil

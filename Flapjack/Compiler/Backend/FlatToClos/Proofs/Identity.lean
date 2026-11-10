@@ -8,37 +8,6 @@ public import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL Flapjack.Basis.Pure.MlString
 
-/-- A unary flat identity operation has the same result as its operand. -/
-theorem evaluate_flat_id {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (state : FlatSem.State C F) (trace : BackendCommon.Tra) (argument : FlatLang.Exp) :
-    FlatSem.evaluate env state [.app trace .id [argument]] = FlatSem.evaluate env state [argument] := by
-  rw [FlatSem.evaluate]
-  simp only [List.reverse_singleton, (FlatSem.fixClock_evaluations env state [argument] argument []).1]
-  cases run : FlatSem.evaluate env state [argument] with
-  | mk next result =>
-    cases result with
-    | err error => rfl
-    | val values =>
-      have length := FlatSem.evaluate_singleton_length env state next argument values run
-      cases values with
-      | nil => simp at length
-      | cons first rest =>
-        cases rest with
-        | cons _ _ => simp at length
-        | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat]
-
-/-- Unary identity compilation preserves evaluation and the value relation. -/
-theorem evaluate_id {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (names : List (Option MlString)) (values : List ClosSem.Value)
-    (source : FlatSem.State C F) (target : ClosSem.State C F)
-    (trace : BackendCommon.Tra) (argument : FlatLang.Exp)
-    (argumentSim : EvalSim env names values source target [argument]) :
-    EvalSim env names values source target [.app trace .id [argument]] := by
-  unfold EvalSim at argumentSim ⊢
-  simp only [compile, compileExps, compileExp, destNop, compileOp, arg1, List.reverse_singleton] at argumentSim ⊢
-  rw [evaluate_flat_id]
-  exact argumentSim
-
 /-- The flat evaluator sequences a unary conversion after its operand. -/
 theorem evaluate_flat_conversion {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (state : FlatSem.State C F) (trace : BackendCommon.Tra) (sourceType targetType : AstHOL.PrimType)

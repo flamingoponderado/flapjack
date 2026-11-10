@@ -46,6 +46,54 @@ class HolRefExportTest(unittest.TestCase):
             {"fmap_as_finite_support_result_observations": ["different"]},
         )
 
+    def test_parameter_observations_require_elaborated_combined_marker(self):
+        fields = {"fmap_as_finite_support_parameters": ["code"],
+                  "fmap_as_finite_support_result_observations": ["Flapjack.Map.make"]}
+        self.check_qualifier(
+            "reviewed_fmap_as_finite_support_parameter_observations", fields,
+            {**fields, "fmap_as_finite_support_parameter_observations": True}, fields)
+
+    def test_nested_list_qualifier_must_match_both_directions(self):
+        self.check_qualifier(
+            "reviewed_nested_list_rel_as_mutual",
+            {"nested_list_rel_as_mutual": ["FunctionsRel"]},
+            {"nested_list_rel_as_mutual": ["FunctionsRel"]},
+            {"nested_list_rel_as_mutual": ["Other"]},
+        )
+        with self.assertRaisesRegex(ValueError, "nested-list relation qualifier"):
+            MODULE.check_records(self.manifest, [{**self.export[0], "qualifiers":
+                {"nested_list_rel_as_mutual": ["FunctionsRel"]}}])
+
+    def test_combined_nested_and_fmap_match_export(self):
+        fields = {"fmap_as_finite_support": ["refs", "code"],
+                  "nested_list_rel_as_mutual": ["FunctionsRel"]}
+        status = "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual"
+        manifest = [{**self.manifest[0], "statement_status": status, **fields}]
+        self.assertEqual(MODULE.check_records(manifest, [{**self.export[0], "qualifiers": fields}]), 1)
+        for missing in ("fmap_as_finite_support", "nested_list_rel_as_mutual"):
+            with self.subTest(missing=missing), self.assertRaises(ValueError):
+                MODULE.check_records(manifest, [{**self.export[0], "qualifiers":
+                    {key: value for key, value in fields.items() if key != missing}}])
+            with self.subTest(unrecorded=missing), self.assertRaises(ValueError):
+                MODULE.check_records([{key: value for key, value in manifest[0].items() if key != missing}],
+                                     [{**self.export[0], "qualifiers": fields}])
+
+    def test_nested_audit_requires_witness_comparison_and_ordered_marker(self):
+        source = MODULE.NESTED_AUDIT.read_text(encoding="utf-8")
+        MODULE.validate_nested_audit_source(source)
+        for missing in ("Lean.Meta.isDefEq witness.type expectedWitness.value",
+                        "Lean.collectAxioms ``functionsRel_iff",
+                        "private def expectedFunctionsConsRule"):
+            with self.subTest(missing=missing), self.assertRaises(ValueError):
+                MODULE.validate_nested_audit_source(source.replace(missing, "", 1))
+        with self.assertRaises(ValueError):
+            MODULE.validate_nested_audit_source(source.replace(
+                "Lean.collectAxioms ``functionsRel_iff",
+                "/- Lean.collectAxioms ``functionsRel_iff -/", 1))
+        marker = "theorem nestedRelationAudit_passed : True := trivial"
+        with self.assertRaises(ValueError):
+            MODULE.validate_nested_audit_source(marker + "\n" + source.replace(marker, "", 1))
+
     def test_tuple_map_qualifier_must_match_in_both_directions(self):
         status = "reviewed_fmap_as_finite_support_tuple_words_as_type_indexed_bitvec"
         fields = {"fmap_as_finite_support_tuple": ["component_2", "component_3"],

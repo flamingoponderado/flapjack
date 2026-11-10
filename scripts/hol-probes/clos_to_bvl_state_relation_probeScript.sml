@@ -1,6 +1,7 @@
 (* Typed source statements for the closure-to-BVL state relation. *)
 load "clos_to_bvlProofTheory";
 open HolKernel Parse boolLib bossLib;
+open listTheory;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
 fun show label th = if null (hyp th) then
@@ -9,6 +10,106 @@ fun show label th = if null (hyp th) then
 val _ = show "code_split_def_typed=" clos_to_bvlTheory.code_split_def;
 val _ = show "code_split_perm_typed=" clos_to_bvlProofTheory.code_split_IMP_PERM;
 val _ = show "chain_exps_def_typed=" clos_to_bvlTheory.chain_exps_def;
+val _ = show "compile_common_def_typed=" clos_to_bvlTheory.compile_common_def;
+val _ = show "compile_common_inc_def_typed=" clos_to_bvlProofTheory.compile_common_inc_def;
+val _ = (print "compile_common_inc_type=";
+  print_type (type_of ``clos_to_bvlProof$compile_common_inc``); print "\n");
+val _ = show "compile_def_typed=" clos_to_bvlTheory.compile_def;
+val _ = show "init_code_def_typed=" clos_to_bvlTheory.init_code_def;
+val _ = show "init_globals_def_typed=" clos_to_bvlTheory.init_globals_def;
+val _ = show "force_thunk_code_def_typed=" clos_to_bvlTheory.force_thunk_code_def;
+val _ = show "code_sort_def_typed=" clos_to_bvlTheory.code_sort_def;
+val _ = show "make_name_alist_def_typed=" clos_to_bvlTheory.make_name_alist_def;
+val _ = show "tuple_tag_def_typed=" backend_commonTheory.tuple_tag_def;
+val _ = show "closure_tag_def_typed=" backend_commonTheory.closure_tag_def;
+val _ = show "partial_app_tag_def_typed=" backend_commonTheory.partial_app_tag_def;
+val _ = show "bvl_Bool_def_typed=" bvlTheory.Bool_def;
+val _ = show "partial_app_label_table_loc_def_typed=" clos_to_bvlTheory.partial_app_label_table_loc_def;
+val _ = show "add_src_names_def_typed=" clos_to_bvlTheory.add_src_names_def;
+val _ = show "get_src_names_def_typed=" clos_to_bvlTheory.get_src_names_def;
+val _ = show "get_src_names_sing_def_typed=" clos_to_bvlTheory.get_src_names_sing_def;
+val _ = show "get_src_names_sing_eq_typed=" clos_to_bvlTheory.get_src_names_sing_eq;
+val _ = show "code_merge_def_typed=" clos_to_bvlTheory.code_merge_def;
+val _ = show "num_stubs_def_typed=" clos_to_bvlTheory.num_stubs_def;
+val _ = show "generic_app_fn_location_def_typed=" clos_to_bvlTheory.generic_app_fn_location_def;
+val _ = show "partial_app_fn_location_def_typed=" clos_to_bvlTheory.partial_app_fn_location_def;
+val _ = show "partial_app_fn_location_code_def_typed=" clos_to_bvlTheory.partial_app_fn_location_code_def;
+val _ = show "generate_generic_app_def_typed=" clos_to_bvlTheory.generate_generic_app_def;
+val _ = show "generate_partial_app_closure_fn_def_typed=" clos_to_bvlTheory.generate_partial_app_closure_fn_def;
+val _ = show "check_closure_def_typed=" clos_to_bvlTheory.check_closure_def;
+val _ = show "mk_const_def_typed=" clos_to_bvlTheory.mk_const_def;
+val _ = show "mk_label_def_typed=" clos_to_bvlTheory.mk_label_def;
+val _ = show "mk_el_def_typed=" clos_to_bvlTheory.mk_el_def;
+val _ = show "mk_cl_call_def_typed=" clos_to_bvlTheory.mk_cl_call_def;
+val _ = show "bvl_Jump_def_typed=" bvl_jumpTheory.Jump_def;
+val _ = show "bvl_JumpList_def_typed=" bvl_jumpTheory.JumpList_def;
+val _ = show "assign_get_code_label_compile_op_typed=" clos_to_bvlProofTheory.assign_get_code_label_compile_op;
+val _ = show "assign_get_code_label_def_typed=" closLangTheory.assign_get_code_label_def;
+val _ = show "compile_op_def_typed=" clos_to_bvlTheory.compile_op_def;
+val _ = show "compile_const_def_typed=" clos_to_bvlTheory.compile_const_def;
+val _ = show "add_parts_def_typed=" clos_to_bvlTheory.add_parts_def;
+val _ = show "add_part_def_typed=" clos_to_bvlTheory.add_part_def;
+val _ = show "part_hash_def_typed=" clos_to_bvlTheory.part_hash_def;
+val _ = show "clos_tag_shift_def_typed=" backend_commonTheory.clos_tag_shift_def;
+val _ = show "bvl_get_code_labels_def_typed=" bvlPropsTheory.get_code_labels_def;
+val _ = show "clos_get_code_labels_def_typed=" closPropsTheory.get_code_labels_def;
+val _ = show "compile_exps_code_labels_typed=" clos_to_bvlProofTheory.compile_exps_code_labels;
+val _ = show "compile_prog_code_labels_typed=" clos_to_bvlProofTheory.compile_prog_code_labels;
+val _ = show "syntax_oracle_ok_bvl_FST_monotonic_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_bvl_FST_monotonic;
+val _ = show "extracted_addrs_def_typed=" clos_to_bvlProofTheory.extracted_addrs_def;
+val _ = show "req_compile_inc_addrs_def_typed=" clos_to_bvlProofTheory.req_compile_inc_addrs_def;
+val _ = show "can_extract_def_typed=" clos_to_bvlProofTheory.can_extract_def;
+val _ = show "compile_inc_req_addrs_typed=" clos_to_bvlProofTheory.compile_inc_req_addrs;
+val _ = show "oracle_monotonic_subset_typed=" backendPropsTheory.oracle_monotonic_subset;
+val _ = show "compile_inc_monotonic_typed=" clos_to_bvlProofTheory.compile_inc_monotonic;
+val _ = show "subset_req_orac_to_oracle_typed=" clos_to_bvlProofTheory.subset_req_orac_to_oracle;
+val _ = show "annotate_compile_code_locs_typed=" clos_to_bvlProofTheory.annotate_compile_code_locs;
+val _ = show "annotate_compile_inc_req_typed=" clos_to_bvlProofTheory.annotate_compile_inc_req;
+val _ = show "cond_call_compile_inc_req_typed=" clos_to_bvlProofTheory.cond_call_compile_inc_req;
+val _ = show "calls_length_typed=" clos_callTheory.calls_length;
+val _ = show "calls_sing_typed=" clos_callTheory.calls_sing;
+val _ = show "calls_add_SUC_code_locs_typed=" clos_callProofTheory.calls_add_SUC_code_locs;
+val _ = show "calls_ALL_DISTINCT_typed=" clos_callProofTheory.calls_ALL_DISTINCT;
+val _ = show "calls_code_locs_MEM_typed=" clos_callProofTheory.calls_code_locs_MEM;
+val _ = show "code_locs_cons_typed=" closPropsTheory.code_locs_cons;
+val _ = show "code_locs_append_typed=" closPropsTheory.code_locs_append;
+val _ = show "calls_code_locs_ALL_DISTINCT_typed=" clos_callProofTheory.calls_code_locs_ALL_DISTINCT;
+val code_locs_code_list_ALL_DISTINCT_replay = prove (
+  ``∀ls n rest.
+    ALL_DISTINCT (closProps$code_locs
+      (MAP (SND o SND) (SND (clos_call$code_list n ls rest)))) ⇔
+    ALL_DISTINCT (closProps$code_locs (MAP (SND o SND) (SND rest) ++ MAP SND ls))``,
+  Induct >> fs[clos_callTheory.code_list_def, pairTheory.FORALL_PROD,
+    Once closPropsTheory.code_locs_cons, closPropsTheory.code_locs_append] >>
+  rw[] >> EVAL_TAC >>
+  fs[ALL_DISTINCT_APPEND] >>
+  rw[EQ_IMP_THM] >>
+  fs[Once closPropsTheory.code_locs_cons, ALL_DISTINCT_APPEND, closPropsTheory.code_locs_def] >>
+  metis_tac[]);
+val _ = show "code_locs_code_list_ALL_DISTINCT_replay_typed=" code_locs_code_list_ALL_DISTINCT_replay;
+val _ = show "MAP_FST_code_list_typed=" clos_callProofTheory.MAP_FST_code_list;
+val _ = show "can_extract_to_case_typed=" clos_to_bvlProofTheory.can_extract_to_case;
+val _ = show "annotate_Op_Const_typed=" clos_to_bvlProofTheory.annotate_Op_Const;
+val _ = show "LENGTH_annotate_typed=" clos_to_bvlProofTheory.LENGTH_annotate;
+val _ = show "extract_name_MAP_FST_addrs_typed=" clos_to_bvlProofTheory.extract_name_MAP_FST_addrs;
+val _ = show "extract_name_code_locs_typed=" clos_to_bvlProofTheory.extract_name_code_locs;
+val _ = show "MAP_FST_chain_exps_any_typed=" clos_to_bvlProofTheory.MAP_FST_chain_exps_any;
+val _ = show "compile_exps_SING_typed=" clos_to_bvlTheory.compile_exps_SING;
+val _ = show "compile_exps_LENGTH_typed=" clos_to_bvlTheory.compile_exps_LENGTH;
+val _ = show "MEM_build_aux_imp_SND_MEM_typed=" clos_to_bvlProofTheory.MEM_build_aux_imp_SND_MEM;
+val _ = show "build_aux_def_typed=" clos_to_bvlTheory.build_aux_def;
+val _ = show "free_let_def_typed=" clos_to_bvlTheory.free_let_def;
+val _ = show "code_for_recc_case_def_typed=" clos_to_bvlTheory.code_for_recc_case_def;
+val _ = show "build_recc_lets_def_typed=" clos_to_bvlTheory.build_recc_lets_def;
+val _ = show "recc_Let0_def_typed=" clos_to_bvlTheory.recc_Let0_def;
+val _ = show "recc_Lets_code_labels_typed=" clos_to_bvlProofTheory.recc_Lets_code_labels;
+val _ = show "recc_Let_def_typed=" clos_to_bvlTheory.recc_Let_def;
+val _ = show "recc_Lets_def_typed=" clos_to_bvlTheory.recc_Lets_def;
+val _ = show "sptree_domain_fromList_typed=" sptreeTheory.domain_fromList;
+val _ = show "sptree_domain_def_typed=" sptreeTheory.domain_def;
+val _ = show "domain_init_code_typed=" clos_to_bvlProofTheory.domain_init_code;
+val _ = show "domain_init_code_lt_num_stubs_typed=" clos_to_bvlProofTheory.domain_init_code_lt_num_stubs;
+val _ = show "num_added_globals_def_typed=" clos_to_bvlTheory.num_added_globals_def;
 val _ = show "chain_exps_code_locs_typed=" clos_to_bvlProofTheory.chain_exps_code_locs;
 val _ = show "chain_exps_vars_none_typed=" clos_to_bvlProofTheory.chain_exps_every_Fn_vs_NONE;
 val _ = show "state_rel_typed=" clos_to_bvlProofTheory.state_rel_def;
@@ -28,4 +129,117 @@ val _ = show "init_code_rel_typed=" clos_to_bvlProofTheory.init_code_def;
 val _ = show "compile_prog_semantics_typed=" clos_to_bvlProofTheory.compile_prog_semantics;
 val _ = show "compile_exps_correct_typed=" clos_to_bvlProofTheory.compile_exps_correct;
 
+val _ = show "remove_ticks_op_const_typed=" clos_to_bvlProofTheory.remove_ticks_Op_Const;
+val _ = show "let_op_const_typed=" clos_to_bvlProofTheory.let_op_Op_Const;
+val _ = show "known_co_req_typed=" clos_to_bvlProofTheory.known_co_req;
+val _ = show "number_compile_inc_req_typed=" clos_to_bvlProofTheory.number_compile_inc_req;
+val _ = show "mem_number_req_typed=" clos_to_bvlProofTheory.MEM_number_req;
+val _ = show "number_oracle_fst_inc_typed=" clos_to_bvlProofTheory.number_oracle_FST_inc;
+val _ = show "number_oracle_fst_strict_mono_typed=" clos_to_bvlProofTheory.number_oracle_FST_strict_mono;
+val _ = show "number_oracle_fst_mono_typed=" clos_to_bvlProofTheory.number_oracle_FST_mono;
+val _ = show "number_monotonic_req_typed=" clos_to_bvlProofTheory.renumber_code_locs_monotonic_req;
+val _ = show "mem_number_compile_locs_typed=" clos_to_bvlProofTheory.MEM_number_compile_inc_locs;
+val _ = show "domain_nth_code_typed=" clos_to_bvlProofTheory.domain_nth_code;
+val _ = show "disjoint_nth_code_monotonic_typed=" clos_to_bvlProofTheory.DISJOINT_nth_code_monotonic;
+val _ = show "nth_code_def_typed=" clos_to_bvlProofTheory.nth_code_def;
+val _ = show "shift_seq_def_typed=" miscTheory.shift_seq_def;
+val _ = show "uncurry_eq_typed=" clos_to_bvlProofTheory.UNCURRY_EQ;
+val _ = show "length_fst_cond_mti_typed=" clos_to_bvlProofTheory.LENGTH_FST_cond_mti_compile_inc;
+val _ = show "every_fn_none_cond_mti_typed=" clos_to_bvlProofTheory.every_Fn_vs_NONE_cond_mti_compile_inc;
+val _ = show "map_fst_compile_prog_typed=" clos_to_bvlProofTheory.MAP_FST_compile_prog;
+val _ = show "image_add_subset_count_typed=" clos_to_bvlProofTheory.IMAGE_ADD_SUBSET_count;
+val _ = show "call_compile_length_typed=" clos_callTheory.compile_LENGTH;
+val _ = show "known_compile_length_typed=" clos_knownProofTheory.compile_LENGTH;
+val _ = show "ccompile_aux_subset_typed=" clos_to_bvlProofTheory.ccompile_aux_subset;
+val _ = show "ccompile_locs_subset_typed=" clos_to_bvlProofTheory.ccompile_locs_subset;
+val _ = show "compile_common_map_fst_compile_prog_typed=" clos_to_bvlProofTheory.compile_common_MAP_FST_compile_prog;
+val _ = show "clos_bvl_syntax_oracle_ok_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_def;
+val _ = show "set_of_bag_typed=" bagTheory.SET_OF_BAG;
+val _ = show "syntax_oracle_ok_to_oracle_inv_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_to_oracle_inv;
+val _ = show "compile_inc_post_kcompile_typed=" clos_to_bvlProofTheory.compile_inc_post_kcompile_def;
+val _ = show "annotate_compile_every_fn_vars_some_typed=" clos_to_bvlProofTheory.annotate_compile_every_Fn_vs_SOME;
+val _ = show "every_fn_some_cond_call_typed=" clos_to_bvlProofTheory.every_Fn_SOME_cond_call_compile_inc;
+val _ = show "every_fn_genlist_var_typed=" clos_callProofTheory.every_Fn_GENLIST_Var;
+val _ = show "every_fn_calls_list_typed=" clos_callProofTheory.every_Fn_calls_list;
+val _ = show "every_fn_code_list_typed=" clos_callProofTheory.every_Fn_code_list;
+val _ = show "calls_preserves_every_fn_some_typed=" clos_callProofTheory.calls_preserves_every_Fn_SOME;
+val _ = show "ccompile_every_fn_some_typed=" clos_to_bvlProofTheory.ccompile_every_Fn_SOME;
+val _ = show "compile_common_max_app_typed=" clos_to_bvlProofTheory.compile_common_max_app;
+val _ = show "compile_exps_el_typed=" clos_to_bvlProofTheory.compile_exps_EL;
+val _ = show "compile_common_distinct_locs_typed=" clos_to_bvlProofTheory.compile_common_distinct_locs;
+(* Replay the source's local ALOOKUP_lemma, which is not exported by HOL. *)
+val alookup_lemma_replay = prove(
+  ``∀l1 l2 n k v.
+    (EL n l1 = (k,v)) ∧ ALL_DISTINCT (MAP FST l1) ∧
+    n < LENGTH l1 ∧ LENGTH l2 = LENGTH l1 ⇒
+    ALOOKUP (MAP2 (λ(loc,args,_) exp. (loc + (m:num),args,exp)) l1 l2) (k + m) =
+      SOME (FST v, EL n l2)``,
+  Induct \\ rw[]
+  \\ Cases_on `l2` \\ fs[]
+  \\ pairarg_tac \\ fs[]
+  \\ IF_CASES_TAC
+  >- (fs[] \\ reverse(Cases_on `n`) \\ fs[]
+      >- (fs[MEM_MAP, PULL_EXISTS, Once pairTheory.EXISTS_PROD, MEM_EL] \\ metis_tac[])
+      \\ rw[])
+  \\ Cases_on `n` \\ fs[]);
+val _ = show "alookup_lemma_replay_typed=" alookup_lemma_replay;
+(* Replay the local membership helper and code-installation theorem. *)
+val is_sublist_mem_replay = prove(
+  ``∀ls ls' x. MEM x ls ∧ IS_SUBLIST ls' ls ⇒ MEM x ls'``,
+  Induct >> Induct_on `ls'` >> rw[rich_listTheory.IS_SUBLIST] >>
+  metis_tac[MEM,rich_listTheory.IS_PREFIX_IS_SUBLIST]);
+val code_installed_from_alist_strong_replay = prove(
+  ``∀ls ls'. ALL_DISTINCT (MAP FST ls) ∧ IS_SUBLIST ls ls' ⇒
+    clos_to_bvlProof$code_installed ls' (sptree$fromAList ls)``,
+  srw_tac[][clos_to_bvlProofTheory.code_installed_def, EVERY_MEM,
+    pairTheory.FORALL_PROD, sptreeTheory.lookup_fromAList] >>
+  metis_tac[alistTheory.ALOOKUP_ALL_DISTINCT_MEM,is_sublist_mem_replay]);
+val _ = show "code_installed_from_alist_strong_replay_typed=" code_installed_from_alist_strong_replay;
+val _ = show "code_installed_union_typed=" clos_to_bvlProofTheory.code_installed_union;
+val _ = show "code_installed_union1_typed=" clos_to_bvlProofTheory.code_installed_union1;
+val _ = show "alookup_compile_common_typed=" clos_to_bvlProofTheory.ALOOKUP_compile_common;
+val _ = show "imp_perm_code_merge_typed=" clos_to_bvlProofTheory.IMP_PERM_code_merge;
+val _ = show "perm_code_sort_typed=" clos_to_bvlProofTheory.PERM_code_sort;
+val _ = show "all_distinct_code_sort_typed=" clos_to_bvlProofTheory.ALL_DISTINCT_code_sort;
+val _ = show "compile_all_distinct_locs_typed=" clos_to_bvlProofTheory.compile_all_distinct_locs;
+val _ = show "perm_imp_from_alist_eq_typed=" clos_to_bvlProofTheory.PERM_IMP_fromAList_EQ_fromAList;
+val _ = show "from_alist_code_sort_typed=" clos_to_bvlProofTheory.fromAList_code_sort;
+val _ = show "syntax_oracle_ok_start_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_start;
+val _ = show "syntax_oracle_ok_call_fst_monotonic_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_call_FST_monotonic;
+val _ = show "length_fst_calls_typed=" clos_to_bvlProofTheory.LENGTH_FST_calls;
+val _ = show "ignore_table_uncurry_typed=" clos_to_bvlProofTheory.ignore_table_uncurry;
+val _ = show "known_nil_typed=" clos_to_bvlProofTheory.known_nil;
+val _ = show "remove_ticks_nil_typed=" clos_to_bvlProofTheory.remove_ticks_nil;
+val _ = show "let_op_nil_typed=" clos_to_bvlProofTheory.let_op_nil;
+val _ = show "annotate_nil_typed=" clos_to_bvlProofTheory.annotate_nil;
+val _ = show "calls_nil_typed=" clos_to_bvlProofTheory.calls_nil;
+val _ = show "renumber_code_locs_list_nil_typed=" clos_to_bvlProofTheory.renumber_code_locs_list_nil;
+val _ = show "mcompile_inc_nil_typed=" clos_to_bvlProofTheory.mcompile_inc_nil;
+val _ = show "map_fst_compile_inc_typed=" clos_to_bvlProofTheory.MAP_FST_compile_inc;
+val _ = show "renumber_code_locs_sing_typed=" clos_to_bvlProofTheory.renumber_code_locs_sing;
+val _ = show "set_code_locs_fst_calls_subset_typed=" clos_to_bvlProofTheory.set_code_locs_FST_calls_SUBSET;
+val _ = show "syntax_oracle_ok_bvl_fst_monotonic_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_bvl_FST_monotonic;
+val _ = show "compile_inc_phases_all_distinct_typed=" clos_to_bvlProofTheory.compile_inc_phases_all_distinct;
+val _ = show "semantics_cond_mti_compile_inc_typed=" clos_to_bvlProofTheory.semantics_cond_mti_compile_inc;
+val _ = show "chain_installed_cons_typed=" clos_to_bvlProofTheory.chain_installed_cons;
+val _ = show "chain_installed_submap_typed=" clos_to_bvlProofTheory.chain_installed_SUBMAP;
+val _ = show "chain_installed_chain_exps_typed=" clos_to_bvlProofTheory.chain_installed_chain_exps;
+val _ = show "toaList_domain_typed=" miscTheory.toAList_domain;
+val _ = show "sptree_domain_lookup_typed=" sptreeTheory.domain_lookup;
+val _ = show "known_compile_is_some_typed=" clos_knownProofTheory.known_compile_IS_SOME;
+val _ = show "fst_known_co_typed=" clos_to_bvlProofTheory.FST_known_co;
+val _ = show "known_co_facts_typed=" clos_to_bvlProofTheory.known_co_facts;
+val _ = show "known_state_oracle_globals_approx_typed=" clos_to_bvlProofTheory.known_state_oracle_globals_approx;
+val _ = show "is_state_oracle_k_typed=" backendPropsTheory.is_state_oracle_k;
+val _ = show "clos_call_syntax_ok_typed=" clos_callProofTheory.syntax_ok_def;
+val _ = show "compile_oracle_inv_typed=" clos_to_bvlProofTheory.compile_oracle_inv_def;
+val _ = show "every_fn_some_every_typed=" closPropsTheory.every_Fn_SOME_EVERY;
+val _ = show "every_fn_vs_some_every_typed=" closPropsTheory.every_Fn_vs_SOME_EVERY;
+val _ = show "snd_snd_ignore_table_typed=" clos_to_bvlProofTheory.SND_SND_ignore_table;
+val _ = show "fst_snd_ignore_table_typed=" clos_to_bvlProofTheory.FST_SND_ignore_table;
+val _ = show "snd_cond_mti_compile_inc_typed=" clos_to_bvlProofTheory.SND_cond_mti_compile_inc;
+val _ = show "renumber_code_locs_monotonic_typed=" clos_to_bvlProofTheory.renumber_code_locs_monotonic;
+val _ = show "length_remove_ticks_typed=" clos_ticksTheory.LENGTH_remove_ticks;
+val _ = show "length_let_op_typed=" clos_letopTheory.LENGTH_let_op;
+val _ = show "known_length_eq_e_typed=" clos_knownTheory.known_LENGTH_EQ_E;
 val _ = show "known_op_const_typed=" clos_to_bvlProofTheory.known_Op_Const;

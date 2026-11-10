@@ -26,7 +26,7 @@ def WorkerCore {C F : Type} (work : Bvi.Exp) (env1 env2 : List Value)
   ∃ (workResult : BviResult) (workMap : HolFiniteMapExact Nat Nat) (workState : BviState C F),
     evaluate [work] env2 target = (workResult, workState) ∧
     optResRel workMap result workResult ∧ stateRel workMap final workState ∧
-    finiteSubmap f workMap ∧ onlyFresh f workMap target.refs ∧
+    f.submap workMap ∧ onlyFresh f workMap target.refs ∧
     holesUnchangedExcept f target.refs workState.refs {holePtr} ∧
     holesStillNotFinalised f target.refs workState.refs ∧
     ∀ resValue, result = .val [resValue] →
@@ -124,7 +124,7 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
               (envRel_submap true f g env1 env2 environments extension) middleStates nextHole nextNotFinal
               (WrapperCases.evaluate_pres_opt_code loc locOpt source middle target middleTarget
                 [condition] env1 env2 (.val [value]) (.val [value']) code conditionRun targetRun)
-          have submap : finiteSubmap f h := by
+          have submap : f.submap h := by
             intro k v found; exact branchExtension k v (extension k v found)
           have domain := BviProps.evaluate_refs_subset [condition] env2 target middleTarget (.val [value']) targetRun
           have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh branchFresh domain

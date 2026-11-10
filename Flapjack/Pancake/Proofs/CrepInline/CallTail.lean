@@ -64,11 +64,6 @@ theorem submap_erase (m : InlMap width) (k : CrepInlineMapHOLName) :
   · cases h
   · exact h
 
-theorem submap_trans' {α β : Type} {a b c : HolFiniteMapExact α β}
-    (h1 : HolFiniteMapExact.submap a b) (h2 : HolFiniteMapExact.submap b c) :
-    HolFiniteMapExact.submap a c :=
-  fun x v h => h2 x v (h1 x v h)
-
 theorem updateList_eq_updateListEq (l : List (Nat × HolWordLab width)) :
     (HolFiniteMapExact.empty : HolFiniteMapExact Nat (HolWordLab width)).updateList l =
       HolFiniteMapExact.empty.updateListEq l := by
@@ -215,7 +210,7 @@ theorem callTail
     exact ⟨a, b, c, d, by simp [decClockCrepSemHOL, e], f, g, h, i⟩
   obtain ⟨t1, ht1, hrel1, hci1, _⟩ := ihB r0 s0 inlFs
     { decClockCrepSemHOL t with locals := HolFiniteMapExact.empty.updateList (ns.zip vs) }
-    (inlBag.erase fname) hb hr0ne hsub (submap_trans' (submap_erase _ _) hbag) hsrD rfl
+    (inlBag.erase fname) hb hr0ne hsub (HolFiniteMapExact.submap_trans (submap_erase _ _) hbag) hsrD rfl
     (codeInl_of_code_eq rfl rfl hci)
   have hu := CrepInlineUnreachElimEvaluate.unreachElimCorrect _ _ _ _ _ _ ⟨ht1, hr0ne, rfl⟩
   obtain ⟨hnd', hlen', hnotns, hnotargs⟩ := tmpVars_facts argexps ns

@@ -40,7 +40,7 @@ theorem evaluate_ordinary_op {C F : Type} (trace : BackendCommon.Tra)
   | mk argsResult middle =>
     obtain ⟨targetArgsResult, targetMiddle, targetArgsRun, argsRel, middleRel⟩ :=
       argsIH argsResult middle (compileList args) nextEnv target
-        ⟨argsRun, envRel, states, rfl⟩
+        ⟨argsRun, envRel, states, by simp [CodeRel]⟩
     rw [argsRun] at run
     rw [targetArgsRun]
     cases argsResult with

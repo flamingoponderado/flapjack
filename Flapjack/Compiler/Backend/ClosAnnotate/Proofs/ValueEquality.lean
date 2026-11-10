@@ -55,11 +55,11 @@ theorem primitiveSimulation_equal {C F : Type} :
   intro values nextValues source target valuesRel states
   cases valuesRel with
   | nil =>
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons first rest =>
     cases rest with
     | nil =>
-      exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+      exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | cons second rest =>
       cases rest with
       | nil =>
@@ -69,7 +69,7 @@ theorem primitiveSimulation_equal {C F : Type} :
         | typeError =>
           have targetEq : doEq nextLeft nextRight = .typeError := by rw [← same, sourceEq]
           exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock, targetEq], by
-            simp [doApp, applyBlock, sourceEq, AppResultRel, ResultRel]⟩
+            simp [doApp, applyBlock, sourceEq, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
         | val flag =>
           have targetEq : doEq nextLeft nextRight = .val flag := by rw [← same, sourceEq]
           refine ⟨.val (boolValue flag, target), ?_, ?_⟩
@@ -77,7 +77,7 @@ theorem primitiveSimulation_equal {C F : Type} :
           · simp only [doApp, applyBlock, sourceEq, AppResultRel]
             exact ⟨.block _ [] [] .nil, states⟩
       | cons third rest =>
-        exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+        exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- Constant comparisons produce related Boolean results or matching type
 errors on related values. -/
@@ -86,14 +86,14 @@ theorem primitiveSimulation_equalConst {C F : Type} (part : ClosLang.ConstPart) 
   intro values nextValues source target valuesRel states
   cases valuesRel with
   | nil =>
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons head tail =>
     cases tail with
     | nil =>
       cases head <;> cases part <;>
-        simp [doApp, applyBlock, AppResultRel, ResultRel, states]
+        simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel, states]
       all_goals exact .block _ [] [] .nil
     | cons first rest =>
-      exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+      exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate

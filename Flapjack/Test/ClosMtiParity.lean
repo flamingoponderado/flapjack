@@ -70,7 +70,7 @@ private def mtiConfig : ClosToBvl.Config :=
 private def bvlStage (withHandle : Bool) (decls : List AstHOL.Dec) :
     Option (List (Nat × Nat × Bvi.Exp)) := do
   let (_, exps) ← SourceToFlat.compileCakeToClosFuel 100 SourceToFlat.emptyConfig decls
-  let (closure, bvl, _) ← ClosToBvl.compileMtiOnlyFuel? 100 mtiConfig exps
+  let (closure, bvl, _) ← ClosToBvl.compileCallMtiFuel? 100 mtiConfig exps
   let bvl := (BvlInline.tickCompileProg 8 .ln bvl).2.map fun (n, a, e) =>
     (n, a, BvlInline.letOpSing (BvlInline.removeTicksSing e))
   let bvl := if withHandle then bvl.map (fun (n, a, e) =>
@@ -78,7 +78,7 @@ private def bvlStage (withHandle : Bool) (decls : List AstHOL.Dec) :
   let (_, code, _) ← BvlToBvi.compileProgFuel 100 100 closure.start 0 bvl
   pure code
 
-#guard match SourceToFlat.compileCakeToBviMtiFuel 100 SourceToFlat.emptyConfig mtiConfig
+#guard match SourceToFlat.compileCakeToBviBeforeOptimizationsFuel 100 SourceToFlat.emptyConfig mtiConfig
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
       (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
   | some (_, _, _, code, _, _) => Flapjack.Test.MtiCakeBviOracle.matchesCaptured code

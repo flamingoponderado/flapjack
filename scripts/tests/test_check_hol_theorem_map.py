@@ -1467,6 +1467,48 @@ class ValidateInventoryTest(unittest.TestCase):
         self.assertNotIn(mismatch, MAP["tagged_declarations"]())
 
 
+class NestedRelationStatusTest(unittest.TestCase):
+    def test_qualifier_requires_matching_manifest_and_status(self):
+        key = ("Flapjack/Example.lean", "ValueRel")
+        record = {
+            "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml",
+            "hol_name": "v_rel", "lean_path": key[0], "lean_name": key[1],
+            "statement_status": "reviewed_nested_list_rel_as_mutual",
+            "nested_list_rel_as_mutual": ["FunctionsRel"],
+            "reviewer": "source comparison of nested_list_rel_as_mutual and functionsRel_iff",
+        }
+        tag = (record["hol_path"], record["hol_name"], (), (), (), (), False, (), False,
+               False, (), (), None, (), (), False, False, (), (), (), ("FunctionsRel",))
+        validate = MAP["validate_inventory"]
+        self.assertEqual(validate([record], set(), {key: tag}, set()), [])
+        for changed in ({"nested_list_rel_as_mutual": []}, {"statement_status": "reviewed_exact"},
+                        {"reviewer": "source comparison"}):
+            self.assertTrue(validate([{**record, **changed}], set(), {key: tag}, set()))
+
+    def test_combined_fmap_status_requires_both_qualifiers(self):
+        key = ("Flapjack/Example.lean", "observer")
+        record = {
+            "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml",
+            "hol_name": "state_rel_def", "lean_path": key[0], "lean_name": key[1],
+            "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
+            "nested_list_rel_as_mutual": ["FunctionsRel"],
+            "fmap_as_finite_support": ["refs", "code"],
+            "reviewer": "source comparison of fmap_as_finite_support and nested_list_rel_as_mutual using functionsRel_iff",
+        }
+        tag = (record["hol_path"], record["hol_name"], (), (), (), ("refs", "code"), False, (), False,
+               False, (), (), None, (), (), False, False, (), (), (), ("FunctionsRel",))
+        validate = MAP["validate_inventory"]
+        self.assertEqual(validate([record], set(), {key: tag}, set()), [])
+        for changed in ({"statement_status": "reviewed_nested_list_rel_as_mutual"},
+                        {"statement_status": "reviewed_fmap_as_finite_support"},
+                        {"nested_list_rel_as_mutual": []}, {"fmap_as_finite_support": ["refs"]}):
+            self.assertTrue(validate([{**record, **changed}], set(), {key: tag}, set()))
+        for index in (5, 20):
+            missing = list(tag)
+            missing[index] = ()
+            self.assertTrue(validate([record], set(), {key: tuple(missing)}, set()))
+
+
 class TupleFmapStatusTest(unittest.TestCase):
     def setUp(self):
         self.key = ("Flapjack/Example.lean", "ClockValueInv")
@@ -1523,6 +1565,12 @@ class ExistentialFmapStatusTest(unittest.TestCase):
     def test_accepts_existential_map_status(self):
         self.assertEqual(self._errors(self._record(), self._tag()), [])
 
+    def test_accepts_camel_case_binder_in_source_note(self):
+        self.assertEqual(self._errors(
+            self._record(reviewer="source comparison of targetUpdated",
+                         fmap_as_finite_support_existentials=["targetUpdated"]),
+            self._tag(("targetUpdated",))), [])
+
     def test_rejects_status_without_qualifier(self):
         errors = self._errors(self._record(), self._tag(()))
         self.assertTrue(any("needs a fmap_as_finite_support_existentials" in e for e in errors))
@@ -1537,6 +1585,28 @@ class ExistentialFmapStatusTest(unittest.TestCase):
         errors = self._errors(
             self._record(fmap_as_finite_support_existentials=["other"]), self._tag())
         self.assertTrue(any("do not match its @[hol] tag" in e for e in errors))
+
+    def test_accepts_relation_and_existential_composition_without_words(self):
+        record = self._record(
+            statement_status="reviewed_fmap_as_finite_support_relation_existentials",
+            reviewer="source comparison of ClosSem.State maps and inl_bag",
+            fmap_as_finite_support_relation=["ClosSem.State.refs", "ClosSem.State.code"],
+        )
+        tagged = self._tag()
+        key = next(iter(tagged))
+        old = tagged[key]
+        tagged[key] = old[:7] + (
+            (("ClosSem.State", "refs"), ("ClosSem.State", "code")),
+            False, False, (), ("inl_bag",),
+        )
+        self.assertEqual(self._errors(record, tagged), [])
+        self.assertTrue(self._errors({**record, "fmap_as_finite_support_relation": []}, tagged))
+        self.assertTrue(self._errors({**record, "fmap_as_finite_support_existentials": []}, tagged))
+        self.assertTrue(self._errors({**record, "statement_status": "reviewed_exact"}, tagged))
+        without_relation = {key: tagged[key][:7] + ((),) + tagged[key][8:]}
+        without_existential = {key: tagged[key][:11] + ((),)}
+        self.assertTrue(self._errors({**record, "fmap_as_finite_support_relation": []}, without_relation))
+        self.assertTrue(self._errors({**record, "fmap_as_finite_support_existentials": []}, without_existential))
 
     def test_accepts_relation_existential_and_word_carrier_composition(self):
         record = self._record(
@@ -2194,6 +2264,21 @@ class FmapResultObservationInventoryTest(unittest.TestCase):
                         dict(record, fmap_as_finite_support_result_observations=["other"]),
                         dict(record, reviewer="")]:
             self.assertTrue(MAP["validate_inventory"]([changed], set(), tags, set()))
+
+    def test_parameter_observations_require_both_reviewed_lists(self):
+        record, tags = self.fixture()
+        record.update(statement_status="reviewed_fmap_as_finite_support_parameter_observations",
+                      fmap_as_finite_support_parameters=["code"],
+                      reviewer="Source comparison of code and toFmap.")
+        key = next(iter(tags))
+        tag = list(tags[key])
+        tag[10] = ("code",)
+        tags[key] = tuple(tag)
+        self.assertEqual([], MAP["validate_inventory"]([record], set(), tags, set()))
+        bad = dict(record, reviewer="Source comparison of code only.")
+        self.assertTrue(MAP["validate_inventory"]([bad], set(), tags, set()))
+        bad = dict(record, fmap_as_finite_support_parameters=[])
+        self.assertTrue(MAP["validate_inventory"]([bad], set(), tags, set()))
 
     def test_status_cannot_be_used_without_qualifier(self):
         record, tags = self.fixture()

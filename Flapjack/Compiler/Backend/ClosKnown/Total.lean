@@ -136,6 +136,14 @@ theorem knownListTotal_length (c : Config) (xs : List Exp) (env : List ValApprox
         rw [hs] at length
         simp_all
 
+/-- The result of the known-function traversal has the input length. -/
+@[hol "cakeml/compiler/backend/clos_knownScript.sml" "known_LENGTH_EQ_E"]
+theorem knownListTotal_length_eq (c : Config) (xs : List Exp) (env : List ValApprox)
+    (globals : Spt ValApprox) (out : List (Exp × ValApprox)) (final : Spt ValApprox)
+    (run : knownListTotal c xs env globals = (out, final)) : out.length = xs.length := by
+  have length := knownListTotal_length c xs env globals
+  simpa [run] using length
+
 /-- The checked smart constructor is the source-shaped total smart operation.
 This is Flapjack infrastructure for reviewing the executed traversal. -/
 theorem smartTotal_eq_smartOp (t : BackendCommon.Tra) (op : Op) (xs : List Exp) :

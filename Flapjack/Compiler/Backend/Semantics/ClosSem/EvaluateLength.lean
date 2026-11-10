@@ -71,41 +71,6 @@ theorem evaluateApp_length_step {C F : Type} (location : Option Nat) (function :
                 | cons other tail => simp at singleton
 
 
-/-- If every successful singleton evaluation returns one value, successful
-list evaluation returns one value per expression. This isolates the list
-sequencing case needed by the mutual length argument. -/
-theorem evaluate_list_length_of_singletons {C F : Type}
-    (singleton : ∀ (expression : ClosLang.Exp) (env : List Value)
-      (state next : State C F) (values : List Value),
-      evaluate [expression] env state = (.val values, next) → values.length = 1)
-    (expressions : List ClosLang.Exp) (env : List Value) (state next : State C F)
-    (values : List Value)
-    (run : evaluate expressions env state = (.val values, next)) :
-    values.length = expressions.length := by
-  induction expressions generalizing state next values with
-  | nil => simp [evaluate] at run; rcases run with ⟨rfl, _⟩; rfl
-  | cons first rest ih =>
-    cases rest with
-    | nil => simpa using singleton first env state next values run
-    | cons second tail =>
-      rw [evaluate, fixClock_evaluate] at run
-      cases headRun : evaluate [first] env state with
-      | mk headResult headNext =>
-        rw [headRun] at run
-        cases headResult with
-        | err error => simp at run
-        | val headValues =>
-          cases tailRun : evaluate (second :: tail) env headNext with
-          | mk tailResult tailNext =>
-            rw [tailRun] at run
-            cases tailResult with
-            | err error => simp at run
-            | val tailValues =>
-              simp at run
-              rcases run with ⟨rfl, _⟩
-              have tailLength := ih headNext tailNext tailValues tailRun
-              simpa using congrArg Nat.succ tailLength
-
 /-- Ordinary primitive operations produce exactly one value on success. -/
 theorem evaluate_ordinaryOp_length {C F : Type} (trace : BackendCommon.Tra)
     (op : ClosLang.Op) (args : List ClosLang.Exp) (env : List Value)

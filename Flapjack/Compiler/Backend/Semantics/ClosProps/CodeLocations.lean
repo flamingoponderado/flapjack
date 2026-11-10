@@ -54,18 +54,11 @@ theorem codeLocationsFuns_map (fns : List (Nat × Exp)) :
     simp [codeLocationsFuns, codeLocations, ih]
 
 /-- Collecting locations distributes over expression-list concatenation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "code_locs_append"]
 theorem codeLocations_append (left right : List Exp) :
     codeLocations (left ++ right) = codeLocations left ++ codeLocations right := by
   induction left with
   | nil => simp [codeLocations]
   | cons first rest ih => simp [codeLocations, ih, List.append_assoc]
-
-/-- A collected location occurs in the traversal of some list member. -/
-theorem mem_codeLocations (location : Nat) (expressions : List Exp) :
-    location ∈ codeLocations expressions ↔
-      ∃ expression ∈ expressions, location ∈ codeLocationsExp expression := by
-  induction expressions with
-  | nil => simp [codeLocations]
-  | cons first rest ih => simp [codeLocations, ih, or_and_right, exists_or]
 
 end Flapjack.Compiler.Backend.ClosProps

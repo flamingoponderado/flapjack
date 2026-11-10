@@ -278,7 +278,7 @@ theorem evaluate_wrapper_core {C F : Type} (loc dest tag : Nat) (left right : Li
           { target with refs := target.refs.updateEq (leastUnusedRef target.refs,
             .mutBlock tag false (right.map (fun n => holEl n env2)).reverse (.number 0)
               (left.map (fun n => holEl n env2)).reverse) } = (workerResult, next) ∧
-        ResultRelation.optResRel g childResult workerResult ∧ stateRel g mid next ∧ finiteSubmap f g ∧
+        ResultRelation.optResRel g childResult workerResult ∧ stateRel g mid next ∧ f.submap g ∧
         onlyFresh f g (target.refs.updateEq (leastUnusedRef target.refs,
           .mutBlock tag false (right.map (fun n => holEl n env2)).reverse (.number 0)
             (left.map (fun n => holEl n env2)).reverse)) ∧

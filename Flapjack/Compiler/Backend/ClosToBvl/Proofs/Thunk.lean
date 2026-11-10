@@ -72,7 +72,7 @@ theorem alloc_thunk_related {C F : Type} (s : ClosSem.State C F) (t : BvlSem.Sta
     BvlSem.doApp (.thunkOp (.allocThunk mode)) [targetValue] t = .val (.refPtr false targetPtr, targetNext) ∧
     stateRel newMap sourceNext targetNext ∧
     vRel s.maxApp newMap targetNext.refs targetNext.code (.refPtr false sourcePtr) (.refPtr false targetPtr) ∧
-    relocationSubmap f newMap ∧ unmappedRefsSubmap t.refs targetNext.refs f newMap := by
+    f.submap newMap ∧ unmappedRefsSubmap t.refs targetNext.refs f newMap := by
   let sourcePtr := ClosSem.leastUnusedRef s.refs
   let targetPtr := BvlSem.leastUnusedRef t.refs
   have sourceFree : s.refs.lookup sourcePtr = none := ClosSem.leastUnusedRef_unused s.refs
@@ -156,7 +156,7 @@ theorem updateThunk_related {C F : Type} (s : ClosSem.State C F) (t : BvlSem.Sta
   have targetGood := badThunkUpdate_related s t states mode valueRel good
   let targetCell := BvlSem.Ref.thunk mode targetValue
   have frame := mappedUpdate_frame f t.refs sourcePtr targetPtr mapped targetCell
-  have submap : relocationSubmap f f := by intro key val lookup; exact lookup
+  have submap : f.submap f := by intro key val lookup; exact lookup
   have grown := vRel_grow_refs valueRel submap frame
   refine ⟨?_, ?_, ?_, .block .nil, frame⟩
   · simp [ClosSem.doApp, good, found]
@@ -375,7 +375,7 @@ theorem forceUpdate_related {C F : Type} {f : HolFiniteMapExact Nat Nat}
   change _ ∧ BvlSem.doApp (.thunkOp (.updateThunk .evaluated)) [.refPtr false targetPtr, targetValue] t =
     .val (BvlSem.unitValue, targetNext) ∧ stateRel f _ targetNext ∧ _ ∧
     unmappedRefsSubmap t.refs targetNext.refs f f at updated
-  have submap : relocationSubmap f f := by intro key val lookup; exact lookup
+  have submap : f.submap f := by intro key val lookup; exact lookup
   exact ⟨targetNext, updated.2.1, updated.2.2.1, vRel_grow_refs valueRel submap updated.2.2.2.2,
     updated.2.2.2.2, rfl⟩
 

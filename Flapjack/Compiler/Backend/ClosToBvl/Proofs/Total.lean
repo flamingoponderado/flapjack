@@ -172,10 +172,4 @@ termination_by sizeOf functions
 decreasing_by all_goals simp_wf <;> omega
 end
 
-/-- The program conversion itself cannot fail. -/
-theorem compileProg_succeeds (maxApp : Nat) (prog : List (Nat × Nat × ClosLang.Exp)) :
-    ∃ result, compileProg? maxApp prog = some result := by
-  obtain ⟨⟨expressions, aux⟩, h⟩ := compileExpList_succeeds maxApp (prog.map (fun (_, _, e) => e)) []
-  exact ⟨_, by simp [compileProg?, h]; rfl⟩
-
 end Flapjack.Compiler.Backend.ClosToBvl

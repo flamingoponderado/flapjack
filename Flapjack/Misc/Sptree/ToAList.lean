@@ -159,10 +159,11 @@ theorem sptDomainFromAList {α : Type} :
       funext x
       simp
 
-/-- Flapjack consequence of `MEM_toAList` used by the allocator proofs:
-`set (MAP FST (toAList s)) = domain s`. -/
-theorem sptMemMapFstToAList {α : Type} (t : Spt α) (k : Nat) :
-    k ∈ (sptToAList t).map Prod.fst ↔ sptDomain t k := by
+/-- The keys in the association list are exactly the tree domain. -/
+@[hol "cakeml/misc/miscScript.sml" "toAList_domain"]
+theorem sptMemMapFstToAList {α : Type} (t : Spt α) :
+    ∀ k, k ∈ (sptToAList t).map Prod.fst ↔ sptDomain t k := by
+  intro k
   simp only [List.mem_map, sptDomain]
   constructor
   · rintro ⟨⟨a, v⟩, hm, rfl⟩

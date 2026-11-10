@@ -59,7 +59,7 @@ theorem evaluate_remove_ticks_cons {C F : Type} (first second : ClosLang.Exp)
     | nil => simp at length
     | cons sourceSecond sourceRest =>
       have codeParts : first = removeSing sourceFirst ∧
-          second :: rest = removeList (sourceSecond :: sourceRest) := by
+          second :: rest = removeSource (sourceSecond :: sourceRest) := by
         simpa [CodeRel, removeList] using code
       have firstCode : CodeRel [sourceFirst] [first] := by
         simp [CodeRel, removeList, codeParts.1]

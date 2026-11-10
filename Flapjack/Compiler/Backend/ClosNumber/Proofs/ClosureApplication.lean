@@ -321,10 +321,13 @@ theorem destRecclosure_numbered_full (maxApp start index : Nat) (location nextLo
     · simp [destClosure, found, checkLoc, valid] at run
 
 /-- Related closure values reject the same indirect applications. -/
-theorem destClosure_related_none (maxApp : Nat) (source target : Value) (args nextArgs : List Value)
-    (related : ValueRel maxApp source target) (argsRel : List.Forall₂ (ValueRel maxApp) args nextArgs)
-    (rejected : destClosure maxApp none source args = none) :
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "dest_closure_v_rel_none"]
+theorem destClosure_related_none (maxApp : Nat) (source : Value) (args : List Value)
+    (target : Value) (nextArgs : List Value)
+    (h : ValueRel maxApp source target ∧ List.Forall₂ (ValueRel maxApp) args nextArgs ∧
+      destClosure maxApp none source args = none) :
     destClosure maxApp none target nextArgs = none := by
+  obtain ⟨related, argsRel, rejected⟩ := h
   cases related with
   | number _ | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ => rfl
   | closure location nextLocation supplied nextSupplied env nextEnv arity start body nextBody envRel suppliedRel safe bodyEq =>

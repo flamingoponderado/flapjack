@@ -70,7 +70,7 @@ Flapjack infrastructure for the installation proof. -/
 theorem compiler_callback {C F : Type} (s t : State C F) (related : StateRel s t)
     (config : C) (program : List ClosLang.Exp) :
     s.compile config (program, []) = t.compile config (removeList program, []) := by
-  rw [related.2.2.2.2.2.2.2.2.2.1]
+  rw [related.2.2.2.2.2.2.2.2.2.1, compileIncSource_eq]
   rfl
 
 /-- Corresponding shifted oracles have the same compiler configuration. This

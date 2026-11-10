@@ -1,15 +1,12 @@
 module
 
 public import Flapjack.FiniteMap.UnionExact
+public import Flapjack.FiniteMap.DomainExact
 public import Mathlib.Data.Set.Finite.Basic
 
 @[expose] public section
 
 namespace Flapjack.HolFiniteMapExact
-/-- Defined lookup domain of the canonical carrier. Flapjack infrastructure;
-HOL uses FDOM on its abstract finite-map carrier. -/
-def domain (map : HolFiniteMapExact α β) : Set α := {key | map.lookup key ≠ none}
-
 /-- Finite support implies finiteness of the actual domain, independently of
 which support list witnesses the carrier proposition. -/
 theorem domain_finite (map : HolFiniteMapExact α β) : map.domain.Finite := by

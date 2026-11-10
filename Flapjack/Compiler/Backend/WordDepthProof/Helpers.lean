@@ -279,7 +279,7 @@ theorem length_less_size {α : Type} :
   have keys : ∀ k, (sptLookup k funs).isSome = true → k ∈ (sptToAList funs).map Prod.fst := by
     intro k hk
     obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hk
-    exact List.mem_map.mpr ⟨(k, v), (sptToAList_mem_iff_lookup funs k v).mpr hv, rfl⟩
+    exact List.mem_map.mpr ⟨(k, v), (sptMemToAList funs k v).mpr hv, rfl⟩
   have hsub : name :: ns ⊆ (sptToAList funs).map Prod.fst := by
     intro x hx
     rcases List.mem_cons.mp hx with rfl | hx

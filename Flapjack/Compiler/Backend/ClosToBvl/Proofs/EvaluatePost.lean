@@ -24,7 +24,7 @@ theorem evaluatePost_environment {C F : Type} (s sNext : ClosSem.State C F)
       BvlSem.evaluate compiled targetEnv { t with clock := s.clock + extraClock } = (targetResult, tNext) ∧
       resultRel (List.Forall₂ (vRel s.maxApp fNext tNext.refs tNext.code))
         (vRel s.maxApp fNext tNext.refs tNext.code) result targetResult ∧
-      stateRel fNext sNext tNext ∧ relocationSubmap f fNext ∧
+      stateRel fNext sNext tNext ∧ f.submap fNext ∧
       unmappedRefsSubmap t.refs tNext.refs f fNext ∧ codeAnnotations sNext ∧
       sNext.clock = tNext.clock ∧ sptSubspt t.code tNext.code ∧
       envRel s.maxApp fNext tNext.refs tNext.code env targetEnv := by

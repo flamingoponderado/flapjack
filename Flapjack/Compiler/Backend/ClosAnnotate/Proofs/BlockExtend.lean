@@ -14,22 +14,22 @@ theorem primitiveSimulation_consExtend {C F : Type} (tag : Nat) :
     PrimitiveSimulation (C := C) (F := F) (.blockOp (.consExtend tag)) := by
   intro args nextArgs source target argsRel stateRel
   cases argsRel with
-  | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+  | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
   | cons first rest =>
     cases first with
     | block original fields nextFields fieldsRel =>
       cases rest with
-      | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+      | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
       | cons lowerRel rest =>
         cases lowerRel with
         | number lower =>
           cases rest with
-          | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+          | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
           | cons lenRel rest =>
             cases lenRel with
             | number len =>
               cases rest with
-              | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+              | nil => exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
               | cons totalRel initialRel =>
                 cases totalRel with
                 | number total =>
@@ -42,19 +42,19 @@ theorem primitiveSimulation_consExtend {C F : Type} (tag : Nat) :
                       total = 0 ∨ total ≠ Int.ofNat initial.length + len
                   · refine ⟨.err (.abort .typeError), ?_, ?_⟩
                     · simp only [doApp, applyBlock, ← fieldsLength, ← initialLength, if_pos invalid]
-                    · simp only [doApp, applyBlock, if_pos invalid, AppResultRel, ResultRel]
+                    · simp only [doApp, applyBlock, if_pos invalid, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]
                   · refine ⟨.val (.block tag (nextInitial ++ (nextFields.drop lower.toNat).take len.toNat), target), ?_, ?_⟩
                     · simp only [doApp, applyBlock, ← fieldsLength, ← initialLength, if_neg invalid]
                     · simp only [doApp, applyBlock, if_neg invalid, AppResultRel]
                       exact ⟨resultRel, stateRel⟩
                 | _ =>
-                  exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+                  exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
             | _ =>
-              cases rest <;> exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+              cases rest <;> exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
         | _ =>
-          cases rest <;> exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+          cases rest <;> exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
     | _ =>
-      cases rest <;> exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+      cases rest <;> exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 /-- Every case of the current proof-side block dispatcher preserves the
 candidate primitive relation. The dispatcher itself is not yet reviewed as a
@@ -79,6 +79,6 @@ theorem primitiveSimulation_block {C F : Type} (op : ClosLang.BlockOp) :
   | equalConst constant => exact primitiveSimulation_equalConst constant
   | build constants =>
     intro args nextArgs source target argsRel states
-    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel]⟩
+    exact ⟨.err (.abort .typeError), by simp [doApp, applyBlock], by simp [doApp, applyBlock, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate

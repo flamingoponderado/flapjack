@@ -224,33 +224,6 @@ theorem evaluateApp_const_step {C F : Type} (location : Option Nat) (function : 
                 | nil => exact (appIH value remaining next nextSmaller).trans bodyConst
                 | cons other values => exact bodyConst
 
-/-- Once singleton evaluation preserves the arity bound, list sequencing does
-too. The singleton premise is the corresponding evaluator induction result. -/
-theorem evaluate_list_const_of_singletons {C F : Type}
-    (singleton : ∀ (expression : ClosLang.Exp) (env : List ClosSem.Value) (state : State C F),
-      (evaluate [expression] env state).2.maxApp = state.maxApp)
-    (expressions : List ClosLang.Exp) (env : List ClosSem.Value) (state : State C F) :
-    (evaluate expressions env state).2.maxApp = state.maxApp := by
-  induction expressions generalizing state with
-  | nil => simp [evaluate]
-  | cons first rest ih =>
-      cases rest with
-      | nil => exact singleton first env state
-      | cons second tail =>
-          rw [evaluate, fixClock_evaluate]
-          cases firstRun : evaluate [first] env state with
-          | mk result next =>
-            have firstConst := singleton first env state
-            rw [firstRun] at firstConst
-            cases result with
-            | err error => exact firstConst
-            | val values =>
-              have tailConst := ih next
-              cases tailRun : evaluate (second :: tail) env next with
-              | mk result last =>
-                rw [tailRun] at tailConst
-                cases result <;> exact tailConst.trans firstConst
-
 /-- A binding preserves the arity bound when its bindings and body do. -/
 theorem evaluate_let_const_step {C F : Type} (trace : BackendCommon.Tra)
     (bindings : List ClosLang.Exp) (body : ClosLang.Exp) (env : List ClosSem.Value)

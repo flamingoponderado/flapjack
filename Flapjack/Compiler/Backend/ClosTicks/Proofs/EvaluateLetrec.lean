@@ -16,14 +16,14 @@ instance evaluateLetrecInst1 : Nonempty ClosLang.Exp := ⟨.var .none 0⟩
 theorem remove_ticks_Letrec_IMP_mk_Ticks (expression : ClosLang.Exp) (names : List Flapjack.AstHOL.VarN)
     (location : Option Nat) (selected : Option (List Nat)) (functions : List (Nat × ClosLang.Exp))
     (body : ClosLang.Exp)
-    (removed : [ClosLang.Exp.letrec names location selected functions body] = removeList [expression]) :
+    (removed : [ClosLang.Exp.letrec names location selected functions body] = removeSource [expression]) :
     ∃ traces sourceFunctions sourceBody,
       expression = mkTicks traces (.letrec names location selected sourceFunctions sourceBody) ∧
-      body = Flapjack.holHd (removeList [sourceBody]) ∧
-      functions = sourceFunctions.map (fun (arity, e) => (arity, Flapjack.holHd (removeList [e]))) := by
+      body = Flapjack.holHd (removeSource [sourceBody]) ∧
+      functions = sourceFunctions.map (fun (arity, e) => (arity, Flapjack.holHd (removeSource [e]))) := by
   cases expression
   case tick outer inner =>
-    have innerRemoved : [ClosLang.Exp.letrec names location selected functions body] = removeList [inner] := by
+    have innerRemoved : [ClosLang.Exp.letrec names location selected functions body] = removeSource [inner] := by
       simpa [removeList, removeSing] using removed
     obtain ⟨traces, sourceFunctions, sourceBody, equal, bodyEqual, functionsEqual⟩ :=
       remove_ticks_Letrec_IMP_mk_Ticks inner names location selected functions body innerRemoved
@@ -123,7 +123,7 @@ theorem evaluate_remove_ticks_letrec {C F : Type} (names : List Flapjack.AstHOL.
   obtain ⟨expression, rfl⟩ := singleton
   obtain ⟨traces, sourceFunctions, sourceBody, rfl, bodyCode, functionsCode⟩ :=
     remove_ticks_Letrec_IMP_mk_Ticks expression names location selected functions body code
-  simp only [removeList, Flapjack.holHd] at bodyCode functionsCode
+  simp only [removeSource_eq_list, removeList, Flapjack.holHd] at bodyCode functionsCode
   have functionsEq : functions = removeFuns sourceFunctions := by
     simpa [removeFuns_eq_map] using functionsCode
   clear functionsCode

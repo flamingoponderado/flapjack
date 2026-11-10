@@ -15,7 +15,7 @@ open ClosSem BackendProps
 
 /-- Target code is the let-operation cleanup of source code. -/
 @[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "code_rel_def"]
-def CodeRel (source target : List ClosLang.Exp) : Prop := target = compileList source
+def CodeRel (source target : List ClosLang.Exp) : Prop := target = compileSource source
 
 /-- Related recursive function bodies preserve their arity and transform their code. -/
 @[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "f_rel_def"]
@@ -88,14 +88,14 @@ def StateRel {C F : Type} (source target : State C F) : Prop :=
   target.maxApp = source.maxApp ∧ 1 ≤ source.maxApp ∧ target.clock = source.clock ∧
   target.ffi = source.ffi ∧ List.Forall₂ (Flapjack.optionRel ValueRel) source.globals target.globals ∧
   fmapRel RefRel source.refs target.refs ∧
-  source.compile = pureCc compileInc target.compile ∧
-  target.compileOracle = pureCo compileInc ∘ source.compileOracle
+  source.compile = pureCc compileIncSource target.compile ∧
+  target.compileOracle = pureCo compileIncSource ∘ source.compileOracle
 
 /-- Related code lists have the same length. -/
 @[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "code_rel_IMP_LENGTH"]
 theorem codeRel_length (source target : List ClosLang.Exp) (related : CodeRel source target) :
     source.length = target.length := by
-  change target = compileList source at related
+  change target = compileSource source at related
   subst target
   simp [compileList_eq_map]
 

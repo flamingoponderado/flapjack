@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
 
 @[expose] public section
 
@@ -12,12 +13,9 @@ namespace Flapjack.Compiler.Backend.ClosAnnotate
 open Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.ClosProps
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-/-- Related results preserve aborts and relate normal and raised values. -/
-def ResultRel : Result (List Value) Value → Result (List Value) Value → Prop
-  | .val left, .val right => List.Forall₂ ValueRel left right
-  | .err (.raise left), .err (.raise right) => ValueRel left right
-  | .err (.abort left), .err (.abort right) => left = right
-  | _, _ => False
+/-- The generic result relation instantiated for closure values. -/
+abbrev ResultRel : Result (List Value) Value → Result (List Value) Value → Prop :=
+  Flapjack.SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel
 
 /-- All source code bodies lack pre-existing capture annotations. -/
 def CodeSafe {C F : Type} (state : State C F) : Prop :=
@@ -28,8 +26,7 @@ def OracleSafe {C F : Type} (state : State C F) : Prop :=
   ∀ index, everyFnVarsNone (state.compileOracle index).2.1 ∧
     everyFnVarsNone ((state.compileOracle index).2.2.map (fun (_, _, body) => body))
 
-/-- Source-shaped simulation obligation for shifting an expression list.
-The proof-side carriers and evaluator remain pending HOL correspondence review. -/
+/-- Simulation obligation for shifting an expression list. -/
 def EvalSimulation {C F : Type} (expressions : List ClosLang.Exp) : Prop :=
   ∀ (env : List Value) (source : State C F) (nextEnv : List Value) (target : State C F)
     (result : Result (List Value) Value) (sourceNext : State C F) (m l : Nat) (index : Spt Nat),
@@ -41,8 +38,7 @@ def EvalSimulation {C F : Type} (expressions : List ClosLang.Exp) : Prop :=
       evaluate (shiftList (altFree expressions).1 m l index) nextEnv target = (targetResult, targetNext) ∧
       ResultRel result targetResult ∧ StateRel sourceNext targetNext
 
-/-- Preservation obligation for code and oracle safety across evaluation.
-The general proof for arbitrary expressions and applications remains open. -/
+/-- Preservation obligation for code and oracle safety across evaluation. -/
 def PreservesCodeOracle {C F : Type} (expressions : List ClosLang.Exp) : Prop :=
   ∀ (env : List Value) (source : State C F) (result : Result (List Value) Value) (next : State C F),
     evaluate expressions env source = (result, next) → CodeSafe source → OracleSafe source →

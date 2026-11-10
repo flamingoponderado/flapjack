@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.WordToStack.Proofs.SortedKeys
-public import Flapjack.Misc.Sptree
+public import Flapjack.Misc.Sptree.ToAList
 
 @[expose] public section
 
@@ -55,21 +55,6 @@ private theorem lookupIffMem {α : Type} (l : List (Nat × α)) (q : Nat) (r : �
           exact List.mem_map.mpr ⟨(q,r), hm, he⟩
         simpa [sptAListLookup, hne] using ih ht hm
 
-/-- Flapjack infrastructure: the existing unrestricted native mixed-order
-Spt enumeration bridge, expressed at arbitrary key/value membership. There is
-no separate CakeML original for this local restatement. -/
-private theorem nativeToAListMemIffLookup {α : Type} (tree : Spt α) (key : Nat) (value : α) :
-    (key, value) ∈ sptToAList tree ↔ sptLookup key tree = some value := by
-  constructor
-  · intro hm
-    rcases sptFoldi_mem_address tree 0 [] key value hm with ha | ⟨localKey, he, hl⟩
-    · simp at ha
-    · have hk : key = localKey := by simpa [sptAcc_eq, lrNext] using he
-      simpa [hk] using hl
-  · intro hl
-    simpa [sptToAList, sptAcc_eq, lrNext] using
-      sptFoldi_lookup_mem tree 0 [] key value hl
-
 /-- Full original distinct-key Spt association-list roundtrip membership law,
 with native first-match insertion and native mixed-order enumeration. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
@@ -78,7 +63,7 @@ theorem allDistinctMemToAListFromAList {α : Type} (ls : List (Nat × α)) (x : 
     (hd : (ls.map Prod.fst).Nodup) :
     x ∈ sptToAList (sptFromAList ls) ↔ x ∈ ls := by
   rcases x with ⟨key, value⟩
-  rw [nativeToAListMemIffLookup, sptLookup_sptFromAList]
+  rw [sptMemToAList, sptLookup_sptFromAList]
   exact lookupIffMem ls key value hd
 
 /-- Full original sorted-list native Spt roundtrip membership equality. -/

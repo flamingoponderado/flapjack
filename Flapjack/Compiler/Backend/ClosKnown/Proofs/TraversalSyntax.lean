@@ -375,12 +375,6 @@ theorem knownVarsApp (c : Config) (trace : BackendCommon.Tra) (loc : Option Nat)
           simp [everyFnVarsNone, fnVarsNoneExp] at tickSafe rBody ⊢
           exact ⟨⟨tickSafe, argSafe⟩, rBody.2.1, rFun.2.2⟩
 
-private theorem everyFnVarsNone_iff (xs : List ClosLang.Exp) :
-    everyFnVarsNone xs ↔ ∀ e ∈ xs, everyFnVarsNone [e] := by
-  induction xs with
-  | nil => simp [everyFnVarsNone]
-  | cons x xs ih => simp [everyFnVarsNone, ih]
-
 /-- Recursive-closure case of the source optimizer annotation invariant. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_every_Fn_vs_NONE"]
 theorem knownVarsLetrec (c : Config) (names : List Basis.Pure.MlString.MlString)
@@ -414,7 +408,7 @@ theorem knownVarsLetrec (c : Config) (names : List Basis.Pure.MlString.MlString)
     · exact closSafe a mem
     · exact safe a mem
   have originalBodies : ∀ e ∈ fns.map Prod.snd, everyFnVarsNone [e] :=
-    (everyFnVarsNone_iff _).mp ((fnVarsNoneFuns_eq_map fns).mp parts.2.1)
+    (everyFnVarsNone_every _).mp ((fnVarsNoneFuns_eq_map fns).mp parts.2.1)
   have newBodies : ∀ e ∈ newFns.map Prod.snd, everyFnVarsNone [e] := by
     intro transformed member
     obtain ⟨entry, inNew, valueEq⟩ := List.mem_map.mp member
@@ -439,7 +433,7 @@ theorem knownVarsLetrec (c : Config) (names : List Basis.Pure.MlString.MlString)
       subst entry
       subst transformed
       simpa [← List.append_assoc, he, knownSourceHead] using result.1
-  have newFnsSafe : fnVarsNoneFuns newFns := (fnVarsNoneFuns_eq_map _).mpr ((everyFnVarsNone_iff _).mpr newBodies)
+  have newFnsSafe : fnVarsNoneFuns newFns := (fnVarsNoneFuns_eq_map _).mpr ((everyFnVarsNone_every _).mpr newBodies)
   cases hb : knownListTotal c [body] (clos ++ env) globals with
   | mk ea gb =>
     obtain ⟨bodyExpr, bodyApprox, bodyEq⟩ := knownListTotal_single_result c body (clos ++ env) globals gb ea hb
