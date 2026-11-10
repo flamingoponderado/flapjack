@@ -206,6 +206,15 @@ val _ = show "perm_imp_from_alist_eq_typed=" clos_to_bvlProofTheory.PERM_IMP_fro
 val _ = show "from_alist_code_sort_typed=" clos_to_bvlProofTheory.fromAList_code_sort;
 val _ = show "syntax_oracle_ok_start_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_start;
 val _ = show "syntax_oracle_ok_call_fst_monotonic_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_call_FST_monotonic;
+val _ = show "length_fst_calls_typed=" clos_to_bvlProofTheory.LENGTH_FST_calls;
+val _ = show "ignore_table_uncurry_typed=" clos_to_bvlProofTheory.ignore_table_uncurry;
+val _ = show "known_nil_typed=" clos_to_bvlProofTheory.known_nil;
+val _ = show "remove_ticks_nil_typed=" clos_to_bvlProofTheory.remove_ticks_nil;
+val _ = show "let_op_nil_typed=" clos_to_bvlProofTheory.let_op_nil;
+val _ = show "annotate_nil_typed=" clos_to_bvlProofTheory.annotate_nil;
+val _ = show "calls_nil_typed=" clos_to_bvlProofTheory.calls_nil;
+val _ = show "renumber_code_locs_list_nil_typed=" clos_to_bvlProofTheory.renumber_code_locs_list_nil;
+val _ = show "mcompile_inc_nil_typed=" clos_to_bvlProofTheory.mcompile_inc_nil;
 val _ = show "toaList_domain_typed=" miscTheory.toAList_domain;
 val _ = show "sptree_domain_lookup_typed=" sptreeTheory.domain_lookup;
 val _ = show "known_compile_is_some_typed=" clos_knownProofTheory.known_compile_IS_SOME;

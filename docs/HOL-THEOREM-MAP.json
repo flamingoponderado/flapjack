@@ -138,6 +138,51 @@
   "reviewer": "Compared syntax_oracle_ok_call_fst_monotonic_typed and independent review: binder order c, c', es, co, prog and polymorphic oracle carrier match; count is the set of naturals below the counter; syntaxOracleOkCommon is the clos_to_bvlProof condition, and the unused compile_common premise is retained as in HOL."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "LENGTH_FST_calls",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/PreprocessLists.lean", "lean_name": "length_fst_calls",
+  "statement_status": "reviewed_exact", "reviewer": "Captured HOL type and independently reviewed: expression list and direct-call state carriers, binder order, and length result match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "ignore_table_uncurry",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/PreprocessLists.lean", "lean_name": "ignoreTable_uncurry",
+  "statement_status": "reviewed_exact", "reviewer": "Captured HOL type and independently reviewed: five independent type parameters, binder order, and right-associated tuple projections match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "known_nil",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/PreprocessLists.lean", "lean_name": "known_nil",
+  "statement_status": "reviewed_exact", "reviewer": "Captured HOL type and independently reviewed: binder order b, a, c, d, carriers, result list and both implications match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "remove_ticks_nil",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/PreprocessLists.lean", "lean_name": "removeTicks_nil",
+  "statement_status": "reviewed_exact", "reviewer": "Captured HOL type and independently reviewed: statement and carriers match; remove_sing_eq_typed captures HOL equality of remove_ticks with the represented list traversal."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "let_op_nil",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/PreprocessLists.lean", "lean_name": "letOp_nil",
+  "statement_status": "reviewed_exact", "reviewer": "Captured HOL type and independently reviewed: statement and carriers match; let_op_sing_eq_typed captures HOL equality of let_op with the represented list traversal."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "annotate_nil",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/PreprocessLists.lean", "lean_name": "annotate_nil",
+  "statement_status": "reviewed_exact", "reviewer": "Captured HOL type and independently reviewed: binder order xs, n and both implications use the reviewed annotateSource definition."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "calls_nil",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/PreprocessLists.lean", "lean_name": "calls_nil",
+  "statement_status": "reviewed_exact", "reviewer": "Captured HOL type and independent review confirm binder order xs, p, the complete pair equality and the nonempty first projection."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "renumber_code_locs_list_nil",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/PreprocessLists.lean", "lean_name": "renumberList_nil",
+  "statement_status": "reviewed_exact", "reviewer": "Captured HOL type and independent review confirm binder order xs, n, the numbering carrier and both second-projection implications."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "mcompile_inc_nil",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/PreprocessLists.lean", "lean_name": "mcompileInc_nil",
+  "statement_status": "reviewed_exact", "reviewer": "Captured HOL type and independent review confirm binder order p, maxApp, shared input α and independently quantified output types β and γ in the two conjuncts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "every_Fn_calls_list",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "everyFn_callsList",
   "statement_status": "reviewed_exact",
