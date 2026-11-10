@@ -18,6 +18,12 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "known_co_req",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownAddresses.lean", "lean_name": "knownCo_req",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_co_req_typed and independent source review: oracle, index and configuration binder order, independent polymorphic state, successor-address lists, curried distinctness premise and both remaining conclusions match HOL."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/clos_ticksScript.sml", "hol_name": "LENGTH_remove_ticks",
   "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Source.lean", "lean_name": "removeList_length",
   "statement_status": "reviewed_exact",
