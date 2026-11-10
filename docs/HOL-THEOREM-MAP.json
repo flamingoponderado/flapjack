@@ -117873,7 +117873,7 @@
   {
     "lean_path": "Flapjack/CakeParser/LexerImpl.lean", "lean_name": "lexAuxTokens",
     "hol_path": "cakeml/compiler/parsing/lexer_implScript.sml", "hol_name": "lex_aux_tokens_def",
-    "statement_status": "pending_statement_review", "reviewer": "Top-level token grouping transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "Compared the typed lex_aux_tokens_def capture: the HOL if-chain returns SOME (REVERSE new_acc, rest) at SemicolonT with depth 0, increments for LetT/StructT/SigT/LparT, decrements for EndT/RparT, and otherwise recurses at the same depth. Lean's match has the same cases, acc.reverse and argument order. Token equality is structural BEq (derived DecidableEq over the same datatype), equivalent to HOL equality."
   },
   {
     "lean_path": "Flapjack/CakeParser/Grammar.lean", "lean_name": "validMultSym",
