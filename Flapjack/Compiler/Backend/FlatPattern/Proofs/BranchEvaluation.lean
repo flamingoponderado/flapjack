@@ -89,8 +89,10 @@ theorem evaluate_compilePatRhs {C F A : Type} (env3 : FlatSem.Environment A)
       exact ((maxDecName_less_every (FlatLang.patBindings pattern) (n - 1)).mp patBound).2 name inPattern
     · simp only
       omega
-  have sim := bindingSimulation_all trace (n + 1) todo body (n - 1) state [value] [] bindings env final result env2.v
-    listMatch evalCompiled inputs (by simp) (by omega) initialRel itemBounds
+  have sim := compilePatBindings_simulation (n - 1) env2.v trace (n + 1) todo body compiled.2 compiled.1
+    state [value] [] bindings env final result () ⟨Prod.ext rfl rfl, listMatch, evalCompiled,
+      by simpa only [BindingInputs, sptMem, sptDomain, and_imp] using inputs,
+      by simp, by omega, initialRel, itemBounds⟩
   obtain ⟨extEnv, extEval, extRelated⟩ := sim
   refine ⟨extEnv, extEval, (envRel_iff_lookup _ _ _).2 ?_⟩
   have combined := aLookupRel_append (fun name => decNameToNum name < m) ValueRel
