@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "evaluate_GENLIST_Var_tra",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubEvaluation.lean", "lean_name": "evaluate_variables",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_GENLIST_Var_tra_typed in clos_call_stub_probe.out: count, trace and index retain their quantified order, the environment and state retain independent HOL carriers, and both the prefix result and out-of-bounds type error leave the state unchanged. The clocked evaluator uses the canonical refs and code finite-map state with the local roundtrip witness and inherits the rational-cut real representation. Inherits the reals_as_rational_cuts assumption through its dependencies."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "FST_insert_each_same",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertDomain.lean", "lean_name": "insertEach_fst_same",
   "statement_status": "reviewed_exact",
