@@ -60,28 +60,12 @@ theorem MEM_functionsHOL {width : Nat} [NeZero width]
       (.function declaration : DeclHOL width) ∈ declarations ∧
         entry = (declaration.name, declaration.params, declaration.body,
           declaration.returnShape) := by
-  induction declarations with
-  | nil => simp [functionsHOL] at hmem
-  | cons declaration declarations ih =>
-      cases declaration with
-      | function funDecl =>
-          simp only [functionsHOL, List.mem_cons] at hmem
-          rcases hmem with hentry | htail
-          · exact ⟨funDecl, by simp, hentry⟩
-          · rcases ih htail with ⟨fi, hmem, heq⟩
-            exact ⟨fi, by simp [hmem], heq⟩
-      | decl shape name value =>
-          simp only [functionsHOL] at hmem
-          rcases ih hmem with ⟨fi, hmem, heq⟩
-          exact ⟨fi, by simp [hmem], heq⟩
-      | exnDecl exceptionName shape =>
-          simp only [functionsHOL] at hmem
-          rcases ih hmem with ⟨fi, hmem, heq⟩
-          exact ⟨fi, by simp [hmem], heq⟩
-      | name struct fields =>
-          simp only [functionsHOL] at hmem
-          rcases ih hmem with ⟨fi, hmem, heq⟩
-          exact ⟨fi, by simp [hmem], heq⟩
+  fun_induction functionsHOL declarations <;> simp_all
+  case case2 =>
+    rename_i ih
+    rcases hmem with h | h
+    · exact Or.inl h
+    · exact Or.inr (ih h)
 
 /-- Exact HOL port of Cake's `fperm_name_cancel`
     (`cakeml/pancake/proofs/pan_globalsProofScript.sml:1622-1626`):
