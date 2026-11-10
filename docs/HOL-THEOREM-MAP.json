@@ -118187,16 +118187,256 @@
     "lean_name": "TypeIdent",
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "type_ident",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Inference carrier or substitution transcribed against pinned HOL; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Type type_ident = “:num”; Lean abbrev TypeIdent := Nat. Typed capture in cake_type_env_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "TarrayNum",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tarray_num_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tarray_num_def (typeSystemScript.sml:40-84) defines Tarray_num as the natural 0 : type_ident; Lean abbrev TarrayNum : Nat := 0, the same value and carrier."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "TboolNum",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tbool_num_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tbool_num_def (typeSystemScript.sml:40-84) defines Tbool_num as the natural 1 : type_ident; Lean abbrev TboolNum : Nat := 1, the same value and carrier."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "TcharNum",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tchar_num_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tchar_num_def (typeSystemScript.sml:40-84) defines Tchar_num as the natural 2 : type_ident; Lean abbrev TcharNum : Nat := 2, the same value and carrier."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "TexnNum",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Texn_num_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Texn_num_def (typeSystemScript.sml:40-84) defines Texn_num as the natural 3 : type_ident; Lean abbrev TexnNum : Nat := 3, the same value and carrier."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "TfnNum",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tfn_num_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tfn_num_def (typeSystemScript.sml:40-84) defines Tfn_num as the natural 4 : type_ident; Lean abbrev TfnNum : Nat := 4, the same value and carrier."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "TintNum",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tint_num_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tint_num_def (typeSystemScript.sml:40-84) defines Tint_num as the natural 5 : type_ident; Lean abbrev TintNum : Nat := 5, the same value and carrier."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "TlistNum",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tlist_num_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tlist_num_def (typeSystemScript.sml:40-84) defines Tlist_num as the natural 6 : type_ident; Lean abbrev TlistNum : Nat := 6, the same value and carrier."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "TrefNum",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tref_num_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tref_num_def (typeSystemScript.sml:40-84) defines Tref_num as the natural 7 : type_ident; Lean abbrev TrefNum : Nat := 7, the same value and carrier."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "TstringNum",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tstring_num_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tstring_num_def (typeSystemScript.sml:40-84) defines Tstring_num as the natural 8 : type_ident; Lean abbrev TstringNum : Nat := 8, the same value and carrier."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "TtupNum",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Ttup_num_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Ttup_num_def (typeSystemScript.sml:40-84) defines Ttup_num as the natural 9 : type_ident; Lean abbrev TtupNum : Nat := 9, the same value and carrier."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "TvectorNum",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tvector_num_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tvector_num_def (typeSystemScript.sml:40-84) defines Tvector_num as the natural 10 : type_ident; Lean abbrev TvectorNum : Nat := 10, the same value and carrier."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Tword64Num",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tword64_num_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tword64_num_def (typeSystemScript.sml:40-84) defines Tword64_num as the natural 11 : type_ident; Lean abbrev Tword64Num : Nat := 11, the same value and carrier."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Tword8Num",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tword8_num_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tword8_num_def (typeSystemScript.sml:40-84) defines Tword8_num as the natural 12 : type_ident; Lean abbrev Tword8Num : Nat := 12, the same value and carrier."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Tword8arrayNum",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tword8array_num_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tword8array_num_def (typeSystemScript.sml:40-84) defines Tword8array_num as the natural 13 : type_ident; Lean abbrev Tword8arrayNum : Nat := 13, the same value and carrier."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "TdoubleNum",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tdouble_num_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tdouble_num_def (typeSystemScript.sml:40-84) defines Tdouble_num as the natural 14 : type_ident; Lean abbrev TdoubleNum : Nat := 14, the same value and carrier."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Tarray",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tarray_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tarray_def: Tarray t = Tapp [t] Tarray_num; Lean abbrev Tarray (t : SemanticT) : SemanticT := .app [t] TarrayNum. The type abbreviation is a definitional alias in Lean, so every tagged statement that mentions it elaborates to the same Tapp term as HOL."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Tbool",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tbool_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tbool_def: Tbool = Tapp [] Tbool_num; Lean abbrev Tbool : SemanticT := .app [] TboolNum. The type abbreviation is a definitional alias in Lean, so every tagged statement that mentions it elaborates to the same Tapp term as HOL."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Tchar",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tchar_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tchar_def: Tchar = Tapp [] Tchar_num; Lean abbrev Tchar : SemanticT := .app [] TcharNum. The type abbreviation is a definitional alias in Lean, so every tagged statement that mentions it elaborates to the same Tapp term as HOL."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Texn",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Texn_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Texn_def: Texn = Tapp [] Texn_num; Lean abbrev Texn : SemanticT := .app [] TexnNum. The type abbreviation is a definitional alias in Lean, so every tagged statement that mentions it elaborates to the same Tapp term as HOL."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Tfn",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tfn_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tfn_def: Tfn t1 t2 = Tapp [t1;t2] Tfn_num; Lean abbrev Tfn (t₁ t₂ : SemanticT) : SemanticT := .app [t₁, t₂] TfnNum. The type abbreviation is a definitional alias in Lean, so every tagged statement that mentions it elaborates to the same Tapp term as HOL."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Tint",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tint_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tint_def: Tint = Tapp [] Tint_num; Lean abbrev Tint : SemanticT := .app [] TintNum. The type abbreviation is a definitional alias in Lean, so every tagged statement that mentions it elaborates to the same Tapp term as HOL."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Tlist",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tlist_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tlist_def: Tlist t = Tapp [t] Tlist_num; Lean abbrev Tlist (t : SemanticT) : SemanticT := .app [t] TlistNum. The type abbreviation is a definitional alias in Lean, so every tagged statement that mentions it elaborates to the same Tapp term as HOL."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Tref",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tref_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tref_def: Tref t = Tapp [t] Tref_num; Lean abbrev Tref (t : SemanticT) : SemanticT := .app [t] TrefNum. The type abbreviation is a definitional alias in Lean, so every tagged statement that mentions it elaborates to the same Tapp term as HOL."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Tstring",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tstring_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tstring_def: Tstring = Tapp [] Tstring_num; Lean abbrev Tstring : SemanticT := .app [] TstringNum. The type abbreviation is a definitional alias in Lean, so every tagged statement that mentions it elaborates to the same Tapp term as HOL."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Ttup",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Ttup_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Ttup_def: Ttup ts = Tapp ts Ttup_num; Lean abbrev Ttup (ts : List SemanticT) : SemanticT := .app ts TtupNum. The type abbreviation is a definitional alias in Lean, so every tagged statement that mentions it elaborates to the same Tapp term as HOL."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Tvector",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tvector_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tvector_def: Tvector t = Tapp [t] Tvector_num; Lean abbrev Tvector (t : SemanticT) : SemanticT := .app [t] TvectorNum. The type abbreviation is a definitional alias in Lean, so every tagged statement that mentions it elaborates to the same Tapp term as HOL."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Tword64",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tword64_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tword64_def: Tword64 = Tapp [] Tword64_num; Lean abbrev Tword64 : SemanticT := .app [] Tword64Num. The type abbreviation is a definitional alias in Lean, so every tagged statement that mentions it elaborates to the same Tapp term as HOL."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Tword8",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tword8_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tword8_def: Tword8 = Tapp [] Tword8_num; Lean abbrev Tword8 : SemanticT := .app [] Tword8Num. The type abbreviation is a definitional alias in Lean, so every tagged statement that mentions it elaborates to the same Tapp term as HOL."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Tword8array",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tword8array_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tword8array_def: Tword8array = Tapp [] Tword8array_num; Lean abbrev Tword8array : SemanticT := .app [] Tword8arrayNum. The type abbreviation is a definitional alias in Lean, so every tagged statement that mentions it elaborates to the same Tapp term as HOL."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "Tdouble",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "Tdouble_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Tdouble_def: Tdouble = Tapp [] Tdouble_num; Lean abbrev Tdouble : SemanticT := .app [] TdoubleNum. The type abbreviation is a definitional alias in Lean, so every tagged statement that mentions it elaborates to the same Tapp term as HOL."
   },
   {
     "lean_path": "Flapjack/TypeSystemHOL.lean",
     "lean_name": "SemanticT",
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "t",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Inference carrier or substitution transcribed against pinned HOL; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Datatype t = Tvar tvarN | Tvar_db num | Tapp (t list) type_ident with tvarN = mlstring; Lean inductive SemanticT = var MlString | varDb Nat | app (List SemanticT) TypeIdent, constructor-for-constructor with the same field types (MlString is the exact mlstring carrier)."
   },
   {
     "lean_path": "Flapjack/Compiler/Inference/InferT.lean",
@@ -119612,136 +119852,136 @@
     "hol_name": "check_freevars_def",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "checkFreevars",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `freevars` in cake_type_env_probe.out gives Tvar tv ⇔ MEM tv tvs, Tapp ts tn ⇔ EVERY (check_freevars dbmax tvs) ts and Tvar_db n ⇔ n < dbmax; Lean states the same clauses with tvs.contains for MEM and a list helper for EVERY."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "check_freevars_ast_def",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "checkFreevarsAst",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `freevars_ast`: Atvar tv ⇔ MEM tv tvs, Attup/Atapp ⇔ EVERY, Atfun ⇔ conjunction; Lean states the same four clauses."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "deBruijn_inc_def",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "deBruijnInc",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `db_inc`: Tvar unchanged, Tvar_db m = if m < skip then Tvar_db m else Tvar_db (m + n), Tapp maps recursively; Lean is clause-identical."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "deBruijn_subst_def",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "deBruijnSubst",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `db_subst`: Tvar unchanged; Tvar_db n = EL (n - skip) ts when ¬(n < skip) ∧ n < LENGTH ts + skip, else Tvar_db (n - LENGTH ts) when ¬(n < skip), else Tvar_db n; Tapp maps. Lean's `skip ≤ n` forms are the same negations and replacement[n - skip] is EL."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "tenv_val_exp",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "TenvValExp",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Datatype tenv_val_exp = Empty | Bind_tvar num tenv_val_exp | Bind_name varN num t tenv_val_exp; Lean inductive empty | bindTvar Nat | bindName MlString Nat SemanticT, the same three constructors, arities and field types."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "bind_tvar_def",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "bindTvar",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `bind_tvar`: if tvs = 0 then tenvE else Bind_tvar tvs tenvE; Lean is clause-identical."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "opt_bind_name_def",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "optBindName",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `opt_bind`: case n of NONE => tenvE | SOME n' => Bind_name n' tvs t tenvE; Lean matches."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "tveLookup_def",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "tveLookup",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `tve_lookup`: Empty => NONE; Bind_tvar tvs tenvE => tveLookup n (inc + tvs) tenvE; Bind_name n' tvs t tenvE => if n' = n then SOME (tvs, deBruijn_inc tvs inc t) else recurse; Lean matches."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "tenv_abbrev",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "TenvAbbrev",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Type tenv_abbrev = (modN, typeN, tvarN list # t) namespace with modN/typeN/tvarN all mlstring; Lean Namespace MlString MlString (List MlString × SemanticT)."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "tenv_ctor",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "TenvCtor",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Type tenv_ctor = (modN, conN, tvarN list # t list # type_ident) namespace; Lean Namespace MlString MlString (List MlString × List SemanticT × TypeIdent), the same right-nested payload."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "tenv_val",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "TenvVal",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL Type tenv_val = (modN, varN, num # t) namespace; Lean Namespace MlString MlString (Nat × SemanticT)."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "type_env",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "TypeEnv",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL record type_env = <| v : tenv_val; c : tenv_ctor; t : tenv_abbrev |>; Lean structure TypeEnv with the same three fields in the same order."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "extend_dec_tenv_def",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "extendDecTenv",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `extend`: <|v := nsAppend tenv'.v tenv.v; c := nsAppend tenv'.c tenv.c; t := nsAppend tenv'.t tenv.t|>; Lean is clause-identical."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "lookup_varE_def",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "lookupVarE",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `lookup_local`: case id of Short x => tveLookup x 0 tenvE | _ => NONE; Lean matches with .long _ _ => none."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "lookup_var_def",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "lookupVar",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `lookup`: case lookup_varE id tenvE of NONE => nsLookup tenv.v id | SOME x => SOME x; Lean matches."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "num_tvs_def",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "numTvs",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `num_tvs`: Empty 0; Bind_tvar tvs tenvE => tvs + num_tvs tenvE; Bind_name n tvs t tenvE => num_tvs tenvE; Lean is clause-identical."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "bind_var_list_def",
     "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
     "lean_name": "bindVarList",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `bind_list`: bind_var_list tvs [] tenvE = tenvE and (n,t)::binds => Bind_name n tvs t (bind_var_list tvs binds tenvE); Lean is clause-identical."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
@@ -119759,72 +119999,72 @@
     "hol_name": "check_type_names_def",
     "lean_path": "Flapjack/TypeSystemHOL/TypeNames.lean",
     "lean_name": "checkTypeNames",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL source equations and pattern-typing rules captured in cake_type_env_probe; complete source, finite-map and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `check_type_names`: Atvar ⇔ T; Attup ⇔ EVERY; Atfun ⇔ conjunction; Atapp ⇔ (case nsLookup tenvT tn of SOME (tvs,_) => LENGTH tvs = LENGTH ts | NONE => F) ∧ EVERY; Lean matches, with tvs.length == ts.length for the length test."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "type_name_subst_def",
     "lean_path": "Flapjack/TypeSystemHOL/TypeNames.lean",
     "lean_name": "typeNameSubst",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL source equations and pattern-typing rules captured in cake_type_env_probe; complete source, finite-map and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `type_name_subst`: Atvar => Tvar tv; Attup => Ttup (MAP ...); Atfun => Tfn (type_name_subst t1) (type_name_subst t2); Atapp => let args = MAP ... in case nsLookup tenvT tc of SOME (tvs,t) => type_subst (alist_to_fmap (ZIP (tvs,args))) t | NONE => Ttup args; Lean matches, with typeSubstMap as the tagged alist_to_fmap construction."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "type_p",
     "lean_path": "Flapjack/TypeSystemHOL/Patterns.lean",
     "lean_name": "TypeP",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL source equations and pattern-typing rules captured in cake_type_env_probe; complete source, finite-map and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `type_p_rules` gives the eleven rules in order: Pany/Pvar with check_freevars tvs []; the five Plit rules with Tint/Tchar/Tstring/Tword8/Tword64; Pcon (SOME cn) with args.all check_freevars, arity, type_ps under type_subst and nsLookup env.c; Pcon NONE with Ttup; Pref with Tref; Pas with bindings ++ [(v,t)]; Ptannot with check_freevars_ast/check_type_names/type_name_subst. Lean's inductive TypeP has the same rules, order and carriers."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "type_p",
     "lean_path": "Flapjack/TypeSystemHOL/Patterns.lean",
     "lean_name": "TypePs",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL source equations and pattern-typing rules captured in cake_type_env_probe; complete source, finite-map and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `type_p_rules` gives type_ps tvs tenv [] [] [] and type_ps tvs tenv (p::ps) (t::ts) (bindings' ++ bindings); Lean's TypePs has the nil and cons rules with the tail bindings appended before the head's (rest ++ bindings), the same order."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "t_of_def",
     "lean_path": "Flapjack/TypeSystemHOL/Operators.lean",
     "lean_name": "typeOf",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; operator, semantic type carriers and complete source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `type_of`: t_of BoolT = Tbool, IntT = Tint, CharT = Tchar, StrT = Tstring, WordT W8 = Tword8, WordT W64 = Tword64, Float64T = Tdouble; Lean matches clause for clause with the ported abbreviations."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "supported_test_def",
     "lean_path": "Flapjack/TypeSystemHOL/Operators.lean",
     "lean_name": "supportedTest",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; operator, semantic type carriers and complete source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `supported_test`: Equal ⇔ T; Compare ⇔ MEM ty [IntT; CharT; WordT W8; Float64T; StrT]; _ ⇔ ty = StrT; Lean matches, with list membership and == for the final equality."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "supported_arith_def",
     "lean_path": "Flapjack/TypeSystemHOL/Operators.lean",
     "lean_name": "supportedArith",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; operator, semantic type carriers and complete source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `supported_arith`: IntT in [Add;Sub;Mul;Div;Mod] => SOME 2; Float64T Abs/Neg/Sqrt => SOME 1, Add/Sub/Mul/Div => SOME 2, FMA => SOME 3; WordT _ in [Add;Sub;And;Or;Xor] => SOME 2; BoolT Not => SOME 1; _ => NONE; Lean matches every clause."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "supported_conversion_def",
     "lean_path": "Flapjack/TypeSystemHOL/Operators.lean",
     "lean_name": "supportedConversion",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; operator, semantic type carriers and complete source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `supported_conversion` lists the ten true conversions (WordT W8/WordT W64 ↔ IntT, CharT ↔ IntT, CharT ↔ WordT W8, Float64T ↔ WordT W64) and F otherwise; Lean's pattern clauses are the same ten pairs with true and a false fallback."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "type_op_def",
     "lean_path": "Flapjack/TypeSystemHOL/Operators.lean",
     "lean_name": "typeOp",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; operator, semantic type carriers and complete source review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `type_op` gives every source clause: Opapp with Tfn; Shift W8/W64 with Tword8/Tword64; Equality and Test with Tbool; Arith and FromTo through t_of; Opassign with Tref/Ttup []; Opref/Opderef with Tref; the Aw8/CopyStr/CopyAw8/Implode/Explode/Str/V/A/ConfigGC/FFI/ListAppend clauses with Tint/Tword8/Tword8array/Tstring/Tchar/Tlist/Tvector/Tarray/Ttup and Tlist_num/Tvector_num/Tarray_num; fallback F. Lean's clause order and results match."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
@@ -119839,48 +120079,48 @@
     "hol_name": "check_ctor_tenv_def",
     "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean",
     "lean_name": "checkCtorTenv",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `check_ctor`: [] ⇔ T; (tvs,tn,ctors)::tds ⇔ check_dup_ctors ∧ ALL_DISTINCT tvs ∧ EVERY (λ(cn,ts). EVERY (check_freevars_ast tvs) ts ∧ EVERY (check_type_names tenvT) ts) ctors ∧ ¬MEM tn (MAP ... tds) ∧ recursive; Lean states the same with membership forms, checkDupCtors = true, tvs.Nodup and name ∉ the rest's names."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "build_ctor_tenv_def",
     "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean",
     "lean_name": "buildCtorTenv",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `build_ctor`: [] [] = alist_to_ns []; (tvs,tn,ctors)::tds with id::ids = nsAppend (recursive) (alist_to_ns (REVERSE (MAP (λ(cn,ts). (cn,(tvs,MAP (type_name_subst tenvT) ts,id))) ctors))); fallback alist_to_ns []; Lean is clause-identical with alistToNs."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "tenv_add_tvs_def",
     "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean",
     "lean_name": "tenvAddTvs",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `add_tvs`: tenv_add_tvs tvs bindings = MAP (λ(n,t). (n,tvs,t)) bindings; Lean is the same map."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "tscheme_inst_def",
     "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean",
     "lean_name": "tschemeInst",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `scheme`: tscheme_inst (tvs_spec,t_spec) (tvs_impl,t_impl) ⇔ ∃subst. LENGTH subst = tvs_impl ∧ check_freevars tvs_impl [] t_impl ∧ EVERY (check_freevars tvs_spec []) subst ∧ deBruijn_subst 0 subst t_impl = t_spec; Lean matches every conjunct."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "tenvLift_def",
     "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean",
     "lean_name": "tenvLift",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `tenv_lift`: <|v := nsLift mn tenv.v; c := nsLift mn tenv.c; t := nsLift mn tenv.t|>; Lean is clause-identical."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
     "hol_name": "prim_type_nums_def",
     "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean",
     "lean_name": "primTypeNums",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed `primitive_nums`: [Tarray_num; Tchar_num; Texn_num; Tfn_num; Tint_num; Tref_num; Tstring_num; Ttup_num; Tvector_num; Tword64_num; Tword8_num; Tword8array_num; Tdouble_num]; Lean lists the same thirteen ported abbreviations in the same order."
   },
   {
     "hol_path": "cakeml/semantics/primTypesScript.sml",

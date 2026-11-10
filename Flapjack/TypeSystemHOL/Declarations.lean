@@ -64,7 +64,9 @@ def disjointTypeIds (a b : TypeIds) : Prop := ∀ id, a id → b id → False
 def unionTypeIds (a b : TypeIds) : TypeIds := fun id => a id ∨ b id
 
 @[hol "cakeml/semantics/typeSystemScript.sml" "prim_type_nums_def"]
-def primTypeNums : List Nat := [0, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14]
+def primTypeNums : List Nat :=
+  [TarrayNum, TcharNum, TexnNum, TfnNum, TintNum, TrefNum, TstringNum, TtupNum,
+   TvectorNum, Tword64Num, Tword8Num, Tword8arrayNum, TdoubleNum]
 
 /-! `TypeD` and `TypeDs` follow the source declaration rules but depend on the
 untagged `TypeE` representation. Their source correspondence remains open;

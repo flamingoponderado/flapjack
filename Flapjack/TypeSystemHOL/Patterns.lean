@@ -17,15 +17,15 @@ inductive TypeP : Nat → TypeEnv → Pat → SemanticT → List (MlString × Se
       (free : checkFreevars tvs [] t = true) :
       TypeP tvs env (.pvar name) t [(name, t)]
   | intLit (tvs : Nat) (env : TypeEnv) (n : Int) :
-      TypeP tvs env (.plit (.intLit n)) (.app [] 5) []
+      TypeP tvs env (.plit (.intLit n)) Tint []
   | charLit (tvs : Nat) (env : TypeEnv) (c : HolChar) :
-      TypeP tvs env (.plit (.char c)) (.app [] 2) []
+      TypeP tvs env (.plit (.char c)) Tchar []
   | stringLit (tvs : Nat) (env : TypeEnv) (s : MlString) :
-      TypeP tvs env (.plit (.strLit s)) (.app [] 8) []
+      TypeP tvs env (.plit (.strLit s)) Tstring []
   | word8Lit (tvs : Nat) (env : TypeEnv) (w : BitVec 8) :
-      TypeP tvs env (.plit (.word8 w)) (.app [] 12) []
+      TypeP tvs env (.plit (.word8 w)) Tword8 []
   | word64Lit (tvs : Nat) (env : TypeEnv) (w : BitVec 64) :
-      TypeP tvs env (.plit (.word64 w)) (.app [] 11) []
+      TypeP tvs env (.plit (.word64 w)) Tword64 []
   | constructor (tvs : Nat) (env : TypeEnv) (name : Ident MlString MlString)
       (ps : List Pat) (types : List SemanticT) (params : List MlString) (id : Nat)
       (args : List SemanticT) (bindings : List (MlString × SemanticT))
@@ -36,10 +36,10 @@ inductive TypeP : Nat → TypeEnv → Pat → SemanticT → List (MlString × Se
       TypeP tvs env (.pcon (some name) ps) (.app args id) bindings
   | tuple (tvs : Nat) (env : TypeEnv) (ps : List Pat) (types : List SemanticT)
       (bindings : List (MlString × SemanticT)) (typed : TypePs tvs env ps types bindings) :
-      TypeP tvs env (.pcon none ps) (.app types 9) bindings
+      TypeP tvs env (.pcon none ps) (Ttup types) bindings
   | reference (tvs : Nat) (env : TypeEnv) (p : Pat) (t : SemanticT)
       (bindings : List (MlString × SemanticT)) (typed : TypeP tvs env p t bindings) :
-      TypeP tvs env (.pref p) (.app [t] 7) bindings
+      TypeP tvs env (.pref p) (Tref t) bindings
   | asPattern (tvs : Nat) (env : TypeEnv) (p : Pat) (name : MlString) (t : SemanticT)
       (bindings : List (MlString × SemanticT)) (typed : TypeP tvs env p t bindings) :
       TypeP tvs env (.pas p name) t (bindings ++ [(name, t)])
