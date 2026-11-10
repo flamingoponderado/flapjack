@@ -37,5 +37,6 @@ calls_pure_type=!(xs :closLang$exp list) (g :sptree$num_set # (num # num # closL
 calls_pure_sing_type=pure (x1 :closLang$exp) /\ calls [x1] (g :sptree$num_set # (num # num # closLang$exp) list) = ([(e1 :closLang$exp)],(g1 :sptree$num_set # (num # num # closLang$exp) list)) ==> pure e1
 wfg_subg_refl_type=wfg (g :'a sptree$num_map # (num # 'b) list) ==> subg g g
 wfg_subg_ex_helper_type=wfg (g :'a sptree$num_map # (num # 'b) list) /\ (P :'a sptree$num_map # (num # 'b) list -> bool) g ==> ?(g2 :'a sptree$num_map # (num # 'b) list). subg g g2 /\ P g2
+mk_code_g_type=!(code :num |-> 'a). mk_code_g code = (list_to_num_set (MAP PRE (SET_TO_LIST (FDOM code))),fmap_to_alist code)
 suffix_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list). IS_SUFFIX (SND (code_list loc fns g)) (SND g)
 example=(LN,[(15,1,Var None 2); (13,0,Var None 9); (11,2,Var None 4); (90,3,Var None 0)])

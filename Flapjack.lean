@@ -852,6 +852,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeInvariant
 import Flapjack.Compiler.Backend.ClosCall.Proofs.OracleIncludes
 import Flapjack.Compiler.Backend.ClosCall.Proofs.ApplicationGrowth
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Purity
+import Flapjack.Compiler.Backend.ClosCall.Proofs.MakeCodeState
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InstallSimulation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FiniteMap
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment

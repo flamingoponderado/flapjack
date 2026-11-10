@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "mk_code_g_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeCodeState.lean", "lean_name": "mkCodeG",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared mk_code_g_type and the complete source equation: code is the canonical finite-support map, both projections use the same choice-ordered finite domain, PRE and right-recursive tree insertion are preserved, and holThe matches FAPPLY on domain keys by mkCodeG_keys_defined. HOL CHOICE and Lean epsilon share an interpretation; concrete enumeration order across implementations is not asserted."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfg_subg_refl",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateExtension.lean", "lean_name": "wfg_subg_refl",
   "statement_status": "reviewed_exact",
