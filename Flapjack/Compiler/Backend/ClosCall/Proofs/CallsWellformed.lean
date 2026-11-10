@@ -1,7 +1,6 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.StateGrowth
-public import Flapjack.Compiler.Backend.ClosCall.Proofs.DomainOrigin
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelDistinct
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.Wellformed
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations

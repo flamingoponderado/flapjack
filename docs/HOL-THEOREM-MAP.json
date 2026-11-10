@@ -13,7 +13,7 @@
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_domain",
-  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/DomainOrigin.lean", "lean_name": "calls_domain",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateGrowth.lean", "lean_name": "calls_domain",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared calls_domain_type in clos_call_code_list_probe.out and HOL source: the input expressions, initial state, output expressions and final state retain their order and original carriers. The calls equality implies inclusion of the final domain in the union of the initial domain and predecessor image of final auxiliary labels."
  },
