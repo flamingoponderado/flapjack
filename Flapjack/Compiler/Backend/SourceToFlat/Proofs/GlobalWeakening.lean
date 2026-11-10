@@ -67,17 +67,9 @@ has room for those slots. -/
 theorem subglobals_none {α : Type} (n : Nat) (globals : List (Option α)) :
     subglobals (List.replicate n none) globals ↔ n ≤ globals.length := by
   rw [subglobals_iff_observations]
-  have emptySlot : ∀ (count index : Nat),
-      ((List.replicate count none : List (Option α))[index]?).getD none = none := by
-    intro count
-    induction count with
-    | zero => intro index; simp
-    | succ count ih =>
-      intro index
-      cases index with
-      | zero => simp
-      | succ index => simpa [List.replicate_succ] using ih index
-  simp [emptySlot]
+  simp [List.getElem?_replicate]
+  intro _ i value slot
+  split at slot <;> simp_all
 
 /-- Allocating uninitialized global slots preserves all existing globals. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "subglobals_add_NONE"]
