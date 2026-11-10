@@ -18,6 +18,12 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "known_co_facts",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownOracleFacts.lean", "lean_name": "knownCo_facts",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_co_facts_typed and independent review: let scope, nested implications, oracle input state Spt × α and output α, closure-call syntax predicate, four conclusions and alpha-renamed shadowed forall match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "known_state_oracle_globals_approx",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownOracleFacts.lean", "lean_name": "knownStateOracle_globalsApprox",
   "statement_status": "reviewed_exact",

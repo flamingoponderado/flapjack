@@ -3,12 +3,17 @@ module
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SyntaxOracle
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalLocationsTotal
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalSyntaxTotal
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CodeLocations
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.SyntaxOk
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Syntax
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Syntax
 
 @[expose] public section
 
 /-! Annotation invariants for the known-function state oracle. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open ClosLang ClosProps BackendProps ClosKnown
+local instance : Nonempty ClosKnown.Config := ⟨ClosKnown.defaultConfig 0⟩
 
 /-- Every known-function oracle state preserves both global annotation invariants. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "known_state_oracle_globals_approx"]
@@ -47,5 +52,119 @@ theorem knownStateOracle_globalsApprox {α : Type} (cfg' : ClosKnown.Config)
       have eq := recurrence k
       simp [pureCo, ClosFvs.compileInc, ClosKnown.compileInc, hk] at eq
       simpa [eq] using And.intro varsStep.2.2 locationsStep.2.2
+
+/-- Known-function preprocessing preserves the oracle properties needed by later passes. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "known_co_facts"]
+theorem knownCo_facts {α : Type} (kc : Option ClosKnown.Config)
+    (co : Nat → (Spt ValApprox × α) × ClosSem.Program) (exps : List ClosLang.Exp)
+    (kc' : Option ClosKnown.Config) (exps' : List ClosLang.Exp) :
+    let co2 := ClosKnown.knownCo kc co
+    ClosKnown.compile kc exps = (kc', exps') →
+    (kc.isSome →
+      isStateOracle (ClosKnown.compileInc (holThe kc))
+        (pureCo (ClosFvs.compileInc (α := List (Nat × Nat × ClosLang.Exp))
+          (β := Nat × Nat × ClosLang.Exp)) ∘ co) ∧
+      (co 0).1.1 = (holThe kc').valApproxSpt ∧
+      everyFnVarsNone exps ∧ everyFnLocationSome exps ∧
+      (∀ k, everyFnVarsNone (co k).2.1 ∧ everyFnLocationSome (co k).2.1)) →
+    (oracleMonotonic (fun entry => {x | x ∈ codeLocations entry.2.1}) (· < ·)
+        {x | x ∈ codeLocations exps} co →
+      oracleMonotonic (fun entry => {x | x ∈ codeLocations entry.2.1}) (· < ·)
+        {x | x ∈ codeLocations exps'} co2) ∧
+    (∀ k, ClosCall.syntaxOk (co k).2.1 → ClosCall.syntaxOk (co2 k).2.1) ∧
+    (∀ k, (co k).2.2 = [] → (co2 k).2.2 = []) ∧
+    (∀ k, (∀ j, everyFnLocationSome (co j).2.1 ∧ (co j).2.2 = []) →
+      everyFnLocationSome (co2 k).2.1 ∧
+      everyFnLocationSome ((co2 k).2.2.map (fun entry => entry.2.2))) := by
+  dsimp only
+  intro compiled guarded
+  cases kc with
+  | none =>
+    simp only [ClosKnown.compile, Prod.mk.injEq] at compiled
+    obtain ⟨_, rfl⟩ := compiled
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · intro ordered
+      simpa [ClosKnown.knownCo, stateCo, oracleMonotonic] using ordered
+    · intro k safe
+      simpa [ClosKnown.knownCo, stateCo] using safe
+    · intro k empty
+      simpa [ClosKnown.knownCo, stateCo] using empty
+    · intro k all
+      simpa [ClosKnown.knownCo, stateCo, (all k).2, everyFnLocationSome] using (all k).1
+  | some c =>
+    cases initial : knownListTotal c (ClosFvs.compile exps) [] .ln with
+    | mk eas g =>
+      have compiled' :
+          (some { c with valApproxSpt := g },
+            ClosLetop.compileList (ClosTicks.removeList (eas.map Prod.fst))) = (kc', exps') := by
+        simpa only [ClosKnown.compile, initial] using compiled
+      cases compiled'
+      have guard := guarded (by simp)
+      simp only [holThe] at guard
+      have initialVars : everyFnVarsNone (ClosFvs.compile exps) := by
+        simpa [ClosFvs.compile] using (ClosFvs.removeList_varsNone exps 0).mpr guard.2.2.1
+      have initialLocations : everyFnLocationSome (ClosFvs.compile exps) := by
+        simpa [ClosFvs.compile] using (ClosFvs.removeList_locations exps 0).mpr guard.2.2.2.1
+      have globalSafe := knownStateOracle_globalsApprox c co g c (ClosFvs.compile exps) eas
+        ⟨guard.1, guard.2.1, initial, initialVars, initialLocations, guard.2.2.2.2⟩
+      have counts : ∀ k x, (codeLocations (ClosKnown.knownCo (some c) co k).2.1).count x ≤
+          (codeLocations (co k).2.1).count x := by
+        intro k x
+        cases hk : knownListTotal (resetInlineFactor c) (ClosFvs.compile (co k).2.1) [] (co k).1.1 with
+        | mk output next =>
+          have bound := TraversalCodeBag.knownCodeLocationsBag (resetInlineFactor c)
+            (ClosFvs.compile (co k).2.1) [] (co k).1.1 output next hk x
+          change (codeLocations (ClosLetop.compileList (ClosTicks.removeList
+            ((knownListTotal (resetInlineFactor c) (ClosFvs.compile (co k).2.1) [] (co k).1.1).1.map Prod.fst)))).count x ≤ _
+          rw [hk]
+          simpa [ClosLetop.compileList_codeLocations, ClosTicks.removeList_codeLocations,
+            ClosFvs.compile, ClosFvs.removeList_codeLocations] using bound
+      have outVars : ∀ k, everyFnVarsNone (ClosKnown.knownCo (some c) co k).2.1 := by
+        intro k
+        have input : everyFnVarsNone (ClosFvs.compile (co k).2.1) := by
+          simpa [ClosFvs.compile] using (ClosFvs.removeList_varsNone (co k).2.1 0).mpr (guard.2.2.2.2 k).1
+        have safe := TraversalSyntax.knownEveryFnVarsNone (resetInlineFactor c)
+          (ClosFvs.compile (co k).2.1) [] (co k).1.1 ⟨input, by simp, (globalSafe k).1⟩
+        change everyFnVarsNone (ClosLetop.compileList (ClosTicks.removeList
+          ((knownListTotal (resetInlineFactor c) (ClosFvs.compile (co k).2.1) [] (co k).1.1).1.map Prod.fst)))
+        simpa [ClosLetop.compileList_varsNone, ClosTicks.removeList_varsNone] using safe.1
+      have outLocations : ∀ k, everyFnLocationSome (ClosKnown.knownCo (some c) co k).2.1 := by
+        intro k
+        have input : everyFnLocationSome (ClosFvs.compile (co k).2.1) := by
+          simpa [ClosFvs.compile] using (ClosFvs.removeList_locations (co k).2.1 0).mpr (guard.2.2.2.2 k).2
+        have safe := TraversalLocations.knownEveryFnLocations (resetInlineFactor c)
+          (ClosFvs.compile (co k).2.1) [] (co k).1.1 ⟨input, by simp, (globalSafe k).2⟩
+        change everyFnLocationSome (ClosLetop.compileList (ClosTicks.removeList
+          ((knownListTotal (resetInlineFactor c) (ClosFvs.compile (co k).2.1) [] (co k).1.1).1.map Prod.fst)))
+        simpa [ClosLetop.compileList_locations, ClosTicks.removeList_locations] using safe.1
+      have outAux : ∀ k, (ClosKnown.knownCo (some c) co k).2.2 = [] := by
+        intro k
+        rfl
+      refine ⟨?_, ?_, ?_, ?_⟩
+      · intro ordered
+        apply oracleMonotonic_subset _ _ _ _ _ _ _ ?_ ordered
+        constructor
+        · intro x mem
+          have bound := ClosKnown.compile_codeLocationsBag (some c)
+            (some { c with valApproxSpt := g }) exps
+            (ClosLetop.compileList (ClosTicks.removeList (eas.map Prod.fst))) compiled x
+          have positive : 0 < (codeLocations (ClosLetop.compileList (ClosTicks.removeList (eas.map Prod.fst)))).count x :=
+            List.count_pos_iff.mpr mem
+          exact List.count_pos_iff.mp (by omega)
+        · intro k x mem
+          have positive : 0 < (codeLocations (ClosKnown.knownCo (some c) co k).2.1).count x :=
+            List.count_pos_iff.mpr mem
+          have bound := counts k x
+          exact List.count_pos_iff.mp (by omega)
+      · intro k safe
+        obtain ⟨_, _, nodup⟩ := safe
+        refine ⟨outLocations k, outVars k, ?_⟩
+        apply List.nodup_iff_count_le_one.mpr
+        intro x
+        exact Nat.le_trans (counts k x) (List.nodup_iff_count_le_one.mp nodup x)
+      · intro k _
+        exact outAux k
+      · intro k _
+        exact ⟨outLocations k, by simp [outAux, everyFnLocationSome]⟩
 
 end Flapjack.Compiler.Backend.ClosToBvl
