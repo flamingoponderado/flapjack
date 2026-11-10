@@ -88,8 +88,8 @@ def StateRel {C F : Type} (source target : State C F) : Prop :=
   target.maxApp = source.maxApp ∧ 1 ≤ source.maxApp ∧ target.clock = source.clock ∧
   target.ffi = source.ffi ∧ List.Forall₂ (Flapjack.optionRel ValueRel) source.globals target.globals ∧
   fmapRel RefRel source.refs target.refs ∧
-  source.compile = pureCc compileInc target.compile ∧
-  target.compileOracle = pureCo compileInc ∘ source.compileOracle
+  source.compile = pureCc compileIncSource target.compile ∧
+  target.compileOracle = pureCo compileIncSource ∘ source.compileOracle
 
 /-- Related code lists have the same length. -/
 @[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "code_rel_IMP_LENGTH"]

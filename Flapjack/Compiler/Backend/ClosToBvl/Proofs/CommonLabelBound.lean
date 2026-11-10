@@ -47,11 +47,11 @@ theorem compileCommon_distinctLocations (c : Config) (es : List ClosLang.Exp)
             ({ c with start := c.nextLoc, nextLoc := next, knownConf := known, callState := (globals, aux) },
               ClosAnnotate.compileSource (chainExps c.nextLoc called ++ aux)) = (c', p) := by
           change (let (next, expressions) := ClosNumber.renumberList aligned source
-            let (known, expressions) := ClosKnown.compile c.knownConf expressions
+            let (known, expressions) := ClosKnown.compileSource c.knownConf expressions
             let (expressions, (globals, auxiliary)) := ClosCall.compile c.doCall expressions
             ({ c with start := c.nextLoc, nextLoc := next, knownConf := known, callState := (globals, auxiliary) },
               ClosAnnotate.compileSource (chainExps c.nextLoc expressions ++ auxiliary))) = (c', p) at run
-          simpa only [hr, hk, hc] using run
+          simpa only [ClosKnown.compileSource_eq_compile, hr, hk, hc] using run
         cases run'
         have nlen := ClosNumber.renumberList_imp_length aligned source next numbered hr
         have klen := ClosKnown.compile_length c.knownConf numbered known optimized hk
@@ -166,11 +166,11 @@ theorem compileCommon_mapFst_compileProg (c : Config) (es : List ClosLang.Exp)
             ({ c with start := c.nextLoc, nextLoc := next, knownConf := known, callState := (globals, aux) },
               ClosAnnotate.compileSource (chainExps c.nextLoc called ++ aux)) = (c', p) := by
           change (let (next, expressions) := ClosNumber.renumberList aligned source
-            let (known, expressions) := ClosKnown.compile c.knownConf expressions
+            let (known, expressions) := ClosKnown.compileSource c.knownConf expressions
             let (expressions, (globals, auxiliary)) := ClosCall.compile c.doCall expressions
             ({ c with start := c.nextLoc, nextLoc := next, knownConf := known, callState := (globals, auxiliary) },
               ClosAnnotate.compileSource (chainExps c.nextLoc expressions ++ auxiliary))) = (c', p) at run
-          simpa only [hr, hk, hc] using run
+          simpa only [ClosKnown.compileSource_eq_compile, hr, hk, hc] using run
         cases run'
         have nlen := ClosNumber.renumberList_imp_length aligned source next numbered hr
         have klen := ClosKnown.compile_length c.knownConf numbered known optimized hk

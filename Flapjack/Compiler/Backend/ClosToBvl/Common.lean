@@ -21,7 +21,7 @@ noncomputable def compileCommon (config : Config) (expressions : List ClosLang.E
   let loc := config.nextLoc + max 1 expressions.length
   let loc := if loc % 2 = 0 then loc else loc + 1
   let (next, expressions) := ClosNumber.renumberList loc expressions
-  let (known, expressions) := ClosKnown.compile config.knownConf expressions
+  let (known, expressions) := ClosKnown.compileSource config.knownConf expressions
   let (expressions, (globals, auxiliary)) := ClosCall.compile config.doCall expressions
   let program := chainExps config.nextLoc expressions ++ auxiliary
   ({ config with start := config.nextLoc, nextLoc := next, knownConf := known, callState := (globals, auxiliary) },

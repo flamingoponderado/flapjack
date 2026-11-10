@@ -18,12 +18,12 @@ namespace Flapjack.Compiler.Backend.ClosKnown
 open ClosSem BackendProps
 
 private abbrev fvsInc : Program → Program := ClosFvs.compileInc
-private abbrev ticksInc : Program → Program := ClosTicks.compileInc
-private abbrev letopInc : Program → Program := ClosLetop.compileInc
+private noncomputable abbrev ticksInc : Program → Program := ClosTicks.compileIncSource
+private noncomputable abbrev letopInc : Program → Program := ClosLetop.compileIncSource
 
 /-- Adapt the downstream compiler to the optional known-function pass. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_cc_def"]
-def knownCc {C : Type} (config : Option Config) (cc : Compiler C) :
+noncomputable def knownCc {C : Type} (config : Option Config) (cc : Compiler C) :
     Compiler (Spt ValApprox × C) :=
   match config with
   | some c => pureCc fvsInc
@@ -32,7 +32,7 @@ def knownCc {C : Type} (config : Option Config) (cc : Compiler C) :
 
 /-- Adapt the compilation oracle to the optional known-function pass. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_co_def"]
-def knownCo {C : Type} (config : Option Config) (co : CompileOracle (Spt ValApprox × C)) :
+noncomputable def knownCo {C : Type} (config : Option Config) (co : CompileOracle (Spt ValApprox × C)) :
     CompileOracle C :=
   match config with
   | some c => pureCo letopInc ∘ pureCo ticksInc ∘
@@ -54,7 +54,8 @@ theorem semanticsCompileSome {C F : Type} (c : Config) (ffi : HolFfiState F) (ma
   let fco : CompileOracle (Spt ValApprox × C) := pureCo ClosFvs.compileInc ∘ co
   let kco : CompileOracle C := stateCo (compileInc c) fco
   let tco : CompileOracle C := pureCo ClosTicks.compileInc ∘ kco
-  let afterKnown : Compiler C := pureCc ticksInc (pureCc letopInc cc)
+  let afterKnown : Compiler C :=
+    pureCc (ClosTicks.compileInc : Program → Program) (pureCc (ClosLetop.compileInc : Program → Program) cc)
   have aux : ∀ n, (co n).2.2 = [] := fun n => (oracle.2.2.2.2 n).2
   have fvsEq := ClosFvs.semantics_compile ffi maxApp co (stateCc (compileInc c) afterKnown) xs
     (by simpa [knownCc, afterKnown] using nonFail) ⟨aux, positive⟩
@@ -93,12 +94,13 @@ theorem semanticsCompile {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
     (co1 : CompileOracle C) (es : List ClosLang.Exp)
     (h : semantics ffi maxApp HolFiniteMapExact.holEmpty co cc1 xs ≠ .fail ∧
       cc1 = knownCc knownConf cc ∧ co1 = knownCo knownConf co ∧
-      compile knownConf xs = (knownConf', es) ∧
+      compileSource knownConf xs = (knownConf', es) ∧
       (knownConf.isSome → syntaxOracleOk (Flapjack.holThe knownConf) xs co
         (Flapjack.holThe knownConf').valApproxSpt ∧ 1 ≤ maxApp)) :
     semantics ffi maxApp HolFiniteMapExact.holEmpty co1 cc es =
       semantics ffi maxApp HolFiniteMapExact.holEmpty co cc1 xs := by
   obtain ⟨nonFail, rfl, rfl, compiled, assumption⟩ := h
+  rw [compileSource_eq_compile] at compiled
   cases knownConf with
   | none =>
     simp [compile] at compiled

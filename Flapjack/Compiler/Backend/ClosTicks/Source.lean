@@ -127,7 +127,7 @@ theorem compileIncSource_eq_compileInc {α β : Type} (program : List Exp × α)
   simp [compileIncSource, compileInc]
 
 /-- The two incremental passes are equal as functions. -/
-theorem compileIncSource_eq {α β : Type} :
+@[simp] theorem compileIncSource_eq {α β : Type} :
     (compileIncSource : List Exp × α → List Exp × List β) = compileInc := by
   funext program
   exact compileIncSource_eq_compileInc program

@@ -134,11 +134,11 @@ theorem syntaxOracleOk_to_oracleInv {CC R α : Type}
                   obtain ⟨globals, aux⟩ := state
                   have run := h.2
                   change (let (next, expressions) := ClosNumber.renumberList aligned source
-                    let (knownConf, expressions) := ClosKnown.compile c.knownConf expressions
+                    let (knownConf, expressions) := ClosKnown.compileSource c.knownConf expressions
                     let (expressions, (globals, auxiliary)) := ClosCall.compile c.doCall expressions
                     ({ c with start := c.nextLoc, nextLoc := next, knownConf := knownConf, callState := (globals, auxiliary) },
                       ClosAnnotate.compileSource (chainExps c.nextLoc expressions ++ auxiliary))) = (c', prog) at run
-                  simp only [hr, hk, hc, Prod.mk.injEq] at run
+                  simp only [ClosKnown.compileSource_eq_compile, hr, hk, hc, Prod.mk.injEq] at run
                   have cfg := congrArg Config.knownConf run.1
                   simpa [known, base, source, aligned, hr, hk] using cfg
           have knownSome : known.1.isSome := by
@@ -183,7 +183,7 @@ theorem syntaxOracleOk_to_oracleInv {CC R α : Type}
             everyFnLocationSome, fnLocationSomeExp] using locs
         · simpa [nco, stateCo, ClosNumber.ignoreTable] using mempty
       have facts := knownCo_facts c.knownConf nco base known.1 known.2
-        (by change known = (known.1, known.2); exact (Prod.eta known).symm) guard
+        (by rw [ClosKnown.compileSource_eq_compile]) guard
       exact facts.2.2.2 n numbered
     have calledLocations := everyFnLocationSome_condCallCompileInc (kco n).2 c.doCall (kco n).1.1
     have mainLoc : everyFnLocationSome (aco n).2.1 := calledLocations.1 knownLocations.1

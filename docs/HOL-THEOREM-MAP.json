@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/clos_knownScript.sml", "hol_name": "known_compile_inc_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Compile.lean", "lean_name": "knownCompileInc",
+  "statement_status": "documented_mismatch",
+  "reviewer": "The executed incremental optimizer uses executable tick and let-op passes. knownCompileIncSource is the tagged source definition, and knownCompileIncSource_eq proves agreement."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/clos_letopScript.sml", "hol_name": "compile_inc_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Source.lean", "lean_name": "compileInc",
   "statement_status": "documented_mismatch",
@@ -128650,7 +128656,7 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Compile.lean",
   "statement_status": "reviewed_exact",
   "hol_name": "known_compile_inc_def",
-  "lean_name": "knownCompileInc",
+  "lean_name": "knownCompileIncSource",
   "reviewer": "Compared known_compile_inc_typed in clos_letop_source_probe.out: input and output auxiliary lists have the same independently polymorphic element type, the intermediate closure-code list is fixed to natural-number triples containing closure expressions, and NONE returns the original tree and program. SOME runs free-variable cleanup, incremental known optimization, tick removal and let-operation cleanup in order, threading the approximation tree. compileIncFuel_eq_source proves the executed driver agrees at its concrete closure-code carrier after static configuration and configuration update. Source comparison and Lean checking do not establish cross-language equivalence."
 },
 {

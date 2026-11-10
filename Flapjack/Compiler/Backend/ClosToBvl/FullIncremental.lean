@@ -25,7 +25,7 @@ noncomputable def closToBvlCompileInc (config : Config)
   let config := { config with nextLoc := next }
   let approximations := ClosKnown.optionValApproxSpt config.knownConf
   let (approximations, program) :=
-    ClosKnown.knownCompileInc (ClosKnown.knownStaticConf config.knownConf) approximations program
+    ClosKnown.knownCompileIncSource (ClosKnown.knownStaticConf config.knownConf) approximations program
   let config := { config with knownConf := ClosKnown.optionUpdValSpt approximations config.knownConf }
   let (known, program) := ClosCall.condCallCompileInc config.doCall config.callState.1 program
   let config := { config with callState := (known, []) }
