@@ -119210,8 +119210,8 @@
     "hol_name": "sing_env_def",
     "lean_path": "Flapjack/EvaluateHOL.lean",
     "lean_name": "singleEnv",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed sing_env_def capture: \u2200n v. sing_env n v = <|v := nsBind n v nsEmpty; c := nsEmpty|>, with n : varN (MlString, the tagged port of HOL mlstring) and v : v. Lean's singleEnv builds the same record over SemEnv Value."
   },
   {
   "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
