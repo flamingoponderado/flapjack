@@ -40,6 +40,7 @@ val _ = (print "fv_genlist_alt_type="; Lib.with_flag (Globals.show_types,true) p
 val _ = (print "env_exists_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.env_rel_env_exists); print "\n");
 val _ = (print "evaluate_includes_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.evaluate_includes_state); print "\n");
 val _ = (print "evaluate_app_includes_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.evaluate_app_includes_state); print "\n");
+val _ = (print "evaluate_app_mono_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.evaluate_app_mono); print "\n");
 val _ = (print "suffix_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.code_list_IS_SUFFIX); print "\n");
 val entry = EVAL ``clos_call$code_list 10 [(2,closLang$Var None 4);(0,closLang$Var None 9);(1,closLang$Var None 2)] (sptree$LN,[(90,3,closLang$Var None 0)])``;
 val _ = (print "example="; print_term (rhs (concl entry)); print "\n");

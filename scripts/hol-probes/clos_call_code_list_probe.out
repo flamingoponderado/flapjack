@@ -32,5 +32,6 @@ fv_genlist_alt_type=!(n :num) (i :num) (tra :tra). fv (v :num) (GENLIST_Var tra 
 env_exists_type=!(vars :(num # closLang$exp) list). EVERY (wfv (g1 :sptree$num_set # (num # num # closLang$exp) list) (l1 :num -> bool) (code :num |-> num # closLang$exp)) (env :v list) ==> ?(env5 :v list). env_rel (v_rel g1 l1 code) env env5 (0 :num) vars /\ LENGTH env5 = LENGTH env
 evaluate_includes_type=!(xs :closLang$exp list) (env :v list) (s :('a # 'b, 'c) state) (res :(v list, v) result) (s1 :('a # 'b, 'c) state) (g1 :'a # 'd). includes_state g1 s1.compile_oracle /\ evaluate (xs,env,s) = (res,s1) ==> includes_state g1 s.compile_oracle
 evaluate_app_includes_type=!(xs :'a) (env :'b) (s :('c # 'd, 'e) state) (res :(v list, v) result) (s1 :('c # 'd, 'e) state) (g1 :'c # 'f). includes_state g1 s1.compile_oracle /\ evaluate_app (loco :num option) (x :v) (vs :v list) s = (res,s1) ==> includes_state g1 s.compile_oracle
+evaluate_app_mono_type=evaluate_app (x :num option) (y :v) (z :v list) (s1 :('a, 'b) state) = ((vs :(v list, v) result),(s2 :('a, 'b) state)) ==> s1.code SUBMAP s2.code
 suffix_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list). IS_SUFFIX (SND (code_list loc fns g)) (SND g)
 example=(LN,[(15,1,Var None 2); (13,0,Var None 9); (11,2,Var None 4); (90,3,Var None 0)])

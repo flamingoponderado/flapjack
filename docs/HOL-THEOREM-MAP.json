@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "evaluate_app_mono",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ApplicationGrowth.lean", "lean_name": "evaluateApp_mono",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed evaluate_app_mono_type source capture: independent compiler and FFI types, arbitrary application arguments and result, the full evaluation premise and code-submap conclusion agree. The closure state refs and code use canonical finite support. The faithful evaluator inherits reals_as_rational_cuts and SOUNDNESS item 8."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "evaluate_includes_state",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/OracleIncludes.lean", "lean_name": "evaluate_includesState",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
