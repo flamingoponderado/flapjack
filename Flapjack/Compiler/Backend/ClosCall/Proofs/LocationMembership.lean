@@ -268,7 +268,10 @@ termination_by sizeOf es
 decreasing_by all_goals simp_wf <;> omega
 end
 
-private theorem callsLocations_subperm (xs : List Exp) (initial : State)
+/-- Direct-call conversion preserves the multiplicity bound for code locations.
+This auxiliary invariant supports the incremental compiler address proof; it
+is not a separate HOL declaration. -/
+theorem callsLocations_subperm (xs : List Exp) (initial : State)
     (ys : List Exp) (final : State) (run : calls xs initial = (ys, final)) :
     List.Subperm (codeLocations ys ++ codeLocations (final.2.map (fun t => t.2.2)))
       (codeLocations xs ++ codeLocations (initial.2.map (fun t => t.2.2))) := by

@@ -47,28 +47,6 @@ theorem canExtract_to_case (exps : List ClosLang.Exp) :
   | nil => exact Or.inl ⟨tr, n, rfl⟩
   | cons e rest => exact Or.inr ⟨tr, n, e, rest, rfl⟩
 
-/-- Chained expression labels form the complete range, with one entry for an
-empty expression list. -/
-@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "MAP_FST_chain_exps_any"]
-theorem mapFst_chainExps_any (start : Nat) (exps : List ClosLang.Exp) :
-    (chainExps start exps).map Prod.fst =
-      (List.range (max 1 exps.length)).map (start + ·) := by
-  induction exps generalizing start with
-  | nil => simp [chainExps]
-  | cons first rest ih =>
-    cases rest with
-    | nil => simp [chainExps]
-    | cons second tail =>
-      have step := ih (start + 1)
-      simp only [chainExps, List.map_cons] at step ⊢
-      simp only [List.length_cons] at step ⊢
-      rw [Nat.max_eq_right (by omega : 1 ≤ tail.length + 1)] at step
-      rw [Nat.max_eq_right (by omega : 1 ≤ tail.length + 1 + 1)]
-      rw [List.range_succ_eq_map]
-      simp only [List.map_cons, List.map_map, Function.comp_def]
-      congr 1
-      simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using step
-
 /-- Extracting the entry point gives exactly the chained-entry addresses. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "extract_name_MAP_FST_addrs"]
 theorem extractName_mapFst_addrs (exps : List ClosLang.Exp) (n : Nat) (realExps : List ClosLang.Exp)

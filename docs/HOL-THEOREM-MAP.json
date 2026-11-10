@@ -18,6 +18,12 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cond_call_compile_inc_req",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallAddresses.lean", "lean_name": "condCallCompileInc_req",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cond_call_compile_inc_req_typed and independent source review: program, enable flag and sparse-set binders, natural metadata, successor-address list, tuple projections, curried premise and all three conclusions match HOL."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_code_locs_ALL_DISTINCT",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "calls_codeLocations_allDistinct",
   "statement_status": "reviewed_exact",
@@ -127,7 +133,7 @@
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "MAP_FST_chain_exps_any",
-  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "mapFst_chainExps_any",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainLocations.lean", "lean_name": "mapFst_chainExps_any",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared MAP_FST_chain_exps_any_typed: arbitrary start and expression list, chain labels, COUNT_LIST as List.range and MAX 1 agree."
  },
