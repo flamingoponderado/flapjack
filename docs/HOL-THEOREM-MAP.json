@@ -18,6 +18,18 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "SET_OF_BAG",
+  "lean_path": "Flapjack/Misc/Bag.lean", "lean_name": "setOfBag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared set_of_bag_typed and independent review: arbitrary count-valued bag and predicate result are BAG_IN pointwise, as in HOL."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "syntax_oracle_ok_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SyntaxOracle.lean", "lean_name": "syntaxOracleOkCommon",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_bvl_syntax_oracle_ok_typed and independent review: c, c', es, co order; independent oracle payload; all guarded clauses, state-oracle compositions, bag conditions, holThe and fixed free-variable pass instantiation match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml", "hol_name": "renumber_code_locs_every_Fn_vs_NONE",
   "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/VarsNone.lean", "lean_name": "renumberCodeLocs_everyFnVarsNone",
   "statement_status": "reviewed_exact",

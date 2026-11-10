@@ -154,6 +154,7 @@ val _ = show "ccompile_aux_subset_typed=" clos_to_bvlProofTheory.ccompile_aux_su
 val _ = show "ccompile_locs_subset_typed=" clos_to_bvlProofTheory.ccompile_locs_subset;
 val _ = show "compile_common_map_fst_compile_prog_typed=" clos_to_bvlProofTheory.compile_common_MAP_FST_compile_prog;
 val _ = show "clos_bvl_syntax_oracle_ok_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_def;
+val _ = show "set_of_bag_typed=" bagTheory.SET_OF_BAG;
 val _ = show "syntax_oracle_ok_to_oracle_inv_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_to_oracle_inv;
 val _ = show "compile_oracle_inv_typed=" clos_to_bvlProofTheory.compile_oracle_inv_def;
 val _ = show "every_fn_some_every_typed=" closPropsTheory.every_Fn_SOME_EVERY;
