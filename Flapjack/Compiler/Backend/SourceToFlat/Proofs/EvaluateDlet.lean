@@ -166,78 +166,6 @@ theorem evaluateDlet_alias {C F : Type} (genv : GlobalEnv)
     · simp [compileDecs, simpleDlet, compiledLookup, FlatSem.evaluateDecs]
     · exact globalEnvInv_alias genv name idx nameTrace value stored bound slot related
 
-/-- A successful flat expression and pattern match run the generated
-initializer as the body of the declaration's match expression. -/
-theorem evaluateDlet_pattern_flat_success {C F : Type}
-    (flat middle last : FlatSem.State C F) (trace : List VarN) (n : Nat) (next : NextIndices)
-    (compMap : Environment) (gen : EnvironmentGenerationStore) (location : Flapjack.Misc.Location.Locs)
-    (pattern : Pat) (expr : AstHOL.Exp) (value : FlatSem.Value) (bindings : List (VarN × FlatSem.Value))
-    (notAlias : simpleDlet pattern expr = none) (distinct : (AstHOL.patBindings pattern).Nodup)
-    (expressionRun : FlatSem.evaluate ⟨[]⟩ flat
-      [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr] = (middle, .val [value]))
-    (matched : FlatSem.pmatch middle (compilePat compMap pattern) value [] = .match bindings)
-    (initializerRun : FlatSem.evaluate ⟨bindings⟩ middle
-      [makeVarls 0 .none next.vidx (AstHOL.patBindings pattern).reverse] = (last, .val [FlatSem.unitValue])) :
-    FlatSem.evaluateDecs flat (compileDecs trace n next compMap gen [.dlet location pattern expr]).2.2.2.2 =
-      (last, none) := by
-  let initialEnv : FlatSem.Environment FlatSem.Value := ⟨[]⟩
-  let body := makeVarls 0 .none next.vidx (AstHOL.patBindings pattern).reverse
-  have bound : middle.clock ≤ flat.clock := FlatSem.evaluate_clock_spec.1 _ _ _ _ _ expressionRun
-  have lastBound : last.clock ≤ flat.clock :=
-    Nat.le_trans (FlatSem.evaluate_clock_spec.1 _ _ _ _ _ initializerRun) bound
-  have fixed : FlatSem.fixClock flat (middle, (Result.val [value] : Result (List FlatSem.Value) FlatSem.Value)) =
-      (middle, .val [value]) := by simp [FlatSem.fixClock, Nat.min_eq_right bound]
-  have selection : FlatSem.selectRow middle [(compilePat compMap pattern, body)] value FlatSem.bindExnV =
-      .ok (bindings, body) := by
-    simp [FlatSem.selectRow, FlatSem.pmatchRows, matched, compilePat_bindings, distinct]
-  have matRun : FlatSem.evaluate initialEnv flat
-      [.mat .none (compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr)
-        [(compilePat compMap pattern, body)]] = (last, .val [FlatSem.unitValue]) := by
-    rw [FlatSem.evaluate, expressionRun, fixed]
-    simp (config := { zeta := false })
-    have selection' := selection
-    dsimp only [body] at selection'
-    rw [selection']
-    simpa [body, initialEnv] using initializerRun
-  simp only [compileDecs, notAlias]
-  rw [FlatSem.evaluateDecs]
-  dsimp only [initialEnv, body] at matRun
-  rw [matRun]
-  simp [FlatSem.fixClock, FlatSem.unitValue, FlatSem.evaluateDecs, Nat.min_eq_right lastBound]
-
-/-- A nonmatching flat declaration pattern raises the bind exception before
-running the global initializer. -/
-theorem evaluateDlet_pattern_flat_noMatch {C F : Type}
-    (flat middle : FlatSem.State C F) (trace : List VarN) (n : Nat) (next : NextIndices)
-    (compMap : Environment) (gen : EnvironmentGenerationStore) (location : Flapjack.Misc.Location.Locs)
-    (pattern : Pat) (expr : AstHOL.Exp) (value : FlatSem.Value)
-    (notAlias : simpleDlet pattern expr = none)
-    (expressionRun : FlatSem.evaluate ⟨[]⟩ flat
-      [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr] = (middle, .val [value]))
-    (matched : FlatSem.pmatch middle (compilePat compMap pattern) value [] = .noMatch) :
-    FlatSem.evaluateDecs flat (compileDecs trace n next compMap gen [.dlet location pattern expr]).2.2.2.2 =
-      (middle, some (.raise FlatSem.bindExnV)) := by
-  let body := makeVarls 0 .none next.vidx (AstHOL.patBindings pattern).reverse
-  have bound : middle.clock ≤ flat.clock := FlatSem.evaluate_clock_spec.1 _ _ _ _ _ expressionRun
-  have fixed : FlatSem.fixClock flat (middle, (Result.val [value] : Result (List FlatSem.Value) FlatSem.Value)) =
-      (middle, .val [value]) := by simp [FlatSem.fixClock, Nat.min_eq_right bound]
-  have selection : FlatSem.selectRow middle [(compilePat compMap pattern, body)] value FlatSem.bindExnV =
-      .error (.raise FlatSem.bindExnV) := by
-    simp [FlatSem.selectRow, FlatSem.pmatchRows, matched]
-  have matRun : FlatSem.evaluate ⟨[]⟩ flat
-      [.mat .none (compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr)
-        [(compilePat compMap pattern, body)]] = (middle, .err (.raise FlatSem.bindExnV)) := by
-    rw [FlatSem.evaluate, expressionRun, fixed]
-    simp (config := { zeta := false })
-    have selection' := selection
-    dsimp only [body] at selection'
-    rw [selection']
-  simp only [compileDecs, notAlias]
-  rw [FlatSem.evaluateDecs]
-  dsimp only [body] at matRun
-  rw [matRun]
-  simp [FlatSem.fixClock, Nat.min_eq_right bound]
-
 /-- A source pattern mismatch produces related bind exceptions and retains
 the post-expression factored invariant in both evaluators. -/
 theorem evaluateDlet_pattern_noMatch {C F : Type} [Nonempty C]
@@ -274,10 +202,18 @@ theorem evaluateDlet_pattern_noMatch {C F : Type} [Nonempty C]
   have flatMatched : FlatSem.pmatch flatMiddle (compilePat compMap pattern) flatValue [] = .noMatch := by
     cases flatMatch : FlatSem.pmatch flatMiddle (compilePat compMap pattern) flatValue [] <;>
       simp_all [MatchResultRel]
-  refine ⟨?_, evaluateDlet_pattern_flat_noMatch flat flatMiddle trace n next compMap gen location pattern expr
-    flatValue notAlias flatRun flatMatched, (valueRel_lemmas genv ok).2.2.2.1, states, invariant⟩
-  simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, matched,
-    EvaluateHOL.headValue, Flapjack.holHd]
+  refine ⟨?_, ?_, (valueRel_lemmas genv ok).2.2.2.1, states, invariant⟩
+  · simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, matched,
+      EvaluateHOL.headValue, Flapjack.holHd]
+  · simp only [compileDecs, notAlias, FlatSem.evaluateDecs_cons, FlatSem.evaluateDec]
+    rw [FlatSem.evaluate, (FlatSem.fixClock_evaluations _ _ _
+      (compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr) []).1, flatRun]
+    simp (config := { zeta := false })
+    have selection : FlatSem.selectRow flatMiddle
+        [(compilePat compMap pattern, makeVarls 0 .none next.vidx (AstHOL.patBindings pattern).reverse)]
+        flatValue FlatSem.bindExnV = .error (.raise FlatSem.bindExnV) := by
+      simp [FlatSem.selectRow, FlatSem.pmatchRows, flatMatched]
+    rw [selection]
 
 /-- A failing expression propagates through a non-alias declaration before
 the generated pattern match can initialize any globals. -/
@@ -354,9 +290,20 @@ theorem evaluateDlet_pattern_factored {C F : Type} [Nonempty C]
   · simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, matched,
       EvaluateHOL.headValue, Flapjack.holHd]
   · simp [compileDecs, notAlias, emptyEnv]
-  · apply evaluateDlet_pattern_flat_success flat flatMiddle finalFlat trace n start compMap gen location pattern expr
-      flatValue flatBindings notAlias distinct flatRun flatMatch
-    simpa [names] using initRun
+  · have initializerRun : FlatSem.evaluate ⟨flatBindings⟩ flatMiddle
+        [makeVarls 0 .none start.vidx (AstHOL.patBindings pattern).reverse] =
+        (finalFlat, .val [FlatSem.unitValue]) := by simpa [names] using initRun
+    simp only [compileDecs, notAlias, FlatSem.evaluateDecs_cons, FlatSem.evaluateDec]
+    rw [FlatSem.evaluate, (FlatSem.fixClock_evaluations _ _ _
+      (compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr) []).1, flatRun]
+    simp (config := { zeta := false })
+    have selection : FlatSem.selectRow flatMiddle
+        [(compilePat compMap pattern, makeVarls 0 .none start.vidx (AstHOL.patBindings pattern).reverse)]
+        flatValue FlatSem.bindExnV =
+        .ok (flatBindings, makeVarls 0 .none start.vidx (AstHOL.patBindings pattern).reverse) := by
+      simp [FlatSem.selectRow, FlatSem.pmatchRows, flatMatch, compilePat_bindings, distinct]
+    rw [selection]
+    simp [initializerRun, FlatSem.evaluateDecs, FlatSem.unitValue]
   · simpa [emptyEnv, names] using finalEnv
   · simpa [names] using finalInv
 
