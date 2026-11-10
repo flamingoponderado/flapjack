@@ -128084,8 +128084,8 @@
   "hol_name": "syntax_ok_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/SyntaxOk.lean",
   "lean_name": "syntaxOk",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed syntax_ok_def capture: syntax_ok x \u21d4 every_Fn_SOME x \u2227 every_Fn_vs_NONE x \u2227 ALL_DISTINCT (code_locs x), with every_Fn_SOME/every_Fn_vs_NONE : closLang$exp list -> bool and code_locs : closLang$exp list -> num list. Lean's syntaxOk uses the tagged Prop-valued ports everyFnLocationSome/everyFnVarsNone and codeLocations with List.Nodup (ALL_DISTINCT)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
