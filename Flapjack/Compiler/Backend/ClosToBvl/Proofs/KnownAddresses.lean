@@ -11,6 +11,27 @@ import Mathlib.Data.List.Perm.Subperm
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open ClosLang ClosProps ClosKnown BackendProps
 
+/-- The incremental known-function pass exposes the original traversal result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "kcompile_inc_uncurry"]
+theorem kcompileInc_uncurry {α : Type} (c : ClosKnown.Config) (g : Spt ValApprox)
+    (p : List ClosLang.Exp × α) :
+    ClosKnown.compileInc c g p =
+      ((knownListTotal (resetInlineFactor c) p.1 [] g).2,
+        (knownListTotal (resetInlineFactor c) p.1 [] g).1.map Prod.fst, p.2) := by
+  cases h : knownListTotal (resetInlineFactor c) p.1 [] g
+  simp [ClosKnown.compileInc, h]
+
+/-- Incremental known-function optimization does not add code locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "code_locs_FST_SND_kcompile_inc"]
+theorem codeLocations_kcompileInc {α : Type} (c : ClosKnown.Config) (g : Spt ValApprox)
+    (p : List ClosLang.Exp × α) :
+    ∀ label, (codeLocations (ClosKnown.compileInc c g p).2.1).count label ≤
+      (codeLocations p.1).count label := by
+  cases h : knownListTotal (resetInlineFactor c) p.1 [] g with
+  | mk eas next =>
+    have bounded := TraversalCodeBag.knownCodeLocationsBag (resetInlineFactor c) p.1 [] g eas next h
+    simpa [kcompileInc_uncurry, h] using bounded
+
 private theorem marker_extract (tr : BackendCommon.Tra) (n : Nat)
     (xs ys : List ClosLang.Exp) (length : ys.length = xs.length) :
     extractedAddrs (.op tr (.intOp (.const (Int.ofNat n))) [] :: ys) =

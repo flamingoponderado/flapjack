@@ -40,6 +40,21 @@ theorem callsCompile_callSyntaxOk (enabled : Bool) (xs ys : List ClosLang.Exp) (
       (by simpa [ClosCall.compile] using run)
     simpa [everyFnVarsNone] using safe.2.1
 
+/-- Direct-call compilation preserves distinct code locations across both outputs. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_code_locs_ALL_DISTINCT"]
+theorem compile_codeLocations_allDistinct (enabled : Bool) (es xs : List ClosLang.Exp)
+    (g : NumSet) (aux : List (Nat × Nat × ClosLang.Exp))
+    (h : ClosCall.compile enabled es = (xs, (g, aux)) ∧ (codeLocations es).Nodup) :
+    (codeLocations xs ++ codeLocations (aux.map (fun p => p.2.2))).Nodup := by
+  cases enabled with
+  | false =>
+    simp [ClosCall.compile] at h
+    obtain ⟨⟨rfl, _, rfl⟩, distinct⟩ := h
+    simpa [codeLocations] using distinct
+  | true =>
+    apply ClosCall.calls_codeLocations_allDistinct es (.ln, []) xs (g, aux)
+      (by simpa [ClosCall.compile] using h.1)
+    simpa [codeLocations] using h.2
 /-- Conditional direct-call conversion preserves absent variable annotations. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "every_Fn_vs_NONE_cond_call_compile_inc"]
 theorem everyFnVarsNone_condCallCompileInc (program : List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp))

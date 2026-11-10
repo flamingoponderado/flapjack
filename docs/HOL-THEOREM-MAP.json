@@ -42,6 +42,24 @@
   "reviewer": "Compared every_Fn_vs_NONE_cond_call_compile_inc_typed and HOL source: free variables program, enabled, known, the state carriers, both implication premises and conclusions match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "kcompile_inc_uncurry",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownAddresses.lean", "lean_name": "kcompileInc_uncurry",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared kcompile_inc_uncurry_typed: the source config, globals and program occur in order; the untouched program payload is independently polymorphic, and all three output components match the original traversal."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_locs_FST_SND_kcompile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownAddresses.lean", "lean_name": "codeLocations_kcompileInc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_locs_FST_SND_kcompile_inc_typed: the source-shaped incremental pass preserves the independent payload type. SUB_BAG_LEQ reduces HOL bag inclusion to pointwise ordering, and LIST_TO_BAG gives each label's list multiplicity."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_code_locs_ALL_DISTINCT",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallAddresses.lean", "lean_name": "compile_codeLocations_allDistinct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_code_locs_ALL_DISTINCT_typed: the compile equation and input distinctness share one premise; the output and auxiliary code locations are concatenated before the distinctness conclusion."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "renumber_code_locs_list_csyntax_ok",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallAddresses.lean", "lean_name": "renumberList_callSyntaxOk",
   "statement_status": "reviewed_exact",
