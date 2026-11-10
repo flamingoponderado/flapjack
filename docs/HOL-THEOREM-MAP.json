@@ -18,6 +18,24 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "every_Fn_GENLIST_Var",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "everyFn_variables",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL capture every_fn_genlist_var_typed and independent review: binder order and both conjuncts match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "every_Fn_calls_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "everyFn_callsList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL capture every_fn_calls_list_typed and independent review: polymorphic carrier, binder order and both conjuncts match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "every_Fn_code_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "everyFn_codeList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL capture every_fn_code_list_typed and independent review: independent polymorphic carriers, binder order and both equivalences match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "annotate_compile_every_Fn_vs_SOME",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/AnnotationAddresses.lean", "lean_name": "annotateCompile_everyFnVarsSome",
   "statement_status": "reviewed_exact",

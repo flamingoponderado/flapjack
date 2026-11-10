@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelsOriginal
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
 import Mathlib.Data.List.Perm.Subperm
 
 @[expose] public section
@@ -62,6 +63,70 @@ private theorem insertEach_snd (loc count : Nat) (state : State) :
   | succ count ih =>
     cases state with
     | mk known code => simpa [insertEachSource] using ih (loc + 2) (sptInsert loc () known, code)
+
+private theorem locationSome_append (xs ys : List Exp) :
+    everyFnLocationSome (xs ++ ys) ↔ everyFnLocationSome xs ∧ everyFnLocationSome ys := by
+  induction xs with
+  | nil => simp [everyFnLocationSome]
+  | cons x xs ih => simp [everyFnLocationSome, ih, and_assoc]
+
+private theorem varsNone_append (xs ys : List Exp) :
+    everyFnVarsNone (xs ++ ys) ↔ everyFnVarsNone xs ∧ everyFnVarsNone ys := by
+  induction xs with
+  | nil => simp [everyFnVarsNone]
+  | cons x xs ih => simp [everyFnVarsNone, ih, and_assoc]
+
+private theorem locationSome_reverse (xs : List Exp) :
+    everyFnLocationSome xs.reverse ↔ everyFnLocationSome xs := by
+  induction xs with
+  | nil => simp [everyFnLocationSome]
+  | cons x xs ih => simp [List.reverse_cons, locationSome_append, everyFnLocationSome, ih, and_comm]
+
+private theorem varsNone_reverse (xs : List Exp) :
+    everyFnVarsNone xs.reverse ↔ everyFnVarsNone xs := by
+  induction xs with
+  | nil => simp [everyFnVarsNone]
+  | cons x xs ih => simp [List.reverse_cons, varsNone_append, everyFnVarsNone, ih, and_comm]
+
+/-- Generated variable lists contain no unlocated or annotated functions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "every_Fn_GENLIST_Var"]
+theorem everyFn_variables : ∀ n i t,
+    everyFnLocationSome (variablesSource t i n) ∧ everyFnVarsNone (variablesSource t i n) := by
+  intro n
+  induction n with
+  | zero => intro i t; simp [variablesSource, everyFnLocationSome, everyFnVarsNone]
+  | succ n ih =>
+    intro i t
+    have h := ih (i + 1) t
+    simpa [variablesSource, locationSome_append, varsNone_append,
+      everyFnLocationSome, everyFnVarsNone, fnLocationSomeExp, fnVarsNoneExp] using h
+
+/-- Generated direct-call stubs contain no unlocated or annotated functions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "every_Fn_calls_list"]
+theorem everyFn_callsList {α : Type} : ∀ (ls : List (Nat × α)) n i t,
+    everyFnLocationSome ((callsListSource t i n ls).map Prod.snd) ∧
+      everyFnVarsNone ((callsListSource t i n ls).map Prod.snd) := by
+  intro ls
+  induction ls with
+  | nil => intro n i t; simp [callsListSource, everyFnLocationSome, everyFnVarsNone]
+  | cons entry rest ih =>
+    obtain ⟨arity, body⟩ := entry
+    intro n i t
+    have h := ih (n + 2) (i + 1) t
+    have v := everyFn_variables arity 1 t
+    simpa [callsListSource, everyFnLocationSome, everyFnVarsNone,
+      fnLocationSomeExp, fnVarsNoneExp] using And.intro (And.intro v.1 h.1) (And.intro v.2 h.2)
+
+/-- Auxiliary code insertion preserves exactly the two annotation predicates. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "every_Fn_code_list"]
+theorem everyFn_codeList {α β : Type} : ∀ (ls : List (α × Exp)) n (rest : β × List (Nat × α × Exp)),
+    (everyFnLocationSome ((codeListSource n ls rest).2.map (fun p => p.2.2)) ↔
+      everyFnLocationSome (ls.map Prod.snd) ∧ everyFnLocationSome (rest.2.map (fun p => p.2.2))) ∧
+    (everyFnVarsNone ((codeListSource n ls rest).2.map (fun p => p.2.2)) ↔
+      everyFnVarsNone (ls.map Prod.snd) ∧ everyFnVarsNone (rest.2.map (fun p => p.2.2))) := by
+  intro ls n rest
+  rw [codeList_bodies]
+  simp [locationSome_append, varsNone_append, locationSome_reverse, varsNone_reverse]
 
 private theorem locations_flatMap (xs : List Exp) :
     codeLocations xs = xs.flatMap codeLocationsExp := by

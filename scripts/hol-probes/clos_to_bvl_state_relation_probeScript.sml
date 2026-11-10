@@ -159,6 +159,10 @@ val _ = show "syntax_oracle_ok_to_oracle_inv_typed=" clos_to_bvlProofTheory.synt
 val _ = show "compile_inc_post_kcompile_typed=" clos_to_bvlProofTheory.compile_inc_post_kcompile_def;
 val _ = show "annotate_compile_every_fn_vars_some_typed=" clos_to_bvlProofTheory.annotate_compile_every_Fn_vs_SOME;
 val _ = show "every_fn_some_cond_call_typed=" clos_to_bvlProofTheory.every_Fn_SOME_cond_call_compile_inc;
+val _ = show "every_fn_genlist_var_typed=" clos_callProofTheory.every_Fn_GENLIST_Var;
+val _ = show "every_fn_calls_list_typed=" clos_callProofTheory.every_Fn_calls_list;
+val _ = show "every_fn_code_list_typed=" clos_callProofTheory.every_Fn_code_list;
+val _ = show "calls_preserves_every_fn_some_typed=" clos_callProofTheory.calls_preserves_every_Fn_SOME;
 val _ = show "toaList_domain_typed=" miscTheory.toAList_domain;
 val _ = show "sptree_domain_lookup_typed=" sptreeTheory.domain_lookup;
 val _ = show "known_compile_is_some_typed=" clos_knownProofTheory.known_compile_IS_SOME;
