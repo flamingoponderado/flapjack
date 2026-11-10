@@ -1,6 +1,8 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.Wellformed
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeLookup
 public import Flapjack.FiniteMap.AlistExact.Lookup
 public import Flapjack.Misc.Option
 @[expose] public section
@@ -106,5 +108,62 @@ theorem insertWithCode_wellFormed {A : Type} [Nonempty A] (gt : List (Nat × A))
       apply fresh x
       · exact List.mem_map.mpr ⟨i, List.mem_range.mpr bound, same.symm⟩
       · exact known
+
+/-- The inserted lookup entries extend to the corresponding generated code
+list under the original state, freshness, and lookup premises. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "subg_insert_each'"]
+theorem stateExtends_insertWithCode {A B C D : Type} [Nonempty B] [Nonempty C] [Nonempty D]
+    (newG : Spt A × List (Nat × B × C)) (ls : List (Nat × B × C))
+    (loc : Nat) (g : NumSet × List (Nat × B × C))
+    (gb : Spt A × List (Nat × B × C)) (fns1 : List (B × D))
+    (es : List C) (g1 : List (Nat × B × C))
+    (h : stateExtends gb (newG.1, ls ++ (insertWithCode g1 loc fns1.length g).2) ∧
+      newG.2 = ls ++ g.2 ∧ fns1.length = es.length ∧ wellFormed g ∧
+      (∀ x, ¬ (x ∈ (List.range fns1.length).map (fun i => 2 * i + loc + 1) ∧
+        x ∈ Set.image Nat.succ (sptDomain g.1))) ∧
+      (∀ x, ¬ (x ∈ ls.map Prod.fst ∧ x ∈ Set.image Nat.succ (sptDomain g.1))) ∧
+      (∀ i, i < fns1.length → holALookup g1 (2 * i + loc + 1) =
+        some ((holEl i fns1).1, holEl i es))) :
+    stateExtends (newG.1, ls ++ (insertWithCode g1 loc fns1.length g).2)
+      (codeListSource loc ((fns1.map Prod.fst).zip es) newG) := by
+  classical
+  obtain ⟨extension, oldCode, len, wf, fresh, disjoint, lookup⟩ := h
+  let fns := (fns1.map Prod.fst).zip es
+  have fnsLen : fns.length = fns1.length := by simp [fns, List.length_zip, len]
+  let generated := (List.range fns1.length).map (fun i =>
+    (2 * i + loc + 1, holThe (holALookup g1 (2 * i + loc + 1))))
+  have generatedEq : generated = ((List.range fns.length).map (fun i => loc + 1 + 2 * i)).zip fns := by
+    apply List.ext_getElem
+    · simp [generated, fnsLen]
+    · intro i hi hj
+      have bound : i < fns1.length := by simpa [generated] using hi
+      have boundE : i < es.length := by omega
+      have boundF : i < fns.length := by omega
+      have found := lookup i bound
+      rw [holEl_eq_getElem i fns1 bound, holEl_eq_getElem i es boundE] at found
+      simp only [generated, List.getElem_map, List.getElem_range, List.getElem_zip]
+      simp only [fns, List.getElem_zip, List.getElem_map]
+      rw [found]
+      simp [holThe, Nat.add_comm, Nat.add_left_comm, Nat.add_assoc]
+  have inserted : (insertWithCode g1 loc fns1.length g).2 = generated.reverse ++ g.2 := by
+    simpa [generated] using insertWithCode_snd g1 loc fns1.length g
+  have compiled : (codeListSource loc fns newG).2 = generated.reverse ++ (ls ++ g.2) := by
+    rw [codeListSource_snd_zip, ← generatedEq, oldCode]
+  have perm : (ls ++ (insertWithCode g1 loc fns1.length g).2).Perm
+      (codeListSource loc fns newG).2 := by
+    rw [inserted, compiled]
+    simpa [List.append_assoc] using (List.perm_append_comm (l₁ := ls) (l₂ := generated.reverse)).append_right g.2
+  unfold stateExtends at extension ⊢
+  simp only [codeListSource_fst]
+  refine ⟨?_, ?_, ?_⟩
+  · intro key member
+    exact ⟨member, rfl⟩
+  · intro key value found
+    apply holALookup_of_distinct_member
+    refine ⟨?_, ?_⟩
+    · exact (perm.map Prod.fst).nodup_iff.mp extension.2.2
+    · exact perm.mem_iff.mp (holALookup_member _ _ _ found)
+  · exact (perm.map Prod.fst).nodup_iff.mp extension.2.2
+
 
 end Flapjack.Compiler.Backend.ClosCall

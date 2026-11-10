@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "subg_insert_each'",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertWithCode.lean", "lean_name": "stateExtends_insertWithCode",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared subg_insert_each_prime_type in clos_call_code_list_probe.out with the HOL source: the sparse-map payload, code payload, function metadata and body types remain independent, and all original extension, suffix, length, well-formedness, disjointness and indexed lookup premises imply the full state extension."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "dest_closure_v_rel",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ClosureLookup.lean", "lean_name": "destClosure_valueRel",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
