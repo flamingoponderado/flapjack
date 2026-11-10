@@ -48,3 +48,5 @@ can_type_prog=⊢ ∀(state :α state) (prog :dec list). can_type_prog state pro
 semantics_def=⊢ ∀(state :α state) (prelude :dec list) (input :string). semantics state prelude input = case parse (lexer_fun input) of (NONE :dec list option) => CannotParse | SOME prog => if can_type_prog state (prelude ++ prog) then Execute (semantics_prog state.sem_st state.sem_env (prelude ++ prog)) else IllTyped
 prim_list_lookup=⊢ nsLookup prim_tenv.t (Short «list» :(mlstring, mlstring) id) = SOME ([«'a»],Tapp [Tvar «'a»] (6 :num))
 prim_cons_lookup=⊢ nsLookup prim_tenv.c (Short «::» :(mlstring, mlstring) id) = SOME ([«'a»],[Tvar «'a»; Tapp [Tvar «'a»] (6 :num)],(6 :num))
+state_axiom=⊢ ∀(f :type_env -> (num -> bool) -> 'ffi semanticPrimitives$state -> v sem_env -> α). ∃(fn :'ffi state -> α). ∀(a0 :type_env) (a1 :num -> bool) (a2 :'ffi semanticPrimitives$state) (a3 :v sem_env). fn (state a0 a1 a2 a3 :'ffi state) = f a0 a1 a2 a3
+semantics_axiom=⊢ ∀(f0 :α) (f1 :α) (f2 :(behaviour -> bool) -> α). ∃(fn :semantics -> α). fn CannotParse = f0 ∧ fn IllTyped = f1 ∧ ∀(a :behaviour -> bool). fn (Execute a) = f2 a

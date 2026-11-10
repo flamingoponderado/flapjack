@@ -193,7 +193,7 @@
     {"bytes": 30324, "out": "cake_subglobals_probe.out", "rows": 81, "sha256": "30594c7d439c97a560391083a62f33e74b2e760be8fe5ec227a0d6248f79cd29"},
     {"bytes": 177, "out": "cake_type_diagnostic_probe.out", "rows": 8, "sha256": "958bf17e7f98f8549d9f3e120ebfff65043e2debead08a7c238327e1a8054d69"},
     {"bytes": 6368, "out": "cake_type_display_probe.out", "rows": 14, "sha256": "ffdb800a6f9264273d7359865686c7ac65137d7ae652a0b12463c52b91186be9"},
-    {"bytes": 38436, "out": "cake_type_env_probe.out", "rows": 50, "sha256": "120b41099792d629ebc1948d708e9d599ab2ec436f98d4f2190503eb0c26c6d2"},
+    {"bytes": 38900, "out": "cake_type_env_probe.out", "rows": 52, "sha256": "48ba8a147ff43c9d36eae8268386926a3e1dd74d5405648c26891e3407f3cb7e"},
     {"bytes": 305, "out": "cake_undefined_diagnostic_probe.out", "rows": 3, "sha256": "d0914ae825d6a125c2ed7f318efb81cefdc590152551cc078ac87d1ca7274571"},
     {"bytes": 10659, "out": "cake_word_array_probe.out", "rows": 32, "sha256": "6d86d63ef05e58c42384e8a9fb88809fbaa56d4a53597a36815754897be7dc3b"},
     {"bytes": 2587, "out": "cakeml_frontend_flat_probe.out", "rows": 116, "sha256": "20f5daca23f947cc44fda3d5690ebb2e4568b42a18697cd471d4e93129d046ef"},

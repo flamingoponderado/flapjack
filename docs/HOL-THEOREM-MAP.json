@@ -120161,16 +120161,16 @@
     "hol_name": "state",
     "lean_path": "Flapjack/SemanticsHOL/Typed.lean",
     "lean_name": "SourceState",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: source declarations and relevant typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed state_Axiom capture against SourceState: HOL's `state` has `type_env : type_env`, `type_ids : num -> bool`, `prim_state : 'ffi semanticPrimitives$state`, `env : v sem_env`. Lean's SourceState carries the same four fields in the same order, with HOL's `type_ident set` rendered as the `Nat -> Prop` membership predicate `TypeIds` (Flapjack/TypeSystemHOL/Declarations.lean) and the FFI state as the universe-0 host type `\u03c3`."
   },
   {
     "hol_path": "cakeml/semantics/semanticsScript.sml",
     "hol_name": "semantics",
     "lean_path": "Flapjack/SemanticsHOL/Typed.lean",
     "lean_name": "SourceSemantics",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: source declarations and relevant typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed semantics_Axiom capture against SourceSemantics: HOL's `semantics` is `CannotParse | IllTyped | Execute (behaviour -> bool)`, i.e. Execute carries a behaviour set. Lean's SourceSemantics has the same three constructors, with that set rendered as the membership predicate `HolBehaviour -> Prop`."
   },
   {
     "hol_path": "cakeml/compiler/inference/infer_tScript.sml",
