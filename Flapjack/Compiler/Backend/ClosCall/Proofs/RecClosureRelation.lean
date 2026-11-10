@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosure
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeIncludes
 public import Flapjack.Compiler.Backend.ClosCall.Compile
+public import Flapjack.FiniteMap.SubmapExact
 
 @[expose] public section
 
@@ -54,5 +55,34 @@ noncomputable def recClosureRel (g : State) (allowed : Nat → Prop)
       ({n | n ∈ codeLocations (fns1.map Prod.snd)} \ sptDomain next.1) ⊆ allowed ∧
       {n | n ∈ (List.range fns1.length).map (fun i => 2 * i + loc)} ⊆ allowed ∧
       codeIncludes next.2 code
+
+/-- Monotonicity used to prove the HOL value well-formedness extension theorem. -/
+theorem recClosureRel_mono (g g' : State) (allowed allowed' : Nat → Prop)
+    (code code' : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc : Nat)
+    (fns1 fns2 : List (Nat × ClosLang.Exp))
+    (related : recClosureRel g allowed code loc fns1 fns2)
+    (codeSub : code.submap code') (stateSub : stateExtends g g')
+    (allowedSub : ∀ x, allowed x → allowed' x) : recClosureRel g' allowed' code' loc fns1 fns2 := by
+  classical
+  unfold recClosureRel at related ⊢
+  obtain ⟨g0, wf, stateWf, disjoint, fresh, branch⟩ := related
+  refine ⟨g0, wf, stateWf, disjoint, fresh, ?_⟩
+  dsimp only at branch ⊢
+  split at branch
+  next condition =>
+    simp only [condition, ↓reduceIte]
+    obtain ⟨out, ext, subset, includes⟩ := branch
+    refine ⟨out, stateExtends_trans _ _ _ ext stateSub, ?_, ?_⟩
+    · exact fun x member => allowedSub x (subset member)
+    · intro key value found
+      exact codeSub key value (includes key value found)
+  next condition =>
+    simp only [condition, ↓reduceIte]
+    obtain ⟨out, ext, subset, group, includes⟩ := branch
+    refine ⟨out, stateExtends_trans _ _ _ ext stateSub, ?_, ?_, ?_⟩
+    · exact fun x member => allowedSub x (subset member)
+    · exact fun x member => allowedSub x (group member)
+    · intro key value found
+      exact codeSub key value (includes key value found)
 
 end Flapjack.Compiler.Backend.ClosCall

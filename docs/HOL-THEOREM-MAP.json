@@ -42,6 +42,20 @@
   "reviewer": "Compared every_Fn_vs_NONE_cond_call_compile_inc_typed and HOL source: free variables program, enabled, known, the state carriers, both implication premises and conclusions match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfv_subg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueWellFormed.lean", "lean_name": "valueWellFormed_subg",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code", "codeNext"],
+  "reviewer": "Source comparison: compared clos_call_wfv_subg_typed: all seven quantified arguments remain in order; the grouped value, code-submap, compiler-state extension and pointwise allowed-set inclusion premises imply the same value well-formedness result. Both code maps use the canonical finite-support codec."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfv_state_subg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueWellFormed.lean", "lean_name": "stateValuesWellFormed_subg",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code", "code", "codeNext"],
+  "reviewer": "Source comparison: compared clos_call_wfv_state_subg_typed: the free variables preserve their first-appearance order, with the same grouped state, code-submap, compiler-state extension and allowed-set inclusion premises. Both state fields and both standalone code maps use canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "every_refv_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueWellFormed.lean", "lean_name": "everyRefValue",
   "statement_status": "reviewed_exact",
