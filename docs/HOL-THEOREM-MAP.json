@@ -1642,6 +1642,15 @@
   "reviewer": "Compared compile_append_typed: the two unrestricted program lists share the original polymorphic key type, and compilation distributes over append in the same order."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "do_app_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/Primitive.lean", "lean_name": "doAppLemma",
+  "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
+  "fmap_as_finite_support": ["refs", "code"],
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_lemma_local_typed, replayed with the original HOL proof: state and value-list premises, operation and case analysis, existential target results, error relation and success relation agree; compiler and FFI state carriers are independent. fmap_as_finite_support records refs and code; nested_list_rel_as_mutual records the source value relation witnessed by functionsRel_iff. doApp inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "do_install_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/Install.lean", "lean_name": "doInstall_full",
   "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",

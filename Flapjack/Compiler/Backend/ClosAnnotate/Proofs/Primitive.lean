@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation.Original
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Operations
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
 
@@ -98,13 +99,42 @@ theorem stateRelSimple {C F : Type} : simpleStateRel ValueRel (StateRel (C := C)
     rcases related with ⟨clock, ffi, maxApp, oracle, compiler, _, refs, code⟩
     exact ⟨clock, ffi, maxApp, oracle, compiler, values, refs, code⟩
 
+namespace PrimitivePort
+/-- The closure state uses canonical finite-support maps. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end PrimitivePort
+
+/-- Primitive operations preserve the annotation value and state relations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "do_app_lemma"
+  (nested_list_rel_as_mutual := [FunctionsRel]) (fmap_as_finite_support := [refs, code])]
+theorem doAppLemma {C F : Type} (source target : State C F) (values nextValues : List Value)
+    (op : ClosLang.Op) (h : StateRelSource source target ∧ List.Forall₂ ValueRel values nextValues) :
+    match doApp op values source with
+    | .val (value, next) => ∃ nextValue nextTarget, ValueRel value nextValue ∧
+        StateRelSource next nextTarget ∧ doApp op nextValues target = .val (nextValue, nextTarget)
+    | .err error => ∃ nextError, doApp op nextValues target = .err nextError ∧
+        Flapjack.SemanticPrimitivesProps.excRel ValueRel error nextError := by
+  have sim := ClosProps.PrimitiveTotal.simpleValRelDoApp ValueRel StateRel source target
+    values nextValues op ⟨valueRelSimple, stateRelSimple⟩
+      ⟨(stateRelSource_iff source target).mp h.1, h.2⟩
+  cases run : doApp op values source with
+  | err error => simpa [run] using sim
+  | val pair =>
+    obtain ⟨value, next⟩ := pair
+    rw [run] at sim
+    obtain ⟨nextValue, nextTarget, valuesRel, statesRel, nextRun⟩ := sim
+    exact ⟨nextValue, nextTarget, valuesRel, (stateRelSource_iff next nextTarget).mpr statesRel, nextRun⟩
+
 /-- The generic primitive theorem supplies the evaluator's simulation
 interface. This Flapjack-specific adapter is used by the annotation proof. -/
 theorem primitiveSimulation_generic {C F : Type} (op : ClosLang.Op) :
     PrimitiveSimulation (C := C) (F := F) op := by
   intro values nextValues source target valuesRel states
-  have sim := ClosProps.PrimitiveTotal.simpleValRelDoApp ValueRel StateRel source target
-    values nextValues op ⟨valueRelSimple, stateRelSimple⟩ ⟨states, valuesRel⟩
+  have sim := doAppLemma source target values nextValues op
+    ⟨(stateRelSource_iff source target).mpr states, valuesRel⟩
   cases run : doApp op values source with
   | err error =>
     rw [run] at sim
@@ -115,6 +145,7 @@ theorem primitiveSimulation_generic {C F : Type} (op : ClosLang.Op) :
     obtain ⟨value, state⟩ := pair
     rw [run] at sim
     obtain ⟨nextValue, nextState, vals, states, nextRun⟩ := sim
-    exact ⟨.val (nextValue, nextState), nextRun, by simpa [AppResultRel] using And.intro vals states⟩
+    exact ⟨.val (nextValue, nextState), nextRun, by
+      simpa [AppResultRel] using And.intro vals ((stateRelSource_iff state nextState).mp states)⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate

@@ -241,6 +241,33 @@ val _ = show "ALOOKUP_compile_typed=" clos_annotateProofTheory.ALOOKUP_compile;
 val _ = show "compile_append_typed=" clos_annotateProofTheory.compile_append;
 val _ = show "state_rel_def_typed=" clos_annotateProofTheory.state_rel_def;
 val _ = show "do_install_thm_typed=" clos_annotateProofTheory.do_install_thm;
+(* Replay the original local primitive simulation proof; it is not exported. *)
+val do_app_lemma_replay = prove (
+  ``state_rel s t /\ LIST_REL v_rel xs ys ==>
+    case do_app opp xs s of
+      Rval (x,s1) =>
+        ?y t1. v_rel x y /\ state_rel s1 t1 /\ do_app opp ys t = Rval (y,t1)
+    | Rerr err1 =>
+        ?err2. do_app opp ys t = Rerr err2 /\ exc_rel v_rel err1 err2``,
+  match_mp_tac simple_val_rel_do_app
+  >> conj_tac >-
+   (fs [simple_val_rel_def]
+    >> once_rewrite_tac [clos_annotateProofTheory.v_rel_cases]
+    >> fs [] >> rw [] >> fs [])
+  >> fs [simple_state_rel_def,clos_annotateProofTheory.state_rel_def]
+  >> rpt strip_tac >> fs [FLOOKUP_DEF]
+  >- (`ref_rel v_rel (s.refs ' ptr) (t.refs ' ptr)` by fs []
+    >> rpt (qpat_x_assum `!x. _` kall_tac) >> rfs []
+    >> Cases_on `s.refs ' ptr` >> fs [ref_rel_def])
+  >- (`ref_rel v_rel (s.refs ' ptr) (t.refs ' ptr)` by fs []
+    >> rpt (qpat_x_assum `!x. _` kall_tac) >> rfs []
+    >> Cases_on `s.refs ' ptr` >> fs [ref_rel_def])
+  >- (`ref_rel v_rel (s.refs ' ptr) (t.refs ' ptr)` by fs []
+    >> rpt (qpat_x_assum `!x. _` kall_tac) >> rfs []
+    >> Cases_on `s.refs ' ptr` >> fs [ref_rel_def])
+  >> rfs [] >> fs [FAPPLY_FUPDATE_THM] >> rveq
+  >> fs [ref_rel_def] >> rw []);
+val _ = show "do_app_lemma_local_typed=" do_app_lemma_replay;
 (* Replay the source-local theorem, which is not exported by the theory. *)
 val state_rel_clocks_eqs_replay = prove (
   ``state_rel s t ==> s.clock = t.clock``,
