@@ -116721,8 +116721,8 @@
     "lean_name": "getSrcNames",
     "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
     "hol_name": "get_src_names_def",
-    "statement_status": "documented_mismatch",
-    "reviewer": "documented_mismatch. Compared get_src_names_def_typed with source lines 790-817: HOL defines get_src_names by list recursion (empty, x::y::xs, and per-constructor singleton clauses). Lean getSrcNames is the singleton-threaded get_src_names_list, which HOL proves equal in get_src_names_sing_eq; that equality is not established in Lean, so the body is not the source definition. The @[hol] tag is withdrawn and a faithful list-recursive port is still missing."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed get_src_names_def_typed capture in clos_to_bvl_source_probe.out: thirteen conjuncts over closLang$exp list and mlstring sptree$num_map. Empty returns the table; x::y::xs recurses on y::xs with get_src_names [x]; the per-constructor singleton clauses are If (nested x, y, z), Var identity, Let on x::xs, Raise/Tick/Handle, Call/Op on xs, App on x::xs, and Fn/Letrec with the loc_opt case and add_src_names. Lean's getSrcNames states the same clauses; the Letrec body list is funBodies (proved equal to MAP SND funs) and the termination measure is sizeOf. The executed compiler reaches it through makeNameAlist."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber.lean",

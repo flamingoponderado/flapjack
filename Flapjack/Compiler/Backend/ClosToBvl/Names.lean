@@ -48,15 +48,66 @@ def getSrcNamesFuns : List (Nat × Exp) → Spt MlString → Spt MlString
   | (_, x) :: xs, table => getSrcNamesFuns xs (getSrcNamesSing x table)
 end
 
-/-- Collect names using the singleton traversal. HOL's `get_src_names_def` is
-the list-recursive form (empty, two-element and per-constructor singleton
-clauses); this definition is the singleton-threaded `get_src_names_list`,
-which HOL proves equal to it in `get_src_names_sing_eq`. That equality is not
-established in Lean, so this is not an exact port of the source definition.
+/-- The recursive-function bodies in source order (HOL's `MAP SND funs`). -/
+def funBodies : List (Nat × Exp) → List Exp
+  | [] => []
+  | (_, body) :: rest => body :: funBodies rest
 
-Former reference: `@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "get_src_names_def"]`. -/
-def getSrcNames (es : List Exp) (table : Spt MlString) : Spt MlString :=
-  getSrcNamesList es table
+/-- The structural traversal is HOL's mapped body list. -/
+theorem funBodies_eq_map (funs : List (Nat × Exp)) :
+    funBodies funs = funs.map Prod.snd := by
+  induction funs with
+  | nil => simp [funBodies]
+  | cons pair rest ih =>
+    obtain ⟨number, body⟩ := pair
+    simp [funBodies, ih]
+
+/-- Mapping the recursive-function bodies does not increase the term size. -/
+theorem sizeOf_funBodies_le (funs : List (Nat × Exp)) :
+    sizeOf (funBodies funs) ≤ sizeOf funs := by
+  induction funs with
+  | nil => simp [funBodies]
+  | cons pair rest ih =>
+    obtain ⟨number, body⟩ := pair
+    simp [funBodies] at ih ⊢
+    omega
+
+/-- Every expression has positive size, so a list's tail contributes at least one. -/
+theorem one_le_sizeOf_exp (expression : Exp) : 1 ≤ sizeOf expression := by
+  cases expression <;> simp <;> omega
+
+/-- Collect names by list recursion: the empty list, HOL's per-constructor
+singleton clauses, and the multi-element split `x :: y :: xs`. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "get_src_names_def"]
+def getSrcNames : List Exp → Spt MlString → Spt MlString
+  | [], table => table
+  | [.ifThenElse _ x y z], table =>
+      getSrcNames [x] (getSrcNames [y] (getSrcNames [z] table))
+  | [.var _ _], table => table
+  | [.«let» _ xs x], table => getSrcNames (x :: xs) table
+  | [.raise _ x], table => getSrcNames [x] table
+  | [.handle _ x y], table => getSrcNames [x] (getSrcNames [y] table)
+  | [.tick _ x], table => getSrcNames [x] table
+  | [.call _ _ _ xs], table => getSrcNames xs table
+  | [.op _ _ xs], table => getSrcNames xs table
+  | [.app _ _ x xs], table => getSrcNames (x :: xs) table
+  | [.fn name loc _ _ x], table =>
+      let table1 := getSrcNames [x] table
+      match loc with | none => table1 | some n => addSrcNames n [name] table1
+  | [.letrec names loc _ funs x], table =>
+      let table0 := getSrcNames (funBodies funs) table
+      let table1 := getSrcNames [x] table0
+      match loc with | none => table1 | some n => addSrcNames n names table1
+  | x :: y :: xs, table => getSrcNames (y :: xs) (getSrcNames [x] table)
+termination_by es _ => sizeOf es
+decreasing_by
+  all_goals
+    try have hx : 1 ≤ sizeOf x := one_le_sizeOf_exp x
+    try have hy : 1 ≤ sizeOf y := one_le_sizeOf_exp y
+    try have hz : 1 ≤ sizeOf z := one_le_sizeOf_exp z
+    try have hf : sizeOf (funBodies funs) ≤ sizeOf funs := sizeOf_funBodies_le funs
+    simp
+    omega
 
 /-- Construct the name table for stubs, top-level declarations and closures. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "make_name_alist_def"]
