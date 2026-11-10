@@ -8,7 +8,7 @@ open Flapjack.Compiler.Inference.Infer Flapjack.Compiler.Inference.Infer.Core
 open Flapjack.Basis.Pure.MlString
 
 private def initial : State := ⟨0, .ln, 15⟩
-private def idFn : Exp := .fn (ofString "x") (.var (.short (ofString "x")))
+private def idFn : AstHOL.Exp := .fn (ofString "x") (.var (.short (ofString "x")))
 
 #guard match inferExprFuel 100 100 emptyEnv idFn initial with
   | .ok (t, s) => t == .app [.uvar 0, .uvar 0] 4 && s.nextUvar == 1 &&
