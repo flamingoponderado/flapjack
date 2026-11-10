@@ -88,33 +88,27 @@ theorem compile_decs_decls_thmHOL {width : Nat} [NeZero width] :
         (∀ d ∈ fdecs, ¬ isFunctionHOL d = true) →
       funs = [] := by
   intro ctxt fdecs
-  induction fdecs generalizing ctxt with
-  | nil =>
-      intro decls funs exns ctxt' ⟨h, _⟩
-      simp only [compileDecsExactHOL, Prod.mk.injEq] at h
-      exact h.2.1.symm
-  | cons d ds ih =>
-      intro decls funs exns ctxt' ⟨h, hall⟩
-      have htail : ∀ e ∈ ds, ¬ isFunctionHOL e = true := fun e he => hall e (by simp [he])
-      cases d with
-      | function fi => exact absurd (by simp) (hall (.function fi) (by simp))
-      | decl shape name value =>
-          simp only [compileDecsExactHOL] at h
-          generalize hr : compileDecsExactHOL (width := width) _ ds = r at h
-          obtain ⟨a, b, c, e⟩ := r
-          simp only [Prod.mk.injEq] at h
-          obtain ⟨_, rfl, _, _⟩ := h
-          exact ih _ a b c e ⟨hr, htail⟩
-      | exnDecl name shape =>
-          simp only [compileDecsExactHOL] at h
-          generalize hr : compileDecsExactHOL (width := width) _ ds = r at h
-          obtain ⟨a, b, c, e⟩ := r
-          simp only [Prod.mk.injEq] at h
-          obtain ⟨_, rfl, _, _⟩ := h
-          exact ih _ a b c e ⟨hr, htail⟩
-      | name name fields =>
-          simp only [compileDecsExactHOL] at h
-          exact ih _ _ _ _ _ ⟨h, htail⟩
+  fun_induction compileDecsExactHOL ctxt fdecs with
+  | case1 => simp_all [Prod.mk.injEq, compileDecsExactHOL]
+  | case2 =>
+    rename_i xh ih
+    intro decls funs exns ctxt' ⟨h, hall⟩
+    simp only [Prod.mk.injEq] at h
+    obtain ⟨_, rfl, _, _⟩ := h
+    exact ih _ _ _ _ ⟨xh, fun e he => hall e (List.mem_cons_of_mem _ he)⟩
+  | case3 =>
+    intro decls funs exns ctxt' ⟨h, hall⟩
+    exact absurd (by simp [isFunctionHOL]) (hall (.function _) List.mem_cons_self)
+  | case4 =>
+    rename_i xh ih
+    intro decls funs exns ctxt' ⟨h, hall⟩
+    simp only [Prod.mk.injEq] at h
+    obtain ⟨_, rfl, _, _⟩ := h
+    exact ih _ _ _ _ ⟨xh, fun e he => hall e (List.mem_cons_of_mem _ he)⟩
+  | case5 =>
+    rename_i ih
+    intro decls funs exns ctxt' ⟨h, hall⟩
+    exact ih _ _ _ _ ⟨h, fun e he => hall e (List.mem_cons_of_mem _ he)⟩
 
 /-- Exact HOL `compile_decs_EVERY_is_function` (`pan_globalsProofScript.sml:1977-1980`). -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "compile_decs_EVERY_is_function"
