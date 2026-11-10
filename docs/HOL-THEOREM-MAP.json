@@ -1,5 +1,19 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_inv_def", "hol_line": 2087,
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeInvariant.lean", "lean_name": "codeInv",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["sCode", "tCode"],
+  "reviewer": "Source comparison: compared clos_call_code_inv_def_typed: the eight independent payload and callback types, source and target code maps, both stateful transformations, existential well-formed state, oracle monotonicity, association-list code, optional-state implication and every-entry syntax/auxiliary clause match. Both code parameters use canonical finite support. The separately reviewed HolFiniteMapExact.alistToFmap producer is observed in the definition body; the current parameter-observations qualifier only tracks occurrences in declaration types."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_inv_k",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeInvariant.lean", "lean_name": "codeInv_entry",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["sCode", "tCode"],
+  "reviewer": "Source comparison: compared clos_call_code_inv_k_typed: the free invariant inputs precede quantified k, all independent types and the code invariant premise are retained, and the complete source oracle entry yields syntaxOk and an empty auxiliary list. Both code parameters use canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "co_ok_IMP_full_gs_eq_shift_seq",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/OracleInvariant.lean", "lean_name": "oracleOk_fullState",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",

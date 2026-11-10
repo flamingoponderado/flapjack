@@ -835,6 +835,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.InsertDomain
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DomainLocations
 import Flapjack.Compiler.Backend.ClosCall.Proofs.MakeState
 import Flapjack.Compiler.Backend.ClosCall.Proofs.OracleInvariant
+import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeInvariant
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
