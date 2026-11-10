@@ -19,6 +19,7 @@ val _ = (print "v_rel_exists_type="; Lib.with_flag (Globals.show_types,true) pri
 val _ = (print "dest_closure_v_rel_lookup_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.dest_closure_v_rel_lookup); print "\n");
 val _ = (print "dest_closure_v_rel_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.dest_closure_v_rel); print "\n");
 val _ = (print "dest_closure_partial_wfv_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.dest_closure_partial_wfv); print "\n");
+val _ = (print "dest_closure_full_wfv_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.dest_closure_full_wfv); print "\n");
 val _ = (print "insert_each_prime_def_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.insert_each'_def); print "\n");
 val _ = (print "wfg_insert_each_prime_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.wfg_insert_each'); print "\n");
 val _ = (print "fst_insert_each_prime_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.FST_insert_each'); print "\n");
