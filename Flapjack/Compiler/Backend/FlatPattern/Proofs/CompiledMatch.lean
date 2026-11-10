@@ -80,51 +80,6 @@ theorem setToList_fromList {α : Type} (xs : List α) :
     apply (sptMemToList x _).2
     exact ⟨index, by simpa [sptFromList] using branchFold_lookup xs 0 .ln index x atIndex⟩
 
-/-- Each branch stored by the compiler is found at its original index. -/
-theorem branchTree_lookup (branches : List FlatLang.Exp) (index : Nat) (branch : FlatLang.Exp)
-    (atIndex : branches[index]? = some branch) : sptLookup index (branchTree branches) = some branch := by
-  simpa [branchTree, sptFromList] using branchFold_lookup branches 0 .ln index branch atIndex
-
-/-- The decision-tree branch lowering evaluates the same selected source row
-as the flat matcher, provided matching does not type-fail. -/
-theorem evaluate_compilePats_decision {C F : Type} (cfg : Config) (trace : BackendCommon.Tra) (n : Nat)
-    (expression default : FlatLang.Exp) (rows : List (FlatLang.Pat × FlatLang.Exp))
-    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (value : FlatSem.Value)
-    (pure : FlatSem.evaluate env state [expression] = (state, .val [value]))
-    (safe : FlatSem.pmatchRows rows state value ≠ .typeError) :
-    FlatSem.evaluate env state [compilePats cfg false trace n expression default rows] =
-      FlatSem.evaluate env state [match FlatSem.pmatchRows rows state value with
-        | .match (_, pattern, body) => compilePatRhs trace n expression (pattern, body)
-        | _ => default] := by
-  let encoded := (rows.zipIdx 0).map (fun (row, index) => (encodePat row.1, index))
-  let branches := rows.map (compilePatRhs trace n expression)
-  have encoding := encodeRows_simulation state value rows 0
-  cases source : FlatSem.pmatchRows rows state value with
-  | typeError => exact (safe source).elim
-  | noMatch =>
-    have abstractMatch : PatternSemantics.matchRows (encodeRefs state) encoded (encodeValue value) = some .failure := by
-      simpa [source, encoded] using encoding
-    have compiled := PatternComp.comp_correct (encodeRefs state) (encodeValue value) encoded (by rw [abstractMatch]; simp)
-    have treeEval : PatternSemantics.dtEval (encodeRefs state) (encodeValue value) (PatternComp.comp encoded) =
-        some .failure := compiled.trans abstractMatch
-    have decoded := decodeDtree_simulation state value (PatternComp.comp encoded) .failure env expression trace
-      (branchTree branches) default ⟨treeEval, pure⟩
-    simpa [compilePats, encoded, branches, source] using decoded
-  | «match» selected =>
-    rcases selected with ⟨bindings, pattern, body⟩
-    obtain ⟨index, rowAt, abstractMatch⟩ : ∃ index, rows[index]? = some (pattern, body) ∧
-        PatternSemantics.matchRows (encodeRefs state) encoded (encodeValue value) = some (.success index) := by
-      simpa [source, encoded] using encoding
-    have compiled := PatternComp.comp_correct (encodeRefs state) (encodeValue value) encoded (by rw [abstractMatch]; simp)
-    have treeEval : PatternSemantics.dtEval (encodeRefs state) (encodeValue value) (PatternComp.comp encoded) =
-        some (.success index) := compiled.trans abstractMatch
-    have branchAt : branches[index]? = some (compilePatRhs trace n expression (pattern, body)) := by
-      simp [branches, List.getElem?_map, rowAt]
-    have lookup := branchTree_lookup branches index (compilePatRhs trace n expression (pattern, body)) branchAt
-    have decoded := decodeDtree_simulation state value (PatternComp.comp encoded) (.success index) env expression trace
-      (branchTree branches) default ⟨treeEval, pure⟩
-    simpa [compilePats, encoded, branches, source, lookup] using decoded
-
 /-- Both pattern-compilation paths evaluate the branch chosen by FlatLang's matcher. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "evaluate_compile_pats"]
 theorem evaluate_compilePats {C F : Type} (rows : List (FlatLang.Pat × FlatLang.Exp))
@@ -138,7 +93,37 @@ theorem evaluate_compilePats {C F : Type} (rows : List (FlatLang.Pat × FlatLang
         | _ => default] := by
   obtain ⟨safe, pure⟩ := premises
   cases naive with
-  | false => exact evaluate_compilePats_decision cfg trace n expression default rows env state value pure safe
+  | false =>
+    let encoded := (rows.zipIdx 0).map (fun (row, index) => (encodePat row.1, index))
+    let branches := rows.map (compilePatRhs trace n expression)
+    have encoding := encodeRows_simulation state value rows 0
+    cases source : FlatSem.pmatchRows rows state value with
+    | typeError => exact (safe source).elim
+    | noMatch =>
+      have abstractMatch : PatternSemantics.matchRows (encodeRefs state) encoded (encodeValue value) = some .failure := by
+        simpa [source, encoded] using encoding
+      have compiled := PatternComp.comp_correct (encodeRefs state) (encodeValue value) encoded (by rw [abstractMatch]; simp)
+      have treeEval : PatternSemantics.dtEval (encodeRefs state) (encodeValue value) (PatternComp.comp encoded) =
+          some .failure := compiled.trans abstractMatch
+      have decoded := decodeDtree_simulation state value (PatternComp.comp encoded) .failure env expression trace
+        (branchTree branches) default ⟨treeEval, pure⟩
+      simpa [compilePats, encoded, branches, source] using decoded
+    | «match» selected =>
+      rcases selected with ⟨bindings, pattern, body⟩
+      obtain ⟨index, rowAt, abstractMatch⟩ : ∃ index, rows[index]? = some (pattern, body) ∧
+          PatternSemantics.matchRows (encodeRefs state) encoded (encodeValue value) = some (.success index) := by
+        simpa [source, encoded] using encoding
+      have compiled := PatternComp.comp_correct (encodeRefs state) (encodeValue value) encoded (by rw [abstractMatch]; simp)
+      have treeEval : PatternSemantics.dtEval (encodeRefs state) (encodeValue value) (PatternComp.comp encoded) =
+          some (.success index) := compiled.trans abstractMatch
+      have branchAt : branches[index]? = some (compilePatRhs trace n expression (pattern, body)) := by
+        simp [branches, List.getElem?_map, rowAt]
+      have lookup : sptLookup index (branchTree branches) = some (compilePatRhs trace n expression (pattern, body)) := by
+        simpa [branchTree, sptFromList] using
+          branchFold_lookup branches 0 .ln index (compilePatRhs trace n expression (pattern, body)) branchAt
+      have decoded := decodeDtree_simulation state value (PatternComp.comp encoded) (.success index) env expression trace
+        (branchTree branches) default ⟨treeEval, pure⟩
+      simpa [compilePats, encoded, branches, source, lookup] using decoded
   | true => exact evaluate_compilePats_naive cfg trace n expression default rows env state value pure safe
 
 end Flapjack.Compiler.Backend.FlatPattern
