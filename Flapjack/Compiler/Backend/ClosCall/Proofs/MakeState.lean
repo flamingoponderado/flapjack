@@ -140,4 +140,56 @@ theorem makeState_subg {A B : Type} [Nonempty B] (cfg : Spt A)
       exact holALookup_of_distinct_member _ key value ⟨newWell.2, member⟩
   next invalid => simp at run
 
+/-- Canonical codec for the first code map in state-construction uniqueness. -/
+theorem holFmapAsFiniteSupportParamWitness_makeState_eq_x2 {B : Type}
+    (x2 : HolFiniteMapExact Nat B) (key : Nat) :
+    (ofBroad (toBroad x2) x2.finiteSupport).lookup key = x2.lookup key ∧
+    (ofBroad (toBroad x2) x2.finiteSupport).finiteSupport = x2.finiteSupport ∧
+    ofBroad (toBroad x2) x2.finiteSupport = x2 :=
+  holFmapAsFiniteSupportParamWitness_makeState_code x2 key
+
+/-- Canonical codec for the second code map in state-construction uniqueness. -/
+theorem holFmapAsFiniteSupportParamWitness_makeState_eq_y2 {B : Type}
+    (y2 : HolFiniteMapExact Nat B) (key : Nat) :
+    (ofBroad (toBroad y2) y2.finiteSupport).lookup key = y2.lookup key ∧
+    (ofBroad (toBroad y2) y2.finiteSupport).finiteSupport = y2.finiteSupport ∧
+    ofBroad (toBroad y2) y2.finiteSupport = y2 :=
+  holFmapAsFiniteSupportParamWitness_makeState_code y2 key
+
+/-- Constructed states with the same sparse tree and an extension relation agree. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "make_g_make_g_eq"
+  (fmap_as_finite_support_parameters := [x2, y2])]
+theorem makeState_eq {A B : Type} [Nonempty B]
+    (x1 : Spt A) (x2 : HolFiniteMapExact Nat B)
+    (y1 : Spt A) (y2 : HolFiniteMapExact Nat B)
+    (g0 g1 : Spt A × List (Nat × B))
+    (h : g0.1 = g1.1 ∧ stateExtends g0 g1 ∧
+      makeState x1 x2 = some g0 ∧ makeState y1 y2 = some g1) : g0 = g1 := by
+  classical
+  obtain ⟨sameTree, extension, run0, run1⟩ := h
+  have wf0 := makeState_wellFormed x1 x2 g0 run0
+  have wf1 := makeState_wellFormed y1 y2 g1 run1
+  unfold makeState at run0 run1
+  split at run0 <;> try contradiction
+  split at run1 <;> try contradiction
+  simp only [Option.some.injEq] at run0 run1
+  subst g0
+  subst g1
+  simp only at sameTree
+  subst y1
+  simp only [Prod.mk.injEq, true_and]
+  apply List.map_congr_left
+  intro entry member
+  obtain ⟨k, v⟩ := entry
+  have mem0 : (k + 1, holThe (x2.lookup (k + 1))) ∈
+      (sptToAList x1).map (fun entry => (entry.1 + 1, holThe (x2.lookup (entry.1 + 1)))) :=
+    List.mem_map.mpr ⟨(k, v), member, rfl⟩
+  have mem1 : (k + 1, holThe (y2.lookup (k + 1))) ∈
+      (sptToAList x1).map (fun entry => (entry.1 + 1, holThe (y2.lookup (entry.1 + 1)))) :=
+    List.mem_map.mpr ⟨(k, v), member, rfl⟩
+  have lookup0 := holALookup_of_distinct_member _ _ _ ⟨wf0.2, mem0⟩
+  have lookup1 := holALookup_of_distinct_member _ _ _ ⟨wf1.2, mem1⟩
+  have same := (extension.2.1 _ _ lookup0).symm.trans lookup1
+  exact congrArg (fun value => (k + 1, value)) (Option.some.inj same)
+
 end Flapjack.Compiler.Backend.ClosCall

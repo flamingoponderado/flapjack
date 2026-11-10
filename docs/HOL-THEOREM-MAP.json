@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "make_g_make_g_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeState.lean", "lean_name": "makeState_eq",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["x2", "y2"],
+  "reviewer": "Compared make_g_make_g_eq_type in clos_call_code_list_probe.out and HOL source: independent sparse-tree and code payload types, both finite maps and states, same-tree and extension conditions, and both successful constructions imply equality of the complete states. Both code parameters use canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "make_g_subg",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeState.lean", "lean_name": "makeState_subg",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations",
