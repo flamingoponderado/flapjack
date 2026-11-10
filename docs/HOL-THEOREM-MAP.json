@@ -127002,16 +127002,16 @@
   "hol_name": "free_names_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean",
   "lean_name": "freeNames",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_tailrec_proof_source_probe capture (`∀n name :num. free_names n name ⇔ ∀k :num. n + bvl_to_bvi_namespaces * k ≠ name`) with freeNames next name := ∀ k, next + bvlToBviNamespaces * k ≠ name; bvlToBviNamespaces is the reviewed bvl_to_bvi_namespaces_def port."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
   "hol_name": "namespace_rel_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean",
   "lean_name": "namespaceRel",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_tailrec_proof_source_probe capture (`∀c1 c2 :α sptree$num_map. namespace_rel c1 c2 ⇔ ...` with the three domain clauses and `n MOD bvl_to_bvi_namespaces = 2` for in_ns_2) with namespaceRel source target over the reviewed Spt port: sptMem is HOL's `n IN domain t` (documented in Flapjack/Misc/Sptree.lean), the if-then-else, the second `≠ 2` clause and the stub clause match clause for clause."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
@@ -127058,56 +127058,56 @@
   "hol_name": "from_op_to_op",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/ScanCorrespondence.lean",
   "lean_name": "fromOp_toOp",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_tailrec_proof_source_probe capture (`from_op (to_op (opr :assoc_op)) = opr`) with fromOp_toOp (assoc : AssocOp) : fromOp (toOp assoc) = assoc; fromOp, toOp and AssocOp are the reviewed from_op_def, to_op_def and assoc_op ports."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
   "hol_name": "list_to_v_simp",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/Semantics.lean",
   "lean_name": "listToValue_decode",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_tailrec_proof_source_probe capture (`∀xs :v list. v_to_list (list_to_v xs) = SOME xs`) with listToValue_decode (xs : List Value) : valueToList (listToValue xs) = some xs; valueToList and listToValue are the reviewed v_to_list_def and list_to_v_def ports and Value is the reviewed v port."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
   "hol_name": "list_to_v_imp",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/Semantics.lean",
   "lean_name": "listToValue_of_decode",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_tailrec_proof_source_probe capture (`∀x :v. ∀xs :v list. v_to_list x = SOME xs ⇒ list_to_v xs = x`) with listToValue_of_decode (x) (xs) (h : valueToList x = some xs) : listToValue xs = x; same reviewed conversions and carrier as list_to_v_simp."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
   "hol_name": "op_id_val_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/Semantics.lean",
   "lean_name": "opIdValue",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_tailrec_proof_source_probe capture (`op_id_val Plus = Number 0 ∧ Times = Number 1 ∧ Append = Block nil_tag [] ∧ Noop = Number 6333`) with opIdValue's four clauses .number 0/.number 1/.block nilTag []/.number 6333; AssocOp, Value and nilTag are the reviewed assoc_op, v and nil_tag_def ports."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
   "hol_name": "ty_rel_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/Semantics.lean",
   "lean_name": "tyRel",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_tailrec_proof_source_probe capture (`ty_rel = LIST_REL (λv t. (t = Int ⇒ ∃k. v = Number k) ∧ (t = List ⇒ ∃ys. v_to_list v = SOME ys))`) with tyRel env types := List.Forall₂ (fun value ty => (ty = .int → ∃ k, value = .number k) ∧ (ty = .list → ∃ ys, valueToList value = some ys)) env types; List.Forall₂ is the List rendering of LIST_REL and ValueType is the reviewed v_ty port."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
   "hol_name": "ty_rel_APPEND",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/Semantics.lean",
   "lean_name": "tyRel_append",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the source statement of the [local] theorem ty_rel_APPEND (bvi_tailrecProofScript.sml:420-423; the theory does not export it, so bvi_tailrec_proof_source_probe replays it typed: `∀env ts ws vs. ty_rel env ts ∧ ty_rel vs ws ⇒ ty_rel (vs ++ env) (ws ++ ts)`) with tyRel_append (env) (ts ws) (vs) (h : tyRel env ts ∧ tyRel vs ws) : tyRel (vs ++ env) (ws ++ ts); binders and premise order match the replay."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
   "hol_name": "ty_rel_decide_ty",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/Semantics.lean",
   "lean_name": "tyRel_decideType",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_tailrec_proof_source_probe capture (`∀ts tt env. (ty_rel env ts ∨ ty_rel env tt) ∧ LENGTH ts = LENGTH tt ⇒ ty_rel env (MAP2 decide_ty ts tt)`) with tyRel_decideType (ts tt) (env) (hyp : (tyRel env ts ∨ tyRel env tt) ∧ ts.length = tt.length) : tyRel env ((ts.zip tt).map fun (x,y) => decideType x y); Lean's List.zip is the truncating MAP2 rendering and decideType is the reviewed decide_ty_def port."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",

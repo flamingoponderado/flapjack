@@ -9474,3 +9474,8 @@ run_probe semantic_primitives_source_probeScript.sml semantic_primitives_source_
   bind_stamp_def_typed chr_stamp_def_typed div_stamp_def_typed subscript_stamp_def_typed bind_exn_v_def_typed chr_exn_v_def_typed div_exn_v_def_typed sub_exn_v_def_typed exp_or_val_axiom_typed store_ffi_type_typed \
   "$cake_dir/semantics/semanticPrimitivesScript.sml" \
   "$cake_dir/semantics"
+
+run_probe bvi_tailrec_proof_source_probeScript.sml bvi_tailrec_proof_source_probe.out \
+  free_names_def_typed namespace_rel_def_typed from_op_to_op_typed list_to_v_simp_typed list_to_v_imp_typed op_id_val_def_typed ty_rel_def_typed ty_rel_APPEND_typed ty_rel_decide_ty_typed \
+  "$cake_dir/compiler/backend/proofs/bvi_tailrecProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
