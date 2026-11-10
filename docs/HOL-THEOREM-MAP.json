@@ -441,6 +441,12 @@
   "reviewer": "Compared DISJOINT_LE_GT_typed and source: the free variables A, n, B occur in order, with natural-number set carriers, the grouped bounds, and pointwise DISJOINT conclusion matching HOL."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cond_mti_monotonic_elist_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean", "lean_name": "condMti_monotonic_elistGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cond_mti_monotonic_elist_globals_typed and source: free variables es, co, enabled, maxApp are in order; oracle configuration and auxiliary element types are independent. The global-write bag support, strict ordering, initial-set transformation and incremental oracle composition match HOL for both boolean cases."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "oracle_monotonic_init_subset",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean", "lean_name": "oracleMonotonic_initSubset",
   "statement_status": "reviewed_exact",

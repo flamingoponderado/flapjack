@@ -2,6 +2,9 @@ module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Oracle
 public import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.GlobalTraversal
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
+public import Flapjack.Misc.Bag
 import Flapjack.Misc.Sptree.ToAList
 import Mathlib.Data.Set.Lattice
 
@@ -9,7 +12,7 @@ import Mathlib.Data.Set.Lattice
 
 /-! Domains and freshness of code accumulated from an oracle. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
-open BackendProps
+open Flapjack ClosLang ClosProps BackendProps
 
 /-- Accumulated code contains exactly the labels from earlier oracle entries. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "domain_nth_code"]
@@ -70,5 +73,23 @@ theorem oracleMonotonic_initSubset {α β : Type} (f : α → Set β) (R : β �
     (St : Set β) (co : Nat → α) (St' : Set β)
     (h : oracleMonotonic f R St co ∧ St' ⊆ St) : oracleMonotonic f R St' co := by
   exact oracleMonotonic_subset St' St f co f co R ⟨h.2, fun _ => Set.Subset.rfl⟩ h.1
+
+/-- Optional multi-argument introduction preserves the global-write oracle order. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cond_mti_monotonic_elist_globals"]
+theorem condMti_monotonic_elistGlobals {α β : Type} (es : List ClosLang.Exp)
+    (co : Nat → α × (List ClosLang.Exp × List β)) (enabled : Bool) (maxApp : Nat)
+    (h : oracleMonotonic (fun entry => setOfBag (elistGlobals entry.2.1)) (· < ·)
+      (setOfBag (elistGlobals es)) co) :
+    oracleMonotonic (fun entry => setOfBag (elistGlobals entry.2.1)) (· < ·)
+      (setOfBag (elistGlobals (ClosMti.compile enabled maxApp es)))
+      (pureCo (ClosMti.condCompileInc enabled maxApp) ∘ co) := by
+  apply oracleMonotonic_subset _ _ _ _ _ _ _ ?_ h
+  constructor
+  · simp only [ClosMti.compile_preserves_elist_globals]
+    exact fun _ hx => hx
+  · intro n x hx
+    cases enabled <;>
+      simpa [Function.comp_def, pureCo, ClosMti.condCompileInc, ClosMti.compileInc,
+        ClosMti.intro_multi_preserves_elist_globals] using hx
 
 end Flapjack.Compiler.Backend.ClosToBvl
