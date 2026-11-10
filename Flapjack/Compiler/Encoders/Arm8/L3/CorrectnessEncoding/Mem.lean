@@ -156,7 +156,8 @@ theorem arm8MemStore_alignedN {n k : Nat} (hpow : n = 2 ^ k) (op : HolMemop)
     Aligned (TN := 64) (s1.regs base + off, n) = true := by
   have hlog : holLOG2 n = k := by
     rw [hpow]
-    exact holLOG_UNIQUE 2 (2 ^ k) k ⟨Nat.le_refl _, Nat.pow_lt_pow_succ (a := 2) (n := k) (by decide)⟩
+    exact holLOG_UNIQUE 2 (2 ^ k) k
+      ⟨Nat.le_refl _, Nat.pow_lt_pow_succ (a := 2) (n := k) (by decide)⟩
   have hfail : s2.failed = false := boolOfNotTrue hok
   rw [← hupd] at hfail
   simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
@@ -192,7 +193,8 @@ theorem arm8MemLoad_alignedN {n k : Nat} (hpow : n = 2 ^ k) (op : HolMemop)
     Aligned (TN := 64) (s1.regs base + off, n) = true := by
   have hlog : holLOG2 n = k := by
     rw [hpow]
-    exact holLOG_UNIQUE 2 (2 ^ k) k ⟨Nat.le_refl _, Nat.pow_lt_pow_succ (a := 2) (n := k) (by decide)⟩
+    exact holLOG_UNIQUE 2 (2 ^ k) k
+      ⟨Nat.le_refl _, Nat.pow_lt_pow_succ (a := 2) (n := k) (by decide)⟩
   have hfail : s2.failed = false := boolOfNotTrue hok
   rw [← hupd] at hfail
   simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
@@ -864,7 +866,8 @@ theorem arm8MemStore_aligned (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     Aligned (TN := 64) (s1.regs base + off, 8) = true := by
-  exact arm8MemStore_alignedN (n := 8) (k := 3) (by decide) op r base off s1 s2 pc hspec hupd hbe hok
+  exact arm8MemStore_alignedN (n := 8) (k := 3) (by decide)
+    op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemStore_domain (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memStore (width := 64) 8)
@@ -878,7 +881,8 @@ theorem arm8MemLoad_aligned (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     Aligned (TN := 64) (s1.regs base + off, 8) = true := by
-  exact arm8MemLoad_alignedN (n := 8) (k := 3) (by decide) op r base off s1 s2 pc hspec hupd hbe hok
+  exact arm8MemLoad_alignedN (n := 8) (k := 3) (by decide)
+    op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemLoad_domain (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memLoad (width := 64) 8)
@@ -1181,7 +1185,8 @@ theorem arm8MemStore_aligned_four (op : HolMemop) (r base : Nat) (off : BitVec 6
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     Aligned (TN := 64) (s1.regs base + off, 4) = true := by
-  exact arm8MemStore_alignedN (n := 4) (k := 2) (by decide) op r base off s1 s2 pc hspec hupd hbe hok
+  exact arm8MemStore_alignedN (n := 4) (k := 2) (by decide)
+    op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemStore_domain_four (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memStore (width := 64) 4)
@@ -1195,7 +1200,8 @@ theorem arm8MemLoad_aligned_four (op : HolMemop) (r base : Nat) (off : BitVec 64
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     Aligned (TN := 64) (s1.regs base + off, 4) = true := by
-  exact arm8MemLoad_alignedN (n := 4) (k := 2) (by decide) op r base off s1 s2 pc hspec hupd hbe hok
+  exact arm8MemLoad_alignedN (n := 4) (k := 2) (by decide)
+    op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemLoad_domain_four (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memLoad (width := 64) 4)
@@ -1561,7 +1567,8 @@ theorem arm8MemStore_aligned_one (op : HolMemop) (r base : Nat) (off : BitVec 64
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     Aligned (TN := 64) (s1.regs base + off, 1) = true := by
-  exact arm8MemStore_alignedN (n := 1) (k := 0) (by decide) op r base off s1 s2 pc hspec hupd hbe hok
+  exact arm8MemStore_alignedN (n := 1) (k := 0) (by decide)
+    op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemStore_domain_one (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memStore (width := 64) 1)
@@ -1575,7 +1582,8 @@ theorem arm8MemLoad_aligned_one (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     Aligned (TN := 64) (s1.regs base + off, 1) = true := by
-  exact arm8MemLoad_alignedN (n := 1) (k := 0) (by decide) op r base off s1 s2 pc hspec hupd hbe hok
+  exact arm8MemLoad_alignedN (n := 1) (k := 0) (by decide)
+    op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemLoad_domain_one (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memLoad (width := 64) 1)
@@ -1939,7 +1947,8 @@ theorem arm8MemStore_aligned_two (op : HolMemop) (r base : Nat) (off : BitVec 64
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     Aligned (TN := 64) (s1.regs base + off, 2) = true := by
-  exact arm8MemStore_alignedN (n := 2) (k := 1) (by decide) op r base off s1 s2 pc hspec hupd hbe hok
+  exact arm8MemStore_alignedN (n := 2) (k := 1) (by decide)
+    op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemStore_domain_two (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memStore (width := 64) 2)
@@ -1953,7 +1962,8 @@ theorem arm8MemLoad_aligned_two (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     Aligned (TN := 64) (s1.regs base + off, 2) = true := by
-  exact arm8MemLoad_alignedN (n := 2) (k := 1) (by decide) op r base off s1 s2 pc hspec hupd hbe hok
+  exact arm8MemLoad_alignedN (n := 2) (k := 1) (by decide)
+    op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemLoad_domain_two (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memLoad (width := 64) 2)
