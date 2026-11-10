@@ -125,14 +125,16 @@ theorem arm8Aligned_iff (a : BitVec 64) {n : Nat} :
   · intro h
     have ht := congrArg BitVec.toNat h
     have hle : n * (a.toNat / n) ≤ a.toNat := by
-      rw [Nat.mul_comm]; exact Nat.div_mul_le_self _ _
+      rw [Nat.mul_comm]
+      exact Nat.div_mul_le_self _ _
     rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt hle a.isLt)] at ht
     rw [ht]
     exact Nat.mul_mod_right n (a.toNat / n)
   · intro h
     apply BitVec.eq_of_toNat_eq
     have hle : n * (a.toNat / n) ≤ a.toNat := by
-      rw [Nat.mul_comm]; exact Nat.div_mul_le_self _ _
+      rw [Nat.mul_comm]
+      exact Nat.div_mul_le_self _ _
     rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt hle a.isLt), Nat.mul_comm]
     exact (Nat.div_mul_cancel (Nat.dvd_of_mod_eq_zero h)).symm
 
@@ -217,7 +219,9 @@ theorem arm8MemLoad_domainN {n k : Nat} (hpow : n = 2 ^ k) (op : HolMemop)
     exact hspec
   have h := memLoadDomain op r base off s1 s2 k pc hspec' hupd hbe hok
   intro i hi
-  exact h i (by rw [← hpow]; exact hi)
+  exact h i (by
+    rw [← hpow]
+    exact hi)
 
 /-- `e_load_store` of `LoadStoreImmediate@64` on the scaled twelve-bit path:
 the word `arm8LoadStoreImm12Word` (Flapjack infrastructure; the rendered
