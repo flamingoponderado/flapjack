@@ -60,6 +60,7 @@ val _ = (print "every_error_result_type="; Lib.with_flag (Globals.show_types,tru
 val _ = (print "every_result_type="; Lib.with_flag (Globals.show_types,true) print_term (concl semanticPrimitivesPropsTheory.every_result_def); print "\n");
 val _ = (print "evaluate_add_clock_type="; Lib.with_flag (Globals.show_types,true) print_term (concl closPropsTheory.evaluate_add_clock); print "\n");
 val _ = (print "evaluate_add_to_clock_type="; Lib.with_flag (Globals.show_types,true) print_term (concl closPropsTheory.evaluate_add_to_clock); print "\n");
+val _ = (print "evaluate_mono_type="; Lib.with_flag (Globals.show_types,true) print_term (concl closPropsTheory.evaluate_mono); print "\n");
 val _ = (print "suffix_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.code_list_IS_SUFFIX); print "\n");
 val entry = EVAL ``clos_call$code_list 10 [(2,closLang$Var None 4);(0,closLang$Var None 9);(1,closLang$Var None 2)] (sptree$LN,[(90,3,closLang$Var None 0)])``;
 val _ = (print "example="; print_term (rhs (concl entry)); print "\n");

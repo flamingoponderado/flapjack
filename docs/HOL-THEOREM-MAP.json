@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_mono",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/CodeGrowth.lean", "lean_name": "evaluate_mono",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_mono_type and source: expressions, environment, independently polymorphic state carriers, unrestricted result and final state retain the original order; the complete evaluation equation implies the full code-submap conclusion. Closure state refs and code use canonical finite support. The faithful evaluator inherits reals_as_rational_cuts and SOUNDNESS item 8."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_add_to_clock",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/ClockShift.lean", "lean_name": "evaluate_addToClock",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],

@@ -855,6 +855,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.Purity
 import Flapjack.Compiler.Backend.ClosCall.Proofs.MakeCodeState
 import Flapjack.Compiler.Backend.ClosCall.Proofs.PureCorrect
 import Flapjack.Compiler.Backend.Semantics.ClosProps.ClockShift
+import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeGrowth
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InstallSimulation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FiniteMap
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
