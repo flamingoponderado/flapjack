@@ -106,4 +106,27 @@ decreasing_by
   all_goals have bound := List.sizeOf_lt_of_mem (show x ∈ _ from ‹x ∈ _›)
   all_goals simp_wf
   all_goals omega
+/-- Canonical finite-map codec for the environment-existence theorem. -/
+theorem holFmapAsFiniteSupportParamWitness_envRel_exists_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_exists_code code key
+
+/-- A well-formed environment has a related target of the same length. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "env_rel_env_exists"
+  (fmap_as_finite_support_parameters := [code])]
+theorem envRel_exists (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (env : List Value)
+    (vars : List (Nat × ClosLang.Exp)) (safe : ∀ v ∈ env, valueWellFormed g allowed code v) :
+    ∃ env5, envRel (valueRel g allowed code) env env5 0 vars ∧ env5.length = env.length := by
+  obtain ⟨env5, related⟩ := listExists (valueRel g allowed code) env (by
+    intro v member
+    exact valueRel_exists g allowed code v (safe v member))
+  refine ⟨env5, ?_, related.length_eq.symm⟩
+  unfold envRel
+  rw [if_pos related.length_eq]
+  exact related
+
 end Flapjack.Compiler.Backend.ClosCall

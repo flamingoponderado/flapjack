@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "fv_GENLIST_Var_alt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubInvariants.lean", "lean_name": "freeVars_variables_alt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed fv_genlist_alt_type source capture: the free variable index precedes quantified count, starting index and trace, and the full free-variable iff is unchanged."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "env_rel_env_exists",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueExistence.lean", "lean_name": "envRel_exists",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared the typed env_exists_type source capture: the free compiler state, allowed set, code and source environment precede vars; every source value is well formed, and the result existential retains the complete environment relation and equal-length conclusion. The code parameter uses canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_rel_state_rel_install",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InstallSimulation.lean", "lean_name": "codeRel_stateRel_install",
   "statement_status": "reviewed_fmap_as_finite_support_relation",
@@ -21667,8 +21679,8 @@
     "hol_name": "pmatch_Match_reachable",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PatternRelation.lean",
     "lean_name": "pmatch_Match_reachable",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full matcher, value, store, and sparse-tree carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the full typed source statement in flat_elim_value_globals_probe.out and both matcher clauses against HOL: the single and list cases retain all four premises and the binding reachability conclusions. Reviewed FlatSem values, list-backed reference store, matching failure and type-error behavior, global analyses, and sparse-tree lookup and domain against the source."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",

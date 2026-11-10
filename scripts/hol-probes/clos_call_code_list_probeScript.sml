@@ -36,6 +36,8 @@ val _ = (print "fst_insert_each_prime_type="; Lib.with_flag (Globals.show_types,
 val _ = (print "map_fst_insert_each_prime_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.MAP_FST_insert_each'); print "\n");
 val _ = (print "snd_insert_each_prime_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.SND_insert_each'); print "\n");
 val _ = (print "subg_insert_each_prime_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.subg_insert_each'); print "\n");
+val _ = (print "fv_genlist_alt_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.fv_GENLIST_Var_alt); print "\n");
+val _ = (print "env_exists_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.env_rel_env_exists); print "\n");
 val _ = (print "suffix_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.code_list_IS_SUFFIX); print "\n");
 val entry = EVAL ``clos_call$code_list 10 [(2,closLang$Var None 4);(0,closLang$Var None 9);(1,closLang$Var None 2)] (sptree$LN,[(90,3,closLang$Var None 0)])``;
 val _ = (print "example="; print_term (rhs (concl entry)); print "\n");

@@ -49,6 +49,12 @@ theorem freeVars_variables (v : Nat) : ∀ (count : Nat) (trace : BackendCommon.
     simp [variablesSource, freeVars_append, freeVars, freeVarExp, ih]
     omega
 
+/-- Generated variables use exactly the indices below the list length. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "fv_GENLIST_Var_alt"]
+theorem freeVars_variables_alt (v : Nat) (count index : Nat) (trace : BackendCommon.Tra) :
+    freeVars v (variablesSource trace index count) ↔ v < count :=
+  freeVars_variables v count trace index
+
 /-- Generated variables contain no label operations. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "no_Labels_GENLIST_Var"]
 theorem noLabels_variables : ∀ (trace : BackendCommon.Tra) (index count : Nat),
