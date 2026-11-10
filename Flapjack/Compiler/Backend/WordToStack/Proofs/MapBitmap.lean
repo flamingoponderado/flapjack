@@ -55,38 +55,8 @@ hypothesis or conclusion and is vacuous for this complete theorem. -/
 theorem mapBitmapMore {α : Type} (bs : List Bool) (ls stack a c ls' : List α)
     (h : mapBitmap bs ls stack = some (a, [], c)) :
     mapBitmap bs (ls ++ ls') stack = some (a, ls', c) := by
-  induction bs generalizing ls stack a c with
-  | nil =>
-    simp only [mapBitmap, Option.some.injEq, Prod.mk.injEq] at h
-    rcases h with ⟨ha, hl, hc⟩
-    subst ls
-    simp [mapBitmap, ← ha, ← hc]
-  | cons bit bs ih =>
-    cases stack with
-    | nil => cases bit <;> cases ls <;> simp [mapBitmap] at h
-    | cons v vs =>
-      cases bit with
-      | false =>
-        cases hr : mapBitmap bs ls vs with
-        | none => simp [mapBitmap, hr] at h
-        | some result =>
-          rcases result with ⟨mapped, movedRest, stackRest⟩
-          simp only [mapBitmap, hr, Option.some.injEq, Prod.mk.injEq] at h
-          rcases h with ⟨ha, hl, hc⟩
-          have hm := ih ls vs mapped stackRest (by simpa [hl] using hr)
-          simp [mapBitmap, hm, ha, hc]
-      | true =>
-        cases ls with
-        | nil => simp [mapBitmap] at h
-        | cons m ms =>
-          cases hr : mapBitmap bs ms vs with
-          | none => simp [mapBitmap, hr] at h
-          | some result =>
-            rcases result with ⟨mapped, movedRest, stackRest⟩
-            simp only [mapBitmap, hr, Option.some.injEq, Prod.mk.injEq] at h
-            rcases h with ⟨ha, hl, hc⟩
-            have hm := ih ms vs mapped stackRest (by simpa [hl] using hr)
-            simp [mapBitmap, hm, ha, hc]
+  revert a c ls'
+  fun_induction mapBitmap bs ls stack <;> simp_all [mapBitmap]
 
 /-- Full original arbitrary-list-length prefix/suffix specialization. The
 original l is retained at an independent payload type since its length matters. -/
