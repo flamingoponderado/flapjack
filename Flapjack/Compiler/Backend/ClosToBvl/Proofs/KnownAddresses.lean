@@ -100,7 +100,12 @@ private theorem knownPipeline_properties (c : ClosKnown.Config) (g : Spt ValAppr
       rw [knownRun]
       change ClosLetop.compileList (ClosTicks.removeList
         (.op tr (.intOp (.const (Int.ofNat n))) [] :: eas.map Prod.fst)) = _
-      rw [removeTicks_opConst, letOp_opConst]
+      have ticks := removeTicks_opConst tr n (eas.map Prod.fst)
+      simp only [ClosTicks.removeSource_eq_list] at ticks
+      rw [ticks]
+      have letop := letOp_opConst tr n (ClosTicks.removeList (eas.map Prod.fst))
+      simp only [ClosLetop.compileSource_eq_list] at letop
+      exact letop
     have locs := TraversalCodeBag.knownCodeLocationsBag cf (ClosFvs.compile (marker :: rest))
       [] g ((marker, .int (Int.ofNat n)) :: eas) next knownRun
     have subLoc : List.Subperm (codeLocations (knownPipeline c g (marker :: rest)))

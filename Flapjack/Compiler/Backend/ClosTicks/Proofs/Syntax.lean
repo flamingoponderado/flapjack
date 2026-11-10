@@ -28,7 +28,6 @@ theorem removeSing_varsNone (e : Exp) : fnVarsNoneExp (removeSing e) ↔ fnVarsN
 termination_by sizeOf e
 
 /-- Tick removal preserves absent closure-capture annotations. -/
-@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_every_Fn_vs_NONE"]
 theorem removeList_varsNone (xs : List Exp) : everyFnVarsNone (removeList xs) ↔ everyFnVarsNone xs := by
   cases xs with
   | nil => simp [removeList, everyFnVarsNone]
@@ -64,7 +63,6 @@ theorem removeSing_locations (e : Exp) : fnLocationSomeExp (removeSing e) ↔ fn
 termination_by sizeOf e
 
 /-- Tick removal preserves present function locations. -/
-@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_every_Fn_SOME"]
 theorem removeList_locations (xs : List Exp) : everyFnLocationSome (removeList xs) ↔ everyFnLocationSome xs := by
   cases xs with
   | nil => simp [removeList, everyFnLocationSome]
@@ -81,5 +79,15 @@ theorem removeFuns_locations (fns : List (Nat × Exp)) : fnLocationSomeFuns (rem
 termination_by sizeOf fns
 decreasing_by all_goals subst_vars; simp_wf <;> omega
 end
+
+/-- The original list-shaped pass has the HOL invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_every_Fn_vs_NONE"]
+theorem removeSource_varsNone (xs : List Exp) : everyFnVarsNone (removeSource xs) ↔ everyFnVarsNone xs := by
+  simpa using removeList_varsNone xs
+
+/-- The original list-shaped pass has the HOL invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_every_Fn_SOME"]
+theorem removeSource_locations (xs : List Exp) : everyFnLocationSome (removeSource xs) ↔ everyFnLocationSome xs := by
+  simpa using removeList_locations xs
 
 end Flapjack.Compiler.Backend.ClosTicks

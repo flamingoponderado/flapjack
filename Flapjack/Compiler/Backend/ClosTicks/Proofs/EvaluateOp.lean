@@ -14,18 +14,18 @@ open Flapjack.SemanticPrimitivesHOL (Result)
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_Op_IMP_mk_Ticks"]
 theorem remove_ticks_Op_IMP_mk_Ticks (expression : ClosLang.Exp) (trace : BackendCommon.Tra)
     (op : ClosLang.Op) (args : List ClosLang.Exp)
-    (removed : [ClosLang.Exp.op trace op args] = removeList [expression]) :
-    ∃ traces sourceArgs, expression = mkTicks traces (.op trace op sourceArgs) ∧ args = removeList sourceArgs := by
+    (removed : [ClosLang.Exp.op trace op args] = removeSource [expression]) :
+    ∃ traces sourceArgs, expression = mkTicks traces (.op trace op sourceArgs) ∧ args = removeSource sourceArgs := by
   cases expression
   case tick outer inner =>
-    have innerRemoved : [ClosLang.Exp.op trace op args] = removeList [inner] := by
+    have innerRemoved : [ClosLang.Exp.op trace op args] = removeSource [inner] := by
       simpa [removeList, removeSing] using removed
     obtain ⟨traces, sourceArgs, equal, argsEqual⟩ := remove_ticks_Op_IMP_mk_Ticks inner trace op args innerRemoved
     exact ⟨outer :: traces, sourceArgs, by simp [mkTicks, equal], argsEqual⟩
   case op actualTrace actualOp sourceArgs =>
     simp [removeList, removeSing] at removed
     obtain ⟨rfl, rfl, rfl⟩ := removed
-    exact ⟨[], sourceArgs, rfl, rfl⟩
+    exact ⟨[], sourceArgs, rfl, by simp⟩
   all_goals simp [removeList, removeSing] at removed
 termination_by sizeOf expression
 

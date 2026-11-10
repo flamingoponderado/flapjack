@@ -69,13 +69,15 @@ theorem semanticsCompileSome {C F : Type} (c : Config) (ffi : HolFfiState F) (ma
     intro n
     simp [kco, fco, stateCo, pureCo, ClosFvs.compileInc, compileInc]
   have ticksEq := ClosTicks.semantics_remove_ticks ffi maxApp kco (pureCc ClosLetop.compileInc cc)
-    (ys.map Prod.fst) knownNonfail ⟨kaux, positive⟩
+    (ys.map Prod.fst) (by simpa [ClosTicks.compileIncSource_eq, afterKnown] using knownNonfail) ⟨kaux, positive⟩
+  simp only [ClosTicks.compileIncSource_eq, ClosTicks.removeSource_eq_list] at ticksEq
   have ticksNonfail : semantics ffi maxApp HolFiniteMapExact.holEmpty tco (pureCc ClosLetop.compileInc cc)
       (ClosTicks.removeList (ys.map Prod.fst)) ≠ .fail := by
     rw [← ticksEq, knownEq, fvsEq]; simpa [knownCc, afterKnown] using nonFail
   have taux : ∀ n, (tco n).2.2 = [] := by simp [tco, pureCo, ClosTicks.compileInc]
   have letopEq := ClosLetop.semantics_let_op ffi maxApp tco cc
-    (ClosTicks.removeList (ys.map Prod.fst)) ticksNonfail ⟨taux, positive⟩
+    (ClosTicks.removeList (ys.map Prod.fst)) (by simpa [ClosLetop.compileIncSource_eq] using ticksNonfail) ⟨taux, positive⟩
+  simp only [ClosLetop.compileIncSource_eq, ClosLetop.compileSource_eq_list] at letopEq
   simpa [compile, known, knownCo, knownCc, fco, kco, tco, afterKnown] using
     letopEq.trans (ticksEq.symm.trans (knownEq.trans fvsEq))
 

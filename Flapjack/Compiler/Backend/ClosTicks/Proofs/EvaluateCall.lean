@@ -14,12 +14,12 @@ leading ticks. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_Call_IMP_mk_Ticks"]
 theorem remove_ticks_Call_IMP_mk_Ticks (expression : ClosLang.Exp) (trace : BackendCommon.Tra)
     (ticks location : Nat) (args : List ClosLang.Exp)
-    (removed : [ClosLang.Exp.call trace ticks location args] = removeList [expression]) :
+    (removed : [ClosLang.Exp.call trace ticks location args] = removeSource [expression]) :
     ticks = 0 ∧ ∃ traces sourceTicks sourceArgs,
-      expression = mkTicks traces (.call trace sourceTicks location sourceArgs) ∧ args = removeList sourceArgs := by
+      expression = mkTicks traces (.call trace sourceTicks location sourceArgs) ∧ args = removeSource sourceArgs := by
   cases expression
   case tick outer inner =>
-    have innerRemoved : [ClosLang.Exp.call trace ticks location args] = removeList [inner] := by
+    have innerRemoved : [ClosLang.Exp.call trace ticks location args] = removeSource [inner] := by
       simpa [removeList, removeSing] using removed
     obtain ⟨zero, traces, sourceTicks, sourceArgs, equal, argsEqual⟩ :=
       remove_ticks_Call_IMP_mk_Ticks inner trace ticks location args innerRemoved
@@ -27,7 +27,7 @@ theorem remove_ticks_Call_IMP_mk_Ticks (expression : ClosLang.Exp) (trace : Back
   case call actualTrace sourceTicks actualLocation sourceArgs =>
     simp [removeList, removeSing] at removed
     obtain ⟨rfl, rfl, rfl, rfl⟩ := removed
-    exact ⟨rfl, [], sourceTicks, sourceArgs, rfl, rfl⟩
+    exact ⟨rfl, [], sourceTicks, sourceArgs, rfl, by simp⟩
   all_goals simp [removeList, removeSing] at removed
 termination_by sizeOf expression
 

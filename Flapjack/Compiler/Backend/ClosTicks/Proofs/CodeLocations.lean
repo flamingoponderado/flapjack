@@ -32,7 +32,6 @@ theorem removeSing_codeLocations (e : Exp) : codeLocationsExp (removeSing e) = c
 termination_by sizeOf e
 
 /-- Tick removal preserves the original list of closure-code locations. -/
-@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "code_locs_remove_ticks"]
 theorem removeList_codeLocations (xs : List Exp) : codeLocations (removeList xs) = codeLocations xs := by
   cases xs with
   | nil => rfl
@@ -49,4 +48,9 @@ theorem removeFuns_codeLocations (fns : List (Nat × Exp)) :
 termination_by sizeOf fns
 decreasing_by all_goals subst_vars; simp_wf <;> omega
 end
+/-- The original list-shaped pass has the HOL invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "code_locs_remove_ticks"]
+theorem removeSource_codeLocations (xs : List Exp) : codeLocations (removeSource xs) = codeLocations xs := by
+  simpa using removeList_codeLocations xs
+
 end Flapjack.Compiler.Backend.ClosTicks

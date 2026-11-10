@@ -58,7 +58,6 @@ theorem compileSing_codeLocations (e : Exp) : codeLocationsExp (compileSing e) =
 termination_by sizeOf e
 
 /-- Let-operation cleanup preserves the original list of closure-code locations. -/
-@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "code_locs_let_op"]
 theorem compileList_codeLocations (xs : List Exp) : codeLocations (compileList xs) = codeLocations xs := by
   cases xs with
   | nil => rfl
@@ -75,4 +74,9 @@ theorem compileFuns_codeLocations (fns : List (Nat × Exp)) :
 termination_by sizeOf fns
 decreasing_by all_goals subst_vars; simp_wf <;> omega
 end
+/-- The original list-shaped pass has the HOL invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "code_locs_let_op"]
+theorem compileSource_codeLocations (xs : List Exp) : codeLocations (compileSource xs) = codeLocations xs := by
+  simpa using compileList_codeLocations xs
+
 end Flapjack.Compiler.Backend.ClosLetop

@@ -236,9 +236,9 @@ theorem let_op_correct {C F : Type} (xs : List ClosLang.Exp) (env : List Value)
     (premises : evaluate xs env source = (result, next) ∧
       List.Forall₂ ValueRel env nextEnv ∧ StateRel source target) :
     ∃ targetResult targetNext,
-      evaluate (compileList xs) nextEnv target = (targetResult, targetNext) ∧
+      evaluate (compileSource xs) nextEnv target = (targetResult, targetNext) ∧
       ResultRel result targetResult ∧ StateRel next targetNext := by
-  exact evaluate_let_op.1 xs env source result next (compileList xs) nextEnv target
+  exact evaluate_let_op.1 xs env source result next (compileSource xs) nextEnv target
     ⟨premises.1, premises.2.1, premises.2.2, rfl⟩
 end SimulationPort
 

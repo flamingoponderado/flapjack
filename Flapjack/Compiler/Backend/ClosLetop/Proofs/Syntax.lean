@@ -56,7 +56,6 @@ theorem compileSing_varsNone (e : Exp) : fnVarsNoneExp (compileSing e) ↔ fnVar
 termination_by sizeOf e
 
 /-- Let-operation cleanup preserves absent closure-capture annotations. -/
-@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "let_op_every_Fn_vs_NONE"]
 theorem compileList_varsNone (xs : List Exp) : everyFnVarsNone (compileList xs) ↔ everyFnVarsNone xs := by
   cases xs with
   | nil => simp [compileList, everyFnVarsNone]
@@ -120,7 +119,6 @@ theorem compileSing_locations (e : Exp) : fnLocationSomeExp (compileSing e) ↔ 
 termination_by sizeOf e
 
 /-- Let-operation cleanup preserves present function locations. -/
-@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "let_op_every_Fn_SOME"]
 theorem compileList_locations (xs : List Exp) : everyFnLocationSome (compileList xs) ↔ everyFnLocationSome xs := by
   cases xs with
   | nil => simp [compileList, everyFnLocationSome]
@@ -137,5 +135,15 @@ theorem compileFuns_locations (fns : List (Nat × Exp)) : fnLocationSomeFuns (co
 termination_by sizeOf fns
 decreasing_by all_goals subst_vars; simp_wf <;> omega
 end
+
+/-- The original list-shaped pass has the HOL invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "let_op_every_Fn_vs_NONE"]
+theorem compileSource_varsNone (xs : List Exp) : everyFnVarsNone (compileSource xs) ↔ everyFnVarsNone xs := by
+  simpa using compileList_varsNone xs
+
+/-- The original list-shaped pass has the HOL invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "let_op_every_Fn_SOME"]
+theorem compileSource_locations (xs : List Exp) : everyFnLocationSome (compileSource xs) ↔ everyFnLocationSome xs := by
+  simpa using compileList_locations xs
 
 end Flapjack.Compiler.Backend.ClosLetop

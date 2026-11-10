@@ -25,14 +25,27 @@ def compileInc {α : Type} (c : Config) (g : Spt ValApprox) (program : List Exp 
   let (eas, next) := knownListTotal (resetInlineFactor c) program.1 [] g
   (next, eas.map Prod.fst, program.2)
 
-/-- Apply the source closure optimizer, including its disabled case. -/
+/-- Apply the original source closure optimizer, including its disabled case. -/
 @[hol "cakeml/compiler/backend/clos_knownScript.sml" "compile_def"]
+noncomputable def compileSource : Option Config → List Exp → Option Config × List Exp
+  | none, es => (none, es)
+  | some c, es =>
+      let (eas, globals) := knownListTotal c (ClosFvs.compile es) [] .ln
+      (some { c with valApproxSpt := globals },
+        ClosLetop.compileSource (ClosTicks.removeSource (eas.map Prod.fst)))
+
+/-- The executable closure optimizer uses the equivalent total traversals. -/
 def compile : Option Config → List Exp → Option Config × List Exp
   | none, es => (none, es)
   | some c, es =>
       let (eas, globals) := knownListTotal c (ClosFvs.compile es) [] .ln
       (some { c with valApproxSpt := globals },
         ClosLetop.compileList (ClosTicks.removeList (eas.map Prod.fst)))
+
+/-- The executed closure optimizer agrees with the original source pass. -/
+theorem compileSource_eq_compile (config : Option Config) (es : List Exp) :
+    compileSource config es = compile config es := by
+  cases config <;> simp [compileSource, compile]
 
 /-- Prepare the static settings for incremental known-function optimization. -/
 @[hol "cakeml/compiler/backend/clos_knownScript.sml" "known_static_conf_def"]

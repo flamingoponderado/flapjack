@@ -13,12 +13,12 @@ open Flapjack.SemanticPrimitivesHOL (Result)
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_Let_IMP_mk_Ticks"]
 theorem remove_ticks_Let_IMP_mk_Ticks (expression : ClosLang.Exp) (trace : BackendCommon.Tra)
     (bindings : List ClosLang.Exp) (body : ClosLang.Exp)
-    (removed : [ClosLang.Exp.let trace bindings body] = removeList [expression]) :
+    (removed : [ClosLang.Exp.let trace bindings body] = removeSource [expression]) :
     ∃ traces sourceBindings sourceBody, expression = mkTicks traces (.let trace sourceBindings sourceBody) ∧
-      bindings = removeList sourceBindings ∧ [body] = removeList [sourceBody] := by
+      bindings = removeSource sourceBindings ∧ [body] = removeSource [sourceBody] := by
   cases expression
   case tick outer inner =>
-    have innerRemoved : [ClosLang.Exp.let trace bindings body] = removeList [inner] := by
+    have innerRemoved : [ClosLang.Exp.let trace bindings body] = removeSource [inner] := by
       simpa [removeList, removeSing] using removed
     obtain ⟨traces, sourceBindings, sourceBody, equal, bindingsEqual, bodyEqual⟩ :=
       remove_ticks_Let_IMP_mk_Ticks inner trace bindings body innerRemoved
@@ -26,7 +26,7 @@ theorem remove_ticks_Let_IMP_mk_Ticks (expression : ClosLang.Exp) (trace : Backe
   case «let» actualTrace sourceBindings sourceBody =>
     simp [removeList, removeSing] at removed
     obtain ⟨rfl, rfl, rfl⟩ := removed
-    exact ⟨[], sourceBindings, sourceBody, rfl, rfl, by simp [removeList]⟩
+    exact ⟨[], sourceBindings, sourceBody, rfl, by simp, by simp [removeList]⟩
   all_goals simp [removeList, removeSing] at removed
 termination_by sizeOf expression
 
