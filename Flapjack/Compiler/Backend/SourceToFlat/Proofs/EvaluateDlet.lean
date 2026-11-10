@@ -54,23 +54,6 @@ theorem dlet_conditions_of_safe {F : Type} (source : SemanticPrimitivesHOL.State
       simp [EvaluateHOL.evaluateDecs, distinct, EvaluateHOL.typeError]
     exact False.elim (safe source bad)
 
-/-- A safe declaration whose expression succeeds cannot have a pattern
-matching type error. -/
-theorem dlet_match_noTypeError_of_safe {F : Type} (source middle : SemanticPrimitivesHOL.State F)
-    (sourceEnv : SemEnv Value) (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
-    (value : Value)
-    (safe : ∀ next, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] ≠
-      (next, .err (.abort .typeError)))
-    (sourceRun : EvaluateHOL.evaluate source sourceEnv [expr] = (middle, .val [value])) :
-    pmatch sourceEnv.c middle.refs pattern value [] ≠ .typeError := by
-  obtain ⟨distinct, wellformed⟩ := dlet_conditions_of_safe source sourceEnv location pattern expr safe
-  intro failed
-  have bad : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
-      (middle, .err (.abort .typeError)) := by
-    simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, EvaluateHOL.headValue,
-      Flapjack.holHd, failed, EvaluateHOL.typeError]
-  exact safe middle bad
-
 /-- A singleton source alias and compiler binding share a global slot. -/
 theorem globalEnvInv_alias (genv : GlobalEnv) (name : VarN) (idx : Nat) (trace : Tra)
     (value : Value) (stored : FlatSem.Value) (bound : idx < genv.v.length)
@@ -311,42 +294,6 @@ theorem evaluateDlet_pattern_flat_error {C F : Type}
   simp only [compileDecs, notAlias]
   simp [FlatSem.evaluateDecs, FlatSem.evaluate, expressionRun, FlatSem.fixClock, Nat.min_eq_right bound]
 
-/-- The expression induction hypothesis supplies related errors for a
-non-alias declaration with any source-safe pattern. -/
-theorem evaluateDlet_pattern_error {C F : Type} (genv : GlobalEnv)
-    (source sourceMiddle : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
-    (sourceEnv : SemEnv Value) (trace : List VarN) (n : Nat) (next : NextIndices)
-    (compMap : Environment) (gen : EnvironmentGenerationStore) (location : Flapjack.Misc.Location.Locs)
-    (pattern : Pat) (expr : AstHOL.Exp) (error : ErrorResult Value)
-    (notAlias : simpleDlet pattern expr = none) (distinct : (AstHOL.patBindings pattern).Nodup)
-    (wellformed : AstHOL.everyExp (oneConCheck sourceEnv.c) expr = true)
-    (sourceRun : EvaluateHOL.evaluate source sourceEnv [expr] = (sourceMiddle, .err error))
-    (expressionSim : ExprSim genv compMap ((AstHOL.patBindings pattern).reverse ++ trace)
-      sourceEnv ⟨[]⟩ source flat expr) :
-    ∃ flatMiddle flatError,
-      EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] = (sourceMiddle, .err error) ∧
-      FlatSem.evaluateDecs flat (compileDecs trace n next compMap gen [.dlet location pattern expr]).2.2.2.2 =
-        (flatMiddle, some flatError) ∧
-      EvalResultRel genv (.err error) (.err flatError) ∧ StateRel genv sourceMiddle flatMiddle := by
-  unfold ExprSim at expressionSim
-  rw [sourceRun] at expressionSim
-  cases flatRun : FlatSem.evaluate ⟨[]⟩ flat
-      [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr] with
-  | mk flatMiddle flatResult =>
-    rw [flatRun] at expressionSim
-    obtain ⟨resultRel, states⟩ := expressionSim
-    cases resultRel with
-    | raise valueRel =>
-      refine ⟨flatMiddle, .raise _, ?_, ?_, .raise valueRel, states⟩
-      · simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun]
-      · exact evaluateDlet_pattern_flat_error flat flatMiddle trace n next compMap gen location pattern expr _
-          notAlias flatRun
-    | abort kind =>
-      refine ⟨flatMiddle, .abort kind, ?_, ?_, .abort kind, states⟩
-      · simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun]
-      · exact evaluateDlet_pattern_flat_error flat flatMiddle trace n next compMap gen location pattern expr _
-          notAlias flatRun
-
 /-- A successful non-alias declaration preserves the full factored invariant
 after all pattern bindings are initialized. Reserved slots are derived from
 the pre-initialization invariant and the index-block bound. -/
@@ -506,10 +453,11 @@ theorem evaluateDlet_pattern_cases {C F : Type} [Nonempty C]
               rename_i flatValue
               have current : factoredInvariant interp transform gen genv (start, finish, other)
                   sourceMiddle flatMiddle := by simpa using expressionInvariant
-              have safeMatch := dlet_match_noTypeError_of_safe source sourceMiddle sourceEnv location pattern expr
-                value safe sourceRun
               cases matched : pmatch sourceEnv.c sourceMiddle.refs pattern value [] with
-              | typeError => exact (safeMatch matched).elim
+              | typeError =>
+                apply (safe sourceMiddle).elim
+                simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, EvaluateHOL.headValue,
+                  Flapjack.holHd, matched, EvaluateHOL.typeError]
               | noMatch =>
                 have result := evaluateDlet_pattern_noMatch interp transform genv (start, finish, other)
                   source sourceMiddle flat flatMiddle sourceEnv trace n start compMap compMap gen location pattern expr
@@ -775,12 +723,23 @@ theorem evaluateDlet_pattern_growing {C F : Type} [Nonempty C]
     rw [sourceRun] at expressionPost
     by_cases aborted : ∃ kind, result = .err (.abort kind)
     · obtain ⟨kind, rfl⟩ := aborted
-      obtain ⟨flatMiddle, flatError, sourceDec, flatDec, errors, states⟩ :=
-        evaluateDlet_pattern_error middleGenv source sourceMiddle flat sourceEnv trace n start compMap gen
-          location pattern expr (.abort kind) notAlias distinct wellformed sourceRun expressionSim
-      unfold DletOutcomeGrowing
-      rw [sourceDec]
-      exact ⟨flatMiddle, middleGenv, some flatError, flatDec, states, flatError, rfl, errors, trivial⟩
+      have sourceDec : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
+          (sourceMiddle, .err (.abort kind)) := by
+        simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun]
+      unfold ExprSim at expressionSim
+      rw [sourceRun] at expressionSim
+      cases flatRun : FlatSem.evaluate ⟨[]⟩ flat
+          [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr] with
+      | mk flatMiddle flatResult =>
+        rw [flatRun] at expressionSim
+        obtain ⟨resultRel, states⟩ := expressionSim
+        cases resultRel with
+        | abort kind =>
+          have flatDec := evaluateDlet_pattern_flat_error flat flatMiddle trace n start compMap gen location
+            pattern expr (.abort kind) notAlias flatRun
+          unfold DletOutcomeGrowing
+          rw [sourceDec]
+          exact ⟨flatMiddle, middleGenv, some (.abort kind), flatDec, states, _, rfl, .abort kind, trivial⟩
     · have growth : GlobalGrowth genv middleGenv := by
         cases result with
         | val values => exact expressionPost.1
