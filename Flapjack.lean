@@ -1070,6 +1070,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MtiInvariants
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CallBounds
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CommonLabelBound
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SyntaxOracle
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownOracleFacts
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.StateRelation
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateVar
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRelation

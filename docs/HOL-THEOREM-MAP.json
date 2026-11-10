@@ -18,6 +18,12 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "known_state_oracle_globals_approx",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownOracleFacts.lean", "lean_name": "knownStateOracle_globalsApprox",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_state_oracle_globals_approx_typed and independent review: separate initial and recurrence configurations, polymorphic oracle payload, original grouped premises, direct initial known traversal, and both global annotation conclusions match; recurrence uses resetInlineFactor."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "is_state_oracle_k",
   "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonic.lean", "lean_name": "isStateOracle_k",
   "statement_status": "reviewed_exact",
