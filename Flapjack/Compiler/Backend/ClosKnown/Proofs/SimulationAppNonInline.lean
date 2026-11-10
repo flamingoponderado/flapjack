@@ -12,13 +12,6 @@ open OracleGlobals OracleMonotonic UniqueGlobalsPort StateOracleDisjoint SubsptC
 open Relations Relations.StateRelation Relations.StateRelation.Oracle
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
-private theorem subsptTrans {A : Type} (a b c : Spt A)
-    (h1 : sptSubspt a b) (h2 : sptSubspt b c) : sptSubspt a c := by
-  intro k member
-  obtain ⟨mid, e1⟩ := h1 k member
-  obtain ⟨last, e2⟩ := h2 k mid
-  exact ⟨last, e2.trans e1⟩
-
 /-- Simulation of an application when the optimizer leaves the call in place,
 including errors in either preliminary evaluation. The decision premise makes
 this a Flapjack case helper, not the full HOL induction case. -/
@@ -88,7 +81,7 @@ theorem nonInlineApplicationSimulation {C F : Type} (trace : BackendCommon.Tra)
     omega
   have ⟨subArgs, subFn⟩ := subsptKnownElistGlobals c (first :: rest) aenv g0 argsEas g1
     [x] aenv [(fnExp, fnApprox)] g2 ⟨argsKnown, fnKnown, sub0, bagDisjoint⟩
-  have subArgsNext := subsptTrans g1 g2 (nextG s0) subFn sub1
+  have subArgsNext := sptSubsptTrans g1 g2 (nextG s0) ⟨subFn, sub1⟩
   have argsLength := knownListTotal_length c (first :: rest) aenv g0
   rw [argsKnown] at argsLength
   have argsNonempty : argsEas.map Prod.fst ≠ [] := by
