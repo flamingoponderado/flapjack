@@ -130,4 +130,21 @@ theorem stateRelSource_iff {C F : Type} (source target : State C F) :
   rw [codeLookup_iff, lookupRelation_iff]
   simp only [and_assoc]
 
+/-- Either related reference lookup determines a related lookup in the other state. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "state_rel_opt_rel_refs"
+  (nested_list_rel_as_mutual := [FunctionsRel]) (fmap_as_finite_support := [refs, code])]
+theorem stateRelSource_optRelRefs {C F : Type} (source target : State C F) (key : Nat)
+    (left right : Option (Ref Value)) :
+    (StateRelSource source target ∧ source.refs.lookup key = left →
+      ∃ right', target.refs.lookup key = right' ∧ optionRel (ClosProps.refRel ValueRel) left right') ∧
+    (StateRelSource source target ∧ target.refs.lookup key = right →
+      ∃ left', source.refs.lookup key = left' ∧ optionRel (ClosProps.refRel ValueRel) left' right) := by
+  constructor
+  · rintro ⟨states, lookup⟩
+    have refs := ((stateRelSource_iff source target).mp states).2.2.2.2.2.2.1 key
+    exact ⟨target.refs.lookup key, rfl, lookup ▸ refs⟩
+  · rintro ⟨states, lookup⟩
+    have refs := ((stateRelSource_iff source target).mp states).2.2.2.2.2.2.1 key
+    exact ⟨source.refs.lookup key, rfl, lookup ▸ refs⟩
+
 end Flapjack.Compiler.Backend.ClosAnnotate

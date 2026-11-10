@@ -289,6 +289,13 @@ val do_app_err_thm_replay = prove (
   >> fs[clos_annotateProofTheory.v_rel_simp,clos_annotateProofTheory.state_rel_def]
   >> res_tac >> gvs []);
 val _ = show "do_app_err_thm_local_typed=" do_app_err_thm_replay;
+val state_rel_opt_rel_refs_replay = prove (
+  ``(state_rel s1 s2 /\ FLOOKUP s1.refs n = r1 ==>
+       ?r2. FLOOKUP s2.refs n = r2 /\ OPTREL (ref_rel v_rel) r1 r2) /\
+    (state_rel s1 s2 /\ FLOOKUP s2.refs n = r2 ==>
+       ?r1. FLOOKUP s1.refs n = r1 /\ OPTREL (ref_rel v_rel) r1 r2)``,
+  rw [] >> gvs [clos_annotateProofTheory.state_rel_def, FLOOKUP_DEF] >> rw []);
+val _ = show "state_rel_opt_rel_refs_local_typed=" state_rel_opt_rel_refs_replay;
 (* Replay the source-local theorem, which is not exported by the theory. *)
 val state_rel_clocks_eqs_replay = prove (
   ``state_rel s t ==> s.clock = t.clock``,
