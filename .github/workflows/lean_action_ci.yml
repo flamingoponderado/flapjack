@@ -22,7 +22,15 @@ jobs:
     runs-on: [self-hosted, linux, x64]
 
     steps:
+      # The self-hosted runner reuses one workspace per repository, so the
+      # default `clean: true` (git clean -ffdx) would delete the warm .lake.
       - uses: actions/checkout@v5
+        with:
+          clean: false
+
+      # Remove stale untracked files while keeping the persistent Lake build.
+      - name: Clean the workspace except .lake
+        run: git clean -ffdx -e .lake
 
       # The workspace declares FlapjackTest as its test driver, so lean-action
       # runs `lake build` and `lake test` here.
@@ -76,6 +84,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          clean: false
 
       - name: Check native proof and compiler trust mechanisms
         run: |
@@ -93,6 +103,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          clean: false
 
       - name: Check out pinned CakeML and HOL submodules
         run: git submodule update --init --depth 1 -- cakeml HOL
@@ -114,6 +126,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          clean: false
 
       - name: Check out pinned CakeML and HOL submodules
         run: git submodule update --init --depth 1 -- cakeml HOL
@@ -132,6 +146,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          clean: false
 
       - name: Download flapjack-compile
         uses: actions/download-artifact@v8
@@ -186,6 +202,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          clean: false
 
       - name: Check out pinned CakeML submodule
         run: git submodule update --init --depth 1 -- cakeml
