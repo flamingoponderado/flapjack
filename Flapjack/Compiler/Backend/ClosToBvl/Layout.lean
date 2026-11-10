@@ -104,7 +104,7 @@ def numStubs (maxApp : Nat) : Nat := maxApp + maxApp * (maxApp - 1) / 2 + 1 + 1
 
 /-- Location of a generic-application stub. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "generic_app_fn_location_def"]
-def genericAppFnLocation (n : Nat) : Nat := n
+def genericAppFnLocation {α : Type} (n : α) : α := n
 
 /-- Location of a partial-application stub. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "partial_app_fn_location_def"]

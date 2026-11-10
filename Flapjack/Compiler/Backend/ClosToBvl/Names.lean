@@ -48,15 +48,19 @@ def getSrcNamesFuns : List (Nat × Exp) → Spt MlString → Spt MlString
   | (_, x) :: xs, table => getSrcNamesFuns xs (getSrcNamesSing x table)
 end
 
-/-- Collect names using the singleton traversal, which HOL proves equal to
-the original list-valued `get_src_names` definition. -/
-@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "get_src_names_def"]
+/-- Collect names using the singleton traversal. HOL's `get_src_names_def` is
+the list-recursive form (empty, two-element and per-constructor singleton
+clauses); this definition is the singleton-threaded `get_src_names_list`,
+which HOL proves equal to it in `get_src_names_sing_eq`. That equality is not
+established in Lean, so this is not an exact port of the source definition.
+
+Former reference: `@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "get_src_names_def"]`. -/
 def getSrcNames (es : List Exp) (table : Spt MlString) : Spt MlString :=
   getSrcNamesList es table
 
 /-- Construct the name table for stubs, top-level declarations and closures. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "make_name_alist_def"]
-def makeNameAlist (nums : List Nat) (prog : List (Nat × Nat × Exp))
+def makeNameAlist {α β : Type} (nums : List Nat) (prog : List (α × β × Exp))
     (nstubs decStart decLength : Nat) : Spt MlString :=
   let names := getSrcNames (prog.map (fun (_, _, e) => e)) .ln
   sptFromAList (nums.map fun n =>
