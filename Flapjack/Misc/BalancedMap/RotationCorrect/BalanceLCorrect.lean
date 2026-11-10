@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Misc.BalancedMap.RotationCorrect.BalanceL
+public import Flapjack.Misc.BalancedMap.OrderTrans
 public import Flapjack.Misc.BalancedMap.RotationCorrect.RotateR
 
 @[expose] public section
@@ -8,20 +9,6 @@ namespace Flapjack.Misc.BalancedMap
 open FiniteMap.Comparison
 noncomputable section
 local instance balanceLCorrectSetDecidableEq {κ : Type} : DecidableEq (Set κ) := Classical.typeDecidableEq _
-
-/-- Direct proof for the original unrotated Bin branch. Local infrastructure,
-not a separate HOL declaration or an extra premise of balanceLThm. -/
-private theorem binCorrect {κ ν : Type} (key : κ) (value : ν) (left right : Map κ ν)
-    (cmp : κ → κ → Ordering) (hl : invariant cmp left) (hr : invariant cmp right)
-    (hlo : keyOrdered cmp key left .gt) (hro : keyOrdered cmp key right .lt)
-    (hb : balanced (size left) (size right)) :
-    invariant cmp (bin key value left right) ∧
-    toFmap cmp (bin key value left right) =
-      ((toFmap cmp left).union (toFmap cmp right)).updateEq (keySet cmp key, value) := by
-  have hls := structureSizeThm cmp left hl
-  have hrs := structureSizeThm cmp right hr
-  refine ⟨⟨?_, hlo, hro, hb, hl, hr⟩, rfl⟩
-  omega
 
 /-- Entire original left-balancing correctness for the actual balanceL:
 all original hypotheses and both invariant/map preservation conclusions. -/

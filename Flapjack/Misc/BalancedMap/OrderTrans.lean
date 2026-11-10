@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Misc.BalancedMap.InvariantSemantics
+public import Flapjack.Misc.BalancedMap.Semantics
 public import Flapjack.Misc.BalancedMap.StructuralSize
 
 @[expose] public section
@@ -39,5 +40,21 @@ theorem orderedGtTrans {κ ν : Type} (cmp : κ → κ → Ordering)
     exact (hgood.2.2.1 x root).mpr
       (hgood.2.2.2.2.2.2 root y x
         ⟨(hgood.2.2.1 y root).mp hordered.1, (hgood.2.2.1 x y).mp hxy⟩)
+
+/-- Direct proof for the original unrotated `bin` branch: both the literal
+invariant and the exact finite-map image are preserved. Flapjack
+infrastructure shared by the left and right balance proofs; not a separate
+HOL declaration or an extra premise of the balance theorems. -/
+theorem binCorrect {κ ν : Type} (key : κ) (value : ν) (left right : Map κ ν)
+    (cmp : κ → κ → Ordering) (hl : invariant cmp left) (hr : invariant cmp right)
+    (hlo : keyOrdered cmp key left .gt) (hro : keyOrdered cmp key right .lt)
+    (hb : balanced (size left) (size right)) :
+    invariant cmp (bin key value left right) ∧
+    toFmap cmp (bin key value left right) =
+      ((toFmap cmp left).union (toFmap cmp right)).updateEq (keySet cmp key, value) := by
+  have hls := structureSizeThm cmp left hl
+  have hrs := structureSizeThm cmp right hr
+  refine ⟨⟨?_, hlo, hro, hb, hl, hr⟩, rfl⟩
+  omega
 
 end Flapjack.Misc.BalancedMap
