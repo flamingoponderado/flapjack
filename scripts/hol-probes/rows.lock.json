@@ -473,6 +473,7 @@
     {"bytes": 630, "out": "hol_mergesort_probe.out", "rows": 18, "sha256": "f21073d6c3ba873a7301c709deeb95fc47d830992e0af715607c1f76f26ae840"},
     {"bytes": 412, "out": "hol_sorting_probe.out", "rows": 14, "sha256": "ac959c6f311fbb14bb9cdea997f6151952925df527e4c4f5a709b66b2f1805ee"},
     {"bytes": 583, "out": "hol_word_arithmetic_probe.out", "rows": 13, "sha256": "de8ecd5dd96ff87ed4f8aae184a500d303c337c564ab04275870567a195e9caf"},
+    {"bytes": 1923, "out": "infer_subst_probe.out", "rows": 4, "sha256": "d618314f05f5c465e48507c8feb50dbb2fab2f2ab19f5a2e52c19d0150e64590"},
     {"bytes": 760783, "out": "init_code_probe.out", "rows": 242, "sha256": "98116ec2387e337491ba44e99dda85fef74182310d2432545203d94c9df6b3be"},
     {"bytes": 18640, "out": "init_memory_probe.out", "rows": 130, "sha256": "8621374217c1c694fe1946de7fab4eab8073c93512e3cb9f8f0e397e22b2762f"},
     {"bytes": 2996, "out": "inline_cake_bvi_probe.out", "rows": 1, "sha256": "4198b99e8942d88b585762b10d051f969efc110d9f671fe39c49265db7cd7ac2"},

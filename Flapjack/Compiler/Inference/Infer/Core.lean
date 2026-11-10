@@ -378,7 +378,7 @@ private def bindVars (env : Env) (bindings : List (MlString × InferT)) : Env :=
   { env with infV := nsAppend (alistToNs (bindings.map (fun (name, t) => (name, (0, t))))) env.infV }
 
 mutual
-private def inferExprWorker : Nat → Nat → Env → Exp → M InferT
+private def inferExprWorker : Nat → Nat → Env → AstHOL.Exp → M InferT
   | 0, _, _, _ => fail .exhausted
   | fuel + 1, unifFuel, env, expr => do
     match expr with
@@ -455,7 +455,8 @@ private def inferExprWorker : Nat → Nat → Env → Exp → M InferT
       inferExprWorker fuel unifFuel env body
 
 
-private def inferFunsWorker : Nat → Nat → Env → List (MlString × MlString × Exp) → M (List InferT)
+private def inferFunsWorker : Nat → Nat → Env →
+    List (MlString × MlString × AstHOL.Exp) → M (List InferT)
   | 0, _, _, _ => fail .exhausted
   | _ + 1, _, _, [] => pure []
   | fuel + 1, unifFuel, env, (_, arg, body) :: rest => do
@@ -464,7 +465,7 @@ private def inferFunsWorker : Nat → Nat → Env → List (MlString × MlString
     let rest ← inferFunsWorker fuel unifFuel env rest
     return .app [argType, bodyType] 4 :: rest
 
-private def inferExprsWorker : Nat → Nat → Env → List Exp → M (List InferT)
+private def inferExprsWorker : Nat → Nat → Env → List AstHOL.Exp → M (List InferT)
   | 0, _, _, _ => fail .exhausted
   | _ + 1, _, _, [] => pure []
   | fuel + 1, unifFuel, env, e :: es => do
@@ -472,7 +473,8 @@ private def inferExprsWorker : Nat → Nat → Env → List Exp → M (List Infe
     let ts ← inferExprsWorker fuel unifFuel env es
     return t :: ts
 
-private def inferClausesWorker : Nat → Nat → Env → List (Pat × Exp) → InferT → InferT → M Unit
+private def inferClausesWorker : Nat → Nat → Env → List (Pat × AstHOL.Exp) →
+    InferT → InferT → M Unit
   | 0, _, _, _, _, _ => fail .exhausted
   | _ + 1, _, _, [], _, _ => pure ()
   | fuel + 1, unifFuel, env, (p, e) :: ps, input, output => do
@@ -487,7 +489,7 @@ end
 /-- Infer the supported expression forms with explicit bounds. Unsupported
 forms are distinguished from type mismatches; diagnostic fidelity and the
 remaining cases are not implemented. -/
-def inferExprFuel (fuel unifFuel : Nat) (env : Env) (e : Exp) (s : State) :
+def inferExprFuel (fuel unifFuel : Nat) (env : Env) (e : AstHOL.Exp) (s : State) :
     Except Error (InferT × State) :=
   (inferExprWorker fuel unifFuel env e) s
 

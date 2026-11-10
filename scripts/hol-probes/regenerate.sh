@@ -9499,3 +9499,8 @@ run_probe lexer_fun_source_probeScript.sml lexer_fun_source_probe.out \
   symbol_axiom_typed next_loc_def_typed next_line_def_typed get_token_def_typed to_path_def_typed token_of_sym_def_typed \
   "$cake_dir/semantics/lexer_funScript.sml" \
   "$cake_dir/semantics"
+
+run_probe infer_subst_probeScript.sml infer_subst_probe.out \
+  infer_type_subst_def_typed infer_deBruijn_subst_def_typed inf_env_axiom_typed init_config_def_typed \
+  "$cake_dir/compiler/inference/inferScript.sml" \
+  "$cake_dir/compiler/inference"

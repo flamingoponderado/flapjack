@@ -118463,32 +118463,32 @@
     "lean_name": "inferTypeSubst",
     "hol_path": "cakeml/compiler/inference/inferScript.sml",
     "hol_name": "infer_type_subst_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Inference carrier or substitution transcribed against pinned HOL; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed infer_subst_probe capture of infer_type_subst_def with inferTypeSubst and inferTypeSubstList: Tvar tv => ALOOKUP s tv (SOME t => t | NONE => Infer_Tvar_db 0) is (s.lookup v).getD (.varDb 0), where List.lookup on an mlstring-keyed alist is HOL's first-match ALOOKUP and getD supplies the same default; Tvar_db and Tapp clauses and both list clauses match one for one. SemanticT (t) and InferT are the reviewed carriers and MlString is the reviewed mlstring port with structural equality."
   },
   {
     "lean_path": "Flapjack/Compiler/Inference/Infer.lean",
     "lean_name": "inferTypeSubstList",
     "hol_path": "cakeml/compiler/inference/inferScript.sml",
     "hol_name": "infer_type_subst_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Inference carrier or substitution transcribed against pinned HOL; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed infer_subst_probe capture of infer_type_subst_def with inferTypeSubst and inferTypeSubstList: Tvar tv => ALOOKUP s tv (SOME t => t | NONE => Infer_Tvar_db 0) is (s.lookup v).getD (.varDb 0), where List.lookup on an mlstring-keyed alist is HOL's first-match ALOOKUP and getD supplies the same default; Tvar_db and Tapp clauses and both list clauses match one for one. SemanticT (t) and InferT are the reviewed carriers and MlString is the reviewed mlstring port with structural equality."
   },
   {
     "lean_path": "Flapjack/Compiler/Inference/Infer.lean",
     "lean_name": "inferDeBruijnSubst",
     "hol_path": "cakeml/compiler/inference/inferScript.sml",
     "hol_name": "infer_deBruijn_subst_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Inference carrier or substitution transcribed against pinned HOL; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed infer_subst_probe capture of infer_deBruijn_subst_def with inferDeBruijnSubst and inferDeBruijnSubstList: Infer_Tvar_db n => if n < LENGTH s then EL n s else Infer_Tvar_db (n - LENGTH s) is (s[n]?).getD (.varDb (n - s.length)) (the optional index is the in-bounds test and the default is the same out-of-range value); the Tapp, Tuvar and both list clauses match one for one."
   },
   {
     "lean_path": "Flapjack/Compiler/Inference/Infer.lean",
     "lean_name": "inferDeBruijnSubstList",
     "hol_path": "cakeml/compiler/inference/inferScript.sml",
     "hol_name": "infer_deBruijn_subst_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Inference carrier or substitution transcribed against pinned HOL; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed infer_subst_probe capture of infer_deBruijn_subst_def with inferDeBruijnSubst and inferDeBruijnSubstList: Infer_Tvar_db n => if n < LENGTH s then EL n s else Infer_Tvar_db (n - LENGTH s) is (s[n]?).getD (.varDb (n - s.length)) (the optional index is the in-bounds test and the default is the same out-of-range value); the Tapp, Tuvar and both list clauses match one for one."
   },
   {
     "lean_path": "Flapjack/Compiler/Inference/Unify.lean",
@@ -118503,16 +118503,16 @@
     "lean_name": "Env",
     "hol_path": "cakeml/compiler/inference/inferScript.sml",
     "hol_name": "inf_env",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Inference environment transcribed with namespace and semantic-type carriers; full HOL source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed infer_subst_probe capture of inf_env_Axiom (`inf_env` applied to `(mlstring, mlstring, num # infer_t) namespace`, `(mlstring, mlstring, mlstring list # t list # num) namespace` and `(mlstring, mlstring, mlstring list # t) namespace`) with Env's three fields infV, infC, infT over the reviewed Namespace port; HOL's tenv_val/tenv_ctor/tenv_abbrev abbreviations (typeSystemScript.sml:267-269) are exactly those three namespace carriers with SemanticT as t and Nat as type_ident."
   },
   {
     "lean_path": "Flapjack/Compiler/Inference/Infer.lean",
     "lean_name": "initConfig",
     "hol_path": "cakeml/compiler/inference/inferScript.sml",
     "hol_name": "init_config_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Primitive inference namespaces transcribed including association-list order; complete source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed infer_subst_probe capture (`init_config = <|inf_c := prim_tenv.c; inf_v := nsEmpty; inf_t := prim_tenv.t|>`) with initConfig := \u27e8nsEmpty, primTenv.c, primTenv.t\u27e9: the same three components (Lean's Env field order is infV, infC, infT), nsEmpty the reviewed nsEmpty_def port and primTenv the reviewed prim_tenv_def port (primTypesScript)."
   },
   {
     "lean_path": "Flapjack/Basis/BasisProg.lean",
