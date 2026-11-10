@@ -101,7 +101,7 @@ theorem codeList_labels (loc : Nat) (fns : List (Nat × ClosLang.Exp)) (state : 
 
 /-- New auxiliary labels are distinct. This supports the direct-call pass's
 code-location invariant. -/
-theorem codeList_newLabels_nodup (loc count : Nat) :
+private theorem codeList_newLabels_nodup (loc count : Nat) :
     (((List.range count).map (fun i => loc + i * 2 + 1)).reverse).Nodup := by
   apply List.nodup_reverse.mpr
   apply List.Nodup.map (fun _ _ equal => by omega) List.nodup_range

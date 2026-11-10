@@ -38,13 +38,6 @@ private theorem labelsBound_append {s0 s1 s2 : State} {xs ys : List Nat}
     · exact Or.inr ⟨loc, List.mem_append_left _ inX, eq⟩
   · exact Or.inr ⟨loc, List.mem_append_right _ inY, eq⟩
 
-/-- Flapjack bookkeeping for locating function bodies; no separate HOL theorem. -/
-theorem codeLocations_map_snd (fns : List (Nat × Exp)) :
-    codeLocations (fns.map Prod.snd) = codeLocationsFuns fns := by
-  induction fns with
-  | nil => rfl
-  | cons fn fns ih => cases fn; simp [codeLocations, codeLocationsFuns, ih]
-
 /-- Flapjack bookkeeping for labels emitted by code lists; no separate HOL theorem. -/
 theorem codeList_bound (loc : Nat) (fns : List (Nat × Exp)) (state : State) :
     LabelsBound state (codeList loc fns state)
@@ -150,14 +143,14 @@ theorem callsFuel_labelsBound (fuel : Nat) (e : Exp) (initial final : State) (ou
           (callsListFuel_labelsBound fuel (fns.map Prod.snd) initial s2 bodies' hb')
           (callsFuel_labelsBound fuel body s2 s3 body' he)
         apply labelsBound_mono bounds
-        simp only [codeLocations_map_snd, codeLocationsExp, List.mem_append]
+        simp only [← codeLocationsFuns_map, codeLocationsExp, List.mem_append]
         aesop
       | true =>
         simp only [↓reduceIte, Option.bind_eq_some_iff, Option.some.injEq,
           Prod.mk.injEq] at rest
         obtain ⟨⟨body', s2⟩, he, _, rfl⟩ := rest
         have before : LabelsBound initial s1 (codeLocationsFuns fns) := by
-          simpa only [LabelsBound, insertEach, codeLocations_map_snd] using
+          simpa only [LabelsBound, insertEach, ← codeLocationsFuns_map] using
             callsListFuel_labelsBound fuel (fns.map Prod.snd)
               (insertEach (loc.getD 0) fns.length initial) s1 bodies hb
         have generated := codeList_bound (loc.getD 0) ((fns.map Prod.fst).zip bodies) s1

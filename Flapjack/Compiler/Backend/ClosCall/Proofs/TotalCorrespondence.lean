@@ -37,7 +37,7 @@ private theorem groupClosedFold_eq (fuel : Nat) (pairs : List ((Nat × Exp) × E
 
 /-- The executed group fold agrees with the total pairwise closedness test.
 This Flapjack bridge is needed to compare the bounded and total traversals. -/
-theorem groupClosedFuel_eq_total (fuel : Nat) (fns : List (Nat × Exp)) (bodies : List Exp) :
+private theorem groupClosedFuel_eq_total (fuel : Nat) (fns : List (Nat × Exp)) (bodies : List Exp) :
     groupClosedFuel fuel fns bodies = some ((fns.zip bodies).all (fun (fn, code) =>
       closed (.fn (Flapjack.Basis.Pure.MlString.ofString "") none none fn.1 code))) := by
   simpa [groupClosedFuel, totalGroupClosed] using groupClosedFold_eq fuel (fns.zip bodies) true
@@ -234,15 +234,9 @@ private theorem callsFuel_refines (fuel : Nat) :
         intro q
         exact refines_some _
 
-/-- Every successful bounded expression traversal equals the total traversal.
-This Flapjack bridge relates the executable fuel adapter to HOL's traversal. -/
-theorem callsFuel_correct (fuel : Nat) (e : Exp) (state : State) (result : Exp × State)
-    (run : callsFuel fuel e state = some result) : result = callsSing e state :=
-  (callsFuel_refines fuel).1 e state result run
-
 /-- Every successful bounded list traversal equals the total traversal.
 This Flapjack bridge relates the executable fuel adapter to HOL's traversal. -/
-theorem callsListFuel_correct (fuel : Nat) (es : List Exp) (state : State) (result : List Exp × State)
+private theorem callsListFuel_correct (fuel : Nat) (es : List Exp) (state : State) (result : List Exp × State)
     (run : callsListFuel fuel es state = some result) : result = callsSingList es state :=
   (callsFuel_refines fuel).2 es state result run
 
@@ -267,14 +261,14 @@ theorem callsListBounded_correct (fuel : Nat) (es : List Exp) (state : State) :
 /-- The executable conditional pass agrees with the total traversal when
 enabled and returns the unchanged input when disabled. This is a bridge from
 the fuel adapter to HOL's `compile_eq`. -/
-theorem compileFuel_correct (fuel : Nat) (enabled : Bool) (es : List Exp) :
+private theorem compileFuel_correct (fuel : Nat) (enabled : Bool) (es : List Exp) :
     compileFuel fuel enabled es = some (if enabled then callsSingList es (.ln, []) else (es, (.ln, []))) := by
   cases enabled <;> simp [compileFuel, callsListBounded_correct]
 
 /-- The executed incremental pass returns the total traversal's known set,
 expressions and generated code. This bridges the fuel adapter to HOL's
 `compile_inc_eq`; the incoming auxiliary code is discarded. -/
-theorem compileIncFuel_correct (fuel : Nat) (known : NumSet)
+private theorem compileIncFuel_correct (fuel : Nat) (known : NumSet)
     (program : List Exp × List (Nat × Nat × Exp)) :
     compileIncFuel? fuel known program =
       some (let result := callsSingList program.1 (known, [])
