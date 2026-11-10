@@ -95,4 +95,25 @@ theorem codeInv_entry {A B D E Z H T G : Type}
     cases program with
     | mk exp aux => simpa [found] using entry
 
+/-- An oracle includes a state when an entry has the same first component. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "includes_state_def" 2133]
+def includesState {A B C D : Type} (g : A × B) (oracle : Nat → (A × C) × D) : Prop :=
+  ∃ k, (oracle k).1.1 = g.1
+
+/-- An included state occurs in a fully decomposed oracle entry. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "includes_state_EX"]
+theorem includesState_exists {A B C D E : Type} (g : A × B)
+    (oracle : Nat → (A × C) × D × E) (h : includesState g oracle) :
+    ∃ k cfg exps aux, oracle k = ((g.1, cfg), exps, aux) := by
+  obtain ⟨k, same⟩ := h
+  cases entry : oracle k with
+  | mk config program =>
+    cases config with
+    | mk first cfg =>
+      cases program with
+      | mk exps aux =>
+        simp only [entry] at same
+        cases same
+        exact ⟨k, cfg, exps, aux, entry⟩
+
 end Flapjack.Compiler.Backend.ClosCall

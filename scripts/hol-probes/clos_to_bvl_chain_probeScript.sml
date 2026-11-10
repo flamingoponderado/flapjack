@@ -73,6 +73,9 @@ val _ = show_thm "clos_call_co_ok_IMP_wfg_full_gs_typed=" clos_callProofTheory.c
 val _ = show_thm "clos_call_co_ok_IMP_make_g_typed=" clos_callProofTheory.co_ok_IMP_make_g;
 val _ = show_thm "clos_call_code_inv_def_typed=" clos_callProofTheory.code_inv_def;
 val _ = show_thm "clos_call_code_inv_k_typed=" clos_callProofTheory.code_inv_k;
+val _ = show_thm "clos_call_SUBMAP_FUPDATE_LIST_typed=" clos_callProofTheory.SUBMAP_FUPDATE_LIST;
+val _ = show_thm "clos_call_includes_state_def_typed=" clos_callProofTheory.includes_state_def;
+val _ = show_thm "clos_call_includes_state_EX_typed=" clos_callProofTheory.includes_state_EX;
 (* This theorem is local in HOL; replay its statement and proof to retain inferred types. *)
 val clos_call_env_rel_Op_Install_replay = Q.prove (
   `clos_callProof$env_rel r env env2 0 [(0, closLang$Op v6 closLang$Install e1)] <=>

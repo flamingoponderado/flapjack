@@ -1,5 +1,24 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "SUBMAP_FUPDATE_LIST",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FiniteMap.lean", "lean_name": "submap_updateList",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Source comparison: compared clos_call_SUBMAP_FUPDATE_LIST_typed: independently polymorphic keys and values, original grouped distinctness and pointwise disjointness premises, and full submap conclusion match. The map f uses canonical finite support and updates use classical HOL equality."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "includes_state_def", "hol_line": 2133,
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeInvariant.lean", "lean_name": "includesState",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_call_includes_state_def_typed: all four polymorphic tuple payload types remain independent and the oracle includes exactly an entry whose first component equals the first state component. The line selects the live definition over the commented alternative."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "includes_state_EX",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeInvariant.lean", "lean_name": "includesState_exists",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_call_includes_state_EX_typed: the five tuple payload types remain independent, the source inclusion premise and all four existential witnesses occur in order, and the whole oracle entry equality is retained."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_inv_def", "hol_line": 2087,
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeInvariant.lean", "lean_name": "codeInv",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
