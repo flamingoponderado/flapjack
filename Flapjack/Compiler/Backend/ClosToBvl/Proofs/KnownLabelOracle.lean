@@ -2,6 +2,8 @@ module
 
 public import Mathlib.Data.List.Nodup
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CodeLocations
+public import Flapjack.Compiler.Backend.ClosTicks.Source
+public import Flapjack.Compiler.Backend.ClosLetop.Source
 
 @[expose] public section
 
@@ -24,5 +26,19 @@ theorem knownOpConst (c : ClosKnown.Config) (trace : BackendCommon.Tra) (n : Nat
   | cons x xs =>
     rw [knownListTotal_cons_cons, marker]
     cases h : knownListTotal c (x :: xs) env g; simp [h]
+
+/-- Tick removal leaves a leading nonnegative integer entry marker unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "remove_ticks_Op_Const"]
+theorem removeTicks_opConst (trace : BackendCommon.Tra) (n : Nat) (xs : List ClosLang.Exp) :
+    ClosTicks.removeList (.op trace (.intOp (.const (Int.ofNat n))) [] :: xs) =
+      .op trace (.intOp (.const (Int.ofNat n))) [] :: ClosTicks.removeList xs := by
+  rfl
+
+/-- Let-operation cleanup leaves a leading nonnegative integer entry marker unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "let_op_Op_Const"]
+theorem letOp_opConst (trace : BackendCommon.Tra) (n : Nat) (xs : List ClosLang.Exp) :
+    ClosLetop.compileList (.op trace (.intOp (.const (Int.ofNat n))) [] :: xs) =
+      .op trace (.intOp (.const (Int.ofNat n))) [] :: ClosLetop.compileList xs := by
+  rfl
 
 end Flapjack.Compiler.Backend.ClosToBvl

@@ -37,6 +37,13 @@ def removeFuns : List (Nat × Exp) → List (Nat × Exp)
   | (arity, body) :: rest => (arity, removeSing body) :: removeFuns rest
 end
 
+/-- Tick removal preserves the length of the expression list. -/
+@[hol "cakeml/compiler/backend/clos_ticksScript.sml" "LENGTH_remove_ticks"]
+theorem removeList_length (xs : List Exp) : (removeList xs).length = xs.length := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih => simp [removeList, ih]
+
 /-- Incremental tick removal discards the auxiliary component. -/
 @[hol "cakeml/compiler/backend/clos_ticksScript.sml" "compile_inc_def"]
 def compileInc {α β : Type} (program : List Exp × α) : List Exp × List β :=

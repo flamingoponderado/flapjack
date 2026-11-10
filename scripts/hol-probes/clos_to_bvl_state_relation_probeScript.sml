@@ -129,4 +129,10 @@ val _ = show "init_code_rel_typed=" clos_to_bvlProofTheory.init_code_def;
 val _ = show "compile_prog_semantics_typed=" clos_to_bvlProofTheory.compile_prog_semantics;
 val _ = show "compile_exps_correct_typed=" clos_to_bvlProofTheory.compile_exps_correct;
 
+val _ = show "remove_ticks_op_const_typed=" clos_to_bvlProofTheory.remove_ticks_Op_Const;
+val _ = show "let_op_const_typed=" clos_to_bvlProofTheory.let_op_Op_Const;
+val _ = show "known_co_req_typed=" clos_to_bvlProofTheory.known_co_req;
+val _ = show "length_remove_ticks_typed=" clos_ticksTheory.LENGTH_remove_ticks;
+val _ = show "length_let_op_typed=" clos_letopTheory.LENGTH_let_op;
+val _ = show "known_length_eq_e_typed=" clos_knownTheory.known_LENGTH_EQ_E;
 val _ = show "known_op_const_typed=" clos_to_bvlProofTheory.known_Op_Const;

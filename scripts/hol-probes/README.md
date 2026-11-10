@@ -9910,6 +9910,8 @@ evaluation and semantics correctness theorems, plus typed replays of the
 original local annotation-collection statements and proofs. Regenerate with
 `HOL_PROBE_ONLY=clos_mti_correct_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean correspondence.
+
 `clos_to_bvl_state_relation_probe.out` replays the original local
 `code_locs_code_list_ALL_DISTINCT` proof and captures its independent
-polymorphic metadata and state types for statement comparison.
+polymorphic metadata and state types for statement comparison. It also captures
+the known-oracle address invariant and its entry-marker and length prerequisites.

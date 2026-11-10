@@ -55,6 +55,13 @@ def compileFuns : List (Nat × Exp) → List (Nat × Exp)
   | (arity, body) :: rest => (arity, compileSing body) :: compileFuns rest
 end
 
+/-- Let-operation cleanup preserves the length of the expression list. -/
+@[hol "cakeml/compiler/backend/clos_letopScript.sml" "LENGTH_let_op"]
+theorem compileList_length (xs : List Exp) : (compileList xs).length = xs.length := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih => simp [compileList, ih]
+
 /-- Incremental cleanup discards the auxiliary component. -/
 @[hol "cakeml/compiler/backend/clos_letopScript.sml" "compile_inc_def"]
 def compileInc {α β : Type} (program : List Exp × α) : List Exp × List β :=

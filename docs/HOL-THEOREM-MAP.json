@@ -18,6 +18,36 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/clos_ticksScript.sml", "hol_name": "LENGTH_remove_ticks",
+  "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Source.lean", "lean_name": "removeList_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared length_remove_ticks_typed and independent review; remove_sing_eq_typed in clos_ticks_source_probe.out identifies HOL remove_ticks with its list traversal. The universal list and length equality agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_letopScript.sml", "hol_name": "LENGTH_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Source.lean", "lean_name": "compileList_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared length_let_op_typed and independent review; let_op_sing_eq_typed in clos_letop_source_probe.out identifies HOL let_op with its list traversal. The universal list and length equality agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_knownScript.sml", "hol_name": "known_LENGTH_EQ_E",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Total.lean", "lean_name": "knownListTotal_length_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_length_eq_e_typed and independent source review: configuration, list, sparse-tree and output binders, execution premise and length equality agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "remove_ticks_Op_Const",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownLabelOracle.lean", "lean_name": "removeTicks_opConst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared remove_ticks_op_const_typed and independent review; remove_sing_eq_typed in clos_ticks_source_probe.out identifies HOL remove_ticks with its list traversal. Trace, natural integer marker, list tail and equation agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "let_op_Op_Const",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownLabelOracle.lean", "lean_name": "letOp_opConst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared let_op_const_typed and independent review; let_op_sing_eq_typed in clos_letop_source_probe.out identifies HOL let_op with its list traversal. Trace, natural integer marker, list tail and equation agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cond_call_compile_inc_req",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallAddresses.lean", "lean_name": "condCallCompileInc_req",
   "statement_status": "reviewed_exact",
