@@ -18,6 +18,12 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_common_MAP_FST_compile_prog",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CommonLabelBound.lean", "lean_name": "compileCommon_mapFst_compileProg",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_common_map_fst_compile_prog_typed and independent review: c, es, c', p order, original compile equation, input maxApp and output nextLoc, and count as the strict bound match. The proof unfolds makeEven to the original inline mod-2 expression."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "ccompile_aux_subset",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallBounds.lean", "lean_name": "ccompile_aux_subset",
   "statement_status": "reviewed_exact",
