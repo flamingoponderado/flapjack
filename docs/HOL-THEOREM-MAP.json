@@ -1,5 +1,35 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "insert_each'_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertWithCode.lean", "lean_name": "insertWithCode",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared insert_each_prime_def_type in clos_call_code_list_probe.out and HOL source: the generic code payload, zero case, sparse insertion, p+2 recursion and prepended p+1 lookup agree. holALookup and holThe preserve HOL lookup and THE, including the unspecified missing value for the inhabited payload."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfg_insert_each'",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertWithCode.lean", "lean_name": "insertWithCode_wellFormed",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wfg_insert_each_prime_type and source: arbitrary code entries, starting location, count and state retain their carriers; the original full well-formedness and generated-location/domain disjointness premises imply full well-formedness after insertion. Disjointness is expressed pointwise."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "FST_insert_each'",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertWithCode.lean", "lean_name": "insertWithCode_fst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fst_insert_each_prime_type and source: generic code payload and ordered inputs agree, and the whole sparse-state first component equals ordinary location insertion."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "MAP_FST_insert_each'",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertWithCode.lean", "lean_name": "insertWithCode_labels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared map_fst_insert_each_prime_type and source: generic inputs retain their order and the reversed generated label list is appended before the unchanged old labels."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "SND_insert_each'",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertWithCode.lean", "lean_name": "insertWithCode_snd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared snd_insert_each_prime_type and source: the exact reversed generated label and HOL THE/ALOOKUP payload list precedes the unchanged old code; generic payload remains inhabited only for HOL THE."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_acc",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/SuffixReplacement.lean", "lean_name": "calls_acc",
   "statement_status": "reviewed_exact",
