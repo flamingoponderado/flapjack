@@ -3628,8 +3628,8 @@
   "hol_name": "size_of_cons_seen_Block",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Assign/SizeSeen.lean",
   "lean_name": "sizeOfValues_cons_seen_block",
-  "statement_status": "pending_statement_review",
-  "reviewer": "The Lean result builds; capture the exported original theorem's inferred type before classifying the statement as reviewed."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed size_of_cons_seen_Block capture: HOL size_of has type limits -> v list -> v ref sptree$num_map -> num_set -> ..., so lims/vs/refs/seen correspond to Lean's limits/values/refs/seen carriers (DataSem.Value for v, Spt (BvlSem.Ref DataSem.Value) for v ref sptree$num_map, Spt Unit for num_set), and Block ts tag l is num/num/v list, matching .block stamp tag fields. The hypothesis MEM (Block ts tag l) vs is Lean's membership hypothesis and the conclusion is the same equation; size_of is the tagged dataSemScript size_of_def port."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_assignProofScript.sml",
