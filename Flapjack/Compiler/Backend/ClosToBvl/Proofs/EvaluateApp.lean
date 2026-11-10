@@ -107,7 +107,7 @@ theorem evaluatePost_app_function_error {C F : Type}
           (.val targetValues, { tMiddle with clock := sMiddle.clock + clock2 }) := by
         simpa [Nat.add_assoc, clocks1] using shifted
       refine ⟨clock1 + clock2, .err targetError, tFinal, fFinal, ?_, ?_, state2,
-        relocationSubmap_trans map1 map2, unmappedRefsSubmap_trans frame1 frame2, annotations2, clocks2⟩
+        HolFiniteMapExact.submap_trans map1 map2, unmappedRefsSubmap_trans frame1 frame2, annotations2, clocks2⟩
       · exact evaluate_appTarget_function_error _ _ _ _ _ _ _ _ _ _ runArgs run2
       · simpa [maxApp] using related2
 
@@ -678,7 +678,7 @@ theorem evaluatePost_app_generic_success {C F : Type}
             (.val [targetClosure], { tFunction with clock := sFunction.clock + clock3 }) := by
           simpa [Nat.add_assoc, clocks2] using shiftFunction
         refine ⟨clock1 + clock2 + clock3, targetResult, tFinal, fFinal, ?_, ?_, states3,
-          relocationSubmap_trans (relocationSubmap_trans map1 map2) map3,
+          HolFiniteMapExact.submap_trans (HolFiniteMapExact.submap_trans map1 map2) map3,
           unmappedRefsSubmap_trans (unmappedRefsSubmap_trans frame1 frame2) frame3, annotations3, clocks3⟩
         · rw [evaluate_appTarget_generic _ _ _ _ _ _ _ _ _ runArgs runFunction]
           simpa [targetLength] using targetCallRun
@@ -4905,7 +4905,7 @@ theorem evaluatePost_mkClCall_over_compose {C F : Type}
       (fMiddle : HolFiniteMapExact Nat Nat),
       stateRel fMiddle sMiddle tMiddle →
       vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code value targetValue →
-      relocationSubmap f fMiddle → unmappedRefsSubmap t.refs tMiddle.refs f fMiddle →
+      f.submap fMiddle → unmappedRefsSubmap t.refs tMiddle.refs f fMiddle →
       codeAnnotations sMiddle → sptSubspt t.code tMiddle.code →
       evaluatePost sMiddle sFinal tMiddle
         (targetValue :: .number (Int.ofNat total) :: .number (Int.ofNat total - Int.ofNat (n + 1)) ::
@@ -4944,7 +4944,7 @@ theorem evaluatePost_mkClCall_over_compose {C F : Type}
             (s.clock - (total + 1) + clock1) + clock2 := by omega
         simpa [BvlSem.decClock, ClosSem.decClock, clockEq, clocks1] using shiftedBody
       refine ⟨clock1 + clock2 + 1, targetFinal, tFinal, fFinal, ?_, ?_, states2,
-        relocationSubmap_trans map1 map2, unmappedRefsSubmap_trans refs1 refs2, annotations2, clocks2⟩
+        HolFiniteMapExact.submap_trans map1 map2, unmappedRefsSubmap_trans refs1 refs2, annotations2, clocks2⟩
       · rw [evaluate_mkClCall_over_step _ s.maxApp n total tag address args fields rest body length over totalBound
           (by simpa using genericLookup) (by simpa using lookup)]
         have targetEnough : ¬s.clock + (clock1 + clock2 + 1) < total + 2 := by omega
@@ -5039,7 +5039,7 @@ theorem evaluateApp_ordinary_over_success {C F : Type}
       ClosSem.evaluateApp none value (args.take (args.length - arity)) sMiddle = (result, sFinal) →
       stateRel fMiddle sMiddle tMiddle →
       vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code value targetValue →
-      relocationSubmap f fMiddle → unmappedRefsSubmap t.refs tMiddle.refs f fMiddle →
+      f.submap fMiddle → unmappedRefsSubmap t.refs tMiddle.refs f fMiddle →
       codeAnnotations sMiddle → sptSubspt t.code tMiddle.code →
       evaluatePost sMiddle sFinal tMiddle
         (targetValue :: .number (Int.ofNat (arity - 1)) ::

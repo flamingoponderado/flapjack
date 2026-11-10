@@ -21,7 +21,7 @@ def RawSingletonPost {C F : Type} (e : Bvi.Exp) (source : BviState (Nat × C) F)
   ∃ (next : BviState C F) (nextMap : HolFiniteMapExact Nat Nat) (nextResult : BviResult),
     evaluate [e] env2 target = (nextResult, next) ∧
     SemanticPrimitivesProps.resultRel (List.Forall₂ (valueRel nextMap)) (ResultRelation.eorRel nextMap) result nextResult ∧
-    stateRel nextMap final next ∧ finiteSubmap f nextMap ∧ onlyFresh f nextMap target.refs ∧
+    stateRel nextMap final next ∧ f.submap nextMap ∧ onlyFresh f nextMap target.refs ∧
     holesUnchangedExcept f target.refs next.refs ∅ ∧ holesStillNotFinalised f target.refs next.refs ∧
     ∀ dest, optimisedCode loc dest source.code target.code →
       (∀ wrapper, ([e] : List Bvi.Exp).length = 1 ∧ rewriteWrapperSource loc dest env1.length e = some wrapper →

@@ -29,13 +29,13 @@ theorem stateRel_alloc {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (f.updateEq (src, tgt)).lookup src = some tgt ∧
     stateRel (f.updateEq (src, tgt)) { source with refs := source.refs.updateEq (src, v) }
       { target with refs := target.refs.updateEq (tgt, w) } ∧
-    finiteSubmap f (f.updateEq (src, tgt)) ∧ onlyFresh f (f.updateEq (src, tgt)) target.refs ∧
+    f.submap (f.updateEq (src, tgt)) ∧ onlyFresh f (f.updateEq (src, tgt)) target.refs ∧
     holesUnchangedExcept f target.refs (target.refs.updateEq (tgt, w)) ∅ ∧
     holesStillNotFinalised f target.refs (target.refs.updateEq (tgt, w)) := by
   have mapMissing : f.lookup src = none := by
     have absent : src ∉ f.domain := by rw [related.1.1]; exact srcFresh
     simpa [HolFiniteMapExact.domain] using absent
-  have extension : finiteSubmap f (f.updateEq (src, tgt)) := by
+  have extension : f.submap (f.updateEq (src, tgt)) := by
     intro i j found
     have ne : i ≠ src := by
       intro eq

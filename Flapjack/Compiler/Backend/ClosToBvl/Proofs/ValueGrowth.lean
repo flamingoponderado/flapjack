@@ -7,13 +7,6 @@ public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRelation
 /-! Preservation of closure, value and environment relations as stores grow. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
-/-- Relocation-map extension composes across sequential evaluations. -/
-theorem relocationSubmap_trans {f1 f2 f3 : HolFiniteMapExact Nat Nat}
-    (first : relocationSubmap f1 f2) (second : relocationSubmap f2 f3) :
-    relocationSubmap f1 f3 := by
-  intro key value found
-  exact second key value (first key value found)
-
 /-- The unmapped-reference frame also composes across sequential evaluations. -/
 theorem unmappedRefsSubmap_trans
     {refs1 refs2 refs3 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)}
@@ -52,7 +45,7 @@ theorem vRel_grow_refs {maxApp : Nat} {f1 f2 : HolFiniteMapExact Nat Nat}
     {refs1 refs2 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)}
     {code : Spt (Nat × Bvl.Exp)} {x y}
     (related : vRel maxApp f1 refs1 code x y)
-    (submap : relocationSubmap f1 f2) (frame : unmappedRefsSubmap refs1 refs2 f1 f2) :
+    (submap : f1.submap f2) (frame : unmappedRefsSubmap refs1 refs2 f1 f2) :
     vRel maxApp f2 refs2 code x y := by
   have rangeSubset : ∀ p, (∃ n, f1.lookup n = some p) → ∃ n, f2.lookup n = some p := by
     intro p ⟨n, lookup⟩
@@ -88,7 +81,7 @@ theorem envRel_grow_refs {maxApp : Nat} {f1 f2 : HolFiniteMapExact Nat Nat}
     {refs1 refs2 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)}
     {code : Spt (Nat × Bvl.Exp)} {env targetEnv}
     (related : envRel maxApp f1 refs1 code env targetEnv)
-    (submap : relocationSubmap f1 f2) (frame : unmappedRefsSubmap refs1 refs2 f1 f2) :
+    (submap : f1.submap f2) (frame : unmappedRefsSubmap refs1 refs2 f1 f2) :
     envRel maxApp f2 refs2 code env targetEnv := by
   induction env generalizing targetEnv with
   | nil => trivial
@@ -104,7 +97,7 @@ theorem vRel_grow {maxApp : Nat} {f1 f2 : HolFiniteMapExact Nat Nat}
     {refs1 refs2 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)}
     {code1 code2 : Spt (Nat × Bvl.Exp)} {x y}
     (related : vRel maxApp f1 refs1 code1 x y)
-    (submap : relocationSubmap f1 f2) (frame : unmappedRefsSubmap refs1 refs2 f1 f2)
+    (submap : f1.submap f2) (frame : unmappedRefsSubmap refs1 refs2 f1 f2)
     (codeGrowth : sptSubspt code1 code2) : vRel maxApp f2 refs2 code2 x y :=
   vRel_subspt f2 refs2 (vRel_grow_refs related submap frame) codeGrowth
 
@@ -113,7 +106,7 @@ theorem envRel_grow {maxApp : Nat} {f1 f2 : HolFiniteMapExact Nat Nat}
     {refs1 refs2 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)}
     {code1 code2 : Spt (Nat × Bvl.Exp)} {env targetEnv}
     (related : envRel maxApp f1 refs1 code1 env targetEnv)
-    (submap : relocationSubmap f1 f2) (frame : unmappedRefsSubmap refs1 refs2 f1 f2)
+    (submap : f1.submap f2) (frame : unmappedRefsSubmap refs1 refs2 f1 f2)
     (codeGrowth : sptSubspt code1 code2) : envRel maxApp f2 refs2 code2 env targetEnv :=
   envRel_subspt f2 refs2 (envRel_grow_refs related submap frame) codeGrowth
 

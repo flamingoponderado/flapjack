@@ -79,7 +79,7 @@ theorem evaluate_fill_hole_val {C F : Type} (e : Bvi.Exp)
     (_sourceRun : evaluate [e] env1 source = (.val [value], sourceNext))
     (targetRun : evaluate [e] env2 target = (.val [relatedValue], targetNext))
     (_environments : envRel true f env1 env2) (_states : stateRel f source target)
-    (submap : finiteSubmap f fNext) (values : valueRel fNext value relatedValue)
+    (submap : f.submap fNext) (values : valueRel fNext value relatedValue)
     (hole : holeHasVal f env1 env2 target.refs c) (unfinalised : holeNotFinalised target.refs holePtr)
     (unchanged : holesUnchangedExcept f target.refs targetNext.refs ∅)
     (still : holesStillNotFinalised f target.refs targetNext.refs)
@@ -88,7 +88,7 @@ theorem evaluate_fill_hole_val {C F : Type} (e : Bvi.Exp)
     ∃ (fillResult : BviResult) (fillMap : HolFiniteMapExact Nat Nat) (fillState : BviState C F),
       evaluate [fillHoleSource env1.length (env1.length + 1) e] env2 target = (fillResult, fillState) ∧
       optResRel fillMap (.val [value]) fillResult ∧ stateRel fillMap sourceNext fillState ∧
-      finiteSubmap f fillMap ∧ onlyFresh f fillMap target.refs ∧
+      f.submap fillMap ∧ onlyFresh f fillMap target.refs ∧
       holesUnchangedExcept f target.refs fillState.refs {holePtr} ∧
       holesStillNotFinalised f target.refs fillState.refs ∧
       ∃ fillValue, mutableBlockRel fillMap target.refs (fillState.refs.eraseEq holePtr) value fillValue ∧
@@ -152,7 +152,7 @@ theorem evaluate_fill_hole {C F : Type} (e : Bvi.Exp)
     (sourceRun : evaluate [e] env1 source = (result, sourceNext))
     (targetRun : evaluate [e] env2 target = (targetResult, targetNext))
     (environments : envRel true f env1 env2) (states : stateRel f source target)
-    (submap : finiteSubmap f fNext)
+    (submap : f.submap fNext)
     (results : resultRel (List.Forall₂ (valueRel fNext)) (eorRel fNext) result targetResult)
     (hole : holeHasVal f env1 env2 target.refs c) (unfinalised : holeNotFinalised target.refs holePtr)
     (unchanged : holesUnchangedExcept f target.refs targetNext.refs ∅)
@@ -162,7 +162,7 @@ theorem evaluate_fill_hole {C F : Type} (e : Bvi.Exp)
     ∃ (fillResult : BviResult) (fillMap : HolFiniteMapExact Nat Nat) (fillState : BviState C F),
       evaluate [fillHoleSource env1.length (env1.length + 1) e] env2 target = (fillResult, fillState) ∧
       optResRel fillMap result fillResult ∧ stateRel fillMap sourceNext fillState ∧
-      finiteSubmap f fillMap ∧ onlyFresh f fillMap target.refs ∧
+      f.submap fillMap ∧ onlyFresh f fillMap target.refs ∧
       holesUnchangedExcept f target.refs fillState.refs {holePtr} ∧
       holesStillNotFinalised f target.refs fillState.refs ∧
       ∀ value, result = .val [value] →

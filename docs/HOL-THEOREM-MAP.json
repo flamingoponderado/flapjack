@@ -141,7 +141,7 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "chain_installed_SUBMAP",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SourceChain.lean", "lean_name": "chainInstalled_submap",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["code", "nextCode"],
-  "reviewer": "Compared the HOL source and chain_installed_submap_typed with independent review: binder order, grouped premise and conclusion match. HOL SUBMAP_DEF is equivalent on canonical finite maps to the CodeSubmap lookup implication, and both code parameters have codec witnesses."
+  "reviewer": "Compared the HOL source and chain_installed_submap_typed with independent review: binder order, grouped premise and conclusion match. HOL SUBMAP_DEF is equivalent on canonical finite maps to the shared HolFiniteMapExact.submap lookup implication, and both code parameters have codec witnesses. Independently re-compared the HOL source: SUBMAP now uses canonical HolFiniteMapExact.submap with the identical lookup condition; all other statement components match."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "chain_installed_chain_exps",
@@ -1818,7 +1818,7 @@
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
-  "reviewer": "Compared the full three-conjunct statement with v_rel_weakening2_replay in source_to_flat_init_probe.out, including the shared free target environment and the three independently polymorphic unused gc binders. The original local HOL proof is replayed; GlobalEnv.c and tys use canonical finite maps."
+  "reviewer": "Compared the full three-conjunct statement with v_rel_weakening2_replay in source_to_flat_init_probe.out, including the shared free target environment and the three independently polymorphic unused gc binders. The original local HOL proof is replayed; GlobalEnv.c and tys use canonical finite maps. Independently re-compared the HOL source: SUBMAP now uses canonical HolFiniteMapExact.submap with the identical lookup condition; all other statement components match."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -1827,7 +1827,7 @@
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f1", "f2"],
-  "reviewer": "Compared the independent key and value carriers, submap premise and complete restriction/union equality with drestrict_lem_replay in source_to_flat_init_probe.out; the original local HOL proof is replayed. The finite restriction lookup returns the map lookup precisely on the given set, domain is the defined-lookup set, and union is HOL's left-biased FUNION. Both parameters use canonical finite maps with lookup/support roundtrip witnesses."
+  "reviewer": "Compared the independent key and value carriers, submap premise and complete restriction/union equality with drestrict_lem_replay in source_to_flat_init_probe.out; the original local HOL proof is replayed. The finite restriction lookup returns the map lookup precisely on the given set, domain is the defined-lookup set, and union is HOL's left-biased FUNION. Both parameters use canonical finite maps with lookup/support roundtrip witnesses. Independently re-compared the HOL source: SUBMAP now uses canonical HolFiniteMapExact.submap with the identical lookup condition; all other statement components match."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -1845,7 +1845,7 @@
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["c", "tys"],
-  "reviewer": "Compared all quantified environments, the combined environment relation and the original global-extension premises with env_all_rel_weak_replay in source_to_flat_init_probe.out; the HOL proof is replayed. GlobalEnv.c and tys use canonical finite maps."
+  "reviewer": "Compared all quantified environments, the combined environment relation and the original global-extension premises with env_all_rel_weak_replay in source_to_flat_init_probe.out; the HOL proof is replayed. GlobalEnv.c and tys use canonical finite maps. Independently re-compared the HOL source: SUBMAP now uses canonical HolFiniteMapExact.submap with the identical lookup condition; all other statement components match."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -15800,7 +15800,7 @@
     "hol_name": "src_orac_invs_weak",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
     "lean_name": "srcOracInvs_growth",
-    "reviewer": "Compared the typed original implication: the old oracle invariant, constructor and type finite-map submap conditions, and subglobals premise imply the invariant for the new global environment. finiteSubmap is the lookup characterization of the original submap; both canonical global finite-map fields are named by the qualifier. No target invariant or extra success premise is assumed."
+    "reviewer": "Compared the typed original implication: the old oracle invariant, constructor and type finite-map submap conditions, and subglobals premise imply the invariant for the new global environment. HolFiniteMapExact.submap is the lookup characterization of the original submap; both canonical global finite-map fields are named by the qualifier. No target invariant or extra success premise is assumed. Independently re-compared the HOL source: SUBMAP now uses canonical HolFiniteMapExact.submap with the identical lookup condition; all other statement components match. Corrected binder order to old, evalState, new."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -16398,7 +16398,7 @@
       "c",
       "tys"
     ],
-    "reviewer": "Compared v_rel_weak_typed in cake_subglobals_probe.out with the original: both quantify the old environment, source and flat values, and new environment; the relation and c submap, tys submap and subglobals conjunction imply the same relation in the new environment. The global environment c and tys fields use the canonical finite-support representation."
+    "reviewer": "Compared v_rel_weak_typed in cake_subglobals_probe.out with the original: both quantify the old environment, source and flat values, and new environment; the relation and c submap, tys submap and subglobals conjunction imply the same relation in the new environment. The global environment c and tys fields use the canonical finite-support representation. Independently re-compared the HOL source: SUBMAP now uses canonical HolFiniteMapExact.submap with the identical lookup condition; all other statement components match."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -16410,7 +16410,7 @@
       "c",
       "tys"
     ],
-    "reviewer": "Compared env_rel_weak_typed in cake_subglobals_probe.out with the original: both quantify the old environment, source namespace and flat local bindings, and new environment; the relation and c submap, tys submap and subglobals conjunction imply the same relation in the new environment. The global environment c and tys fields use the canonical finite-support representation."
+    "reviewer": "Compared env_rel_weak_typed in cake_subglobals_probe.out with the original: both quantify the old environment, source namespace and flat local bindings, and new environment; the relation and c submap, tys submap and subglobals conjunction imply the same relation in the new environment. The global environment c and tys fields use the canonical finite-support representation. Independently re-compared the HOL source: SUBMAP now uses canonical HolFiniteMapExact.submap with the identical lookup condition; all other statement components match."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -16422,7 +16422,7 @@
       "c",
       "tys"
     ],
-    "reviewer": "Compared global_env_inv_weak_typed in cake_subglobals_probe.out with the original: both quantify the old environment, compiler environment, shadower set and semantic environment, and new environment; the relation and c submap, tys submap and subglobals conjunction imply the same relation in the new environment. The global environment c and tys fields use the canonical finite-support representation."
+    "reviewer": "Compared global_env_inv_weak_typed in cake_subglobals_probe.out with the original: both quantify the old environment, compiler environment, shadower set and semantic environment, and new environment; the relation and c submap, tys submap and subglobals conjunction imply the same relation in the new environment. The global environment c and tys fields use the canonical finite-support representation. Independently re-compared the HOL source: SUBMAP now uses canonical HolFiniteMapExact.submap with the identical lookup condition; all other statement components match."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -16431,7 +16431,7 @@
     "lean_name": "storeValueRel_weak",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["c", "tys"],
-    "reviewer": "Compared the original local theorem with sv_rel_weak_replay in cake_subglobals_probe.out: both quantify the old global environment, source and flat store values, and new global environment, with the same relation, constructor submap, type submap and subglobals conjunction in that order. The global environment c and tys fields use the canonical finite-support representation."
+    "reviewer": "Compared the original local theorem with sv_rel_weak_replay in cake_subglobals_probe.out: both quantify the old global environment, source and flat store values, and new global environment, with the same relation, constructor submap, type submap and subglobals conjunction in that order. The global environment c and tys fields use the canonical finite-support representation. Independently re-compared the HOL source: SUBMAP now uses canonical HolFiniteMapExact.submap with the identical lookup condition; all other statement components match."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
@@ -16440,7 +16440,7 @@
     "hol_name": "LIST_REL_sv_rel_weak",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["c", "tys"],
-    "reviewer": "Compared LIST_REL_sv_rel_weak_typed with the HOL source: the original store-list relation, subglobals and both finite-submap premises imply the same store-list relation under the new global environment. The source and flat store-value carriers are unchanged; canonical c and tys fields are qualified."
+    "reviewer": "Compared LIST_REL_sv_rel_weak_typed with the HOL source: the original store-list relation, subglobals and both finite-submap premises imply the same store-list relation under the new global environment. The source and flat store-value carriers are unchanged; canonical c and tys fields are qualified. Independently re-compared the HOL source: SUBMAP now uses canonical HolFiniteMapExact.submap with the identical lookup condition; all other statement components match."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDenv.lean",
@@ -16651,7 +16651,7 @@
     "hol_name": "alloc_tags_invariant",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["c", "tys"],
-    "reviewer": "Compared alloc_tags_invariant_typed in source_to_flat_init_probe.out: original constructor allocation, invariant, environment, distinctness and index premises and all existential growth, invariant and environment conclusions agree. Compiler and FFI carriers are independent; HOL inhabitance for the invariant is explicit. The canonical global-environment c and tys finite maps and their submap observations use the reviewed finite-support representation."
+    "reviewer": "Compared alloc_tags_invariant_typed in source_to_flat_init_probe.out: original constructor allocation, invariant, environment, distinctness and index premises and all existential growth, invariant and environment conclusions agree. Compiler and FFI carriers are independent; HOL inhabitance for the invariant is explicit. The canonical global-environment c and tys finite maps and their submap observations use the reviewed finite-support representation. Independently re-compared the HOL source: SUBMAP now uses canonical HolFiniteMapExact.submap with the identical lookup condition; all other statement components match."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDatatype.lean",
@@ -21271,7 +21271,7 @@
       "f",
       "g"
     ],
-    "reviewer": "Source comparison against typed submap_fresh row of cake_subglobals_probe: HOL maps f and g share arbitrary key α and value β; key x is outside FDOM f iff its lookup is NONE. Both sides assert that the single update of f is a submap of g exactly when g maps x to y and f is already a submap of g. finiteSubmap is the SUBMAP_FLOOKUP_EQN lookup characterization; finiteUpdate uses HOL equality and FUPDATE lookup, without BEq or extra premises. Both map parameters use HolFiniteMapExact with same-module lookup/support roundtrip witnesses; the qualifier records only the finite-map representation."
+    "reviewer": "Source comparison against typed submap_fresh row of cake_subglobals_probe: HOL maps f and g share arbitrary key α and value β; key x is outside FDOM f iff its lookup is NONE. Both sides assert that the single update of f is a submap of g exactly when g maps x to y and f is already a submap of g. HolFiniteMapExact.submap is the SUBMAP_FLOOKUP_EQN lookup characterization; finiteUpdate uses HOL equality and FUPDATE lookup, without BEq or extra premises. Both map parameters use HolFiniteMapExact with same-module lookup/support roundtrip witnesses; the qualifier records only the finite-map representation. Independently re-compared the HOL source: SUBMAP now uses canonical HolFiniteMapExact.submap with the identical lookup condition; all other statement components match."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -21283,7 +21283,7 @@
       "f",
       "g"
     ],
-    "reviewer": "Source comparison against typed submap_update row of cake_subglobals_probe: arbitrary maps f and g share key type α and value type β; the updated map is a submap of g iff g maps x to y and f with x removed is a submap of g. finiteSubmap follows SUBMAP_FLOOKUP_EQN, finiteUpdate and finiteErase use HOL equality and the FUPDATE and DOMSUB lookup behavior. No additional premises or BEq assumptions. Both map parameters use HolFiniteMapExact with same-module lookup/support roundtrip witnesses; the qualifier records only the finite-map representation."
+    "reviewer": "Source comparison against typed submap_update row of cake_subglobals_probe: arbitrary maps f and g share key type α and value type β; the updated map is a submap of g iff g maps x to y and f with x removed is a submap of g. HolFiniteMapExact.submap follows SUBMAP_FLOOKUP_EQN, finiteUpdate and finiteErase use HOL equality and the FUPDATE and DOMSUB lookup behavior. No additional premises or BEq assumptions. Both map parameters use HolFiniteMapExact with same-module lookup/support roundtrip witnesses; the qualifier records only the finite-map representation. Independently re-compared the HOL source: SUBMAP now uses canonical HolFiniteMapExact.submap with the identical lookup condition; all other statement components match."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -78039,14 +78039,6 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead .42.2): inl_bag \\\\ fname SUBMAP inl_bag (HOL SUBMAP_DOMSUB)."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallTail.lean",
-    "lean_name": "submap_trans'",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack local support (bead .42.2): SUBMAP transitivity on HolFiniteMapExact (HOL SUBMAP_TRANS)."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallTail.lean",

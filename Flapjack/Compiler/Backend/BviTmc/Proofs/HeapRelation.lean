@@ -55,7 +55,7 @@ theorem holFmapAsFiniteSupportParamWitness_refRel_submap_g (g : HolFiniteMapExac
 Intended HOL counterpart, pending statement and finite-map carrier source review.
 Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "ref_rel_submap" (fmap_as_finite_support_parameters := [f, g])] -/
 theorem refRel_submap (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
-    (source target : Ref Value) (related : refRel f source target) (submap : finiteSubmap f g) :
+    (source target : Ref Value) (related : refRel f source target) (submap : f.submap g) :
     refRel g source target := by
   cases related with
   | byteArray b bytes => exact .byteArray b bytes
@@ -177,7 +177,7 @@ theorem stateRefRel_alloc (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMap
   have mapMissing : f.lookup src = none := by
     have notMem : src ∉ f.domain := by rw [related.1]; exact srcFresh
     simpa [HolFiniteMapExact.domain] using notMem
-  have extension : finiteSubmap f (f.updateEq (src, tgt)) := by
+  have extension : f.submap (f.updateEq (src, tgt)) := by
     intro i j found
     have ne : i ≠ src := by
       intro eq

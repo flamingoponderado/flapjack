@@ -442,7 +442,7 @@ theorem install_success_body_simulation {C F : Type}
         (vRel s.maxApp fFinal targetFinal.refs targetFinal.code)
         (match result with | .err error => .err error | .val values => .val [Flapjack.holLast values])
         (chainResult targetResult) ∧
-      stateRel fFinal finalSource targetFinal ∧ relocationSubmap f fFinal ∧
+      stateRel fFinal finalSource targetFinal ∧ f.submap fFinal ∧
       unmappedRefsSubmap t.refs targetFinal.refs f fFinal ∧ codeAnnotations finalSource ∧
       finalSource.clock = targetFinal.clock := by
   have successClock := ClosSem.doInstall_success_clock sourceValues s installedSource expressions installRun

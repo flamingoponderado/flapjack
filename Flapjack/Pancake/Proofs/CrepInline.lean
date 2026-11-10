@@ -6,7 +6,7 @@ public import Flapjack.Pancake.Semantics.CrepSem
 public import Flapjack.Pancake.Semantics.CrepSem.Eval
 public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 public import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
-public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.FiniteMap.SubmapExact
 public import Flapjack.Pancake.Semantics.CrepProps
 public import Flapjack.Pancake.CrepInline.Pass
 public import Flapjack.Pancake.CrepInline.Canonical
@@ -247,19 +247,8 @@ clauses (`crep_inlineProofScript.sml:117/127/135`) over the canonical
 finite-support carrier `HolFiniteMapExact`
 (`Flapjack/Pancake/Semantics/CrepSem/HOLState.lean`) with its HOL-equality
 (`DecidableEq`) `updateEq`/`eraseEq`, so they carry the exact HOL statements
-with no `BEq`/`LawfulBEq` side conditions.  `submap` is untagged
-infrastructure: HOL's `SUBMAP` is a finite-map operation defined in
-`fmapScript`, not a declaration of `crep_inlineProofScript.sml`. -/
-
-namespace HolFiniteMapExact
-
-/-- HOL finite-map `SUBMAP` on the canonical finite-support carrier: every
-    binding of `f` is also a binding of `g` with the same value, i.e. `FLOOKUP f`
-    and `FLOOKUP g` agree on `FDOM f`. -/
-def submap (f g : HolFiniteMapExact α β) : Prop :=
-  ∀ key value, f.lookup key = some value → g.lookup key = some value
-
-end HolFiniteMapExact
+with no `BEq`/`LawfulBEq` side conditions. The shared `submap` rendering is
+defined in `Flapjack/FiniteMap/SubmapExact.lean`. -/
 
 /-- Finite-map `SUBMAP_IMP_FUPDATE_SUBMAP`
     (`crep_inlineProofScript.sml:117`) over the exact finite-support carrier. -/

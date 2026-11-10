@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeRelation
 public import Flapjack.Compiler.Backend.BackendCommon.SmallInt
 public import Flapjack.Misc.ListEl
+public import Flapjack.FiniteMap.SubmapExact
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
 
 @[expose] public section
@@ -62,10 +63,6 @@ noncomputable def envRel (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source ta
     (opt = true → ys.length = 2 ∧ ∃ ptr idx,
       holEl 0 ys = .refPtr false ptr ∧ holEl 1 ys = .number idx ∧ BackendCommon.smallEnoughInt idx)
 
-/-- Lookup characterization of finite-map extension. -/
-def finiteSubmap (f g : HolFiniteMapExact Nat Nat) : Prop :=
-  ∀ key value, f.lookup key = some value → g.lookup key = some value
-
 theorem holFmapAsFiniteSupportParamWitness_valueRel_submap_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 theorem holFmapAsFiniteSupportParamWitness_valueRel_submap_g (g : HolFiniteMapExact Nat Nat) :
@@ -76,7 +73,7 @@ theorem holFmapAsFiniteSupportParamWitness_valueRel_submap_g (g : HolFiniteMapEx
 Intended HOL counterpart, pending statement and finite-map carrier source review.
 Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_rel_submap" (fmap_as_finite_support_parameters := [f, g])] -/
 theorem valueRel_submap (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat) (v1 v2 : Value)
-    (related : valueRel f v1 v2) (submap : finiteSubmap f g) : valueRel g v1 v2 := by
+    (related : valueRel f v1 v2) (submap : f.submap g) : valueRel g v1 v2 := by
   cases related with
   | number i => exact .number i
   | word64 w => exact .word64 w
@@ -112,7 +109,7 @@ Intended HOL counterpart, pending statement and finite-map carrier source review
 Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_submap" (fmap_as_finite_support_parameters := [f, g])] -/
 theorem listRel_submap (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
     (source target : List Value) (related : List.Forall₂ (valueRel f) source target)
-    (submap : finiteSubmap f g) : List.Forall₂ (valueRel g) source target := by
+    (submap : f.submap g) : List.Forall₂ (valueRel g) source target := by
   induction related with
   | nil => exact .nil
   | cons head tail ih => exact .cons (valueRel_submap f g _ _ head submap) ih
@@ -127,7 +124,7 @@ theorem holFmapAsFiniteSupportParamWitness_envRel_submap_g (g : HolFiniteMapExac
 Intended HOL counterpart, pending statement and finite-map carrier source review.
 Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_submap" (fmap_as_finite_support_parameters := [f, g])] -/
 theorem envRel_submap (opt : Bool) (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
-    (source target : List Value) (related : envRel opt f source target) (submap : finiteSubmap f g) :
+    (source target : List Value) (related : envRel opt f source target) (submap : f.submap g) :
     envRel opt g source target := by
   obtain ⟨xs, ys, equal, pairs, extras⟩ := related
   exact ⟨xs, ys, equal, listRel_submap f g source xs pairs submap, extras⟩

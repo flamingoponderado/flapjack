@@ -78,7 +78,7 @@ theorem evaluatePost_handle_raise {C F : Type}
           (.err (.raise targetValue), { tMiddle with clock := sMiddle.clock + clock2 }) := by
         simpa [Nat.add_assoc, clocks1] using shifted
       refine ⟨clock1 + clock2, result2, tFinal, fFinal, ?_, ?_, state2,
-        relocationSubmap_trans map1 map2, unmappedRefsSubmap_trans refs1 refs2, annotations2, clocks2⟩
+        HolFiniteMapExact.submap_trans map1 map2, unmappedRefsSubmap_trans refs1 refs2, annotations2, clocks2⟩
       · rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, runBody]
         exact targetRun2
       · simpa [maxApp] using related2

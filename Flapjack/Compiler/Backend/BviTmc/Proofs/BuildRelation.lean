@@ -20,7 +20,7 @@ theorem freshHeapAllocation (f : HolFiniteMapExact Nat Nat)
     let next := f.updateEq (src, tgt)
     next.lookup src = some tgt ∧
     stateRefRel next (source.updateEq (src, v)) (target.updateEq (tgt, w)) ∧
-    fmapInj next ∧ finiteSubmap f next ∧ onlyFresh f next target ∧
+    fmapInj next ∧ f.submap next ∧ onlyFresh f next target ∧
     holesUnchangedExcept f target (target.updateEq (tgt, w)) ∅ ∧
     holesStillNotFinalised f target (target.updateEq (tgt, w)) ∧
     target.domain ⊆ (target.updateEq (tgt, w)).domain := by
@@ -29,7 +29,7 @@ theorem freshHeapAllocation (f : HolFiniteMapExact Nat Nat)
   let tgt := leastUnusedRef target
   change (f.updateEq (src, tgt)).lookup src = some tgt ∧
     stateRefRel (f.updateEq (src, tgt)) (source.updateEq (src, v)) (target.updateEq (tgt, w)) ∧
-    fmapInj (f.updateEq (src, tgt)) ∧ finiteSubmap f (f.updateEq (src, tgt)) ∧
+    fmapInj (f.updateEq (src, tgt)) ∧ f.submap (f.updateEq (src, tgt)) ∧
     onlyFresh f (f.updateEq (src, tgt)) target ∧
     holesUnchangedExcept f target (target.updateEq (tgt, w)) ∅ ∧
     holesStillNotFinalised f target (target.updateEq (tgt, w)) ∧
@@ -42,7 +42,7 @@ theorem freshHeapAllocation (f : HolFiniteMapExact Nat Nat)
   have mapMissing : f.lookup src = none := by
     have absent : src ∉ f.domain := by rw [related.1]; exact srcFresh
     simpa [HolFiniteMapExact.domain] using absent
-  have extension : finiteSubmap f (f.updateEq (src, tgt)) := by
+  have extension : f.submap (f.updateEq (src, tgt)) := by
     intro key value found
     have different : key ≠ src := by
       intro equal
@@ -106,7 +106,7 @@ theorem doPart_related (f : HolFiniteMapExact Nat Nat) (m m' : Nat → Value)
       doPart m' part target = (value', targetNext) ∧
       valueRel nextMap (doPart m part source).1 value' ∧
       stateRefRel nextMap (doPart m part source).2 targetNext ∧ fmapInj nextMap ∧
-      finiteSubmap f nextMap ∧ onlyFresh f nextMap target ∧
+      f.submap nextMap ∧ onlyFresh f nextMap target ∧
       holesUnchangedExcept f target targetNext ∅ ∧ holesStillNotFinalised f target targetNext ∧
       target.domain ⊆ targetNext.domain := by
   cases part with
@@ -144,7 +144,7 @@ theorem doBuild_related (parts : List ClosLang.ConstPart) (f : HolFiniteMapExact
       doBuild m' i parts target = (value', targetNext) ∧
       valueRel nextMap (doBuild m i parts source).1 value' ∧
       stateRefRel nextMap (doBuild m i parts source).2 targetNext ∧ fmapInj nextMap ∧
-      finiteSubmap f nextMap ∧ onlyFresh f nextMap target ∧
+      f.submap nextMap ∧ onlyFresh f nextMap target ∧
       holesUnchangedExcept f target targetNext ∅ ∧ holesStillNotFinalised f target targetNext ∧
       target.domain ⊆ targetNext.domain := by
   induction parts generalizing f m m' i source target with
@@ -196,7 +196,7 @@ theorem doBuild_value_rel (parts : List ClosLang.ConstPart) (m : Nat → Value) 
     (injective : fmapInj f) (values : ∀ key, valueRel f (m key) (m' key)) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : HolFiniteMapExact Nat (Ref Value)),
       doBuild m' i parts target = (value', targetNext) ∧ valueRel nextMap value value' ∧
-      stateRefRel nextMap sourceNext targetNext ∧ fmapInj nextMap ∧ finiteSubmap f nextMap ∧
+      stateRefRel nextMap sourceNext targetNext ∧ fmapInj nextMap ∧ f.submap nextMap ∧
       onlyFresh f nextMap target ∧ holesUnchangedExcept f target targetNext ∅ ∧
       holesStillNotFinalised f target targetNext := by
   obtain ⟨nextMap, value', targetNext, targetRun, result, heaps, inj, submap, fresh, holes, still, _⟩ :=
@@ -216,7 +216,7 @@ theorem doBuildConst_value_rel (parts : List ClosLang.ConstPart)
     (injective : fmapInj f) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : HolFiniteMapExact Nat (Ref Value)),
       doBuildConst parts target = (value', targetNext) ∧ valueRel nextMap value value' ∧
-      stateRefRel nextMap sourceNext targetNext ∧ fmapInj nextMap ∧ finiteSubmap f nextMap ∧
+      stateRefRel nextMap sourceNext targetNext ∧ fmapInj nextMap ∧ f.submap nextMap ∧
       onlyFresh f nextMap target ∧ holesUnchangedExcept f target targetNext ∅ ∧
       holesStillNotFinalised f target targetNext := by
   exact doBuild_value_rel parts (fun _ => .number 0) 0 source value sourceNext f

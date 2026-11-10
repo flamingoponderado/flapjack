@@ -69,7 +69,7 @@ theorem doApp_op_rel_word {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : Clo
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.wordOp op) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   rw [BviTailrec.doApp_wordOp_pure] at run
@@ -98,7 +98,7 @@ theorem doApp_op_rel_int {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : Clos
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.intOp op) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   rw [BviTailrec.doApp_intOp_pure] at run
@@ -128,7 +128,7 @@ theorem doApp_op_rel_label {C F : Type} (f : HolFiniteMapExact Nat Nat) (label :
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.label label) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -162,7 +162,7 @@ theorem doApp_op_rel_globalsPtr {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.globOp .globalsPtr) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -198,7 +198,7 @@ theorem doApp_op_rel_setGlobalsPtr {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.globOp .setGlobalsPtr) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -245,7 +245,7 @@ theorem doApp_op_rel_allocGlobal {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (_statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.globOp .allocGlobal) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
@@ -287,7 +287,7 @@ theorem doApp_op_rel_global {C F : Type} (f : HolFiniteMapExact Nat Nat) (index 
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.globOp (.global index)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -334,7 +334,7 @@ theorem doApp_op_rel_setGlobal {C F : Type} (f : HolFiniteMapExact Nat Nat) (ind
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.globOp (.setGlobal index)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -398,7 +398,7 @@ theorem doApp_op_rel_glob {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : Clo
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.globOp op) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases op with
@@ -438,7 +438,7 @@ theorem doApp_op_finalise_rel {C F : Type} (v : Value) (refsNext : HolFiniteMapE
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (result' : Value)
       (targetRefsNext : HolFiniteMapExact Nat (Ref Value)),
       BviSem.finaliseCons relatedValue target.refs = some (result', targetRefsNext) ∧
-      finiteSubmap f nextMap ∧ valueRel nextMap result result' ∧
+      f.submap nextMap ∧ valueRel nextMap result result' ∧
       stateRel nextMap { source with refs := refsNext } { target with refs := targetRefsNext } ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetRefsNext ∅ ∧
       holesStillNotFinalised f target.refs targetRefsNext := by
@@ -463,7 +463,7 @@ theorem doApp_op_rel_finaliseCons {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .finaliseCons) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -496,7 +496,7 @@ theorem doApp_op_rel_updateCons {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .updateCons) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   rw [BviTailrec.doApp_updateCons_effect] at run
@@ -522,7 +522,7 @@ theorem doApp_op_rel_ref {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .ref) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   let src := leastUnusedRef source.refs
@@ -538,7 +538,7 @@ theorem doApp_op_rel_ref {C F : Type} (f : HolFiniteMapExact Nat Nat)
   have srcMissing : f.lookup src = none := by
     have absent : src ∉ f.domain := by rw [statesRelated.1.1]; exact srcFresh
     simpa [HolFiniteMapExact.domain] using absent
-  have extension : finiteSubmap f (f.updateEq (src, tgt)) := by
+  have extension : f.submap (f.updateEq (src, tgt)) := by
     intro key item found
     have different : key ≠ src := by
       intro equal
@@ -568,7 +568,7 @@ private theorem allocate_related {C F : Type} (f : HolFiniteMapExact Nat Nat)
     next.lookup src = some tgt ∧
     stateRel next { source with refs := source.refs.updateEq (src, v) }
       { target with refs := target.refs.updateEq (tgt, w) } ∧
-    finiteSubmap f next ∧ onlyFresh f next target.refs ∧
+    f.submap next ∧ onlyFresh f next target.refs ∧
     holesUnchangedExcept f target.refs (target.refs.updateEq (tgt, w)) ∅ ∧
     holesStillNotFinalised f target.refs (target.refs.updateEq (tgt, w)) := by
   dsimp only
@@ -585,7 +585,7 @@ private theorem allocate_related {C F : Type} (f : HolFiniteMapExact Nat Nat)
   have srcMissing : f.lookup src = none := by
     have absent : src ∉ f.domain := by rw [states.1.1]; exact srcFresh
     simpa [HolFiniteMapExact.domain] using absent
-  have extension : finiteSubmap f (f.updateEq (src, tgt)) := by
+  have extension : f.submap (f.updateEq (src, tgt)) := by
     intro key item found
     have different : key ≠ src := by
       intro equal
@@ -614,7 +614,7 @@ theorem doApp_op_rel_refArray {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .refArray) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -666,7 +666,7 @@ theorem doApp_op_rel_refByte {C F : Type} (f : HolFiniteMapExact Nat Nat) (flag 
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp (.refByte flag)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -715,7 +715,7 @@ theorem doApp_op_rel_length {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .length) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -766,7 +766,7 @@ theorem doApp_op_rel_lengthByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .lengthByte) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -816,7 +816,7 @@ theorem doApp_op_rel_el {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .el) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -895,7 +895,7 @@ theorem doApp_op_rel_derefByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .derefByte) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -950,7 +950,7 @@ theorem doApp_op_rel_boundsCheckByte {C F : Type} (f : HolFiniteMapExact Nat Nat
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp (.boundsCheckByte loose)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -1003,7 +1003,7 @@ theorem doApp_op_rel_boundsCheckArray {C F : Type} (f : HolFiniteMapExact Nat Na
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .boundsCheckArray) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -1057,7 +1057,7 @@ theorem doApp_op_rel_update {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .update) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -1126,7 +1126,7 @@ theorem doApp_op_rel_updateByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .updateByte) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -1196,7 +1196,7 @@ theorem doApp_op_rel_stringCmp {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp (.stringCmp fast op)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -1256,7 +1256,7 @@ theorem doApp_op_rel_xorByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .xorByte) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -1324,7 +1324,7 @@ theorem doApp_op_rel_configGC {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .configGC) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -1361,7 +1361,7 @@ private theorem rejected_memory_simulation {C F : Type} (f : HolFiniteMapExact N
     (run : BviSem.doApp (.memOp op) values source = .val (value, sourceNext)) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp op) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   rw [BviTailrec.doApp_memory_rejected op values source rejected] at run
@@ -1379,7 +1379,7 @@ theorem doApp_op_rel_fromListByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (_statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .fromListByte) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs :=
   rejected_memory_simulation f .fromListByte values relatedValues source sourceNext target value rfl run
@@ -1396,7 +1396,7 @@ theorem doApp_op_rel_toListByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (_statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .toListByte) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs :=
   rejected_memory_simulation f .toListByte values relatedValues source sourceNext target value rfl run
@@ -1413,7 +1413,7 @@ theorem doApp_op_rel_concatByteVec {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (_statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .concatByteVec) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs :=
   rejected_memory_simulation f .concatByteVec values relatedValues source sourceNext target value rfl run
@@ -1430,7 +1430,7 @@ theorem doApp_op_rel_copyByte_new {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (_statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp (.copyByte true)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs :=
   rejected_memory_simulation f (.copyByte true) values relatedValues source sourceNext target value rfl run
@@ -1447,7 +1447,7 @@ theorem doApp_op_rel_mutCons {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag i
     (_statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp (.mutCons tag index)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   exact (noMutcons tag index rfl).elim
@@ -1464,7 +1464,7 @@ theorem doApp_op_rel_lengthByteVec {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (_statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .lengthByteVec) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
@@ -1481,7 +1481,7 @@ theorem doApp_op_rel_derefByteVec {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (_statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp .derefByteVec) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
@@ -1499,7 +1499,7 @@ theorem doApp_op_rel_copyByte_inPlace {C F : Type} (f : HolFiniteMapExact Nat Na
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp (.copyByte false)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -1589,7 +1589,7 @@ theorem doApp_op_rel_mem {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : Clos
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.memOp op) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases op with
@@ -1632,7 +1632,7 @@ theorem doApp_op_rel_equal {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp .equal) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -1678,7 +1678,7 @@ theorem doApp_op_rel_cons {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag : Na
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp (.cons tag)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
@@ -1703,7 +1703,7 @@ theorem doApp_op_rel_fromList {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag 
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp (.fromList tag)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -1752,7 +1752,7 @@ theorem doApp_op_rel_listAppend {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp .listAppend) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -1814,7 +1814,7 @@ theorem doApp_op_rel_elemAt {C F : Type} (f : HolFiniteMapExact Nat Nat) (index 
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp (.elemAt index)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -1846,7 +1846,7 @@ theorem doApp_op_rel_lengthBlock {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp .lengthBlock) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -1887,7 +1887,7 @@ theorem doApp_op_rel_tagLenEq {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag 
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp (.tagLenEq tag length)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -1929,7 +1929,7 @@ theorem doApp_op_rel_lenEq {C F : Type} (f : HolFiniteMapExact Nat Nat) (length 
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp (.lenEq length)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -1971,7 +1971,7 @@ theorem doApp_op_rel_tagEq {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag : N
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp (.tagEq tag)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -2021,7 +2021,7 @@ theorem doApp_op_rel_boolNot {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp .boolNot) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -2060,7 +2060,7 @@ theorem doApp_op_rel_boolTest {C F : Type} (f : HolFiniteMapExact Nat Nat) (test
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp (.boolTest test)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -2109,7 +2109,7 @@ theorem doApp_op_rel_boundsCheckBlock {C F : Type} (f : HolFiniteMapExact Nat Na
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp .boundsCheckBlock) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -2156,7 +2156,7 @@ theorem doApp_op_rel_build {C F : Type} (f : HolFiniteMapExact Nat Nat) (parts :
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp (.build parts)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -2192,7 +2192,7 @@ theorem doApp_op_rel_consExtend {C F : Type} (f : HolFiniteMapExact Nat Nat) (ta
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp (.consExtend tag)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -2259,7 +2259,7 @@ theorem doApp_op_rel_equalConst {C F : Type} (f : HolFiniteMapExact Nat Nat) (pa
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp (.equalConst part)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -2323,7 +2323,7 @@ theorem doApp_op_rel_constant {C F : Type} (f : HolFiniteMapExact Nat Nat) (cons
     (_statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp (.constant constant)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
@@ -2340,7 +2340,7 @@ theorem doApp_op_rel_block {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : Cl
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.blockOp op) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases op with
@@ -2373,7 +2373,7 @@ theorem doApp_op_rel_allocThunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (mo
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.thunkOp (.allocThunk mode)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -2413,7 +2413,7 @@ theorem doApp_op_rel_updateThunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (m
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.thunkOp (.updateThunk mode)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases values with
@@ -2482,7 +2482,7 @@ theorem doApp_op_rel_forceThunk {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (_statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.thunkOp .forceThunk) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at run
@@ -2499,7 +2499,7 @@ theorem doApp_op_rel_thunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : As
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.thunkOp op) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases op with
@@ -2519,7 +2519,7 @@ theorem doApp_op_rel_ffi {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp (.ffi name) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   rw [BviTailrec.doApp_ffi_effect] at run
@@ -2594,7 +2594,7 @@ theorem doApp_op_rel_install {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp .install relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   change BviSem.doInstall values source = .val (value, sourceNext) at run
@@ -2620,7 +2620,7 @@ theorem doApp_op_rel {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : ClosLang
     (statesRelated : stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp op relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ finiteSubmap f nextMap ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
   cases op with

@@ -87,7 +87,7 @@ theorem evaluate_if_to_core {C F : Type} (condition yes no yesTarget noTarget : 
             branchIH selected selectedTarget middle g middleTarget branchPair branchSource
               (envRel_submap opt f g env1 env2 environments extension) middleStates
               ⟨.val [value], .val [value'], conditionRun, targetRun⟩
-          have submap : finiteSubmap f h := by
+          have submap : f.submap h := by
             intro k v found; exact branchExtension k v (extension k v found)
           have domain := BviProps.evaluate_refs_subset [condition] env2 target middleTarget (.val [value']) targetRun
           have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh branchFresh domain

@@ -86,7 +86,7 @@ theorem evaluatePost_install_success {C F : Type}
     have nonzero : sArgs.clock ≠ 0 := by omega
     have clockEq : sArgs.clock + extra - 1 = sInstalled.clock + extra := by omega
     refine ⟨clock1 + extra, chainResult finalResult, tFinal, fFinal, ?_, ?_, finalStates,
-      relocationSubmap_trans map1 map2, ?_, finalAnnotations, finalClocks⟩
+      HolFiniteMapExact.submap_trans map1 map2, ?_, finalAnnotations, finalClocks⟩
     · rw [evaluate_install_target_call _ _ _ _ _ _ _ _ runArgs install' found']
       simpa [targetNext, positive, nonzero, BvlSem.decClock, clockEq] using bodyTargetRun
     · cases result <;> simpa [maxApp] using resultRelated

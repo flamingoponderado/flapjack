@@ -16,7 +16,7 @@ theorem freshMapped_growth {C F : Type} (s : ClosSem.State C F) (t : BvlSem.Stat
     (targetFree : t.refs.lookup targetPtr = none) :
     let newMap := f.updateEq (sourcePtr, targetPtr)
     let newRefs := t.refs.updateEq (targetPtr, targetCell)
-    relocationSubmap f newMap ∧ unmappedRefsSubmap t.refs newRefs f newMap := by
+    f.submap newMap ∧ unmappedRefsSubmap t.refs newRefs f newMap := by
   have mapFree : f.lookup sourcePtr = none := by
     have domain := states.2.2.2.2.2.1 sourcePtr
     by_contra nonempty
@@ -157,7 +157,7 @@ theorem alloc_valueArray_related {C F : Type} (s : ClosSem.State C F) (t : BvlSe
     let targetNext := { t with refs := t.refs.updateEq (targetPtr, .valueArray targetValues) }
     stateRel newMap sourceNext targetNext ∧
     vRel s.maxApp newMap targetNext.refs targetNext.code (.refPtr true sourcePtr) (.refPtr true targetPtr) ∧
-    relocationSubmap f newMap ∧ unmappedRefsSubmap t.refs targetNext.refs f newMap := by
+    f.submap newMap ∧ unmappedRefsSubmap t.refs targetNext.refs f newMap := by
   let sourcePtr := ClosSem.leastUnusedRef s.refs
   let targetPtr := BvlSem.leastUnusedRef t.refs
   have sourceFree : s.refs.lookup sourcePtr = none := ClosSem.leastUnusedRef_unused s.refs
@@ -185,7 +185,7 @@ theorem doApp_ref_related {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State
     BvlSem.doApp (.memOp .ref) targetValues t = .val (.refPtr true targetPtr, targetNext) ∧
     stateRel newMap sourceNext targetNext ∧
     vRel s.maxApp newMap targetNext.refs targetNext.code (.refPtr true sourcePtr) (.refPtr true targetPtr) ∧
-    relocationSubmap f newMap ∧ unmappedRefsSubmap t.refs targetNext.refs f newMap := by
+    f.submap newMap ∧ unmappedRefsSubmap t.refs targetNext.refs f newMap := by
   refine ⟨?_, ?_, alloc_valueArray_related s t f sourceValues targetValues states values⟩
   · simp [ClosSem.doApp, ClosSem.applyMemory]
   · simp [BvlSem.doApp, BvlSem.applyMemory]
@@ -207,7 +207,7 @@ theorem doApp_refArray_related {C F : Type} (s : ClosSem.State C F) (t : BvlSem.
     BvlSem.doApp (.memOp .refArray) [.number count, targetValue] t = .val (.refPtr true targetPtr, targetNext) ∧
     stateRel newMap sourceNext targetNext ∧
     vRel s.maxApp newMap targetNext.refs targetNext.code (.refPtr true sourcePtr) (.refPtr true targetPtr) ∧
-    relocationSubmap f newMap ∧ unmappedRefsSubmap t.refs targetNext.refs f newMap := by
+    f.submap newMap ∧ unmappedRefsSubmap t.refs targetNext.refs f newMap := by
   have related : List.Forall₂ (vRel s.maxApp f t.refs t.code)
       (List.replicate count.toNat sourceValue) (List.replicate count.toNat targetValue) := by
     induction count.toNat with
@@ -262,7 +262,7 @@ theorem alloc_byteArray_related {C F : Type} (s : ClosSem.State C F) (t : BvlSem
     let targetNext := { t with refs := t.refs.updateEq (targetPtr, .byteArray false bytes) }
     stateRel newMap sourceNext targetNext ∧
     vRel s.maxApp newMap targetNext.refs targetNext.code (.refPtr true sourcePtr) (.refPtr true targetPtr) ∧
-    relocationSubmap f newMap ∧ unmappedRefsSubmap t.refs targetNext.refs f newMap := by
+    f.submap newMap ∧ unmappedRefsSubmap t.refs targetNext.refs f newMap := by
   let sourcePtr := ClosSem.leastUnusedRef s.refs
   let targetPtr := BvlSem.leastUnusedRef t.refs
   have sourceFree : s.refs.lookup sourcePtr = none := ClosSem.leastUnusedRef_unused s.refs
@@ -290,7 +290,7 @@ theorem doApp_refByte_related {C F : Type} (s : ClosSem.State C F) (t : BvlSem.S
       .val (.refPtr true targetPtr, targetNext) ∧
     stateRel newMap sourceNext targetNext ∧
     vRel s.maxApp newMap targetNext.refs targetNext.code (.refPtr true sourcePtr) (.refPtr true targetPtr) ∧
-    relocationSubmap f newMap ∧ unmappedRefsSubmap t.refs targetNext.refs f newMap := by
+    f.submap newMap ∧ unmappedRefsSubmap t.refs targetNext.refs f newMap := by
   refine ⟨?_, ?_, alloc_byteArray_related s t f _ states⟩
   · simp [ClosSem.doApp, ClosSem.applyMemory, nonnegative, valid]
   · simp [BvlSem.doApp, BvlSem.applyMemory, nonnegative, valid]

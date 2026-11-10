@@ -51,7 +51,7 @@ theorem holFmapAsFiniteSupportParamWitness_chainInstalled_code
 theorem chainInstalled_submap (start : Nat) (expressions : List ClosLang.Exp)
     (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
     (nextCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
-    (h : chainInstalled start expressions code ∧ CodeSubmap code nextCode) :
+    (h : chainInstalled start expressions code ∧ code.submap nextCode) :
     chainInstalled start expressions nextCode := by
   obtain ⟨installed, submap⟩ := h
   intro i bound

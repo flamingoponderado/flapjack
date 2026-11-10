@@ -17,7 +17,7 @@ def AuxCore {C F : Type} (cb : CallBlock) (dest : Nat) (env : List Value)
     (sourceResult : BviResult) (sourceFinal : BviState (Nat × C) F) : Prop :=
   ∃ result next g,
     evaluate [workerAuxSource (shiftBlock extras.length cb) dest slot idx] (extras ++ env) state = (result, next) ∧
-    ResultRelation.optResRel g sourceResult result ∧ stateRel g sourceFinal next ∧ finiteSubmap f g ∧
+    ResultRelation.optResRel g sourceResult result ∧ stateRel g sourceFinal next ∧ f.submap g ∧
     onlyFresh f g state.refs ∧ holesUnchangedExcept f state.refs next.refs {ptr} ∧
     holesStillNotFinalised f state.refs next.refs ∧
     ∀ sourceValue, sourceResult = .val [sourceValue] →

@@ -55,7 +55,7 @@ submap. -/
   (fmap_as_finite_support_parameters := [f, g])]
 theorem finiteSubmap_update_fresh {α β : Type} (key : α) (f : HolFiniteMapExact α β) (value : β) (g : HolFiniteMapExact α β)
     (fresh : f.lookup key = none) :
-    finiteSubmap (finiteUpdate f key value) g ↔ g.lookup key = some value ∧ finiteSubmap f g := by
+    (finiteUpdate f key value).submap g ↔ g.lookup key = some value ∧ f.submap g := by
   classical
   constructor
   · intro h
@@ -84,8 +84,8 @@ be preserved. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "submap_fupdate_flookup"
   (fmap_as_finite_support_parameters := [f, g])]
 theorem finiteSubmap_update {α β : Type} (f : HolFiniteMapExact α β) (key : α) (value : β) (g : HolFiniteMapExact α β) :
-    finiteSubmap (finiteUpdate f key value) g ↔
-      g.lookup key = some value ∧ finiteSubmap (finiteErase f key) g := by
+    (finiteUpdate f key value).submap g ↔
+      g.lookup key = some value ∧ (finiteErase f key).submap g := by
   classical
   constructor
   · intro h

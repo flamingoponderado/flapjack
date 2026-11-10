@@ -36,7 +36,7 @@ theorem stateRel_targetRefs_extend {C F : Type} (s : ClosSem.State C F) (t : Bvl
     stateRel f s { t with refs := newRefs } := by
   obtain ⟨ffi, globals, table, injective, notFrozen, sourceDomain, targetDomain, cells,
     generic, partialCode, force, oracle, code⟩ := states
-  have submap : relocationSubmap f f := by intro key value found; exact found
+  have submap : f.submap f := by intro key value found; exact found
   have frame := unmappedRefsSubmap_of_extension t.refs newRefs f extension
   have valuesGrow : ∀ a b, vRel s.maxApp f t.refs t.code a b → vRel s.maxApp f newRefs t.code a b := by
     intro a b related

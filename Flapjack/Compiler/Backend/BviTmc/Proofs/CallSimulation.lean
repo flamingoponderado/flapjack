@@ -117,7 +117,7 @@ theorem evaluate_call_no_handler_core {C F : Type} (loc ticks : Nat) (dest : Opt
                 bodyFresh, bodyUnchanged, bodyStill⟩ := bodyCore
               have targetNoReturn := ForceSimulation.related_no_return h result targetResult related noReturn
               have domain := BviProps.evaluate_refs_subset args env2 target middleTarget (.val values') targetArgsRun
-              have totalExtension : finiteSubmap f h := fun key value found => bodyExtension key value (extension key value found)
+              have totalExtension : f.submap h := fun key value found => bodyExtension key value (extension key value found)
               have totalFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh domain
               have totalUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs next.refs ∅
                 unchanged bodyUnchanged fresh extension
@@ -179,12 +179,12 @@ theorem evaluate_call_handler_from_weight {C F : Type} (loc ticks destination : 
     (bodyCore : Core [targetBody] targetCallEnv g bodyTarget (.err (.raise (.exn raised))) bodyFinal)
     (handlerRun : evaluate [handler] (raised :: env1) bodyFinal = (result, final))
     (notTypeError : result ≠ .err (.abort .typeError)) (handlerSafe : noMutcons handler)
-    (environments : envRel opt f env1 env2) (initialExtension : finiteSubmap f g)
+    (environments : envRel opt f env1 env2) (initialExtension : f.submap g)
     (weightIH : SmallerWeightIH (C := C) (F := F) initial.clock
       (expsWeight [.call ticks (some destination) args (some handler)])) :
     ∃ (next : BviState C F) (h : HolFiniteMapExact Nat Nat) (raisedTarget : Value),
       evaluate [targetBody] targetCallEnv bodyTarget = (.err (.raise (.exn raisedTarget)), next) ∧
-      finiteSubmap g h ∧ onlyFresh g h bodyTarget.refs ∧
+      g.submap h ∧ onlyFresh g h bodyTarget.refs ∧
       holesUnchangedExcept g bodyTarget.refs next.refs ∅ ∧
       holesStillNotFinalised g bodyTarget.refs next.refs ∧
       SingletonPost handler bodyFinal next (raised :: env1) (raisedTarget :: env2) opt h loc result final := by
@@ -321,12 +321,12 @@ theorem evaluate_call_handled_exception {C F : Type} (loc ticks destination : Na
     have argsDomain := BviProps.evaluate_refs_subset args env2 target middleTarget (.val values') targetArgsRun
     have bodyDomain := BviProps.evaluate_refs_subset [body'] callArgs' (decClock (ticks + 1) middleTarget) next
       (.err (.raise (.exn raisedTarget))) targetBodyRun
-    have firstExtension : finiteSubmap f h := fun key value present => bodyExtension key value (extension key value present)
+    have firstExtension : f.submap h := fun key value present => bodyExtension key value (extension key value present)
     have firstFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh argsDomain
     have firstUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs next.refs ∅
       unchanged bodyUnchanged fresh extension
     have firstStill := holesStill_trans f g target.refs middleTarget.refs next.refs () still bodyStill fresh extension
-    have allExtension : finiteSubmap f k := fun key value present => handlerExtension key value (firstExtension key value present)
+    have allExtension : f.submap k := fun key value present => handlerExtension key value (firstExtension key value present)
     have allFresh := onlyFresh_trans f h k target.refs next.refs firstFresh handlerFresh
       (Set.Subset.trans argsDomain bodyDomain)
     have allUnchanged := holesUnchanged_trans f h target.refs next.refs last.refs ∅

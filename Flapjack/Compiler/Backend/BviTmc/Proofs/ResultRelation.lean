@@ -45,14 +45,14 @@ def optResRel (f : HolFiniteMapExact Nat Nat) : BviResult → BviResult → Prop
 
 /-- Flapjack infrastructure: exception and return relations survive map extension. -/
 theorem eorRel_submap (f g : HolFiniteMapExact Nat Nat) (a b : ExnOrRet)
-    (related : eorRel f a b) (submap : finiteSubmap f g) : eorRel g a b := by
+    (related : eorRel f a b) (submap : f.submap g) : eorRel g a b := by
   cases a <;> cases b <;> simp only [eorRel] at related ⊢
   · exact valueRel_submap f g _ _ related submap
   · exact listRel_submap f g _ _ related submap
 
 /-- Flapjack infrastructure: optimized results survive map extension. -/
 theorem optResRel_submap (f g : HolFiniteMapExact Nat Nat) (a b : BviResult)
-    (related : optResRel f a b) (submap : finiteSubmap f g) : optResRel g a b := by
+    (related : optResRel f a b) (submap : f.submap g) : optResRel g a b := by
   cases a with
   | val values =>
     cases b with

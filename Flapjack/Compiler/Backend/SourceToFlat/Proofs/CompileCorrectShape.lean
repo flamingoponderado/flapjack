@@ -86,7 +86,7 @@ theorem compileCorrect {C F α β : Type} [Nonempty C]
         EvalResultRel nextGenv result flatResult ∧ StateRel nextGenv sourceLast flatLast ∧
         (¬ resultAbort result → factoredInvariant interp transform gen nextGenv idxs sourceLast flatLast ∧
           envGenRel gen sourceLast.evalState ∧ oracForwardRel interp source.evalState sourceLast.evalState ∧
-          finiteSubmap genv.c nextGenv.c ∧ finiteSubmap genv.tys nextGenv.tys ∧
+          genv.c.submap nextGenv.c ∧ genv.tys.submap nextGenv.tys ∧
           subglobals genv.v nextGenv.v)) ∧
     (∀ (source : State F) (env : SemEnv Value) (value : Value) (rows : List (Pat × AstHOL.Exp))
       (errorValue : Value) (genv : GlobalEnv) (comp : Environment) (sourceLast : State F)
@@ -106,7 +106,7 @@ theorem compileCorrect {C F α β : Type} [Nonempty C]
         EvalResultRel nextGenv result flatResult ∧ StateRel nextGenv sourceLast flatLast ∧
         (¬ resultAbort result → factoredInvariant interp transform gen nextGenv idxs sourceLast flatLast ∧
           envGenRel gen sourceLast.evalState ∧ oracForwardRel interp source.evalState sourceLast.evalState ∧
-          finiteSubmap genv.c nextGenv.c ∧ finiteSubmap genv.tys nextGenv.tys ∧
+          genv.c.submap nextGenv.c ∧ genv.tys.submap nextGenv.tys ∧
           subglobals genv.v nextGenv.v)) ∧
     (∀ (source : State F) (env : SemEnv Value) (decs : List Dec) (sourceLast : State F)
       (result : Result (SemEnv Value) Value) (path : List VarN) (n : Nat)
@@ -123,7 +123,7 @@ theorem compileCorrect {C F α β : Type} [Nonempty C]
         FlatSem.evaluateDecs flat flatDecs = (flatLast, flatError) ∧ StateRel nextGenv sourceLast flatLast ∧
         (¬ resultAbort result → factoredInvariant interp transform nextGen nextGenv
           (next, finish, other) sourceLast flatLast ∧ oracForwardRel interp source.evalState sourceLast.evalState ∧
-          finiteSubmap genv.c nextGenv.c ∧ finiteSubmap genv.tys nextGenv.tys ∧
+          genv.c.submap nextGenv.c ∧ genv.tys.submap nextGenv.tys ∧
           subglobals genv.v nextGenv.v) ∧
         (∀ resultEnv, result = .val resultEnv → flatError = none ∧ EnvDomainEq nextComp resultEnv ∧
           envGenRel nextGen sourceLast.evalState ∧ GlobalEnvInv nextGenv nextComp (fun _ => False) resultEnv) ∧

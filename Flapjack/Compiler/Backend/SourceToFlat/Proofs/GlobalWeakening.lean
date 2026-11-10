@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
 public import Flapjack.FiniteMap.CardinalityExact
 public import Flapjack.FiniteMap.MapKeys
+public import Flapjack.FiniteMap.SubmapExact
 
 @[expose] public section
 
@@ -205,10 +206,6 @@ theorem valueRel_growth (old new : GlobalEnv) (growth : GlobalGrowth old new)
     intro lookup bound slot related ih
     exact .intro new compMap id source n flat t lookup (Nat.lt_of_lt_of_le bound growth.length) (growth.values n _ slot) ih
 
-/-- Lookup characterization of finite-map submap over the canonical carrier. -/
-def finiteSubmap {α β : Type} (f g : HolFiniteMapExact α β) : Prop :=
-  ∀ key value, f.lookup key = some value → g.lookup key = some value
-
 /-- Construct the observation-based growth condition from `subglobals` and
 pointwise finite-map extension. -/
 theorem GlobalGrowth.ofSubglobals (old new : GlobalEnv)
@@ -292,8 +289,8 @@ theorem envRel_growth (old new : GlobalEnv) (growth : GlobalGrowth old new)
   (fmap_as_finite_support := [c, tys])]
 theorem storeValueRel_weak (old : GlobalEnv) (source : StoreValue Value)
     (flat : StoreValue FlatSem.Value) (new : GlobalEnv)
-    (premises : StoreValueRel old source flat ∧ finiteSubmap old.c new.c ∧
-      finiteSubmap old.tys new.tys ∧ subglobals old.v new.v) :
+    (premises : StoreValueRel old source flat ∧ old.c.submap new.c ∧
+      old.tys.submap new.tys ∧ subglobals old.v new.v) :
     StoreValueRel new source flat := by
   obtain ⟨related, constructors, types, slots⟩ := premises
   have growth := GlobalGrowth.ofSubglobals old new slots constructors types
@@ -314,8 +311,8 @@ end StoreListWeakPort
   (fmap_as_finite_support := [c, tys])]
 theorem valueRel_weak (old : GlobalEnv) (source : Value) (flat : FlatSem.Value)
     (new : GlobalEnv)
-    (premises : ValueRel old source flat ∧ finiteSubmap old.c new.c ∧
-      finiteSubmap old.tys new.tys ∧ subglobals old.v new.v) : ValueRel new source flat := by
+    (premises : ValueRel old source flat ∧ old.c.submap new.c ∧
+      old.tys.submap new.tys ∧ subglobals old.v new.v) : ValueRel new source flat := by
   obtain ⟨related, constructors, types, slots⟩ := premises
   exact valueRel_growth old new (GlobalGrowth.ofSubglobals old new slots constructors types)
     source flat related
@@ -325,8 +322,8 @@ theorem valueRel_weak (old : GlobalEnv) (source : Value) (flat : FlatSem.Value)
   (fmap_as_finite_support := [c, tys])]
 theorem envRel_weak (old : GlobalEnv) (env : Flapjack.NamespaceHOL.Namespace ModN VarN Value)
     (locals : List (VarN × FlatSem.Value)) (new : GlobalEnv)
-    (premises : EnvRel old env locals ∧ finiteSubmap old.c new.c ∧
-      finiteSubmap old.tys new.tys ∧ subglobals old.v new.v) : EnvRel new env locals := by
+    (premises : EnvRel old env locals ∧ old.c.submap new.c ∧
+      old.tys.submap new.tys ∧ subglobals old.v new.v) : EnvRel new env locals := by
   obtain ⟨related, constructors, types, slots⟩ := premises
   exact envRel_growth old new (GlobalGrowth.ofSubglobals old new slots constructors types)
     env locals related
@@ -336,8 +333,8 @@ theorem envRel_weak (old : GlobalEnv) (env : Flapjack.NamespaceHOL.Namespace Mod
   (fmap_as_finite_support := [c, tys])]
 theorem globalEnvInv_weak (old : GlobalEnv) (map : Environment) (shadowers : VarN → Prop)
     (env : SemEnv Value) (new : GlobalEnv)
-    (premises : GlobalEnvInv old map shadowers env ∧ finiteSubmap old.c new.c ∧
-      finiteSubmap old.tys new.tys ∧ subglobals old.v new.v) : GlobalEnvInv new map shadowers env := by
+    (premises : GlobalEnvInv old map shadowers env ∧ old.c.submap new.c ∧
+      old.tys.submap new.tys ∧ subglobals old.v new.v) : GlobalEnvInv new map shadowers env := by
   obtain ⟨related, constructors, types, slots⟩ := premises
   exact globalEnvInv_growth old new (GlobalGrowth.ofSubglobals old new slots constructors types)
     map shadowers env related
@@ -356,13 +353,13 @@ theorem valueRel_weakening :
   refine ⟨?_, ?_, ?_⟩
   · intro old source flat related new ⟨constructors, types, slots⟩
     exact valueRel_weak old source flat new
-      ⟨related, by simp [← constructors, finiteSubmap], by simp [← types, finiteSubmap], slots⟩
+      ⟨related, by simp [← constructors, HolFiniteMapExact.submap], by simp [← types, HolFiniteMapExact.submap], slots⟩
   · intro old env locals related new ⟨constructors, types, slots⟩
     exact envRel_weak old env locals new
-      ⟨related, by simp [← constructors, finiteSubmap], by simp [← types, finiteSubmap], slots⟩
+      ⟨related, by simp [← constructors, HolFiniteMapExact.submap], by simp [← types, HolFiniteMapExact.submap], slots⟩
   · intro old map shadowers env related new ⟨constructors, types, slots⟩
     exact globalEnvInv_weak old map shadowers env new
-      ⟨related, by simp [← constructors, finiteSubmap], by simp [← types, finiteSubmap], slots⟩
+      ⟨related, by simp [← constructors, HolFiniteMapExact.submap], by simp [← types, HolFiniteMapExact.submap], slots⟩
 
 /-- Mutual value, local-environment, and global-environment weakening when
 the value slots agree and the constructor/type maps grow. -/
@@ -371,13 +368,13 @@ the value slots agree and the constructor/type maps grow. -/
 theorem valueRel_weakening2 {A B C : Type} [Nonempty A] [Nonempty B] [Nonempty C]
     (new : GlobalEnv) :
     (∀ old source flat, ValueRel old source flat → ∀ (_unused : A),
-      finiteSubmap old.c new.c ∧ finiteSubmap old.tys new.tys ∧ old.v = new.v →
+      old.c.submap new.c ∧ old.tys.submap new.tys ∧ old.v = new.v →
         ValueRel new source flat) ∧
     (∀ old env locals, EnvRel old env locals → ∀ (_unused : B),
-      finiteSubmap old.c new.c ∧ finiteSubmap old.tys new.tys ∧ old.v = new.v →
+      old.c.submap new.c ∧ old.tys.submap new.tys ∧ old.v = new.v →
         EnvRel new env locals) ∧
     (∀ old map shadowers env, GlobalEnvInv old map shadowers env → ∀ (_unused : C),
-      finiteSubmap old.c new.c ∧ finiteSubmap old.tys new.tys ∧ old.v = new.v →
+      old.c.submap new.c ∧ old.tys.submap new.tys ∧ old.v = new.v →
         GlobalEnvInv new map shadowers env) := by
   refine ⟨?_, ?_, ?_⟩
   · intro old source flat related _ ⟨constructors, types, slots⟩
@@ -422,7 +419,7 @@ theorem holFmapAsFiniteSupportParamWitness_drestrict_lem_f2 {α β : Type}
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "drestrict_lem"
   (fmap_as_finite_support_parameters := [f1, f2])]
 theorem drestrict_lem {α β : Type} (f1 : HolFiniteMapExact α β) (f2 : HolFiniteMapExact α β)
-    (submap : finiteSubmap f1 f2) :
+    (submap : f1.submap f2) :
     (finiteRestrict f2 f1.domainᶜ).union f1 = f2 := by
   classical
   apply HolFiniteMapExact.ext_lookup
@@ -440,8 +437,8 @@ theorem drestrict_lem {α β : Type} (f1 : HolFiniteMapExact α β) (f2 : HolFin
   (fmap_as_finite_support := [c, tys])]
 theorem envAllRel_weak (old : GlobalEnv) (map : Environment) (locals : List VarN)
     (env : SemEnv Value) (flatEnv : FlatSem.Environment FlatSem.Value) (new : GlobalEnv)
-    (premises : FactoredEnvAllRel old map env flatEnv locals ∧ finiteSubmap old.c new.c ∧
-      finiteSubmap old.tys new.tys ∧ subglobals old.v new.v) :
+    (premises : FactoredEnvAllRel old map env flatEnv locals ∧ old.c.submap new.c ∧
+      old.tys.submap new.tys ∧ subglobals old.v new.v) :
     FactoredEnvAllRel new map env flatEnv locals := by
   obtain ⟨⟨base, sourceLocal, bindings, envEq, localEq, names, globals, localRel⟩,
     constructors, types, slots⟩ := premises
@@ -455,7 +452,7 @@ theorem envAllRel_weak (old : GlobalEnv) (map : Environment) (locals : List VarN
 theorem storeList_weak (old : GlobalEnv) (source : List (StoreValue Value))
     (flat : List (StoreValue FlatSem.Value)) (new : GlobalEnv)
     (premises : List.Forall₂ (StoreValueRel old) source flat ∧ subglobals old.v new.v ∧
-      finiteSubmap old.c new.c ∧ finiteSubmap old.tys new.tys) :
+      old.c.submap new.c ∧ old.tys.submap new.tys) :
     List.Forall₂ (StoreValueRel new) source flat := by
   obtain ⟨related, slots, constructors, types⟩ := premises
   induction related with

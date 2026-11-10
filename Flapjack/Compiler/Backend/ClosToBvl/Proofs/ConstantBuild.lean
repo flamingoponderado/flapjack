@@ -67,7 +67,7 @@ theorem constantBuild_related {C F : Type} (parts : List ClosLang.ConstPart)
   | cons part rest ih =>
     obtain ⟨value, refs, partRun, valueRel, nextStates, frame⟩ :=
       constantPart_related part sourceMemory targetMemory s t f states memoryRel
-    have submap : relocationSubmap f f := by intro key val found; exact found
+    have submap : f.submap f := by intro key val found; exact found
     let sourceNext := fun key => if key = index then buildPart sourceMemory part else sourceMemory key
     let targetNext := fun key => if key = index then value else targetMemory key
     have nextMemoryRel : ∀ key, vRel s.maxApp f refs t.code (sourceNext key) (targetNext key) := by

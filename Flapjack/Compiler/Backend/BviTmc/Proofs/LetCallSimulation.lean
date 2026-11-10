@@ -21,12 +21,12 @@ theorem continuation_from_weight {C F : Type} (loc rets ticks destination : Nat)
     (bodyCore : Core [targetBody] targetCallEnv g bodyTarget (.err (.raise (.ret returned))) bodyFinal)
     (continuationRun : evaluate [continuation] (returned ++ env1) bodyFinal = (result, final))
     (notTypeError : result ≠ .err (.abort .typeError)) (continuationSafe : noMutcons continuation)
-    (environments : envRel opt f env1 env2) (initialExtension : finiteSubmap f g)
+    (environments : envRel opt f env1 env2) (initialExtension : f.submap g)
     (weightIH : SmallerWeightIH (C := C) (F := F) initial.clock
       (expsWeight [.letCall rets ticks destination args continuation])) :
     ∃ (next : BviState C F) (h : HolFiniteMapExact Nat Nat) (returnedTarget : List Value),
       evaluate [targetBody] targetCallEnv bodyTarget = (.err (.raise (.ret returnedTarget)), next) ∧
-      returned.length = returnedTarget.length ∧ finiteSubmap g h ∧ onlyFresh g h bodyTarget.refs ∧
+      returned.length = returnedTarget.length ∧ g.submap h ∧ onlyFresh g h bodyTarget.refs ∧
       holesUnchangedExcept g bodyTarget.refs next.refs ∅ ∧
       holesStillNotFinalised g bodyTarget.refs next.refs ∧
       Core [continuation] (returnedTarget ++ env2) h next result final := by
@@ -122,12 +122,12 @@ theorem evaluate_letcall_return {C F : Type} (loc rets ticks destination : Nat)
     have argsDomain := BviProps.evaluate_refs_subset args env2 target middleTarget (.val values') targetArgsRun
     have bodyDomain := BviProps.evaluate_refs_subset [body'] callArgs' (decClock (ticks + 1) middleTarget) next
       (.err (.raise (.ret returnedTarget))) targetBodyRun
-    have firstExtension : finiteSubmap f h := fun key value present => bodyExtension key value (extension key value present)
+    have firstExtension : f.submap h := fun key value present => bodyExtension key value (extension key value present)
     have firstFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh argsDomain
     have firstUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs next.refs ∅
       unchanged bodyUnchanged fresh extension
     have firstStill := holesStill_trans f g target.refs middleTarget.refs next.refs () still bodyStill fresh extension
-    have allExtension : finiteSubmap f k := fun key value present => continuationExtension key value (firstExtension key value present)
+    have allExtension : f.submap k := fun key value present => continuationExtension key value (firstExtension key value present)
     have allFresh := onlyFresh_trans f h k target.refs next.refs firstFresh continuationFresh
       (Set.Subset.trans argsDomain bodyDomain)
     have allUnchanged := holesUnchanged_trans f h target.refs next.refs last.refs ∅

@@ -92,7 +92,7 @@ theorem expressionSimulationBelow_letrec_mutual {C F : Type} (clockBound : Nat)
                   ((List.range functions.length).map (fun index => ClosSem.Value.recclosure
                     (some label) [] sourceValues functions index)) blocks at allocated
               obtain ⟨nextStates, frame, _, closuresRel⟩ := allocated
-              have submap : relocationSubmap f f := by intro key value found; exact found
+              have submap : f.submap f := by intro key value found; exact found
               have nextEnv := envRel_grow_refs envRelated submap frame
               have bodyEnv := envRel_prepend closuresRel nextEnv
               have bodyPost := bodyIH s sFinal next _ _ f auxRec finalAux [targetBody] result clockBounded bodyRun noTypeError

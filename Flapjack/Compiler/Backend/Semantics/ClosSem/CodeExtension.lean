@@ -21,14 +21,14 @@ def codeDomain (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) : Set Nat :=
 future oracle labels. This candidate uses the finite-support carrier and
 remains untagged pending HOL correspondence review. -/
 def CodeExtension {C F : Type} (source target : State C F) : Prop :=
-  target = { source with code := target.code } ∧ CodeSubmap source.code target.code ∧
+  target = { source with code := target.code } ∧ source.code.submap target.code ∧
     oracleMonotonic oracleCodeNames (· < ·) (codeDomain target.code) source.compileOracle
 
 /-- Updating corresponding code maps with identical entries preserves the
 lookup submap relation, including duplicate keys. -/
 theorem codeSubmap_updateList (source target : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
-    (entries : List (Nat × Nat × ClosLang.Exp)) (submap : CodeSubmap source target) :
-    CodeSubmap (source.updateListEq entries) (target.updateListEq entries) := by
+    (entries : List (Nat × Nat × ClosLang.Exp)) (submap : source.submap target) :
+    (source.updateListEq entries).submap (target.updateListEq entries) := by
   intro key entry found
   simp only [HolFiniteMapExact.lookup_updateListEq] at found ⊢
   have aux : ∀ (xs : List (Nat × Nat × ClosLang.Exp)) (left right : Nat → Option (Nat × ClosLang.Exp)),
@@ -85,7 +85,7 @@ theorem oracleMonotonic_after_install {C : Type} (code : HolFiniteMapExact Nat (
 /-- Successful code lookup is preserved when the code map is extended. -/
 theorem findCode_of_codeSubmap {α : Type} (source target : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
     (location : Nat) (args : List α) (result : List α × ClosLang.Exp)
-    (submap : CodeSubmap source target) (found : findCode location args source = some result) :
+    (submap : source.submap target) (found : findCode location args source = some result) :
     findCode location args target = some result := by
   unfold findCode at found ⊢
   cases lookup : source.lookup location with

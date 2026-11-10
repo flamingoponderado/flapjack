@@ -17,7 +17,7 @@ def Core {C F : Type} (xs : List Bvi.Exp) (env2 : List Value)
   ∃ (next : BviState C F) (nextMap : HolFiniteMapExact Nat Nat) (nextResult : BviResult),
     evaluate xs env2 target = (nextResult, next) ∧
     resultRel (List.Forall₂ (valueRel nextMap)) (eorRel nextMap) result nextResult ∧
-    stateRel nextMap final next ∧ finiteSubmap f nextMap ∧
+    stateRel nextMap final next ∧ f.submap nextMap ∧
     onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs next.refs ∅ ∧
     holesStillNotFinalised f target.refs next.refs
 
@@ -88,7 +88,7 @@ theorem evaluate_cons_cons {C F : Type} (first second : Bvi.Exp) (rest : List Bv
             secondExtension, secondFresh, secondUnchanged, secondStill⟩ :=
             tailIH tailResult middle g middleTarget ⟨headValue, headRun⟩ tailRun
               (envRel_submap false f g env1 env2 environments firstExtension) middleStates tailSafe
-          have extension : finiteSubmap f h := by
+          have extension : f.submap h := by
             intro key value found; exact secondExtension key value (firstExtension key value found)
           have domain := BviProps.evaluate_refs_subset [first] env2 target middleTarget (.val [headValue']) headTargetRun
           have fresh := onlyFresh_trans f g h target.refs middleTarget.refs firstFresh secondFresh domain
