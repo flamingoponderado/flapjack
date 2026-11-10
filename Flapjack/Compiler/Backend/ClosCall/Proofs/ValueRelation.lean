@@ -510,4 +510,33 @@ theorem valueRel_decodeEncode (g : State) (allowed : Nat → Prop)
   rw [listToValue_valueToList x xs h.2.1, listToValue_valueToList y ys h.2.2]
   exact h.1
 
+/-- Canonical code-map codec for related list append. -/
+theorem holFmapAsFiniteSupportParamWitness_valueRel_listAppend_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code code key
+
+/-- Appending related lists preserves their encoded value relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "vrel_list_to_v"
+  (fmap_as_finite_support_parameters := [code])]
+theorem valueRel_listAppend (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (xs1 xs2 ys1 ys2 : List Value)
+    (h : List.Forall₂ (valueRel g allowed code) xs1 xs2 ∧
+      List.Forall₂ (valueRel g allowed code) ys1 ys2 ∧
+      valueRel g allowed code (listToValue xs1) (listToValue xs2) ∧
+      valueRel g allowed code (listToValue ys1) (listToValue ys2)) :
+    valueRel g allowed code (listToValue (xs1 ++ ys1)) (listToValue (xs2 ++ ys2)) := by
+  have related := h.1
+  have endRelated := h.2.2.2
+  clear h
+  induction related with
+  | nil => simpa using endRelated
+  | @cons x y xs ys head tail ih =>
+    simp only [List.cons_append, listToValue]
+    apply (valueRel_sourceEquations g allowed code).1 _ _ _ |>.mpr
+    exact ⟨_, rfl, .cons head (.cons ih .nil)⟩
+
 end Flapjack.Compiler.Backend.ClosCall

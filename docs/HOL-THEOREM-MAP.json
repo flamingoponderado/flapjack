@@ -1,5 +1,19 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "vrel_list_to_v",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "valueRel_listAppend",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Source comparison: compared clos_call_vrel_list_to_v_typed: free state, allowed set and code precede four quantified lists; all four premises and the appended encoded value relation match in order. The code map uses canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfv_v2l",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueWellFormed.lean", "lean_name": "valueWellFormed_listAppend",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Source comparison: compared clos_call_wfv_v2l_typed: free state, allowed set and code precede both quantified values and lists; both well-formedness and decode premises imply existence of a well-formed value decoding to their append. The code map uses canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "vrel_v2l_l2v",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "valueRel_decodeEncode",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",

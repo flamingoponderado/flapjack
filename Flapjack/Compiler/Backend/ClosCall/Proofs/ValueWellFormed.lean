@@ -392,4 +392,37 @@ theorem valueWellFormed_decodeEncode {α β : Type} (g : State) (allowed : Nat �
   rw [listToValue_valueToList x xs h.2]
   exact h.1
 
+/-- Canonical code-map codec for well-formed decoded list append. -/
+theorem holFmapAsFiniteSupportParamWitness_valueWellFormed_listAppend_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueWellFormed_code code key
+
+/-- Two well-formed decoded lists have a well-formed value for their append. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "wfv_v2l"
+  (fmap_as_finite_support_parameters := [code])]
+theorem valueWellFormed_listAppend (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (x y : Value) (xs ys : List Value)
+    (h : valueWellFormed g allowed code x ∧ valueWellFormed g allowed code y ∧
+      valueToList x = some xs ∧ valueToList y = some ys) :
+    ∃ z, valueWellFormed g allowed code z ∧ valueToList z = some (xs ++ ys) := by
+  have xsSafe := valueToList_wellFormed g allowed code x xs ⟨h.2.2.1, h.1⟩
+  have ysSafe := valueToList_wellFormed g allowed code y ys ⟨h.2.2.2, h.2.1⟩
+  have encodedSafe : ∀ zs : List Value, (∀ v ∈ zs, valueWellFormed g allowed code v) →
+      valueWellFormed g allowed code (listToValue zs) := by
+    intro zs safe
+    induction zs with
+    | nil => simp [listToValue, valueWellFormed]
+    | cons first rest ih =>
+      simp only [List.mem_cons, forall_eq_or_imp] at safe
+      simp only [listToValue, valueWellFormed, List.mem_cons, forall_eq_or_imp]
+      exact ⟨safe.1, ih safe.2, by simp⟩
+  refine ⟨listToValue (xs ++ ys), encodedSafe _ ?_, valueToList_listToValue _⟩
+  intro v member
+  rcases List.mem_append.mp member with member | member
+  · exact xsSafe v member
+  · exact ysSafe v member
+
 end Flapjack.Compiler.Backend.ClosCall
