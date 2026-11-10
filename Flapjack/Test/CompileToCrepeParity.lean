@@ -1,8 +1,18 @@
-import Flapjack.Pancake.PanToCrep.Compile
-import Flapjack.Pancake.PanToCrep.CompileExact
-import Flapjack.Pancake.CrepToLoop
-import Flapjack.Pancake.LoopToWord
-import Flapjack.RiscV.WordToStack
+module
+
+public import Flapjack.Pancake.PanToCrep.Compile
+public import Flapjack.Pancake.PanToCrep.CompileExact
+public import Flapjack.Pancake.CrepToLoop
+public import Flapjack.Pancake.LoopToWord
+public import Flapjack.RiscV.WordToStack
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.Pancake.PanToCrep.CompileExact
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.CompileToCrepeParity
 
