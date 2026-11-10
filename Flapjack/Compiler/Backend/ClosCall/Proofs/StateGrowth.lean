@@ -12,17 +12,28 @@ namespace Flapjack.Compiler.Backend.ClosCall
 open Flapjack ClosLang
 
 private def Grows (s t : State) : Prop :=
-  sptSubspt s.1 t.1 ∧ s.2 <:+ t.2
+  sptSubspt s.1 t.1 ∧ s.2 <:+ t.2 ∧
+    ∀ label ∈ t.2.map Prod.fst,
+      (∃ loc, sptDomain t.1 loc ∧ label = Nat.succ loc) ∨ label ∈ s.2.map Prod.fst
 
 private theorem refl (s : State) : Grows s s :=
-  ⟨fun _ h => ⟨h, rfl⟩, List.suffix_refl _⟩
+  ⟨fun _ h => ⟨h, rfl⟩, List.suffix_refl _, fun _ h => Or.inr h⟩
 
-private theorem trans {s t u : State} (h : Grows s t) (h' : Grows t u) : Grows s u :=
-  ⟨sptSubsptTrans _ _ _ ⟨h.1, h'.1⟩, h.2.trans h'.2⟩
+private theorem trans {s t u : State} (h : Grows s t) (h' : Grows t u) : Grows s u := by
+  refine ⟨sptSubsptTrans _ _ _ ⟨h.1, h'.1⟩, h.2.1.trans h'.2.1, ?_⟩
+  intro label member
+  rcases h'.2.2 label member with new | middle
+  · exact Or.inl new
+  · rcases h.2.2 label middle with ⟨loc, known, eq⟩ | old
+    · exact Or.inl ⟨loc, (h'.1 loc known).1, eq⟩
+    · exact Or.inr old
 
 private theorem insert_growth (loc count : Nat) (s : State) :
     Grows s (insertEachSource loc count s) := by
-  exact ⟨insertEach_subspt loc count s, by simp [insertEach_snd]⟩
+  refine ⟨insertEach_subspt loc count s, by simp [insertEach_snd], ?_⟩
+  intro label member
+  right
+  simpa [insertEach_snd] using member
 
 mutual
 private theorem growth_expr (e : Exp) (s : State) :
@@ -97,7 +108,19 @@ private theorem growth_expr (e : Exp) (s : State) :
       simp only [callsSing, hf]
       split
       · have extended := trans (insert_growth _ _ s) ih
-        exact ⟨extended.1, extended.2.trans (List.suffix_cons _ _)⟩
+        refine ⟨extended.1, extended.2.1.trans (List.suffix_cons _ _), ?_⟩
+        intro label member
+        simp only [List.map_cons, List.mem_cons] at member
+        rcases member with same | old
+        · left
+          refine ⟨loc.getD 0, ?_, ?_⟩
+          · have inFresh : sptDomain fresh.1 (loc.getD 0) := by
+              dsimp [fresh]
+              rw [domain_insertEach]
+              exact Or.inl (by simp)
+            exact (ih.1 _ inFresh).1
+          · simpa [Nat.succ_eq_add_one] using same
+        · exact extended.2.2 label old
       · have ih := growth_expr body s
         cases hr : callsSing body s with
         | mk out next => simpa [hr] using ih
@@ -112,8 +135,28 @@ private theorem growth_expr (e : Exp) (s : State) :
       split
       · let emitted := codeListSource (loc.getD 0) ((fns.map Prod.fst).zip bodies) st
         have emitGrowth : Grows st emitted := by
-          exact ⟨by simpa [emitted, codeListSource_fst] using (refl st).1,
-            codeListSource_suffix _ _ _⟩
+          refine ⟨by simpa [emitted, codeListSource_fst] using (refl st).1,
+            codeListSource_suffix _ _ _, ?_⟩
+          intro label member
+          simp only [emitted, codeListSource_labels, List.mem_append, List.mem_reverse,
+            List.mem_map, List.mem_range] at member
+          rcases member with ⟨i, bound, eq⟩ | old
+          · left
+            refine ⟨loc.getD 0 + 2 * i, ?_, ?_⟩
+            · have inFresh : sptDomain fresh.1 (loc.getD 0 + 2 * i) := by
+                dsimp [fresh]
+                rw [domain_insertEach]
+                left
+                simp only [Set.mem_ofPred_eq, List.mem_map, List.mem_range]
+                refine ⟨i, ?_, ?_⟩
+                · simp only [List.length_zip, List.length_map] at bound
+                  omega
+                · omega
+              change sptDomain (codeListSource _ _ st).1 _
+              rw [codeListSource_fst]
+              exact (ihF.1 _ inFresh).1
+            · omega
+          · exact Or.inr (List.mem_map.mpr old)
         have ihBody := growth_expr body emitted
         cases hb : callsSing body emitted with
         | mk out final =>
@@ -155,6 +198,7 @@ decreasing_by all_goals simp_wf <;> omega
 end
 
 /-- Direct-call conversion preserves all previously known locations. -/
+
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_subspt"]
 theorem calls_subspt (xs : List Exp) (g0 : State) (ys : List Exp) (g : State)
     (h : calls xs g0 = (ys, g)) : sptSubspt g0.1 g.1 := by
@@ -163,11 +207,36 @@ theorem calls_subspt (xs : List Exp) (g0 : State) (ys : List Exp) (g : State)
   simpa [h] using result.1
 
 /-- Direct-call conversion retains the old auxiliary code as a suffix. -/
+
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_IS_SUFFIX"]
 theorem calls_suffix (xs : List Exp) (g0 : State) (ys : List Exp) (g : State)
     (h : calls xs g0 = (ys, g)) : g0.2 <:+ g.2 := by
   have result := growth_list xs g0
   change callsSingList xs g0 = (ys, g) at h
-  simpa [h] using result.2
+  simpa [h] using result.2.1
+
+/-- Direct-call conversion preserves old locations and code labels; every new
+label is the successor of a location in the final state. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_code_subset"]
+theorem calls_codeSubset (xs : List Exp) (g0 : State) (ys : List Exp) (g : State)
+    (h : calls xs g0 = (ys, g)) :
+    Set.image Nat.succ (sptDomain g0.1) ⊆ Set.image Nat.succ (sptDomain g.1) ∧
+    { label | label ∈ g0.2.map Prod.fst } ⊆ { label | label ∈ g.2.map Prod.fst } ∧
+    { label | label ∈ g.2.map Prod.fst } ⊆
+      Set.image Nat.succ (sptDomain g.1) ∪ { label | label ∈ g0.2.map Prod.fst } := by
+  have growth := growth_list xs g0
+  change callsSingList xs g0 = (ys, g) at h
+  rw [h] at growth
+  refine ⟨?_, ?_, ?_⟩
+  · rintro label ⟨loc, known, rfl⟩
+    exact ⟨loc, (growth.1 loc known).1, rfl⟩
+  · intro label member
+    obtain ⟨added, eq⟩ := growth.2.1
+    rw [← eq, List.map_append]
+    exact List.mem_append_right _ member
+  · intro label member
+    rcases growth.2.2 label member with ⟨loc, known, eq⟩ | old
+    · exact Or.inl ⟨loc, known, eq.symm⟩
+    · exact Or.inr old
 
 end Flapjack.Compiler.Backend.ClosCall
