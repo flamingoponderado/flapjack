@@ -1,8 +1,10 @@
 import Flapjack.Compiler.Backend.LabProps.Native
+import Flapjack.Test.Fixtures.LabToTarget
 namespace Flapjack.Test.LabValidityNativeParity
 
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.LabLang
+open Flapjack.Test.Fixtures.LabToTarget
 open Flapjack.Compiler.Backend.LabSem
 example {width : Nat} [NeZero width] (instruction : HolAsm width) :
     cbwToAsmHOL (.asmi instruction) = instruction := rfl
@@ -22,43 +24,26 @@ example {width : Nat} [NeZero width] (config : AsmConfigExact width)
     (bytes : List (BitVec 8)) (length : Nat) :
     lineOkPreHOL config (.asm instruction bytes length) ↔
       asmOkExact (cbwToAsmHOL instruction) config = true := Iff.rfl
-private def cfg : AsmConfigExact 8 where
-  isa := .riscv
-  encode := fun _ => []
-  bigEndian := false
-  codeAlignment := 2
-  linkReg := none
-  avoidRegs := [3]
-  regCount := 8
-  fpRegCount := 4
-  twoRegArith := true
-  validImm := fun _ _ => true
-  addrOffset := (0,100)
-  hwOffset := (0,100)
-  byteOffset := (0,100)
-  jumpOffset := (0,100)
-  cjumpOffset := (0,100)
-  locOffset := (0,100)
-example : lineOkPreHOL cfg (.asm (.asmi (.inst .skip)) [] 0) := by
+example : lineOkPreHOL cfg8 (.asm (.asmi (.inst .skip)) [] 0) := by
   simp only [lineOkPreHOL]
   decide +kernel
-example : lineOkPreHOL cfg (.asm (.cbw 1 2) [] 0) := by
+example : lineOkPreHOL cfg8 (.asm (.cbw 1 2) [] 0) := by
   simp only [lineOkPreHOL]
   decide +kernel
-example : ¬ lineOkPreHOL cfg (.asm (.asmi (.inst (.const 9 0))) [] 0) := by
+example : ¬ lineOkPreHOL cfg8 (.asm (.asmi (.inst (.const 9 0))) [] 0) := by
   simp only [lineOkPreHOL]
   decide +kernel
 
-example : secOkPreHOL cfg { sectionId := 0, lines := [] } := by
+example : secOkPreHOL cfg8 { sectionId := 0, lines := [] } := by
   simp [secOkPreHOL]
-example : secOkPreHOL cfg { sectionId := 0, lines := [.asm (.asmi (.inst .skip)) [] 0] } := by
+example : secOkPreHOL cfg8 { sectionId := 0, lines := [.asm (.asmi (.inst .skip)) [] 0] } := by
   simp [secOkPreHOL, lineOkPreHOL]
   decide +kernel
-example : ¬ secOkPreHOL cfg { sectionId := 0, lines := [.asm (.asmi (.inst (.const 9 0))) [] 0] } := by
+example : ¬ secOkPreHOL cfg8 { sectionId := 0, lines := [.asm (.asmi (.inst (.const 9 0))) [] 0] } := by
   simp [secOkPreHOL, lineOkPreHOL]
   decide +kernel
-example : allEncOkPreHOL cfg [] := by simp [allEncOkPreHOL]
-example : allEncOkPreHOL cfg [{ sectionId := 0, lines := [.label 0 1 0] },
+example : allEncOkPreHOL cfg8 [] := by simp [allEncOkPreHOL]
+example : allEncOkPreHOL cfg8 [{ sectionId := 0, lines := [.label 0 1 0] },
     { sectionId := 1, lines := [.asm (.asmi (.inst .skip)) [] 0] }] := by
   simp [allEncOkPreHOL, secOkPreHOL, lineOkPreHOL]
   decide +kernel
