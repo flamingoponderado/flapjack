@@ -156,6 +156,19 @@ theorem calls_singleton_closure_equations :
 def compile (enabled : Bool) (es : List Exp) : List Exp × State :=
   if enabled then calls es (.ln, []) else (es, (.ln, []))
 
+/-- Direct-call compilation preserves the length of its input program. -/
+@[hol "cakeml/compiler/backend/clos_callScript.sml" "compile_LENGTH"]
+theorem compile_length (enabled : Bool) (input output : List Exp) (state : State)
+    (run : compile enabled input = (output, state)) : input.length = output.length := by
+  cases enabled with
+  | false =>
+    simp [compile] at run
+    obtain ⟨rfl, _⟩ := run
+    rfl
+  | true =>
+    have length := calls_length input (.ln, []) output state (by simpa [compile] using run)
+    exact length.symm
+
 /-- Convert one incremental program, discarding its incoming auxiliary payload. -/
 @[hol "cakeml/compiler/backend/clos_callScript.sml" "compile_inc_def"]
 def compileInc {A : Type} (known : NumSet) (program : List Exp × A) :

@@ -18,6 +18,30 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "ccompile_aux_subset",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallBounds.lean", "lean_name": "ccompile_aux_subset",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared ccompile_aux_subset_typed and independent review: full config and output tuple, set of auxiliary labels, and successor image of input locations match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "ccompile_locs_subset",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallBounds.lean", "lean_name": "ccompile_locs_subset",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared ccompile_locs_subset_typed and independent review: full config and output tuple, append inside codeLocations, auxiliary body projection and subset conclusion match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "compile_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Compile.lean", "lean_name": "compile_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared call_compile_length_typed and independent review: enabled, input, output, state order, full sparse-tree and auxiliary state, and input length on the left match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml", "hol_name": "compile_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileLength.lean", "lean_name": "compile_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_compile_length_typed and independent review: option config, input, next config, output order, and output length on the left match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "MAP_FST_compile_prog",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/LabelOrigins.lean", "lean_name": "map_fst_compileProg",
   "statement_status": "reviewed_exact",

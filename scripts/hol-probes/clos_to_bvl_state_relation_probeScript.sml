@@ -148,6 +148,10 @@ val _ = show "length_fst_cond_mti_typed=" clos_to_bvlProofTheory.LENGTH_FST_cond
 val _ = show "every_fn_none_cond_mti_typed=" clos_to_bvlProofTheory.every_Fn_vs_NONE_cond_mti_compile_inc;
 val _ = show "map_fst_compile_prog_typed=" clos_to_bvlProofTheory.MAP_FST_compile_prog;
 val _ = show "image_add_subset_count_typed=" clos_to_bvlProofTheory.IMAGE_ADD_SUBSET_count;
+val _ = show "call_compile_length_typed=" clos_callTheory.compile_LENGTH;
+val _ = show "known_compile_length_typed=" clos_knownProofTheory.compile_LENGTH;
+val _ = show "ccompile_aux_subset_typed=" clos_to_bvlProofTheory.ccompile_aux_subset;
+val _ = show "ccompile_locs_subset_typed=" clos_to_bvlProofTheory.ccompile_locs_subset;
 val _ = show "length_remove_ticks_typed=" clos_ticksTheory.LENGTH_remove_ticks;
 val _ = show "length_let_op_typed=" clos_letopTheory.LENGTH_let_op;
 val _ = show "known_length_eq_e_typed=" clos_knownTheory.known_LENGTH_EQ_E;
