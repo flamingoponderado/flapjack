@@ -127626,200 +127626,200 @@
   "hol_name": "compile_inc_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "compileIncSource_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: exported HOL compile_inc_no_mutcons shown typed in bvl_to_bvi_proof_source_probe.out: compile_inc n prog = (n1, prog1) with prog1 a plain (num # num # bvi$exp) list and EVERY (no_mutcons o SND o SND) prog1; Lean compileIncSource returns (next, code) with code : List (Nat × Nat × Bvi.Exp) and states ∀ entry ∈ code, noMutcons entry.2.2, the same predicate."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "compile_int_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "compileInt_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀(i:int). no_mutcons (compile_int i); Lean compileInt_noMutcons : noMutcons (compileInt value) over the same Int input."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "compile_op_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "compileOp_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀(op:closLang$op)(c1:bvi$exp list). EVERY no_mutcons c1 ⇒ no_mutcons (compile_op op c1); Lean states ∀ e ∈ args, noMutcons e → noMutcons (compileOp op args), the same EVERY as membership."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "compile_list_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "compileProgramsSource_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀n progs q n1. compile_list n progs = (q,n1) ⇒ EVERY (no_mutcons o SND o SND) (append q) with q a (num # num # bvi$exp) app_list; Lean compileProgramsSource returns an AppList and states auxNoMutcons code (∀ entry ∈ appListAppend code, noMutcons entry.2.2), the same predicate on the same carrier."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "compile_single_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "compileSingleSource_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀n p q n1. compile_single n p = (q,n1) ⇒ EVERY (no_mutcons o SND o SND) (append q) with p a num # num # bvl$exp triple and q an app_list; Lean compileSingleSource takes the same triple and returns an AppList with auxNoMutcons."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "compile_exps_sing_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "compile_exps_sing_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement: both conjuncts quantify n e c aux n1 over bvl$exp / bvi$exp / (num # num # bvi$exp) app_list and state no_mutcons c (resp. EVERY no_mutcons c) plus EVERY (no_mutcons o SND o SND) (append aux); Lean uses the tagged source-shaped compileSingSource/compileListSource with auxNoMutcons aux = the same EVERY over appListAppend."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "bvi_let_delete_var_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "deleteVar_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀(x:bvi$exp). no_mutcons x ⇒ no_mutcons (delete_var x); Lean deleteVar_noMutcons over Bvi.Exp is the same implication."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "bvi_let_compile_exp_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "let_compileExp_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "documented_mismatch",
+  "reviewer": "documented_mismatch. Compared the replayed typed original bvi_let_compile_exp_no_mutcons_typed (bvl_to_bvi_proof_source_probe.out) with the source at bvl_to_bviProofScript.sml:4840-4843: HOL states no_mutcons x ⇒ no_mutcons (bvi_let$compile_exp x), and compile_exp is defined as the head of the list-recursive compile (bvi_letScript.sml:197-201) with compile_exp_eq resting on compile_sing. The Lean declaration let_compileExp_noMutcons states no_mutcons (BviLet.compileSing [] 0 expression), i.e. the singleton-threaded compile_sing form; Lean ports neither compile nor compile_exp and establishes no compile_exp_eq. Equivalent via HOL only, so the @[hol] tag is withdrawn and the exact port remains open."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "bvi_let_compile_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "let_compile_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement: (∀env d e. no_mutcons e ⇒ no_mutcons (compile_sing env d e)) ∧ (∀env d es. EVERY no_mutcons es ⇒ EVERY no_mutcons (compile_list env d es)); Lean states the same two conjuncts with ∀ e ∈ expressions in place of EVERY, over the same List Nat environment and Bvi.Exp carrier."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "stubs_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "stubs_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀start n. EVERY (no_mutcons o SND o SND) (stubs start n); Lean states ∀ entry ∈ stubs start count, noMutcons entry.2.2, the same predicate on the same (Nat × Nat × Bvi.Exp) entries."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "apply_op_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "tailrec_applyOp_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀op e1 e2. no_mutcons (apply_op op e1 e2) ⇔ no_mutcons e1 ∧ no_mutcons e2; Lean is the same iff over AssocOp and Bvi.Exp."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "args_from_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "tailrec_argsFrom_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀f t d args hdl. args_from f = SOME (t,d,args,hdl) ∧ no_mutcons f ⇒ EVERY no_mutcons args ∧ (case hdl of NONE => T | SOME h => no_mutcons h); Lean states the same result with ∀ e ∈ args and a match on the Option handler."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "check_op_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "tailrec_checkOp_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀ts opr loc exp exp2. check_op ts opr loc exp = SOME exp2 ∧ no_mutcons exp ⇒ no_mutcons exp2; Lean is the same implication with ctx : List ValueType."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "bvi_tailrec_compile_each_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "tailrec_compileEach_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀next prog next1 prog1. compile_each next prog = (next1,prog1) ∧ EVERY (no_mutcons o SND o SND) prog ⇒ EVERY (no_mutcons o SND o SND) prog1 over (num # num # bvi$exp) lists; Lean states the same with ∀ entry ∈ program/result in place of EVERY."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "tailrec_compile_exp_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "tailrec_compileExp_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀loc next arity exp aux opt. compile_exp loc next arity exp = SOME (aux,opt) ∧ no_mutcons exp ⇒ no_mutcons aux ∧ no_mutcons opt; Lean compileExpSource states the same success condition and both conjuncts."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "bvi_tailrec_compile_prog_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "tailrec_compileProg_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: exported HOL bvi_tailrec_compile_prog_no_mutcons shown typed in bvl_to_bvi_proof_source_probe.out: ∀b next prog next1 prog1. compile_prog b next prog = (next1,prog1) ∧ EVERY (no_mutcons o SND o SND) prog ⇒ EVERY (no_mutcons o SND o SND) prog1; Lean compileProgSource states the same with the Bool enable flag and ∀ entry ∈ program/result."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "rewrite_catchall_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "tailrec_dispatch_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement equates the source case expression (check_op NONE => (F, apply_op opr (Var acc) exp); SOME v1 => opbinargs opr v1 NONE => (F, apply_op opr (Var acc) v1); SOME (xs,f) => (T, push_call next opr acc xs (args_from f))) to (r,y) and requires no_mutcons exp ⇒ no_mutcons y; Lean names that same case expression sourceDispatch (definitionally the same branches) and states noMutcons output."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "get_bin_args_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "tailrec_getBinArgs_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀exp e1 e2. get_bin_args exp = SOME (e1,e2) ∧ no_mutcons exp ⇒ no_mutcons e1 ∧ no_mutcons e2; Lean is the same implication."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "id_from_op_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "tailrec_identity_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀op. no_mutcons (id_from_op op); Lean tailrec_identity_noMutcons over AssocOp is the same."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "let_wrap_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "tailrec_letWrap_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀arity id x. no_mutcons (let_wrap arity id x) ⇔ no_mutcons id ∧ no_mutcons x; Lean states the same iff."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "opbinargs_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "tailrec_opBinArgs_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀opr exp e1 e2. opbinargs opr exp = SOME (e1,e2) ∧ no_mutcons exp ⇒ no_mutcons e1 ∧ no_mutcons e2; Lean is the same implication."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "push_call_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "tailrec_pushCall_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀n op acc x f. no_mutcons x ∧ no_mutcons f ⇒ no_mutcons (push_call n op acc x (args_from f)); Lean is the same implication with value/expression in place of x/f."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "rewrite_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "tailrec_rewrite_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀loc next opr acc ts exp r y. rewrite loc next opr acc ts exp = (r,y) ∧ no_mutcons exp ⇒ no_mutcons y; Lean rewriteSource states the same over ctx : List ValueType."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "to_op_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "tailrec_toOp_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀op. no_mutcons_op (to_op op); Lean tailrec_toOp_noMutcons over AssocOp is the same."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "try_swap_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "tailrec_trySwap_noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: replayed typed statement ∀loc opr exp. no_mutcons exp ⇒ no_mutcons (try_swap loc opr exp); Lean is the same implication."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
