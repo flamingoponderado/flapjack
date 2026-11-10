@@ -1,5 +1,19 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_add_to_clock",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/ClockShift.lean", "lean_name": "evaluate_addToClock",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_add_to_clock_type and the source: the shared extra clock, original tuple binder and equality, independent state parameters, complete non-timeout premises, both evaluation and application conjuncts and final clock updates agree. Closure state refs and code use canonical finite support. The faithful evaluator inherits reals_as_rational_cuts and SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_add_clock",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/ClockShift.lean", "lean_name": "evaluate_addClock",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_add_clock_type and the source: final and initial states, result, expressions and environment keep their HOL binder order; the full evaluation and non-timeout premise implies the original universally quantified clock update. Closure state refs and code use canonical finite support. The faithful evaluator inherits reals_as_rational_cuts and SOUNDNESS item 8."
+ },
+ {
   "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml", "hol_name": "every_error_result_def",
   "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean", "lean_name": "everyErrorResult",
   "statement_status": "reviewed_exact",
