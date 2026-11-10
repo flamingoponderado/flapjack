@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.PresLang.Bvl
-import Flapjack.Compiler.Backend.Bvi.Syntax
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Bvl
+public import Flapjack.Compiler.Backend.Bvi.Syntax
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! BVI explorer display following `bvi_to_display_def`,
 `bvi_fun_to_display_def`, and `bvi_to_strs_def` in `presLangScript.sml`.

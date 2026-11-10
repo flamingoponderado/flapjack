@@ -1,7 +1,11 @@
-import Flapjack.RiscV.Allocator
-import Flapjack.RiscV.Backend
-import Flapjack.RiscV.RegAlloc
-import Flapjack.RiscV.Calls
+module
+
+public import Flapjack.RiscV.Allocator
+public import Flapjack.RiscV.Backend
+public import Flapjack.RiscV.RegAlloc
+public import Flapjack.RiscV.Calls
+
+@[expose] public section
 
 /-!
 Semantic foundations for the SSA and colouring stages of the Word allocator.

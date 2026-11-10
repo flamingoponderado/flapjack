@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 """Render the pinned HOL bignum output as a 64-bit executable snapshot."""
+import sys
+from pathlib import Path as _Path
+sys.path.insert(0, str(_Path(__file__).resolve().parent))
+from lean_module_header import to_module  # noqa: E402
 import argparse
 import importlib.util
 import re
@@ -50,6 +54,7 @@ def main():
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     expected = render()
+    expected = to_module(expected, private_in_public=True)
     if args.check:
         if not OUTPUT.exists() or OUTPUT.read_text() != expected:
             raise SystemExit(f"{OUTPUT} is stale; regenerate it from the HOL capture")

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCse.RegisterData
-import Flapjack.Compiler.Encoders.Asm
+module
+
+public import Flapjack.Compiler.Backend.WordCse.RegisterData
+public import Flapjack.Compiler.Encoders.Asm
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack Compiler.Encoders.Asm

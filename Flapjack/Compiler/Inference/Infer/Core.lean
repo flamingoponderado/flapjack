@@ -1,7 +1,15 @@
-import Flapjack.Compiler.Inference.Infer
-import Flapjack.Compiler.Inference.Unify
-import Flapjack.AstHOL.Syntax
-import Flapjack.TypeSystemHOL.Values
+module
+
+public import Flapjack.Compiler.Inference.Infer
+public import Flapjack.Compiler.Inference.Unify
+public import Flapjack.AstHOL.Syntax
+public import Flapjack.TypeSystemHOL.Values
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Bounded executable inference infrastructure. The result distinguishes
 unsupported forms from rejected inputs and resource exhaustion. It does not

@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelDomain
-import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelSets
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelDomain
+public import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelSets
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.LabelUpdates
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Misc Flapjack.Compiler.Backend.LabLang

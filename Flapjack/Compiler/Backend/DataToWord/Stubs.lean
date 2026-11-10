@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.DataToWord.Locations
-import Flapjack.Compiler.Backend.DataToWord.Control
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Locations
+public import Flapjack.Compiler.Backend.DataToWord.Control
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! A partial selection of data-to-word runtime stubs. -/
 namespace Flapjack.Compiler.Backend.DataToWord

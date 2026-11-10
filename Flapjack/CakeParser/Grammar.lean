@@ -1,4 +1,8 @@
-import Flapjack.CakeParser.Tokens
+module
+
+public import Flapjack.CakeParser.Tokens
+
+@[expose] public section
 
 /-! Operator classes from CakeML's concrete grammar. -/
 namespace Flapjack.CakeParser.Grammar

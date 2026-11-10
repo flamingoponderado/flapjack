@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Compiler.Backend.LinearScan.HiddenState
-import Flapjack.Compiler.Backend.RegAlloc.StateMap
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Compiler.Backend.LinearScan.HiddenState
+public import Flapjack.Compiler.Backend.RegAlloc.StateMap
+
+@[expose] public section
 
 /-!
 # linear_scan translation helper `map_colors_sub`

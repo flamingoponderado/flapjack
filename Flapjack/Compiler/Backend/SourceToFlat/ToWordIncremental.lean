@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.ToDataIncremental
-import Flapjack.Compiler.Backend.DataToWord.Total
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.ToDataIncremental
+public import Flapjack.Compiler.Backend.DataToWord.Total
+
+@[expose] public section
 
 /-! Checked incremental CakeML source-to-word compilation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

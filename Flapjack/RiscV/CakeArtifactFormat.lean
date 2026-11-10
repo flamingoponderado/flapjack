@@ -1,6 +1,14 @@
-import Flapjack.RiscV.ArtifactFormat
-import Flapjack.RiscV.NativeCLIAdapter
-import Flapjack.Compiler.Backend.Backend
+module
+
+public import Flapjack.RiscV.ArtifactFormat
+public import Flapjack.RiscV.NativeCLIAdapter
+public import Flapjack.Compiler.Backend.Backend
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! CakeML RISC-V assembly output, including bitmap initialization and the
 optional returning entry points from the pinned exporter. -/

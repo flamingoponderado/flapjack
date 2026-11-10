@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorSetWF
-import Flapjack.Compiler.Backend.RegAlloc.ProductionNumSet
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorSetWF
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionNumSet
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

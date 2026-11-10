@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.FfiReads
-import Flapjack.Compiler.Backend.Semantics.TargetProps.Interference
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.FfiReads
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.Interference
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.Semantics.TargetProps

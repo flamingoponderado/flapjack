@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionMemoryGuard
-import Flapjack.Compiler.Backend.WordCopy.Production
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionMemoryGuard
+public import Flapjack.Compiler.Backend.WordCopy.Production
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

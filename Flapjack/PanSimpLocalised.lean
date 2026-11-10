@@ -1,6 +1,10 @@
-import Flapjack.Pancake.PanSimp
-import Flapjack.PanLocalised
-import Flapjack.Pancake.Proofs.PanSimp
+module
+
+public import Flapjack.Pancake.PanSimp
+public import Flapjack.PanLocalised
+public import Flapjack.Pancake.Proofs.PanSimp
+
+@[expose] public section
 
 /-!
 `pan_simp` only inserts `Skip`, `Seq`, and `Annot` nodes and rewrites the

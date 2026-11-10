@@ -1,4 +1,8 @@
-import Flapjack.RiscV.Encoding
+module
+
+public import Flapjack.RiscV.Encoding
+
+@[expose] public section
 
 /-!
 # Captured CakeML RISC-V runtime oracle

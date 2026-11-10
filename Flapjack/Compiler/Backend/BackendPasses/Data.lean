@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.BackendPasses.Bvi
-import Flapjack.Compiler.Backend.PresLang.Data
-import Flapjack.Compiler.Backend.BviToData.Compile
+module
+
+public import Flapjack.Compiler.Backend.BackendPasses.Bvi
+public import Flapjack.Compiler.Backend.PresLang.Data
+public import Flapjack.Compiler.Backend.BviToData.Compile
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Capture BVI-to-data and the three following data optimizations from
 `backend_passesScript.sml`. Display correspondence and executable explorer

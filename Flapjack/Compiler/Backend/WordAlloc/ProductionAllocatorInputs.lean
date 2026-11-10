@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
-import Flapjack.Compiler.Backend.RegAlloc.ProductionInitializer
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionInitializer
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open RegAlloc RiscV.CakeRegAlloc Flapjack.Compiler.Encoders.Asm

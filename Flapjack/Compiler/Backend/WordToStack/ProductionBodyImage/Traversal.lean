@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.MlStringBridge
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
-import Flapjack.Stack
-import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+module
+
+public import Flapjack.Compiler.Backend.MlStringBridge
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+public import Flapjack.Stack
+public import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+
+@[expose] public section
 
 /-! Native `compNative` body output in the actual production decoder image.
 Flapjack codec infrastructure (no HOL original): the production StackLang

@@ -1,3 +1,7 @@
+module
+
+@[expose] public section
+
 /-! Generated from the pinned CakeML compiler help string by
 `scripts/generate-cake-help.py`. This String is CLI infrastructure;
 it is not a reviewed port of HOL's mlstring declaration. -/

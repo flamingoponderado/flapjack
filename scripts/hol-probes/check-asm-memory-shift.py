@@ -3,7 +3,7 @@
 from pathlib import Path
 import hashlib
 ROOT=Path(__file__).resolve().parents[2]
-CHECKS={'Flapjack/Compiler/Backend/LabToTarget/InstMem.lean': '3aa95286c2411d7a59a8e1f4bb67020fccaf50865fc2dbf2bce09b4736c90e13', 'Flapjack/Compiler/Encoders/AsmSem/Memory.lean': 'd843f6b1c4a9551c31f28407dadba5c2f71c70aec7b997f324cbfd0f917d5400', 'Flapjack/Compiler/Encoders/AsmProps/Memory.lean': '30277a3843dca072feceb6a873a428ee3b7fbc2d2826384addeec3771e604ab4', 'Flapjack/Compiler/Encoders/AsmSem/MemoryByteShift.lean': '612052b61edbe8c534b40153eaa625b63dba46b0c1b9957ff4e5f6d908ca183e', 'scripts/hol-probes/asm_memory_shift_probeScript.sml': 'a1dab80e422e0709729ffbfafa5b3da9ac727fcec4b330d0e3fef0581391fef5', 'scripts/hol-probes/asm_memory_shift_probe.out': '4127bc37122a7ca758123fa08ca515b75dff3b9cbd6b4fcced2fe7800703b78c'}
+CHECKS={'Flapjack/Compiler/Backend/LabToTarget/InstMem.lean': '3aa95286c2411d7a59a8e1f4bb67020fccaf50865fc2dbf2bce09b4736c90e13', 'Flapjack/Compiler/Encoders/AsmSem/Memory.lean': 'd843f6b1c4a9551c31f28407dadba5c2f71c70aec7b997f324cbfd0f917d5400', 'Flapjack/Compiler/Encoders/AsmProps/Memory.lean': '30277a3843dca072feceb6a873a428ee3b7fbc2d2826384addeec3771e604ab4', 'Flapjack/Compiler/Encoders/AsmSem/MemoryByteShift.lean': '35857af10780868b9dc39f29d939674fcdb346123519176a3de38c4d8a5692cc', 'scripts/hol-probes/asm_memory_shift_probeScript.sml': 'a1dab80e422e0709729ffbfafa5b3da9ac727fcec4b330d0e3fef0581391fef5', 'scripts/hol-probes/asm_memory_shift_probe.out': '4127bc37122a7ca758123fa08ca515b75dff3b9cbd6b4fcced2fe7800703b78c'}
 LABELS=tuple(f'{case}_width_{width}' for width in (1,2,3,64) for case in ('read','write'))
 def check(root=ROOT):
  for name,digest in CHECKS.items():

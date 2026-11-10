@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionTreeMapMerge
-import Flapjack.Misc.Sptree.MapiLookup
-import Flapjack.Misc.Sptree.MapiWf
-import Flapjack.Compiler.Backend.WordAlloc.ProductionCallCache
-import Flapjack.Compiler.Backend.WordAlloc.HeuProg
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionTreeMapMerge
+public import Flapjack.Misc.Sptree.MapiLookup
+public import Flapjack.Misc.Sptree.MapiWf
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionCallCache
+public import Flapjack.Compiler.Backend.WordAlloc.HeuProg
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open RiscV

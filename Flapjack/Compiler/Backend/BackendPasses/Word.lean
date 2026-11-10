@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BackendPasses.Data
-import Flapjack.Compiler.Backend.PresLang.Word
-import Flapjack.Compiler.Backend.SourceToFlat.ToWord
+module
+
+public import Flapjack.Compiler.Backend.BackendPasses.Data
+public import Flapjack.Compiler.Backend.PresLang.Word
+public import Flapjack.Compiler.Backend.SourceToFlat.ToWord
+
+@[expose] public section
 
 /-! Capture the initial DataLang-to-WordLang stage from
 `backend_passesScript.sml`. This follows the executable 64-bit backend path,

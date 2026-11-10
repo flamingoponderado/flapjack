@@ -1,5 +1,13 @@
-import Flapjack.Basis.Pure.MlString
-import Flapjack.HolRef
+module
+
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.HolRef
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Byte-oriented S-expression parser for the CakeML bootstrap input path.
 The grammar follows HOL's `simpleSexpPEG`, but this direct implementation has

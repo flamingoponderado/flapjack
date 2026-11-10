@@ -1,6 +1,10 @@
-import Flapjack.CakeParser.Lexer
-import Flapjack.CakeParser.PegEval
-import Flapjack.CakeParser.PtreeConversion
+module
+
+public import Flapjack.CakeParser.Lexer
+public import Flapjack.CakeParser.PegEval
+public import Flapjack.CakeParser.PtreeConversion
+
+@[expose] public section
 
 /-! A bounded source-to-CakeML-AST entry point. The original parser's detailed
 errors and exact continuation-machine fuel are not represented here, and the

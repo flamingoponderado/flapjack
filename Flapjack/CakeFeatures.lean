@@ -1,3 +1,7 @@
+module
+
+@[expose] public section
+
 /-! Generated from pinned Pancake feature history by
 `scripts/generate-cake-features.py`. This String-backed table is
 CLI infrastructure, not a reviewed HOL mlstring port. -/

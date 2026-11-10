@@ -1,6 +1,10 @@
-import Flapjack.Misc.MachineIeee.Arith
-import Flapjack.Misc.BinaryIeeeRoundFp64
-import Flapjack.FpSemHOL
+module
+
+public import Flapjack.Misc.MachineIeee.Arith
+public import Flapjack.Misc.BinaryIeeeRoundFp64
+public import Flapjack.FpSemHOL
+
+@[expose] public section
 
 /-!
 # binary64 arithmetic through the computable roundTiesToEven

@@ -1,4 +1,8 @@
-import Flapjack.CakeParser.Lexer
+module
+
+public import Flapjack.CakeParser.Lexer
+
+@[expose] public section
 
 /-! CakeML's top-level semicolon grouping over the functional lexer output. -/
 namespace Flapjack.CakeParser.LexerImpl

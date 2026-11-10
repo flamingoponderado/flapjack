@@ -1,5 +1,9 @@
-import Flapjack.RiscV.Encoding
-import Flapjack.RiscV.Encoding.Reference
+module
+
+public import Flapjack.RiscV.Encoding
+public import Flapjack.RiscV.Encoding.Reference
+
+@[expose] public section
 
 /-! Unconditional production/native encoding agreement. These infrastructure
 relations compare distinct Lean carriers and do not narrow the full tagged HOL

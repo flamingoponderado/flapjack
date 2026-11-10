@@ -1,5 +1,9 @@
-import Flapjack.RiscV.RegAlloc
-import Flapjack.RiscV.CakeAllocatorCore
+module
+
+public import Flapjack.RiscV.RegAlloc
+public import Flapjack.RiscV.CakeAllocatorCore
+
+@[expose] public section
 
 /-!
 An oracle-backed entry point for the CakeML-shaped Word allocator.

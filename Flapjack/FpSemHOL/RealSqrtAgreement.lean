@@ -1,5 +1,9 @@
-import Flapjack.FpSemHOL
-import Flapjack.Misc.MachineIeee.SqrtReal
+module
+
+public import Flapjack.FpSemHOL
+public import Flapjack.Misc.MachineIeee.SqrtReal
+
+@[expose] public section
 
 namespace Flapjack
 

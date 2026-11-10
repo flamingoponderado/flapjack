@@ -1,6 +1,10 @@
-import Flapjack.RiscV.PipelineDiagnostics
-import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
-import Flapjack.Compiler.Backend.RegAlloc.ProductionExtraction
+module
+
+public import Flapjack.RiscV.PipelineDiagnostics
+public import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionExtraction
+
+@[expose] public section
 
 /-! Actual move-domain infrastructure. There is no standalone HOL declaration
 for the production colouring carrier. Bounds are derived from emitted moves

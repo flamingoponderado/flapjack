@@ -1,5 +1,9 @@
-import Flapjack.LoopMemLoad
-import Flapjack.LoopMemStore
+module
+
+public import Flapjack.LoopMemLoad
+public import Flapjack.LoopMemStore
+
+@[expose] public section
 
 /-!
 # Exact Loop word-memory adapter

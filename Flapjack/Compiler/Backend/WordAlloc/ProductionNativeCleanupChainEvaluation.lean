@@ -1,15 +1,19 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead
-import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
-import Flapjack.Compiler.Backend.WordCopy.Production
-import Flapjack.Compiler.Backend.WordCopy.Proofs.Correct
-import Flapjack.Compiler.Backend.WordUnreach.Production
-import Flapjack.Compiler.Backend.WordAlloc.ProductionCanonicalCutsetCodec
-import Flapjack.Pancake.Proofs.WordConvs.CopyProp
-import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
-import Flapjack.Pancake.Proofs.WordConvs.Unreach
-import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect
-import Flapjack.Pancake.Proofs.WordConvs.WordCse
-import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead
+public import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
+public import Flapjack.Compiler.Backend.WordCopy.Production
+public import Flapjack.Compiler.Backend.WordCopy.Proofs.Correct
+public import Flapjack.Compiler.Backend.WordUnreach.Production
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionCanonicalCutsetCodec
+public import Flapjack.Pancake.Proofs.WordConvs.CopyProp
+public import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
+public import Flapjack.Pancake.Proofs.WordConvs.Unreach
+public import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect
+public import Flapjack.Pancake.Proofs.WordConvs.WordCse
+public import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
+
+@[expose] public section
 
 /-! Executed post-SSA allocator cleanup chain.
 

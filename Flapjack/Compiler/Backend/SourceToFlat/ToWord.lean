@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.SourceToFlat.ToData
-import Flapjack.Compiler.Backend.DataToWord.Total
-import Flapjack.Compiler.Backend.DataToWord.Stubs
-import Flapjack.Compiler.Backend.WordBignum.Generated64
-import Flapjack.Compiler.Backend.WordBignum.Generate
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.ToData
+public import Flapjack.Compiler.Backend.DataToWord.Total
+public import Flapjack.Compiler.Backend.DataToWord.Stubs
+public import Flapjack.Compiler.Backend.WordBignum.Generated64
+public import Flapjack.Compiler.Backend.WordBignum.Generate
+
+@[expose] public section
 
 /-! Source-to-word compositions at intermediate and configured stages. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

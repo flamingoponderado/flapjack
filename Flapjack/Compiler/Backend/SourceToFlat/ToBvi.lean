@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.SourceToFlat.ToClos
-import Flapjack.Compiler.Backend.ClosToBvl.Prepared
-import Flapjack.Compiler.Backend.BvlToBvi.Compile
-import Flapjack.Compiler.Backend.BvlToBvi.Names
-import Flapjack.Compiler.Backend.BviInline
-import Flapjack.Compiler.Backend.BvlInline
-import Flapjack.Compiler.Backend.BviTailrec.Rewrite
-import Flapjack.Compiler.Backend.BviTmc
-import Flapjack.Compiler.Backend.BvlToBvi.Config
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.ToClos
+public import Flapjack.Compiler.Backend.ClosToBvl.Prepared
+public import Flapjack.Compiler.Backend.BvlToBvi.Compile
+public import Flapjack.Compiler.Backend.BvlToBvi.Names
+public import Flapjack.Compiler.Backend.BviInline
+public import Flapjack.Compiler.Backend.BvlInline
+public import Flapjack.Compiler.Backend.BviTailrec.Rewrite
+public import Flapjack.Compiler.Backend.BviTmc
+public import Flapjack.Compiler.Backend.BvlToBvi.Config
+
+@[expose] public section
 
 /-! Checked source-to-BVI compositions. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

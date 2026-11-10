@@ -1,5 +1,9 @@
-import Flapjack.Misc.BinaryIeeeArith
-import Flapjack.Misc.BinaryIeeeSqrt.RealCarrier
+module
+
+public import Flapjack.Misc.BinaryIeeeArith
+public import Flapjack.Misc.BinaryIeeeSqrt.RealCarrier
+
+@[expose] public section
 
 /-!
 # `binary_ieee` arithmetic and comparison over Mathlib reals

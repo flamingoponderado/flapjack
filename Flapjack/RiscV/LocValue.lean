@@ -1,5 +1,9 @@
-import Flapjack.RiscV.Backend
-import Flapjack.RiscV.Lab
+module
+
+public import Flapjack.RiscV.Backend
+public import Flapjack.RiscV.Lab
+
+@[expose] public section
 
 namespace Flapjack.RiscV
 

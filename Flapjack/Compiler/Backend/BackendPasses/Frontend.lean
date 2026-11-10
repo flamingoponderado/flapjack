@@ -1,7 +1,15 @@
-import Flapjack.Compiler.Backend.PresLang.Source
-import Flapjack.Compiler.Backend.PresLang.Flat
-import Flapjack.Compiler.Backend.PresLang.Clos
-import Flapjack.Compiler.Backend.SourceToFlat.ToClos
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Source
+public import Flapjack.Compiler.Backend.PresLang.Flat
+public import Flapjack.Compiler.Backend.PresLang.Clos
+public import Flapjack.Compiler.Backend.SourceToFlat.ToClos
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Capturing the initial explorer stages of `backend_passesScript.sml`.
 The existing source-to-closure compiler runs the same passes, but this module

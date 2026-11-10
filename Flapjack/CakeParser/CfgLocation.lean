@@ -1,4 +1,8 @@
-import Flapjack.CakeParser.CfgValidation
+module
+
+public import Flapjack.CakeParser.CfgValidation
+
+@[expose] public section
 
 /-! Location preservation between executable PEG trees and the generic HOL
 grammar trees. These are Flapjack infrastructure lemmas. -/

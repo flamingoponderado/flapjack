@@ -1,5 +1,9 @@
-import Flapjack.CakeParser.Frontend
-import Flapjack.Compiler.Inference.Infer.Diagnostics
+module
+
+public import Flapjack.CakeParser.Frontend
+public import Flapjack.Compiler.Inference.Infer.Diagnostics
+
+@[expose] public section
 
 /-! Rendering for parse failures where the bounded parser identifies the
 first unconsumed token. Other parser failure locations remain unported. -/

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
-import Flapjack.PanToCrepMaxList
+module
+
+public import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
+public import Flapjack.PanToCrepMaxList
+
+@[expose] public section
 
 /-! Infrastructure for the source's reverse/traverse/reverse clauses. -/
 namespace Flapjack.Compiler.Backend.FlatPattern

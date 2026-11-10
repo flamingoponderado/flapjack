@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAMemoryGuard
-import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorSetWF
-import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicProgram
-import Flapjack.RiscV.OracleAllocator
-import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeCopyMemoryGuard
-import Flapjack.RiscV.PipelineDiagnostics
-import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.WordAllocCorrect
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAMemoryGuard
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorSetWF
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicProgram
+public import Flapjack.RiscV.OracleAllocator
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeCopyMemoryGuard
+public import Flapjack.RiscV.PipelineDiagnostics
+public import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.WordAllocCorrect
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open RegAlloc RiscV RiscV.CakeRegAlloc Compiler.Encoders.Asm

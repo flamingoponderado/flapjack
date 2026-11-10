@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.SourceToFlat.ToWord
-import Flapjack.Compiler.Backend.RegAlloc.Executable
-import Flapjack.Compiler.Backend.WordToWord.FastCompile
-import Flapjack.Compiler.Backend.Backend
-import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
-import Flapjack.Compiler.Backend.DataToWord.Names
-import Flapjack.Compiler.Backend.WordToStack.StubNames
-import Flapjack.Compiler.Backend.StackAlloc.StubNames
-import Flapjack.Compiler.Backend.StackRemove.StubNames
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.ToWord
+public import Flapjack.Compiler.Backend.RegAlloc.Executable
+public import Flapjack.Compiler.Backend.WordToWord.FastCompile
+public import Flapjack.Compiler.Backend.Backend
+public import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+public import Flapjack.Compiler.Backend.DataToWord.Names
+public import Flapjack.Compiler.Backend.WordToStack.StubNames
+public import Flapjack.Compiler.Backend.StackAlloc.StubNames
+public import Flapjack.Compiler.Backend.StackRemove.StubNames
+
+@[expose] public section
 
 /-! CakeML AST to RISC-V backend compositions. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

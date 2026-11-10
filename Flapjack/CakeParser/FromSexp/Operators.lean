@@ -1,4 +1,8 @@
-import Flapjack.CakeParser.FromSexp
+module
+
+public import Flapjack.CakeParser.FromSexp
+
+@[expose] public section
 
 /-! Operator decoding for the CakeML S-expression format. -/
 namespace Flapjack.CakeParser.FromSexp

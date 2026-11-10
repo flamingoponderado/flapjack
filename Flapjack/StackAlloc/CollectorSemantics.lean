@@ -1,5 +1,9 @@
-import Flapjack.StackAlloc.FrameMachine
-import Flapjack.StackAlloc.BitmapSemantics
+module
+
+public import Flapjack.StackAlloc.FrameMachine
+public import Flapjack.StackAlloc.BitmapSemantics
+
+@[expose] public section
 
 /-!
 # Bounded collector machine semantics

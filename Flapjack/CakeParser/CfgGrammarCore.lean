@@ -1,6 +1,10 @@
-import Flapjack.CakeParser.PegChecks
-import Flapjack.CakeParser.Nonterminal
-import Flapjack.Misc.Grammar
+module
+
+public import Flapjack.CakeParser.PegChecks
+public import Flapjack.CakeParser.Nonterminal
+public import Flapjack.Misc.Grammar
+
+@[expose] public section
 
 /-! Flapjack representation of CakeML context-free production patterns. The
 complete generated grammar and PEG-to-CFG correspondence still need review. -/

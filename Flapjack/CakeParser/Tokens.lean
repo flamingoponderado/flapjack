@@ -1,4 +1,8 @@
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-! CakeML concrete-syntax token carriers. HOL strings use byte lists and
 `mlstring` retains its constructor-for-constructor representation. -/

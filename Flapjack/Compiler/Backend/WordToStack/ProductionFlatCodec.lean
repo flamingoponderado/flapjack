@@ -1,6 +1,10 @@
-import Flapjack.RiscV.WordExpressionFlatten
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.Domain
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.RiscV.WordExpressionFlatten
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.Domain
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 namespace Flapjack.WordProgCarrierCodec
 

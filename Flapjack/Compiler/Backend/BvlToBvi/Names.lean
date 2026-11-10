@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
-import Flapjack.Misc.Sptree
-import Flapjack.Basis.Pure.MlString
-import Flapjack.HolRef
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
+public import Flapjack.Misc.Sptree
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Names for BVL-to-BVI output locations. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi

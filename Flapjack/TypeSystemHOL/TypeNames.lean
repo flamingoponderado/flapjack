@@ -1,5 +1,9 @@
-import Flapjack.TypeSystemHOL.Environments
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.TypeSystemHOL.Environments
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 
 /-! Semantic type substitutions and source type-name resolution. The source
 and representation review of these definitions remains pending. -/

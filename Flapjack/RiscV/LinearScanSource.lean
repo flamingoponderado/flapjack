@@ -1,4 +1,8 @@
-import Flapjack.RiscV.LinearScan
+module
+
+public import Flapjack.RiscV.LinearScan
+
+@[expose] public section
 
 /-!
 # Source-faithful linear-scan checks

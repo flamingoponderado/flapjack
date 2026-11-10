@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackLang.WordPayloads
-import Flapjack.RiscV.Lab
+module
+
+public import Flapjack.Compiler.Backend.StackLang.WordPayloads
+public import Flapjack.RiscV.Lab
+
+@[expose] public section
 
 /-! Flapjack-only correspondence to the instruction conversions already used
 by the executed Word-to-Stack and Lab routes. These declarations have no HOL
