@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "make_g_subg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeState.lean", "lean_name": "makeState_subg",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.alistToFmap"],
+  "reviewer": "Compared make_g_subg_type in clos_call_code_list_probe.out and HOL source: independent sparse-map and code payload carriers, the successful make_g and full wfg premises, and the entire subg conclusion are preserved. The reviewed alistToFmap producer applied to reversed entries represents HOL FEMPTY |++ aux, retaining last-update lookup behavior."
+ },
+ {
   "hol_path": "HOL/src/finite_maps/alistScript.sml", "hol_name": "ALOOKUP_ALL_DISTINCT_MEM",
   "lean_path": "Flapjack/FiniteMap/AlistExact/Lookup.lean", "lean_name": "holALookup_of_distinct_member",
   "statement_status": "reviewed_exact",
