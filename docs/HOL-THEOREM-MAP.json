@@ -128388,8 +128388,8 @@
   "hol_name": "get_code_labels_compile",
   "lean_path": "Flapjack/Compiler/Backend/DataSpace/Proofs/CodeLabels.lean",
   "lean_name": "getCodeLabels_compile",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed get_code_labels_compile capture: \u2200x. get_code_labels (compile x) = get_code_labels x, with compile : dataLang$prog -> dataLang$prog; Lean states getCodeLabels (compile program) = getCodeLabels program for a DataLang.Prog."
 },
 {
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
