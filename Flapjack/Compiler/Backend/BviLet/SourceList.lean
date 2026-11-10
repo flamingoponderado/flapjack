@@ -73,8 +73,9 @@ noncomputable def compile (env : List Nat) (d : Nat) : List Exp → List Exp
         | .var v =>
             if v = xs.length - 1 then
               let last := xs.getLast hne
-              [.«let» (compile env d xs.dropLast) (Flapjack.holHd (compile (env.map ((xs.length - 1) + ·))
-                (d + (xs.length - 1)) [last]))]
+              [.«let» (compile env d xs.dropLast)
+                (Flapjack.holHd (compile (env.map ((xs.length - 1) + ·))
+                  (d + (xs.length - 1)) [last]))]
             else
               [.«let» ((compile env d xs).map deleteVar)
                 (Flapjack.holHd (compile (extractList (compile env d xs) ++ env) d [.var v]))]

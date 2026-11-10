@@ -213,7 +213,8 @@ private theorem auxNoMutcons_append {a b : AppList (Nat × Nat × Bvi.Exp)}
 
 private theorem auxNoMutcons_fresh (n arity : Nat) (body : Bvi.Exp) (safe : noMutcons body) :
     auxNoMutcons (compileAuxSource (n, arity, body)) := by
-  simp [auxNoMutcons, compileAuxSource, appListAppend, appendAux, let_compileSing_zero_noMutcons body safe]
+  simp [auxNoMutcons, compileAuxSource, appListAppend, appendAux,
+    let_compileSing_zero_noMutcons body safe]
 
 private theorem destLetBudget' (exp : Bvl.Exp) :
     listBudget (destLet exp).1 ≤ expBudget exp ∧ expBudget (destLet exp).2 ≤ expBudget exp := by

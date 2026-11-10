@@ -91,7 +91,8 @@ noncomputable def compilePart (part : Nat × Nat × Bvi.Exp) : Nat × Nat × Dat
 
 /-- Compile each labeled BVI function in source order. -/
 @[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "compile_prog_def"]
-noncomputable def compileProg (program : List (Nat × Nat × Bvi.Exp)) : List (Nat × Nat × DataLang.Prog) :=
+noncomputable def compileProg (program : List (Nat × Nat × Bvi.Exp)) :
+    List (Nat × Nat × DataLang.Prog) :=
   program.map compilePart
 
 end Flapjack.Compiler.Backend.BviToData
