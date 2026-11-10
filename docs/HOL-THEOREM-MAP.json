@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "dest_closure_v_rel",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ClosureLookup.lean", "lean_name": "destClosure_valueRel",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared dest_closure_v_rel_type in clos_call_code_list_probe.out and HOL source: all three premises and both result cases agree, including the actual target application, related partial closure, full-application witnesses, recursive offset, prefix and environment relations, remaining arguments, group relation, index bound and selected source body. The code parameter uses canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "dest_closure_v_rel_lookup",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ClosureLookup.lean", "lean_name": "destClosure_valueRel_lookup",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
