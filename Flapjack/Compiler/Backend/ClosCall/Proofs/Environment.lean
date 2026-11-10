@@ -63,4 +63,24 @@ theorem envRel_congr {A B : Type} {R R' : A → B → Prop} {env1 : List A} {env
     intro x y ⟨hx, hy, rel⟩
     exact (same x hx y hy).mpr rel
 
+/-- The Install operation uses the same environment variables as its argument
+expressions, so either function-list form induces the same relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "env_rel_Op_Install"]
+theorem envRel_opInstall {A B : Type} (r : A → B → Prop) (env : List A) (env2 : List B)
+    (trace : BackendCommon.Tra) (es : List Exp) :
+    envRel r env env2 0 [(0, .op trace .install es)] ↔
+      envRel r env env2 0 (es.map (fun e => (0, e))) := by
+  have freeVarsExists : ∀ (n : Nat) (xs : List Exp),
+      freeVars n xs ↔ ∃ e ∈ xs, freeVarExp n e := by
+    intro n xs
+    induction xs with
+    | nil => simp [freeVars]
+    | cons e es ih => simp [freeVars, ih]
+  unfold envRel
+  split
+  · rfl
+  · simp only [freeVar, freeVars, freeVarExp, Nat.zero_add, List.mem_singleton,
+      exists_eq_left, List.mem_map, exists_exists_and_eq_and]
+    simp only [freeVarsExists, or_false]
+
 end Flapjack.Compiler.Backend.ClosCall

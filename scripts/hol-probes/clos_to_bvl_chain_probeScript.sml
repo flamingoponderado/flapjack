@@ -65,6 +65,14 @@ val _ = show_thm "clos_call_calls_domain_locs_typed=" clos_callProofTheory.calls
 val _ = show_thm "clos_call_NOT_IN_domain_FST_g_typed=" clos_callProofTheory.NOT_IN_domain_FST_g;
 val _ = show_thm "clos_call_wfg_insert_each_typed=" clos_callProofTheory.wfg'_insert_each;
 val _ = show_thm "clos_call_v_rel_Boolv_typed=" clos_callProofTheory.v_rel_Boolv;
+(* This theorem is local in HOL; replay its statement and proof to retain inferred types. *)
+val clos_call_env_rel_Op_Install_replay = Q.prove (
+  `clos_callProof$env_rel r env env2 0 [(0, closLang$Op v6 closLang$Install e1)] <=>
+   clos_callProof$env_rel r env env2 0 (MAP (λx. (0,x)) e1)`,
+  fs [clos_callProofTheory.env_rel_def] >> rw [] >> fs [closPropsTheory.fv1_thm, listTheory.EXISTS_MAP]
+  >> qsuff_tac `!x. EXISTS (λx'. closProps$fv1 x x') e1 = closProps$fv x e1` >> fs []
+  >> Induct_on `e1` >> fs []);
+val _ = show_thm "clos_call_env_rel_Op_Install_replay=" clos_call_env_rel_Op_Install_replay;
 val _ = show_thm "clos_call_state_rel_def_typed=" clos_callProofTheory.state_rel_def;
 val _ = show_thm "clos_call_state_rel_max_app_typed=" clos_callProofTheory.state_rel_max_app;
 val _ = show_thm "clos_call_state_rel_clock_typed=" clos_callProofTheory.state_rel_clock;
