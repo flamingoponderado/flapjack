@@ -42,4 +42,20 @@ theorem domain_insertEach {A : Type} (p n : Nat) (g : NumSet × A) :
           · left; refine ⟨i - 1, by omega, ?_⟩; omega
         · exact Or.inr (Or.inr old)
 
+/-- Inserting locations preserves the existing sparse set. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "insert_each_subspt"]
+theorem insertEach_subspt {A : Type} (p n : Nat) (g : NumSet × A) :
+    sptSubspt g.1 (insertEachSource p n g).1 := by
+  intro key old
+  have new : sptMem key (insertEachSource p n g).1 := by
+    change sptDomain (insertEachSource p n g).1 key
+    rw [domain_insertEach]
+    exact Or.inr old
+  refine ⟨new, ?_⟩
+  obtain ⟨v, hv⟩ := (sptMem_iff_lookup key g.1).1 old
+  obtain ⟨w, hw⟩ := (sptMem_iff_lookup key (insertEachSource p n g).1).1 new
+  cases v
+  cases w
+  rw [hv, hw]
+
 end Flapjack.Compiler.Backend.ClosCall
