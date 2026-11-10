@@ -1719,6 +1719,12 @@
   "reviewer": "Source comparison with list_to_v_v_rel_typed: both unrestricted value lists, their pointwise relation premise and the related list-encoding conclusion agree. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_fv",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "altFvSource_equations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alt_fv_typed: all thirteen universally quantified conjuncts retain their order, individual binder order, constructors, iff and disjunction structure, and index arithmetic. EVERY pure is a bounded universal in the Let condition; EXISTS over recursive function pairs is a bounded existential. Fn and Letrec names use the reviewed MlString carrier. The source alt_free and alt_fv observations are used directly."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_fv1_intro",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "altFvOneSource_intro",
   "statement_status": "reviewed_exact",
