@@ -13,52 +13,6 @@ open Flapjack.AstHOL Flapjack.Compiler.Backend.FlatSem
 local instance : Nonempty (FlatLang.Pat × FlatLang.Exp) :=
   ⟨(.pany, .con .none none [])⟩
 
-/-- Mapping row bodies preserves the first matching pattern and its related
-bindings, provided the source row match does not raise a type error. The
-proof-side value and state relations remain subject to HOL source review. -/
-theorem pmatchRows_map_related {C F E E' : Type} (cfg : Config) (n : Nat)
-    (source target : FlatSem.State C F) (value value' : Value) (f : E → E')
-    (states : StateRel cfg source target) (values : ValueRel value value')
-    (rows : List (FlatLang.Pat × E)) :
-    match FlatSem.pmatchRows rows source value with
-    | .typeError => True
-    | .noMatch => FlatSem.pmatchRows (rows.map fun (p, e) => (p, f e)) target value' = .noMatch
-    | .match (env, p, e) =>
-      ∃ env', aLookupRel (fun key => decNameToNum key < n) ValueRel env env' ∧
-        FlatSem.pmatchRows (rows.map fun (p, e) => (p, f e)) target value' = .match (env', p, f e) := by
-  induction rows with
-  | nil => simp [FlatSem.pmatchRows]
-  | cons row rows ih =>
-    obtain ⟨pattern, expression⟩ := row
-    cases sourceHead : FlatSem.pmatch source pattern value [] with
-    | typeError => simp [FlatSem.pmatchRows, sourceHead]
-    | noMatch =>
-      have head := pmatch_related cfg n source target pattern value value' [] [] states values
-        (aLookupRel_empty _ _) (by simp [sourceHead])
-      cases targetHead : FlatSem.pmatch target pattern value' [] with
-      | typeError => simp [sourceHead, targetHead, MatchRel] at head
-      | «match» _ => simp [sourceHead, targetHead, MatchRel] at head
-      | noMatch => simpa [FlatSem.pmatchRows, sourceHead, targetHead] using ih
-    | «match» env =>
-      have head := pmatch_related cfg n source target pattern value value' [] [] states values
-        (aLookupRel_empty _ _) (by simp [sourceHead])
-      cases targetHead : FlatSem.pmatch target pattern value' [] with
-      | typeError => simp [sourceHead, targetHead, MatchRel] at head
-      | noMatch => simp [sourceHead, targetHead, MatchRel] at head
-      | «match» env' =>
-        have envs : aLookupRel (fun key => decNameToNum key < n) ValueRel env env' := by
-          simpa [sourceHead, targetHead, MatchRel] using head
-        cases sourceTail : FlatSem.pmatchRows rows source value with
-        | typeError => simp [FlatSem.pmatchRows, sourceHead, sourceTail]
-        | noMatch =>
-          simp only [sourceTail] at ih
-          simp [FlatSem.pmatchRows, sourceHead, sourceTail, targetHead, ih, envs]
-        | «match» result =>
-          rcases result with ⟨tailEnv, tailPattern, tailExpression⟩
-          simp only [sourceTail] at ih
-          obtain ⟨tailEnv', _, targetTail⟩ := ih
-          simp [FlatSem.pmatchRows, sourceHead, sourceTail, targetHead, targetTail, envs]
-
 /-- Compiling match rows preserves their patterns and transforms each body. -/
 theorem compileMatch_rows (cfg : Config) (rows : List (FlatLang.Pat × FlatLang.Exp)) :
     (compileMatch cfg rows).2.2 = rows.map (fun (p, e) => (p, (compileExp cfg e).2.2)) := by
@@ -136,29 +90,6 @@ theorem compileMatch_index (cfg : Config) (pattern : FlatLang.Pat) (body : FlatL
       simp only [result] at bound targetEl
       exact ⟨bodyBound, flag, compiledBody, rfl, targetEl, bound.1, bound.2⟩
 
-/-- Compiled rows select the compiled body of the source row and preserve
-related bindings, or agree that no row matches. -/
-theorem compileMatch_pmatchRows_related {C F : Type} (cfg stateCfg : Config) (n : Nat)
-    (source target : FlatSem.State C F) (value value' : Value)
-    (states : StateRel stateCfg source target) (values : ValueRel value value')
-    (rows : List (FlatLang.Pat × FlatLang.Exp)) :
-    match FlatSem.pmatchRows rows source value with
-    | .typeError => True
-    | .noMatch => FlatSem.pmatchRows (compileMatch cfg rows).2.2 target value' = .noMatch
-    | .match (env, p, e) =>
-      ∃ env', aLookupRel (fun key => decNameToNum key < n) ValueRel env env' ∧
-        FlatSem.pmatchRows (compileMatch cfg rows).2.2 target value' =
-          .match (env', p, (compileExp cfg e).2.2) := by
-  rw [compileMatch_rows]
-  have h := pmatchRows_map_related stateCfg n source target value value' (fun e => (compileExp cfg e).2.2)
-    states values rows
-  cases result : FlatSem.pmatchRows rows source value with
-  | typeError => trivial
-  | noMatch => simpa [result] using h
-  | «match» selected =>
-    rcases selected with ⟨env, pattern, expression⟩
-    simpa [result] using h
-
 /-- Compiled match rows preserve the source match and its selected row index. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_match_pmatch_rows"]
 theorem compileMatch_pmatchRows {C F : Type} (cfg stateCfg : Config)
@@ -180,35 +111,76 @@ theorem compileMatch_pmatchRows {C F : Type} (cfg stateCfg : Config)
         FlatSem.pmatchRows compiledRows target value' =
           .match (env', Flapjack.holEl i compiledRows) := by
   obtain ⟨compiled, states, values, _, matched⟩ := premises
-  have sim := compileMatch_pmatchRows_related cfg stateCfg n source target value value' states values rows
-  rw [compiled] at sim
+  have sim :
+    match FlatSem.pmatchRows rows source value with
+    | .typeError => True
+    | .noMatch => FlatSem.pmatchRows (rows.map (fun (p, e) => (p, (compileExp cfg e).2.2))) target value' = .noMatch
+    | .match (env, pattern, body) =>
+      ∃ i env', i < rows.length ∧ i < (rows.map (fun (p, e) => (p, (compileExp cfg e).2.2))).length ∧
+        (pattern, body) = Flapjack.holEl i rows ∧
+        aLookupRel (fun key => decNameToNum key < n) ValueRel env env' ∧
+        FlatSem.pmatchRows (rows.map (fun (p, e) => (p, (compileExp cfg e).2.2))) target value' =
+          .match (env', Flapjack.holEl i (rows.map (fun (p, e) => (p, (compileExp cfg e).2.2)))) := by
+    clear compiled matched
+    induction rows with
+    | nil => simp [FlatSem.pmatchRows]
+    | cons row rows ih =>
+      obtain ⟨pattern, body⟩ := row
+      cases sourceHead : FlatSem.pmatch source pattern value [] with
+      | typeError => simp [FlatSem.pmatchRows, sourceHead]
+      | noMatch =>
+        have head := pmatch_related stateCfg n source target pattern value value' [] [] states values
+          (aLookupRel_empty _ _) (by simp [sourceHead])
+        cases targetHead : FlatSem.pmatch target pattern value' [] with
+        | typeError => simp [sourceHead, targetHead, MatchRel] at head
+        | «match» _ => simp [sourceHead, targetHead, MatchRel] at head
+        | noMatch =>
+          cases sourceTail : FlatSem.pmatchRows rows source value with
+          | typeError => simp [FlatSem.pmatchRows, sourceHead, sourceTail]
+          | noMatch => simpa [FlatSem.pmatchRows, sourceHead, sourceTail, targetHead] using ih
+          | «match» selected =>
+            rcases selected with ⟨env, p, e⟩
+            simp only [sourceTail] at ih
+            simp only [FlatSem.pmatchRows, sourceHead, sourceTail]
+            obtain ⟨i, env', bound, bound', atSource, envs, atTarget⟩ := ih
+            refine ⟨i+1, env', by simpa using bound, by simpa using bound', ?_, envs, ?_⟩
+            · simpa [Flapjack.holEl] using atSource
+            · simpa [FlatSem.pmatchRows, sourceHead, targetHead, Flapjack.holEl] using atTarget
+      | «match» env =>
+        have head := pmatch_related stateCfg n source target pattern value value' [] [] states values
+          (aLookupRel_empty _ _) (by simp [sourceHead])
+        cases targetHead : FlatSem.pmatch target pattern value' [] with
+        | typeError => simp [sourceHead, targetHead, MatchRel] at head
+        | noMatch => simp [sourceHead, targetHead, MatchRel] at head
+        | «match» env' =>
+          have envs : aLookupRel (fun key => decNameToNum key < n) ValueRel env env' := by
+            simpa [sourceHead, targetHead, MatchRel] using head
+          cases sourceTail : FlatSem.pmatchRows rows source value with
+          | typeError => simp [FlatSem.pmatchRows, sourceHead, sourceTail]
+          | noMatch =>
+            simp only [sourceTail] at ih
+            simp only [FlatSem.pmatchRows, sourceHead, sourceTail]
+            refine ⟨0, env', by simp, by simp, ?_, envs, ?_⟩
+            · simp [Flapjack.holEl, Flapjack.holHd]
+            · simp [FlatSem.pmatchRows, targetHead, ih, Flapjack.holEl, Flapjack.holHd]
+          | «match» selected =>
+            rcases selected with ⟨tailEnv, p, e⟩
+            simp only [sourceTail] at ih
+            simp only [FlatSem.pmatchRows, sourceHead, sourceTail]
+            obtain ⟨i, tailEnv', _, _, _, _, tailTarget⟩ := ih
+            refine ⟨0, env', by simp, by simp, ?_, envs, ?_⟩
+            · simp [Flapjack.holEl, Flapjack.holHd]
+            · simp [FlatSem.pmatchRows, targetHead, tailTarget, Flapjack.holEl, Flapjack.holHd]
+
+  have mapped := compileMatch_rows cfg rows
+  rw [compiled] at mapped
+  change compiledRows = _ at mapped
   cases result with
   | typeError => trivial
-  | noMatch => simpa [matched] using sim
+  | noMatch => simpa [matched, ← mapped] using sim
   | «match» selected =>
     rcases selected with ⟨env, pattern, body⟩
-    have membership := (FlatProps.pmatchRows_imp_pmatch rows source value env pattern body matched).2
-    obtain ⟨i, sourceAt⟩ := List.mem_iff_getElem?.1 membership
-    have indexBound : i < rows.length := (List.getElem?_eq_some_iff.mp sourceAt).choose
-    have targetBound : i < compiledRows.length := by
-      have lengths := congrArg List.length (compileMatch_rows cfg rows)
-      simp only [compiled, List.length_map] at lengths
-      omega
-    have sourceEl : Flapjack.holEl i rows = (pattern, body) := by
-      rw [Flapjack.holEl_eq_getElem i rows indexBound]
-      exact (List.getElem?_eq_some_iff.mp sourceAt).choose_spec
-    have targetAt : compiledRows[i]? = some (pattern, (compileExp cfg body).2.2) := by
-      have mapped := compileMatch_rows cfg rows
-      rw [compiled] at mapped
-      change compiledRows = _ at mapped
-      rw [mapped]
-      simp [List.getElem?_map, sourceAt]
-    have targetEl : Flapjack.holEl i compiledRows = (pattern, (compileExp cfg body).2.2) := by
-      rw [Flapjack.holEl_eq_getElem i compiledRows targetBound]
-      exact (List.getElem?_eq_some_iff.mp targetAt).choose_spec
-    simp only [matched] at sim
-    obtain ⟨env', related, targetMatch⟩ := sim
-    exact ⟨i, env', indexBound, targetBound, sourceEl.symm, related, by simpa [targetEl] using targetMatch⟩
+    simpa [matched, ← mapped] using sim
 
 /-- The selected compiled row also carries the bounds needed to evaluate
 its compiled body under a sufficiently large name bound. -/
