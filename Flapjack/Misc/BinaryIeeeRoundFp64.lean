@@ -457,20 +457,6 @@ theorem fp64Nearest_lt {X : Rat} (hX : 0 ≤ X)
 /-- `2^1074` is positive in `Rat`. -/
 theorem fp64_D_pos : (0 : Rat) < 2 ^ 1074 := Rat.pow_pos (by decide)
 
-/-- HOL `abs` commutes with scaling by a positive factor. -/
-theorem holRatAbs_mul_pos (y D : Rat) (hD : 0 < D) : holRatAbs y * D = holRatAbs (y * D) := by
-  unfold holRatAbs
-  by_cases hy : y < 0
-  · have : y * D < 0 := by
-      have := Rat.mul_lt_mul_of_pos_right hy hD; simpa using this
-    rw [if_pos hy, if_pos this]; grind
-  · have : ¬ y * D < 0 := by
-      intro h
-      have h0 : 0 ≤ y := by grind
-      have := Rat.mul_le_mul_of_nonneg_right h0 (Rat.le_of_lt hD)
-      simp at this; grind
-    rw [if_neg hy, if_neg this]
-
 /-- The distance from `x ≥ 0` to a binary64 float, scaled by `2^1074`. -/
 theorem fp64_absdist_scaled (f : HolFloat 52 11) {x : Rat} (hx : 0 ≤ x) :
     holRatAbs (holFloatToReal f - x) * 2 ^ 1074 =

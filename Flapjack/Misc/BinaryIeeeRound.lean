@@ -56,6 +56,22 @@ instance {t : Nat} {w : Nat} [NeZero t] [NeZero w] : Inhabited (HolFloat t w) :=
     (HOL `realTheory.abs`). -/
 def holRatAbs (x : Rat) : Rat := if x < 0 then -x else x
 
+/-- HOL `abs` commutes with scaling by a positive factor. Flapjack
+infrastructure shared by the binary64 and binary32 rounding modules; no
+separate HOL declaration is claimed for this helper. -/
+theorem holRatAbs_mul_pos (y D : Rat) (hD : 0 < D) : holRatAbs y * D = holRatAbs (y * D) := by
+  unfold holRatAbs
+  by_cases hy : y < 0
+  · have : y * D < 0 := by
+      have := Rat.mul_lt_mul_of_pos_right hy hD; simpa using this
+    rw [if_pos hy, if_pos this]; grind
+  · have : ¬ y * D < 0 := by
+      intro h
+      have h0 : 0 ≤ y := by grind
+      have := Rat.mul_le_mul_of_nonneg_right h0 (Rat.le_of_lt hD)
+      simp at this; grind
+    rw [if_neg hy, if_neg this]
+
 /-- HOL `UINT_MAX (:'w) = 2 ^ dimindex (:'w) - 1`. -/
 def holUintMax (w : Nat) : Nat := 2 ^ w - 1
 
