@@ -116818,80 +116818,80 @@
     "lean_name": "destLet",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "destLet_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: HOL destLet_def (bvl_to_bviScript.sml:26-29) decomposes Let and returns ([],Var 0) for the other eight constructors (Var/If/Raise/Handle/Tick/Call/Force/Op); the typed original in bvl_to_bvi_source_probe.out lists all nine clauses, and Lean's wildcard `_ => ([], .var 0)` covers exactly those eight constructors of the same nine-constructor Bvl.Exp carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Analysis.lean",
     "lean_name": "compileInt",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "compile_int_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original compile_int_def (bvl_to_bvi_source_probe.out) gives ∀(i:int). compile_int i = Op (if -(268435457:int) ≤ i ∧ i ≤ (268435457:int) then IntOp (Const i) else BlockOp (Build [Int i])) []; Lean states the same inclusive literal bound, the same Int input and the same Bvi.Exp result."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Analysis.lean",
     "lean_name": "globalCountSing",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "global_count_sing_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original global_count_sing_def (bvl_to_bvi_source_probe.out) gives the clauses Var/Force = 0, If/Handle = sum of children, Tick/Raise = child, Let = child + list, Call = list, Op with op = GlobOp AllocGlobal then 1 + list else list; Lean's constructor clauses match, and its `.globOp .allocGlobal` pattern is the same equality test on the same op carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Analysis.lean",
     "lean_name": "globalCountList",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "global_count_sing_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original global_count_sing_def (bvl_to_bvi_source_probe.out) gives global_count_list [] = 0 and global_count_list (x::xs) = global_count_sing x + global_count_list xs; Lean is clause-identical."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/CompileOp.lean",
     "lean_name": "compileOp",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "compile_op_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original compile_op_def (bvl_to_bvi_source_probe.out) enumerates every op constructor. Lean matches each: IntOp(Const i) with the empty/non-empty operand cases, GlobOp Global (n+1 / El lookup with Const 2), SetGlobal (n+1), AllocGlobal stub call, BlockOp(FromList n) with listLength, Install arity fixup, FromListByte/ToListByte/ConcatByteVec stub calls (ToListByte's mk_unit is HOL's overload Op (BlockOp (Cons 0)) []), MemOp(CopyByte T) fixup plus RefByte T / CopyByte F, Label with bvl_num_stubs + nss*l, MutCons/UpdateCons/FinaliseCons replaced by Let c1 zero, and Build/EqualConst/every other constructor passed through as Op op c1."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/CompileOp.lean",
     "lean_name": "listLengthLocation",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "ListLength_location_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original ListLength_location = InitGlobals_location + (1:num); Lean listLengthLocation : Nat := initGlobalsLocation + 1, clause-identical."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/CompileOp.lean",
     "lean_name": "fromListByteLocation",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "FromListByte_location_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original FromListByte_location = ListLength_location + (1:num); Lean clause-identical."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/CompileOp.lean",
     "lean_name": "toListByteLocation",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "ToListByte_location_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original ToListByte_location = FromListByte_location + (1:num); Lean clause-identical."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/CompileOp.lean",
     "lean_name": "sumListLengthLocation",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "SumListLength_location_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original SumListLength_location = ToListByte_location + (1:num); Lean clause-identical."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/CompileOp.lean",
     "lean_name": "concatByteLocation",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "ConcatByte_location_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source definition transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original ConcatByte_location = SumListLength_location + (1:num); Lean clause-identical."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviLet/Helpers.lean",
@@ -117372,80 +117372,80 @@
     "lean_name": "allocGlobalCode",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "AllocGlobal_code_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source stub and operand order transcribed; full typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original AllocGlobal_code = (1:num, <the nested Let/If body>) in bvl_to_bvi_source_probe.out; Lean's allocGlobalCode has the same arity 1 and the same clause sequence, including Var 6 in the CopyGlobals call and the RefArray/SetGlobalsPtr growth path."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Stubs.lean",
     "lean_name": "copyGlobalsCode",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "CopyGlobals_code_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source stub and operand order transcribed; full typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original CopyGlobals_code = (3:num, Let [Op (MemOp Update) [Op (MemOp El) [Var 2; Var 1]; Var 2; Var 0]] (If (Op (BlockOp Equal) [Const 0; Var 3]) (Var 0) (Call CopyGlobals ...))); Lean is clause-identical with the same arity 3."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Stubs.lean",
     "lean_name": "initGlobalsMax",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "InitGlobals_max_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source stub and operand order transcribed; full typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original InitGlobals_max = (10000:num) (the `n` suffix is HOL num, not a word); Lean initGlobalsMax : Nat := 10000."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Stubs.lean",
     "lean_name": "initGlobalsCode",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "InitGlobals_code_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source stub and operand order transcribed; full typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original ∀(start:num)(n:num). InitGlobals_code start n = (0:num, let n = MIN (MAX n 1) InitGlobals_max in ...); Lean uses min (max n 1) initGlobalsMax, Int.ofNat n for HOL's &n, and the same RefArray/Update/SetGlobalsPtr/Call sequence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Stubs.lean",
     "lean_name": "listLengthCode",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "ListLength_code_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source stub and operand order transcribed; full typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original ListLength_code = (2:num, If (Op (BlockOp (TagLenEq nil_tag 0)) [Var 0]) (Var 1) (Call ListLength [Op (MemOp El) [Const 1; Var 0]; Op (IntOp Add) [Var 1; Const 1]])); Lean is clause-identical with arity 2."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Stubs.lean",
     "lean_name": "fromListByteCode",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "FromListByte_code_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source stub and operand order transcribed; full typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original FromListByte_code = (3:num, If TagLenEq nil_tag 0 then Var 2 else Let UpdateByte ... (Call FromListByte ...)); Lean is clause-identical with arity 3."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Stubs.lean",
     "lean_name": "toListByteCode",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "ToListByte_code_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source stub and operand order transcribed; full typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original ToListByte_code = (3:num, If (Op (BlockOp (EqualConst (Int 0))) [Var 1]) (Var 0) (Let (Sub 1 Var 1) (Let DerefByte (Call ToListByte [mk_unit; LengthByte Var 0; Var 0])))); Lean is clause-identical with arity 3 and mk_unit = Op (BlockOp (Cons 0)) []."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Stubs.lean",
     "lean_name": "sumListLengthCode",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "SumListLength_code_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source stub and operand order transcribed; full typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original SumListLength_code = (2:num, If TagLenEq nil_tag 0 then Var 1 else Call SumListLength [El 1 Var 0; Add Var 1 (LengthByte (El 0 Var 0))]); Lean is clause-identical with arity 2."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Stubs.lean",
     "lean_name": "concatByteCode",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "ConcatByte_code_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source stub and operand order transcribed; full typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original ConcatByte_code = (3:num, If TagLenEq nil_tag 0 then Var 2 else Let El (Let LengthByte (Let (CopyByte F) ... (Call ConcatByte ...)))); Lean is clause-identical with arity 3, including CopyByte F and Var 5."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Stubs.lean",
     "lean_name": "stubs",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "stubs_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source stub and operand order transcribed; full typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original ∀(start n:num). stubs start n = the eight (location, code) pairs in source order, with element carrier num × (num × bvi$exp); Lean's List (Nat × Nat × Bvi.Exp) is that same right-nested carrier, and InitGlobals_code start n is used whole."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlJump.lean",
@@ -117708,8 +117708,8 @@
     "lean_name": "getNames",
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "get_names_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed using byte-backed names; typed source and complete carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed original ∀(final_nums:num list)(old_names:mlstring sptree$num_map). get_names final_nums old_names = fromAList (MAP (λn. (n, if n = InitGlobals_location then «start» else ... else if n < num_stubs then implode \"bvi_unknown\" else let k = n - num_stubs; kd = k DIV nss; km = k MOD nss; n = case lookup kd old_names of NONE => implode \"bvi_unmapped\" | SOME name => name; aux = if km = 0 then implode \"\" else implode \"_bvi_aux\" in n ^ aux)) final_nums). Lean uses the tagged sptFromAList/sptLookup translations of HOL fromAList/lookup, Nat / and % for DIV/MOD, ofString (byte codec, ASCII-exact for these names) for implode literals, and MlString.concat [name, aux] for HOL strcat = concat [s1;s2]."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Names.lean",
