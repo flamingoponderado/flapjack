@@ -128074,176 +128074,176 @@
   "hol_name": "build'_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Build.lean",
   "lean_name": "build",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_build_prime_def in clos_constant_probe.out: build' mem i [] = mem (i-1) and build' mem i (p::rest) = build' (mem with i updated by build_part' mem p) (i+1) rest over mem : num -> v; Lean build has the same two clauses with the if-then-else update."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "build_const'_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Build.lean",
   "lean_name": "buildConst",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_build_const_prime_def: build_const' xs = build' (λx. Number 0) 0 xs; Lean buildConst uses the same zero-memory and initial index."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "build_part'_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Build.lean",
   "lean_name": "buildPart",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_build_part_prime_def: build_part' mem (Int i) = Number i; (Str s) = ByteVector (MAP (n2w o ORD) (explode s)); (W64 w) = Word64 w; (Con t ns) = Block t (MAP mem ns), with mem : num -> v; Lean's four clauses match, with MlString.explode supplying the byte list for MAP (n2w o ORD)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "update_tag_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Build.lean",
   "lean_name": "updateTag",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_update_tag_def: update_tag (Con t ns) = Con (clos_tag_shift t) ns and the identity on Int/Str/W64; Lean's constructor clauses match."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "build_const_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Flatten.lean",
   "lean_name": "buildConstSyntax",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_build_const_def: build_const xs = build (λx. ConstInt 0) 0 xs; Lean buildConstSyntax is the same zero-memory and initial index."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "build_map_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Flatten.lean",
   "lean_name": "buildMap",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_build_map_def: build_map mem i [] = mem and build_map mem i (p::rest) = build_map (mem with i updated by build_part mem p) (i+1) rest; Lean buildMap is clause-identical."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "build_map_APPEND",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Flatten.lean",
   "lean_name": "buildMap_append",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_build_map_APPEND: ∀xs ys m n. build_map m n (xs ++ ys) = build_map (build_map m n xs) (n + LENGTH xs) ys; Lean states the same with xs.length."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "build_map_ignore",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Flatten.lean",
   "lean_name": "buildMap_ignore",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_build_map_ignore: ∀xs m n k. k < n ⇒ build_map m n xs k = m k; Lean states the same implication."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "build_part_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Flatten.lean",
   "lean_name": "buildPartSyntax",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_build_part_def: build_part mem (Int i) = ConstInt i; (Str s) = ConstStr s; (W64 w) = ConstWord64 w; (Con t ns) = ConstCons t (MAP mem ns); Lean's four clauses match."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "build_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Flatten.lean",
   "lean_name": "buildSyntax",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_build_def: build mem i [] = mem (i-1) and build mem i (p::rest) = build (mem with i updated by build_part mem p) (i+1) rest; Lean buildSyntax is clause-identical."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "build_mem_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Flatten.lean",
   "lean_name": "buildSyntax_append_one",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_build_mem_thm: ∀mem i xs y. build mem i (xs ++ [y]) = build (build_map mem i xs) (i + LENGTH xs) [y]; Lean states the same equality."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "make_part_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Flatten.lean",
   "lean_name": "makePart",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Typed original captured in clos_constant_probe.out. HOL polymorphic ALOOKUP uses equality on a generic part type; Lean uses DecidableEq, whose decisions are proof-irrelevant and can be supplied classically. Full dependency and carrier review remains pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_make_part_def: ∀(n:num)(p:α)(aux:(α # num) list). make_part n p aux = case ALOOKUP aux p of NONE => (n+1,n,(p,n)::aux) | SOME k => (n,k,aux); HOL's make_part is polymorphic in the entry type. Lean makePart is polymorphic with the DecidableEq needed for its ALOOKUP rendering (lookupPart)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "parts_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Flatten.lean",
   "lean_name": "parts",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_parts_def: the four source clauses (ConstInt/ConstStr/ConstWord64 make_part; ConstCons via parts_list then make_part (Con t rs)); Lean parts has the same clauses with the same accumulator carriers."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "parts_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Flatten.lean",
   "lean_name": "partsList",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_parts_def continues with parts_list [] n aux = (n,[],aux) and parts_list (c::cs) n aux = let (n,r,aux) = parts c n aux in let (n,rs,aux) = parts_list cs n aux in (n,r::rs,aux); Lean partsList is clause-identical."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "parts_acc",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Flatten.lean",
   "lean_name": "parts_acc",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_parts_acc: both conjuncts state ∃a. res = a ++ aux for the parts and parts_list results; Lean's two conjuncts are the same existentials."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "to_parts_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Flatten.lean",
   "lean_name": "toParts",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_to_parts_def: to_parts (ConstInt i) = [Int i], (ConstStr s) = [Str s], (ConstWord64 w) = [W64 w], and ConstCons t cs = REVERSE ((Con t rs) :: MAP FST aux) after parts_list cs 0 []; Lean is clause-identical."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "update_tag_11",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Flatten.lean",
   "lean_name": "updateTag_eq_iff",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_update_tag_11: update_tag x = update_tag y ⇔ x = y over const_part; Lean states the same iff."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "add_part_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Hash.lean",
   "lean_name": "addPart_thm",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_add_part_thm: add_part n (update_tag x) m (MAP (update_tag o FST) aux) = (n1,rs,m1,acc1) ∧ make_part n x aux = (n2,rs1,aux1) ∧ good_hash_table m aux ⇒ n1 = n2 ∧ rs = rs1 ∧ MAP (update_tag o FST) aux1 = acc1 ∧ good_hash_table m1 aux1; Lean states the same four conclusions from the same three premises (addPart/makePart/goodHashTable)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "good_hash_table_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Hash.lean",
   "lean_name": "goodHashTable",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Typed original captured in clos_constant_probe.out. The finite-map bucket and association-list payload remain independently generic, matching HOL; full dependency and carrier review remains pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_good_hash_table_def: good_hash_table m aux ⇔ ∀k v. ALOOKUP aux k = SOME v ⇔ ∃bucket. lookup (part_hash (update_tag k)) m = SOME bucket ∧ ALOOKUP bucket (update_tag k) = SOME v, polymorphic in the value type; Lean's goodHashTable states the same iff with lookupPart for ALOOKUP and sptLookup for lookup, polymorphic in α."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "add_parts_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/HashParts.lean",
   "lean_name": "addParts_thm",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Typed original captured in clos_constant_probe.out. Each conjunct retains its independently typed vacuous shadowed binder, modeled by a Nonempty type and element. Full dependency and carrier review remains pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_add_parts_thm quantifies l n m acc n1 m1 rs m1 acc1 aux n2 rs1 aux1; the first m1 : α is immediately shadowed by the second m1 : (const_part # num) list sptree$num_map, so it is vacuous. Lean retains the vacuous type/value binder as {α : Type} [Nonempty α] (_unused : α) and states the same two conjuncts with the same premises and four conclusions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "compile_const_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/HashParts.lean",
   "lean_name": "compileConst_thm",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_compile_const_thm: (∀i. c ≠ ConstInt i) ∧ (∀t. c ≠ ConstCons t []) ⇒ compile_const c = BlockOp (Build (MAP update_tag (to_parts c))); Lean states the same two prerequisites and the same conclusion."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "build_const_to_parts",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Reconstruct.lean",
   "lean_name": "buildConst_toParts",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "source comparison 2026-11-10: typed cc_build_const_to_parts: ∀c. build_const (to_parts c) = c; Lean states buildConstSyntax (toParts constant) = constant over the same Const carrier."
 },
 {
   "hol_path": "cakeml/compiler/backend/closLangScript.sml",
