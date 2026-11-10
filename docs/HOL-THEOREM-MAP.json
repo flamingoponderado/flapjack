@@ -120247,8 +120247,8 @@
     "hol_name": "symbol",
     "lean_path": "Flapjack/Misc/Grammar.lean",
     "lean_name": "Symbol",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed grammarTheory.symbol_Axiom capture in context_free_tree_probe (`TOK : α -> (α, β) symbol`, `NT : β + num -> (α, β) symbol`) with Symbol.tok : α → Symbol α β and Symbol.nt : Sum β Nat → Symbol α β; HOL's `inf` abbreviation is `'a + num` (grammarScript.sml:11), so Sum β Nat is the same carrier."
   },
   {
     "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
@@ -120266,48 +120266,48 @@
     "hol_name": "isTOK_def",
     "lean_path": "Flapjack/Misc/Grammar.lean",
     "lean_name": "isTok",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed context_free_tree_probe capture of isTOK_def (`(isTOK (TOK tok) ⇔ T) ∧ ∀n. isTOK (NT n) ⇔ F`) with isTok : Symbol α β → Bool returning true for .tok and false for .nt; HOL bool and Lean Bool are the ordinary datatype port."
   },
   {
     "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
     "hol_name": "destTOK_def",
     "lean_path": "Flapjack/Misc/Grammar.lean",
     "lean_name": "destTok",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed context_free_tree_probe capture of destTOK_def (`destTOK ((TOK tk),_) = SOME tk ∧ destTOK ((NT n),_) = NONE`) with destTok : Symbol α β × loc → Option α, whose two clauses return some tok and none; the pair argument and the wildcard second clause match."
   },
   {
     "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
     "hol_name": "parsetree",
     "lean_path": "Flapjack/Misc/Grammar.lean",
     "lean_name": "ParseTree",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed grammarTheory.parsetree_Axiom capture in context_free_tree_probe (`Lf : (α, β) symbol # 'locs -> parsetree`, `Nd : (β + num) # 'locs -> parsetree list -> parsetree`) with ParseTree.leaf : Symbol α β × loc → ParseTree α β loc and ParseTree.node : Sum β Nat × loc → List (ParseTree α β loc) → ParseTree α β loc; only the constructor names differ."
   },
   {
     "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
     "hol_name": "ptree_loc_def",
     "lean_path": "Flapjack/Misc/Grammar.lean",
     "lean_name": "treeLoc",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed context_free_tree_probe capture of ptree_loc_def (`ptree_loc (Lf (_,l)) = l ∧ ptree_loc (Nd (_,l) _) = l`) with treeLoc, which returns the loc component of either constructor."
   },
   {
     "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
     "hol_name": "ptree_list_loc_def",
     "lean_path": "Flapjack/Misc/Grammar.lean",
     "lean_name": "treeListLoc",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed context_free_tree_probe capture (`∀ l :(α, β, locs) parsetree list. ptree_list_loc l = merge_list_locs (MAP ptree_loc l)`) with treeListLoc (trees : List (ParseTree α β Locs)) := mergeListLocs (trees.map treeLoc); the typed capture shows HOL's loc parameter is forced to `locs` by merge_list_locs, so the Lean specialization to Locs is the only instantiation, and mergeListLocs is the reviewed merge_list_locs_def port."
   },
   {
     "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
     "hol_name": "ptree_head_def",
     "lean_path": "Flapjack/Misc/Grammar.lean",
     "lean_name": "treeHead",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed context_free_tree_probe capture of ptree_head_def (`ptree_head (Lf (tok,l)) = tok ∧ ptree_head (Nd (nt,l) children) = NT nt`) with treeHead returning the leaf symbol or .nt rule."
   },
   {
     "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
@@ -120315,24 +120315,24 @@
     "lean_path": "Flapjack/Misc/Grammar.lean",
     "lean_name": "treeFringe",
     "hol_line": 57,
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed context_free_tree_probe capture of ptree_fringe_def (`ptree_fringe (Lf (t,_)) = [t] ∧ ptree_fringe (Nd _ children) = FLAT (MAP ptree_fringe children)`) with treeFringe and its Flapjack-only helper treesFringe, which appends the fringe of each child in order (the List-concat rendering of FLAT o MAP)."
   },
   {
     "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
     "hol_name": "real_fringe_def",
     "lean_path": "Flapjack/Misc/Grammar.lean",
     "lean_name": "realFringe",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed context_free_tree_probe capture of real_fringe_def (`real_fringe (Lf t) = [t] ∧ real_fringe (Nd n ptl) = FLAT (MAP real_fringe ptl)`) with realFringe and its Flapjack-only helper treesRealFringe, which appends the location-bearing fringes in order (the List-concat rendering of FLAT o MAP)."
   },
   {
     "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
     "hol_name": "valid_locs_def",
     "lean_path": "Flapjack/Misc/Grammar.lean",
     "lean_name": "validLocs",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed context_free_tree_probe capture of valid_locs_def (`valid_locs (Lf _) ⇔ T ∧ valid_locs (Nd (_,l) children) ⇔ l = merge_list_locs (MAP ptree_loc children) ∧ ∀pt. MEM pt children ⇒ valid_locs pt`) with validLocs's True leaf case and node case loc = treeListLoc children ∧ ∀ child ∈ children, validLocs child."
   },
   {
     "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",

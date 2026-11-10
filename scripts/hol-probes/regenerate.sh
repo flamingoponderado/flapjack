@@ -917,7 +917,7 @@ run_probe cake_cfg_grammar_probeScript.sml cake_cfg_grammar_probe.out \
   cml_grammar cml_start empty_top decl_top "$cake_dir/semantics/gramScript.sml" "$cake_dir/semantics"
 
 run_probe context_free_tree_probeScript.sml context_free_tree_probe.out \
-  merge_locs merge_list is_tok dest_tok ptree_loc ptree_list_loc ptree_head ptree_fringe real_fringe valid_locs valid_ptree complete_ptree valid_lptree merge_example fringe_example valid_example missing_rule \
+  merge_locs merge_list symbol_axiom parsetree_axiom is_tok dest_tok ptree_loc ptree_list_loc ptree_head ptree_fringe real_fringe valid_locs valid_ptree complete_ptree valid_lptree merge_example fringe_example valid_example missing_rule \
   "$hol_dir/examples/formal-languages/context-free/grammarScript.sml" "$hol_dir/examples/formal-languages/context-free"
 
 run_probe cake_type_env_probeScript.sml cake_type_env_probe.out \
