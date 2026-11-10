@@ -56,25 +56,24 @@ theorem compile_decs_functions_thmHOL {width : Nat} [NeZero width] :
           | .function fi => .function { fi with body := compileProgExactHOL ctxt fi.body }
           | _ => .name (Flapjack.Basis.Pure.MlString.ofString "") []) := by
   intro ctxt fdecs
-  induction fdecs with
-  | nil =>
-      intro decls funs exns ctxt' ⟨h, _⟩
-      simp only [compileDecsExactHOL, Prod.mk.injEq] at h
-      obtain ⟨rfl, rfl, rfl, rfl⟩ := h
-      simp
-  | cons d ds ih =>
-      intro decls funs exns ctxt' ⟨h, hall⟩
-      have htail : ∀ e ∈ ds, isFunctionHOL e = true := fun e he => hall e (by simp [he])
-      cases d with
-      | function fi =>
-          rcases hr : compileDecsExactHOL ctxt ds with ⟨a, b, c, e⟩
-          simp only [compileDecsExactHOL, hr, Prod.mk.injEq] at h
-          obtain ⟨rfl, rfl, rfl, rfl⟩ := h
-          obtain ⟨h1, h2, h3, h4⟩ := ih a b c e ⟨hr, htail⟩
-          simp [h1, h2, h3, h4]
-      | decl shape name value => simpa using hall (.decl shape name value) (by simp)
-      | exnDecl name shape => simpa using hall (.exnDecl name shape) (by simp)
-      | name name fields => simpa using hall (.name name fields) (by simp)
+  fun_induction compileDecsExactHOL ctxt fdecs with
+  | case1 => simp_all [Prod.mk.injEq, compileDecsExactHOL]
+  | case2 =>
+    intro decls funs exns ctxt' ⟨h, hall⟩
+    exact absurd (hall (.decl _ _ _) List.mem_cons_self) (by simp [isFunctionHOL])
+  | case3 =>
+    rename_i xh ih
+    intro decls funs exns ctxt' ⟨h, hall⟩
+    simp only [Prod.mk.injEq] at h
+    obtain ⟨rfl, rfl, rfl, rfl⟩ := h
+    obtain ⟨h1, h2, h3, h4⟩ := ih _ _ _ _ ⟨xh, fun e he => hall e (List.mem_cons_of_mem _ he)⟩
+    simp [h1, h2, h3, h4]
+  | case4 =>
+    intro decls funs exns ctxt' ⟨h, hall⟩
+    exact absurd (hall (.exnDecl _ _) List.mem_cons_self) (by simp [isFunctionHOL])
+  | case5 =>
+    intro decls funs exns ctxt' ⟨h, hall⟩
+    exact absurd (hall (.name _ _) List.mem_cons_self) (by simp [isFunctionHOL])
 
 /-- Exact HOL `compile_decs_decls_thm` (`pan_globalsProofScript.sml:1967-1971`). -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "compile_decs_decls_thm"
