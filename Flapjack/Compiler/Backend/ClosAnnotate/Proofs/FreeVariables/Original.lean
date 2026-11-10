@@ -71,6 +71,12 @@ theorem altFvSource_eq_altFv (index : Nat) (expressions : List Exp) :
 noncomputable def altFvOneSource (index : Nat) (expression : Exp) : Bool :=
   altFvSource index [expression]
 
+/-- Singleton observations agree with the single-expression predicate. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "alt_fv1_intro"]
+theorem altFvOneSource_intro (index : Nat) (expression : Exp) :
+    (altFvSource index [expression] = true ↔ altFvOneSource index expression = true) :=
+  Iff.rfl
+
 /-- The empty expression list has no free variables. -/
 @[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "alt_fv_nil"]
 theorem altFvSource_nil (index : Nat) : altFvSource index [] = false := by

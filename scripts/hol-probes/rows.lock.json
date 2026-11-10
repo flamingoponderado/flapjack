@@ -187,7 +187,7 @@
     {"bytes": 10659, "out": "cake_word_array_probe.out", "rows": 32, "sha256": "6d86d63ef05e58c42384e8a9fb88809fbaa56d4a53597a36815754897be7dc3b"},
     {"bytes": 2587, "out": "cakeml_frontend_flat_probe.out", "rows": 116, "sha256": "20f5daca23f947cc44fda3d5690ebb2e4568b42a18697cd471d4e93129d046ef"},
     {"bytes": 121, "out": "cexp_heads_probe.out", "rows": 5, "sha256": "6008ea6cbd045b498a9b2ab282fbd0734ddd6c4760faa5e59cd7aa29a438f184"},
-    {"bytes": 40842, "out": "clos_annotate_semantics_probe.out", "rows": 86, "sha256": "f06b2135fbb666d65e9e4e304d2e9f9ea19934664a866621285ef895009bec26"},
+    {"bytes": 44978, "out": "clos_annotate_semantics_probe.out", "rows": 89, "sha256": "6c4ba55205dd89f08563873c4f1f3fbf294056e63c1fc3023a932e42573deb9d"},
     {"bytes": 1812, "out": "clos_annotate_shift_replay_probe.out", "rows": 1, "sha256": "208a635be0e6cf3ec2b8ba6efa1a54d55a9a4570a520193b01ba4b085642a42d"},
     {"bytes": 1077, "out": "clos_call_code_list_probe.out", "rows": 7, "sha256": "7fd51d9fd015321b0ade9fc3a6993794d8069f19c3387ee7c57e57a173820811"},
     {"bytes": 3774, "out": "clos_call_env_rel_probe.out", "rows": 14, "sha256": "21268424aae4542c87558eb7f272fc2d7f08a8c9b194ec50ccec89391553f2e3"},

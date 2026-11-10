@@ -1719,6 +1719,12 @@
   "reviewer": "Source comparison with list_to_v_v_rel_typed: both unrestricted value lists, their pointwise relation premise and the related list-encoding conclusion agree. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_fv1_intro",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "altFvOneSource_intro",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alt_fv1_intro_typed: the universally quantified index and expression retain their order and types, and the singleton-list free-variable observation is equivalent to altFvOneSource in the same direction."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "v_rel_simp",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ValueRelation.lean", "lean_name": "valueRel_simp",
   "statement_status": "reviewed_nested_list_rel_as_mutual",
