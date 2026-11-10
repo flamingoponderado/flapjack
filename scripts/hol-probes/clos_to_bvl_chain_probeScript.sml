@@ -49,6 +49,8 @@ val _ = show_thm "clos_call_LIST_REL_v_rel_SUBMAP_typed=" clos_callProofTheory.L
 val _ = show_thm "clos_call_LIST_REL_v_rel_subg_typed=" clos_callProofTheory.LIST_REL_v_rel_subg;
 val _ = show_thm "clos_call_env_rel_SUBMAP_typed=" clos_callProofTheory.env_rel_SUBMAP;
 val _ = show_thm "clos_call_env_rel_subg_typed=" clos_callProofTheory.env_rel_subg;
+val _ = show_thm "clos_call_v_rel_Unit_typed=" clos_callProofTheory.v_rel_Unit;
+val _ = show_thm "clos_call_v_to_list_thm_typed=" clos_callProofTheory.v_to_list_thm;
 val _ = show_thm "clos_call_state_rel_def_typed=" clos_callProofTheory.state_rel_def;
 val _ = show_thm "clos_call_state_rel_max_app_typed=" clos_callProofTheory.state_rel_max_app;
 val _ = show_thm "clos_call_state_rel_clock_typed=" clos_callProofTheory.state_rel_clock;

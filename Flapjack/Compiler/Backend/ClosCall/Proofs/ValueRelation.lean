@@ -367,4 +367,72 @@ theorem envValueRel_submap (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
   intro x y ⟨_, _, related⟩
   exact valueRel_submap g allowed code x y codeNext ⟨related, h.2⟩
 
+/-- Canonical code-map codec for the unit-value relation. -/
+theorem holFmapAsFiniteSupportParamWitness_valueRel_unit_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code code key
+
+/-- Unit values are related by direct-call conversion. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "v_rel_Unit"
+  (fmap_as_finite_support_parameters := [code])]
+theorem valueRel_unit (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) :
+    valueRel g allowed code unitValue unitValue := by
+  apply (valueRel_sourceEquations g allowed code).1 _ _ _ |>.mpr
+  exact ⟨[], rfl, .nil⟩
+
+/-- Canonical code-map codec for list decoding preservation. -/
+theorem holFmapAsFiniteSupportParamWitness_valueToList_thm_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code code key
+
+/-- Decoding a related source list yields pointwise related target elements. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "v_to_list_thm"
+  (fmap_as_finite_support_parameters := [code])]
+theorem valueToList_thm (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (h h' : Value) (x : List Value)
+    (assumptions : valueToList h = some x ∧ valueRel g allowed code h h') :
+    ∃ x', valueToList h' = some x' ∧ List.Forall₂ (valueRel g allowed code) x x' := by
+  cases h with
+  | block tag values =>
+    obtain ⟨values', eq, related⟩ := (valueRel_sourceEquations g allowed code).1 _ _ _ |>.mp assumptions.2
+    subst h'
+    cases related with
+    | nil =>
+      simp only [valueToList] at assumptions ⊢
+      split at assumptions <;> simp_all
+    | @cons first first' tail tail' firstRel rest =>
+      cases rest with
+      | nil => simp [valueToList] at assumptions
+      | @cons last last' tail tail' lastRel rest =>
+        cases rest with
+        | cons => simp [valueToList] at assumptions
+        | nil =>
+          simp only [valueToList] at assumptions ⊢
+          split at assumptions <;> simp_all
+          cases decoded : valueToList last with
+          | none => simp [decoded] at assumptions
+          | some xs =>
+            simp only [decoded, Option.some.injEq] at assumptions
+            obtain ⟨ys, target, elements⟩ := valueToList_thm g allowed code last last' xs ⟨decoded, lastRel⟩
+            obtain ⟨⟨_, rfl, rfl⟩, _⟩ := assumptions
+            exact ⟨ys, target, .cons firstRel elements⟩
+  | number n => simp [valueToList] at assumptions
+  | word64 w => simp [valueToList] at assumptions
+  | byteVector bytes => simp [valueToList] at assumptions
+  | refPtr b n => simp [valueToList] at assumptions
+  | closure loco values env arity body => simp [valueToList] at assumptions
+  | recclosure loco values env fns index => simp [valueToList] at assumptions
+termination_by sizeOf h
+decreasing_by
+  subst_vars
+  simp_wf
+  omega
+
 end Flapjack.Compiler.Backend.ClosCall
