@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "domain_FST_insert_each",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertDomain.lean", "lean_name": "domain_insertEach",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_call_domain_FST_insert_each_typed: quantified position, count and state retain order and the state payload remains polymorphic. The exact domain equality uses the generated 2*i+p locations and the original domain."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "do_app_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/DoApp.lean", "lean_name": "doApp_correct",
   "statement_status": "reviewed_fmap_as_finite_support_relation",
