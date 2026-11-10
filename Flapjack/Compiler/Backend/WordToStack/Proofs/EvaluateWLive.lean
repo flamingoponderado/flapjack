@@ -146,7 +146,7 @@ theorem wLiveFilterBitmap {width : Nat} [NeZero width] (k f' : Nat) (names2 : Sp
   have henv : ∀ r v, (r, v) ∈ (wordSemEnvToList (sptInter locals names2) perm).1 ↔
       sptLookup r locals = some v ∧ sptDomain names2 r := by
     intro r v
-    rw [wordSemEnvToList_mem_iff, sptToAList_mem_iff_lookup, sptLookup_sptInterCases]
+    rw [wordSemEnvToList_mem_iff, sptMemToAList, sptLookup_sptInterCases]
     unfold sptDomain
     cases sptLookup r locals <;> cases sptLookup r names2 <;> simp
   apply filterBitmapEqSomeNil bits (indexList frame k) _ (by rw [hbl, hil])
@@ -189,7 +189,7 @@ theorem wLiveFilterBitmap {width : Nat} [NeZero width] (k f' : Nat) (names2 : Sp
         Prod.exists] at hbit
       obtain ⟨r, u, hru, hri⟩ := hbit
       have hdom : sptDomain names2 r := by
-        unfold sptDomain; rw [(sptToAList_mem_iff_lookup names2 r u).mp hru]; rfl
+        unfold sptDomain; rw [(sptMemToAList names2 r u).mp hru]; rfl
       obtain ⟨heven, hk⟩ := hsnd r hdom
       obtain ⟨w, hw⟩ := Option.isSome_iff_exists.mp (hsub r hdom)
       obtain ⟨hlt, hfr⟩ := hloc r w hw heven hk
@@ -218,7 +218,7 @@ theorem wLiveFilterBitmap {width : Nat} [NeZero width] (k f' : Nat) (names2 : Sp
       · simp only [bits, List.getElem_map, List.getElem_range, decide_eq_true_eq, List.mem_map,
           Prod.exists]
         obtain ⟨u, hu⟩ := Option.isSome_iff_exists.mp hdom
-        exact ⟨r, u, (sptToAList_mem_iff_lookup names2 r u).mpr hu, rfl⟩
+        exact ⟨r, u, (sptMemToAList names2 r u).mpr hu, rfl⟩
 
 theorem drop_set_self {α : Type} (l : List α) (i : Nat) (a : α) (h : i < l.length) :
     (l.set i a).drop i = a :: l.drop (i + 1) := by
@@ -444,14 +444,14 @@ theorem evaluateWLive {width : Nat} [NeZero width] {C F : Type}
             obtain ⟨⟨r, u⟩, hru, hri⟩ := List.mem_map.mp hmem
             simp only at hri
             have hdom2 : sptDomain names.2 r := by
-              unfold sptDomain; rw [(sptToAList_mem_iff_lookup names.2 r u).mp hru]; rfl
+              unfold sptDomain; rw [(sptMemToAList names.2 r u).mp hru]; rfl
             obtain ⟨heven2, hk2⟩ := hsnd r hdom2
             obtain ⟨w2, hw2⟩ := Option.isSome_iff_exists.mp (hsub r hdom2)
             obtain ⟨hlt2, -⟩ := hloc' r w2 hw2 heven2 hk2
             have hrn : r = n0 := by omega
             subst hrn
             have hmemL : (r, v) ∈ (wordSemEnvToList envs.2 s.permute).1 := by
-              rw [wordSemEnvToList_mem_iff, sptToAList_mem_iff_lookup, he2,
+              rw [wordSemEnvToList_mem_iff, sptMemToAList, he2,
                 sptLookup_sptInterCases, hdom1.2]
               obtain ⟨u', hu'⟩ := Option.isSome_iff_exists.mp hdom2
               rw [hu']

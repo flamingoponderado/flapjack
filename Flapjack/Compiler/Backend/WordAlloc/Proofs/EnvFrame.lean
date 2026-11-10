@@ -341,11 +341,11 @@ private theorem sortToAListKeys {α : Type} (r : Nat × α → Nat × α → Boo
   simp only [List.mem_map]
   constructor
   · rintro ⟨⟨a, v⟩, hmem, rfl⟩
-    rw [wordSemSort_mem_iff, sptToAList_mem_iff_lookup] at hmem
+    rw [wordSemSort_mem_iff, sptMemToAList] at hmem
     simp [sptDomain, hmem]
   · intro hk
     obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hk
-    exact ⟨(k, v), by rw [wordSemSort_mem_iff, sptToAList_mem_iff_lookup]; exact hv, rfl⟩
+    exact ⟨(k, v), by rw [wordSemSort_mem_iff, sptMemToAList]; exact hv, rfl⟩
 
 private theorem rearrangeKeys {α β : Type} (perm : Nat → Nat) (ls : List (α × β)) (k : α) :
     k ∈ (wordSemListRearrange perm ls).map Prod.fst ↔ k ∈ ls.map Prod.fst := by
@@ -434,7 +434,7 @@ private theorem sortedKeysNodup {α : Type} (r : Nat × α → Nat × α → Boo
 private theorem sortedMem {α : Type} (r : Nat × α → Nat × α → Bool) (x : Spt α)
     (k : Nat) (v : α) :
     (k, v) ∈ Basis.Pure.MlList.sort r (sptToAList x) ↔ sptLookup k x = some v := by
-  rw [wordSemSort_mem_iff, sptToAList_mem_iff_lookup]
+  rw [wordSemSort_mem_iff, sptMemToAList]
 
 /-- Exact HOL `env_to_list_perm` (`word_allocProofScript.sml:442-513`): when the
 target environment is the injective image of the source under `f` (with the

@@ -218,10 +218,10 @@ theorem sKeyEqPushEnvImpMapFst {width : Nat} [NeZero width] {C F : Type}
     simp only [List.mem_map, sptDomain]
     constructor
     · rintro ⟨⟨a, v⟩, hm, rfl⟩
-      simp [(sptToAList_mem_iff_lookup x' a v).mp hm]
+      simp [(sptMemToAList x' a v).mp hm]
     · intro hk'
       obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hk'
-      exact ⟨(k, v), (sptToAList_mem_iff_lookup x' k v).mpr hv, rfl⟩
+      exact ⟨(k, v), (sptMemToAList x' k v).mpr hv, rfl⟩
   cases o0 with
   | none =>
       simp only [WordSemStateFiniteExact.pushEnv, he] at hk

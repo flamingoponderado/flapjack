@@ -267,7 +267,7 @@ theorem allocImpAlloc {width : Nat} [NeZero width] {C F : Type}
           obtain ⟨⟨n0, v0⟩, hmem0, hn0⟩ := List.mem_map.mp hkey
           simp only at hn0
           subst hn0
-          rw [wordSemEnvToList_mem_iff, sptToAList_mem_iff_lookup] at hmem0
+          rw [wordSemEnvToList_mem_iff, sptMemToAList] at hmem0
           obtain ⟨heven, hk⟩ := hsnd n0 (hcut2 n0 v0 hmem0)
           refine ⟨heven, ?_⟩
           rw [if_neg (by omega)]
@@ -402,7 +402,7 @@ theorem allocImpAlloc2 {width : Nat} [NeZero width] {C F : Type}
   have htoal : sptToAList (.ln : Spt (WordLocW width)) = [] := by
     rw [List.eq_nil_iff_forall_not_mem]
     rintro ⟨a, b⟩ h
-    rw [sptToAList_mem_iff_lookup] at h
+    rw [sptMemToAList] at h
     simp [sptLookup] at h
   have henv : (wordSemEnvToList (.ln : Spt (WordLocW width)) s.permute).1 = [] := by
     rw [List.eq_nil_iff_forall_not_mem]

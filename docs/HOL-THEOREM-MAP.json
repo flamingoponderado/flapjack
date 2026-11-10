@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "make_g_wfg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeState.lean", "lean_name": "makeState_wellFormed",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Source comparison: compared clos_call_make_g_wfg_typed: free sparse tree, code and result state retain first-occurrence order, with independent polymorphic tree and map payloads; successful make_g implies the full wfg conjunction. The map uses canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "make_g_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeState.lean", "lean_name": "makeState",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",

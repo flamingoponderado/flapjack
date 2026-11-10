@@ -30,10 +30,10 @@ theorem checkColInj (f : Nat → Nat) (tree q r : NumSet)
       obtain ⟨⟨name, value⟩, hentry, he⟩ := hm'
       cases value
       subst key
-      exact (hdomain name).mpr ((sptToAList_mem_iff_lookup tree name ()).mp hentry)
+      exact (hdomain name).mpr ((sptMemToAList tree name ()).mp hentry)
     · intro hd
       exact List.mem_map.mpr ⟨(key, ()),
-        (sptToAList_mem_iff_lookup tree key ()).mpr ((hdomain key).mp hd), rfl⟩
+        (sptMemToAList tree key ()).mpr ((hdomain key).mp hd), rfl⟩
   have hfrom (names : List Nat) :
       sptFromAList (names.map (fun name => (name, ()))) = numsetListInsert names .ln := by
     induction names with
