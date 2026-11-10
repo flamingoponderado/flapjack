@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.WordAlloc.ClashTreeProg
-import Flapjack.Compiler.Backend.RegAlloc.ProductionBijection
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ClashTreeProg
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionBijection
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.WordAllocGetClashTreeParity
 

@@ -1,4 +1,8 @@
-import Flapjack.SemanticPrimitivesHOL.Test
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Test
+
+@[expose] public section
 
 /-! Primitive comparison observations captured from pinned HOL. -/
 namespace Flapjack.Test.CakeSourceTestParity

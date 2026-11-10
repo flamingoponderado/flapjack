@@ -1,5 +1,16 @@
-import Flapjack.Pancake.Proofs.PanToCrep
-import Flapjack.Test.PanEvaluateParity
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep
+public import Flapjack.Test.PanEvaluateParity
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.PanToCrep
+public meta import Flapjack.Test.PanEvaluateParity
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! A direct fixed-RV64 runtime fixture for a state-owned Call that catches a
 one-word exception and returns the handler local. The source-side HOL oracle is

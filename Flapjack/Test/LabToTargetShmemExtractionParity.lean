@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.ShmemExtraction
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemExtraction
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetShmemExtractionParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps

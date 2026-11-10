@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundFlat
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundFlat
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackRegFlatParity
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackProps

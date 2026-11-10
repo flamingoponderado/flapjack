@@ -1,8 +1,21 @@
-import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileDefinitions
-import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
-import Flapjack.Parser
-import Flapjack.Pancake.PanToTarget
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileDefinitions
+public import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+public import Flapjack.Parser
+public import Flapjack.Pancake.PanToTarget
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public meta import Flapjack.Compiler.Backend.RiscVConfig.Executable
+public meta import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+public meta import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+public meta import Flapjack.Pancake.PanToTarget
+public meta import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileDefinitions
+public meta import Flapjack.Parser
+@[expose] public section
 
 /-!
 # Real artifact symbols

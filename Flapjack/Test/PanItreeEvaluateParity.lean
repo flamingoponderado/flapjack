@@ -1,4 +1,10 @@
-import Flapjack.PanItreeEvaluate
+module
+
+public import Flapjack.PanItreeEvaluate
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanItreeEvaluate
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `itree_evaluate_def`

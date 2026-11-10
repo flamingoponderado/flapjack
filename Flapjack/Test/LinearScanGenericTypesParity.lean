@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LinearScan.TopLevel
+module
+
+public import Flapjack.Compiler.Backend.LinearScan.TopLevel
+
+@[expose] public section
 
 namespace Flapjack.Test.LinearScanGenericTypesParity
 open Flapjack Flapjack.RegAlloc Flapjack.LinearScan Flapjack.Translator.Monadic.MonadBase

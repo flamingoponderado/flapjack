@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+
+@[expose] public section
 
 /-! Flapjack-specific kernel checks of the ported state primitives, including
 non-Word values, missing registers and preservation of unrelated state fields.

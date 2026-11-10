@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.TopLabelSafety
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.TopLabelSafety
+
+@[expose] public section
 
 set_option maxHeartbeats 1600000
 

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.Memory
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Memory
+
+@[expose] public section
 
 /-! Eleven kernel replays of fresh original miscTheory EVAL observations in
 scripts/hol-probes/bytes_in_mem_probe.out. Nat and Bool payloads retain the

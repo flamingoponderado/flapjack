@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionTreeMapMerge
-import Flapjack.Compiler.Backend.WordAlloc.HeuMax
-import Flapjack.Misc.Sptree.MapiLookup
-import Flapjack.Compiler.Backend.WordAlloc.HeuInst
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionTreeMapMerge
+public import Flapjack.Compiler.Backend.WordAlloc.HeuMax
+public import Flapjack.Misc.Sptree.MapiLookup
+public import Flapjack.Compiler.Backend.WordAlloc.HeuInst
+
+@[expose] public section
 
 namespace Flapjack.Test.ActualHeuInstParity
 open Flapjack Flapjack.WordAlloc

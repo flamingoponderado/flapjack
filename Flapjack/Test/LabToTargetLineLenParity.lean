@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.LineLength
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.LineLength
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetLineLenParity
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

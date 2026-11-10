@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.ReadsExp
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ReadsExp
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocReadsExpParity
 open WordAlloc

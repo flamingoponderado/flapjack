@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.TargetProps.FindNextInterference
-import Flapjack.Test.TargetSemEvaluateParity
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.FindNextInterference
+public import Flapjack.Test.TargetSemEvaluateParity
+
+@[expose] public section
 
 namespace Flapjack.Test.TargetFindNextInterferenceParity
 open Flapjack Flapjack.Compiler.Encoders.Asm

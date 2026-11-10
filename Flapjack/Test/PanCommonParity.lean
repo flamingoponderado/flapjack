@@ -1,6 +1,14 @@
-import Flapjack.Pancake.CrepLang
-import Flapjack.Pancake.PanCommon
-import Flapjack.Pancake.PanToCrep
+module
+
+public import Flapjack.Pancake.CrepLang
+public import Flapjack.Pancake.PanCommon
+public import Flapjack.Pancake.PanToCrep
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.CrepLang
+public meta import Flapjack.Pancake.PanCommon
+public meta import Flapjack.Pancake.PanToCrep
+@[expose] public section
 
 /-!
 # Original-domain parity for `pan_common$distinct_lists`

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.Compile
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Compile
+
+@[expose] public section
 namespace Flapjack.Test.StackRemoveCompile
 open Flapjack.Compiler.Backend.StackRemove Flapjack.Compiler.Backend.StackLang
 example : initStubs (width := 1) false 0 0 0 = [(0, .seq (initCode false 0 0) (.call none (.inl 0) none)), (1, .seq (.inst (.const 1 0)) (.halt 1)), (2, .seq (.inst (.const 1 2)) (.halt 1))] := by simp only [initStubs, haltInst] <;> rfl

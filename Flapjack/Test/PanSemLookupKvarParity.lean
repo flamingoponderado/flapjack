@@ -1,4 +1,10 @@
-import Flapjack.PanSemLookupKvar
+module
+
+public import Flapjack.PanSemLookupKvar
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanSemLookupKvar
+@[expose] public section
 
 /-!
 # Parity checks for `panSem$lookup_kvar_def`

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
+
+@[expose] public section
 
 /-! Original encoding observations exercise both offset branches, growth flags,
 position threading, section identities and a nonempty accumulator. -/

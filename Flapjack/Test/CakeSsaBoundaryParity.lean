@@ -1,4 +1,8 @@
-import Flapjack.RiscV.Allocator
+module
+
+public import Flapjack.RiscV.Allocator
+
+@[expose] public section
 
 /-! Direct HOL parity for the Return and Alloc rows of CakeML's
     `full_ssa_cc_trans`.  The expected shapes come from the canonical Cake

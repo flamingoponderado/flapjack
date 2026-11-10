@@ -1,10 +1,14 @@
-import Flapjack.Test.CrepArithExactParity
-import Flapjack.Pancake.CrepArith
-import Flapjack.Pancake.Semantics.CrepSem
-import Flapjack.Pancake.Semantics.CrepRuntimeTarget
-import Flapjack.Pancake.Proofs.CrepArith
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.RiscV.PanMemory
+module
+
+public import Flapjack.Test.CrepArithExactParity
+public import Flapjack.Pancake.CrepArith
+public import Flapjack.Pancake.Semantics.CrepSem
+public import Flapjack.Pancake.Semantics.CrepRuntimeTarget
+public import Flapjack.Pancake.Proofs.CrepArith
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.RiscV.PanMemory
+
+@[expose] public section
 
 namespace Flapjack.Test.CrepeSimpExpParity
 

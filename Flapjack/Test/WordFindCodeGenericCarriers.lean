@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.WordRemove.Proofs.CompileState
+module
+
+public import Flapjack.Compiler.Backend.WordRemove.Proofs.CompileState
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Pancake.WordLang
+public meta import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
+@[expose] public section
 
 namespace Flapjack.Test.WordFindCodeGenericCarriers
 open Flapjack Flapjack.Compiler.Backend.WordRemove

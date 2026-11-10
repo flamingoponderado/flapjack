@@ -1,4 +1,8 @@
-import Flapjack.Misc.TakeFlatReplicate
+module
+
+public import Flapjack.Misc.TakeFlatReplicate
+
+@[expose] public section
 namespace Flapjack.Test.MiscTakeFlatReplicateParity
 open Flapjack.Misc
 example : ((List.replicate 4 [1,2,3]).flatten).take (2*3) = [1,2,3,1,2,3] := rfl

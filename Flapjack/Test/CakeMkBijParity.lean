@@ -1,4 +1,10 @@
-import Flapjack.RiscV.RegAlloc
+module
+
+public import Flapjack.RiscV.RegAlloc
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.RiscV.RegAlloc
+@[expose] public section
 
 /-! The source `mk_bij`/`list_remap` pass assigns each first-seen clash-tree
     variable the next allocator node, preserving existing assignments across

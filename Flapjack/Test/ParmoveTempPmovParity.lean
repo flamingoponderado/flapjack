@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Pmov
+module
+
+public import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Pmov
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmoveTempPmovParity
 open Compiler.Backend.Parmove

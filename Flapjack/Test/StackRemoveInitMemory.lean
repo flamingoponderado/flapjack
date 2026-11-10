@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.InitMemory
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.InitMemory
+
+@[expose] public section
 namespace Flapjack.Test.StackRemoveInitMemory
 open Flapjack.Compiler.Backend.StackRemove Flapjack.Compiler.Backend.StackLang
 -- init_memory_1_0_0; original full-tree equality = T

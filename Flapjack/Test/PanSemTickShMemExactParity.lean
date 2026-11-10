@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem.TickShMemExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.TickShMemExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.TickShMemExact
+@[expose] public section
 
 /-! # Parity for the exact panSem `Tick` and `ShMemLoad`/`ShMemStore` clause steps
 

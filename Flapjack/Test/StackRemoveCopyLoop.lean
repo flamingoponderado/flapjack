@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.CopyLoop
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.CopyLoop
+
+@[expose] public section
 
 /-! Kernel replays of fully expanded original copy constructors; no extra HOL theorem port. -/
 

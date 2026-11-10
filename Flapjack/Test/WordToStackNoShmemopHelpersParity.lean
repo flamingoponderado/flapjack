@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopHelpers
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopHelpers
+
+@[expose] public section
 
 /-! Same-input original helper observations; regression evidence only. -/
 namespace Flapjack.Test.WordToStackNoShmemopHelpersParity

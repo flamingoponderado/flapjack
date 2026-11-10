@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanToTarget.ProductionSourceEntry
+module
+
+public import Flapjack.Pancake.PanToTarget.ProductionSourceEntry
+
+@[expose] public section
 
 namespace Flapjack.Test.PanSourceEntryParity
 open Flapjack Pancake.PanLang Pancake.PanToTarget Basis.Pure.MlString

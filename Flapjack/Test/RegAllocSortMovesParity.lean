@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.SortMoves
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.SortMoves
+
+@[expose] public section
 
 namespace Flapjack.Test.RegAllocSortMovesParity
 open Flapjack.RegAlloc

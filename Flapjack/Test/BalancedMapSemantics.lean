@@ -1,5 +1,9 @@
-import Flapjack.Misc.BalancedMap.Semantics
-import Mathlib.Data.Set.Insert
+module
+
+public import Flapjack.Misc.BalancedMap.Semantics
+public import Mathlib.Data.Set.Insert
+
+@[expose] public section
 
 namespace Flapjack.Test.BalancedMapSemantics
 open Misc.BalancedMap

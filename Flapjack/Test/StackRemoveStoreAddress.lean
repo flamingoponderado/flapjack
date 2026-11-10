@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.StoreAddress
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.StoreAddress
+
+@[expose] public section
 
 /-! Kernel replay of original storage positions and modular offsets; no new HOL theorem claimed. -/
 

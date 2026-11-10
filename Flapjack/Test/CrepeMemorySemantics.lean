@@ -1,5 +1,12 @@
-import Flapjack.CrepeSemantics
-import Flapjack.RiscV.PanMemory
+module
+
+public import Flapjack.CrepeSemantics
+public import Flapjack.RiscV.PanMemory
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CrepeSemantics
+public meta import Flapjack.RiscV.PanMemory
+@[expose] public section
 
 /-!
 Focused executable checks for the canonical Crepe word-cell memory boundary.

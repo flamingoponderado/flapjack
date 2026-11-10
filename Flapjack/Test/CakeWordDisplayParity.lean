@@ -1,6 +1,15 @@
-import Flapjack.Compiler.Backend.PresLang.Word
-import Flapjack.Compiler.Backend.DataToWord.Stubs
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Word
+public import Flapjack.Compiler.Backend.DataToWord.Stubs
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.WordLang
+public meta import Flapjack.Compiler.Backend.DataToWord.Stubs
+public meta import Flapjack.Compiler.Backend.PresLang.Word
+public meta import Flapjack.Compiler.Backend.RiscVConfig.Executable
+@[expose] public section
 
 /-! Prefix of `_FromList@7` after `data_to_word` in the pinned CakeML
 explorer. The Lean side prints the actual configuration-dependent stub. -/

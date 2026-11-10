@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
-import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+module
+
+public import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
+public import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+
+@[expose] public section
 /-! Concrete native RISC-V API fixture. Expected bounds are transcribed from
 fresh guarded original source replay; this fixture uses actual native passes and
 actual generated frames. The full output/error pair is not replaced by a bound. -/

@@ -1,5 +1,16 @@
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalExact
-import Flapjack.Test.PanSemExtCallExactParity
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalExact
+public import Flapjack.Test.PanSemExtCallExactParity
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.TotalEvalExact
+public meta import Flapjack.Test.PanSemExtCallExactParity
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Direct original-HOL rows for the exact-state PanSem dispatcher fragment.
     Call/DecCall cases correspond to `call_code_map_7`,

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.Limits
+
+@[expose] public section
 
 /-! Non-overflow and architecture boundary checks for data-to-word limits. -/
 namespace Flapjack.Compiler.Backend.DataToWord.Proofs.Gc

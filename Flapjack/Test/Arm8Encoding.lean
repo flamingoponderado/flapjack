@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.Arm8.Machine.Decode
-import Flapjack.Compiler.Encoders.Arm8.Machine.Execute
+module
+
+public import Flapjack.Compiler.Encoders.Arm8.Machine.Decode
+public import Flapjack.Compiler.Encoders.Arm8.Machine.Execute
+
+@[expose] public section
 
 /-! Concrete round-trip checks for ARMv8 instruction encodings that are not on
 the emitted `arm8_ast` path, in particular the `ADRP` (`address true`) field

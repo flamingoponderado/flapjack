@@ -1,8 +1,22 @@
-import Flapjack.Pancake.LoopToWord
-import Flapjack.Pancake.LoopToWord.Proofs.FindVarExact
-import Flapjack.Pancake.Proofs.LoopToWord.ContextSupport
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
+module
+
+public import Flapjack.Pancake.LoopToWord
+public import Flapjack.Pancake.LoopToWord.Proofs.FindVarExact
+public import Flapjack.Pancake.Proofs.LoopToWord.ContextSupport
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
+public import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Pancake.LoopToWord
+public meta import Flapjack.Pancake.WordLang
+public meta import Flapjack.Word
+public meta import Flapjack.Pancake.LoopToWord.MakeCtxtExact
+public meta import Flapjack.Pancake.LoopToWord.Proofs.FindVarExact
+public meta import Flapjack.Pancake.Proofs.LoopToWord.ContextSupport
+public meta import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
+public meta import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
+@[expose] public section
 
 /-!
 # Original-domain parity for the exact `loop_to_word` context definitions

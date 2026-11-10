@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.StateMap
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.StateMap
+
+@[expose] public section
 
 namespace Flapjack.Test.RegAllocStateMapParity
 open Flapjack.RegAlloc Flapjack.Translator.Monadic.MonadBase

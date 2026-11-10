@@ -1,6 +1,15 @@
-import Flapjack.Compiler.Backend.BackendPasses.Closure
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
-import Flapjack.CakeParser.Frontend
+module
+
+public import Flapjack.Compiler.Backend.BackendPasses.Closure
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+public import Flapjack.CakeParser.Frontend
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CakeParser.Frontend
+public meta import Flapjack.Compiler.Backend.BackendPasses.Closure
+public meta import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.WordEquality
+public meta import Flapjack.Compiler.Backend.RiscVConfig.Executable
+@[expose] public section
 
 /-! The complete captured bytes are compared with pinned CakeML by
 `scripts/check-cake-closure-explore.py`. This guard checks that the same

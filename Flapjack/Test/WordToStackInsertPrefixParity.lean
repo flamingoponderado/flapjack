@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InsertBitmapPrefix
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.InsertBitmapPrefix
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackInsertPrefixParity
 open Flapjack Flapjack.Compiler.Backend.WordToStack

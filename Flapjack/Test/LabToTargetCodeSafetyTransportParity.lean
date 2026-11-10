@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
+
+@[expose] public section
 
 namespace Flapjack.Test.LabToTargetCodeSafetyTransportParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabSem

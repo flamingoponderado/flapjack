@@ -1,4 +1,10 @@
-import Flapjack.Pancake.PanGlobals
+module
+
+public import Flapjack.Pancake.PanGlobals
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanGlobals
+@[expose] public section
 
 namespace Flapjack.Test.PanGlobalsFpermNameParity
 

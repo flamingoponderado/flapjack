@@ -1,7 +1,17 @@
-import Flapjack.Compiler.Backend.PresLang.Bvi
-import Flapjack.Compiler.Backend.ClosToBvl.Stubs
-import Flapjack.Compiler.Backend.BvlToBvi.Stubs
-import Flapjack.Compiler.Backend.BvlToBvi.Names
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Bvi
+public import Flapjack.Compiler.Backend.ClosToBvl.Stubs
+public import Flapjack.Compiler.Backend.BvlToBvi.Stubs
+public import Flapjack.Compiler.Backend.BvlToBvi.Names
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.BvlToBvi.Names
+public meta import Flapjack.Compiler.Backend.BvlToBvi.Stubs
+public meta import Flapjack.Compiler.Backend.ClosToBvl.Stubs
+public meta import Flapjack.Compiler.Backend.PresLang.Bvi
+public meta import Flapjack.Compiler.Backend.StackLang
+@[expose] public section
 
 /-! The expected functions are the first BVL and BVI functions emitted by
 the pinned CakeML compiler in the explorer regression program. -/

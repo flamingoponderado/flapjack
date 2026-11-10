@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.TotalColour
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.TotalColour
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocTotalColourParity
 open Flapjack Flapjack.WordAlloc

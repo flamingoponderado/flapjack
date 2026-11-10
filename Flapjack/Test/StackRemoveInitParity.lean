@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.StackRemove
+module
+
+public import Flapjack.Compiler.Backend.StackRemove
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.StackRemove
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Parity test for the stack_remove `make_init` prerequisites ported in

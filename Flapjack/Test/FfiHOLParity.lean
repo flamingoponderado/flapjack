@@ -1,4 +1,14 @@
-import Flapjack.FfiHOL
+module
+
+public import Flapjack.FfiHOL
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.FfiHOL
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # FFI carrier parity

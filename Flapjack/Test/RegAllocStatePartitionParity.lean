@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.StatePartition
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.StatePartition
+
+@[expose] public section
 
 namespace Flapjack.Test.RegAllocStatePartitionParity
 open Flapjack.RegAlloc Flapjack.Translator.Monadic.MonadBase

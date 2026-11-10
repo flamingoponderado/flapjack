@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateSource
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateSource
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
+
+@[expose] public section
 
 /-! Unbounded flat evaluation compared with the original HOL observations in
 `cake_flat_sem_evaluate_probe.out`. -/

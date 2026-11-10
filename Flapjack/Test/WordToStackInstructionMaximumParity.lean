@@ -1,6 +1,10 @@
-import Flapjack.RiscV.Allocator
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
-import Flapjack.Pancake.WordLang.MaxVarInst
+module
+
+public import Flapjack.RiscV.Allocator
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+public import Flapjack.Pancake.WordLang.MaxVarInst
+
+@[expose] public section
 
 /-! Same-input kernel replay of fourteen original instruction maxima.
 The last two rows expose HOL's zero maximum for ordinary 16-bit memory and

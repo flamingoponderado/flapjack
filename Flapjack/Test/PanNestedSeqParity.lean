@@ -1,5 +1,13 @@
-import Flapjack.Pancake.PanLang
-import Flapjack.Pancake.PanLang.Prog
+module
+
+public import Flapjack.Pancake.PanLang
+public import Flapjack.Pancake.PanLang.Prog
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.PanLang.Prog
+@[expose] public section
 
 /-!
 # Original-domain parity for `panLang$nested_seq`

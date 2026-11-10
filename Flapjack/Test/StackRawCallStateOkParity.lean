@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateOk
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.StateOk
+
+@[expose] public section
 namespace Flapjack.Test.StackRawCallStateOkParity
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackRawCall
 example (code : Spt (HolProg 64)) : stateOk .ln code := stateOk_empty code

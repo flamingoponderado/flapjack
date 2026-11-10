@@ -1,5 +1,9 @@
-import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
-import Flapjack.Misc.BinaryIeeeSqrtFp64
+module
+
+public import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
+public import Flapjack.Misc.BinaryIeeeSqrtFp64
+
+@[expose] public section
 
 /-!
 # Concrete agreement of the real-sqrt and rational-cut `fp64_sqrt` renderings

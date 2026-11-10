@@ -1,4 +1,10 @@
-import Flapjack.LoopStateResult
+module
+
+public import Flapjack.LoopStateResult
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.LoopStateResult
+@[expose] public section
 
 /-!
 # Original-domain parity for `loopSem$cut_res`

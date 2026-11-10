@@ -1,5 +1,9 @@
-import Flapjack.Misc.FindIndex.Distinct
-import Flapjack.Compiler.Backend.LabToTarget.ShmemDistinct
+module
+
+public import Flapjack.Misc.FindIndex.Distinct
+public import Flapjack.Compiler.Backend.LabToTarget.ShmemDistinct
+
+@[expose] public section
 namespace Flapjack.Test.MiscFindIndexDistinctParity
 open Flapjack Flapjack.Misc Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps

@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
-import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
-import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosure
-import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeIncludes
-import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
+module
+
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosure
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeIncludes
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.RefRelations
+
+@[expose] public section
 
 /-! Replay binder and environment cases captured from CakeML/HOL. -/
 namespace Flapjack.Test.ClosCallEnvironmentParity

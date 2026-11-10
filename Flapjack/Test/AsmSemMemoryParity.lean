@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.AsmProps.Memory
+module
+
+public import Flapjack.Compiler.Encoders.AsmProps.Memory
+
+@[expose] public section
 
 /-! Direct original asmSem/asmProps memory-word oracle replays.  Inputs match
 `scripts/hol-probes/asm_sem_mem_word_probe.out` row for row; the accessors are

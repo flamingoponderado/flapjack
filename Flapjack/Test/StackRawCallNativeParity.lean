@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRawCall
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall
+
+@[expose] public section
 
 /-! Kernel replay of the original rawcall native probe. These fixtures compare
 complete constructor trees, including untouched and compiled handler bodies. -/

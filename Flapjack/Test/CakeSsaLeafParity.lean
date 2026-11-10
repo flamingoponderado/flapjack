@@ -1,4 +1,8 @@
-import Flapjack.RiscV.Allocator
+module
+
+public import Flapjack.RiscV.Allocator
+
+@[expose] public section
 
 /-! Direct Cake parity for the remaining leaf/control rows of
     `ssa_cc_trans` in `word_allocScript.sml`.  The expected forms pin the

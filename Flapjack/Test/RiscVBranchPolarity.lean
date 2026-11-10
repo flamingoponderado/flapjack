@@ -1,5 +1,9 @@
-import Flapjack.RiscV.Lab
-import Flapjack.RiscV.Encoding
+module
+
+public import Flapjack.RiscV.Lab
+public import Flapjack.RiscV.Encoding
+
+@[expose] public section
 
 /-! Fresh original riscv_ast/riscv_encode byte vectors from
 scripts/hol-probes/riscv_jumpcmp_polarity_probe.out. These compare the actual

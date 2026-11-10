@@ -1,4 +1,8 @@
-import Flapjack.RiscV.LinearScan
+module
+
+public import Flapjack.RiscV.LinearScan
+
+@[expose] public section
 
 /-! Regression coverage for the linear-scan live-tree boundary. -/
 

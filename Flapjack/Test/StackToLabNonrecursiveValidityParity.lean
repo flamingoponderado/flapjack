@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
+module
+
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
+
+@[expose] public section
 namespace Flapjack.Test.StackToLabNonrecursiveValidityParity
 open Flapjack Flapjack.Compiler.Backend.StackToLab
 open Flapjack.Compiler.Backend.StackToLab.Proofs

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveData
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMoveData
+
+@[expose] public section
 
 /-! Kernel replay of seven determinate original HOL partial-data collector rows.
 No concrete nonword-header output is claimed: HOL's `theWord (Loc ...)` is

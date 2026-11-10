@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.NopInsertEncoding
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.NopInsertEncoding
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetNopInsertEncodingParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabToTarget

@@ -1,5 +1,13 @@
-import Flapjack.Misc.Sptree.Wf
-import Init.Data.Prod
+module
+
+public import Flapjack.Misc.Sptree.Wf
+public import Init.Data.Prod
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Independent original wf/isEmpty complete outputs, including every depth-two
 constructor combination, recursively malformed children, 24-level chains, and

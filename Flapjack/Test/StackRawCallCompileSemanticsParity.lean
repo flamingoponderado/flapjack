@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompileSemantics
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompileSemantics
+
+@[expose] public section
 
 namespace Flapjack.Test.StackRawCallCompileSemanticsParity
 open Flapjack Flapjack.Compiler.Backend.StackLang

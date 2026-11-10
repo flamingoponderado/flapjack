@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Stack
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Stack
+
+@[expose] public section
 
 /-! Data-language stack-bound edge cases. -/
 namespace Flapjack.Test.DataSemStack

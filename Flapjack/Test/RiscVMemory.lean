@@ -1,4 +1,8 @@
-import Flapjack.RiscV.PanMemory
+module
+
+public import Flapjack.RiscV.PanMemory
+
+@[expose] public section
 
 namespace Flapjack
 

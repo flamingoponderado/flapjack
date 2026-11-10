@@ -1,4 +1,8 @@
-import Flapjack.Misc.BalancedMap.InsertCorrect
+module
+
+public import Flapjack.Misc.BalancedMap.InsertCorrect
+
+@[expose] public section
 namespace Flapjack.Test.BalancedMapInsertCorrectParity
 open Flapjack.Misc.BalancedMap
 private def cmp (x y : Fin 7) : Ordering := compare x.val y.val

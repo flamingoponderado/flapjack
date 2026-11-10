@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
-import Flapjack.Test.LabToTargetSecondPassParity
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
+public import Flapjack.Test.LabToTargetSecondPassParity
+
+@[expose] public section
 
 /-!
 # Native kernel replays of `lab_to_target_maplemmas_probe.out`

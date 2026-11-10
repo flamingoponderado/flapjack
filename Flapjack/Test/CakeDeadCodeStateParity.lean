@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordUnreach
-import Flapjack.RiscV.CakeRegAlloc
-import Flapjack.Compiler.Backend.WordCse.ListOrder
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
-import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+module
+
+public import Flapjack.Compiler.Backend.WordUnreach
+public import Flapjack.RiscV.CakeRegAlloc
+public import Flapjack.Compiler.Backend.WordCse.ListOrder
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+
+@[expose] public section
 
 /-! Direct Cake/HOL parity for the `remove_dead` global-store state carried by
     `nlive`.  Cake resets `nlive` after a non-variable `Set`, so an earlier

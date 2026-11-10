@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Proofs.PanGlobals
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.PanGlobals
+@[expose] public section
 
 namespace Flapjack.Test.PanGlobalsDecShapesClusterParity
 

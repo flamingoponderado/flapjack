@@ -1,4 +1,10 @@
-import Flapjack.PanBst
+module
+
+public import Flapjack.PanBst
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanBst
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `bst_def`

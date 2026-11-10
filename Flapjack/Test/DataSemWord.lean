@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Word
-import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Word
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
+
+@[expose] public section
 
 /-! Regression cases for data-language word operations. -/
 namespace Flapjack.Test.DataSemWord

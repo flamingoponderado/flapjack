@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.ProgComp
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.ProgComp
+
+@[expose] public section
 
 /-! Generic native wrapper fixtures; Flapjack infrastructure rather than new HOL ports. -/
 

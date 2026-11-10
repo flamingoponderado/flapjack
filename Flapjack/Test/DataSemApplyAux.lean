@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyAux
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.ApplyAux
+
+@[expose] public section
 
 /-! Representative data-language primitive dispatch behavior. -/
 namespace Flapjack.Test.DataSemApplyAux

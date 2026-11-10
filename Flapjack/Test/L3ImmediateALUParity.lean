@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.ImmediateALU
+module
+
+public import Flapjack.RiscV.L3.Defs.ImmediateALU
+
+@[expose] public section
 
 namespace Flapjack.Test.L3ImmediateALUParity
 open Flapjack.RiscV.L3

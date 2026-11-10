@@ -1,4 +1,10 @@
-import Flapjack.Pancake.PanLang
+module
+
+public import Flapjack.Pancake.PanLang
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang
+@[expose] public section
 
 /-! Parity guard for `panLang$free_var_ids` from
     `cakeml/pancake/panLangScript.sml:347-389`. -/

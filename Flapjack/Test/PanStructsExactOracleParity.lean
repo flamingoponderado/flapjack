@@ -1,5 +1,17 @@
-import Flapjack.Pancake.Proofs.PanStructs.ConvertState
-import Flapjack.Pancake.PanStructs.CompileExpExact
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.ConvertState
+public import Flapjack.Pancake.PanStructs.CompileExpExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang.Exp
+public meta import Flapjack.Pancake.PanLang.Prog
+public meta import Flapjack.Pancake.PanStructs.CompileExpExact
+public meta import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
+public meta import Flapjack.Pancake.Proofs.PanStructs.ConvertState
+public meta import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public meta import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+@[expose] public section
 
 /-! Rows from `pan_structs_compile_exp_correct_probe.out`,
 `pan_structs_compile_correct_probe.out` and `pan_structs_value_validity_probe.out`,

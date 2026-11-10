@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompLength
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompLength
+
+@[expose] public section
 
 /-! Original bitmap accounting observations with nonzero initial gaps. -/
 namespace Flapjack.Test.WordToStackCompLengthParity

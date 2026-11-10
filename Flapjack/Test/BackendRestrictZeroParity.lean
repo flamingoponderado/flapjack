@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BackendProps
+module
+
+public import Flapjack.Compiler.Backend.BackendProps
+
+@[expose] public section
 namespace Flapjack.Test.BackendRestrictZeroParity
 open Flapjack.Compiler.Backend.BackendProps
 example : restrictZero ∅ = ∅ := by ext p; simp [restrictZero]

@@ -1,4 +1,14 @@
-import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Direct oracle and exact-theorem checks for

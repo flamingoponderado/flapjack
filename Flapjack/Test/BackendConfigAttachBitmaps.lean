@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Backend
+module
+
+public import Flapjack.Compiler.Backend.Backend
+
+@[expose] public section
 
 namespace Flapjack.Test.BackendConfigAttachBitmaps
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.Backend

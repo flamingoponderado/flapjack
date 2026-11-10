@@ -1,4 +1,8 @@
-import Flapjack.PanHProgAssign
+module
+
+public import Flapjack.PanHProgAssign
+
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `h_prog_assign_def`

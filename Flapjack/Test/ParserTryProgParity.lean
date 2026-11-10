@@ -1,4 +1,11 @@
-import Flapjack.Parser.Grammar
+module
+
+public import Flapjack.Parser.Grammar
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Parser.Lexer
+public meta import Flapjack.Parser.Grammar
+@[expose] public section
 
 namespace Flapjack.Test.ParserTryProgParity
 

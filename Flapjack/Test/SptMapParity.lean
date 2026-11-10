@@ -1,4 +1,8 @@
-import Flapjack.Misc.Sptree.Map
+module
+
+public import Flapjack.Misc.Sptree.Map
+
+@[expose] public section
 
 namespace Flapjack.Test.SptMapParity
 open Flapjack

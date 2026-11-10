@@ -1,4 +1,14 @@
-import Flapjack.Misc.MachineIeee
+module
+
+public import Flapjack.Misc.MachineIeee
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Misc.MachineIeee
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Direct HOL oracle rows for the binary64 comparison and sign operations

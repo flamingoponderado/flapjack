@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdate
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ListUpdate
+
+@[expose] public section
 open Flapjack.Compiler.Backend.WordToStack
 
 -- lu_output_0_0_0

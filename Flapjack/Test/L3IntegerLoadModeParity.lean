@@ -1,4 +1,12 @@
-import Flapjack.RiscV.L3.Defs.IntegerLoadMode
+module
+
+public import Flapjack.RiscV.L3.Defs.IntegerLoadMode
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 namespace Flapjack.Test.L3IntegerLoadModeParity
 open Flapjack.RiscV.L3
 

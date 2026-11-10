@@ -1,4 +1,10 @@
-import Flapjack.RiscV.CorrectnessColour
+module
+
+public import Flapjack.RiscV.CorrectnessColour
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.RiscV.CorrectnessColour
+@[expose] public section
 
 /-! The matching HOL observations on `check_colouring_ok_alt`'s assignment
     write/live-after set are in

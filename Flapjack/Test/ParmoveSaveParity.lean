@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.StepSem.Save
+module
+
+public import Flapjack.Compiler.Backend.Parmove.StepSem.Save
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveSaveParity
 open Flapjack.Compiler.Backend.Parmove
 private def env : Option Nat → Nat := fun x => match x with

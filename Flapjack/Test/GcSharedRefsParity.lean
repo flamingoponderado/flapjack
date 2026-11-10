@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordGcFunctions
+module
+
+public import Flapjack.Compiler.Backend.WordGcFunctions
+
+@[expose] public section
 
 /-! Kernel regression for the `refs_to_addresses` port over the faithful
 `gc_shared` carriers.

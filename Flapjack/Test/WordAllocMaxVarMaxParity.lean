@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocMaxVarMaxParity
 open Compiler.Backend.WordAlloc

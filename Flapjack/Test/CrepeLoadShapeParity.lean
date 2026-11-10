@@ -1,21 +1,44 @@
-import Flapjack.Pancake.CrepLang
-import Flapjack.Pancake.CrepLang.Exp
-import Flapjack.Pancake.PanToCrep
-import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
-import Flapjack.Pancake.PanGlobalsByteRanged
-import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
-import Flapjack.Pancake.PanStructs.CompileDeclsExact
-import Flapjack.CompileFunctionDistinct
-import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
-import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
-import Flapjack.Pancake.CrepInline.InlineRouteNames
-import Flapjack.Pancake.LoopToWord.CompFuncExact
-import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
-import Flapjack.RiscV.WordDiagnostics
-import Flapjack.RiscV.WordFuseConditions
-import Flapjack.RiscV.WordUnreach
-import Flapjack.RiscV.Lab
-import Flapjack.Display
+module
+
+public import Flapjack.Pancake.CrepLang
+public import Flapjack.Pancake.CrepLang.Exp
+public import Flapjack.Pancake.PanToCrep
+public import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
+public import Flapjack.Pancake.PanGlobalsByteRanged
+public import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
+public import Flapjack.Pancake.PanStructs.CompileDeclsExact
+public import Flapjack.CompileFunctionDistinct
+public import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
+public import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
+public import Flapjack.Pancake.CrepInline.InlineRouteNames
+public import Flapjack.Pancake.LoopToWord.CompFuncExact
+public import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+public import Flapjack.RiscV.WordDiagnostics
+public import Flapjack.RiscV.WordFuseConditions
+public import Flapjack.RiscV.WordUnreach
+public import Flapjack.RiscV.Lab
+public import Flapjack.Display
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CompileFunctionDistinct
+public meta import Flapjack.Display
+public meta import Flapjack.Pancake.CrepInline.InlineRouteNames
+public meta import Flapjack.Pancake.CrepLang
+public meta import Flapjack.Pancake.CrepLang.Exp
+public meta import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
+public meta import Flapjack.Pancake.LoopToWord.CompFuncExact
+public meta import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+public meta import Flapjack.Pancake.PanGlobalsByteRanged
+public meta import Flapjack.Pancake.PanStructs.CompileDeclsExact
+public meta import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
+public meta import Flapjack.Pancake.PanToCrep
+public meta import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
+public meta import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
+public meta import Flapjack.RiscV.Lab
+public meta import Flapjack.RiscV.WordDiagnostics
+public meta import Flapjack.RiscV.WordFuseConditions
+public meta import Flapjack.RiscV.WordUnreach
+@[expose] public section
 
 /-!
 # Original-domain parity for `crepLang$load_shape`

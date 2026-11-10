@@ -1,5 +1,12 @@
-import Flapjack.RiscV.CakeAllocatorCore
-import Flapjack.RiscV.CakeSsaTemp
+module
+
+public import Flapjack.RiscV.CakeAllocatorCore
+public import Flapjack.RiscV.CakeSsaTemp
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.RiscV.CakeAllocatorCore
+public meta import Flapjack.RiscV.CakeSsaTemp
+@[expose] public section
 
 /-! Direct HOL parity for CakeML `full_ssa_cc_trans` temporary numbering.
     Fixtures are in `scripts/hol-probes/cake_ssa_temp_probe.out`. -/

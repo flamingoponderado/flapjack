@@ -1,4 +1,8 @@
-import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+module
+
+public import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+
+@[expose] public section
 namespace Flapjack.Test.WordConvsProgramMonoParity
 private def pm_skip : WordLangProgHOL (BitVec 1) := .skip
 example : everyVarHOL (fun x => decide (x ≤ 0)) pm_skip = true ∧

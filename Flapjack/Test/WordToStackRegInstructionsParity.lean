@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundInstructions
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundInstructions
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackRegInstructionsParity
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackProps

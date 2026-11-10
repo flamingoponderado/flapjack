@@ -1,4 +1,11 @@
-import Flapjack.RiscV.PipelineDiagnostics
+module
+
+public import Flapjack.RiscV.PipelineDiagnostics
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.Semantics.WordSem
+public meta import Flapjack.RiscV.PipelineDiagnostics
+@[expose] public section
 
 /-!
 # Cake register-renaming oracle for the source-facing ABI adapter

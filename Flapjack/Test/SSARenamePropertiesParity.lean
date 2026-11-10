@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
+
+@[expose] public section
 namespace Flapjack.Test.SSARenamePropertiesParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 -- These claims apply the full public theorem, including final map correctness.

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.Worklists
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Worklists
+
+@[expose] public section
 
 namespace Flapjack.Test.RegAllocWorklistsParity
 open Flapjack.RegAlloc Flapjack.Translator.Monadic.MonadBase

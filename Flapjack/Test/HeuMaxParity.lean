@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.HeuMax
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.HeuMax
+
+@[expose] public section
 
 namespace Flapjack.Test.HeuMaxParity
 open Flapjack Flapjack.WordAlloc

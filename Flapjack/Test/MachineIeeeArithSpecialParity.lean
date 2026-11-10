@@ -1,4 +1,12 @@
-import Flapjack.FpSemHOL
+module
+
+public import Flapjack.FpSemHOL
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Direct HOL oracle rows for the non-rounding branches of the binary64 arithmetic

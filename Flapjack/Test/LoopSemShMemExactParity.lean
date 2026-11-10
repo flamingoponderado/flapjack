@@ -1,4 +1,12 @@
-import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
+module
+
+public import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.MemOp
+public meta import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
+public meta import Flapjack.Pancake.WordLang
+@[expose] public section
 
 /-! Direct HOL parity for the exact loopSem shared-memory helpers.  Each
     `#guard` is a checked-in HOL `EVAL` row of

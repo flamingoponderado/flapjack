@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.BackendPasses.Data
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
-import Flapjack.CakeParser.Frontend
+module
+
+public import Flapjack.Compiler.Backend.BackendPasses.Data
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+public import Flapjack.CakeParser.Frontend
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CakeParser.Frontend
+public meta import Flapjack.Compiler.Backend.BackendPasses.Data
+public meta import Flapjack.Compiler.Backend.RiscVConfig.Executable
+@[expose] public section
 
 /-! `scripts/check-cake-data-explore.py` compares the entire captured output
 with pinned CakeML. This guard checks that the capture succeeds for that input. -/

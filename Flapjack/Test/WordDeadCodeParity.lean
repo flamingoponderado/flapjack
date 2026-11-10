@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.WordUnreach
-import Flapjack.RiscV.CakeRegAlloc
-import Flapjack.Compiler.Backend.WordCse.ListOrder
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
-import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
-import Flapjack.RiscV.WordExpressionFlatten
+module
+
+public import Flapjack.Compiler.Backend.WordUnreach
+public import Flapjack.RiscV.CakeRegAlloc
+public import Flapjack.Compiler.Backend.WordCse.ListOrder
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+public import Flapjack.RiscV.WordExpressionFlatten
+
+@[expose] public section
 
 namespace Flapjack.Test.WordDeadCodeParity
 

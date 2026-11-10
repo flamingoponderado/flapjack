@@ -1,6 +1,14 @@
-import Flapjack.Pancake.CrepToLoop
-import Flapjack.Pancake.CrepToLoop.ContextExact
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Pancake.CrepToLoop
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+public import Flapjack.Basis.Pure.MlString
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.Pancake.CrepToLoop
+public meta import Flapjack.Pancake.CrepToLoop.ContextExact
+@[expose] public section
 
 /-! Direct parity for `crep_to_loop$find_lab` (`find_lab_def`, line 27). -/
 namespace Flapjack.Test.CrepFindLabParity

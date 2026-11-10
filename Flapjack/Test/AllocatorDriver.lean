@@ -1,5 +1,9 @@
-import Flapjack.RiscV.OracleAllocator
-import Flapjack.RiscV.AllocatorCorrectness
+module
+
+public import Flapjack.RiscV.OracleAllocator
+public import Flapjack.RiscV.AllocatorCorrectness
+
+@[expose] public section
 
 /-!
 Regression coverage for the composed CakeML allocator decision boundary.

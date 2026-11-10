@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackProps.LabelSafety
-import Mathlib.Data.Set.Insert
+module
+
+public import Flapjack.Compiler.Backend.StackProps.LabelSafety
+public import Mathlib.Data.Set.Insert
+
+@[expose] public section
 
 namespace Flapjack.Test.StackPropsLabelSafetyParity
 open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackProps

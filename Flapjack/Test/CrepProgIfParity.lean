@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepToLoop
+module
+
+public import Flapjack.Pancake.CrepToLoop
+
+@[expose] public section
 
 /-!
 Direct parity for `crep_to_loop$prog_if` (`crep_to_loopScript.sml:34`).

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Parmove
+module
+
+public import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Parmove
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmovePreservesMovesParmoveParity
 open Flapjack.Compiler.Backend.Parmove

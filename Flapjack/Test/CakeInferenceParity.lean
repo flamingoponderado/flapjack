@@ -1,5 +1,14 @@
-import Flapjack.Compiler.Inference.Infer
-import Flapjack.Compiler.Inference.Unify
+module
+
+public import Flapjack.Compiler.Inference.Infer
+public import Flapjack.Compiler.Inference.Unify
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Inference.InferT
+public meta import Flapjack.Compiler.Inference.Unify
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Compiler.Inference.Infer
+@[expose] public section
 
 /-! Original inference substitutions and unification captured from HOL. -/
 namespace Flapjack.Test.CakeInferenceParity

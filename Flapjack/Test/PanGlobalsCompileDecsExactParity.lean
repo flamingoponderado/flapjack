@@ -1,4 +1,10 @@
-import Flapjack.Pancake.PanGlobals.CompileExpExact
+module
+
+public import Flapjack.Pancake.PanGlobals.CompileExpExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanGlobals.CompileExpExact
+@[expose] public section
 
 /-! Direct replay of the captured original HOL rows in
 `scripts/hol-probes/pan_globals_compile_decs_probe.out` against the exact

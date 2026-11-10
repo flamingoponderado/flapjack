@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Encoders.RiscV.Target.State
-import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+module
+
+public import Flapjack.Compiler.Encoders.RiscV.Target.State
+public import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+
+@[expose] public section
 
 /-! Whole original native config projections and all immediate-policy classes.
 Finite policy fixtures are not universal cross-language equivalence; the encoder

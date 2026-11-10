@@ -1,4 +1,12 @@
-import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Direct-HOL `evaluate_shape_invariant_ret_inst2` regression. The paired
 `scripts/hol-probes/pan_to_crep_ret_inst2_probe.out` records all five HOL

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
+
+@[expose] public section
 namespace Flapjack.Test.WordToStackBitmapAppendParity
 open Flapjack.StackSem Flapjack.WordToStackProofs
 example : readBitmap (width := 8) [13] ≠ none ∧

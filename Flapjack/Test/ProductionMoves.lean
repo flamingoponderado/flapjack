@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.ProductionMoves
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.ProductionMoves
+
+@[expose] public section
 
 namespace Flapjack.Test.ProductionMoves
 open Flapjack RiscV Flapjack.ProductionMoves

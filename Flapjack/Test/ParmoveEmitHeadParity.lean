@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.StepSem.EmitHead
+module
+
+public import Flapjack.Compiler.Backend.Parmove.StepSem.EmitHead
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveEmitHeadParity
 open Flapjack.Compiler.Backend.Parmove
 private def env : Option Nat → Nat := fun x => match x with

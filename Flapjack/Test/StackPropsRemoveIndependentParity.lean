@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.RemoveNames
+module
+
+public import Flapjack.Compiler.Backend.StackProps.RemoveNames
+
+@[expose] public section
 
 namespace Flapjack.Test.StackPropsRemoveIndependentParity
 open Flapjack Flapjack.Compiler.Backend.StackLang

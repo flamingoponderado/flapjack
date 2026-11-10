@@ -1,4 +1,11 @@
-import Flapjack.Pancake.LoopCall
+module
+
+public import Flapjack.Pancake.LoopCall
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.LoopCall
+public meta import Flapjack.Pancake.LoopLang
+@[expose] public section
 
 /-!
 # Original-domain parity for `loop_call$comp`

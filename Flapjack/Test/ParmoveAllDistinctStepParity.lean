@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.AllDistinct.Step
+module
+
+public import Flapjack.Compiler.Backend.Parmove.AllDistinct.Step
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveAllDistinctStepParity
 open Flapjack.Compiler.Backend.Parmove
 private def destinations {α : Type} (s : State α) : List (Option α) :=

@@ -1,6 +1,10 @@
-import Flapjack.RiscV.L3.Defs
-import Flapjack.Misc.BinaryIeeeDirectedFp32
-import Flapjack.Misc.BinaryIeeeDirectedFp64
+module
+
+public import Flapjack.RiscV.L3.Defs
+public import Flapjack.Misc.BinaryIeeeDirectedFp32
+public import Flapjack.Misc.BinaryIeeeDirectedFp64
+
+@[expose] public section
 /-! Original native multiply/add/subtract equations retain separate product
 rounding and final sign negation. Symbolic invalid-product cases retain the
 original nested choices; no NaN payload is fixed. Numeric state fixtures are

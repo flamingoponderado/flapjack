@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.WordCse.ListOrder
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
-import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
-import Std.Data.TreeMap
+module
+
+public import Flapjack.Compiler.Backend.WordCse.ListOrder
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+public import Std.Data.TreeMap
+
+@[expose] public section
 
 /-! Source-shaped instruction-key observations at the actual CSE boundary.
 Memory catch-all keys are distinct from load-fact keys. No simulation claim. -/

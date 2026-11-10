@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.PaddingLength
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.PaddingLength
+
+@[expose] public section
 
 namespace Flapjack.Test.LabToTargetPaddingLengthParity
 open Flapjack.Compiler.Backend.LabToTarget

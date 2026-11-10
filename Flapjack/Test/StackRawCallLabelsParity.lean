@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.Labels
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.Labels
+
+@[expose] public section
 /-! Generic proof application and complete independent original label-set pairs. -/
 namespace Flapjack.Test.StackRawCallLabelsParity
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackRawCall Flapjack.StackSem

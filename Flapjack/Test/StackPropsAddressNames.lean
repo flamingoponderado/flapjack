@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.AddressNames
+module
+
+public import Flapjack.Compiler.Backend.StackProps.AddressNames
+
+@[expose] public section
 namespace Flapjack.Test.StackPropsAddressNames
 open Flapjack.Compiler.Backend.StackProps Flapjack.Compiler.Encoders.Asm
 -- Original HOL word_min=T

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
+
+@[expose] public section
 
 /-! Kernel replay of the direct HOL observations in
 `scripts/hol-probes/stacksem_labels_probe.out`. The loc_check positive

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabSem.FpUpdates
-import Flapjack.Misc.BinaryIeeeArithFp64
-import Flapjack.Misc.BinaryIeeeSqrtFp64
+module
+
+public import Flapjack.Compiler.Backend.LabSem.FpUpdates
+public import Flapjack.Misc.BinaryIeeeArithFp64
+public import Flapjack.Misc.BinaryIeeeSqrtFp64
+
+@[expose] public section
 
 /-! Kernel replay of the identical symbolic-state direct original HOL fixtures
 in scripts/hol-probes/labsem_fp_updates_probe.out. Finite regression coverage,

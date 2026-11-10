@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabSem.Updates
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Updates
+
+@[expose] public section
 
 /-! Kernel replays of the original labsem_updates_probe.out observations.
 Failure preserves writes, total maps retain other keys, and FP values retain raw64 bits. -/

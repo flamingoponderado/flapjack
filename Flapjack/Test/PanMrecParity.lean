@@ -1,5 +1,12 @@
-import Flapjack.PanMrec
-import Flapjack.Ffi
+module
+
+public import Flapjack.PanMrec
+public import Flapjack.Ffi
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Ffi
+public meta import Flapjack.PanMrec
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `mrec_def`

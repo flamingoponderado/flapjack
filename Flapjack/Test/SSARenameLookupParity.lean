@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
+
+@[expose] public section
 namespace Flapjack.Test.SSARenameLookupParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 private def observe (names : List Nat) (ssa : Spt Nat) (next : Nat) (keys : List Nat) :=

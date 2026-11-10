@@ -1,5 +1,12 @@
-import Flapjack.Pancake.CrepLang
-import Flapjack.Pancake.CrepInline
+module
+
+public import Flapjack.Pancake.CrepLang
+public import Flapjack.Pancake.CrepInline
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.CrepInline
+public meta import Flapjack.Pancake.CrepLang
+@[expose] public section
 
 /-!
 # Original-domain parity for `crepLang$nested_seq`

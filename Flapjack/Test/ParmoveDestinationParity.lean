@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.DestinationMembership
+module
+
+public import Flapjack.Compiler.Backend.Parmove.DestinationMembership
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveDestinationParity
 open Flapjack.Compiler.Backend.Parmove
 -- pv_destination_terminal

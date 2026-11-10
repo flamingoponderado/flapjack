@@ -1,5 +1,16 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Call
-import Flapjack.Compiler.Backend.Semantics.StackSem.LeafTransfers
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Call
+public import Flapjack.Compiler.Backend.Semantics.StackSem.LeafTransfers
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.Semantics.StackSem.Call
+public meta import Flapjack.Compiler.Backend.Semantics.StackSem.LeafTransfers
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Replay of ten direct original HOL `evaluate` observations in
 `stacksem_call_indirect_probe.out` (find_code645-651 and Call861-892).

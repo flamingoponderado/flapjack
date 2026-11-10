@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterLabels
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterLabels
+
+@[expose] public section
 
 /-! Kernel fixtures for the five original register-write label rows.
 The theorem is instantiated non-vacuously without register/frame bounds. -/

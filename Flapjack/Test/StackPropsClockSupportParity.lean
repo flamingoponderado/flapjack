@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.ClockSupport
+module
+
+public import Flapjack.Compiler.Backend.StackProps.ClockSupport
+
+@[expose] public section
 
 /-! Kernel replay of the ten original clock_neutral observations. This tests
 accepted/rejected constructors and recursive conjunctions, not evaluation. -/

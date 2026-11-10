@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.PresLang.Source
-import Flapjack.CakeParser.Frontend
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Source
+public import Flapjack.CakeParser.Frontend
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CakeParser.Frontend
+public meta import Flapjack.Compiler.Backend.PresLang.Source
+@[expose] public section
 
 /-! The expected text is the `original source code` section emitted by the
 pinned CakeML compiler with `--explore --exclude_prelude=true`. -/

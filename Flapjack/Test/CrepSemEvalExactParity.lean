@@ -1,5 +1,17 @@
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.Semantics.CrepProps
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.Semantics.CrepProps
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.AstHOL
+public meta import Flapjack.Pancake.CrepLang
+public meta import Flapjack.Pancake.CrepLang.Exp
+public meta import Flapjack.Pancake.Semantics.PanSem
+public meta import Flapjack.Pancake.WordLang
+public meta import Flapjack.Pancake.Semantics.CrepProps
+public meta import Flapjack.Pancake.Semantics.CrepSem.HOLState
+@[expose] public section
 
 /-!
 Direct original-HOL evaluator rows for the exact executable `crepSem$eval_def`

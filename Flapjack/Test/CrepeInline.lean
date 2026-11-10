@@ -1,4 +1,16 @@
-import Flapjack.Pancake.CrepInline
+module
+
+public import Flapjack.Pancake.CrepInline
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.CrepInline
+public meta import Flapjack.Pancake.CrepLang
+public meta import Flapjack.Pancake.CrepLang.Exp
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack
 

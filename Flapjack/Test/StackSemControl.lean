@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+
+@[expose] public section
 
 /-! Flapjack-specific kernel checks of code lookup rejection and clock-state
 preservation. These are infrastructure checks, not additional HOL theorem ports. -/

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
+module
+
+public import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmoveDestinationWrapperParity
 open Flapjack.Compiler.Backend.Parmove

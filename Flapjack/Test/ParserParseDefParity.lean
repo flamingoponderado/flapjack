@@ -1,4 +1,10 @@
-import Flapjack.Parser
+module
+
+public import Flapjack.Parser
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Parser
+@[expose] public section
 
 /-! Direct source-shaped coverage for
     `cakeml/pancake/parser/panPEGScript.sml:482`, `parse_def`.

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.Initialization.FullStateRel
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization.FullStateRel
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetInitializerFullStateRelParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabLang

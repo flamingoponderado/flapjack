@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Evaluate
+
+@[expose] public section
 
 /-! Control-flow observations for data-language evaluation. -/
 namespace Flapjack.Test.DataSemEvaluate

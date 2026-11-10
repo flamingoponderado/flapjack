@@ -1,4 +1,14 @@
-import Flapjack.Pancake.LoopLive
+module
+
+public import Flapjack.Pancake.LoopLive
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.LoopLive
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Direct parity for the exact `loopCallCompHOL` port of `loop_call$comp`
     (`loop_callScript.sml:18-98`) and `optimiseHOL` of `loop_live$optimise`

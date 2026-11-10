@@ -1,4 +1,8 @@
-import Flapjack.RiscV.LabToTargetRoute
+module
+
+public import Flapjack.RiscV.LabToTargetRoute
+
+@[expose] public section
 
 namespace Flapjack.Test.FrameFfiNames
 

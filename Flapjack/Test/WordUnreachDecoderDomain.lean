@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordUnreach.ProductionDecoderDomain
+module
+
+public import Flapjack.Compiler.Backend.WordUnreach.ProductionDecoderDomain
+
+@[expose] public section
 
 /-! Decoder-boundary regressions, distinct from the unchanged original
 word_unreach branch fixtures. Rejected instruction leaves remain failures

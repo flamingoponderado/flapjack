@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPreservation
-import Flapjack.Compiler.Backend.LabProps.LabelExtractionValidity
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPreservation
+public import Flapjack.Compiler.Backend.LabProps.LabelExtractionValidity
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetLookupPrerequisitesParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Backend.LabProps.LabelSets Flapjack.Compiler.Backend.LabLang

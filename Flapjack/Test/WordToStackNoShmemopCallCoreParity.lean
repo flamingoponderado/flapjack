@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCallCore
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCallCore
+
+@[expose] public section
 
 /-! Identical-input original helper predicate regressions, not cross-language
 agreement or instrumentation evaluation correctness. -/

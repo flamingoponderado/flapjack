@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.GenGc
-import Flapjack.Compiler.Backend.GenGcPartial
-import Flapjack.Compiler.Backend.GcCombined.Collector
+module
+
+public import Flapjack.Compiler.Backend.GenGc
+public import Flapjack.Compiler.Backend.GenGcPartial
+public import Flapjack.Compiler.Backend.GcCombined.Collector
+
+@[expose] public section
 
 /-! HOL observations captured in `data_to_word_gc_stack_probe.out`. -/
 namespace Flapjack.Test.AbstractGenerationalGcParity

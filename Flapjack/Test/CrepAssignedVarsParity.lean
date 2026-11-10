@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Semantics.CrepProps
+module
+
+public import Flapjack.Pancake.Semantics.CrepProps
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.CrepProps
+@[expose] public section
 
 /-!
 Parity checks for the `crepProps` assigned-variable theorems ported into

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabSem.Arithmetic
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Arithmetic
+
+@[expose] public section
 
 /-! Native kernel replays of labsem_arithmetic_probe.out. Includes all8 cases,
 Loc errors and self-OR, shift/division retained failure writes, signed overflow

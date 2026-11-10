@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.FloatNames
+module
+
+public import Flapjack.Compiler.Backend.StackProps.FloatNames
+
+@[expose] public section
 namespace Flapjack.Test.StackPropsFloatNames
 open Flapjack.Compiler.Backend.StackProps Flapjack.Compiler.Encoders.Asm
 -- Original HOL fpLess=T

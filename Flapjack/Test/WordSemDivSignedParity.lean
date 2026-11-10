@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Kernel replay of original wordSem inst_def observations from
 scripts/hol-probes/word_sem_div_signed_probe.out. All states are updates of

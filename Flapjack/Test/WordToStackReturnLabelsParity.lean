@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnLabels
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.ReturnLabels
+
+@[expose] public section
 
 /-! Whole native return-copy ASTs and continuation label observations, checked
 against fresh original HOL captures. Regression checks are not equivalence proofs. -/

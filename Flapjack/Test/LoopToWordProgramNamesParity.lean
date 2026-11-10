@@ -1,4 +1,8 @@
-import Flapjack.Pancake.LoopToWord.Proofs.ProgramNames
+module
+
+public import Flapjack.Pancake.LoopToWord.Proofs.ProgramNames
+
+@[expose] public section
 
 namespace Flapjack.Test.LoopToWordProgramNamesParity
 open Flapjack Flapjack.LoopToWord

@@ -1,7 +1,11 @@
-import Flapjack.RiscV.SpillCosts
-import Flapjack.RiscV.OracleAllocator
-import Flapjack.RiscV.AllocatorCorrectness
-import Flapjack.RiscV.LinearScan
+module
+
+public import Flapjack.RiscV.SpillCosts
+public import Flapjack.RiscV.OracleAllocator
+public import Flapjack.RiscV.AllocatorCorrectness
+public import Flapjack.RiscV.LinearScan
+
+@[expose] public section
 
 /-! Regression coverage for the composed heuristic allocation decision. -/
 

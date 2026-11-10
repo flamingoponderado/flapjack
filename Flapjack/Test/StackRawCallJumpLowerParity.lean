@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.JumpLower
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.JumpLower
+
+@[expose] public section
 
 namespace Flapjack.Test.StackRawCallJumpLowerParity
 open Flapjack Flapjack.Compiler.Backend.StackLang

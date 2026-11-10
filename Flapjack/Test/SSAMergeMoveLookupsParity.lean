@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveLookups
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveLookups
+
+@[expose] public section
 
 namespace Flapjack.Test.SSAMergeMoveLookupsParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc

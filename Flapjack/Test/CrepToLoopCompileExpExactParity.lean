@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepToLoop.ContextExact
+module
+
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+
+@[expose] public section
 
 /-! Direct cases for the exact-carrier `crep_to_loop$compile_exp_def` port.
 The expected equations are from `scripts/hol-probes/crep_to_loop_compile_exp_probe.out`.

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
-import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
-import Std.Data.TreeMap
-import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
+module
+
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+public import Std.Data.TreeMap
+public import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
+
+@[expose] public section
 open Flapjack.RiscV Flapjack.Compiler.Backend.WordCse

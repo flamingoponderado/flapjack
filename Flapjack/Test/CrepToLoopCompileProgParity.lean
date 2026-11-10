@@ -1,5 +1,16 @@
-import Flapjack.Pancake.CrepToLoop.ContextExact
-import Flapjack.Pancake.CrepToLoop.StateRel
+module
+
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+public import Flapjack.Pancake.CrepToLoop.StateRel
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.CrepToLoop.ContextExact
+public meta import Flapjack.Pancake.CrepToLoop.StateRel
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Exact-carrier parity for `crep_to_loop$compile_prog_def`

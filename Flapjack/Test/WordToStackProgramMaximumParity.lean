@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
+
+@[expose] public section
 
 /-! Same-input kernel replay of fresh original full-program maxima. Every
 production constructor is covered, with recursive Call forms, duplicate

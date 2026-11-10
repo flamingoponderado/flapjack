@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
+
+@[expose] public section
 namespace Flapjack.Test.StackRemoveInitLimits
 open Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
 

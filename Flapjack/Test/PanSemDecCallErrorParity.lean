@@ -1,6 +1,18 @@
-import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.PanValueFfiClockSemantics
-import Flapjack.Test.PanValueFfiCore
+module
+
+public import Flapjack.Pancake.Semantics.PanSem
+public import Flapjack.PanValueFfiClockSemantics
+public import Flapjack.Test.PanValueFfiCore
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.PanValueFfiCore
+public meta import Flapjack.PanValueFfiClockSemantics
+public meta import Flapjack.Pancake.Semantics.PanSem
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Parity for the Pancake `DecCall` Error result

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocGetHeuristicsParity
 open Flapjack WordAlloc

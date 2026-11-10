@@ -1,4 +1,8 @@
-import Flapjack.RiscV.WordExpressionFlatten
+module
+
+public import Flapjack.RiscV.WordExpressionFlatten
+
+@[expose] public section
 
 namespace Flapjack.RiscV
 

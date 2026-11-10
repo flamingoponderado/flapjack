@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.PanToCrep
+@[expose] public section
 
 /-!
 Regression for the exact HOL shared-memory helper ports over the exact

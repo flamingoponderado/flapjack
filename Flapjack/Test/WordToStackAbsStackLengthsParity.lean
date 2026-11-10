@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackAbsStackLengthsParity
 open Flapjack.WordToStackProofs

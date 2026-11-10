@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordInst
+module
+
+public import Flapjack.Compiler.Backend.WordInst
+
+@[expose] public section
 
 /-!
 # `word_inst` replay of fresh original HOL evaluations

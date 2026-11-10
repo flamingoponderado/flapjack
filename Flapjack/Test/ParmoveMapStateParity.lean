@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.MapState
+module
+
+public import Flapjack.Compiler.Backend.Parmove.MapState
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveMapStateParity
 open Flapjack.Compiler.Backend.Parmove
 example : mapState (fun x => x + 1 : Nat → Nat) ([],[],[]) = ([],[],[]) := by decide

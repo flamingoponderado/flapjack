@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.Exceptions
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Exceptions
+
+@[expose] public section
 
 namespace Flapjack.Translator.Monadic.MonadBase
 

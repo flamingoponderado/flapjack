@@ -1,4 +1,10 @@
-import Flapjack.PanSetKvar
+module
+
+public import Flapjack.PanSetKvar
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanSetKvar
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `set_kvar_def`

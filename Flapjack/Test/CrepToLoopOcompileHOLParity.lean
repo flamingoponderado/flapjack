@@ -1,4 +1,10 @@
-import Flapjack.Pancake.CrepToLoop.ContextExact
+module
+
+public import Flapjack.Pancake.CrepToLoop.ContextExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.CrepToLoop.ContextExact
+@[expose] public section
 
 /-!
 Build-time replay of the six `crep_to_loop$ocompile_def` direct HOL EVAL rows

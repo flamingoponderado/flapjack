@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.BackendCommon
+module
+
+public import Flapjack.Compiler.Backend.BackendCommon
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.BackendCommon
+public meta import Flapjack.Pancake.Semantics.PanSem
+@[expose] public section
 
 namespace Flapjack.Test.BackendCommonCarryParity
 

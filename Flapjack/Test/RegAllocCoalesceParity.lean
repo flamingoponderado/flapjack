@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.RegAlloc.Coalesce
-import Flapjack.Compiler.Backend.RegAlloc.SpillChoice
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Coalesce
+public import Flapjack.Compiler.Backend.RegAlloc.SpillChoice
+
+@[expose] public section
 
 namespace Flapjack.Test.RegAllocCoalesceParity
 open Flapjack Flapjack.RegAlloc Flapjack.Translator.Monadic.MonadBase

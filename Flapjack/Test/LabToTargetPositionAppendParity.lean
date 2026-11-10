@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.PositionAppend
+
+@[expose] public section
 
 namespace Flapjack.Test.LabToTargetPositionAppendParity
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabToTarget

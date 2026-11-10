@@ -1,4 +1,11 @@
-import Flapjack.LoopObservationalSemantics
+module
+
+public import Flapjack.LoopObservationalSemantics
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.LoopObservationalSemantics
+public meta import Flapjack.PanToCrepMaxList
+@[expose] public section
 
 /-!
 # Source parity for `loopSem$semantics`

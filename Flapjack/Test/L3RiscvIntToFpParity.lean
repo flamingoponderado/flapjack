@@ -1,6 +1,10 @@
-import Flapjack.RiscV.L3.Defs
-import Flapjack.Misc.BinaryIeeeDirectedFp32
-import Flapjack.Misc.BinaryIeeeDirectedFp64
+module
+
+public import Flapjack.RiscV.L3.Defs
+public import Flapjack.Misc.BinaryIeeeDirectedFp32
+public import Flapjack.Misc.BinaryIeeeDirectedFp64
+
+@[expose] public section
 
 /-! All144 original integer-to-FP state observations. Unobserved ARB fields
 are instantiated by defaults. Numeric choice is rewritten using the complete

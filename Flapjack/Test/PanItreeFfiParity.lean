@@ -1,4 +1,10 @@
-import Flapjack.PanItreeFfi
+module
+
+public import Flapjack.PanItreeFfi
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanItreeFfi
+@[expose] public section
 
 /-!
 Lean parity checks for `comp_ffi_def` and its three source branches.  The

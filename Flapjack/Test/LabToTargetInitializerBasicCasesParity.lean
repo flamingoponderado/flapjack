@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.Initialization.BasicCases
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Initialization.BasicCases
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetInitializerBasicCasesParity
 open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabLang

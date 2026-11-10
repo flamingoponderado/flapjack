@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionMergeMoves
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionMergeMoves
+
+@[expose] public section
 
 namespace Flapjack.Test.SSAMergeMovesRouteParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc

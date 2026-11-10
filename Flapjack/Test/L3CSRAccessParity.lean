@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.CSRAccess
+module
+
+public import Flapjack.RiscV.L3.Defs.CSRAccess
+
+@[expose] public section
 namespace Flapjack.Test.L3CSRAccessParity
 open Flapjack.RiscV.L3
 private def fixture (base : riscv_state) (mode p core : Nat) : riscv_state :=

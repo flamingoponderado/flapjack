@@ -1,4 +1,10 @@
-import Flapjack.PanBStateUpdates
+module
+
+public import Flapjack.PanBStateUpdates
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanBStateUpdates
+@[expose] public section
 
 /-!
 # Parity checks for Pancake `set_var_def` on `bstate`

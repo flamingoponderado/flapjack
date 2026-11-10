@@ -1,4 +1,12 @@
-import Flapjack.EvaluateHOL
+module
+
+public import Flapjack.EvaluateHOL
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.SemanticPrimitivesHOL
+public meta import Flapjack.EvaluateHOL
+@[expose] public section
 
 /-! Typed clock-lemma replay and examples captured from pinned HOL. -/
 namespace Flapjack.Test.CakeSourceEvaluateClock

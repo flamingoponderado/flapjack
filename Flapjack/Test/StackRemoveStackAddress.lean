@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackRemove.StackAddress
+module
+
+public import Flapjack.Compiler.Backend.StackRemove.StackAddress
+
+@[expose] public section
 
 
 

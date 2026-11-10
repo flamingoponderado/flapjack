@@ -1,4 +1,8 @@
-import Flapjack.RiscV.Allocator
+module
+
+public import Flapjack.RiscV.Allocator
+
+@[expose] public section
 
 /-! Direct Cake parity for the ordinary Word memory rows of `ssa_cc_trans`.
     These expected forms follow CakeML's `word_allocScript.sml`: Get freshens

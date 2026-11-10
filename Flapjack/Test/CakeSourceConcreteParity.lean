@@ -1,4 +1,11 @@
-import Flapjack.SemanticPrimitivesHOL.Concrete
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Concrete
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.SemanticPrimitivesHOL
+public meta import Flapjack.SemanticPrimitivesHOL.Concrete
+@[expose] public section
 
 /-! Concrete-value observations captured from pinned HOL. -/
 namespace Flapjack.Test.CakeSourceConcreteParity

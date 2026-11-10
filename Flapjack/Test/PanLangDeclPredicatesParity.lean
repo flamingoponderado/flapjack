@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanGlobals
+module
+
+public import Flapjack.Pancake.PanGlobals
+
+@[expose] public section
 
 /-!
 # Pancake declaration predicate/count parity

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterFlip
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterFlip
+
+@[expose] public section
 namespace Flapjack.Test.SSARegisterFlipParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 def observe (next : Nat) : Bool × Bool × Bool × Bool :=

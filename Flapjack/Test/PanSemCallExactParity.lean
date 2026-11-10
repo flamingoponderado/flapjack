@@ -6,8 +6,15 @@
   `call_clause_bad_shape`, `call_clause_handler`, `call_clause_missing_function`,
   `call_clause_clock_zero`).
 -/
-import Flapjack.Pancake.Semantics.PanSem.CallExact
-import Flapjack.Test.PanValueFfiCore
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.CallExact
+public import Flapjack.Test.PanValueFfiCore
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.CallExact
+public meta import Flapjack.Test.PanValueFfiCore
+@[expose] public section
 
 namespace Flapjack.Test.PanSemCallExactParity
 

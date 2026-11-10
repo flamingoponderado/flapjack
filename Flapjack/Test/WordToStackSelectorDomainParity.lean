@@ -1,5 +1,9 @@
-import Flapjack.RiscV.WordExpressionFlatten
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.Domain
+module
+
+public import Flapjack.RiscV.WordExpressionFlatten
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.Domain
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackSelectorDomainParity
 open Flapjack Flapjack.RiscV

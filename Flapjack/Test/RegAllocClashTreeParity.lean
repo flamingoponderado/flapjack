@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.ClashTree
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ClashTree
+
+@[expose] public section
 namespace Flapjack.Test.RegAllocClashTreeParity
 open RegAlloc
 -- Full-tree replay of the eight original reg_alloc_clash_tree_probe rows.

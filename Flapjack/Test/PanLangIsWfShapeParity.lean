@@ -1,4 +1,15 @@
-import Flapjack.Pancake.PanLang.Decl
+module
+
+public import Flapjack.Pancake.PanLang.Decl
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang.Decl
+public meta import Flapjack.Pancake.PanLang.Exp
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Direct HOL-oracle parity for the exact `is_wf_shape`/`is_wf_flds`/`is_wf_ctxt`
 ports (`scripts/hol-probes/pan_lang_is_wf_shape_probe.out`, fifteen rows). The

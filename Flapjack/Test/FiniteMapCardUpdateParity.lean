@@ -1,4 +1,8 @@
-import Flapjack.FiniteMap.CardinalityExact
+module
+
+public import Flapjack.FiniteMap.CardinalityExact
+
+@[expose] public section
 namespace Flapjack.Test.FiniteMapCardUpdateParity
 open Flapjack
 noncomputable section

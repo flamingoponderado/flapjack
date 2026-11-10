@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.EvaluateIgnoreClocks
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetIgnoreClocksParity
 open Flapjack
 example {width : Nat} [NeZero width]

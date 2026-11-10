@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.LabProps
-import Flapjack.Compiler.Encoders.Asm
+module
+
+public import Flapjack.Compiler.Backend.LabProps
+public import Flapjack.Compiler.Encoders.Asm
+
+@[expose] public section
 
 /-! Parity check for the concrete `flattenOps` instantiation of the
 StackToLab `FlattenOps` record over the faithful assembler carriers.

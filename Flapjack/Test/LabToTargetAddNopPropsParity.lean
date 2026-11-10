@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.AddNopProps
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.AddNopProps
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetAddNopPropsParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabToTarget

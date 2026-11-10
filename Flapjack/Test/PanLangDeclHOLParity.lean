@@ -7,11 +7,22 @@ Rows reproduce `scripts/hol-probes/pan_lang_decl_probe.out`:
   d_function_name_len=2 d_decl_name_len=1 d_exn_name_len=2 d_name_fields_len=1
   si_fields_len=1 si_size=7
 -/
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.Pancake.Semantics.PanProps
-import Flapjack.Pancake.PanToCrep.CompileProg
-import Flapjack.Parser.ParseTopDecsByteRanged
-import Flapjack.Pancake.PanGlobals
+module
+
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Pancake.PanToCrep.CompileProg
+public import Flapjack.Parser.ParseTopDecsByteRanged
+public import Flapjack.Pancake.PanGlobals
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CakeParser.Sexp
+public meta import Flapjack.Pancake.PanGlobals
+public meta import Flapjack.Pancake.PanLang.Decl
+public meta import Flapjack.Pancake.PanToCrep.CompileProg
+public meta import Flapjack.Pancake.Semantics.PanProps
+public meta import Flapjack.Parser.ParseTopDecsByteRanged
+@[expose] public section
 
 namespace Flapjack.Test.PanLangDeclHOLParity
 

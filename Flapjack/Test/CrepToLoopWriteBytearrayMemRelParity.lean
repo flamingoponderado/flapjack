@@ -1,4 +1,12 @@
-import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
+module
+
+public import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+public meta import Flapjack.Pancake.Semantics.PanSem
+public meta import Flapjack.Pancake.WordLang
+@[expose] public section
 
 /-!
 # Parity checks for the two sides of `write_bytearray_mem_rel`

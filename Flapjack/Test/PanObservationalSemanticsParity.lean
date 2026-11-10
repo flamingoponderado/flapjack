@@ -1,6 +1,14 @@
-import Flapjack.PanObservationalSemantics
-import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Test.PanValueFfiCore
+module
+
+public import Flapjack.PanObservationalSemantics
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Test.PanValueFfiCore
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.PanValueFfiCore
+public meta import Flapjack.PanObservationalSemantics
+public meta import Flapjack.Pancake.Semantics.PanSemStateEval
+@[expose] public section
 
 /-!
 # Source parity for Pancake `semantics_def`

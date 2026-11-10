@@ -1,4 +1,11 @@
-import Flapjack.CakeParser.PegActions
+module
+
+public import Flapjack.CakeParser.PegActions
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.CakeParser.ParseTree
+public meta import Flapjack.CakeParser.PegActions
+@[expose] public section
 
 /-! Replay the semantic-action trees and locations from pinned HOL. -/
 namespace Flapjack.Test.CakePegActionsParity

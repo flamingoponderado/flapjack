@@ -1,4 +1,15 @@
-import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang.Exp
+public meta import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 Direct HOL observations and exact evaluator regressions for

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.UpdateZero
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.UpdateZero
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetUpdateZeroParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabToTarget

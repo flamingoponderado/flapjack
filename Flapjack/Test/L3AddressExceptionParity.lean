@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.AddressException
+module
+
+public import Flapjack.RiscV.L3.Defs.AddressException
+
+@[expose] public section
 namespace Flapjack.Test.L3AddressExceptionParity
 open Flapjack.RiscV.L3
 

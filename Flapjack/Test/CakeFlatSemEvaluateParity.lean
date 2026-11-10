@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+
+@[expose] public section
 
 /-! Matched observations from `cake_flat_sem_evaluate_probe.out`. The fuel
 bound is separate from the original evaluator's clock. -/

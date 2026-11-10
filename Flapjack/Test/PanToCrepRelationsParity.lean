@@ -1,4 +1,11 @@
-import Flapjack.Pancake.Proofs.PanToCrep
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.PanToCrep
+public meta import Flapjack.Parser.Lexer
+@[expose] public section
 
 /-! Direct original Pancake HOL EVAL coverage for
 `pan_to_crepProof$excp_rel` and `ctxt_fc`; outputs are committed in

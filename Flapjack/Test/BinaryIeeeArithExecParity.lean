@@ -1,4 +1,8 @@
-import Flapjack.Misc.BinaryIeeeArithExec
+module
+
+public import Flapjack.Misc.BinaryIeeeArithExec
+
+@[expose] public section
 
 namespace Flapjack.Test.BinaryIeeeArithExecParity
 open Flapjack

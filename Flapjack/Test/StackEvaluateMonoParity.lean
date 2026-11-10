@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.StackProps.EvaluateMono
+module
+
+public import Flapjack.Compiler.Backend.StackProps.EvaluateMono
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Misc.Sptree
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.StackEvaluateMonoParity
 open Flapjack Flapjack.Compiler.Backend.StackLang

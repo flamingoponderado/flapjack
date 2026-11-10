@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.ProgramNames
+module
+
+public import Flapjack.Compiler.Backend.StackProps.ProgramNames
+
+@[expose] public section
 namespace Flapjack.Test.StackPropsProgramNames
 open Flapjack.Compiler.Backend.StackProps Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm
 -- Original HOL inst_good=T

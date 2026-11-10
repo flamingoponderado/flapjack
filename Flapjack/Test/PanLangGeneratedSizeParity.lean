@@ -1,4 +1,10 @@
-import Flapjack.Pancake.PanLang.Exp
+module
+
+public import Flapjack.Pancake.PanLang.Exp
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanLang.Exp
+@[expose] public section
 
 /-!
 # Generated `panLang` datatype size parity

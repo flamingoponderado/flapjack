@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanLang
+module
+
+public import Flapjack.Pancake.PanLang
+
+@[expose] public section
 
 /-!
 # `panLang$size_of_shape` parity

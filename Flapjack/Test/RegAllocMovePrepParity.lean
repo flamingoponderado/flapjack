@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.RegAlloc.MovePrep
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.MovePrep
+
+@[expose] public section
 
 namespace Flapjack.Test.RegAllocMovePrepParity
 open Flapjack Flapjack.RegAlloc Flapjack.Translator.Monadic.MonadBase

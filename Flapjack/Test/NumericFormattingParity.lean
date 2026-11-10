@@ -1,4 +1,8 @@
-import Flapjack.Misc.Words.Formatting
+module
+
+public import Flapjack.Misc.Words.Formatting
+
+@[expose] public section
 
 set_option maxRecDepth 10000
 

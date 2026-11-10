@@ -1,5 +1,16 @@
-import Flapjack.Pancake.Semantics.LoopSemState
-import Flapjack.Pancake.Semantics.LoopSemStateExact
+module
+
+public import Flapjack.Pancake.Semantics.LoopSemState
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.LoopSemState
+public meta import Flapjack.Pancake.Semantics.LoopSemStateExact
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Exact `loopSem$state` carrier parity

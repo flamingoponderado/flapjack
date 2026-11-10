@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Limits
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Limits
+
+@[expose] public section
 
 /-! Data-language representation-limit boundaries. -/
 namespace Flapjack.Test.DataSemLimits

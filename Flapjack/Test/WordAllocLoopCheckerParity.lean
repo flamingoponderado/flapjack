@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.LoopCases
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.LoopCases
+
+@[expose] public section
 
 namespace Flapjack.Test.WordAllocLoopCheckerParity
 open Flapjack Flapjack.WordAlloc Flapjack.RegAlloc

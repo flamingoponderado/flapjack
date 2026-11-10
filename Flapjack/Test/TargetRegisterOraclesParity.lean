@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetProps.RegisterOracles
+
+@[expose] public section
 
 namespace Flapjack.Test.TargetRegisterOraclesParity
 open Flapjack Flapjack.Compiler.Backend.Semantics.TargetProps

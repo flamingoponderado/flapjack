@@ -15,7 +15,13 @@
   The clause is callback-parameterised, so the fixtures below supply the
   initializer evaluation and the body evaluation directly.
 -/
-import Flapjack.Pancake.Semantics.PanSem.DecExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.DecExact
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.PanSem.DecExact
+@[expose] public section
 
 namespace Flapjack.Test.PanSemDecExactParity
 

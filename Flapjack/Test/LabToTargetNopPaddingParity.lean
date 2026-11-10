@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.NopPadding
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.NopPadding
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetNopPaddingParity
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Encoders.Asm
 private def enc : HolAsm 8 → List Nat | .inst .skip => [9,8] | _ => [1,2]

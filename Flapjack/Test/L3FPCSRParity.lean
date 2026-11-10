@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.CSRDispatch
+module
+
+public import Flapjack.RiscV.L3.Defs.CSRDispatch
+
+@[expose] public section
 namespace Flapjack.Test.L3FPCSRParity
 open Flapjack.RiscV.L3
 -- Independent bit-position expectations from literal source867-892.

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
-import Flapjack.Pancake.PanLang.Decl
+module
+
+public import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
+public import Flapjack.Pancake.PanLang.Decl
+
+@[expose] public section
 
 /-! Regression for the exact-carrier port of
 `pan_structsProofScript.sml:size_of_sh_with_ctxt_drop`, paired with the direct

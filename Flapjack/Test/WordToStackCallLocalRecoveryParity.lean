@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CallLocalRecovery
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallLocalRecovery
+
+@[expose] public section
 open Flapjack Flapjack.WordToStackProofs
 set_option maxRecDepth 8192
 private def base {width : Nat} [NeZero width] : WordSemStateFiniteExact width Unit Unit where

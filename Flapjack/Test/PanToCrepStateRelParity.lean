@@ -1,6 +1,18 @@
-import Flapjack.Pancake.Proofs.PanToCrep
-import Flapjack.Pancake.Semantics.CrepSem
-import Flapjack.Pancake.Semantics.PanCommonProps
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep
+public import Flapjack.Pancake.Semantics.CrepSem
+public import Flapjack.Pancake.Semantics.PanCommonProps
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Semantics.CrepSem
+public meta import Flapjack.Pancake.Proofs.PanToCrep
+public meta import Flapjack.Pancake.Semantics.PanCommonProps
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Nonvacuous checks for the HOL `state_rel_def`, `state_rel_structs`,
 `state_rel_globals`, and `locals_rel_def` ports in

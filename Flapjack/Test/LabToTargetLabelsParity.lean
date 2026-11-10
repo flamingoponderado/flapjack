@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.LabToTarget.Labels
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Labels
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Native kernel replays of `lab_to_target_labels_probe.out`

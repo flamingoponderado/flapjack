@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabelSafety
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabelSafety
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackCodeLabelSafetyParity
 open Flapjack Flapjack.Compiler.Backend.StackLang

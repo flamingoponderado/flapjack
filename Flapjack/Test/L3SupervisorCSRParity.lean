@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.SupervisorCSR
+module
+
+public import Flapjack.RiscV.L3.Defs.SupervisorCSR
+
+@[expose] public section
 namespace Flapjack.Test.L3SupervisorCSRParity
 open Flapjack.RiscV.L3
 -- Original codec_sip_0; independently packed basis/mixed input.

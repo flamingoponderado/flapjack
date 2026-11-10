@@ -14,8 +14,19 @@ and the `example`s apply the ported theorems to concrete lists), plus `#guard`
 rows that the concrete `evaluate_decls` results agree on both orderings.  No
 oracle row is fabricated.
 -/
-import Flapjack.Pancake.Proofs.PanGlobals
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.PanGlobals
+public meta import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.PanGlobalsResortDeclsEvaluateParity
 

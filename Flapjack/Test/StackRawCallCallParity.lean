@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Call
+module
+
+public import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Call
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Compiler.Backend.StackLang
+public meta import Flapjack.Compiler.Backend.StackRawCall
+@[expose] public section
 namespace Flapjack.Test.StackRawCallCallParity
 open Flapjack Flapjack.Compiler.Backend.StackLang StackSemControl
 open Flapjack.Compiler.Backend.StackRawCall

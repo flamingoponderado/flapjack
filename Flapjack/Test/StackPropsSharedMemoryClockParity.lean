@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.SharedMemoryClock
+module
+
+public import Flapjack.Compiler.Backend.StackProps.SharedMemoryClock
+
+@[expose] public section
 
 /-! Original stackprops_shared_memory_clock_probe.out: full native returned,
 terminal, domain-failure and non-word cases. Clock update proofs retain the

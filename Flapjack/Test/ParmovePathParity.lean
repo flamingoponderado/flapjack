@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.Invariants.Path
+module
+
+public import Flapjack.Compiler.Backend.Parmove.Invariants.Path
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmovePathParity
 open Flapjack.Compiler.Backend.Parmove

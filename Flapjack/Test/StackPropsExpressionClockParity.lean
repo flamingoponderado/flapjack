@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.StackProps.ExpressionClock
+module
+
+public import Flapjack.Compiler.Backend.StackProps.ExpressionClock
+
+@[expose] public section
 
 open Flapjack Flapjack.StackSemExpressions
 

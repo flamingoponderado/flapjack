@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation
+
+@[expose] public section
 namespace Flapjack.Test.WordCseLoadEvaluationParity
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.WordCse WordSemStateFiniteExact
 -- ld_any_load_98_1

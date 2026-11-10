@@ -1,4 +1,11 @@
-import Flapjack.Pancake.Proofs.CrepInline
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.Proofs.CrepInline
+public meta import Flapjack.Pancake.Semantics.PanSem.ShMemExact
+@[expose] public section
 
 namespace Flapjack.Test.CrepInlineGenlistParity
 

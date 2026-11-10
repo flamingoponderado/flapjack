@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.UpdatePosition
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.UpdatePosition
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetUpdatePositionParity
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString

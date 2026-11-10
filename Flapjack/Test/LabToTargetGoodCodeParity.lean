@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.GoodCode
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.GoodCode
+
+@[expose] public section
 
 namespace Flapjack.Test.LabToTargetGoodCodeParity
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.LabLang

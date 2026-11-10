@@ -1,4 +1,11 @@
-import Flapjack.SemanticPrimitivesHOL.EvalState
+module
+
+public import Flapjack.SemanticPrimitivesHOL.EvalState
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.SemanticPrimitivesHOL
+public meta import Flapjack.SemanticPrimitivesHOL.EvalState
+@[expose] public section
 
 /-! Eval environment-generation observations captured from pinned HOL. -/
 namespace Flapjack.Test.CakeSourceEvalStateParity

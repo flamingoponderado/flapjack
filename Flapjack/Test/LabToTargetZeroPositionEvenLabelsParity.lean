@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.LabToTarget.ZeroPositionEvenLabels
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.ZeroPositionEvenLabels
+
+@[expose] public section
 namespace Flapjack.Test.LabToTargetZeroPositionEvenLabelsParity
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Encoders.Asm

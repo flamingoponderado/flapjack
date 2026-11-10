@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.GetStackOnly
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.GetStackOnly
+
+@[expose] public section
 namespace Flapjack.Test.WordAllocStackOnlyParity
 open Flapjack Flapjack.WordAlloc
 abbrev P := WordLangProgHOL (BitVec 64)

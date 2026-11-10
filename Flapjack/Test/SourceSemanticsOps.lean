@@ -1,7 +1,21 @@
-import Flapjack.RiscV.PanMemory
-import Flapjack.Semantics
-import Flapjack.LoopSemantics
-import Flapjack.Parser
+module
+
+public import Flapjack.RiscV.PanMemory
+public import Flapjack.Semantics
+public import Flapjack.LoopSemantics
+public import Flapjack.Parser
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.AstHOL
+public meta import Flapjack.LoopSemantics
+public meta import Flapjack.PanValues
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.PanStatic
+public meta import Flapjack.Parser
+public meta import Flapjack.RiscV.Model
+public meta import Flapjack.RiscV.PanMemory
+public meta import Flapjack.Semantics
+@[expose] public section
 
 /-! RISC-V regressions for the complete source shift operation. -/
 

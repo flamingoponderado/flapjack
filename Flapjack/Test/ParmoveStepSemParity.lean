@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.StepSem
+module
+
+public import Flapjack.Compiler.Backend.Parmove.StepSem
+
+@[expose] public section
 namespace Flapjack.Test.ParmoveStepSemParity
 open Flapjack.Compiler.Backend.Parmove
 example (env : Option Nat → Nat) : eqenv (sem ([(some 1,some 1)],[],[]) env) (sem ([],[],[]) env) :=

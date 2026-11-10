@@ -1,4 +1,10 @@
-import Flapjack.SemanticPrimitivesHOL.Array
+module
+
+public import Flapjack.SemanticPrimitivesHOL.Array
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.SemanticPrimitivesHOL.Array
+@[expose] public section
 
 /-! Source array-copy observations captured from pinned HOL. -/
 namespace Flapjack.Test.CakeSourceArrayParity

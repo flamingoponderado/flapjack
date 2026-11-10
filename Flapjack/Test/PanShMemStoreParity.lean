@@ -1,4 +1,10 @@
-import Flapjack.PanShMemStore
+module
+
+public import Flapjack.PanShMemStore
+
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.PanShMemStore
+@[expose] public section
 
 /-!
 # Parity checks for `panSem$sh_mem_store_def`

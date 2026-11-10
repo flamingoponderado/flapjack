@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveLength
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveLength
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackLiveLengthParity
 open Flapjack Flapjack.Compiler.Backend.WordToStack.Native

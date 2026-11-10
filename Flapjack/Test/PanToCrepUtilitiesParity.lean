@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Proofs.PanToCrep
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep
+
+@[expose] public section
 
 /-! Focused regressions for exact utility theorem ports from
 `pan_to_crepProofScript.sml`. -/

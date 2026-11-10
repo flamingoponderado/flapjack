@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
+
+@[expose] public section
 namespace Flapjack.Test.DataMaxHeapLimit
 open Flapjack.Compiler.Backend.DataToWord
 example : maxHeapLimit 1 {tagBits := 0, lenBits := 0, padBits := 0, lenSize := 0, hasDiv := false, hasLongdiv := false, hasFpOps := false, hasFpTern := false, be := false, callEmptyFfi := false, gcKind := .none} = 0 := by decide

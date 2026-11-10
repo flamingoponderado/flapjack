@@ -1,5 +1,9 @@
-import Flapjack.Pancake.WordLang
-import Flapjack.Pancake.WordConvs
+module
+
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Pancake.WordConvs
+
+@[expose] public section
 
 /-! # `every_name` / `every_var` / `every_stack_var` oracle parity
 
