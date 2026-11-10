@@ -286,39 +286,32 @@ theorem compile_decs_exns_are_exnsHOL {width : Nat} [NeZero width] :
       compileDecsExactHOL ctxt code = (decls, funs, exns, ctxt') →
       exns = code.filter isExnDeclHOL := by
   intro ctxt code
-  induction code generalizing ctxt with
-  | nil =>
-      intro decls funs exns ctxt' h
-      simp only [compileDecsExactHOL, Prod.mk.injEq] at h
-      obtain ⟨_, _, rfl, _⟩ := h
-      rfl
-  | cons d ds ih =>
-      intro decls funs exns ctxt' h
-      cases d with
-      | function fi =>
-          simp only [compileDecsExactHOL] at h
-          generalize hr : compileDecsExactHOL (width := width) _ ds = r at h
-          obtain ⟨a, b, c, e⟩ := r
-          simp only [Prod.mk.injEq] at h
-          obtain ⟨_, _, rfl, _⟩ := h
-          simpa using ih _ a b c e hr
-      | decl shape name value =>
-          simp only [compileDecsExactHOL] at h
-          generalize hr : compileDecsExactHOL (width := width) _ ds = r at h
-          obtain ⟨a, b, c, e⟩ := r
-          simp only [Prod.mk.injEq] at h
-          obtain ⟨_, _, rfl, _⟩ := h
-          simpa using ih _ a b c e hr
-      | exnDecl name shape =>
-          simp only [compileDecsExactHOL] at h
-          generalize hr : compileDecsExactHOL (width := width) _ ds = r at h
-          obtain ⟨a, b, c, e⟩ := r
-          simp only [Prod.mk.injEq] at h
-          obtain ⟨_, _, rfl, _⟩ := h
-          simpa using ih _ a b c e hr
-      | name name fields =>
-          simp only [compileDecsExactHOL] at h
-          simpa using ih _ _ _ _ _ h
+  fun_induction compileDecsExactHOL ctxt code with
+  | case1 =>
+    intro decls funs exns ctxt' h
+    simp_all [Prod.mk.injEq]
+  | case2 =>
+    rename_i xh ih
+    intro decls funs exns ctxt' h
+    simp only [Prod.mk.injEq] at h
+    obtain ⟨_, _, rfl, _⟩ := h
+    simpa [isExnDeclHOL] using ih _ _ _ _ xh
+  | case3 =>
+    rename_i xh ih
+    intro decls funs exns ctxt' h
+    simp only [Prod.mk.injEq] at h
+    obtain ⟨_, _, rfl, _⟩ := h
+    simpa [isExnDeclHOL] using ih _ _ _ _ xh
+  | case4 =>
+    rename_i xh ih
+    intro decls funs exns ctxt' h
+    simp only [Prod.mk.injEq] at h
+    obtain ⟨_, _, rfl, _⟩ := h
+    simp [isExnDeclHOL, List.filter_cons, ih _ _ _ _ xh]
+  | case5 =>
+    rename_i ih
+    intro decls funs exns ctxt' h
+    simpa [isExnDeclHOL] using ih _ _ _ _ h
 
 /-- Exact HOL `compile_decs_FILTER_decs` (`pan_globalsProofScript.sml:2822-2825`). -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "compile_decs_FILTER_decs"
