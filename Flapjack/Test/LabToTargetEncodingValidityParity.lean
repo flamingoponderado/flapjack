@@ -142,17 +142,17 @@ example : ¬ lineOk cfg labs ffis 4 (.labAsm (.jump (.lab 1 6)) 0 [0,99] 2) := b
       asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact, asmFpOkExact, asmFpRegOkExact,
       asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact, labInst, asmOkExact]
 
-example : allEncOk cfg labs ffis 3 ([] : LabProgHOL 8) := by 
+example : allEncOk cfg labs ffis 3 ([] : LabProgHOL 8) := by
   simp [allEncOk, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
     asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
     asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
     labInst, asmOkExact]
-example : allEncOk cfg labs ffis 4 [⟨1, []⟩] := by 
+example : allEncOk cfg labs ffis 4 [⟨1, []⟩] := by
   simp [allEncOk, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
     asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
     asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
     labInst, asmOkExact]
-example : ¬ allEncOk cfg labs ffis 3 [⟨1, []⟩] := by 
+example : ¬ allEncOk cfg labs ffis 3 [⟨1, []⟩] := by
   simp [allEncOk, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
     asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
     asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
