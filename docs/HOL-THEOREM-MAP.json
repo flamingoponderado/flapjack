@@ -66,6 +66,24 @@
   "reviewer": "Compared alookup_lemma_replay_typed, which replays the local HOL proof, and independent review: free m precedes the quantifiers, α β γ remain independent, Nonempty is used only for holEl, MAP2 is zip/map, and ALOOKUP is holALookup."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_installed_fromAList_strong",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode/Original.lean", "lean_name": "codeInstalled_fromAList_strong",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_installed_from_alist_strong_replay_typed and independent review: source proof and local IS_SUBLIST_MEM dependency are replayed; IS_SUBLIST ls ls' renders as ls' <:+: ls by IS_SUBLIST_APPEND."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_installed_union",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode/Original.lean", "lean_name": "codeInstalled_union",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_installed_union_typed and independent review: binder order, grouped premise and left-biased union match; DISJOINT is pointwise non-overlap."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_installed_union1",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode/Original.lean", "lean_name": "codeInstalled_union1",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_installed_union1_typed and independent review: binder order and left-biased union preserve installed left-tree code."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "every_Fn_calls_list",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "everyFn_callsList",
   "statement_status": "reviewed_exact",
@@ -118998,22 +119016,6 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Compared annotate_list_typed and annotate_sing_eq_typed: the list free-variable and shift traversals implement the original annotate function at the same arity and empty sparse tree. Source review and Lean checking do not establish cross-language equivalence."
   },
-  {
-  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
-  "lean_name": "compile",
-  "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
-  "hol_name": "compile_def",
-  "statement_status": "documented_mismatch",
-  "reviewer": "The executable uses annotateSing, while HOL compile_def uses the head of the separate source annotate on a singleton. The source definition agrees by compileSource_eq_compile."
-},
-  {
-  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
-  "lean_name": "compileInc",
-  "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
-  "hol_name": "compile_inc_def",
-  "statement_status": "documented_mismatch",
-  "reviewer": "The executable uses annotateList and optimized compile, while HOL compile_inc_def uses the separate source annotate and compile. The source definition agrees by compileIncSource_eq_compileInc."
-},
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Names.lean",
     "lean_name": "getNames",

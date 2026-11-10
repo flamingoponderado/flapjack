@@ -183,6 +183,20 @@ val alookup_lemma_replay = prove(
       \\ rw[])
   \\ Cases_on `n` \\ fs[]);
 val _ = show "alookup_lemma_replay_typed=" alookup_lemma_replay;
+(* Replay the local membership helper and code-installation theorem. *)
+val is_sublist_mem_replay = prove(
+  ``∀ls ls' x. MEM x ls ∧ IS_SUBLIST ls' ls ⇒ MEM x ls'``,
+  Induct >> Induct_on `ls'` >> rw[rich_listTheory.IS_SUBLIST] >>
+  metis_tac[MEM,rich_listTheory.IS_PREFIX_IS_SUBLIST]);
+val code_installed_from_alist_strong_replay = prove(
+  ``∀ls ls'. ALL_DISTINCT (MAP FST ls) ∧ IS_SUBLIST ls ls' ⇒
+    clos_to_bvlProof$code_installed ls' (sptree$fromAList ls)``,
+  srw_tac[][clos_to_bvlProofTheory.code_installed_def, EVERY_MEM,
+    pairTheory.FORALL_PROD, sptreeTheory.lookup_fromAList] >>
+  metis_tac[alistTheory.ALOOKUP_ALL_DISTINCT_MEM,is_sublist_mem_replay]);
+val _ = show "code_installed_from_alist_strong_replay_typed=" code_installed_from_alist_strong_replay;
+val _ = show "code_installed_union_typed=" clos_to_bvlProofTheory.code_installed_union;
+val _ = show "code_installed_union1_typed=" clos_to_bvlProofTheory.code_installed_union1;
 val _ = show "toaList_domain_typed=" miscTheory.toAList_domain;
 val _ = show "sptree_domain_lookup_typed=" sptreeTheory.domain_lookup;
 val _ = show "known_compile_is_some_typed=" clos_knownProofTheory.known_compile_IS_SOME;

@@ -1061,6 +1061,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SourceCompile
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ExpsEquivalence
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArguments
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InstalledCode
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InstalledCode.Original
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureRelation
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Oracle
