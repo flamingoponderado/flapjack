@@ -1,0 +1,2 @@
+get_code_labels_compile=⊢ ∀x. get_code_labels (compile x) = get_code_labels x
+compile_type=:dataLang$prog -> dataLang$prog

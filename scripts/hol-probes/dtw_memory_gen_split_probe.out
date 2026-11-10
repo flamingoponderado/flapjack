@@ -1,0 +1,9 @@
+gen_gc_data_refs_split=∀cc roots heap roots1 s.
+  gen_gc cc (roots,heap) = (roots1,s) ∧ (∀t r. cc.isRef (t,r) ⇔ isMutTag t) ⇒
+  EVERY (λx. ¬isRef x) (s.h1 ++ s.h2) ∧ EVERY isDataElement (s.h1 ++ s.h2) ∧
+  EVERY isRef (s.r1 ++ s.r2 ++ s.r3 ++ s.r4)
+gen_gc_type=:α gen_gc_conf ->
+β heap_address list # (β, α) heap_element list ->
+β heap_address list # (β, α) gc_state
+isRef_type=:(α, tag # β) heap_element -> bool
+isDataElement_type=:(α, β) heap_element -> bool

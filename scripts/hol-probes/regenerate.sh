@@ -9554,3 +9554,51 @@ run_probe bvi_inline_probeScript.sml bvi_inline_probe.out \
   bvi_mk_tick_def_typed canonical_wrapper_def_typed \
   "$cake_dir/compiler/backend/bvi_inlineScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe dtw_assign_size_seen_probeScript.sml dtw_assign_size_seen_probe.out \
+  size_of_cons_seen_Block size_of_type \
+  "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe dtw_memory_gen_split_probeScript.sml dtw_memory_gen_split_probe.out \
+  gen_gc_data_refs_split gen_gc_type isRef_type isDataElement_type \
+  "$cake_dir/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe flat_props_globals_probeScript.sml flat_props_globals_probe.out \
+  elist_globals_eq_empty elist_globals_type \
+  "$cake_dir/compiler/backend/semantics/flatPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe backend_common_tags_probeScript.sml backend_common_tags_probe.out \
+  clos_tag_shift_def \
+  "$cake_dir/compiler/backend/backend_commonScript.sml" "$cake_dir/compiler/backend"
+
+run_probe data_lang_ticks_probeScript.sml data_lang_ticks_probe.out \
+  mk_ticks_def \
+  "$cake_dir/compiler/backend/dataLangScript.sml" "$cake_dir/compiler/backend"
+
+run_probe lexer_impl_tokens_probeScript.sml lexer_impl_tokens_probe.out \
+  lex_aux_tokens_def \
+  "$cake_dir/compiler/parsing/lexer_implScript.sml" "$cake_dir/compiler/parsing"
+
+run_probe unify_subst_probeScript.sml unify_subst_probe.out \
+  capply_subst_def \
+  "$cake_dir/compiler/inference/unifyScript.sml" "$cake_dir/compiler/inference"
+
+run_probe evaluate_sing_env_probeScript.sml evaluate_sing_env_probe.out \
+  sing_env_def \
+  "$cake_dir/semantics/evaluateScript.sml" "$cake_dir/semantics"
+
+run_probe clos_call_syntax_ok_probeScript.sml clos_call_syntax_ok_probe.out \
+  syntax_ok_def every_Fn_SOME_type every_Fn_vs_NONE_type code_locs_type \
+  "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe clos_lang_code_label_probeScript.sml clos_lang_code_label_probe.out \
+  assign_get_code_label_def \
+  "$cake_dir/compiler/backend/closLangScript.sml" "$cake_dir/compiler/backend"
+
+run_probe data_space_code_labels_probeScript.sml data_space_code_labels_probe.out \
+  get_code_labels_compile compile_type \
+  "$cake_dir/compiler/backend/proofs/data_spaceProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe data_props_code_labels_probeScript.sml data_props_code_labels_probe.out \
+  get_code_labels_def \
+  "$cake_dir/compiler/backend/semantics/dataPropsScript.sml" "$cake_dir/compiler/backend/semantics"

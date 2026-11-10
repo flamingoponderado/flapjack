@@ -1,0 +1,1 @@
+clos_tag_shift_def=⊢ ∀tag. clos_tag_shift tag = if tag < 30 then tag else tag + 2

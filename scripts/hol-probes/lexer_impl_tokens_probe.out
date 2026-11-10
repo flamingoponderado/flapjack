@@ -1,0 +1,16 @@
+lex_aux_tokens_def=⊢ ∀input d acc.
+    lex_aux_tokens acc d input =
+    case input of
+      [] => NONE
+    | (token,locs)::rest =>
+      (let
+         new_acc = (token,locs)::acc
+       in
+         if token = SemicolonT ∧ d = 0 then SOME (REVERSE new_acc,rest)
+         else if token = LetT then lex_aux_tokens new_acc (d + 1) rest
+         else if token = StructT then lex_aux_tokens new_acc (d + 1) rest
+         else if token = SigT then lex_aux_tokens new_acc (d + 1) rest
+         else if token = LparT then lex_aux_tokens new_acc (d + 1) rest
+         else if token = EndT then lex_aux_tokens new_acc (d − 1) rest
+         else if token = RparT then lex_aux_tokens new_acc (d − 1) rest
+         else lex_aux_tokens new_acc d rest)

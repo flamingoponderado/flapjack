@@ -1,0 +1,5 @@
+syntax_ok_def=⊢ ∀x. syntax_ok x ⇔
+      every_Fn_SOME x ∧ every_Fn_vs_NONE x ∧ ALL_DISTINCT (code_locs x)
+every_Fn_SOME_type=:closLang$exp list -> bool
+every_Fn_vs_NONE_type=:closLang$exp list -> bool
+code_locs_type=:closLang$exp list -> num list

@@ -1,0 +1,7 @@
+assign_get_code_label_def=⊢ assign_get_code_label (Label x) = {x} ∧
+  assign_get_code_label (FFI v1) = ∅ ∧ assign_get_code_label (IntOp v2) = ∅ ∧
+  assign_get_code_label (WordOp v3) = ∅ ∧
+  assign_get_code_label (BlockOp v4) = ∅ ∧
+  assign_get_code_label (GlobOp v5) = ∅ ∧
+  assign_get_code_label (MemOp v6) = ∅ ∧ assign_get_code_label Install = ∅ ∧
+  assign_get_code_label (ThunkOp v7) = ∅

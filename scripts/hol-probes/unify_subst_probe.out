@@ -1,0 +1,7 @@
+capply_subst_def=⊢ (∀s n.
+     capply_subst s (Infer_Tuvar n) =
+     case lookup n s of NONE => Infer_Tuvar n | SOME it => it) ∧
+  (∀ts tc s.
+     capply_subst s (Infer_Tapp ts tc) =
+     Infer_Tapp (MAP (λa. capply_subst s a) ts) tc) ∧
+  ∀s n. capply_subst s (Infer_Tvar_db n) = Infer_Tvar_db n
