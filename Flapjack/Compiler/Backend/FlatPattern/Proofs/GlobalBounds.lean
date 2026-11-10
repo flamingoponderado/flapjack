@@ -15,7 +15,8 @@ private theorem compiledRows_empty (cfg : Config) (ps : List (FlatLang.Pat × Fl
     (eqp : compileMatch cfg ps = (j, sgp, ps2))
     (bounds : ∀ key, rowGlobals ps2 key ≤ rowGlobals ps key)
     (flag : sgp = false) : rowGlobals ps2 = emptyGlobalBag := by
-  have iff := compileMatch_globalFlag cfg ps
+  have iff : (compileMatch cfg ps).2.1 = true ↔ rowGlobals ps ≠ emptyGlobalBag := by
+    simpa [rowGlobals_eq_elistGlobals] using compileExp_setGlobals_flag.2.2 cfg ps
   simp only [eqp] at iff
   have srcEmpty : rowGlobals ps = emptyGlobalBag := by
     apply Classical.byContradiction
