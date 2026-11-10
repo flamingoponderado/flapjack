@@ -255,98 +255,6 @@ theorem noMat_compilePats (default value : FlatLang.Exp) (rows : List (FlatLang.
     · exact branchesSafe branch (List.of_mem_zip row).2
 
 
-/-- Compiling an expression eliminates every source match. -/
-theorem noMat_compileExp (cfg : Config) (exp : FlatLang.Exp) :
-    FlatProps.noMat (compileExp cfg exp).2.2 = true := by
-  induction exp using compileExp.induct cfg
-      (motive_2 := fun fs => FlatProps.noMatFuns (compileFuns cfg fs).2.2 = true)
-      (motive_3 := fun es => FlatProps.noMatList (compileExps cfg es).2.2 = true)
-      (motive_4 := fun rows => ∀ p e, (p, e) ∈ (compileMatch cfg rows).2.2 → FlatProps.noMat e = true) with
-  | case1 => simp [compileExp, FlatProps.noMat]
-  | case2 t x i sg y eq ih => simpa [compileExp, eq, FlatProps.noMat] using ih
-  | case3 t x ps i sg y eq j sgp ps2 eqp ih ihp =>
-    have branch := noMat_compilePats (.raise t (.varLocal t (encNumToName (max i j + 2))))
-      (.varLocal t (encNumToName (max i j + 2))) ps2 cfg sgp t (max i j + 2)
-      ⟨by simp [FlatProps.noMat], by simp [FlatProps.noMat], by
-        intro body member
-        obtain ⟨⟨pattern, expression⟩, row, rfl⟩ := List.mem_map.mp member
-        apply ihp pattern expression
-        simpa [eqp] using row⟩
-    simpa [compileExp, eq, eqp, FlatProps.noMat] using And.intro ih branch
-  | case4 t tag xs i sg ys eq ih => simpa [compileExp, eq, FlatProps.noMat] using ih
-  | case5 t v x i sg y eq ih => simpa [compileExp, eq, FlatProps.noMat] using ih
-  | case6 t op xs i sg ys eq ih => simpa [compileExp, eq, FlatProps.noMat] using ih
-  | case7 t x ps i sg y eq j sgp ps2 eqp ih ihp =>
-    have branch := noMat_compilePats (.raise t (.con t (some (0, none)) []))
-      (.varLocal t (encNumToName (max i j + 2))) ps2 cfg sgp t (max i j + 2)
-      ⟨by simp [FlatProps.noMat, FlatProps.noMatList], by simp [FlatProps.noMat], by
-        intro body member
-        obtain ⟨⟨pattern, expression⟩, row, rfl⟩ := List.mem_map.mp member
-        apply ihp pattern expression
-        simpa [eqp] using row⟩
-    simpa [compileExp, eq, eqp, FlatProps.noMat] using And.intro ih branch
-  | case8 t vo x1 x2 i sg y eq j sg2 y2 eq2 ih1 ih2 =>
-    simpa [compileExp, eq, eq2, FlatProps.noMat] using And.intro ih1 ih2
-  | case9 t fs x j sgfs fs2 eqf i sg y eq ihf ih =>
-    simpa [compileExp, eqf, eq, FlatProps.noMat] using And.intro ihf ih
-  | case10 t x1 x2 x3 i sg1 y1 eq1 j sg2 y2 eq2 k sg3 y3 eq3 ih1 ih2 ih3 =>
-    simp only [compileExp, eq1, eq2, eq3]
-    apply noMat_smartIf
-    · simpa [eq1] using ih1
-    · simpa [eq2] using ih2
-    · simpa [eq3] using ih3
-  | case11 e h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 =>
-    cases e <;> simp_all [compileExp, FlatProps.noMat]
-    all_goals first | exact False.elim (h8 _ _ _ _ rfl rfl rfl rfl) | exact False.elim (h10 _ _ _ _ rfl rfl rfl rfl)
-  | case12 p e member => simp [compileMatch] at member
-  | case13 p x ps i sg y eq j sgp ps2 eqp ih ihp p' e member =>
-    simp only [compileMatch, eq, eqp, List.mem_cons, Prod.mk.injEq] at member
-    rcases member with ⟨_, rfl⟩ | member
-    · simpa [eq] using ih
-    · exact ihp p' e (by simpa [eqp] using member)
-  | case14 => simp [compileExps, FlatProps.noMatList]
-  | case15 x xs i sg y eq j sg2 ys eqs ih ihs =>
-    simpa [compileExps, eq, eqs, FlatProps.noMatList] using And.intro ih ihs
-  | case16 => simp [compileFuns, FlatProps.noMatFuns]
-  | case17 f v e fs i sg y eq j sgfs fs2 eqf ih ihf =>
-    simpa [compileFuns, eq, eqf, FlatProps.noMatFuns] using And.intro ih ihf
-
-
-private theorem noMat_compileExps (cfg : Config) (exps : List FlatLang.Exp) :
-    ∀ e ∈ (compileExps cfg exps).2.2, FlatProps.noMat e = true := by
-  induction exps with
-  | nil => simp [compileExps]
-  | cons x xs ih =>
-    cases hx : compileExp cfg x with
-    | mk i pair =>
-      obtain ⟨sg, y⟩ := pair
-      cases hxs : compileExps cfg xs with
-      | mk j pair =>
-        obtain ⟨sgs, ys⟩ := pair
-        intro e mem
-        simp only [compileExps, hx, hxs, List.mem_cons] at mem
-        rcases mem with rfl | mem
-        · simpa [hx] using noMat_compileExp cfg x
-        · exact ih e (by simpa [hxs] using mem)
-
-private theorem noMat_compileMatch (cfg : Config) (rows : List (FlatLang.Pat × FlatLang.Exp)) :
-    ∀ row ∈ (compileMatch cfg rows).2.2, FlatProps.noMat row.2 = true := by
-  induction rows with
-  | nil => simp [compileMatch]
-  | cons row rows ih =>
-    obtain ⟨p, x⟩ := row
-    cases hx : compileExp cfg x with
-    | mk i pair =>
-      obtain ⟨sg, y⟩ := pair
-      cases hrs : compileMatch cfg rows with
-      | mk j pair =>
-        obtain ⟨sgs, ys⟩ := pair
-        intro row mem
-        simp only [compileMatch, hx, hrs, List.mem_cons] at mem
-        rcases mem with rfl | mem
-        · simpa [hx] using noMat_compileExp cfg x
-        · exact ih row (by simpa [hrs] using mem)
-
 /-- All three expression-compiler outputs are match-free. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_exp_no_Mat"]
 theorem compileExp_noMat :
@@ -355,23 +263,73 @@ theorem compileExp_noMat :
       ∀ e ∈ exps', FlatProps.noMat e = true) ∧
     (∀ cfg rows n sg rows', compileMatch cfg rows = (n, sg, rows') →
       ∀ row ∈ rows', FlatProps.noMat row.2 = true) := by
+  have all (cfg : Config) :
+      (∀ exp, FlatProps.noMat (compileExp cfg exp).2.2 = true) ∧
+      (∀ fs, FlatProps.noMatFuns (compileFuns cfg fs).2.2 = true) ∧
+      (∀ es, FlatProps.noMatList (compileExps cfg es).2.2 = true) ∧
+      (∀ rows p e, (p, e) ∈ (compileMatch cfg rows).2.2 → FlatProps.noMat e = true) := by
+    apply compileExp.mutual_induct cfg
+    case case3 =>
+      intro t x ps i sg y eq j sgp ps2 eqp ih ihp
+      have branch := noMat_compilePats (.raise t (.varLocal t (encNumToName (max i j + 2))))
+        (.varLocal t (encNumToName (max i j + 2))) ps2 cfg sgp t (max i j + 2)
+        ⟨by simp [FlatProps.noMat], by simp [FlatProps.noMat], by
+          intro body member
+          obtain ⟨⟨pattern, expression⟩, row, rfl⟩ := List.mem_map.mp member
+          apply ihp pattern expression
+          simpa [eqp] using row⟩
+      simpa [compileExp, eq, eqp, FlatProps.noMat] using And.intro ih branch
+    case case7 =>
+      intro t x ps i sg y eq j sgp ps2 eqp ih ihp
+      have branch := noMat_compilePats (.raise t (.con t (some (0, none)) []))
+        (.varLocal t (encNumToName (max i j + 2))) ps2 cfg sgp t (max i j + 2)
+        ⟨by simp [FlatProps.noMat, FlatProps.noMatList], by simp [FlatProps.noMat], by
+          intro body member
+          obtain ⟨⟨pattern, expression⟩, row, rfl⟩ := List.mem_map.mp member
+          apply ihp pattern expression
+          simpa [eqp] using row⟩
+      simpa [compileExp, eq, eqp, FlatProps.noMat] using And.intro ih branch
+    case case10 =>
+      intro t x1 x2 x3 i sg1 y1 eq1 j sg2 y2 eq2 k sg3 y3 eq3 ih1 ih2 ih3
+      simp only [compileExp, eq1, eq2, eq3]
+      apply noMat_smartIf
+      · simpa [eq1] using ih1
+      · simpa [eq2] using ih2
+      · simpa [eq3] using ih3
+    case case11 =>
+      intro e h1 h2 h3 h4 h5 h6 h7 h8 h9 h10
+      cases e <;> simp_all [compileExp, FlatProps.noMat]
+      all_goals first | exact False.elim (h8 _ _ _ _ rfl rfl rfl rfl) | exact False.elim (h10 _ _ _ _ rfl rfl rfl rfl)
+    case case13 =>
+      intro p x ps i sg y eq j sgp ps2 eqp ih ihp p' e member
+      simp only [compileMatch, eq, eqp, List.mem_cons, Prod.mk.injEq] at member
+      rcases member with ⟨_, rfl⟩ | member
+      · simpa [eq] using ih
+      · exact ihp p' e (by simpa [eqp] using member)
+    all_goals intros
+    all_goals simp_all [compileExp, compileFuns, compileExps, compileMatch, FlatProps.noMat,
+      FlatProps.noMatList, FlatProps.noMatFuns]
   refine ⟨?_, ?_, ?_⟩
   · intro cfg exp n sg exp' eq
-    simpa only [eq] using noMat_compileExp cfg exp
+    simpa only [eq] using (all cfg).1 exp
   · intro cfg exps n sg exps' eq
-    simpa only [eq] using noMat_compileExps cfg exps
-  · intro cfg rows n sg rows' eq
-    simpa only [eq] using noMat_compileMatch cfg rows
+    have out := (all cfg).2.2.1 exps
+    simpa only [eq, FlatProps.noMatList_eq_all, List.all_eq_true] using out
+  · intro cfg rows n sg rows' eq row member
+    have out := (all cfg).2.2.2 rows row.1 row.2
+    apply out
+    simpa [eq] using member
 
 /-- Compiling every declaration produces the match-free input expected by
 flat-to-closure compilation. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_decs_no_Mat"]
 theorem noMat_compileDecs (cfg : Config) (declarations : List FlatLang.Exp) :
     FlatProps.noMatDecs (declarations.map (compileDec cfg)) = true := by
-  induction declarations with
-  | nil => rfl
-  | cons declaration rest ih =>
-    simp [FlatProps.noMatDecs, compileDec, noMat_compileExp, ih]
+  rw [FlatProps.noMatDecs_eq_noMatList, FlatProps.noMatList_eq_all, List.all_eq_true]
+  intro e member
+  obtain ⟨source, _, rfl⟩ := List.mem_map.mp member
+  exact compileExp_noMat.1 cfg source (compileExp cfg source).1 (compileExp cfg source).2.1
+    (compileExp cfg source).2.2 (by cases h : compileExp cfg source with | mk a b => cases b; rfl)
 
 
 
