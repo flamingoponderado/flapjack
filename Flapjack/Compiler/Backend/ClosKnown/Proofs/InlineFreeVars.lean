@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.FreeVars
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
 public import Flapjack.Compiler.Backend.ClosKnown.Inline.Free.Correct
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeCorrect
 
 @[expose] public section
 

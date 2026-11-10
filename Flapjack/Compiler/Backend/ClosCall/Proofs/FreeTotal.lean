@@ -123,4 +123,22 @@ theorem closedFuel_succeeds (fuel : Nat) (e : Exp) : ∃ result, closedFuel fuel
   obtain ⟨⟨e', free⟩, h⟩ := freeBounded_succeeds fuel e
   exact ⟨_, by simp [closedFuel, h]; rfl⟩
 
+/-- Free-variable annotation preserves the length of an expression list. -/
+theorem freeListFuel_length (fuel : Nat) (es result : List Exp) (vars : DbVarSet)
+    (run : freeListFuel fuel es = some (result, vars)) : result.length = es.length := by
+  induction fuel generalizing es result vars with
+  | zero =>
+    cases es with
+    | nil => simp [freeListFuel] at run; obtain ⟨rfl, _⟩ := run; rfl
+    | cons e es => simp [freeListFuel] at run
+  | succ fuel ih =>
+    cases es with
+    | nil => simp [freeListFuel] at run; obtain ⟨rfl, _⟩ := run; rfl
+    | cons e es =>
+      simp only [freeListFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
+        Option.some.injEq, Prod.mk.injEq] at run
+      obtain ⟨⟨e', a⟩, _, ⟨es', b⟩, hs, rfl, _⟩ := run
+      simp only [List.length_cons]
+      exact congrArg Nat.succ (ih es es' b hs)
+
 end Flapjack.Compiler.Backend.ClosCall

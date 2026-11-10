@@ -1,7 +1,8 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosKnown.Inline.Free
-public import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeCorrect
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeTotal
+public import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
 public import Flapjack.Misc.Sptree.Wf
 
 @[expose] public section

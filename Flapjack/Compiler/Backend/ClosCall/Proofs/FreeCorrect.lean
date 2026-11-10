@@ -1,6 +1,8 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeTotal
+public import Flapjack.Compiler.Backend.ClosCall.Free
+public import Flapjack.Compiler.Backend.ClosKnown.Inline.Free.Correct
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.FreeVars
 public import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
 public import Mathlib.Tactic
@@ -10,24 +12,6 @@ public import Mathlib.Tactic
 /-! Free-variable agreement for the executable direct-call analysis. -/
 namespace Flapjack.Compiler.Backend.ClosCall
 open ClosLang ClosProps DbVars
-
-/-- Free-variable annotation preserves the length of an expression list. -/
-theorem freeListFuel_length (fuel : Nat) (es result : List Exp) (vars : DbVarSet)
-    (run : freeListFuel fuel es = some (result, vars)) : result.length = es.length := by
-  induction fuel generalizing es result vars with
-  | zero =>
-    cases es with
-    | nil => simp [freeListFuel] at run; obtain ⟨rfl, _⟩ := run; rfl
-    | cons e es => simp [freeListFuel] at run
-  | succ fuel ih =>
-    cases es with
-    | nil => simp [freeListFuel] at run; obtain ⟨rfl, _⟩ := run; rfl
-    | cons e es =>
-      simp only [freeListFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
-        Option.some.injEq, Prod.mk.injEq] at run
-      obtain ⟨⟨e', a⟩, _, ⟨es', b⟩, hs, rfl, _⟩ := run
-      simp only [List.length_cons]
-      exact congrArg Nat.succ (ih es es' b hs)
 
 private theorem freeFuns_agreement (fuel count : Nat)
     (agree : ∀ (e result : Exp) (vars : DbVarSet), freeFuel fuel e = some (result, vars) →
@@ -66,7 +50,7 @@ mutual
 /-- On success, free-variable analysis computes membership for both the
 original expression and the annotated result. HOL's analysis is total;
 the success premise records the executable traversal's fuel. -/
-theorem freeFuel_freeVars (fuel : Nat) (e result : Exp) (vars : DbVarSet)
+private theorem freeFuel_freeVars (fuel : Nat) (e result : Exp) (vars : DbVarSet)
     (run : freeFuel fuel e = some (result, vars)) :
     ∀ n, (freeVarExp n e ↔ hasVar n vars = true) ∧
       (freeVarExp n result ↔ hasVar n vars = true) := by
@@ -151,7 +135,7 @@ termination_by fuel
 
 /-- The list traversal computes the same free variables before and after
 annotation. -/
-theorem freeListFuel_freeVars (fuel : Nat) (es result : List Exp) (vars : DbVarSet)
+private theorem freeListFuel_freeVars (fuel : Nat) (es result : List Exp) (vars : DbVarSet)
     (run : freeListFuel fuel es = some (result, vars)) :
     ∀ n, (freeVars n es ↔ hasVar n vars = true) ∧
       (freeVars n result ↔ hasVar n vars = true) := by
@@ -174,8 +158,25 @@ theorem freeListFuel_freeVars (fuel : Nat) (es result : List Exp) (vars : DbVarS
 termination_by fuel
 end
 
+/-- The source free-variable traversal preserves membership and computes its
+exact variable set. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "free_thm"]
+theorem freeThm (expressions : List Exp) :
+    let (output, vars) := free expressions
+    ∀ n, (freeVars n output ↔ hasVar n vars = true) ∧
+      (freeVars n expressions ↔ hasVar n vars = true) := by
+  obtain ⟨⟨output, vars⟩, run⟩ :=
+    freeListFuel_succeeds (listBudget expressions + 1) expressions (Nat.lt_succ_self _)
+  have sourceEq : (output, vars) = free expressions :=
+    (ClosKnown.freeFuel_correct _).2 expressions output vars run
+  rw [← sourceEq]
+  intro n
+  have agreement := freeListFuel_freeVars _ expressions output vars run n
+  exact ⟨agreement.2, agreement.1⟩
+
+
 /-- The production retry wrapper retains free-variable agreement. -/
-theorem freeBounded_freeVars (fuel : Nat) (e result : Exp) (vars : DbVarSet)
+private theorem freeBounded_freeVars (fuel : Nat) (e result : Exp) (vars : DbVarSet)
     (run : freeBounded fuel e = some (result, vars)) :
     ∀ n, (freeVarExp n e ↔ hasVar n vars = true) ∧
       (freeVarExp n result ↔ hasVar n vars = true) := by

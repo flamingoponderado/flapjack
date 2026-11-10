@@ -1719,6 +1719,12 @@
   "reviewer": "Source comparison with list_to_v_v_rel_typed: both unrestricted value lists, their pointwise relation premise and the related list-encoding conclusion agree. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "free_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FreeCorrect.lean", "lean_name": "freeThm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared free_thm in clos_call_free_correct_probe.out: the universally quantified source expression list and index, source free traversal, let-bound output and variable set, and both output-then-input free-variable equivalences retain their original order and meaning. The successful fuel traversal used in the proof is established unconditionally and is not a theorem premise."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "no_Labels_GENLIST_Var",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubInvariants.lean", "lean_name": "noLabels_variables",
   "statement_status": "reviewed_exact",
