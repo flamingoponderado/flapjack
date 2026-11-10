@@ -18,6 +18,30 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "number_compile_inc_req",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberAddresses.lean", "lean_name": "numberCompileInc_req",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared number_compile_inc_req_typed and independent source review: independently polymorphic auxiliary metadata, let scope, empty-code premise and all three conclusions match HOL."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml", "hol_name": "renumber_code_locs_list_distinct",
+  "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LocationDistinct.lean", "lean_name": "renumberList_codeLocations_distinct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared renumber_list_distinct_typed and independent source review: all three list conjuncts, lower and upper bound orientations, and recursive-group location order match HOL."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml", "hol_name": "renumber_code_locs_distinct",
+  "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LocationDistinct.lean", "lean_name": "renumber_codeLocations_distinct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared renumber_distinct_typed and independent source review: all three singleton conjuncts and lower and upper bound orientations match HOL."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml", "hol_name": "renumber_code_locs_EVEN",
+  "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LocationParity.lean", "lean_name": "renumberCodeLocs_even",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared renumber_even_typed and independent source review: both list and singleton conjuncts, even input and output conditions, and bounded universal checks on code locations match HOL, with EVEN rendered as remainder zero."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml", "hol_name": "renumber_code_locs_list_IMP_LENGTH",
   "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LocationInvariants.lean", "lean_name": "renumberList_imp_length",
   "statement_status": "reviewed_exact",

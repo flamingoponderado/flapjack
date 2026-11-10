@@ -1158,6 +1158,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IncrementalAddresses
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IncrementalOracle
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotationAddresses
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CallAddresses
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberAddresses
 import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLabels
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InitialCodeDomain
 import Flapjack.Compiler.Backend.BvlConst.SourceCompile
@@ -1323,6 +1324,8 @@ import Flapjack.Compiler.Backend.SourceToFlat.ToDataIncremental
 import Flapjack.Compiler.Backend.SourceToFlat.ToWordIncremental
 import Flapjack.Compiler.Backend.SourceToFlat.ToRiscVIncremental
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.ValueRelation
+import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationParity
+import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationDistinct
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.StateRelation
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.Install
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.ClosureApplication
