@@ -161,4 +161,25 @@ theorem compileProg_codeLocs (maxApp : Nat) (program : List (Nat × Nat × ClosL
     rw [zip_entry_labels (numStubs maxApp) program compiled lengthEq, labels]
     simp [Nat.add_comm]
 
+/-- Program conversion labels are the shifted source entry and closure labels. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "MAP_FST_compile_prog"]
+theorem map_fst_compileProg (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp)) :
+    (compileProgExpsHOL maxApp program).map Prod.fst =
+      (program.map Prod.fst ++
+        (ClosProps.codeLocations (program.map (fun entry => entry.2.2))).reverse).map
+          (fun label => numStubs maxApp + label) := by
+  simpa [List.map_append, List.map_map, Function.comp_def] using compileProg_codeLocs maxApp program
+
+/-- Shifting a set bounded by a difference stays below the original bound. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "IMAGE_ADD_SUBSET_count"]
+theorem image_add_subset_count (A : Set Nat) (n m : Nat)
+    (h : A ⊆ {x | x < n - m}) :
+    Set.image (fun x => m + x) A ⊆ {x | x < n} := by
+  intro x hx
+  obtain ⟨y, hy, rfl⟩ := hx
+  have bound := h hy
+  change y < n - m at bound
+  change m + y < n
+  omega
+
 end Flapjack.Compiler.Backend.ClosToBvl

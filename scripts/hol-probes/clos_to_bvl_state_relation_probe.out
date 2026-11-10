@@ -123,6 +123,8 @@ shift_seq_def_typed=∀(k :num) (s :num -> α). shift_seq k s = (λ(i :num). s (
 uncurry_eq_typed=UNCURRY (f :α -> β -> γ) = (λ(x :α # β). f (FST x) (SND x))
 length_fst_cond_mti_typed=LENGTH (FST (cond_mti_compile_inc (do_it :bool) (ma :num) (prog :closLang$exp list # α list))) = LENGTH (FST prog)
 every_fn_none_cond_mti_typed=every_Fn_vs_NONE (FST (cond_mti_compile_inc (do_it :bool) (ma :num) (prog :closLang$exp list # α list))) ⇔ every_Fn_vs_NONE (FST prog)
+map_fst_compile_prog_typed=MAP (FST :num # num # bvl$exp -> num) (compile_prog (max_app :num) (ls :(num # num # closLang$exp) list)) = MAP ($+ (num_stubs max_app)) (MAP (FST :num # num # closLang$exp -> num) ls ++ REVERSE (code_locs (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :num # num # closLang$exp -> num # closLang$exp)) ls)))
+image_add_subset_count_typed=(A :num -> bool) ⊆ count ((n :num) − (m :num)) ⇒ IMAGE ($+ m) A ⊆ count n
 length_remove_ticks_typed=∀(es :closLang$exp list). LENGTH (remove_ticks es) = LENGTH es
 length_let_op_typed=∀(xs :closLang$exp list). LENGTH (let_op xs) = LENGTH xs
 known_length_eq_e_typed=known (limit :clos_known$config) (es :closLang$exp list) (vs :val_approx list) (g0 :val_approx sptree$num_map) = ((alist :(closLang$exp # val_approx) list),(g :val_approx sptree$num_map)) ⇒ LENGTH alist = LENGTH es

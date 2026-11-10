@@ -18,6 +18,18 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "MAP_FST_compile_prog",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/LabelOrigins.lean", "lean_name": "map_fst_compileProg",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared map_fst_compile_prog_typed and independent review: fixed source and target carriers, one map over the append, reversal of locations alone, and left-sided stub offset match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "IMAGE_ADD_SUBSET_count",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/LabelOrigins.lean", "lean_name": "image_add_subset_count",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared image_add_subset_count_typed and independent review: A, n, m order, count k as {x | x < k}, truncated subtraction, image and left-sided offset match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "UNCURRY_EQ",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiInvariants.lean", "lean_name": "uncurry_eq",
   "statement_status": "reviewed_exact",
