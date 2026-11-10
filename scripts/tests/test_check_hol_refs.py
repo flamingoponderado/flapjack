@@ -4005,6 +4005,59 @@ class FmapResultObservationShadowTest(unittest.TestCase):
         errors = fixture.errors("theorem observer (toFmap : Nat) : toFmap = toFmap")
         self.assertTrue(any("shadowed" in error for error in errors))
 
+    def test_let_binder_cannot_impersonate_producer(self):
+        errors = FmapResultObservationTest().errors(
+            "theorem observer : let toFmap := 0; toFmap = toFmap := by trivial")
+        self.assertTrue(any("shadowed" in error for error in errors))
+
+    def test_other_binders_cannot_impersonate_producer(self):
+        statements = [
+            "theorem observer (x toFmap : Nat) : toFmap = x := by trivial",
+            "theorem observer : ∀ toFmap : Nat, toFmap = toFmap := by trivial",
+            "theorem observer : ∃ x toFmap : Nat, toFmap = x := by trivial",
+            "theorem observer : (fun toFmap => toFmap) = id := by trivial",
+            "theorem observer : (fun ⟨x, toFmap⟩ => toFmap) = id := by trivial",
+            "theorem observer ⦃toFmap : Nat⦄ : toFmap = toFmap := by trivial",
+            "theorem observer [toFmap : C] : toFmap = toFmap := by trivial",
+            "theorem observer : let ⟨toFmap, _⟩ := p; toFmap = toFmap := by trivial",
+            "theorem observer : let (toFmap, x) := p; toFmap = x := by trivial",
+            "theorem observer : match p with | toFmap => toFmap = toFmap := by trivial",
+            "theorem observer : {toFmap | toFmap = 0} = s := by trivial",
+            "theorem observer : (fun toFmap ↦ toFmap) = id := by trivial",
+            "theorem observer : (λ toFmap ↦ toFmap) = id := by trivial",
+            "theorem observer : (⋃ toFmap, S toFmap) = s := by trivial",
+            "theorem observer : (∑ toFmap, f toFmap) = n := by trivial",
+            "theorem observer : ∀ᶠ toFmap, P toFmap := by trivial",
+        ]
+        for statement in statements:
+            with self.subTest(statement=statement):
+                errors = FmapResultObservationTest().errors(statement)
+                self.assertTrue(any("shadowed" in error for error in errors), errors)
+
+    def test_ambient_and_dotted_local_shadows(self):
+        root, records = FmapResultObservationTest().fixture()
+        producer = "Flapjack.Misc.BalancedMap.toFmap"
+        for extra in ("variable (toFmap : Nat)", "def Foo.toFmap : Nat := 0",
+                      'local notation "toFmap" => value',
+                      'scoped[Foo] notation "toFmap" => value',
+                      'prefix:max "toFmap" => value',
+                      'elab "toFmap" : term => value',
+                      'private macro "toFmap" : term => value',
+                      '@[inherit_doc] notation "toFmap" => value',
+                      'open Foo renaming bar → toFmap',
+                      'export Foo (toFmap)'):
+            with self.subTest(extra=extra):
+                errors = CHECKER["fmap_result_observation_errors"](
+                    ["import Flapjack.Misc.BalancedMap.Semantics", extra], "Fixture",
+                    "theorem observer : toFmap = toFmap := by trivial", (producer,), records, root)
+                self.assertTrue(any("shadowed" in error or "unused" in error for error in errors), errors)
+
+    def test_let_instance_binder_cannot_impersonate_producer(self):
+        for binder in ("letI", "haveI"):
+            errors = FmapResultObservationTest().errors(
+                f"theorem observer : {binder} toFmap := value; toFmap = toFmap := by trivial")
+            self.assertTrue(any("shadowed" in error for error in errors), errors)
+
 
 class FmapResultObservationLiteralTest(unittest.TestCase):
     def test_string_literal_does_not_establish_dependency(self):
@@ -4018,6 +4071,70 @@ class FmapResultObservationQualifiedTest(unittest.TestCase):
         fixture = FmapResultObservationTest()
         self.assertEqual([], fixture.errors(
             f"theorem observer : ({producer} cmp tree).lookup keys ≠ none → True", (producer,)))
+
+    def test_attribute_alone_does_not_establish_dependency(self):
+        producer = "Flapjack.Misc.BalancedMap.toFmap"
+        source = (f'@[hol "file" "name" (fmap_as_finite_support_result_observations := [{producer}])]\n'
+                  'theorem observer : True := by trivial')
+        errors = FmapResultObservationTest().errors(source, (producer,))
+        self.assertTrue(any("unused" in error for error in errors))
+
+    def test_namespace_relative_producer(self):
+        producer = "Flapjack.Misc.BalancedMap.toFmap"
+        errors = FmapResultObservationTest().errors(
+            "theorem observer : (BalancedMap.toFmap cmp tree).lookup keys ≠ none → True", (producer,))
+        self.assertEqual([], errors)
+
+    def test_proof_body_does_not_establish_dependency(self):
+        producer = "Flapjack.Misc.BalancedMap.toFmap"
+        errors = FmapResultObservationTest().errors(
+            f"theorem observer : True := by have h := {producer} cmp tree; trivial", (producer,))
+        self.assertTrue(any("unused" in error for error in errors))
+
+    def test_let_binding_in_theorem_type(self):
+        producer = "Flapjack.Misc.BalancedMap.toFmap"
+        errors = FmapResultObservationTest().errors(
+            "theorem observer : let x := tree; (BalancedMap.toFmap cmp x).lookup keys ≠ none → True := by trivial",
+            (producer,))
+        self.assertEqual([], errors)
+
+    def test_assignments_in_type_before_producer(self):
+        producer = "Flapjack.Misc.BalancedMap.toFmap"
+        types = [
+            "f (Output := T) → (BalancedMap.toFmap cmp tree).lookup keys ≠ none",
+            "g { s with code := c } → (BalancedMap.toFmap cmp tree).lookup keys ≠ none",
+            "let x : T := tree; (BalancedMap.toFmap cmp x).lookup keys ≠ none",
+            "let ⟨x, y⟩ := pair; (BalancedMap.toFmap cmp x).lookup keys ≠ none",
+            "letI x := inst; (BalancedMap.toFmap cmp tree).lookup keys ≠ none",
+            "haveI x := inst; (BalancedMap.toFmap cmp tree).lookup keys ≠ none",
+        ]
+        for type_ in types:
+            with self.subTest(type_=type_):
+                errors = FmapResultObservationTest().errors(f"theorem observer : {type_} := by trivial", (producer,))
+                self.assertEqual([], errors)
+
+    def test_union_requires_explicit_producer_application(self):
+        root, records = FmapResultObservationTest().fixture()
+        producer = "Flapjack.HolFiniteMapExact.union"
+        def errors(statement):
+            return CHECKER["fmap_result_observation_errors"](
+                ["import Flapjack.FiniteMap.UnionExact"], "Fixture", statement,
+                (producer,), records, root)
+        self.assertEqual([], errors(
+            "theorem observer : (Flapjack.HolFiniteMapExact.union a b).lookup k = none"))
+        self.assertTrue(any("unused" in error for error in errors(
+            "theorem observer : (a.union b).lookup k = none")))
+
+    def test_equation_body_does_not_establish_dependency(self):
+        producer = "Flapjack.Misc.BalancedMap.toFmap"
+        errors = FmapResultObservationTest().errors(
+            f"def observer : Nat → Nat\n | x => ({producer} cmp tree).size", (producer,))
+        self.assertTrue(any("unused" in error for error in errors))
+
+    def test_bounded_quantifier_domain_can_use_producer(self):
+        producer = "Flapjack.Misc.BalancedMap.toFmap"
+        statement = f"theorem observer : ∀ x ∈ ({producer} cmp tree).domain, P x := by trivial"
+        self.assertEqual([], FmapResultObservationTest().errors(statement, (producer,)))
 
     def test_local_shadow_rejected(self):
         root, records = FmapResultObservationTest().fixture()
@@ -4055,6 +4172,20 @@ class MutualScopedProducerResolutionTest(unittest.TestCase):
 
 
 class FmapResultObservationAmbiguityTest(unittest.TestCase):
+    def test_qualified_suffix_with_untagged_namesake_is_rejected(self):
+        root, records = FmapResultObservationTest().fixture()
+        with tempfile.TemporaryDirectory() as directory:
+            temporary = Path(directory)
+            producer = temporary / "Flapjack/Misc/BalancedMap/Semantics.lean"
+            producer.parent.mkdir(parents=True)
+            source = (root / "Flapjack/Misc/BalancedMap/Semantics.lean").read_text()
+            producer.write_text(source + "\nnamespace Other.BalancedMap\ndef toFmap : Nat := 0\nend Other.BalancedMap\n")
+            errors = CHECKER["fmap_result_observation_errors"](
+                ["import Flapjack.Misc.BalancedMap.Semantics"], "Fixture",
+                "theorem observer : (BalancedMap.toFmap cmp tree).lookup keys ≠ none → True",
+                ("Flapjack.Misc.BalancedMap.toFmap",), records, temporary)
+            self.assertTrue(any("unused" in error for error in errors), errors)
+
     def test_unqualified_imported_shadow_rejected(self):
         root, records = FmapResultObservationTest().fixture()
         with tempfile.TemporaryDirectory() as directory:

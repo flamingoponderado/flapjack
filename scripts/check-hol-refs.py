@@ -1890,6 +1890,59 @@ def lean_namespace_prefix(lines: list[str], upto: int) -> str:
     return ".".join(part for part in namespaces if part is not None)
 
 
+def observer_type_source(declaration_text: str) -> str:
+    """Find the declaration type, excluding attributes and the definition body.
+
+    A theorem type may itself contain named arguments, record updates, and
+    let-bindings. Their assignments are not the declaration's proof separator.
+    Unbalanced or incomplete syntax fails closed by returning an empty type.
+    """
+    source = re.sub(r'"(?:\\.|[^"\\])*"', '""', strip_lean_comments(declaration_text))
+    declaration = re.search(r"\b(?:theorem|lemma|def|abbrev|instance|structure)\s+", source)
+    if declaration is None:
+        return ""
+    source = source[declaration.start():]
+    delimiters = {"(": ")", "[": "]", "{": "}", "⦃": "⦄", "⟨": "⟩"}
+    stack: list[str] = []
+    pending_lets: list[int] = []
+    equation_declaration = re.match(r"(?:def|abbrev)\b", source) is not None
+    tokens = re.compile(r"(?<![A-Za-z0-9_'.])(?:letI?|haveI?)\b|:=|[()\[\]{}⦃⦄⟨⟩|]")
+    for match in tokens.finditer(source):
+        token = match.group()
+        if token in ("let", "letI", "have", "haveI"):
+            pending_lets.append(len(stack))
+        elif token in delimiters:
+            stack.append(delimiters[token])
+        elif token in delimiters.values():
+            if not stack or stack.pop() != token:
+                return ""
+        elif token == ":=":
+            if pending_lets and pending_lets[-1] == len(stack):
+                pending_lets.pop()
+            elif not stack:
+                return "" if pending_lets else source[:match.start()]
+        elif (token == "|" and equation_declaration and not stack and
+              not source[source.rfind("\n", 0, match.start()) + 1:match.start()].strip()):
+            # Equation-style definitions start their bodies at a top-level |.
+            return "" if pending_lets else source[:match.start()]
+    return source if not stack and not pending_lets else ""
+
+
+def observer_name_is_bound(signature: str, name: str) -> bool:
+    """Conservatively reject binder forms that can shadow a producer name."""
+    name_pattern = r"(?<![A-Za-z0-9_'.])" + re.escape(name) + r"(?![A-Za-z0-9_'])"
+    # Parenthesised, implicit, strict-implicit and instance binder groups.
+    groups = re.findall(r"[({\[⦃]\s*([^(){}\[\]⦃⦄:]+):", signature)
+    # Binder lists after quantifiers and lambda, up to their type or body.
+    groups += re.findall(r"(?:∀ᶠ|∃ᶠ|∀|∃!?|Σ|⋃|⋂|⨆|⨅|∑|∏|\bfun\b|λ)\s*([^,:⇒↦∈∉<>≤≥⊆]+?)(?=\s*(?:,|:|=>|⇒|↦|∈|∉|<|>|≤|≥|⊆))", signature)
+    groups += re.findall(r"(?:\bfun\b|λ)\s*([\s\S]*?)(?:=>|⇒|↦)", signature)
+    groups += re.findall(r"\{\s*([^{}|:]+?)\s*\|", signature)
+    # Let and match patterns can bind identifiers within nested patterns.
+    groups += re.findall(r"(?<![A-Za-z0-9_'.])(?:letI?|haveI?)\b([\s\S]*?):=", signature)
+    groups += re.findall(r"\|([^|\n]*?)=>", signature)
+    return any(re.search(name_pattern, group) for group in groups)
+
+
 def fmap_result_observation_errors(
     lines: list[str], module: str, declaration_text: str,
     producers: tuple[str, ...], records: list[dict], root: Path = ROOT,
@@ -1898,6 +1951,9 @@ def fmap_result_observation_errors(
 
     This checks representation evidence only. Source comparison of the entire
     observer remains mandatory; a producer review is not an observer review.
+    Use a qualified application when dot notation would obscure its owner.
+    Short-name resolution is syntactic; source review must verify the Lean
+    name resolves to the listed producer, including names from external imports.
     """
     errors: list[str] = []
     if not producers or len(set(producers)) != len(producers):
@@ -1905,7 +1961,7 @@ def fmap_result_observation_errors(
     stack = list(IMPORT_RE.findall(strip_lean_comments("\n".join(lines))))
     seen: set[str] = set()
     candidates: dict[str, list[tuple[str, str, list[str], str, bool]]] = {}
-    imported_declarations: dict[str, set[str]] = {}
+    imported_declarations: dict[str, set[tuple[str, int]]] = {}
     while stack:
         imported = stack.pop()
         if imported in seen:
@@ -1916,8 +1972,8 @@ def fmap_result_observation_errors(
             continue
         clean = strip_lean_comments(info.text)
         stack.extend(IMPORT_RE.findall(clean))
-        for declared in re.findall(r"^\s*(?:noncomputable\s+)?(?:private\s+|protected\s+)?(?:def|abbrev|opaque|theorem|lemma)\s+([A-Za-z0-9_'.]+)", clean, re.M):
-            imported_declarations.setdefault(declared.rsplit(".", 1)[-1], set()).add(imported)
+        for index, declared in enumerate(re.findall(r"^\s*(?:noncomputable\s+)?(?:private\s+|protected\s+)?(?:def|abbrev|opaque|theorem|lemma)\s+([A-Za-z0-9_'.]+)", clean, re.M)):
+            imported_declarations.setdefault(declared.rsplit(".", 1)[-1], set()).add((imported, index))
         for site in hol_attribute_sites(info.lines):
             number = site[0]
             name = find_lean_decl(info.lines, number - 1)
@@ -1930,17 +1986,39 @@ def fmap_result_observation_errors(
                          tagged_declaration_source(info.lines, number), bool(site[8]))
             for alias in set((name, full_name)):
                 candidates.setdefault(alias, []).append(candidate)
-    signature = re.sub(r'"(?:\\.|[^"\\])*"', '""', strip_lean_comments(declaration_text))
+    signature = observer_type_source(declaration_text)
     for producer in producers:
         short_name = producer.rsplit(".", 1)[-1]
         local_source = strip_lean_comments("\n".join(lines))
-        if re.search(r"\b(?:def|abbrev|opaque|theorem|lemma)\s+" + re.escape(short_name) + r"\b", local_source):
+        if re.search(r"\b(?:def|abbrev|opaque|theorem|lemma|instance|structure)\s+(?:[A-Za-z0-9_']+\.)*" + re.escape(short_name) + r"\b", local_source):
             errors.append(f"result observation producer {producer} is shadowed by a local declaration")
-        if re.search(r"[({]\s*" + re.escape(producer) + r"\s*:", signature):
+        ambient_commands = re.findall(r"(?m)^\s*(?:variables?|include|omit|export|open\b[^\n]*\brenaming)\b[^\n]*(?:\n[ \t]+[^\n]*)*", local_source)
+        local_syntax = re.findall(
+            r"(?m)^\s*(?:@\[[^\]]*\]\s*)?(?:(?:private|protected)\s+)?(?:(?:local|scoped)(?:\[[^\]]*\])?\s+)?"
+            r"(?:notation\d*|infix[lr]?|prefix|postfix|macro|macro_rules|syntax|elab|elab_rules|term_elab)\b[^\n]*",
+            local_source)
+        if (observer_name_is_bound(signature, short_name) or
+                any(re.search(r"(?<![A-Za-z0-9_'])" + re.escape(short_name) + r"(?![A-Za-z0-9_'])", cmd)
+                    for cmd in ambient_commands + local_syntax)):
             errors.append(f"result observation producer {producer} is shadowed by an observer binder")
-        if not re.search(r"(?<![A-Za-z0-9_'.])" + re.escape(producer) +
-                         r"(?![A-Za-z0-9_'.])", signature):
-            errors.append(f"result observation producer {producer} is unused in observer type")
+        parts = producer.split(".")
+        aliases = [producer]
+        for i in range(1, len(parts) - 1):
+            suffix = ".".join(parts[i:])
+            owners = {(candidate[0], candidate[1]) for full, entries in candidates.items()
+                      if "." in full and (full == suffix or full.endswith("." + suffix))
+                      for candidate in entries}
+            if len(owners) == 1 and len(imported_declarations.get(short_name, set())) <= 1:
+                aliases.append(suffix)
+        if local_syntax:
+            # User notation or macros can change the meaning of abbreviated
+            # identifiers; require the exact qualified producer spelling.
+            aliases = [producer] if "." in producer else []
+        elif len(imported_declarations.get(short_name, set())) <= 1:
+            aliases.append(short_name)
+        if not any(re.search(r"(?<![A-Za-z0-9_'.])" + re.escape(alias) +
+                             r"(?![A-Za-z0-9_'.])", signature) for alias in aliases):
+            errors.append(f"result observation producer {producer} is unused in observer type; use its fully qualified name when spelling is ambiguous")
         if "." not in producer and len(imported_declarations.get(short_name, set())) > 1:
             errors.append(f"result observation producer {producer} is ambiguous among imported declarations")
         matches = candidates.get(producer, [])
@@ -4957,7 +5035,7 @@ def main(argv: list[str]) -> int:
                     reals_cuts or fmap_equality):
                     errors.append(f"{where}: result observations cannot combine with other representation qualifiers")
                 errors.extend(f"{where}: {error}" for error in fmap_result_observation_errors(
-                    lines, module, tagged_declaration_text(lines, number),
+                    lines, module, tagged_declaration_source(lines, number),
                     result_observations, observation_records))
             errors.extend(
                 f"{where}: {error}"
