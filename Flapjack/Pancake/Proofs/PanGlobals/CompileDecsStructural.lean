@@ -57,7 +57,7 @@ theorem compile_decs_functions_thmHOL {width : Nat} [NeZero width] :
           | _ => .name (Flapjack.Basis.Pure.MlString.ofString "") []) := by
   intro ctxt fdecs
   fun_induction compileDecsExactHOL ctxt fdecs with
-  | case1 => simp_all [Prod.mk.injEq, compileDecsExactHOL]
+  | case1 => simp_all [Prod.mk.injEq]
   | case2 =>
     intro decls funs exns ctxt' ⟨h, hall⟩
     exact absurd (hall (.decl _ _ _) List.mem_cons_self) (by simp [isFunctionHOL])
@@ -88,7 +88,7 @@ theorem compile_decs_decls_thmHOL {width : Nat} [NeZero width] :
       funs = [] := by
   intro ctxt fdecs
   fun_induction compileDecsExactHOL ctxt fdecs with
-  | case1 => simp_all [Prod.mk.injEq, compileDecsExactHOL]
+  | case1 => simp_all [Prod.mk.injEq]
   | case2 =>
     rename_i xh ih
     intro decls funs exns ctxt' ⟨h, hall⟩
@@ -318,7 +318,7 @@ theorem compile_decs_FILTER_declsHOL {width : Nat} [NeZero width] :
       compileDecsExactHOL ctxt (code.filter isDeclHOL) = (decls, [], [], ctxt') := by
   intro ctxt code
   fun_induction compileDecsExactHOL ctxt code with
-  | case1 => simp_all [compileDecsExactHOL, List.filter_cons, isDeclHOL]
+  | case1 => simp_all [compileDecsExactHOL]
   | case2 =>
     rename_i xh ih
     intro decls funs exns ctxt' h1
@@ -327,8 +327,8 @@ theorem compile_decs_FILTER_declsHOL {width : Nat} [NeZero width] :
     rw [hih]
     simp only [Prod.mk.injEq] at h1 ⊢
     exact ⟨h1.1, trivial, trivial, h1.2.2.2⟩
-  | case3 => simp_all [compileDecsExactHOL, List.filter_cons, isDeclHOL]
-  | case4 => simp_all [compileDecsExactHOL, List.filter_cons, isDeclHOL]
+  | case3 => simp_all [isDeclHOL]
+  | case4 => simp_all [isDeclHOL]
   | case5 =>
     rename_i ih
     intro decls funs exns ctxt' h
