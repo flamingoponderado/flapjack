@@ -126946,184 +126946,184 @@
   "hol_name": "free_names_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeNames.lean",
   "lean_name": "freeNames",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared free_names_def_typed with source lines 108-110: free_names n name is forall k, n + bvl_to_bvi_namespaces * k <> name; the Lean definition keeps the same num carriers, universal quantifier and inequality."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "input_condition_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeNames.lean",
   "lean_name": "inputCondition",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "documented_mismatch",
+  "reviewer": "documented_mismatch. Compared input_condition_def_typed with source lines 120-127: HOL types the program as (num # \u03b1 # bvi$exp) list, so input_condition is polymorphic in the middle arity component, while Lean inputCondition fixes that component to Nat. The conjuncts themselves match (EVERY free_names, EVERY no_mutcons, ALL_DISTINCT on the label projection, the namespace-three filter over labels at or above bvl_num_stubs, and bvl_num_stubs <= next with next in namespace three), but the Lean declaration is a specialization of the HOL constant, not an exact port; the @[hol] tag is withdrawn and a faithful polymorphic port is still missing."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "no_mutcons_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeNames.lean",
   "lean_name": "noMutcons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared no_mutcons_def_typed with source lines 59-73: the Var and Force true cases, the If conjunction, the Let and LetCall list/body conjunctions, Raise/Tick body recursion, the Call handler option case, Return and Op with no_mutcons_op all match; HOL EVERY becomes quantification over list members and the termination measure is sizeOf."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "no_mutcons_op_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeNames.lean",
   "lean_name": "noMutconsOp",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared no_mutcons_op_def_typed with source lines 55-57: forall tag i, op <> MemOp (MutCons tag i), over the same closLang$op carrier."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "code_rel_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "codeRel",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_rel_def_typed with source lines 75-87: for every loc/arity/exp found in c1, no_mutcons exp and a witness n such that a NONE compile_exp leaves (arity, exp) in c2 while SOME (wrap, work) yields (arity, wrap) at loc and (arity + 2, work) at n; the sptree carrier and lookup are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "code_rel_cases",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "codeRel_cases",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_rel_cases_typed with source lines 3330-3348: the no_mutcons conclusion, the existential loc_opt/body2, the (arity, body2) lookup and the body1 <> body2 implication to optimised_code and rewrite_wrapper ... = SOME body2 match."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "code_rel_domain",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "codeRel_domain",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_rel_domain_typed with source lines 89-106: code_rel c1 c2 implies domain c1 subset domain c2; Lean states the subset pointwise over sptMem."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "code_rel_union",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "codeRel_union",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_rel_union_typed with source lines 379-387: code_rel of both pairs and DISJOINT (domain s) (domain y) imply code_rel (union x t) (union y s); Lean's disjoint hypothesis is the pointwise domain form and union is sptUnion."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "compile_each_code_rel",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "compileEachSource_codeRel",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_each_code_rel_typed with source lines 464-486: the compile_each result pair, the ALL_DISTINCT label projection, EVERY free_names and EVERY no_mutcons premises imply code_rel (fromAList prog) (fromAList prog2); sptFromAList and sptLookup carry the same association-list tree."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "compile_each_ALL_DISTINCT",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "compileEachSource_distinct_and_free",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_each_ALL_DISTINCT_typed with source lines 323-346: distinct label projection and free_names at n for the input imply distinct output labels and free_names at n1."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "compile_each_LENGTH",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "compileEachSource_length",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_each_LENGTH_typed with source lines 253-261: the compiled list is at least as long as the input; Lean states code.length <= (compileEachSource next code).2.length."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "compile_each_MEM",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "compileEachSource_mem",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_each_MEM_typed with source lines 281-299: an output label is an input label or lies in [n, n1) at a namespace-stride offset n + k * bvl_to_bvi_namespaces."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "compile_each_namespace_rel",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "compileEachSource_namespaceRel",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_each_namespace_rel_typed with source lines 357-370: next in namespace three, bvl_num_stubs <= next and every non-stub input label outside namespace three imply namespace_rel (fromAList prog) (fromAList prog2)."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "compile_each_next_mono",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "compileEachSource_next_mono",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_each_next_mono_typed with source lines 263-271: the resulting counter is n + bvl_to_bvi_namespaces * k for some k."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "compile_exp_next_addr",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "compileExp_next_addr",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed replay compile_exp_next_addr_typed of the [local] theorem with source lines 237-243: a NONE compile_exp at next stays NONE at next + bvl_to_bvi_namespaces, with loc/args/exp unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "compile_exp_SOME_irrel",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "compileExp_some_irrel",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed replay compile_exp_SOME_irrel_typed of the [local] theorem with source lines 245-251: SOME w at next implies SOME at every next2, with loc/args/exp unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "compile_prog_ALL_DISTINCT",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "compileProgSource_distinct_and_free",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_prog_ALL_DISTINCT_typed with source lines 348-355: the compile_prog result pair, distinct labels and free_names at n imply distinct output labels and free_names at n1."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "compile_prog_MEM",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "compileProgSource_mem",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_prog_MEM_typed with source lines 301-307: the same label membership and interval conclusion as compile_each_MEM, for the compile_prog entry point."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "compile_prog_next_mono",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "compileProgSource_next_mono",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_prog_next_mono_typed with source lines 273-279: the resulting counter is n + bvl_to_bvi_namespaces * k for some k, in either Bool mode."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "namespace_rel_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "namespaceRel",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared namespace_rel_def_typed with source lines 112-118: the three conjuncts (namespace-three targets absent from c1 and other targets present, source labels at or above bvl_num_stubs outside namespace three, target labels below bvl_num_stubs present in c1) match; Lean keeps the same polymorphic \u03b1 sptree carrier and renders n MOD bvl_to_bvi_namespaces = 3 as inWorkerNamespace."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "namespace_rel_union",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "namespaceRel_union",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared namespace_rel_union_typed with source lines 372-377: namespace_rel of both pairs and DISJOINT (domain s) (domain y) imply namespace_rel (union x t) (union y s); Lean keeps the disjoint hypothesis even though its proof does not use it."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "optimised_code_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "optimisedCode",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared optimised_code_def_typed with source lines 2935-2943: the same existential arity/body/wrapper/worker with lookups at loc and loc_opt, rewrite_wrapper = SOME wrapper and rewrite_worker ... arity (arity + 1) arity body = worker."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "rewrite_wrapper_NONE_irrel",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "rewriteWrapper_none_irrel",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed replay rewrite_wrapper_NONE_irrel_typed of the [local] theorem with source lines 227-235: a NONE rewrite_wrapper at lo1 stays NONE at lo2, with loc/n/exp unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
@@ -127370,16 +127370,16 @@
   "hol_name": "list_rel_front",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
   "lean_name": "listRel_front",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared list_rel_front_typed with source lines 2268-2276: LIST_REL r l1 l2 implies LIST_REL r (FRONT l1) (FRONT l2); Lean uses Forall2 and dropLast, which agree with HOL FRONT including the empty case."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "list_rel_last",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
   "lean_name": "listRel_last",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared list_rel_last_typed with source lines 2256-2266: LIST_REL r l1 l2 and l1 nonempty imply r (LAST l1) (LAST l2). Lean's holLast requires Nonempty element types, the rendering of HOL's inhabited types; the nonempty premise keeps the used path off LAST []."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
@@ -127450,32 +127450,32 @@
   "hol_name": "wrapper_strip_if_else",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/WrapperCases.lean",
   "lean_name": "wrapper_strip_if_else",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wrapper_strip_if_else_typed with source lines 2166-2178: a rewritten If keeps x1 and either rewrites x3 or returns it unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "wrapper_strip_if_then",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/WrapperCases.lean",
   "lean_name": "wrapper_strip_if_then",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wrapper_strip_if_then_typed with source lines 2152-2164: a rewritten If keeps x1 and either rewrites x2 or returns it unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "wrapper_strip_let",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/WrapperCases.lean",
   "lean_name": "wrapper_strip_let",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wrapper_strip_let_typed with source lines 2180-2189: a rewritten Let keeps xs and rewrites the body at n + LENGTH xs."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "wrapper_strip_tick",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/WrapperCases.lean",
   "lean_name": "wrapper_strip_tick",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wrapper_strip_tick_typed with source lines 2191-2197: a rewritten Tick keeps the constructor and rewrites the body at n."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml",

@@ -44,8 +44,15 @@ def freeNames (next name : Nat) : Prop :=
 the TMC pass. -/
 def inWorkerNamespace (name : Nat) : Prop := name % Flapjack.bvlToBviNamespaces = 3
 
-/-- Source program and namespace preconditions for tail-modulo-cons. -/
-@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "input_condition_def"]
+/-- Source program and namespace preconditions for tail-modulo-cons.
+
+HOL's `input_condition_def` (bvi_tmcProofScript.sml:120-127) types the program
+as `(num # α # bvi$exp) list`, so `input_condition` is polymorphic in the
+middle arity component; this definition fixes that component to `Nat` and is
+therefore a specialization, not an exact port. The conjuncts are the source
+ones. A faithful polymorphic port is still missing.
+
+Former reference: `@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "input_condition_def"]`. -/
 def inputCondition (next : Nat) (program : List (Nat × Nat × Bvi.Exp)) : Prop :=
   (∀ entry ∈ program, freeNames next entry.1) ∧
   (∀ entry ∈ program, noMutcons entry.2.2) ∧
