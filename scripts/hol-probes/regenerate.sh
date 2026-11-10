@@ -648,7 +648,7 @@ run_probe flat_to_clos_globals_probeScript.sml flat_to_clos_globals_probe.out \
   "$cake_dir/compiler/backend/proofs/flat_to_closProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe backend_oracle_monotonic_probeScript.sml backend_oracle_monotonic_probe.out \
-  state_co oracle_monotonic is_state_oracle monotonic_with_invariant state_cc FST_state_co SND_state_co state_cc_success state_cc_failure \
+  state_co oracle_monotonic is_state_oracle monotonic_with_invariant state_cc FST_state_co SND_state_co monotonic_shift monotonic_disjoint_init state_cc_success state_cc_failure \
   "$cake_dir/compiler/backend/semantics/backendPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe source_to_flat_compile_globals_probeScript.sml source_to_flat_compile_globals_probe.out \

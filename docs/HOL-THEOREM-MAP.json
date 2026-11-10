@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "oracle_monotonic_shift_seq",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonic.lean", "lean_name": "oracleMonotonic_shiftSeq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source monotonic_shift capture: independent oracle entry and identifier types, ordering relation, positive shift and original subset premise yield the full oracle monotonicity conclusion."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "oracle_monotonic_DISJOINT_init",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonic.lean", "lean_name": "oracleMonotonic_disjointInit",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source monotonic_disjoint_init capture: arbitrary entry and identifier types, oracle monotonicity and irreflexive ordering imply disjointness of the initial set and each oracle entry."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_rel_IMP_v_to_bytes_lemma",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "valueRel_bytesList_lemma",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["code"],
