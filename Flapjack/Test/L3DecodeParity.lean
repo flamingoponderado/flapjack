@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.Decode
+module
+
+public import Flapjack.RiscV.L3.Defs.Decode
+
+@[expose] public section
 
 /-! Original complete native decoded instructions, including numeric payloads.
 All feasible source guard leaves sampled; finite regression evidence, not

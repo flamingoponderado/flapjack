@@ -15,6 +15,9 @@ import runpy
 import sys
 from functools import lru_cache
 from pathlib import Path
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from lean_module_header import to_module  # noqa: E402
 ROOT = Path(__file__).resolve().parents[2]
 sys.setrecursionlimit(50000)
 m = runpy.run_path(str(ROOT / "scripts/hol_terms_to_lean.py"))
@@ -167,7 +170,7 @@ open Flapjack.RiscV.L3
 
 if __name__ == "__main__":
     try:
-        generated = fixture((ROOT / "scripts/hol-probes/l3_decode_probe.out").read_text())
+        generated = to_module(fixture((ROOT / "scripts/hol-probes/l3_decode_probe.out").read_text()))
         target = ROOT / "Flapjack/Test/L3DecodeParity.lean"
         if sys.argv[1:] == ["--update"]:
             target.write_text(generated)

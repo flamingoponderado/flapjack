@@ -1,6 +1,9 @@
 """Fail-closed full native target AST/byte and source partial-table evidence."""
 import importlib.util
 from pathlib import Path
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from lean_module_header import to_module  # noqa: E402
 import unittest
 import re
 import tempfile
@@ -12,7 +15,7 @@ class TargetEncoderCapture(unittest.TestCase):
     def test_full_capture_and_fixture(self):
         self.assertEqual(len(CHECK.samples()),300)
         self.assertEqual(len(CHECK.capture(self.text)),600)
-        self.assertEqual(CHECK.fixture(self.text),(ROOT/'Flapjack/Test/RiscVNativeTargetParity.lean').read_text())
+        self.assertEqual(to_module(CHECK.fixture(self.text)),(ROOT/'Flapjack/Test/RiscVNativeTargetParity.lean').read_text())
     def test_constructor_modes_and_boundaries(self):
         rows=CHECK.samples();groups={r['group'] for r in rows}
         self.assertEqual(groups,{'Skip','Const','BinopReg','BinopImm','ShiftReg','ShiftImm','Div','LongMul','LongDiv','AddCarry','AddOverflow','SubOverflow','Mem','FP','Jump','JumpCmpReg','JumpCmpImm','Call','JumpReg','Loc'})

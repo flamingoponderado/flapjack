@@ -3,6 +3,10 @@
 Finite observations are regression evidence, not universal HOL-to-Lean agreement.
 """
 from pathlib import Path
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parent.parent))
+from lean_module_header import to_module  # noqa: E402
 import re,sys
 ROOT=Path(__file__).resolve().parents[2]
 # Accepted whole instruction AST; outer/inner constructors and original word widths.
@@ -69,7 +73,7 @@ HEADERS = ['Encode_type=:instruction -> word32', 'Encode_hypotheses=0', 'opc_typ
 if __name__=="__main__":
     check_inventory((ROOT / "Flapjack/RiscV/L3/Types.lean").read_text())
     text=(ROOT / "scripts/hol-probes/l3_encode_probe.out").read_text()
-    result=fixture(text)
+    result=to_module(fixture(text))
     path=ROOT / "Flapjack/Test/L3EncodeParity.lean"
     if sys.argv[1:]==["--update"]:path.write_text(result)
     elif sys.argv[1:]:raise SystemExit("usage: check-encode-fixtures.py [--update]")

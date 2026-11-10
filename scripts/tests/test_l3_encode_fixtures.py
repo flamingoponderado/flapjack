@@ -1,6 +1,9 @@
 """Full native Encode capture, carrier coverage and fixture drift guards."""
 import importlib.util
 from pathlib import Path
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from lean_module_header import to_module  # noqa: E402
 import unittest
 ROOT=Path(__file__).resolve().parents[2]
 SPEC=importlib.util.spec_from_file_location("encode_check", ROOT / "scripts/l3/check-encode-fixtures.py")
@@ -13,7 +16,7 @@ class EncodeCapture(unittest.TestCase):
         CHECK.check_inventory((ROOT / "Flapjack/RiscV/L3/Types.lean").read_text())
         self.assertEqual(len(CHECK.CLAUSES),163)
         self.assertEqual(len(CHECK.parse(self.text)),634)
-        self.assertEqual(CHECK.fixture(self.text),(ROOT / "Flapjack/Test/L3EncodeParity.lean").read_text())
+        self.assertEqual(to_module(CHECK.fixture(self.text)),(ROOT / "Flapjack/Test/L3EncodeParity.lean").read_text())
     def test_missing_reordered_duplicate_unreduced_out_of_range(self):
         rows=self.text.splitlines()
         variants=[rows[:-1],rows+[rows[-1]],rows[:20]+[rows[21],rows[20]]+rows[22:],

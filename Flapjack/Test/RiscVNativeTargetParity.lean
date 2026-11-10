@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.RiscV.Target
+module
+
+public import Flapjack.Compiler.Encoders.RiscV.Target
+
+@[expose] public section
 
 /-! Original complete native target AST lists and byte lists. Finite regression
 evidence, not universal HOL-to-Lean equivalence. -/
