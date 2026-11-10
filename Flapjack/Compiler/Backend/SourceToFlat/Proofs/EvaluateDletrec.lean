@@ -1,5 +1,7 @@
 module
 
+import Flapjack.Compiler.Backend.FlatProps.ValueBasics
+
 public import Flapjack.FiniteMap.AlistExact.Lookup
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDlet
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateEmptyDeclarations
@@ -85,29 +87,6 @@ theorem dletrec_bindings_rel (genv : GlobalEnv) (env : Environment) (sourceEnv :
     have head := dletrec_closure_rel genv env sourceEnv trace funs name envInv
     simpa [alistToNs, nsBind] using EnvRel.bind genv name _ _ _ _ ih head
 
-/-- The flat recursive environment contains closures in source-name order. -/
-theorem dletrec_flatEnv (env : Environment) (trace : List VarN)
-    (funs : List (VarN × VarN × AstHOL.Exp)) :
-    let compiled := compileFuns trace
-      { env with v := nsBindList ((funs.map Prod.fst).map
-        (fun f => (f, VarName.localName .none f))) env.v } funs
-    FlatSem.buildRecEnv compiled ⟨[]⟩ [] =
-      (funs.map Prod.fst).map (fun name => (name, FlatSem.Value.recclosure ⟨[]⟩ compiled name)) := by
-  let compiled := compileFuns trace
-    { env with v := nsBindList ((funs.map Prod.fst).map
-      (fun f => (f, VarName.localName .none f))) env.v } funs
-  have shape (xs : List (VarN × VarN × FlatLang.Exp)) :
-      xs.foldr (fun (name, _, _) rest => (name, FlatSem.Value.recclosure ⟨[]⟩ compiled name) :: rest) [] =
-        (xs.map Prod.fst).map (fun name => (name, FlatSem.Value.recclosure ⟨[]⟩ compiled name)) := by
-    induction xs with
-    | nil => rfl
-    | cons pair rest ih =>
-      rcases pair with ⟨name, arg, body⟩
-      simp [ih]
-  change FlatSem.buildRecEnv compiled ⟨[]⟩ [] = _
-  rw [FlatSem.buildRecEnv, shape]
-  rw [show compiled.map Prod.fst = funs.map Prod.fst from compileFuns_names trace _ funs]
-
 /-- The compiled recursive group and source recursive environment have the
 same value and module domains. -/
 theorem dletrec_envDomainEq (env : Environment) (sourceEnv : SemEnv Value) (trace : List VarN)
@@ -135,27 +114,6 @@ theorem dletrec_envDomainEq (env : Environment) (sourceEnv : SemEnv Value) (trac
   · funext path
     apply propext
     cases path <;> simp [nsDomMod, nsLookupMod, nsEmpty]
-
-/-- The compiled recursive declaration executes its generated initializer
-in the environment of all compiled recursive closures. -/
-theorem evaluateDletrec_flat {C F : Type} (flat final : FlatSem.State C F)
-    (trace : List VarN) (n : Nat) (start : NextIndices) (env : Environment)
-    (gen : EnvironmentGenerationStore) (location : Flapjack.Misc.Location.Locs)
-    (funs : List (VarN × VarN × AstHOL.Exp))
-    (distinct : (funs.map Prod.fst).Nodup)
-    (run : let compiled := (compileFuns trace
-          { env with v := nsBindList ((funs.map Prod.fst).map
-            (fun f => (f, VarName.localName .none f))) env.v } funs)
-      FlatSem.evaluate ⟨FlatSem.buildRecEnv compiled ⟨[]⟩ []⟩ flat
-        [makeVarls 0 .none start.vidx (funs.map Prod.fst).reverse] =
-        (final, .val [FlatSem.unitValue]))
-    (clock : final.clock = flat.clock) :
-    FlatSem.evaluateDecs flat (compileDecs trace n start env gen [.dletrec location funs]).2.2.2.2 =
-      (final, none) := by
-  simp only [compileDecs, FlatSem.evaluateDecs, FlatSem.evaluate, compileFuns_names, distinct, if_true]
-  rw [run]
-  cases final
-  simp_all [FlatSem.fixClock, FlatSem.unitValue]
 
 /-- A safe recursive declaration preserves the factored compiler invariant
 after filling its reserved globals. Its relations and evaluator carriers
@@ -216,7 +174,11 @@ theorem evaluateDletrec_factored {C F : Type} [Nonempty C]
   have stateResult : StateRel finalGenv sourceState finalState := finalInv.2.2.1
   have nameShape : flatBindings.reverse.map Prod.fst = (funs.map Prod.fst).reverse := by
     simpa [List.map_reverse] using congrArg List.reverse names
-  have flatEnv : FlatSem.buildRecEnv compiled ⟨[]⟩ [] = flatBindings := dletrec_flatEnv env trace funs
+  have flatEnv : FlatSem.buildRecEnv compiled ⟨[]⟩ [] = flatBindings := by
+    rw [FlatProps.buildRecEnv_merge compiled (), List.append_nil]
+    simpa only [flatBindings, List.map_map, Function.comp_def] using
+      congrArg (List.map (fun name => (name, FlatSem.Value.recclosure ⟨[]⟩ compiled name)))
+        (compileFuns_names trace _ funs)
   have bodyRun : FlatSem.evaluate ⟨FlatSem.buildRecEnv compiled ⟨[]⟩ []⟩ flatState
       [makeVarls 0 .none start.vidx (funs.map Prod.fst).reverse] =
         (finalState, .val [FlatSem.unitValue]) := by
@@ -227,8 +189,10 @@ theorem evaluateDletrec_factored {C F : Type} [Nonempty C]
     dletrec_envDomainEq env sourceEnv trace n start gen location funs, ?_, ?_, ?_, oracForwardRel_refl interp _⟩
   · have beforeClock := ((stateRel_iff genv sourceState flatState).mp invariant.2.2.1).2.2.1
     have afterClock := ((stateRel_iff finalGenv sourceState finalState).mp stateResult).2.2.1
-    exact evaluateDletrec_flat flatState finalState trace n start env gen location funs distinct bodyRun
-      (afterClock.symm.trans beforeClock)
+    have clock : finalState.clock = flatState.clock := afterClock.symm.trans beforeClock
+    simp only [compileDecs, FlatSem.evaluateDecs, FlatSem.evaluate, compileFuns_names, distinct, if_true]
+    rw [bodyRun]
+    simp [FlatSem.fixClock, ← clock, FlatSem.unitValue]
   · simpa only [compileDecs, Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs (),
       (nsAppend_nsEmpty _).1, List.map_map, Function.comp_def, ← nameShape, List.map_reverse, emptyEnv,
       sourceBindings, allocDefs_ignoreCounter _ (n + 1) 0 start.vidx] using envResult'
