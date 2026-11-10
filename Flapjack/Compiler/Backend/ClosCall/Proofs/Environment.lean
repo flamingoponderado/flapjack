@@ -19,7 +19,8 @@ def envRel {A B : Type} (R : A → B → Prop) (env1 : List A) (env2 : List B)
     ∀ x, (∃ fn ∈ fns, freeVar (fn.1 + offset + x) fn.2) →
       ∃ (left : x < env1.length) (right : x < env2.length), R env1[x] env2[x]
 
-private theorem forall₂_mono_members {A B : Type} {R R' : A → B → Prop}
+/-- Flapjack infrastructure for lifting a relation between members of two lists. -/
+theorem forall₂_mono_members {A B : Type} {R R' : A → B → Prop}
     {xs : List A} {ys : List B} (related : List.Forall₂ R xs ys)
     (change : ∀ x ∈ xs, ∀ y ∈ ys, R x y → R' x y) : List.Forall₂ R' xs ys := by
   induction related with

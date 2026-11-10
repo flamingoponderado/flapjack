@@ -87,4 +87,67 @@ theorem valueRel_sourceEquations (g : State) (allowed : Nat → Prop)
         envRel (valueRel g allowed code) env env' fns'.length fns') := by
   simp [valueRel, attachListRel, attachEnvRel]
 
+/-- Canonical finite-map codec for value-relation state extension. -/
+theorem holFmapAsFiniteSupportParamWitness_valueRel_subg_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code code key
+
+/-- Extending the compiler state and allowed locations preserves the
+direct-call value relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "v_rel_subg"
+  (fmap_as_finite_support_parameters := [code])]
+theorem valueRel_subg (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (left right : Value)
+    (gNext : State) (allowedNext : Nat → Prop)
+    (h : valueRel g allowed code left right ∧ stateExtends g gNext ∧
+      (∀ x, allowed x → allowedNext x)) :
+    valueRel gNext allowedNext code left right := by
+  cases left with
+  | number n => simpa [valueRel] using h.1
+  | word64 w => simpa [valueRel] using h.1
+  | byteVector bytes => simpa [valueRel] using h.1
+  | refPtr b n => simpa [valueRel] using h.1
+  | block tag values =>
+      obtain ⟨nextValues, eq, related⟩ := (valueRel_sourceEquations g allowed code).1 _ _ _ |>.mp h.1
+      apply (valueRel_sourceEquations gNext allowedNext code).1 _ _ _ |>.mpr
+      refine ⟨nextValues, eq, ?_⟩
+      apply forall₂_mono_members related
+      intro x hx y hy rel
+      exact valueRel_subg g allowed code x y gNext allowedNext ⟨rel, h.2⟩
+  | closure loco values env arity body =>
+      obtain ⟨loc, nextValues, nextEnv, nextBody, closure, eq, location, valuesRel, envRelated⟩ :=
+        (valueRel_sourceEquations g allowed code).2.1 _ _ _ _ _ _ |>.mp h.1
+      apply (valueRel_sourceEquations gNext allowedNext code).2.1 _ _ _ _ _ _ |>.mpr
+      refine ⟨loc, nextValues, nextEnv, nextBody, ?_, eq, location, ?_, ?_⟩
+      · exact recClosureRel_mono g gNext allowed allowedNext code code loc [(arity, body)]
+          [(arity, nextBody)] closure (HolFiniteMapExact.submap_refl _) h.2.1 h.2.2
+      · apply forall₂_mono_members valuesRel
+        intro x hx y hy rel
+        exact valueRel_subg g allowed code x y gNext allowedNext ⟨rel, h.2⟩
+      · apply envRel_mono ?_ envRelated
+        intro x y ⟨hx, hy, rel⟩
+        exact valueRel_subg g allowed code x y gNext allowedNext ⟨rel, h.2⟩
+  | recclosure loco values env fns index =>
+      obtain ⟨loc, nextValues, nextEnv, nextFns, closure, eq, location, valuesRel, envRelated⟩ :=
+        (valueRel_sourceEquations g allowed code).2.2 _ _ _ _ _ _ |>.mp h.1
+      apply (valueRel_sourceEquations gNext allowedNext code).2.2 _ _ _ _ _ _ |>.mpr
+      refine ⟨loc, nextValues, nextEnv, nextFns, ?_, eq, location, ?_, ?_⟩
+      · exact recClosureRel_mono g gNext allowed allowedNext code code loc fns nextFns
+          closure (HolFiniteMapExact.submap_refl _) h.2.1 h.2.2
+      · apply forall₂_mono_members valuesRel
+        intro x hx y hy rel
+        exact valueRel_subg g allowed code x y gNext allowedNext ⟨rel, h.2⟩
+      · apply envRel_mono ?_ envRelated
+        intro x y ⟨hx, hy, rel⟩
+        exact valueRel_subg g allowed code x y gNext allowedNext ⟨rel, h.2⟩
+termination_by sizeOf left
+decreasing_by
+  all_goals subst_vars
+  all_goals have bound := List.sizeOf_lt_of_mem (show x ∈ _ from ‹x ∈ _›)
+  all_goals simp_wf
+  all_goals omega
+
 end Flapjack.Compiler.Backend.ClosCall
