@@ -11,25 +11,6 @@ public import Flapjack.Misc.ListEl
 namespace Flapjack.Compiler.Backend.ClosCall
 open Flapjack
 
-private theorem lookup_of_member {V : Type} (entries : List (Nat × V)) (key : Nat) (value : V)
-    (distinct : (entries.map Prod.fst).Nodup) (member : (key, value) ∈ entries) :
-    holALookup entries key = some value := by
-  induction entries with
-  | nil => simp at member
-  | cons head tail ih =>
-    obtain ⟨k, v⟩ := head
-    simp only [List.map_cons, List.nodup_cons] at distinct
-    simp only [List.mem_cons, Prod.mk.injEq] at member
-    by_cases eq : key = k
-    · subst k
-      rcases member with ⟨_, rfl⟩ | mem
-      · simp [holALookup]
-      · exfalso
-        exact distinct.1 (List.mem_map.mpr ⟨(key, value), mem, rfl⟩)
-    · rcases member with ⟨same, _⟩ | mem
-      · exact (eq same).elim
-      · simpa [holALookup, eq] using ih distinct.2 mem
-
 /-- Lookup in generated auxiliary code uses the unique matching source index,
 falling back to the previous code list when there is none. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "ALOOKUP_code_list"]
@@ -76,7 +57,7 @@ theorem codeListSource_alookup {A B C : Type} [Nonempty (A × B)] (loc : Nat) (f
     have member : (key, holEl i fns) ∈ entries := by
       rw [holEl_eq_getElem i fns bound]
       exact List.mem_reverse.mpr inZip
-    have found := lookup_of_member entries key (holEl i fns) distinct member
+    have found := holALookup_of_distinct_member entries key (holEl i fns) ⟨distinct, member⟩
     simp [found]
 
 end Flapjack.Compiler.Backend.ClosCall

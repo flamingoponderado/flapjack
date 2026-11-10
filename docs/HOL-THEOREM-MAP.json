@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "HOL/src/finite_maps/alistScript.sml", "hol_name": "ALOOKUP_ALL_DISTINCT_MEM",
+  "lean_path": "Flapjack/FiniteMap/AlistExact/Lookup.lean", "lean_name": "holALookup_of_distinct_member",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alookup_all_distinct_mem_type in clos_call_code_list_probe.out and HOL source: key and value types remain independent, and distinct keys plus pair membership imply the original association-list lookup result."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "is_Recclosure_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "isRecClosure",
   "statement_status": "reviewed_exact",
