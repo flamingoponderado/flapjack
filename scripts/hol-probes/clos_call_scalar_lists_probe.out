@@ -1,0 +1,2 @@
+bytes_replay=!(x :v) (y :v) (c :sptree$num_set # (num # num # closLang$exp) list) (g :num -> bool) (code :num |-> num # closLang$exp). v_rel c g code x y ==> !(ns :word8 list). v_to_list x = SOME (MAP (Number o $& o (w2n :word8 -> num)) ns) <=> v_to_list y = SOME (MAP (Number o $& o (w2n :word8 -> num)) ns)
+words_replay=!(x :v) (y :v) (c :sptree$num_set # (num # num # closLang$exp) list) (g :num -> bool). v_rel c g (code :num |-> num # closLang$exp) x y ==> !(ns :word64 list). v_to_list x = SOME (MAP Word64 ns) <=> v_to_list y = SOME (MAP Word64 ns)

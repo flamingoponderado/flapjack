@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_rel_IMP_v_to_bytes_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "valueRel_bytesList_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared the typed local source proof replay bytes_replay in clos_call_scalar_lists_probe.out: the original value relation implies, for every word8 list, the full equivalence of the two exact number-encoded list decodings. The code parameter uses canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_rel_IMP_v_to_words_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "valueRel_wordsList_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared the typed local source proof replay words_replay in clos_call_scalar_lists_probe.out: the free code parameter precedes quantified values and state, and the original value relation implies the full decoding equivalence for every word64 list. The code parameter uses canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "subg_insert_each'",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertWithCode.lean", "lean_name": "stateExtends_insertWithCode",
   "statement_status": "reviewed_exact",

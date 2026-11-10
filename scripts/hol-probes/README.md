@@ -723,6 +723,10 @@ exported global-invariant equation and replay its original simplifier derivation
 
 `clos_call_frontend_probe.out` captures the typed direct-call traversal and compiler entry points, closure free-variable annotations, direct-call conversion, effectful calls, mutually recursive code extraction, and enabled and disabled incremental conversion. `ClosCallParity` replays both conditional results through the total entry point and the enabled result at two fuel values through the bounded executable. `full_clos_call_cake_word_probe.out` captures the complete word program for a nested-function CakeML declaration with direct-call conversion and the ported BVL/BVI optimizations enabled; known-function optimization is disabled.
 
+`clos_call_scalar_lists_probe.out` replays the two local closure-call byte-list and
+word-list relation lemmas with inferred types shown. Regenerate with
+`HOL_PROBE_ONLY=clos_call_scalar_lists_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `clos_call_code_list_probe.out` captures the polymorphic source type and typed label-accounting theorems for the direct-call code-list helper, the typed `insert_each` equations, and a concrete example replayed by the executable-pass parity tests.
 
 `clos_call_wfg_probe.out` captures the inferred polymorphic compiler-state and recursive-closure invariants, state-extension, code-inclusion and location-traversal definitions, and their structural theorems. Its state-extension, code-inclusion and location-order cases are replayed in Lean.
