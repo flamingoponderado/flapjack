@@ -1,8 +1,21 @@
-import Flapjack.Compiler.Backend.LabFilter
-import Flapjack.Compiler.Backend.LabToTarget.Compile
-import Flapjack.Misc.ListSubset
-import Flapjack.Test.LabToTargetRemoveLabelsParity
-import Flapjack.Test.Fixtures.LabToTarget
+module
+
+public import Flapjack.Compiler.Backend.LabFilter
+public import Flapjack.Compiler.Backend.LabToTarget.Compile
+public import Flapjack.Misc.ListSubset
+public import Flapjack.Test.LabToTargetRemoveLabelsParity
+public import Flapjack.Test.Fixtures.LabToTarget
+import all Flapjack.Compiler.Backend.LabFilter
+import all Flapjack.Compiler.Backend.LabToTarget.Compile
+import all Flapjack.Misc.ListSubset
+import all Flapjack.Test.LabToTargetRemoveLabelsParity
+import all Flapjack.Test.Fixtures.LabToTarget
+import all Flapjack.Compiler.Encoders.Asm
+import all Flapjack.Compiler.Backend.LabToTarget.Encoding
+import all Flapjack.Compiler.Backend.LabLang
+import all Init.Data.Sum.Basic
+
+@[expose] public section
 
 /-!
 # Native kernel replays of `lab_to_target_compile_probe.out`
