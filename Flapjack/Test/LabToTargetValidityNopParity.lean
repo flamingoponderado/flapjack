@@ -140,7 +140,8 @@ example {width : Nat} [NeZero width]
         linesOk_linesEncWithNop c labs ffis pos lines
 
 def runChecks : IO Bool := do
-  IO.println "PASS full validity-to-NOP implications (9 original observations, 9 actual premise
-      instances, 2 full consumers)"
+  IO.println
+    ("PASS full validity-to-NOP implications (9 original observations, 9 actual premise" ++
+      " instances, 2 full consumers)")
   pure true
 end Flapjack.Test.LabToTargetValidityNopParity

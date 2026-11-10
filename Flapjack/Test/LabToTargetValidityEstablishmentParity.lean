@@ -173,7 +173,8 @@ example {width : Nat} [NeZero width] (c : AsmConfigExact width) (labs : Spt (Spt
         labs ffis pos code
 
 def runChecks : IO Bool := do
-  IO.println "PASS full six-guard encoding establishment (11 original observations, 2 full
-      consumers)"
+  IO.println
+    ("PASS full six-guard encoding establishment (11 original observations, 2 full" ++
+      " consumers)")
   pure true
 end Flapjack.Test.LabToTargetValidityEstablishmentParity
