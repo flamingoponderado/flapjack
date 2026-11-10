@@ -26,8 +26,8 @@ def argsFrom : Exp → Option (Nat × Nat × List Exp × Option Exp)
 
 /-- Construct the accumulator worker call from extracted call data. -/
 @[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "push_call_def"]
-def pushCall (next : Nat) (op : AssocOp) (acc : Nat) (value : Exp) :
-    Option (Nat × Nat × List Exp × Option Exp) → Exp
+def pushCall {α : Type} (next : Nat) (op : AssocOp) (acc : Nat) (value : Exp) :
+    Option (Nat × α × List Exp × Option Exp) → Exp
   | some (ticks, _, args, handler) => .call ticks (some next) (args ++ [applyOp op (.var acc) value]) handler
   | none => .var 1234567890
 
