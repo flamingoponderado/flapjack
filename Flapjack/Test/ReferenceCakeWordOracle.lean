@@ -1,6 +1,14 @@
 -- Generated from the pinned original HOL compiler; do not edit.
-import Flapjack.Pancake.WordLang
-import Flapjack.Test.CakeWordOracleHelpers
+module
+
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Test.CakeWordOracleHelpers
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.ReferenceCakeWordOracle
 

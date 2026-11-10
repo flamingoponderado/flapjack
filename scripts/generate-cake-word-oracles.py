@@ -2,6 +2,10 @@
 """Generate a complete Lean word-program pattern from the pinned HOL capture."""
 import argparse
 import re
+import sys
+from pathlib import Path as _Path
+sys.path.insert(0, str(_Path(__file__).resolve().parent))
+from lean_module_header import to_module  # noqa: E402
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -389,7 +393,7 @@ def expected_modules():
             plan.append((output_path, alias_render(shared, namespace)))
         else:
             plan.append((output_path, module_with_sharing(namespace, width, parts[namespace], shared_names, defs)))
-    return plan
+    return [(path, to_module(text, private_in_public=True)) for path, text in plan]
 
 
 def main():
