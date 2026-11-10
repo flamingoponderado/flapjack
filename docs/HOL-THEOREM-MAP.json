@@ -128452,8 +128452,8 @@
   "hol_name": "get_code_labels_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/CodeLabels.lean",
   "lean_name": "getCodeLabels",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed get_code_labels_def capture: Call unions the destination and handler cases, Force gives {loc}, Seq/If union, Assign delegates to assign_get_code_label, and the remaining constructors (Skip, Move, MakeSpace, Raise, Return, Tick) give {}. Lean's clauses match, with _ -> \u2205 covering exactly those remaining DataLang.Prog constructors."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataSemScript.sml",
