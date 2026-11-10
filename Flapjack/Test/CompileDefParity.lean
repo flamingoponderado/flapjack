@@ -1,6 +1,16 @@
-import Flapjack.Pancake.PanToCrep.Compile
-import Flapjack.Pancake.PanToCrep.CompileExact
-import Flapjack.Pancake.PanToCrep.CompileProg
+module
+
+public import Flapjack.Pancake.PanToCrep.Compile
+public import Flapjack.Pancake.PanToCrep.CompileExact
+public import Flapjack.Pancake.PanToCrep.CompileProg
+public meta import Flapjack.Pancake.PanToCrep.Compile
+public meta import Flapjack.Pancake.PanToCrep.CompileExact
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-!
 # Original-domain parity for `pan_to_crep$compile` (`compile_def`)
