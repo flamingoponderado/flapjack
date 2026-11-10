@@ -1331,6 +1331,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.ToWordIncremental
 import Flapjack.Compiler.Backend.SourceToFlat.ToRiscVIncremental
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationParity
+import Flapjack.Compiler.Backend.ClosNumber.Proofs.VarsNone
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationDistinct
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.StateRelation
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.Install

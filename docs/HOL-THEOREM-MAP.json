@@ -18,6 +18,18 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml", "hol_name": "renumber_code_locs_every_Fn_vs_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/VarsNone.lean", "lean_name": "renumberCodeLocs_everyFnVarsNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared renumber_vars_none_typed and independent review: both quantified list and singleton equivalences, their order, and unchanged captured-variable annotations match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "every_Fn_vs_NONE_EVERY",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/Syntactic.lean", "lean_name": "everyFnVarsNone_every",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_fn_vs_none_every_typed and independent review: quantified expression list, singleton predicate and EVERY as bounded forall match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "every_Fn_SOME_EVERY",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/FnAnnotations.lean", "lean_name": "everyFnLocationSome_every",
   "statement_status": "reviewed_exact",
