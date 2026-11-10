@@ -17821,40 +17821,40 @@
     "hol_name": "SND_pure_co",
     "lean_path": "Flapjack/Compiler/Backend/BackendProps/Pure.lean",
     "lean_name": "snd_pureCo",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; complete source comparison remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed flat_pattern_install_relation_probe capture (`SND (pure_co (co :\u03b3 -> \u03b1) (x :\u03b2 # \u03b3)) = co (SND x)`) with snd_pureCo (f) (x : Config \u00d7 Input) : (pureCo f x).2 = f x.2; pureCo is the reviewed pure_co_def port (HOL's I ## f)."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
     "hol_name": "FST_pure_co",
     "lean_path": "Flapjack/Compiler/Backend/BackendProps/Pure.lean",
     "lean_name": "fst_pureCo",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; complete source comparison remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed flat_pattern_install_relation_probe capture (`FST (pure_co (co :\u03b3 -> \u03b2) (x :\u03b1 # \u03b3)) = FST x`) with fst_pureCo (f) (x : Config \u00d7 Input) : (pureCo f x).1 = x.1."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
     "hol_name": "pure_co_comb_pure_co",
     "lean_path": "Flapjack/Compiler/Backend/BackendProps/Pure.lean",
     "lean_name": "pureCo_comp",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; complete source comparison remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed flat_pattern_install_relation_probe capture (`pure_co f \u2218 pure_co g \u2218 co = pure_co (f \u2218 g) \u2218 co`) with pureCo_comp: the same composition shape, HOL's `o` rendered as Function.comp, over the reviewed pureCo port."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
     "hol_name": "pure_co_I",
     "lean_path": "Flapjack/Compiler/Backend/BackendProps/Pure.lean",
     "lean_name": "pureCo_id",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; complete source comparison remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed flat_pattern_install_relation_probe capture (`pure_co (I :\u03b2 -> \u03b2) = (I :\u03b1 # \u03b2 -> \u03b1 # \u03b2)`) with pureCo_id : pureCo (id : A \u2192 A) = (id : Config \u00d7 A \u2192 Config \u00d7 A); HOL's I is rendered as Lean id at the same pair type."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
     "hol_name": "pure_cc_I",
     "lean_path": "Flapjack/Compiler/Backend/BackendProps/Pure.lean",
     "lean_name": "pureCc_id",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; complete source comparison remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed flat_pattern_install_relation_probe capture (`pure_cc (I :\u03b2 -> \u03b2) = (I :(\u03b1 -> \u03b2 -> \u03b3) -> \u03b1 -> \u03b2 -> \u03b3)`) with pureCc_id : pureCc (id : A \u2192 A) = (id : (Config \u2192 A \u2192 Result) \u2192 (Config \u2192 A \u2192 Result)); pureCc is the reviewed pure_cc_def port."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
