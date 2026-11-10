@@ -55,4 +55,20 @@ theorem disjoint_nthCode_monotonic {C A : Type}
     have hi := List.mem_range.mp hi
     have lt := mono.1 i n x x hi xmem current
     omega
+
+/-- Ordered lower and upper sets are disjoint. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "DISJOINT_LE_GT"]
+theorem disjoint_le_gt (A : Set Nat) (n : Nat) (B : Set Nat)
+    (h : (∀ x, x ∈ A → x ≤ n) ∧ (∀ x, x ∈ B → n < x)) :
+    ∀ x, ¬ (x ∈ A ∧ x ∈ B) := by
+  intro x ⟨left, right⟩
+  exact (Nat.not_lt_of_ge (h.1 x left)) (h.2 x right)
+
+/-- An oracle remains monotone when its initial set is restricted. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "oracle_monotonic_init_subset"]
+theorem oracleMonotonic_initSubset {α β : Type} (f : α → Set β) (R : β → β → Prop)
+    (St : Set β) (co : Nat → α) (St' : Set β)
+    (h : oracleMonotonic f R St co ∧ St' ⊆ St) : oracleMonotonic f R St' co := by
+  exact oracleMonotonic_subset St' St f co f co R ⟨h.2, fun _ => Set.Subset.rfl⟩ h.1
+
 end Flapjack.Compiler.Backend.ClosToBvl

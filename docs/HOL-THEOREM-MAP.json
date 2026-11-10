@@ -435,6 +435,18 @@
   "reviewer": "Compared every_fn_none_cond_mti_typed and independent review: free enabled, maxApp and program order, polymorphic auxiliary list carrier and Boolean equivalence rendered as iff match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "DISJOINT_LE_GT",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean", "lean_name": "disjoint_le_gt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared DISJOINT_LE_GT_typed and source: the free variables A, n, B occur in order, with natural-number set carriers, the grouped bounds, and pointwise DISJOINT conclusion matching HOL."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "oracle_monotonic_init_subset",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean", "lean_name": "oracleMonotonic_initSubset",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared oracle_monotonic_init_subset_typed and source: free variables f, R, St, co, St' occur in order, with independent oracle-entry and name carriers and the same grouped monotonicity and subset premise and conclusion."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "domain_nth_code",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean", "lean_name": "domain_nthCode",
   "statement_status": "reviewed_exact",
