@@ -1,5 +1,29 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "calls_length",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Compile.lean", "lean_name": "calls_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_length_typed and independent review: all quantified binders, sparse-tree state carrier, equation premise and output length equality match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "calls_sing",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Compile.lean", "lean_name": "calls_sing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_add_SUC_code_locs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LabelsOriginal.lean", "lean_name": "calls_addSucc_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_add_SUC_code_locs_typed and independent review: quantified binders, sparse-tree state, calls equation and old-or-successor label set inclusion agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_ALL_DISTINCT",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LabelsOriginal.lean", "lean_name": "calls_allDistinct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_ALL_DISTINCT_typed and independent review: quantified binders, grouped equation, distinctness and ordered disjointness premises, and final label distinctness agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "annotate_compile_inc_req",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/AnnotationAddresses.lean", "lean_name": "annotateCompileInc_req",
   "statement_status": "reviewed_exact",

@@ -64,6 +64,14 @@ val _ = show "compile_inc_monotonic_typed=" clos_to_bvlProofTheory.compile_inc_m
 val _ = show "subset_req_orac_to_oracle_typed=" clos_to_bvlProofTheory.subset_req_orac_to_oracle;
 val _ = show "annotate_compile_code_locs_typed=" clos_to_bvlProofTheory.annotate_compile_code_locs;
 val _ = show "annotate_compile_inc_req_typed=" clos_to_bvlProofTheory.annotate_compile_inc_req;
+val _ = show "cond_call_compile_inc_req_typed=" clos_to_bvlProofTheory.cond_call_compile_inc_req;
+val _ = show "calls_length_typed=" clos_callTheory.calls_length;
+val _ = show "calls_sing_typed=" clos_callTheory.calls_sing;
+val _ = show "calls_add_SUC_code_locs_typed=" clos_callProofTheory.calls_add_SUC_code_locs;
+val _ = show "calls_ALL_DISTINCT_typed=" clos_callProofTheory.calls_ALL_DISTINCT;
+val _ = show "calls_code_locs_MEM_typed=" clos_callProofTheory.calls_code_locs_MEM;
+val _ = show "calls_code_locs_ALL_DISTINCT_typed=" clos_callProofTheory.calls_code_locs_ALL_DISTINCT;
+val _ = show "MAP_FST_code_list_typed=" clos_callProofTheory.MAP_FST_code_list;
 val _ = show "can_extract_to_case_typed=" clos_to_bvlProofTheory.can_extract_to_case;
 val _ = show "annotate_Op_Const_typed=" clos_to_bvlProofTheory.annotate_Op_Const;
 val _ = show "LENGTH_annotate_typed=" clos_to_bvlProofTheory.LENGTH_annotate;

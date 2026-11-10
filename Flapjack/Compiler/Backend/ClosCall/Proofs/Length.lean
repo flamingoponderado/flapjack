@@ -28,20 +28,6 @@ theorem callsListFuel_length (fuel : Nat) (es : List Exp) (initial final : State
       simp only [List.length_cons]
       exact congrArg Nat.succ (ih es s1 s2 es' hs)
 
-/-- Retrying with the structural budget preserves the same length invariant. -/
-theorem callsListBounded_length (fuel : Nat) (es : List Exp) (initial final : State)
-    (out : List Exp) (run : callsListBounded fuel es initial = some (out, final)) :
-    out.length = es.length := by
-  unfold callsListBounded at run
-  cases first : callsListFuel fuel es initial with
-  | some result =>
-    simp only [first, Option.some.injEq] at run
-    subst result
-    exact callsListFuel_length fuel es initial final out first
-  | none =>
-    simp only [first] at run
-    exact callsListFuel_length _ es initial final out run
-
 /-- In a mutually recursive group, pairing converted bodies with their
 original arities retains the original number of auxiliary functions. -/
 theorem convertedFunctions_length (fuel : Nat) (fns : List (Nat × Exp))

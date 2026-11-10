@@ -26,6 +26,25 @@ theorem callsSing_eq :
   · intro es state
     rfl
 
+/-- Direct-call conversion preserves the number of expressions. -/
+@[hol "cakeml/compiler/backend/clos_callScript.sml" "calls_length"]
+theorem calls_length (xs : List Exp) (initial : State) (ys : List Exp) (final : State)
+    (run : calls xs initial = (ys, final)) : ys.length = xs.length := by
+  have length := callsSingList_length xs initial
+  simpa [calls, run] using length
+
+/-- Compiling a singleton expression produces a singleton expression list. -/
+@[hol "cakeml/compiler/backend/clos_callScript.sml" "calls_sing"]
+theorem calls_sing (x : Exp) (initial : State) (ys : List Exp) (final : State)
+    (run : calls [x] initial = (ys, final)) : ∃ y, ys = [y] := by
+  have len := calls_length [x] initial ys final run
+  cases ys with
+  | nil => simp at len
+  | cons y rest =>
+    cases rest with
+    | nil => exact ⟨y, rfl⟩
+    | cons z rest => simp at len
+
 /-- The list clauses of HOL's `calls_def` hold for the shared traversal.
 The singleton constructor clauses follow from `callsSing_eq` and `callsSing`. -/
 theorem calls_list_equations (x y : Exp) (xs : List Exp) (state : State) :

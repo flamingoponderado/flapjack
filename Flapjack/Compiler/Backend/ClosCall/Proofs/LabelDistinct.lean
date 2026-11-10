@@ -251,17 +251,4 @@ theorem callsListBounded_labelsDistinct (fuel : Nat) (es : List Exp) (initial fi
     simp only [first] at run
     exact callsListFuel_labelsDistinct _ es initial final out run distinct fresh oldDistinct
 
-/-- Compiling a list with distinct closure locations produces distinct
-auxiliary function labels, for either setting of direct-call conversion. -/
-theorem compileFuel_labelsDistinct (fuel : Nat) (enabled : Bool) (es : List Exp)
-    (out : List Exp) (final : State) (run : compileFuel fuel enabled es = some (out, final))
-    (distinct : (codeLocations es).Nodup) : (final.2.map Prod.fst).Nodup := by
-  cases enabled with
-  | false => simp [compileFuel] at run; obtain ⟨_, rfl⟩ := run; simp
-  | true =>
-    simp only [compileFuel, ↓reduceIte] at run
-    apply callsListBounded_labelsDistinct fuel es (.ln, []) final out run distinct
-    · simp [LabelsFresh]
-    · simp
-
 end Flapjack.Compiler.Backend.ClosCall
