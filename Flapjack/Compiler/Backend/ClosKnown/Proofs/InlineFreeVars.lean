@@ -17,12 +17,7 @@ closedness traversal to the closure semantics. -/
 theorem closedFunctionBodyBound (arity : Nat) (body : Exp)
     (h : closedHOL (.fn (Flapjack.Basis.Pure.MlString.ofString "") none none arity body) = true) :
     fvMax arity [body] := by
-  have fuel := closedFuel_correct 0 (.fn (Flapjack.Basis.Pure.MlString.ofString "") none none arity body)
-  rw [h] at fuel
-  have bound := (closedFuel_fn 0 (Flapjack.Basis.Pure.MlString.ofString "") none none arity body).mp fuel
-  intro n free
-  apply bound n
-  simpa [freeVars] using free
+  exact (closedFn_fv (Flapjack.Basis.Pure.MlString.ofString "") none none arity body).mp h
 
 /-- A selected inline body is a closure approximation whose free variables
 are all supplied by the application's arguments. -/

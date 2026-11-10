@@ -1719,6 +1719,18 @@
   "reviewer": "Source comparison with list_to_v_v_rel_typed: both unrestricted value lists, their pointwise relation premise and the related list-encoding conclusion agree. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "closed_Fn_fv",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FreeCorrect.lean", "lean_name": "closedFn_fv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared closed_fn_fv in clos_call_free_correct_probe.out: the name, location, variable annotation, arity and body retain their source types and order; source closedness is equivalent to the universally quantified free-variable bound. Names use the reviewed MlString carrier."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "closed_Fn",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FreeCorrect.lean", "lean_name": "closedFn",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared closed_fn in clos_call_free_correct_probe.out: the name, location, variable annotation, arity and body retain their source types and order; source closedness is equivalent to the bound on every variable in the SND of the source free traversal. Names use the reviewed MlString carrier."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "free_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FreeCorrect.lean", "lean_name": "freeThm",
   "statement_status": "reviewed_exact",

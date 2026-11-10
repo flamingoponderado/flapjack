@@ -209,7 +209,7 @@ private theorem materializedEmpty_iff (vars : DbVarSet) :
 
 /-- The executable closedness check succeeds exactly when its input has no
 free variables. -/
-theorem closedFuel_iff_noFreeVars (fuel : Nat) (e : Exp) :
+private theorem closedFuel_iff_noFreeVars (fuel : Nat) (e : Exp) :
     closedFuel fuel e = some true ↔ ∀ n, ¬ freeVarExp n e := by
   obtain ⟨⟨result, vars⟩, run⟩ := freeBounded_succeeds fuel e
   have agreement := freeBounded_freeVars fuel e result vars run
@@ -225,7 +225,7 @@ theorem closedFuel_iff_noFreeVars (fuel : Nat) (e : Exp) :
 
 /-- A closure is reported closed precisely when its body has no free
 variable beyond its argument prefix. -/
-theorem closedFuel_fn (fuel : Nat) (name : Flapjack.Basis.Pure.MlString.MlString)
+private theorem closedFuel_fn (fuel : Nat) (name : Flapjack.Basis.Pure.MlString.MlString)
     (loc : Option Nat) (vars : Option (List Nat)) (arity : Nat) (body : Exp) :
     closedFuel fuel (.fn name loc vars arity body) = some true ↔
       ∀ n, freeVarExp n body → n < arity := by
@@ -240,5 +240,32 @@ theorem closedFuel_fn (fuel : Nat) (name : Flapjack.Basis.Pure.MlString.MlString
   · intro bound n free
     have := bound (n + arity) free
     omega
+
+/-- A source function is closed exactly when its body's free variables lie
+inside its argument prefix. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "closed_Fn_fv"]
+theorem closedFn_fv (name : Flapjack.Basis.Pure.MlString.MlString)
+    (loc : Option Nat) (vars : Option (List Nat)) (arity : Nat) (body : Exp) :
+    closed (.fn name loc vars arity body) = true ↔
+      ∀ n, freeVars n [body] → n < arity := by
+  have bridge := ClosKnown.closedFuel_correct 0 (.fn name loc vars arity body)
+  have result := closedFuel_fn 0 name loc vars arity body
+  rw [bridge] at result
+  simpa [closed, freeVars] using result
+
+/-- Source closedness is characterized by the body's computed variable set. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "closed_Fn"]
+theorem closedFn (name : Flapjack.Basis.Pure.MlString.MlString)
+    (loc : Option Nat) (vars : Option (List Nat)) (arity : Nat) (body : Exp) :
+    closed (.fn name loc vars arity body) = true ↔
+      ∀ n, hasVar n (free [body]).2 = true → n < arity := by
+  rw [closedFn_fv]
+  have correct := freeThm [body]
+  cases result : free [body] with
+  | mk output live =>
+    rw [result] at correct
+    constructor <;> intro h n member
+    · exact h n ((correct n).2.mpr member)
+    · exact h n ((correct n).2.mp member)
 
 end Flapjack.Compiler.Backend.ClosCall
