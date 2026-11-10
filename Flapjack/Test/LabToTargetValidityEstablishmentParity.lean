@@ -131,14 +131,14 @@ example : lineOkPreHOL cfg (.labAsm (.locValue 2 (.lab 1 5)) 16 [16, 77] 2) ∧
   all_goals try decide +kernel
 
 example : ¬ evenLabelsStrong 3 ([⟨1,[]⟩] : List (Section (LabLineHOL 8))) ∧
-    ¬ allEncOk cfg labs ffis 3 [⟨1, []⟩] := by 
+    ¬ allEncOk cfg labs ffis 3 [⟨1, []⟩] := by
       simp [evenLabelsStrong, allEncOk, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact,
     asmRegOkExact, asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact,
     asmArithOkExact, asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact,
     asmByteOffsetOkExact, asmOkExact]
 example : lineEncWithNop cfg.encode labs ffis 4 (.labAsm (.call (.lab 1 5)) 16 [0,0] 2) ∧
     lineOkLight cfg (.labAsm (.call (.lab 1 5)) 16 [0,0] 2) = false ∧
-    ¬ lineOk cfg labs ffis 4 (.labAsm (.call (.lab 1 5)) 16 [0, 0] 2) := by 
+    ¬ lineOk cfg labs ffis 4 (.labAsm (.call (.lab 1 5)) 16 [0, 0] 2) := by
       simp [lineEncWithNop, lineOkLight, lineOk, asmCmpOkExact, asmCjumpOffsetOkExact,
           asmOffsetOkExact,
     asmRegOkExact, asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact,
@@ -173,7 +173,8 @@ example {width : Nat} [NeZero width] (c : AsmConfigExact width) (labs : Spt (Spt
         labs ffis pos code
 
 def runChecks : IO Bool := do
-  IO.println "PASS full six-guard encoding establishment (11 original observations, 2 full
-      consumers)"
+  IO.println
+    ("PASS full six-guard encoding establishment (11 original observations, 2 full" ++
+      " consumers)")
   pure true
 end Flapjack.Test.LabToTargetValidityEstablishmentParity

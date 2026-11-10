@@ -6101,7 +6101,7 @@
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "gcMoveRefList_simulation",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared gc_move_ref_list_simulation_typed (gen_gc_partial_source_probe.out:24) with source lines 810-825: the partial and major runs, ok, sim_inv, the child bound, the length equation and EVERY isDataElement imply sim_inv, the translated refs, the translated state and hasOldPtr preservation. The tagged theorem takes refs0 and refs1 as List (HeapElement \u03b1 \u03b2), the same payload as the state, exactly as the typed capture's (\u03b2, \u03b1) heap_element list; the independent-payload generalisation is the untagged gcMoveRefList_simulation_general."
+  "reviewer": "Compared gc_move_ref_list_simulation_typed (gen_gc_partial_source_probe.out:24) with source lines 810-825: the partial and major runs, ok, sim_inv, the child bound, the length equation and EVERY isDataElement imply sim_inv, the translated refs, the translated state and hasOldPtr preservation. The tagged theorem takes refs0 and refs1 as List (HeapElement \u03b1 \u03b2), the same payload as the state, exactly as the typed capture's (\u03b2, \u03b1) heap_element list; the independent-payload generalisation is the untagged gcMoveRefList_simulation_general. Its term binders are in HOL's order conf state refs0 heap0 state1 state1' refs1 refs1' (Lean state1'/refs1' are majorState/majorRoots), and its single premise is the conjunction of HOL's seven premises in HOL's order (partial run, major run, ok, sim_inv, child bound, heap length, EVERY isDataElement), followed by HOL's four-conjunct conclusion."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
