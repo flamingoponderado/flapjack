@@ -193,26 +193,8 @@ theorem every_inst_ok_less_pan_globals_compile_decs {width : Nat} [NeZero width]
       pan_code.all goodPanopsHOL = true →
         (compileDecsExactHOL ctxt pan_code).2.1.all goodPanopsHOL = true := by
   intro ctxt pan_code
-  induction pan_code generalizing ctxt with
-  | nil => simp [compileDecsExactHOL]
-  | cons d ds ih =>
-      intro h
-      simp only [List.all_cons, Bool.and_eq_true] at h
-      cases d with
-      | decl sh v e =>
-          simp only [compileDecsExactHOL]
-          exact ih _ h.2
-      | function fi =>
-          simp only [compileDecsExactHOL, List.all_cons, Bool.and_eq_true]
-          refine ⟨?_, ih _ h.2⟩
-          simp only [goodPanopsHOL] at h ⊢
-          exact every_inst_ok_less_pan_globals_compile ctxt fi.body h.1
-      | exnDecl eid sh =>
-          simp only [compileDecsExactHOL]
-          exact ih _ h.2
-      | name nm flds =>
-          simp only [compileDecsExactHOL]
-          exact ih _ h.2
+  fun_induction compileDecsExactHOL ctxt pan_code <;>
+    simp_all [goodPanopsHOL, every_inst_ok_less_pan_globals_compile]
 
 /-- Full original `every_inst_ok_less_pan_globals_compile_decs_init`:
 `∀ctxt pan_code. EVERY good_panops pan_code ⇒
