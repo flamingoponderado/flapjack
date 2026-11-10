@@ -45,9 +45,8 @@ private theorem compileFuns_bagBounds (cfg : Config)
       | mk j rest =>
         obtain ⟨sgs, ys⟩ := rest
         intro key
-        have h1 := compileExp_bagBounds cfg e key
+        have h1 := compileExp_setGlobals.1 cfg e i sg y he key
         have h2 := ih key
-        simp only [he] at h1
         simp only [hfs] at h2
         simp only [compileFuns, he, hfs, funGlobals, unionGlobalBag, Flapjack.bagUnion]
         omega
@@ -82,7 +81,7 @@ theorem compileExp_esgcFree :
       simp only [esgcFree] at safe
       simp only [compileExp, eq, esgcFree]
       apply bagEmpty_of_bound _ _ _ safe
-      simpa only [eq] using compileExp_bagBounds cfg x
+      exact compileExp_setGlobals.1 cfg x i sg y eq
     case case7 =>
       intro t x ps i sg y eq j sgp ps2 eqp ih ihp safe
       have h := safe
