@@ -52,6 +52,69 @@ def arm8LoadStoreImm12Word (sz : BitVec 2) (opc : BitVec 2) (imm12 : BitVec 12)
           BitVec.setWidth 10 (rn ++ rt)))))
 
 
+/-- `holW2v` of a `width`-bit word has `width` bits (Flapjack infrastructure;
+    the generic form of `holW2v_length{8,16,32}`). -/
+theorem holW2v_lengthN {width : Nat} [NeZero width] (value : BitVec width) :
+    (holW2v value).length = width := by
+  simp [holW2v]
+
+/-- `holW2v` at index `m` is the `m`-th high-to-low bit (Flapjack
+    infrastructure; the generic form of `holW2v_getElem?_{16,32}`). -/
+theorem holW2v_getElem?N {width : Nat} [NeZero width] (value : BitVec width) (m : Nat) :
+    (holW2v value)[m]? = if m < width then some (value.getLsbD (width - 1 - m)) else none := by
+  simp only [holW2v, List.getElem?_map]
+  by_cases hm : m < width
+  · simp [hm]
+  · simp [hm]
+
+/-- The `i`-th eight-bit field of a `8 * n`-bit word has eight bits (Flapjack
+    infrastructure; the generic form of `holField_{two,four}_length`). -/
+theorem holFieldN_length {n : Nat} [NeZero (8 * n)] (value : BitVec (8 * n)) (i : Nat)
+    (hi : i < n) :
+    (holField (8 * i + 7) (8 * i) (holW2v value)).length = 8 := by
+  have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
+  have hge : ¬ (8 * n - 8 * i < 8) := by omega
+  have hmin : min (8 * n - 8 * i) (8 * n) = 8 * n - 8 * i := Nat.min_eq_left (by omega)
+  simp only [holField, holShiftr, h8, holFixwidth, holW2v_lengthN, hmin, hge, if_false,
+    List.length_take, List.length_drop]
+  omega
+
+/-- The `i`-th eight-bit field of a `8 * n`-bit word is the byte `8i .. 8i+7`
+    (Flapjack infrastructure; the generic form of
+    `holField_{two,four}_getElem?`). -/
+theorem holFieldN_getElem? {n : Nat} [NeZero (8 * n)] (value : BitVec (8 * n)) (i j : Nat)
+    (hi : i < n) (hj : j < 8) :
+    (holField (8 * i + 7) (8 * i) (holW2v value))[7 - j]? =
+      some (value.getLsbD (8 * i + j)) := by
+  have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
+  have hge : ¬ (8 * n - 8 * i < 8) := by omega
+  have hmin : min (8 * n - 8 * i) (8 * n) = 8 * n - 8 * i := Nat.min_eq_left (by omega)
+  simp only [holField, holShiftr, h8, holFixwidth, holW2v_lengthN, List.length_take, hmin, hge,
+    if_false]
+  rw [List.getElem?_drop]
+  rw [show 8 * n - 8 * i - 8 + (7 - j) = 8 * n - 1 - 8 * i - j by omega]
+  rw [List.getElem?_take_of_lt (by omega : 8 * n - 1 - 8 * i - j < 8 * n - 8 * i)]
+  rw [holW2v_getElem?N]
+  have hlt : 8 * n - 1 - 8 * i - j < 8 * n := by omega
+  have hidx : 8 * n - 1 - (8 * n - 1 - 8 * i - j) = 8 * i + j := by omega
+  simp only [hlt, if_true, hidx]
+
+/-- The byte `write'Mem` stores at `address + i` for a `8 * n`-bit value
+    (Flapjack infrastructure; the generic form of `arm8HolByte{8,16,32}`). -/
+theorem arm8HolByteN {n : Nat} [NeZero (8 * n)] (value : BitVec (8 * n)) (i : Nat)
+    (hi : i < n) :
+    holV2w 8 (holField (8 * i + 7) (8 * i) (holW2v value)) =
+      (value >>> (8 * i)).setWidth 8 := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro j hj
+  simp only [Flapjack.RiscV.L3.holV2w]
+  rw [getLsbD_holFcpWord]
+  have hlen := holFieldN_length value i hi
+  simp only [hj, decide_true, Bool.true_and, hlen, show 8 - 1 - j = 7 - j by omega]
+  rw [List.getD_eq_getElem?_getD, holFieldN_getElem? value i j hi hj]
+  simp only [Option.getD_some, BitVec.getLsbD_setWidth, hj, decide_true, Bool.true_and,
+    BitVec.getLsbD_ushiftRight]
+
 /-- `Aligned` at a power-of-two size is `toNat` divisibility
 (Flapjack infrastructure; the generic form of `Aligned_two_iff`/`Aligned_four_iff`/
 `arm8Aligned_eight_iff`). -/
@@ -978,19 +1041,7 @@ there (Flapjack infrastructure). -/
 theorem arm8HolByte (value : BitVec 64) (i : Nat) (hi : i < 8) :
     holV2w 8 (holField (8 * i + 7) (8 * i) (holW2v value)) =
       (value >>> (8 * i)).setWidth 8 := by
-  apply BitVec.eq_of_getLsbD_eq
-  intro j hj
-  simp only [Flapjack.RiscV.L3.holV2w]
-  rw [getLsbD_holFcpWord]
-  have hlen := holField_eight_length value i hi
-  simp only [hj, decide_true, Bool.true_and, hlen, show 8 - 1 - j = 7 - j by omega]
-  rw [List.getD_eq_getElem?_getD, holField_eight_getElem? value i j hi hj]
-  simp only [Option.getD_some, BitVec.getLsbD_setWidth, hj, decide_true, Bool.true_and,
-    BitVec.getLsbD_ushiftRight]
-
-
-/-- The L3 eight-byte write agrees with the machine's eight-byte write at every
-byte (Flapjack infrastructure; the write analogue of `arm8Mem_eight_pair`). -/
+  exact arm8HolByteN (n := 8) value i hi
 theorem arm8WriteMem_eight (ms : arm8_state) (address : BitVec 64) (value : BitVec 64)
     (acctype : AccType)
     (hal : Aligned (TN := 64) (address, 8) = true)
@@ -1032,57 +1083,21 @@ theorem arm8WriteMem_only_mem (ms : arm8_state) (value : BitVec 64) (address : B
 /-! ## The four-byte `Mem` helpers -/
 
 theorem holW2v_length32 (value : BitVec 32) : (holW2v value).length = 32 := by
-  simp [holW2v]
-
+  exact holW2v_lengthN value
 theorem holW2v_getElem?_32 (value : BitVec 32) (m : Nat) :
     (holW2v value)[m]? = if m < 32 then some (value.getLsbD (31 - m)) else none := by
-  simp only [holW2v, List.getElem?_map]
-  by_cases hm : m < 32
-  · simp [hm]
-  · simp [hm]
-
+  exact holW2v_getElem?N value m
 theorem holField_four_length (value : BitVec 32) (i : Nat) (hi : i < 4) :
     (holField (8 * i + 7) (8 * i) (holW2v value)).length = 8 := by
-  have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
-  have hge : ¬ (32 - 8 * i < 8) := by omega
-  have hmin : min (32 - 8 * i) 32 = 32 - 8 * i := Nat.min_eq_left (by omega)
-  simp only [holField, holShiftr, h8, holFixwidth, holW2v_length32, hmin, hge, if_false,
-    List.length_take, List.length_drop]
-  omega
-
+  exact holFieldN_length (n := 4) value i hi
 theorem holField_four_getElem? (value : BitVec 32) (i j : Nat) (hi : i < 4) (hj : j < 8) :
     (holField (8 * i + 7) (8 * i) (holW2v value))[7 - j]? =
       some (value.getLsbD (8 * i + j)) := by
-  have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
-  have hge : ¬ (32 - 8 * i < 8) := by omega
-  have hmin : min (32 - 8 * i) 32 = 32 - 8 * i := Nat.min_eq_left (by omega)
-  simp only [holField, holShiftr, h8, holFixwidth, holW2v_length32, List.length_take, hmin, hge,
-    if_false]
-  rw [List.getElem?_drop]
-  rw [show 32 - 8 * i - 8 + (7 - j) = 31 - 8 * i - j by omega]
-  rw [List.getElem?_take_of_lt (by omega : 31 - 8 * i - j < 32 - 8 * i)]
-  rw [holW2v_getElem?_32]
-  have hlt : 31 - 8 * i - j < 32 := by omega
-  have hidx : 31 - (31 - 8 * i - j) = 8 * i + j := by omega
-  simp only [hlt, if_true, hidx]
-
-/-- The byte `write'Mem` stores at `address + i` for a 32-bit value
-(Flapjack infrastructure; the four-byte analogue of `arm8HolByte`). -/
+  exact holFieldN_getElem? (n := 4) value i j hi hj
 theorem arm8HolByte32 (value : BitVec 32) (i : Nat) (hi : i < 4) :
     holV2w 8 (holField (8 * i + 7) (8 * i) (holW2v value)) =
       (value >>> (8 * i)).setWidth 8 := by
-  apply BitVec.eq_of_getLsbD_eq
-  intro j hj
-  simp only [Flapjack.RiscV.L3.holV2w]
-  rw [getLsbD_holFcpWord]
-  have hlen := holField_four_length value i hi
-  simp only [hj, decide_true, Bool.true_and, hlen, show 8 - 1 - j = 7 - j by omega]
-  rw [List.getD_eq_getElem?_getD, holField_four_getElem? value i j hi hj]
-  simp only [Option.getD_some, BitVec.getLsbD_setWidth, hj, decide_true, Bool.true_and,
-    BitVec.getLsbD_ushiftRight]
-
-/-- The low four bytes of `setWidth 64 (setWidth 32 w)` are those of `w`
-(Flapjack infrastructure). -/
+  exact arm8HolByteN (n := 4) value i hi
 theorem arm8ByteSetWidth32_64 (w : BitVec 64) (i : Nat) (hi : i < 4) :
     (((BitVec.setWidth 64 (BitVec.setWidth 32 w)) >>> (8 * i : Nat)).setWidth 8) =
       ((w >>> (8 * i : Nat)).setWidth 8) := by
@@ -1472,8 +1487,7 @@ theorem arm8ShiftRight_zero (x : BitVec 64) : x >>> (0 : Nat) = x := rfl
 /-! ## The one-byte `Mem` helpers -/
 
 theorem holW2v_length8 (value : BitVec 8) : (holW2v value).length = 8 := by
-  simp [holW2v]
-
+  exact holW2v_lengthN value
 theorem holField_eight_of_length (l : List Bool) (h : l.length = 8) : holField 7 0 l = l := by
   have ht : (l.take 8).length = 8 := by rw [List.length_take, h]; omega
   simp only [holField, holShiftr, holFixwidth, h, Nat.sub_zero, ht, Nat.sub_self]
@@ -1844,53 +1858,21 @@ transfer is two bytes, and the register write is the zero-extended halfword.
 -/
 
 theorem holW2v_length16 (value : BitVec 16) : (holW2v value).length = 16 := by
-  simp [holW2v]
-
+  exact holW2v_lengthN value
 theorem holW2v_getElem?_16 (value : BitVec 16) (m : Nat) :
     (holW2v value)[m]? = if m < 16 then some (value.getLsbD (15 - m)) else none := by
-  simp only [holW2v, List.getElem?_map]
-  by_cases hm : m < 16
-  · simp [hm]
-  · simp [hm]
-
+  exact holW2v_getElem?N value m
 theorem holField_two_length (value : BitVec 16) (i : Nat) (hi : i < 2) :
     (holField (8 * i + 7) (8 * i) (holW2v value)).length = 8 := by
-  have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
-  have hge : ¬ (16 - 8 * i < 8) := by omega
-  have hmin : min (16 - 8 * i) 16 = 16 - 8 * i := Nat.min_eq_left (by omega)
-  simp only [holField, holShiftr, h8, holFixwidth, holW2v_length16, hmin, hge, if_false,
-    List.length_take, List.length_drop]
-  omega
-
+  exact holFieldN_length (n := 2) value i hi
 theorem holField_two_getElem? (value : BitVec 16) (i j : Nat) (hi : i < 2) (hj : j < 8) :
     (holField (8 * i + 7) (8 * i) (holW2v value))[7 - j]? =
       some (value.getLsbD (8 * i + j)) := by
-  have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
-  have hge : ¬ (16 - 8 * i < 8) := by omega
-  have hmin : min (16 - 8 * i) 16 = 16 - 8 * i := Nat.min_eq_left (by omega)
-  simp only [holField, holShiftr, h8, holFixwidth, holW2v_length16, List.length_take, hmin, hge,
-    if_false]
-  rw [List.getElem?_drop]
-  rw [show 16 - 8 * i - 8 + (7 - j) = 15 - 8 * i - j by omega]
-  rw [List.getElem?_take_of_lt (by omega : 15 - 8 * i - j < 16 - 8 * i)]
-  rw [holW2v_getElem?_16]
-  have hlt : 15 - 8 * i - j < 16 := by omega
-  have hidx : 15 - (15 - 8 * i - j) = 8 * i + j := by omega
-  simp only [hlt, if_true, hidx]
-
+  exact holFieldN_getElem? (n := 2) value i j hi hj
 theorem arm8HolByte16 (value : BitVec 16) (i : Nat) (hi : i < 2) :
     holV2w 8 (holField (8 * i + 7) (8 * i) (holW2v value)) =
       (value >>> (8 * i)).setWidth 8 := by
-  apply BitVec.eq_of_getLsbD_eq
-  intro j hj
-  simp only [Flapjack.RiscV.L3.holV2w]
-  rw [getLsbD_holFcpWord]
-  have hlen := holField_two_length value i hi
-  simp only [hj, decide_true, Bool.true_and, hlen, show 8 - 1 - j = 7 - j by omega]
-  rw [List.getD_eq_getElem?_getD, holField_two_getElem? value i j hi hj]
-  simp only [Option.getD_some, BitVec.getLsbD_setWidth, hj, decide_true, Bool.true_and,
-    BitVec.getLsbD_ushiftRight]
-
+  exact arm8HolByteN (n := 2) value i hi
 theorem arm8ByteSetWidth16_64 (w : BitVec 64) (i : Nat) (hi : i < 2) :
     (((BitVec.setWidth 64 (BitVec.setWidth 16 w)) >>> (8 * i : Nat)).setWidth 8) =
       ((w >>> (8 * i : Nat)).setWidth 8) := by
