@@ -59,6 +59,21 @@ There is no extra HOL declaration for exposing this alias to Lean notation. -/
 theorem llookupEqNative {α : Type} (xs : List α) (n : Nat) :
     llookup xs n = xs[n]? := rfl
 
+/-- `List.lookup` returns an entry of the list. Flapjack infrastructure shared
+by the PanGlobals and PanToCrep proofs; no separate HOL declaration is
+claimed. -/
+theorem lookupMem {α β : Type} [BEq α] [LawfulBEq α]
+    (l : List (α × β)) (k : α) (v : β) (h : List.lookup k l = some v) : (k, v) ∈ l := by
+  induction l with
+  | nil => simp at h
+  | cons e l ih =>
+    obtain ⟨a, b⟩ := e
+    by_cases hk : k = a
+    · subst hk; simp at h; subst h; simp
+    · have : (k == a) = false := by simp [hk]
+      simp only [List.lookup_cons, this] at h
+      exact List.mem_cons_of_mem _ (ih h)
+
 /-- Membership of a key/value pair in a list with distinct keys determines
 `List.lookup`. HOL's library fact `ALOOKUP_ALL_DISTINCT_MEM`; no CakeML
 declaration is claimed. Shared by the PanGlobals and PanToCrep proofs, which
