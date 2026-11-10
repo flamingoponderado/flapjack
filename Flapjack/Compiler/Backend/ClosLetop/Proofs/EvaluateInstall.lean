@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateOp
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.SimpleRelations
 public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Install
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
 
@@ -19,19 +20,6 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
       (∀ s : State C F, State.ofBroad s.toBroad = s) :=
   ClosSem.holFmapAsFiniteSupportWitness
 end EvaluateInstallPort
-
-/-- Related nonempty result lists have related HOL last values. This helper has no standalone HOL declaration. -/
-theorem related_holLast {left right : List Value} (related : List.Forall₂ ValueRel left right)
-    (nonempty : left ≠ []) :
-    ValueRel (@Flapjack.holLast Value ⟨unitValue⟩ left) (@Flapjack.holLast Value ⟨unitValue⟩ right) := by
-  induction related with
-  | nil => exact (nonempty rfl).elim
-  | @cons first nextFirst rest nextRest head tail ih =>
-    cases tail with
-    | nil => simpa [Flapjack.holLast] using head
-    | @cons second nextSecond tail nextTail nextHead restRel =>
-      simp only [Flapjack.holLast]
-      exact ih (by simp)
 
 /-- Installing related code simulates errors and evaluation of the newly
 installed, nonempty program. -/
@@ -128,7 +116,7 @@ theorem evaluate_let_op_install {C F : Type} (trace : BackendCommon.Tra)
                     subst returned
                     have length := (evaluate_length (C := C) (F := F)).1 program [] installed final [] programRun
                     exact nonempty (List.eq_nil_of_length_eq_zero length.symm)
-                  have lastRel := related_holLast related returnedNonempty
+                  have lastRel := forall₂_holLast related returnedNonempty
                   rw [evaluate_install_eq, argsRun] at run
                   simp only [runInstalled, installRun, programRun] at run
                   cases run

@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+public import Flapjack.Misc.ListEl
 public import Flapjack.Misc.Option.Rel
 public import Mathlib.Data.List.Forall2
 
@@ -27,6 +28,21 @@ def simpleValRel (vr : Value → Value → Prop) : Prop :=
   (∀ x p b, vr x (.refPtr b p) ↔ x = .refPtr b p) ∧
   (∀ body arity env args loc x, vr x (.closure loc args env arity body) → isClos x) ∧
   (∀ index funs env args loc x, vr x (.recclosure loc args env funs index) → isClos x)
+
+/-- Related nonempty lists have related HOL last values. Flapjack
+infrastructure shared by the closure-simulation continuations; no separate
+HOL declaration is claimed. -/
+theorem forall₂_holLast {R : Value → Value → Prop} {left right : List Value}
+    (related : List.Forall₂ R left right) (nonempty : left ≠ []) :
+    R (@Flapjack.holLast Value ⟨unitValue⟩ left) (@Flapjack.holLast Value ⟨unitValue⟩ right) := by
+  induction related with
+  | nil => exact (nonempty rfl).elim
+  | @cons first nextFirst rest nextRest head tail ih =>
+    cases tail with
+    | nil => simpa [Flapjack.holLast] using head
+    | @cons second nextSecond tail nextTail nextHead restRel =>
+      simp only [Flapjack.holLast]
+      exact ih (by simp)
 
 /-- The closure state's canonical finite maps roundtrip through lookup and
 finite-support views. -/
