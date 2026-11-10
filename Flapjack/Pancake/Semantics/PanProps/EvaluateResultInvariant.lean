@@ -4583,6 +4583,28 @@ private theorem evaluateWfShapeWhileCase {width : Nat} {σ : Type} [NeZero width
                 subst hpostEq
                 exact ⟨hlocals, hglobals, by simp [panSemResultHOLWf]⟩
 
+private theorem evaluateWfShapeExtCallCase {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsEvalStateFiniteExact width σ) (function : MlS)
+    (configuration configurationLength array arrayLength : ExpHOL width) :
+    evaluateWfShapeAtHOLFinite state
+      (.extCall function configuration configurationLength array arrayLength :
+        ProgHOL width) := by
+  intro hlocals hglobals result post hRun
+  simp only [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+    PanSemStateFiniteExact.evaluateHOLFiniteState_extCall_source,
+    PanPropsEvalStateFiniteExact.toPanSemFinite_ofPanSemFinite] at hRun
+  repeat' split at hRun
+  all_goals
+    rcases hRun with ⟨rfl, rfl⟩
+    simp_all [valuesHOLWf, panSemResultHOLWf,
+      PanSemStateFiniteExact.emptyLocalsHOLFinite,
+      PanPropsEvalStateFiniteExact.ofPanSemFinite,
+      PanSemStateFiniteExact.ofExact,
+      PanPropsEvalStateFiniteExact.toPanSemFinite]
+    first
+    | exact hglobals
+    | exact ⟨hlocals, hglobals⟩
+
 /-- Exact finite-support port of HOL `evaluate_is_wf_shape_invariant`
     (`cakeml/pancake/semantics/panPropsScript.sml:1250-1264`). The two input
     predicates and two post-state predicates are the pointwise rendering of
