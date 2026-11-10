@@ -47,6 +47,15 @@ val _ = (print "wfg_subg_refl_type="; Lib.with_flag (Globals.show_types,true) pr
 val _ = (print "wfg_subg_ex_helper_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.wfg_subg_EX_helper); print "\n");
 val _ = (print "mk_code_g_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.mk_code_g_def); print "\n");
 val _ = (print "pure_correct_eq_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.pure_correct_eq); print "\n");
+open clos_callProofTheory finite_mapTheory;
+(* The source theorem is local; replay its full statement and original proof. *)
+val state_rel_refs_replay = prove
+  (``(state_rel g l s1 s2 /\ FLOOKUP s1.refs n = r1 ==>
+       ?r2. FLOOKUP s2.refs n = r2 /\ OPTREL (ref_rel (v_rel g l s2.code)) r1 r2) /\
+     (state_rel g l s1 s2 /\ FLOOKUP s2.refs n = r2 ==>
+       ?r1. FLOOKUP s1.refs n = r1 /\ OPTREL (ref_rel (v_rel g l s2.code)) r1 r2)``,
+   rw [] \\ gvs [state_rel_def, FLOOKUP_DEF, fmap_rel_def] \\ rw []);
+val _ = (print "state_rel_refs_replay_type="; Lib.with_flag (Globals.show_types,true) print_term (concl state_rel_refs_replay); print "\n");
 val _ = (print "suffix_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.code_list_IS_SUFFIX); print "\n");
 val entry = EVAL ``clos_call$code_list 10 [(2,closLang$Var None 4);(0,closLang$Var None 9);(1,closLang$Var None 2)] (sptree$LN,[(90,3,closLang$Var None 0)])``;
 val _ = (print "example="; print_term (rhs (concl entry)); print "\n");

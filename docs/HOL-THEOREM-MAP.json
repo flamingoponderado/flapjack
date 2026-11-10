@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "state_rel_opt_rel_refs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateRelation.lean", "lean_name": "stateRel_optRefs",
+  "statement_status": "reviewed_fmap_as_finite_support_relation", "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code"],
+  "reviewer": "Compared the local HOL source and state_rel_refs_replay_type, replaying the original proof with inferred types: both directions preserve the original state relation and lookup premises, existential optional lookup and ref relation, including absent references, and independent compiler and FFI carriers. Both closure-state fields use canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "pure_correct_eq",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/PureCorrect.lean", "lean_name": "pureCorrectEq",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
