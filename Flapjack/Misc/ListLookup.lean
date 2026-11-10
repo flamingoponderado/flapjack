@@ -93,4 +93,26 @@ theorem listLookupOfMemNodup {α β : Type} [BEq α] [LawfulBEq α]
       have : (k == a) = false := by simp [hka]
       simp [List.lookup_cons, this, ih h hnd.2]
 
+/-- With distinct keys, `List.lookup` does not depend on the list order.
+HOL's library fact `alookup_distinct_reverse`; no CakeML declaration is
+claimed. Shared by the PanGlobals and PanToCrep proofs, which previously
+carried private copies. -/
+theorem listLookupReverseOfNodup {α β : Type} [BEq α] [LawfulBEq α]
+    (l : List (α × β)) (k : α) (hnd : (l.map Prod.fst).Nodup) :
+    List.lookup k l.reverse = List.lookup k l := by
+  have hnd' : (l.reverse.map Prod.fst).Nodup := by
+    rw [List.map_reverse, List.Nodup, List.pairwise_reverse]
+    exact hnd.imp (fun h => Ne.symm h)
+  cases h : List.lookup k l with
+  | none =>
+    cases h' : List.lookup k l.reverse with
+    | none => rfl
+    | some v =>
+      have hm := lookupMem _ _ _ h'
+      have := listLookupOfMemNodup l k v (List.mem_reverse.mp hm) hnd
+      rw [h] at this
+      cases this
+  | some v =>
+    exact listLookupOfMemNodup _ k v (List.mem_reverse.mpr (lookupMem _ _ _ h)) hnd'
+
 end Flapjack.Misc

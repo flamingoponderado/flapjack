@@ -75,28 +75,12 @@ theorem lookupNoneOfNotMem {α β : Type} [BEq α] [LawfulBEq α]
   | none => rfl
   | some v => exact absurd (List.mem_map.mpr ⟨(k, v), Misc.lookupMem l k v hl, rfl⟩) h
 
-theorem lookupReverseOfNodup {α β : Type} [BEq α] [LawfulBEq α]
-    (l : List (α × β)) (k : α) (hnd : (l.map Prod.fst).Nodup) :
-    List.lookup k l.reverse = List.lookup k l := by
-  have hnd' : (l.reverse.map Prod.fst).Nodup := by
-    rw [List.map_reverse, List.Nodup, List.pairwise_reverse]; exact hnd.imp (fun h => Ne.symm h)
-  cases h : List.lookup k l with
-  | none =>
-    cases h' : List.lookup k l.reverse with
-    | none => rfl
-    | some v =>
-      have hm := Misc.lookupMem _ _ _ h'
-      have := Flapjack.Misc.listLookupOfMemNodup l k v (List.mem_reverse.mp hm) hnd
-      rw [h] at this; cases this
-  | some v =>
-    exact Flapjack.Misc.listLookupOfMemNodup _ k v
-      (List.mem_reverse.mpr (Misc.lookupMem _ _ _ h)) hnd'
-
 /-- `FUPDATE_LIST FEMPTY` over distinct keys is `ALOOKUP`. -/
 theorem emptyUpdateListLookup {α β : Type} [BEq α] [LawfulBEq α]
     (l : List (α × β)) (k : α) (hnd : (l.map Prod.fst).Nodup) :
     (HolFiniteMapExact.empty.updateList l).lookup k = List.lookup k l := by
-  rw [HolFiniteMapExact.lookup_updateList, fupdateListLookup, lookupReverseOfNodup l k hnd]
+  rw [HolFiniteMapExact.lookup_updateList, fupdateListLookup,
+    Misc.listLookupReverseOfNodup l k hnd]
   cases List.lookup k l <;> rfl
 
 /-- Flapjack evaluator infrastructure: a successful run of exception
@@ -507,7 +491,7 @@ theorem compileTopSemanticsDeclsHOL {width : Nat} {σ : Type} [NeZero width]
       T.code.lookup f = some (entry.1, compileProgExactHOL ctx entry.2.1, entry.2.2) := by
     intro f entry hmem
     rw [hTcode, HolFiniteMapExact.lookup_updateList, fupdateListLookup,
-      lookupReverseOfNodup _ _ hLNodup,
+      Misc.listLookupReverseOfNodup _ _ hLNodup,
       Flapjack.Misc.listLookupOfMemNodup _ f (entry.1, compileProgExactHOL ctx entry.2.1, entry.2.2)
         (List.mem_map.mpr ⟨(f, entry), hmem, rfl⟩) hLNodup]
   have hstartNotRenamed : start ∉ (functionsHOL (fpermDecsHOL start nm code)).map Prod.fst := by

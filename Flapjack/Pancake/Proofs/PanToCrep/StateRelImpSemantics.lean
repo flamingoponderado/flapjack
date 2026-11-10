@@ -384,24 +384,6 @@ private theorem list_lookup_isSome_iff {α β : Type} [BEq α] [LawfulBEq α]
     · have : (k == a) = false := by simp [h]
       simp [List.lookup_cons, this, ih, h]
 
-/-- With distinct keys, `List.lookup` does not depend on the list order. -/
-private theorem list_lookup_reverse_of_nodup {α β : Type} [BEq α] [LawfulBEq α]
-    (l : List (α × β)) (k : α) (hnd : (l.map Prod.fst).Nodup) :
-    List.lookup k l.reverse = List.lookup k l := by
-  have hnd' : (l.reverse.map Prod.fst).Nodup := by
-    rw [List.map_reverse, List.Nodup, List.pairwise_reverse]; exact hnd.imp (fun h => Ne.symm h)
-  cases h : List.lookup k l with
-  | none =>
-    cases h' : List.lookup k l.reverse with
-    | none => rfl
-    | some v =>
-      have hm := Misc.lookupMem _ _ _ h'
-      have := Flapjack.Misc.listLookupOfMemNodup l k v (List.mem_reverse.mp hm) hnd
-      rw [h] at this; cases this
-  | some v =>
-    exact Flapjack.Misc.listLookupOfMemNodup _ k v
-      (List.mem_reverse.mpr (Misc.lookupMem _ _ _ h)) hnd'
-
 /-- `FUPDATE_LIST FEMPTY` of a list is `List.lookup` on its reverse. -/
 private theorem fupdateList_empty_eq_lookup {α β : Type} [BEq α] [LawfulBEq α]
     (l : List (α × β)) (k : α) :
@@ -522,7 +504,7 @@ theorem stateRelImpSemanticsDeclsToCrep {width : Nat} {σ : Type} [NeZero width]
     simp only [HolFiniteMapExact.lookup_updateList]
     change FUPDATE_LIST FEMPTY _ k = FUPDATE_LIST FEMPTY _ k
     rw [fupdateList_empty_eq_lookup, fupdateList_empty_eq_lookup, List.reverse_reverse,
-      list_lookup_reverse_of_nodup _ _ hdist]
+      Misc.listLookupReverseOfNodup _ _ hdist]
   · intro key
     show ((HolFiniteMapExact.empty.updateList (exceptionsHOL pan_code)).lookup key).isSome =
       ((getEidsFromDeclsHOL pan_code).lookup key).isSome
