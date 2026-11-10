@@ -118455,8 +118455,8 @@
     "lean_name": "InferT",
     "hol_path": "cakeml/compiler/inference/infer_tScript.sml",
     "hol_name": "infer_t",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Inference carrier or substitution transcribed against pinned HOL; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed infer_tTheory.infer_t_Axiom capture in cake_type_display_probe (`Infer_Tvar_db : num -> infer_t`, `Infer_Tapp : infer_t list -> num -> infer_t`, `Infer_Tuvar : num -> infer_t`) with InferT.varDb : Nat \u2192 InferT, InferT.app : List InferT \u2192 Nat \u2192 InferT and InferT.uvar : Nat \u2192 InferT; HOL's type_ident argument is the reviewed num type abbreviation."
   },
   {
     "lean_path": "Flapjack/Compiler/Inference/Infer.lean",
@@ -120175,56 +120175,56 @@
     "hol_name": "get_tyname_def",
     "lean_path": "Flapjack/Compiler/Inference/InferT/Display.lean",
     "lean_name": "getTyName",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed original equations captured in cake_type_display_probe, including the polymorphic namespace payload; full source and carrier review remains pending. The executed --types path uses this renderer."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed cake_type_display_probe capture of all three get_tyname equations with getTyName/getTyNameEntries/getTyNameModules: HOL's namespace is `(mlstring, mlstring, \u03b1 # t) namespace` with entries `mlstring # \u03b1 # t`, i.e. `mlstring # (\u03b1 # t)`, matching Lean's `MlString \u00d7 (\u03b1 \u00d7 SemanticT)`; the empty-bind/empty-modules NONE case, the modules-only clause (`m ^ \u00ab.\u00bb ^ x` = concat [name, '.', result]) and the entry clause that compares the Tapp type_ident against n (ignoring the middle namespace value) match clause for clause. The entry-first recursion order is the HOL equation order."
   },
   {
     "hol_path": "cakeml/compiler/inference/infer_tScript.sml",
     "hol_name": "type_ident_to_string_def",
     "lean_path": "Flapjack/Compiler/Inference/InferT/Display.lean",
     "lean_name": "typeIdentToString",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed original equations captured in cake_type_display_probe, including the polymorphic namespace payload; full source and carrier review remains pending. The executed --types path uses this renderer."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed cake_type_display_probe capture of the if-chain with typeIdentToString: Tarray_num=0, Tbool_num=1, Tchar_num=2, Texn_num=3, Tint_num=5, Tlist_num=6, Tref_num=7, Tstring_num=8, Tvector_num=10, Tword64_num=11, Tword8_num=12, Tword8array_num=13, Tdouble_num=14 (typeSystemScript.sml:27-70) match the Lean literals and their strings; the fallback `case get_tyname ti tys of NONE => toString (&ti) | SOME s => s` is getD (ofString (toString n)) \u2014 Lean's decimal toString through the checked ofString codec equals HOL's mlint$toString of the nonnegative numeral."
   },
   {
     "hol_path": "cakeml/compiler/inference/infer_tScript.sml",
     "hol_name": "ty_var_name_def",
     "lean_path": "Flapjack/Compiler/Inference/InferT/Display.lean",
     "lean_name": "tyVarName",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed original equations captured in cake_type_display_probe, including the polymorphic namespace payload; full source and carrier review remains pending. The executed --types path uses this renderer."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed cake_type_display_probe capture (`if n < 28 then implode (STRCAT \"'\" (STRING (CHR (n + ORD #\"a\")) \"\")) else concat [\u00ab'\u00bb; toString (&n)]`) with tyVarName: the n < 28 branch is the one-byte list [39, BitVec.ofNat 8 (n + 97)] (39 = apostrophe, 97 = ORD #\"a\") and the other branch is concat [\"'\", ofString (toString n)], matching the same decimal rendering as type_ident_to_string."
   },
   {
     "hol_path": "cakeml/compiler/inference/infer_tScript.sml",
     "hol_name": "add_parens_def",
     "lean_path": "Flapjack/Compiler/Inference/InferT/Display.lean",
     "lean_name": "addParens",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed original equations captured in cake_type_display_probe, including the polymorphic namespace payload; full source and carrier review remains pending. The executed --types path uses this renderer."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed cake_type_display_probe capture (`add_parens threshold (x,n) = if threshold < n then concat [\u00ab(\u00bb; x; \u00ab)\u00bb] else x`) with addParens threshold part := if threshold < part.2 then concat [\"(\", part.1, \")\"] else part.1."
   },
   {
     "hol_path": "cakeml/compiler/inference/infer_tScript.sml",
     "hol_name": "inf_type_to_string_rec_def",
     "lean_path": "Flapjack/Compiler/Inference/InferT/Display.lean",
     "lean_name": "inferTypeToStringRec",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed original equations captured in cake_type_display_probe, including the polymorphic namespace payload; full source and carrier review remains pending. The executed --types path uses this renderer."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed cake_type_display_probe capture of both mutual clauses with inferTypeToStringRec and inferTypesToStringRec: uvar n = concat [\"_\", toString n] with depth 0; var_db n = ty_var_name n with depth 0; Tfn_num (4) with [t1;t2] gives depths 3 and add_parens 2/3, anything else gives \"<bad function type>\"; Ttup_num (9) gives \"unit\" for [], the element for [t], and commas \" * \" of add_parens 1 parts with depth 2 otherwise; the general case gives the bare identifier for [], \" t id\" for [t] (depth 1) and the parenthesised comma list with depth 1 otherwise; the list clause maps the element rendering. HOL's commas c is exactly concat \u2218 intersperse c, which is Flapjack's joinParts, and the \u22652-element patterns match HOL's t1::t2::rest cases."
   },
   {
     "hol_path": "cakeml/compiler/inference/infer_tScript.sml",
     "hol_name": "inf_type_to_string_rec_def",
     "lean_path": "Flapjack/Compiler/Inference/InferT/Display.lean",
     "lean_name": "inferTypesToStringRec",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed original equations captured in cake_type_display_probe, including the polymorphic namespace payload; full source and carrier review remains pending. The executed --types path uses this renderer."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed cake_type_display_probe capture of both mutual clauses with inferTypeToStringRec and inferTypesToStringRec: uvar n = concat [\"_\", toString n] with depth 0; var_db n = ty_var_name n with depth 0; Tfn_num (4) with [t1;t2] gives depths 3 and add_parens 2/3, anything else gives \"<bad function type>\"; Ttup_num (9) gives \"unit\" for [], the element for [t], and commas \" * \" of add_parens 1 parts with depth 2 otherwise; the general case gives the bare identifier for [], \" t id\" for [t] (depth 1) and the parenthesised comma list with depth 1 otherwise; the list clause maps the element rendering. HOL's commas c is exactly concat \u2218 intersperse c, which is Flapjack's joinParts, and the \u22652-element patterns match HOL's t1::t2::rest cases."
   },
   {
     "hol_path": "cakeml/compiler/inference/infer_tScript.sml",
     "hol_name": "inf_type_to_string_def",
     "lean_path": "Flapjack/Compiler/Inference/InferT/Display.lean",
     "lean_name": "inferTypeToString",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed original equations captured in cake_type_display_probe, including the polymorphic namespace payload; full source and carrier review remains pending. The executed --types path uses this renderer."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed cake_type_display_probe capture (`inf_type_to_string tys t = FST (inf_type_to_string_rec tys t)`) with inferTypeToString names t := (inferTypeToStringRec names t).1."
   },
   {
     "hol_path": "HOL/examples/formal-languages/context-free/locationScript.sml",

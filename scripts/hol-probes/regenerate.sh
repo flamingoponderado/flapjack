@@ -910,7 +910,7 @@ run_probe cake_build_lowering_probeScript.sml cake_build_lowering_probe.out \
   parts64 parts32be build64 fromlist64 refbyte64 "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
 run_probe cake_type_display_probeScript.sml cake_type_display_probe.out \
-  get_tyname type_ident var_name parentheses type_render type_render_final alist_nub ns_nub ns_alist types_output type_function type_tuple type_unknown \
+  infer_t_axiom get_tyname type_ident var_name parentheses type_render type_render_final alist_nub ns_nub ns_alist types_output type_function type_tuple type_unknown \
   "$cake_dir/compiler/inference/infer_tScript.sml" "$cake_dir/compiler/inference"
 
 run_probe cake_cfg_grammar_probeScript.sml cake_cfg_grammar_probe.out \
