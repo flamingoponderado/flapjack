@@ -140,22 +140,6 @@ def sourcePmatchRows {F : Type} (env : SemEnv SemanticPrimitivesHOL.Value)
     | .noMatch => sourcePmatchRows env state value rows
     | .match bindings => .match (bindings, pattern, body)
 
-/-- An all-row source check excludes a type error in first-row selection. -/
-theorem sourcePmatchRows_noTypeError {F : Type} (env : SemEnv SemanticPrimitivesHOL.Value)
-    (state : SemanticPrimitivesHOL.State F) (value : SemanticPrimitivesHOL.Value)
-    (rows : List (Pat × AstHOL.Exp))
-    (can : canPmatchAll env.c state.refs (rows.map Prod.fst) value = true) :
-    sourcePmatchRows env state value rows ≠ .typeError := by
-  induction rows with
-  | nil => simp [sourcePmatchRows]
-  | cons row rest ih =>
-    obtain ⟨pattern, body⟩ := row
-    have checks := can
-    simp only [canPmatchAll, List.map_cons, List.all_cons, Bool.and_eq_true] at checks
-    have restSafe := ih checks.2
-    cases matching : pmatch env.c state.refs pattern value [] <;>
-      simp_all [sourcePmatchRows]
-
 /-- A selected source row belongs to the original ordered row list. -/
 theorem sourcePmatchRows_mem {F : Type} (env : SemEnv SemanticPrimitivesHOL.Value)
     (state : SemanticPrimitivesHOL.State F) (value : SemanticPrimitivesHOL.Value)
@@ -181,36 +165,6 @@ def MatchRowsRel (genv : GlobalEnv) (compMap : Environment) (trace : List VarN) 
       flatPattern = compilePat compMap pattern ∧
       flatBody = compileExp trace { compMap with v := nsBindList (patTups .none (patBindings pattern)) compMap.v } body
   | _, _ => False
-
-/-- All-row compatibility and pattern preservation identify the same first
-matching row on both sides, with related pattern bindings. -/
-theorem pmatchRows_related {C F : Type} (genv : GlobalEnv)
-    (compMap compMap2 : Environment) (trace : List VarN)
-    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (sourceState : SemanticPrimitivesHOL.State F)
-    (flatState : FlatSem.State C F) (shadowers : VarN → Prop)
-    (inv : GlobalEnvInv genv compMap2 shadowers sourceEnv) (mapsEq : compMap2.c = compMap.c)
-    (ok : genvCOk genv.c) (typesOk : genvCTysOk genv.c genv.tys)
-    (stateRel : StateRel genv sourceState flatState)
-    (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value) (valueRel : ValueRel genv source flat)
-    (rows : List (Pat × AstHOL.Exp))
-    (can : canPmatchAll sourceEnv.c sourceState.refs (rows.map Prod.fst) source = true) :
-    MatchRowsRel genv compMap trace (sourcePmatchRows sourceEnv sourceState source rows)
-      (FlatSem.pmatchRows (compilePes trace compMap rows) flatState flat) := by
-  induction rows with
-  | nil => simp [sourcePmatchRows, compilePes, FlatSem.pmatchRows, MatchRowsRel]
-  | cons row rows ih =>
-    obtain ⟨pattern, body⟩ := row
-    have checks := can
-    simp only [canPmatchAll, List.map_cons, List.all_cons, Bool.and_eq_true] at checks
-    have related := patternSimulation genv compMap compMap2 sourceEnv sourceState flatState [] shadowers
-      inv mapsEq ok typesOk stateRel pattern source flat [] [] (by simpa [alistToNs, nsEmpty] using EnvRel.empty genv) valueRel
-    simp only [List.nil_append] at related
-    have restSafe := canPmatchAll_rows_noTypeError genv compMap compMap2 trace sourceEnv sourceState flatState
-      shadowers inv mapsEq ok typesOk stateRel source flat valueRel rows checks.2
-    have restRelated := ih checks.2
-    cases sourceMatch : pmatch sourceEnv.c sourceState.refs pattern source [] <;>
-      cases flatMatch : FlatSem.pmatch flatState (compilePat compMap pattern) flat [] <;>
-      simp_all [sourcePmatchRows, compilePes, FlatSem.pmatchRows, MatchResultRel, MatchRowsRel]
 
 /-- If compiled rows avoid pattern type errors, row selection agrees whenever
 the source selection itself succeeds. Unlike the all-row compatibility lemma,
