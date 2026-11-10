@@ -85,4 +85,16 @@ theorem recClosureRel_mono (g g' : State) (allowed allowed' : Nat → Prop)
     · intro key value found
       exact codeSub key value (includes key value found)
 
+/-- The state reached by a recursive-closure relation has distinct labels,
+so it extends itself. Used in the HOL code-submap preservation proof. -/
+theorem recClosureRel_stateExtendsSelf (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc : Nat)
+    (fns1 fns2 : List (Nat × ClosLang.Exp))
+    (related : recClosureRel g allowed code loc fns1 fns2) : stateExtends g g := by
+  classical
+  unfold recClosureRel at related
+  obtain ⟨g0, _, _, _, _, branch⟩ := related
+  dsimp only at branch
+  split at branch <;> exact stateExtends_refl g branch.2.1.2.2
+
 end Flapjack.Compiler.Backend.ClosCall

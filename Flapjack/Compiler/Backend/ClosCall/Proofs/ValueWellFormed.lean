@@ -136,6 +136,122 @@ decreasing_by
   all_goals simp_wf
   all_goals omega
 
+/-- Canonical codec for the original code map in code-extension preservation. -/
+theorem holFmapAsFiniteSupportParamWitness_valueWellFormed_submap_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueWellFormed_code code key
+
+/-- Canonical codec for the extended code map in code-extension preservation. -/
+theorem holFmapAsFiniteSupportParamWitness_valueWellFormed_submap_codeNext
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).lookup key = codeNext.lookup key ∧
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).finiteSupport = codeNext.finiteSupport ∧
+    ofBroad (toBroad codeNext) codeNext.finiteSupport = codeNext :=
+  holFmapAsFiniteSupportParamWitness_valueWellFormed_code codeNext key
+
+/-- Adding code bindings preserves direct-call value well-formedness. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "wfv_SUBMAP"
+  (fmap_as_finite_support_parameters := [code, codeNext])]
+theorem valueWellFormed_submap (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (v : Value)
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (h : valueWellFormed g allowed code v ∧ code.submap codeNext) :
+    valueWellFormed g allowed codeNext v := by
+  cases v with
+  | number n => simp [valueWellFormed]
+  | word64 w => simp [valueWellFormed]
+  | byteVector bytes => simp [valueWellFormed]
+  | refPtr b n => simp [valueWellFormed]
+  | block tag values =>
+      simp only [valueWellFormed] at h ⊢
+      intro value member
+      exact valueWellFormed_submap g allowed code value codeNext ⟨h.1 value member, h.2⟩
+  | closure loc values env arity body =>
+      cases loc with
+      | none => simp [valueWellFormed] at h
+      | some loc =>
+          have parts := h.1
+          simp only [valueWellFormed] at parts
+          obtain ⟨_, _, fns, related⟩ := parts
+          exact valueWellFormed_subg g allowed code _ g allowed codeNext
+            ⟨h.1, h.2, recClosureRel_stateExtendsSelf g allowed code loc [(arity, body)] fns related,
+              fun _ member => member⟩
+  | recclosure loc values env fns index =>
+      cases loc with
+      | none => simp [valueWellFormed] at h
+      | some loc =>
+          have parts := h.1
+          simp only [valueWellFormed] at parts
+          obtain ⟨_, _, fnsNext, related⟩ := parts
+          exact valueWellFormed_subg g allowed code _ g allowed codeNext
+            ⟨h.1, h.2, recClosureRel_stateExtendsSelf g allowed code loc fns fnsNext related,
+              fun _ member => member⟩
+termination_by sizeOf v
+decreasing_by
+  all_goals subst_vars
+  all_goals have h := List.sizeOf_lt_of_mem ‹_ ∈ _›
+  all_goals simp_wf
+  all_goals omega
+
+/-- Canonical codec for the source map in list code-extension preservation. -/
+theorem holFmapAsFiniteSupportParamWitness_everyValueWellFormed_submap_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueWellFormed_code code key
+
+/-- Canonical codec for the extended map in list code-extension preservation. -/
+theorem holFmapAsFiniteSupportParamWitness_everyValueWellFormed_submap_codeNext
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).lookup key = codeNext.lookup key ∧
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).finiteSupport = codeNext.finiteSupport ∧
+    ofBroad (toBroad codeNext) codeNext.finiteSupport = codeNext :=
+  holFmapAsFiniteSupportParamWitness_valueWellFormed_code codeNext key
+
+/-- Code extension preserves well-formedness of every value in a list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "EVERY_wfv_SUBMAP"
+  (fmap_as_finite_support_parameters := [code, codeNext])]
+theorem everyValueWellFormed_submap (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (env : List Value)
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (h : (∀ v ∈ env, valueWellFormed g allowed code v) ∧ code.submap codeNext) :
+    ∀ v ∈ env, valueWellFormed g allowed codeNext v := by
+  intro v member
+  exact valueWellFormed_submap g allowed code v codeNext ⟨h.1 v member, h.2⟩
+
+/-- Canonical codec for the source map in list state-extension preservation. -/
+theorem holFmapAsFiniteSupportParamWitness_everyValueWellFormed_subg_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueWellFormed_code code key
+
+/-- Canonical codec for the extended map in list state-extension preservation. -/
+theorem holFmapAsFiniteSupportParamWitness_everyValueWellFormed_subg_codeNext
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).lookup key = codeNext.lookup key ∧
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).finiteSupport = codeNext.finiteSupport ∧
+    ofBroad (toBroad codeNext) codeNext.finiteSupport = codeNext :=
+  holFmapAsFiniteSupportParamWitness_valueWellFormed_code codeNext key
+
+/-- Extending the compiler state, code and allowed locations preserves
+well-formedness of every value in a list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "EVERY_wfv_subg"
+  (fmap_as_finite_support_parameters := [code, codeNext])]
+theorem everyValueWellFormed_subg (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (env : List Value)
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (gNext : State) (allowedNext : Nat → Prop)
+    (h : (∀ v ∈ env, valueWellFormed g allowed code v) ∧ code.submap codeNext ∧
+      stateExtends g gNext ∧ (∀ x, allowed x → allowedNext x)) :
+    ∀ v ∈ env, valueWellFormed gNext allowedNext codeNext v := by
+  intro v member
+  exact valueWellFormed_subg g allowed code v gNext allowedNext codeNext ⟨h.1 v member, h.2⟩
+
 /-- Closure-state finite maps roundtrip through their lookup/support view. -/
 theorem holFmapAsFiniteSupportRelationWitness_ClosSem.State {C F : Type} :
     (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
@@ -172,5 +288,22 @@ theorem stateValuesWellFormed_subg {C F : Type} (g : State) (allowed : Nat → P
     intro value safe
     exact valueWellFormed_subg g allowed code value gNext allowedNext codeNext
       ⟨safe, codeSub, stateSub, allowedSub⟩
+
+/-- Adding code bindings preserves the value invariant of a closure state. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "wfv_state_SUBMAP"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code, code, codeNext])]
+theorem stateValuesWellFormed_submap {C F : Type} (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (s : ClosSem.State C F)
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (h : stateValuesWellFormed g allowed code s ∧ code.submap codeNext) :
+    stateValuesWellFormed g allowed codeNext s := by
+  obtain ⟨⟨globals, refs, empty⟩, codeSub⟩ := h
+  refine ⟨?_, ?_, empty⟩
+  · intro entry member value found
+    exact valueWellFormed_submap g allowed code value codeNext ⟨globals entry member value found, codeSub⟩
+  · intro key cell found
+    apply everyRefValue_mono _ _ cell ?_ (refs key cell found)
+    intro value safe
+    exact valueWellFormed_submap g allowed code value codeNext ⟨safe, codeSub⟩
 
 end Flapjack.Compiler.Backend.ClosCall

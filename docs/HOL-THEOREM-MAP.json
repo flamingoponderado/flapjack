@@ -42,6 +42,34 @@
   "reviewer": "Compared every_Fn_vs_NONE_cond_call_compile_inc_typed and HOL source: free variables program, enabled, known, the state carriers, both implication premises and conclusions match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfv_SUBMAP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueWellFormed.lean", "lean_name": "valueWellFormed_submap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code", "codeNext"],
+  "reviewer": "Source comparison: compared clos_call_wfv_SUBMAP_typed: quantified arguments and grouped well-formedness and submap premises imply the original code-extension result. Both code maps use the canonical finite-support codec."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "EVERY_wfv_SUBMAP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueWellFormed.lean", "lean_name": "everyValueWellFormed_submap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code", "codeNext"],
+  "reviewer": "Source comparison: compared clos_call_EVERY_wfv_SUBMAP_typed: free variables retain first-appearance order; the grouped EVERY and submap premise implies EVERY for the extended map. Both code maps use canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "EVERY_wfv_subg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueWellFormed.lean", "lean_name": "everyValueWellFormed_subg",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code", "codeNext"],
+  "reviewer": "Source comparison: compared clos_call_EVERY_wfv_subg_typed: EVERY, code submap, state extension and allowed-set inclusion are grouped in source order, with the original EVERY conclusion. Both code maps use canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfv_state_SUBMAP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueWellFormed.lean", "lean_name": "stateValuesWellFormed_submap",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code", "code", "codeNext"],
+  "reviewer": "Source comparison: compared clos_call_wfv_state_SUBMAP_typed: quantified state and independent map arguments and the grouped well-formedness and submap premises match. Both state fields and both code inputs use canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfv_subg",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueWellFormed.lean", "lean_name": "valueWellFormed_subg",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
