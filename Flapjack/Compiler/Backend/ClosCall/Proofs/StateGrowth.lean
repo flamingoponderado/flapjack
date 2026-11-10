@@ -4,12 +4,13 @@ public import Flapjack.Compiler.Backend.ClosCall.Proofs.InsertDomain
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.Suffix
 public import Flapjack.Compiler.Backend.ClosCall.Compile
 public import Flapjack.Misc.Sptree.Subspt
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
 
 @[expose] public section
 
 /-! Preservation of known locations by direct-call conversion. -/
 namespace Flapjack.Compiler.Backend.ClosCall
-open Flapjack ClosLang
+open Flapjack ClosLang ClosProps
 
 private def Grows (s t : State) : Prop :=
   sptSubspt s.1 t.1 ∧ s.2 <:+ t.2 ∧
@@ -55,15 +56,62 @@ private theorem fullTrans {s t u : State} (h : FullGrows s t) (h' : FullGrows t 
       exact List.mem_append_right _ member
   · exact Or.inr new
 
+private def DomainBound (initial final : State) (locations : List Nat) : Prop :=
+  ∀ k, sptDomain final.1 k → sptDomain initial.1 k ∨ k ∈ locations
+
+private theorem domainBound_refl (s : State) (locations : List Nat) : DomainBound s s locations :=
+  fun _ h => Or.inl h
+
+private theorem domainBound_mono {s t : State} {small large : List Nat}
+    (h : DomainBound s t small) (sub : ∀ k ∈ small, k ∈ large) : DomainBound s t large := by
+  intro k found
+  rcases h k found with old | new
+  · exact Or.inl old
+  · exact Or.inr (sub k new)
+
+private theorem domainBound_append {s t u : State} {xs ys : List Nat}
+    (h₁ : DomainBound s t xs) (h₂ : DomainBound t u ys) : DomainBound s u (xs ++ ys) := by
+  intro k found
+  rcases h₂ k found with intermediate | new
+  · rcases h₁ k intermediate with old | new
+    · exact Or.inl old
+    · exact Or.inr (List.mem_append_left _ new)
+  · exact Or.inr (List.mem_append_right _ new)
+
+private theorem domainBound_insert (s : State) (loc n : Nat) :
+    DomainBound s (insertEachSource loc n s) ((List.range n).map (fun i => loc + 2 * i)) := by
+  intro k found
+  rw [domain_insertEach] at found
+  rcases found with generated | old
+  · right
+    simp only [Set.mem_ofPred_eq, List.mem_map] at generated ⊢
+    obtain ⟨i, hi, eq⟩ := generated
+    exact ⟨i, hi, by omega⟩
+  · exact Or.inl old
+
+private def IndexedGrows (s t : State) (locations : List Nat) : Prop :=
+  FullGrows s t ∧ DomainBound s t locations
+
+private theorem indexedRefl (s : State) (locations : List Nat) : IndexedGrows s s locations :=
+  ⟨fullRefl s, domainBound_refl s locations⟩
+
+private theorem indexedTrans {s t u : State} {xs ys : List Nat}
+    (h : IndexedGrows s t xs) (h' : IndexedGrows t u ys) : IndexedGrows s u (xs ++ ys) :=
+  ⟨fullTrans h.1 h'.1, domainBound_append h.2 h'.2⟩
+
+private theorem indexedMono {s t : State} {small large : List Nat}
+    (h : IndexedGrows s t small) (sub : ∀ k ∈ small, k ∈ large) : IndexedGrows s t large :=
+  ⟨h.1, domainBound_mono h.2 sub⟩
+
 mutual
 private theorem growth_expr (e : Exp) (s : State) :
-    FullGrows s (callsSing e s).2 := by
+    IndexedGrows s (callsSing e s).2 (codeLocationsExp e) := by
   cases e with
-  | var tr n => simpa [callsSing] using fullRefl s
+  | var tr n => simpa [callsSing] using indexedRefl s _
   | raise tr e | tick tr e =>
     have ih := growth_expr e s
     cases run : callsSing e s with
-    | mk out next => simpa [callsSing, run] using ih
+    | mk out next => simpa [callsSing, run, codeLocationsExp] using ih
   | ifThenElse tr x y z =>
     cases hx : callsSing x s with
     | mk ox sx =>
@@ -77,7 +125,7 @@ private theorem growth_expr (e : Exp) (s : State) :
           simp only [hx] at h₁
           simp only [hy] at h₂
           simp only [hz] at h₃
-          simpa [callsSing, hx, hy, hz] using fullTrans (fullTrans h₁ h₂) h₃
+          simpa [callsSing, hx, hy, hz, codeLocationsExp] using indexedTrans (indexedTrans h₁ h₂) h₃
   | «let» tr args body =>
     cases hx : callsSingList args s with
     | mk ox sx =>
@@ -87,7 +135,7 @@ private theorem growth_expr (e : Exp) (s : State) :
         have h₂ := growth_expr body sx
         simp only [hx] at h₁
         simp only [hy] at h₂
-        simpa [callsSing, hx, hy] using fullTrans h₁ h₂
+        simpa [callsSing, hx, hy, codeLocationsExp] using indexedTrans h₁ h₂
   | handle tr x y =>
     cases hx : callsSing x s with
     | mk ox sx =>
@@ -97,11 +145,11 @@ private theorem growth_expr (e : Exp) (s : State) :
         have h₂ := growth_expr y sx
         simp only [hx] at h₁
         simp only [hy] at h₂
-        simpa [callsSing, hx, hy] using fullTrans h₁ h₂
+        simpa [callsSing, hx, hy, codeLocationsExp] using indexedTrans h₁ h₂
   | call tr ticks dest args | op tr dest args =>
     have ih := growth_list args s
     cases run : callsSingList args s with
-    | mk out next => simpa [callsSing, run] using ih
+    | mk out next => simpa [callsSing, run, codeLocationsExp] using ih
   | app tr loc body args =>
     cases hx : callsSingList args s with
     | mk ox sx =>
@@ -111,13 +159,18 @@ private theorem growth_expr (e : Exp) (s : State) :
         have h₂ := growth_expr body sx
         simp only [hx] at h₁
         simp only [hy] at h₂
-        have combined := fullTrans h₁ h₂
+        have combined := indexedTrans h₁ h₂
         cases loc with
-        | none => simpa [callsSing, hx, hy] using combined
+        | none =>
+          simp only [callsSing, hx, hy]
+          apply indexedMono combined
+          simp [codeLocationsExp, List.mem_append, or_comm]
         | some loc =>
           simp only [callsSing, hx, hy]
           cases (sptLookup loc sy.1).isSome <;> cases ClosLang.pure body <;>
-            simpa using combined
+            simp only [Bool.false_eq_true, ↓reduceIte] <;>
+            apply indexedMono combined <;>
+            simp [codeLocationsExp, List.mem_append, or_comm]
   | fn name loc vars arity body =>
     let fresh := insertEachSource (loc.getD 0) 1 s
     cases hf : callsSing body fresh with
@@ -128,40 +181,48 @@ private theorem growth_expr (e : Exp) (s : State) :
       simp only [callsSing, hf]
       split
       · constructor
-        · have extended := trans (insert_growth _ _ s) ih.1
-          refine ⟨extended.1, extended.2.1.trans (List.suffix_cons _ _), ?_⟩
-          intro label member
-          simp only [List.map_cons, List.mem_cons] at member
-          rcases member with same | old
-          · left
-            refine ⟨loc.getD 0, ?_, ?_⟩
-            · have inFresh : sptDomain fresh.1 (loc.getD 0) := by
-                dsimp [fresh]
-                rw [domain_insertEach]
-                exact Or.inl (by simp)
-              exact (ih.1.1 _ inFresh).1
-            · simpa [Nat.succ_eq_add_one] using same
-          · exact extended.2.2 label old
-        · intro x present
-          rcases ih.2 x present with initial | ⟨label, member, eq⟩
-          · dsimp [fresh] at initial
-            rw [domain_insertEach] at initial
-            rcases initial with generated | old
+        · constructor
+          · have extended := trans (insert_growth _ _ s) ih.1.1
+            refine ⟨extended.1, extended.2.1.trans (List.suffix_cons _ _), ?_⟩
+            intro label member
+            simp only [List.map_cons, List.mem_cons] at member
+            rcases member with same | old
+            · left
+              refine ⟨loc.getD 0, ?_, ?_⟩
+              · have inFresh : sptDomain fresh.1 (loc.getD 0) := by
+                  dsimp [fresh]
+                  rw [domain_insertEach]
+                  exact Or.inl (by simp)
+                exact (ih.1.1.1 _ inFresh).1
+              · simpa [Nat.succ_eq_add_one] using same
+            · exact extended.2.2 label old
+          · intro x present
+            rcases ih.1.2 x present with initial | ⟨label, member, eq⟩
+            · dsimp [fresh] at initial
+              rw [domain_insertEach] at initial
+              rcases initial with generated | old
+              · right
+                simp only [Set.mem_ofPred_eq, List.mem_map, List.mem_range] at generated
+                obtain ⟨i, bound, equal⟩ := generated
+                refine ⟨loc.getD 0 + 1, ?_, ?_⟩
+                · simp
+                · simp only [Nat.add_one, Nat.pred_succ]
+                  omega
+              · exact Or.inl old
             · right
-              simp only [Set.mem_ofPred_eq, List.mem_map, List.mem_range] at generated
-              obtain ⟨i, bound, equal⟩ := generated
-              refine ⟨loc.getD 0 + 1, ?_, ?_⟩
-              · simp
-              · simp only [Nat.add_one, Nat.pred_succ]
-                omega
-            · exact Or.inl old
-          · right
-            refine ⟨label, ?_, eq⟩
-            simp only [List.map_cons, List.mem_cons]
-            exact Or.inr member
+              refine ⟨label, ?_, eq⟩
+              simp only [List.map_cons, List.mem_cons]
+              exact Or.inr member
+        · have combined := domainBound_append (domainBound_insert s (loc.getD 0) 1) ih.2
+          apply domainBound_mono combined
+          simp [codeLocationsExp, List.mem_append, or_comm]
       · have ih := growth_expr body s
         cases hr : callsSing body s with
-        | mk out next => simpa [hr] using ih
+        | mk out next =>
+          simp only [hr] at ih ⊢
+          apply indexedMono ih
+          intro k member
+          simp [codeLocationsExp, member]
   | letrec names loc vars fns body =>
     let fresh := insertEachSource (loc.getD 0) fns.length s
     cases hf : callsSingList (fns.map Prod.snd) fresh with
@@ -192,15 +253,15 @@ private theorem growth_expr (e : Exp) (s : State) :
                 · omega
               change sptDomain (codeListSource _ _ st).1 _
               rw [codeListSource_fst]
-              exact (ihF.1.1 _ inFresh).1
+              exact (ihF.1.1.1 _ inFresh).1
             · omega
           · exact Or.inr (List.mem_map.mpr old)
         have fullEmit : FullGrows s emitted := by
-          refine ⟨trans (trans (insert_growth _ _ s) ihF.1) emitGrowth, ?_⟩
+          refine ⟨trans (trans (insert_growth _ _ s) ihF.1.1) emitGrowth, ?_⟩
           intro x present
           have stPresent : sptDomain st.1 x := by
             simpa [emitted, codeListSource_fst] using present
-          rcases ihF.2 x stPresent with initial | ⟨label, member, eq⟩
+          rcases ihF.1.2 x stPresent with initial | ⟨label, member, eq⟩
           · dsimp [fresh] at initial
             rw [domain_insertEach] at initial
             rcases initial with generated | old
@@ -229,8 +290,16 @@ private theorem growth_expr (e : Exp) (s : State) :
         cases hb : callsSing body emitted with
         | mk out final =>
           simp only [hb] at ihBody
-          change FullGrows s final
-          exact fullTrans fullEmit ihBody
+          change IndexedGrows s final _
+          constructor
+          · exact fullTrans fullEmit ihBody.1
+          · have emitBound : DomainBound st emitted [] := by
+              simp [DomainBound, emitted, codeListSource_fst]
+            have all := domainBound_append
+              (domainBound_append (domainBound_append (domainBound_insert s (loc.getD 0) fns.length) ihF.2)
+                emitBound) ihBody.2
+            apply domainBound_mono all
+            simp [codeLocationsExp, codeLocationsFuns_map, List.mem_append, or_comm, or_left_comm, or_assoc]
       · cases hg : callsSingList (fns.map Prod.snd) s with
         | mk bodies st =>
           have ihG := growth_list (fns.map Prod.snd) s
@@ -239,7 +308,10 @@ private theorem growth_expr (e : Exp) (s : State) :
           | mk out final =>
             have ihBody := growth_expr body st
             simp only [hb] at ihBody ⊢
-            exact fullTrans ihG ihBody
+            apply indexedMono (indexedTrans ihG ihBody)
+            simp only [codeLocationsExp, codeLocationsFuns_map, List.mem_append]
+            aesop
+
 termination_by sizeOf e
 decreasing_by
   all_goals simp_wf
@@ -248,9 +320,9 @@ decreasing_by
   all_goals omega
 
 private theorem growth_list (es : List Exp) (s : State) :
-    FullGrows s (callsSingList es s).2 := by
+    IndexedGrows s (callsSingList es s).2 (codeLocations es) := by
   cases es with
-  | nil => simpa [callsSingList] using fullRefl s
+  | nil => simpa [callsSingList] using indexedRefl s (codeLocations [])
   | cons e es =>
     cases he : callsSing e s with
     | mk out mid =>
@@ -260,7 +332,7 @@ private theorem growth_list (es : List Exp) (s : State) :
         have h₂ := growth_list es mid
         simp only [he] at h₁
         simp only [hs] at h₂
-        simpa [callsSingList, he, hs] using fullTrans h₁ h₂
+        simpa [callsSingList, he, hs, codeLocations] using indexedTrans h₁ h₂
 termination_by sizeOf es
 decreasing_by all_goals simp_wf <;> omega
 end
@@ -272,7 +344,7 @@ theorem calls_subspt (xs : List Exp) (g0 : State) (ys : List Exp) (g : State)
     (h : calls xs g0 = (ys, g)) : sptSubspt g0.1 g.1 := by
   have result := growth_list xs g0
   change callsSingList xs g0 = (ys, g) at h
-  simpa [h] using result.1.1
+  simpa [h] using result.1.1.1
 
 /-- Direct-call conversion retains the old auxiliary code as a suffix. -/
 
@@ -281,7 +353,7 @@ theorem calls_suffix (xs : List Exp) (g0 : State) (ys : List Exp) (g : State)
     (h : calls xs g0 = (ys, g)) : g0.2 <:+ g.2 := by
   have result := growth_list xs g0
   change callsSingList xs g0 = (ys, g) at h
-  simpa [h] using result.1.2.1
+  simpa [h] using result.1.1.2.1
 
 /-- Direct-call conversion preserves old locations and code labels; every new
 label is the successor of a location in the final state. -/
@@ -295,7 +367,7 @@ theorem calls_codeSubset (xs : List Exp) (g0 : State) (ys : List Exp) (g : State
   have growth := growth_list xs g0
   change callsSingList xs g0 = (ys, g) at h
   rw [h] at growth
-  have growth := growth.1
+  have growth := growth.1.1
   refine ⟨?_, ?_, ?_⟩
   · rintro label ⟨loc, known, rfl⟩
     exact ⟨loc, (growth.1 loc known).1, rfl⟩
@@ -319,8 +391,19 @@ theorem calls_domain (xs : List Exp) (g0 : State) (ys : List Exp) (g : State)
   change callsSingList xs g0 = (ys, g) at h
   rw [h] at growth
   intro loc present
-  rcases growth.2 loc present with old | ⟨label, member, eq⟩
+  rcases growth.1.2 loc present with old | ⟨label, member, eq⟩
   · exact Or.inl old
   · exact Or.inr ⟨label, member, eq.symm⟩
+
+/-- A direct-call traversal adds only locations occurring in its input. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_domain_locs"]
+theorem calls_domainLocations (xs : List Exp) (g : State) (ys : List Exp) (g2 : State)
+    (h : calls xs g = (ys, g2)) :
+    Set.Subset (sptDomain g2.1) (Set.union (sptDomain g.1) {x | x ∈ codeLocations xs}) := by
+  have bound := (growth_list xs g).2
+  change callsSingList xs g = (ys, g2) at h
+  rw [h] at bound
+  exact bound
+
 
 end Flapjack.Compiler.Backend.ClosCall

@@ -269,7 +269,7 @@
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_domain_locs",
-  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/DomainLocations.lean", "lean_name": "calls_domainLocations",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateGrowth.lean", "lean_name": "calls_domainLocations",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared clos_call_calls_domain_locs_typed: quantified input list, state, output list and final state occur in order; the original total calls equation implies the full domain inclusion in the initial domain union input code locations."
  },
