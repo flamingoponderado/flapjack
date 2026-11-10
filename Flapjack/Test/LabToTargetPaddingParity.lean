@@ -1,6 +1,17 @@
-import Flapjack.Compiler.Backend.LabToTarget.Padding
-import Flapjack.Test.LabToTargetSecondPassParity
-import Flapjack.Test.Fixtures.LabToTarget
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Padding
+public import Flapjack.Test.LabToTargetSecondPassParity
+public import Flapjack.Test.Fixtures.LabToTarget
+import all Flapjack.Compiler.Backend.LabToTarget.Padding
+import all Flapjack.Test.LabToTargetSecondPassParity
+import all Flapjack.Test.Fixtures.LabToTarget
+import all Flapjack.Compiler.Encoders.Asm
+import all Flapjack.Compiler.Backend.LabToTarget.Encoding
+import all Flapjack.Compiler.Backend.LabLang
+import all Init.Data.Sum.Basic
+
+@[expose] public section
 
 /-!
 # Native kernel replays of `lab_to_target_padding_probe.out`
