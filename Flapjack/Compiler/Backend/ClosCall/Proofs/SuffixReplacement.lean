@@ -267,4 +267,13 @@ theorem calls_replace_snd (xs : List Exp) (g0 : State) (ys : List Exp) (g : Stat
       · exact first.symm
       · exact right
 
+/-- Existing auxiliary code is retained after the code generated from an
+empty accumulator. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_acc"]
+theorem calls_acc (xs : List Exp) (d : NumSet) (old : List (Nat × Nat × Exp))
+    (res : List Exp) (d1 : NumSet) (aux : List (Nat × Nat × Exp))
+    (h : calls xs (d, []) = (res, (d1, aux))) :
+    calls xs (d, old) = (res, (d1, aux ++ old)) := by
+  exact calls_replace_snd xs (d, []) res (d1, aux) (d, old) aux ⟨h, rfl, by simp⟩
+
 end Flapjack.Compiler.Backend.ClosCall

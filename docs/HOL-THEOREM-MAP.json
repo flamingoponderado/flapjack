@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_acc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/SuffixReplacement.lean", "lean_name": "calls_acc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_acc_type in clos_call_code_list_probe.out and source: the expression list, input sparse state, old code, result expressions, final sparse state and generated code retain their original order and carriers. The empty-accumulator equation implies the same result with old code appended."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_replace_SND",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/SuffixReplacement.lean", "lean_name": "calls_replace_snd",
   "statement_status": "reviewed_exact",

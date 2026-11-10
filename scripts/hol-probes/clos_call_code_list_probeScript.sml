@@ -13,6 +13,7 @@ val _ = (print "code_list_replace_snd_type="; Lib.with_flag (Globals.show_types,
 val _ = (print "calls_code_subset_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_code_subset); print "\n");
 val _ = (print "calls_domain_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_domain); print "\n");
 val _ = (print "calls_replace_snd_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_replace_SND); print "\n");
+val _ = (print "calls_acc_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_acc); print "\n");
 val _ = (print "suffix_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.code_list_IS_SUFFIX); print "\n");
 val entry = EVAL ``clos_call$code_list 10 [(2,closLang$Var None 4);(0,closLang$Var None 9);(1,closLang$Var None 2)] (sptree$LN,[(90,3,closLang$Var None 0)])``;
 val _ = (print "example="; print_term (rhs (concl entry)); print "\n");
