@@ -45,7 +45,8 @@ example : lineOkPreHOL cfg (.asm (.asmi (.inst .skip)) [0, 0, 0, 0] 4) ∧
       encWithNop, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
       asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
       asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
-      asmOkExact] ; try decide +kernel
+      asmOkExact]
+  all_goals try decide +kernel
 example : lineOkPreHOL cfg (.labAsm .halt 236 [236, 99] 2) ∧
   lineEncWithNop cfg.encode labs ffis 4 (.labAsm .halt 236 [236,99] 2) ∧
     lineOffsetOk (width := 8) labs ffis 4 (.labAsm .halt 236 [236, 99] 2) ∧

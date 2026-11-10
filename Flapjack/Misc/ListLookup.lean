@@ -69,7 +69,10 @@ theorem lookupMem {α β : Type} [BEq α] [LawfulBEq α]
   | cons e l ih =>
     obtain ⟨a, b⟩ := e
     by_cases hk : k = a
-    · subst hk; simp at h; subst h; simp
+    · subst hk
+      simp at h
+      subst h
+      simp
     · have : (k == a) = false := by simp [hk]
       simp only [List.lookup_cons, this] at h
       exact List.mem_cons_of_mem _ (ih h)
