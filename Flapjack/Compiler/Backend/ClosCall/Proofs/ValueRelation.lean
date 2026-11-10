@@ -492,4 +492,22 @@ theorem valueToWords_thm (g : State) (allowed : Nat → Prop)
         simp [head, ih _ tail]
   exact (valueToWords_eq_some h' x).mpr (same ▸ target)
 
+/-- Canonical code-map codec for re-encoding related lists. -/
+theorem holFmapAsFiniteSupportParamWitness_valueRel_decodeEncode_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code code key
+
+/-- Decoding and re-encoding related list values preserves the relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "vrel_v2l_l2v"
+  (fmap_as_finite_support_parameters := [code])]
+theorem valueRel_decodeEncode (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (x y : Value) (xs ys : List Value)
+    (h : valueRel g allowed code x y ∧ valueToList x = some xs ∧ valueToList y = some ys) :
+    valueRel g allowed code (listToValue xs) (listToValue ys) := by
+  rw [listToValue_valueToList x xs h.2.1, listToValue_valueToList y ys h.2.2]
+  exact h.1
+
 end Flapjack.Compiler.Backend.ClosCall

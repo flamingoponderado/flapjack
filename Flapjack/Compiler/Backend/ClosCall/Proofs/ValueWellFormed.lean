@@ -373,4 +373,23 @@ theorem valueWellFormed_boolUnit (g : State) (allowed : Nat → Prop)
     valueWellFormed g allowed code (boolValue b) ∧ valueWellFormed g allowed code unitValue := by
   simp [boolValue, unitValue, valueWellFormed]
 
+/-- Canonical code-map codec for well-formed re-encoded lists. -/
+theorem holFmapAsFiniteSupportParamWitness_valueWellFormed_decodeEncode_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueWellFormed_code code key
+
+/-- Re-encoding a decoded well-formed list preserves well-formedness. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "wfv_v2l_l2v"
+  (fmap_as_finite_support_parameters := [code])]
+theorem valueWellFormed_decodeEncode {α β : Type} (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (x : Value) (_y : α)
+    (xs : List Value) (_ys : β)
+    (h : valueWellFormed g allowed code x ∧ valueToList x = some xs) :
+    valueWellFormed g allowed code (listToValue xs) := by
+  rw [listToValue_valueToList x xs h.2]
+  exact h.1
+
 end Flapjack.Compiler.Backend.ClosCall
