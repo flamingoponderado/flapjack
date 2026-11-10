@@ -406,7 +406,8 @@ def headerConfig : Config := { conf with lenSize := 4 }
   | some (.assign 8 (.const 2), 2) => true
   | _ => false
 -- Installation checks and call captured from the original data-to-word pass.
-def matchesInstallFailure {width : Nat} [NeZero width] (p : Flapjack.WordLangProgHOL (BitVec width)) : Bool :=
+def matchesInstallFailure {width : Nat} [NeZero width]
+    (p : Flapjack.WordLangProgHOL (BitVec width)) : Bool :=
   match p with
   | .seq (.assign 1 (.const n)) (.alloc 1 (.ls (), .ln)) => n == -1
   | _ => false
