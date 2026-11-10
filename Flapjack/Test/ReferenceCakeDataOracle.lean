@@ -1,5 +1,9 @@
 -- Generated from the pinned original HOL compiler; do not edit.
-import Flapjack.Compiler.Backend.DataLang.Syntax
+module
+
+public import Flapjack.Compiler.Backend.DataLang.Syntax
+
+@[expose] public section
 
 namespace Flapjack.Test.ReferenceCakeDataOracle
 

@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Generate an exhaustive Lean data-program pattern from pinned HOL output."""
 import argparse
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parent))
+from lean_module_header import to_module  # noqa: E402
 import importlib.util
 import re
 from pathlib import Path
@@ -113,7 +117,7 @@ def main():
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     for input_path, output_path, namespace in CASES:
-        expected = render(input_path, namespace)
+        expected = to_module(render(input_path, namespace))
         if args.check:
             if not output_path.exists() or output_path.read_text() != expected:
                 raise SystemExit(f"{output_path} is stale; regenerate it from the HOL capture")
