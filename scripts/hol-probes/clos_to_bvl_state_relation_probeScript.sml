@@ -70,6 +70,8 @@ val _ = show "calls_sing_typed=" clos_callTheory.calls_sing;
 val _ = show "calls_add_SUC_code_locs_typed=" clos_callProofTheory.calls_add_SUC_code_locs;
 val _ = show "calls_ALL_DISTINCT_typed=" clos_callProofTheory.calls_ALL_DISTINCT;
 val _ = show "calls_code_locs_MEM_typed=" clos_callProofTheory.calls_code_locs_MEM;
+val _ = show "code_locs_cons_typed=" closPropsTheory.code_locs_cons;
+val _ = show "code_locs_append_typed=" closPropsTheory.code_locs_append;
 val _ = show "calls_code_locs_ALL_DISTINCT_typed=" clos_callProofTheory.calls_code_locs_ALL_DISTINCT;
 val _ = show "MAP_FST_code_list_typed=" clos_callProofTheory.MAP_FST_code_list;
 val _ = show "can_extract_to_case_typed=" clos_to_bvlProofTheory.can_extract_to_case;

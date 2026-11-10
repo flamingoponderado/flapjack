@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "code_locs_append",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/CodeLocations.lean", "lean_name": "codeLocations_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_locs_append_typed and independent source review: both expression-list binders and the concatenation equality, including its orientation, match HOL."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "calls_length",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Compile.lean", "lean_name": "calls_length",
   "statement_status": "reviewed_exact",

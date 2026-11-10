@@ -54,6 +54,7 @@ theorem codeLocationsFuns_map (fns : List (Nat × Exp)) :
     simp [codeLocationsFuns, codeLocations, ih]
 
 /-- Collecting locations distributes over expression-list concatenation. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "code_locs_append"]
 theorem codeLocations_append (left right : List Exp) :
     codeLocations (left ++ right) = codeLocations left ++ codeLocations right := by
   induction left with
