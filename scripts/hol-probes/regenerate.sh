@@ -9539,3 +9539,8 @@ run_probe data_simp_probeScript.sml data_simp_probe.out \
   pSeq_def_typed simp_def_typed \
   "$cake_dir/compiler/backend/data_simpScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe tokens_carriers_probeScript.sml tokens_carriers_probe.out \
+  path_axiom_typed token_axiom_typed \
+  "$cake_dir/semantics/tokensScript.sml" \
+  "$cake_dir/semantics"

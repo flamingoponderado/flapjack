@@ -117833,12 +117833,12 @@
   {
     "lean_path": "Flapjack/CakeParser/Tokens.lean", "lean_name": "Path",
     "hol_path": "cakeml/semantics/tokensScript.sml", "hol_name": "path",
-    "statement_status": "pending_statement_review", "reviewer": "Path constructors transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "Independently compared the typed tokens_carriers_probe capture of path_Axiom (`Mod : mlstring -> path -> \u03b1 -> \u03b1`, `End`) with Path.mod : MlString \u2192 Path \u2192 Path and Path.\u00abend\u00bb; MlString is the reviewed mlstring port and only the constructor spelling differs (Lean's escaped \u00abend\u00bb avoids the keyword)."
   },
   {
     "lean_path": "Flapjack/CakeParser/Tokens.lean", "lean_name": "Token",
     "hol_path": "cakeml/semantics/tokensScript.sml", "hol_name": "token",
-    "statement_status": "pending_statement_review", "reviewer": "Complete token constructor sequence transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "Independently compared the typed tokens_carriers_probe capture of token_Axiom with Token: the datatype axiom lists 68 constructors in exactly the source order (WhitespaceT num; NewlineT; LexErrorT; HashT \u2026 WithtypeT; IntT int; HexintT mlstring; WordT num; RealT mlstring; StringT mlstring; CharT char; TyvarT mlstring; AlphaT mlstring; SymbolT mlstring; LongidT path mlstring; FFIT mlstring; REPLIDT mlstring), and the Lean declaration has the same 68 constructors in the same order with the same payload types (Nat, Int, MlString, HolChar, Path); only the names are lowercased (FFIT\u2192ffiT, REPLIDT\u2192replidT)."
   },
   {
     "lean_path": "Flapjack/CakeParser/Lexer.lean", "lean_name": "Symbol",
