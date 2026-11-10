@@ -181,6 +181,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/lab_filterScript.sml` | `Flapjack/Compiler/Backend/LabFilter.lean` |
 | `misc/miscScript.sml` (`list_subset`) | `Flapjack/Misc/ListSubset.lean` |
 | `misc/miscScript.sml` (`opt_bind`) | `Flapjack/Misc/OptBind.lean` |
+| `misc/miscScript.sml` (`make_even`) | `Flapjack/Misc/MakeEven.lean` |
 | `misc/miscScript.sml` (`lookup_vars`) | `Flapjack/Misc/LookupVars.lean` |
 | `compiler/backend/proofs/lab_filterProofScript.sml` | `Flapjack/Compiler/Backend/LabFilter/Proofs.lean` (submodules in `LabFilter/Proofs/`) |
 | `compiler/backend/proofs/lab_to_targetProofScript.sml` | `Flapjack/Compiler/Backend/LabToTarget/` (code similarity and structural preservation; `ShareMemDomain.lean` share_mem_domain_code_rel, `ShareMemState.lean` share_mem_state_rel) |

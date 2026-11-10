@@ -9,6 +9,7 @@ fun show label th = if null (hyp th) then
 val _ = show "renumber_def_typed=" clos_numberTheory.renumber_code_locs_def;
 val _ = show "compile_inc_def_typed=" clos_numberTheory.compile_inc_def;
 val _ = show "make_even_def_typed=" miscTheory.make_even_def;
+val _ = show "even_make_even_typed=" miscTheory.EVEN_make_even;
 val _ = show "ignore_table_def_typed=" clos_numberTheory.ignore_table_def;
 val _ = show "v_rel_rules_typed=" clos_numberProofTheory.v_rel_rules;
 val _ = show "ref_rel_def_typed=" closPropsTheory.ref_rel_def;
@@ -17,6 +18,9 @@ val _ = show "state_rel_typed=" clos_numberProofTheory.state_rel_def;
 val _ = show "renumber_correct_typed=" clos_numberProofTheory.renumber_code_locs_correct;
 val _ = show "renumber_code_locs_inc_typed=" clos_numberProofTheory.renumber_code_locs_inc;
 val _ = show "renumber_code_locs_imp_inc_typed=" clos_numberProofTheory.renumber_code_locs_imp_inc;
+val _ = show "renumber_list_imp_length_typed=" clos_numberProofTheory.renumber_code_locs_list_IMP_LENGTH;
+val _ = show "renumber_list_distinct_typed=" clos_numberProofTheory.renumber_code_locs_list_distinct;
+val _ = show "renumber_even_typed=" clos_numberProofTheory.renumber_code_locs_EVEN;
 val _ = show "renumber_code_locs_every_Fn_SOME_typed=" clos_numberProofTheory.renumber_code_locs_every_Fn_SOME;
 open closLangTheory clos_numberTheory clos_numberProofTheory closSemTheory closPropsTheory
   listTheory rich_listTheory;

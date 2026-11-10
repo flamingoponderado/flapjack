@@ -18,6 +18,24 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml", "hol_name": "renumber_code_locs_list_IMP_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LocationInvariants.lean", "lean_name": "renumberList_imp_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared renumber_list_imp_length_typed and independent source review: location, expression list and output pair binders, execution premise and length equality agree."
+ },
+ {
+  "hol_path": "cakeml/misc/miscScript.sml", "hol_name": "make_even_def",
+  "lean_path": "Flapjack/Misc/MakeEven.lean", "lean_name": "makeEven",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared make_even_def_typed and independent source review: HOL EVEN is rendered by remainder modulo two equal to zero; both branches and their natural input and output agree."
+ },
+ {
+  "hol_path": "cakeml/misc/miscScript.sml", "hol_name": "EVEN_make_even",
+  "lean_path": "Flapjack/Misc/MakeEven.lean", "lean_name": "even_makeEven",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared even_make_even_typed and independent source review: every natural input yields an even result, with HOL EVEN rendered by remainder modulo two equal to zero."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "known_co_req",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownAddresses.lean", "lean_name": "knownCo_req",
   "statement_status": "reviewed_exact",
@@ -117732,7 +117750,7 @@
     "hol_path": "cakeml/compiler/backend/clos_numberScript.sml",
     "hol_name": "compile_inc_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared compile_inc_def_typed and make_even_def_typed in clos_number_correctness_probe.out: the input/output location and expression-list carriers, reservation max(length,1), even alignment, numbering call and embedded original-location constant agree. Natural remainder zero is the HOL EVEN test. The executed incremental compiler uses this definition. Source review and Lean checking do not establish cross-language equivalence."
+    "reviewer": "Compared compile_inc_def_typed and make_even_def_typed in clos_number_correctness_probe.out: the input/output location and expression-list carriers, reservation max(length,1), even alignment, numbering call and embedded original-location constant agree. The executed definition calls the reviewed makeEven; natural remainder zero is the HOL EVEN test. The executed incremental compiler uses this definition. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber.lean",

@@ -154,7 +154,7 @@ theorem stateRel_shiftOracle {C F : Type} {source : State (Nat × C) F} {target 
 /-- Every incremental numbering result begins with its original location. -/
 theorem compileInc_nonempty (number : Nat) (expressions : List ClosLang.Exp) :
     (compileInc number expressions).2 ≠ [] := by
-  simp only [compileInc]
+  simp only [compileInc, makeEven]
   split <;> simp
 
 /-- Successful or timed-out installation is simulated by the numbered
