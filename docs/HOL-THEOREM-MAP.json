@@ -117879,6 +117879,11 @@
     "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
   },
   {
+    "lean_path": "Flapjack/CakeParser/Grammar.lean", "lean_name": "validAddSymAlt",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "validAddSym_alt_def",
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: HOL validAddSym_alt_def (pegexec_cml_foScript.sml:183-189): validAddSym_alt [] = F and validAddSym_alt (c::t) = in_set c [#\"+\"; #\"-\"; #\"\\094\"] \\/ (t <> [] /\\ c = #\"|\"). Lean validAddSymAlt has the same two clauses with the character codes 43, 45, 94 and 124 (+, -, ^, |); it is the function HOL's eval_token_symbol_check valid_add clause names."
+  },
+  {
     "lean_path": "Flapjack/CakeParser/Grammar.lean", "lean_name": "validRelSym",
     "hol_path": "cakeml/semantics/gramScript.sml", "hol_name": "validRelSym_def",
     "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
@@ -117896,99 +117901,99 @@
   {
     "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "AlphaCheck",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "token_alpha_check",
-    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed token_alpha_check_typed in pegexec_cml_fo_source_probe.out gives the three nullary constructors TokenAlpha_nonempty, TokenAlpha_upper_initial and TokenAlpha_lower_initial_not_reserved; Lean AlphaCheck has the same three nullary constructors in the same order."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "SymbolCheck",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "token_symbol_check",
-    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed token_symbol_check_typed gives TokenSymbol_nonempty, valid_mult, valid_add, valid_rel, valid_list, valid_prefix, all nullary; Lean SymbolCheck has the same six constructors."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "LongidCheck",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "token_longid_check",
-    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed token_longid_check_typed gives TokenLongid_tail_nonempty, tail_nonempty_head_alpha_not_upper and ctor_upper_initial, all nullary; Lean LongidCheck has the same three constructors."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "TokenCheck",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "token_check",
-    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed token_check_typed gives seventeen constructors, with TokenCheck_eq : token -> token_check and alpha/symbol/longid carrying token_alpha_check/token_symbol_check/token_longid_check; Lean TokenCheck has the same seventeen constructors with the same payload types."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "evalAlpha",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_token_alpha_check_def",
-    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed eval_token_alpha_check_def_typed: nonempty s ⇔ s ≠ «»; upper_initial s ⇔ if s = «» then F else isUpper (strsub s 0); lower_initial_not_reserved s ⇔ if s = «» then F else ¬isUpper (strsub s 0) ∧ s ≠ «before» ∧ s ≠ «div» ∧ s ≠ «mod» ∧ s ≠ «o». Lean's clauses match, with upper (65 ≤ code ≤ 90) as HOL's isUpper and the head of MlString.explode as strsub s 0."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "evalSymbol",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_token_symbol_check_def",
-    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed eval_token_symbol_check_def_typed: nonempty s ⇔ s ≠ «»; valid_mult ⇔ validMultSym (explode s); valid_add ⇔ validAddSym_alt (explode s); valid_rel ⇔ validRelSym; valid_list ⇔ validListSym; valid_prefix ⇔ validPrefixSym. Lean's clauses match, with the newly ported validAddSymAlt for the valid_add clause."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "evalLongid",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_token_longid_check_alt_def",
-    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed eval_token_longid_check_alt_def_typed: tail_nonempty (str,s) ⇔ s ≠ «»; tail_nonempty_head_alpha_not_upper ⇔ if s = «» then F else isAlpha (strsub s 0) ⇒ ¬isUpper (strsub s 0); ctor_upper_initial ⇔ if s = «» then F else isAlpha (strsub s 0) ∧ isUpper (strsub s 0). Lean's empty-guard clauses match, with alpha (65..90 or 97..122) as HOL's isAlpha and upper as isUpper."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "evalToken",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_token_check_def",
-    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed eval_token_check_def_typed gives all seventeen clauses: always T, never F, eq t0 ⇔ t = t0, isInt/isString/isCharT/isWordT/destFFIT, alpha/symbol/longid via destAlphaT/destSymbolT/destLongidT and the three checks, isTyvarT/isAlphaSym/isLongidT, and the three opid nonempty cases. Lean's pattern clauses match; the tokenUtils predicates are one-line token-case definitions that Lean inlines (isInt t = case t of IntT _ => T | _ => F, etc.)."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "Unary",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "sem_u",
-    "statement_status": "pending_statement_review", "reviewer": "First-order semantic action transcribed against generated nonterminal and parse-tree carriers; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed sem_u_typed: SemU_id : sem_u and SemU_bindNT : MMLnonT + num -> sem_u. Lean Unary has id and bindNT : Rule, with Rule = Sum Nonterminal Nat = MMLnonT + num."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "Binary",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "sem_b",
-    "statement_status": "pending_statement_review", "reviewer": "First-order semantic action transcribed against generated nonterminal and parse-tree carriers; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed sem_b_typed gives the nine constructors SemB_first, second, append, mklinfix (MMLnonT + num), foldl_Eapp, foldl_DType, papp_ctor_rpt, ebase_paren_apply and bindNT0 (MMLnonT + num). Lean Binary has the same nine constructors with the same payloads."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "evalUnary",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_unary_def",
-    "statement_status": "pending_statement_review", "reviewer": "First-order semantic action transcribed against generated nonterminal and parse-tree carriers; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed eval_unary_def_typed: eval_unary SemU_id v = v; eval_unary (SemU_bindNT nt) v = [Nd (nt, ptree_list_loc v) v]. Lean's clauses match, with mkNode n xs = Nd (n, listLocation xs) xs."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "mkLinfix",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "mk_linfix_fo_def",
-    "statement_status": "pending_statement_review", "reviewer": "First-order semantic action transcribed against generated nonterminal and parse-tree carriers; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed mk_linfix_fo_def_typed: mk_linfix_fo tgt acc [] = acc; [t] = acc; (opt::t::rest) = mk_linfix_fo tgt (mkNd_fo tgt [acc; opt; t]) rest. Lean's three clauses match with mkNode."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "evalBinary",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_binary_def",
-    "statement_status": "pending_statement_review", "reviewer": "First-order semantic action transcribed against generated nonterminal and parse-tree carriers; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed eval_binary_def_typed gives all nine clauses: first v2 v1 = v2; second = v1; append = v2 ++ v1; mklinfix tgt with [] -> [] and h::_ -> [mk_linfix_fo tgt (mkNd_fo tgt [h]) v1]; foldl_Eapp/foldl_DType on v2 ++ v1; papp_ctor_rpt on v2 ++ v1; ebase_paren_apply = peg_Ebase_paren_fo v2; bindNT0 tgt = [mkNd_fo tgt (v2 ++ v1)]. Lean's clauses match, with foldNodes/pappCtor/ebaseParen as the private renderings of foldl_Eapp_fo/foldl_DType_fo, eval_papp_ctor_rpt_fo and peg_Ebase_paren_fo."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegSyntax.lean",
     "lean_name": "TokenMap",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml",
     "hol_name": "tok_map",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against the pinned first-order PEG and specialized CakeML parse-tree carriers; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed tok_map_typed: TokenMap_mktokLf, TokenMap_empty_list and TokenMap_bindNT (MMLnonT + num). Lean TokenMap has leaf, empty and bindNT : Rule."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegSyntax.lean",
     "lean_name": "PegExpr",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml",
     "hol_name": "pegsym_fo",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against the pinned first-order PEG and specialized CakeML parse-tree carriers; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed pegsym_fo_typed gives the nine constructors: Empty_fo (parsetree list), Any_fo tok_map, Tok_fo token_check tok_map, Nt_fo (MMLnonT + num) sem_u, Seq_fo pegsym_fo pegsym_fo sem_b, Choice_fo pegsym_fo pegsym_fo, Rpt_fo pegsym_fo, Not_fo pegsym_fo (parsetree list), Error_fo string. Lean PegExpr has the same nine constructors with the same payloads, with List HolChar for string."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegGrammar.lean",
     "lean_name": "ntRule",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml",
     "hol_name": "nt_rule_fo_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against the pinned first-order PEG and specialized CakeML parse-tree carriers; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: Flapjack/CakeParser/PegGrammar.lean is generated from this definition by scripts/generate-cake-peg-grammar.py, which parses the pinned cakeml/compiler/parsing/pegexec_cml_foScript.sml and rejects unfamiliar syntax; the generator --check gate keeps the Lean definition in sync. The typed nt_rule_fo_def capture in pegexec_cml_fo_source_probe.out confirms the clause order, the INL/INR rule keys and the final `nt_rule_fo _ = NONE` default that Lean renders as `| _ => none`."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegEval.lean",
     "lean_name": "evalTokenMap",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml",
     "hol_name": "eval_tok_map_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Transcribed against the pinned first-order PEG and specialized CakeML parse-tree carriers; full source and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed eval_tok_map_def_typed: mktokLf (t,l) = [Lf (TK t, l)]; empty_list = []; bindNT nnt (t,l) = [Nd (nnt, l) [Lf (TK t, l)]]. Lean's three clauses match, with ParseTree.leaf (.inr input.1) input.2 for Lf (TK t, l)."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",

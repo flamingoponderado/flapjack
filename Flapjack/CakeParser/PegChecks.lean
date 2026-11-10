@@ -49,7 +49,7 @@ def evalSymbol (check : SymbolCheck) (s : MlString) : Bool :=
   match check with
   | .nonempty => !s.explode.isEmpty
   | .validMult => validMultSym s.explode
-  | .validAdd => validAddSym s.explode
+  | .validAdd => validAddSymAlt s.explode
   | .validRel => validRelSym s.explode
   | .validList => validListSym s.explode
   | .validPrefix => validPrefixSym s.explode

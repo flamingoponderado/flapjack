@@ -1239,6 +1239,7 @@
     {"bytes": 234, "out": "parmove_wf_steps_probe.out", "rows": 14, "sha256": "6a94d9036f78c45a406e743107453195e659fd6e3c8971df41a550767ed55506"},
     {"bytes": 1467, "out": "parse_statement_probe.out", "rows": 2, "sha256": "78464aedbb34b041a2ef04eea0fd0d2842de25f576e6165dc7b6524ab93c667c"},
     {"bytes": 26325, "out": "pattern_exh_steps_probe.out", "rows": 103, "sha256": "5cf75a043f710ac3048aae36f98fc0a6c2801f6bffb709f61d2a86d56d8b08b3"},
+    {"bytes": 38509, "out": "pegexec_cml_fo_source_probe.out", "rows": 17, "sha256": "c7b76014362a9fd3466f9fac57cc789b709404341e184060a6128bb280927c9f"},
     {"bytes": 353, "out": "pres_lang_config_probe.out", "rows": 7, "sha256": "da093b2f718e09a2b47b42423dc02af873560656d84178e48aaf54d4566a9853"},
     {"bytes": 133, "out": "prim_sem_env_probe.out", "rows": 2, "sha256": "5afd5fab76c9aef7cacab7290ce4854d71b0ff1562a517d981531a92cec85cf1"},
     {"bytes": 500, "out": "prim_types_program_probe.out", "rows": 1, "sha256": "62ff383d60af839aa71cedf6e8cf21647186a4b9ac555a388c5003ff8e4b4b0e"},

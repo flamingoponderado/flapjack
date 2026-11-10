@@ -16,6 +16,13 @@ def validAddSym : List HolChar → Bool
   | c :: rest => c == 43 || c == 45 || c == 94 || (c == 124 && !rest.isEmpty)
   | [] => false
 
+/-- Additive operator spelling used by the first-order PEG; the same
+computation as `validAddSym`, spelled with the source's case analysis. -/
+@[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "validAddSym_alt_def"]
+def validAddSymAlt : List HolChar → Bool
+  | [] => false
+  | c :: rest => c == 43 || c == 45 || c == 94 || (c == 124 && !rest.isEmpty)
+
 /-- Relational operator spelling. -/
 @[hol "cakeml/semantics/gramScript.sml" "validRelSym_def"]
 def validRelSym : List HolChar → Bool
