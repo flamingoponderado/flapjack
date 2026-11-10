@@ -12,15 +12,6 @@ import Mathlib.Data.List.Perm.Subperm
 namespace Flapjack.Compiler.Backend.ClosCall
 open ClosLang ClosProps
 
-private theorem sizeOf_map_snd_le (xs : List (Nat × Exp)) :
-    sizeOf (xs.map Prod.snd) ≤ sizeOf xs := by
-  induction xs with
-  | nil => simp
-  | cons x xs ih =>
-    cases x
-    simp_wf
-    omega
-
 private theorem locations_variables (t : BackendCommon.Tra) (i n : Nat) :
     codeLocations (variablesSource t i n) = [] := by
   induction n generalizing i with

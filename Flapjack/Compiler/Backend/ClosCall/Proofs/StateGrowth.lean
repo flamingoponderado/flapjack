@@ -11,12 +11,6 @@ public import Flapjack.Misc.Sptree.Subspt
 namespace Flapjack.Compiler.Backend.ClosCall
 open Flapjack ClosLang
 
-private theorem sizeOf_map_snd_le (xs : List (Nat × Exp)) :
-    sizeOf (xs.map Prod.snd) ≤ sizeOf xs := by
-  induction xs with
-  | nil => simp
-  | cons x xs ih => cases x; simp_wf; omega
-
 private def Grows (s t : State) : Prop :=
   sptSubspt s.1 t.1 ∧ s.2 <:+ t.2
 
