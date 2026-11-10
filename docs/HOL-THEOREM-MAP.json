@@ -18,6 +18,24 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "UNCURRY_EQ",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiInvariants.lean", "lean_name": "uncurry_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared uncurry_eq_typed and independent review: three independent type variables, function equality, pair projections and free f match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "LENGTH_FST_cond_mti_compile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiInvariants.lean", "lean_name": "length_fst_condMtiCompileInc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared length_fst_cond_mti_typed and independent review: free enabled, maxApp and program order, polymorphic auxiliary list carrier and equality of main-program lengths match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_vs_NONE_cond_mti_compile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiInvariants.lean", "lean_name": "everyFnVarsNone_condMtiCompileInc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_fn_none_cond_mti_typed and independent review: free enabled, maxApp and program order, polymorphic auxiliary list carrier and Boolean equivalence rendered as iff match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "domain_nth_code",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean", "lean_name": "domain_nthCode",
   "statement_status": "reviewed_exact",
