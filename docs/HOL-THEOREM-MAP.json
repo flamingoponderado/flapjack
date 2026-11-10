@@ -18,6 +18,18 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "domain_nth_code",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean", "lean_name": "domain_nthCode",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared domain_nth_code_typed and independent review: quantified n and oracle, independent configuration and payload types, and BIGUNION over the sets mapped from COUNT_LIST (List.range) match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "DISJOINT_nth_code_monotonic",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean", "lean_name": "disjoint_nthCode_monotonic",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared disjoint_nth_code_monotonic_typed and independent review: free init, oracle, v and n, independent configuration and payload types, grouped monotonicity and v equality premises, and set disjointness conclusion match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "MEM_number_compile_inc_locs",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberAddresses.lean", "lean_name": "mem_numberCompileInc_locs",
   "statement_status": "reviewed_exact",
@@ -129161,8 +129173,8 @@
   "hol_name": "nth_code_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Oracle.lean",
   "lean_name": "nthCode",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared nth_code_def_typed, shift_seq_def_typed and independent review: independent configuration and payload types, recursive clauses and shift_seq match. The typed capture prints the zero clause using the sptree isEmpty overload, which means equality with LN."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",

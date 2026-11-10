@@ -139,6 +139,10 @@ val _ = show "number_oracle_fst_strict_mono_typed=" clos_to_bvlProofTheory.numbe
 val _ = show "number_oracle_fst_mono_typed=" clos_to_bvlProofTheory.number_oracle_FST_mono;
 val _ = show "number_monotonic_req_typed=" clos_to_bvlProofTheory.renumber_code_locs_monotonic_req;
 val _ = show "mem_number_compile_locs_typed=" clos_to_bvlProofTheory.MEM_number_compile_inc_locs;
+val _ = show "domain_nth_code_typed=" clos_to_bvlProofTheory.domain_nth_code;
+val _ = show "disjoint_nth_code_monotonic_typed=" clos_to_bvlProofTheory.DISJOINT_nth_code_monotonic;
+val _ = show "nth_code_def_typed=" clos_to_bvlProofTheory.nth_code_def;
+val _ = show "shift_seq_def_typed=" miscTheory.shift_seq_def;
 val _ = show "length_remove_ticks_typed=" clos_ticksTheory.LENGTH_remove_ticks;
 val _ = show "length_let_op_typed=" clos_letopTheory.LENGTH_let_op;
 val _ = show "known_length_eq_e_typed=" clos_knownTheory.known_LENGTH_EQ_E;

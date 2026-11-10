@@ -6,6 +6,7 @@ public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.State
 public import Flapjack.Compiler.Backend.BackendProps.Pure
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ExpsEquivalence
+public import Flapjack.Misc.ShiftSeq
 
 @[expose] public section
 
@@ -17,7 +18,7 @@ open Flapjack.Compiler.Backend.ClosProps Flapjack.Compiler.Backend.BackendProps
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "nth_code_def"]
 def nthCode {C A : Type} (oracle : Nat → C × List (Nat × A)) : Nat → Spt A
   | 0 => .ln
-  | n + 1 => sptUnion (sptFromAList (oracle 0).2) (nthCode (fun i => oracle (i + 1)) n)
+  | n + 1 => sptUnion (sptFromAList (oracle 0).2) (nthCode (holShiftSeq 1 oracle) n)
 
 /-- The compiler and oracle agree with incremental conversion, with fresh
 future labels and the source annotations required by closure conversion. -/
