@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSemStateEval
+import Flapjack.Test.Fixtures.PanSem
 import Flapjack.Test.PanValueFfiCore
 
 /-!
@@ -26,34 +27,9 @@ namespace Flapjack.Test.PanSemAssignErrorExactParity
 
 open Flapjack
 open Flapjack.RiscV
+open Flapjack.Test.Fixtures.PanSem
 
 private abbrev Word64 := Word 64
-
-private def exactDomain : Word64 → Bool :=
-  fun address => address == 8
-
-private def exactMemory : Word64 → Option (PanValue Word64) :=
-  fun _ => some (.word 0)
-
-private def localsWordX : VarName → Option (PanValue Word64) :=
-  fun name => if name == "x" then some (.word 3) else none
-
-/-- State-owned source state used by the `Assign` guards: local `x` holds a
-    word, the store domain contains address `8`, and the clock is 5. -/
-private def sourceState : PanSemState Word64 (FfiState Unit) :=
-  { locals := localsWordX
-    globals := fun _ => none
-    structs := []
-    code := []
-    exceptionShapes := fun _ => none
-    memory := exactMemory
-    memaddrs := exactDomain
-    sharedMemaddrs := fun _ => false
-    clock := 5
-    be := false
-    ffi := statefulTestFfiState
-    baseAddress := BitVec.ofNat 64 0
-    topAddress := BitVec.ofNat 64 100 }
 
 private def evaluate (state : PanSemState Word64 (FfiState Unit)) (program : Prog Word64) :
     Option (PanValueFfiClockResult Word64 Unit) :=
@@ -89,16 +65,16 @@ private def assignFreshGlobalProgram : Prog Word64 :=
   .assign .global "y" (.const 9)
 
 private def assignLocalEvalFailGuard : Bool :=
-  isErrorKeepingX 5 3 (evaluate sourceState assignLocalEvalFailProgram)
+  isErrorKeepingX 5 3 (evaluate assignSourceState assignLocalEvalFailProgram)
 
 private def assignGlobalEvalFailGuard : Bool :=
-  isErrorKeepingX 5 3 (evaluate sourceState assignGlobalEvalFailProgram)
+  isErrorKeepingX 5 3 (evaluate assignSourceState assignGlobalEvalFailProgram)
 
 private def assignFreshLocalGuard : Bool :=
-  isErrorKeepingX 5 3 (evaluate sourceState assignFreshLocalProgram)
+  isErrorKeepingX 5 3 (evaluate assignSourceState assignFreshLocalProgram)
 
 private def assignFreshGlobalGuard : Bool :=
-  isErrorKeepingX 5 3 (evaluate sourceState assignFreshGlobalProgram)
+  isErrorKeepingX 5 3 (evaluate assignSourceState assignFreshGlobalProgram)
 
 private def assignErrorGuard : Bool :=
   assignLocalEvalFailGuard && assignGlobalEvalFailGuard &&

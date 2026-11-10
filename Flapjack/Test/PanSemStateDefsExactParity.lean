@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSem.StateDefsExact
+import Flapjack.Test.Fixtures.PanSemExact
 
 /-!
 # Parity for the exact `kvar_defs` state-accessor bundle
@@ -14,26 +15,8 @@ Replays the direct original-HOL rows in
 namespace Flapjack.Test.PanSemStateDefsExactParity
 
 open Flapjack
+open Flapjack.Test.Fixtures.PanSemExact
 open Flapjack.Pancake.PanLang (MlS)
-
-private abbrev Word8 := RiscV.Word 8
-
-abbrev ml (s : String) : MlS := Flapjack.Basis.Pure.MlString.ofString s
-
-abbrev stateA : PanSemStateExact 8 Unit where
-  locals := fun name => if name = ml "x" then some (.val (.word 7)) else none
-  globals := fun name => if name = ml "g" then some (.val (.word 9)) else none
-  structs := []
-  code := fun _ => none
-  eshapes := fun _ => none
-  memory := fun _ => .word 0
-  memaddrs := fun _ => False
-  shMemaddrs := fun _ => False
-  clock := 5
-  be := false
-  ffi := { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
-  baseAddr := 0
-  topAddr := 100
 
 def wordOfLocal (state : PanSemStateExact 8 Unit) (name : MlS) : Option Nat :=
   match state.locals name with

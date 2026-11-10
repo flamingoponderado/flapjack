@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSem.StateSimpExact
+import Flapjack.Test.Fixtures.PanSemExact
 
 /-!
 # Parity for the exact `panSem` state-accessor simplification lemmas
@@ -14,27 +15,9 @@ exact theorems `kvar_simps`, `is_valid_value_simps`, `is_valid_value_simps2`
 namespace Flapjack.Test.PanSemStateSimpExactParity
 
 open Flapjack
+open Flapjack.Test.Fixtures.PanSemExact
 
 open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL ProgHOL)
-
-abbrev ml (s : String) : MlS := Flapjack.Basis.Pure.MlString.ofString s
-
-private abbrev Word8 := RiscV.Word 8
-
-abbrev stateA : PanSemStateExact 8 Unit where
-  locals := fun name => if name = ml "x" then some (.val (.word 7)) else none
-  globals := fun name => if name = ml "g" then some (.val (.word 9)) else none
-  structs := []
-  code := fun _ => none
-  eshapes := fun _ => none
-  memory := fun _ => .word 0
-  memaddrs := fun _ => False
-  shMemaddrs := fun _ => False
-  clock := 5
-  be := false
-  ffi := { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
-  baseAddr := 0
-  topAddr := 100
 
 abbrev stateClock : PanSemStateExact 8 Unit := { stateA with clock := 9 }
 

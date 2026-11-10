@@ -41,4 +41,24 @@ def sourceState (domain : Word 64 → Bool) : PanSemState (Word 64) (FfiState Un
     baseAddress := BitVec.ofNat 64 0
     topAddress := BitVec.ofNat 64 100 }
 
+/-- Store domain containing only address `8`. -/
+def exactDomain : Word 64 → Bool := fun address => address == 8
+
+/-- State-owned source state used by the `Assign`/`If` guards: local `x` holds a
+    word, the store domain contains address `8`, and the clock is 5. -/
+def assignSourceState : PanSemState (Word 64) (FfiState Unit) :=
+  { locals := localsWordX
+    globals := fun _ => none
+    structs := []
+    code := []
+    exceptionShapes := fun _ => none
+    memory := exactMemory
+    memaddrs := exactDomain
+    sharedMemaddrs := fun _ => false
+    clock := 5
+    be := false
+    ffi := statefulTestFfiState
+    baseAddress := BitVec.ofNat 64 0
+    topAddress := BitVec.ofNat 64 100 }
+
 end Flapjack.Test.Fixtures.PanSem

@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSemStateEval
+import Flapjack.Test.Fixtures.PanSem
 import Flapjack.Test.PanValueFfiCore
 
 /-!
@@ -17,31 +18,9 @@ namespace Flapjack.Test.PanSemIteErrorExactParity
 
 open Flapjack
 open Flapjack.RiscV
+open Flapjack.Test.Fixtures.PanSem
 
 private abbrev Word64 := Word 64
-
-private def exactDomain (address : Word64) : Bool := address == 8
-
-private def exactMemory : Word64 → Option (PanValue Word64) := fun _ => some (.word 0)
-
-private def localsWordX : VarName → Option (PanValue Word64) :=
-  fun name => if name == "x" then some (.word 3) else none
-
-/-- State-owned source state used by the `If` guards: local `x` holds a word. -/
-private def sourceState : PanSemState Word64 (FfiState Unit) :=
-  { locals := localsWordX
-    globals := fun _ => none
-    structs := []
-    code := []
-    exceptionShapes := fun _ => none
-    memory := exactMemory
-    memaddrs := exactDomain
-    sharedMemaddrs := fun _ => false
-    clock := 5
-    be := false
-    ffi := statefulTestFfiState
-    baseAddress := BitVec.ofNat 64 0
-    topAddress := BitVec.ofNat 64 100 }
 
 private def evaluate (state : PanSemState Word64 (FfiState Unit)) (program : Prog Word64) :
     Option (PanValueFfiClockResult Word64 Unit) :=
@@ -69,10 +48,10 @@ private def failedConditionProgram : Prog Word64 :=
   .ite (.var .local "z") .skip .skip
 
 private def iteNonwordGuard : Bool :=
-  isErrorKeepingX 5 3 (evaluate sourceState nonwordConditionProgram)
+  isErrorKeepingX 5 3 (evaluate assignSourceState nonwordConditionProgram)
 
 private def iteFailedGuard : Bool :=
-  isErrorKeepingX 5 3 (evaluate sourceState failedConditionProgram)
+  isErrorKeepingX 5 3 (evaluate assignSourceState failedConditionProgram)
 
 private def iteErrorGuard : Bool :=
   iteNonwordGuard && iteFailedGuard
@@ -81,10 +60,10 @@ private def iteErrorGuard : Bool :=
 
 /-- The kernel-checked code-map `If` non-word-condition equation at clock 5. -/
 theorem iteNonword_eq :
-    evaluate sourceState nonwordConditionProgram =
+    evaluate assignSourceState nonwordConditionProgram =
       some (.control (.error localsWordX (fun _ => none) exactMemory
         statefulTestFfiState), 5) := by
-  simp (config := { decide := true }) [evaluate, sourceState, nonwordConditionProgram,
+  simp (config := { decide := true }) [evaluate, assignSourceState, nonwordConditionProgram,
     panSemEvaluateRiscV64CodeState, panSemEvaluateWordCodeState,
     panSemEvaluateCodeStateWithMemoryModel, panSemEvaluateCodeState,
     panSemEvaluateCodeStateWithFuel, panSemCodeEvaluateFuel, panSemProgFuel,
