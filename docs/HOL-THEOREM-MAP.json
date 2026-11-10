@@ -6101,7 +6101,7 @@
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "gcMoveRefList_simulation",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared gc_move_ref_list_simulation_typed with source lines 810-825: the partial and major runs, ok, sim_inv, the child bound, the length equation and EVERY isDataElement imply sim_inv, the translated refs, the translated state and hasOldPtr preservation. Lean keeps the refs heap payload \u03b3 independent, the reviewed gcMoveRefList carrier; HOL's inferred instance is \u03b3 := \u03b2."
+  "reviewer": "Compared gc_move_ref_list_simulation_typed (gen_gc_partial_source_probe.out:24) with source lines 810-825: the partial and major runs, ok, sim_inv, the child bound, the length equation and EVERY isDataElement imply sim_inv, the translated refs, the translated state and hasOldPtr preservation. The tagged theorem takes refs0 and refs1 as List (HeapElement \u03b1 \u03b2), the same payload as the state, exactly as the typed capture's (\u03b2, \u03b1) heap_element list; the independent-payload generalisation is the untagged gcMoveRefList_simulation_general."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
@@ -127252,7 +127252,7 @@
   "hol_name": "compile_sing",
   "statement_status": "reviewed_exact",
   "lean_name": "compile_sing",
-  "reviewer": "Compared the typed compile_sing_typed capture: (forall n d e. compile n d [e] = [compile_sing n d e]) and (forall n d xs. compile_list n d xs = compile n d xs). Lean's compile_sing proves both conjuncts (the list equality with the sides swapped) through compile_eq_compileList, which inducts over the source traversal."
+  "reviewer": "Compared the typed compile_sing_typed capture: (forall n d e. compile n d [e] = [compile_sing n d e]) and (forall n d xs. compile_list n d xs = compile n d xs). Lean's compile_sing proves both conjuncts in HOL's orientation, the list conjunct as compileList env d xs = compile env d xs via (compile_eq_compileList env d xs).symm; compile_eq_compileList inducts over the source traversal and keeps the convenient orientation as untagged infrastructure."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_letScript.sml",
