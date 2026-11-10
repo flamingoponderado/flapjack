@@ -42,6 +42,34 @@
   "reviewer": "Compared every_Fn_vs_NONE_cond_call_compile_inc_typed and HOL source: free variables program, enabled, known, the state carriers, both implication premises and conclusions match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_rel_SUBMAP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "valueRel_submap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code", "codeNext"],
+  "reviewer": "Source comparison: compared clos_call_v_rel_SUBMAP_typed: all six quantified arguments and the grouped relation and submap premises match; both code maps use canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_rel_SUBMAP_subg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "valueRel_submapSubg",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code", "codeNext"],
+  "reviewer": "Source comparison: compared clos_call_v_rel_SUBMAP_subg_typed: free arguments retain first-appearance order and the grouped value, submap, allowed-set inclusion and state-extension premises retain their source order. Both code maps use canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "LIST_REL_v_rel_subg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "listValueRel_subg",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code", "codeNext"],
+  "reviewer": "Source comparison: compared clos_call_LIST_REL_v_rel_subg_typed: the list relation, state extension, allowed-set inclusion and submap form one source-ordered premise. Both code maps use canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "env_rel_subg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "envValueRel_subg",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code", "codeNext"],
+  "reviewer": "Source comparison: compared clos_call_env_rel_subg_typed: the original environment relation, state extension, allowed-set inclusion and code submap form one source-ordered premise. Both code maps use canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_rel_subg",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "valueRel_subg",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",

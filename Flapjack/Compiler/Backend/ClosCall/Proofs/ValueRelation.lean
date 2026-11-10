@@ -150,4 +150,164 @@ decreasing_by
   all_goals simp_wf
   all_goals omega
 
+/-- Canonical codec for the source code map in code-extension preservation. -/
+theorem holFmapAsFiniteSupportParamWitness_valueRel_submap_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code code key
+
+/-- Canonical codec for the extended code map. -/
+theorem holFmapAsFiniteSupportParamWitness_valueRel_submap_codeNext
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).lookup key = codeNext.lookup key ∧
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).finiteSupport = codeNext.finiteSupport ∧
+    ofBroad (toBroad codeNext) codeNext.finiteSupport = codeNext :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code codeNext key
+
+/-- Adding code bindings preserves the direct-call value relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "v_rel_SUBMAP"
+  (fmap_as_finite_support_parameters := [code, codeNext])]
+theorem valueRel_submap (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (left right : Value)
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (h : valueRel g allowed code left right ∧ code.submap codeNext) :
+    valueRel g allowed codeNext left right := by
+  cases left with
+  | number n => simpa [valueRel] using h.1
+  | word64 w => simpa [valueRel] using h.1
+  | byteVector bytes => simpa [valueRel] using h.1
+  | refPtr b n => simpa [valueRel] using h.1
+  | block tag values =>
+      obtain ⟨nextValues, eq, related⟩ := (valueRel_sourceEquations g allowed code).1 _ _ _ |>.mp h.1
+      apply (valueRel_sourceEquations g allowed codeNext).1 _ _ _ |>.mpr
+      refine ⟨nextValues, eq, ?_⟩
+      apply forall₂_mono_members related
+      intro x hx y hy rel
+      exact valueRel_submap g allowed code x y codeNext ⟨rel, h.2⟩
+  | closure loco values env arity body =>
+      obtain ⟨loc, nextValues, nextEnv, nextBody, closure, eq, location, valuesRel, envRelated⟩ :=
+        (valueRel_sourceEquations g allowed code).2.1 _ _ _ _ _ _ |>.mp h.1
+      apply (valueRel_sourceEquations g allowed codeNext).2.1 _ _ _ _ _ _ |>.mpr
+      refine ⟨loc, nextValues, nextEnv, nextBody, ?_, eq, location, ?_, ?_⟩
+      · exact recClosureRel_mono g g allowed allowed code codeNext loc [(arity, body)]
+          [(arity, nextBody)] closure h.2
+          (recClosureRel_stateExtendsSelf g allowed code loc [(arity, body)] [(arity, nextBody)] closure)
+          (fun _ member => member)
+      · apply forall₂_mono_members valuesRel
+        intro x hx y hy rel
+        exact valueRel_submap g allowed code x y codeNext ⟨rel, h.2⟩
+      · apply envRel_mono ?_ envRelated
+        intro x y ⟨hx, hy, rel⟩
+        exact valueRel_submap g allowed code x y codeNext ⟨rel, h.2⟩
+  | recclosure loco values env fns index =>
+      obtain ⟨loc, nextValues, nextEnv, nextFns, closure, eq, location, valuesRel, envRelated⟩ :=
+        (valueRel_sourceEquations g allowed code).2.2 _ _ _ _ _ _ |>.mp h.1
+      apply (valueRel_sourceEquations g allowed codeNext).2.2 _ _ _ _ _ _ |>.mpr
+      refine ⟨loc, nextValues, nextEnv, nextFns, ?_, eq, location, ?_, ?_⟩
+      · exact recClosureRel_mono g g allowed allowed code codeNext loc fns nextFns closure h.2
+          (recClosureRel_stateExtendsSelf g allowed code loc fns nextFns closure) (fun _ member => member)
+      · apply forall₂_mono_members valuesRel
+        intro x hx y hy rel
+        exact valueRel_submap g allowed code x y codeNext ⟨rel, h.2⟩
+      · apply envRel_mono ?_ envRelated
+        intro x y ⟨hx, hy, rel⟩
+        exact valueRel_submap g allowed code x y codeNext ⟨rel, h.2⟩
+termination_by sizeOf left
+decreasing_by
+  all_goals subst_vars
+  all_goals have bound := List.sizeOf_lt_of_mem (show x ∈ _ from ‹x ∈ _›)
+  all_goals simp_wf
+  all_goals omega
+
+/-- Canonical finite-map codec for code in valueRel_submapSubg. -/
+theorem holFmapAsFiniteSupportParamWitness_valueRel_submapSubg_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code code key
+
+/-- Canonical finite-map codec for codeNext in valueRel_submapSubg. -/
+theorem holFmapAsFiniteSupportParamWitness_valueRel_submapSubg_codeNext
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).lookup key = codeNext.lookup key ∧
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).finiteSupport = codeNext.finiteSupport ∧
+    ofBroad (toBroad codeNext) codeNext.finiteSupport = codeNext :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code codeNext key
+
+/-- Canonical finite-map codec for code in listValueRel_subg. -/
+theorem holFmapAsFiniteSupportParamWitness_listValueRel_subg_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code code key
+
+/-- Canonical finite-map codec for codeNext in listValueRel_subg. -/
+theorem holFmapAsFiniteSupportParamWitness_listValueRel_subg_codeNext
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).lookup key = codeNext.lookup key ∧
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).finiteSupport = codeNext.finiteSupport ∧
+    ofBroad (toBroad codeNext) codeNext.finiteSupport = codeNext :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code codeNext key
+
+/-- Canonical finite-map codec for code in envValueRel_subg. -/
+theorem holFmapAsFiniteSupportParamWitness_envValueRel_subg_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code code key
+
+/-- Canonical finite-map codec for codeNext in envValueRel_subg. -/
+theorem holFmapAsFiniteSupportParamWitness_envValueRel_subg_codeNext
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).lookup key = codeNext.lookup key ∧
+    (ofBroad (toBroad codeNext) codeNext.finiteSupport).finiteSupport = codeNext.finiteSupport ∧
+    ofBroad (toBroad codeNext) codeNext.finiteSupport = codeNext :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code codeNext key
+
+/-- Extending code, allowed locations and compiler state preserves related values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "v_rel_SUBMAP_subg"
+  (fmap_as_finite_support_parameters := [code, codeNext])]
+theorem valueRel_submapSubg (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (left right : Value)
+    (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (allowedNext : Nat → Prop) (gNext : State)
+    (h : valueRel g allowed code left right ∧ code.submap codeNext ∧
+      (∀ x, allowed x → allowedNext x) ∧ stateExtends g gNext) :
+    valueRel gNext allowedNext codeNext left right := by
+  exact valueRel_subg g allowed codeNext left right gNext allowedNext
+    ⟨valueRel_submap g allowed code left right codeNext ⟨h.1, h.2.1⟩, h.2.2.2, h.2.2.1⟩
+
+/-- Extending the compiler state, allowed locations and code preserves related value lists. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "LIST_REL_v_rel_subg"
+  (fmap_as_finite_support_parameters := [code, codeNext])]
+theorem listValueRel_subg (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (xs ys : List Value)
+    (gNext : State) (allowedNext : Nat → Prop) (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (h : List.Forall₂ (valueRel g allowed code) xs ys ∧ stateExtends g gNext ∧
+      (∀ x, allowed x → allowedNext x) ∧ code.submap codeNext) :
+    List.Forall₂ (valueRel gNext allowedNext codeNext) xs ys := by
+  apply h.1.imp
+  intro x y related
+  exact valueRel_submapSubg g allowed code x y codeNext allowedNext gNext
+    ⟨related, h.2.2.2, h.2.2.1, h.2.1⟩
+
+/-- Extending the compiler state, allowed locations and code preserves related environments. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "env_rel_subg"
+  (fmap_as_finite_support_parameters := [code, codeNext])]
+theorem envValueRel_subg (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (env1 env2 : List Value)
+    (offset : Nat) (fns : List (Nat × ClosLang.Exp))
+    (gNext : State) (allowedNext : Nat → Prop) (codeNext : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (h : envRel (valueRel g allowed code) env1 env2 offset fns ∧ stateExtends g gNext ∧
+      (∀ x, allowed x → allowedNext x) ∧ code.submap codeNext) :
+    envRel (valueRel gNext allowedNext codeNext) env1 env2 offset fns := by
+  apply envRel_mono ?_ h.1
+  intro x y ⟨_, _, related⟩
+  exact valueRel_submapSubg g allowed code x y codeNext allowedNext gNext
+    ⟨related, h.2.2.2, h.2.2.1, h.2.1⟩
+
 end Flapjack.Compiler.Backend.ClosCall
