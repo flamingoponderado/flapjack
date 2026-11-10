@@ -166,55 +166,6 @@ theorem evaluateDlet_alias {C F : Type} (genv : GlobalEnv)
     · simp [compileDecs, simpleDlet, compiledLookup, FlatSem.evaluateDecs]
     · exact globalEnvInv_alias genv name idx nameTrace value stored bound slot related
 
-/-- A source pattern mismatch produces related bind exceptions and retains
-the post-expression factored invariant in both evaluators. -/
-theorem evaluateDlet_pattern_noMatch {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (genv : GlobalEnv) (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
-    (source sourceMiddle : SemanticPrimitivesHOL.State F) (flat flatMiddle : FlatSem.State C F)
-    (sourceEnv : SemEnv Value) (trace : List VarN) (n : Nat) (next : NextIndices)
-    (compMap compMap2 : Environment) (gen : EnvironmentGenerationStore)
-    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
-    (value : Value) (flatValue : FlatSem.Value)
-    (notAlias : simpleDlet pattern expr = none) (distinct : (AstHOL.patBindings pattern).Nodup)
-    (wellformed : AstHOL.everyExp (oneConCheck sourceEnv.c) expr = true)
-    (sourceRun : EvaluateHOL.evaluate source sourceEnv [expr] = (sourceMiddle, .val [value]))
-    (flatRun : FlatSem.evaluate ⟨[]⟩ flat
-      [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr] = (flatMiddle, .val [flatValue]))
-    (matched : pmatch sourceEnv.c sourceMiddle.refs pattern value [] = .noMatch)
-    (shadowers : VarN → Prop) (envInv : GlobalEnvInv genv compMap2 shadowers sourceEnv)
-    (mapsEq : compMap2.c = compMap.c) (valueRel : ValueRel genv value flatValue)
-    (invariant : factoredInvariant interp transform gen genv idxs sourceMiddle flatMiddle) :
-    EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
-      (sourceMiddle, .err (.raise SemanticPrimitivesHOL.bindExnV)) ∧
-    FlatSem.evaluateDecs flat (compileDecs trace n next compMap gen [.dlet location pattern expr]).2.2.2.2 =
-      (flatMiddle, some (.raise FlatSem.bindExnV)) ∧
-    ValueRel genv SemanticPrimitivesHOL.bindExnV FlatSem.bindExnV ∧
-    StateRel genv sourceMiddle flatMiddle ∧
-    factoredInvariant interp transform gen genv idxs sourceMiddle flatMiddle := by
-  have ok := invariant.1
-  have typesOk := invariant.2.1
-  have states := invariant.2.2.1
-  have matchRel := patternSimulation genv compMap compMap2 sourceEnv sourceMiddle flatMiddle [] shadowers
-    envInv mapsEq ok typesOk states pattern value flatValue [] []
-    (by simpa [alistToNs, nsEmpty] using EnvRel.empty genv) valueRel
-  simp only [List.nil_append, matched] at matchRel
-  have flatMatched : FlatSem.pmatch flatMiddle (compilePat compMap pattern) flatValue [] = .noMatch := by
-    cases flatMatch : FlatSem.pmatch flatMiddle (compilePat compMap pattern) flatValue [] <;>
-      simp_all [MatchResultRel]
-  refine ⟨?_, ?_, (valueRel_lemmas genv ok).2.2.2.1, states, invariant⟩
-  · simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, matched,
-      EvaluateHOL.headValue, Flapjack.holHd]
-  · simp only [compileDecs, notAlias, FlatSem.evaluateDecs_cons, FlatSem.evaluateDec]
-    rw [FlatSem.evaluate, (FlatSem.fixClock_evaluations _ _ _
-      (compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr) []).1, flatRun]
-    simp (config := { zeta := false })
-    have selection : FlatSem.selectRow flatMiddle
-        [(compilePat compMap pattern, makeVarls 0 .none next.vidx (AstHOL.patBindings pattern).reverse)]
-        flatValue FlatSem.bindExnV = .error (.raise FlatSem.bindExnV) := by
-      simp [FlatSem.selectRow, FlatSem.pmatchRows, flatMatched]
-    rw [selection]
-
 /-- A failing expression propagates through a non-alias declaration before
 the generated pattern match can initialize any globals. -/
 theorem evaluateDlet_pattern_flat_error {C F : Type}
@@ -406,15 +357,34 @@ theorem evaluateDlet_pattern_cases {C F : Type} [Nonempty C]
                 simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, EvaluateHOL.headValue,
                   Flapjack.holHd, matched, EvaluateHOL.typeError]
               | noMatch =>
-                have result := evaluateDlet_pattern_noMatch interp transform genv (start, finish, other)
-                  source sourceMiddle flat flatMiddle sourceEnv trace n start compMap compMap gen location pattern expr
-                  value flatValue notAlias distinct wellformed sourceRun flatRun matched (fun _ => False) envInv rfl
-                  valueRel current
-                obtain ⟨sourceDec, flatDec, errorRel, finalStates, finalInvariant⟩ := result
+                have matchRel := patternSimulation genv compMap compMap sourceEnv sourceMiddle flatMiddle
+                  [] (fun _ => False) envInv rfl current.1 current.2.1 states pattern value flatValue [] []
+                  (by simpa [alistToNs, nsEmpty] using EnvRel.empty genv) valueRel
+                simp only [List.nil_append, matched] at matchRel
+                have flatMatched : FlatSem.pmatch flatMiddle (compilePat compMap pattern) flatValue [] =
+                    .noMatch := by
+                  simpa using matchResultRel_cases genv [] .noMatch _ matchRel
+                have sourceDec : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
+                    (sourceMiddle, .err (.raise SemanticPrimitivesHOL.bindExnV)) := by
+                  simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, matched,
+                    EvaluateHOL.headValue, Flapjack.holHd]
+                have flatDec : FlatSem.evaluateDecs flat
+                    (compileDecs trace n start compMap gen [.dlet location pattern expr]).2.2.2.2 =
+                    (flatMiddle, some (.raise FlatSem.bindExnV)) := by
+                  simp only [compileDecs, notAlias, FlatSem.evaluateDecs_cons, FlatSem.evaluateDec]
+                  rw [FlatSem.evaluate, (FlatSem.fixClock_evaluations _ _ _
+                    (compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr) []).1, flatRun]
+                  simp (config := { zeta := false })
+                  have selection : FlatSem.selectRow flatMiddle
+                      [(compilePat compMap pattern, makeVarls 0 .none start.vidx (AstHOL.patBindings pattern).reverse)]
+                      flatValue FlatSem.bindExnV = .error (.raise FlatSem.bindExnV) := by
+                    simp [FlatSem.selectRow, FlatSem.pmatchRows, flatMatched]
+                  rw [selection]
+                have errorRel := (valueRel_lemmas genv current.1).2.2.2.1
                 unfold DletOutcome
                 rw [sourceDec]
-                exact ⟨flatMiddle, genv, some (.raise FlatSem.bindExnV), flatDec, finalStates,
-                  GlobalGrowth.refl genv, _, rfl, .raise errorRel, finalInvariant⟩
+                exact ⟨flatMiddle, genv, some (.raise FlatSem.bindExnV), flatDec, states,
+                  GlobalGrowth.refl genv, _, rfl, .raise errorRel, current⟩
               | «match» bindings =>
                 obtain ⟨finalGenv, finalFlat, sourceDec, compiled, flatDec, growth, finalStates,
                   domain, finalEnv, finalInvariant⟩ :=
