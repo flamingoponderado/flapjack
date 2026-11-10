@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.SimpleRelations
 
 @[expose] public section
 
@@ -424,5 +425,137 @@ theorem valueWellFormed_listAppend (g : State) (allowed : Nat → Prop)
   rcases List.mem_append.mp member with member | member
   · exact xsSafe v member
   · exact ysSafe v member
+
+private theorem forall₂_wellFormedEq (P : Value → Prop) (xs ys : List Value) :
+    List.Forall₂ (fun x y => x = y ∧ P x) xs ys ↔ xs = ys ∧ ∀ x ∈ xs, P x := by
+  induction xs generalizing ys with
+  | nil => cases ys <;> simp
+  | cons x xs ih =>
+    cases ys with
+    | nil => simp
+    | cons y ys => simp [List.forall₂_cons, ih, and_assoc, and_left_comm]
+
+/-- The well-formedness-and-equality relation meets the generic primitive
+simulation's value conditions. HOL proves these clauses inline in do_app_thm. -/
+theorem valueWellFormed_simple (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) :
+    ClosProps.simpleValRel (fun x y => valueWellFormed g allowed code x ∧ x = y) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro x n
+    cases x <;> simp [valueWellFormed]
+  · intro x fields tag
+    cases x with
+    | block sourceTag sourceFields =>
+      simp [valueWellFormed, forall₂_wellFormedEq, and_assoc, and_comm]
+    | number n => simp [valueWellFormed]
+    | word64 n => simp [valueWellFormed]
+    | byteVector bytes => simp [valueWellFormed]
+    | refPtr b n => simp [valueWellFormed]
+    | closure loco values env arity body => simp
+    | recclosure loco values env fns index => simp
+  · intro x p
+    cases x <;> simp [valueWellFormed]
+  · intro x p
+    cases x <;> simp [valueWellFormed]
+  · intro x p b
+    cases x <;> simp [valueWellFormed]
+  · intro body arity env args loc x related
+    obtain ⟨_, rfl⟩ := related
+    trivial
+  · intro index fns env args loc x related
+    obtain ⟨_, rfl⟩ := related
+    trivial
+
+/-- The well-formedness-and-equality state relation meets the generic
+primitive simulation's state conditions; HOL proves these inline in do_app_thm. -/
+theorem stateValuesWellFormed_simple {C F : Type} (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) :
+    ClosProps.simpleStateRel (fun x y => valueWellFormed g allowed code x ∧ x = y)
+      (fun (s t : ClosSem.State C F) => stateValuesWellFormed g allowed code s ∧ s = t) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro s t ptr ⟨missing, _, rfl⟩
+    exact missing
+  · intro bytes t s ptr ⟨found, _, rfl⟩
+    exact found
+  · intro values t s ptr ⟨found, safe, rfl⟩
+    have all := safe.2.1 ptr (.valueArray values) found
+    refine ⟨values, found, ?_⟩
+    apply List.Forall₂.imp ?_ ((forall₂_wellFormedEq _ values values).2 ⟨rfl, all⟩)
+    intro x y ⟨eq, safe⟩
+    exact ⟨safe, eq⟩
+  · intro mode value t s ptr ⟨found, safe, rfl⟩
+    exact ⟨value, found, safe.2.1 ptr (.thunk mode value) found, rfl⟩
+  · intro s t ⟨safe, rfl⟩
+    refine ⟨rfl, (fun _ => Iff.rfl), ?_⟩
+    have globalsRel : ∀ entries : List (Option Value),
+        (∀ entry ∈ entries, ∀ value, entry = some value → valueWellFormed g allowed code value) →
+        List.Forall₂ (optionRel (fun x y => valueWellFormed g allowed code x ∧ x = y)) entries entries := by
+      intro entries all
+      induction entries with
+      | nil => exact .nil
+      | cons entry rest ih =>
+        apply List.Forall₂.cons
+        · cases entry with
+          | none => trivial
+          | some value => exact ⟨all _ (List.mem_cons_self ..) _ rfl, rfl⟩
+        · apply ih
+          intro entry member
+          exact all entry (List.mem_cons_of_mem _ member)
+    exact globalsRel s.globals safe.1
+  · intro ffi s t ⟨safe, rfl⟩
+    exact ⟨safe, rfl⟩
+  · intro bytes s t ptr ⟨safe, rfl⟩
+    refine ⟨⟨safe.1, ?_, safe.2.2⟩, rfl⟩
+    intro key cell found
+    by_cases same : key = ptr
+    · subst key
+      simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL] at found
+      subst cell
+      trivial
+    · apply safe.2.1 key cell
+      simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using found
+  · intro s t ptr xs ys ⟨⟨safe, rfl⟩, related⟩
+    obtain ⟨eq, all⟩ := (forall₂_wellFormedEq _ xs ys).1 (related.imp (fun _ _ ⟨p, eq⟩ => ⟨eq, p⟩))
+    subst ys
+    refine ⟨⟨safe.1, ?_, safe.2.2⟩, rfl⟩
+    intro key cell found
+    by_cases same : key = ptr
+    · subst key
+      simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL] at found
+      subst cell
+      exact all
+    · apply safe.2.1 key cell
+      simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using found
+  · intro s t ptr mode v w ⟨⟨safe, rfl⟩, related⟩
+    obtain ⟨vSafe, rfl⟩ := related
+    refine ⟨⟨safe.1, ?_, safe.2.2⟩, rfl⟩
+    intro key cell found
+    by_cases same : key = ptr
+    · subst key
+      simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL] at found
+      subst cell
+      exact vSafe
+    · apply safe.2.1 key cell
+      simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using found
+  · intro s t xs ys ⟨⟨safe, rfl⟩, related⟩
+    have equalAndSafe : xs = ys ∧
+        ∀ entry ∈ xs, ∀ value, entry = some value → valueWellFormed g allowed code value := by
+      induction related with
+      | nil => simp
+      | @cons first second rest1 rest2 head tail ih =>
+        obtain ⟨rfl, tailSafe⟩ := ih
+        cases first with
+        | none =>
+          cases second with
+          | none => simpa [optionRel] using tailSafe
+          | some v => contradiction
+        | some v =>
+          cases second with
+          | none => contradiction
+          | some w =>
+            obtain ⟨vSafe, rfl⟩ := head
+            exact ⟨rfl, by simpa using And.intro vSafe tailSafe⟩
+    obtain ⟨rfl, all⟩ := equalAndSafe
+    exact ⟨⟨all, safe.2⟩, rfl⟩
 
 end Flapjack.Compiler.Backend.ClosCall
