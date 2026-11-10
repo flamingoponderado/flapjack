@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfg_subg_refl",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateExtension.lean", "lean_name": "wfg_subg_refl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and wfg_subg_refl_type capture: the sparse-map payload and auxiliary-code payload remain independent; original well-formedness implies the same reflexive extension."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfg_subg_EX_helper",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateExtension.lean", "lean_name": "wfg_subg_ex_helper",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and wfg_subg_ex_helper_type capture: independent sparse-map and code payloads, arbitrary state predicate, original conjunctive premise, and existential extension satisfying the predicate are preserved."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_pure",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Purity.lean", "lean_name": "calls_pure",
   "statement_status": "reviewed_exact",

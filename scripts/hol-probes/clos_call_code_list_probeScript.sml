@@ -43,6 +43,8 @@ val _ = (print "evaluate_app_includes_type="; Lib.with_flag (Globals.show_types,
 val _ = (print "evaluate_app_mono_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.evaluate_app_mono); print "\n");
 val _ = (print "calls_pure_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_pure); print "\n");
 val _ = (print "calls_pure_sing_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_pure_sing); print "\n");
+val _ = (print "wfg_subg_refl_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.wfg_subg_refl); print "\n");
+val _ = (print "wfg_subg_ex_helper_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.wfg_subg_EX_helper); print "\n");
 val _ = (print "suffix_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.code_list_IS_SUFFIX); print "\n");
 val entry = EVAL ``clos_call$code_list 10 [(2,closLang$Var None 4);(0,closLang$Var None 9);(1,closLang$Var None 2)] (sptree$LN,[(90,3,closLang$Var None 0)])``;
 val _ = (print "example="; print_term (rhs (concl entry)); print "\n");

@@ -35,5 +35,7 @@ evaluate_app_includes_type=!(xs :'a) (env :'b) (s :('c # 'd, 'e) state) (res :(v
 evaluate_app_mono_type=evaluate_app (x :num option) (y :v) (z :v list) (s1 :('a, 'b) state) = ((vs :(v list, v) result),(s2 :('a, 'b) state)) ==> s1.code SUBMAP s2.code
 calls_pure_type=!(xs :closLang$exp list) (g :sptree$num_set # (num # num # closLang$exp) list) (es :closLang$exp list) (g1 :sptree$num_set # (num # num # closLang$exp) list). EVERY pure xs /\ calls xs g = (es,g1) ==> EVERY pure es
 calls_pure_sing_type=pure (x1 :closLang$exp) /\ calls [x1] (g :sptree$num_set # (num # num # closLang$exp) list) = ([(e1 :closLang$exp)],(g1 :sptree$num_set # (num # num # closLang$exp) list)) ==> pure e1
+wfg_subg_refl_type=wfg (g :'a sptree$num_map # (num # 'b) list) ==> subg g g
+wfg_subg_ex_helper_type=wfg (g :'a sptree$num_map # (num # 'b) list) /\ (P :'a sptree$num_map # (num # 'b) list -> bool) g ==> ?(g2 :'a sptree$num_map # (num # 'b) list). subg g g2 /\ P g2
 suffix_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list). IS_SUFFIX (SND (code_list loc fns g)) (SND g)
 example=(LN,[(15,1,Var None 2); (13,0,Var None 9); (11,2,Var None 4); (90,3,Var None 0)])
