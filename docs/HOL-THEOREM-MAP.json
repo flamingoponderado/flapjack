@@ -117756,40 +117756,40 @@
     "lean_name": "isRec",
     "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
     "hol_name": "is_rec_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Direct unhandled self-call test transcribed; inferred source typing and complete declaration review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared is_rec_def_typed with source lines 27-30: the direct unhandled call clause is dest = SOME name and every other expression constructor gives F, over the same num and bvi$exp carriers."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
     "lean_name": "ValueType",
     "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
     "hol_name": "v_ty",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Three nullary constructors transcribed; source typing and complete declaration review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared v_ty_typed with source lines 66-68: constructors Int, List and Any, all of type v_ty, match the Lean inductive ValueType with int, list and any."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
     "lean_name": "AssocOp",
     "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
     "hol_name": "assoc_op",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Four nullary constructors transcribed; source typing and complete declaration review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared assoc_op_typed with source lines 59-64: constructors Plus, Times, Append and Noop, all of type assoc_op, match the Lean inductive AssocOp."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
     "lean_name": "fromOp",
     "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
     "hol_name": "from_op_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source operator classification transcribed; full carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared from_op_def_typed with source lines 83-89: the IntOp Add, IntOp Mult and BlockOp ListAppend tests in source order and the Noop fallback match."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
     "lean_name": "toOp",
     "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
     "hol_name": "to_op_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source accumulator operation mapping transcribed; full carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared to_op_def_typed with source lines 76-81: Plus to IntOp Add, Times to IntOp Mult, Append to BlockOp ListAppend, Noop to IntOp Mod."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviTmc.lean",
@@ -126610,136 +126610,136 @@
   "hol_name": "apply_op_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "applyOp",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared apply_op_def_typed with source lines 140-142: Op (to_op op) [e1; e2] matches applyOp assoc x y."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "arg_ty_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "argType",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared arg_ty_def_typed with source lines 410-423: IntOp Const uses small_enough_int (Lean's private Bool small, the same bound) for Int vs Any, the nine arithmetic and relational IntOp cases give Int, BlockOp ListAppend gives List, and every other constructor gives Any."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "check_op_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "checkOp",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared check_op_def_typed with source lines 369-380: opbinargs of the swapped expression, NONE stays NONE, and SOME (xs,f) gives apply_op when is_rec loc f and term_ok ts (op_type opr) xs hold."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "decide_ty_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "decideType",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared decide_ty_def_typed with source lines 382-386: Int/Int and List/List keep the type and every other pair gives Any."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "get_bin_args_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "getBinArgs",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared get_bin_args_def_typed with source lines 183-188: only Op _ [e1; e2] returns SOME (e1,e2); every other expression and operand-list length returns NONE."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "is_arith_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "isArith",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared is_arith_def_typed with source lines 227-234: IntOp Add, Sub and Mult are T and every other operation F."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "is_const_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "isConst",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared is_const_def_typed with source lines 44-47: IntOp (Const i) tests small_enough_int i (Lean's private Bool small, the same bound) and every other operation is F."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "is_rel_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "isRel",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared is_rel_def_typed with source lines 248-256: IntOp Less, LessEq, Greater and GreaterEq are T and every other operation F."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "opbinargs_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "opBinArgs",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared opbinargs_def_typed with source lines 211-213: the negation of op_eq gates get_bin_args, with NONE on a mismatch."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "op_eq_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "opEq",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared op_eq_def_typed with source lines 109-114: Plus matches Op (IntOp Add), Times matches Op (IntOp Mult), Append matches Op (BlockOp ListAppend), and every other assoc_op/expression pair is F."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "op_type_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "opType",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared op_type_def_typed with source lines 70-74: Append gives List, Noop gives Any, Plus and Times give Int."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "scan_expr_sing_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "scanList",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared scan_expr_sing_def_typed with source lines 618-620: scan_expr_list is empty on [] and threads the returned context through each scan_expr_sing, matching scanList."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "scan_expr_sing_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "scanSing",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared scan_expr_sing_def_typed with source lines 552-616: the Var and Force lookups with Any default, the If clause (cond context, then both branches, op = ot or oe, MAP2 decide_ty, IS_SOME oe), Let (scan_expr_list, type list, LAST1 context, DROP), Raise/Call/Return/LetCall Any, Tick recursion and the Op clause (Noop branch with arg_ty Int and is_const, list-nil case, optimized branch through check_op then term_ok and update_context) match scanSing."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "term_ok_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "term",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared term_ok_def_typed with source lines 348-354: Int selects term_ok_int, List selects term_ok_any T and Any selects term_ok_any F."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "term_ok_any_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "termAny",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared term_ok_any_def_typed with source lines 288-304: the Var bounds/list tests, the get_bin_args NONE case (xs = [] and Cons 0 under list, is_const otherwise), the ListAppend two-element case, the arithmetic and relational cases under ~list, the Cons 0 two-element case, and F for every other constructor match."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "term_ok_int_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "termInt",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared term_ok_int_def_typed with source lines 271-283: Var in-bounds Int lookup, the get_bin_args NONE case (xs = [] and is_const op), the two-element is_arith/term recursion, and F otherwise."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "try_swap_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
   "lean_name": "trySwap",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared try_swap_def_typed with source lines 359-366: Append returns the expression unchanged and every other operator takes opbinargs and swaps when the left operand is the recursive call."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
@@ -126762,40 +126762,40 @@
   "hol_name": "has_rec_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/HasRecCorrespondence.lean",
   "lean_name": "hasRec",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared has_rec_def_typed with source lines 699-712: the empty case, the two-element short circuit, the singleton If/Let/Tick/Op clauses (EXISTS is_rec then recursion), and F for every other singleton match."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "has_rec1_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/HasRecCorrespondence.lean",
   "lean_name": "hasRec1",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared has_rec1_def_typed with source line 715: has_rec loc [x] matches hasRec1 loc x."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "has_rec_sing_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/HasRecCorrespondence.lean",
   "lean_name": "hasRecList",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared has_rec_sing_def_typed with source lines 733-735: the empty list is F and a cons short-circuits on has_rec_sing, matching hasRecList."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "has_rec_sing_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/HasRecCorrespondence.lean",
   "lean_name": "hasRecSing",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared has_rec_sing_def_typed with source lines 719-731: If short-circuits on the then branch, Let and Tick recurse, Op tests EXISTS is_rec and then has_rec_list, and every other expression is F."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "has_rec_eq",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/HasRecCorrespondence.lean",
   "lean_name": "hasRec_eq",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared has_rec_eq_typed with source lines 736-739: both conjuncts (singleton and list agreement) with the same quantified expression/list and loc."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
@@ -126858,40 +126858,40 @@
   "hol_name": "args_from_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Rewrite.lean",
   "lean_name": "argsFrom",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared args_from_def_typed with source lines 166-169: only Call t (SOME d) as hdl returns SOME (t,d,as,hdl); every other expression, including Call with a NONE destination, returns NONE."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "id_from_op_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Rewrite.lean",
   "lean_name": "identity",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared id_from_op_def_typed with source lines 144-148: Plus is Op (IntOp (Const 0)) [], Times is Op (IntOp (Const 1)) [], Append is Op (BlockOp (Cons nil_tag)) [] with nil_tag = 0, and Noop is dummy = Var 1234567890."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "let_wrap_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Rewrite.lean",
   "lean_name": "letWrap",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared let_wrap_def_typed with source lines 774-776: Let (GENLIST Var arity ++ [id]) exp matches the List.range map."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "mk_aux_call_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Rewrite.lean",
   "lean_name": "mkAuxCall",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared mk_aux_call_def_typed with source lines 779-781: Call 0 (SOME loc) (id :: GENLIST Var arity) NONE matches."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
   "hol_name": "push_call_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Rewrite.lean",
   "lean_name": "pushCall",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared push_call_def_typed with source lines 627-630: the SOME tuple case builds Call ticks (SOME n) (args ++ [apply_op op (Var acc) exp]) handler and NONE gives dummy; Lean is now polymorphic in the destination component like HOL's \u03b1, and dummy is Var 1234567890."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
