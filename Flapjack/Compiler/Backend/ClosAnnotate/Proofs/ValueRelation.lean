@@ -86,6 +86,26 @@ theorem valueRel_primitive (x : Value) (i : Int) (ws : List (BitVec 8)) (w : Bit
   all_goals intro h
   all_goals first | (cases h; rfl) | (subst x; constructor)
 
+/-- Related boolean values are equal in either direction. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel_Boolv"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem valueRel_bool (x : Value) (b : Bool) :
+    (ValueRel x (boolValue b) ↔ x = boolValue b) ∧
+      (ValueRel (boolValue b) x ↔ x = boolValue b) := by
+  cases b <;> simp only [boolValue, Bool.false_eq_true, ↓reduceIte] <;>
+    constructor <;> constructor <;> intro h
+  all_goals first | (cases h with | block _ _ _ rel => cases rel; rfl) | (subst x; exact .block _ [] [] .nil)
+
+/-- Related unit values are equal in either direction. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel_Unit"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem valueRel_unit (x : Value) :
+    (ValueRel x unitValue ↔ x = unitValue) ∧
+      (ValueRel unitValue x ↔ x = unitValue) := by
+  simp only [unitValue]
+  constructor <;> constructor <;> intro h
+  all_goals first | (cases h with | block _ _ _ rel => cases rel; rfl) | (subst x; exact .block _ [] [] .nil)
+
 /-- Every set of variables is valid in an empty source environment. -/
 @[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "env_set_default"
   (nested_list_rel_as_mutual := [FunctionsRel])]
