@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
 public import Mathlib.Data.List.Forall2
 
 @[expose] public section
@@ -44,6 +45,46 @@ theorem install_related {C F : Type} {ValueRel : Value → Value → Prop}
     have hy := doInstall_wrongArity ys t targetArity
     rw [hx, hy]
     exact typeError s t states
+
+/-- Installation preserves a state relation and produces related programs or
+related exceptions, from the outcome relation's own clauses. Flapjack
+infrastructure shared by the closure-simulation passes; no separate HOL
+declaration is claimed. -/
+theorem doInstallLemmaOf {C F : Type} {ValueRel : Value → Value → Prop}
+    {StateRel : State C F → State C F → Prop}
+    {CodeRel : List ClosLang.Exp → List ClosLang.Exp → Prop}
+    {InstallRel : (Result (List ClosLang.Exp) Value × State C F) →
+      (Result (List ClosLang.Exp) Value × State C F) → Prop}
+    (rel : ∀ (r1 r2 : Result (List ClosLang.Exp) Value) (s t : State C F),
+      InstallRel (r1, s) (r2, t) ↔
+        match r1, r2 with
+        | .err e, .err f => Flapjack.SemanticPrimitivesProps.excRel ValueRel e f ∧ StateRel s t
+        | .val xs, .val ys => xs ≠ [] ∧ CodeRel xs ys ∧ StateRel s t
+        | _, _ => False)
+    (s t : State C F) (xs ys : List Value)
+    (both : InstallRel (doInstall xs s) (doInstall ys t)) :
+    match doInstall xs s with
+    | (.err err1, s1) => ∃ err2 t1, doInstall ys t = (.err err2, t1) ∧
+        Flapjack.SemanticPrimitivesProps.excRel ValueRel err1 err2 ∧ StateRel s1 t1
+    | (.val exps1, s1) => ∃ exps2 t1, StateRel s1 t1 ∧ exps1 ≠ [] ∧ CodeRel exps1 exps2 ∧
+        doInstall ys t = (.val exps2, t1) := by
+  cases sourceRun : doInstall xs s with
+  | mk sourceResult sourceNext =>
+    cases targetRun : doInstall ys t with
+    | mk targetResult targetNext =>
+      rw [sourceRun, targetRun] at both
+      rw [rel] at both
+      cases sourceResult with
+      | err error =>
+        cases targetResult with
+        | val values => exact both.elim
+        | err targetError =>
+          exact ⟨targetError, targetNext, rfl, both.1, both.2⟩
+      | val program =>
+        cases targetResult with
+        | err error => exact both.elim
+        | val targetProgram =>
+          exact ⟨targetProgram, targetNext, both.2.2, both.1, both.2.1, rfl⟩
 
 /-- Installation continuation factored out of the install equation: install
 the evaluated values, run the installed program, and return its last value. -/

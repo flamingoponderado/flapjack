@@ -176,24 +176,12 @@ theorem doInstallLemma {C F : Type} (s t : State C F) (xs ys : List Value)
     | (.err err1, s1) => ∃ err2 t1, doInstall ys t = (.err err2, t1) ∧
         Flapjack.SemanticPrimitivesProps.excRel ValueRel err1 err2 ∧ StateRel s1 t1
     | (.val exps1, s1) => ∃ exps2 t1, StateRel s1 t1 ∧ exps1 ≠ [] ∧ CodeRel exps1 exps2 ∧
-        doInstall ys t = (.val exps2, t1) := by
-  have both := install_related s t xs ys related.1 related.2
-  cases sourceRun : doInstall xs s with
-  | mk sourceResult sourceNext =>
-    cases targetRun : doInstall ys t with
-    | mk targetResult targetNext =>
-      rw [sourceRun, targetRun] at both
-      cases sourceResult with
-      | err error =>
-        cases targetResult with
-        | val values => simp [InstallRel] at both
-        | err targetError =>
-          exact ⟨targetError, targetNext, rfl, both.1, both.2⟩
-      | val program =>
-        cases targetResult with
-        | err error => simp [InstallRel] at both
-        | val targetProgram =>
-          exact ⟨targetProgram, targetNext, both.2.2, both.1, both.2.1, rfl⟩
+        doInstall ys t = (.val exps2, t1) :=
+  ClosProps.doInstallLemmaOf (CodeRel := CodeRel) (InstallRel := InstallRel)
+    (by
+      intro r1 r2 u v
+      cases r1 <;> cases r2 <;> simp [InstallRel])
+    s t xs ys (install_related s t xs ys related.1 related.2)
 end InstallPort
 
 end Flapjack.Compiler.Backend.ClosTicks
