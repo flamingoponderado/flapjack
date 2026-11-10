@@ -9549,3 +9549,8 @@ run_probe bvl_jump_probeScript.sml bvl_jump_probe.out \
   JumpList_def_typed Jump_def_typed \
   "$cake_dir/compiler/backend/bvl_jumpScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe bvi_inline_probeScript.sml bvi_inline_probe.out \
+  bvi_mk_tick_def_typed canonical_wrapper_def_typed \
+  "$cake_dir/compiler/backend/bvi_inlineScript.sml" \
+  "$cake_dir/compiler/backend"
