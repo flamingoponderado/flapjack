@@ -117025,24 +117025,24 @@
     "lean_name": "pMakeSpace",
     "hol_path": "cakeml/compiler/backend/data_spaceScript.sml",
     "hol_name": "pMakeSpace_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed data_space_compile_probe capture (`pMakeSpace (INL c) = c \u2227 pMakeSpace (INR (k,names,c)) = Seq (MakeSpace k names) c`) with pMakeSpace: the same two clauses over Sum Prog (Nat \u00d7 NumSet \u00d7 Prog), with MakeSpace the reviewed DataLang constructor."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataSpace/Compile.lean",
     "lean_name": "space",
     "hol_path": "cakeml/compiler/backend/data_spaceScript.sml",
     "hol_name": "space_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed data_space_compile_probe capture clause by clause with space: MakeSpace k names => INR (k,names,Skip); the Seq clause's d1/x2 lets and both pmatch branches (INL: MakeSpace, Skip, wildcard Seq d1 c4; INR: Skip, MakeSpace with inter names1 names2, Move with insert/delete, Assign NONE with op_space_req op (LENGTH args) + k2 and list_insert args (delete dest names2), wildcard Seq d1 (pMakeSpace x2)); the If clause INL (If n (pMakeSpace (space c2)) (pMakeSpace (space c3))); and the wildcard INL c. The Lean match arms are exactly the captured arms (the capture prints the pattern-match expansions), with sptInter/sptInsert/sptDelete/sptListInsert and opSpaceReq the reviewed helpers."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataSpace/Compile.lean",
     "lean_name": "compile",
     "hol_path": "cakeml/compiler/backend/data_spaceScript.sml",
     "hol_name": "compile_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed data_space_compile_probe capture (`compile c = pMakeSpace (space c)`) with compile c := pMakeSpace (space c)."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Optimise.lean",

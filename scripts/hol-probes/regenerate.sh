@@ -9519,3 +9519,8 @@ run_probe bvi_let_helpers_probeScript.sml bvi_let_helpers_probe.out \
   extract_def_typed extract_list_def_typed delete_var_def_typed \
   "$cake_dir/compiler/backend/bvi_letScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe data_space_compile_probeScript.sml data_space_compile_probe.out \
+  pMakeSpace_def_typed space_def_typed compile_def_typed \
+  "$cake_dir/compiler/backend/data_spaceScript.sml" \
+  "$cake_dir/compiler/backend"
