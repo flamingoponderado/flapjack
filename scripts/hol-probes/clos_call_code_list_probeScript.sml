@@ -16,6 +16,9 @@ val _ = (print "calls_replace_snd_type="; Lib.with_flag (Globals.show_types,true
 val _ = (print "calls_acc_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_acc); print "\n");
 val _ = (print "calls_el_sing_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_el_sing); print "\n");
 val _ = (print "v_rel_exists_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.v_rel_exists); print "\n");
+val _ = (print "dest_closure_v_rel_lookup_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.dest_closure_v_rel_lookup); print "\n");
+val _ = (print "dest_closure_v_rel_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.dest_closure_v_rel); print "\n");
+val _ = (print "dest_closure_partial_wfv_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.dest_closure_partial_wfv); print "\n");
 val _ = (print "insert_each_prime_def_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.insert_each'_def); print "\n");
 val _ = (print "wfg_insert_each_prime_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.wfg_insert_each'); print "\n");
 val _ = (print "fst_insert_each_prime_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.FST_insert_each'); print "\n");
