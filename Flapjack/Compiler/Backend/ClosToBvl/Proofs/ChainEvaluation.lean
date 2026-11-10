@@ -455,9 +455,9 @@ theorem install_success_body_simulation {C F : Type}
   have oracle := states.2.2.2.2.2.2.2.2.2.2.2.1
   have installedStates := install_stateRel s t f config expressions auxiliary sourceHead states
   have installedAnnotations := install_codeAnnotations s t config expressions auxiliary sourceHead annotations oracle
-  have mainAnnotations := oracle.2.2.2.2 0
-  have locations : ClosProps.everyFnLocationSome expressions := by simpa [sourceHead] using mainAnnotations.1
-  have vars : ClosProps.everyFnVarsSome expressions := by simpa [sourceHead] using mainAnnotations.2.1
+  have mainAnnotations := oracle.2.2.2.2 0 config expressions auxiliary sourceHead
+  have locations : ClosProps.everyFnLocationSome expressions := mainAnnotations.1
+  have vars : ClosProps.everyFnVarsSome expressions := mainAnnotations.2.1
   let targetNext := { t with
     code := sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))
     compileOracle := fun n => t.compileOracle (n + 1) }

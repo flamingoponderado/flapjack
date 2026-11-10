@@ -87,7 +87,7 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "DISJOINT_nth_code_monotonic",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean", "lean_name": "disjoint_nthCode_monotonic",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared disjoint_nth_code_monotonic_typed and independent review: free init, oracle, v and n, independent configuration and payload types, grouped monotonicity and v equality premises, and set disjointness conclusion match."
+  "reviewer": "Compared disjoint_nth_code_monotonic_typed and independent review: free init, oracle, v and n, independent configuration and payload types, and grouped monotonicity and v equality premises match. DISJOINT is pointwise non-overlap under the reviewed DISJOINT_INTER convention."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "MEM_number_compile_inc_locs",
@@ -129225,8 +129225,8 @@
   "hol_name": "compile_oracle_inv_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Oracle.lean",
   "lean_name": "compileOracleInv",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_oracle_inv_typed and independent review: binder order, four independent type roles, explicit pair-pattern premises, and EVERY as bounded forall match. DISJOINT is pointwise non-overlap under the reviewed DISJOINT_INTER convention."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",

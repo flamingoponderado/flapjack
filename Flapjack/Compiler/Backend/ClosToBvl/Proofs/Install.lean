@@ -466,11 +466,11 @@ theorem install_codeAnnotations {C F : Type} (s : ClosSem.State C F) (t : BvlSem
     (annotations : codeAnnotations s)
     (oracle : compileOracleInv s.maxApp s.code s.compile s.compileOracle t.code t.compile t.compileOracle) :
     codeAnnotations { s with code := s.code.updateListEq auxiliary } := by
-  have oracleAnnotations := oracle.2.2.2.2 0
+  have oracleAnnotations := oracle.2.2.2.2 0 config expressions auxiliary sourceHead
   have newLocations : ∀ entry ∈ auxiliary, ClosProps.everyFnLocationSome [entry.2.2] := by
-    simpa [sourceHead] using oracleAnnotations.2.2.1
+    exact oracleAnnotations.2.2.1
   have newVars : ∀ entry ∈ auxiliary, ClosProps.everyFnVarsSome [entry.2.2] := by
-    simpa [sourceHead] using oracleAnnotations.2.2.2
+    exact oracleAnnotations.2.2.2
   constructor
   · intro name arity body found
     cases install_source_lookup s.code auxiliary name arity body found with

@@ -38,10 +38,9 @@ theorem disjoint_nthCode_monotonic {C A : Type}
     (init : Spt A) (orac : Nat → C × List (Nat × A)) (v : List (Nat × A)) (n : Nat)
     (h : oracleMonotonic (fun entry : C × List (Nat × A) => {x | x ∈ entry.2.map Prod.fst})
       (· < ·) (sptDomain init) orac ∧ v = (orac n).2) :
-    Disjoint (sptDomain (sptUnion init (nthCode orac n))) {x | x ∈ v.map Prod.fst} := by
+    ∀ x, ¬ (sptDomain (sptUnion init (nthCode orac n)) x ∧ x ∈ v.map Prod.fst) := by
   obtain ⟨mono, rfl⟩ := h
-  apply Set.disjoint_left.mpr
-  intro x inUnion current
+  intro x ⟨inUnion, current⟩
   change sptMem x (sptUnion init (nthCode orac n)) at inUnion
   rw [sptMem_sptUnion] at inUnion
   rcases inUnion with present | past
