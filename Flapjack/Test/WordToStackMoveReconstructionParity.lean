@@ -1,33 +1,10 @@
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveReconstruction
-open Flapjack Flapjack.WordAlloc Flapjack.WordToStackProofs
+import Flapjack.Test.Fixtures.WordToStack
+open Flapjack Flapjack.WordAlloc Flapjack.WordToStackProofs Flapjack.Test.Fixtures.WordToStack
 set_option maxRecDepth 8192
 -- The complete eight-component packet needs a larger equality-instance search.
 set_option synthInstance.maxSize 512
 local instance {width : Nat} [NeZero width] : Nonempty (WordLocW width) := ⟨.word 0⟩
-private def base {width : Nat} [NeZero width] : WordSemStateFiniteExact width Unit Unit where
-  locals := .ln
-  localsSize := none
-  fpRegs := HolFiniteMapExact.empty
-  store := HolFiniteMapExact.empty
-  stack := []
-  stackLimit := 0
-  stackMax := none
-  stackSize := .ln
-  memory := fun _ => .word 0
-  mdomain := fun _ => false
-  shMdomain := fun _ => false
-  permute := fun _ i => i
-  compile := fun _ _ => none
-  compileOracle := fun _ => ((), [])
-  codeBuffer := { position := 0, buffer := [], spaceLeft := 0 }
-  dataBuffer := { position := 0, buffer := [], spaceLeft := 0 }
-  gcFun := fun _ => none
-  handler := 0
-  clock := 0
-  termdep := 0
-  code := .ln
-  be := false
-  ffi := { oracle := fun _ state _ _ => .ret state [], ffiState := (), ioEvents := [] }
 -- mr_move_1_0_0_0
 example : (fun s : WordSemStateFiniteExact 1 Unit Unit => (WordSemStateFiniteExact.getVars (([]:List (Nat × Nat)).map Prod.snd) s, (WordSemStateFiniteExact.getVars (([]:List (Nat × Nat)).map Prod.snd) s).map (fun xs => (LoopSemStateFiniteExact.sptAlistInsert ((([none,none]:List (Option Nat)).filter Option.isSome).map holThe) ((([none,none]:List (Option Nat)).filter Option.isSome).map (fun p => holThe (WordSemStateFiniteExact.getVar (holThe (keyLookup ([]:List (Nat × Nat)) (holThe p))) s))) s.locals, LoopSemStateFiniteExact.sptAlistInsert (([]:List (Nat × Nat)).map Prod.fst) xs s.locals)), (decide (([]:List (Nat × Nat)).map Prod.fst).Nodup, (WordSemStateFiniteExact.getVars (([]:List (Nat × Nat)).map Prod.snd) s).isSome, decide (([none,none]:List (Option Nat)).filter Option.isSome).Nodup, sptWf s.locals, ([none,none]:List (Option Nat)).all (fun p => match p with | none => true | some q => (([]:List (Nat × Nat)).map Prod.fst).contains q), ([]:List (Nat × Nat)).all (fun p => decide (p.1=p.2) || ([none,none]:List (Option Nat)).contains (some p.1))))) ({ (base : WordSemStateFiniteExact 1 Unit Unit) with locals := .ln, clock := 17, handler := 31 }) = (some [], some (.ln, .ln), (true, true, true, true, true, true)) := by
   simp only [← numericLookupEq]
