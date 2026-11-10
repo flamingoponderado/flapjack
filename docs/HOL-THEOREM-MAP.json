@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "annotate_compile_inc_req",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/AnnotationAddresses.lean", "lean_name": "annotateCompileInc_req",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared annotate_compile_inc_req_typed and independent review: numeric metadata, source annotation compiler, extractability premise and all three distinctness, extractability and subset conclusions match HOL precedence."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "subset_req_orac_to_oracle",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalOracle.lean", "lean_name": "subsetReqOrac_to_oracle",
   "statement_status": "reviewed_exact",

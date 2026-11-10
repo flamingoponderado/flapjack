@@ -53,4 +53,52 @@ theorem annotateCompile_codeLocations {α : Type} (xs : List (α × Nat × ClosL
   have sub := annotateCompile_codeLocations_sublist xs
   exact ⟨fun _ h => sub.subset h, fun h => sub.nodup h⟩
 
+private theorem extracted_annotate (xs : List ClosLang.Exp) (h : canExtract xs) :
+    extractedAddrs (ClosAnnotate.annotateSource 0 xs) = extractedAddrs xs := by
+  obtain ⟨tr, n, rest, rfl⟩ := h
+  cases rest with
+  | nil =>
+    have empty : ClosAnnotate.annotateSource 0 [] = [] := by
+      rw [(ClosAnnotate.annotateSource_sing_eq 0 (.var .none 0) []).2]
+      rfl
+    simp [annotate_opConst, extractedAddrs, extractNameSource_eq_extractName, extractName, empty]
+  | cons e es =>
+    have nonempty : ClosAnnotate.annotateSource 0 (e :: es) ≠ [] := by
+      intro empty
+      have length := length_annotate 0 (e :: es)
+      rw [empty] at length
+      simp at length
+    simp [annotate_opConst, extractedAddrs, extractNameSource_eq_extractName,
+      extractName, length_annotate, nonempty]
+
+/-- Incremental annotation preserves address distinctness and extractability,
+and does not introduce required addresses. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "annotate_compile_inc_req"]
+theorem annotateCompileInc_req (program : List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)) :
+    canExtract program.1 →
+      ((reqCompileIncAddrs [] program).Nodup →
+        (reqCompileIncAddrs [] (ClosAnnotate.compileIncSource program)).Nodup) ∧
+      canExtract (ClosAnnotate.compileIncSource program).1 ∧
+      {x | x ∈ reqCompileIncAddrs [] (ClosAnnotate.compileIncSource program)} ⊆
+        {x | x ∈ reqCompileIncAddrs [] program} := by
+  obtain ⟨exps, code⟩ := program
+  intro extractable
+  have exprSub := ClosAnnotate.annotateList_codeLocations_sublist 0 exps
+  rw [← (ClosAnnotate.annotateSource_sing_eq 0 (.var .none 0) exps).2] at exprSub
+  have codeSub := annotateCompile_codeLocations_sublist code
+  have names : (ClosAnnotate.compileSource code).map Prod.fst = code.map Prod.fst := by
+    simp [ClosAnnotate.compileSource_eq, List.map_map, Function.comp_def]
+  have reqSub : (reqCompileIncAddrs [] (ClosAnnotate.compileIncSource (exps, code))).Sublist
+      (reqCompileIncAddrs [] (exps, code)) := by
+    simp only [ClosAnnotate.compileIncSource, reqCompileIncAddrs, List.map_nil, List.flatten_nil,
+      List.append_nil, extracted_annotate exps extractable, names]
+    exact (((List.Sublist.refl _).append exprSub).append (List.Sublist.refl _)).append codeSub
+  constructor
+  · exact fun distinct => reqSub.nodup distinct
+  · constructor
+    · obtain ⟨tr, n, rest, rfl⟩ := extractable
+      exact ⟨tr, n, ClosAnnotate.annotateSource 0 rest, by
+        simp [ClosAnnotate.compileIncSource, annotate_opConst]⟩
+    · exact fun _ mem => reqSub.subset mem
+
 end Flapjack.Compiler.Backend.ClosToBvl
