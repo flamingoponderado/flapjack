@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "dest_closure_partial_wfv",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ClosureWellFormed.lean", "lean_name": "destClosure_partialWellFormed",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared dest_closure_partial_wfv_type in clos_call_code_list_probe.out and HOL source: the original successful partial application, well-formed operand list and well-formed input value imply well-formedness of the actual resulting closure. The code parameter uses canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_rel_exists",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueExistence.lean", "lean_name": "valueRel_exists",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
