@@ -8,6 +8,8 @@ code_locs_GENLIST_Var_typed=!(n :num) (t :tra) (i :num). code_locs (GENLIST_Var 
 fv_GENLIST_Var_tra_typed=!(n :num) (tra :tra) (i :num). fv (v :num) (GENLIST_Var tra i n) <=> v < n
 evaluate_GENLIST_Var_tra_typed=!(n :num) (tr :tra) (i :num). evaluate (GENLIST_Var tr i n,(env :v list),(s :('a, 'b) state)) = if n <= LENGTH env then ((Rval (TAKE n env) :(v list, v) result),s) else ((Rerr (Rabort Rtype_error :v error_result) :(v list, v) result),s)
 compile_ALL_DISTINCT_typed=compile (do_call :bool) (x :closLang$exp list) = ((y :closLang$exp list),(g :sptree$num_set),(aux :(num # num # closLang$exp) list)) /\ ALL_DISTINCT (code_locs x) ==> ALL_DISTINCT (MAP (FST :num # num # closLang$exp -> num) aux)
+calls_fv1_subset_typed=!(xs :closLang$exp list) (g0 :sptree$num_set # (num # num # closLang$exp) list) (ys :closLang$exp list) (g :sptree$num_set # (num # num # closLang$exp) list). calls xs g0 = (ys,g) ==> LIST_REL (\(x :closLang$exp) (y :closLang$exp). flip fv1 y SUBSET flip fv1 x) xs ys
+calls_fv_imp_typed=calls (xs :closLang$exp list) (g0 :sptree$num_set # (num # num # closLang$exp) list) = ((ys :closLang$exp list),(g :sptree$num_set # (num # num # closLang$exp) list)) /\ fv (v :num) ys ==> fv v xs
 no_Labels_GENLIST_Var_typed=!(n :tra) (l :num) (w :num). EVERY no_Labels (GENLIST_Var n l w)
 no_Labels_calls_list_typed=!(t :tra) (k1 :num) (loc :num) (fns :(num # 'a) list). EVERY no_Labels (MAP (SND :num # closLang$exp -> closLang$exp) (calls_list t k1 loc fns))
 obeys_max_app_GENLIST_Var_typed=!(n :tra) (l :num) (w :num). EVERY (obeys_max_app (k :num)) (GENLIST_Var n l w)

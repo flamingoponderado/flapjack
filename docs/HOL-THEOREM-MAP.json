@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_fv1_subset",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FreeVarsPreservation.lean", "lean_name": "calls_freeVar_subset",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_fv1_subset_typed in clos_call_stub_probe.out and source: the input expression list, initial state, output list and final state retain their original order and carriers, and the calls equation implies the full elementwise list relation from output free variables to input free variables."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_fv_imp",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FreeVarsPreservation.lean", "lean_name": "calls_freeVars_imp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_fv_imp_typed in clos_call_stub_probe.out and source: input list, initial state, output list, final state and variable retain their carriers and the original calls-equation and output-freeness conjunction implies input freeness."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_domain",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/DomainOrigin.lean", "lean_name": "calls_domain",
   "statement_status": "reviewed_exact",
