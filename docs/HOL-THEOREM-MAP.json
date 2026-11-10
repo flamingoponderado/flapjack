@@ -18,6 +18,24 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "is_state_oracle_k",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonic.lean", "lean_name": "isStateOracle_k",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared is_state_oracle_k_typed and independent review: four independent carriers, quantified k before the implication, and existential pair decomposition and next-state equation match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_inc_post_kcompile_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SyntaxOracle.lean", "lean_name": "compileIncPostKcompile",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_inc_post_kcompile_typed and independent review: input length, makeEven, multi-argument pass, numbering projection and known compiler result match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "FST_known_co",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SyntaxOracle.lean", "lean_name": "fst_knownCo",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fst_known_co_typed and independent review: kc, co, n order, independent oracle payload, and downstream configuration projection match."
+ },
+ {
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "SET_OF_BAG",
   "lean_path": "Flapjack/Misc/Bag.lean", "lean_name": "setOfBag",
   "statement_status": "reviewed_exact",
@@ -129029,8 +129047,8 @@
   "hol_name": "syntax_ok_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/SyntaxOk.lean",
   "lean_name": "syntaxOk",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_call_syntax_ok_typed and independent review: location presence, absent variable annotations and distinct code locations match in order."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",

@@ -36,6 +36,16 @@ def isStateOracle {S C P Q : Type} (compile : S → P → S × Q)
     (oracle : Nat → (S × C) × P) : Prop :=
   ∀ n, (oracle (n + 1)).1.1 = (compile (oracle n).1.1 (oracle n).2).1
 
+/-- Each state-oracle entry exposes its state, configuration and program. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "is_state_oracle_k"]
+theorem isStateOracle_k {S C P Q : Type} (compile : S → P → S × Q)
+    (oracle : Nat → (S × C) × P) :
+    ∀ k, isStateOracle compile oracle →
+      ∃ st other prog, oracle k = ((st, other), prog) ∧
+        (oracle (k + 1)).1.1 = (compile st prog).1 := by
+  intro k h
+  exact ⟨(oracle k).1.1, (oracle k).1.2, (oracle k).2, by cases oracle k; rfl, h k⟩
+
 /-- An invariant and a monotone state bound order generated oracle identifiers. -/
 @[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "oracle_monotonic_state_with_inv"]
 theorem oracleMonotonic_stateWithInv {S C P Q : Type}

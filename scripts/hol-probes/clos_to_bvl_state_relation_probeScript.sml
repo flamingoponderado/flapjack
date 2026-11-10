@@ -156,6 +156,12 @@ val _ = show "compile_common_map_fst_compile_prog_typed=" clos_to_bvlProofTheory
 val _ = show "clos_bvl_syntax_oracle_ok_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_def;
 val _ = show "set_of_bag_typed=" bagTheory.SET_OF_BAG;
 val _ = show "syntax_oracle_ok_to_oracle_inv_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_to_oracle_inv;
+val _ = show "compile_inc_post_kcompile_typed=" clos_to_bvlProofTheory.compile_inc_post_kcompile_def;
+val _ = show "fst_known_co_typed=" clos_to_bvlProofTheory.FST_known_co;
+val _ = show "known_co_facts_typed=" clos_to_bvlProofTheory.known_co_facts;
+val _ = show "known_state_oracle_globals_approx_typed=" clos_to_bvlProofTheory.known_state_oracle_globals_approx;
+val _ = show "is_state_oracle_k_typed=" backendPropsTheory.is_state_oracle_k;
+val _ = show "clos_call_syntax_ok_typed=" clos_callProofTheory.syntax_ok_def;
 val _ = show "compile_oracle_inv_typed=" clos_to_bvlProofTheory.compile_oracle_inv_def;
 val _ = show "every_fn_some_every_typed=" closPropsTheory.every_Fn_SOME_EVERY;
 val _ = show "every_fn_vs_some_every_typed=" closPropsTheory.every_Fn_vs_SOME_EVERY;
