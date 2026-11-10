@@ -1022,10 +1022,10 @@ theorem majorMoveList_append {α β : Type} (conf : GenGc.Config β) (state : Gc
     simp only
     rw [ih middle]
 
-/-- Reference-object traversal simulates a major root-list traversal over the
-flattened translated children and preserves the protected-pointer subset. -/
-@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_ref_list_simulation"]
-theorem gcMoveRefList_simulation {α β γ : Type} (conf : Config β)
+/-- Flapjack generalisation of `gc_move_ref_list_simulation`: the reference
+payload `γ` is independent of the heap payload `β`. HOL's theorem is the
+instance `γ := β`; the tagged statement below is that instance. -/
+theorem gcMoveRefList_simulation_general {α β γ : Type} (conf : Config β)
     (state state1 : GcState α β) (refs0 refs1 : List (HeapElement α γ))
     (heap0 : List (HeapElement α β))
     (majorRoots : List (HeapAddress (DataSort (HeapAddress α) α)))
@@ -1098,6 +1098,28 @@ theorem gcMoveRefList_simulation {α β γ : Type} (conf : Config β)
       · obtain ⟨xs, size, payload, v, oldMember, oldChild, outside⟩ :=
           tailOld p ⟨xs, size, payload, u, member, child, outside⟩
         exact ⟨xs, size, payload, v, by simp [oldMember], oldChild, outside⟩
+
+/-- HOL `gc_move_ref_list_simulation`: the reference payload is the state's
+heap payload, so HOL's `('b,'a)` refs are `HeapElement α β` here. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_ref_list_simulation"]
+theorem gcMoveRefList_simulation {α β : Type} (conf : Config β)
+    (state state1 : GcState α β) (refs0 refs1 : List (HeapElement α β))
+    (heap0 : List (HeapElement α β))
+    (majorRoots : List (HeapAddress (DataSort (HeapAddress α) α)))
+    (majorState : GcState (DataSort (HeapAddress α) α) β)
+    (partialRun : gcMoveRefList conf state refs0 = (refs1, state1))
+    (majorRun : GenGc.gcMoveList (toGenConf conf) (toGenState conf state) (refsToRoots conf refs0) =
+      (majorRoots, majorState)) (majorOk : majorState.ok = true)
+    (invariant : simInv conf heap0 state)
+    (bounded : ∀ ptrs len data ptr u, .pointer ptr u ∈ ptrs ∧ .dataElement ptrs len data ∈ refs0 →
+      ptr < heapLength state.heap)
+    (heapLengthEq : heapLength state.heap = conf.limit) (allData : List.Forall isDataElement refs0)
+        :
+    simInv conf heap0 state1 ∧ majorRoots = refsToRoots conf refs1 ∧
+      majorState = toGenState conf state1 ∧
+    ∀ p, hasOldPtr conf refs1 p → hasOldPtr conf refs0 p :=
+  gcMoveRefList_simulation_general conf state state1 refs0 refs1 heap0 majorRoots majorState
+    partialRun majorRun majorOk invariant bounded heapLengthEq allData
 
 /-- Flapjack proof infrastructure: functional form of the partial copied-data
 scan simulation. -/

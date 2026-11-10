@@ -63,13 +63,16 @@ theorem holRatAbs_mul_pos (y D : Rat) (hD : 0 < D) : holRatAbs y * D = holRatAbs
   unfold holRatAbs
   by_cases hy : y < 0
   · have : y * D < 0 := by
-      have := Rat.mul_lt_mul_of_pos_right hy hD; simpa using this
-    rw [if_pos hy, if_pos this]; grind
+      have := Rat.mul_lt_mul_of_pos_right hy hD
+      all_goals simpa using this
+    rw [if_pos hy, if_pos this]
+    all_goals grind
   · have : ¬ y * D < 0 := by
       intro h
       have h0 : 0 ≤ y := by grind
       have := Rat.mul_le_mul_of_nonneg_right h0 (Rat.le_of_lt hD)
-      simp at this; grind
+      simp at this
+      all_goals grind
     rw [if_neg hy, if_neg this]
 
 /-- HOL `UINT_MAX (:'w) = 2 ^ dimindex (:'w) - 1`. -/

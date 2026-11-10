@@ -41,7 +41,8 @@ theorem haltLineNotAligned :
 theorem jumpLineNotAligned :
     lineEncd enc .ln [] 7 (.labAsm (.jump (.lab 1 2)) 77 [249,249] 3) ∧
     ¬lineAligned (width := 8) 2 (.labAsm (.jump (.lab 1 2)) 77 [249,249] 3) ∧
-    ¬lineEncWithNop enc .ln [] 7 (.labAsm (.jump (.lab 1 2)) 77 (padBytes [249,249] 3 [0,0]) 3) := by
+    ¬lineEncWithNop enc .ln [] 7 (.labAsm (.jump (.lab 1 2)) 77 (padBytes [249,249] 3 [0,0]) 3) :=
+        by
   simp only [lineEncd,lineAligned,lineLen,lineLength,lineEncWithNop,encWithNop]
   decide +kernel
 

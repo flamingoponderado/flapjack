@@ -129,7 +129,9 @@ theorem list_mapM_eq_some_iff {α β : Type} (f : α → Option β) (xs : List �
                 ∀ n, n < ys'.length → (xs[n]?).bind f = ys'[n]? := by
               refine ⟨by simpa using hlen, ?_⟩
               intro n hn
-              have := hpt (n + 1) (by simp; omega)
+              have := hpt (n + 1) (by
+                simp
+                all_goals omega)
               simpa [List.getElem?_cons_succ] using this
             have hxs : xs.mapM f = some ys' := (ih ys').mpr htail
             simp [hfx, hxs]
