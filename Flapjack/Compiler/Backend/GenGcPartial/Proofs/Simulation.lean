@@ -1113,7 +1113,8 @@ theorem gcMoveRefList_simulation {α β : Type} (conf : Config β)
     (invariant : simInv conf heap0 state)
     (bounded : ∀ ptrs len data ptr u, .pointer ptr u ∈ ptrs ∧ .dataElement ptrs len data ∈ refs0 →
       ptr < heapLength state.heap)
-    (heapLengthEq : heapLength state.heap = conf.limit) (allData : List.Forall isDataElement refs0) :
+    (heapLengthEq : heapLength state.heap = conf.limit) (allData : List.Forall isDataElement refs0)
+        :
     simInv conf heap0 state1 ∧ majorRoots = refsToRoots conf refs1 ∧
       majorState = toGenState conf state1 ∧
     ∀ p, hasOldPtr conf refs1 p → hasOldPtr conf refs0 p :=

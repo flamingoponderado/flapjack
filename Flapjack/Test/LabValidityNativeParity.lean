@@ -46,7 +46,8 @@ example : secOkPreHOL cfg8 { sectionId := 0, lines := [] } := by
 example : secOkPreHOL cfg8 { sectionId := 0, lines := [.asm (.asmi (.inst .skip)) [] 0] } := by
   simp [secOkPreHOL, lineOkPreHOL]
   decide +kernel
-example : ¬ secOkPreHOL cfg8 { sectionId := 0, lines := [.asm (.asmi (.inst (.const 9 0))) [] 0] } := by
+example : ¬ secOkPreHOL cfg8 { sectionId := 0, lines := [.asm (.asmi (.inst (.const 9 0))) [] 0] }
+    := by
   simp [secOkPreHOL, lineOkPreHOL]
   decide +kernel
 example : allEncOkPreHOL cfg8 [] := by simp [allEncOkPreHOL]

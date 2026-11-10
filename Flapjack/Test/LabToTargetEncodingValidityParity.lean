@@ -31,66 +31,142 @@ example : labLookup 1 5 (sptInsert 1 (sptInsert 5 true .ln) .ln) = some true := 
 example : labLookup 2 5 labs = none := by decide +kernel
 example : labLookup 1 6 labs = none := by decide +kernel
 example : lineOk cfg labs ffis 4 (.label 1 5 0) := by
-  simp [lineOk,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  simp [lineOk, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+      asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+      asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+      labInst, asmOkExact]
   try decide +kernel
 example : ¬ lineOk cfg labs ffis 3 (.label 1 5 0) := by
-  simp [lineOk,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  simp [lineOk, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+      asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+      asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+      labInst, asmOkExact]
   try decide +kernel
 example : ¬ lineOk cfg labs ffis 4 (.label 1 5 2) := by
-  simp [lineOk,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  simp [lineOk, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+      asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+      asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+      labInst, asmOkExact]
   try decide +kernel
 example : lineOk cfg labs ffis 4 (.asm (.asmi (.inst .skip)) [0,0] 2) := by
-  simp [lineOk, encWithNop,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  simp [lineOk, encWithNop, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+      asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+      asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+      labInst, asmOkExact]
   try decide +kernel
 example : lineOk cfg labs ffis 4 (.asm (.asmi (.inst .skip)) [0,0,0,0] 4) := by
-  simp [lineOk, encWithNop,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  simp [lineOk, encWithNop, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+      asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+      asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+      labInst, asmOkExact]
   try decide +kernel
 example : ¬ lineOk cfg labs ffis 4 (.asm (.asmi (.inst .skip)) [0,0] 3) := by
-  simp [lineOk, encWithNop,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  simp [lineOk, encWithNop, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+      asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+      asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+      labInst, asmOkExact]
   try decide +kernel
 example : ¬ lineOk cfg labs ffis 4 (.asm (.asmi (.inst .skip)) [1,1] 2) := by
-  simp [lineOk, encWithNop,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  simp [lineOk, encWithNop, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+      asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+      asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+      labInst, asmOkExact]
   try decide +kernel
 example : ¬ lineOk cfg labs ffis 4 (.asm (.asmi (.inst (.const 40 1))) [10,11] 2) := by
-  simp [lineOk, encWithNop,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  simp [lineOk, encWithNop, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+      asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+      asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+      labInst, asmOkExact]
   try decide +kernel
 example : lineOk cfg labs ffis 4 (.asm (.cbw 1 2) [10,11] 2) := by
-  simp [lineOk, encWithNop,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  simp [lineOk, encWithNop, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+      asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+      asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+      labInst, asmOkExact]
   try decide +kernel
 example : lineOk cfg labs ffis 4 (.labAsm .halt 99 [236,99] 2) := by
-  simp [lineOk, encWithNop,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  simp [lineOk, encWithNop, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+      asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+      asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+      labInst, asmOkExact]
   try decide +kernel
 example : lineOk cfg labs ffis 4 (.labAsm .install 99 [220,99] 2) := by
-  simp [lineOk, encWithNop,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  simp [lineOk, encWithNop, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+      asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+      asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+      labInst, asmOkExact]
   try decide +kernel
 example : lineOk cfg labs ffis 4 (.labAsm (.callFFI (.implode [98])) 99 [188,99] 2) := by
-  simp [lineOk, encWithNop,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  simp [lineOk, encWithNop, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+      asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+      asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+      labInst, asmOkExact]
   try decide +kernel
 example : lineOk cfg labs ffis 4 (.labAsm (.callFFI (.implode [122])) 99 [204,99] 2) := by
-  simp [lineOk, encWithNop,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  simp [lineOk, encWithNop, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+      asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+      asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+      labInst, asmOkExact]
   try decide +kernel
 example : ¬ lineOk cfg labs ffis 4 (.labAsm (.call (.lab 1 5)) 0 [16,99] 2) := by
-  simp [lineOk,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  simp [lineOk, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+      asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+      asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+      labInst, asmOkExact]
   try decide +kernel
 example : lineOk cfg labs ffis 4 (.labAsm (.jump (.lab 1 5)) 99 [16,99] 2) := by
-  simp [lineOk, getLabel, labLookup, labs, sptLookup, sptInsert, encWithNop,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact] <;> try decide +kernel
+  simp [lineOk, getLabel, labLookup, labs, sptLookup, sptInsert, encWithNop, asmCmpOkExact,
+      asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact, asmRegImmOkExact, asmInstOkExact,
+      asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact, asmFpOkExact, asmFpRegOkExact,
+      asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact, labInst, asmOkExact] <;> try
+          decide +kernel
 
-example : lineOk cfg labs ffis 4 (.labAsm (.jumpCmp .equal 2 (.imm 1) (.lab 1 5)) 99 [16,88] 2) := by
-  simp [lineOk, getLabel, labLookup, labs, sptLookup, sptInsert, encWithNop,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact] <;> try decide +kernel
+example : lineOk cfg labs ffis 4 (.labAsm (.jumpCmp .equal 2 (.imm 1) (.lab 1 5)) 99 [16, 88] 2) :=
+    by
+  simp [lineOk, getLabel, labLookup, labs, sptLookup, sptInsert, encWithNop, asmCmpOkExact,
+      asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact, asmRegImmOkExact, asmInstOkExact,
+      asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact, asmFpOkExact, asmFpRegOkExact,
+      asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact, labInst, asmOkExact] <;> try
+          decide +kernel
 
 example : lineOk cfg labs ffis 4 (.labAsm (.locValue 2 (.lab 1 5)) 99 [16,77] 2) := by
-  simp [lineOk, getLabel, labLookup, labs, sptLookup, sptInsert, encWithNop,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact] <;> try decide +kernel
+  simp [lineOk, getLabel, labLookup, labs, sptLookup, sptInsert, encWithNop, asmCmpOkExact,
+      asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact, asmRegImmOkExact, asmInstOkExact,
+      asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact, asmFpOkExact, asmFpRegOkExact,
+      asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact, labInst, asmOkExact] <;> try
+          decide +kernel
 
 example : ¬ lineOk cfg labs ffis 4 (.labAsm (.jump (.lab 1 6)) 0 [0,99] 2) := by
-  simp [lineOk, getLabel, labLookup, labs, sptLookup, sptInsert,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  simp [lineOk, getLabel, labLookup, labs, sptLookup, sptInsert, asmCmpOkExact,
+      asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact, asmRegImmOkExact, asmInstOkExact,
+      asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact, asmFpOkExact, asmFpRegOkExact,
+      asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact, labInst, asmOkExact]
 
-example : allEncOk cfg labs ffis 3 ([] : LabProgHOL 8) := by simp [allEncOk,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
-example : allEncOk cfg labs ffis 4 [⟨1, []⟩] := by simp [allEncOk,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
-example : ¬ allEncOk cfg labs ffis 3 [⟨1, []⟩] := by simp [allEncOk,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+example : allEncOk cfg labs ffis 3 ([] : LabProgHOL 8) := by 
+  simp [allEncOk, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+    asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+    asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+    labInst, asmOkExact]
+example : allEncOk cfg labs ffis 4 [⟨1, []⟩] := by 
+  simp [allEncOk, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+    asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+    asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+    labInst, asmOkExact]
+example : ¬ allEncOk cfg labs ffis 3 [⟨1, []⟩] := by 
+  simp [allEncOk, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact,
+    asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact,
+    asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact,
+    labInst, asmOkExact]
 theorem code_valid : allEncOk cfg labs ffis 0 code := by
-  simp [code, allEncOk, lineOk, encWithNop,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  simp [code, allEncOk, lineOk, encWithNop, asmCmpOkExact, asmCjumpOffsetOkExact, asmOffsetOkExact,
+      asmRegOkExact, asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact, asmLocOffsetOkExact,
+      asmArithOkExact, asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact, asmHwOffsetOkExact,
+      asmByteOffsetOkExact, labInst, asmOkExact]
   try decide +kernel
-example : (progToBytes code).length = 4 := by simp [progToBytes, code, lineBytes,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+example : (progToBytes code).length = 4 := by simp [progToBytes, code, lineBytes, asmCmpOkExact,
+    asmCjumpOffsetOkExact, asmOffsetOkExact, asmRegOkExact, asmRegImmOkExact, asmInstOkExact,
+    asmJumpOffsetOkExact, asmLocOffsetOkExact, asmArithOkExact, asmFpOkExact, asmFpRegOkExact,
+    asmAddrOffsetOkExact, asmHwOffsetOkExact, asmByteOffsetOkExact, labInst, asmOkExact]
 example : posVal 0 0 code = 0 := by decide +kernel
 example : posVal 2 17 code = 21 := by decide +kernel
 -- Full consumers have actual premise instances, not assumed success callbacks.
@@ -106,7 +182,10 @@ example {width : Nat} [NeZero width] (c : AsmConfigExact width) (labels : Spt (S
     posVal i pos xs ≤ pos + (progToBytes xs).length := posVal_bound i pos xs c labels names n h
 example {α : Type} (l1 l2 : Nat) (xs : Spt (Spt α)) :
     labLookup l1 l2 xs = (sptLookup l1 xs).bind (sptLookup l2) := by
-  cases h : sptLookup l1 xs <;> simp [labLookup, h,asmCmpOkExact,asmCjumpOffsetOkExact,asmOffsetOkExact,asmRegOkExact,asmRegImmOkExact,asmInstOkExact,asmJumpOffsetOkExact,asmLocOffsetOkExact,asmArithOkExact,asmFpOkExact,asmFpRegOkExact,asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,labInst,asmOkExact]
+  cases h : sptLookup l1 xs <;> simp [labLookup, h, asmCmpOkExact, asmCjumpOffsetOkExact,
+      asmOffsetOkExact, asmRegOkExact, asmRegImmOkExact, asmInstOkExact, asmJumpOffsetOkExact,
+      asmLocOffsetOkExact, asmArithOkExact, asmFpOkExact, asmFpRegOkExact, asmAddrOffsetOkExact,
+      asmHwOffsetOkExact, asmByteOffsetOkExact, labInst, asmOkExact]
 example : findPos (.lab 1 5) labs = 20 :=
   labLookup_implies_findPos 1 5 labs 20 (by decide +kernel)
 
@@ -120,6 +199,7 @@ example : allEncOk cfg labs ffis 0 code ↔
       0 1 [⟨2, []⟩]
 
 def runChecks : IO Bool := do
-  IO.println "PASS original full native encoding validity (28 observations, 7 full generic/consumer checks)"
+  IO.println
+    "PASS original full native encoding validity (28 observations, 7 full generic/consumer checks)"
   return true
 end Flapjack.Test.LabToTargetEncodingValidityParity
