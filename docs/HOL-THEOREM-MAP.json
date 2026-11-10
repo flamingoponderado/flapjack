@@ -19170,16 +19170,16 @@
     "hol_name": "is_adjacent_num_set_tree_union",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Reachability.lean",
     "lean_name": "isAdjacent_union",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed HOL capture preserves both trees and source/target keys; adjacency and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed flat_elim_closure_probe capture (`\u2200t1 t2 n m. is_adjacent t1 n m \u21d2 is_adjacent (num_set_tree_union t1 t2) n m`) with isAdjacent_union (first second : Spt NumSet) (source target : Nat) (edge : isAdjacent first source target) : isAdjacent (numSetTreeUnion first second) source target; isAdjacent and numSetTreeUnion are the reviewed is_adjacent_def and num_set_tree_union_def ports over the reviewed Spt/NumSet carriers."
   },
   {
     "hol_path": "HOL/examples/algorithms/spt_closureScript.sml",
     "hol_name": "is_reachable_num_set_tree_union",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Reachability.lean",
     "lean_name": "isReachable_union",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed HOL capture preserves both trees and source/target keys; RTC correspondence review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed flat_elim_closure_probe capture (`\u2200t1 t2 n m. is_reachable t1 n m \u21d2 is_reachable (num_set_tree_union t1 t2) n m`) with isReachable_union (first second) (source target) (path : isReachable first source target) : isReachable (numSetTreeUnion first second) source target; isReachable is the reviewed is_reachable_def port (RTC of is_adjacent), so the statement is the same reflexive-transitive closure monotonicity."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
@@ -19218,16 +19218,16 @@
     "hol_name": "domain_spt_fold_union",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Reachability.lean",
     "lean_name": "domainFoldUnion",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed HOL probe confirms arbitrary payload type and the full fold-domain equality; full source fold correspondence review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed flat_elim_closure_probe capture (`domain (spt_fold union y tree) = domain y \u222a {n | \u2203k aSet. lookup k tree = SOME aSet \u2227 n \u2208 domain aSet}`) with domainFoldUnion : sptDomain (foldUnion acc tree) = fun key => sptDomain acc key \u2228 \u2203 source values, sptLookup source tree = some values \u2227 sptDomain values key. foldUnion is the untagged Flapjack rendering of HOL's spt_fold specialized to union (same left/node/right traversal order), sets are membership predicates (\u222a as \u2228, \u2208 domain as sptDomain), and lookup is sptLookup."
   },
   {
     "hol_path": "HOL/examples/algorithms/spt_closureScript.sml",
     "hol_name": "closure_spt_thm",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Reachability.lean",
     "lean_name": "closureTotal_reachable",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed HOL result captured; Lean proves the corresponding domain equality for the executed total closure, with closure and reachability correspondence review pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed flat_elim_closure_probe capture (`\u2200tree start. domain (closure_spt start tree) = {a | \u2203n. n \u2208 domain start \u2227 is_reachable tree n a}`) with closureTotal_reachable : sptDomain (closureTotal roots tree) = fun key => \u2203 root, sptDomain roots root \u2227 isReachable tree root key. closureTotal is the reviewed closure_spt_def port (the fuel-bounded executable proved equal to the source recursion by closureTotal_eq_closure), sets are membership predicates, and isReachable is the reviewed is_reachable_def port."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
