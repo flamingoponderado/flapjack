@@ -128404,40 +128404,40 @@
   "hol_name": "has_var_vars_flatten",
   "lean_path": "Flapjack/Compiler/Backend/DbVars/Proofs/Lookup.lean",
   "lean_name": "hasVarVarsFlatten",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed db_vars_definitions_probe capture (`has_var n (vars_flatten d) \u21d4 has_var n d`) with hasVarVarsFlatten : hasVar n (varsFlatten d) = hasVar n d; Bool equality of the two has_var values is the same statement as the iff, and varsFlatten is the reviewed vars_flatten_def port."
 },
 {
   "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
   "hol_name": "lookup_db_to_set",
   "lean_path": "Flapjack/Compiler/Backend/DbVars/Proofs/Lookup.lean",
   "lean_name": "lookupDbToSet",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed db_vars_definitions_probe capture (`has_var n d \u21d4 lookup n (db_to_set d) = SOME ()`) with lookupDbToSet : (hasVar n d = true) \u2194 sptLookup n (dbToSet d) = some (); HOL's stored theorem is an iff, and the Lean Bool test hasVar = true is the same proposition. dbToSet and hasVar are the reviewed ports."
 },
 {
   "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
   "hol_name": "lookup_db_to_set_acc",
   "lean_path": "Flapjack/Compiler/Backend/DbVars/Proofs/Lookup.lean",
   "lean_name": "lookupDbToSetAcc",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed db_vars_definitions_probe capture (`lookup n (db_to_set_acc k d s) = if has_var (n + k) d then SOME () else lookup n s`) with lookupDbToSetAcc: the same accumulated sparse-tree lookup, the same shifted has_var test and the same fallback lookup; dbToSetAcc, hasVar and NumSet are the reviewed db_to_set_acc_def, has_var_def and num_set ports."
 },
 {
   "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
   "hol_name": "MEM_vars_from_list",
   "lean_path": "Flapjack/Compiler/Backend/DbVars/Proofs/Lookup.lean",
   "lean_name": "memVarsFromList",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed db_vars_definitions_probe capture (`has_var n (vars_from_list vs) \u21d4 MEM n vs`) with memVarsFromList : (hasVar n (varsFromList vs) = true) \u2194 n \u2208 vs; varsFromList is the reviewed vars_from_list_def port."
 },
 {
   "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
   "hol_name": "MEM_vars_to_list",
   "lean_path": "Flapjack/Compiler/Backend/DbVars/Proofs/Lookup.lean",
   "lean_name": "memVarsToList",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed db_vars_definitions_probe capture (`MEM n (vars_to_list d) \u21d4 has_var n d`) with memVarsToList : (n \u2208 varsToList d) \u2194 hasVar n d = true; List membership is MEM and varsToList is the reviewed vars_to_list_def port."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",

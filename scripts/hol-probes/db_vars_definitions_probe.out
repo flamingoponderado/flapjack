@@ -6,3 +6,8 @@ vars_to_list_typed=∀(db :db_var_set). vars_to_list db = MAP (FST :num # unit -
 vars_from_list_typed=∀(vs :num list). vars_from_list vs = FOLDL (λ(s1 :db_var_set) (v :num). Union (Var v) s1) Empty vs
 vars_flatten_typed=∀(db :db_var_set). vars_flatten db = vars_from_list (vars_to_list db)
 has_var_typed=(∀(n :num). has_var n Empty ⇔ F) ∧ (∀(n :num) (v :num). has_var n (Var v) ⇔ n = v) ∧ (∀(n :num) (k :num) (d :db_var_set). has_var n (Shift k d) ⇔ has_var (n + k) d) ∧ ∀(n :num) (d1 :db_var_set) (d2 :db_var_set). has_var n (Union d1 d2) ⇔ has_var n d1 ∨ has_var n d2
+lookup_db_to_set_acc_typed=∀(d :db_var_set) (n :num) (k :num) (s :sptree$num_set). lookup n (db_to_set_acc k d s) = if has_var (n + k) d then SOME () else lookup n s
+lookup_db_to_set_typed=has_var (n :num) (d :db_var_set) ⇔ lookup n (db_to_set d) = SOME ()
+MEM_vars_to_list_typed=MEM (n :num) (vars_to_list (d :db_var_set)) ⇔ has_var n d
+MEM_vars_from_list_typed=∀(vs :num list) (n :num). has_var n (vars_from_list vs) ⇔ MEM n vs
+has_var_vars_flatten_typed=has_var (n :num) (vars_flatten (d :db_var_set)) ⇔ has_var n d
