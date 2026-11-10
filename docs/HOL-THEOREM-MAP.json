@@ -1719,6 +1719,30 @@
   "reviewer": "Source comparison with list_to_v_v_rel_typed: both unrestricted value lists, their pointwise relation premise and the related list-encoding conclusion agree. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
  },
  {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "EVERY_pure_correct",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/PureEvaluate.lean", "lean_name": "everyPureCorrect",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared EVERY_pure_correct_typed: the exported HOL theorem has one universally quantified conjunct, with independent compiler and FFI carriers, the EVERY pure premise, and the complete value, raised-exception and abort cases in order. The finite-map qualifier records refs and code in the closure state; evaluate inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_pure",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/PureEvaluate.lean", "lean_name": "evaluatePure",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_pure_typed: binder order, grouped evaluation and EVERY pure premises, and the existential over the success-or-type-error disjunction match. Compiler and FFI carriers are independent. The finite-map qualifier records refs and code in the closure state; evaluate inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "evaluate_pure_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/PureEvaluate.lean", "lean_name": "evaluatePureImp",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_pure_IMP_local_typed, replayed with the original HOL proof: binder order, grouped evaluation, EVERY pure and non-type-error premises, and the existential result, state and length conjunction match. Compiler and FFI carriers are independent. The finite-map qualifier records refs and code in the closure state; evaluate inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_fv1_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "altFvOneSource_equations",
   "statement_status": "reviewed_exact",

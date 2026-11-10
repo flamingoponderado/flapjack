@@ -10,9 +10,7 @@ namespace Flapjack.Compiler.Backend.ClosProps
 open Flapjack.Compiler.Backend.ClosSem
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-/-- A pure expression list cannot change state or raise a non-type error.
-This proof-side result is untagged pending evaluator and carrier review. -/
-theorem evaluate_pure {C F : Type} (expressions : List ClosLang.Exp) (env : List Value)
+private theorem evaluatePureAux {C F : Type} (expressions : List ClosLang.Exp) (env : List Value)
     (source next : State C F) (result : Result (List Value) Value)
     (pure : ClosLang.pureList expressions = true)
     (run : evaluate expressions env source = (result, next))
@@ -197,15 +195,63 @@ theorem evaluate_pure {C F : Type} (expressions : List ClosLang.Exp) (env : List
                 exact ⟨[value], rfl, rfl⟩
   exact all (expsWeight expressions) expressions env source next result rfl pure run notType
 
-/-- Successful pure evaluation returns one value per expression and leaves
-the source state unchanged. -/
-theorem evaluate_pure_length {C F : Type} (expressions : List ClosLang.Exp) (env : List Value)
-    (source next : State C F) (result : Result (List Value) Value)
-    (pure : ClosLang.pureList expressions = true)
-    (run : evaluate expressions env source = (result, next))
-    (notType : result ≠ .err (.abort .typeError)) :
-    ∃ values, result = .val values ∧ next = source ∧ values.length = expressions.length := by
-  obtain ⟨values, rfl, rfl⟩ := evaluate_pure expressions env source next result pure run notType
-  exact ⟨values, rfl, rfl, (evaluate_length (C := C) (F := F)).1 expressions env next next values run⟩
+namespace PureEvaluatePort
+/-- Closure states use canonical finite-support maps. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end PureEvaluatePort
+
+/-- Pure expression evaluation either preserves the state and returns one
+value per expression, or aborts with a type error. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "EVERY_pure_correct"
+  (fmap_as_finite_support := [refs, code])]
+theorem everyPureCorrect {C F : Type} :
+    ∀ (expressions : List ClosLang.Exp) (env : List Value) (source : State C F),
+      (∀ expression ∈ expressions, ClosLang.pure expression = true) →
+      match evaluate expressions env source with
+      | (.val values, next) => next = source ∧ values.length = expressions.length
+      | (.err (.raise _), _) => False
+      | (.err (.abort error), _) => error = .typeError := by
+  intro expressions env source pure
+  have pureList : ClosLang.pureList expressions = true := by
+    rw [ClosLang.pureList_eq_all, List.all_eq_true]
+    exact pure
+  cases run : evaluate expressions env source with
+  | mk result next =>
+    cases result with
+    | val values =>
+      obtain ⟨_, resultEq, stateEq⟩ := evaluatePureAux expressions env source next (.val values)
+        pureList run (by simp)
+      exact ⟨stateEq, (evaluate_length (C := C) (F := F)).1 expressions env source next values run⟩
+    | err error =>
+      by_cases typeError : error = .abort .typeError
+      · subst error; rfl
+      · have notType : (Result.err error : Result (List Value) Value) ≠ .err (.abort .typeError) := by
+          intro eq
+          cases eq
+          exact typeError rfl
+        obtain ⟨_, impossible, _⟩ := evaluatePureAux expressions env source next (.err error)
+          pureList run notType
+        cases impossible
+
+/-- Pure evaluation either returns values without changing state or reports
+a type error. -/
+@[hol "cakeml/compiler/backend/semantics/closPropsScript.sml" "evaluate_pure"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluatePure {C F : Type} (expressions : List ClosLang.Exp) (env : List Value)
+    (source : State C F) (result : Result (List Value) Value) (next : State C F)
+    (h : evaluate expressions env source = (result, next) ∧
+      ∀ expression ∈ expressions, ClosLang.pure expression = true) :
+    ∃ values, (result = .val values ∧ next = source) ∨ result = .err (.abort .typeError) := by
+  have correct := everyPureCorrect expressions env source h.2
+  rw [h.1] at correct
+  cases result with
+  | val values => exact ⟨values, Or.inl ⟨rfl, correct.1⟩⟩
+  | err error =>
+    cases error with
+    | raise value => exact False.elim correct
+    | abort abort => exact ⟨[], Or.inr (by cases correct; rfl)⟩
 
 end Flapjack.Compiler.Backend.ClosProps

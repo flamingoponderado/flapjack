@@ -30,7 +30,9 @@ theorem pureFunctionEvaluation {C F : Type} (c : Config) (x targetX : ClosLang.E
     ∃ fn targetFn, result = .val [fn] ∧ targetResult = .val [targetFn] ∧
       next = source ∧ targetNext = target ∧ ValueRel c current fn targetFn := by
   have sourcePure : ClosLang.pureList [x] = true := by simpa [ClosLang.pureList] using pure
-  obtain ⟨values, sourceResult, sourceState⟩ := evaluate_pure [x] env source next result sourcePure run noType
+  obtain ⟨values, outcome⟩ := evaluatePure [x] env source result next
+    ⟨run, by simpa [ClosLang.pureList_eq_all, List.all_eq_true] using sourcePure⟩
+  have ⟨sourceResult, sourceState⟩ := outcome.resolve_right noType
   subst result
   obtain ⟨fn, rfl⟩ := evaluate_singleton_value x env source next values run
   cases targetResult with
@@ -45,8 +47,11 @@ theorem pureFunctionEvaluation {C F : Type} (c : Config) (x targetX : ClosLang.E
         simpa using all
       have targetListPure : ClosLang.pureList [targetX] = true := by
         simpa [ClosLang.pureList] using targetPure
-      obtain ⟨_, _, targetState⟩ := evaluate_pure [targetX] targetEnv target targetNext
-        (.val [_]) targetListPure targetRun (by simp)
+      have targetState : targetNext = target := by
+        have correct := everyPureCorrect [targetX] targetEnv target
+          (by simpa [ClosLang.pureList_eq_all, List.all_eq_true] using targetListPure)
+        rw [targetRun] at correct
+        exact correct.1
       exact ⟨fn, _, rfl, rfl, sourceState, targetState, fnRel⟩
 
 end Flapjack.Compiler.Backend.ClosKnown.InlinePureEvaluation

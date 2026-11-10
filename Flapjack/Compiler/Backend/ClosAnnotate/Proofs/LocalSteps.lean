@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.RecursiveFunctions
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Control
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.PureBindings
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Primitive
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.PureEvaluate
 
 @[expose] public section
 
@@ -426,8 +427,10 @@ theorem evaluate_let_step {C F : Type} (trace : BackendCommon.Tra)
         rw [evaluate, fixClock_evaluate, bindingsRun] at run
         cases run
         exact noType rfl
+      have allPure : ∀ expression ∈ bindings, ClosLang.pure expression = true := by
+        simpa [pureList_eq_all, List.all_eq_true] using pure
       obtain ⟨values, resultEq, stateEq, valuesLength⟩ :=
-        evaluate_pure_length bindings env source middle bindingsResult pure bindingsRun bindingsNoType
+        evaluatePureImp bindings env source bindingsResult middle ⟨bindingsRun, allPure, bindingsNoType⟩
       subst bindingsResult
       subst middle
       have bodyRun : evaluate [body] (values ++ env) source = (result, sourceNext) := by

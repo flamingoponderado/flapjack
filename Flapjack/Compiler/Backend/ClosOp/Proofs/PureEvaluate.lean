@@ -43,8 +43,11 @@ theorem evaluateEl {C F : Type} (xs : List ClosLang.Exp) (i : Nat) (vs : List Va
         cases run
       | val headValues =>
         obtain ⟨headValue, rfl⟩ := evaluate_singleton_value x env s headState headValues headRun
-        obtain ⟨_, _, stateEq⟩ := ClosProps.evaluate_pure [x] env s headState (.val [headValue])
-          headPure headRun (by simp)
+        have stateEq : headState = s := by
+          have correct := ClosProps.everyPureCorrect [x] env s
+            (by simpa [ClosLang.pureList_eq_all, List.all_eq_true] using headPure)
+          rw [headRun] at correct
+          exact correct.1
         subst headState
         rw [ClosProps.evaluate_cons_value x xs env s s headValue headRun] at run
         cases tailRun : evaluate xs env s with
@@ -129,8 +132,11 @@ private theorem conjunctionHead {C F : Type} (x y : ClosLang.Exp) (xs : List Clo
       cases run
     | val headValues =>
       obtain ⟨v, rfl⟩ := evaluate_singleton_value x env s headState headValues headRun
-      obtain ⟨_, _, stateEq⟩ := ClosProps.evaluate_pure [x] env s headState (.val [v])
-        headPure headRun (by simp)
+      have stateEq : headState = s := by
+        have correct := ClosProps.everyPureCorrect [x] env s
+          (by simpa [ClosLang.pureList_eq_all, List.all_eq_true] using headPure)
+        rw [headRun] at correct
+        exact correct.1
       subst headState
       simp only [conjList] at run
       rw [evaluate, fixClock_evaluate, headRun] at run

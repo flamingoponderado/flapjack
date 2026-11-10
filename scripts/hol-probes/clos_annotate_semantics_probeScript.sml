@@ -328,6 +328,17 @@ val rel_update_thunk_replay = prove (
       >> simp [ref_rel_def, Once clos_annotateProofTheory.v_rel_cases]
       >> metis_tac []));
 val _ = show "rel_update_thunk_local_typed=" rel_update_thunk_replay;
+val evaluate_pure_IMP_replay = prove (
+  ``evaluate (xs,env,(s:('c,'ffi)closSem$state)) = (q,r) /\ EVERY pure xs /\
+    q <> Rerr (Rabort Rtype_error) ==>
+    ?vs. q = Rval vs /\ r = s /\ LENGTH vs = LENGTH xs``,
+  rw[] >> imp_res_tac EVERY_pure_correct >> fs[]
+  >> first_x_assum(qspecl_then[`s`,`env`]mp_tac)
+  >> simp[case_eq_thms] >> CASE_TAC >> simp[] >> CASE_TAC >> simp[]
+  >> strip_tac >> fs[]);
+val _ = show "evaluate_pure_IMP_local_typed=" evaluate_pure_IMP_replay;
+val _ = show "EVERY_pure_correct_typed=" closPropsTheory.EVERY_pure_correct;
+val _ = show "evaluate_pure_typed=" closPropsTheory.evaluate_pure;
 (* Replay the source-local theorem, which is not exported by the theory. *)
 val state_rel_clocks_eqs_replay = prove (
   ``state_rel s t ==> s.clock = t.clock``,
