@@ -15,6 +15,12 @@ set_option backward.privateInPublic.warn false
 namespace Flapjack.Compiler.Backend.ClosCall
 open Flapjack ClosSem
 
+/-- Recognize recursive closures in the source value datatype. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "is_Recclosure_def"]
+def isRecClosure : Value → Bool
+  | .recclosure _ _ _ _ _ => true
+  | _ => false
+
 private def toBroad {K V : Type} (code : HolFiniteMapExact K V) : K → Option V := code.lookup
 private def ofBroad {K V : Type} (lookup : K → Option V)
     (support : ∃ keys : List K, ∀ key, lookup key ≠ none → key ∈ keys) : HolFiniteMapExact K V :=

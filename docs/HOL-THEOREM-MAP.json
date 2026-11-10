@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "is_Recclosure_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "isRecClosure",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared is_recclosure_def_type in clos_call_code_list_probe.out and HOL source: the recursive-closure constructor returns true and all six other original value constructors return false, with their exact carriers and fixed word widths."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "env_rel_DROP_args",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Environment.lean", "lean_name": "envRel_dropArgs",
   "statement_status": "reviewed_exact",
