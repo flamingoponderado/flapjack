@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.Bvi.Syntax
 public import Flapjack.Compiler.Backend.Bvi.Budget
 public import Flapjack.Compiler.Backend.BackendCommon.BvlStubs
+public import Flapjack.Compiler.Backend.BackendCommon.SmallInt
 public import Flapjack.HolRef
 
 @[expose] public section
@@ -100,7 +101,7 @@ mutual
           match ← extractOneFuel fuel n loc tag x with
           | none => pure none
           | some (bs1, .inl vs1) =>
-              if vs1.length + vs2.length ≤ 268435457 then
+              if BackendCommon.smallEnoughInt (Int.ofNat (vs1.length + vs2.length)) then
                 pure (some (bs1 ++ bs2, .inl (vs1 ++ shiftVars bs1.length vs2)))
               else pure none
           | some (bs1, .inr (.callBlock _ [] child [])) =>

@@ -127147,7 +127147,7 @@
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ExtractCorrespondence.lean",
   "lean_name": "extractListSource",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared bvi_to_cb_aux_def_typed with source lines 210-268: the empty, singleton and cons list clauses, including shift_vars, the small_enough_int length bound and the shift_cb 1 cons case, match the Lean list traversal. Lean drops the vacuous non-negative lower half of the length bound."
+  "reviewer": "Compared bvi_to_cb_aux_def_typed with source lines 210-268: the empty, singleton and cons list clauses match, including shift_vars, the shift_cb 1 cons case, and the cons bound, which Lean now states as smallEnoughInt (Int.ofNat (vs1.length + vs2.length)) -- exactly HOL's small_enough_int &(LENGTH vs1 + LENGTH vs2), both halves included."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
