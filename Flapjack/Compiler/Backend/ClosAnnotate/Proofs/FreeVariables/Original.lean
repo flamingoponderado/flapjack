@@ -157,4 +157,40 @@ theorem altFvSource_equations :
   · intros; simp [altFv_handle]
   · intros; simp [altFv_call]
 
+/-- Singleton free-variable observations for the source constructor equations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "alt_fv1_thm"]
+theorem altFvOneSource_equations :
+    (∀ (y : Exp) (xs : List Exp) (x : Exp) n,
+      altFvSource n (x :: y :: xs) = true ↔ altFvOneSource n (x) = true ∨ altFvSource n (y :: xs) = true) ∧
+    (∀ (trace : BackendCommon.Tra) v n, altFvOneSource n (.var trace v) = true ↔ n = v) ∧
+    (∀ (x3 x2 x1 : Exp) (trace : BackendCommon.Tra) n,
+      altFvOneSource n (.ifThenElse trace x1 x2 x3) = true ↔
+      altFvOneSource n (x1) = true ∨ altFvOneSource n (x2) = true ∨ altFvOneSource n (x3) = true) ∧
+    (∀ (xs : List Exp) (body : Exp) (trace : BackendCommon.Tra) n,
+      altFvOneSource n (.let trace xs body) = true ↔
+      if noOverlap xs.length (altFreeSource [body]).2 = true ∧ ∀ e ∈ xs, pure e = true then
+        altFvOneSource (n + xs.length) (body) = true
+      else altFvSource n xs = true ∨ altFvOneSource (n + xs.length) (body) = true) ∧
+    (∀ (body : Exp) (trace : BackendCommon.Tra) n,
+      altFvOneSource n (.raise trace body) = true ↔ altFvOneSource n (body) = true) ∧
+    (∀ (body : Exp) (trace : BackendCommon.Tra) n,
+      altFvOneSource n (.tick trace body) = true ↔ altFvOneSource n (body) = true) ∧
+    (∀ (xs : List Exp) (trace : BackendCommon.Tra) (op : Op) n,
+      altFvOneSource n (.op trace op xs) = true ↔ altFvSource n xs = true) ∧
+    (∀ (xs : List Exp) (fn : Exp) (trace : BackendCommon.Tra) n (loc : Option Nat),
+      altFvOneSource n (.app trace loc fn xs) = true ↔ altFvOneSource n (fn) = true ∨ altFvSource n xs = true) ∧
+    (∀ (body : Exp) (vs : Option (List Nat)) (name : Flapjack.Basis.Pure.MlString.MlString) arity n (loc : Option Nat),
+      altFvOneSource n (.fn name loc vs arity body) = true ↔ altFvOneSource (n + arity) (body) = true) ∧
+    (∀ (body : Exp) (vs : Option (List Nat)) (names : List Flapjack.Basis.Pure.MlString.MlString) n (loc : Option Nat)
+       (fns : List (Nat × Exp)),
+      altFvOneSource n (.letrec names loc vs fns body) = true ↔
+      (∃ arity expr, (arity, expr) ∈ fns ∧ altFvOneSource (n + arity + fns.length) (expr) = true) ∨
+        altFvOneSource (n + fns.length) (body) = true) ∧
+    (∀ (handler body : Exp) (trace : BackendCommon.Tra) n,
+      altFvOneSource n (.handle trace body handler) = true ↔
+        altFvOneSource n (body) = true ∨ altFvOneSource (n + 1) (handler) = true) ∧
+    (∀ (xs : List Exp) (trace : BackendCommon.Tra) ticks n dest,
+      altFvOneSource n (.call trace ticks dest xs) = true ↔ altFvSource n xs = true) := by
+  simpa only [altFvOneSource] using altFvSource_equations.2
+
 end Flapjack.Compiler.Backend.ClosAnnotate
