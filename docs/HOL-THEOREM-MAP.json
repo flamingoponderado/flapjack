@@ -116985,8 +116985,8 @@
     "lean_name": "iAssign",
     "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml",
     "hol_name": "iAssign_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed bvi_to_data_state_probe capture (`iAssign n1 op vs live env = if op_requires_names op then let xs = SOME (list_to_num_set (vs++live++env)) in if op = IntOp Greater then Assign n1 (IntOp Less) (REVERSE vs) xs else if op = IntOp GreaterEq then Assign n1 (IntOp LessEq) (REVERSE vs) xs else Assign n1 op vs xs else let k = op_space_req op (LENGTH vs) in if k = 0 then (if op = WordOp (WordTest W8 (Compare Gt)) then Assign n1 (WordOp (WordTest W8 (Compare Lt))) (REVERSE vs) NONE else if op = WordOp (WordTest W8 (Compare Geq)) then Assign n1 (WordOp (WordTest W8 (Compare Leq))) (REVERSE vs) NONE else Assign n1 op vs NONE) else Seq (MakeSpace k (list_to_num_set (vs++live++env))) (Assign n1 op vs NONE)`) with iAssign: every comparison and clause matches, with list_to_num_set rendered by the Flapjack-only helper namesOfList (HOL's right-fold insert, sptreeScript list_to_num_set), op_requires_names/op_space_req by the reviewed opRequiresNames/opSpaceReq ports, and MakeSpace by the reviewed DataLang constructor. The Lean definition computes the name set before the branch, which is a harmless let-hoist of a pure value."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataSimp.lean",
@@ -117049,8 +117049,8 @@
     "lean_name": "optimise",
     "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml",
     "hol_name": "optimise_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed bvi_to_data_state_probe capture (`optimise prog = compile (simp (FST (compile prog LN)) Skip)`) with optimise p := DataSpace.compile (DataSimp.simp (DataLive.compile p .ln).1 .skip): the same data_live compile, FST projection, simp with Skip and data_space compile composition, using the DataLive.compile, DataSimp.simp and DataSpace.compile ports of data_liveScript compile_def, data_simpScript simp_def and data_spaceScript compile_def."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Variables.lean",
@@ -127738,40 +127738,40 @@
   "hol_name": "compile_exp_def",
   "lean_path": "Flapjack/Compiler/Backend/BviToData/CompileTotal.lean",
   "lean_name": "compileExp",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "documented_mismatch",
+  "reviewer": "Source comparison: HOL compile_exp_def (bvi_to_dataScript.sml:309-312) is optimise (FST (compile arg_count (COUNT_LIST arg_count) T [] [exp])); the Lean compileExp uses the singleton-threaded compile_sing form, which is the right-hand side of HOL compile_exp_eq, and Lean compileExp_source proves it equal to the list-shaped compileSource (compile_def) form. The body is not the source definition, so the tag is withdrawn. Open work: move compileExp below compileSource, define it with the reviewed compileSource, and re-establish the bounded-traversal agreement (compileExpBounded_agrees, compileProgBounded_agrees)."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml",
   "hol_name": "compile_sing_def",
   "lean_path": "Flapjack/Compiler/Backend/BviToData/CompileTotal.lean",
   "lean_name": "compileList",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_to_data_state_probe capture of compile_sing_def with compileSing and compileList: compileSing has exactly the eleven expression clauses (Var with any_el -> env[v]?.getD 0, If, Let, Raise, Return, Op, Tick, Force, Call NONE, Call (SOME handler), LetCall with GENLIST Var -> List.range/map) and compileList the two list clauses of the same mutual HOL definition. Clause order and the pair destructuring match; no clause is added, dropped or weakened."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml",
   "hol_name": "compile_part_def",
   "lean_path": "Flapjack/Compiler/Backend/BviToData/CompileTotal.lean",
   "lean_name": "compilePart",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_to_data_state_probe capture (`compile_part (name, arg_count, exp) = (name, arg_count, compile_exp arg_count exp)`) with compilePart part := (part.1, part.2.1, compileExp part.2.1 part.2.2) over a right-associated Nat \u00d7 Nat \u00d7 Exp triple; the fields and the compileExp call match. compileExp itself is documented as a mismatch in its own row."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml",
   "hol_name": "compile_prog_def",
   "lean_path": "Flapjack/Compiler/Backend/BviToData/CompileTotal.lean",
   "lean_name": "compileProg",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_to_data_state_probe capture (`compile_prog prog = MAP compile_part prog`) with compileProg program := program.map compilePart."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml",
   "hol_name": "compile_sing_def",
   "lean_path": "Flapjack/Compiler/Backend/BviToData/CompileTotal.lean",
   "lean_name": "compileSing",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvi_to_data_state_probe capture of compile_sing_def with compileSing and compileList: compileSing has exactly the eleven expression clauses (Var with any_el -> env[v]?.getD 0, If, Let, Raise, Return, Op, Tick, Force, Call NONE, Call (SOME handler), LetCall with GENLIST Var -> List.range/map) and compileList the two list clauses of the same mutual HOL definition. Clause order and the pair destructuring match; no clause is added, dropped or weakened."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",

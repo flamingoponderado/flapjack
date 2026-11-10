@@ -80,9 +80,15 @@ termination_by xs => sizeOf xs
 end
 
 /-- Compile a complete expression, then apply the original optimization sequence.
-This uses the source's `compile_exp_eq` rewrite through `compile_sing`; its
-agreement with the original list traversal is proved in `Proofs.CompileSource`. -/
-@[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "compile_exp_def"]
+HOL's `compile_exp_def` is the list-shaped `optimise (FST (compile arg_count
+(COUNT_LIST arg_count) T [] [exp]))`; this definition instead uses the
+singleton-threaded `compile_sing` form, which is the right-hand side of HOL's
+`compile_exp_eq`. `compileExp_source` (Proofs/CompileSource.lean) proves the
+two agree, but this is not the source-shaped definition: the exact port would
+call the reviewed `compileSource` (`compile_def`) below `CompileSource`.
+
+Former reference: `@[hol "cakeml/compiler/backend/bvi_to_dataScript.sml"
+"compile_exp_def"]`. -/
 noncomputable def compileExp (argc : Nat) (exp : Bvi.Exp) : DataLang.Prog :=
   optimise (compileSing argc (List.range argc) true [] exp).1
 
