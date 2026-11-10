@@ -234,9 +234,9 @@ theorem remove_fvs_correct {C F : Type} (xs : List ClosLang.Exp) (env : List Val
     (premises : evaluate xs env source = (result, next) ∧
       List.Forall₂ ValueRel env nextEnv ∧ StateRel source target) :
     ∃ targetResult targetNext,
-      evaluate (removeList env.length xs) nextEnv target = (targetResult, targetNext) ∧
+      evaluate (removeSource env.length xs) nextEnv target = (targetResult, targetNext) ∧
       ResultRel result targetResult ∧ StateRel next targetNext := by
-  exact evaluate_remove_fvs.1 xs env source result next (removeList env.length xs) nextEnv target
+  exact evaluate_remove_fvs.1 xs env source result next (removeSource env.length xs) nextEnv target
     ⟨premises.1, premises.2.1, premises.2.2, rfl⟩
 end SimulationPort
 

@@ -6,6 +6,36 @@
   "reviewer": "Compared has_var_mk_union_typed: the natural index and two db_var_set arguments retain HOL order, and the Boolean predicate rendered as equality to true preserves the full disjunction equivalence."
  },
  {
+  "hol_path": "cakeml/compiler/backend/clos_fvsScript.sml", "hol_name": "remove_fvs_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Source.lean", "lean_name": "removeSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared remove_typed and every original list and singleton clause including binder bounds, HOL HD, processed list length and the recursive-function map. The attached map supplies termination evidence."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_fvsScript.sml", "hol_name": "remove_fvs_sing_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Source.lean", "lean_name": "removeSource_sing_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared remove_sing_eq_typed: all three original singleton, list and function-list equality conjuncts and bound orders agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_fvsScript.sml", "hol_name": "compile_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Source.lean", "lean_name": "compileSource_eq_list",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_eq_typed: source compilation equals the singleton-derived list traversal at bound zero."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_fvsScript.sml", "hol_name": "compile_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Source.lean", "lean_name": "compile",
+  "statement_status": "documented_mismatch",
+  "reviewer": "The executed pass uses the singleton-derived list traversal. compileSource is the tagged source-shaped definition; compileSource_eq_compile proves agreement."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/clos_fvsScript.sml", "hol_name": "compile_inc_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Source.lean", "lean_name": "compileInc",
+  "statement_status": "documented_mismatch",
+  "reviewer": "The executed pass uses executable compile. compileIncSource is the tagged source-shaped definition; compileIncSource_eq_compileInc proves agreement."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/clos_knownScript.sml", "hol_name": "known_compile_inc_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Compile.lean", "lean_name": "knownCompileInc",
   "statement_status": "documented_mismatch",
@@ -8364,9 +8394,9 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
   "hol_name": "code_locs_remove_fvs",
   "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/CodeLocations.lean",
-  "lean_name": "removeList_codeLocations",
+  "lean_name": "removeSource_codeLocations",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the source theorem and regenerated fvs_code_locations_typed: the complete ordered code-location list is equal before and after the source-shaped traversal; the free-variable bound is universally quantified when applicable. Source review and kernel checking do not establish cross-language equivalence."
+  "reviewer": "Compared the complete HOL statement and typed capture: the original list-shaped removal appears with its original bounds and premises; removeSource_sing_eq relates it to the executable traversal."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
@@ -8548,9 +8578,9 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
   "hol_name": "remove_fvs_every_Fn_SOME",
   "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Syntax.lean",
-  "lean_name": "removeList_locations",
+  "lean_name": "removeSource_locations",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared source theorem and fvs_locations_typed from the regenerated HOL probe: function-location presence is equivalent before and after the corresponding source-shaped traversal. The free-variable bound remains universally quantified when applicable. Kernel checking and source review do not establish cross-language equivalence."
+  "reviewer": "Compared the complete HOL statement and typed capture: the original list-shaped removal appears with its original bounds and premises; removeSource_sing_eq relates it to the executable traversal."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
@@ -11648,25 +11678,25 @@
     "hol_path": "cakeml/compiler/backend/clos_fvsScript.sml",
     "hol_name": "LENGTH_remove_fvs",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Source.lean",
-    "lean_name": "removeList_length",
+    "lean_name": "removeSource_length",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared remove_length_typed and remove_sing_eq_typed: for every natural bound and expression list, the optimized source-equivalent list traversal preserves length. No extra hypothesis or changed carrier is present. Source review and Lean checking do not establish cross-language equivalence."
+    "reviewer": "Compared remove_length_typed: the original list-shaped removal preserves length for every bound and input."
   },
   {
     "hol_path": "cakeml/compiler/backend/clos_fvsScript.sml",
     "hol_name": "compile_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Source.lean",
-    "lean_name": "compile",
+    "lean_name": "compileSource",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared compile_typed and remove_sing_eq_typed: original compile applies remove_fvs to the input list at bound zero, and the typed source equivalence identifies removeList with that original traversal. compileBounded_eq_source proves the executed list retry returns this result. Source review and Lean checking do not establish cross-language equivalence."
+    "reviewer": "Compared compile_typed: the original pass applies removeSource at bound zero; compileSource_eq_compile proves agreement with the executable."
   },
   {
     "hol_path": "cakeml/compiler/backend/clos_fvsScript.sml",
     "hol_name": "compile_inc_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Source.lean",
-    "lean_name": "compileInc",
+    "lean_name": "compileIncSource",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared compile_inc_typed: the first input component is compiled and the second is discarded; the arbitrary input auxiliary type and output list element type remain independent. Source review and Lean checking do not establish cross-language equivalence."
+    "reviewer": "Compared compile_inc_typed: the original compile is applied to the first input and the output auxiliary list is empty, with independent input and output auxiliary types."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
@@ -128676,40 +128706,40 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Syntax.lean",
   "statement_status": "reviewed_exact",
   "hol_name": "remove_fvs_every_Fn_vs_NONE",
-  "lean_name": "removeList_varsNone",
-  "reviewer": "Compared the typed original in clos_fvs_correctness_probe.out. The transformed and original expression lists have the same absent-capture-annotation predicate for every bound. removeSource is the original list traversal; removeSource_sing_eq proves agreement with removeList. Source comparison and Lean checking do not establish cross-language equivalence."
+  "lean_name": "removeSource_varsNone",
+  "reviewer": "Compared the complete HOL statement and typed capture: the original list-shaped removal appears with its original bounds and premises; removeSource_sing_eq relates it to the executable traversal."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Syntax.lean",
   "statement_status": "reviewed_exact",
   "hol_name": "fv_max_remove_fvs",
-  "lean_name": "removeList_fvMax",
-  "reviewer": "Compared the typed original in clos_fvs_correctness_probe.out. The original absent-capture-annotation premise implies every free variable of the transformed list is below the given bound; fvMax unfolds to precisely that universal condition. removeSource is the original list traversal; removeSource_sing_eq proves agreement with removeList. Source comparison and Lean checking do not establish cross-language equivalence."
+  "lean_name": "removeSource_fvMax",
+  "reviewer": "Compared the complete HOL statement and typed capture: the original list-shaped removal appears with its original bounds and premises; removeSource_sing_eq relates it to the executable traversal."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Syntax.lean",
   "statement_status": "reviewed_exact",
   "hol_name": "remove_fvs_set_globals",
-  "lean_name": "removeList_setGlobals",
-  "reviewer": "Compared the typed original in clos_fvs_correctness_probe.out. The transformed and original lists have identical maps of per-expression global-write bags. removeSource is the original list traversal; removeSource_sing_eq proves agreement with removeList. Source comparison and Lean checking do not establish cross-language equivalence."
+  "lean_name": "removeSource_setGlobals",
+  "reviewer": "Compared the complete HOL statement and typed capture: the original list-shaped removal appears with its original bounds and premises; removeSource_sing_eq relates it to the executable traversal."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Syntax.lean",
   "statement_status": "reviewed_exact",
   "hol_name": "remove_fvs_elist_globals",
-  "lean_name": "removeList_globals",
-  "reviewer": "Compared the typed original in clos_fvs_correctness_probe.out. The transformed and original lists have identical combined global-write bags. removeSource is the original list traversal; removeSource_sing_eq proves agreement with removeList. Source comparison and Lean checking do not establish cross-language equivalence."
+  "lean_name": "removeSource_globals",
+  "reviewer": "Compared the complete HOL statement and typed capture: the original list-shaped removal appears with its original bounds and premises; removeSource_sing_eq relates it to the executable traversal."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Syntax.lean",
   "statement_status": "reviewed_exact",
   "hol_name": "remove_fvs_esgc_free",
-  "lean_name": "removeList_esgcFree",
-  "reviewer": "Compared the typed original in clos_fvs_correctness_probe.out. The transformed and original lists satisfy the same EVERY esgc_free condition; esgcFreeList_iff establishes the source list predicate. removeSource is the original list traversal; removeSource_sing_eq proves agreement with removeList. Source comparison and Lean checking do not establish cross-language equivalence."
+  "lean_name": "removeSource_esgcFree",
+  "reviewer": "Compared the complete HOL statement and typed capture: the original list-shaped removal appears with its original bounds and premises; removeSource_sing_eq relates it to the executable traversal."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",

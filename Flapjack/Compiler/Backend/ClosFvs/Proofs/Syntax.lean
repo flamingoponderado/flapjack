@@ -39,7 +39,6 @@ theorem removeSing_varsNone (expression : Exp) (bound : Nat) :
 termination_by sizeOf expression
 
 /-- Cleanup preserves absent capture annotations in an expression list. -/
-@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "remove_fvs_every_Fn_vs_NONE"]
 theorem removeList_varsNone (expressions : List Exp) (bound : Nat) :
     everyFnVarsNone (removeList bound expressions) ↔ everyFnVarsNone expressions := by
   cases expressions with
@@ -89,7 +88,6 @@ theorem removeSing_locations (expression : Exp) (bound : Nat) :
 termination_by sizeOf expression
 
 /-- Cleanup preserves present function locations in an expression list. -/
-@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "remove_fvs_every_Fn_SOME"]
 theorem removeList_locations (expressions : List Exp) (bound : Nat) :
     everyFnLocationSome (removeList bound expressions) ↔ everyFnLocationSome expressions := by
   cases expressions with
@@ -141,7 +139,6 @@ theorem removeSing_globals (expression : Exp) (bound : Nat) :
 termination_by sizeOf expression
 
 /-- Cleanup preserves the combined global-write bag of an expression list. -/
-@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "remove_fvs_elist_globals"]
 theorem removeList_globals (expressions : List Exp) (bound : Nat) :
     elistGlobals (removeList bound expressions) = elistGlobals expressions := by
   cases expressions with
@@ -164,7 +161,6 @@ decreasing_by all_goals subst_vars; simp_wf <;> omega
 end
 
 /-- Cleanup preserves each expression's global-write bag, in order. -/
-@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "remove_fvs_set_globals"]
 theorem removeList_setGlobals (expressions : List Exp) (bound : Nat) :
     (removeList bound expressions).map setGlobals = expressions.map setGlobals := by
   induction expressions with
@@ -197,7 +193,6 @@ theorem removeSing_esgcFree (expression : Exp) (bound : Nat) :
 termination_by sizeOf expression
 
 /-- Cleanup preserves global-write safety over expression lists. -/
-@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "remove_fvs_esgc_free"]
 theorem removeList_esgcFree (expressions : List Exp) (bound : Nat) :
     esgcFreeList (removeList bound expressions) ↔ esgcFreeList expressions := by
   cases expressions with
@@ -267,7 +262,6 @@ termination_by sizeOf expression
 
 /-- Cleanup bounds all free variables in a list of safely annotated
 expressions. -/
-@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "fv_max_remove_fvs"]
 theorem removeList_fvMax (expressions : List Exp) (bound : Nat) (safe : everyFnVarsNone expressions) :
     ClosKnown.fvMax bound (removeList bound expressions) := by
   cases expressions with
@@ -298,5 +292,41 @@ termination_by sizeOf functions
 decreasing_by all_goals subst_vars; simp_wf <;> omega
 
 end
+
+/-- The original list-shaped removal satisfies the HOL invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "remove_fvs_every_Fn_vs_NONE"]
+theorem removeSource_varsNone (bound : Nat) (expressions : List Exp) :
+    everyFnVarsNone (removeSource bound expressions) ↔ everyFnVarsNone expressions := by
+  simpa using removeList_varsNone expressions bound
+
+/-- The original list-shaped removal satisfies the HOL invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "remove_fvs_every_Fn_SOME"]
+theorem removeSource_locations (bound : Nat) (expressions : List Exp) :
+    everyFnLocationSome (removeSource bound expressions) ↔ everyFnLocationSome expressions := by
+  simpa using removeList_locations expressions bound
+
+/-- The original list-shaped removal satisfies the HOL invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "remove_fvs_elist_globals"]
+theorem removeSource_globals (bound : Nat) (expressions : List Exp) :
+    elistGlobals (removeSource bound expressions) = elistGlobals expressions := by
+  simpa using removeList_globals expressions bound
+
+/-- The original list-shaped removal satisfies the HOL invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "remove_fvs_set_globals"]
+theorem removeSource_setGlobals (bound : Nat) (expressions : List Exp) :
+    (removeSource bound expressions).map setGlobals = expressions.map setGlobals := by
+  simpa using removeList_setGlobals expressions bound
+
+/-- The original list-shaped removal satisfies the HOL invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "remove_fvs_esgc_free"]
+theorem removeSource_esgcFree (bound : Nat) (expressions : List Exp) :
+    (∀ e ∈ removeSource bound expressions, esgcFree e) ↔ ∀ e ∈ expressions, esgcFree e := by
+  simpa [esgcFreeList_iff] using removeList_esgcFree expressions bound
+
+/-- The original list-shaped removal satisfies the HOL invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "fv_max_remove_fvs"]
+theorem removeSource_fvMax (bound : Nat) (expressions : List Exp) (safe : everyFnVarsNone expressions) :
+    ∀ v, freeVars v (removeSource bound expressions) → v < bound := by
+  simpa [ClosKnown.fvMax] using removeList_fvMax expressions bound safe
 
 end Flapjack.Compiler.Backend.ClosFvs

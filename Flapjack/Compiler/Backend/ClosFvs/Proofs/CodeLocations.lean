@@ -28,7 +28,6 @@ theorem removeSing_codeLocations (e : Exp) (bound : Nat) :
 termination_by sizeOf e
 
 /-- Cleanup preserves the original list of closure-code locations. -/
-@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "code_locs_remove_fvs"]
 theorem removeList_codeLocations (xs : List Exp) (bound : Nat) :
     codeLocations (removeList bound xs) = codeLocations xs := by
   cases xs with
@@ -46,4 +45,10 @@ theorem removeFuns_codeLocations (fns : List (Nat × Exp)) (count captured : Nat
 termination_by sizeOf fns
 decreasing_by all_goals subst_vars; simp_wf <;> omega
 end
+/-- The original list-shaped removal satisfies the HOL invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "code_locs_remove_fvs"]
+theorem removeSource_codeLocations (bound : Nat) (xs : List Exp) :
+    codeLocations (removeSource bound xs) = codeLocations xs := by
+  simpa using removeList_codeLocations xs bound
+
 end Flapjack.Compiler.Backend.ClosFvs

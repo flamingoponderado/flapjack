@@ -245,7 +245,7 @@ theorem evaluate_remove_fvs_cons {C F : Type} (first second : ClosLang.Exp)
             rw [restRun] at run
             obtain ⟨targetRestResult, targetLast, targetRestRun, restRel, lastRel⟩ :=
               restIH [value] middle firstRun restResult last (removeList env.length (second :: rest))
-                nextEnv targetMiddle ⟨restRun, envRel, middleRel, rfl⟩
+                nextEnv targetMiddle ⟨restRun, envRel, middleRel, by simp [CodeRel]⟩
             cases restResult with
             | err error =>
               simp only at run
@@ -476,7 +476,7 @@ theorem evaluate_remove_fvs_let {C F : Type} (trace : BackendCommon.Tra)
   | mk bindingsResult middle =>
     obtain ⟨targetResult, targetMiddle, targetRun, related, middleRel⟩ :=
       bindingsIH bindingsResult middle (removeList env.length bindings) nextEnv target
-        ⟨bindingsRun, envRel, states, rfl⟩
+        ⟨bindingsRun, envRel, states, by simp [CodeRel]⟩
     cases bindingsResult with
     | err error =>
       rw [evaluate, fixClock_evaluate, bindingsRun] at run
@@ -854,7 +854,7 @@ theorem evaluate_remove_fvs_app {C F : Type} (trace : BackendCommon.Tra)
     | mk argsResult middle =>
       obtain ⟨targetArgsResult, targetMiddle, targetArgsRun, argsRel, middleRel⟩ :=
         argsIH nonempty argsResult middle (removeList env.length (first :: rest)) nextEnv target
-          ⟨argsRun, envRel, states, rfl⟩
+          ⟨argsRun, envRel, states, by simp [CodeRel]⟩
       cases argsResult with
       | err error =>
         rw [evaluate, fixClock_evaluate, argsRun] at run
@@ -942,7 +942,7 @@ theorem evaluate_remove_fvs_call {C F : Type} (trace : BackendCommon.Tra)
   | mk argsResult middle =>
     obtain ⟨targetResult, targetMiddle, targetRun, related, middleRel⟩ :=
       argsIH argsResult middle (removeList env.length args) nextEnv target
-        ⟨argsRun, envRel, states, rfl⟩
+        ⟨argsRun, envRel, states, by simp [CodeRel]⟩
     cases argsResult with
     | err error =>
       rw [evaluate, fixClock_evaluate, argsRun] at run
@@ -994,7 +994,7 @@ theorem evaluate_ordinary_op {C F : Type} (trace : BackendCommon.Tra)
   | mk argsResult middle =>
     obtain ⟨targetArgsResult, targetMiddle, targetArgsRun, argsRel, middleRel⟩ :=
       argsIH argsResult middle (removeList env.length args) nextEnv target
-        ⟨argsRun, envRel, states, rfl⟩
+        ⟨argsRun, envRel, states, by simp [CodeRel]⟩
     rw [argsRun] at run
     rw [targetArgsRun]
     cases argsResult with
@@ -1076,7 +1076,7 @@ theorem evaluate_remove_fvs_install {C F : Type} (trace : BackendCommon.Tra)
   | mk argsResult middle =>
     obtain ⟨targetArgsResult, targetMiddle, targetArgsRun, argsRel, middleRel⟩ :=
       argsIH argsResult middle (removeList env.length args) nextEnv target
-        ⟨argsRun, envRel, states, rfl⟩
+        ⟨argsRun, envRel, states, by simp [CodeRel]⟩
     cases argsResult with
     | err error =>
       rw [evaluate_install_eq, argsRun] at run
@@ -1179,7 +1179,7 @@ theorem evaluate_remove_fvs_force {C F : Type} (trace : BackendCommon.Tra)
   | mk argsResult middle =>
     obtain ⟨targetArgsResult, targetMiddle, targetArgsRun, argsRel, middleRel⟩ :=
       argsIH argsResult middle (removeList env.length args) nextEnv target
-        ⟨argsRun, envRel, states, rfl⟩
+        ⟨argsRun, envRel, states, by simp [CodeRel]⟩
     cases argsResult with
     | err error =>
       rw [evaluate, fixClock_evaluate, argsRun] at run
