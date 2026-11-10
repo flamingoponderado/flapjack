@@ -83,4 +83,44 @@ theorem envRel_opInstall {A B : Type} (r : A → B → Prop) (env : List A) (env
       exists_eq_left, List.mem_map, exists_exists_and_eq_and]
     simp only [freeVarsExists, or_false]
 
+/-- Related prefixes and shifted tails give related whole environments. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "env_rel_DROP"]
+theorem envRel_drop {A B : Type} (R : A → B → Prop) (x : Nat) (l1 : List A) (l2 : List B)
+    (es : List (Nat × Exp))
+    (h : envRel R (l1.drop x) (l2.drop x) x es ∧
+      List.Forall₂ R (l1.take x) (l2.take x) ∧ x ≤ l1.length ∧ x ≤ l2.length) :
+    envRel R l1 l2 0 es := by
+  obtain ⟨tailRel, prefixRel, b1, b2⟩ := h
+  unfold envRel at tailRel ⊢
+  by_cases eq : l1.length = l2.length
+  · rw [if_pos eq]
+    have tailsEq : (l1.drop x).length = (l2.drop x).length := by simp [eq]
+    rw [if_pos tailsEq] at tailRel
+    have joined := List.rel_append prefixRel tailRel
+    simpa using joined
+  · rw [if_neg eq]
+    have tailsNe : (l1.drop x).length ≠ (l2.drop x).length := by
+      simp only [List.length_drop]
+      omega
+    rw [if_neg tailsNe] at tailRel
+    intro i used
+    by_cases prior : i < x
+    · have i1 : i < (l1.take x).length := by simp; omega
+      have i2 : i < (l2.take x).length := by simp; omega
+      have rel := prefixRel.get i1 i2
+      have bi1 : i < l1.length := by omega
+      have bi2 : i < l2.length := by omega
+      refine ⟨bi1, bi2, ?_⟩
+      simpa using rel
+    · have rest := tailRel (i - x) (by
+        obtain ⟨fn, mem, used⟩ := used
+        refine ⟨fn, mem, ?_⟩
+        convert used using 1; omega)
+      obtain ⟨hi1, hi2, rel⟩ := rest
+      have bi1 : i < l1.length := by simp only [List.length_drop] at hi1; omega
+      have bi2 : i < l2.length := by simp only [List.length_drop] at hi2; omega
+      refine ⟨bi1, bi2, ?_⟩
+      have shift : x + (i - x) = i := Nat.add_sub_of_le (Nat.le_of_not_gt prior)
+      simpa [shift] using rel
+
 end Flapjack.Compiler.Backend.ClosCall

@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "env_rel_DROP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Environment.lean", "lean_name": "envRel_drop",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared env_rel_drop in clos_call_env_rel_probe.out and HOL source: relation domain and codomain remain independent, and the original shifted-tail relation, prefix list relation and both length bounds imply the complete zero-offset environment relation."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "dest_closure_full_wfv",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ClosureWellFormed.lean", "lean_name": "destClosure_fullWellFormed",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
