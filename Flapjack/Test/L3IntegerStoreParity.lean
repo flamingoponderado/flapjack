@@ -1,7 +1,9 @@
 import Flapjack.RiscV.L3.Defs.IntegerStore
+import Flapjack.Test.Fixtures.L3
 set_option maxRecDepth 200000
 namespace Flapjack.Test.L3IntegerStoreParity
 open Flapjack.RiscV.L3
+open Flapjack.Test.Fixtures.L3
 /-! Flapjack-only original-oracle regressions, not whole atomic/runtime correctness.
 Arbitrary unrelated native fields are retained; every observed frame resets only
 fields the exact instruction may change. No standalone HOL theorem is claimed. -/
@@ -11,18 +13,6 @@ fields the exact instruction may change. No standalone HOL theorem is claimed. -
 private theorem singletonWord (b : Bool) :
     holV2w 1 [b] = (if b then (1 : BitVec 1) else 0) := by
   cases b <;> decide
-
--- Flapjack regression normalization for the complete aligned PTE word store.
--- No standalone HOL original; the original rawWriteData equation is unchanged.
-private theorem writeFullWord (w : BitVec 64) (s : riscv_state) :
-    rawWriteData (BitVec.ofNat 64 0, w, 8) s = «write'MEM» (w, BitVec.ofNat 61 0) s := by
-  have hmask : ((BitVec.setWidth 64 (BitVec.ofNat 1 1) <<< (8 * 8)) -
-      (BitVec.ofNat 64 1)) = BitVec.allOnes 64 := by decide
-  have hidx : holWordExtract 61 63 3 (BitVec.ofNat 64 0) = BitVec.ofNat 61 0 := by decide
-  have halign : holWordExtract 3 2 0 (BitVec.ofNat 64 0) = BitVec.ofNat 3 0 := by decide
-  simp only [rawWriteData, hmask, hidx, halign]
-  simp only [BitVec.toNat_zero, BEq.refl, ↓reduceIte,
-    BitVec.not_allOnes, BitVec.and_zero, BitVec.and_allOnes, BitVec.zero_or]
 
 -- Flapjack-specific empty-table normalizations, with no standalone HOL originals.
 -- Both retain arbitrary original parameters and the complete native state.
