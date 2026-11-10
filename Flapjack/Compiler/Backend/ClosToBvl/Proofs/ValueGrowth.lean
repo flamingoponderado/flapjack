@@ -99,7 +99,7 @@ theorem vRel_grow {maxApp : Nat} {f1 f2 : HolFiniteMapExact Nat Nat}
     (related : vRel maxApp f1 refs1 code1 x y)
     (submap : f1.submap f2) (frame : unmappedRefsSubmap refs1 refs2 f1 f2)
     (codeGrowth : sptSubspt code1 code2) : vRel maxApp f2 refs2 code2 x y :=
-  vRel_subspt f2 refs2 (vRel_grow_refs related submap frame) codeGrowth
+  vRel_subspt f2 refs2 ⟨vRel_grow_refs related submap frame, codeGrowth⟩
 
 /-- The analogous combined growth property for environments. -/
 theorem envRel_grow {maxApp : Nat} {f1 f2 : HolFiniteMapExact Nat Nat}
@@ -108,6 +108,6 @@ theorem envRel_grow {maxApp : Nat} {f1 f2 : HolFiniteMapExact Nat Nat}
     (related : envRel maxApp f1 refs1 code1 env targetEnv)
     (submap : f1.submap f2) (frame : unmappedRefsSubmap refs1 refs2 f1 f2)
     (codeGrowth : sptSubspt code1 code2) : envRel maxApp f2 refs2 code2 env targetEnv :=
-  envRel_subspt f2 refs2 (envRel_grow_refs related submap frame) codeGrowth
+  envRel_subspt _ f2 refs2 _ _ _ (envRel_grow_refs related submap frame) _ codeGrowth
 
 end Flapjack.Compiler.Backend.ClosToBvl

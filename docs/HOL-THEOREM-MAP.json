@@ -14627,6 +14627,33 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "cl_rel_subspt",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureRelation.lean",
+    "lean_name": "clRel_subspt",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["refs"],
+    "reviewer": "Source comparison: compared cl_rel_subspt_typed and source: free parameters precede the three closure components, with separate relation and sparse-tree extension premises. The refs parameter uses the canonical finite-support lookup codec."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "v_rel_subspt",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueRelation.lean",
+    "lean_name": "vRel_subspt",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["f", "refs"],
+    "reviewer": "Source comparison: compared v_rel_subspt_typed, including SPEC_ALL and MP_CANON: related values and sparse-tree extension form one conjunctive premise. Both finite-map inputs use canonical finite-support lookup codecs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "env_rel_subspt",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueRelation.lean",
+    "lean_name": "envRel_subspt",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["f", "refs"],
+    "reviewer": "Source comparison: compared env_rel_subspt_typed: the extended code tree is quantified after the environment relation premise, followed by the sparse-tree extension premise. Both finite-map inputs use canonical finite-support lookup codecs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
     "hol_name": "cl_rel",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureRelation.lean",
     "lean_name": "clRel",

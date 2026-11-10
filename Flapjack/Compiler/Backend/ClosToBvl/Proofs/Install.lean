@@ -432,7 +432,7 @@ theorem install_stateRel {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State 
   have growth : sptSubspt t.code (sptUnion t.code added) := sptSubsptUnion _ _
   have valuesGrow : ∀ a b, vRel s.maxApp f t.refs t.code a b → vRel s.maxApp f t.refs (sptUnion t.code added) a b := by
     intro a b related
-    exact vRel_subspt f t.refs related growth
+    exact vRel_subspt f t.refs ⟨related, growth⟩
   have shift := compileOracleInv_shift s.maxApp s.code (s.code.updateListEq auxiliary)
     s.compile s.compileOracle t.code t.compile t.compileOracle oracle
   have oracleHead : t.compileOracle 0 = (config, compileInc s.maxApp (expressions, auxiliary)) := by
