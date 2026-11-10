@@ -18,6 +18,36 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "MEM_number_compile_inc_locs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberAddresses.lean", "lean_name": "mem_numberCompileInc_locs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared mem_number_compile_locs_typed and independent source review: address, input counter and expression-list binder order, code-location membership premise and both strict bounds agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "number_oracle_FST_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberOracle.lean", "lean_name": "numberOracle_fst_inc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared number_oracle_fst_inc_typed and independent source review: the independently polymorphic whole auxiliary and downstream state carriers, state-oracle premise and next-counter equation agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "number_oracle_FST_strict_mono",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberOracle.lean", "lean_name": "numberOracle_fst_strictMono",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared number_oracle_fst_strict_mono_typed and independent source review: independent oracle carriers, state-oracle premise, nested j and i binders and strict counter ordering agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "number_oracle_FST_mono",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberOracle.lean", "lean_name": "numberOracle_fst_mono",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared number_oracle_fst_mono_typed and independent source review: independent oracle carriers, state-oracle premise, nested j and i binders and counter ordering agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "renumber_code_locs_monotonic_req",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberOracle.lean", "lean_name": "renumberCodeLocs_monotonic_req",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared number_monotonic_req_typed and independent source review: independent metadata and downstream state, grouped oracle premises, offset addition direction and full monotonicity conclusion agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "MEM_number_req",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberAddresses.lean", "lean_name": "mem_number_req",
   "statement_status": "reviewed_exact",

@@ -140,4 +140,25 @@ theorem mem_number_req {α : Type} (x n : Nat)
       have ei := even.2 i hi
       have ef := even.1
       omega
+/-- Locations in numbered code lie strictly between its input and output counters. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "MEM_number_compile_inc_locs"]
+theorem mem_numberCompileInc_locs (x n : Nat) (es : List ClosLang.Exp)
+    (member : x ∈ codeLocations (ClosNumber.compileInc n es).2) :
+    n < x ∧ x < (ClosNumber.compileInc n es).1 := by
+  let aligned := makeEven (n + max es.length 1)
+  cases hr : ClosNumber.renumberList aligned es with
+  | mk finish ys =>
+    have locs := ClosNumber.renumberList_codeLocations_distinct aligned es
+    simp only [hr] at locs
+    have bound : n < aligned := by
+      dsimp only [aligned, makeEven]
+      split <;> omega
+    change x ∈ codeLocations (.op .none (.intOp (.const (Int.ofNat n))) [] ::
+      (ClosNumber.renumberList aligned es).2) at member
+    change n < x ∧ x < (ClosNumber.renumberList aligned es).1
+    rw [hr] at member ⊢
+    simp only [codeLocations, codeLocationsExp, List.nil_append] at member
+    have low := locs.2.1 x member
+    have high := locs.2.2 x member
+    omega
 end Flapjack.Compiler.Backend.ClosToBvl
