@@ -731,7 +731,7 @@ word-list relation lemmas with inferred types shown. Regenerate with
 installation simulation. Regenerate with
 `HOL_PROBE_ONLY=clos_call_install_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-`clos_call_code_list_probe.out` captures the polymorphic source type and typed label-accounting theorems for the direct-call code-list helper, the typed `insert_each` equations, the full list and singleton direct-call purity theorems, the well-formed-state extension lemmas, the inferred code-state constructor and pure-evaluation correctness statements, the typed replay of the local reference-relation lemma, and a concrete example replayed by the executable-pass parity tests.
+`clos_call_code_list_probe.out` captures the polymorphic source type and typed label-accounting theorems for the direct-call code-list helper, the typed `insert_each` equations, the full list and singleton direct-call purity theorems, the well-formed-state extension lemmas, the inferred code-state constructor and pure-evaluation correctness statements, the typed replay of the local reference-relation lemma, the independently typed result-predicate equations, and a concrete example replayed by the executable-pass parity tests.
 
 `clos_call_wfg_probe.out` captures the inferred polymorphic compiler-state and recursive-closure invariants, state-extension, code-inclusion and location-traversal definitions, and their structural theorems. Its state-extension, code-inclusion and location-order cases are replayed in Lean.
 

@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml", "hol_name": "every_error_result_def",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean", "lean_name": "everyErrorResult",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_error_result_type and the source: the generic raised payload is checked by the predicate and all aborts satisfy it unconditionally."
+ },
+ {
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml", "hol_name": "every_result_def",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean", "lean_name": "everyResult",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_result_type and the source: success and error payload types remain independent; success uses the first predicate and errors use everyErrorResult with the second."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "state_rel_opt_rel_refs",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateRelation.lean", "lean_name": "stateRel_optRefs",
   "statement_status": "reviewed_fmap_as_finite_support_relation", "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code"],
