@@ -1,6 +1,12 @@
-import Flapjack.RiscV.CakeArtifactFormat
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
-import Flapjack.Test.CakeExportOracle
+module
+
+public import Flapjack.RiscV.CakeArtifactFormat
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+public import Flapjack.Test.CakeExportOracle
+public meta import Flapjack.Test.CakeExportOracle
+public meta import Flapjack.RiscV.CakeArtifactFormat
+
+@[expose] public section
 
 /-! Byte-for-byte comparison with the pinned HOL RISC-V exporter, including
 CakeML startup, bitmap data, FFI ordering and escaped symbols. -/
