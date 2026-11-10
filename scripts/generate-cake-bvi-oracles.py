@@ -5,6 +5,10 @@ The grammar deliberately accepts only constructors present in this capture;
 unexpected syntax fails the check instead of silently dropping output.
 """
 import argparse
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parent))
+from lean_module_header import to_module  # noqa: E402
 import json
 import re
 from pathlib import Path
@@ -189,7 +193,7 @@ def expected_modules():
     for _, output_path, namespace in CASES:
         shared = canonical[normalize(rendered[namespace], namespace)]
         plan.append((output_path, rendered[namespace] if shared == namespace else alias_render(shared, namespace)))
-    return plan
+    return [(path, to_module(text, private_in_public=True)) for path, text in plan]
 
 
 def main():
