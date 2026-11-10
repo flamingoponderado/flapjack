@@ -1,0 +1,10 @@
+bind_stamp_def_typed=bind_stamp = ExnStamp (0 :num)
+chr_stamp_def_typed=chr_stamp = ExnStamp (1 :num)
+div_stamp_def_typed=div_stamp = ExnStamp (2 :num)
+subscript_stamp_def_typed=subscript_stamp = ExnStamp (3 :num)
+bind_exn_v_def_typed=bind_exn_v = Conv (SOME bind_stamp) ([] :v list)
+chr_exn_v_def_typed=chr_exn_v = Conv (SOME chr_stamp) ([] :v list)
+div_exn_v_def_typed=div_exn_v = Conv (SOME div_stamp) ([] :v list)
+sub_exn_v_def_typed=sub_exn_v = Conv (SOME subscript_stamp) ([] :v list)
+exp_or_val_axiom_typed=∀(f0 :exp -> α) (f1 :v -> α). ∃(fn :exp_or_val -> α). (∀(a :exp). fn (Exp a) = f0 a) ∧ ∀(a :v). fn (Val a) = f1 a
+store_ffi_type_typed=λ(x :'ffi store_v list # φ ffi_state). x

@@ -9469,3 +9469,8 @@ run_probe flat_elim_evaluate_source_probeScript.sml flat_elim_evaluate_source_pr
   evaluate_keep_flat_state_rel_eq_lemma_typed evaluate_sing_keep_flat_state_rel_eq_typed evaluate_dec_flat_state_rel_typed evaluate_flat_state_rel_lemma_typed evaluate_sing_notKeep_flat_state_rel_typed \
   "$cake_dir/compiler/backend/proofs/flat_elimProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe semantic_primitives_source_probeScript.sml semantic_primitives_source_probe.out \
+  bind_stamp_def_typed chr_stamp_def_typed div_stamp_def_typed subscript_stamp_def_typed bind_exn_v_def_typed chr_exn_v_def_typed div_exn_v_def_typed sub_exn_v_def_typed exp_or_val_axiom_typed store_ffi_type_typed \
+  "$cake_dir/semantics/semanticPrimitivesScript.sml" \
+  "$cake_dir/semantics"

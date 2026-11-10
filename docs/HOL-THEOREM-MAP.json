@@ -118591,48 +118591,48 @@
     "hol_name": "bind_exn_v_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "bindExnV",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed semantic_primitives_source_probe capture (`bind_exn_v = Conv (SOME bind_stamp) ([] :v list)`) with bindExnV : Value := .conv (some bindStamp) []; Conv/SOME/[] are the reviewed Value port's conv/some/nil rendering."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "bind_stamp_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "bindStamp",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed semantic_primitives_source_probe capture (`bind_stamp = ExnStamp (0 :num)`) with bindStamp : Stamp := .exnStamp 0; HOL's ExnStamp is the reviewed Stamp port's exnStamp."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "chr_exn_v_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "chrExnV",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed semantic_primitives_source_probe capture (`chr_exn_v = Conv (SOME chr_stamp) ([] :v list)`) with chrExnV : Value := .conv (some chrStamp) []."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "chr_stamp_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "chrStamp",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed semantic_primitives_source_probe capture (`chr_stamp = ExnStamp (1 :num)`) with chrStamp : Stamp := .exnStamp 1; HOL's ExnStamp is the reviewed Stamp port's exnStamp."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "div_exn_v_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "divExnV",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed semantic_primitives_source_probe capture (`div_exn_v = Conv (SOME div_stamp) ([] :v list)`) with divExnV : Value := .conv (some divStamp) []."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "div_stamp_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "divStamp",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed semantic_primitives_source_probe capture (`div_stamp = ExnStamp (2 :num)`) with divStamp : Stamp := .exnStamp 2; HOL's ExnStamp is the reviewed Stamp port's exnStamp."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -118679,16 +118679,16 @@
     "hol_name": "sub_exn_v_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "subExnV",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed semantic_primitives_source_probe capture (`sub_exn_v = Conv (SOME subscript_stamp) ([] :v list)`) with subExnV : Value := .conv (some subscriptStamp) []."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "subscript_stamp_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
     "lean_name": "subscriptStamp",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed semantic_primitives_source_probe capture (`subscript_stamp = ExnStamp (3 :num)`) with subscriptStamp : Stamp := .exnStamp 3; HOL's ExnStamp is the reviewed Stamp port's exnStamp."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
@@ -119031,16 +119031,16 @@
     "hol_name": "exp_or_val",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Thunk.lean",
     "lean_name": "ExpOrVal",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed datatype axiom in semantic_primitives_source_probe (`∀f0 :exp -> α. ∀f1 :v -> α. ∃fn :exp_or_val -> α. ...` with constructors `Exp : exp -> exp_or_val` and `Val : v -> exp_or_val`) with ExpOrVal.exp/.val, whose field types AstHOL.Exp and Value are the reviewed exp and v ports."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "store_ffi",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/Thunk.lean",
     "lean_name": "StoreFfi",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex (reference inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared HOL's type abbreviation `store_ffi = 'v store # 'ffi ffi_state` (semanticPrimitivesScript.sml:761) with StoreFfi α σ := Store α × HolFfiState σ: the typed replay in semantic_primitives_source_probe expands the abbreviation to `'v store_v list # 'ffi ffi_state`, matching Store α = List (StoreValue α) (the reviewed store abbreviation) and the reviewed HolFfiState port of ffi_state."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
