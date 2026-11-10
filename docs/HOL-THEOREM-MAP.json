@@ -117843,32 +117843,32 @@
   {
     "lean_path": "Flapjack/CakeParser/Lexer.lean", "lean_name": "Symbol",
     "hol_path": "cakeml/semantics/lexer_funScript.sml", "hol_name": "symbol",
-    "statement_status": "pending_statement_review", "reviewer": "Intermediate symbol constructors and byte-list carriers transcribed; source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "Independently compared the typed lexer_fun_source_probe capture of symbol_Axiom (`StringS : string -> symbol`, `CharS : char -> symbol`, `NumberS : int -> symbol`, `WordS : num -> symbol`, `LongS : string list -> string -> symbol`, `FFIS : string -> symbol`, `OtherS : string -> symbol`, `ErrorS`) with Symbol.stringS : List HolChar \u2192 Symbol, charS : HolChar \u2192 Symbol, numberS : Int \u2192 Symbol, wordS : Nat \u2192 Symbol, longS : List (List HolChar) \u2192 List HolChar \u2192 Symbol, ffiS : List HolChar \u2192 Symbol, otherS : List HolChar \u2192 Symbol and errorS; HOL string is char list and char is word8, rendered as List HolChar and HolChar."
   },
   {
     "lean_path": "Flapjack/CakeParser/Lexer.lean", "lean_name": "nextLoc",
     "hol_path": "cakeml/semantics/lexer_funScript.sml", "hol_name": "next_loc_def",
-    "statement_status": "pending_statement_review", "reviewer": "Position update transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "Independently compared the typed lexer_fun_source_probe capture (`next_loc n (POSN r c) = POSN r (c + n) \u2227 next_loc n UNKNOWNpt = UNKNOWNpt \u2227 next_loc n EOFpt = EOFpt`) with nextLoc n : .posn row col => .posn row (col + n) and the catch-all x => x, which covers exactly UNKNOWNpt and EOFpt."
   },
   {
     "lean_path": "Flapjack/CakeParser/Lexer.lean", "lean_name": "nextLine",
     "hol_path": "cakeml/semantics/lexer_funScript.sml", "hol_name": "next_line_def",
-    "statement_status": "pending_statement_review", "reviewer": "Line update transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "Independently compared the typed lexer_fun_source_probe capture (`next_line (POSN r c) = POSN (r + 1) 0 \u2227 next_line UNKNOWNpt = UNKNOWNpt \u2227 next_line EOFpt = EOFpt`) with nextLine : .posn row _ => .posn (row + 1) 0 and the catch-all x => x."
   },
   {
     "lean_path": "Flapjack/CakeParser/Lexer.lean", "lean_name": "getToken",
     "hol_path": "cakeml/semantics/lexer_funScript.sml", "hol_name": "get_token_def",
-    "statement_status": "pending_statement_review", "reviewer": "Token table transcribed; complete classification and byte-carrier review remain pending."
+    "statement_status": "reviewed_exact", "reviewer": "Independently compared the typed lexer_fun_source_probe capture of the whole if-chain with getToken: the Lean definition replaces the chain with a lookup table over the same 52 spellings in the same order and the same tokens (find? is full-string equality, so the chain and the table agree), and the tail `if s <> \"\" \u2227 HD s = #\"'\" then TyvarT (implode s) else processIdent s` is rendered as [] => lexErrorT, c :: _ => if c == 39 then tyvarT (.implode s) else if isAlpha c then alphaT (.implode s) else symbolT (.implode s), which inlines processIdent_def's three cases. isAlpha is HOL's ASCIInumbers isAlpha (A-Z or a-z), rendered as the 65..90/97..122 byte tests; the private table/helpers are Flapjack-only rendering of the same source clauses."
   },
   {
     "lean_path": "Flapjack/CakeParser/Lexer.lean", "lean_name": "toPath",
     "hol_path": "cakeml/semantics/lexer_funScript.sml", "hol_name": "to_path_def",
-    "statement_status": "pending_statement_review", "reviewer": "Qualified identifier path conversion transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "Independently compared the typed lexer_fun_source_probe capture (`to_path [] = End \u2227 \u2200x xs. to_path (x::xs) = Mod x (to_path xs)`) with toPath : [] => .end and x :: xs => .mod x (toPath xs)."
   },
   {
     "lean_path": "Flapjack/CakeParser/Lexer.lean", "lean_name": "tokenOfSymbol",
     "hol_path": "cakeml/semantics/lexer_funScript.sml", "hol_name": "token_of_sym_def",
-    "statement_status": "pending_statement_review", "reviewer": "Intermediate symbol conversion transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "Independently compared the typed lexer_fun_source_probe capture of all eight clauses (ErrorS => LexErrorT, StringS s => StringT (implode s), CharS c => CharT c, NumberS i => IntT i, WordS n => WordT n, LongS xs s => LongidT (to_path (MAP implode xs)) (implode s), FFIS s => FFIT (implode s), OtherS s => get_token s) with tokenOfSymbol; constructor order differs but every clause is the same, and LongS's first argument is the string list mapped through implode exactly as HOL."
   },
   {
     "lean_path": "Flapjack/CakeParser/LexerImpl.lean", "lean_name": "lexAuxTokens",

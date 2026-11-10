@@ -9494,3 +9494,8 @@ run_probe clos_to_bvl_proof_relations_probeScript.sml clos_to_bvl_proof_relation
   global_table_def_typed ref_rel_def_typed ref_rel_simp_typed nth_code_def_typed compile_oracle_inv_def_typed closure_code_installed_subspt_typed compile_exps_IMP_code_installed_typed \
   "$cake_dir/compiler/backend/proofs/clos_to_bvlProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lexer_fun_source_probeScript.sml lexer_fun_source_probe.out \
+  symbol_axiom_typed next_loc_def_typed next_line_def_typed get_token_def_typed to_path_def_typed token_of_sym_def_typed \
+  "$cake_dir/semantics/lexer_funScript.sml" \
+  "$cake_dir/semantics"
