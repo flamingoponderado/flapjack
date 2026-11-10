@@ -120233,16 +120233,16 @@
     "hol_name": "merge_locs_def",
     "lean_path": "Flapjack/Misc/Location/Merge.lean",
     "lean_name": "mergeLocs",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations and a location-merge example captured in context_free_tree_probe; full source review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed context_free_tree_probe capture (`merge_locs (Locs l1 l2) (Locs l3 l4) = Locs l1 l4`) with mergeLocs: the first component comes from the first location and the last from the second, exactly as HOL."
   },
   {
     "hol_path": "HOL/examples/formal-languages/context-free/locationScript.sml",
     "hol_name": "merge_list_locs_def",
     "lean_path": "Flapjack/Misc/Location/Merge.lean",
     "lean_name": "mergeListLocs",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Codex: typed HOL equations and a location-merge example captured in context_free_tree_probe; full source review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed context_free_tree_probe capture of all four merge_list_locs clauses (`[] = unknown_loc`, `[h] = h`, `[h1; h2] = merge_locs h1 h2`, `h1::h2::v4::v5 = merge_list_locs (h1::v4::v5)`) with mergeListLocs's four clauses: unknownLoc for [], the singleton, mergeLocs for two elements, and the recursive first :: _ :: rest case."
   },
   {
     "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
