@@ -1,2 +1,3 @@
 fempty_typed=(FEMPTY :α |-> β) = fmap_ABS (λ(a :α). (INR () :β + unit))
 flookup_empty_typed=FLOOKUP (FEMPTY :β |-> α) (k :β) = (NONE :α option)
+funion_spec_typed=∀(f :α |-> β) (g :α |-> β). FDOM (f ⊌ g) = FDOM f ∪ FDOM g ∧ ∀(x :α). (f ⊌ g)⟨x⟩ = if x ∈ FDOM f then f⟨x⟩ else g⟨x⟩

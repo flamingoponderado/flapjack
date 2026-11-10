@@ -312,7 +312,7 @@ run_probe clos_interp_semantics_probeScript.sml clos_interp_semantics_probe.out 
   "$cake_dir/compiler/backend/proofs/clos_interpProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe finite_map_empty_probeScript.sml finite_map_empty_probe.out \
-  fempty_typed flookup_empty_typed \
+  fempty_typed flookup_empty_typed funion_spec_typed \
   "$hol_dir/src/finite_maps/finite_mapScript.sml" "$hol_dir/src/finite_maps"
 
 run_probe flat_to_clos_relation_probeScript.sml flat_to_clos_relation_probe.out \

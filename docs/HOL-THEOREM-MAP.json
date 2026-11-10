@@ -14751,6 +14751,24 @@
   "reviewer": "Source comparison: Compared fempty_typed and flookup_empty_typed: HOL's empty finite map is polymorphic independently in key and value types and has no binding at any key. The result is the canonical finite-support carrier; the local unconditional lookup witness compares it with the independent raw empty-map codec."
 },
   {
+    "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
+    "hol_name": "FUNION_DEF",
+    "lean_path": "Flapjack/FiniteMap/UnionExact.lean",
+    "lean_name": "union",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "Source comparison with funion_spec_typed: HOL's new_specification introduces the polymorphic FUNION constant; the independent raw lookup witness establishes its left-biased finite-support implementation. The accompanying union_spec proves both specification conjuncts, which uniquely determine the finite map by domain and lookup extensionality."
+  },
+  {
+    "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
+    "hol_name": "FUNION_DEF",
+    "lean_path": "Flapjack/FiniteMap/UnionExact.lean",
+    "lean_name": "union_spec",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["left", "right"],
+    "reviewer": "Source comparison with funion_spec_typed: the two polymorphic input maps share key and value types, and the domain-union and unconditional FAPPLY conjuncts have the same order and conclusions as HOL. Nonempty beta renders HOL type inhabitedness. The canonical map codec witnesses cover both parameters; holFapply preserves the single unspecified out-of-domain value."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
     "hol_name": "compile_semantics'",
     "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Semantics.lean",
