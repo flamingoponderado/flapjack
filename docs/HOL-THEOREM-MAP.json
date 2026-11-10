@@ -60,6 +60,12 @@
   "reviewer": "Compared compile_common_distinct_locs_typed and independent review: binders c, e, c', p, source equation and combined distinctness match. Proof separates auxiliary labels from code locations by even/odd parity."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "ALOOKUP_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode.lean", "lean_name": "alookup_lemma",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alookup_lemma_replay_typed, which replays the local HOL proof, and independent review: free m precedes the quantifiers, α β γ remain independent, Nonempty is used only for holEl, MAP2 is zip/map, and ALOOKUP is holALookup."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "every_Fn_calls_list",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "everyFn_callsList",
   "statement_status": "reviewed_exact",

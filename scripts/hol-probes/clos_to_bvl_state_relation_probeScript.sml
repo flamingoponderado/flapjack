@@ -167,6 +167,22 @@ val _ = show "ccompile_every_fn_some_typed=" clos_to_bvlProofTheory.ccompile_eve
 val _ = show "compile_common_max_app_typed=" clos_to_bvlProofTheory.compile_common_max_app;
 val _ = show "compile_exps_el_typed=" clos_to_bvlProofTheory.compile_exps_EL;
 val _ = show "compile_common_distinct_locs_typed=" clos_to_bvlProofTheory.compile_common_distinct_locs;
+(* Replay the source's local ALOOKUP_lemma, which is not exported by HOL. *)
+val alookup_lemma_replay = prove(
+  ``∀l1 l2 n k v.
+    (EL n l1 = (k,v)) ∧ ALL_DISTINCT (MAP FST l1) ∧
+    n < LENGTH l1 ∧ LENGTH l2 = LENGTH l1 ⇒
+    ALOOKUP (MAP2 (λ(loc,args,_) exp. (loc + (m:num),args,exp)) l1 l2) (k + m) =
+      SOME (FST v, EL n l2)``,
+  Induct \\ rw[]
+  \\ Cases_on `l2` \\ fs[]
+  \\ pairarg_tac \\ fs[]
+  \\ IF_CASES_TAC
+  >- (fs[] \\ reverse(Cases_on `n`) \\ fs[]
+      >- (fs[MEM_MAP, PULL_EXISTS, Once pairTheory.EXISTS_PROD, MEM_EL] \\ metis_tac[])
+      \\ rw[])
+  \\ Cases_on `n` \\ fs[]);
+val _ = show "alookup_lemma_replay_typed=" alookup_lemma_replay;
 val _ = show "toaList_domain_typed=" miscTheory.toAList_domain;
 val _ = show "sptree_domain_lookup_typed=" sptreeTheory.domain_lookup;
 val _ = show "known_compile_is_some_typed=" clos_knownProofTheory.known_compile_IS_SOME;

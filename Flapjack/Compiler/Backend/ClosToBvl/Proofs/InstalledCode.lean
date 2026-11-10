@@ -6,6 +6,7 @@ public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Accumulator
 public import Flapjack.Compiler.Backend.Semantics.ClosSem
 public import Flapjack.Misc.Sptree
 public import Flapjack.Misc.ListEl
+public import Flapjack.FiniteMap.AlistExact.Lookup
 
 @[expose] public section
 
@@ -52,6 +53,57 @@ theorem compileExps_el (ma : Nat) :
           obtain ⟨auxn, aux2n, compiled, included⟩ := ih mid rest aux2 n ⟨tailRun, bound⟩
           refine ⟨auxn, aux2n, ?_, included⟩
           simpa [holEl_cons_succ] using compiled
+
+private theorem sptAListLookup_eq_holALookup {α : Type} (key : Nat) (entries : List (Nat × α)) :
+    sptAListLookup key entries = holALookup entries key := by
+  induction entries with
+  | nil => rfl
+  | cons entry rest ih =>
+    obtain ⟨name, value⟩ := entry
+    by_cases same : key = name <;> simp [sptAListLookup, holALookup, same, ih]
+
+/-- Distinct source labels select the corresponding paired compiled expression. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "ALOOKUP_lemma"]
+theorem alookup_lemma {α β γ : Type} [Nonempty α] [Nonempty β] [Nonempty γ] (m : Nat) :
+    ∀ (l1 : List (Nat × α × β)) (l2 : List γ) n k (v : α × β),
+      (holEl n l1 = (k, v) ∧ (l1.map Prod.fst).Nodup ∧
+        n < l1.length ∧ l2.length = l1.length) →
+      holALookup
+        ((l1.zip l2).map (fun (entry, e) => (entry.1 + m, entry.2.1, e))) (k + m) =
+          some (v.1, holEl n l2) := by
+  simp only [← sptAListLookup_eq_holALookup]
+  intro l1
+  induction l1 with
+  | nil =>
+    intro l2 n k v h
+    simp at h
+  | cons entry rest ih =>
+    obtain ⟨loc, arity, body⟩ := entry
+    intro l2 n k v h
+    cases l2 with
+    | nil => simp at h
+    | cons out outs =>
+      simp only [List.map_cons, List.nodup_cons, List.length_cons, Nat.succ.injEq] at h
+      cases n with
+      | zero =>
+        simp only [holEl, holHd] at h
+        obtain ⟨eq, distinct, _, _⟩ := h
+        cases eq
+        simp [sptAListLookup, holEl, holHd]
+      | succ n =>
+        have hEl : holEl n rest = (k, v) := by simpa [holEl_cons_succ] using h.1
+        have bound : n < rest.length := by omega
+        have tail := ih outs n k v ⟨hEl, h.2.1.2, bound, h.2.2.2⟩
+        have diff : k ≠ loc := by
+          intro eq
+          have mem : (k, v) ∈ rest := by
+            rw [holEl_eq_getElem n rest bound] at hEl
+            exact hEl ▸ List.getElem_mem bound
+          apply h.2.1.1
+          exact List.mem_map.mpr ⟨(k, v), mem, by simpa using eq⟩
+        have shiftDiff : k + m ≠ loc + m := by omega
+        simpa [sptAListLookup, shiftDiff, diff, holEl_cons_succ] using tail
+
 
 /-- Each auxiliary function produced by compilation is present in the code tree. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "code_installed_def"]
