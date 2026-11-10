@@ -1,4 +1,9 @@
-import Flapjack.Pancake.PanToCrep
+module
+
+public import Flapjack.Pancake.PanToCrep
+public meta import Flapjack.Pancake.PanToCrep
+
+@[expose] public section
 
 /-!
 # Original-domain parity for `pan_to_crep$exp_hdl`
