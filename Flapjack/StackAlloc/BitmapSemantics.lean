@@ -1,4 +1,8 @@
-import Flapjack.StackAlloc.Correctness
+module
+
+public import Flapjack.StackAlloc.Correctness
+
+@[expose] public section
 
 namespace Flapjack
 

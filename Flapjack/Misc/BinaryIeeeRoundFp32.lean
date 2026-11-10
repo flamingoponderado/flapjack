@@ -1,4 +1,8 @@
-import Flapjack.Misc.BinaryIeeeRound
+module
+
+public import Flapjack.Misc.BinaryIeeeRound
+
+@[expose] public section
 
 /-!
 # Complete computable binary32 nearest-even rounding agreement

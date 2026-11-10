@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
-import Flapjack.Compiler.Backend.BviToData.Compile
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
+public import Flapjack.Compiler.Backend.BviToData.Compile
+
+@[expose] public section
 
 /-! Checked composition through the data-language stage. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

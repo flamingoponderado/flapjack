@@ -1,5 +1,13 @@
-import Flapjack.CakeParser.Sexp
-import Flapjack.AstHOL.Syntax
+module
+
+public import Flapjack.CakeParser.Sexp
+public import Flapjack.AstHOL.Syntax
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Shared conversions for CakeML's S-expression AST format, following
 `compiler/parsing/fromSexpScript.sml`. The S-expression carrier and total

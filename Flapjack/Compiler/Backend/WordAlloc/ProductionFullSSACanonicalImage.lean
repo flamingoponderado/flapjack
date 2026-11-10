@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionSSACanonicalHelpers
-import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAMemoryGuard
-import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAMetadata
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionSSACanonicalHelpers
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAMemoryGuard
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAMetadata
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Compiler.Backend.WordAlloc

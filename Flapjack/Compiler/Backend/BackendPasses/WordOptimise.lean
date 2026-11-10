@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.BackendPasses.Word
-import Flapjack.Compiler.Backend.WordToWord.FastCompile
-import Flapjack.Compiler.Backend.RegAlloc.Executable
+module
+
+public import Flapjack.Compiler.Backend.BackendPasses.Word
+public import Flapjack.Compiler.Backend.WordToWord.FastCompile
+public import Flapjack.Compiler.Backend.RegAlloc.Executable
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Capture WordLang optimization and allocation stages from
 `backend_passesScript.sml`. The executable allocator replacement is the

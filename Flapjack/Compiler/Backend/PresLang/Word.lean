@@ -1,7 +1,15 @@
-import Flapjack.Compiler.Backend.PresLang.Asm
-import Flapjack.Compiler.Backend.PresLang.Clos
-import Flapjack.Compiler.Backend.PresLang.Data
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Asm
+public import Flapjack.Compiler.Backend.PresLang.Clos
+public import Flapjack.Compiler.Backend.PresLang.Data
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! WordLang explorer display following the `word_*_to_display_def` group in
 `cakeml/compiler/backend/presLangScript.sml`. This uses the HOL-shaped

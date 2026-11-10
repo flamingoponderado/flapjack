@@ -1,5 +1,9 @@
-import Flapjack.RiscV.CakeAllocatorCore
-import Flapjack.Compiler.Backend.WordToStack
+module
+
+public import Flapjack.RiscV.CakeAllocatorCore
+public import Flapjack.Compiler.Backend.WordToStack
+
+@[expose] public section
 
 /-!
 # Executable Cake bitmap words vs the tagged HOL recursion (untagged bridge)

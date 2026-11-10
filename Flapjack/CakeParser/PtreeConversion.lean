@@ -1,6 +1,14 @@
-import Flapjack.CakeParser.ParseTree
-import Flapjack.CakeParser.Grammar
-import Flapjack.AstHOL.Syntax
+module
+
+public import Flapjack.CakeParser.ParseTree
+public import Flapjack.CakeParser.Grammar
+public import Flapjack.AstHOL.Syntax
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! CakeML parse-tree conversion. The type converter uses a structurally
 bounded worker; its public wrapper derives the bound from the input tree.

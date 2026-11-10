@@ -1,4 +1,8 @@
-import Flapjack.PanSemLookupKvar
+module
+
+public import Flapjack.PanSemLookupKvar
+
+@[expose] public section
 
 /-!
 # Pancake `panSem.is_valid_value`

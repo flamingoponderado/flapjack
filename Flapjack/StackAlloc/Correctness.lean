@@ -1,6 +1,10 @@
-import Flapjack.StackAlloc.Runtime
-import Flapjack.RiscV.WordToStack
-import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
+module
+
+public import Flapjack.StackAlloc.Runtime
+public import Flapjack.RiscV.WordToStack
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
+
+@[expose] public section
 
 /-
   The HOL source for this specification is

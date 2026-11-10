@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionSSAStateRoute
-import Flapjack.RiscV.LocValue
-import Flapjack.RiscV.CorrectnessColour
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionSSAStateRoute
+public import Flapjack.RiscV.LocValue
+public import Flapjack.RiscV.CorrectnessColour
+
+@[expose] public section
 
 /-!
 # SSA-renaming to colouring boundary

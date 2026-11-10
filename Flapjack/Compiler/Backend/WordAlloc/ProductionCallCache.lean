@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlyCache
-import Flapjack.Compiler.Backend.WordAlloc.HeuCall
-import Flapjack.RiscV.Heuristics
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlyCache
+public import Flapjack.Compiler.Backend.WordAlloc.HeuCall
+public import Flapjack.RiscV.Heuristics
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open RiscV

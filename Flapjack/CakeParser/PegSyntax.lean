@@ -1,5 +1,9 @@
-import Flapjack.CakeParser.PegActions
-import Flapjack.CakeParser.PegChecks
+module
+
+public import Flapjack.CakeParser.PegActions
+public import Flapjack.CakeParser.PegChecks
+
+@[expose] public section
 
 /-! First-order syntax for the CakeML PEG. -/
 namespace Flapjack.CakeParser.PegSyntax

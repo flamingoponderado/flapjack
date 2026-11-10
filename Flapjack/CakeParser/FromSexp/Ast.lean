@@ -1,4 +1,12 @@
-import Flapjack.CakeParser.FromSexp.Operators
+module
+
+public import Flapjack.CakeParser.FromSexp.Operators
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! CakeML AST decoding from S-expressions. Expression and declaration
 decoding use source-reviewed structural recursion. -/

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.LoopToWord.Proofs.NoFP
-import Flapjack.Compiler.Backend.WordAlloc.ProductionMemoryGuard
+module
+
+public import Flapjack.Pancake.LoopToWord.Proofs.NoFP
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionMemoryGuard
+
+@[expose] public section
 
 namespace Flapjack.LoopToWord
 open WordAlloc

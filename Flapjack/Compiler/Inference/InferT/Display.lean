@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Inference.Infer
+module
+
+public import Flapjack.Compiler.Inference.Infer
+
+@[expose] public section
 
 /-! CakeML inference-type rendering. Source and carrier review remains pending. -/
 namespace Flapjack.Compiler.Inference.InferTDisplay

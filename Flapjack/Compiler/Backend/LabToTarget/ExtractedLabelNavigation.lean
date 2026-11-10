@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.LabToTarget.Navigation
-import Flapjack.Compiler.Backend.LabProps.Labels
-import Flapjack.Compiler.Backend.LabProps.LabelSets
+module
+
+public import Flapjack.Compiler.Backend.LabToTarget.Navigation
+public import Flapjack.Compiler.Backend.LabProps.Labels
+public import Flapjack.Compiler.Backend.LabProps.LabelSets
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem

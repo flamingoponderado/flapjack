@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapWritePair
-import Flapjack.Compiler.Backend.WordRemove.Production
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapWritePair
+public import Flapjack.Compiler.Backend.WordRemove.Production
+
+@[expose] public section
 
 /-! Flapjack caller invariants across the executed native MustTerminate removal.
 These are structural carrier consequences, not HOL semantic theorem ports.

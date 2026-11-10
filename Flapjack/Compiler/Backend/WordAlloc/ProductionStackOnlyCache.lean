@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlySets
-import Flapjack.RiscV.CakeRegAlloc
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlySets
+public import Flapjack.RiscV.CakeRegAlloc
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open RiscV RiscV.CakeRegAlloc

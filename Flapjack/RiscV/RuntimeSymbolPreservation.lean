@@ -1,4 +1,12 @@
-import Flapjack.RiscV.ArtifactFormat
+module
+
+public import Flapjack.RiscV.ArtifactFormat
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 namespace Flapjack.RiscV
 /-- Frozen pre-wiring dispatcher for the unconditional behavior-preservation
 proof. Flapjack-specific regression infrastructure, not a HOL port or an

@@ -1,8 +1,16 @@
-import Flapjack.Compiler.Backend.BackendPasses.WordOptimise
-import Flapjack.Compiler.Backend.PresLang.Stack
-import Flapjack.Compiler.Backend.PresLang.Lab
-import Flapjack.Compiler.Backend.Backend
-import Flapjack.Compiler.Backend.LabFilter
+module
+
+public import Flapjack.Compiler.Backend.BackendPasses.WordOptimise
+public import Flapjack.Compiler.Backend.PresLang.Stack
+public import Flapjack.Compiler.Backend.PresLang.Lab
+public import Flapjack.Compiler.Backend.Backend
+public import Flapjack.Compiler.Backend.LabFilter
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Capture the stack and labelled-assembly stages from
 `backend_passesScript.sml`. This follows the normal width-indexed backend

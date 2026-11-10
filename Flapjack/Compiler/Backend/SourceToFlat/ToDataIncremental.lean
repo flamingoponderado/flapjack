@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.SourceToFlat.ToBviIncremental
-import Flapjack.Compiler.Backend.BviToData.Compile
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.ToBviIncremental
+public import Flapjack.Compiler.Backend.BviToData.Compile
+
+@[expose] public section
 
 /-! Checked incremental CakeML source-to-data compilation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

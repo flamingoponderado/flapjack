@@ -1,5 +1,9 @@
-import Flapjack.RiscV.AllocatorCorrectness
-import Flapjack.RiscV.OracleAllocator
+module
+
+public import Flapjack.RiscV.AllocatorCorrectness
+public import Flapjack.RiscV.OracleAllocator
+
+@[expose] public section
 
 /-!
 # Full-SSA graph coverage

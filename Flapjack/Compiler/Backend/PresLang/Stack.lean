@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.PresLang.Asm
-import Flapjack.Compiler.Backend.PresLang.Clos
-import Flapjack.Compiler.Backend.StackLang.Prog
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Asm
+public import Flapjack.Compiler.Backend.PresLang.Clos
+public import Flapjack.Compiler.Backend.StackLang.Prog
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! StackLang explorer display following the `stack_*_to_display_def` group in
 `cakeml/compiler/backend/presLangScript.sml`. The generic assembly payloads

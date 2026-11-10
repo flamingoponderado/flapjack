@@ -1,5 +1,13 @@
 -- Generated from the pinned HOL basis capture by scripts/generate-cake-basis.py.
-import Flapjack.AstHOL.Syntax
+module
+
+public import Flapjack.AstHOL.Syntax
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! The original generated CakeML basis declarations in their source order. -/
 namespace Flapjack.Basis.BasisProg

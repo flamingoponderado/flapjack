@@ -1,4 +1,8 @@
-import Flapjack.RiscV.AllocatorCorrectness
+module
+
+public import Flapjack.RiscV.AllocatorCorrectness
+
+@[expose] public section
 
 /-!
 Correctness of applying a register colouring to a small, executable Word

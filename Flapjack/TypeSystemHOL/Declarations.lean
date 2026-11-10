@@ -1,6 +1,10 @@
-import Flapjack.TypeSystemHOL.Expressions
-import Flapjack.TypeSystemHOL.Values
-import Flapjack.SemanticPrimitivesHOL.Control
+module
+
+public import Flapjack.TypeSystemHOL.Expressions
+public import Flapjack.TypeSystemHOL.Values
+public import Flapjack.SemanticPrimitivesHOL.Control
+
+@[expose] public section
 
 /-! Prerequisites for declarative declaration typing. The expression judgment
 uses a proved-equivalent branch-list encoding and remains pending full source

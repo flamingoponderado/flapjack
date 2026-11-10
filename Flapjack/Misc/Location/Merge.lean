@@ -1,4 +1,8 @@
-import Flapjack.Misc.Location
+module
+
+public import Flapjack.Misc.Location
+
+@[expose] public section
 
 /-! Source location merging for context-free parse trees. -/
 namespace Flapjack.Misc.Location

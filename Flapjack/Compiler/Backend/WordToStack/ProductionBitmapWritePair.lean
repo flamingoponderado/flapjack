@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTransport
-import Flapjack.Compiler.Backend.WordToStack.ProductionGcCutsets
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTransport
+public import Flapjack.Compiler.Backend.WordToStack.ProductionGcCutsets
+
+@[expose] public section
 
 /-! Complete actual caller bitmap-write transport. This is Flapjack production
 carrier infrastructure with no HOL declaration. The shared native codec and

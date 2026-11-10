@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Inference.Infer.Core
+module
+
+public import Flapjack.Compiler.Inference.Infer.Core
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Byte-oriented rendering for undefined variables and selected type
 mismatches. Other failure messages remain incomplete. -/

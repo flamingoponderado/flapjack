@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
-import Flapjack.Misc.BinaryIeeeConvert
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
+public import Flapjack.Misc.BinaryIeeeConvert
+
+@[expose] public section
 
 /-!
 # HOL `binary_ieee` rounding and `float_sqrt` over Mathlib reals

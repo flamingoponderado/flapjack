@@ -1,11 +1,15 @@
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Output
-import Flapjack.Compiler.Backend.WordAlloc.ProductionCallInputs
-import Flapjack.Compiler.Backend.RegAlloc.ProductionWrapper
-import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlyCache
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoRegAllocCorrect
-import Flapjack.RiscV.CakeAllocatorBitsBridge
-import Flapjack.RiscV.PipelineDiagnostics
-import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
+module
+
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Output
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionCallInputs
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionWrapper
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlyCache
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoRegAllocCorrect
+public import Flapjack.RiscV.CakeAllocatorBitsBridge
+public import Flapjack.RiscV.PipelineDiagnostics
+public import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
+
+@[expose] public section
 
 namespace Flapjack.ProductionBitmapTransport
 open RiscV Compiler.Backend.WordToStack

@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
-import Flapjack.Misc.Option.Characterization
-import Aesop
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
+public import Flapjack.Misc.Option.Characterization
+public import Aesop
+
+@[expose] public section
 
 /-! Correspondence between closure byte traversals and the guarded choices
 used by the original primitive dispatcher. These are Lean infrastructure

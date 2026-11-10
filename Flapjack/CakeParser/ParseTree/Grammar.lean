@@ -1,5 +1,9 @@
-import Flapjack.CakeParser.ParseTree
-import Flapjack.Misc.Grammar
+module
+
+public import Flapjack.CakeParser.ParseTree
+public import Flapjack.Misc.Grammar
+
+@[expose] public section
 
 /-! Flapjack conversion between the executable CakeML PEG tree and the
 generic HOL-shaped grammar tree. Parser validity and grammar correspondence

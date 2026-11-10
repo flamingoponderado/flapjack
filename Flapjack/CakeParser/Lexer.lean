@@ -1,5 +1,13 @@
-import Flapjack.CakeParser.Tokens
-import Flapjack.Misc.Location
+module
+
+public import Flapjack.CakeParser.Tokens
+public import Flapjack.Misc.Location
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! CakeML lexer infrastructure, operating on HOL's byte-valued characters. -/
 namespace Flapjack.CakeParser.Lexer

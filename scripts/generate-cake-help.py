@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 """Generate the CakeML driver's help text from the pinned compiler source."""
+import sys
+from pathlib import Path as _Path
+sys.path.insert(0, str(_Path(__file__).resolve().parent))
+from lean_module_header import to_module  # noqa: E402
 import argparse
 import json
 from pathlib import Path
@@ -41,6 +45,7 @@ if __name__ == '__main__':
     parser.add_argument('--check', action='store_true')
     args = parser.parse_args()
     generated = render()
+    generated = to_module(generated)
     if args.check:
         if not OUTPUT.exists() or OUTPUT.read_text() != generated:
             raise SystemExit('generated CakeML help text is out of date')

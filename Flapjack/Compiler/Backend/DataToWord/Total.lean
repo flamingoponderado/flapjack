@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.DataToWord.Control
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Control
+
+@[expose] public section
 
 /-! Totality of the existing data-to-word traversal. -/
 namespace Flapjack.Compiler.Backend.DataToWord

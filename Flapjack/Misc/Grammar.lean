@@ -1,5 +1,9 @@
-import Flapjack.Misc.Location.Merge
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Misc.Location.Merge
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 
 /-! Generic context-free grammar tree carriers and observations, independent
 of CakeML's specialized PEG tree. Source and carrier review remains pending. -/

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionSSAMemoryGuard
-import Flapjack.Compiler.Backend.WordAlloc.FullSSA
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionSSAMemoryGuard
+public import Flapjack.Compiler.Backend.WordAlloc.FullSSA
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Compiler.Backend.WordAlloc

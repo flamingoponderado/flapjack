@@ -1,9 +1,17 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionPreferences
-import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost
-import Flapjack.Compiler.Backend.WordAlloc.Heuristics
-import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlyCache
-import Flapjack.Compiler.Backend.WordAlloc.HeuCounters
-import Std.Data.TreeMap.Lemmas
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionPreferences
+public import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost
+public import Flapjack.Compiler.Backend.WordAlloc.Heuristics
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlyCache
+public import Flapjack.Compiler.Backend.WordAlloc.HeuCounters
+public import Std.Data.TreeMap.Lemmas
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.WordAlloc
 open Std.DTreeMap.Internal
@@ -120,5 +128,7 @@ theorem treeMapMergeWith_lookup {β : Type} (f : Nat → β → β → β)
     rw [Std.TreeMap.map_fst_toList_eq_keys]
     exact Std.TreeMap.nodup_keys
   rw [mergeFold_lookup f right.toList unique left key, assocLookupTreeMap]
+  -- The statement's and `mergeFold_lookup`'s matchers agree up to defeq only.
+  rfl
 
 end Flapjack.WordAlloc

@@ -1,5 +1,9 @@
-import Flapjack.Misc.BinaryIeeeArithFp64
-import Flapjack.Misc.Fp64NanRefinement
+module
+
+public import Flapjack.Misc.BinaryIeeeArithFp64
+public import Flapjack.Misc.Fp64NanRefinement
+
+@[expose] public section
 
 /-!
 # Computable binary64 arithmetic with a canonical quiet NaN

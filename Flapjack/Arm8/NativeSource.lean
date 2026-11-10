@@ -1,10 +1,14 @@
-import Flapjack.Compiler.Backend.RegAlloc.Executable
-import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileDefinitions
-import Flapjack.Pancake.PanToTarget
-import Flapjack.Pancake.PanStatic
-import Flapjack.Parser
-import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
-import Flapjack.Compiler.Encoders.Arm8.Configuration
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Executable
+public import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileDefinitions
+public import Flapjack.Pancake.PanToTarget
+public import Flapjack.Pancake.PanStatic
+public import Flapjack.Parser
+public import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
+public import Flapjack.Compiler.Encoders.Arm8.Configuration
+
+@[expose] public section
 
 /-! The parser-backed ARMv8 (AArch64) compiler: the RISC-V driver
 `Flapjack.RiscV.NativeSource` at word width 64, with `pancake_backend_conf` of the ARMv8

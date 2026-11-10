@@ -1,12 +1,16 @@
-import Flapjack.Compiler.Backend.WordToStack.ProductionMoveDomain
-import Flapjack.Compiler.Backend.WordToStack.ProductionMoves
-import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
-import Flapjack.Compiler.Backend.Parmove.SourceMembershipWrapper
-import Flapjack.Compiler.Backend.Parmove.PmovDsteps
-import Flapjack.Compiler.Backend.Parmove.Invariants.Preservation
-import Flapjack.Compiler.Backend.Parmove.DStepStep
-import Flapjack.Compiler.Backend.Parmove.MapInj
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Move
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.ProductionMoveDomain
+public import Flapjack.Compiler.Backend.WordToStack.ProductionMoves
+public import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
+public import Flapjack.Compiler.Backend.Parmove.SourceMembershipWrapper
+public import Flapjack.Compiler.Backend.Parmove.PmovDsteps
+public import Flapjack.Compiler.Backend.Parmove.Invariants.Preservation
+public import Flapjack.Compiler.Backend.Parmove.DStepStep
+public import Flapjack.Compiler.Backend.Parmove.MapInj
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Move
+
+@[expose] public section
 
 /-! Concrete formatting/materialization infrastructure, not a HOL theorem
 port. Actual caller domain discharge is provided by ProductionMoveDomain;

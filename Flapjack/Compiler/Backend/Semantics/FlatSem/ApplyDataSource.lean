@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+
+@[expose] public section
 
 /-! Source-shaped list, string, vector, thunk and FFI primitive cases. -/
 namespace Flapjack.Compiler.Backend.FlatSem

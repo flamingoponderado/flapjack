@@ -1,5 +1,9 @@
-import Flapjack.SemanticsHOL
-import Flapjack.PrimTypesHOL.Types
+module
+
+public import Flapjack.SemanticsHOL
+public import Flapjack.PrimTypesHOL.Types
+
+@[expose] public section
 
 /-! Source semantics state and typeability. The declarative type judgments use
 the unreviewed expression/declaration encodings; the original grammar-based

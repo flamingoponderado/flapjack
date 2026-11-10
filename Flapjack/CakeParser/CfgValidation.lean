@@ -1,5 +1,9 @@
-import Flapjack.CakeParser.CfgGrammar
-import Flapjack.CakeParser.ParseTree.Grammar
+module
+
+public import Flapjack.CakeParser.CfgGrammar
+public import Flapjack.CakeParser.ParseTree.Grammar
+
+@[expose] public section
 
 /-! A decidable check for the generated grammar on executable PEG trees. This
 checks the generated table; it does not prove the table equals HOL `cmlG` or

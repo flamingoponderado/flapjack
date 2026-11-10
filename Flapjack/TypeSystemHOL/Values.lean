@@ -1,4 +1,8 @@
-import Flapjack.AstHOL.Syntax
+module
+
+public import Flapjack.AstHOL.Syntax
+
+@[expose] public section
 
 /-! The source value predicate used by declarative typing and inference. -/
 namespace Flapjack.TypeSystemHOL

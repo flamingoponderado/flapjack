@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.PresLang.Source
-import Flapjack.Compiler.Backend.FlatLang
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Source
+public import Flapjack.Compiler.Backend.FlatLang
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! The flat-language explorer printer, following `presLangScript.sml`'s
 `opt_con_to_display_def`, `flat_pat_to_display_def`,

@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
-import Flapjack.Misc.MachineIeee.SqrtReal
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+public import Flapjack.Misc.MachineIeee.SqrtReal
+
+@[expose] public section
 
 namespace Flapjack.WordSemStateFiniteExact
 

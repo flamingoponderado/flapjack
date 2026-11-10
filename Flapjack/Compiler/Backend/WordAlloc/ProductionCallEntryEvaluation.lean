@@ -1,6 +1,10 @@
-import Flapjack.Misc.Sptree.FromList2
-import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSACanonicalImage
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.FullSSACorrect
+module
+
+public import Flapjack.Misc.Sptree.FromList2
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSACanonicalImage
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.FullSSACorrect
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 open Compiler.Backend.WordAlloc WordSemStateFiniteExact
