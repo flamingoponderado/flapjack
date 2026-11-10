@@ -155,6 +155,7 @@ all_distinct_code_sort_typed=ALL_DISTINCT (MAP (FST :num # α -> num) (code_sort
 compile_all_distinct_locs_typed=(compile (c :config) (e :closLang$exp list) :config # (num # num # bvl$exp) list # mlstring sptree$num_map) = ((c' :config),(p :(num # num # bvl$exp) list),(n :mlstring sptree$num_map)) ⇒ ALL_DISTINCT (MAP (FST :num # num # bvl$exp -> num) p)
 perm_imp_from_alist_eq_typed=∀(xs :(num # α) list) (ys :(num # α) list). PERM xs ys ⇒ ALL_DISTINCT (MAP (FST :num # α -> num) xs) ⇒ fromAList xs = fromAList ys
 from_alist_code_sort_typed=ALL_DISTINCT (MAP (FST :num # α -> num) (xs :(num # α) list)) ⇒ fromAList (code_sort xs) = fromAList xs
+syntax_oracle_ok_start_typed=syntax_oracle_ok (c :config) ((c' :config) with start updated_by (f :num -> num)) (es :closLang$exp list) (co :num -> (num # val_approx sptree$num_map # sptree$num_set # α) # closLang$exp list # (num # num # closLang$exp) list) ⇔ syntax_oracle_ok c c' es co
 toaList_domain_typed=∀(x :num). MEM x (MAP (FST :num # α -> num) (toAList (t :α sptree$num_map))) ⇔ x ∈ (domain t :num -> bool)
 sptree_domain_lookup_typed=∀(t :α sptree$num_map) (k :num). k ∈ (domain t :num -> bool) ⇔ ∃(v :α). lookup k t = SOME v
 known_compile_is_some_typed=(compile (kc :clos_known$config option) (es :closLang$exp list) :clos_known$config option # closLang$exp list) = ((kc' :clos_known$config option),(es' :closLang$exp list)) ⇒ (IS_SOME kc' ⇔ IS_SOME kc)

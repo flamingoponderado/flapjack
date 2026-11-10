@@ -126,6 +126,12 @@
   "reviewer": "Compared from_alist_code_sort_typed and independent review: polymorphic payload, distinctness premise and structural Spt equality match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "syntax_oracle_ok_start",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SyntaxOracle.lean", "lean_name": "syntaxOracleOkCommon_start",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared syntax_oracle_ok_start_typed and independent review: binder order c, c', f, es, co and polymorphic oracle payload match; the start update is f c'.start and HOL boolean equality is rendered as iff."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "every_Fn_calls_list",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "everyFn_callsList",
   "statement_status": "reviewed_exact",
@@ -10385,7 +10391,7 @@
     "Flapjack.HolFiniteMapExact.holEmpty"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared semantics_remove_ticks_typed and remove_sing_eq_typed: the original source non-failure premise, empty auxiliary oracle entries, positive maximum application, empty code maps, pure compiler/oracle composition and source-to-target semantics equality are retained. Compiler configuration and FFI payload types remain independent. The proof uses the reverse evaluator simulation with existential extra source clock, stability of non-timeout evaluations and monotone trace limits; semantics_bounded separately connects the executed retry. holEmpty is the reviewed canonical finite-map producer, and the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or end-to-end compiler correctness. Inherits the reals_as_rational_cuts assumption through its dependencies."
+  "reviewer": "Compared semantics_remove_ticks_typed and remove_sing_eq_typed: the original source non-failure premise, empty auxiliary oracle entries, positive maximum application, empty code maps, pure compiler/oracle composition and source-to-target semantics equality are retained. Compiler configuration and FFI payload types remain independent. The proof uses the reverse evaluator simulation with existential extra source clock, stability of non-timeout evaluations and monotone trace limits; removeBounded_list_eq_source connects the executed retry to removeList. holEmpty is the reviewed canonical finite-map producer, and the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or end-to-end compiler correctness. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
@@ -11257,7 +11263,7 @@
     "code"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared remove_correct_typed and the source statement: the original source evaluation, environment and state premises and existential target evaluation of removeList at the source environment length, result relation and final state relation are retained. Both states share independently polymorphic compiler and FFI carriers. The state uses canonical refs and code finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. The separate removeBounded_correct helper connects this theorem to the executed bounded-retry list traversal. Source review and Lean checking do not establish cross-language equivalence or whole-program correctness. Inherits the reals_as_rational_cuts assumption through its dependencies."
+  "reviewer": "Compared remove_correct_typed and the source statement: the original source evaluation, environment and state premises and existential target evaluation of removeList at the source environment length, result relation and final state relation are retained. Both states share independently polymorphic compiler and FFI carriers. The state uses canonical refs and code finite maps with a local roundtrip witness; the evaluator inherits the reviewed rational-cut real model. removeBounded_list_eq_source connects the executed bounded-retry list traversal to removeList. Source review and Lean checking do not establish cross-language equivalence or whole-program correctness. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
   {
   "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
@@ -11269,7 +11275,7 @@
     "Flapjack.HolFiniteMapExact.holEmpty"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared semantics_compile_typed: the original source non-failure premise, empty auxiliary oracle entries, positive maximum application, empty code maps, pure compiler/oracle composition and target-to-source semantics equality are retained. Compiler configuration and FFI payload types remain independent. The proof derives equal failure status, terminating observations and divergence trace sets from the complete evaluator simulation; semantics_bounded separately connects the executable bounded-retry pass. holEmpty is the reviewed canonical finite-map result producer, and the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or end-to-end compiler correctness. Inherits the reals_as_rational_cuts assumption through its dependencies."
+  "reviewer": "Compared semantics_compile_typed: the original source non-failure premise, empty auxiliary oracle entries, positive maximum application, empty code maps, pure compiler/oracle composition and target-to-source semantics equality are retained. Compiler configuration and FFI payload types remain independent. The proof derives equal failure status, terminating observations and divergence trace sets from the complete evaluator simulation; compileBounded_eq_source connects the executable bounded-retry pass to compile. holEmpty is the reviewed canonical finite-map result producer, and the evaluator inherits the reviewed rational-cut real model. Source review and Lean checking do not establish cross-language equivalence or end-to-end compiler correctness. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
@@ -127894,7 +127900,7 @@
     "Flapjack.HolFiniteMapExact.holEmpty"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared semantics_let_op_typed: original source non-failure premise, empty auxiliary oracle entries, positive maximum application, empty code maps, pure compiler/oracle composition and target-to-source semantics equality agree. Compiler configuration and FFI payload types remain independent. The proof derives equal observations from the complete evaluator simulation; semantics_bounded connects the executed bounded traversal. holEmpty is the reviewed canonical finite-map result producer; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or end-to-end compiler correctness. Inherits the reals_as_rational_cuts assumption through its dependencies."
+  "reviewer": "Compared semantics_let_op_typed: original source non-failure premise, empty auxiliary oracle entries, positive maximum application, empty code maps, pure compiler/oracle composition and target-to-source semantics equality agree. Compiler configuration and FFI payload types remain independent. The proof derives equal observations from the complete evaluator simulation; compileBounded_list_eq_source connects the executed retry to compileList. holEmpty is the reviewed canonical finite-map result producer; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or end-to-end compiler correctness. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
 {
   "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",

@@ -116,16 +116,4 @@ theorem semantics_let_op {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
       semantics ffi maxApp Flapjack.HolFiniteMapExact.holEmpty oracle (pureCc compileInc compiler) program :=
   semantics_let_op_core ffi maxApp oracle compiler program notFail assumptions.1 assumptions.2
 
-/-- The production bounded-retry list pass has the same observable semantics
-as the untransformed source program. -/
-theorem semantics_bounded {C F : Type} (ffi : HolFfiState F) (fuel maxApp : Nat)
-    (oracle : CompileOracle C) (compiler : Compiler C) (program : List ClosLang.Exp)
-    (notFail : semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) program ≠ .fail)
-    (assumptions : (∀ index, (oracle index).2.2 = []) ∧ 1 ≤ maxApp) :
-    ∃ transformed, program.mapM (compileBounded fuel) = some transformed ∧
-      semantics ffi maxApp HolFiniteMapExact.empty (pureCo compileInc ∘ oracle) compiler transformed =
-        semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) program :=
-  ⟨compileList program, compileBounded_list_eq_source fuel program,
-    semantics_let_op_core ffi maxApp oracle compiler program notFail assumptions.1 assumptions.2⟩
-
 end Flapjack.Compiler.Backend.ClosLetop

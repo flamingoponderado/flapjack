@@ -240,21 +240,4 @@ theorem remove_fvs_correct {C F : Type} (xs : List ClosLang.Exp) (env : List Val
     ⟨premises.1, premises.2.1, premises.2.2, rfl⟩
 end SimulationPort
 
-/-- The production bounded-retry traversal always returns code simulated by
-the source evaluator theorem. This connects the proof-side traversal to the
-compiler's executable list pass. -/
-theorem removeBounded_correct {C F : Type} (fuel : Nat) (xs : List ClosLang.Exp) (env : List Value)
-    (source : State C F) (result : Result (List Value) Value) (next : State C F)
-    (nextEnv : List Value) (target : State C F)
-    (premises : evaluate xs env source = (result, next) ∧
-      List.Forall₂ ValueRel env nextEnv ∧ StateRel source target) :
-    ∃ code targetResult targetNext,
-      xs.mapM (removeBounded fuel env.length) = some code ∧
-      evaluate code nextEnv target = (targetResult, targetNext) ∧
-      ResultRel result targetResult ∧ StateRel next targetNext := by
-  obtain ⟨targetResult, targetNext, run, results, states⟩ :=
-    SimulationPort.remove_fvs_correct xs env source result next nextEnv target premises
-  exact ⟨removeList env.length xs, targetResult, targetNext,
-    removeBounded_list_eq_source fuel env.length xs, run, results, states⟩
-
 end Flapjack.Compiler.Backend.ClosFvs

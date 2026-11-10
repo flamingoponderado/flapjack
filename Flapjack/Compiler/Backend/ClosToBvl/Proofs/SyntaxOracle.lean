@@ -59,4 +59,13 @@ noncomputable def syntaxOracleOkCommon {α : Type} (c c' : Config) (es : List Cl
   isStateOracle (ClosNumber.ignoreTable ClosNumber.compileInc)
     (pureCo (ClosMti.condCompileInc c.doMti c.maxApp) ∘ co)
 
+/-- Updating the eventual entry label leaves the source oracle condition unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "syntax_oracle_ok_start"]
+theorem syntaxOracleOkCommon_start {α : Type} (c c' : Config) (f : Nat → Nat)
+    (es : List ClosLang.Exp)
+    (co : Nat → (Nat × Spt ClosKnown.ValApprox × NumSet × α) × ClosSem.Program) :
+    syntaxOracleOkCommon c { c' with start := f c'.start } es co ↔
+      syntaxOracleOkCommon c c' es co := by
+  rfl
+
 end Flapjack.Compiler.Backend.ClosToBvl

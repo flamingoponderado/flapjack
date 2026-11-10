@@ -113,16 +113,4 @@ theorem semantics_remove_ticks {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
       fun ⟨clock, error⟩ => targetSafe clock error, if_false]
   rw [terminatingEq, ← tracesEq]
 
-/-- The executed tick-removal retry has the original observable semantics.
-This is Flapjack infrastructure connecting the production path. -/
-theorem semantics_bounded {C F : Type} (ffi : HolFfiState F) (fuel maxApp : Nat)
-    (oracle : CompileOracle C) (compiler : Compiler C) (program : List ClosLang.Exp)
-    (notFail : semantics ffi maxApp HolFiniteMapExact.holEmpty oracle (pureCc compileInc compiler) program ≠ .fail)
-    (assumptions : (∀ index, (oracle index).2.2 = []) ∧ 1 ≤ maxApp) :
-    ∃ transformed, program.mapM (removeBounded fuel) = some transformed ∧
-      semantics ffi maxApp HolFiniteMapExact.holEmpty oracle (pureCc compileInc compiler) program =
-        semantics ffi maxApp HolFiniteMapExact.holEmpty (pureCo compileInc ∘ oracle) compiler transformed :=
-  ⟨removeList program, removeBounded_list_eq_source fuel program,
-    semantics_remove_ticks ffi maxApp oracle compiler program notFail assumptions⟩
-
 end Flapjack.Compiler.Backend.ClosTicks
