@@ -145,9 +145,14 @@ theorem let_compile_noMutcons :
     rintro _ ⟨e, member, rfl⟩
     exact let_compileSing_noMutcons env d e (safe e member)
 
-/-- The source entry point to let propagation preserves the invariant;
-`compile_exp_eq` identifies it with the singleton compiler at empty environment. -/
-@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "bvi_let_compile_exp_no_mutcons"]
+/-- The singleton-threaded let pass at empty environment preserves the
+invariant. HOL's `bvi_let_compile_exp_no_mutcons` is stated over
+`bvi_let$compile_exp`, whose source definition takes the head of the
+list-recursive `compile`; this Lean statement is about the singleton-threaded
+`compileSing [] 0`, which HOL's `compile_exp_eq` (itself resting on
+`compile_sing`) identifies with `compile_exp`. That equality is not established
+in Lean and neither `compile` nor `compile_exp` is ported, so the `@[hol]` tag
+is withdrawn and the exact port remains open. -/
 theorem let_compileExp_noMutcons (expression : Bvi.Exp) (safe : noMutcons expression) :
     noMutcons (BviLet.compileSing [] 0 expression) :=
   let_compileSing_noMutcons [] 0 expression safe
