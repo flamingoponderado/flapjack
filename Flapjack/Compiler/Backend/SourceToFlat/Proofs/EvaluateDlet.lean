@@ -1,5 +1,7 @@
 module
 
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.BindingCount
+
 public import Flapjack.FiniteMap.AlistExact.Lookup
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDenv
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
@@ -447,35 +449,6 @@ theorem compileDlet_generationStore (trace : List VarN) (n : Nat) (start : NextI
       cases lookup : nsLookup compMap.v id <;> simp [compileDecs, found, lookup]
       case some binding => cases binding <;> rfl
 
-/-- The value-index counter produced by compiling a single declaration.
-This specialized helper has no separate HOL declaration. -/
-theorem compileDlet_valueIndex (trace : List VarN) (n : Nat) (start : NextIndices)
-    (compMap : Environment) (gen : EnvironmentGenerationStore)
-    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
-    (compileDecs trace n start compMap gen [.dlet location pattern expr]).2.1.vidx =
-      start.vidx + (match simpleDlet pattern expr with
-        | some _ => 0 | none => (AstHOL.patBindings pattern).length) := by
-  cases found : simpleDlet pattern expr with
-  | none => simp [compileDecs, found]
-  | some pair =>
-    cases pair with
-    | mk name id =>
-      cases lookup : nsLookup compMap.v id <;> simp [compileDecs, found, lookup]
-      case some binding => cases binding <;> rfl
-
-/-- The compiler's index-order premise supplies the reserved-slot bound used
-by the factored declaration simulation. This helper has no separate HOL
-declaration. -/
-theorem compileDlet_fits_of_idxPrev (trace : List VarN) (n : Nat) (start finish : NextIndices)
-    (compMap : Environment) (gen : EnvironmentGenerationStore)
-    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
-    (bounded : idxPrev (compileDecs trace n start compMap gen [.dlet location pattern expr]).2.1 finish) :
-    start.vidx + (match simpleDlet pattern expr with
-      | some _ => 0 | none => (AstHOL.patBindings pattern).length) ≤ finish.vidx := by
-  have bound := bounded.1
-  rw [compileDlet_valueIndex] at bound
-  exact bound
-
 /-- Expression induction hypothesis allowing the global environment to grow.
 The growth and oracle postconditions are required only for non-abort results,
 as in the original correctness theorem. The factored relations still need
@@ -760,41 +733,6 @@ theorem evaluateDlet_growing {C F : Type} [Nonempty C]
     exact evaluateDlet_alias_growing interp transform genv start finish other source flat sourceEnv trace n compMap gen
       location name id safe envInv invariant generation
 
-/-- Apply the factored declaration simulation using the actual compiler and
-source-evaluation results. The outcome still uses factored relations and is
-not yet the original HOL pass-correctness theorem. -/
-theorem evaluateDlet_growing_compiled {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (genv : GlobalEnv) (start finish next : NextIndices) (other : Set (Nat × IndexKind))
-    (source sourceLast : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
-    (sourceEnv : SemEnv Value) (trace : List VarN) (n n' : Nat)
-    (compMap nextMap : Environment) (gen nextGen : EnvironmentGenerationStore)
-    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
-    (flatDecs : List FlatLang.Exp) (result : Result (SemEnv Value) Value)
-    (compiled : compileDecs trace n start compMap gen [.dlet location pattern expr] =
-      (n', next, nextMap, nextGen, flatDecs))
-    (bounded : idxPrev next finish)
-    (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
-      (sourceLast, result))
-    (notTypeError : result ≠ .err (.abort .typeError))
-    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
-    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
-    (generation : envGenRel gen source.evalState)
-    (expressionStep : DletExpressionStep interp transform genv start finish other source flat sourceEnv
-      ((AstHOL.patBindings pattern).reverse ++ trace) compMap gen expr) :
-    DletOutcomeGrowing interp transform genv start finish other source flat sourceEnv trace n compMap gen
-      location pattern expr := by
-  have safe : ∀ last, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] ≠
-      (last, .err (.abort .typeError)) := by
-    intro last bad
-    apply notTypeError
-    exact congrArg Prod.snd (sourceRun.symm.trans bad)
-  have bound : idxPrev (compileDecs trace n start compMap gen [.dlet location pattern expr]).2.1 finish := by
-    simpa [compiled] using bounded
-  exact evaluateDlet_growing interp transform genv start finish other source flat sourceEnv trace n compMap gen
-    location pattern expr safe envInv invariant generation expressionStep
-    (compileDlet_fits_of_idxPrev trace n start finish compMap gen location pattern expr bound)
-
 /-- The internal simulation carries compiled indices on every non-abort
 result, using the expression induction hypothesis. -/
 theorem evaluateDlet_advanced_compiled {C F : Type} [Nonempty C]
@@ -821,9 +759,19 @@ theorem evaluateDlet_advanced_compiled {C F : Type} [Nonempty C]
   apply DletOutcomeGrowing.advance interp transform genv start finish other source flat sourceEnv trace n
     compMap gen location pattern expr
   · simpa [compiled] using bounded
-  · exact evaluateDlet_growing_compiled interp transform genv start finish next other source sourceLast flat
-      sourceEnv trace n n' compMap nextMap gen nextGen location pattern expr flatDecs result
-      compiled bounded sourceRun notTypeError envInv invariant generation expressionStep
+  · have safe : ∀ last, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] ≠
+        (last, .err (.abort .typeError)) := by
+      intro last bad
+      exact notTypeError (congrArg Prod.snd (sourceRun.symm.trans bad))
+    have count := compileDecs_numBindings trace n start compMap gen [.dlet location pattern expr]
+      n' next nextMap nextGen flatDecs compiled
+    have slots : start.vidx + numBindings (.dlet location pattern expr) ≤ finish.vidx := by
+      simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, Nat.add_zero] at count
+      have finalBound := bounded.1
+      omega
+    apply evaluateDlet_growing interp transform genv start finish other source flat sourceEnv trace n
+      compMap gen location pattern expr safe envInv invariant generation expressionStep
+    cases found : simpleDlet pattern expr <;> simpa [numBindings.eq_1, found] using slots
 
 /-- Convert the advanced value-declaration simulation into the shared
 factored declaration case, including both abort and raised-error outcomes. -/
