@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_list_MAPi",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubInvariants.lean", "lean_name": "callsListSource_mapIdx",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_list_mapi in clos_call_stub_probe.out and HOL source: the free trace and quantified location, unused independently polymorphic argument, and index retain their order; the function equality retains the independent function payload type and original indexed call and variable generation."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "SND_code_list_ZIP",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeList.lean", "lean_name": "codeListSource_snd_zip",
   "statement_status": "reviewed_exact",
@@ -118617,17 +118623,6 @@
       "refs"
     ],
     "reviewer": "Compared source transformed-row membership and the existential original row with match-result equality against the typed local HOL proof replay. The same-module witness checks the canonical finite-map parameter."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
-    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
-    "hol_name": "exh_matrix_thm",
-    "lean_name": "exhMatrix_sound",
-    "statement_status": "reviewed_fmap_as_finite_support_parameters",
-    "fmap_as_finite_support_parameters": [
-      "refs"
-    ],
-    "reviewer": "Compared the matrix conjunct of the source theorem and typed local HOL proof replay, preserving accepted matrix, non-type-failure of every row, and an existential successful row. The same-module witness checks the canonical finite-map parameter."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",

@@ -10,6 +10,27 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.FreeVars
 namespace Flapjack.Compiler.Backend.ClosCall
 open ClosLang ClosProps
 
+/-- The recursive stub generator is the indexed map in the source theorem. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_list_MAPi"]
+theorem callsListSource_mapIdx {A B : Type} (t : BackendCommon.Tra) :
+    ∀ (loc : Nat) (_tra : A) (n : Nat),
+      (callsListSource (A := B) t n loc) =
+        fun fns => fns.mapIdx (fun i p =>
+          (p.1, .call t 0 (loc + 2 * i + 1) (variablesSource t 1 p.1))) := by
+  intro loc tra n
+  funext fns
+  induction fns generalizing loc n with
+  | nil => simp [callsListSource]
+  | cons fn rest ih =>
+    rcases fn with ⟨arity, payload⟩
+    simp only [callsListSource, List.mapIdx_cons]
+    congr 1
+    convert ih (loc + 2) (n + 1) using 1
+    congr 1
+    funext i p
+    congr 2
+    omega
+
 private theorem freeVars_append (v : Nat) (left right : List Exp) :
     freeVars v (left ++ right) ↔ freeVars v left ∨ freeVars v right := by
   induction left with
