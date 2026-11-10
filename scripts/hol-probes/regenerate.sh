@@ -699,7 +699,7 @@ run_probe clos_call_free_correct_probeScript.sml clos_call_free_correct_probe.ou
   free_def_typed closed_def_typed free_thm closed_fn closed_fn_fv closed_cases group_cases "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_call_stub_probeScript.sml clos_call_stub_probe.out \
-  variables_type variables_def calls_list_type calls_list_def calls_list_mapi code_locs_GENLIST_Var_typed fv_GENLIST_Var_tra_typed evaluate_GENLIST_Var_tra_typed no_Labels_GENLIST_Var_typed no_Labels_calls_list_typed obeys_max_app_GENLIST_Var_typed obeys_max_app_calls_list_typed cases "$cake_dir/compiler/backend/clos_callScript.sml" "$cake_dir/compiler/backend/proofs"
+  variables_type variables_def calls_list_type calls_list_def calls_list_mapi code_locs_GENLIST_Var_typed fv_GENLIST_Var_tra_typed evaluate_GENLIST_Var_tra_typed compile_ALL_DISTINCT_typed no_Labels_GENLIST_Var_typed no_Labels_calls_list_typed obeys_max_app_GENLIST_Var_typed obeys_max_app_calls_list_typed cases "$cake_dir/compiler/backend/clos_callScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe tmc_program_word_probeScript.sml tmc_program_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"

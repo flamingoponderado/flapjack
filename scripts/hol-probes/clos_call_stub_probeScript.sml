@@ -10,6 +10,7 @@ val _ = (print "calls_list_mapi="; Lib.with_flag (Globals.show_types,true) print
 val _ = (print "code_locs_GENLIST_Var_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.code_locs_GENLIST_Var); print "\n");
 val _ = (print "fv_GENLIST_Var_tra_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.fv_GENLIST_Var_tra); print "\n");
 val _ = (print "evaluate_GENLIST_Var_tra_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.evaluate_GENLIST_Var_tra); print "\n");
+val _ = (print "compile_ALL_DISTINCT_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.compile_ALL_DISTINCT); print "\n");
 val _ = (print "no_Labels_GENLIST_Var_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.no_Labels_GENLIST_Var); print "\n");
 val _ = (print "no_Labels_calls_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.no_Labels_calls_list); print "\n");
 val _ = (print "obeys_max_app_GENLIST_Var_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.obeys_max_app_GENLIST_Var); print "\n");

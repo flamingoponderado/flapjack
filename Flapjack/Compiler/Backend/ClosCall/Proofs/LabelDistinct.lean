@@ -296,5 +296,21 @@ theorem calls_allDistinct (xs : List Exp) (initial : State) (ys : List Exp)
   apply h.2.2.2 (Nat.succ loc)
   exact ⟨⟨loc, locMem, rfl⟩, by simpa [Nat.succ_eq_add_one] using labelMem⟩
 
+/-- Compiling input with distinct closure locations produces distinct auxiliary labels. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "compile_ALL_DISTINCT"]
+theorem compile_allDistinct (enabled : Bool) (xs ys : List Exp) (known : Flapjack.NumSet)
+    (aux : List (Nat × Nat × Exp))
+    (h : compile enabled xs = (ys, (known, aux)) ∧ (codeLocations xs).Nodup) :
+    (aux.map Prod.fst).Nodup := by
+  cases enabled with
+  | false =>
+    simp [compile] at h
+    obtain ⟨⟨_, _, rfl⟩, _⟩ := h
+    simp
+  | true =>
+    apply calls_allDistinct xs (.ln, []) ys (known, aux)
+    simp only [compile, ↓reduceIte] at h
+    exact ⟨h.1, by simp, h.2, by simp⟩
+
 
 end Flapjack.Compiler.Backend.ClosCall

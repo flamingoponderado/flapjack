@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "compile_ALL_DISTINCT",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LabelDistinct.lean", "lean_name": "compile_allDistinct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_ALL_DISTINCT_typed in clos_call_stub_probe.out and HOL source: the Boolean, input and output expressions, sparse state, and auxiliary code retain their original carriers and order. The original conjunction and distinctness conclusion are unchanged; both enabled and disabled compiler branches are covered."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "evaluate_GENLIST_Var_tra",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubEvaluation.lean", "lean_name": "evaluate_variables",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"], "inherits_reals_as_rational_cuts": true,
