@@ -18,6 +18,12 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_code_locs_MEM",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "calls_codeLocations_mem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_code_locs_MEM_typed in clos_to_bvl_state_relation_probe.out and independent source review: the state carrier and equation agree, the quantified location follows that equation premise, and both disjunctions preserve HOL's statement."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_add_SUC_code_locs",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LabelsOriginal.lean", "lean_name": "calls_addSucc_codeLocations",
   "statement_status": "reviewed_exact",
