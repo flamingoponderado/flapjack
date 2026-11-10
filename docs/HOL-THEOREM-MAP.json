@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_pure",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Purity.lean", "lean_name": "calls_pure",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and calls_pure_type capture: the input expression list, direct-call state, output expression list and final state have the original carriers and order; input EVERY purity and the complete calls equation imply output EVERY purity."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_pure_sing",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Purity.lean", "lean_name": "calls_pure_sing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and calls_pure_sing_type capture: the input and output expressions and initial and final direct-call states retain their carriers and order; input purity and the singleton calls equation imply output purity."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "evaluate_app_mono",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ApplicationGrowth.lean", "lean_name": "evaluateApp_mono",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
