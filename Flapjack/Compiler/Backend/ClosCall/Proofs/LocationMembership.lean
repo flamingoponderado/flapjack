@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelsOriginal
+import Mathlib.Data.List.Perm.Subperm
 
 @[expose] public section
 
@@ -61,6 +62,17 @@ private theorem insertEach_snd (loc count : Nat) (state : State) :
   | succ count ih =>
     cases state with
     | mk known code => simpa [insertEachSource] using ih (loc + 2) (sptInsert loc () known, code)
+
+private theorem locations_flatMap (xs : List Exp) :
+    codeLocations xs = xs.flatMap codeLocationsExp := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih => simp [codeLocations, ih]
+
+private theorem locations_perm {xs ys : List Exp} (h : xs.Perm ys) :
+    (codeLocations xs).Perm (codeLocations ys) := by
+  simp only [locations_flatMap]
+  exact h.flatMap (fun _ _ => List.Perm.refl _)
 
 private def auxLoc (s : State) : Set Nat :=
   {x | x ∈ codeLocations (s.2.map (fun t => t.2.2))}
@@ -296,5 +308,22 @@ theorem calls_codeLocations_mem (xs : List Exp) (initial : State) (ys : List Exp
   change callsSingList xs initial = (ys, final) at run
   rw [run] at invariant
   exact invariant member
+
+private theorem codeLocations_codeList_perm {A C : Type} (ls : List (A × Exp))
+    (n : Nat) (rest : C × List (Nat × A × Exp)) :
+    (codeLocations ((codeListSource n ls rest).2.map (fun t => t.2.2))).Perm
+      (codeLocations (rest.2.map (fun t => t.2.2) ++ ls.map Prod.snd)) := by
+  rw [codeList_bodies, codeLocations_append, codeLocations_append]
+  exact ((locations_perm (List.reverse_perm (ls.map Prod.snd))).append_right _).trans
+    List.perm_append_comm
+
+/-- Moving the bodies into the auxiliary code list preserves location
+distinctness, including when the state and function metadata are polymorphic. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "code_locs_code_list_ALL_DISTINCT"]
+theorem codeLocations_codeList_allDistinct {A C : Type} (ls : List (A × Exp))
+    (n : Nat) (rest : C × List (Nat × A × Exp)) :
+    (codeLocations ((codeListSource n ls rest).2.map (fun t => t.2.2))).Nodup ↔
+      (codeLocations (rest.2.map (fun t => t.2.2) ++ ls.map Prod.snd)).Nodup := by
+  exact (codeLocations_codeList_perm ls n rest).nodup_iff
 
 end Flapjack.Compiler.Backend.ClosCall

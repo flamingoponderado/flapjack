@@ -1,6 +1,7 @@
 (* Typed source statements for the closure-to-BVL state relation. *)
 load "clos_to_bvlProofTheory";
 open HolKernel Parse boolLib bossLib;
+open listTheory;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
 fun show label th = if null (hyp th) then
@@ -73,6 +74,19 @@ val _ = show "calls_code_locs_MEM_typed=" clos_callProofTheory.calls_code_locs_M
 val _ = show "code_locs_cons_typed=" closPropsTheory.code_locs_cons;
 val _ = show "code_locs_append_typed=" closPropsTheory.code_locs_append;
 val _ = show "calls_code_locs_ALL_DISTINCT_typed=" clos_callProofTheory.calls_code_locs_ALL_DISTINCT;
+val code_locs_code_list_ALL_DISTINCT_replay = prove (
+  ``∀ls n rest.
+    ALL_DISTINCT (closProps$code_locs
+      (MAP (SND o SND) (SND (clos_call$code_list n ls rest)))) ⇔
+    ALL_DISTINCT (closProps$code_locs (MAP (SND o SND) (SND rest) ++ MAP SND ls))``,
+  Induct >> fs[clos_callTheory.code_list_def, pairTheory.FORALL_PROD,
+    Once closPropsTheory.code_locs_cons, closPropsTheory.code_locs_append] >>
+  rw[] >> EVAL_TAC >>
+  fs[ALL_DISTINCT_APPEND] >>
+  rw[EQ_IMP_THM] >>
+  fs[Once closPropsTheory.code_locs_cons, ALL_DISTINCT_APPEND, closPropsTheory.code_locs_def] >>
+  metis_tac[]);
+val _ = show "code_locs_code_list_ALL_DISTINCT_replay_typed=" code_locs_code_list_ALL_DISTINCT_replay;
 val _ = show "MAP_FST_code_list_typed=" clos_callProofTheory.MAP_FST_code_list;
 val _ = show "can_extract_to_case_typed=" clos_to_bvlProofTheory.can_extract_to_case;
 val _ = show "annotate_Op_Const_typed=" clos_to_bvlProofTheory.annotate_Op_Const;
