@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.ClosAnnotate.Original
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants
+module
+
+public import Flapjack.Compiler.Backend.ClosAnnotate.Original
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants
+
+@[expose] public section
 
 /-! Source-shaped closure annotation invariants. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate

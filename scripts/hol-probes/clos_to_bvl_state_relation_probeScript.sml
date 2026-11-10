@@ -220,6 +220,7 @@ val _ = show "renumber_code_locs_sing_typed=" clos_to_bvlProofTheory.renumber_co
 val _ = show "set_code_locs_fst_calls_subset_typed=" clos_to_bvlProofTheory.set_code_locs_FST_calls_SUBSET;
 val _ = show "syntax_oracle_ok_bvl_fst_monotonic_typed=" clos_to_bvlProofTheory.syntax_oracle_ok_bvl_FST_monotonic;
 val _ = show "compile_inc_phases_all_distinct_typed=" clos_to_bvlProofTheory.compile_inc_phases_all_distinct;
+val _ = show "semantics_cond_mti_compile_inc_typed=" clos_to_bvlProofTheory.semantics_cond_mti_compile_inc;
 val _ = show "toaList_domain_typed=" miscTheory.toAList_domain;
 val _ = show "sptree_domain_lookup_typed=" sptreeTheory.domain_lookup;
 val _ = show "known_compile_is_some_typed=" clos_knownProofTheory.known_compile_IS_SOME;
