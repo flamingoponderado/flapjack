@@ -117796,32 +117796,32 @@
     "lean_name": "CallBlock",
     "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
     "hol_name": "call_block",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Two constructor skeleton transcribed; inferred source typing and complete declaration review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared call_block_typed with source lines 114-116: constructors CallBlock num (num list) call_block (num list) and RCall num (num list) match the Lean inductive arities and field types, with no other carrier difference."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviTmc.lean",
     "lean_name": "pureOp",
     "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
     "hol_name": "pure_op_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source operation purity cases transcribed; full carrier and declaration review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared pure_op_def_typed with source lines 10-22: the Label, FFI, IntOp Const with empty args, WordOp, BlockOp Cons and remaining operation clauses match; small_enough_int n is the -268435457 <= n <= 268435457 bound, and Lean's match on op and args covers the same eleven clauses."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviTmc.lean",
     "lean_name": "shiftBlock",
     "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
     "hol_name": "shift_cb_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source call-block index shifting transcribed; inferred source typing and complete review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared shift_cb_def_typed with source lines 143-150: RCall shifts its argument list and CallBlock shifts left, recurses on the child and shifts right, preserving the binder order."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviTmc.lean",
     "lean_name": "workerAux",
     "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
     "hol_name": "cb_to_bvi_worker_aux_alt_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source shift-accumulator worker transcribed; complete carrier and definition review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared cb_to_bvi_worker_aux_alt_def_typed with source lines 658-666: the shift accumulator, shifted left and right lists, mut_cons/update_cons binders, Const &idx and LENGTH right match the Lean accumulator definition."
   },
   {
     "lean_path": "Flapjack/CakeParser/Tokens.lean", "lean_name": "Path",
@@ -126898,48 +126898,48 @@
   "hol_name": "shift_vars_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc.lean",
   "lean_name": "shiftVars",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared shift_vars_def_typed with source lines 138-141: Lean defines shiftVars as List.map (fun h => h + n); its empty and cons cases are the two HOL equations."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "wf_vars_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc.lean",
   "lean_name": "wfVars",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wf_vars_def_typed with source lines 274-276: EVERY (fun v => v < n) vs is rendered as membership quantification forall index in indices, index < n, with the same num-list carrier."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "wf_vars_append",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc.lean",
   "lean_name": "wfVars_append",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wf_vars_append_typed with source lines 323-333: both wf_vars premises and the appended-list conclusion match."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "wf_vars_empty",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc.lean",
   "lean_name": "wfVars_empty",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wf_vars_empty_typed with source lines 278-283: the empty list is well-formed for every n."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "wf_vars_expand",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc.lean",
   "lean_name": "wfVars_expand",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wf_vars_expand_typed with source lines 285-297: wf_vars n1 vs and n1 <= n2 imply wf_vars n2 vs; Lean splits the HOL conjunction into two hypotheses."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "wf_vars_shift",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc.lean",
   "lean_name": "wfVars_shift",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wf_vars_shift_typed with source lines 299-308: wf_vars (n2 + n1) (shift_vars n2 vs) matches the Lean map-based shiftVars."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
@@ -127130,240 +127130,240 @@
   "hol_name": "bind_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ExtractCorrespondence.lean",
   "lean_name": "bind",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bind_def_typed with source lines 119-124: the polymorphic element carrier, empty case ([], n) and cons case (n :: vs, last) with bind (n + 1) t match."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "call_to_cb_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ExtractCorrespondence.lean",
   "lean_name": "callToBlockSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared call_to_cb_def_typed with source lines 152-159: dest = some loc and handler = none, bind 0 args and SOME (args, RCall ticks vs) match."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "bvi_to_cb_aux_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ExtractCorrespondence.lean",
   "lean_name": "extractListSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bvi_to_cb_aux_def_typed with source lines 210-268: the empty, singleton and cons list clauses, including shift_vars, the small_enough_int length bound and the shift_cb 1 cons case, match the Lean list traversal. Lean drops the vacuous non-negative lower half of the length bound."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "bvi_to_cb_aux_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ExtractCorrespondence.lean",
   "lean_name": "extractOneSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bvi_to_cb_aux_def_typed with source lines 210-268: the Call, Op (BlockOp (Cons tag)) and other-expression clauses match, including call_to_cb, the recursive list call and the pure_exp guards."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "shift_vars_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ExtractCorrespondence.lean",
   "lean_name": "shiftVarsSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared shift_vars_def_typed with source lines 138-141: Lean defines shiftVarsSource as List.map (fun h => h + n); its empty and cons cases are the two HOL equations."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "bvi_to_cb_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ExtractCorrespondence.lean",
   "lean_name": "toBlockSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bvi_to_cb_def_typed with source lines 492-503: the Call, Op (BlockOp (Cons tag)) and fall-through NONE clauses match."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "bvi_to_cb_aux_wf_inr",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ExtractionWellFormed.lean",
   "lean_name": "extractList_wf_inr",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bvi_to_cb_aux_wf_inr_typed with source line 490 (cj 2 of the local lemma): wf_cb (LENGTH bs) cb and the existential CallBlock tag l child r conclusion match."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "bvi_to_cb_aux_wf_inr_lemma",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ExtractionWellFormed.lean",
   "lean_name": "extractOne_wf_inr",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed replay bvi_to_cb_aux_wf_inr_lemma_typed of the local conjunction with source lines 455-488: the singleton conjunct has the same hypotheses and conclusion shape."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "bvi_to_cb_cases",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ExtractionWellFormed.lean",
   "lean_name": "toBlock_cases",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bvi_to_cb_cases_typed with source lines 523-545: the constructor and direct-call disjuncts match, including x = Op (BlockOp (Cons tag)) args and x = Call ts (SOME loc) args NONE."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "bvi_to_cb_wf",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ExtractionWellFormed.lean",
   "lean_name": "toBlock_wf",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bvi_to_cb_wf_typed with source lines 505-521: the wf_cb (LENGTH bs) cb conclusion matches."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "pure_exp_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/PureCorrespondence.lean",
   "lean_name": "pureExp",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pure_exp_def_typed with source lines 24-41: Var, Let and Op match; the If, Raise, Tick, Call, Force, LetCall and Return cases are F. Lean splits the mutual definition into pureExp and pureExps, with Bool conjunction rendered as &&."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "pure_exp_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/PureCorrespondence.lean",
   "lean_name": "pureExps",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pure_exp_def_typed with source lines 24-41: the pureExps nil and cons equations match the Lean list traversal."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "bvi_to_cb_aux_wf_inl",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/PureExtraction.lean",
   "lean_name": "extractList_wf_inl",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bvi_to_cb_aux_wf_inl_typed with source line 443 (cj 2 of the local lemma): pure_exps n bs, wf_vars (LENGTH bs) vs and small_enough_int (&LENGTH vs) match; pureExps is rendered as = true."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "bvi_to_cb_aux_wf_inl_lemma",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/PureExtraction.lean",
   "lean_name": "extractOne_wf_inl",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed replay bvi_to_cb_aux_wf_inl_lemma_typed of the local conjunction with source lines 411-441: the singleton conjunct has the same hypotheses and conclusion shape."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "cb_size_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/RewriteCorrespondence.lean",
   "lean_name": "callBlockDepth",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cb_size_def_typed with source lines 626-629: CallBlock adds one to the child depth and the other constructor is zero; Lean's explicit RCall case covers the HOL wildcard."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "compile_each_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/RewriteCorrespondence.lean",
   "lean_name": "compileEachSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_each_def_typed with source lines 767-777: the nil, NONE and SOME clauses, including bvl_to_bvi_namespaces and arity + 2, match."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "compile_exp_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/RewriteCorrespondence.lean",
   "lean_name": "compileExpSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_exp_def_typed with source lines 758-765: NONE or SOME (wrapper, rewrite_worker loc next arity (arity + 1) arity exp) matches the map-based Lean definition."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "compile_prog_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/RewriteCorrespondence.lean",
   "lean_name": "compileProgSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_prog_def_typed with source lines 779-781: if do_it then compile_each next xs else (next, xs) matches."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "fill_hole_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/RewriteCorrespondence.lean",
   "lean_name": "fillHoleSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fill_hole_def_typed with source lines 612-614: UpdateCons [exp; Var idx; Var ptr] matches fillHoleSource ptr idx e."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "mut_cons_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/RewriteCorrespondence.lean",
   "lean_name": "mutConsSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared mut_cons_def_typed with source lines 599-606: MutCons tag (LENGTH r), MAP Var l ++ [Const 0] ++ MAP Var r match."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "optimise_call_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/RewriteCorrespondence.lean",
   "lean_name": "optimiseCallSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared optimise_call_def_typed with source lines 616-620: Call ticks (SOME dest) (MAP Var args ++ [ptr; idx]) NONE matches."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "rewrite_worker_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/RewriteCorrespondence.lean",
   "lean_name": "rewriteWorkerSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared rewrite_worker_def_typed with source lines 729-756: If, Let offsets, Raise, Op and Call with LENGTH bs offsets and fill_hole fallbacks, Tick and the final fill_hole clause match; Lean combines the Op and Call clauses because both use the same fallback."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "rewrite_wrapper_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/RewriteCorrespondence.lean",
   "lean_name": "rewriteWrapperSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared rewrite_wrapper_def_typed with source lines 702-727: Var, Raise, Force and Call return NONE; If has the same four option combinations; Let recurses under n + LENGTH xs; Tick uses OPTION_MAP; Op goes through bvi_to_cb and CallBlock. Lean's getD form is the same four-way case."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "shift_cb_dist",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/RewriteCorrespondence.lean",
   "lean_name": "shiftBlock_add",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared shift_cb_dist_typed with source lines 190-208: shift_cb n1 (shift_cb n2 cb) = shift_cb (n1 + n2) cb matches, preserving the argument order."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "shift_cb_zero",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/RewriteCorrespondence.lean",
   "lean_name": "shiftBlock_zero",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared shift_cb_zero_typed with source lines 649-656: shift_cb 0 x = x matches shiftBlock 0 cb = cb."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "update_cons_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/RewriteCorrespondence.lean",
   "lean_name": "updateConsSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared update_cons_def_typed with source lines 622-624: the [exp_val; exp_idx; exp_ptr] operand order matches [value, idx, ptr]."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "cb_to_bvi_worker_aux_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/RewriteCorrespondence.lean",
   "lean_name": "workerAuxSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cb_to_bvi_worker_aux_def_typed with source lines 637-647: the RCall optimise_call clause and the CallBlock nested mut_cons, update_cons and shift_cb 2 clauses match."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "cb_to_bvi_worker_aux_alt_thm",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/RewriteCorrespondence.lean",
   "lean_name": "workerAux_eq_shift",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cb_to_bvi_worker_aux_alt_thm_typed with source lines 668-676: the accumulator worker equals the original worker on the shifted block, with the same loc_opt, ptr and idx arguments."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "cb_to_bvi_worker_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/RewriteCorrespondence.lean",
   "lean_name": "workerBlockSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cb_to_bvi_worker_def_typed with source lines 685-692: the RCall optimise_call clause and the CallBlock mut_cons, update_cons and shift_cb 2 clauses match."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "cb_to_bvi_wrapper_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/RewriteCorrespondence.lean",
   "lean_name": "wrapperBlockSource",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cb_to_bvi_wrapper_def_typed with source lines 694-700: mut_cons, the shifted-child worker_aux and finalise_cons 1 match."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
@@ -127386,64 +127386,64 @@
   "hol_name": "cb_to_bvi_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/VariableEvaluation.lean",
   "lean_name": "callBlockToBvi",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cb_to_bvi_def_typed with source lines 547-555: CallBlock becomes Op (BlockOp (Cons tag)) (l' ++ [child'] ++ r') and RCall becomes Call ts (SOME loc) (MAP Var args) NONE."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "bvi_to_cb_aux_sing",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/WellFormed.lean",
   "lean_name": "extractList_single_shape",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bvi_to_cb_aux_sing_typed with source lines 445-453: the singleton CallBlock tag [] child [] conclusion matches."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "wf_cb_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/WellFormed.lean",
   "lean_name": "wfBlock",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wf_cb_def_typed with source lines 365-373: RCall is wf_vars n args and CallBlock is wf_vars left, wf_cb child, wf_vars right and small_enough_int (&LENGTH right); Lean's smallEnoughInt (Int.ofNat right.length) matches."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "wf_cb_expand",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/WellFormed.lean",
   "lean_name": "wfBlock_expand",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wf_cb_expand_typed with source lines 375-392: wf_cb n1 cb and n1 <= n2 imply wf_cb n2 cb; Lean splits the conjunction into two hypotheses."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "wf_cb_shift_sing",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/WellFormed.lean",
   "lean_name": "wfBlock_shift_sing",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wf_cb_shift_sing_typed with source lines 394-408: SUC n is rendered as n + 1 and shift_cb 1 cb matches shiftBlock 1 cb."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "wf_vars_bind",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/WellFormed.lean",
   "lean_name": "wfVars_bind",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wf_vars_bind_typed with source lines 348-363: bind n bs = (vs, n') implies wf_vars (n + LENGTH bs) vs, with bs.length for the source length."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "wf_vars_cons",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/WellFormed.lean",
   "lean_name": "wfVars_cons",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wf_vars_cons_typed with source lines 335-346: v < n and wf_vars n vs imply wf_vars n (v::vs); Lean splits the conjunction into two hypotheses."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "wf_vars_shift_sing",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/WellFormed.lean",
   "lean_name": "wfVars_shift_sing",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wf_vars_shift_sing_typed with source lines 310-321: SUC n is rendered as n + 1; shift_vars 1 vs and the wf_vars premise agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
