@@ -1,4 +1,10 @@
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Misc.Sptree
+
+import all Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Direct HOL parity for sptree operations. The set operations used by
     `loop_live` (`sptree$union`, `inter`, `delete`, `backend_common$list_delete`,
@@ -11,9 +17,9 @@ namespace Flapjack.Test.SptreeSetOpsParity
 
 open Flapjack
 
-private def keys (t : Spt Unit) : List Nat := (sptToAList t).map Prod.fst
+def keys (t : Spt Unit) : List Nat := (sptToAList t).map Prod.fst
 
-private def set (ks : List Nat) : Spt Unit := sptFromAList (ks.map fun k => (k, ()))
+def set (ks : List Nat) : Spt Unit := sptFromAList (ks.map fun k => (k, ()))
 
 def sptreeSetOpsGuard : Bool :=
   -- union_keys=[1; 9; 0; 4; 6]

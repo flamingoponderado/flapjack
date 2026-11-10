@@ -6,19 +6,29 @@ produced from `pan_itreeSemTheory` whose `eval_def` is identical to
 `panSemScript.sml:209`.  The exact carriers (`ValueHOL`, `PanSemStateExact`)
 derive only `Repr`, so the guards project to `Nat`/`Bool`.
 -/
-import Flapjack.Pancake.Semantics.PanSem.EvalExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.EvalExact
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.PanLang.Decl
+public meta import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+public meta import Flapjack.Pancake.Semantics.PanSem.IsValidValueExact
+public meta import Flapjack.Pancake.Semantics.PanSem.EvalExact
+
+@[expose] public section
 
 namespace Flapjack.Test.PanSemEvalExactParity
 
 open Flapjack
 open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL)
 
-private abbrev ml (s : String) : MlS := Flapjack.Basis.Pure.MlString.ofString s
+abbrev ml (s : String) : MlS := Flapjack.Basis.Pure.MlString.ofString s
 
-private abbrev exactStructs : Flapjack.Pancake.PanLang.StructContextExact :=
+abbrev exactStructs : Flapjack.Pancake.PanLang.StructContextExact :=
   [(ml "Pair", { fields := [(ml "left", ShapeHOL.one), (ml "right", ShapeHOL.one)], size := 2 })]
 
-private abbrev exactState : PanSemStateExact 8 Unit where
+abbrev exactState : PanSemStateExact 8 Unit where
   locals := fun name => if name = ml "x" then some (.val (.word 5)) else none
   globals := fun name => if name = ml "g" then some (.val (.word 6)) else none
   structs := exactStructs
@@ -33,15 +43,15 @@ private abbrev exactState : PanSemStateExact 8 Unit where
   baseAddr := 0
   topAddr := 100
 
-private def wordNat? : Option (ValueHOL 8) → Option Nat
+def wordNat? : Option (ValueHOL 8) → Option Nat
   | some (.val (.word value)) => some value.toNat
   | _ => none
 
-private def isNoneResult : Option (ValueHOL 8) → Bool
+def isNoneResult : Option (ValueHOL 8) → Bool
   | none => true
   | _ => false
 
-private def namedPairEq : Option (ValueHOL 8) → Bool
+def namedPairEq : Option (ValueHOL 8) → Bool
   | some (.nStruct name fields) =>
       name = ml "Pair" &&
         (match fields with
@@ -51,10 +61,10 @@ private def namedPairEq : Option (ValueHOL 8) → Bool
          | _ => false)
   | _ => false
 
-private def namedLocalValue : ValueHOL 8 :=
+def namedLocalValue : ValueHOL 8 :=
   .nStruct (ml "Pair") [(ml "left", .val (.word 3)), (ml "left", .val (.word 4))]
 
-private abbrev namedLocalState : PanSemStateExact 8 Unit :=
+abbrev namedLocalState : PanSemStateExact 8 Unit :=
   { exactState with locals := fun name => if name = ml "v" then some namedLocalValue else none }
 
 def evalExactGuard : Bool :=

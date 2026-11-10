@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Backend.BviLet.Proofs.SourceAgreement
+module
+
+public import Flapjack.Compiler.Backend.BviLet.Proofs.SourceAgreement
+
+import all Flapjack.Compiler.Backend.BviLet.Proofs.SourceAgreement
+public meta import Flapjack.Compiler.Backend.BviLet.SourceSing
+public meta import Flapjack.Compiler.Backend.BviLet.Compile
+
+@[expose] public section
 
 /-! Replays original HOL `compile_exp` observations from bvi_let_compile_probe. -/
 open Flapjack.Compiler.Backend.BviLet

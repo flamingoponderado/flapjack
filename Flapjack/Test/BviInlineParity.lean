@@ -1,9 +1,24 @@
-import Flapjack.Compiler.Backend.BviInline
-import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
-import Flapjack.Test.CakeMLFlatOracle
-import Flapjack.Test.EmptyCakeBviOracle
-import Flapjack.Compiler.Backend.SourceToFlat.ToWord
-import Flapjack.Test.FullCakeWordOracle
+module
+
+public import Flapjack.Compiler.Backend.BviInline
+public import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
+public import Flapjack.Test.CakeMLFlatOracle
+public import Flapjack.Test.EmptyCakeBviOracle
+public import Flapjack.Compiler.Backend.SourceToFlat.ToWord
+public import Flapjack.Test.FullCakeWordOracle
+public meta import Flapjack.Compiler.Backend.BviInline
+public meta import Flapjack.Test.CakeMLFlatOracle
+public meta import Flapjack.Test.EmptyCakeBviOracle
+public meta import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
+public meta import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
+public meta import Flapjack.Compiler.Backend.SourceToFlat.ToWord
+public meta import Flapjack.Test.FullCakeWordOracle
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Original wrapper-inlining and full-program observations. -/
 namespace Flapjack.Test.BviInlineParity

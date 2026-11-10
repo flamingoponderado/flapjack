@@ -1,8 +1,18 @@
-import Flapjack.RiscV.WordExpressionFlatten
-import Flapjack.Compiler.Backend.WordCse.ListOrder
-import Flapjack.Compiler.Backend.WordCse.RegisterUses
-import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
-import Std.Data.TreeMap
+module
+
+public import Flapjack.RiscV.WordExpressionFlatten
+public import Flapjack.Compiler.Backend.WordCse.ListOrder
+public import Flapjack.Compiler.Backend.WordCse.RegisterUses
+public import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+public import Std.Data.TreeMap
+
+import all Flapjack.RiscV.WordExpressionFlatten
+import all Flapjack.Compiler.Backend.WordCse.ListOrder
+import all Flapjack.Compiler.Backend.WordCse.RegisterUses
+import all Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
+import all Std.Data.TreeMap
+
+@[expose] public section
 
 /-!
 # Cake `pull_exp`/`flatten_exp` constant-placement oracle (GH #1024)

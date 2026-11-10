@@ -1,17 +1,35 @@
-import Flapjack.Compiler.Backend.BviTmc
-import Flapjack.Test.BviTmcOracle
-import Flapjack.Compiler.Backend.BviInline
-import Flapjack.Compiler.Backend.BviToData.Compile
-import Flapjack.Compiler.Backend.DataToWord.Control
-import Flapjack.Test.TmcProgramWordOracle
+module
+
+public import Flapjack.Compiler.Backend.BviTmc
+public import Flapjack.Test.BviTmcOracle
+public import Flapjack.Compiler.Backend.BviInline
+public import Flapjack.Compiler.Backend.BviToData.Compile
+public import Flapjack.Compiler.Backend.DataToWord.Control
+public import Flapjack.Test.TmcProgramWordOracle
+
+import all Flapjack.Compiler.Backend.BviTmc
+import all Flapjack.Test.BviTmcOracle
+import all Flapjack.Compiler.Backend.BviInline
+import all Flapjack.Compiler.Backend.BviToData.Compile
+import all Flapjack.Compiler.Backend.DataToWord.Control
+import all Flapjack.Test.TmcProgramWordOracle
+public meta import Flapjack.Compiler.Backend.Bvi.Syntax
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Compiler.Backend.BviToData.Assign
+public meta import Flapjack.Compiler.Backend.BviToData.Optimise
+public meta import Flapjack.Compiler.Backend.DataToWord.Variables
+public meta import Flapjack.Compiler.Backend.DataToWord.Header
+public meta import Flapjack.Compiler.Backend.DataToWord.Numbers
+
+@[expose] public section
 
 /-! Replay the complete original wrapper and worker examples. -/
 namespace Flapjack.Test.BviTmcParity
 open Flapjack.Compiler.Backend BviTmc
 
-private def call : Bvi.Exp := .call 2 (some 3) [.var 0] none
-private def cons (xs : List Bvi.Exp) : Bvi.Exp := .op (.blockOp (.cons 0)) xs
-private def examples : List Bvi.Exp :=
+def call : Bvi.Exp := .call 2 (some 3) [.var 0] none
+def cons (xs : List Bvi.Exp) : Bvi.Exp := .op (.blockOp (.cons 0)) xs
+def examples : List Bvi.Exp :=
   [cons [.var 0, call], cons [call, .var 0], cons [.var 0, cons [.var 0, call]],
    cons [call, .call 0 (some 7) [] none],
    .ifThenElse (.var 0) (cons [.var 0, call]) (.var 0),
@@ -37,7 +55,7 @@ private def examples : List Bvi.Exp :=
 
 #guard (compileExpFuel 0 3 59 1 (cons [.var 0, call])).isNone
 
-private def wordConfig : DataToWord.Config :=
+def wordConfig : DataToWord.Config :=
   ⟨1, 2, 3, 16, false, false, false, false, false, false, .simple⟩
 
 #guard match (do

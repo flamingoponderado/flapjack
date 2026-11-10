@@ -1,4 +1,10 @@
-import Flapjack.Test.CrepGlobalShapeParity
+module
+
+public import Flapjack.Test.CrepGlobalShapeParity
+
+import all Flapjack.Test.CrepGlobalShapeParity
+
+@[expose] public section
 
 /-!
 Fuel is an evaluator cutoff, not a semantic Crep `Error`. The recursive

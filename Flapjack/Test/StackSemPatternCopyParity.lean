@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
+
+@[expose] public section
 
 /-! Kernel replay of all twelve direct original HOL pattern-copy observations. -/
 namespace Flapjack.Test.StackSemPatternCopyParity

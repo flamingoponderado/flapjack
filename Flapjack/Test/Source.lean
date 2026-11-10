@@ -1,7 +1,16 @@
-import Flapjack.Test.Basics
-import Flapjack.Test.SourceSemantics
-import Flapjack.Test.SourceDeclarations
-import Flapjack.Test.Compile
+module
+
+public import Flapjack.Test.Basics
+public import Flapjack.Test.SourceSemantics
+public import Flapjack.Test.SourceDeclarations
+public import Flapjack.Test.Compile
+
+import all Flapjack.Test.Basics
+import all Flapjack.Test.SourceSemantics
+import all Flapjack.Test.SourceDeclarations
+import all Flapjack.Test.Compile
+
+@[expose] public section
 
 /-!
 # Source-language regression tests

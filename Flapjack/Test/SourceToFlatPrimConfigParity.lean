@@ -1,5 +1,16 @@
-import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
-import Flapjack.PrimTypesHOL
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
+public import Flapjack.PrimTypesHOL
+
+import all Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
+import all Flapjack.PrimTypesHOL
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.Misc.Location
+public meta import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public meta import Flapjack.Compiler.Backend.SourceToFlat.Helpers
+
+@[expose] public section
 
 /-!
 # `prim_src_config` closed-form replay

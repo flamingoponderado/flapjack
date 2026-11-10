@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
-import Flapjack.Test.Fixtures.StackExpressions
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
+public import Flapjack.Test.Fixtures.StackExpressions
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
+import all Flapjack.Test.Fixtures.StackExpressions
+
+@[expose] public section
 
 open Flapjack Flapjack.StackSemExpressions
 open Flapjack.Test.Fixtures.StackExpressions

@@ -1,275 +1,279 @@
-import Flapjack.Test.WordUnreachEncoderBoundary
-import Flapjack.Test.AbstractGenerationalGcParity
-import Flapjack.Test.SetNewTriggerParity
-import Flapjack.Test.GenGcMoveRefsParity
-import Flapjack.Test.GenPartialMoveDataParity
-import Flapjack.Test.RuntimeSymbolWiringParity
-import Flapjack.Test.BackendRuntimeStubNamesParity
-import Flapjack.Test.StackRemoveStubNamesParity
-import Flapjack.Test.BalancedMapInsertCorrectParity
-import Flapjack.Test.FiniteMapCardUpdateParity
-import Flapjack.Test.BalancedMapCardinalityCorrectParity
-import Flapjack.Test.BalancedMapAlmostBalanceCorrectParity
-import Flapjack.Test.BalancedMapBalanceRCorrectParity
-import Flapjack.Test.BalancedMapBalanceREqParity
-import Flapjack.Test.BalancedMapRotateLParity
-import Flapjack.Test.BalancedMapDoubleLParity
-import Flapjack.Test.BalancedMapSingleLParity
-import Flapjack.Test.RegAllocGenericCarrierRepair
-import Flapjack.Test.BalancedMapBalanceLCorrectParity
-import Flapjack.Test.BalancedMapBalanceLEqParity
-import Flapjack.Test.BalancedMapRotateRParity
-import Flapjack.Test.BalancedMapDoubleRParity
-import Flapjack.Test.BalancedMapSingleRParity
-import Flapjack.Test.BalancedMapNullParity
-import Flapjack.Test.BalancedMapInvariantEqParity
-import Flapjack.Test.BalancedMapRotationAuxParity
-import Flapjack.Test.BalancedMapMembershipParity
-import Flapjack.Test.BalancedMapBalanceArithmeticParity
-import Flapjack.Test.BalancedMapKeyOrderedTypes
-import Flapjack.Test.BalancedMapHeterogeneousParity
-import Flapjack.Test.LabToTargetLabsDomainParity
-import Flapjack.Test.StackToLabExecutedInput
-import Flapjack.Test.StackWordBoundary
-import Flapjack.Test.StackToLabExecutedCodecParity
-import Flapjack.Test.StackToLabFullEncodingParity
-import Flapjack.Test.StackToLabRecursiveValidityParity
-import Flapjack.Test.StackToLabNonrecursiveValidityParity
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
-import Flapjack.Test.WordConvsFullInstNativeParity
-import Flapjack.Test.WordToStackAsmNameHelpersParity
-import Flapjack.Test.WordToStackAsmRemoveCompilerParity
-import Flapjack.Test.WordToStackAsmRemoveHelpersParity
-import Flapjack.Test.StackPropsRemoveIndependentParity
-import Flapjack.Test.WordToStackStackConvsParity
-import Flapjack.Test.WordToStackRegCompilerParity
-import Flapjack.Test.WordToStackRegRecursiveParity
-import Flapjack.Test.WordToStackRegFlatParity
-import Flapjack.Test.WordToStackRegInstructionsParity
-import Flapjack.Test.WordToStackCallArgsCompilerParity
-import Flapjack.Test.WordToStackReturnCallArgsParity
-import Flapjack.Test.WordToStackRegBoundMonoParity
-import Flapjack.Test.WordToStackReturnRegBoundParity
-import Flapjack.Test.WordToStackAllocCompilerParity
-import Flapjack.Test.WordToStackAllocFlatParity
-import Flapjack.Test.WordToStackAllocInstructionsParity
-import Flapjack.Test.WordToStackReturnAllocArgsParity
-import Flapjack.Test.WordToStackReturnLabelsParity
-import Flapjack.Test.WordToStackLoadContinuationsParity
-import Flapjack.Test.WordToStackMoveReconstructionParity
-import Flapjack.Test.WordToStackALookupMapParity
-import Flapjack.Test.WordToStackNativeInsertWfParity
-import Flapjack.Test.WordToStackConstMemoryAppendParity
-import Flapjack.Test.WordToStackNativeAccessorsParity
-import Flapjack.Test.WordToStackCallLocalRecoveryParity
-import Flapjack.Test.WordToStackStackSuffixParity
-import Flapjack.Test.WordToStackIndexReconstructionParity
-import Flapjack.Test.WordToStackSourceFrameSizeParity
-import Flapjack.Test.WordToStackSortedAListParity
-import Flapjack.Test.WordToStackFrameOffsetsParity
-import Flapjack.Test.WordToStackDecodedFrameShapeParity
-import Flapjack.Test.WordToStackAbsStackWordLengthParity
-import Flapjack.Test.WordToStackMapBitmapParity
-import Flapjack.Test.WordToStackFilterBitmapParity
-import Flapjack.Test.WordToStackListUpdateParity
-import Flapjack.Test.WordToStackWordListLengthParity
-import Flapjack.Test.WordToStackLiveListParity
-import Flapjack.Test.LabValidityNativeParity
-import Flapjack.Test.StackToLabNativeParity
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAOptionLookupSubset
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalStateUpdates
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectLeft
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectRight
-import Flapjack.Test.SSAMapStepParity
-import Flapjack.Test.SSALocalsInsertParity
-import Flapjack.Test.SSAMapBoundsParity
-import Flapjack.Test.SSARegisterFlipParity
-import Flapjack.Test.SSAMapExtendParity
-import Flapjack.Test.SSARenamePropertiesParity
-import Flapjack.Test.SSALocalsPhysicalInsertParity
-import Flapjack.Test.SSAMapPreservationParity
-import Flapjack.Test.SSARegisterClassParity
-import Flapjack.Test.SSALocalsParity
-import Flapjack.Test.SSAMapParity
-import Flapjack.Test.SSASetupParity
-import Flapjack.Test.StackPropsLabelSafetyParity
-import Flapjack.Test.WordConvsProgramMonoParity
-import Flapjack.Test.WordConvsNameMonoParity
-import Flapjack.Test.WordConvsExpMonoParity
-import Flapjack.Test.WordAllocMaxVarExpParity
-import Flapjack.Test.WordAllocMaxVarInstParity
-import Flapjack.Test.WordConvsEveryVarInstMonoParity
-import Flapjack.Test.ParmovePreservesMovesParmoveParity
-import Flapjack.Test.ParmovePreservesMovesPmovParity
-import Flapjack.Test.ParmovePreservesMovesStepsParity
-import Flapjack.Test.RegAllocSortMovesRouteParity
-import Flapjack.Test.ParmovePreservesMovesStepParity
-import Flapjack.Test.ParmoveAllDistinctStepsParity
-import Flapjack.Test.RegAllocSortMovesParity
-import Flapjack.Test.ProductionThreeToTwoDomain
-import Flapjack.Test.CanonizeMovesParity
-import Flapjack.Test.MonadArrayLengthParity
-import Flapjack.Test.RegAllocStateMapParity
-import Flapjack.Test.MonadListPrimitivesParity
-import Flapjack.Test.CanonizeSortParity
-import Flapjack.Test.HeuProgParity
-import Flapjack.Test.RegAllocRemapParity
-import Flapjack.Test.HeuCallParity
-import Flapjack.Test.HeuMaxParity
-import Flapjack.Test.HeuInstParity
-import Flapjack.Test.SptMapParity
-import Flapjack.Test.WordAllocCheckerAssemblyParity
-import Flapjack.Test.SptMapiParity
-import Flapjack.Test.WordAllocOracleColourParity
-import Flapjack.Test.WordAllocReturnCheckerParity
-import Flapjack.Test.WordAllocShareCheckerParity
-import Flapjack.Test.WordAllocCoalesceCostParity
-import Flapjack.Test.WordAllocLoopCheckerParity
-import Flapjack.Test.WordToStackCompilePrefixParity
-import Flapjack.Test.WordToStackInsertPrefixParity
-import Flapjack.Test.WordToStackLivePrefixParity
-import Flapjack.Test.WordToStackLiveLengthParity
-import Flapjack.Test.ParmoveDestinationWrapperParity
-import Flapjack.Test.ParmoveDStepStepParity
+module
 
-import Flapjack.Test.WordToStackCompileKeysParity
-import Flapjack.Test.WordToStackRetainedFrameParity
-import Flapjack.Test.WordToStackAllocatorCodecParity
-import Flapjack.Test.WordToStackSelectorPreludeParity
-import Flapjack.Test.WordToStackSelectorDomainParity
-import Flapjack.Test.WordToStackNativeConfigParity
-import Flapjack.Test.ParmoveDStepsParity
-import Flapjack.Test.WordLangMaxVarParity
-import Flapjack.Test.WordLangCutsetsMaxParity
-import Flapjack.Test.WordLangMaxVarInstParity
-import Flapjack.Test.WordToStackNativeCompileParity
-import Flapjack.Test.StackSemStackCodecParity
-import Flapjack.Test.StackSemControl
-import Flapjack.Test.StackSemStateOps
-import Flapjack.Test.StackSemWordBitmapParity
-import Flapjack.Test.Source
-import Flapjack.Test.Parser
-import Flapjack.Test.DisplayParity
-import Flapjack.Test.ParserStaticExamples
-import Flapjack.Test.ParserParseDefParity
-import Flapjack.Test.CompileFunctionDistinct
-import Flapjack.Test.Runtime
-import Flapjack.Test.CollectorSemantics
-import Flapjack.Test.SpillAllocation
-import Flapjack.Test.OracleAllocator
-import Flapjack.Test.AllocatorDriver
-import Flapjack.Test.HeuristicsFastParity
-import Flapjack.Test.SpillCosts
-import Flapjack.Test.HeuristicDriver
-import Flapjack.Test.LocValueAnalysis
-import Flapjack.Test.LocValueLowering
-import Flapjack.Test.GraphLocations
-import Flapjack.Test.LinearScan
-import Flapjack.Test.PanMemoryModel
-import Flapjack.Test.CrepeMemorySemantics
-import Flapjack.Test.PanValueFfiCore
-import Flapjack.Test.PanValueFfiClockSemantics
-import Flapjack.Test.PanValueWfParity
-import Flapjack.Test.PanSemStateEvalParity
-import Flapjack.Test.PanSemEvalRoutedParity
-import Flapjack.Test.SourceSemanticsOps
-import Flapjack.Test.PanToCrepExceptionRelation
-import Flapjack.Test.PanToCrepRelationsParity
-import Flapjack.Test.PanToCrepStateRelCarrierParity
-import Flapjack.Test.PanToCrepRetInst2Parity
-import Flapjack.Test.PanToCrepCodeRelParity
-import Flapjack.Test.PanToCrepFirstCompileParity
-import Flapjack.Test.PanToCrepContextExactParity
-import Flapjack.Test.PanToCrepCompFuncExactParity
-import Flapjack.Test.PanCommonParity
+public import Flapjack.Test.WordUnreachEncoderBoundary
+public import Flapjack.Test.AbstractGenerationalGcParity
+public import Flapjack.Test.SetNewTriggerParity
+public import Flapjack.Test.GenGcMoveRefsParity
+public import Flapjack.Test.GenPartialMoveDataParity
+public import Flapjack.Test.RuntimeSymbolWiringParity
+public import Flapjack.Test.BackendRuntimeStubNamesParity
+public import Flapjack.Test.StackRemoveStubNamesParity
+public import Flapjack.Test.BalancedMapInsertCorrectParity
+public import Flapjack.Test.FiniteMapCardUpdateParity
+public import Flapjack.Test.BalancedMapCardinalityCorrectParity
+public import Flapjack.Test.BalancedMapAlmostBalanceCorrectParity
+public import Flapjack.Test.BalancedMapBalanceRCorrectParity
+public import Flapjack.Test.BalancedMapBalanceREqParity
+public import Flapjack.Test.BalancedMapRotateLParity
+public import Flapjack.Test.BalancedMapDoubleLParity
+public import Flapjack.Test.BalancedMapSingleLParity
+public import Flapjack.Test.RegAllocGenericCarrierRepair
+public import Flapjack.Test.BalancedMapBalanceLCorrectParity
+public import Flapjack.Test.BalancedMapBalanceLEqParity
+public import Flapjack.Test.BalancedMapRotateRParity
+public import Flapjack.Test.BalancedMapDoubleRParity
+public import Flapjack.Test.BalancedMapSingleRParity
+public import Flapjack.Test.BalancedMapNullParity
+public import Flapjack.Test.BalancedMapInvariantEqParity
+public import Flapjack.Test.BalancedMapRotationAuxParity
+public import Flapjack.Test.BalancedMapMembershipParity
+public import Flapjack.Test.BalancedMapBalanceArithmeticParity
+public import Flapjack.Test.BalancedMapKeyOrderedTypes
+public import Flapjack.Test.BalancedMapHeterogeneousParity
+public import Flapjack.Test.LabToTargetLabsDomainParity
+public import Flapjack.Test.StackToLabExecutedInput
+public import Flapjack.Test.StackWordBoundary
+public import Flapjack.Test.StackToLabExecutedCodecParity
+public import Flapjack.Test.StackToLabFullEncodingParity
+public import Flapjack.Test.StackToLabRecursiveValidityParity
+public import Flapjack.Test.StackToLabNonrecursiveValidityParity
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+public import Flapjack.Test.WordConvsFullInstNativeParity
+public import Flapjack.Test.WordToStackAsmNameHelpersParity
+public import Flapjack.Test.WordToStackAsmRemoveCompilerParity
+public import Flapjack.Test.WordToStackAsmRemoveHelpersParity
+public import Flapjack.Test.StackPropsRemoveIndependentParity
+public import Flapjack.Test.WordToStackStackConvsParity
+public import Flapjack.Test.WordToStackRegCompilerParity
+public import Flapjack.Test.WordToStackRegRecursiveParity
+public import Flapjack.Test.WordToStackRegFlatParity
+public import Flapjack.Test.WordToStackRegInstructionsParity
+public import Flapjack.Test.WordToStackCallArgsCompilerParity
+public import Flapjack.Test.WordToStackReturnCallArgsParity
+public import Flapjack.Test.WordToStackRegBoundMonoParity
+public import Flapjack.Test.WordToStackReturnRegBoundParity
+public import Flapjack.Test.WordToStackAllocCompilerParity
+public import Flapjack.Test.WordToStackAllocFlatParity
+public import Flapjack.Test.WordToStackAllocInstructionsParity
+public import Flapjack.Test.WordToStackReturnAllocArgsParity
+public import Flapjack.Test.WordToStackReturnLabelsParity
+public import Flapjack.Test.WordToStackLoadContinuationsParity
+public import Flapjack.Test.WordToStackMoveReconstructionParity
+public import Flapjack.Test.WordToStackALookupMapParity
+public import Flapjack.Test.WordToStackNativeInsertWfParity
+public import Flapjack.Test.WordToStackConstMemoryAppendParity
+public import Flapjack.Test.WordToStackNativeAccessorsParity
+public import Flapjack.Test.WordToStackCallLocalRecoveryParity
+public import Flapjack.Test.WordToStackStackSuffixParity
+public import Flapjack.Test.WordToStackIndexReconstructionParity
+public import Flapjack.Test.WordToStackSourceFrameSizeParity
+public import Flapjack.Test.WordToStackSortedAListParity
+public import Flapjack.Test.WordToStackFrameOffsetsParity
+public import Flapjack.Test.WordToStackDecodedFrameShapeParity
+public import Flapjack.Test.WordToStackAbsStackWordLengthParity
+public import Flapjack.Test.WordToStackMapBitmapParity
+public import Flapjack.Test.WordToStackFilterBitmapParity
+public import Flapjack.Test.WordToStackListUpdateParity
+public import Flapjack.Test.WordToStackWordListLengthParity
+public import Flapjack.Test.WordToStackLiveListParity
+public import Flapjack.Test.LabValidityNativeParity
+public import Flapjack.Test.StackToLabNativeParity
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAOptionLookupSubset
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalStateUpdates
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectLeft
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectRight
+public import Flapjack.Test.SSAMapStepParity
+public import Flapjack.Test.SSALocalsInsertParity
+public import Flapjack.Test.SSAMapBoundsParity
+public import Flapjack.Test.SSARegisterFlipParity
+public import Flapjack.Test.SSAMapExtendParity
+public import Flapjack.Test.SSARenamePropertiesParity
+public import Flapjack.Test.SSALocalsPhysicalInsertParity
+public import Flapjack.Test.SSAMapPreservationParity
+public import Flapjack.Test.SSARegisterClassParity
+public import Flapjack.Test.SSALocalsParity
+public import Flapjack.Test.SSAMapParity
+public import Flapjack.Test.SSASetupParity
+public import Flapjack.Test.StackPropsLabelSafetyParity
+public import Flapjack.Test.WordConvsProgramMonoParity
+public import Flapjack.Test.WordConvsNameMonoParity
+public import Flapjack.Test.WordConvsExpMonoParity
+public import Flapjack.Test.WordAllocMaxVarExpParity
+public import Flapjack.Test.WordAllocMaxVarInstParity
+public import Flapjack.Test.WordConvsEveryVarInstMonoParity
+public import Flapjack.Test.ParmovePreservesMovesParmoveParity
+public import Flapjack.Test.ParmovePreservesMovesPmovParity
+public import Flapjack.Test.ParmovePreservesMovesStepsParity
+public import Flapjack.Test.RegAllocSortMovesRouteParity
+public import Flapjack.Test.ParmovePreservesMovesStepParity
+public import Flapjack.Test.ParmoveAllDistinctStepsParity
+public import Flapjack.Test.RegAllocSortMovesParity
+public import Flapjack.Test.ProductionThreeToTwoDomain
+public import Flapjack.Test.CanonizeMovesParity
+public import Flapjack.Test.MonadArrayLengthParity
+public import Flapjack.Test.RegAllocStateMapParity
+public import Flapjack.Test.MonadListPrimitivesParity
+public import Flapjack.Test.CanonizeSortParity
+public import Flapjack.Test.HeuProgParity
+public import Flapjack.Test.RegAllocRemapParity
+public import Flapjack.Test.HeuCallParity
+public import Flapjack.Test.HeuMaxParity
+public import Flapjack.Test.HeuInstParity
+public import Flapjack.Test.SptMapParity
+public import Flapjack.Test.WordAllocCheckerAssemblyParity
+public import Flapjack.Test.SptMapiParity
+public import Flapjack.Test.WordAllocOracleColourParity
+public import Flapjack.Test.WordAllocReturnCheckerParity
+public import Flapjack.Test.WordAllocShareCheckerParity
+public import Flapjack.Test.WordAllocCoalesceCostParity
+public import Flapjack.Test.WordAllocLoopCheckerParity
+public import Flapjack.Test.WordToStackCompilePrefixParity
+public import Flapjack.Test.WordToStackInsertPrefixParity
+public import Flapjack.Test.WordToStackLivePrefixParity
+public import Flapjack.Test.WordToStackLiveLengthParity
+public import Flapjack.Test.ParmoveDestinationWrapperParity
+public import Flapjack.Test.ParmoveDStepStepParity
+
+public import Flapjack.Test.WordToStackCompileKeysParity
+public import Flapjack.Test.WordToStackRetainedFrameParity
+public import Flapjack.Test.WordToStackAllocatorCodecParity
+public import Flapjack.Test.WordToStackSelectorPreludeParity
+public import Flapjack.Test.WordToStackSelectorDomainParity
+public import Flapjack.Test.WordToStackNativeConfigParity
+public import Flapjack.Test.ParmoveDStepsParity
+public import Flapjack.Test.WordLangMaxVarParity
+public import Flapjack.Test.WordLangCutsetsMaxParity
+public import Flapjack.Test.WordLangMaxVarInstParity
+public import Flapjack.Test.WordToStackNativeCompileParity
+public import Flapjack.Test.StackSemStackCodecParity
+public import Flapjack.Test.StackSemControl
+public import Flapjack.Test.StackSemStateOps
+public import Flapjack.Test.StackSemWordBitmapParity
+public import Flapjack.Test.Source
+public import Flapjack.Test.Parser
+public import Flapjack.Test.DisplayParity
+public import Flapjack.Test.ParserStaticExamples
+public import Flapjack.Test.ParserParseDefParity
+public import Flapjack.Test.CompileFunctionDistinct
+public import Flapjack.Test.Runtime
+public import Flapjack.Test.CollectorSemantics
+public import Flapjack.Test.SpillAllocation
+public import Flapjack.Test.OracleAllocator
+public import Flapjack.Test.AllocatorDriver
+public import Flapjack.Test.HeuristicsFastParity
+public import Flapjack.Test.SpillCosts
+public import Flapjack.Test.HeuristicDriver
+public import Flapjack.Test.LocValueAnalysis
+public import Flapjack.Test.LocValueLowering
+public import Flapjack.Test.GraphLocations
+public import Flapjack.Test.LinearScan
+public import Flapjack.Test.PanMemoryModel
+public import Flapjack.Test.CrepeMemorySemantics
+public import Flapjack.Test.PanValueFfiCore
+public import Flapjack.Test.PanValueFfiClockSemantics
+public import Flapjack.Test.PanValueWfParity
+public import Flapjack.Test.PanSemStateEvalParity
+public import Flapjack.Test.PanSemEvalRoutedParity
+public import Flapjack.Test.SourceSemanticsOps
+public import Flapjack.Test.PanToCrepExceptionRelation
+public import Flapjack.Test.PanToCrepRelationsParity
+public import Flapjack.Test.PanToCrepStateRelCarrierParity
+public import Flapjack.Test.PanToCrepRetInst2Parity
+public import Flapjack.Test.PanToCrepCodeRelParity
+public import Flapjack.Test.PanToCrepFirstCompileParity
+public import Flapjack.Test.PanToCrepContextExactParity
+public import Flapjack.Test.PanToCrepCompFuncExactParity
+public import Flapjack.Test.PanCommonParity
 /- These legacy Crep-to-Loop theorem fixtures still assume identity variable
    resolution; source parity coverage remains in `Test.SourceToLoop`. -/
-import Flapjack.Test.StaticGlobalVarParity
-import Flapjack.Test.StaticRedecVarParity
-import Flapjack.Test.StaticExportParamsParity
-import Flapjack.Test.StaticOperandsParity
-import Flapjack.Test.StaticFuncArgsParity
-import Flapjack.Test.StaticStructFieldsParity
-import Flapjack.Test.StaticShapeParity
-import Flapjack.Test.StaticIdShapesParity
-import Flapjack.Test.StaticExpParity
-import Flapjack.Test.StaticProgParity
-import Flapjack.Test.StaticProgsParity
-import Flapjack.Test.StaticDeclsParity
-import Flapjack.Test.StaticNamesParity
-import Flapjack.Test.StaticOverallParity
-import Flapjack.Test.WordToStack.ReturnCopy
-import Flapjack.Test.WordToStack.Special
-import Flapjack.Test.PipelineDiagnostics
-import Flapjack.Test.ProductionAllocationLimit
-import Flapjack.Test.LoopToWordSourceCodec
-import Flapjack.Test.ProductionPreSsaCodec
-import Flapjack.Test.ProductionLocations
-import Flapjack.Test.ProductionConfiguration
-import Flapjack.Test.ProductionScheduler
-import Flapjack.Test.PanValueMemoryFfi
-import Flapjack.Test.PanValueAcceleratorFfi
-import Flapjack.Test.PanValueFfiClockMemoryFfi
-import Flapjack.Test.CrepeArith
-import Flapjack.Test.CrepeArithLookupCodeParity
-import Flapjack.Test.CrepeExpressionStabilityParity
-import Flapjack.Test.CrepeInline
-import Flapjack.Test.CrepeInlineRewrite
-import Flapjack.Test.CrepeInlinePass
-import Flapjack.Test.SpillRelation
-import Flapjack.Test.CakeStackAlloc
-import Flapjack.Test.StackToLab
-import Flapjack.Test.LabProps
-import Flapjack.Test.StackFunctionSpillRelation
-import Flapjack.Test.StackParallelMoveEvaluator
-import Flapjack.Test.BinarySpillRelation
-import Flapjack.Test.ShiftSpillRelation
-import Flapjack.Test.LoadSpillRelation
-import Flapjack.Test.StoreSpillRelation
-import Flapjack.Test.ConstSpillRelation
-import Flapjack.Test.LookupSpillRelation
-import Flapjack.Test.SetSpillRelation
-import Flapjack.Test.SharedLoadSpillRelation
-import Flapjack.Test.DivSpillRelation
-import Flapjack.Test.GetSpillRelation
-import Flapjack.Test.MemorySpillRelation
-import Flapjack.Test.DirectSetRelation
-import Flapjack.Test.DirectDivRelation
-import Flapjack.Test.DirectMemoryRelation
-import Flapjack.Test.DirectSharedLoadRelation
-import Flapjack.Test.DirectSharedStoreRelation
-import Flapjack.Test.DirectMoveRelation
-import Flapjack.Test.AddCarrySpillRelation
-import Flapjack.Test.DirectAddCarryRelation
-import Flapjack.Test.LongMulSpillRelation
-import Flapjack.Test.LongMulRegisterRelation
-import Flapjack.Test.AddCarryRegisterRelation
-import Flapjack.Test.LongMulMixedRelation
-import Flapjack.Test.WordToStackBitsParity
-import Flapjack.Test.MlStringParity
-import Flapjack.Test.MlStringBridgeParity
-import Flapjack.Test.PanLangShapeHOLParity
-import Flapjack.Test.PanLangExpHOLParity
-import Flapjack.Test.PanLangProgHOLParity
-import Flapjack.Test.PanLangDeclHOLParity
-import Flapjack.Test.CrepLookupCodeHOLParity
-import Flapjack.Test.CrepExpHOLParity
-import Flapjack.Test.CrepProgHOLParity
-import Flapjack.Test.CrepHolStateParity
-import Flapjack.Test.ParserByteNamesParity
-import Flapjack.Test.ParserByteRangedParity
-import Flapjack.Test.ParserKeywordParity
-import Flapjack.Test.PanGlobalsNameByteRangedParity
-import Flapjack.Test.LoopPropsCutSetsParity
-import Flapjack.Test.LoopPropsCompSyntaxOkParity
-import Flapjack.Test.CrepToLoopCompFuncParity
-import Flapjack.Test.CrepToLoopSurvivesMapiAssignParity
-import Flapjack.Test.SSARenameLookupParity
-import Flapjack.Test.SSAMergeMovesParity
+public import Flapjack.Test.StaticGlobalVarParity
+public import Flapjack.Test.StaticRedecVarParity
+public import Flapjack.Test.StaticExportParamsParity
+public import Flapjack.Test.StaticOperandsParity
+public import Flapjack.Test.StaticFuncArgsParity
+public import Flapjack.Test.StaticStructFieldsParity
+public import Flapjack.Test.StaticShapeParity
+public import Flapjack.Test.StaticIdShapesParity
+public import Flapjack.Test.StaticExpParity
+public import Flapjack.Test.StaticProgParity
+public import Flapjack.Test.StaticProgsParity
+public import Flapjack.Test.StaticDeclsParity
+public import Flapjack.Test.StaticNamesParity
+public import Flapjack.Test.StaticOverallParity
+public import Flapjack.Test.WordToStack.ReturnCopy
+public import Flapjack.Test.WordToStack.Special
+public import Flapjack.Test.PipelineDiagnostics
+public import Flapjack.Test.ProductionAllocationLimit
+public import Flapjack.Test.LoopToWordSourceCodec
+public import Flapjack.Test.ProductionPreSsaCodec
+public import Flapjack.Test.ProductionLocations
+public import Flapjack.Test.ProductionConfiguration
+public import Flapjack.Test.ProductionScheduler
+public import Flapjack.Test.PanValueMemoryFfi
+public import Flapjack.Test.PanValueAcceleratorFfi
+public import Flapjack.Test.PanValueFfiClockMemoryFfi
+public import Flapjack.Test.CrepeArith
+public import Flapjack.Test.CrepeArithLookupCodeParity
+public import Flapjack.Test.CrepeExpressionStabilityParity
+public import Flapjack.Test.CrepeInline
+public import Flapjack.Test.CrepeInlineRewrite
+public import Flapjack.Test.CrepeInlinePass
+public import Flapjack.Test.SpillRelation
+public import Flapjack.Test.CakeStackAlloc
+public import Flapjack.Test.StackToLab
+public import Flapjack.Test.LabProps
+public import Flapjack.Test.StackFunctionSpillRelation
+public import Flapjack.Test.StackParallelMoveEvaluator
+public import Flapjack.Test.BinarySpillRelation
+public import Flapjack.Test.ShiftSpillRelation
+public import Flapjack.Test.LoadSpillRelation
+public import Flapjack.Test.StoreSpillRelation
+public import Flapjack.Test.ConstSpillRelation
+public import Flapjack.Test.LookupSpillRelation
+public import Flapjack.Test.SetSpillRelation
+public import Flapjack.Test.SharedLoadSpillRelation
+public import Flapjack.Test.DivSpillRelation
+public import Flapjack.Test.GetSpillRelation
+public import Flapjack.Test.MemorySpillRelation
+public import Flapjack.Test.DirectSetRelation
+public import Flapjack.Test.DirectDivRelation
+public import Flapjack.Test.DirectMemoryRelation
+public import Flapjack.Test.DirectSharedLoadRelation
+public import Flapjack.Test.DirectSharedStoreRelation
+public import Flapjack.Test.DirectMoveRelation
+public import Flapjack.Test.AddCarrySpillRelation
+public import Flapjack.Test.DirectAddCarryRelation
+public import Flapjack.Test.LongMulSpillRelation
+public import Flapjack.Test.LongMulRegisterRelation
+public import Flapjack.Test.AddCarryRegisterRelation
+public import Flapjack.Test.LongMulMixedRelation
+public import Flapjack.Test.WordToStackBitsParity
+public import Flapjack.Test.MlStringParity
+public import Flapjack.Test.MlStringBridgeParity
+public import Flapjack.Test.PanLangShapeHOLParity
+public import Flapjack.Test.PanLangExpHOLParity
+public import Flapjack.Test.PanLangProgHOLParity
+public import Flapjack.Test.PanLangDeclHOLParity
+public import Flapjack.Test.CrepLookupCodeHOLParity
+public import Flapjack.Test.CrepExpHOLParity
+public import Flapjack.Test.CrepProgHOLParity
+public import Flapjack.Test.CrepHolStateParity
+public import Flapjack.Test.ParserByteNamesParity
+public import Flapjack.Test.ParserByteRangedParity
+public import Flapjack.Test.ParserKeywordParity
+public import Flapjack.Test.PanGlobalsNameByteRangedParity
+public import Flapjack.Test.LoopPropsCutSetsParity
+public import Flapjack.Test.LoopPropsCompSyntaxOkParity
+public import Flapjack.Test.CrepToLoopCompFuncParity
+public import Flapjack.Test.CrepToLoopSurvivesMapiAssignParity
+public import Flapjack.Test.SSARenameLookupParity
+public import Flapjack.Test.SSAMergeMovesParity
+
+@[expose] public section
 
 /-!
 # Flapjack regression tests

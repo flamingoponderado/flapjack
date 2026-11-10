@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Word
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Word
+
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.Word
+
+@[expose] public section
 
 /-! Concrete closure-word edge cases. The original probe reduces Boolean,
 word64 conversion and arithmetic observations; byte arithmetic examples also

@@ -1,4 +1,10 @@
-import Flapjack.Misc.BinaryIeeeSqrtFp64
+module
+
+public import Flapjack.Misc.BinaryIeeeSqrtFp64
+
+import all Flapjack.Misc.BinaryIeeeSqrtFp64
+
+@[expose] public section
 
 /-!
 Direct HOL oracle rows for binary64 `fp64_sqrt roundTiesToEven` on exact

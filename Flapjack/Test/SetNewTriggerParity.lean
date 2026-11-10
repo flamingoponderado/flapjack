@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.SetNewTrigger
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.SetNewTrigger
+
+import all Flapjack.Compiler.Backend.StackAlloc.Proofs.SetNewTrigger
+
+@[expose] public section
 
 /-! Kernel replay of original new_trig and actual StackSem SetNewTrigger rows.
 Unobserved fields remain arbitrary, and observed untouched fields are checked. -/

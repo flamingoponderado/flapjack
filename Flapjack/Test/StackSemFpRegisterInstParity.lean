@@ -1,6 +1,14 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.FpRegisterInstructions
-import Flapjack.Misc.BinaryIeeeArithFp64
-import Flapjack.Misc.BinaryIeeeSqrtFp64
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.FpRegisterInstructions
+public import Flapjack.Misc.BinaryIeeeArithFp64
+public import Flapjack.Misc.BinaryIeeeSqrtFp64
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.FpRegisterInstructions
+import all Flapjack.Misc.BinaryIeeeArithFp64
+import all Flapjack.Misc.BinaryIeeeSqrtFp64
+
+@[expose] public section
 
 /-! Kernel replay of twenty original HOL FP register/sign observations, all
 fourteen rows of `stacksem_fp_arith_probe.out` for the FP comparison and

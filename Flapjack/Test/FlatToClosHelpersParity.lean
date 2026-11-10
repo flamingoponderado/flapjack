@@ -1,4 +1,13 @@
-import Flapjack.Compiler.Backend.FlatToClos.Helpers
+module
+
+public import Flapjack.Compiler.Backend.FlatToClos.Helpers
+
+import all Flapjack.Compiler.Backend.FlatToClos.Helpers
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.Compiler.Backend.FlatLang
+public meta import Flapjack.Compiler.Backend.ClosLang.Syntax
+
+@[expose] public section
 
 /-! Kernel replays of `flat_to_clos_helpers_probe.out`. -/
 namespace Flapjack.Test.FlatToClosHelpersParity

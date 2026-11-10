@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Values
-import Flapjack.Compiler.Backend.BvlHandle.Proofs.HandleOk
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Values
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.HandleOk
+
+import all Flapjack.Compiler.Backend.BvlToBvi.Proofs.Values
+import all Flapjack.Compiler.Backend.BvlHandle.Proofs.HandleOk
+public meta import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
+
+@[expose] public section
 
 /-! Replays the nested original observation in bvl_to_bvi_value_rel_probe.out. -/
 open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BvlToBvi.Proofs

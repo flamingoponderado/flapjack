@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
-import Flapjack.Compiler.Backend.RegAlloc.Exceptions
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
+public import Flapjack.Compiler.Backend.RegAlloc.Exceptions
+
+import all Flapjack.Compiler.Backend.RegAlloc.Proofs.Invariants
+import all Flapjack.Compiler.Backend.RegAlloc.Exceptions
+
+@[expose] public section
 namespace Flapjack.Test.RegAllocInvariantsParity
 open Flapjack Flapjack.RegAlloc Flapjack.Translator.Monadic.MonadBase
 

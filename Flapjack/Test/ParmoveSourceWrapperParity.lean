@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.Parmove.SourceMembershipWrapper
-import Flapjack.Test.ParmoveFstepParity
+module
+
+public import Flapjack.Compiler.Backend.Parmove.SourceMembershipWrapper
+public import Flapjack.Test.ParmoveFstepParity
+
+import all Flapjack.Compiler.Backend.Parmove.SourceMembershipWrapper
+import all Flapjack.Test.ParmoveFstepParity
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmoveSourceWrapperParity
 open Flapjack.Compiler.Backend.Parmove

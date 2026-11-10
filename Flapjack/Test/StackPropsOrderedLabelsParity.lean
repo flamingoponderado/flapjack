@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.StackProps.OrderedLabels
+module
+
+public import Flapjack.Compiler.Backend.StackProps.OrderedLabels
+
+import all Flapjack.Compiler.Backend.StackProps.OrderedLabels
+
+@[expose] public section
 
 /-! Ten fresh original ordered-label observations, including nested order,
 duplicates and an exception continuation ignored by a tail Call. -/

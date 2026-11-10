@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.CopyingGc
+module
+
+public import Flapjack.Compiler.Backend.CopyingGc
+
+import all Flapjack.Compiler.Backend.CopyingGc
+
+@[expose] public section
 
 /-! Replays of `scripts/hol-probes/copying_gc_probe.out`. -/
 namespace Flapjack.Test.CopyingGcParity

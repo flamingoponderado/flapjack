@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.Finalise
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Finalise
+
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Finalise
+
+@[expose] public section
 
 /-! Original finalisation observations captured in bvi_sem_state_probe.out. -/
 namespace Flapjack.Compiler.Backend.BviSem

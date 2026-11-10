@@ -1,6 +1,30 @@
-import Flapjack.Compiler.Backend.BackendPasses.Frontend
-import Flapjack.Compiler.Backend.Backend.PrimSrcConfig.Executable
-import Flapjack.CakeParser.Frontend
+module
+
+public import Flapjack.Compiler.Backend.BackendPasses.Frontend
+public import Flapjack.Compiler.Backend.Backend.PrimSrcConfig.Executable
+public import Flapjack.CakeParser.Frontend
+
+import all Flapjack.Compiler.Backend.BackendPasses.Frontend
+import all Flapjack.Compiler.Backend.Backend.PrimSrcConfig.Executable
+import all Flapjack.CakeParser.Frontend
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.Misc.Location
+public meta import Flapjack.CakeParser.Lexer
+public meta import Flapjack.CakeParser.PegEval
+public meta import Flapjack.CakeParser.PtreeConversion
+public meta import Flapjack.Compiler.Backend.FlatToClos.Compile
+public meta import Flapjack.Compiler.Backend.SourceLet
+public meta import Flapjack.Compiler.Backend.BviToData.CompileSource
+public meta import Flapjack.Compiler.Backend.BvlInline.SourceCompile
+public meta import Flapjack.Compiler.Backend.ClosToBvl.Compile
+public meta import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
+public meta import Flapjack.Compiler.Backend.FlatElim.Reachability
+public meta import Flapjack.Compiler.Backend.ClosToBvl.Names
+public meta import Flapjack.Compiler.Backend.PresLang.Source
+public meta import Flapjack.Compiler.Backend.PresLang.Flat
+public meta import Flapjack.Compiler.Backend.PresLang.Bvi
+
+@[expose] public section
 
 /-! Complete six-stage prefix from the pinned CakeML explorer, with the
 standard basis excluded. The reference digest is recorded in

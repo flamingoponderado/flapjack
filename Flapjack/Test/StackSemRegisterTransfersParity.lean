@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.RegisterTransfers
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.RegisterTransfers
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.RegisterTransfers
+
+@[expose] public section
 
 /-! Kernel replay of all thirteen original StackSem register-transfer probe rows.
 The fixture overrides every observed field over an arbitrary base state. -/

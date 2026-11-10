@@ -1,5 +1,12 @@
-import Flapjack.Pancake.WordConvs.NotCreated
-import Flapjack.Test.Runtime
+module
+
+public import Flapjack.Pancake.WordConvs.NotCreated
+public import Flapjack.Test.Runtime
+
+import all Flapjack.Pancake.WordConvs.NotCreated
+import all Flapjack.Test.Runtime
+
+@[expose] public section
 
 /-!
 # wordConvs `not_created_subprogs` / `no_*_subprogs` Lean regression
@@ -12,31 +19,31 @@ namespace Flapjack.Test.WordLangNotCreatedParity
 
 open Flapjack
 
-private abbrev W := BitVec 8
+abbrev W := BitVec 8
 
-private def cuts : WordLangCutsetsHOL := (.ln, .ln)
+def cuts : WordLangCutsetsHOL := (.ln, .ln)
 
-private def skipP : WordLangProgHOL W := .skip
+def skipP : WordLangProgHOL W := .skip
 
-private def allocEmpty : WordLangProgHOL W := .alloc 0 cuts
+def allocEmpty : WordLangProgHOL W := .alloc 0 cuts
 
-private def allocOther : WordLangProgHOL W := .alloc 1 cuts
+def allocOther : WordLangProgHOL W := .alloc 1 cuts
 
-private def seqAlloc : WordLangProgHOL W := .seq .skip (.alloc 0 cuts)
+def seqAlloc : WordLangProgHOL W := .seq .skip (.alloc 0 cuts)
 
-private def mtSkip : WordLangProgHOL W := .mustTerminate .skip
+def mtSkip : WordLangProgHOL W := .mustTerminate .skip
 
-private def installEmpty : WordLangProgHOL W := .install 0 0 0 0 cuts
+def installEmpty : WordLangProgHOL W := .install 0 0 0 0 cuts
 
-private def shareArb : WordLangProgHOL W := .shareInst wordLangArbMemOp 0 (.var 0)
+def shareArb : WordLangProgHOL W := .shareInst wordLangArbMemOp 0 (.var 0)
 
-private def shareLoad : WordLangProgHOL W := .shareInst .load 0 (.var 0)
+def shareLoad : WordLangProgHOL W := .shareInst .load 0 (.var 0)
 
-private def seqShare : WordLangProgHOL W := .seq .skip shareArb
+def seqShare : WordLangProgHOL W := .seq .skip shareArb
 
-private def callNone : WordLangProgHOL W := .call none none [] none
+def callNone : WordLangProgHOL W := .call none none [] none
 
-private def callHandlerMt : WordLangProgHOL W :=
+def callHandlerMt : WordLangProgHOL W :=
   .call none none [] (some (0, .mustTerminate .skip, 0, 0))
 
 -- nac_skip=T
@@ -89,7 +96,7 @@ example : notCreatedSubprogsHOL
       true := by
   rw [← noShareInstSubprogsHOL_eq_notCreated]; decide
 
-private def oracleChecks : Bool :=
+def oracleChecks : Bool :=
   [
     noAllocSubprogsHOL skipP == true,
     noAllocSubprogsHOL allocEmpty == false,

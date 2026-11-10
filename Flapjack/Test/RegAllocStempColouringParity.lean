@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.StempColouring
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.StempColouring
+
+import all Flapjack.Compiler.Backend.RegAlloc.StempColouring
+
+@[expose] public section
 namespace Flapjack.Test.RegAllocStempColouringParity
 open Flapjack Flapjack.RegAlloc Flapjack.Translator.Monadic.MonadBase
 

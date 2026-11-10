@@ -1,8 +1,29 @@
-import Flapjack.Basis.BasisProg
-import Flapjack.Compiler.Inference.Infer.Core
-import Flapjack.Compiler.Backend.SourceToFlat.FromText
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
-import Flapjack.Test.BasisCakeBviOracle
+module
+
+public import Flapjack.Basis.BasisProg
+public import Flapjack.Compiler.Inference.Infer.Core
+public import Flapjack.Compiler.Backend.SourceToFlat.FromText
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+public import Flapjack.Test.BasisCakeBviOracle
+
+import all Flapjack.Basis.BasisProg
+import all Flapjack.Compiler.Inference.Infer.Core
+import all Flapjack.Compiler.Backend.SourceToFlat.FromText
+import all Flapjack.Compiler.Backend.RiscVConfig.Executable
+import all Flapjack.Test.BasisCakeBviOracle
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.Misc.Location
+public meta import Flapjack.NamespaceHOL
+public meta import Flapjack.Compiler.Backend.FlatPattern.Config
+public meta import Flapjack.Compiler.Inference.Infer
+public meta import Flapjack.Compiler.Inference.Unify
+public meta import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
+public meta import Flapjack.Compiler.Backend.RiscVConfig.Names
+public meta import Flapjack.Compiler.Backend.Backend.PrimSrcConfig.Executable
+public meta import Flapjack.CakeParser.Frontend
+public meta import Flapjack.Compiler.Backend.SourceToFlat.ToRiscV
+
+@[expose] public section
 
 /-! The complete generated basis has the captured HOL declaration count and
 is accepted by the current bounded inferencer. This does not establish full

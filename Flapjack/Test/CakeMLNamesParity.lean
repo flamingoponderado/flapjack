@@ -1,7 +1,22 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Names
-import Flapjack.Compiler.Backend.DataToWord.Names
-import Flapjack.Compiler.Backend.SourceToFlat.ToRiscV
-import Flapjack.Test.CakeMLFlatOracle
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Names
+public import Flapjack.Compiler.Backend.DataToWord.Names
+public import Flapjack.Compiler.Backend.SourceToFlat.ToRiscV
+public import Flapjack.Test.CakeMLFlatOracle
+
+import all Flapjack.Compiler.Backend.BvlToBvi.Names
+import all Flapjack.Compiler.Backend.DataToWord.Names
+import all Flapjack.Compiler.Backend.SourceToFlat.ToRiscV
+import all Flapjack.Test.CakeMLFlatOracle
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
+public meta import Flapjack.Compiler.Backend.StackAlloc.StubNames
+public meta import Flapjack.Compiler.Backend.StackRemove.StubNames
+public meta import Flapjack.Compiler.Backend.WordToStack.StubNames
+
+@[expose] public section
 
 /-! Original output and runtime symbol-name observations. -/
 namespace Flapjack.Test.CakeMLNamesParity

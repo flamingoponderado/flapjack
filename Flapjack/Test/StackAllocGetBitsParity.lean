@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
+
+import all Flapjack.Compiler.Backend.StackAlloc.Proofs.WordLemmas
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` `get_bits`: original-oracle rows

@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.DataToWord.Control
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Control
+
+import all Flapjack.Compiler.Backend.DataToWord.Control
+public meta import Flapjack.Pancake.WordLang
+public meta import Flapjack.Compiler.Backend.ClosLang.Syntax
+public meta import Flapjack.Compiler.Backend.DataToWord.Build
+public meta import Flapjack.Compiler.Backend.DataToWord.Variables
+
+@[expose] public section
 
 /-! Original HOL constant-building and allocation lowering observations. -/
 namespace Flapjack.Test.CakeBuildLoweringParity

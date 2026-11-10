@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.WordCse.InstructionKeys
+module
+
+public import Flapjack.Compiler.Backend.WordCse.InstructionKeys
+
+import all Flapjack.Compiler.Backend.WordCse.InstructionKeys
+
+@[expose] public section
 namespace Flapjack.Test.WordCseInstructionKeysParity
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.WordCse
 -- key_shift_lsl

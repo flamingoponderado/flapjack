@@ -1,5 +1,16 @@
-import Flapjack.PanProgramSemantics
-import Flapjack.Test.OriginalPancakeProbes
+module
+
+public import Flapjack.PanProgramSemantics
+public import Flapjack.Test.OriginalPancakeProbes
+
+import all Flapjack.PanProgramSemantics
+import all Flapjack.Test.OriginalPancakeProbes
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.PanStatic
+public meta import Flapjack.Semantics
+public meta import Flapjack.PanValues
+
+@[expose] public section
 
 namespace Flapjack
 
