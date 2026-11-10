@@ -74,241 +74,6 @@ private theorem locations_perm {xs ys : List Exp} (h : xs.Perm ys) :
   simp only [locations_flatMap]
   exact h.flatMap (fun _ _ => List.Perm.refl _)
 
-private def auxLoc (s : State) : Set Nat :=
-  {x | x ∈ codeLocations (s.2.map (fun t => t.2.2))}
-private def expLoc (e : Exp) : Set Nat := {x | x ∈ codeLocationsExp e}
-private def listLoc (es : List Exp) : Set Nat := {x | x ∈ codeLocations es}
-
-set_option maxHeartbeats 1000000 in
-mutual
-private theorem callsExpr_locs (e : Exp) (initial : State) :
-    expLoc (callsSing e initial).1 ∪ auxLoc (callsSing e initial).2 ⊆
-      expLoc e ∪ auxLoc initial := by
-  cases e with
-  | var tr v => simp [callsSing, expLoc, codeLocationsExp]
-  | raise tr body =>
-    have ih := callsExpr_locs body initial
-    cases run : callsSing body initial with
-    | mk out final =>
-      simpa [callsSing, run, expLoc, codeLocationsExp] using ih
-  | tick tr body =>
-    have ih := callsExpr_locs body initial
-    cases run : callsSing body initial with
-    | mk out final =>
-      simpa [callsSing, run, expLoc, codeLocationsExp] using ih
-  | ifThenElse tr x y z =>
-    cases hx : callsSing x initial with
-    | mk ox sx =>
-      cases hy : callsSing y sx with
-      | mk oy sy =>
-        cases hz : callsSing z sy with
-        | mk oz sz =>
-          have a := callsExpr_locs x initial
-          have b := callsExpr_locs y sx
-          have c := callsExpr_locs z sy
-          simp only [hx] at a
-          simp only [hy] at b
-          simp only [hz] at c
-          simp only [callsSing, hx, hy, hz]
-          intro k hk
-          have aa := @a k
-          have bb := @b k
-          have cc := @c k
-          simp only [expLoc, auxLoc, Set.mem_union, Set.mem_ofPred_eq,
-            codeLocationsExp, List.mem_append] at *
-          aesop
-  | «let» tr binds body =>
-    cases hb : callsSingList binds initial with
-    | mk out mid =>
-      cases hx : callsSing body mid with
-      | mk outB final =>
-        have a := callsList_locs binds initial
-        have b := callsExpr_locs body mid
-        simp only [hb] at a
-        simp only [hx] at b
-        simp only [callsSing, hb, hx]
-        intro k hk
-        have aa := @a k
-        have bb := @b k
-        simp only [expLoc, listLoc, auxLoc, Set.mem_union, Set.mem_ofPred_eq,
-          codeLocationsExp, List.mem_append] at *
-        aesop
-  | handle tr body handler =>
-    cases hb : callsSing body initial with
-    | mk out mid =>
-      cases hh : callsSing handler mid with
-      | mk outH final =>
-        have a := callsExpr_locs body initial
-        have b := callsExpr_locs handler mid
-        simp only [hb] at a
-        simp only [hh] at b
-        simp only [callsSing, hb, hh]
-        intro k hk
-        have aa := @a k
-        have bb := @b k
-        simp only [expLoc, auxLoc, Set.mem_union, Set.mem_ofPred_eq,
-          codeLocationsExp, List.mem_append] at *
-        aesop
-  | call tr ticks dest args =>
-    have ih := callsList_locs args initial
-    cases run : callsSingList args initial with
-    | mk out final =>
-      simpa [callsSing, run, expLoc, listLoc, codeLocationsExp] using ih
-  | app tr loc body args =>
-    cases ha : callsSingList args initial with
-    | mk outA mid =>
-      cases hb : callsSing body mid with
-      | mk outB final =>
-        have a := callsList_locs args initial
-        have b := callsExpr_locs body mid
-        simp only [ha] at a
-        simp only [hb] at b
-        simp only [callsSing, ha, hb]
-        cases loc with
-        | none =>
-          intro k hk
-          have aa := @a k
-          have bb := @b k
-          simp only [expLoc, listLoc, auxLoc, Set.mem_union, Set.mem_ofPred_eq,
-            codeLocationsExp, List.mem_append] at *
-          aesop
-        | some loc =>
-          split <;> (try split) <;> (try contradiction) <;> intro k hk <;>
-            have aa := @a k <;> have bb := @b k <;>
-            simp only [expLoc, listLoc, auxLoc, Set.mem_union, Set.mem_ofPred_eq,
-              codeLocationsExp, List.mem_append] at * <;>
-            aesop (add simp [codeLocationsExp, codeLocations, codeLocations_append, locations_variables])
-  | fn name loc vs arity body =>
-    let fresh := insertEachSource (loc.getD 0) 1 initial
-    cases hr : callsSing body fresh with
-    | mk outF stateF =>
-      have ihF := callsExpr_locs body fresh
-      simp only [hr] at ihF
-      simp only [callsSing]
-      split
-      · have same : auxLoc fresh = auxLoc initial := by
-          cases initial; rfl
-        rw [same] at ihF
-        intro k hk
-        have hf := @ihF k
-        simp only [expLoc, auxLoc, Set.mem_union, Set.mem_ofPred_eq,
-          codeLocationsExp, codeLocations, List.map_cons, List.mem_append,
-          List.mem_cons, locations_variables] at *
-        aesop (add simp [codeLocationsExp, codeLocations, locations_variables])
-      · have ih := callsExpr_locs body initial
-        cases run : callsSing body initial with
-        | mk out final =>
-          simp only [run] at ih ⊢
-          intro k hk
-          have hh := @ih k
-          simp only [expLoc, auxLoc, Set.mem_union, Set.mem_ofPred_eq,
-            codeLocationsExp, List.mem_append, List.mem_singleton] at *
-          aesop
-  | letrec names loc vs fns body =>
-    let fresh := insertEachSource (loc.getD 0) fns.length initial
-    cases hf : callsSingList (fns.map Prod.snd) fresh with
-    | mk bodies stateF =>
-      have ihF := callsList_locs (fns.map Prod.snd) fresh
-      simp only [hf] at ihF
-      dsimp [fresh] at hf
-      simp only [callsSing, hf]
-      split
-      · have hlen : bodies.length = fns.length := by
-          have h := callsSingList_length (fns.map Prod.snd) fresh
-          simpa [hf, fresh] using h
-        have hzip : ((fns.map Prod.fst).zip bodies).map Prod.snd = bodies := by
-          simp [List.map_snd_zip, hlen]
-        have haux : auxLoc fresh = auxLoc initial := by
-          simp [auxLoc, fresh, insertEach_snd]
-        rw [haux] at ihF
-        have ihBody := callsExpr_locs body (codeListSource (loc.getD 0)
-          ((fns.map Prod.fst).zip bodies) stateF)
-        cases hbody : callsSing body (codeListSource (loc.getD 0)
-          ((fns.map Prod.fst).zip bodies) stateF) with
-        | mk out final =>
-          simp only [hbody] at ihBody ⊢
-          intro k hk
-          have hF := @ihF k
-          have hB := @ihBody k
-          simp only [expLoc, listLoc, auxLoc, Set.mem_union, Set.mem_ofPred_eq,
-            codeLocationsExp, codeLocationsFuns_map, locations_callsList,
-            length_callsList, List.nil_append, List.mem_append, codeList_bodies, hzip,
-            codeLocations_append, mem_codeLocations, List.mem_reverse] at *
-          aesop
-      · cases hgroup : callsSingList (fns.map Prod.snd) initial with
-        | mk outs middle =>
-          have ihGroup := callsList_locs (fns.map Prod.snd) initial
-          simp only [hgroup] at ihGroup ⊢
-          have hlen : outs.length = fns.length := by
-            have h := callsSingList_length (fns.map Prod.snd) initial
-            simpa [hgroup] using h
-          have hzip : ((fns.map Prod.fst).zip outs).map Prod.snd = outs := by
-            simp [List.map_snd_zip, hlen]
-          have ihBody := callsExpr_locs body middle
-          cases hbody : callsSing body middle with
-          | mk out final =>
-            simp only [hbody] at ihBody ⊢
-            intro k hk
-            have hG := @ihGroup k
-            have hB := @ihBody k
-            simp only [expLoc, listLoc, auxLoc, Set.mem_union, Set.mem_ofPred_eq,
-              codeLocationsExp, codeLocationsFuns_map, hzip, List.length_zip,
-              List.length_map, hlen, min_self, List.mem_append] at *
-            aesop
-  | op tr op args =>
-    have ih := callsList_locs args initial
-    cases run : callsSingList args initial with
-    | mk out final =>
-      simpa [callsSing, run, expLoc, listLoc, codeLocationsExp] using ih
-termination_by sizeOf e
-decreasing_by
-  all_goals simp_wf
-  all_goals try omega
-  all_goals have bound := sizeOf_map_snd_le fns
-  all_goals omega
-
-private theorem callsList_locs (es : List Exp) (initial : State) :
-    listLoc (callsSingList es initial).1 ∪ auxLoc (callsSingList es initial).2 ⊆
-      listLoc es ∪ auxLoc initial := by
-  cases es with
-  | nil => simp [callsSingList, listLoc, codeLocations]
-  | cons e es =>
-    cases he : callsSing e initial with
-    | mk out middle =>
-      cases hs : callsSingList es middle with
-      | mk outs final =>
-        have a := callsExpr_locs e initial
-        have b := callsList_locs es middle
-        simp only [he] at a
-        simp only [hs] at b
-        simp only [callsSingList, he, hs]
-        change ({k | k ∈ codeLocationsExp out ++ codeLocations outs} ∪ auxLoc final) ⊆ _
-        simp only [List.mem_append] at *
-        intro k hk
-        have aa := @a k
-        have bb := @b k
-        simp only [expLoc, listLoc, auxLoc, Set.mem_union, Set.mem_ofPred_eq,
-          codeLocations, List.mem_append] at *
-        aesop
-termination_by sizeOf es
-decreasing_by all_goals simp_wf <;> omega
-end
-
-/-- Direct-call conversion introduces no closure-code locations: every
-location in the result or its auxiliary code comes from the input or the
-initial auxiliary code. -/
-@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_code_locs_MEM"]
-theorem calls_codeLocations_mem (xs : List Exp) (initial : State) (ys : List Exp)
-    (final : State) (run : calls xs initial = (ys, final)) (x : Nat)
-    (member : x ∈ codeLocations ys ∨
-      x ∈ codeLocations (final.2.map (fun t => t.2.2))) :
-    x ∈ codeLocations xs ∨
-      x ∈ codeLocations (initial.2.map (fun t => t.2.2)) := by
-  have invariant := callsList_locs xs initial
-  change callsSingList xs initial = (ys, final) at run
-  rw [run] at invariant
-  exact invariant member
-
 private theorem codeLocations_codeList_perm {A C : Type} (ls : List (A × Exp))
     (n : Nat) (rest : C × List (Nat × A × Exp)) :
     (codeLocations ((codeListSource n ls rest).2.map (fun t => t.2.2))).Perm
@@ -325,5 +90,217 @@ theorem codeLocations_codeList_allDistinct {A C : Type} (ls : List (A × Exp))
     (codeLocations ((codeListSource n ls rest).2.map (fun t => t.2.2))).Nodup ↔
       (codeLocations (rest.2.map (fun t => t.2.2) ++ ls.map Prod.snd)).Nodup := by
   exact (codeLocations_codeList_perm ls n rest).nodup_iff
+
+private def cntExp (k : Nat) (e : Exp) := (codeLocationsExp e).count k
+private def cntList (k : Nat) (es : List Exp) := (codeLocations es).count k
+private def cntAux (k : Nat) (s : State) := (codeLocations (s.2.map (fun t => t.2.2))).count k
+
+mutual
+private theorem countExpr (e : Exp) (s : State) (k : Nat) :
+    cntExp k (callsSing e s).1 + cntAux k (callsSing e s).2 ≤ cntExp k e + cntAux k s := by
+  cases e with
+  | var tr v => simp [callsSing, cntExp, codeLocationsExp]
+  | raise tr body =>
+    have h := countExpr body s k
+    cases hr : callsSing body s with
+    | mk out st => simpa [callsSing, hr, cntExp, codeLocationsExp] using h
+  | tick tr body =>
+    have h := countExpr body s k
+    cases hr : callsSing body s with
+    | mk out st => simpa [callsSing, hr, cntExp, codeLocationsExp] using h
+  | ifThenElse tr a b c =>
+    cases ha : callsSing a s with
+    | mk oa sa =>
+      cases hb : callsSing b sa with
+      | mk ob sb =>
+        cases hc : callsSing c sb with
+        | mk oc sc =>
+          have h1 := countExpr a s k
+          have h2 := countExpr b sa k
+          have h3 := countExpr c sb k
+          simp only [ha] at h1
+          simp only [hb] at h2
+          simp only [hc] at h3
+          simp only [callsSing, ha, hb, hc, cntExp, codeLocationsExp, List.count_append] at *
+          omega
+  | «let» tr args body =>
+    cases ha : callsSingList args s with
+    | mk oa sa =>
+      cases hb : callsSing body sa with
+      | mk ob sb =>
+        have h1 := countList args s k
+        have h2 := countExpr body sa k
+        simp only [ha] at h1
+        simp only [hb] at h2
+        simp only [callsSing, ha, hb, cntExp, cntList, codeLocationsExp, List.count_append] at *
+        omega
+  | handle tr body handler =>
+    cases ha : callsSing body s with
+    | mk oa sa =>
+      cases hb : callsSing handler sa with
+      | mk ob sb =>
+        have h1 := countExpr body s k
+        have h2 := countExpr handler sa k
+        simp only [ha] at h1
+        simp only [hb] at h2
+        simp only [callsSing, ha, hb, cntExp, codeLocationsExp, List.count_append] at *
+        omega
+  | call tr ticks dest args =>
+    have h := countList args s k
+    cases hr : callsSingList args s with
+    | mk out st => simpa [callsSing, hr, cntExp, cntList, codeLocationsExp] using h
+  | op tr op args =>
+    have h := countList args s k
+    cases hr : callsSingList args s with
+    | mk out st => simpa [callsSing, hr, cntExp, cntList, codeLocationsExp] using h
+  | app tr loc body args =>
+    cases ha : callsSingList args s with
+    | mk oa sa =>
+      cases hb : callsSing body sa with
+      | mk ob sb =>
+        have h1 := countList args s k
+        have h2 := countExpr body sa k
+        simp only [ha] at h1
+        simp only [hb] at h2
+        simp only [callsSing, ha, hb]
+        cases loc with
+        | none =>
+          simp only [cntExp, cntList, codeLocationsExp, List.count_append] at *
+          omega
+        | some loc =>
+          cases hl : (sptLookup loc sb.1).isSome <;> cases hp : ClosLang.pure body <;>
+            simp [hl, hp, cntExp, cntList, codeLocationsExp, codeLocations_append, codeLocations,
+              locations_variables, List.count_append] at * <;> omega
+  | fn name loc vs arity body =>
+    let fresh := insertEachSource (loc.getD 0) 1 s
+    cases hf : callsSing body fresh with
+    | mk out st =>
+      have ih := countExpr body fresh k
+      simp only [hf] at ih
+      have same : cntAux k fresh = cntAux k s := by
+        cases s; rfl
+      rw [same] at ih
+      dsimp [fresh] at hf
+      simp only [callsSing, hf]
+      split
+      · simp only [cntExp, cntAux, codeLocationsExp, codeLocations, List.map_cons,
+          List.count_append, locations_variables, List.count_nil] at *
+        omega
+      · have ih := countExpr body s k
+        cases hr : callsSing body s with
+        | mk out st =>
+          simp only [hr] at ih ⊢
+          simp only [cntExp, codeLocationsExp, List.count_append] at *
+          omega
+  | letrec names loc vs fns body =>
+    let fresh := insertEachSource (loc.getD 0) fns.length s
+    cases hf : callsSingList (fns.map Prod.snd) fresh with
+    | mk bodies st =>
+      have ihF := countList (fns.map Prod.snd) fresh k
+      simp only [hf] at ihF
+      have same : cntAux k fresh = cntAux k s := by
+        simp [cntAux, fresh, insertEach_snd]
+      rw [same] at ihF
+      dsimp [fresh] at hf
+      simp only [callsSing, hf]
+      split
+      · have hlen : bodies.length = fns.length := by
+          have h := callsSingList_length (fns.map Prod.snd) fresh
+          simpa [hf, fresh] using h
+        have hzip : ((fns.map Prod.fst).zip bodies).map Prod.snd = bodies := by
+          simp [List.map_snd_zip, hlen]
+        have cntCode :
+            cntAux k (codeListSource (loc.getD 0) ((fns.map Prod.fst).zip bodies) st) =
+              cntAux k st + cntList k bodies := by
+          simp only [cntAux, cntList]
+          rw [(codeLocations_codeList_perm ((fns.map Prod.fst).zip bodies) (loc.getD 0) st).count_eq k,
+            codeLocations_append, List.count_append, hzip]
+        have ihBody := countExpr body
+          (codeListSource (loc.getD 0) ((fns.map Prod.fst).zip bodies) st) k
+        cases hbody : callsSing body
+          (codeListSource (loc.getD 0) ((fns.map Prod.fst).zip bodies) st) with
+        | mk out final =>
+          simp only [hbody, cntCode] at ihBody ⊢
+          simp only [cntExp, cntList, codeLocationsExp, codeLocationsFuns_map,
+            locations_callsList, length_callsList, List.count_nil, List.count_append,
+            Nat.zero_add] at *
+          omega
+      · cases hg : callsSingList (fns.map Prod.snd) s with
+        | mk bodies st =>
+          have ihG := countList (fns.map Prod.snd) s k
+          simp only [hg] at ihG ⊢
+          have hlen : bodies.length = fns.length := by
+            have h := callsSingList_length (fns.map Prod.snd) s
+            simpa [hg] using h
+          have hzip : ((fns.map Prod.fst).zip bodies).map Prod.snd = bodies := by
+            simp [List.map_snd_zip, hlen]
+          have ihBody := countExpr body st k
+          cases hb : callsSing body st with
+          | mk out final =>
+            simp only [hb] at ihBody ⊢
+            simp only [cntExp, cntList, codeLocationsExp, codeLocationsFuns_map,
+              hzip, List.length_zip, List.length_map, hlen, min_self, List.count_append] at *
+            omega
+termination_by sizeOf e
+decreasing_by
+  all_goals simp_wf
+  all_goals try omega
+  all_goals have bound := sizeOf_map_snd_le fns
+  all_goals omega
+
+private theorem countList (es : List Exp) (s : State) (k : Nat) :
+    cntList k (callsSingList es s).1 + cntAux k (callsSingList es s).2 ≤ cntList k es + cntAux k s := by
+  cases es with
+  | nil => simp [callsSingList, cntList, codeLocations]
+  | cons e es =>
+    cases he : callsSing e s with
+    | mk out mid =>
+      cases hs : callsSingList es mid with
+      | mk outs final =>
+        have h1 := countExpr e s k
+        have h2 := countList es mid k
+        simp only [he] at h1
+        simp only [hs] at h2
+        simp only [callsSingList, he, hs, cntList, cntExp, codeLocations,
+          List.count_append] at *
+        omega
+termination_by sizeOf es
+decreasing_by all_goals simp_wf <;> omega
+end
+
+private theorem callsLocations_subperm (xs : List Exp) (initial : State)
+    (ys : List Exp) (final : State) (run : calls xs initial = (ys, final)) :
+    List.Subperm (codeLocations ys ++ codeLocations (final.2.map (fun t => t.2.2)))
+      (codeLocations xs ++ codeLocations (initial.2.map (fun t => t.2.2))) := by
+  apply List.subperm_iff_count.mpr
+  intro k
+  have ih := countList xs initial k
+  change callsSingList xs initial = (ys, final) at run
+  rw [run] at ih
+  simpa [cntList, cntAux, List.count_append] using ih
+
+/-- Direct-call conversion introduces no closure-code locations: every
+location in the result or its auxiliary code comes from the input or the
+initial auxiliary code. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_code_locs_MEM"]
+theorem calls_codeLocations_mem (xs : List Exp) (initial : State) (ys : List Exp)
+    (final : State) (run : calls xs initial = (ys, final)) (x : Nat)
+    (member : x ∈ codeLocations ys ∨
+      x ∈ codeLocations (final.2.map (fun t => t.2.2))) :
+    x ∈ codeLocations xs ∨
+      x ∈ codeLocations (initial.2.map (fun t => t.2.2)) := by
+  exact List.mem_append.mp ((callsLocations_subperm xs initial ys final run).subset
+    (List.mem_append.mpr member))
+
+/-- Direct-call conversion preserves distinctness of input and auxiliary code locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_code_locs_ALL_DISTINCT"]
+theorem calls_codeLocations_allDistinct (xs : List Exp) (initial : State)
+    (ys : List Exp) (final : State) (run : calls xs initial = (ys, final))
+    (distinct : (codeLocations xs ++
+      codeLocations (initial.2.map (fun t => t.2.2))).Nodup) :
+    (codeLocations ys ++ codeLocations (final.2.map (fun t => t.2.2))).Nodup := by
+  have bound := callsLocations_subperm xs initial ys final run
+  obtain ⟨middle, perm, sub⟩ := List.subperm_iff.mp bound
+  exact sub.nodup (perm.nodup_iff.mpr distinct)
 
 end Flapjack.Compiler.Backend.ClosCall

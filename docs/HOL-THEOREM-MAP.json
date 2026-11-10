@@ -18,6 +18,12 @@
   "reviewer": "Compared calls_sing_typed and independent review: quantified input, state and output binders, equation premise and singleton existential match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_code_locs_ALL_DISTINCT",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "calls_codeLocations_allDistinct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_code_locs_ALL_DISTINCT_typed and independent source review: quantified state and expression binders, curried execution and distinctness premises, and append outside each code_locs application match HOL."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_locs_code_list_ALL_DISTINCT",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "codeLocations_codeList_allDistinct",
   "statement_status": "reviewed_exact",
