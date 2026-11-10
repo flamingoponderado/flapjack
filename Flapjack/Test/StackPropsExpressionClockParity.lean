@@ -1,12 +1,12 @@
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
+import Flapjack.Test.Fixtures.StackExpressions
 
 open Flapjack Flapjack.StackSemExpressions
+open Flapjack.Test.Fixtures.StackExpressions
 
 /- Kernel replay of scripts/hol-probes/stackprops_expression_clock_probe.out.
-The arbitrary base state has every expression-observable field overridden. -/
-private def fixture {C F : Type} (s : StackSemStateFiniteExact 8 C F) :=
-  {s with regs := ((HolFiniteMapExact.empty : HolFiniteMapExact Nat (WordLocW 8)).updateEq (1,.word 7)).updateEq (2,.loc 4 5), store := ((HolFiniteMapExact.empty : HolFiniteMapExact WordStoreHOL (WordLocW 8)).updateEq (.allocSize,.word 9)).updateEq (.nextFree,.loc 2 3), memory := fun a => if a = 0 then .word 11 else .loc 8 9, mdomain := fun a => a = 0 ∨ a = 1, clock := 19}
-
+The arbitrary base state has every expression-observable field overridden; the
+clock-specific rows use storeFixture below. -/
 variable {C F : Type} (s : StackSemStateFiniteExact 8 C F)
 -- const
 example : wordExp (fixture s) (.const 255) = some 255 := by cbv
@@ -47,10 +47,10 @@ example : wordExp (fixture s) (.shift .lsr (.const 3) (.var 2)) = none := by cbv
 -- assign_success
 example : (assign 1 (.const 12) (fixture s)).map
     (fun t => (t.regs.lookup 1,t.regs.lookup 2)) =
-    some (some (.word 12),some (.loc 4 5)) := by cbv
+    some (some (.word 12),some (.loc 4 5)) := assignSuccess s
 -- assign_failure
 example : (assign 1 (.var 2) (fixture s)).map
-    (fun t => (t.regs.lookup 1,t.regs.lookup 2)) = none := by cbv
+    (fun t => (t.regs.lookup 1,t.regs.lookup 2)) = none := assignFailure s
 
 private def storeFixture (s : StackSemStateFiniteExact 8 C F) :=
   { s with memory := fun _ => .word 11, mdomain := fun a => a = 0, clock := 19 }

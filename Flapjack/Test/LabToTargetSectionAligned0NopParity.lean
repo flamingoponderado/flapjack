@@ -1,13 +1,10 @@
 import Flapjack.Compiler.Backend.LabToTarget.SectionNopEncoding
+import Flapjack.Test.Fixtures.LabToTargetSectionNop
 namespace Flapjack.Test.LabToTargetSectionAligned0NopParity
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
-private def enc : HolAsm 8 → List (BitVec 8)
-  | .jump w => [w,w]
-  | .jumpCmp _ _ _ w => [w,w]
-  | .loc _ w => [w,w]
-  | _ => [0,0]
+open Flapjack.Test.Fixtures.LabToTargetSectionNop
 private def aux : List (LabLineHOL 8) := [.label 1 2 0,.label 1 3 0]
 private def code : List (LabLineHOL 8) := [.labAsm (.jump (.lab 1 2)) 77 [251,251] 6,
   .label 1 9 0,.labAsm .halt 88 [229,229] 4]
@@ -32,19 +29,14 @@ example : linesEncWithNop enc .ln [] 5 (padSection [0,0] code []) := by
   apply linesEncWithNop_padSection0 enc .ln [] [0,0] code [] 5
   refine ⟨rfl,by decide +kernel,guards.2.2.1,?_,trivial,by simp,guards.2.2.2.2.2.2⟩
   simpa [aux,lineLen] using guards.2.2.2.1
-private def shortenc : HolAsm 8 → List (BitVec 8)
-  | .inst .skip => [0,0]
-  | _ => [7]
 example : lineEncd shortenc .ln [] 7 (.labAsm .halt 77 [7] 4) ∧
     ¬lineAligned (width := 8) 2 (.labAsm .halt 77 [7] 4) ∧
-    ¬lineEncWithNop shortenc .ln [] 7 (.labAsm .halt 77 (padBytes [7] 4 [0,0]) 4) := by
-  simp only [lineEncd,lineAligned,lineLen,lineLength,lineEncWithNop,encWithNop]
-  decide +kernel
+    ¬lineEncWithNop shortenc .ln [] 7 (.labAsm .halt 77 (padBytes [7] 4 [0,0]) 4) :=
+  haltLineNotAligned
 example : lineEncd enc .ln [] 7 (.labAsm (.jump (.lab 1 2)) 77 [249,249] 3) ∧
     ¬lineAligned (width := 8) 2 (.labAsm (.jump (.lab 1 2)) 77 [249,249] 3) ∧
-    ¬lineEncWithNop enc .ln [] 7 (.labAsm (.jump (.lab 1 2)) 77 (padBytes [249,249] 3 [0,0]) 3) := by
-  simp only [lineEncd,lineAligned,lineLen,lineLength,lineEncWithNop,encWithNop]
-  decide +kernel
+    ¬lineEncWithNop enc .ln [] 7 (.labAsm (.jump (.lab 1 2)) 77 (padBytes [249,249] 3 [0,0]) 3) :=
+  jumpLineNotAligned
 private theorem allLabConstructor (a : AsmWithLab HolCmp (HolRegImm 8) MlString) :
     linesEncd (fun _ : HolAsm 8 => [0,0]) .ln [] 5 [.labAsm a 77 [0,0] 6] ∧
     lineAligned (width := 8) 2 (.labAsm a 77 [0,0] 6) ∧

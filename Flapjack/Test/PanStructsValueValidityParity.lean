@@ -1,18 +1,15 @@
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
+import Flapjack.Test.Fixtures.PanProps
 
 /-! Lean cases paired with `scripts/hol-probes/pan_structs_value_validity_probe.out`. -/
 
 namespace Flapjack.Test
 
 open Flapjack
+open Flapjack.Test.Fixtures.PanProps
 
-private abbrev ExactName := Flapjack.Basis.Pure.MlString.MlString
-
-private def pairName : ExactName := .implode [80, 97, 105, 114]
 private def outerName : ExactName := .implode [79, 117, 116, 101, 114]
 private def prefixName : ExactName := .implode [80, 114, 101, 102, 105, 120, 79, 110, 108, 121]
-private def leftName : ExactName := .implode [108, 101, 102, 116]
-private def rightName : ExactName := .implode [114, 105, 103, 104, 116]
 private def innerName : ExactName := .implode [105, 110, 110, 101, 114]
 private def tagName : ExactName := .implode [116, 97, 103]
 private def markerName : ExactName := .implode [109, 97, 114, 107, 101, 114]
@@ -54,12 +51,6 @@ example : valueFldsOkHOLExact (exactAppendPrefix ++ exactNestedContext)
 
 private def wrongName : ExactName := .implode [119, 114, 111, 110, 103]
 
-private def exactPairContext : Flapjack.Pancake.PanLang.StructContextExact :=
-  [(pairName, { fields := [(leftName, .one), (rightName, .comb [])], size := 2 })]
-
-private def exactMatchingValue : ValueHOL 8 :=
-  .nStruct pairName [(leftName, .val (.word 2)), (rightName, .rStruct [])]
-
 private def exactMismatchValue : ValueHOL 8 :=
   .nStruct pairName [(leftName, .val (.word 2)), (wrongName, .rStruct [])]
 
@@ -72,10 +63,8 @@ example : isWfShapeValueHOLExact exactPairContext (.val (.word 1) : ValueHOL 8) 
   simp [isWfShapeValueHOLExact, exactPairContext]
 
 /-- `is_wf_shape_v_named_match`. -/
-example : isWfShapeValueHOLExact exactPairContext exactMatchingValue = true := by
-  simp [isWfShapeValueHOLExact, isWfShapeValuesHOLExact,
-    Flapjack.Pancake.PanLang.structContextLookupHOL, exactPairContext,
-    exactMatchingValue, pairName]
+example : isWfShapeValueHOLExact exactPairContext exactMatchingValue = true :=
+  isWfShapeValueHOLExact_matching
 
 /-- `is_wf_shape_v_named_missing`. -/
 example : isWfShapeValueHOLExact ([] : Flapjack.Pancake.PanLang.StructContextExact)
