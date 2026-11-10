@@ -1,4 +1,13 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
+public meta import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
+
+@[expose] public section
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
+
 
 /-! Direct original pan_globalsProof$fperm_code replay from
 scripts/hol-probes/pan_globals_fperm_code_probe.out. -/
