@@ -9504,3 +9504,8 @@ run_probe infer_subst_probeScript.sml infer_subst_probe.out \
   infer_type_subst_def_typed infer_deBruijn_subst_def_typed inf_env_axiom_typed init_config_def_typed \
   "$cake_dir/compiler/inference/inferScript.sml" \
   "$cake_dir/compiler/inference"
+
+run_probe gram_valid_sym_probeScript.sml gram_valid_sym_probe.out \
+  valid_mult_sym_def_typed valid_add_sym_def_typed valid_rel_sym_def_typed valid_list_sym_def_typed valid_prefix_sym_def_typed \
+  "$cake_dir/semantics/gramScript.sml" \
+  "$cake_dir/semantics"

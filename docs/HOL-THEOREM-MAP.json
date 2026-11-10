@@ -117878,12 +117878,12 @@
   {
     "lean_path": "Flapjack/CakeParser/Grammar.lean", "lean_name": "validMultSym",
     "hol_path": "cakeml/semantics/gramScript.sml", "hol_name": "validMultSym_def",
-    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "Independently compared the typed gram_valid_sym_probe capture (`validMultSym s \u21d4 \"/\" \u227c s \u2228 \"*\" \u227c s \u2228 \"%\" \u227c s \u2228 \"&\" \u227c s`) with validMultSym: prefix \u227c is the leading-character test, rendered as the byte comparisons 47 ('/'), 42 ('*'), 37 ('%') and 38 ('&') on the head of the List HolChar spelling, with [] giving false."
   },
   {
     "lean_path": "Flapjack/CakeParser/Grammar.lean", "lean_name": "validAddSym",
     "hol_path": "cakeml/semantics/gramScript.sml", "hol_name": "validAddSym_def",
-    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "Independently compared the typed gram_valid_sym_probe capture (`validAddSym s \u21d4 s \u2260 \"\" \u2227 HD s \u2208 {#\"+\"; #\"-\"; #\"^\"} \u2228 2 \u2264 STRLEN s \u2227 HD s = #\"|\"`) with validAddSym: '+'/'-'/'^' are 43/45/94 on the head, and the '|' case additionally requires a nonempty tail (2 \u2264 length), exactly as HOL; the [] case is false."
   },
   {
     "lean_path": "Flapjack/CakeParser/Grammar.lean", "lean_name": "validAddSymAlt",
@@ -117893,17 +117893,17 @@
   {
     "lean_path": "Flapjack/CakeParser/Grammar.lean", "lean_name": "validRelSym",
     "hol_path": "cakeml/semantics/gramScript.sml", "hol_name": "validRelSym_def",
-    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "Independently compared the typed gram_valid_sym_probe capture (`validRelSym s \u21d4 \"<\" \u227c s \u2228 \">\" \u227c s \u2228 2 \u2264 STRLEN s \u2227 (\"=\" \u227c s \u2228 \"~\" \u227c s)`) with validRelSym: '<'/'>' are 60/62, and '='/'~' (61/126) are accepted only with a nonempty tail, matching HOL's length condition."
   },
   {
     "lean_path": "Flapjack/CakeParser/Grammar.lean", "lean_name": "validListSym",
     "hol_path": "cakeml/semantics/gramScript.sml", "hol_name": "validListSym_def",
-    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "Independently compared the typed gram_valid_sym_probe capture (`validListSym s \u21d4 \"@\" \u227c s \u2228 \":\" \u227c s \u2227 2 \u2264 STRLEN s \u2227 s \u2260 \":=\"`) with validListSym: '@' is 64, ':' is 58 with a nonempty tail, and the s \u2260 \":=\" exclusion is the list inequality against [58, 61]."
   },
   {
     "lean_path": "Flapjack/CakeParser/Grammar.lean", "lean_name": "validPrefixSym",
     "hol_path": "cakeml/semantics/gramScript.sml", "hol_name": "validPrefixSym_def",
-    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+    "statement_status": "reviewed_exact", "reviewer": "Independently compared the typed gram_valid_sym_probe capture (`validPrefixSym s \u21d4 s = \"~\" \u2228 \"!\" \u227c s \u2228 \"?\" \u227c s`) with validPrefixSym: the exact list [126] for \"~\" and the head bytes 33 ('!') and 63 ('?') for the prefix cases."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "AlphaCheck",
