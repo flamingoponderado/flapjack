@@ -28,21 +28,6 @@ private theorem fullInst_seq {width : Nat} [NeZero width]
   rw [fullInstOkLessExactSeq, ha, hb]
   rfl
 
-/-- Flapjack factoring of the original reconciliation proof; no separately
-named HOL declaration is claimed for this helper. -/
-private theorem fix_fullInst {width : Nat} [NeZero width]
-    (config : AsmConfigExact width) (prio : Option (Unit ⊕ Unit)) (l r : Spt Nat) (next : Nat) :
-    let (a, b, _, _) := fixInconsistencies (width := width) prio l r next
-    fullInstOkLessExact config a = true ∧ fullInstOkLessExact config b = true := by
-  unfold fixInconsistencies
-  generalize hm : mergeMoves ((sptToAList (sptUnion l r)).map Prod.fst) l r next = merged
-  rcases merged with ⟨lmov, rmov, count, left, right⟩
-  generalize hf : fakeMoves (width := width) prio ((sptToAList (sptUnion l r)).map Prod.fst)
-    left right count = result
-  rcases result with ⟨a, b, final, leftOut, rightOut⟩
-  have facts := fakeMoves_instructionConventions config prio _ left right count a b final leftOut rightOut hf
-  simpa [hm, hf, fullInstOkLessExact, fullInstOkLessWith] using And.intro facts.1 facts.2.1
-
 /-- Flapjack factoring of the literal Move-producing renamer; no separate original. -/
 private theorem ssaRenameMove_fullInst {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (ssa : Spt Nat) (next : Nat) (keys : List Nat) :
