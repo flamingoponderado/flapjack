@@ -47,19 +47,6 @@ theorem degOrInf_production (limit node : Nat) {native : State} {production : Ca
     simp [fixed, cakeDegOrInf, degreesSubEqn, degreeBound,
       holEl_eq_getElem node native.degrees degreeBound, read, ret]
 
-private theorem filter_pure {α : Type} (predicate : α → M State Bool StateException)
-    (pure : α → Bool) (nodes acc : List α) (state : State)
-    (reads : ∀ node ∈ nodes, predicate node state = (.success (pure node), state)) :
-    stExFilter predicate nodes acc state = (.success ((nodes.filter pure).reverse ++ acc), state) := by
-  induction nodes generalizing acc with
-  | nil => rfl
-  | cons node rest ih =>
-    simp only [stExFilter, Translator.Monadic.MonadBase.bind, reads node List.mem_cons_self]
-    cases selected : pure node <;>
-      simp only [Bool.false_eq_true, if_false, if_true, List.filter_cons, selected,
-        List.reverse_cons, List.append_assoc, List.singleton_append]
-    all_goals exact ih _ (fun next member => reads next (List.mem_cons_of_mem node member))
-
 private theorem map_pure {α β : Type} (query : α → M State β StateException)
     (pure : α → β) (nodes : List α) (state : State)
     (reads : ∀ node ∈ nodes, query node state = (.success (pure node), state)) :
@@ -130,7 +117,7 @@ theorem bgOk_production (limit x y : Nat) {native : State} {production : CakeRaS
   have case3Bound := filtered_bound predicate _ native.dim raw3Bound
   have filterRun (nodes : List Nat) (bounds : ∀ node ∈ nodes, node < native.dim) :
       stExFilter (consideredVar limit) nodes [] native = (.success (filterReversed predicate nodes), native) := by
-    simpa only [filterReversed_production, List.append_nil] using filter_pure (consideredVar limit)
+    simpa only [filterReversed_production, List.append_nil] using stExFilter_pure (consideredVar limit)
       predicate nodes [] native (fun node member => consideredVar_production limit node related good (bounds node member))
   have firstFilter := filterRun parts.1 raw1Bound
   have secondFilter := filterRun parts.2 raw2Bound
