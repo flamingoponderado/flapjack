@@ -9524,3 +9524,8 @@ run_probe data_space_compile_probeScript.sml data_space_compile_probe.out \
   pMakeSpace_def_typed space_def_typed compile_def_typed \
   "$cake_dir/compiler/backend/data_spaceScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe data_to_word_ops_probeScript.sml data_to_word_ops_probe.out \
+  word_op_type_axiom_typed lookup_word_op_def_typed stub_names_def_typed \
+  "$cake_dir/compiler/backend/data_to_wordScript.sml" \
+  "$cake_dir/compiler/backend"

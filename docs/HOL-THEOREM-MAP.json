@@ -117363,16 +117363,16 @@
     "lean_name": "WordOpType",
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "word_op_type",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source constructors and clauses transcribed; typed HOL capture and complete statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed data_to_word_ops_probe capture of word_op_type_Axiom (`Bitwise : binop -> word_op_type`, `Carried : binop -> word_op_type`) with WordOpType.bitwise/carried : BinOp \u2192 WordOpType. HOL's binop (panLangScript.sml) has Add/Sub/And/Or/Xor, matching Flapjack's BinOp add/sub/and/or/xor constructor for constructor."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/WordOp.lean",
     "lean_name": "lookupWordOp",
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "lookup_word_op_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source constructors and clauses transcribed; typed HOL capture and complete statement review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed data_to_word_ops_probe capture (`lookup_word_op Andw = Bitwise And \u2227 Orw = Bitwise Or \u2227 Xor = Bitwise Xor \u2227 Add = Carried Add \u2227 Sub = Carried Sub`) with lookupWordOp's five clauses; Opw is the reviewed opw port and the five constructor spellings match."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Stubs.lean",
@@ -117723,8 +117723,8 @@
     "lean_name": "stubNames",
     "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
     "hol_name": "stub_names_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source list transcribed using byte-backed names; typed source and complete list review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed data_to_word_ops_probe capture of stub_names_def with stubNames: the same 32 fixed (location, name) pairs in source order (FromList through Dummy), followed by GENLIST (\u03bbi. (i + Bignum_location, \u00ab_Bignum\u00bb)) (data_num_stubs - Bignum_location), rendered as (List.range (dataNumStubs - bignumLocation)).map fun i => (i + bignumLocation, ofString \"_Bignum\"); the location constants are the reviewed *_location ports, dataNumStubs is the reviewed data_num_stubs_def port and the names are MlString.ofString literals matching HOL's \u00ab...\u00bb mlstrings."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosMti.lean",
