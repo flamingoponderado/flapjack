@@ -89,7 +89,8 @@ theorem lookupReverseOfNodup {α β : Type} [BEq α] [LawfulBEq α]
       have := Flapjack.Misc.listLookupOfMemNodup l k v (List.mem_reverse.mp hm) hnd
       rw [h] at this; cases this
   | some v =>
-    exact Flapjack.Misc.listLookupOfMemNodup _ k v (List.mem_reverse.mpr (Misc.lookupMem _ _ _ h)) hnd'
+    exact Flapjack.Misc.listLookupOfMemNodup _ k v
+      (List.mem_reverse.mpr (Misc.lookupMem _ _ _ h)) hnd'
 
 /-- `FUPDATE_LIST FEMPTY` over distinct keys is `ALOOKUP`. -/
 theorem emptyUpdateListLookup {α β : Type} [BEq α] [LawfulBEq α]

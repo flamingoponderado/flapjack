@@ -33,7 +33,8 @@ declaration is claimed. -/
 theorem stExFilter_pure {α : Type} (predicate : α → M State Bool StateException)
     (pure : α → Bool) (nodes acc : List α) (state : State)
     (reads : ∀ node ∈ nodes, predicate node state = (.success (pure node), state)) :
-    stExFilter predicate nodes acc state = (.success ((nodes.filter pure).reverse ++ acc), state) := by
+    stExFilter predicate nodes acc state =
+      (.success ((nodes.filter pure).reverse ++ acc), state) := by
   induction nodes generalizing acc with
   | nil => rfl
   | cons node rest ih =>

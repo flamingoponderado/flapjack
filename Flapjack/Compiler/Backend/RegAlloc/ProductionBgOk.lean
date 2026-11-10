@@ -117,7 +117,8 @@ theorem bgOk_production (limit x y : Nat) {native : State} {production : CakeRaS
   have case3Bound := filtered_bound predicate _ native.dim raw3Bound
   have filterRun (nodes : List Nat) (bounds : ∀ node ∈ nodes, node < native.dim) :
       stExFilter (consideredVar limit) nodes [] native = (.success (filterReversed predicate nodes), native) := by
-    simpa only [filterReversed_production, List.append_nil] using stExFilter_pure (consideredVar limit)
+    simpa only [filterReversed_production, List.append_nil] using
+      stExFilter_pure (consideredVar limit)
       predicate nodes [] native (fun node member => consideredVar_production limit node related good (bounds node member))
   have firstFilter := filterRun parts.1 raw1Bound
   have secondFilter := filterRun parts.2 raw2Bound
