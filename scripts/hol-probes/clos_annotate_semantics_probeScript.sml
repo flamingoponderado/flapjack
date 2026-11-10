@@ -26,6 +26,7 @@ val _ = show "alt_fv_nil_typed=" clos_annotateProofTheory.alt_fv_nil;
 val _ = show "alt_fv_cons_typed=" clos_annotateProofTheory.alt_fv_cons;
 val _ = show "alt_fv_REPLICATE_typed=" clos_annotateProofTheory.alt_fv_REPLICATE;
 val _ = show "v_rel_rules_typed=" clos_annotateProofTheory.v_rel_rules;
+val _ = show "v_rel_simp_typed=" clos_annotateProofTheory.v_rel_simp;
 val _ = show "v_rel_Boolv_typed=" clos_annotateProofTheory.v_rel_Boolv;
 val _ = show "v_rel_Unit_typed=" clos_annotateProofTheory.v_rel_Unit;
 val _ = show "annotate_sing_typed=" clos_annotateTheory.annotate_sing_def;

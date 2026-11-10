@@ -1719,6 +1719,13 @@
   "reviewer": "Source comparison with list_to_v_v_rel_typed: both unrestricted value lists, their pointwise relation premise and the related list-encoding conclusion agree. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "v_rel_simp",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ValueRelation.lean", "lean_name": "valueRel_simp",
+  "statement_status": "reviewed_nested_list_rel_as_mutual",
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "reviewer": "Source comparison with v_rel_simp_typed: all fourteen equivalences retain their original conjunct order, shared variables, existential order, source-shaped shift, alt_fv1, nested LIST_REL and inequality clauses. HOL variables named x at types int and num are independent (xInt and xNat); variables named n at types word64, num and num option are independent (nWord, nBlock and nLoc). Other same-name same-type variables remain shared. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "v_rel_Boolv",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ValueRelation.lean", "lean_name": "valueRel_bool",
   "statement_status": "reviewed_nested_list_rel_as_mutual",
