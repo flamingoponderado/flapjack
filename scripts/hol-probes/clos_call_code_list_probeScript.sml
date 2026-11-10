@@ -14,6 +14,7 @@ val _ = (print "calls_code_subset_type="; Lib.with_flag (Globals.show_types,true
 val _ = (print "calls_domain_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_domain); print "\n");
 val _ = (print "calls_replace_snd_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_replace_SND); print "\n");
 val _ = (print "calls_acc_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_acc); print "\n");
+val _ = (print "calls_el_sing_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_el_sing); print "\n");
 val _ = (print "insert_each_prime_def_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.insert_each'_def); print "\n");
 val _ = (print "wfg_insert_each_prime_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.wfg_insert_each'); print "\n");
 val _ = (print "fst_insert_each_prime_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.FST_insert_each'); print "\n");

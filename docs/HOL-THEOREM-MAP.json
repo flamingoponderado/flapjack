@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_el_sing",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/IndexedCalls.lean", "lean_name": "calls_el_sing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_el_sing_type in clos_call_code_list_probe.out and source: the ordered input/output lists, states and index retain their carriers; the original calls, bounds, distinctness, disjointness, well-formedness and annotation premises imply both existential intermediate states and all original run, extension, well-formedness, freshness, prefix-label and remaining-location conclusions. HOL fEL is holEl."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "insert_each'_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertWithCode.lean", "lean_name": "insertWithCode",
   "statement_status": "reviewed_exact",
@@ -16972,7 +16978,7 @@
       "c",
       "tys"
     ],
-    "reviewer": "Compared all typed HOL value-relation rules, induction and case equations. The eight cases preserve literal, constructor lookup and pointwise fields, tuple, local and top-level recursive closures, offset locations and vectors; the additional Lean list and lookup relations are positivity helpers. valueRel_source_cases and valueRel_source_induction_all establish the source-shaped cases and least-relation induction. GlobalEnv.c and GlobalEnv.tys use the reviewed canonical finite-map representation. Every global-list access is guarded by the original bound, under which globalSlot_eq_get proves agreement with list indexing."
+    "reviewer": "Compared all typed HOL value-relation rules, induction and case equations. The eight cases preserve literal, constructor lookup and pointwise fields, tuple, local and top-level recursive closures, offset locations and vectors; the additional Lean list and lookup relations are positivity helpers. valueRel_source_cases and valueRel_ind establish the source-shaped cases and least-relation induction. GlobalEnv.c and GlobalEnv.tys use the reviewed canonical finite-map representation. Every global-list access is guarded by the original bound, under which globalSlot_eq_get proves agreement with list indexing."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

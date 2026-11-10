@@ -840,6 +840,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.InsertDomain
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InsertWithCode
 import Flapjack.Compiler.Backend.ClosCall.Proofs.StateGrowth
 import Flapjack.Compiler.Backend.ClosCall.Proofs.CallsWellformed
+import Flapjack.Compiler.Backend.ClosCall.Proofs.IndexedCalls
 import Flapjack.Compiler.Backend.ClosCall.Proofs.CallsExtension
 import Flapjack.Compiler.Backend.ClosCall.Proofs.DomainLocations
 import Flapjack.Compiler.Backend.ClosCall.Proofs.MakeState
