@@ -2,12 +2,31 @@ module
 
 public import Flapjack.Compiler.Backend.ClosCall.Stubs
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic.LabelsAndArity
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.FreeVars
 
 @[expose] public section
 
 /-! Source invariants for the direct-call stub generators. -/
 namespace Flapjack.Compiler.Backend.ClosCall
 open ClosLang ClosProps
+
+private theorem freeVars_append (v : Nat) (left right : List Exp) :
+    freeVars v (left ++ right) ↔ freeVars v left ∨ freeVars v right := by
+  induction left with
+  | nil => simp [freeVars]
+  | cons head tail ih => simp [freeVars, ih, or_assoc]
+
+/-- Generated variables have exactly the indices below the requested count. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "fv_GENLIST_Var_tra"]
+theorem freeVars_variables (v : Nat) : ∀ (count : Nat) (trace : BackendCommon.Tra) (index : Nat),
+    freeVars v (variablesSource trace index count) ↔ v < count := by
+  intro count
+  induction count with
+  | zero => intro trace index; simp [variablesSource, freeVars]
+  | succ count ih =>
+    intro trace index
+    simp [variablesSource, freeVars_append, freeVars, freeVarExp, ih]
+    omega
 
 /-- Generated variables contain no label operations. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "no_Labels_GENLIST_Var"]

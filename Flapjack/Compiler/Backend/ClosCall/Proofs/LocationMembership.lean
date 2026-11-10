@@ -12,7 +12,9 @@ import Mathlib.Data.List.Perm.Subperm
 namespace Flapjack.Compiler.Backend.ClosCall
 open ClosLang ClosProps
 
-private theorem locations_variables (t : BackendCommon.Tra) (i n : Nat) :
+/-- Generated variable lists contain no code locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "code_locs_GENLIST_Var"]
+theorem locations_variables (n : Nat) (t : BackendCommon.Tra) (i : Nat) :
     codeLocations (variablesSource t i n) = [] := by
   induction n generalizing i with
   | zero => rfl

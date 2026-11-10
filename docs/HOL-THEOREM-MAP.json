@@ -1719,6 +1719,18 @@
   "reviewer": "Source comparison with list_to_v_v_rel_typed: both unrestricted value lists, their pointwise relation premise and the related list-encoding conclusion agree. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_locs_GENLIST_Var",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "locations_variables",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_locs_GENLIST_Var_typed: the universally quantified count, trace and index retain their types and order, and the source variable generator has the empty code-location list."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "fv_GENLIST_Var_tra",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubInvariants.lean", "lean_name": "freeVars_variables",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fv_GENLIST_Var_tra_typed: the free variable index is independent of the universally quantified count, trace and generator index; their order and the equivalence with the strict index bound match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "closed_Fn_fv",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FreeCorrect.lean", "lean_name": "closedFn_fv",
   "statement_status": "reviewed_exact",
