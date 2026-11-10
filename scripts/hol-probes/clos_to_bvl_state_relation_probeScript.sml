@@ -166,6 +166,7 @@ val _ = show "calls_preserves_every_fn_some_typed=" clos_callProofTheory.calls_p
 val _ = show "ccompile_every_fn_some_typed=" clos_to_bvlProofTheory.ccompile_every_Fn_SOME;
 val _ = show "compile_common_max_app_typed=" clos_to_bvlProofTheory.compile_common_max_app;
 val _ = show "compile_exps_el_typed=" clos_to_bvlProofTheory.compile_exps_EL;
+val _ = show "compile_common_distinct_locs_typed=" clos_to_bvlProofTheory.compile_common_distinct_locs;
 val _ = show "toaList_domain_typed=" miscTheory.toAList_domain;
 val _ = show "sptree_domain_lookup_typed=" sptreeTheory.domain_lookup;
 val _ = show "known_compile_is_some_typed=" clos_knownProofTheory.known_compile_IS_SOME;
