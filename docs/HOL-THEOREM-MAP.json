@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/db_varsScript.sml", "hol_name": "has_var_mk_Union",
+  "lean_path": "Flapjack/Compiler/Backend/DbVars/Proofs/Lookup.lean", "lean_name": "hasVarMkUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared has_var_mk_union_typed: the natural index and two db_var_set arguments retain HOL order, and the Boolean predicate rendered as equality to true preserves the full disjunction equivalence."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/clos_knownScript.sml", "hol_name": "known_compile_inc_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Compile.lean", "lean_name": "knownCompileInc",
   "statement_status": "documented_mismatch",

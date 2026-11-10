@@ -11,10 +11,6 @@ public import Mathlib.Tactic
 namespace Flapjack.Compiler.Backend.ClosCall
 open ClosLang ClosProps DbVars
 
-private theorem hasVar_mkUnion (n : Nat) (left right : DbVarSet) :
-    hasVar n (mkUnion left right) = (hasVar n left || hasVar n right) := by
-  cases left <;> cases right <;> simp [mkUnion, hasVar]
-
 /-- Free-variable annotation preserves the length of an expression list. -/
 theorem freeListFuel_length (fuel : Nat) (es result : List Exp) (vars : DbVarSet)
     (run : freeListFuel fuel es = some (result, vars)) : result.length = es.length := by

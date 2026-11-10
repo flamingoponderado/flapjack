@@ -7,6 +7,23 @@ public import Flapjack.Compiler.Backend.DbVars
 /-! Lookup properties of the handler compiler's variable sets. -/
 namespace Flapjack.Compiler.Backend.DbVars
 
+/-- The optimized union has an empty right identity. This is Lean
+infrastructure used in the free-variable proofs. -/
+theorem mkUnion_empty_right (set : DbVarSet) : mkUnion set .empty = set := by
+  cases set <;> rfl
+
+/-- Boolean form used by the Lean free-variable and environment proofs. -/
+theorem hasVar_mkUnion (index : Nat) (left right : DbVarSet) :
+    hasVar index (mkUnion left right) = (hasVar index left || hasVar index right) := by
+  cases left <;> cases right <;> simp [mkUnion, hasVar]
+
+/-- A variable occurs in a union exactly when it occurs in an operand. -/
+@[hol "cakeml/compiler/backend/db_varsScript.sml" "has_var_mk_Union"]
+theorem hasVarMkUnion (index : Nat) (left right : DbVarSet) :
+    hasVar index (mkUnion left right) = true ↔
+      hasVar index left = true ∨ hasVar index right = true := by
+  simp [hasVar_mkUnion]
+
 /-- Looking up a variable in the accumulated sparse tree gives the inserted
 unit when it is visible at the current offset, and otherwise preserves the
 previous lookup. -/

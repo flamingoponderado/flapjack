@@ -361,7 +361,7 @@ run_probe clos_letop_source_probeScript.sml clos_letop_source_probe.out \
   "$cake_dir/compiler/backend/clos_letopScript.sml" "$cake_dir/compiler/backend"
 
 run_probe db_vars_definitions_probeScript.sml db_vars_definitions_probe.out \
-  mk_union_typed list_union_typed db_to_set_acc_typed db_to_set_typed vars_to_list_typed vars_from_list_typed vars_flatten_typed has_var_typed \
+  mk_union_typed list_union_typed db_to_set_acc_typed db_to_set_typed vars_to_list_typed vars_from_list_typed vars_flatten_typed has_var_typed has_var_mk_union_typed \
   "$cake_dir/compiler/backend/db_varsScript.sml" "$cake_dir/compiler/backend"
 
 run_probe finite_map_alist_probeScript.sml finite_map_alist_probe.out \

@@ -6,3 +6,4 @@ vars_to_list_typed=∀(db :db_var_set). vars_to_list db = MAP (FST :num # unit -
 vars_from_list_typed=∀(vs :num list). vars_from_list vs = FOLDL (λ(s1 :db_var_set) (v :num). Union (Var v) s1) Empty vs
 vars_flatten_typed=∀(db :db_var_set). vars_flatten db = vars_from_list (vars_to_list db)
 has_var_typed=(∀(n :num). has_var n Empty ⇔ F) ∧ (∀(n :num) (v :num). has_var n (Var v) ⇔ n = v) ∧ (∀(n :num) (k :num) (d :db_var_set). has_var n (Shift k d) ⇔ has_var (n + k) d) ∧ ∀(n :num) (d1 :db_var_set) (d2 :db_var_set). has_var n (Union d1 d2) ⇔ has_var n d1 ∨ has_var n d2
+has_var_mk_union_typed=has_var (n :num) (mk_Union (l1 :db_var_set) (l2 :db_var_set)) ⇔ has_var n l1 ∨ has_var n l2

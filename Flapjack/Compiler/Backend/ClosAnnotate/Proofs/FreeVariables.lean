@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosAnnotate.Free.SourceEquations
+public import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
 
 @[expose] public section
 
@@ -13,14 +14,6 @@ source-shaped `altFree` equations are checked in `Free.SourceEquations`;
 this observation remains untagged until source correspondence is reviewed. -/
 def altFv (index : Nat) (expressions : List Exp) : Bool :=
   hasVar index (altFree expressions).2
-
-private theorem mkUnion_empty_right (set : DbVarSet) : mkUnion set .empty = set := by
-  cases set <;> rfl
-
-/-- Membership in the optimized union is disjunction, including empty sets. -/
-theorem hasVar_mkUnion (index : Nat) (left right : DbVarSet) :
-    hasVar index (mkUnion left right) = (hasVar index left || hasVar index right) := by
-  cases left <;> cases right <;> simp [mkUnion, hasVar]
 
 /-- The free variables of a list combine its singleton head and tail. -/
 theorem altFv_cons (index : Nat) (first : Exp) (rest : List Exp) :

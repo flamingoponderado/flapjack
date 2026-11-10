@@ -167,7 +167,6 @@ theorem closedFuel_correct (fuel : Nat) (e : Exp) :
   | mk out vars =>
     simp only [result] at free
     have empty := dbToSet_empty_agrees vars
-    have unionEmpty : mkUnion vars .empty = vars := by cases vars <;> rfl
-    simp [closedFuel, free, closedHOL, freeHOL, result, unionEmpty, empty]
+    simp [closedFuel, free, closedHOL, freeHOL, result, mkUnion_empty_right, empty]
 
 end Flapjack.Compiler.Backend.ClosKnown
