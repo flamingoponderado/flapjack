@@ -18,6 +18,16 @@ public import Flapjack.Misc.MakeEven
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open ClosLang ClosProps
 
+/-- Whole-program preprocessing preserves the maximum application arity. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_common_max_app"]
+theorem compileCommon_maxApp (c : Config) (es : List ClosLang.Exp)
+    (c' : Config) (es' : List (Nat × Nat × ClosLang.Exp))
+    (run : compileCommon c es = (c', es')) : c'.maxApp = c.maxApp := by
+  simp only [compileCommon] at run
+  repeat' split at run
+  all_goals simp_all
+  all_goals simpa using (congrArg Config.maxApp run.1).symm
+
 /-- Preprocessing keeps all compiled program labels below its next location. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_common_MAP_FST_compile_prog"]
 theorem compileCommon_mapFst_compileProg (c : Config) (es : List ClosLang.Exp)

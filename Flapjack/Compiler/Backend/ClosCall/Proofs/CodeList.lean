@@ -119,16 +119,4 @@ theorem codeList_labels_nodup (loc : Nat) (fns : List (Nat × ClosLang.Exp))
   obtain ⟨i, bound, rfl⟩ := generated
   exact fresh i bound old
 
-/-- With an even base, generated auxiliary labels do not collide with an
-existing distinct list of even labels. -/
-theorem codeList_labels_nodup_of_even (loc : Nat) (fns : List (Nat × ClosLang.Exp))
-    (state : State) (baseEven : loc % 2 = 0)
-    (oldDistinct : (state.2.map Prod.fst).Nodup)
-    (oldEven : ∀ label ∈ state.2.map Prod.fst, label % 2 = 0) :
-    ((codeList loc fns state).2.map Prod.fst).Nodup := by
-  apply codeList_labels_nodup loc fns state oldDistinct
-  intro i _ old
-  have even := oldEven _ old
-  omega
-
 end Flapjack.Compiler.Backend.ClosCall

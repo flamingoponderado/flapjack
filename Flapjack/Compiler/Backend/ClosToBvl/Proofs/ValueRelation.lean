@@ -210,20 +210,6 @@ def envRel (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
   | _ :: _, [] => False
   | x :: xs, y :: ys => vRel maxApp f refs code x y ∧ envRel maxApp f refs code xs ys
 
-/-- Source-shaped environment-length consequence. The finite-map parameter
-qualifiers and inferred HOL type remain to be reviewed before tagging it. -/
-theorem envRel_length {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {xs ys} (related : envRel maxApp f refs code xs ys) : xs.length ≤ ys.length := by
-  induction xs generalizing ys with
-  | nil => simp
-  | cons x xs ih =>
-      cases ys with
-      | nil => exact False.elim related
-      | cons y ys =>
-          have tail : envRel maxApp f refs code xs ys := related.2
-          simpa using Nat.succ_le_succ (ih tail)
-
 theorem holFmapAsFiniteSupportParamWitness_envRel_subspt_f
     (f : HolFiniteMapExact Nat Nat) (key : Nat) :
     (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧

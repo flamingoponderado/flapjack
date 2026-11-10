@@ -38,14 +38,4 @@ theorem convertedFunctions_length (fuel : Nat) (fns : List (Nat × Exp))
   simp only [List.length_map] at length
   simp [List.length_zip, length]
 
-/-- The auxiliary-label range for a converted recursive group has precisely
-the size of the input function group. -/
-theorem convertedFunctions_labels (fuel loc : Nat) (fns : List (Nat × Exp))
-    (initial final : State) (bodies : List Exp)
-    (run : callsListFuel fuel (fns.map Prod.snd) initial = some (bodies, final)) :
-    (codeList loc ((fns.map Prod.fst).zip bodies) final).2.map Prod.fst =
-      ((List.range fns.length).map (fun i => loc + i * 2 + 1)).reverse ++
-        final.2.map Prod.fst := by
-  rw [codeList_labels, convertedFunctions_length fuel fns initial final bodies run]
-
 end Flapjack.Compiler.Backend.ClosCall

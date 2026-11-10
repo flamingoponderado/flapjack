@@ -34,33 +34,4 @@ Key and value types are independent; lookup uses HOL logical equality. -/
 def codeIncludes {K V : Type} (al : List (K × V)) (code : HolFiniteMapExact K V) : Prop :=
   ∀ key value, logicalAssocLookup key al = some value → code.lookup key = some value
 
-/-- If the larger state is included in code, every binding of the smaller
-state is included as well. -/
-theorem codeIncludes_of_stateExtends {A K V : Type} (g0 g1 : Spt A × List (K × V))
-    (code : HolFiniteMapExact K V) (growth : stateExtends g0 g1)
-    (included : codeIncludes g1.2 code) : codeIncludes g0.2 code := by
-  intro key value lookup
-  exact included key value (growth.2.1 key value lookup)
-
-/-- Extending a finite code map preserves every included binding. -/
-theorem codeIncludes_mono {K V : Type} (al : List (K × V))
-    (code code' : HolFiniteMapExact K V)
-    (growth : ∀ key value, code.lookup key = some value → code'.lookup key = some value)
-    (included : codeIncludes al code) : codeIncludes al code' := by
-  intro key value lookup
-  exact growth key value (included key value lookup)
-
-/-- Installing all code produced by a successful traversal also installs
-the bindings present before that traversal. -/
-theorem callsListBounded_codeIncludes_initial (fuel : Nat) (es : List ClosLang.Exp)
-    (initial final : State) (out : List ClosLang.Exp)
-    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
-    (run : callsListBounded fuel es initial = some (out, final))
-    (distinct : (ClosProps.codeLocations es).Nodup)
-    (fresh : LabelsFresh (ClosProps.codeLocations es) initial)
-    (oldDistinct : (initial.2.map Prod.fst).Nodup)
-    (included : codeIncludes final.2 code) : codeIncludes initial.2 code := by
-  exact codeIncludes_of_stateExtends initial final code
-    (callsListBounded_stateExtends fuel es initial final out run distinct fresh oldDistinct) included
-
 end Flapjack.Compiler.Backend.ClosCall

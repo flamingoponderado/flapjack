@@ -92,29 +92,6 @@ theorem initialSourceCode_cons_lookup (name arity : Nat) (body : ClosLang.Exp)
   simp [initialSourceCode, HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL,
     List.foldl_append, FUPDATE_HOL]
 
-/-- The generated chain is installed in the source association-list code
-map, including the empty-list dummy entry. -/
-theorem chainInstalled_chainExps (start : Nat) (expressions : List ClosLang.Exp) :
-    chainInstalled start expressions (initialSourceCode (chainExps start expressions)) := by
-  induction expressions generalizing start with
-  | nil => simp [chainInstalled]
-  | cons first rest ih =>
-    cases rest with
-    | nil =>
-      rw [chainInstalled_cons]
-      constructor
-      · simp [chainExps, findCode, initialSourceCode_cons_lookup]
-      · simp [chainInstalled]
-    | cons second tail =>
-      rw [chainInstalled_cons]
-      constructor
-      · simp [chainExps, findCode, initialSourceCode_cons_lookup]
-      · intro i bound
-        have found := ih (start + 1) i bound
-        have different : start + 1 + i ≠ start := by omega
-        simp only [chainExps, findCode, initialSourceCode_cons_lookup, if_neg different]
-        exact found
-
 /-- Any closure evaluation retains an installed chain, regardless of its
 result. The evaluator's correspondence with HOL is still to be reviewed. -/
 theorem chainInstalled_after_evaluate {C F : Type} (start : Nat) (chain evaluated : List ClosLang.Exp)

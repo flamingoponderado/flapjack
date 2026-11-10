@@ -138,22 +138,4 @@ theorem callsListBounded_succeeds (fuel : Nat) (es : List Exp) (state : State) :
     obtain ⟨result, done⟩ := callsListFuel_succeeds (max fuel (listBudget es + 1)) es state bound
     exact ⟨result, by simp [callsListBounded, h, done]⟩
 
-/-- The executable incremental direct-call step cannot exhaust traversal
-fuel. This establishes totality of the bounded adapter, not correspondence
-with HOL's unbounded `compile_inc`. -/
-theorem compileIncFuel_succeeds (fuel : Nat) (known : NumSet)
-    (program : List Exp × List (Nat × Nat × Exp)) :
-    ∃ result, compileIncFuel? fuel known program = some result := by
-  obtain ⟨⟨expressions, state⟩, run⟩ := callsListBounded_succeeds fuel program.1 (known, [])
-  exact ⟨(state.1, expressions, state.2), by simp [compileIncFuel?, run]⟩
-
-/-- Whole-program direct-call conversion cannot fail from traversal fuel. -/
-theorem compileFuel_succeeds (fuel : Nat) (enabled : Bool) (es : List Exp) :
-    ∃ result, compileFuel fuel enabled es = some result := by
-  cases enabled with
-  | false => exact ⟨_, rfl⟩
-  | true =>
-    obtain ⟨result, h⟩ := callsListBounded_succeeds fuel es (.ln, [])
-    exact ⟨result, by simpa [compileFuel] using h⟩
-
 end Flapjack.Compiler.Backend.ClosCall

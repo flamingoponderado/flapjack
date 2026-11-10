@@ -42,6 +42,12 @@
   "reviewer": "Compared ccompile_every_fn_some_typed and independent review: first-appearance binder order, grouped premise and both conclusion conjuncts match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_common_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CommonLabelBound.lean", "lean_name": "compileCommon_maxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_common_max_app_typed and independent review: binder order, preprocessing equation and conclusion orientation match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "every_Fn_calls_list",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "everyFn_callsList",
   "statement_status": "reviewed_exact",
@@ -127239,7 +127245,7 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Wellformed.lean",
   "lean_name": "weaklyWellFormed_codeListSource",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared source lines 728-736 and inferred statement in clos_call_wfg_probe.out, including three independent types, binder order, prior weak invariant and generated-location domain subset. The executed codeList is kernel-proved equal to codeListSource. Lean checks the proof; source comparison does not establish cross-language equivalence."
+  "reviewer": "Compared source lines 728-736 and inferred statement in clos_call_wfg_probe.out, including three independent types, binder order and the grouped weak-invariant and generated-location domain-subset premise. The executed codeList is kernel-proved equal to codeListSource. Lean checks the proof; source comparison does not establish cross-language equivalence."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml",
