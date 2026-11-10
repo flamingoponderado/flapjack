@@ -114,13 +114,6 @@ theorem removeFuns_related (count captured : Nat) (functions : List (Nat × Clos
     · simp [FunctionRel, CodeRel, removeList, Nat.add_comm, Nat.add_left_comm]
     · simpa [removeFuns] using ih
 
-/-- Removing free variables leaves a recursive function list's length intact. -/
-theorem removeFuns_length (count captured : Nat) (functions : List (Nat × ClosLang.Exp)) :
-    (removeFuns count captured functions).length = functions.length := by
-  induction functions with
-  | nil => rfl
-  | cons function rest ih => cases function; simp [removeFuns, ih]
-
 /-- Arity checks are unaffected by rewriting recursive function bodies. -/
 theorem removeFuns_all (count captured maxApp : Nat) (functions : List (Nat × ClosLang.Exp)) :
     (removeFuns count captured functions).all (fun (arity, _) => arity ≤ maxApp && arity != 0) =

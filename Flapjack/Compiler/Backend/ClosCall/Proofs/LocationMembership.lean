@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelsOriginal
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.InsertDomain
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
 import Mathlib.Data.List.Perm.Subperm
 
@@ -10,15 +11,6 @@ import Mathlib.Data.List.Perm.Subperm
 
 namespace Flapjack.Compiler.Backend.ClosCall
 open ClosLang ClosProps
-
-private theorem sizeOf_map_snd_le (xs : List (Nat × Exp)) :
-    sizeOf (xs.map Prod.snd) ≤ sizeOf xs := by
-  induction xs with
-  | nil => simp
-  | cons x xs ih =>
-    cases x
-    simp_wf
-    omega
 
 private theorem locations_variables (t : BackendCommon.Tra) (i n : Nat) :
     codeLocations (variablesSource t i n) = [] := by
@@ -55,14 +47,6 @@ private theorem codeList_bodies {A C : Type} (fns : List (A × Exp))
     obtain ⟨a, e⟩ := f
     obtain ⟨known, code⟩ := state
     simp [codeListSource, ih, List.reverse_cons, List.append_assoc]
-
-private theorem insertEach_snd (loc count : Nat) (state : State) :
-    (insertEachSource loc count state).2 = state.2 := by
-  induction count generalizing loc state with
-  | zero => rfl
-  | succ count ih =>
-    cases state with
-    | mk known code => simpa [insertEachSource] using ih (loc + 2) (sptInsert loc () known, code)
 
 private theorem locationSome_append (xs ys : List Exp) :
     everyFnLocationSome (xs ++ ys) ↔ everyFnLocationSome xs ∧ everyFnLocationSome ys := by

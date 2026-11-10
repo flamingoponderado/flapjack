@@ -1,5 +1,23 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "FST_insert_each_same",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertDomain.lean", "lean_name": "insertEach_fst_same",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_call_FST_insert_each_same_typed: the two state payload types remain independent, binders retain HOL order, and equality of initial first components implies equality of the inserted first components."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "insert_each_pair_arg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertDomain.lean", "lean_name": "insertEach_pair_arg",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_call_insert_each_pair_arg_typed: location, count, sparse set and both independently polymorphic payloads retain HOL order; the whole-pair equality is unchanged."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/db_varsScript.sml", "hol_name": "has_var_mk_Union",
+  "lean_path": "Flapjack/Compiler/Backend/DbVars/Proofs/Lookup.lean", "lean_name": "hasVarMkUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared has_var_mk_union_typed: the natural index and two db_var_set arguments retain HOL order, and the Boolean predicate rendered as equality to true preserves the full disjunction equivalence."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/clos_fvsScript.sml", "hol_name": "remove_fvs_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Source.lean", "lean_name": "removeSource",
   "statement_status": "reviewed_exact",
@@ -189,6 +207,12 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertDomain.lean", "lean_name": "domain_insertEach",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared clos_call_domain_FST_insert_each_typed: quantified position, count and state retain order and the state payload remains polymorphic. The exact domain equality uses the generated 2*i+p locations and the original domain."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "SND_insert_each",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertDomain.lean", "lean_name": "insertEach_snd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_call_SND_insert_each_typed: quantified position, count and state retain HOL's order, the state payload is polymorphic, and the second component is unchanged."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "insert_each_subspt",
@@ -1608,6 +1632,14 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/Compile.lean", "lean_name": "compileSource_append",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared compile_append_typed: the two unrestricted program lists share the original polymorphic key type, and compilation distributes over append in the same order."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "do_install_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/Install.lean", "lean_name": "doInstall_full",
+  "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
+  "fmap_as_finite_support": ["refs", "code"],
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "reviewer": "Compared do_install_thm_typed: related initial states and value lists and both installation equations imply the same result relation and related final states, including type errors. The compiler and FFI state parameters remain independent. StateRelSource renders FDOM using domain; fmap_as_finite_support records the canonical refs and code finite maps, and nested_list_rel_as_mutual records the source value relation witnessed by functionsRel_iff."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "v_to_bytes",

@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.OracleGlobals
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Relations
+public import Flapjack.Misc.Sptree.Subspt
 
 @[expose] public section
 
@@ -21,14 +22,6 @@ private theorem subsptRefl {A : Type} (s : Spt A) : sptSubspt s s := by
   intro k member
   exact ⟨member, rfl⟩
 
-/-- Sparse-tree inclusion is transitive. This is Flapjack infrastructure. -/
-private theorem subsptTrans {A : Type} (a b c : Spt A)
-    (h1 : sptSubspt a b) (h2 : sptSubspt b c) : sptSubspt a c := by
-  intro k member
-  obtain ⟨mid, left⟩ := h1 k member
-  obtain ⟨last, right⟩ := h2 k mid
-  exact ⟨last, right.trans left⟩
-
 /-- Successor monotonicity is equivalent to monotonicity over arbitrary
 nonnegative offsets. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "oracle_gapprox_subspt_add"]
@@ -40,7 +33,7 @@ theorem oracleGapproxSubsptAdd {A B C : Type} (co : Nat → (Spt A × B) × C) :
     | zero => simpa using subsptRefl (co n).1.1
     | succ k ih =>
       have step := mono (n + k)
-      exact subsptTrans _ _ _ ih (by simpa [Nat.add_assoc] using step)
+      exact sptSubsptTrans _ _ _ ⟨ih, by simpa [Nat.add_assoc] using step⟩
   · intro all n
     exact all n 1
 

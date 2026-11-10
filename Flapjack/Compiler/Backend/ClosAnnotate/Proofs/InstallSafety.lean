@@ -21,17 +21,6 @@ theorem doApp_preserves_safe {C F : Type} (op : ClosLang.Op) (args : List Value)
     exact code key arity body found
   · simpa [OracleSafe, oracleEq] using oracle
 
-private theorem everyFnVarsNone_mem (expressions : List ClosLang.Exp)
-    (safe : everyFnVarsNone expressions) (body : ClosLang.Exp) (member : body ∈ expressions) :
-    everyFnVarsNone [body] := by
-  induction expressions with
-  | nil => simp at member
-  | cons first rest ih =>
-    simp only [everyFnVarsNone] at safe
-    rcases List.mem_cons.mp member with rfl | member
-    · simpa [everyFnVarsNone] using safe.1
-    · exact ih safe.2 member
-
 private theorem updateCode_safe (lookup : Nat → Option (Nat × ClosLang.Exp))
     (entries : List (Nat × Nat × ClosLang.Exp))
     (safe : ∀ key arity body, lookup key = some (arity, body) → everyFnVarsNone [body])
@@ -72,7 +61,7 @@ theorem doInstall_preserves_safe {C F : Type} (values : List Value) (source next
     simpa [oracleEntry] using h
   have entriesSafe : ∀ entry ∈ auxiliary, everyFnVarsNone [entry.2.2] := by
     intro entry member
-    apply everyFnVarsNone_mem _ bodies entry.2.2
+    apply (everyFnVarsNone_every _).mp bodies entry.2.2
     exact List.mem_map.mpr ⟨entry, member, rfl⟩
   rw [nextEq]
   constructor

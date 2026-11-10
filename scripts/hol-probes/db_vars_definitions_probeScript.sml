@@ -19,3 +19,4 @@ val _ = show "lookup_db_to_set_typed=" db_varsTheory.lookup_db_to_set;
 val _ = show "MEM_vars_to_list_typed=" db_varsTheory.MEM_vars_to_list;
 val _ = show "MEM_vars_from_list_typed=" db_varsTheory.MEM_vars_from_list;
 val _ = show "has_var_vars_flatten_typed=" db_varsTheory.has_var_vars_flatten;
+val _ = show "has_var_mk_union_typed=" db_varsTheory.has_var_mk_Union;

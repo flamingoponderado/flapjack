@@ -11,3 +11,4 @@ lookup_db_to_set_typed=has_var (n :num) (d :db_var_set) ⇔ lookup n (db_to_set 
 MEM_vars_to_list_typed=MEM (n :num) (vars_to_list (d :db_var_set)) ⇔ has_var n d
 MEM_vars_from_list_typed=∀(vs :num list) (n :num). has_var n (vars_from_list vs) ⇔ MEM n vs
 has_var_vars_flatten_typed=has_var (n :num) (vars_flatten (d :db_var_set)) ⇔ has_var n d
+has_var_mk_union_typed=has_var (n :num) (mk_Union (l1 :db_var_set) (l2 :db_var_set)) ⇔ has_var n l1 ∨ has_var n l2

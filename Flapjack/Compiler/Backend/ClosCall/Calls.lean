@@ -10,7 +10,9 @@ public import Flapjack.Compiler.Backend.ClosCall.Stubs
 namespace Flapjack.Compiler.Backend.ClosCall
 open ClosLang
 
-private theorem sizeOf_map_snd_le (xs : List (Nat × Exp)) :
+/-- Mapping recursive function bodies does not increase the structural measure.
+This Lean termination helper has no standalone HOL declaration. -/
+theorem sizeOf_map_snd_le (xs : List (Nat × Exp)) :
     sizeOf (xs.map Prod.snd) ≤ sizeOf xs := by
   induction xs with
   | nil => simp

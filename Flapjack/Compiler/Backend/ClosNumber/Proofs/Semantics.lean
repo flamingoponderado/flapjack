@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosNumber.Proofs.Evaluate
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.ResultObservations
 public import Flapjack.FiniteMap.EmptyExact
 
 @[expose] public section
@@ -14,25 +15,7 @@ set_option backward.privateInPublic.warn false
 namespace Flapjack.Compiler.Backend.ClosNumber
 open Flapjack Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.BackendProps
 open Flapjack.SemanticPrimitivesHOL (Result)
-
-private def resultHasOutcome (result : Result (List Value) Value) (outcome : HolOutcome) : Prop :=
-  match result with
-  | .err (.abort .timeoutError) => False
-  | .err (.abort (.ffiError event)) => outcome = .ffiOutcome event
-  | _ => outcome = .success
-
-private theorem resultHasOutcome_iff (result : Result (List Value) Value) (outcome : HolOutcome) :
-    resultHasOutcome result outcome ↔
-      (match result, outcome with
-       | .err (.abort .timeoutError), _ => False
-       | .err (.abort (.ffiError event)), outcome => outcome = .ffiOutcome event
-       | _, outcome => outcome = .success) := by
-  cases result with
-  | val values => rfl
-  | err error =>
-    cases error with
-    | raise value => rfl
-    | abort reason => cases reason <;> rfl
+open Flapjack.Compiler.Backend.ClosProps (resultHasOutcome resultHasOutcome_iff)
 
 /-- Numbering-related results agree on type errors and on every terminating
 observable outcome, without requiring their returned values to be equal. -/
