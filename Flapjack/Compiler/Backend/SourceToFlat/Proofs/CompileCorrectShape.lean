@@ -190,16 +190,12 @@ theorem compileCorrect {C F α β : Type} [Nonempty C]
       genv start finish other source flat baseEnv sourceLocal flatEnv traces trace comp gen (Nat.le_refl _)
       localRel envInv (by simpa using length) inv generation value errorValue flatValue flatError valueRel errorRel
       rows flatSafe sourceSafe (fun _ body _ => (factoredAllBounded (F := F) interp transform source.clock).1 body)
-    generalize flatRun : flatEvaluateMatch flatEnv flat flatValue flatError
-      (compilePes trace { comp with v := bindLocals traces (flatEnv.v.map Prod.fst) comp.v } rows) =
+    generalize flatRun : FlatProps.evaluateMatch flatEnv flat flatValue
+      (compilePes trace { comp with v := bindLocals traces (flatEnv.v.map Prod.fst) comp.v } rows) flatError =
         flatPair at simulation post
     obtain ⟨flatLast, flatResult⟩ := flatPair
     simp only [run] at simulation
-    have target : FlatProps.evaluateMatch flatEnv flat flatValue
-        (compilePes trace { comp with v := bindLocals traces (flatEnv.v.map Prod.fst) comp.v } rows) flatError =
-        (flatLast, flatResult) := by
-      simpa only [flatEvaluateMatch_eq_flatProps] using flatRun
-    refine ⟨flatLast, flatResult, nextGenv, target, simulation.1, simulation.2, ?_⟩
+    refine ⟨flatLast, flatResult, nextGenv, rfl, simulation.1, simulation.2, ?_⟩
     cases result with
     | val values =>
       intro _

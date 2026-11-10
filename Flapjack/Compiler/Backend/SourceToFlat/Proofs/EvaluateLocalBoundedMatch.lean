@@ -99,8 +99,8 @@ theorem boundedEvaluateMatch_related_flatSafe {C F : Type} [Nonempty C]
       value rows errorValue ≠ (last, .err (.abort .typeError)))
     (each : ∀ pattern body, (pattern, body) ∈ rows → LocalEnvBoundedIH (F := F) interp transform limit body) :
     let sourceResult := EvaluateHOL.evaluateMatch source { baseEnv with v := nsAppend sourceLocal baseEnv.v } value rows errorValue
-    let flatResult := flatEvaluateMatch flatEnv flat flatValue flatError
-      (compilePes trace { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } rows)
+    let flatResult := FlatProps.evaluateMatch flatEnv flat flatValue
+      (compilePes trace { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } rows) flatError
     ∃ nextGenv, (EvalResultRel nextGenv sourceResult.2 flatResult.2 ∧ StateRel nextGenv sourceResult.1 flatResult.1) ∧
       match sourceResult.2 with
       | .err (.abort _) => True
@@ -129,9 +129,9 @@ theorem boundedEvaluateMatch_related_flatSafe {C F : Type} [Nonempty C]
       dsimp only [sourceEnv] at sourceRun
       dsimp only [compMap] at flatSelected
       refine ⟨genv, ?_, ?_⟩
-      · simp only [sourceRun, flatEvaluateMatch, FlatSem.selectRow, flatSelected]
+      · simp only [sourceRun, FlatProps.evaluateMatch, flatSelected]
         exact ⟨.raise errorRel, states⟩
-      · simpa [sourceRun, flatEvaluateMatch, FlatSem.selectRow, flatSelected] using
+      · simpa [sourceRun, FlatProps.evaluateMatch, flatSelected] using
           And.intro (GlobalGrowth.refl genv) (And.intro invariant
             (And.intro generation (oracForwardRel_refl interp source.evalState)))
   | «match» selected =>
@@ -163,9 +163,9 @@ theorem boundedEvaluateMatch_related_flatSafe {C F : Type} [Nonempty C]
       dsimp only [sourceEnv] at sourceRun
       dsimp only [compMap] at flatSelected
       refine ⟨nextGenv, ?_, ?_⟩
-      · simp only [sourceRun, flatEvaluateMatch, FlatSem.selectRow, flatSelected, compilePat_bindings, distinct, ↓reduceIte]
+      · simp only [sourceRun, FlatProps.evaluateMatch, flatSelected, compilePat_bindings, distinct, ↓reduceIte]
         exact bodySim
-      · simp only [sourceRun, flatEvaluateMatch, FlatSem.selectRow, flatSelected, compilePat_bindings, distinct, ↓reduceIte]
+      · simp only [sourceRun, FlatProps.evaluateMatch, flatSelected, compilePat_bindings, distinct, ↓reduceIte]
         exact bodyPost
 
 
@@ -246,12 +246,10 @@ theorem localEnvBounded_handle {C F : Type} [Nonempty C]
         rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
         simp [can]
       have flatOuter : FlatSem.evaluate flatEnv flat [compileExp trace compMap (.handle body rows)] =
-          flatEvaluateMatch flatEnv middleFlat flatValue flatValue (compilePes trace compMap rows) := by
-        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
-          [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
-        simp only
-        unfold flatEvaluateMatch
-        split <;> simp_all
+          FlatProps.evaluateMatch flatEnv middleFlat flatValue (compilePes trace compMap rows) flatValue := by
+        rw [compileExp, FlatProps.evaluate_handle, flatRun]
+        cases matched : FlatSem.pmatchRows (compilePes trace compMap rows) middleFlat flatValue <;>
+          simp [FlatProps.evaluateMatch, matched]
       refine ⟨finalGenv, ?_, ?_⟩
       · unfold ExprSim
         rw [sourceOuter, flatOuter]
@@ -354,12 +352,10 @@ theorem localEnvBounded_mat {C F : Type} [Nonempty C]
             rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
             simp [EvaluateHOL.headValue, Flapjack.holHd, can]
           have flatOuter : FlatSem.evaluate flatEnv flat [compileExp trace compMap (.mat body rows)] =
-              flatEvaluateMatch flatEnv middleFlat flatValue FlatSem.bindExnV (compilePes trace compMap rows) := by
-            rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
-              [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
-            simp only
-            unfold flatEvaluateMatch
-            split <;> simp_all
+              FlatProps.evaluateMatch flatEnv middleFlat flatValue (compilePes trace compMap rows) FlatSem.bindExnV := by
+            rw [compileExp, FlatProps.evaluate_mat, flatRun]
+            cases matched : FlatSem.pmatchRows (compilePes trace compMap rows) middleFlat flatValue <;>
+              simp [FlatProps.evaluateMatch, matched, Flapjack.holHd]
           refine ⟨finalGenv, ?_, ?_⟩
           · unfold ExprSim
             rw [sourceOuter, flatOuter]

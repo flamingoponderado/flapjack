@@ -78,26 +78,4 @@ theorem evaluateMatch_selected {F : Type} (st : State F) (env : SemEnv Value)
         simp [EvaluateHOL.evaluateMatch, unique, EvaluateHOL.typeError]
       exact (safe st bad).elim
 
-/-- The flat evaluator's row selection and selected-body evaluation. This
-helper factors the common behavior of flat `handle` and `mat`. -/
-noncomputable def flatEvaluateMatch {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (state : FlatSem.State C F) (value errorValue : FlatSem.Value)
-    (rows : List (FlatLang.Pat × FlatLang.Exp)) : FlatSem.EvalResult C F :=
-  match FlatSem.selectRow state rows value errorValue with
-  | .error error => (state, .err error)
-  | .ok (bindings, body) => FlatSem.evaluate { env with v := bindings ++ env.v } state [body]
-
-/-- The simulation helper is the source flat-properties match evaluator. -/
-theorem flatEvaluateMatch_eq_flatProps {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (state : FlatSem.State C F) (value errorValue : FlatSem.Value)
-    (rows : List (FlatLang.Pat × FlatLang.Exp)) :
-    flatEvaluateMatch env state value errorValue rows = FlatProps.evaluateMatch env state value rows errorValue := by
-  unfold flatEvaluateMatch FlatSem.selectRow FlatProps.evaluateMatch
-  cases FlatSem.pmatchRows rows state value with
-  | typeError => rfl
-  | noMatch => rfl
-  | «match» matchResult =>
-    rcases matchResult with ⟨bindings, pattern, body⟩
-    by_cases unique : (FlatLang.patBindings pattern).Nodup <;> simp [unique]
-
 end Flapjack.Compiler.Backend.SourceToFlat
