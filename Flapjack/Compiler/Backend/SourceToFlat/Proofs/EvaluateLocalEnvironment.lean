@@ -127,60 +127,6 @@ theorem localRecEnv_related (genv : GlobalEnv) (baseMap : Environment)
   exact helper funs
 
 
-/-- A compiled local lookup selects a trace for the first matching local name. -/
-theorem bindLocals_lookup_hit (locals : List (VarN × FlatSem.Value)) (traces : List BackendCommon.Tra)
-    (base : Namespace ModN VarN VarName) (name : VarN) (value : FlatSem.Value)
-    (length : traces.length = locals.length) (lookup : locals.lookup name = some value) :
-    ∃ tr, nsLookup (bindLocals traces (locals.map Prod.fst) base) (.short name) = some (.localName tr name) := by
-  induction locals generalizing traces with
-  | nil => simp at lookup
-  | cons entry rest ih =>
-    obtain ⟨key, stored⟩ := entry
-    cases traces with
-    | nil => simp at length
-    | cons tr traces =>
-      have len : traces.length = rest.length := by simpa using length
-      by_cases same : name = key
-      · subst key
-        refine ⟨tr, ?_⟩
-        change nsLookup (nsBind name (.localName tr name) (bindLocals traces (rest.map Prod.fst) base))
-          (.short name) = _
-        exact nsLookup_nsBind.1 name _ _
-      · have neq : (name == key) = false := by
-          change decide (name = key) = false
-          simp [same]
-        have restLookup : rest.lookup name = some value := by simpa [List.lookup_cons, neq] using lookup
-        obtain ⟨foundTrace, found⟩ := ih traces len restLookup
-        refine ⟨foundTrace, ?_⟩
-        change nsLookup (nsBind key (.localName tr key) (bindLocals traces (rest.map Prod.fst) base)) (.short name) = _
-        rw [nsLookup_nsBind.2 (.short name) key (VarName.localName tr key) _ (by simpa using same)]
-        exact found
-
-/-- Names absent from the local stack retain their original compiler lookup. -/
-theorem bindLocals_lookup_other (locals : List (VarN × FlatSem.Value)) (traces : List BackendCommon.Tra)
-    (base : Namespace ModN VarN VarName) (id : Ident ModN VarN)
-    (length : traces.length = locals.length)
-    (fresh : ∀ name, name ∈ locals.map Prod.fst → id ≠ .short name) :
-    nsLookup (bindLocals traces (locals.map Prod.fst) base) id = nsLookup base id := by
-  induction locals generalizing traces with
-  | nil =>
-    cases traces with
-    | nil => simp [bindLocals, nsBindList]
-    | cons tr traces => simp at length
-  | cons entry rest ih =>
-    obtain ⟨key, stored⟩ := entry
-    cases traces with
-    | nil => simp at length
-    | cons tr traces =>
-      have len : traces.length = rest.length := by simpa using length
-      have different : id ≠ .short key := fresh key (by simp)
-      have restFresh : ∀ n, n ∈ rest.map Prod.fst → id ≠ .short n := by
-        intro n mem
-        exact fresh n (by simp [mem])
-      change nsLookup (nsBind key (.localName tr key) (bindLocals traces (rest.map Prod.fst) base)) id = _
-      rw [nsLookup_nsBind.2 id key (VarName.localName tr key) _ different]
-      exact ih traces len restFresh
-
 /-- Variable lookup respects local shadowing and falls back to the related
 global environment for names absent from the local stack. -/
 theorem localEnvBounded_variable {C F : Type} [Nonempty C]
@@ -192,6 +138,15 @@ theorem localEnvBounded_variable {C F : Type} [Nonempty C]
   let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
   change LocalExpressionStep interp transform genv start finish other source flat sourceEnv flatEnv trace compMap gen
     (.var id)
+  let tracedNames := traces.zip (flatEnv.v.map Prod.fst)
+  let bindings := tracedNames.map (fun (tr, name) => (name, VarName.localName tr name))
+  have bindingKeys : bindings.map Prod.fst = flatEnv.v.map Prod.fst := by
+    change (tracedNames.map _).map Prod.fst = _
+    rw [List.map_map]
+    exact List.map_snd_zip (by simpa using tracesLen.symm.le)
+  have compiledShape : compMap.v = nsAppend (alistToNs bindings) baseMap.v := by
+    simp only [compMap, bindLocals, ← nsAppend_to_nsBindList, bindings, tracedNames,
+      List.zip_eq_zipWith, List.map_zipWith]
   have globalCase : ∀ id, (∀ name, name ∈ flatEnv.v.map Prod.fst → id ≠ .short name) →
       nsLookup sourceEnv.v id = nsLookup baseEnv.v id →
       (∀ last, EvaluateHOL.evaluate source sourceEnv [.var id] ≠ (last, .err (.abort .typeError))) →
@@ -213,7 +168,21 @@ theorem localEnvBounded_variable {C F : Type} [Nonempty C]
         cases oldRel with
         | intro _ _ _ index stored tr compiled bound slot valueRel =>
           apply GlobalLookupRel.intro genv compMap id sourceValue index stored tr _ bound slot valueRel
-          simpa [compMap, bindLocals_lookup_other flatEnv.v traces baseMap.v id tracesLen fresh] using compiled
+          rw [compiledShape]
+          cases id with
+          | long moduleName rest =>
+            rw [nsLookup_append_long]
+            exact compiled
+          | short name =>
+            have missing : bindings.lookup name = none := by
+              by_contra found
+              have member := (Flapjack.lookup_exists_iff_mem_keys bindings name).mp
+                (Option.ne_none_iff_exists'.mp found)
+              rw [bindingKeys] at member
+              exact fresh name member rfl
+            rw [nsLookup_append_short]
+            change (bindings.lookup name).orElse _ = _
+            simpa [missing] using compiled
       have sourceLookup : nsLookup sourceEnv.v id = some sourceValue := by rw [sourceLookupEq, lookup]
       obtain ⟨flatValue, sourceRun, flatRun, valueRel, states⟩ :=
         evaluate_global_unbounded genv compMap sourceEnv flatEnv source flat invariant.2.2.1
@@ -267,7 +236,24 @@ theorem localEnvBounded_variable {C F : Type} [Nonempty C]
         obtain ⟨foundFlat, foundLookup, valueRel⟩ := envRel_lookup genv sourceLocal flatEnv.v localRel name sourceValue localLookup
         rw [flatLookup] at foundLookup
         cases foundLookup
-        obtain ⟨tr, compiled⟩ := bindLocals_lookup_hit flatEnv.v traces baseMap.v name flatValue tracesLen flatLookup
+        have localKey : name ∈ bindings.map Prod.fst := by
+          rw [bindingKeys]
+          exact (Flapjack.lookup_exists_iff_mem_keys flatEnv.v name).mp ⟨flatValue, flatLookup⟩
+        obtain ⟨varName, found⟩ := (Flapjack.lookup_exists_iff_mem_keys bindings name).mpr localKey
+        obtain ⟨pre, post, split, _⟩ := List.lookup_eq_some_iff.mp found
+        have member : (name, varName) ∈ bindings := by rw [split]; simp
+        obtain ⟨⟨tr, key⟩, _, equal⟩ := List.mem_map.mp member
+        have keyEq : key = name := congrArg Prod.fst equal
+        subst key
+        have valueEq : VarName.localName tr name = varName := congrArg Prod.snd equal
+        subst varName
+        have compiled : nsLookup (bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v)
+            (.short name) = some (.localName tr name) := by
+          change nsLookup compMap.v (.short name) = _
+          rw [compiledShape, nsLookup_append_short]
+          change (bindings.lookup name).orElse _ = _
+          rw [found]
+          rfl
         have sourceLookup : nsLookup sourceEnv.v (.short name) = some sourceValue := by
           change nsLookup (nsAppend sourceLocal baseEnv.v) (.short name) = _
           simp [nsLookup_append_short, localLookup]
