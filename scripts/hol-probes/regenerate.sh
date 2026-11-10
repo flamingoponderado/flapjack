@@ -692,6 +692,9 @@ run_probe clos_call_code_list_probeScript.sml clos_call_code_list_probe.out \
 run_probe clos_call_scalar_lists_probeScript.sml clos_call_scalar_lists_probe.out \
   bytes_replay words_replay "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe clos_call_install_probeScript.sml clos_call_install_probe.out \
+  code_rel_state_rel_install_type "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe clos_call_wfg_probeScript.sml clos_call_wfg_probe.out \
   subg_type subg_def subg_refl subg_trans calls_subg code_locs_type code_locs_def recclosure_wf_def code_includes_type code_includes_def wfg_type wfg_prime_type wfg_def wfg_prime_def wfg_prime_code_type calls_wfg_type calls_wfg_prime_type subg_cases location_cases recclosure_cases code_includes_cases "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" "$cake_dir/compiler/backend/proofs"
 

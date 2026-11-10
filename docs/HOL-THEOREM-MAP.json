@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_rel_state_rel_install",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InstallSimulation.lean", "lean_name": "codeRel_stateRel_install",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code"],
+  "reviewer": "Compared the full typed code_rel_state_rel_install_type source capture: independent compiler and FFI types, seven original premises, generated-label disjointness and distinctness, and all existential compiler, state, oracle, code-submap and location conclusions agree. The closure state refs and code fields use canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "oracle_monotonic_shift_seq",
   "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonic.lean", "lean_name": "oracleMonotonic_shiftSeq",
   "statement_status": "reviewed_exact",

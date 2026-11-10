@@ -849,6 +849,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.DomainLocations
 import Flapjack.Compiler.Backend.ClosCall.Proofs.MakeState
 import Flapjack.Compiler.Backend.ClosCall.Proofs.OracleInvariant
 import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeInvariant
+import Flapjack.Compiler.Backend.ClosCall.Proofs.InstallSimulation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FiniteMap
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
 import Flapjack.Compiler.Backend.BviInline
