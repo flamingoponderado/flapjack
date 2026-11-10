@@ -90,6 +90,30 @@
   "reviewer": "Compared alookup_compile_common_typed and independent review: binder and existential order, grouped premise and input c.maxApp match; HOL ALOOKUP, compile_prog, fromAList and code_installed use holALookup, compileProgExpsHOL, sptFromAList and codeInstalled."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "IMP_PERM_code_merge",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SortPermutation.lean", "lean_name": "codeMerge_imp_perm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared imp_perm_code_merge_typed and independent review: polymorphic payload, binder order, premise and permutation orientation match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "PERM_code_sort",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SortPermutation.lean", "lean_name": "codeSort_perm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared perm_code_sort_typed and independent review: polymorphic payload, quantifier and permutation orientation match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "ALL_DISTINCT_code_sort",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SortPermutation.lean", "lean_name": "codeSort_allDistinct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all_distinct_code_sort_typed and independent review: polymorphic payload and both sides of the distinctness equivalence match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_all_distinct_locs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/WholeDistinct.lean", "lean_name": "compileSource_allDistinct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_all_distinct_locs_typed and independent review: binders c, e, c', p, n and Spt MlString output carrier match; proof covers compile_def's initial, force, globals and compiled-code blocks."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "every_Fn_calls_list",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "everyFn_callsList",
   "statement_status": "reviewed_exact",

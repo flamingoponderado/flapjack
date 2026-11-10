@@ -149,6 +149,10 @@ code_installed_from_alist_strong_replay_typed=∀(ls :(num # α # β) list) (ls'
 code_installed_union_typed=code_installed (aux :(num # α # β) list) (y :(α # β) sptree$num_map) ∧ DISJOINT (set (MAP (FST :num # α # β -> num) aux)) (domain (x :(α # β) sptree$num_map) :num -> bool) ⇒ code_installed aux (union x y)
 code_installed_union1_typed=code_installed (aux :(num # α # β) list) (t1 :(α # β) sptree$num_map) ⇒ code_installed aux (union t1 (t2 :(α # β) sptree$num_map))
 alookup_compile_common_typed=compile_common (c :config) (es :closLang$exp list) = ((c' :config),(prog :(num # num # closLang$exp) list)) ∧ ALOOKUP prog (name :num) = SOME ((arity :num),(exp :closLang$exp)) ⇒ ∃(aux1 :(num # num # bvl$exp) list) (exp2 :bvl$exp) (aux2 :(num # num # bvl$exp) list). compile_exps c.max_app [exp] aux1 = ([exp2],aux2) ∧ ALOOKUP (compile_prog c.max_app prog) (name + num_stubs c.max_app) = SOME (arity,exp2) ∧ code_installed aux2 (fromAList (compile_prog c.max_app prog))
+imp_perm_code_merge_typed=∀(xs :(num # α) list) (ys :(num # α) list) (zs :(num # α) list). PERM (xs ++ ys) zs ⇒ PERM (code_merge xs ys) zs
+perm_code_sort_typed=∀(xs :(num # α) list). PERM (code_sort xs) xs
+all_distinct_code_sort_typed=ALL_DISTINCT (MAP (FST :num # α -> num) (code_sort (xs :(num # α) list))) ⇔ ALL_DISTINCT (MAP (FST :num # α -> num) xs)
+compile_all_distinct_locs_typed=(compile (c :config) (e :closLang$exp list) :config # (num # num # bvl$exp) list # mlstring sptree$num_map) = ((c' :config),(p :(num # num # bvl$exp) list),(n :mlstring sptree$num_map)) ⇒ ALL_DISTINCT (MAP (FST :num # num # bvl$exp -> num) p)
 toaList_domain_typed=∀(x :num). MEM x (MAP (FST :num # α -> num) (toAList (t :α sptree$num_map))) ⇔ x ∈ (domain t :num -> bool)
 sptree_domain_lookup_typed=∀(t :α sptree$num_map) (k :num). k ∈ (domain t :num -> bool) ⇔ ∃(v :α). lookup k t = SOME v
 known_compile_is_some_typed=(compile (kc :clos_known$config option) (es :closLang$exp list) :clos_known$config option # closLang$exp list) = ((kc' :clos_known$config option),(es' :closLang$exp list)) ⇒ (IS_SOME kc' ⇔ IS_SOME kc)

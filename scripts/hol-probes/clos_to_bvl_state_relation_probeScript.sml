@@ -198,6 +198,10 @@ val _ = show "code_installed_from_alist_strong_replay_typed=" code_installed_fro
 val _ = show "code_installed_union_typed=" clos_to_bvlProofTheory.code_installed_union;
 val _ = show "code_installed_union1_typed=" clos_to_bvlProofTheory.code_installed_union1;
 val _ = show "alookup_compile_common_typed=" clos_to_bvlProofTheory.ALOOKUP_compile_common;
+val _ = show "imp_perm_code_merge_typed=" clos_to_bvlProofTheory.IMP_PERM_code_merge;
+val _ = show "perm_code_sort_typed=" clos_to_bvlProofTheory.PERM_code_sort;
+val _ = show "all_distinct_code_sort_typed=" clos_to_bvlProofTheory.ALL_DISTINCT_code_sort;
+val _ = show "compile_all_distinct_locs_typed=" clos_to_bvlProofTheory.compile_all_distinct_locs;
 val _ = show "toaList_domain_typed=" miscTheory.toAList_domain;
 val _ = show "sptree_domain_lookup_typed=" sptreeTheory.domain_lookup;
 val _ = show "known_compile_is_some_typed=" clos_knownProofTheory.known_compile_IS_SOME;
