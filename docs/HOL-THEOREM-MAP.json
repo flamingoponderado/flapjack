@@ -48,6 +48,12 @@
   "reviewer": "Compared compile_common_max_app_typed and independent review: binder order, preprocessing equation and conclusion orientation match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_EL",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode.lean", "lean_name": "compileExps_el",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_exps_el_typed and independent review. IS_SUBLIST aux2 aux2n is rendered as aux2n <:+: aux2 per rich_list IS_SUBLIST_APPEND, with reversed argument order; grouped premise, binders and existential witnesses match. Both holEl indices are in range."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "every_Fn_calls_list",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "everyFn_callsList",
   "statement_status": "reviewed_exact",
