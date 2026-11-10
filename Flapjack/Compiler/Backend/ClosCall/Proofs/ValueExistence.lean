@@ -39,19 +39,14 @@ private theorem singletonGroup (g : State) (allowed : Nat → Prop)
     (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc n : Nat) (body : ClosLang.Exp)
     (fns : List (Nat × ClosLang.Exp)) (h : recClosureRel g allowed code loc [(n, body)] fns) :
     ∃ body', fns = [(n, body')] := by
-  classical
-  unfold recClosureRel at h
-  obtain ⟨g0, _, _, _, _, h⟩ := h
-  dsimp only at h
-  split at h
-  · obtain ⟨⟨tra, i, rfl⟩, _⟩ := h
-    simp [callsListSource]
-  · cases run : calls [body] g0 with
-    | mk bodies next =>
-      simp only [List.map_cons, List.map_nil, run] at h
-      obtain ⟨rfl, _⟩ := h
-      obtain ⟨b, rfl⟩ := calls_sing body g0 bodies next run
-      exact ⟨b, rfl⟩
+  have arities := recClosureRel_arities g allowed code loc [(n, body)] fns h
+  cases fns with
+  | nil => simp at arities
+  | cons f fs =>
+    obtain ⟨a, e⟩ := f
+    cases fs with
+    | nil => simp at arities; subst a; exact ⟨e, rfl⟩
+    | cons f fs => simp at arities
 
 /-- Every well-formed value has a direct-call-related target value. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "v_rel_exists"
