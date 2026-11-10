@@ -3,5 +3,6 @@ insert_each_typed=(!(p :num) (g :sptree$num_set # 'a). insert_each p (0 :num) g 
 fst_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list). FST (code_list loc fns g) = FST g
 snd_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list) (g' :'d # (num # 'a # 'b) list). SND g = SND g' ==> SND (code_list loc fns g) = SND (code_list loc fns g')
 map_fst_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list). MAP (FST :num # 'a # 'b -> num) (SND (code_list loc fns g)) = REVERSE (GENLIST (\(i :num). loc + i * (2 :num) + (1 :num)) (LENGTH fns)) ++ MAP (FST :num # 'a # 'b -> num) (SND g)
+snd_zip_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list). SND (code_list loc fns g) = REVERSE (ZIP (GENLIST ($+ (loc + (1 :num)) o $* (2 :num)) (LENGTH fns),fns)) ++ SND g
 suffix_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list). IS_SUFFIX (SND (code_list loc fns g)) (SND g)
 example=(LN,[(15,1,Var None 2); (13,0,Var None 9); (11,2,Var None 4); (90,3,Var None 0)])

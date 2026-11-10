@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "SND_code_list_ZIP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeList.lean", "lean_name": "codeListSource_snd_zip",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared snd_zip_type in clos_call_code_list_probe.out and source: location, function pairs and state retain the original order and three independent payload types; the reversed zip of the generated label range and function list precedes the unchanged incoming code list."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_list_length",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "length_callsList",
   "statement_status": "reviewed_exact",

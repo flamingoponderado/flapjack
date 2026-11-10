@@ -58,6 +58,27 @@ theorem codeListSource_labels {A B C : Type} (loc : Nat) (fns : List (A × B))
     simp only [Function.comp_apply]
     omega
 
+/-- Auxiliary entries are the reversed zip of generated labels and functions,
+followed by the incoming code list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "SND_code_list_ZIP"]
+theorem codeListSource_snd_zip {A B C : Type} (loc : Nat) (fns : List (A × B))
+    (state : C × List (Nat × A × B)) :
+    (codeListSource loc fns state).2 =
+      (((List.range fns.length).map (fun i => loc + 1 + 2 * i)).zip fns).reverse ++ state.2 := by
+  induction fns generalizing loc state with
+  | nil => simp [codeListSource]
+  | cons fn rest ih =>
+    obtain ⟨a, b⟩ := fn
+    obtain ⟨known, code⟩ := state
+    simp only [codeListSource, ih, List.length_cons, List.range_succ_eq_map,
+      List.map_cons, List.map_map, List.zip_cons_cons, List.reverse_cons,
+      List.append_assoc, List.singleton_append]
+    congr 1
+    congr 3
+    funext i
+    simp only [Function.comp_apply]
+    omega
+
 /-- The indexed fold used by the executable pass is the source recursion. -/
 theorem codeList_eq_source (loc : Nat) (fns : List (Nat × ClosLang.Exp))
     (state : State) : codeList loc fns state = codeListSource loc fns state := by
