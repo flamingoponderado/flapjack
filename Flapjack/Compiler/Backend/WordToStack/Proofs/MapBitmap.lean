@@ -76,7 +76,7 @@ theorem mapBitmapLookupFalse {α : Type} (bm : List Bool) (ls stack : List α) (
     (hm : mapBitmap bm ls stack = some (res, ls1, stack1)) :
     ∃ v, res[n]? = some v ∧ stack[n]? = some v := by
   revert n res ls1 stack1 hb hm
-  fun_induction mapBitmap bm ls stack <;> simp_all [mapBitmap]
+  fun_induction mapBitmap bm ls stack <;> simp_all
   case case3 =>
     rename_i ih
     intro n res ls1 stack1 hb hres hls hst

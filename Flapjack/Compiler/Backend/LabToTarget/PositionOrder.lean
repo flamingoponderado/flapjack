@@ -31,7 +31,7 @@ theorem asmFetchAux_some_ltNumPcs {width : Nat} [NeZero width]
   "pos_val_GE_pc" (words_as_type_indexed_bitvec)]
 theorem posVal_geStart {width : Nat} [NeZero width]
     (i p : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : p ≤ posVal i p code := by
-  fun_induction posVal i p code <;> simp_all [posVal, isLabelHOL, lineLength] <;> omega
+  fun_induction posVal i p code <;> simp_all [isLabelHOL, lineLength] <;> omega
 
 /-- Full original nonempty encoding consequence of complete enc_ok. -/
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
