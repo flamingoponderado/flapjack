@@ -2,7 +2,7 @@ module
 
 public import Flapjack.Semantics
 public import Flapjack.PanMemory
--- `native_decide` below compiles `evalPanFlatProgWithCallsAndFfi`.
+-- The native decision below compiles `evalPanFlatProgWithCallsAndFfi`.
 public meta import Flapjack.PanMemory
 
 @[expose] public section
