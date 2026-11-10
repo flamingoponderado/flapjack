@@ -142,6 +142,18 @@ theorem doAppThm {C F : Type} (source target : State C F) (values nextValues : L
   obtain ⟨nextValue, nextTarget, valuesRel, statesRel, nextRun⟩ := sim
   exact ⟨nextValue, nextTarget, nextRun, valuesRel, statesRel⟩
 
+/-- A non-type-error primitive failure has a related target failure. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "do_app_err_thm"
+  (nested_list_rel_as_mutual := [FunctionsRel]) (fmap_as_finite_support := [refs, code])]
+theorem doAppErrThm {C F : Type} (source target : State C F) (values nextValues : List Value)
+    (op : ClosLang.Op) (error : Flapjack.SemanticPrimitivesHOL.ErrorResult Value)
+    (h : StateRelSource source target ∧ List.Forall₂ ValueRel values nextValues ∧
+      doApp op values source = .err error ∧ error ≠ .abort .typeError) :
+    ∃ nextError, doApp op nextValues target = .err nextError ∧
+      Flapjack.SemanticPrimitivesProps.excRel ValueRel error nextError := by
+  have sim := doAppLemma source target values nextValues op ⟨h.1, h.2.1⟩
+  simpa [h.2.2.1] using sim
+
 /-- The generic primitive theorem supplies the evaluator's simulation
 interface. This Flapjack-specific adapter is used by the annotation proof. -/
 theorem primitiveSimulation_generic {C F : Type} (op : ClosLang.Op) :

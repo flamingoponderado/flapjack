@@ -279,6 +279,16 @@ val do_app_thm_replay = prove (
   >> disch_then (qspec_then `op` mp_tac) >> fs []
   >> rpt strip_tac >> fs []);
 val _ = show "do_app_thm_local_typed=" do_app_thm_replay;
+val do_app_err_thm_replay = prove (
+  ``state_rel s1 t1 /\ EVERY2 v_rel xs ys /\
+    do_app op xs s1 = Rerr err /\ (err <> Rabort Rtype_error) ==>
+    ?w. do_app op ys t1 = Rerr w /\ exc_rel v_rel err w``,
+  srw_tac[][]
+  >> imp_res_tac do_app_err >> fsrw_tac[][]
+  >> gvs [oneline do_app_def, AllCaseEqs()]
+  >> fs[clos_annotateProofTheory.v_rel_simp,clos_annotateProofTheory.state_rel_def]
+  >> res_tac >> gvs []);
+val _ = show "do_app_err_thm_local_typed=" do_app_err_thm_replay;
 (* Replay the source-local theorem, which is not exported by the theory. *)
 val state_rel_clocks_eqs_replay = prove (
   ``state_rel s t ==> s.clock = t.clock``,
