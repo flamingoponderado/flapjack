@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.BviToData.CompileTotal
+public import Flapjack.Compiler.Backend.BviToData.CompileSource
 public import Flapjack.Compiler.Backend.BviToData.Proofs.Value
 public import Flapjack.Compiler.Backend.Semantics.BviSem.State
 public import Flapjack.Compiler.Backend.Semantics.DataSem.State

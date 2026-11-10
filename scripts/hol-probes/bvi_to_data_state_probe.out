@@ -5,6 +5,7 @@ compile_LENGTH=∀(n :num) (env :num list) (tail :bool) (live :num list) (xs :bv
 compile_LESS_EQ=∀(n :num) (env :num list) (tail :bool) (live :num list) (xs :bvi$exp list) (c :dataLang$prog) (vs :num list) (new_var :num). (compile n env tail live xs :dataLang$prog # num list # num) = (c,vs,new_var) ⇒ n ≤ new_var
 compile_RANGE_lemma_statement=∀(n :num) (env :num list) (tail :bool) (live :num list) (xs :bvi$exp list). EVERY (λ(v :num). v < SND (SND (compile n env tail live xs :dataLang$prog # num list # num))) (FST (SND (compile n env tail live xs :dataLang$prog # num list # num)))
 compile_RANGE_statement=∀(n :num) (env :num list) (tail :bool) (live :num list) (xs :bvi$exp list) (ys :dataLang$prog) (vs :num list) (k :num). (compile n env tail live xs :dataLang$prog # num list # num) = (ys,vs,k) ⇒ EVERY (λ(v :num). v < k) vs
+compile_exp_def=∀(arg_count :num) (exp :bvi$exp). (compile_exp arg_count exp :dataLang$prog) = optimise (FST (compile arg_count (COUNT_LIST arg_count) T ([] :num list) [exp] :dataLang$prog # num list # num))
 compile_exp_eq=(compile_exp (arg_count :num) (exp :bvi$exp) :dataLang$prog) = optimise (FST (compile_sing arg_count (COUNT_LIST arg_count) T ([] :num list) exp :dataLang$prog # num # num))
 compile_part=∀(name :num) (arg_count :num) (exp :bvi$exp). (compile_part (name,arg_count,exp) :num # num # dataLang$prog) = (name,arg_count,(compile_exp arg_count exp :dataLang$prog))
 compile_prog=∀(prog :(num # num # bvi$exp) list). (compile_prog prog :(num # num # dataLang$prog) list) = MAP compile_part prog

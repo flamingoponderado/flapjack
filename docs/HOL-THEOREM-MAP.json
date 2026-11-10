@@ -127738,10 +127738,10 @@
 {
   "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml",
   "hol_name": "compile_exp_def",
-  "lean_path": "Flapjack/Compiler/Backend/BviToData/CompileTotal.lean",
+  "lean_path": "Flapjack/Compiler/Backend/BviToData/CompileSource.lean",
   "lean_name": "compileExp",
-  "statement_status": "documented_mismatch",
-  "reviewer": "Source comparison: HOL compile_exp_def (bvi_to_dataScript.sml:309-312) is optimise (FST (compile arg_count (COUNT_LIST arg_count) T [] [exp])); the Lean compileExp uses the singleton-threaded compile_sing form, which is the right-hand side of HOL compile_exp_eq, and Lean compileExp_source proves it equal to the list-shaped compileSource (compile_def) form. The body is not the source definition, so the tag is withdrawn. Open work: move compileExp below compileSource, define it with the reviewed compileSource, and re-establish the bounded-traversal agreement (compileExpBounded_agrees, compileProgBounded_agrees)."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed compile_exp_def capture in bvi_to_data_state_probe.out: optimise (FST (compile arg_count (COUNT_LIST arg_count) T [] [exp])). Lean's compileExp is optimise (compileSource argc (List.range argc) true [] [exp]).1, with List.range for COUNT_LIST and .1 for FST; compileSource is the reviewed compile_def port. The executed bounded path reaches it through compileProg/compilePart, and compileExpBounded_agrees re-establishes agreement."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml",
@@ -127754,15 +127754,15 @@
 {
   "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml",
   "hol_name": "compile_part_def",
-  "lean_path": "Flapjack/Compiler/Backend/BviToData/CompileTotal.lean",
+  "lean_path": "Flapjack/Compiler/Backend/BviToData/CompileSource.lean",
   "lean_name": "compilePart",
   "statement_status": "reviewed_exact",
-  "reviewer": "Independently compared the typed bvi_to_data_state_probe capture (`compile_part (name, arg_count, exp) = (name, arg_count, compile_exp arg_count exp)`) with compilePart part := (part.1, part.2.1, compileExp part.2.1 part.2.2) over a right-associated Nat \u00d7 Nat \u00d7 Exp triple; the fields and the compileExp call match. compileExp itself is documented as a mismatch in its own row."
+  "reviewer": "Independently compared the typed bvi_to_data_state_probe capture (`compile_part (name, arg_count, exp) = (name, arg_count, compile_exp arg_count exp)`) with compilePart part := (part.1, part.2.1, compileExp part.2.1 part.2.2) over a right-associated Nat \u00d7 Nat \u00d7 Exp triple; the fields and the compileExp call match, and compileExp is the reviewed compile_exp_def port."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml",
   "hol_name": "compile_prog_def",
-  "lean_path": "Flapjack/Compiler/Backend/BviToData/CompileTotal.lean",
+  "lean_path": "Flapjack/Compiler/Backend/BviToData/CompileSource.lean",
   "lean_name": "compileProg",
   "statement_status": "reviewed_exact",
   "reviewer": "Independently compared the typed bvi_to_data_state_probe capture (`compile_prog prog = MAP compile_part prog`) with compileProg program := program.map compilePart."

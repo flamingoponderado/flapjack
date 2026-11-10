@@ -78,4 +78,20 @@ decreasing_by
   all_goals try (have positive := listBudget_pos xs)
   all_goals simp_wf <;> simp [Bvi.listBudget, Bvi.expBudget] <;> omega
 
+/-- Compile one complete expression and apply the source optimization sequence:
+HOL's `optimise (FST (compile arg_count (COUNT_LIST arg_count) T [] [exp]))`. -/
+@[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "compile_exp_def"]
+noncomputable def compileExp (argc : Nat) (exp : Bvi.Exp) : DataLang.Prog :=
+  optimise (compileSource argc (List.range argc) true [] [exp]).1
+
+/-- Compile one labeled BVI function. -/
+@[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "compile_part_def"]
+noncomputable def compilePart (part : Nat × Nat × Bvi.Exp) : Nat × Nat × DataLang.Prog :=
+  (part.1, part.2.1, compileExp part.2.1 part.2.2)
+
+/-- Compile each labeled BVI function in source order. -/
+@[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "compile_prog_def"]
+noncomputable def compileProg (program : List (Nat × Nat × Bvi.Exp)) : List (Nat × Nat × DataLang.Prog) :=
+  program.map compilePart
+
 end Flapjack.Compiler.Backend.BviToData

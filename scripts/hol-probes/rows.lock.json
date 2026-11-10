@@ -109,7 +109,7 @@
     {"bytes": 3716, "out": "bvi_tmc_frontend_probe.out", "rows": 2, "sha256": "5bb7b83707dffad561d6ebc16d63611740d05ed32ec21056d32a868f061b2e95"},
     {"bytes": 9867, "out": "bvi_tmc_proof_source_probe.out", "rows": 29, "sha256": "59625eac1ceced67768fae95833f350aab7a08872d537b325ca3daa8736b0f21"},
     {"bytes": 25704, "out": "bvi_tmc_source_probe.out", "rows": 45, "sha256": "4add9d14ed8c6a775c74131ce09c68490ba079dd5109d889c60f0e4930ee9d79"},
-    {"bytes": 27438, "out": "bvi_to_data_state_probe.out", "rows": 47, "sha256": "63bcc9bbf981d696f989ae84f85d0dc9d97fb2339bbfbe1f3a4f0425840c4597"},
+    {"bytes": 27648, "out": "bvi_to_data_state_probe.out", "rows": 48, "sha256": "a1cfbe52b598f87e4cd29c799659e8937743ed3b491affa48d719bb8a876c560"},
     {"bytes": 1436, "out": "bvi_to_data_value_probe.out", "rows": 7, "sha256": "8874bdd1d765c17949993f24a6a8d12231cddcc19ad1b565e8521899a3b36256"},
     {"bytes": 22580, "out": "bvl_const_frontend_probe.out", "rows": 21, "sha256": "af985d7272095b3f2659043f94fbccfca2bd373cdd4195b89b473a9f0531c42e"},
     {"bytes": 5006, "out": "bvl_const_rel_probe.out", "rows": 15, "sha256": "bac85f736c23aa547dab95e5064ac5f869c61d73ea94d4304c1a0f6982d409a2"},

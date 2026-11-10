@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.BviToData.CompileTotal
+public import Flapjack.Compiler.Backend.BviToData.CompileSourceAgrees
 public import Flapjack.Compiler.Backend.BviToData.Proofs.Total
 
 @[expose] public section
@@ -289,21 +289,23 @@ theorem compileExpBounded_agrees (fuel argc : Nat) (exp : Bvi.Exp)
     (bound : Bvi.expBudget exp < fuel) :
     compileExpBounded fuel argc exp = some (compileExp argc exp) := by
   have agreement := compileFuel_agrees fuel argc (List.range argc) true [] exp bound
-  simp [compileExpBounded, compileExpFuel, compileExp, agreement]
+  have sourceForm := compileSource_agrees argc (List.range argc) true [] [exp]
+  simp [compileExpBounded, compileExpFuel, compileExp, agreement, sourceForm]
 
 /-- The retry wrapper agrees with the total compiler at every initial fuel:
 successful first attempts are stable, and failed attempts use enough fuel. -/
 theorem compileExpBounded_agrees_all (fuel argc : Nat) (exp : Bvi.Exp) :
     compileExpBounded fuel argc exp = some (compileExp argc exp) := by
+  have sourceForm := compileSource_agrees argc (List.range argc) true [] [exp]
   cases first : compileFuel fuel argc (List.range argc) true [] exp with
   | some output =>
     obtain ⟨prog, name, next⟩ := output
     have agreement := compileFuel_success_eq fuel argc (List.range argc) true [] exp (prog, name, next) first
-    simp [compileExpBounded, compileExpFuel, compileExp, first, ← agreement]
+    simp [compileExpBounded, compileExpFuel, compileExp, first, ← agreement, sourceForm]
   | none =>
     have bound : Bvi.expBudget exp < max fuel (Bvi.expBudget exp + 1) := by omega
     have agreement := compileFuel_agrees (max fuel (Bvi.expBudget exp + 1)) argc (List.range argc) true [] exp bound
-    simp [compileExpBounded, compileExpFuel, compileExp, first, agreement]
+    simp [compileExpBounded, compileExpFuel, compileExp, first, agreement, sourceForm]
 
 /-- Mapping the executed compiler over a BVI program always produces the
 same function list as the total source-shaped program compiler. -/
