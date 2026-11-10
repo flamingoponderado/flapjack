@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Generate a Lean literal for the byte-exact pinned CakeML exporter capture."""
 import argparse
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parent))
+from lean_module_header import to_module  # noqa: E402
 import json
 from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
@@ -22,7 +26,7 @@ def generate():
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser(); p.add_argument('--check', action='store_true'); a = p.parse_args()
-    result = generate()
+    result = to_module(generate())
     if a.check:
         if not OUTPUT.exists() or OUTPUT.read_text() != result: raise SystemExit('export oracle is stale')
         print('CakeML exporter oracle matches pinned HOL bytes')
