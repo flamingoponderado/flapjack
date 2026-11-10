@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "NOT_IN_domain_FST_g",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/DomainLocations.lean", "lean_name": "calls_preservesFreshLocation",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_call_NOT_IN_domain_FST_g_typed: all free variables and five curried premises retain first-occurrence order, including the original state-well-formedness premise; the result is non-membership in the final domain."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_domain_locs",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/DomainLocations.lean", "lean_name": "calls_domainLocations",
   "statement_status": "reviewed_exact",
