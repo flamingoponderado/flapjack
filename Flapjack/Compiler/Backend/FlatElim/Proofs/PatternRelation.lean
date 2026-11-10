@@ -78,7 +78,7 @@ theorem bindingsWithin_cons (name : VarN) (value : FlatSem.Value)
   simp [bindingsWithin, findValuesGlobals, globalsWithin_union]
 
 /-- A successful match preserves the reachability bound on bindings. -/
-theorem pmatchReachable_aux {C F : Type} (state : FlatSem.State C F) (reachable : NumSet) :
+private theorem pmatchReachable_aux {C F : Type} (state : FlatSem.State C F) (reachable : NumSet) :
     (∀ pattern value bindings result, FlatSem.pmatch state pattern value bindings = .match result →
       globalsWithin (findValueGlobals value) reachable → bindingsWithin bindings reachable →
       globalsWithin (findRefsGlobals state.refs) reachable → bindingsWithin result reachable) ∧
@@ -235,7 +235,7 @@ theorem valuesHaveEval_eq_false_iff (values : List FlatSem.Value) :
     exact ih
 
 /-- A successful match preserves the absence of dynamic evaluation. -/
-theorem pmatchNoEval_aux {C F : Type} (state : FlatSem.State C F) :
+private theorem pmatchNoEval_aux {C F : Type} (state : FlatSem.State C F) :
     (∀ pattern value bindings result, FlatSem.pmatch state pattern value bindings = .match result →
       valueHasEval value = false → storeHasNoEval state.refs → bindingsNoEval bindings →
       bindingsNoEval result) ∧

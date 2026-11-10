@@ -251,7 +251,7 @@ theorem setGlobals_children (trace : Tra) (value : FlatLang.Exp) (patterns : Lis
 
 /-- Naive matching generates a global-initialization-safe guard when each worklist value is
 global-initialization-safe. -/
-theorem setGlobals_naivePatternMatch_aux (trace : Tra) (todo : List (FlatLang.Pat × FlatLang.Exp))
+private theorem setGlobals_naivePatternMatch_aux (trace : Tra) (todo : List (FlatLang.Pat × FlatLang.Exp))
     (safe : ∀ pattern expression, (pattern, expression) ∈ todo → setGlobals expression = emptyGlobalBag) :
     setGlobals (naivePatternMatch trace todo) = emptyGlobalBag := by
   induction todo using naivePatternMatch.induct trace with
@@ -377,7 +377,7 @@ private theorem setGlobals_projectionFold (trace : Tra) (value body : FlatLang.E
     simp [setGlobals, elistGlobals, opGlobalBag, valueSafe, ih, Flapjack.bagUnion_empty_left, Flapjack.bagUnion_empty_right]
 
 /-- Pattern binding preserves the global bag when worklist values have empty bags. -/
-theorem setGlobals_compilePatBindings_aux (trace : Tra) (base : Nat)
+private theorem setGlobals_compilePatBindings_aux (trace : Tra) (base : Nat)
     (todo : List (FlatLang.Pat × Nat × FlatLang.Exp)) (body : FlatLang.Exp)
     (todoSafe : ∀ pattern index expression, (pattern, index, expression) ∈ todo →
       setGlobals expression = emptyGlobalBag) :
