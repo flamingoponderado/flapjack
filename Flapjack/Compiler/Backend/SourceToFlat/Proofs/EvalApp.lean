@@ -16,68 +16,6 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.Basis.Pure.MlString
 open Flapjack.EvaluateHOL (evaluate_sourceEval_success evaluate_sourceEval_timeout evaluate_sourceEval_declaration_error evaluate_eval_args_error evaluate_eval_decode_failure evaluate_eval_success)
 
-/-- If the flat Eval callback and declaration body succeed, the generated
-body reads the stored environment ID through the reserved global reference.
-The declaration run is the declaration induction hypothesis. -/
-theorem evaluate_evalBody_success {C F : Type}
-    (env : FlatSem.Environment FlatSem.Value) (state last : FlatSem.State C F)
-    (bytes words stored : FlatSem.Value) (decs : List FlatLang.Exp)
-    (nextConfig : FlatSem.InstallConfig C)
-    (decoded : FlatSem.doEval [bytes, words] state.evalConfig = some (decs, nextConfig, FlatSem.unitValue))
-    (positive : 0 < state.clock)
-    (declarationRun : FlatSem.evaluateDecs (FlatSem.decClock { state with evalConfig := nextConfig }) decs =
-      (last, none))
-    (globals : last.globals[0]? = some (some (.loc true 0)))
-    (references : last.refs[0]? = some (.refv stored)) :
-    let evalEnv : FlatSem.Environment FlatSem.Value :=
-      { env with v := (ofString "words", words) :: (ofString "bytes", bytes) :: env.v }
-    let body : FlatLang.Exp :=
-      .let_ .none none (.app .none (.src .eval)
-        ([ofString "bytes", ofString "words"].map (.varLocal .none)))
-        (.let_ .none (some (ofString "r")) (.app .none (.globalVarLookup 0) [])
-          (.app .none (.el 0) [.varLocal .none (ofString "r")]))
-    FlatSem.evaluate evalEnv state [body] = (last, .val [stored]) := by
-  have lastBound : last.clock ≤ state.clock := by
-    have bound := FlatSem.evaluate_clock_spec.2.2 _ _ _ _ declarationRun
-    exact Nat.le_trans bound (Nat.sub_le _ _)
-  have namesDistinct : ofString "bytes" ≠ ofString "words" := by decide
-  have nonzero : state.clock ≠ 0 := Nat.ne_of_gt positive
-  have declarations : FlatSem.evaluateDecs
-      { state with clock := state.clock - 1, evalConfig := nextConfig } decs = (last, none) := by
-    simpa [FlatSem.decClock] using declarationRun
-  simp [List.lookup, BEq.beq, namesDistinct, FlatSem.evaluate, FlatSem.fixClock, FlatSem.decClock, FlatSem.applyResult,
-    FlatSem.doApp, FlatSem.doAppFlat, FlatSem.unitValue, storeLookup,
-    decoded, nonzero, declarations, globals, references, Nat.min_eq_right lastBound]
-
-/-- An error from the evaluated declarations propagates through the generated
-body without reading the reserved global reference. -/
-theorem evaluate_evalBody_error {C F : Type}
-    (env : FlatSem.Environment FlatSem.Value) (state last : FlatSem.State C F)
-    (bytes words : FlatSem.Value) (decs : List FlatLang.Exp)
-    (nextConfig : FlatSem.InstallConfig C) (error : ErrorResult FlatSem.Value)
-    (decoded : FlatSem.doEval [bytes, words] state.evalConfig = some (decs, nextConfig, FlatSem.unitValue))
-    (positive : 0 < state.clock)
-    (declarationRun : FlatSem.evaluateDecs (FlatSem.decClock { state with evalConfig := nextConfig }) decs =
-      (last, some error)) :
-    let evalEnv : FlatSem.Environment FlatSem.Value :=
-      { env with v := (ofString "words", words) :: (ofString "bytes", bytes) :: env.v }
-    let body : FlatLang.Exp :=
-      .let_ .none none (.app .none (.src .eval)
-        ([ofString "bytes", ofString "words"].map (.varLocal .none)))
-        (.let_ .none (some (ofString "r")) (.app .none (.globalVarLookup 0) [])
-          (.app .none (.el 0) [.varLocal .none (ofString "r")]))
-    FlatSem.evaluate evalEnv state [body] = (last, .err error) := by
-  have lastBound : last.clock ≤ state.clock := by
-    have bound := FlatSem.evaluate_clock_spec.2.2 _ _ _ _ declarationRun
-    exact Nat.le_trans bound (Nat.sub_le _ _)
-  have namesDistinct : ofString "bytes" ≠ ofString "words" := by decide
-  have nonzero : state.clock ≠ 0 := Nat.ne_of_gt positive
-  have declarations : FlatSem.evaluateDecs
-      { state with clock := state.clock - 1, evalConfig := nextConfig } decs = (last, some error) := by
-    simpa [FlatSem.decClock] using declarationRun
-  simp [List.lookup, BEq.beq, namesDistinct, FlatSem.evaluate, FlatSem.fixClock,
-    FlatSem.decClock, decoded, nonzero, declarations, Nat.min_eq_right lastBound]
-
 /-- The callback installs its next configuration before the zero-clock
 timeout; no declarations or reserved-reference lookup are executed. -/
 theorem evaluate_evalBody_timeout {C F : Type}
@@ -152,44 +90,40 @@ theorem evaluate_compileEval_body {C F : Type}
   rw [selection']
   simpa [body] using bodyRun
 
-/-- On six successfully evaluated operands, the generated pattern passes the
-last two values to the flat callback and returns the stored environment ID. -/
-theorem evaluate_compileEval_success {C F : Type}
-    (env : FlatSem.Environment FlatSem.Value) (state arguments last : FlatSem.State C F)
-    (trace : List VarN) (compMap : Environment) (exprs : List AstHOL.Exp)
-    (a b c d bytes words stored : FlatSem.Value) (decs : List FlatLang.Exp)
-    (nextConfig : FlatSem.InstallConfig C)
-    (operandRun : FlatSem.evaluate env state (compileExps trace compMap exprs).reverse =
-      (arguments, .val [words, bytes, d, c, b, a]))
-    (decoded : FlatSem.doEval [bytes, words] arguments.evalConfig = some (decs, nextConfig, FlatSem.unitValue))
-    (positive : 0 < arguments.clock)
-    (declarationRun : FlatSem.evaluateDecs (FlatSem.decClock { arguments with evalConfig := nextConfig }) decs =
-      (last, none))
-    (globals : last.globals[0]? = some (some (.loc true 0)))
-    (references : last.refs[0]? = some (.refv stored)) :
-    FlatSem.evaluate env state [compileExp trace compMap (.app .eval exprs)] = (last, .val [stored]) := by
-  exact evaluate_compileEval_body env state arguments last trace compMap exprs a b c d bytes words
-    (.val [stored]) operandRun
-    (evaluate_evalBody_success env arguments last bytes words stored decs nextConfig
-      decoded positive declarationRun globals references)
-
-/-- A declaration error propagates through the complete generated Eval
-expression after its six operands have succeeded. -/
-theorem evaluate_compileEval_error {C F : Type}
+/-- After the callback and positive-clock declaration run, the generated Eval
+expression returns the reserved environment ID on success or propagates the error. -/
+theorem evaluate_compileEval_declarations {C F : Type}
     (env : FlatSem.Environment FlatSem.Value) (state arguments last : FlatSem.State C F)
     (trace : List VarN) (compMap : Environment) (exprs : List AstHOL.Exp)
     (a b c d bytes words : FlatSem.Value) (decs : List FlatLang.Exp)
-    (nextConfig : FlatSem.InstallConfig C) (error : ErrorResult FlatSem.Value)
+    (nextConfig : FlatSem.InstallConfig C) (result : Result (List FlatSem.Value) FlatSem.Value)
     (operandRun : FlatSem.evaluate env state (compileExps trace compMap exprs).reverse =
       (arguments, .val [words, bytes, d, c, b, a]))
     (decoded : FlatSem.doEval [bytes, words] arguments.evalConfig = some (decs, nextConfig, FlatSem.unitValue))
     (positive : 0 < arguments.clock)
     (declarationRun : FlatSem.evaluateDecs (FlatSem.decClock { arguments with evalConfig := nextConfig }) decs =
-      (last, some error)) :
-    FlatSem.evaluate env state [compileExp trace compMap (.app .eval exprs)] = (last, .err error) := by
-  exact evaluate_compileEval_body env state arguments last trace compMap exprs a b c d bytes words
-    (.err error) operandRun
-    (evaluate_evalBody_error env arguments last bytes words decs nextConfig error decoded positive declarationRun)
+      (last, match result with | .val _ => none | .err error => some error))
+    (success : match result with
+      | .val values => ∃ stored, values = [stored] ∧
+          last.globals[0]? = some (some (.loc true 0)) ∧ last.refs[0]? = some (.refv stored)
+      | .err _ => True) :
+    FlatSem.evaluate env state [compileExp trace compMap (.app .eval exprs)] = (last, result) := by
+  apply evaluate_compileEval_body env state arguments last trace compMap exprs a b c d bytes words result operandRun
+  have lastBound : last.clock ≤ arguments.clock := by
+    have bound := FlatSem.evaluate_clock_spec.2.2 _ _ _ _ declarationRun
+    exact Nat.le_trans bound (Nat.sub_le _ _)
+  have namesDistinct : ofString "bytes" ≠ ofString "words" := by decide
+  have nonzero : arguments.clock ≠ 0 := Nat.ne_of_gt positive
+  simp only [FlatSem.decClock] at declarationRun
+  cases result with
+  | val values =>
+    obtain ⟨stored, rfl, globals, references⟩ := success
+    simp [List.lookup, BEq.beq, namesDistinct, FlatSem.evaluate, FlatSem.fixClock, FlatSem.decClock, FlatSem.applyResult,
+      FlatSem.doApp, FlatSem.doAppFlat, FlatSem.unitValue, storeLookup,
+      decoded, nonzero, declarationRun, globals, references, Nat.min_eq_right lastBound]
+  | err error =>
+    simp [List.lookup, BEq.beq, namesDistinct, FlatSem.evaluate, FlatSem.fixClock,
+      FlatSem.decClock, decoded, nonzero, declarationRun, Nat.min_eq_right lastBound]
 
 /-- An operand error prevents pattern selection and propagates unchanged. -/
 theorem evaluate_compileEval_operand_error {C F : Type}
@@ -279,9 +213,9 @@ theorem evaluate_eval_declaration_error_related {C F : Type}
   have flatDeclarations := evaluateIncCompileProg_error flatStart flatLast envId config decs n next
     newMap gen body flatError compiledBody bodyRun'
   rw [compiled] at flatDeclarations
-  have flatResult := evaluate_compileEval_error flatEnv flatInitial flatArguments flatLast trace compMap exprs
-    a b c d bytes words flatDecs flatNextConfig flatError flatRun flatDecoded flatPositive
-    (by simpa [flatStart] using flatDeclarations)
+  have flatResult := evaluate_compileEval_declarations flatEnv flatInitial flatArguments flatLast trace compMap exprs
+    a b c d bytes words flatDecs flatNextConfig (.err flatError) flatRun flatDecoded flatPositive
+    (by simpa [flatStart] using flatDeclarations) trivial
   have sourceResult := evaluate_sourceEval_declaration_error sourceEnv evalEnv sourceInitial sourceArguments
     sourceLast exprs sourceValues decs begin sourceError sourceRun sourceDecoded positive sourceDeclarations
   dsimp only
@@ -410,9 +344,9 @@ theorem evaluate_compileEval_declare_success {C F : Type} [Nonempty C]
   have globals : last.globals[0]? = some (some (.loc true 0)) := by simp [globalEq]
   have refs : last.refs[0]? = some (.refv stored) := by simp [last]
   refine ⟨stored, ?_, nextInvariant, related, nextForward, nextGeneration⟩
-  exact evaluate_compileEval_success flatEnv flatInitial flatArguments last trace compMap exprs
-    a b c d bytes words stored flatDecs flatNextConfig operandRun decoded positive
-    (by simpa [flatStart, last] using declarationRun) globals refs
+  exact evaluate_compileEval_declarations flatEnv flatInitial flatArguments last trace compMap exprs
+    a b c d bytes words flatDecs flatNextConfig (.val [stored]) operandRun decoded positive
+    (by simpa [flatStart, last] using declarationRun) ⟨stored, rfl, globals, refs⟩
 
 /-- Successful Eval simulation through the declaration induction hypothesis,
 including restoration of the caller's oracle invariant and generation. The
@@ -745,9 +679,9 @@ theorem eval_error_from_declarations {C F : Type} [Nonempty C]
   have flatDeclarations := evaluateIncCompileProg_error flatStart flatLast envId config decs n nextConfig.next
     newMap nextGen body errorValue bodyEq bodyRun'
   rw [compiled] at flatDeclarations
-  have flatResult := evaluate_compileEval_error flatEnv flatInitial flatArguments flatLast trace compMap exprs
-    a b c d bytes words flatDecs flatNext errorValue (by simpa using flatRun) (by simpa [flatNext] using flatDecoded)
-    flatPositive (by simpa [flatStart] using flatDeclarations)
+  have flatResult := evaluate_compileEval_declarations flatEnv flatInitial flatArguments flatLast trace compMap exprs
+    a b c d bytes words flatDecs flatNext (.err errorValue) (by simpa using flatRun) (by simpa [flatNext] using flatDecoded)
+    flatPositive (by simpa [flatStart] using flatDeclarations) trivial
   have sourceResult := evaluate_sourceEval_declaration_error sourceEnv evalEnv sourceInitial sourceArguments
     sourceLast exprs sourceValues decs begin sourceError sourceRun decoded positive sourceDeclarations
   refine ⟨finalGenv, sim, ?_⟩
