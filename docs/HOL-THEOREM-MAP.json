@@ -76599,6 +76599,14 @@
     "reviewer": "Flapjack-only constructor inversion helper for tagged dest_const_def. HOL uses ordinary datatype equality reasoning here; no separate HOL declaration is being ported."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepDestConstHOL_wordEq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only combination of crepDestConstHOL_eq_some_implies with the mapped child evaluation: a simplified child that evaluates to a word and whose dest-const is some c is exactly .const c with c = word. HOL reasons directly over its dest_const equality; no separate HOL declaration and no evaluator change."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
     "lean_name": "crepOptMmapSimpExpCorrectNativeHOL",
     "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
@@ -88268,6 +88276,14 @@
     "reviewer": "Luna A compared HOL934-941 and panSem458-467 lookup_code: original state_rel ls plus successful source lookup implies target lookup of compiled body, same locals and return shape. HOL SOME(prog,newlocals) groups tail of triple; Lean binds callee and returnShape separately. Canonical callee map qualifier names standalone callee, states/context same-module roundtrips. lookupCodeHOLFinite wraps unchanged exact raw lookup using checked finite support; canonical proof irrelevance yields identical map. Nodup parameter names, exact length+pairwise shape equality implement ALL_DISTINCT and LIST_REL; unchanged ZIP and left FUPDATE_LIST last-binding semantics. No extra premise on code/target outcome. Positive words/Type0 FFI, exact MlS keys. Calls1149/1516 verified. Coordinator source review pending."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationCode.lean",
+    "lean_name": "lookupCodeHOLFinite_of_exact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only inverse of lookupCodeHOLFinite_eq_some: a raw lookupCodeHOLExact result carrying the canonical callee map rebuilds the finite lookup. HOL rewrites the same equation with lookup_code_def; no separate HOL declaration and no evaluator change."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
     "lean_name": "disjointGlobalsHOLExact",
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -90089,6 +90105,46 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.1.x): original pan_simpProofScript.sml:182-345: evaluate_ind instance of !prog s. FST (evaluate (prog,s)) <> SOME Error ==> evaluate (ret_to_tail prog,s) = evaluate (prog,s); assembled via evaluateIndHOL from the reviewed case pieces plus Seq/If/While/Call/DecCall cases using exactly the source induction hypotheses. Exact PanSemStateFiniteExact evaluator evaluateHOLFiniteState; only canonical finite-map and positive BitVec width/Type0 FFI translations; no hypothesis added."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailAssembly.lean",
+    "lean_name": "retToTailCorrect_call",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Call case of the tagged retToTailCorrectHOL assembly: it consumes the source induction hypothesis pair for the exception and no-exception outcomes and the non-error premise, matching the HOL Call resume block. No separate HOL declaration; no evaluator, premise or conclusion change."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailAssembly.lean",
+    "lean_name": "retToTailCorrect_decCall",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only DecCall case of the tagged retToTailCorrectHOL assembly: it consumes the source induction hypothesis pair for the returned and other outcomes and the non-error premise, matching the HOL DecCall resume block. No separate HOL declaration; no evaluator, premise or conclusion change."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailAssembly.lean",
+    "lean_name": "retToTailCorrect_if",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only If case of the tagged retToTailCorrectHOL assembly: it consumes the source induction hypothesis over the condition value and the non-error premise, matching the HOL If resume block. No separate HOL declaration; no evaluator, premise or conclusion change."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailAssembly.lean",
+    "lean_name": "retToTailCorrect_seq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Seq case of the tagged retToTailCorrectHOL assembly: it consumes the induction hypothesis pair and the source non-error premise and derives the HOL Seq resume step. No separate HOL declaration; no evaluator, premise or conclusion change."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailAssembly.lean",
+    "lean_name": "retToTailCorrect_while",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only While case of the tagged retToTailCorrectHOL assembly: it consumes the three source induction hypotheses (continue, none, body) and the non-error premise, matching the HOL While resume block. No separate HOL declaration; no evaluator, premise or conclusion change."
   },
   {
     "hol_path": null,
