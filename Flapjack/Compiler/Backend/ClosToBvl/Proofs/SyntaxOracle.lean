@@ -48,7 +48,7 @@ noncomputable def syntaxOracleOkCommon {α : Type} (c c' : Config) (es : List Cl
     oracleMonotonic (fun entry => setOfBag (elistGlobals entry.2.1)) (· < ·)
       (setOfBag (elistGlobals es)) co ∧
     isStateOracle (ClosKnown.compileInc (holThe c.knownConf))
-      (pureCo (ClosFvs.compileInc (α := List (Nat × Nat × ClosLang.Exp))
+      (pureCo (ClosFvs.compileIncSource (α := List (Nat × Nat × ClosLang.Exp))
         (β := Nat × Nat × ClosLang.Exp)) ∘
         stateCo (ClosNumber.ignoreTable ClosNumber.compileInc)
           (pureCo (ClosMti.condCompileInc c.doMti c.maxApp) ∘ co)) ∧

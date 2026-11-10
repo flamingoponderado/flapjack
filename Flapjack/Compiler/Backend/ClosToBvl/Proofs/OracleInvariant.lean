@@ -113,7 +113,7 @@ theorem syntaxOracleOk_to_oracleInv {CC R α : Type}
       let known := ClosKnown.compile c.knownConf base
       have guard : c.knownConf.isSome →
           isStateOracle (ClosKnown.compileInc (holThe c.knownConf))
-            (pureCo (ClosFvs.compileInc (α := List (Nat × Nat × ClosLang.Exp))
+            (pureCo (ClosFvs.compileIncSource (α := List (Nat × Nat × ClosLang.Exp))
               (β := Nat × Nat × ClosLang.Exp)) ∘ nco) ∧
           (nco 0).1.1 = (holThe known.1).valApproxSpt ∧
           everyFnVarsNone base ∧ everyFnLocationSome base ∧

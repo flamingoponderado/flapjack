@@ -32,7 +32,7 @@ theorem everyFnVarsNone_knownCo {α : Type}
         (ClosFvs.compile (f n).2.1) [] (f n).1.1
         ⟨by simpa [ClosFvs.compile, ClosFvs.removeList_varsNone] using h.1, by simp, h.2⟩
     simp only [ClosKnown.knownCo, Function.comp_apply, pureCo, stateCo,
-      ClosFvs.compileInc, ClosKnown.compileInc, ClosTicks.compileIncSource_eq,
+      ClosFvs.compileIncSource_eq, ClosFvs.compileInc, ClosKnown.compileInc, ClosTicks.compileIncSource_eq,
       ClosLetop.compileIncSource_eq, ClosTicks.compileInc, ClosLetop.compileInc]
     constructor
     · intro h
@@ -56,7 +56,7 @@ theorem everyFnLocationSome_knownCo {α : Type}
         (ClosFvs.compile (f n).2.1) [] (f n).1.1
         ⟨by simpa [ClosFvs.compile, ClosFvs.removeList_locations] using h.1, by simp, h.2⟩
     simp only [ClosKnown.knownCo, Function.comp_apply, pureCo, stateCo,
-      ClosFvs.compileInc, ClosKnown.compileInc, ClosTicks.compileIncSource_eq,
+      ClosFvs.compileIncSource_eq, ClosFvs.compileInc, ClosKnown.compileInc, ClosTicks.compileIncSource_eq,
       ClosLetop.compileIncSource_eq, ClosTicks.compileInc, ClosLetop.compileInc]
     constructor
     · intro h
@@ -70,7 +70,7 @@ theorem knownStateOracle_globalsApprox {α : Type} (cfg' : ClosKnown.Config)
     (co : Nat → (Spt ValApprox × α) × ClosSem.Program) (spt : Spt ValApprox)
     (cfg : ClosKnown.Config) (exps : List ClosLang.Exp) (kExps : List (ClosLang.Exp × ValApprox))
     (h : isStateOracle (ClosKnown.compileInc cfg')
-        (pureCo (ClosFvs.compileInc (α := List (Nat × Nat × ClosLang.Exp))
+        (pureCo (ClosFvs.compileIncSource (α := List (Nat × Nat × ClosLang.Exp))
           (β := Nat × Nat × ClosLang.Exp)) ∘ co) ∧
       (co 0).1.1 = spt ∧ knownListTotal cfg exps [] .ln = (kExps, spt) ∧
       everyFnVarsNone exps ∧ everyFnLocationSome exps ∧
@@ -111,7 +111,7 @@ theorem knownCo_facts {α : Type} (kc : Option ClosKnown.Config)
     ClosKnown.compileSource kc exps = (kc', exps') →
     (kc.isSome →
       isStateOracle (ClosKnown.compileInc (holThe kc))
-        (pureCo (ClosFvs.compileInc (α := List (Nat × Nat × ClosLang.Exp))
+        (pureCo (ClosFvs.compileIncSource (α := List (Nat × Nat × ClosLang.Exp))
           (β := Nat × Nat × ClosLang.Exp)) ∘ co) ∧
       (co 0).1.1 = (holThe kc').valApproxSpt ∧
       everyFnVarsNone exps ∧ everyFnLocationSome exps ∧
@@ -166,7 +166,7 @@ theorem knownCo_facts {α : Type} (kc : Option ClosKnown.Config)
             (ClosFvs.compile (co k).2.1) [] (co k).1.1 output next hk x
           simp only [ClosKnown.knownCo, Function.comp_apply, pureCo, stateCo,
             ClosTicks.compileIncSource_eq, ClosLetop.compileIncSource_eq,
-            ClosFvs.compileInc, ClosKnown.compileInc, ClosTicks.compileInc, ClosLetop.compileInc]
+            ClosFvs.compileIncSource_eq, ClosFvs.compileInc, ClosKnown.compileInc, ClosTicks.compileInc, ClosLetop.compileInc]
           change (codeLocations (ClosLetop.compileList (ClosTicks.removeList
             ((knownListTotal (resetInlineFactor c) (ClosFvs.compile (co k).2.1) [] (co k).1.1).1.map Prod.fst)))).count x ≤ _
           rw [hk]
@@ -180,7 +180,7 @@ theorem knownCo_facts {α : Type} (kc : Option ClosKnown.Config)
           (ClosFvs.compile (co k).2.1) [] (co k).1.1 ⟨input, by simp, (globalSafe k).1⟩
         simp only [ClosKnown.knownCo, Function.comp_apply, pureCo, stateCo,
           ClosTicks.compileIncSource_eq, ClosLetop.compileIncSource_eq,
-          ClosFvs.compileInc, ClosKnown.compileInc, ClosTicks.compileInc, ClosLetop.compileInc]
+          ClosFvs.compileIncSource_eq, ClosFvs.compileInc, ClosKnown.compileInc, ClosTicks.compileInc, ClosLetop.compileInc]
         change everyFnVarsNone (ClosLetop.compileList (ClosTicks.removeList
           ((knownListTotal (resetInlineFactor c) (ClosFvs.compile (co k).2.1) [] (co k).1.1).1.map Prod.fst)))
         simpa [ClosLetop.compileList_varsNone, ClosTicks.removeList_varsNone] using safe.1
@@ -192,7 +192,7 @@ theorem knownCo_facts {α : Type} (kc : Option ClosKnown.Config)
           (ClosFvs.compile (co k).2.1) [] (co k).1.1 ⟨input, by simp, (globalSafe k).2⟩
         simp only [ClosKnown.knownCo, Function.comp_apply, pureCo, stateCo,
           ClosTicks.compileIncSource_eq, ClosLetop.compileIncSource_eq,
-          ClosFvs.compileInc, ClosKnown.compileInc, ClosTicks.compileInc, ClosLetop.compileInc]
+          ClosFvs.compileIncSource_eq, ClosFvs.compileInc, ClosKnown.compileInc, ClosTicks.compileInc, ClosLetop.compileInc]
         change everyFnLocationSome (ClosLetop.compileList (ClosTicks.removeList
           ((knownListTotal (resetInlineFactor c) (ClosFvs.compile (co k).2.1) [] (co k).1.1).1.map Prod.fst)))
         simpa [ClosLetop.compileList_locations, ClosTicks.removeList_locations] using safe.1

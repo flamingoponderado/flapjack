@@ -17,7 +17,7 @@ set_option backward.privateInPublic.warn false
 namespace Flapjack.Compiler.Backend.ClosKnown
 open ClosSem BackendProps
 
-private abbrev fvsInc : Program → Program := ClosFvs.compileInc
+private noncomputable abbrev fvsInc : Program → Program := ClosFvs.compileIncSource
 private noncomputable abbrev ticksInc : Program → Program := ClosTicks.compileIncSource
 private noncomputable abbrev letopInc : Program → Program := ClosLetop.compileIncSource
 
@@ -59,6 +59,7 @@ theorem semanticsCompileSome {C F : Type} (c : Config) (ffi : HolFfiState F) (ma
   have aux : ∀ n, (co n).2.2 = [] := fun n => (oracle.2.2.2.2 n).2
   have fvsEq := ClosFvs.semantics_compile ffi maxApp co (stateCc (compileInc c) afterKnown) xs
     (by simpa [knownCc, afterKnown] using nonFail) ⟨aux, positive⟩
+  simp only [ClosFvs.compileIncSource_eq, ClosFvs.compileSource_eq_compile] at fvsEq
   have fvsNonfail : semantics ffi maxApp HolFiniteMapExact.holEmpty fco
       (stateCc (compileInc c) afterKnown) (ClosFvs.compile xs) ≠ .fail := by
     rw [fvsEq]; simpa [knownCc, afterKnown] using nonFail

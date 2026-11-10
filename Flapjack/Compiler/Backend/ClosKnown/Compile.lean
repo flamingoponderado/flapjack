@@ -30,7 +30,7 @@ def compileInc {α : Type} (c : Config) (g : Spt ValApprox) (program : List Exp 
 noncomputable def compileSource : Option Config → List Exp → Option Config × List Exp
   | none, es => (none, es)
   | some c, es =>
-      let (eas, globals) := knownListTotal c (ClosFvs.compile es) [] .ln
+      let (eas, globals) := knownListTotal c (ClosFvs.compileSource es) [] .ln
       (some { c with valApproxSpt := globals },
         ClosLetop.compileSource (ClosTicks.removeSource (eas.map Prod.fst)))
 
@@ -60,7 +60,7 @@ noncomputable def knownCompileIncSource {α : Type} (config : Option Config) (gl
   match config with
   | none => (globals, program)
   | some c =>
-      let p : List Exp × List (Nat × Nat × Exp) := ClosFvs.compileInc program
+      let p : List Exp × List (Nat × Nat × Exp) := ClosFvs.compileIncSource program
       let (globals, es, aux) := compileInc c globals p
       let p : List Exp × List (Nat × Nat × Exp) := ClosTicks.compileIncSource (es, aux)
       let p : List Exp × List α := ClosLetop.compileIncSource p

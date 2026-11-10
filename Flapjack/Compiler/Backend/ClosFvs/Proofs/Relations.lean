@@ -15,7 +15,7 @@ open Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.BackendProps
 /-- Target code is the source list with free variables removed. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "code_rel_def"]
 def CodeRel (bound : Nat) (source target : List ClosLang.Exp) : Prop :=
-  target = removeList bound source
+  target = removeSource bound source
 
 /-- Related recursive function bodies retain their arity. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "f_rel_def"]
@@ -69,7 +69,7 @@ def StateRel {C F : Type} (source target : State C F) : Prop :=
   target.maxApp = source.maxApp ∧ 1 ≤ source.maxApp ∧ target.clock = source.clock ∧
   target.ffi = source.ffi ∧ List.Forall₂ (optionRel ValueRel) source.globals target.globals ∧
   (∀ key, optionRel RefRel (source.refs.lookup key) (target.refs.lookup key)) ∧
-  source.compile = pureCc compileInc target.compile ∧
-  target.compileOracle = pureCo compileInc ∘ source.compileOracle
+  source.compile = pureCc compileIncSource target.compile ∧
+  target.compileOracle = pureCo compileIncSource ∘ source.compileOracle
 
 end Flapjack.Compiler.Backend.ClosFvs

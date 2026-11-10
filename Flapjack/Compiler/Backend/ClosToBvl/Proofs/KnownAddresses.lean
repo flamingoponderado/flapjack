@@ -150,7 +150,7 @@ theorem knownCo_req {C : Type} (orac : ClosSem.CompileOracle (Spt ValApprox × C
   | some c =>
     have output : (knownCo (some c) orac n).2 =
         (knownPipeline c (orac n).1.1 (orac n).2.1, []) := by
-      simp only [knownCo, Function.comp_apply, pureCo, stateCo, ClosFvs.compileInc,
+      simp only [knownCo, Function.comp_apply, pureCo, stateCo, ClosFvs.compileIncSource_eq, ClosFvs.compileInc,
         ClosTicks.compileIncSource_eq, ClosLetop.compileIncSource_eq,
         ClosTicks.compileInc, ClosLetop.compileInc, ClosKnown.compileInc, knownPipeline]
     have properties := knownPipeline_properties c (orac n).1.1 (orac n).2.1 extract
