@@ -1,5 +1,19 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_to_bytes_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "valueToBytes_thm",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Source comparison: compared clos_call_v_to_bytes_thm_typed: free state, allowed set and code precede quantified source, target and byte list; the grouped successful decode and value relation imply the identical target byte list. HOL word8 is BitVec 8; the code map uses canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_to_words_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "valueToWords_thm",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Source comparison: compared clos_call_v_to_words_thm_typed: free state, allowed set and code precede quantified source, target and word list; the grouped successful decode and value relation imply the identical target word list. HOL word64 is BitVec 64; the code map uses canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_rel_Unit",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "valueRel_unit",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",

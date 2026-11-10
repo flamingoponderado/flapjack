@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
 public import Flapjack.Compiler.Backend.Semantics.ClosSem
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
 
 @[expose] public section
 
@@ -434,5 +435,61 @@ decreasing_by
   subst_vars
   simp_wf
   omega
+
+/-- Canonical code-map codec for byte decoding preservation. -/
+theorem holFmapAsFiniteSupportParamWitness_valueToBytes_thm_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code code key
+
+/-- Direct-call conversion preserves decoded byte lists. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "v_to_bytes_thm"
+  (fmap_as_finite_support_parameters := [code])]
+theorem valueToBytes_thm (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (h h' : Value) (x : List (BitVec 8))
+    (assumptions : valueToBytes h = some x ∧ valueRel g allowed code h h') :
+    valueToBytes h' = some x := by
+  have decoded := (valueToBytes_eq_some h x).mp assumptions.1
+  obtain ⟨ys, target, related⟩ := valueToList_thm g allowed code h h' _ ⟨decoded, assumptions.2⟩
+  have same : ys = x.map (fun b => Value.number b.toNat) := by
+    clear assumptions decoded target
+    induction x generalizing ys with
+    | nil => cases related; rfl
+    | cons b bs ih =>
+      cases related with
+      | cons head tail =>
+        simp only [valueRel] at head
+        simp [head, ih _ tail]
+  exact (valueToBytes_eq_some h' x).mpr (same ▸ target)
+
+/-- Canonical code-map codec for word decoding preservation. -/
+theorem holFmapAsFiniteSupportParamWitness_valueToWords_thm_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code code key
+
+/-- Direct-call conversion preserves decoded word lists. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "v_to_words_thm"
+  (fmap_as_finite_support_parameters := [code])]
+theorem valueToWords_thm (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (h h' : Value) (x : List (BitVec 64))
+    (assumptions : valueToWords h = some x ∧ valueRel g allowed code h h') :
+    valueToWords h' = some x := by
+  have decoded := (valueToWords_eq_some h x).mp assumptions.1
+  obtain ⟨ys, target, related⟩ := valueToList_thm g allowed code h h' _ ⟨decoded, assumptions.2⟩
+  have same : ys = x.map Value.word64 := by
+    clear assumptions decoded target
+    induction x generalizing ys with
+    | nil => cases related; rfl
+    | cons b bs ih =>
+      cases related with
+      | cons head tail =>
+        simp only [valueRel] at head
+        simp [head, ih _ tail]
+  exact (valueToWords_eq_some h' x).mpr (same ▸ target)
 
 end Flapjack.Compiler.Backend.ClosCall
