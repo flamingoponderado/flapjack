@@ -15,51 +15,26 @@ theorem lineOk_lineEncWithNop {width : Nat} [NeZero width]
     (ffis : List HolFfiName) (pos : Nat) (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) :
     lineOk c labs ffis pos line → lineEncWithNop c.encode labs ffis pos line := by
+  intro h
   cases line with
-  | label => exact fun h => h.2
-  | asm => exact fun h => ⟨h.1, h.2.1⟩
+  | label => exact h.2
+  | asm => exact ⟨h.1, h.2.1⟩
   | labAsm a w bytes len =>
     cases a with
-    | halt => simpa [lineOk,lineEncWithNop,BitVec.zero_sub] using
-        (fun h : lineOk c labs ffis pos (.labAsm .halt w bytes len) => And.intro h.1 h.2.1)
-    | install => simpa [lineOk,lineEncWithNop,BitVec.zero_sub] using
-        (fun h : lineOk c labs ffis pos (.labAsm .install w bytes len) => And.intro h.1 h.2.1)
-    | callFFI name => simpa [lineOk,lineEncWithNop,BitVec.zero_sub,Nat.add_comm] using
-        (fun h : lineOk c labs ffis pos (.labAsm (.callFFI name) w bytes len) => And.intro h.1 h.2.1)
-    | call label => simp [lineOk]
-    | jump label =>
-      cases label with
+    | jump l | jumpCmp _ _ _ l | locValue _ l =>
+      cases l with
       | lab k1 k2 =>
         cases hl : labLookup k1 k2 labs with
-        | none => simp [lineOk,getLabel,hl]
+        | none => simp [lineOk, getLabel, hl] at h
         | some target =>
-          intro h
-          simp only [lineOk,getLabel,hl] at h
+          simp only [lineOk, getLabel, hl] at h
           have hp := labLookup_implies_findPos k1 k2 labs target hl
-          simpa [lineEncWithNop,labInst,BitVec.sub_eq_add_neg,hp] using
+          simpa [lineEncWithNop, labInst, BitVec.sub_eq_add_neg, hp] using
             And.intro h.1 h.2.1
-    | jumpCmp cmp reg imm label =>
-      cases label with
-      | lab k1 k2 =>
-        cases hl : labLookup k1 k2 labs with
-        | none => simp [lineOk,getLabel,hl]
-        | some target =>
-          intro h
-          simp only [lineOk,getLabel,hl] at h
-          have hp := labLookup_implies_findPos k1 k2 labs target hl
-          simpa [lineEncWithNop,labInst,BitVec.sub_eq_add_neg,hp] using
-            And.intro h.1 h.2.1
-    | locValue reg label =>
-      cases label with
-      | lab k1 k2 =>
-        cases hl : labLookup k1 k2 labs with
-        | none => simp [lineOk,getLabel,hl]
-        | some target =>
-          intro h
-          simp only [lineOk,getLabel,hl] at h
-          have hp := labLookup_implies_findPos k1 k2 labs target hl
-          simpa [lineEncWithNop,labInst,BitVec.sub_eq_add_neg,hp] using
-            And.intro h.1 h.2.1
+    | call l => simp [lineOk] at h
+    | _ =>
+      simp only [lineOk, lineEncWithNop, Nat.add_comm] at h ⊢
+      exact ⟨h.1, h.2.1⟩
 
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_ok_lines_enc_with_nop"
   (words_as_type_indexed_bitvec)]
