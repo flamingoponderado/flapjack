@@ -3804,56 +3804,56 @@
   "hol_name": "gc_move_refs_isForwardPointer",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Similarity.lean",
   "lean_name": "gcMoveRefList_noForward",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared partial_refs_no_forward_statement_typed, including independent reference and collector-state payloads; local HOL proof replay remains pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_refs_isForwardPointer_typed with source lines 1752-1757: a successful gcMoveRefList with an empty forward-pointer FILTER keeps the result's FILTER empty, with conf :Config \u03b3, refs :List (HeapElement \u03b1 \u03b2) and state :GcState \u03b1 \u03b3."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "isSomeDataElement_heap_lookup_heap_expand",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "heapLookup_heapExpand_notData",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared the no-data conclusion for all offsets and free-region sizes against the source; inferred HOL types and proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared isSomeDataElement_heap_lookup_heap_expand_typed with source lines 1573-1579: not isSomeDataElement (heapLookup ptr (heapExpand len)) for arbitrary ptr/len over List (HeapElement \u03b1 \u03b2)."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "partial_gc_heap_length_lemma",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "partialGc_heapLength",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared partial_gc_heap_length_statement_typed, including independent major roots and heap and the complete major-collection validity premises; the local HOL proof replay remains pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_gc_heap_length_lemma_typed with source lines 1827-1837: the partial_gc and gen_gc runs, the heap_segment split, both bounds, roots_ok and heap_ok imply heapLength (state.old ++ state.h1 ++ heapExpand state.n) = conf.refsStart."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "heap_lookup_old_IMP",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "heapLookup_old",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared partial_lookup_old_statement_typed, including the arbitrary output suffix; the local HOL proof replay remains pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_lookup_old_IMP_typed with source lines 1584-1589: partial_gc, gen_inv, a data-element lookup at ptr and ptr < conf.genStart imply the same lookup in state.old ++ tail."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "heap_lookup_refs_IMP",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "heapLookup_refs",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared partial_lookup_refs_statement_typed, including the output prefix length and preserved object size and payload; the local HOL proof replay remains pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_lookup_refs_IMP_typed with source lines 1621-1630: partial_gc, gen_inv, the data-element lookup, the prefix-length equation and conf.refsStart <= ptr give a children1 with the same len/data at ptr in the extended heap."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_list_similar",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Similarity.lean",
   "lean_name": "gcMoveList_similar",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared partial_move_list_similar_statement_typed including the common state and configuration payload; the local HOL proof replay remains pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_list_similar_typed with source lines 2171-2173: a successful gcMoveList gives Forall2 (similarPtr conf) roots roots1."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_ref_list_similar",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Similarity.lean",
   "lean_name": "gcMoveRefList_similar",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared partial_move_refs_similar_statement_typed, preserving the independent reference payload and collector-state payload; the local HOL proof replay remains pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_ref_list_similar_typed with source lines 2185-2187: a successful gcMoveRefList gives Forall2 (similarData conf) refs refs1; the refs heap payload \u03b2 is independent of the state payload \u03b3 as in the reviewed gcMoveRefList carrier."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
@@ -3885,48 +3885,48 @@
   "hol_name": "heap_ok_simulation",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "heapOk_simulation",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared heap validity, generation segment and ordering premises, and translated heap validity with the source; inferred HOL types and local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared heap_ok_simulation_typed with source lines 1497-1505: heap_ok, the heap_segment split and both bounds imply heapOk (toGenHeapList conf current) (toGenConf conf).limit."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "MEM_to_gen_roots_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "mem_toGenRoots_pointerInv",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared the pointer origin, translation, and generation bounds with the source; inferred types and local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared MEM_to_gen_roots_IMP_MEM_typed with source lines 1403-1411: a pointer in toGenRoots comes from an original root with ptr = original - conf.genStart, value = .real originalValue and conf.genStart <= original < conf.refsStart."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "MEM_refs_to_roots_IMP_MEM",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "mem_refsToRoots_pointerInv",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared reference-object membership, pointer origin, translation, and bounds with the source; inferred types and local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared MEM_refs_to_roots_IMP_MEM_typed with source lines 1374-1382: a pointer in refsToRoots comes from a data element's children with the same offset, payload and bounds."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "isSomeDataElement_to_gen_heap_list",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "isSomeDataElement_toGenHeapList",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared the translated lookup data-element equivalence with the source; inferred types and local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared isSomeDataElement_to_gen_heap_list_typed with source lines 1353-1360: isSomeDataElement (heapLookup ptr (toGenHeapList conf heap)) iff isSomeDataElement (heapLookup ptr heap)."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "roots_ok_simulation",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "rootsOk_simulation",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared the root and heap validity, segment, ordering, and translated roots conclusion with the source; inferred types and local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared roots_ok_simulation_typed with source lines 1426-1434: roots_ok, heap_ok, the heap_segment split and conf.genStart <= conf.refsStart imply rootsOk (toGenRoots conf roots ++ refsToRoots conf refs) (toGenHeapList conf current)."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "partial_gc_simulation",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "partialGc_simulation",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared the source premises and conclusions, including generation segmentation, root validity, major collection, heap validity, and the final state and reference results. Inferred HOL types and local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared partial_gc_simulation_typed with source lines 1143-1159: the partial_gc and gen_gc runs, heap_gen_ok, both bounds, the heap_segment split, the no-reference and isDataElement EVERY premises, roots_ok, heap_ok and new_state.ok imply the translated roots, the translated state, sim_inv, state1.h2 = [] and state1.ok."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
@@ -3934,8 +3934,8 @@
   "hol_line": 1137,
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Accumulator.lean",
   "lean_name": "gcMoveData_r1",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared the scanned-reference equality against the HOL source; inferred types and local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_data_r1_1137_typed with source lines 1137-1139: (gcMoveData conf state).r1 = state.r1."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
@@ -3943,128 +3943,128 @@
   "hol_line": 1123,
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Forward.lean",
   "lean_name": "gcMoveRefList_heapLength",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared the reference traversal premise and heap-length equality against the HOL source; inferred types and local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_ref_list_heap_length_1123_typed with source lines 1123-1125: a successful gcMoveRefList preserves heapLength state.heap."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_data_h2",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Accumulator.lean",
   "lean_name": "gcMoveData_h2",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared the successful-scan premise and empty pending-data conclusion against the HOL source; inferred types and local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_data_h2_typed with source lines 1111-1114: a successful gcMoveData (ok) gives h2 = []."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_with_refs'",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Accumulator.lean",
   "lean_name": "gcMove_withRefsCleared",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared the reference-field update and root-move equality against the HOL source; inferred types and local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_with_refs'_typed with source lines 1053-1055: moving in the state with r2 := [] and r1 := refs equals moving in state and clearing the same fields afterwards."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_list_with_refs'",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Accumulator.lean",
   "lean_name": "gcMoveList_withRefsCleared",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared the reference-field update and root-list equality against the HOL source; inferred types and local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_list_with_refs'_typed with source lines 1074-1077: the same clearing equation for gcMoveList."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_data_with_refs'",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Accumulator.lean",
   "lean_name": "gcMoveData_withRefsCleared",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared the reference-field update and data-scan equality against the HOL source; inferred types and local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_data_with_refs'_typed with source lines 1098-1100: gcMoveData commutes with clearing r2 and r1."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_data_simulation",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "gcMoveData_simulation",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared the simulation invariant, pointer bound, source heap length, and successful major scan conclusion against the HOL source. Inferred HOL types and local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_data_simulation_typed with source lines 979-988: the partial run, sim_inv, the child pointer bound, the heap-length equation, the major gcMoveData run and its ok imply sim_inv after the move and the translated state equality."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_data_pres",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Conservation.lean",
   "lean_name": "gcMove_dataMem",
-  "statement_status": "pending_statement_review",
-  "reviewer": "The data-membership statement was compared with the source; inferred HOL types and the local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_data_pres_typed with source lines 941-943: a gcMove run preserves membership of a data element in heap ++ h2."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_list_data_pres",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Conservation.lean",
   "lean_name": "gcMoveList_dataMem",
-  "statement_status": "pending_statement_review",
-  "reviewer": "The data-membership statement was compared with the source; inferred HOL types and the local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_list_data_pres_typed with source lines 952-955: the same membership preservation for gcMoveList."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_ref_list_data_pres",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Conservation.lean",
   "lean_name": "gcMoveRefList_dataMem",
-  "statement_status": "pending_statement_review",
-  "reviewer": "The reference-list payload is independent of the state payload; inferred HOL types and the local proof replay remain to be checked."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_ref_list_data_pres_typed with source lines 965-968: the same membership preservation for gcMoveRefList, with the refs payload \u03b2 independent of the state payload \u03b3."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_ref_list_simulation",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "gcMoveRefList_simulation",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared the complete statement with partial_ref_list_simulation_statement_typed; the reference-element payload is independent of the state and configuration payload, and the bounds, data condition and protected-pointer subset are retained. The original theorem is local; a typed proof replay remains pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_ref_list_simulation_typed with source lines 810-825: the partial and major runs, ok, sim_inv, the child bound, the length equation and EVERY isDataElement imply sim_inv, the translated refs, the translated state and hasOldPtr preservation. Lean keeps the refs heap payload \u03b3 independent, the reviewed gcMoveRefList carrier; HOL's inferred instance is \u03b3 := \u03b2."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_list_simulation",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "gcMoveList_simulation",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared the complete premises and conclusions with partial_move_list_simulation_statement_typed, including independent address and payload types and protected-pointer subset. The HOL theorem is local; its typed proof replay remains pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_list_simulation_typed with source lines 725-737: the partial and major runs, sim_inv, the pointer bound, the length equation and ok imply sim_inv, the translated root list, the translated state and allOldPtrs preservation."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_simulation",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "gcMove_simulation_fresh",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Fresh data-object case compared with partial_move_simulation_statement_typed and the source proof. The original HOL theorem is local; a typed HOL proof replay remains pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Case piece of gc_move_simulation (source lines 461-605): a pointer inside the generation region whose heap entry is a data element, with the lower/upper/found case hypotheses and the same conclusion shape as the general theorem."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_simulation",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "gcMove_simulation",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Assembled all root and lookup cases compared with partial_move_simulation_statement_typed and the source proof. The original HOL theorem is local; a typed HOL proof replay remains pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared gc_move_simulation_typed with source lines 461-605: gcMove, the pointer bound, the heap-length equation, sim_inv, the major gcMove run and its ok imply sim_inv, the translated root/state pair and allOldPtrs [root1] subset allOldPtrs [root]. This is the exact general statement; the other four rows are its case pieces."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_simulation",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "gcMove_simulation_forward",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Forwarded current-generation pointer case compared with partial_move_simulation_statement_typed and the source proof; a typed replay of the local HOL theorem and assembly of all move cases remain pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Case piece of gc_move_simulation (source lines 461-605): a pointer inside the generation region whose heap entry is a forward pointer, with the lower/upper/found case hypotheses and the same conclusion shape."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_simulation",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "gcMove_simulation_data",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Data constructor case compared with partial_move_simulation_statement_typed and source case split. The original theorem is local; a typed HOL proof replay and assembled simulation remain pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Case piece of gc_move_simulation (source lines 461-605): the .data root case, with the same hypotheses (bounded and heapLengthEq retained unused) and the same conclusion shape."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
   "hol_name": "gc_move_simulation",
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "gcMove_simulation_protected",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Protected pointer branches (below the generation or at/above references) compared with partial_move_simulation_statement_typed and source case split. The original theorem is local; a typed HOL proof replay and assembled simulation remain pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Case piece of gc_move_simulation (source lines 461-605): a pointer outside the generation region, with the outside case hypothesis and the same conclusion shape."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
