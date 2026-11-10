@@ -24,6 +24,18 @@
   "reviewer": "Compared typed HOL capture every_fn_genlist_var_typed and independent review: binder order and both conjuncts match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_preserves_every_Fn_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "calls_preserves_everyFnLocationSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_preserves_every_fn_some_typed and independent review: binder order, grouped premise and conclusion match; proof covers closed and non-closed Fn and Letrec cases."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_SOME_cond_call_compile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallAddresses.lean", "lean_name": "everyFnLocationSome_condCallCompileInc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_fn_some_cond_call_typed and independent review: first-appearance order program, enabled, known and both distinct implication hypotheses match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "every_Fn_calls_list",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "everyFn_callsList",
   "statement_status": "reviewed_exact",

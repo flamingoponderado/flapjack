@@ -10,6 +10,30 @@ import Mathlib.Data.List.Perm.Subperm
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open ClosLang ClosProps
 
+/-- Optional direct-call conversion preserves locations in both the program
+    and its auxiliary code. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "every_Fn_SOME_cond_call_compile_inc"]
+theorem everyFnLocationSome_condCallCompileInc
+    (program : List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)) (enabled : Bool) (known : NumSet) :
+    (everyFnLocationSome program.1 →
+      everyFnLocationSome (ClosCall.condCallCompileInc enabled known program).2.1) ∧
+    (everyFnLocationSome program.1 ∧ everyFnLocationSome (program.2.map (fun p => p.2.2)) →
+      everyFnLocationSome ((ClosCall.condCallCompileInc enabled known program).2.2.map
+        (fun p => p.2.2))) := by
+  obtain ⟨exps, code⟩ := program
+  cases enabled with
+  | false => simp [ClosCall.condCallCompileInc]
+  | true =>
+    cases run : ClosCall.calls exps (known, []) with
+    | mk out final =>
+      have preserve : everyFnLocationSome exps →
+          everyFnLocationSome out ∧ everyFnLocationSome (final.2.map (fun p => p.2.2)) := by
+        intro h
+        apply ClosCall.calls_preserves_everyFnLocationSome exps (known, []) out final run
+        simpa [everyFnLocationSome] using h
+      simp only [ClosCall.condCallCompileInc, ↓reduceIte, ClosCall.compileInc, run]
+      exact ⟨fun h => (preserve h).1, fun h => (preserve h.1).2⟩
+
 private theorem calls_preserve_extract (xs : List ClosLang.Exp) (s : ClosCall.State)
     (extractable : canExtract xs) :
     extractedAddrs (ClosCall.calls xs s).1 = extractedAddrs xs ∧
