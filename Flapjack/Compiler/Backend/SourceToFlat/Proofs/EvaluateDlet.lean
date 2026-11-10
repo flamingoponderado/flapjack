@@ -183,39 +183,6 @@ theorem evaluateDlet_alias {C F : Type} (genv : GlobalEnv)
     · simp [compileDecs, simpleDlet, compiledLookup, FlatSem.evaluateDecs]
     · exact globalEnvInv_alias genv name idx nameTrace value stored bound slot related
 
-/-- A source-safe alias declaration satisfies the factored declaration
-simulation without assuming that its identifier lookup succeeds. This is a
-Flapjack case helper; HOL proves the alias case inside `compile_correct`. -/
-theorem evaluateDlet_alias_safe {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (genv : GlobalEnv) (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
-    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
-    (sourceEnv : SemEnv Value) (trace : List VarN) (n : Nat) (next : NextIndices)
-    (compMap : Environment) (gen : EnvironmentGenerationStore)
-    (location : Flapjack.Misc.Location.Locs) (name : VarN) (id : Ident ModN VarN)
-    (safe : ∀ nextState, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location (.pvar name) (.var id)] ≠
-      (nextState, .err (.abort .typeError)))
-    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
-    (invariant : OracleInvariant.factoredInvariant interp transform gen genv idxs source flat) :
-    ∃ value stored idx nameTrace,
-      EvaluateHOL.evaluateDecs source sourceEnv [.dlet location (.pvar name) (.var id)] =
-        (source, .val { v := nsSing name value, c := nsEmpty }) ∧
-      compileDecs trace n next compMap gen [.dlet location (.pvar name) (.var id)] =
-        (n, next, { v := nsSing name (.glob nameTrace idx), c := nsEmpty }, gen, []) ∧
-      FlatSem.evaluateDecs flat
-        (compileDecs trace n next compMap gen [.dlet location (.pvar name) (.var id)]).2.2.2.2 =
-        (flat, none) ∧ ValueRel genv value stored ∧
-      GlobalEnvInv genv { v := nsSing name (.glob nameTrace idx), c := nsEmpty }
-        (fun _ => False) { v := nsSing name value, c := nsEmpty } ∧
-      OracleInvariant.factoredInvariant interp transform gen genv idxs source flat ∧
-      GlobalGrowth genv genv ∧ idxPrev next next := by
-  obtain ⟨value, lookup⟩ := dlet_alias_lookup_of_safe source sourceEnv location name id safe
-  obtain ⟨stored, idx, nameTrace, sourceRun, compiled, flatRun, valueRel, _, newInv⟩ :=
-    evaluateDlet_alias genv source flat sourceEnv trace n next compMap gen location name id value
-      lookup envInv invariant.2.2.1
-  exact ⟨value, stored, idx, nameTrace, sourceRun, compiled, flatRun, valueRel, newInv, invariant,
-    GlobalGrowth.refl genv, idxPrev_refl next⟩
-
 /-- A successful flat expression and pattern match run the generated
 initializer as the body of the declaration's match expression. -/
 theorem evaluateDlet_pattern_flat_success {C F : Type}
@@ -469,28 +436,6 @@ def DletOutcome {C F : Type} [Nonempty C]
         match error with
         | .abort _ => True
         | .raise _ => factoredInvariant interp transform gen newGenv (start, finish, other) sourceResult.1 flatLast
-
-/-- A safe simple alias satisfies the factored declaration outcome. -/
-theorem evaluateDlet_alias_outcome {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
-    (trace : List VarN) (n : Nat) (compMap : Environment) (gen : EnvironmentGenerationStore)
-    (location : Flapjack.Misc.Location.Locs) (name : VarN) (id : Ident ModN VarN)
-    (safe : ∀ next, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location (.pvar name) (.var id)] ≠
-      (next, .err (.abort .typeError)))
-    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
-    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat) :
-    DletOutcome interp transform genv start finish other source flat sourceEnv trace n compMap gen
-      location (.pvar name) (.var id) := by
-  obtain ⟨value, stored, idx, nameTrace, sourceDec, compiled, flatDec, _, newEnv, _, growth, _⟩ :=
-    evaluateDlet_alias_safe interp transform genv (start, finish, other) source flat sourceEnv trace n start
-      compMap gen location name id safe envInv invariant
-  rw [compiled] at flatDec
-  unfold DletOutcome
-  rw [sourceDec, compiled]
-  exact ⟨flat, genv, none, flatDec, invariant.2.2.1, growth, rfl,
-    envDomainEq_alias name idx nameTrace value, newEnv, invariant⟩
 
 /-- Assemble the non-alias `Dlet` cases from the expression induction
 hypothesis. The hypothesis preserves the factored invariant for successful
@@ -897,10 +842,18 @@ theorem evaluateDlet_alias_growing {C F : Type} [Nonempty C]
       | .err (.abort _) => True
       | _ => envGenRel gen result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState := by
     simpa [EvaluateHOL.evaluate, lookup] using ⟨generation, oracForwardRel_refl interp source.evalState⟩
+  obtain ⟨_, idx, nameTrace, sourceDec, compiled, flatDec, _, states, newEnv⟩ :=
+    evaluateDlet_alias genv source flat sourceEnv trace n start compMap gen location name id value
+      lookup envInv invariant.2.2.1
+  have outcome : DletOutcome interp transform genv start finish other source flat sourceEnv trace n compMap gen
+      location (.pvar name) (.var id) := by
+    rw [compiled] at flatDec
+    unfold DletOutcome
+    rw [sourceDec, compiled]
+    exact ⟨flat, genv, none, flatDec, states, GlobalGrowth.refl genv, rfl,
+      envDomainEq_alias name idx nameTrace value, newEnv, invariant⟩
   exact DletOutcome.toGrowing interp transform genv genv start finish other source flat sourceEnv trace n compMap gen
-    location (.pvar name) (.var id) (GlobalGrowth.refl genv)
-    (evaluateDlet_alias_outcome interp transform genv start finish other source flat sourceEnv trace n compMap gen
-      location name id safe envInv invariant)
+    location (.pvar name) (.var id) (GlobalGrowth.refl genv) outcome
     (dlet_effects_of_expression interp gen source sourceEnv location (.pvar name) (.var id) effects)
 
 /-- The internal abort-sensitive `Dlet` outcome follows from the expression
