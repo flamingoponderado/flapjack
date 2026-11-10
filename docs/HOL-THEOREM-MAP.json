@@ -4232,8 +4232,8 @@
   "hol_name": "gen_gc_data_refs_split",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/GenerationalSplit.lean",
   "lean_name": "genGc_dataRefsSplit_source",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Compared source clauses and the independent address and payload parameters with gen_gc_data_refs_split_statement_typed. The probe parses the original statement with inferred types; replaying the local HOL proof remains pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Replayed the local gen_gc_data_refs_split statement with a typed Term quotation and captured the types of gen_gc, isRef and isDataElement. HOL: gen_gc : \u03b1 gen_gc_conf -> \u03b2 heap_address list # (\u03b2, \u03b1) heap_element list -> ...; isRef : (\u03b1, tag # \u03b2) heap_element -> bool; isDataElement : (\u03b1, \u03b2) heap_element -> bool, which with \u03b1 = tag # \u03b2 are Lean's GenGc.Config (HeapTag \u00d7 \u03b2), List (HeapAddress \u03b1), List (HeapElement \u03b1 (HeapTag \u00d7 \u03b2)) and GcState \u03b1 (HeapTag \u00d7 \u03b2). The two HOL hypotheses are carried as one conjunction; EVERY becomes List.Forall because isRef/isDataElement are the tagged Prop-valued renderings of HOL's bool-valued definitions, and the h1++h2 and r1++r2++r3++r4 segments match."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
