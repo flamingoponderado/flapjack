@@ -25,8 +25,16 @@ def compileInc {α : Type} (c : Config) (g : Spt ValApprox) (program : List Exp 
   let (eas, next) := knownListTotal (resetInlineFactor c) program.1 [] g
   (next, eas.map Prod.fst, program.2)
 
-/-- Apply the source closure optimizer, including its disabled case. -/
+/-- Apply the original source closure optimizer, including its disabled case. -/
 @[hol "cakeml/compiler/backend/clos_knownScript.sml" "compile_def"]
+noncomputable def compileSource : Option Config → List Exp → Option Config × List Exp
+  | none, es => (none, es)
+  | some c, es =>
+      let (eas, globals) := knownListTotal c (ClosFvs.compile es) [] .ln
+      (some { c with valApproxSpt := globals },
+        ClosLetop.compileSource (ClosTicks.removeSource (eas.map Prod.fst)))
+
+/-- The executable closure optimizer uses the equivalent total traversals. -/
 def compile : Option Config → List Exp → Option Config × List Exp
   | none, es => (none, es)
   | some c, es =>
@@ -34,14 +42,31 @@ def compile : Option Config → List Exp → Option Config × List Exp
       (some { c with valApproxSpt := globals },
         ClosLetop.compileList (ClosTicks.removeList (eas.map Prod.fst)))
 
+/-- The executed closure optimizer agrees with the original source pass. -/
+@[simp] theorem compileSource_eq_compile (config : Option Config) (es : List Exp) :
+    compileSource config es = compile config es := by
+  cases config <;> simp [compileSource, compile]
+
 /-- Prepare the static settings for incremental known-function optimization. -/
 @[hol "cakeml/compiler/backend/clos_knownScript.sml" "known_static_conf_def"]
 def knownStaticConf : Option Config → Option Config
   | none => none
   | some c => some { resetInlineFactor c with valApproxSpt := .ln }
 
-/-- Run the original incremental optimizer and thread its approximation tree. -/
+/-- The original incremental optimizer threads its approximation tree. -/
 @[hol "cakeml/compiler/backend/clos_knownScript.sml" "known_compile_inc_def"]
+noncomputable def knownCompileIncSource {α : Type} (config : Option Config) (globals : Spt ValApprox)
+    (program : List Exp × List α) : Spt ValApprox × (List Exp × List α) :=
+  match config with
+  | none => (globals, program)
+  | some c =>
+      let p : List Exp × List (Nat × Nat × Exp) := ClosFvs.compileInc program
+      let (globals, es, aux) := compileInc c globals p
+      let p : List Exp × List (Nat × Nat × Exp) := ClosTicks.compileIncSource (es, aux)
+      let p : List Exp × List α := ClosLetop.compileIncSource p
+      (globals, p)
+
+/-- The executable incremental optimizer uses equivalent total traversals. -/
 def knownCompileInc {α : Type} (config : Option Config) (globals : Spt ValApprox)
     (program : List Exp × List α) : Spt ValApprox × (List Exp × List α) :=
   match config with
@@ -52,6 +77,12 @@ def knownCompileInc {α : Type} (config : Option Config) (globals : Spt ValAppro
       let p : List Exp × List (Nat × Nat × Exp) := ClosTicks.compileInc (es, aux)
       let p : List Exp × List α := ClosLetop.compileInc p
       (globals, p)
+
+/-- Source and executable incremental optimization agree. -/
+@[simp] theorem knownCompileIncSource_eq {α : Type} (config : Option Config)
+    (globals : Spt ValApprox) (program : List Exp × List α) :
+    knownCompileIncSource config globals program = knownCompileInc config globals program := by
+  cases config <;> simp [knownCompileIncSource, knownCompileInc]
 
 /-- Apply free-variable cleanup, approximation, tick removal and let-op cleanup. -/
 def compileFuel (fuel : Nat) (config : Option Config) (es : List Exp) : Option (Option Config × List Exp) := do

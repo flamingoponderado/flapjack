@@ -47,16 +47,16 @@ theorem known_nil (b : List ClosLang.Exp) (a : ClosKnown.Config)
 /-- Tick removal preserves emptiness of its expression list. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "remove_ticks_nil"]
 theorem removeTicks_nil (xs : List ClosLang.Exp) :
-    (xs = [] → ClosTicks.removeList xs = []) ∧
-    (xs ≠ [] → ClosTicks.removeList xs ≠ []) := by
-  exact empty_of_length xs _ (ClosTicks.removeList_length xs)
+    (xs = [] → ClosTicks.removeSource xs = []) ∧
+    (xs ≠ [] → ClosTicks.removeSource xs ≠ []) := by
+  exact empty_of_length xs _ (ClosTicks.removeSource_length xs)
 
 /-- Let-operation cleanup preserves emptiness of its expression list. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "let_op_nil"]
 theorem letOp_nil (xs : List ClosLang.Exp) :
-    (xs = [] → ClosLetop.compileList xs = []) ∧
-    (xs ≠ [] → ClosLetop.compileList xs ≠ []) := by
-  exact empty_of_length xs _ (ClosLetop.compileList_length xs)
+    (xs = [] → ClosLetop.compileSource xs = []) ∧
+    (xs ≠ [] → ClosLetop.compileSource xs ≠ []) := by
+  exact empty_of_length xs _ (ClosLetop.compileSource_length xs)
 
 /-- Annotation preserves emptiness of its expression list. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "annotate_nil"]

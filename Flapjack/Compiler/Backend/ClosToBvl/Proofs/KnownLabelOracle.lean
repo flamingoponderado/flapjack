@@ -30,15 +30,15 @@ theorem knownOpConst (c : ClosKnown.Config) (trace : BackendCommon.Tra) (n : Nat
 /-- Tick removal leaves a leading nonnegative integer entry marker unchanged. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "remove_ticks_Op_Const"]
 theorem removeTicks_opConst (trace : BackendCommon.Tra) (n : Nat) (xs : List ClosLang.Exp) :
-    ClosTicks.removeList (.op trace (.intOp (.const (Int.ofNat n))) [] :: xs) =
-      .op trace (.intOp (.const (Int.ofNat n))) [] :: ClosTicks.removeList xs := by
-  rfl
+    ClosTicks.removeSource (.op trace (.intOp (.const (Int.ofNat n))) [] :: xs) =
+      .op trace (.intOp (.const (Int.ofNat n))) [] :: ClosTicks.removeSource xs := by
+  simp [ClosTicks.removeList, ClosTicks.removeSing]
 
 /-- Let-operation cleanup leaves a leading nonnegative integer entry marker unchanged. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "let_op_Op_Const"]
 theorem letOp_opConst (trace : BackendCommon.Tra) (n : Nat) (xs : List ClosLang.Exp) :
-    ClosLetop.compileList (.op trace (.intOp (.const (Int.ofNat n))) [] :: xs) =
-      .op trace (.intOp (.const (Int.ofNat n))) [] :: ClosLetop.compileList xs := by
-  rfl
+    ClosLetop.compileSource (.op trace (.intOp (.const (Int.ofNat n))) [] :: xs) =
+      .op trace (.intOp (.const (Int.ofNat n))) [] :: ClosLetop.compileSource xs := by
+  simp [ClosLetop.compileList, ClosLetop.compileSing]
 
 end Flapjack.Compiler.Backend.ClosToBvl

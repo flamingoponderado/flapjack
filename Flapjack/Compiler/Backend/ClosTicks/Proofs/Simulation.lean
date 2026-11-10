@@ -233,12 +233,12 @@ theorem evaluate_remove_ticks {C F : Type} :
 theorem remove_ticks_correct {C F : Type} (xs : List ClosLang.Exp) (envTarget : List Value)
     (target : State C F) (result : Result (List Value) Value) (next : State C F)
     (envSource : List Value) (source : State C F)
-    (premises : evaluate (removeList xs) envTarget target = (result, next) ∧
+    (premises : evaluate (removeSource xs) envTarget target = (result, next) ∧
       List.Forall₂ ValueRel envSource envTarget ∧ StateRel source target) :
     ∃ extra sourceResult sourceNext,
       evaluate xs envSource { source with clock := source.clock + extra } = (sourceResult, sourceNext) ∧
       ResultRel sourceResult result ∧ StateRel sourceNext next := by
-  exact evaluate_remove_ticks.1 (removeList xs) envTarget target result next envSource source xs
+  exact evaluate_remove_ticks.1 (removeSource xs) envTarget target result next envSource source xs
     ⟨premises.1, premises.2.1, premises.2.2, rfl⟩
 end SimulationPort
 

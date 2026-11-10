@@ -20,7 +20,7 @@ def mkTicks : List BackendCommon.Tra → ClosLang.Exp → ClosLang.Exp
 /-- Tick removal ignores a sequence of leading ticks. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_mk_Ticks"]
 theorem remove_ticks_mk_Ticks (traces : List BackendCommon.Tra) (expression : ClosLang.Exp) :
-    removeList [mkTicks traces expression] = removeList [expression] := by
+    removeSource [mkTicks traces expression] = removeSource [expression] := by
   induction traces with
   | nil => rfl
   | cons trace rest ih => simpa [mkTicks, removeList, removeSing] using ih
@@ -29,11 +29,11 @@ theorem remove_ticks_mk_Ticks (traces : List BackendCommon.Tra) (expression : Cl
 preceded by zero or more ticks. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_Var_IMP_mk_Ticks"]
 theorem remove_ticks_Var_IMP_mk_Ticks (expression : ClosLang.Exp) (trace : BackendCommon.Tra)
-    (index : Nat) (removed : [ClosLang.Exp.var trace index] = removeList [expression]) :
+    (index : Nat) (removed : [ClosLang.Exp.var trace index] = removeSource [expression]) :
     ∃ traces, expression = mkTicks traces (.var trace index) := by
   cases expression
   case tick outer body =>
-    have bodyRemoved : [ClosLang.Exp.var trace index] = removeList [body] := by
+    have bodyRemoved : [ClosLang.Exp.var trace index] = removeSource [body] := by
       simpa [removeList, removeSing] using removed
     obtain ⟨traces, equal⟩ := remove_ticks_Var_IMP_mk_Ticks body trace index bodyRemoved
     exact ⟨outer :: traces, by simp [mkTicks, equal]⟩
@@ -137,7 +137,8 @@ theorem evaluate_remove_ticks_var {C F : Type} (trace : BackendCommon.Tra) (inde
       | nil => exact ⟨first, rfl⟩
       | cons second rest => simp at length
   obtain ⟨expression, rfl⟩ := singleton
-  have removed : [ClosLang.Exp.var trace index] = removeList [expression] := code
+  have removed : [ClosLang.Exp.var trace index] = removeSource [expression] := by
+    simpa [CodeRel] using code
   obtain ⟨traces, rfl⟩ := remove_ticks_Var_IMP_mk_Ticks expression trace index removed
   have lookup := environment_lookup envSource envTarget envRel index
   have restored : decClock traces.length { source with clock := source.clock + traces.length } = source := by

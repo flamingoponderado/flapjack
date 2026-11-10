@@ -15,13 +15,13 @@ instance evaluateAppInst1 : Nonempty ClosLang.Exp := ⟨.var .none 0⟩
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_App_IMP_mk_Ticks"]
 theorem remove_ticks_App_IMP_mk_Ticks (expression : ClosLang.Exp) (trace : BackendCommon.Tra)
     (location : Option Nat) (function : ClosLang.Exp) (args : List ClosLang.Exp)
-    (removed : [ClosLang.Exp.app trace location function args] = removeList [expression]) :
+    (removed : [ClosLang.Exp.app trace location function args] = removeSource [expression]) :
     ∃ traces sourceFunction sourceArgs,
       expression = mkTicks traces (.app trace location sourceFunction sourceArgs) ∧
-      function = Flapjack.holHd (removeList [sourceFunction]) ∧ args = removeList sourceArgs := by
+      function = Flapjack.holHd (removeSource [sourceFunction]) ∧ args = removeSource sourceArgs := by
   cases expression
   case tick outer inner =>
-    have innerRemoved : [ClosLang.Exp.app trace location function args] = removeList [inner] := by
+    have innerRemoved : [ClosLang.Exp.app trace location function args] = removeSource [inner] := by
       simpa [removeList, removeSing] using removed
     obtain ⟨traces, sourceFunction, sourceArgs, equal, functionEqual, argsEqual⟩ :=
       remove_ticks_App_IMP_mk_Ticks inner trace location function args innerRemoved
@@ -29,7 +29,7 @@ theorem remove_ticks_App_IMP_mk_Ticks (expression : ClosLang.Exp) (trace : Backe
   case app actualTrace actualLocation sourceFunction sourceArgs =>
     simp [removeList, removeSing] at removed
     obtain ⟨rfl, rfl, rfl, rfl⟩ := removed
-    exact ⟨[], sourceFunction, sourceArgs, rfl, by simp [removeList, Flapjack.holHd], rfl⟩
+    exact ⟨[], sourceFunction, sourceArgs, rfl, by simp [removeList, Flapjack.holHd], by simp⟩
   all_goals simp [removeList, removeSing] at removed
 termination_by sizeOf expression
 
@@ -94,7 +94,7 @@ theorem evaluate_remove_ticks_app {C F : Type} (trace : BackendCommon.Tra)
   obtain ⟨expression, rfl⟩ := singleton
   obtain ⟨traces, sourceFunction, sourceArgs, rfl, functionCode, argsCode⟩ :=
     remove_ticks_App_IMP_mk_Ticks expression trace location function args code
-  simp only [removeList, Flapjack.holHd] at functionCode
+  simp only [removeSource_eq_list, removeList, Flapjack.holHd] at functionCode
   have wrapped (extra : Nat) : evaluate [mkTicks traces (.app trace location sourceFunction sourceArgs)] envSource
       { source with clock := source.clock + (extra + traces.length) } =
       evaluate [.app trace location sourceFunction sourceArgs] envSource { source with clock := source.clock + extra } := by

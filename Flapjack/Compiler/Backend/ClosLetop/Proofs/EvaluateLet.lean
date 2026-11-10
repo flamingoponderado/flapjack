@@ -60,12 +60,13 @@ theorem evaluate_let_op_let {C F : Type} (trace : BackendCommon.Tra)
   obtain ⟨run, envRel, states, code⟩ := premises
   have codeEq : targetCode = [compileSing (.let trace bindings body)] := by
     simpa [CodeRel, compileList] using code
+  clear code
   subst targetCode
   cases bindingsRun : evaluate bindings envSource source with
   | mk bindingsResult sourceMiddle =>
     obtain ⟨targetResult, targetMiddle, targetRun, related, middleRel⟩ :=
       bindingsIH bindingsResult sourceMiddle envTarget target (compileList bindings)
-        ⟨bindingsRun, envRel, states, rfl⟩
+        ⟨bindingsRun, envRel, states, by simp [CodeRel]⟩
     cases bindingsResult with
     | err error =>
       rw [evaluate, fixClock_evaluate, bindingsRun] at run

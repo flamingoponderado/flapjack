@@ -25,9 +25,7 @@ theorem initialState_related {C F : Type} (ffi : HolFfiState F) (maxApp clock : 
   simp [StateRel, initialState, Flapjack.optionRel, HolFiniteMapExact.empty, auxEmpty, positive]
 
 /-- Tick removal preserves the original whole-program observations. -/
-@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "semantics_remove_ticks"
-  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty])]
-theorem semantics_remove_ticks {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
+theorem semantics_remove_ticks_core {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
     (oracle : CompileOracle C) (compiler : Compiler C) (program : List ClosLang.Exp)
     (notFail : semantics ffi maxApp HolFiniteMapExact.holEmpty oracle (pureCc compileInc compiler) program ≠ .fail)
     (assumptions : (∀ index, (oracle index).2.2 = []) ∧ 1 ≤ maxApp) :
@@ -46,7 +44,7 @@ theorem semantics_remove_ticks {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
     intro clock result final run
     obtain ⟨extra, sourceResult, sourceFinal, sourceRun, resultRel, stateRel⟩ :=
       SimulationPort.remove_ticks_correct program [] (targetState clock) result final [] (sourceState clock)
-        ⟨run, .nil, initialState_related ffi maxApp clock oracle compiler assumptions.1 assumptions.2⟩
+        ⟨by simpa using run, .nil, initialState_related ffi maxApp clock oracle compiler assumptions.1 assumptions.2⟩
     refine ⟨extra, sourceResult, sourceFinal, ?_, resultRel, stateRel.2.2.2.2.2.2.1.symm⟩
     simpa [sourceState, initialState] using sourceRun
   have targetSafe : ∀ clock, (evaluate (removeList program) [] (targetState clock)).1 ≠ .err (.abort .typeError) := by
@@ -112,5 +110,17 @@ theorem semantics_remove_ticks {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
       (pureCo compileInc ∘ oracle) compiler clock)).1 = .err (.abort .typeError) from
       fun ⟨clock, error⟩ => targetSafe clock error, if_false]
   rw [terminatingEq, ← tracesEq]
+
+/-- Tick removal preserves the original whole-program observations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "semantics_remove_ticks"
+  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty])]
+theorem semantics_remove_ticks {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
+    (oracle : CompileOracle C) (compiler : Compiler C) (program : List ClosLang.Exp)
+    (notFail : semantics ffi maxApp HolFiniteMapExact.holEmpty oracle (pureCc compileIncSource compiler) program ≠ .fail)
+    (assumptions : (∀ index, (oracle index).2.2 = []) ∧ 1 ≤ maxApp) :
+    semantics ffi maxApp HolFiniteMapExact.holEmpty oracle (pureCc compileIncSource compiler) program =
+      semantics ffi maxApp HolFiniteMapExact.holEmpty (pureCo compileIncSource ∘ oracle) compiler (removeSource program) := by
+  simpa [compileIncSource_eq] using
+    semantics_remove_ticks_core ffi maxApp oracle compiler program (by simpa [compileIncSource_eq] using notFail) assumptions
 
 end Flapjack.Compiler.Backend.ClosTicks

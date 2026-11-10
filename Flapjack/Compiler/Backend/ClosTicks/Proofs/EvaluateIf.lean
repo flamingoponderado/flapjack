@@ -16,14 +16,14 @@ instance evaluateIfInst1 : Nonempty ClosLang.Exp := ⟨.var .none 0⟩
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_If_IMP_mk_Ticks"]
 theorem remove_ticks_If_IMP_mk_Ticks (expression : ClosLang.Exp) (trace : BackendCommon.Tra)
     (condition yes no : ClosLang.Exp)
-    (removed : [ClosLang.Exp.ifThenElse trace condition yes no] = removeList [expression]) :
+    (removed : [ClosLang.Exp.ifThenElse trace condition yes no] = removeSource [expression]) :
     ∃ traces sourceCondition sourceYes sourceNo,
       expression = mkTicks traces (.ifThenElse trace sourceCondition sourceYes sourceNo) ∧
-      condition = Flapjack.holHd (removeList [sourceCondition]) ∧
-      yes = Flapjack.holHd (removeList [sourceYes]) ∧ no = Flapjack.holHd (removeList [sourceNo]) := by
+      condition = Flapjack.holHd (removeSource [sourceCondition]) ∧
+      yes = Flapjack.holHd (removeSource [sourceYes]) ∧ no = Flapjack.holHd (removeSource [sourceNo]) := by
   cases expression
   case tick outer inner =>
-    have innerRemoved : [ClosLang.Exp.ifThenElse trace condition yes no] = removeList [inner] := by
+    have innerRemoved : [ClosLang.Exp.ifThenElse trace condition yes no] = removeSource [inner] := by
       simpa [removeList, removeSing] using removed
     obtain ⟨traces, sourceCondition, sourceYes, sourceNo, equal, condEqual, yesEqual, noEqual⟩ :=
       remove_ticks_If_IMP_mk_Ticks inner trace condition yes no innerRemoved
@@ -111,7 +111,7 @@ theorem evaluate_remove_ticks_if {C F : Type} (trace : BackendCommon.Tra)
   obtain ⟨expression, rfl⟩ := singleton
   obtain ⟨traces, sourceCondition, sourceYes, sourceNo, rfl, condCode, yesCode, noCode⟩ :=
     remove_ticks_If_IMP_mk_Ticks expression trace condition yes no code
-  simp only [removeList, Flapjack.holHd] at condCode yesCode noCode
+  simp only [removeSource_eq_list, removeList, Flapjack.holHd] at condCode yesCode noCode
   have wrapped (extra : Nat) : evaluate [mkTicks traces (.ifThenElse trace sourceCondition sourceYes sourceNo)] envSource
       { source with clock := source.clock + (extra + traces.length) } =
       evaluate [.ifThenElse trace sourceCondition sourceYes sourceNo] envSource { source with clock := source.clock + extra } := by

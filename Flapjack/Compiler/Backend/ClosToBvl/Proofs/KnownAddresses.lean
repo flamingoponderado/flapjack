@@ -100,7 +100,12 @@ private theorem knownPipeline_properties (c : ClosKnown.Config) (g : Spt ValAppr
       rw [knownRun]
       change ClosLetop.compileList (ClosTicks.removeList
         (.op tr (.intOp (.const (Int.ofNat n))) [] :: eas.map Prod.fst)) = _
-      rw [removeTicks_opConst, letOp_opConst]
+      have ticks := removeTicks_opConst tr n (eas.map Prod.fst)
+      simp only [ClosTicks.removeSource_eq_list] at ticks
+      rw [ticks]
+      have letop := letOp_opConst tr n (ClosTicks.removeList (eas.map Prod.fst))
+      simp only [ClosLetop.compileSource_eq_list] at letop
+      exact letop
     have locs := TraversalCodeBag.knownCodeLocationsBag cf (ClosFvs.compile (marker :: rest))
       [] g ((marker, .int (Int.ofNat n)) :: eas) next knownRun
     have subLoc : List.Subperm (codeLocations (knownPipeline c g (marker :: rest)))
@@ -146,6 +151,7 @@ theorem knownCo_req {C : Type} (orac : ClosSem.CompileOracle (Spt ValApprox × C
     have output : (knownCo (some c) orac n).2 =
         (knownPipeline c (orac n).1.1 (orac n).2.1, []) := by
       simp only [knownCo, Function.comp_apply, pureCo, stateCo, ClosFvs.compileInc,
+        ClosTicks.compileIncSource_eq, ClosLetop.compileIncSource_eq,
         ClosTicks.compileInc, ClosLetop.compileInc, ClosKnown.compileInc, knownPipeline]
     have properties := knownPipeline_properties c (orac n).1.1 (orac n).2.1 extract
     have sub := req_subperm_of_locations (orac n).2.1
