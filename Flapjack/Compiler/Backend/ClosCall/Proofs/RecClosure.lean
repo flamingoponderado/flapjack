@@ -2,7 +2,6 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
-public import Mathlib.Data.Set.Disjoint
 
 @[expose] public section
 
@@ -18,8 +17,8 @@ each function pair is polymorphic, as in the original declaration. -/
 def recClosureWellFormed {A : Type} (loc : Nat) (fns : List (A × Exp)) : Prop :=
   everyFnLocationSome (fns.map Prod.snd) ∧
     everyFnVarsNone (fns.map Prod.snd) ∧
-    Disjoint { n | n ∈ (List.range fns.length).map (fun i => 2 * i + loc) }
-      { n | n ∈ codeLocations (fns.map Prod.snd) } ∧
+    (∀ n, ¬ (n ∈ (List.range fns.length).map (fun i => 2 * i + loc) ∧
+      n ∈ codeLocations (fns.map Prod.snd))) ∧
     (codeLocations (fns.map Prod.snd)).Nodup
 
 end Flapjack.Compiler.Backend.ClosCall

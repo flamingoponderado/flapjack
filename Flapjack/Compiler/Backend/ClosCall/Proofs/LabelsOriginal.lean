@@ -32,14 +32,15 @@ the source location and disjointness conditions. -/
 theorem calls_allDistinct (xs : List Exp) (initial : State) (ys : List Exp)
     (final : State) (h : calls xs initial = (ys, final) ∧
       (initial.2.map Prod.fst).Nodup ∧ (codeLocations xs).Nodup ∧
-      Disjoint (Nat.succ '' {x | x ∈ codeLocations xs}) {x | x ∈ initial.2.map Prod.fst}) :
+      (∀ label, ¬ (label ∈ Nat.succ '' {x | x ∈ codeLocations xs} ∧
+        label ∈ initial.2.map Prod.fst))) :
     (final.2.map Prod.fst).Nodup := by
   have bounded := callsListBounded_correct 0 xs initial
   have run : callsSingList xs initial = (ys, final) := h.1
   rw [run] at bounded
   apply callsListBounded_labelsDistinct 0 xs initial final ys bounded h.2.2.1 ?_ h.2.1
   intro loc locMem labelMem
-  apply (Set.disjoint_left.mp h.2.2.2) (show Nat.succ loc ∈ Nat.succ '' {x | x ∈ codeLocations xs} from
-    ⟨loc, locMem, rfl⟩) (by simpa [Nat.succ_eq_add_one] using labelMem)
+  apply h.2.2.2 (Nat.succ loc)
+  exact ⟨⟨loc, locMem, rfl⟩, by simpa [Nat.succ_eq_add_one] using labelMem⟩
 
 end Flapjack.Compiler.Backend.ClosCall

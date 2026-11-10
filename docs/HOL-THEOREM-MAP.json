@@ -703,7 +703,7 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_ALL_DISTINCT",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LabelsOriginal.lean", "lean_name": "calls_allDistinct",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared calls_ALL_DISTINCT_typed and independent review: quantified binders, grouped equation, distinctness and ordered disjointness premises, and final label distinctness agree."
+  "reviewer": "Compared calls_ALL_DISTINCT_typed and source: quantified binders, grouped equation and distinctness premises, pointwise ordered disjointness, and final label distinctness agree."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "annotate_compile_inc_req",
@@ -127692,7 +127692,7 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/RecClosure.lean",
   "lean_name": "recClosureWellFormed",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared source lines 254-259 and inferred polymorphic statement in clos_call_wfg_probe.out: the function-pair first component is independently polymorphic, both annotation predicates use mapped bodies, and group-range disjointness and code-location distinctness retain their original sets and order. Lean checks the helper proofs; source comparison does not establish cross-language equivalence."
+  "reviewer": "Compared source lines 254-259 and inferred polymorphic statement in clos_call_wfg_probe.out: the function-pair first component is independently polymorphic, both annotation predicates use mapped bodies, and pointwise group-range disjointness and code-location distinctness retain their original sets and order. Lean checks the helper proofs; source comparison does not establish cross-language equivalence."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml",
