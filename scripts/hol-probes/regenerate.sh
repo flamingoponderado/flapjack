@@ -9509,3 +9509,8 @@ run_probe gram_valid_sym_probeScript.sml gram_valid_sym_probe.out \
   valid_mult_sym_def_typed valid_add_sym_def_typed valid_rel_sym_def_typed valid_list_sym_def_typed valid_prefix_sym_def_typed \
   "$cake_dir/semantics/gramScript.sml" \
   "$cake_dir/semantics"
+
+run_probe bvl_handle_proof_shape_probeScript.sml bvl_handle_proof_shape_probe.out \
+  IS_SOME_lookup_db_to_set_typed handle_ok_SmartLet_typed bVarBound_MEM_typed bVarBound_LESS_EQ_typed bVarBound_LetLet_typed \
+  "$cake_dir/compiler/backend/proofs/bvl_handleProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

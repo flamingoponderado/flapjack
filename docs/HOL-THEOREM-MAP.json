@@ -127844,40 +127844,40 @@
   "hol_name": "IS_SOME_lookup_db_to_set",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/EnvRel.lean",
   "lean_name": "isSomeLookupDbToSet",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvl_handle_proof_shape_probe capture (`\u2200n. IS_SOME (lookup n (db_to_set l)) \u21d4 has_var n l`) with isSomeLookupDbToSet : (sptLookup n (dbToSet live)).isSome = hasVar n live; HOL's stored theorem is the iff between the IS_SOME test and has_var, and Lean's Bool equality of isSome with hasVar is the same statement. dbToSet, hasVar and DbVarSet are the reviewed ports."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml",
   "hol_name": "handle_ok_SmartLet",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/GeneratedShape.lean",
   "lean_name": "handleOk_smartLet",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvl_handle_proof_shape_probe capture (`handle_ok [SmartLet xs x] \u21d4 handle_ok xs \u2227 handle_ok [x]`) with handleOk_smartLet : handleOk [smartLet bindings body] \u2194 handleOk bindings \u2227 handleOk [body]; handleOk and smartLet are the reviewed handle_ok_def and SmartLet_def ports."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml",
   "hol_name": "bVarBound_MEM",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/VarBound.lean",
   "lean_name": "bVarBound_every",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvl_handle_proof_shape_probe capture (`bVarBound n xs \u21d4 \u2200x. MEM x xs \u21d2 bVarBound n [x]`) with bVarBound_every : bVarBound n expressions \u2194 \u2200 expression \u2208 expressions, bVarBound n [expression]; bVarBound is the reviewed bVarBound_def port."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml",
   "hol_name": "bVarBound_LetLet",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/VarBound.lean",
   "lean_name": "bVarBound_letLet_numSet",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvl_handle_proof_shape_probe capture (`bVarBound m [y] \u2227 n \u2264 m \u21d2 bVarBound m [LetLet n l1 y]`, with l1 : sptree$num_set) with bVarBound_letLet_numSet (n m) (live : NumSet) (body) (bodyBound : bVarBound m [body]) (envBound : n \u2264 m) : bVarBound m [letLet n live body]; letLet and NumSet are the reviewed LetLet_def and num_set ports."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml",
   "hol_name": "bVarBound_LESS_EQ",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/VarBound.lean",
   "lean_name": "bVarBound_mono",
-  "statement_status": "pending_statement_review",
-  "reviewer": "Tag present; typed capture and statement review pending."
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independently compared the typed bvl_handle_proof_shape_probe capture (`\u2200m xs n. bVarBound m xs \u2227 m \u2264 n \u21d2 bVarBound n xs`) with bVarBound_mono (expressions) (n m) (le : n \u2264 m) (bound : bVarBound n expressions) : bVarBound m expressions; only the bound-variable names differ, and both state monotonicity in the environment size."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
