@@ -118519,8 +118519,8 @@
     "lean_name": "basis",
     "hol_path": "cakeml/basis/basisProgScript.sml",
     "hol_name": "basis_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Generated from the pinned full HOL basis AST capture; complete source, generator, and carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed basis_def capture: basis : dec list with LENGTH 96. The Lean basis is machine-generated constructor-for-constructor from the captured rhs by scripts/generate-cake-basis.py, and generate-cake-basis.py --check reproduces the committed file from the capture; Dec is the tagged port of HOL's dec (AstHOL/Syntax.lean)."
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
