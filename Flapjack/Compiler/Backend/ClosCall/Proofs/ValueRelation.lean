@@ -570,4 +570,26 @@ theorem valueRel_simple (g : State) (allowed : Nat → Prop)
   · intro index fns env args loc x related
     cases x <;> simp_all [valueRel, ClosProps.isClos]
 
+/-- Canonical code-map codec for Boolean value correspondence. -/
+theorem holFmapAsFiniteSupportParamWitness_valueRel_bool_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code code key
+
+/-- A Boolean value is related exactly to the same Boolean value. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "v_rel_Boolv"
+  (fmap_as_finite_support_parameters := [code])]
+theorem valueRel_bool (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (b : Bool) (v : Value) :
+    valueRel g allowed code (boolValue b) v ↔ v = boolValue b := by
+  simp only [boolValue, (valueRel_sourceEquations g allowed code).1]
+  constructor
+  · rintro ⟨ys, eq, related⟩
+    cases related
+    exact eq
+  · intro eq
+    exact ⟨[], eq, .nil⟩
+
 end Flapjack.Compiler.Backend.ClosCall

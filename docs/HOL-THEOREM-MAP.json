@@ -1,5 +1,18 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfg'_insert_each",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Wellformed.lean", "lean_name": "weaklyWellFormed_insertEach",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_call_wfg_insert_each_typed: count, state and location are quantified in order, with an independent polymorphic payload; the source well-formedness premise implies the same invariant after insertion."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_rel_Boolv",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "valueRel_bool",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Source comparison: compared clos_call_v_rel_Boolv_typed: free state, allowed set, code, Boolean and value retain first-occurrence order; the value relation is equivalent to equality with the identical Boolean value. The code map uses canonical finite support."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "domain_FST_insert_each",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertDomain.lean", "lean_name": "domain_insertEach",
   "statement_status": "reviewed_exact",

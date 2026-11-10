@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeList
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.InsertDomain
 
 @[expose] public section
 
@@ -42,5 +43,26 @@ theorem weaklyWellFormed_codeListSource {A B C : Type} (fns : List (A × B))
     · omega
   · apply well
     simpa only [Set.mem_ofPred_eq, List.mem_map] using old
+
+/-- Adding known locations preserves the one-sided code invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "wfg'_insert_each"]
+theorem weaklyWellFormed_insertEach {A : Type} (n : Nat) (g : NumSet × List (Nat × A))
+    (loc : Nat) (h : weaklyWellFormed g) : weaklyWellFormed (insertEachSource loc n g) := by
+  have samePayload : ∀ (count pos : Nat) (state : NumSet × List (Nat × A)),
+      (insertEachSource pos count state).2 = state.2 := by
+    intro count
+    induction count with
+    | zero => intro pos state; rfl
+    | succ count ih =>
+      intro pos state
+      cases state with
+      | mk known payload => exact ih (pos + 2) (sptInsert pos () known, payload)
+  unfold weaklyWellFormed at h ⊢
+  rw [samePayload]
+  intro label member
+  obtain ⟨x, domain, eq⟩ := h member
+  refine ⟨x, ?_, eq⟩
+  rw [domain_insertEach]
+  exact Or.inr domain
 
 end Flapjack.Compiler.Backend.ClosCall
