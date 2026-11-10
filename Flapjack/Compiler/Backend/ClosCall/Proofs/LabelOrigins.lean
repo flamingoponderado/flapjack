@@ -56,7 +56,7 @@ mutual
 /-- Every label emitted by a successful expression traversal originates in
 the incoming code or at an input closure location. The fuel condition makes
 this an executable-pass invariant rather than an exact HOL theorem port. -/
-theorem callsFuel_labelsBound (fuel : Nat) (e : Exp) (initial final : State) (out : Exp)
+private theorem callsFuel_labelsBound (fuel : Nat) (e : Exp) (initial final : State) (out : Exp)
     (run : callsFuel fuel e initial = some (out, final)) :
     LabelsBound initial final (codeLocationsExp e) := by
   cases fuel with
@@ -163,7 +163,7 @@ theorem callsFuel_labelsBound (fuel : Nat) (e : Exp) (initial final : State) (ou
 termination_by fuel
 
 /-- The list traversal obeys the same label-origin invariant. -/
-theorem callsListFuel_labelsBound (fuel : Nat) (es : List Exp) (initial final : State)
+private theorem callsListFuel_labelsBound (fuel : Nat) (es : List Exp) (initial final : State)
     (out : List Exp) (run : callsListFuel fuel es initial = some (out, final)) :
     LabelsBound initial final (codeLocations es) := by
   cases es with
