@@ -324,40 +324,22 @@ theorem compile_decs_FILTER_declsHOL {width : Nat} [NeZero width] :
       compileDecsExactHOL ctxt code = (decls, funs, exns, ctxt') →
       compileDecsExactHOL ctxt (code.filter isDeclHOL) = (decls, [], [], ctxt') := by
   intro ctxt code
-  induction code generalizing ctxt with
-  | nil =>
-      intro decls funs exns ctxt' h
-      simp only [compileDecsExactHOL, Prod.mk.injEq] at h
-      obtain ⟨rfl, _, _, rfl⟩ := h
-      simp [compileDecsExactHOL]
-  | cons d ds ih =>
-      intro decls funs exns ctxt' h
-      cases d with
-      | function fi =>
-          simp only [compileDecsExactHOL] at h
-          generalize hr : compileDecsExactHOL (width := width) _ ds = r at h
-          obtain ⟨a, b, c, e⟩ := r
-          simp only [Prod.mk.injEq] at h
-          obtain ⟨rfl, _, _, rfl⟩ := h
-          simpa using ih _ a b c e hr
-      | decl shape name value =>
-          simp only [compileDecsExactHOL] at h
-          generalize hr : compileDecsExactHOL (width := width) _ ds = r at h
-          obtain ⟨a, b, c, e⟩ := r
-          simp only [Prod.mk.injEq] at h
-          obtain ⟨rfl, _, _, rfl⟩ := h
-          simp only [List.filter_cons, isDeclHOL.eq_1, if_true, compileDecsExactHOL,
-            ih _ a b c e hr]
-      | exnDecl name shape =>
-          simp only [compileDecsExactHOL] at h
-          generalize hr : compileDecsExactHOL (width := width) _ ds = r at h
-          obtain ⟨a, b, c, e⟩ := r
-          simp only [Prod.mk.injEq] at h
-          obtain ⟨rfl, _, _, rfl⟩ := h
-          simpa using ih _ a b c e hr
-      | name name fields =>
-          simp only [compileDecsExactHOL] at h
-          simpa using ih _ _ _ _ _ h
+  fun_induction compileDecsExactHOL ctxt code with
+  | case1 => simp_all [compileDecsExactHOL, List.filter_cons, isDeclHOL]
+  | case2 =>
+    rename_i xh ih
+    intro decls funs exns ctxt' h1
+    have hih := ih _ _ _ _ xh
+    simp only [List.filter_cons, isDeclHOL.eq_1, if_true, compileDecsExactHOL]
+    rw [hih]
+    simp only [Prod.mk.injEq] at h1 ⊢
+    exact ⟨h1.1, trivial, trivial, h1.2.2.2⟩
+  | case3 => simp_all [compileDecsExactHOL, List.filter_cons, isDeclHOL]
+  | case4 => simp_all [compileDecsExactHOL, List.filter_cons, isDeclHOL]
+  | case5 =>
+    rename_i ih
+    intro decls funs exns ctxt' h
+    simpa [List.filter_cons, isDeclHOL] using ih _ _ _ _ h
 
 /-- Projection forms of `compile_decs_exns_are_exns` and
     `compile_decs_EVERY_is_function`, used to rewrite inside the unfolded
