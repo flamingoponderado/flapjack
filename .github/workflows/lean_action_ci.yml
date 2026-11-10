@@ -3,7 +3,6 @@ name: Lean Action CI
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
-  # Builds on main save the shared Lake build cache that pull requests restore.
   push:
     branches: [main]
   workflow_dispatch:
@@ -20,30 +19,25 @@ jobs:
   # the read-only parity jobs below.
   build:
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
-    runs-on: first-large
+    runs-on: [self-hosted, linux, x64, flapjack-ci]
 
     steps:
+      # The self-hosted runner reuses one workspace per repository, so the
+      # default `clean: true` (git clean -ffdx) would delete the warm .lake.
       - uses: actions/checkout@v5
-
-      # lean-action's built-in cache stores all of .lake (about 22 GB including
-      # .lake/packages) under a per-commit key, which overflows the 10 GB
-      # repository cache limit and evicts main's cache. Cache only .lake/build,
-      # restore it here before lean-action builds, and save it only from main.
-      - name: Restore Lake build cache
-        id: lake-cache
-        uses: actions/cache/restore@v5.1.0
         with:
-          path: .lake/build
-          key: lake-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
-          restore-keys: |
-            lake-build-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+          clean: false
+
+      # Remove stale untracked files while keeping the persistent Lake build.
+      - name: Clean the workspace except .lake
+        run: git clean -ffdx -e .lake
 
       # The workspace declares FlapjackTest as its test driver, so lean-action
       # runs `lake build` and `lake test` here.
       - uses: leanprover/lean-action@v1
         with:
           use-github-cache: false
-          use-mathlib-cache: true
+          use-mathlib-cache: false
 
       - name: Check non-test modules are warning-free
         run: ./scripts/check-warnings.sh
@@ -82,23 +76,16 @@ jobs:
           retention-days: 1
           compression-level: 1
 
-      - name: Save Lake build cache
-        if: >-
-          github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
-          && steps.lake-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v5.1.0
-        with:
-          path: .lake/build
-          key: ${{ steps.lake-cache.outputs.cache-primary-key }}
-
   # Read-only gates that need neither Lake nor a compiled executable. They run
   # in parallel with the build job.
   trust:
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
-    runs-on: first-large
+    runs-on: [self-hosted, linux, x64, flapjack-ci]
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          clean: false
 
       - name: Check native proof and compiler trust mechanisms
         run: |
@@ -112,10 +99,12 @@ jobs:
   # invoke Lake (the export gate and the attribute syntax test are in `build`).
   hol:
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
-    runs-on: first-large
+    runs-on: [self-hosted, linux, x64, flapjack-ci]
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          clean: false
 
       - name: Check out pinned CakeML and HOL submodules
         run: git submodule update --init --depth 1 -- cakeml HOL
@@ -133,10 +122,12 @@ jobs:
   # so both submodules are initialized here.
   native:
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
-    runs-on: first-large
+    runs-on: [self-hosted, linux, x64, flapjack-ci]
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          clean: false
 
       - name: Check out pinned CakeML and HOL submodules
         run: git submodule update --init --depth 1 -- cakeml HOL
@@ -151,10 +142,12 @@ jobs:
   pancake-parity:
     needs: build
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
-    runs-on: first-large
+    runs-on: [self-hosted, linux, x64, flapjack-ci]
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          clean: false
 
       - name: Download flapjack-compile
         uses: actions/download-artifact@v8
@@ -205,10 +198,12 @@ jobs:
   cakeml-parity:
     needs: build
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
-    runs-on: first-large
+    runs-on: [self-hosted, linux, x64, flapjack-ci]
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          clean: false
 
       - name: Check out pinned CakeML submodule
         run: git submodule update --init --depth 1 -- cakeml
