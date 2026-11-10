@@ -16,15 +16,33 @@ instance : Nonempty Exp := ⟨.var 0⟩
 theorem one_le_sizeOf_exp (expression : Exp) : 1 ≤ sizeOf expression := by
   cases expression with
   | var v => simp
-  | ifThenElse x y z => simp <;> omega
-  | «let» xs body => simp <;> omega
-  | raise x => simp <;> omega
-  | tick x => simp <;> omega
-  | call ticks dest xs handler => simp <;> omega
-  | force loc v => simp <;> omega
-  | op op xs => simp <;> omega
-  | letCall rets ticks dest xs body => simp <;> omega
-  | «return» xs => simp <;> omega
+  | ifThenElse x y z =>
+    simp
+    all_goals omega
+  | «let» xs body =>
+    simp
+    all_goals omega
+  | raise x =>
+    simp
+    all_goals omega
+  | tick x =>
+    simp
+    all_goals omega
+  | call ticks dest xs handler =>
+    simp
+    all_goals omega
+  | force loc v =>
+    simp
+    all_goals omega
+  | op op xs =>
+    simp
+    all_goals omega
+  | letCall rets ticks dest xs body =>
+    simp
+    all_goals omega
+  | «return» xs =>
+    simp
+    all_goals omega
 
 /-- Dropping the last element does not increase the size. -/
 theorem sizeOf_dropLast_le (xs : List Exp) : sizeOf xs.dropLast ≤ sizeOf xs := by
@@ -33,7 +51,9 @@ theorem sizeOf_dropLast_le (xs : List Exp) : sizeOf xs.dropLast ≤ sizeOf xs :=
   | cons x xs ih =>
     cases xs with
     | nil => simp
-    | cons y ys => simp at ih ⊢; omega
+    | cons y ys =>
+      simp at ih ⊢
+      all_goals omega
 
 /-- A member's size is at most the list's size. -/
 theorem sizeOf_le_of_mem (xs : List Exp) (expression : Exp) (member : expression ∈ xs) :
@@ -45,7 +65,8 @@ theorem sizeOf_le_of_mem (xs : List Exp) (expression : Exp) (member : expression
     simp
     rcases member with rfl | member
     · omega
-    · have := ih member; omega
+    · have := ih member
+      omega
 
 /-- A list's last element is no larger than the list. -/
 theorem sizeOf_getLast_le (xs : List Exp) (nonempty : xs ≠ []) :
@@ -68,7 +89,10 @@ noncomputable def compile (env : List Nat) (d : Nat) : List Exp → List Exp
   | [.«let» xs body] =>
       if hlen : xs.length = 0 then compile env d [body]
       else
-        have hne : xs ≠ [] := by intro empty; subst empty; simp at hlen
+        have hne : xs ≠ [] := by
+          intro empty
+          subst empty
+          simp at hlen
         match body with
         | .var v =>
             if v = xs.length - 1 then
@@ -122,8 +146,8 @@ noncomputable def compileExp (exp : Exp) : Exp :=
 /-- The list traversal agrees with the executable single/list rewrites. -/
 theorem compile_eq_compileList (env : List Nat) (d : Nat) (xs : List Exp) :
     compile env d xs = compileList env d xs := by
-  fun_induction compile env d xs <;>
-    simp_all [compileSing, compileList, Flapjack.holHd]
+  fun_induction compile env d xs
+  all_goals simp_all [compileSing, compileList, Flapjack.holHd]
   case case7 env d xs hne last ih2 ih1 =>
     cases xs with
     | nil => exact absurd rfl hne
