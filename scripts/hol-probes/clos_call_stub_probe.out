@@ -3,6 +3,7 @@ variables_def=!(t :tra) (n :num) (i :num). GENLIST_Var t i n = if n = (0 :num) t
 calls_list_type=:tra -> num -> num -> (num # 'a) list -> (num # closLang$exp) list
 calls_list_def=(!(t :tra) (loc :num) (i :num). calls_list t i loc ([] :(num # 'a) list) = ([] :(num # closLang$exp) list)) /\ !(xs :(num # 'a) list) (v0 :'a) (t :tra) (n :num) (loc :num) (i :num). calls_list t i loc ((n,v0)::xs) = (n,Call t (0 :num) (loc + (1 :num)) (GENLIST_Var t (1 :num) n))::calls_list t (i + (1 :num)) (loc + (2 :num)) xs
 calls_list_mapi=!(loc :num) (tra :'a) (n :num). (calls_list (t :tra) n loc :(num # 'b) list -> (num # closLang$exp) list) = MAPi (\(i :num) (p :num # 'b). (FST p,Call t (0 :num) (loc + (2 :num) * i + (1 :num)) (GENLIST_Var t (1 :num) (FST p))))
+calls_list_length_typed=LENGTH (calls_list (t :tra) (n :num) (p :num) (fns :(num # 'a) list)) = LENGTH fns
 code_locs_GENLIST_Var_typed=!(n :num) (t :tra) (i :num). code_locs (GENLIST_Var t i n) = ([] :num list)
 fv_GENLIST_Var_tra_typed=!(n :num) (tra :tra) (i :num). fv (v :num) (GENLIST_Var tra i n) <=> v < n
 evaluate_GENLIST_Var_tra_typed=!(n :num) (tr :tra) (i :num). evaluate (GENLIST_Var tr i n,(env :v list),(s :('a, 'b) state)) = if n <= LENGTH env then ((Rval (TAKE n env) :(v list, v) result),s) else ((Rerr (Rabort Rtype_error :v error_result) :(v list, v) result),s)

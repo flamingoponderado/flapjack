@@ -30,8 +30,10 @@ private theorem locations_callsList {A : Type} (fns : List (Nat × A))
     obtain ⟨arity, body⟩ := f
     simp [callsListSource, codeLocations, codeLocationsExp, locations_variables, ih]
 
-private theorem length_callsList {A : Type} (fns : List (Nat × A))
-    (n : Nat) (tr : BackendCommon.Tra) (i : Nat) :
+/-- Generated direct-call stubs preserve the number of input functions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_list_length"]
+theorem length_callsList {A : Type} (tr : BackendCommon.Tra) (i n : Nat)
+    (fns : List (Nat × A)) :
     (callsListSource tr i n fns).length = fns.length := by
   induction fns generalizing n i with
   | nil => rfl

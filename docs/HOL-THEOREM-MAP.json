@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_list_length",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "length_callsList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_list_length_typed in clos_call_stub_probe.out and the source statement: trace, index, location and independently polymorphic function payload retain their original order and carriers, and the generated stub list has the original function-list length."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "compile_ALL_DISTINCT",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LabelDistinct.lean", "lean_name": "compile_allDistinct",
   "statement_status": "reviewed_exact",
