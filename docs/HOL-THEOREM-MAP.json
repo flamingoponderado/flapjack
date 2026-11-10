@@ -116905,24 +116905,24 @@
     "lean_name": "extract",
     "hol_path": "cakeml/compiler/backend/bvi_letScript.sml",
     "hol_name": "extract_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed bvi_let_helpers_probe capture (`extract (Var n) ys = n + LENGTH ys + 1` and 0 for every other constructor, printed one clause per constructor) with extract: the Var clause is n + ys.length + 1 and the wildcard `_ => 0` covers exactly the other nine constructors shown in the capture."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviLet/Helpers.lean",
     "lean_name": "extractList",
     "hol_path": "cakeml/compiler/backend/bvi_letScript.sml",
     "hol_name": "extract_list_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed bvi_let_helpers_probe capture (`extract_list [] = [] \u2227 extract_list (x::xs) = extract x xs :: extract_list xs`) with extractList's two clauses; the displacement uses the tail xs, matching HOL."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviLet/Helpers.lean",
     "lean_name": "deleteVar",
     "hol_path": "cakeml/compiler/backend/bvi_letScript.sml",
     "hol_name": "delete_var_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independently compared the typed bvi_let_helpers_probe capture (`delete_var (Var n) = Op (IntOp (Const 0)) []` and identity for every other constructor, printed one clause per constructor) with deleteVar: the Var clause is .op (.intOp (.const 0)) [] and the wildcard `e => e` covers the other nine constructors; Bvi.Exp and its operators are the reviewed ports."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataLang/Syntax.lean",

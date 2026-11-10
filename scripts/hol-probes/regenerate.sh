@@ -9514,3 +9514,8 @@ run_probe bvl_handle_proof_shape_probeScript.sml bvl_handle_proof_shape_probe.ou
   IS_SOME_lookup_db_to_set_typed handle_ok_SmartLet_typed bVarBound_MEM_typed bVarBound_LESS_EQ_typed bVarBound_LetLet_typed \
   "$cake_dir/compiler/backend/proofs/bvl_handleProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe bvi_let_helpers_probeScript.sml bvi_let_helpers_probe.out \
+  extract_def_typed extract_list_def_typed delete_var_def_typed \
+  "$cake_dir/compiler/backend/bvi_letScript.sml" \
+  "$cake_dir/compiler/backend"
