@@ -64,39 +64,7 @@ theorem posVal_numPcs {width : Nat} [NeZero width]
 theorem posVal_geNumPcs {width : Nat} [NeZero width]
     (pc p : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     numPcs code ≤ pc → posVal (numPcs code) p code = posVal pc p code := by
-  induction code generalizing pc p with
-  | nil => simp [posVal]
-  | cons sec rest ih =>
-    rcases sec with ⟨sid,lines⟩
-    induction lines generalizing pc p with
-    | nil => simpa only [posVal,numPcs] using ih pc p
-    | cons line lines ihLines =>
-      cases line with
-      | label a b len =>
-        simpa only [posVal,numPcs,isLabelHOL,↓reduceIte,lineLength] using
-          ihLines pc (p + (if len=0 then 0 else 1))
-      | asm a bytes len =>
-        intro h
-        have hb : numPcs (⟨sid,lines⟩::rest) ≤ pc-1 := by
-          simp only [numPcs,isLabelHOL,Bool.false_eq_true,↓reduceIte] at h
-          omega
-        have hp : pc ≠ 0 := by
-          simp only [numPcs,isLabelHOL,Bool.false_eq_true,↓reduceIte] at h
-          omega
-        simpa only [posVal,numPcs,isLabelHOL,Bool.false_eq_true,↓reduceIte,
-          Nat.add_eq_zero_iff, Nat.one_ne_zero, false_and, hp,
-          Nat.add_sub_cancel_left,lineLength] using ihLines (pc-1) (p+bytes.length) hb
-      | labAsm a w bytes len =>
-        intro h
-        have hb : numPcs (⟨sid,lines⟩::rest) ≤ pc-1 := by
-          simp only [numPcs,isLabelHOL,Bool.false_eq_true,↓reduceIte] at h
-          omega
-        have hp : pc ≠ 0 := by
-          simp only [numPcs,isLabelHOL,Bool.false_eq_true,↓reduceIte] at h
-          omega
-        simpa only [posVal,numPcs,isLabelHOL,Bool.false_eq_true,↓reduceIte,
-          Nat.add_eq_zero_iff, Nat.one_ne_zero, false_and, hp,
-          Nat.add_sub_cancel_left,lineLength] using ihLines (pc-1) (p+bytes.length) hb
+  fun_induction posVal pc p code <;> simp_all [posVal, numPcs, isLabelHOL, lineLength] <;> omega
 
 /-- Flapjack constructor infrastructure extracts nonempty emitted bytes from
 actual line_ok and enc_ok. There is no independently named HOL original. -/
