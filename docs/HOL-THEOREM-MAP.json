@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_list_replace_SND",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeList.lean", "lean_name": "codeListSource_replace_snd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_list_replace_snd_type in clos_call_code_list_probe.out and source: all six quantified inputs and the three independent payload types agree; the original run, equal first components and suffix equation imply the original replacement-state equation."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "ALOOKUP_code_list",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeLookup.lean", "lean_name": "codeListSource_alookup",
   "statement_status": "reviewed_exact",

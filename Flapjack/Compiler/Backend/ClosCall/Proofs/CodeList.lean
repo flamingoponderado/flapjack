@@ -79,6 +79,24 @@ theorem codeListSource_snd_zip {A B C : Type} (loc : Nat) (fns : List (A × B))
     simp only [Function.comp_apply]
     omega
 
+/-- Replacing the input code suffix preserves the generated prefix. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "code_list_replace_SND"]
+theorem codeListSource_replace_snd {A B C : Type} (loc : Nat) (fns : List (A × B))
+    (g0 g g0' : C × List (Nat × A × B)) (ls : List (Nat × A × B))
+    (h : codeListSource loc fns g0 = g ∧ g0.1 = g0'.1 ∧ g.2 = ls ++ g0.2) :
+    codeListSource loc fns g0' = (g.1, ls ++ g0'.2) := by
+  obtain ⟨run, same, suffix⟩ := h
+  have first : g.1 = g0.1 := by
+    rw [← run, codeListSource_fst]
+  have generated : (((List.range fns.length).map (fun i => loc + 1 + 2 * i)).zip fns).reverse = ls := by
+    have eq : (((List.range fns.length).map (fun i => loc + 1 + 2 * i)).zip fns).reverse ++ g0.2 = ls ++ g0.2 := by
+      rw [← codeListSource_snd_zip, run]
+      exact suffix
+    exact List.append_cancel_right eq
+  apply Prod.ext
+  · simpa [codeListSource_fst] using same.symm.trans first.symm
+  · simp [codeListSource_snd_zip, generated]
+
 /-- The indexed fold used by the executable pass is the source recursion. -/
 theorem codeList_eq_source (loc : Nat) (fns : List (Nat × ClosLang.Exp))
     (state : State) : codeList loc fns state = codeListSource loc fns state := by
