@@ -18820,8 +18820,8 @@
     "hol_name": "elist_globals_eq_empty",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/GlobalBagProperties.lean",
     "lean_name": "elistGlobals_eq_empty",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out. Expression carriers and full declaration review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed elist_globals_eq_empty capture: elist_globals : exp list -> num -> num, a HOL bag. Lean's GlobalBag is Flapjack.Bag Nat (tagged as HOL's bag, \u03b1 -> Nat) with emptyGlobalBag the empty bag, MEM e l is e \u2208 l, and set_globals e = {||} is setGlobals e = emptyGlobalBag."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
