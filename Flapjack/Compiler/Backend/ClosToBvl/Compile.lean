@@ -111,7 +111,7 @@ decreasing_by all_goals simp_wf <;> omega
 end
 
 /-- Compile each labeled expression and append its generated auxiliary code.
-The checked wrapper succeeds for every program by `compileProg_succeeds`. -/
+The checked wrapper agrees with the source compiler by `compileProg_checked_eq_original`. -/
 def compileProg? (maxApp : Nat) (prog : List (Nat × Nat × ClosLang.Exp)) :
     Option (List (Nat × Nat × Bvl.Exp)) := do
   let (exps, aux) ← compileExpList? maxApp (prog.map (fun (_, _, exp) => exp)) []
