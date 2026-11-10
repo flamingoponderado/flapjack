@@ -115579,8 +115579,8 @@
     "lean_name": "closTagShift",
     "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
     "hol_name": "clos_tag_shift_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed clos_tag_shift_def capture: clos_tag_shift tag = if tag < 30 then tag else tag + 2, identical to Lean's closTagShift on Nat."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
