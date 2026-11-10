@@ -20,7 +20,7 @@ jobs:
   # the read-only parity jobs below.
   build:
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
-    runs-on: first-large
+    runs-on: [self-hosted, linux, x64]
 
     steps:
       - uses: actions/checkout@v5
@@ -95,7 +95,7 @@ jobs:
   # in parallel with the build job.
   trust:
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
-    runs-on: first-large
+    runs-on: [self-hosted, linux, x64]
 
     steps:
       - uses: actions/checkout@v5
@@ -112,7 +112,7 @@ jobs:
   # invoke Lake (the export gate and the attribute syntax test are in `build`).
   hol:
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
-    runs-on: first-large
+    runs-on: [self-hosted, linux, x64]
 
     steps:
       - uses: actions/checkout@v5
@@ -133,7 +133,7 @@ jobs:
   # so both submodules are initialized here.
   native:
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
-    runs-on: first-large
+    runs-on: [self-hosted, linux, x64]
 
     steps:
       - uses: actions/checkout@v5
@@ -151,7 +151,7 @@ jobs:
   pancake-parity:
     needs: build
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
-    runs-on: first-large
+    runs-on: [self-hosted, linux, x64]
 
     steps:
       - uses: actions/checkout@v5
@@ -205,7 +205,7 @@ jobs:
   cakeml-parity:
     needs: build
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
-    runs-on: first-large
+    runs-on: [self-hosted, linux, x64]
 
     steps:
       - uses: actions/checkout@v5
