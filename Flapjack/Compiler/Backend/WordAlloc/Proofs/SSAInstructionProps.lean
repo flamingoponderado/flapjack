@@ -8,6 +8,23 @@ public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterClass
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 
+/-- Closing step for every `ssaCcTransInst` constructor branch: reduce the
+produced equation, split its conditionals, and discharge the counter/map
+bounds from one of the three allocation shapes. -/
+local macro "closeSsaCcTransInstProps" "with" p:ident h:ident a4:ident a8:ident
+    m4:ident m8:ident : tactic => `(tactic| (
+    simp only [ssaCcTransInst, nextVarRename] at $p:ident
+    repeat first | split at $p:ident
+    repeat first | split at $p:ident
+    simp only [Prod.mk.injEq] at $p:ident
+    obtain ⟨_, hssa, hnext⟩ := $p
+    subst hssa
+    subst hnext
+    first
+      | exact ⟨Nat.le_refl _, ($h).2, ($h).1⟩
+      | exact ⟨by omega, $a4, $m4 _⟩
+      | exact ⟨by omega, $a8, $m8 _ _⟩))
+
 /-- Full HOL SSA instruction counter/allocation/map invariant. The actual native
 instruction compiler output equality precedes the original map/allocation
 premises. All instruction constructors, including both FP word-width branches,
@@ -36,46 +53,14 @@ theorem ssaCcTransInstProps {width : Nat} [NeZero width]
     cases operation
     case binop operator left right immediate =>
       cases immediate
-      all_goals
-        simp only [ssaCcTransInst, nextVarRename] at produced
-        repeat first | split at produced
-        simp only [Prod.mk.injEq] at produced
-        obtain ⟨_, rfl, rfl⟩ := produced
-        first
-          | exact ⟨Nat.le_refl _, h.2, h.1⟩
-          | exact ⟨by omega, allocation4, map4 _⟩
-          | exact ⟨by omega, allocation8, map8 _ _⟩
+      all_goals closeSsaCcTransInstProps with produced h allocation4 allocation8 map4 map8
     case shift operator left right immediate =>
       cases immediate
-      all_goals
-        simp only [ssaCcTransInst, nextVarRename] at produced
-        repeat first | split at produced
-        simp only [Prod.mk.injEq] at produced
-        obtain ⟨_, rfl, rfl⟩ := produced
-        first
-          | exact ⟨Nat.le_refl _, h.2, h.1⟩
-          | exact ⟨by omega, allocation4, map4 _⟩
-          | exact ⟨by omega, allocation8, map8 _ _⟩
-    all_goals
-      simp only [ssaCcTransInst, nextVarRename] at produced
-      repeat first | split at produced
-      simp only [Prod.mk.injEq] at produced
-      obtain ⟨_, rfl, rfl⟩ := produced
-      first
-        | exact ⟨Nat.le_refl _, h.2, h.1⟩
-        | exact ⟨by omega, allocation4, map4 _⟩
-        | exact ⟨by omega, allocation8, map8 _ _⟩
+      all_goals closeSsaCcTransInstProps with produced h allocation4 allocation8 map4 map8
+    all_goals closeSsaCcTransInstProps with produced h allocation4 allocation8 map4 map8
   case mem operation register address =>
     cases operation <;> cases address
-    all_goals
-      simp only [ssaCcTransInst, nextVarRename] at produced
-      repeat first | split at produced
-      simp only [Prod.mk.injEq] at produced
-      obtain ⟨_, rfl, rfl⟩ := produced
-      first
-        | exact ⟨Nat.le_refl _, h.2, h.1⟩
-        | exact ⟨by omega, allocation4, map4 _⟩
-        | exact ⟨by omega, allocation8, map8 _ _⟩
+    all_goals closeSsaCcTransInstProps with produced h allocation4 allocation8 map4 map8
   case fp operation =>
     cases operation
     all_goals simp only [ssaCcTransInst, nextVarRename] at produced
@@ -87,14 +72,6 @@ theorem ssaCcTransInstProps {width : Nat} [NeZero width]
       | exact ⟨Nat.le_refl _, h.2, h.1⟩
       | exact ⟨by omega, allocation4, map4 _⟩
       | exact ⟨by omega, allocation8, map8 _ _⟩
-  all_goals
-    simp only [ssaCcTransInst, nextVarRename] at produced
-    repeat first | split at produced
-    simp only [Prod.mk.injEq] at produced
-    obtain ⟨_, rfl, rfl⟩ := produced
-    first
-      | exact ⟨Nat.le_refl _, h.2, h.1⟩
-      | exact ⟨by omega, allocation4, map4 _⟩
-      | exact ⟨by omega, allocation8, map8 _ _⟩
+  all_goals closeSsaCcTransInstProps with produced h allocation4 allocation8 map4 map8
 
 end Flapjack.Compiler.Backend.WordAlloc
