@@ -1,10 +1,18 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Layout
 import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic.LabelsAndArity
+import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotationInvariants.Original
 
 /-! Syntactic invariants of the closure-to-BVL entry-point chain. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.Compiler.Backend.ClosProps
+
+/-- Annotation preserves the function-location invariant for every program body. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_every_Fn_SOME"]
+theorem compile_everyFnSome {α : Type} (program : List (α × Nat × ClosLang.Exp)) :
+    everyFnLocationSome (program.map (fun entry => entry.2.2)) →
+      everyFnLocationSome ((ClosAnnotate.compileSource program).map (fun entry => entry.2.2)) :=
+  ClosAnnotate.everyFnSome_ann program
 
 /-- Chaining preserves and reflects the function-location predicate. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_exps_every_Fn_SOME" 8596]
