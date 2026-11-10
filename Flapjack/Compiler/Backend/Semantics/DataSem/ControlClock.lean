@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+module
+
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+
+@[expose] public section
 
 /-! Clock properties of data-language control operations. -/
 namespace Flapjack.Compiler.Backend.DataSem

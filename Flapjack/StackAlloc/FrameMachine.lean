@@ -1,5 +1,9 @@
-import Flapjack.StackAlloc.Correctness
-import Flapjack.RiscV.PanMemory
+module
+
+public import Flapjack.StackAlloc.Correctness
+public import Flapjack.RiscV.PanMemory
+
+@[expose] public section
 
 /-!
 # Bounded StackLang frame semantics

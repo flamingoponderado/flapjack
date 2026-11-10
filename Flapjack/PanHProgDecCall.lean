@@ -1,4 +1,8 @@
-import Flapjack.PanHHandleDecCallRet
+module
+
+public import Flapjack.PanHHandleDecCallRet
+
+@[expose] public section
 
 /-!
 # Pancake h_prog_deccall

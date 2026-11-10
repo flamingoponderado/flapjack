@@ -1,5 +1,9 @@
 -- Generated from the pinned HOL grammar's MMLnonT constructors; do not edit.
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 namespace Flapjack.CakeParser
 

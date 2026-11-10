@@ -1,4 +1,12 @@
-import Flapjack.Compiler.Encoders.AsmSem.Memory
+module
+
+public import Flapjack.Compiler.Encoders.AsmSem.Memory
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Kernel regressions for the independent byte-shift count in source memory.
 These concrete observations are Flapjack regression infrastructure, not separate

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+
+@[expose] public section
 
 /-! Source-shaped equality and comparison cases of flat application. -/
 namespace Flapjack.Compiler.Backend.FlatSem

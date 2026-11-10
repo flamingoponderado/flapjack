@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
+module
+
+public import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Encoders.AsmSem
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorSetWF
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorSetWF
+
+@[expose] public section
 
 namespace Flapjack.WordAlloc
 

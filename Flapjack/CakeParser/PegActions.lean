@@ -1,4 +1,12 @@
-import Flapjack.CakeParser.ParseTree
+module
+
+public import Flapjack.CakeParser.ParseTree
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! First-order semantic actions of CakeML's executable PEG. -/
 namespace Flapjack.CakeParser.PegActions

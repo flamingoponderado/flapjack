@@ -1,4 +1,8 @@
-import Flapjack.PanItreeFfi
+module
+
+public import Flapjack.PanItreeFfi
+
+@[expose] public section
 
 /-!
 # Pancake `ltree`

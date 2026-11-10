@@ -1,4 +1,8 @@
-import Flapjack.FiniteMap.Comparison
+module
+
+public import Flapjack.FiniteMap.Comparison
+
+@[expose] public section
 
 namespace Flapjack.FiniteMap.Comparison
 

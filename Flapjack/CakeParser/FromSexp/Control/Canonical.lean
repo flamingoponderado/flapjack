@@ -1,4 +1,8 @@
-import Flapjack.CakeParser.FromSexp.Control
+module
+
+public import Flapjack.CakeParser.FromSexp.Control
+
+@[expose] public section
 
 /-! Canonical control escaping for successfully decoded S-expressions. -/
 namespace Flapjack.CakeParser.FromSexp

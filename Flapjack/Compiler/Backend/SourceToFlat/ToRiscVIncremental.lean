@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.SourceToFlat.ToWordIncremental
-import Flapjack.Compiler.Backend.Backend
-import Flapjack.Compiler.Backend.WordToWord.FastCompile
-import Flapjack.Compiler.Backend.RegAlloc.Executable
-import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.ToWordIncremental
+public import Flapjack.Compiler.Backend.Backend
+public import Flapjack.Compiler.Backend.WordToWord.FastCompile
+public import Flapjack.Compiler.Backend.RegAlloc.Executable
+public import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+
+@[expose] public section
 
 /-! Checked incremental CakeML compilation through the RISC-V backend. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

@@ -1,6 +1,10 @@
-import Flapjack.TypeSystemHOL
-import Flapjack.NamespaceHOL
-import Flapjack.AstHOL.Syntax
+module
+
+public import Flapjack.TypeSystemHOL
+public import Flapjack.NamespaceHOL
+public import Flapjack.AstHOL.Syntax
+
+@[expose] public section
 
 /-! Type-variable operations and environments for CakeML's declarative type
 system. The typing judgments and their metatheory are not yet ported. -/

@@ -1,4 +1,8 @@
-import Flapjack.Misc.BinaryIeeeRoundFp32
+module
+
+public import Flapjack.Misc.BinaryIeeeRoundFp32
+
+@[expose] public section
 
 /-!
 # Binary32 directed rounding infrastructure

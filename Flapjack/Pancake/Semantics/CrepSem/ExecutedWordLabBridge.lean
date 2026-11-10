@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.FiniteMap
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.FiniteMap
+
+@[expose] public section
 
 /-!
 # Executed Crep `word_lab` evaluator bridge

@@ -1,7 +1,15 @@
-import Flapjack.Compiler.Backend.PresLang.Flat
-import Flapjack.Compiler.Backend.ClosLang.Syntax
-import Flapjack.Compiler.Backend.ClosToBvl.Names
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Flat
+public import Flapjack.Compiler.Backend.ClosLang.Syntax
+public import Flapjack.Compiler.Backend.ClosToBvl.Names
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Closure-language explorer presentation, following the `clos_*_to_display`
 definitions in `cakeml/compiler/backend/presLangScript.sml`. It is untagged

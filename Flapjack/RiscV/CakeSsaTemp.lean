@@ -1,4 +1,8 @@
-import Flapjack.RiscV.CakeSsaSetup
+module
+
+public import Flapjack.RiscV.CakeSsaSetup
+
+@[expose] public section
 
 /-! Source-shaped temporary-numbering boundary for CakeML's
 `full_ssa_cc_trans` (cakeml/compiler/backend/word_allocScript.sml:1822).

@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+module
+
+public import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+
+@[expose] public section
 
 /-! Generated original `riscv_targetScript.sml` assembler rewrite bundles.
 

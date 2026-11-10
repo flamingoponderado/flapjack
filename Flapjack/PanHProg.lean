@@ -1,4 +1,8 @@
-import Flapjack.PanHProgStore
+module
+
+public import Flapjack.PanHProgStore
+
+@[expose] public section
 
 /-!
 # Pancake `h_prog`

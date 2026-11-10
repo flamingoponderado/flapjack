@@ -1,5 +1,13 @@
-import Flapjack.CakeParser.Grammar
-import Flapjack.Misc.Location
+module
+
+public import Flapjack.CakeParser.Grammar
+public import Flapjack.Misc.Location
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! First-order token predicates used by the executable CakeML PEG. -/
 namespace Flapjack.CakeParser.PegChecks

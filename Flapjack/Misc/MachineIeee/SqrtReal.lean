@@ -1,5 +1,9 @@
-import Flapjack.Misc.MachineIeee
-import Flapjack.Misc.BinaryIeeeSqrt.RealCarrier
+module
+
+public import Flapjack.Misc.MachineIeee
+public import Flapjack.Misc.BinaryIeeeSqrt.RealCarrier
+
+@[expose] public section
 
 /-!
 # HOL `machine_ieee` fp64 square root over Mathlib reals

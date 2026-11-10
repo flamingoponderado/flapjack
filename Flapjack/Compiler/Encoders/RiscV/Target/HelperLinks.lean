@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+module
+
+public import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+
+@[expose] public section
 
 /-! Flapjack-specific congruence of executable inline tables with their
 reviewed source-clause tables, and of the two config carriers' check fields.

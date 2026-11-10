@@ -1,4 +1,8 @@
-import Flapjack.PanSetKvar
+module
+
+public import Flapjack.PanSetKvar
+
+@[expose] public section
 
 /-!
 # Pancake `panSem.set_kvar`

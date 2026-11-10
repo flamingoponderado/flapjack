@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Inference.InferT
-import Flapjack.TypeSystemHOL
-import Flapjack.Misc.Sptree
-import Flapjack.NamespaceHOL
+module
+
+public import Flapjack.Compiler.Inference.InferT
+public import Flapjack.TypeSystemHOL
+public import Flapjack.Misc.Sptree
+public import Flapjack.NamespaceHOL
+
+@[expose] public section
 
 /-! Substitution and generalization operations used by CakeML inference. -/
 namespace Flapjack.Compiler.Inference.Infer

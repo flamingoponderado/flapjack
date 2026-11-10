@@ -1,4 +1,8 @@
-import Flapjack.Ffi
+module
+
+public import Flapjack.Ffi
+
+@[expose] public section
 
 /-!
 # Pancake `comp_ffi`

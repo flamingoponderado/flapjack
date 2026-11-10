@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Backend.WordSimp
-import Flapjack.RiscV.WordExpressionFlatten
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
-import Mathlib.Data.List.Defs
-import Flapjack.Misc.SptreeLookup
-import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+module
+
+public import Flapjack.Compiler.Backend.WordSimp
+public import Flapjack.RiscV.WordExpressionFlatten
+public import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+public import Mathlib.Data.List.Defs
+public import Flapjack.Misc.SptreeLookup
+public import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
+
+@[expose] public section
 
 /-! Executed `wordConstFpLoop` against the reviewed native `constFpLoop`.
 Flapjack carrier infrastructure with no HOL original: the executed pass keeps

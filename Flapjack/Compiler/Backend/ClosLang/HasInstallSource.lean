@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.ClosLang.HasInstall
+module
+
+public import Flapjack.Compiler.Backend.ClosLang.HasInstall
+
+@[expose] public section
 
 /-! Source-equation support for the factored installation traversal. -/
 namespace Flapjack.Compiler.Backend.ClosLang

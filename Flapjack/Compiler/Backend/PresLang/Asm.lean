@@ -1,5 +1,13 @@
-import Flapjack.Compiler.Backend.PresLang.Source
-import Flapjack.Compiler.Encoders.Asm
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Source
+public import Flapjack.Compiler.Encoders.Asm
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Assembly display shared by the WordLang, StackLang and LabLang explorer
 printers. The definitions follow the `asm_*_to_display_def` group in

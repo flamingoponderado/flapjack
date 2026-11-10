@@ -1,5 +1,9 @@
-import Flapjack.PanValueFfiCore
-import Flapjack.PanItreeFfi
+module
+
+public import Flapjack.PanValueFfiCore
+public import Flapjack.PanItreeFfi
+
+@[expose] public section
 
 /-!
 # Pancake `h_prog_sh_mem_load`

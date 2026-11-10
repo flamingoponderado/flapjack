@@ -1,4 +1,8 @@
-import Flapjack.TypeSystemHOL.Operators
+module
+
+public import Flapjack.TypeSystemHOL.Operators
+
+@[expose] public section
 
 /-! Declarative CakeML expression-typing infrastructure. `TypeE` uses an
 inductively encoded branch list in its match and handler rules; HOL instead

@@ -1,4 +1,8 @@
-import Flapjack.CakeParser.PegGrammar
+module
+
+public import Flapjack.CakeParser.PegGrammar
+
+@[expose] public section
 
 /-! A bounded direct interpreter for successful CakeML PEG parses. This is
 Flapjack infrastructure: its fuel counts recursive calls and it does not

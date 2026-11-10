@@ -1,4 +1,8 @@
-import Flapjack.TypeSystemHOL.TypeNames
+module
+
+public import Flapjack.TypeSystemHOL.TypeNames
+
+@[expose] public section
 
 /-! Declarative CakeML pattern typing. The judgments below retain the original
 rules; full source and carrier review remains pending. -/

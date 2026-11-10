@@ -1,10 +1,18 @@
-import Flapjack.Compiler.Backend.BackendPasses.Closure
-import Flapjack.Compiler.Backend.PresLang.Bvi
-import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
-import Flapjack.Compiler.Backend.DataToWord.Names
-import Flapjack.Compiler.Backend.WordToStack.StubNames
-import Flapjack.Compiler.Backend.StackAlloc.StubNames
-import Flapjack.Compiler.Backend.StackRemove.StubNames
+module
+
+public import Flapjack.Compiler.Backend.BackendPasses.Closure
+public import Flapjack.Compiler.Backend.PresLang.Bvi
+public import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
+public import Flapjack.Compiler.Backend.DataToWord.Names
+public import Flapjack.Compiler.Backend.WordToStack.StubNames
+public import Flapjack.Compiler.Backend.StackAlloc.StubNames
+public import Flapjack.Compiler.Backend.StackRemove.StubNames
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Capture BVL optimization and BVI stages from `backend_passesScript.sml`.
 The original list snapshots precede the later DataLang and machine stages.

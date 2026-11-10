@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Parmove.Permutation
+module
+
+public import Flapjack.Compiler.Backend.Parmove.Permutation
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.Parmove
 

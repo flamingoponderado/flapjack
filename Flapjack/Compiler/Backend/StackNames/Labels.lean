@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.StackNames
-import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
+module
+
+public import Flapjack.Compiler.Backend.StackNames
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.StackNames
 

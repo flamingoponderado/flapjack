@@ -1,6 +1,10 @@
-import Flapjack.Misc.MachineIeee
-import Flapjack.Misc.BinaryIeeeArith
-import Flapjack.Misc.BinaryIeeeRound
+module
+
+public import Flapjack.Misc.MachineIeee
+public import Flapjack.Misc.BinaryIeeeArith
+public import Flapjack.Misc.BinaryIeeeRound
+
+@[expose] public section
 
 /-!
 # Refinement relation for the unspecified HOL quiet NaN at binary64

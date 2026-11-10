@@ -1,7 +1,15 @@
-import Flapjack.Compiler.Backend.PresLang.Asm
-import Flapjack.Compiler.Backend.PresLang.Clos
-import Flapjack.Compiler.Backend.LabLang
-import Flapjack.Compiler.Backend.LabSem.State
+module
+
+public import Flapjack.Compiler.Backend.PresLang.Asm
+public import Flapjack.Compiler.Backend.PresLang.Clos
+public import Flapjack.Compiler.Backend.LabLang
+public import Flapjack.Compiler.Backend.LabSem.State
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Labelled-assembly explorer display, following the `lab_*_to_display_def`
 and `lab_to_strs_def` definitions in `presLangScript.sml`. The representation

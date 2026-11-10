@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Backend
+module
+
+public import Flapjack.Compiler.Backend.Backend
+
+@[expose] public section
 
 /-!
 # Decidable equality for the backend configuration

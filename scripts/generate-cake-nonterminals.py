@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 """Render CakeML's generated grammar carrier from the pinned HOL capture."""
+import sys
+from pathlib import Path as _Path
+sys.path.insert(0, str(_Path(__file__).resolve().parent))
+from lean_module_header import to_module  # noqa: E402
 import argparse
 import re
 from pathlib import Path
@@ -39,6 +43,7 @@ def main():
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     output = render()
+    output = to_module(output)
     if args.check:
         if not OUTPUT.exists() or OUTPUT.read_text() != output:
             raise SystemExit(f"{OUTPUT} is stale; regenerate it from the HOL capture")

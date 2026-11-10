@@ -1,8 +1,12 @@
-import Flapjack.RiscV.PipelineDiagnostics
-import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Output
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
-import Flapjack.Pancake.Proofs.LoopToWord.ContextSupport
+module
+
+public import Flapjack.RiscV.PipelineDiagnostics
+public import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Output
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
+public import Flapjack.Pancake.Proofs.LoopToWord.ContextSupport
+
+@[expose] public section
 
 namespace Flapjack.ProductionGcCutsets
 open RiscV

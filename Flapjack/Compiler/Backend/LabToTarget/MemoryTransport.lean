@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.TargetSem.State
-import Flapjack.Misc.BytesInMemory
+module
+
+public import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+public import Flapjack.Misc.BytesInMemory
+
+@[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack
 

@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeCleanupChainEvaluation
-import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeColouringOk
-import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSACanonicalImage
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingle
-import Flapjack.Pancake.Proofs.WordConvs.SSAFlatFull
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeCleanupChainEvaluation
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeColouringOk
+public import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSACanonicalImage
+public import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingle
+public import Flapjack.Pancake.Proofs.WordConvs.SSAFlatFull
+
+@[expose] public section
 
 /-! Whole executed allocator stage.
 

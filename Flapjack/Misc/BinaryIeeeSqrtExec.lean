@@ -1,5 +1,9 @@
-import Flapjack.Misc.BinaryIeeeSqrtFp64
-import Flapjack.Misc.BinaryIeeeArithExec
+module
+
+public import Flapjack.Misc.BinaryIeeeSqrtFp64
+public import Flapjack.Misc.BinaryIeeeArithExec
+
+@[expose] public section
 
 /-!
 # Computable binary64 square root with a canonical quiet NaN

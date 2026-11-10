@@ -1,4 +1,8 @@
-import Flapjack.TypeSystemHOL.Patterns
+module
+
+public import Flapjack.TypeSystemHOL.Patterns
+
+@[expose] public section
 
 /-! Declarative primitive-operator typing from the source type system.
 These rules are separate from the executable inference implementation. -/

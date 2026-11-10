@@ -1,5 +1,9 @@
-import Flapjack.CakeParser.ToSexp
-import Mathlib.Tactic.IntervalCases
+module
+
+public import Flapjack.CakeParser.ToSexp
+public import Mathlib.Tactic.IntervalCases
+
+@[expose] public section
 
 /-! Round-trip properties for CakeML's S-expression character escaping. -/
 namespace Flapjack.CakeParser.FromSexp
