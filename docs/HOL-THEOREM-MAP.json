@@ -18944,32 +18944,36 @@
     "hol_name": "evaluate_sing_notKeep_flat_state_rel",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Removal.lean",
     "lean_name": "evaluate_sing_notKeep_flatStateRel",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; the cleared input environment retains its independent polymorphic value type. Full evaluator, carrier, and statement review remain pending."
+    "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+    "reviewer": "source comparison 2026-11-10: typed evaluate_sing_notKeep_flat_state_rel_typed in flat_elim_evaluate_source_probe.out (source 1553-1562): evaluate (env with v := []) state [expr] = (new_state, result) ∧ ¬has_Eval expr ∧ ¬keep reachable expr ∧ flat_state_rel reachable state removed_state ∧ result ≠ Rerr ⇒ flat_state_rel reachable new_state removed_state ∧ ∃value. result = Rval [value]. Lean's emptyEnvironment env renders `env with v := []` (its value type changes as in HOL), and the six premises and two conclusions match. Inherits reals_as_rational_cuts through the FlatSem evaluator's float operations (SOUNDNESS item 8)."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "flat_decs_removal_lemma",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Removal.lean",
     "lean_name": "flat_decs_removal",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out. Full evaluator, carrier, and statement review remain pending."
+    "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+    "reviewer": "source comparison 2026-11-10: typed declaration_removal in flat_elim_value_globals_probe.out: evaluate_decs state decs = (new_state,result) ∧ result ≠ Rabort Rtype_error ∧ remove_unreachable reachable decs = removed_decs ∧ flat_state_rel reachable state removed_state ∧ EVERY (¬ has_Eval_dec) decs ∧ decs_closed reachable decs ⇒ ∃new_removed_state. new_removed_state.ffi = new_state.ffi ∧ evaluate_decs removed_state removed_decs = (new_removed_state,result). Lean states the same six premises and the same existential with .ffi equality and evaluation equality. Inherits reals_as_rational_cuts through the FlatSem evaluator's float operations (SOUNDNESS item 8)."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "flat_removal_thm",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Removal.lean",
     "lean_name": "flat_removal",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out. Full evaluator, carrier, and statement review remain pending."
+    "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+    "reviewer": "source comparison 2026-11-10: typed initial_state_removal in flat_elim_value_globals_probe.out: evaluate_decs (initial_state ffi k ec) decs = (new_state,result) ∧ result ≠ Rabort Rtype_error ∧ (roots,tree) = analyse_code decs ∧ reachable = closure_spt roots tree ∧ ¬EXISTS has_Eval_dec decs ∧ remove_unreachable reachable decs = removed_decs ⇒ ∃s. s.ffi = new_state.ffi ∧ evaluate_decs (initial_state ffi k ec) removed_decs = (s,result). Lean states the same with declarations.any hasEvalDec = false for ¬EXISTS. Inherits reals_as_rational_cuts through the FlatSem evaluator's float operations (SOUNDNESS item 8)."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "evaluate_flat_state_rel_lemma",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PureFull.lean",
     "lean_name": "evaluate_pure_flatStateRel",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out. Full evaluator, carrier, and statement review remain pending."
+    "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+    "reviewer": "source comparison 2026-11-10: typed evaluate_flat_state_rel_lemma_typed in flat_elim_evaluate_source_probe.out (source 1263-1274): evaluate env state exprL = (new_state,result) ∧ EVERY is_pure exprL ∧ EVERY (¬v_has_Eval ∘ SND) env.v ∧ EVERY (¬has_Eval) exprL ∧ EVERY (λe. isEmpty (inter (find_loc e) reachable)) exprL ∧ flat_state_rel reachable state removed_state ∧ result ≠ Rerr ⇒ ∃values. flat_state_rel reachable new_state removed_state ∧ result = Rval values ∧ EVERY (¬v_has_Eval) values. Lean's premises match (bindingsNoEval env.v, expressionsNoEval, sptIsEmpty (sptInter (findLoc e) reachable)), and the conclusion matches with valuesNoEval. Inherits reals_as_rational_cuts through the FlatSem evaluator's float operations (SOUNDNESS item 8)."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
@@ -19000,24 +19004,27 @@
     "hol_name": "evaluate_sing_keep_flat_state_rel_eq",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/EvaluateSpecialization.lean",
     "lean_name": "evaluate_sing_keep_flatStateRel",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; the input environment is polymorphic and clearing its sole field changes its value type. Full evaluator, carrier, and statement review remain pending."
+    "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+    "reviewer": "source comparison 2026-11-10: typed evaluate_sing_keep_flat_state_rel_eq_typed in flat_elim_evaluate_source_probe.out (source 1158-1170): evaluate (env with v := []) state exprL = (new_state,result) ∧ flat_state_rel reachable state removed_state ∧ exprL = [expr] ∧ keep reachable expr ∧ domain (find_lookups expr) ⊆ reachable ∧ ¬has_Eval expr ∧ result ≠ Rerr ⇒ ∃new_removed_state. evaluate (env with v := []) removed_state exprL = (new_removed_state,result) ∧ flat_state_rel reachable new_state new_removed_state. Lean states the same six premises and conclusion with emptyEnvironment env and globalsWithin (findLookups expr). Inherits reals_as_rational_cuts through the FlatSem evaluator's float operations (SOUNDNESS item 8)."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "evaluate_dec_flat_state_rel",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/EvaluateSpecialization.lean",
     "lean_name": "evaluate_dec_flatStateRel",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out. Full evaluator, carrier, and statement review remain pending."
+    "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+    "reviewer": "source comparison 2026-11-10: typed evaluate_dec_flat_state_rel_typed in flat_elim_evaluate_source_probe.out (source 1184-1196): evaluate_dec state dec = (new_state,result) ∧ decs_closed reachable [dec] ∧ flat_state_rel reachable state removed_state ∧ keep reachable dec ∧ ¬has_Eval_dec dec ∧ result ≠ Rabort ⇒ ∃new_removed_state. evaluate_dec removed_state dec = (new_removed_state,result) ∧ flat_state_rel reachable new_state new_removed_state. Lean states the same six premises and conclusion. Inherits reals_as_rational_cuts through the FlatSem evaluator's float operations (SOUNDNESS item 8)."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "evaluate_keep_flat_state_rel_eq_lemma",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/EvaluateFull.lean",
     "lean_name": "evaluate_keep_flatStateRel",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Assembled clock and expression-weight induction; typed original captured in flat_elim_value_globals_probe.out. Full evaluator, carrier, and statement review remain pending."
+    "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+    "reviewer": "source comparison 2026-11-10: typed evaluate_keep_flat_state_rel_eq_lemma_typed in flat_elim_evaluate_source_probe.out (source 778-795): evaluate env state exprL = (new_state,result) ∧ domain (find_lookupsL exprL) ⊆ reachable ∧ flat_state_rel reachable state removed_state ∧ domain (find_env_globals env) ⊆ reachable ∧ EVERY (¬v_has_Eval ∘ SND) env.v ∧ EVERY (¬has_Eval) exprL ∧ result ≠ Rerr ⇒ ∃new_removed_state. evaluate env removed_state exprL = (new_removed_state,result) ∧ flat_state_rel reachable new_state new_removed_state ∧ domain (find_sem_prim_res_globals result) ⊆ reachable ∧ EVERY (¬v_has_Eval) (result_vs result). Lean's premises match with globalsWithin (findGlobalsList destGlobalVarLookup exprL) for find_lookupsL and the four conclusions match with findPrimitiveResultGlobals and valuesNoEval. Inherits reals_as_rational_cuts through the FlatSem evaluator's float operations (SOUNDNESS item 8)."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -19051,40 +19058,40 @@
     "hol_name": "find_v_globals_v_to_list",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
     "lean_name": "findValueGlobals_valueToList",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed value_to_list_globals in flat_elim_value_globals_probe.out: domain (find_v_globals x) ⊆ reachable ∧ v_to_list x = SOME xs ⇒ domain (find_v_globalsL xs) ⊆ reachable. Lean states the same with globalsWithin (findValueGlobals value) and valueToList value = some values."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "find_v_globals_list_to_v",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
     "lean_name": "findValueGlobals_listToValue",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed list_to_value_globals in flat_elim_value_globals_probe.out: domain (find_v_globalsL xs) ⊆ reachable ∧ list_to_v xs = x ⇒ domain (find_v_globals x) ⊆ reachable. Lean states the same with findValuesGlobals/listToValue."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "find_v_globals_list_to_v_APPEND",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
     "lean_name": "findValueGlobals_listToValue_append",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed list_append_globals in flat_elim_value_globals_probe.out: both list domains within reachable ⇒ domain (find_v_globals (list_to_v (xs ++ ys))) ⊆ reachable. Lean states the same with globalsWithin on findValuesGlobals left/right and findValueGlobals (listToValue (left ++ right))."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "v_has_Eval_list_to_v",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
     "lean_name": "valueHasEval_listToValue",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed list_to_value_eval in flat_elim_value_globals_probe.out: v_has_Eval (list_to_v xs) ⇔ EXISTS v_has_Eval xs. Lean states valueHasEval (listToValue values) = valuesHaveEval values, with valuesHaveEval the recursive EXISTS over the list."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "v_has_Eval_v_to_list",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
     "lean_name": "valueHasEval_valueToList",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed value_to_list_eval in flat_elim_value_globals_probe.out: v_to_list v = SOME xs ⇒ (v_has_Eval v ⇔ EXISTS v_has_Eval xs). Lean states valueToList value = some values → valueHasEval value = valuesHaveEval values."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
@@ -19099,16 +19106,16 @@
     "hol_name": "find_refs_globals_LUPDATE",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
     "lean_name": "findRefsGlobals_LUPDATE",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full store, sparse-tree carrier, and list-update review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed refs_update_reachable in flat_elim_value_globals_probe.out: n < LENGTH refs ∧ domain (find_refs_globals refs) ⊆ reachable ⇒ the four-way conjunction over refs[n ↦ Refv a], refs[n ↦ Varray vs], refs[n ↦ W8array ws] and refs[n ↦ Thunk m a], each with its value-globals premise where present. Lean states the same four conjuncts over refs.set index with .refv/.varray/.w8array/.thunk."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "pmatch_Match_reachable",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PatternRelation.lean",
     "lean_name": "pmatch_Match_reachable",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full matcher, value, store, and sparse-tree carrier review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed pmatch_reachable in flat_elim_value_globals_probe.out: two conjuncts for pmatch and pmatch_list, each with Match a, the value/list domain and refs domain premises, concluding the result bindings' domain within reachable. Lean's two conjuncts match with bindingsWithin (domain of findValuesGlobals over the mapped bindings) for the MAP SND domain statements."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
@@ -19315,8 +19322,8 @@
     "hol_name": "flat_state_rel_trans",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/StateRelation.lean",
     "lean_name": "flatStateRel_trans",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "source comparison 2026-11-10: typed state_transitivity in flat_elim_value_globals_probe.out: flat_state_rel reachable s1 s2 ∧ flat_state_rel reachable s2 s3 ⇒ flat_state_rel reachable s1 s3. Lean states the same implication for first/middle/last."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

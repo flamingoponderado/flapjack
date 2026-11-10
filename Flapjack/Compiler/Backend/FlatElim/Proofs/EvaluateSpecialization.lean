@@ -14,7 +14,8 @@ HOL's polymorphic record update. This is Flapjack-specific infrastructure. -/
 def emptyEnvironment {α β : Type} (_env : FlatSem.Environment α) : FlatSem.Environment β := ⟨[]⟩
 
 /-- Singleton evaluation in an empty environment preserves the flat state
-relation. The evaluator and carriers remain pending HOL correspondence review. -/
+relation. The statement has been reviewed against the pinned HOL source; the
+evaluator and carrier renderings are recorded in docs/HOL-THEOREM-MAP.json. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "evaluate_sing_keep_flat_state_rel_eq"]
 theorem evaluate_sing_keep_flatStateRel {C F α : Type} (env : FlatSem.Environment α)
     (state : FlatSem.State C F) (expressions : List FlatLang.Exp) (next : FlatSem.State C F)
@@ -86,7 +87,7 @@ theorem kept_declaration_lookups_closed (reachable : NumSet) (expression : FlatL
           | some value => cases value; rfl
 
 /-- Evaluation of a kept declaration preserves the flat state relation. The
-evaluator and carriers remain pending HOL correspondence review. -/
+evaluator and carrier renderings are recorded in docs/HOL-THEOREM-MAP.json. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "evaluate_dec_flat_state_rel"]
 theorem evaluate_dec_flatStateRel {C F : Type} (state : FlatSem.State C F) (declaration : FlatLang.Exp)
     (next : FlatSem.State C F) (result : Option (ErrorResult FlatSem.Value))

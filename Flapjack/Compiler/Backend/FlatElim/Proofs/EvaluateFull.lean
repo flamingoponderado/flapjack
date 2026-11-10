@@ -136,7 +136,8 @@ private theorem evaluationSimulation_all {C F : Type} (expressions : List FlatLa
                 argsIH
 
 /-- Full flat evaluation simulation. The evaluator and carriers remain
-pending complete HOL correspondence review. -/
+the statement has been reviewed against the pinned HOL source; the evaluator
+and carrier renderings are recorded in docs/HOL-THEOREM-MAP.json. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "evaluate_keep_flat_state_rel_eq_lemma"]
 theorem evaluate_keep_flatStateRel {C F : Type} (env : Environment FlatSem.Value)
     (state : State C F) (expressions : List FlatLang.Exp) (next : State C F)

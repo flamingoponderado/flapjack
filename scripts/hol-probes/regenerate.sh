@@ -9464,3 +9464,8 @@ run_probe pegexec_cml_fo_source_probeScript.sml pegexec_cml_fo_source_probe.out 
   sem_u_typed sem_b_typed token_alpha_check_typed token_symbol_check_typed token_longid_check_typed token_check_typed tok_map_typed pegsym_fo_typed eval_unary_def_typed mk_linfix_fo_def_typed eval_binary_def_typed eval_token_alpha_check_def_typed eval_token_symbol_check_def_typed eval_token_longid_check_alt_def_typed eval_token_check_def_typed eval_tok_map_def_typed nt_rule_fo_def_typed \
   "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" \
   "$cake_dir/compiler/parsing"
+
+run_probe flat_elim_evaluate_source_probeScript.sml flat_elim_evaluate_source_probe.out \
+  evaluate_keep_flat_state_rel_eq_lemma_typed evaluate_sing_keep_flat_state_rel_eq_typed evaluate_dec_flat_state_rel_typed evaluate_flat_state_rel_lemma_typed evaluate_sing_notKeep_flat_state_rel_typed \
+  "$cake_dir/compiler/backend/proofs/flat_elimProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

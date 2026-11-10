@@ -13,8 +13,9 @@ namespace Flapjack.Compiler.Backend.FlatElim
 open Flapjack.SemanticPrimitivesHOL
 
 /-- A discarded singleton expression preserves the relation to the unchanged
-target and returns one value. The evaluator and carriers remain pending HOL
-correspondence review. -/
+target and returns one value. The statement has been reviewed against the
+pinned HOL source; the evaluator and carrier renderings are recorded in
+docs/HOL-THEOREM-MAP.json. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "evaluate_sing_notKeep_flat_state_rel"]
 theorem evaluate_sing_notKeep_flatStateRel {C F α : Type} (env : FlatSem.Environment α)
     (state : FlatSem.State C F) (expressions : List FlatLang.Exp) (next : FlatSem.State C F)
@@ -133,8 +134,9 @@ theorem evaluateDecs_removal_related {C F : Type} (declarations : List FlatLang.
         exact ⟨targetNext, by simpa [removeUnreachable, kept] using evaluated, nextRelated⟩
 
 /-- Removing unreachable declarations preserves the evaluation result and
-final FFI state. The evaluator and carriers remain pending HOL correspondence
-review. -/
+final FFI state. The statement has been reviewed against the pinned HOL
+source; the evaluator and carrier renderings are recorded in
+docs/HOL-THEOREM-MAP.json. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "flat_decs_removal_lemma"]
 theorem flat_decs_removal {C F : Type} (state : FlatSem.State C F) (declarations : List FlatLang.Exp)
     (next : FlatSem.State C F) (result : Option (ErrorResult FlatSem.Value)) (reachable : NumSet)
@@ -151,8 +153,9 @@ theorem flat_decs_removal {C F : Type} (state : FlatSem.State C F) (declarations
   exact ⟨targetNext, nextRelated.2.2.1.symm, evaluated⟩
 
 /-- Starting from the flat initial state, reachability-based removal preserves
-evaluation result and FFI state. The evaluator and carriers remain pending
-HOL correspondence review. -/
+evaluation result and FFI state. The statement has been reviewed against the
+pinned HOL source; the evaluator and carrier renderings are recorded in
+docs/HOL-THEOREM-MAP.json. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "flat_removal_thm"]
 theorem flat_removal {C F : Type} (config : FlatSem.InstallConfig C) (ffi : HolFfiState F) (clock : Nat)
     (declarations : List FlatLang.Exp) (next : FlatSem.State C F)
