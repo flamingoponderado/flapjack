@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/misc/miscScript.sml", "hol_name": "DISJOINT_IMAGE_SUC",
+  "lean_path": "Flapjack/Misc/SuccSet.lean", "lean_name": "disjointImageSucc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared disjoint_image_suc_type and source: the two natural-number sets retain their order, and disjointness of their successor images is equivalent to their original disjointness."
+ },
+ {
+  "hol_path": "cakeml/misc/miscScript.sml", "hol_name": "IMAGE_SUC_SUBSET_UNION",
+  "lean_path": "Flapjack/Misc/SuccSet.lean", "lean_name": "imageSucc_subset_union",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared image_suc_subset_union_type and source: all three natural-number sets retain their order, and the successor-image subset of the image union is equivalent to the original subset of the union."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_mono",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/CodeGrowth.lean", "lean_name": "evaluate_mono",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
