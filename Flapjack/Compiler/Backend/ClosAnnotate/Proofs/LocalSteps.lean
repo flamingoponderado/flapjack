@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Install
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.RecursiveFunctions
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Control
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.PureBindings
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Primitive
 
 @[expose] public section
 
@@ -84,7 +85,7 @@ theorem evaluate_ordinary_all_step {C F : Type} (trace : BackendCommon.Tra) (op 
     (source : State C F) (argsIH : EvalSimulationAt source args) :
     EvalSimulationAt source [.op trace op args] :=
   evaluate_ordinary_op_step trace op args notInstall notForce source argsIH
-    (primitiveSimulation_ordinary op notInstall notForce)
+    (primitiveSimulation_generic op)
 
 theorem evaluate_raise_step {C F : Type} (trace : BackendCommon.Tra) (body : ClosLang.Exp)
     (source : State C F) (bodyIH : EvalSimulationAt source [body]) :

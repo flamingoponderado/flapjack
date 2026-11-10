@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.DirectCall
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.BlockLists
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.CodeLocations
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstallSafety
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation.Original
