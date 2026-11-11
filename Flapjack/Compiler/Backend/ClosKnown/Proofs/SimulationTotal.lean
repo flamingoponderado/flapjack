@@ -12,6 +12,7 @@ public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLetrec
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpGlobal
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpSetGlobal
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationInstallDispatch
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartFixed
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpForce
 
 @[expose] public section
@@ -1594,18 +1595,47 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
                       aenv argEas ⟨hr, hk, initialRel, argsSyntax, coSyntax, argsDisjoint, oracle, stateOracleDisjoint,
                         argsSafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
                         sub0, sub1, mono, argsFree, envRel, argsUnique, stateOracle, envEq, argsNoType⟩
-                    have step := Install.installSmartOpAfterArguments c trace args (argEas.map Prod.fst) env (env2 ++ xenv2)
-                      state middle t0 targetMiddle argResult targetArgResult res1 s hr targetArgs midState argsRelated
-                      safe envSafe argsSafe coSyntax oracleSafe stateOracleDisjoint argsDisjoint argsUnique mono
-                      midOracle midGlobals midOracleState (fun values program installed eq install => by
-                        subst argResult
-                        have bound := evaluate_clock_le args env state
-                        rw [hr] at bound
-                        simp only at bound
-                        have installClock := doInstall_success_clock values.reverse middle installed program install
-                        apply smaller program [] installed
-                        omega) run noType
-                    simpa using step
+                    cases argResult with
+                    | err error =>
+                      cases targetArgResult with
+                      | val targetValues => simp [resultRel] at argsRelated
+                      | err targetError =>
+                        rw [evaluate, fixClock_evaluate, hr] at run
+                        simp at run
+                        rcases run with ⟨rfl, rfl⟩
+                        refine ⟨.err targetError, targetMiddle, ?_, argsRelated, midState, midGlobals,
+                          midOracleState, midOracle⟩
+                        simp only [List.map_cons, List.map_nil, ClosOp.smartInstall]
+                        rw [evaluate, fixClock_evaluate, targetArgs]
+                    | val values =>
+                      cases targetArgResult with
+                      | err error => simp [resultRel] at argsRelated
+                      | val targetValues =>
+                        have safety := EvaluateGlobalsPort.Total.evaluateChangedGlobals args env state (.val values) middle
+                          ⟨hr, safe, argsSafe, envSafe⟩
+                        have midDisjoint := stateOracleMglobalsDisjointEvaluate args env state (.val values) middle
+                          ⟨hr, safe, argsSafe, envSafe, argsUnique, argsDisjoint, stateOracleDisjoint⟩
+                        obtain ⟨n, shifted⟩ := evaluateImpShiftSeq args env state (.val values) middle hr
+                        have midSyntax : coEveryFnVarsNone middle.compileOracle := by
+                          rw [shifted]
+                          exact coEveryFnVarsNoneShift state.compileOracle coSyntax n
+                        have midSafe : Relations.StateRelation.Oracle.oracleStateSgcFree middle.compileOracle := by
+                          rw [shifted]
+                          exact Relations.StateRelation.Oracle.oracleStateSgcFreeShift state.compileOracle oracleSafe n
+                        have midMono := oracleGapproxSubsptEvaluate () args env state (.val values) middle ⟨mono, hr⟩
+                        have midUnique := uniqueSetGlobalsEvaluate args [] env state middle (.val values)
+                          ⟨nilUniqueSetGlobals args state.compileOracle argsUnique, hr⟩
+                        have step := Install.installDispatchAfterArguments c trace args (argEas.map Prod.fst) env (env2 ++ xenv2)
+                          state middle t0 targetMiddle values targetValues res1 s hr targetArgs midState argsRelated
+                          safety.1 midSyntax midSafe midDisjoint midMono midUnique midGlobals midOracle midOracleState
+                          (fun program installed install => by
+                            have bound := evaluate_clock_le args env state
+                            rw [hr] at bound
+                            simp only at bound
+                            have installClock := doInstall_success_clock values.reverse middle installed program install
+                            apply smaller program [] installed
+                            omega) run noType
+                        simpa only [List.map_cons, List.map_nil, smartTotal_eq_smartOp, ClosOp.smartInstall] using step
               | thunkOp operation =>
                 cases operation with
                 | allocThunk mode =>

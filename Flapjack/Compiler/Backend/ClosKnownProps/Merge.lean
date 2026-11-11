@@ -63,9 +63,41 @@ theorem mergeComm (a b : ValApprox) : mergeHOL a b = mergeHOL b a := by
         · rfl
   exact all (sizeOf a + 1) a b (by omega)
 
+private theorem mergeListIdem (xs : List ValApprox)
+    (step : ∀ x ∈ xs, mergeHOL x x = x) : mergeListHOL xs xs = xs := by
+  induction xs with
+  | nil => simp [mergeListHOL]
+  | cons x xs ih =>
+    simp only [mergeListHOL]
+    rw [step x (by simp), ih (fun y hy => step y (by simp [hy]))]
+
+/-- Merging an approximation with itself leaves it unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "merge_idem"]
+theorem mergeIdem (a : ValApprox) : mergeHOL a a = a := by
+  have all : ∀ n (a : ValApprox), sizeOf a < n → mergeHOL a a = a := by
+    intro n
+    induction n using Nat.strongRecOn with
+    | ind n ih =>
+      intro a bound
+      cases a <;> simp only [mergeHOL, beq_self_eq_true, Bool.true_and, ↓reduceIte]
+      case tuple tag xs =>
+        congr 1
+        apply mergeListIdem
+        intro child member
+        have small := List.sizeOf_lt_of_mem member
+        have childBound : sizeOf child + 1 < n := by
+          simp only [ValApprox.tuple.sizeOf_spec] at bound
+          omega
+        exact ih (sizeOf child + 1) childBound child (by omega)
+  exact all (sizeOf a + 1) a (by omega)
+
 /-- An approximation is below another when merging yields the latter. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_def"]
 def subapprox (a1 a2 : ValApprox) : Prop := mergeHOL a1 a2 = a2
+
+/-- Every approximation is below itself. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_refl"]
+theorem subapproxRefl (a : ValApprox) : subapprox a a := mergeIdem a
 
 /-- Approximation ordering is antisymmetric. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_antisym"]
@@ -82,5 +114,11 @@ noncomputable def betterDefinedG (g1 g2 : Spt ValApprox) : Prop :=
   ∀ k, sptMem k g1 → sptMem k g2 ∧
     subapprox (@Flapjack.holThe ValApprox ⟨.other⟩ (sptLookup k g1))
       (@Flapjack.holThe ValApprox ⟨.other⟩ (sptLookup k g2))
+
+/-- Every approximation tree is better defined than itself. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "better_definedg_refl"]
+theorem betterDefinedGRefl (g : Spt ValApprox) : betterDefinedG g g := by
+  intro key member
+  exact ⟨member, subapproxRefl _⟩
 
 end Flapjack.Compiler.Backend.ClosKnownProps

@@ -14256,6 +14256,30 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "merge_idem",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "mergeIdem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_merge_idem_typed: the original full approximation or sparse-tree carrier and reflexive conclusion agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_refl",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxRefl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_refl_typed: the original full approximation or sparse-tree carrier and reflexive conclusion agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "better_definedg_refl",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "betterDefinedGRefl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_better_definedg_refl_typed: the original full approximation or sparse-tree carrier and reflexive conclusion agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
   "hol_name": "subapprox_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
   "lean_name": "subapprox",

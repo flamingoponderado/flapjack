@@ -1,7 +1,6 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationInstall
-public import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartEvaluate
 
 @[expose] public section
 
@@ -241,97 +240,5 @@ theorem installDispatchAfterArguments {C F : Type} (c : Config) (trace : Backend
             rw [targetBodyRun]
             rfl
 
-/-- After related argument evaluations, simulate installation through the
-optimizer's smart-operation result. This is Flapjack induction infrastructure. -/
-theorem installSmartOpAfterArguments {C F : Type} (c : Config) (trace : BackendCommon.Tra)
-    (xs ys : List ClosLang.Exp) (env targetEnv : List ClosSem.Value)
-    (initial middle : State (Spt ValApprox × C) F) (targetInitial target : State C F)
-    (argResult targetArgResult result : Result (List ClosSem.Value) ClosSem.Value)
-    (final : State (Spt ValApprox × C) F)
-    (runArgs : evaluate xs env initial = (argResult, middle))
-    (targetRunArgs : evaluate ys targetEnv targetInitial = (targetArgResult, target))
-    (states : StateRel c (nextG middle) middle target)
-    (argsRelated : resultRel (List.Forall₂ (ValueRel c (nextG middle)))
-      (ValueRel c (nextG middle)) argResult targetArgResult)
-    (safe : StateGlobalSafety.ssgcFree initial) (envSafe : ∀ v ∈ env, ClosProps.vsgcFree v)
-    (exprSafe : ∀ e ∈ xs, esgcFree e)
-    (oracleSyntax : coEveryFnVarsNone initial.compileOracle)
-    (oracleSafe : StateRelation.Oracle.oracleStateSgcFree initial.compileOracle)
-    (disjoint : stateOracleMglobalsDisjoint initial)
-    (argsDisjoint : mglobalsDisjoint initial.globals xs)
-    (argsUnique : uniqueSetGlobals xs initial.compileOracle)
-    (mono : oracleGapproxSubspt initial.compileOracle)
-    (middleOracleDisjoint : oracleGapproxDisjoint (nextG middle) middle.compileOracle)
-    (middleGlobals : stateGlobalsApprox middle (nextG middle))
-    (middleOracle : isStateOracle (compileInc c) middle.compileOracle)
-    (ih : ∀ args program installed, argResult = .val args →
-      doInstall args.reverse middle = (.val program, installed) → KnownSimulationAt program [] installed)
-    (run : evaluate [.op trace .install xs] env initial = (result, final))
-    (noType : result ≠ .err (.abort .typeError)) :
-    ∃ result' targetFinal,
-      evaluate [ClosOp.smartOp trace .install ys] targetEnv targetInitial = (result', targetFinal) ∧
-      resultRel (List.Forall₂ (ValueRel c (nextG final))) (ValueRel c (nextG final)) result result' ∧
-      StateRel c (nextG final) final targetFinal ∧ stateGlobalsApprox final (nextG final) ∧
-      isStateOracle (compileInc c) final.compileOracle ∧
-      oracleGapproxDisjoint (nextG final) final.compileOracle := by
-  have raw : ∃ result' targetFinal,
-      evaluate [.op trace .install ys] targetEnv targetInitial = (result', targetFinal) ∧
-      resultRel (List.Forall₂ (ValueRel c (nextG final))) (ValueRel c (nextG final)) result result' ∧
-      StateRel c (nextG final) final targetFinal ∧ stateGlobalsApprox final (nextG final) ∧
-      isStateOracle (compileInc c) final.compileOracle ∧
-      oracleGapproxDisjoint (nextG final) final.compileOracle := by
-    cases argResult with
-    | err error =>
-      cases targetArgResult with
-      | val targetArgs => simp [resultRel] at argsRelated
-      | err targetError =>
-        rw [evaluate, fixClock_evaluate, runArgs] at run
-        simp at run
-        rcases run with ⟨rfl, rfl⟩
-        refine ⟨.err targetError, target, ?_, argsRelated, states, middleGlobals, middleOracle, middleOracleDisjoint⟩
-        rw [evaluate, fixClock_evaluate, targetRunArgs]
-    | val args =>
-      cases targetArgResult with
-      | err error => simp [resultRel] at argsRelated
-      | val targetArgs =>
-        have safety := EvaluateGlobalsPort.Total.evaluateChangedGlobals xs env initial (.val args) middle
-          ⟨runArgs, safe, exprSafe, envSafe⟩
-        have midDisjoint := stateOracleMglobalsDisjointEvaluate xs env initial (.val args) middle
-          ⟨runArgs, safe, exprSafe, envSafe, argsUnique, argsDisjoint, disjoint⟩
-        obtain ⟨n, shifted⟩ := evaluateImpShiftSeq xs env initial (.val args) middle runArgs
-        have midSyntax : coEveryFnVarsNone middle.compileOracle := by
-          rw [shifted]
-          exact coEveryFnVarsNoneShift initial.compileOracle oracleSyntax n
-        have midSafe : StateRelation.Oracle.oracleStateSgcFree middle.compileOracle := by
-          rw [shifted]
-          exact StateRelation.Oracle.oracleStateSgcFreeShift initial.compileOracle oracleSafe n
-        have midMono := oracleGapproxSubsptEvaluate () xs env initial (.val args) middle ⟨mono, runArgs⟩
-        have emptyUnique : uniqueSetGlobals [] initial.compileOracle := by
-          intro i key
-          have bound := argsUnique i key
-          change elistGlobals ((firstNExps initial.compileOracle i).flatten) key ≤ 1
-          simp only [elistGlobals_append] at bound
-          omega
-        have midUnique := uniqueSetGlobalsEvaluate xs [] env initial middle (.val args) ⟨emptyUnique, runArgs⟩
-        exact installDispatchAfterArguments c trace xs ys env targetEnv initial middle targetInitial target
-          args targetArgs result final runArgs targetRunArgs states argsRelated safety.1 midSyntax midSafe
-          midDisjoint midMono midUnique middleGlobals middleOracleDisjoint middleOracle
-          (fun program installed success => ih args program installed rfl success) run noType
-  obtain ⟨result', targetFinal, targetRun, related, finalState, finalGlobals, finalOracle, finalDisjoint⟩ := raw
-  have targetNoType : result' ≠ .err (.abort .typeError) := by
-    intro eq
-    subst result'
-    cases result with
-    | val values => simp [resultRel] at related
-    | err error =>
-      cases error with
-      | raise value => simp [resultRel, excRel] at related
-      | abort abort =>
-        simp [resultRel, excRel] at related
-        subst abort
-        exact noType rfl
-  exact ⟨result', targetFinal, ClosOp.smartOpThm trace .install ys targetEnv
-    targetInitial targetFinal result' ⟨targetRun, targetNoType⟩, related, finalState,
-    finalGlobals, finalOracle, finalDisjoint⟩
 
 end Flapjack.Compiler.Backend.ClosKnown.Simulation.Install

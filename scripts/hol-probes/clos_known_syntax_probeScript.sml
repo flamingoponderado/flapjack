@@ -225,6 +225,9 @@ val _ = show "val_approx_val_rules_typed=" clos_knownProofTheory.val_approx_val_
 val _ = show "val_approx_merge_left_typed=" clos_knownProofTheory.val_approx_val_merge_I_lemma;
 val _ = show "val_approx_merge_typed=" clos_knownProofTheory.val_approx_val_merge_I;
 val _ = show "known_merge_comm_typed=" clos_knownPropsTheory.merge_comm;
+val _ = show "known_merge_idem_typed=" clos_knownPropsTheory.merge_idem;
+val _ = show "known_subapprox_refl_typed=" clos_knownPropsTheory.subapprox_refl;
+val _ = show "known_better_definedg_refl_typed=" clos_knownPropsTheory.better_definedg_refl;
 val _ = show "known_subapprox_def_typed=" clos_knownPropsTheory.subapprox_def;
 val _ = show "known_better_definedg_typed=" clos_knownPropsTheory.better_definedg_def;
 val _ = show "known_subspt_better_definedg_typed=" clos_knownProofTheory.subspt_better_definedg;

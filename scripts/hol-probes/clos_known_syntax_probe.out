@@ -209,6 +209,9 @@ val_approx_val_rules_typed=(∀(v :v). val_approx_val Other v) ∧ (∀(i :int).
 val_approx_merge_left_typed=∀(a1 :val_approx) (v :v). val_approx_val a1 v ⇒ ∀(a2 :val_approx). val_approx_val (merge a1 a2 :val_approx) v
 val_approx_merge_typed=∀(a1 :val_approx) (v :v) (a2 :val_approx). val_approx_val a1 v ∨ val_approx_val a2 v ⇒ val_approx_val (merge a1 a2 :val_approx) v
 known_merge_comm_typed=∀(a1 :val_approx) (a2 :val_approx). (merge a1 a2 :val_approx) = (merge a2 a1 :val_approx)
+known_merge_idem_typed=(merge (a :val_approx) a :val_approx) = a
+known_subapprox_refl_typed=(a :val_approx) ◁ a
+known_better_definedg_refl_typed=better_definedg (g :val_approx sptree$num_map) g
 known_subapprox_def_typed=∀(a1 :val_approx) (a2 :val_approx). a1 ◁ a2 ⇔ (merge a1 a2 :val_approx) = a2
 known_better_definedg_typed=∀(g1 :val_approx sptree$num_map) (g2 :val_approx sptree$num_map). better_definedg g1 g2 ⇔ ∀(k :num). k ∈ (domain g1 :num -> bool) ⇒ k ∈ (domain g2 :num -> bool) ∧ THE (lookup k g1) ◁ THE (lookup k g2)
 known_subspt_better_definedg_typed=∀(sp1 :val_approx sptree$num_map) (sp2 :val_approx sptree$num_map) (sp3 :val_approx sptree$num_map). subspt sp1 sp3 ∧ better_definedg sp1 sp2 ∧ better_definedg sp2 sp3 ⇒ subspt sp1 sp2
