@@ -3,7 +3,7 @@ module
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SubsptComposition
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxCons
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxApp
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApplyPartial
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Simulation
 
 @[expose] public section
 
@@ -150,46 +150,5 @@ theorem applicationPrefixSimulation {C F : Type} (trace : BackendCommon.Tra)
       argsApprox.2 values rfl, fnRel, fnApproxResult.2, fnSafety.1, fnSafety.2.1, valuesSafe, finalOracleSafe, finalCoSyntax,
       finalUnique, finalStateOracleDisjoint, finalMono, finalState, finalGlobals, finalOracle, finalDisjoint⟩
 
-/-- Once both preliminary evaluations succeed, the source application
-induction hypothesis applies to either an unchanged call or an annotated call.
-This is Flapjack infrastructure for the non-inlining branches. -/
-theorem applicationContinuation {C F : Type} (c : Config) (loc targetLoc : Option Nat)
-    (fn targetFn : ClosSem.Value) (values targetValues : List ClosSem.Value)
-    (next : State (Spt ValApprox × C) F) (targetNext : State C F)
-    (approx : ValApprox) (arity : Nat)
-    (ih : KnownAppSimulationAt loc fn values next)
-    (h : List.Forall₂ (ValueRel c (nextG next)) values targetValues ∧
-      ValueRel c (nextG next) fn targetFn ∧ ValApproxVal approx fn ∧
-      ssgcFree next ∧ vsgcFree fn ∧ (∀ v ∈ values, vsgcFree v) ∧
-      oracleStateSgcFree next.compileOracle ∧ coEveryFnVarsNone next.compileOracle ∧
-      uniqueSetGlobals [] next.compileOracle ∧ stateOracleMglobalsDisjoint next ∧
-      oracleGapproxSubspt next.compileOracle ∧
-      StateRel c (nextG next) next targetNext ∧ stateGlobalsApprox next (nextG next) ∧
-      isStateOracle (compileInc c) next.compileOracle ∧
-      oracleGapproxDisjoint (nextG next) next.compileOracle)
-    (arityEq : arity = values.length)
-    (choice : targetLoc = loc ∨ ∃ address, targetLoc = some address ∧
-      decideInlineHOL c approx loc arity = .annotate address)
-    (result : Result (List ClosSem.Value) ClosSem.Value)
-    (final : State (Spt ValApprox × C) F)
-    (run : evaluateApp loc fn values next = (result, final))
-    (noType : result ≠ .err (.abort .typeError)) :
-    ∃ targetResult targetFinal,
-      evaluateApp targetLoc targetFn targetValues targetNext = (targetResult, targetFinal) ∧
-      resultRel (List.Forall₂ (ValueRel c (nextG final))) (ValueRel c (nextG final)) result targetResult ∧
-      StateRel c (nextG final) final targetFinal ∧ stateGlobalsApprox final (nextG final) ∧
-      isStateOracle (compileInc c) final.compileOracle ∧
-      oracleGapproxDisjoint (nextG final) final.compileOracle := by
-  obtain ⟨argsRel, fnRel, sound, safe, fnSafe, argsSafe, oracleSafe, coSyntax,
-    unique, disjoint, mono, state, globals, stateOracle, oracle⟩ := h
-  have locRel : loptRel targetFn values.length loc targetLoc := by
-    rcases choice with equal | ⟨address, rfl, decision⟩
-    · exact Or.inl equal
-    · simpa [arityEq] using ApplyPartial.annotatedApplicationLocation c (nextG next)
-        approx fn targetFn loc arity address decision sound fnRel
-  apply ih result final targetLoc targetFn targetValues targetNext c none
-  exact ⟨run, by simpa [valueRelAppNone] using fnRel, oracle, disjoint, safe,
-    fnSafe, argsSafe, oracleSafe, coSyntax, unique, stateOracle, argsRel, state,
-    globals, mono, locRel, by simp, noType⟩
 
 end Flapjack.Compiler.Backend.ClosKnown.Simulation.AppPrefix

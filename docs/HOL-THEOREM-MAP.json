@@ -10955,6 +10955,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_changed_globals_alt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OpGlobals.lean",
+  "lean_name": "knownOpChangedGlobalsAlt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_op_changed_alt_typed: original compiler result premise and full domain characteristic-bag subbag bound agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_changed_globals_alt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownGlobals.lean",
+  "lean_name": "knownListTotalChangedGlobalsAlt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_changed_alt_typed: original compiler result premise and full domain characteristic-bag subbag bound agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "set_globals_empty_unique_set_globals",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/UniqueGlobals.lean",
   "lean_name": "setGlobalsEmptyUniqueSetGlobals",
@@ -132760,6 +132776,14 @@
   "lean_name": "bagAllDistinct",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the source and typed bag_all_distinct capture: for an arbitrary element type, every bag multiplicity is at most one."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "BAG_OF_SET",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "bagOfSet",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bag_of_set_typed: an arbitrary predicate determines the characteristic multiplicity at each element."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",

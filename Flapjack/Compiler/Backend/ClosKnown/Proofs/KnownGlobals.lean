@@ -79,4 +79,26 @@ theorem knownListTotalChangedGlobalsAltSet (c : Config) (xs : List ClosLang.Exp)
   · exact Or.inl ((sptMem_iff_lookup i g0).2 ⟨value, old⟩)
   · exact Or.inr written
 
+/-- The original multiplicity bound for output approximation domains. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_changed_globals_alt"]
+theorem knownListTotalChangedGlobalsAlt (c : Config) (xs : List ClosLang.Exp)
+    (env : List ValApprox) (g0 : Spt ValApprox) (result : List (ClosLang.Exp × ValApprox))
+    (g : Spt ValApprox) (run : knownListTotal c xs env g0 = (result, g)) :
+    Flapjack.subBag (Flapjack.bagOfSet (sptDomain g))
+      (Flapjack.bagUnion (Flapjack.bagOfSet (sptDomain g0)) (elistGlobals xs)) := by
+  classical
+  intro key count bounded
+  have included :=  knownListTotalChangedGlobalsAltSet c xs env g0 result g run key
+  simp only [Flapjack.bagInn, Flapjack.bagOfSet, Flapjack.bagUnion] at bounded ⊢
+  by_cases current : sptDomain g key
+  · have alternatives := included current
+    by_cases prior : sptDomain g0 key
+    · simp only [current, prior, if_true] at bounded ⊢
+      omega
+    · have written := alternatives.resolve_left prior
+      simp only [current, prior, if_true, if_false, Nat.zero_add] at bounded ⊢
+      omega
+  · simp only [current, if_false] at bounded
+    omega
+
 end Flapjack.Compiler.Backend.ClosKnown

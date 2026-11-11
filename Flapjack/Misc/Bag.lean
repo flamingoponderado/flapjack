@@ -28,6 +28,12 @@ def bagIn {α : Type} (e : α) (b : Bag α) : Prop := bagInn e 1 b
 @[hol "HOL/src/bag/bagScript.sml" "SET_OF_BAG"]
 def setOfBag {α : Type} (b : Bag α) : α → Prop := fun x => bagIn x b
 
+/-- Turn a set predicate into its characteristic bag. -/
+@[hol "HOL/src/bag/bagScript.sml" "BAG_OF_SET"]
+noncomputable def bagOfSet {α : Type} (P : α → Prop) : Bag α := by
+  classical
+  exact fun x => if P x then 1 else 0
+
 /-- Every element has multiplicity at most one. -/
 @[hol "HOL/src/bag/bagScript.sml" "BAG_ALL_DISTINCT"]
 def bagAllDistinct {α : Type} (b : Bag α) : Prop := ∀ e, b e ≤ 1
