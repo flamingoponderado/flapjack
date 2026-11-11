@@ -124,11 +124,9 @@ theorem codeList_eq_source (loc : Nat) (fns : List (Nat × ClosLang.Exp))
   | mk known code =>
     simp only [codeList]
     rw [fold_eq]
-    induction fns generalizing loc code with
-    | nil => rfl
-    | cons fn rest ih =>
-      cases fn
-      exact ih _ _
+    apply Prod.ext
+    · exact (codeListSource_fst loc fns (known, code)).symm
+    · exact codeListSource_snd_change loc fns ((), code) (known, code) rfl
 
 /-- The label formula applies to the executable direct-call pass. -/
 theorem codeList_labels (loc : Nat) (fns : List (Nat × ClosLang.Exp)) (state : State) :
@@ -138,13 +136,6 @@ theorem codeList_labels (loc : Nat) (fns : List (Nat × ClosLang.Exp)) (state : 
   rw [codeList_eq_source]
   exact codeListSource_labels loc fns state
 
-/-- New auxiliary labels are distinct. This supports the direct-call pass's
-code-location invariant. -/
-private theorem codeList_newLabels_nodup (loc count : Nat) :
-    (((List.range count).map (fun i => loc + i * 2 + 1)).reverse).Nodup := by
-  apply List.nodup_reverse.mpr
-  apply List.Nodup.map (fun _ _ equal => by omega) List.nodup_range
-
 /-- Appending generated code preserves distinct labels whenever the new range
 is disjoint from the labels already in the state. -/
 theorem codeList_labels_nodup (loc : Nat) (fns : List (Nat × ClosLang.Exp))
@@ -152,7 +143,9 @@ theorem codeList_labels_nodup (loc : Nat) (fns : List (Nat × ClosLang.Exp))
     (fresh : ∀ i, i < fns.length → loc + i * 2 + 1 ∉ state.2.map Prod.fst) :
     ((codeList loc fns state).2.map Prod.fst).Nodup := by
   rw [codeList_labels]
-  apply List.Nodup.append (codeList_newLabels_nodup loc fns.length) oldDistinct
+  apply List.Nodup.append
+    (List.nodup_reverse.mpr (List.Nodup.map (fun _ _ equal => by omega) List.nodup_range))
+    oldDistinct
   intro label generated old
   simp only [List.mem_reverse, List.mem_map, List.mem_range] at generated
   obtain ⟨i, bound, rfl⟩ := generated
