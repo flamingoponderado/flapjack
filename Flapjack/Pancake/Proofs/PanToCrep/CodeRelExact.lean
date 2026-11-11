@@ -174,14 +174,15 @@ theorem mkCtxtCodeImpCodeRelExactHOLW {width : Nat} [NeZero width]
     simp
   have hbody : localisedProgHOL program = true := hlocalised _ hmem
   refine ⟨hbody, ?_, ?_⟩
-  · change Flapjack.FLOOKUP
-      (Flapjack.alistToFmap (makeFuncsEntriesHOL (functionsHOL declarations)))
-      function = some (variableShapes, returnShape)
-    change Flapjack.FLOOKUP
-      (Flapjack.alistToFmap
-        ((functionsHOL declarations).map fun entry =>
-          (entry.1, (entry.2.1, entry.2.2.2)))) function = _
-    rw [flookup_alistToFmap_eq_lookup,
+  · change (HolFiniteMapExact.empty.updateListEq
+      (((functionsHOL declarations).map fun entry =>
+        (entry.1, (entry.2.1, entry.2.2.2))).reverse)).lookup function =
+      some (variableShapes, returnShape)
+    rw [HolFiniteMapExact.lookup_updateListEq]
+    change (FUPDATE_LIST_HOL (FEMPTY : FiniteMap MlS
+      (List (MlS × ShapeHOL) × ShapeHOL)) _) function =
+      some (variableShapes, returnShape)
+    rw [Flapjack.FUPDATE_LIST_HOL_reverse_apply_eq_lookup,
       lookup_map_preserveFst
         (project := fun value : List (MlS × ShapeHOL) ×
           (Flapjack.Pancake.PanLang.ProgHOL width × ShapeHOL) =>

@@ -1050,6 +1050,31 @@ theorem FLOOKUP_FUPDATE_LIST_reverse_eq_lookup [BEq α] [LawfulBEq α]
           beq_eq_false_iff_ne.mpr (fun he => h he.symm)
         simp [h1, h2, ih]
 
+/-- Flapjack-specific finite-map support: the HOL-equality `FUPDATE_LIST_HOL`
+    fold over a reversed association list agrees with `List.lookup`, i.e. the
+    first source occurrence wins, exactly like HOL `alist_to_fmap`. -/
+private theorem fupdateListHOL_reverse_eq_foldr {α β : Type} [DecidableEq α]
+    (entries : List (α × β)) :
+    FUPDATE_LIST_HOL (FEMPTY : FiniteMap α β) entries.reverse =
+      List.foldr (fun entry map => FUPDATE_HOL map entry) FEMPTY entries := by
+  simp only [FUPDATE_LIST_HOL, List.foldl_reverse]
+
+theorem FUPDATE_LIST_HOL_reverse_apply_eq_lookup [DecidableEq α] [BEq α]
+    [LawfulBEq α] (entries : List (α × β)) (key : α) :
+    (FUPDATE_LIST_HOL (FEMPTY : FiniteMap α β) entries.reverse) key =
+      List.lookup key entries := by
+  rw [fupdateListHOL_reverse_eq_foldr]
+  induction entries with
+  | nil => rfl
+  | cons entry entries ih =>
+      obtain ⟨entryKey, entryValue⟩ := entry
+      rw [List.foldr_cons, List.lookup_cons]
+      by_cases h : key = entryKey
+      · subst h
+        simp [FUPDATE_HOL]
+      · have h1 : (key == entryKey) = false := beq_eq_false_iff_ne.mpr h
+        simp [FUPDATE_HOL, h, h1, ih]
+
 /-- Flapjack-specific list fact: mapping a key-preserving projection through an
     association list commutes with `List.lookup` (the list-level `ALOOKUP_MAP`
     step used by HOL inside `mk_ctxt_code_imp_code_rel`). -/

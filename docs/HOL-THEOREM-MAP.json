@@ -76834,7 +76834,7 @@
     "lean_name": "makeFuncsExactHOL",
     "statement_status": "reviewed_fmap_as_finite_support_result",
     "fmap_as_finite_support_result": true,
-    "reviewer": "codewhale source comparison (2026-11-11; task 145; typed HOL capture make_funcs_def_typed in scripts/hol-probes/pan_phase4_exact_probe.out, 0 hypotheses). pan_to_crepScript.sml:366-374: ∀(prog :(α # β # δ # γ) list). make_funcs prog = let fnames = MAP FST prog; params = MAP (FST o SND) prog; returns = MAP (SND o SND o SND) prog; fs = MAP3 (λx y z. (x,y,z)) fnames params returns in alist_to_fmap fs. The Lean twin is the port at the panSem used carrier: the program list is the output of the tagged functionsHOL (entries (name, params, body, return), i.e. α = MlS, β = List (MlS × ShapeHOL), δ = ProgHOL width, γ = ShapeHOL), the projection order fnames/params/returns is HOL's, and the result is the canonical finite-support map HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL) whose lookup is the HOL-shaped right-fold association-list rendering alistToFmap (HOL alist_to_fmap, first entry wins on a duplicate key). The standalone fmap_as_finite_support_result qualifier records only that finite-support representation; the same-module witness states the unconditional lookup-level correspondence to FLOOKUP ∘ alistToFmap. HOL's four type variables are instantiated to the distinct used carriers (no identification between them); a fully generic port would have to add BEq/LawfulBEq binders for the generic key type so the association list can be rendered as a Lean finite map, which is an added side condition the qualifier does not authorize, so it is kept at the used instantiation and recorded here."
+    "reviewer": "codewhale source comparison (2026-11-11; task 145/146; typed HOL capture make_funcs_def_typed in scripts/hol-probes/pan_phase4_exact_probe.out, 0 hypotheses). pan_to_crepScript.sml:366-374: ∀(prog :(α # β # δ # γ) list). make_funcs prog = let fnames = MAP FST prog; params = MAP (FST o SND) prog; returns = MAP (SND o SND o SND) prog; fs = MAP3 (λx y z. (x,y,z)) fnames params returns in alist_to_fmap fs. The exact twin is generic over HOL's four independent type variables: {α β γ δ}, with [DecidableEq α] as the accepted rendering of HOL equality on the generic key type (no BEq). It takes prog : List (α × β × δ × γ) and returns the canonical finite-support map HolFiniteMapExact α (β × γ); HOL's MAP3 (λx y z. (x,y,z)) over the three projections is the ordered association list (x, (y, z)), and alist_to_fmap is the right-fold FUPDATE from FEMPTY (first entry wins on a duplicate key), rendered by HolFiniteMapExact.empty.updateListEq over the reversed list. The standalone fmap_as_finite_support_result qualifier records only that finite-support representation; the same-module witness holFmapAsFiniteSupportResultWitness_makeFuncsExactHOL states the unconditional lookup-level correspondence to the raw right-fold FUPDATE_LIST_HOL rendering of alist_to_fmap, at the same key and with no premises. The used panSem instance (name MlS, params List (MlS × ShapeHOL), body ProgHOL width, return ShapeHOL) is kept as the untagged abbreviation makeFuncsUsedHOL for callers; the generic declaration instantiates there automatically. No changed hypothesis or conclusion."
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
@@ -93672,6 +93672,22 @@
     "lean_name": "lookup_map_preserveFst",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific list fact: a key-preserving projection commutes with List.lookup (HOL ALOOKUP_MAP analogue used inside mk_ctxt_code_imp_code_rel). Not a standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "fupdateListHOL_reverse_eq_foldr",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific finite-map support: the HOL-equality FUPDATE_LIST_HOL fold over a reversed association list is the right-fold FUPDATE_HOL from FEMPTY over the original list (the alist_to_fmap shape). Not a standalone HOL declaration; local infrastructure for FUPDATE_LIST_HOL_reverse_apply_eq_lookup."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "FUPDATE_LIST_HOL_reverse_apply_eq_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific finite-map support: applying the HOL-equality FUPDATE_LIST_HOL fold over a reversed association list equals List.lookup on the original list (first occurrence wins), matching HOL alist_to_fmap/ALOOKUP. Not a standalone HOL declaration."
   },
   {
     "hol_path": null,
