@@ -349,7 +349,7 @@ theorem compile_mat_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock 
       have targetRun' : FlatSem.evaluate targetEnv target [(compileExp cfg (.mat trace scrutinee rows)).2.2] =
           ({ targetNext with clock := min target.clock targetNext.clock }, .err targetError) := by
         rw [compileExp_mat_body]
-        apply evaluate_let_error
+        apply evaluate_let_error_any
         exact targetRun
       have equal := sourceEval.symm.trans sourceRun
       cases equal
