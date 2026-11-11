@@ -542,36 +542,6 @@ theorem genvCOk_installConstructor (genv : GlobalEnv) (cn : FlatLang.CtorId × F
       exact False.elim (fresh (cn1, a1) old1)
     · exact valid.2.2.2.2 cn1 cn2 a1 a2 s old1 old2
 
-/-- The first constructor of a newly reserved type is compatible with all
-existing entries when both its type index and source stamp are fresh. -/
-theorem genvCOk_installFreshTypeConstructor (genv : GlobalEnv) (idx tag arity : Nat)
-    (name : ConN) (stamp : Nat) (valid : genvCOk genv.c)
-    (free : ∀ tag' arity', genv.c.lookup ((tag', some idx), arity') = none)
-    (fresh : ∀ name' key, genv.c.lookup key ≠ some (.typeStamp name' stamp)) :
-    genvCOk (finiteUpdate genv.c ((tag, some idx), arity) (.typeStamp name stamp)) := by
-  apply genvCOk_installConstructor genv (tag, some idx) arity (.typeStamp name stamp) valid
-    (free tag arity) (fresh name)
-  intro cn' arity' stamp' lookup
-  have otherIndex : cn'.2 ≠ some idx := by
-    intro same
-    cases cn' with
-    | mk tag' typ =>
-      change typ = some idx at same
-      subst typ
-      rw [free tag' arity'] at lookup
-      contradiction
-  cases stamp' with
-  | exnStamp n =>
-    simp [SemanticPrimitivesHOL.ctorSameType, SemanticPrimitivesHOL.sameType,
-      FlatSem.ctorSameType, Ne.symm otherIndex]
-  | typeStamp name' n =>
-    have otherStamp : n ≠ stamp := by
-      intro same
-      subst n
-      exact fresh name' (cn', arity') lookup
-    simp [SemanticPrimitivesHOL.ctorSameType, SemanticPrimitivesHOL.sameType,
-      FlatSem.ctorSameType, Ne.symm otherIndex, Ne.symm otherStamp]
-
 /-- Once one constructor of a type has been installed, its compatibility
 establishes the type relation for any additional constructor of that type. -/
 theorem genvCOk_sameType_compatible (genv : GlobalEnv) (idx tag anchorTag anchorArity : Nat)
@@ -742,54 +712,6 @@ theorem factoredInvariant_installTypeConstructor {C F : Type} [Nonempty C]
     idxRangeRel_installTypeConstructor interp genv source.nextTypeStamp source.nextExnStamp source.evalState
       start finish other idx tag arity name stamp tags range table older,
     nextInvs, oracle, globals, reserved, genInv, fin⟩
-
-/-- Reserving a type and installing its first constructor preserves the
-factored invariant, deriving the compatibility conditions from the original
-fresh index and stamp. -/
-theorem factoredInvariant_allocateFirstTypeConstructor {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
-    (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source : State F) (flat : FlatSem.State C F)
-    (tag arity : Nat) (name : ConN) (tags : List (Nat × Nat))
-    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
-    (fits : start.tidx + 1 ≤ finish.tidx) (member : (tag, arity) ∈ tags) :
-    factoredInvariant interp transform gen
-      { { genv with tys := finiteUpdate genv.tys start.tidx tags } with
-        c := finiteUpdate genv.c ((tag, some start.tidx), arity) (.typeStamp name source.nextTypeStamp) }
-      ({ start with tidx := start.tidx + 1 }, finish, other)
-      { source with nextTypeStamp := source.nextTypeStamp + 1 } flat := by
-  classical
-  let reserved := { genv with tys := finiteUpdate genv.tys start.tidx tags }
-  let nextSource := { source with nextTypeStamp := source.nextTypeStamp + 1 }
-  have reservedInv : factoredInvariant interp transform gen reserved
-      ({ start with tidx := start.tidx + 1 }, finish, other) nextSource flat :=
-    factoredInvariant_installTypeTable interp transform gen genv start finish other source flat tags valid fits
-  have range := valid.2.2.2.1
-  have free := (idxRangeRel_type_free interp genv source.nextTypeStamp source.nextExnStamp source.evalState
-    start finish other range (by omega)).2
-  have fresh := idxRangeRel_typeStamp_fresh interp genv source.nextTypeStamp source.nextExnStamp source.evalState
-    start finish other range
-  have table : reserved.tys.lookup start.tidx = some tags := by
-    simp [reserved, finiteUpdate, FUPDATE_HOL]
-  have cOk := genvCOk_installFreshTypeConstructor reserved start.tidx tag arity name source.nextTypeStamp
-    reservedInv.1 free fresh
-  have growth := GlobalGrowth.installTypeConstructor reserved start.tidx tag arity name source.nextTypeStamp
-    (free tag arity)
-  have newLookup : (finiteUpdate reserved.c ((tag, some start.tidx), arity)
-      (.typeStamp name source.nextTypeStamp)).lookup ((tag, some start.tidx), arity) =
-      some (.typeStamp name source.nextTypeStamp) := by
-    simp [finiteUpdate, FUPDATE_HOL]
-  have compatible : ∀ cn' arity' stamp', reserved.c.lookup (cn', arity') = some stamp' →
-      (SemanticPrimitivesHOL.ctorSameType (some (.typeStamp name source.nextTypeStamp)) (some stamp') = true ↔
-        FlatSem.ctorSameType (some (tag, some start.tidx)) (some cn')) := by
-    intro cn' arity' stamp' old
-    exact cOk.2.2.2.1 (tag, some start.tidx) cn' arity arity' (.typeStamp name source.nextTypeStamp) stamp'
-      newLookup (growth.constructors (cn', arity') stamp' old)
-  have result := factoredInvariant_installTypeConstructor interp transform gen reserved
-    { start with tidx := start.tidx + 1 } finish other nextSource flat start.tidx tag arity name
-    source.nextTypeStamp tags reservedInv table member (by simp [nextSource]) (free tag arity) (fresh name) compatible
-  simpa [reserved, nextSource] using result
 
 /-- Install a list of named constructor tags for one type. This proof-side
 operation uses the same finite-map updates used by the allocation invariant. -/
@@ -1013,8 +935,6 @@ theorem factoredInvariant_allocateConstructorList {C F : Type} [Nonempty C]
     have headMember : (name, tag, arity) ∈ (name, tag, arity) :: rest := by simp
     let next := { { genv with tys := finiteUpdate genv.tys start.tidx tags } with
       c := finiteUpdate genv.c ((tag, some start.tidx), arity) (.typeStamp name source.nextTypeStamp) }
-    have nextValid := factoredInvariant_allocateFirstTypeConstructor interp transform gen genv start finish other
-      source flat tag arity name tags valid fits (members name tag arity headMember)
     have table : next.tys.lookup start.tidx = some tags := by simp [next, finiteUpdate, FUPDATE_HOL]
     have anchor : next.c.lookup ((tag, some start.tidx), arity) = some (.typeStamp name source.nextTypeStamp) := by
       simp [next, finiteUpdate, FUPDATE_HOL]
@@ -1023,6 +943,36 @@ theorem factoredInvariant_allocateConstructorList {C F : Type} [Nonempty C]
       start finish other range (by omega)).2
     have fresh := idxRangeRel_typeStamp_fresh interp genv source.nextTypeStamp source.nextExnStamp source.evalState
       start finish other range
+    let reserved := { genv with tys := finiteUpdate genv.tys start.tidx tags }
+    have reservedInv := factoredInvariant_installTypeTable interp transform gen genv start finish other
+      source flat tags valid fits
+    have compatible : ∀ cn' arity' stamp', genv.c.lookup (cn', arity') = some stamp' →
+        (SemanticPrimitivesHOL.ctorSameType (some (.typeStamp name source.nextTypeStamp)) (some stamp') = true ↔
+          FlatSem.ctorSameType (some (tag, some start.tidx)) (some cn')) := by
+      intro cn' arity' stamp' lookup
+      have otherIndex : cn'.2 ≠ some start.tidx := by
+        intro same
+        cases cn' with
+        | mk tag' typ =>
+          change typ = some start.tidx at same
+          subst typ
+          rw [free tag' arity'] at lookup
+          contradiction
+      cases stamp' with
+      | exnStamp n =>
+        simp [SemanticPrimitivesHOL.ctorSameType, SemanticPrimitivesHOL.sameType,
+          FlatSem.ctorSameType, Ne.symm otherIndex]
+      | typeStamp name' n =>
+        have otherStamp : n ≠ source.nextTypeStamp := by
+          intro same
+          subst n
+          exact fresh name' (cn', arity') lookup
+        simp [SemanticPrimitivesHOL.ctorSameType, SemanticPrimitivesHOL.sameType,
+          FlatSem.ctorSameType, Ne.symm otherIndex, Ne.symm otherStamp]
+    have nextValid := factoredInvariant_installTypeConstructor interp transform gen reserved
+      { start with tidx := start.tidx + 1 } finish other { source with nextTypeStamp := source.nextTypeStamp + 1 }
+      flat start.tidx tag arity name source.nextTypeStamp tags reservedInv table
+      (members name tag arity headMember) (by simp) (free tag arity) (fresh name) compatible
     change factoredInvariant interp transform gen
       (installTypeConstructorList start.tidx source.nextTypeStamp rest next)
       ({ start with tidx := start.tidx + 1 }, finish, other)
