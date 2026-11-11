@@ -18,24 +18,6 @@ open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend.BackendCommon
 open OracleInvariant
 
-/-- An alias whose declaration does not abort with a type error must refer to
-an existing source value. This discharges the lookup from the usual source
-safety premise. -/
-theorem dlet_alias_lookup_of_safe {F : Type} (source : SemanticPrimitivesHOL.State F)
-    (sourceEnv : SemEnv Value) (location : Flapjack.Misc.Location.Locs)
-    (name : VarN) (id : Ident ModN VarN)
-    (safe : ∀ next, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location (.pvar name) (.var id)] ≠
-      (next, .err (.abort .typeError))) :
-    ∃ value, nsLookup sourceEnv.v id = some value := by
-  cases lookup : nsLookup sourceEnv.v id with
-  | some value => exact ⟨value, rfl⟩
-  | none =>
-    have bad : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location (.pvar name) (.var id)] =
-        (source, .err (.abort .typeError)) := by
-      simp [EvaluateHOL.evaluateDecs, EvaluateHOL.evaluate, AstHOL.patBindings, AstHOL.everyExp,
-        oneConCheck, lookup, EvaluateHOL.typeError]
-    exact False.elim (safe source bad)
-
 /-- The source non-type-error premise enforces distinct pattern names and
 the declaration's constructor check. -/
 theorem dlet_conditions_of_safe {F : Type} (source : SemanticPrimitivesHOL.State F)
@@ -75,40 +57,6 @@ theorem globalEnvInv_alias (genv : GlobalEnv) (name : VarN) (idx : Nat) (trace :
     | long moduleName inner => simp [nsLookup, nsSing] at lookup
   · intro id arity stamp lookup
     cases id <;> simp [nsLookup, nsEmpty] at lookup
-
-/-- A simple variable declaration reuses the original global binding and
-emits no flat declarations. The source and flat states stay related; the
-returned environments retain the factored global invariant. -/
-theorem evaluateDlet_alias {C F : Type} (genv : GlobalEnv)
-    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
-    (sourceEnv : SemEnv Value) (trace : List VarN) (n : Nat) (next : NextIndices)
-    (compMap : Environment) (gen : EnvironmentGenerationStore)
-    (location : Flapjack.Misc.Location.Locs) (name : VarN) (id : Ident ModN VarN) (value : Value)
-    (lookup : nsLookup sourceEnv.v id = some value)
-    (invariant : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
-    (states : StateRel genv source flat) :
-    ∃ stored idx nameTrace,
-      EvaluateHOL.evaluateDecs source sourceEnv [.dlet location (.pvar name) (.var id)] =
-        (source, .val { v := nsSing name value, c := nsEmpty }) ∧
-      compileDecs trace n next compMap gen [.dlet location (.pvar name) (.var id)] =
-        (n, next, { v := nsSing name (.glob nameTrace idx), c := nsEmpty }, gen, []) ∧
-      FlatSem.evaluateDecs flat
-        (compileDecs trace n next compMap gen [.dlet location (.pvar name) (.var id)]).2.2.2.2 =
-        (flat, none) ∧
-      ValueRel genv value stored ∧ StateRel genv source flat ∧
-      GlobalEnvInv genv { v := nsSing name (.glob nameTrace idx), c := nsEmpty }
-        (fun _ => False) { v := nsSing name value, c := nsEmpty } := by
-  cases invariant with
-  | intro _ _ _ values _ =>
-    have unshadowed : ¬ (∃ x, False ∧ id = .short x) := by simp
-    obtain ⟨_, _, _, idx, stored, nameTrace, compiledLookup, bound, slot, related⟩ :=
-      values id value unshadowed lookup
-    refine ⟨stored, idx, nameTrace, ?_, ?_, ?_, related, states, ?_⟩
-    · simp [EvaluateHOL.evaluateDecs, EvaluateHOL.evaluate, AstHOL.patBindings, AstHOL.everyExp,
-        oneConCheck, lookup, pmatch, EvaluateHOL.headValue, Flapjack.holHd, nsSing, alistToNs]
-    · simp [compileDecs, simpleDlet, compiledLookup, nsSing, alistToNs]
-    · simp [compileDecs, simpleDlet, compiledLookup, FlatSem.evaluateDecs]
-    · exact globalEnvInv_alias genv name idx nameTrace value stored bound slot related
 
 /-- A failing expression propagates through a non-alias declaration before
 the generated pattern match can initialize any globals. -/
@@ -630,29 +578,33 @@ theorem evaluateDlet_alias_growing {C F : Type} [Nonempty C]
     (generation : envGenRel gen source.evalState) :
     DletOutcomeGrowing interp transform genv start finish other source flat sourceEnv trace n compMap gen
       location (.pvar name) (.var id) := by
-  obtain ⟨value, lookup⟩ := dlet_alias_lookup_of_safe source sourceEnv location name id safe
-  have effects : let result := EvaluateHOL.evaluate source sourceEnv [.var id]
-      match result.2 with
-      | .err (.abort _) => True
-      | _ => envGenRel gen result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState := by
-    simpa [EvaluateHOL.evaluate, lookup] using ⟨generation, oracForwardRel_refl interp source.evalState⟩
-  obtain ⟨_, idx, nameTrace, sourceDec, compiled, flatDec, _, states, newEnv⟩ :=
-    evaluateDlet_alias genv source flat sourceEnv trace n start compMap gen location name id value
-      lookup envInv invariant.2.2.1
-  have outcome : DletOutcome interp transform genv start finish other source flat sourceEnv trace n compMap gen
-      location (.pvar name) (.var id) := by
-    rw [compiled] at flatDec
-    unfold DletOutcome
-    rw [sourceDec, compiled]
-    obtain ⟨values, valueModules⟩ := alistToNs_domains_eq (M := ModN)
+  obtain ⟨value, lookup⟩ : ∃ value, nsLookup sourceEnv.v id = some value := by
+    cases found : nsLookup sourceEnv.v id with
+    | some value => exact ⟨value, rfl⟩
+    | none =>
+      apply (safe source).elim
+      simp [EvaluateHOL.evaluateDecs, EvaluateHOL.evaluate, AstHOL.patBindings, AstHOL.everyExp,
+        oneConCheck, found, EvaluateHOL.typeError]
+  have sourceDec : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location (.pvar name) (.var id)] =
+      (source, .val { v := nsSing name value, c := nsEmpty }) := by
+    simp [EvaluateHOL.evaluateDecs, EvaluateHOL.evaluate, AstHOL.patBindings, AstHOL.everyExp,
+      oneConCheck, lookup, pmatch, EvaluateHOL.headValue, Flapjack.holHd, nsSing, alistToNs]
+  cases envInv with
+  | intro _ _ _ values _ =>
+    have unshadowed : ¬ (∃ x, False ∧ id = .short x) := by simp
+    obtain ⟨_, _, _, idx, stored, nameTrace, compiledLookup, bound, slot, related⟩ :=
+      values id value unshadowed lookup
+    have compiled : compileDecs trace n start compMap gen [.dlet location (.pvar name) (.var id)] =
+        (n, start, { v := nsSing name (.glob nameTrace idx), c := nsEmpty }, gen, []) := by
+      simp [compileDecs, simpleDlet, compiledLookup, nsSing, alistToNs]
+    obtain ⟨valueDomain, valueModules⟩ := alistToNs_domains_eq (M := ModN)
       [(name, VarName.glob nameTrace idx)] [(name, value)] (fun _ => Iff.rfl)
-    obtain ⟨ctors, ctorModules⟩ := alistToNs_domains_eq (M := ModN) (N := ConN)
-      (V := Nat × Option (Nat × List (Nat × Nat))) (W := Nat × Stamp) [] [] (fun _ => Iff.rfl)
-    exact ⟨flat, genv, none, flatDec, states, GlobalGrowth.refl genv, rfl,
-      ⟨values, valueModules, ctors, ctorModules⟩, newEnv, invariant⟩
-  exact DletOutcome.toGrowing interp transform genv genv start finish other source flat sourceEnv trace n compMap gen
-    location (.pvar name) (.var id) (GlobalGrowth.refl genv) outcome
-    (dlet_effects_of_expression interp gen source sourceEnv location (.pvar name) (.var id) effects)
+    unfold DletOutcomeGrowing
+    rw [sourceDec, compiled]
+    exact ⟨flat, genv, none, by simp [FlatSem.evaluateDecs], invariant.2.2.1, rfl,
+      ⟨valueDomain, valueModules, envDomainEq_empty.2.2⟩,
+      globalEnvInv_alias genv name idx nameTrace value stored bound slot related,
+      GlobalGrowth.refl genv, invariant, generation, oracForwardRel_refl interp source.evalState⟩
 
 /-- The internal abort-sensitive `Dlet` outcome follows from the expression
 induction hypothesis for both alias and general pattern compilation. -/
