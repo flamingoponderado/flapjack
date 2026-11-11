@@ -19,6 +19,10 @@ At Flapjack commit `3027f7f3a2`, a rebuilt `cake` matched the pinned CakeML
 compiler on all 143 fixed corpus cases, including output, diagnostics and exit
 status.
 
+At `e38869acea`, all 38 structured templates matched with seed `20261111`, as
+did 40 structured programs with varied backend options and seed `20261112`.
+Both runs used a 90-second timeout per case.
+
 At Flapjack commit `05992bd4b9`, all 143 fixed corpus cases matched the
 compiler built from the pinned CakeML submodule revision `857f0d98da8f`.
 
