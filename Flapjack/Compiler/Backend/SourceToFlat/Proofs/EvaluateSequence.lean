@@ -66,10 +66,34 @@ theorem factoredDecBoundedIH_dletrec {C F : Type} [Nonempty C]
     (location : Flapjack.Misc.Location.Locs) (funs : List (VarN × VarN × AstHOL.Exp)) :
     FactoredDecBoundedIH (F := F) interp transform limit [.dletrec location funs] := by
   intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result _ sourceRun invariant compiled envInv notTypeError generation future bounded
-  exact evaluateDletrec_case_factored interp transform genv env nextEnv sourceEnv trace funs source sourceLast flat
-    start finish next other n n' gen nextGen location flatDecs result sourceRun invariant compiled envInv
-    notTypeError generation future bounded
+    flatDecs result _ sourceRun invariant compiled envInv notTypeError generation _ bounded
+  have checked :
+      (decide (funs.map (fun (name, _, _) => name)).Nodup &&
+        funs.all (fun (_, _, expr) => everyExp (oneConCheck sourceEnv.c) expr)) = true := by
+    by_contra failed
+    simp only [EvaluateHOL.evaluateDecs, if_neg failed, EvaluateHOL.typeError] at sourceRun
+    exact notTypeError (congrArg Prod.snd sourceRun).symm
+  have distinct : (funs.map Prod.fst).Nodup := by
+    have guards := checked
+    simp only [Bool.and_eq_true, decide_eq_true_eq] at guards
+    exact guards.1
+  simp only [EvaluateHOL.evaluateDecs, if_pos checked, Prod.mk.injEq] at sourceRun
+  obtain ⟨rfl, rfl⟩ := sourceRun
+  have bound : idxPrev (compileDecs trace n start env gen [.dletrec location funs]).2.1 finish := by
+    simpa only [compiled] using bounded
+  obtain ⟨finalGenv, finalState, flatRun, growth, states, domain, finalEnv,
+    finalInvariant, finalGeneration, forward⟩ :=
+    evaluateDletrec_factored interp transform genv env sourceEnv trace funs source flat start finish other
+      n gen location distinct envInv invariant generation bound
+  simp only [compiled] at flatRun domain finalEnv finalInvariant finalGeneration
+  refine ⟨finalState, finalGenv, none, flatRun, states, ?_, ?_, ?_⟩
+  · intro _
+    exact ⟨finalInvariant, forward, growth⟩
+  · intro resultEnv same
+    cases same
+    exact ⟨rfl, domain, finalGeneration, finalEnv⟩
+  · intro error impossible
+    cases impossible
 
 /-- Environment declarations satisfy the factored induction hypothesis,
 including the oracle and generation updates. -/
