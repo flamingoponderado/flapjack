@@ -11,11 +11,6 @@ namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Compiler.Backend.FlatProps (emptyGlobalBag unionGlobalBag)
 
-private theorem reverseSafe (xs : List ClosLang.Exp) (safe : ClosProps.esgcFreeList xs) :
-    ClosProps.esgcFreeList xs.reverse := by
-  rw [ClosProps.esgcFreeList_iff] at safe ⊢
-  simpa using safe
-
 /-- Match-free expressions preserve the absence of global writes in closures. -/
 theorem compileExp_safe (m : List (Option MlString)) (exp : FlatLang.Exp) :
     FlatProps.noMat exp = true → FlatProps.esgcFree exp → ClosProps.esgcFree (compileExp m exp) := by
@@ -36,7 +31,7 @@ theorem compileExp_safe (m : List (Option MlString)) (exp : FlatLang.Exp) :
     simp only [FlatProps.esgcFree] at safe
     rw [compileExp.eq_def]
     dsimp only
-    split <;> simpa [esgcFree_smartCons] using reverseSafe _ (ih noMat safe)
+    split <;> simpa [esgcFree_smartCons, ClosProps.esgcFreeList_iff] using (ih noMat safe)
   | case5 m t op es x found ih =>
     intro noMat safe
     obtain ⟨u, rfl, rfl⟩ | ⟨u, rfl, rfl⟩ := destNop_shape op es x found
@@ -51,7 +46,8 @@ theorem compileExp_safe (m : List (Option MlString)) (exp : FlatLang.Exp) :
     rw [compileExp.eq_def]
     dsimp only
     rw [found]
-    exact compileOp_safe t op _ (reverseSafe _ (ih noMat safe))
+    exact compileOp_safe t op _ (by
+      simpa only [ClosProps.esgcFreeList_iff, List.mem_reverse] using (ih noMat safe))
   | case7 m t v e ih =>
     intro noMat safe
     simp only [FlatProps.noMat] at noMat

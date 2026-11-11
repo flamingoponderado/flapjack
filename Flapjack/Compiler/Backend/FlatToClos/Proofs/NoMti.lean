@@ -96,11 +96,6 @@ theorem compileOp_noMti (t : Tra) (op : FlatLang.Op) (xs : List ClosLang.Exp)
     | nil => simp [compileOp, arg1, noMti, noMtiList]
     | cons x xs => cases xs <;> simp [compileOp, arg1, noMti, noMtiList] at safe ⊢ <;> tauto
 
-private theorem reverse_noMti (xs : List ClosLang.Exp) (safe : noMtiList xs) :
-    noMtiList xs.reverse := by
-  rw [noMtiList_iff] at safe ⊢
-  simpa using safe
-
 /-- Flapjack helper: each compiled expression has pre-MTI syntax. -/
 theorem compileExp_noMti (m : List (Option MlString)) (exp : FlatLang.Exp) :
     noMti (compileExp m exp) := by
@@ -123,7 +118,7 @@ theorem compileExp_noMti (m : List (Option MlString)) (exp : FlatLang.Exp) :
     rw [compileExp.eq_def]
     dsimp only
     rw [found]
-    exact compileOp_noMti t op _ (reverse_noMti _ ih)
+    exact compileOp_noMti t op _ (by simpa only [noMtiList_iff, List.mem_reverse] using ih)
   | case7 m t v e ih => simpa [compileExp, noMti] using ih
   | case8 m t a b c iha ihb ihc => simp [compileExp, noMti, iha, ihb, ihc]
   | case9 m t vo a b iha ihb => simp [compileExp, noMti, noMtiList, iha, ihb]
