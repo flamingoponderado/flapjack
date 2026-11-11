@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
+import all Init.Data.Array.Basic
+
+@[expose] public section
+
 
 namespace Flapjack.Test.RegAllocProductionFixedTags
 open RiscV RiscV.CakeRegAlloc
