@@ -17,11 +17,7 @@ private theorem noLabelsSingle (e : Exp) (s : State)
     noLabels (callsSing e s).1 ∧ stateSyntax noLabels (callsSing e s).2 := by
   cases e with
   | var tr n => simpa [callsSing, noLabels] using h.2
-  | raise tr body =>
-    have ih := noLabelsSingle body s ⟨by simpa [noLabels] using h.1, h.2⟩
-    cases hr : callsSing body s with
-    | mk out st => simpa [callsSing, hr, noLabels] using ih
-  | tick tr body =>
+  | raise tr body | tick tr body =>
     have ih := noLabelsSingle body s ⟨by simpa [noLabels] using h.1, h.2⟩
     cases hr : callsSing body s with
     | mk out st => simpa [callsSing, hr, noLabels] using ih
