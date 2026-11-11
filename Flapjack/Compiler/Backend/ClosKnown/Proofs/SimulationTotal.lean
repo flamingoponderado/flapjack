@@ -1,6 +1,7 @@
 module
 
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApp
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppInline
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppNonInline
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApplyFullBody
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SubsptComposition
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxCons
@@ -975,24 +976,83 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
                     rcases run with ⟨rfl, rfl⟩
                     exact False.elim (noType rfl)
             | app trace location function args =>
-              apply App.knownCorrect0App trace location function args env state ?_ ?_ ?_
-              · intro argResult next values fnResult last functions ⟨_, argsRun, _, fnRun, _⟩
-                have bound1 := evaluate_clock_le args env state
-                rw [argsRun] at bound1
-                simp only at bound1
-                have bound2 := evaluate_clock_le [function] env next
-                rw [fnRun] at bound2
-                simp only at bound2
-                exact appBound location _ values last (by omega)
-              · intro result next values ⟨_, run, _⟩
-                have bound := evaluate_clock_le args env state
-                rw [run] at bound
-                simp only at bound
-                apply exprIH [function] env next (by omega)
-                simp only [expsWeight, expWeight] at measure ⊢; omega
-              · intro _
-                apply exprIH args env state (by omega)
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+              intro result final env1 xenv1 env2 xenv2 t0 c g0 g aenv eas h
+              obtain ⟨run, known, initialRel, inputSyntax, coSyntax, disjoint, oracle, stateOracleDisjoint,
+                exprSafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
+                sub0, sub1, mono, free, envRel, unique, stateOracle, envEq, noType⟩ := h
+              cases args with
+              | nil =>
+                simp [evaluate] at run
+                rcases run with ⟨rfl, rfl⟩
+                exact False.elim (noType rfl)
+              | cons first rest =>
+                have argsInd : KnownSimulationAt (first :: rest) env state := by
+                  apply exprIH (first :: rest) env state (by omega)
+                  simp only [expsWeight, expWeight] at measure ⊢; omega
+                have fnInd : ∀ middle values, evaluate (first :: rest) env state = (.val values, middle) →
+                    KnownSimulationAt [function] env middle := by
+                  intro middle values hr
+                  have bound := evaluate_clock_le (first :: rest) env state
+                  rw [hr] at bound
+                  simp only at bound
+                  apply exprIH [function] env middle (by omega)
+                  simp only [expsWeight, expWeight] at measure ⊢; omega
+                have appInd : ∀ middle values next fn, evaluate (first :: rest) env state = (.val values, middle) →
+                    evaluate [function] env middle = (.val [fn], next) → KnownAppSimulationAt location fn values next := by
+                  intro middle values next fn hr hf
+                  have bound1 := evaluate_clock_le (first :: rest) env state
+                  rw [hr] at bound1
+                  simp only at bound1
+                  have bound2 := evaluate_clock_le [function] env middle
+                  rw [hf] at bound2
+                  simp only at bound2
+                  exact appBound location fn values next (by omega)
+                cases ha : knownListTotal c (first :: rest) aenv g0 with
+                | mk argsEas g1 =>
+                  cases hf : knownListTotal c [function] aenv g1 with
+                  | mk fnEas g2 =>
+                    obtain ⟨fnExp, fnApprox, eq⟩ := knownListTotal_single_result c function aenv g1 g2 fnEas hf
+                    subst fnEas
+                    rw [knownListTotal_app, ha] at known
+                    dsimp only at known
+                    rw [hf] at known
+                    simp only [knownSourceHead, List.headD_cons] at known
+                    cases hd : decideInlineHOL c fnApprox location (first :: rest).length with
+                    | nothing =>
+                      simp only [List.length_cons] at hd
+                      simp [hd] at known
+                      rcases known with ⟨rfl, rfl⟩
+                      simpa using AppNonInline.nonInlineApplicationSimulation trace location location function first rest
+                        env env1 xenv1 env2 xenv2 state final t0 result c aenv g0 g1 g2 argsEas fnExp fnApprox
+                        argsInd fnInd appInd ha hf (Or.inl rfl) run noType
+                        ⟨initialRel, inputSyntax, coSyntax, disjoint, oracle, stateOracleDisjoint, exprSafe, safe,
+                          envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals, sub0, sub1, mono,
+                          free, envRel, unique, stateOracle, envEq⟩
+                    | annotate address =>
+                      simp only [List.length_cons] at hd
+                      simp [hd] at known
+                      rcases known with ⟨rfl, rfl⟩
+                      simpa using AppNonInline.nonInlineApplicationSimulation trace location (some address) function first rest
+                        env env1 xenv1 env2 xenv2 state final t0 result c aenv g0 g1 g2 argsEas fnExp fnApprox
+                        argsInd fnInd appInd ha hf (Or.inr ⟨address, rfl, hd⟩) run noType
+                        ⟨initialRel, inputSyntax, coSyntax, disjoint, oracle, stateOracleDisjoint, exprSafe, safe,
+                          envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals, sub0, sub1, mono,
+                          free, envRel, unique, stateOracle, envEq⟩
+                    | letInline body =>
+                      simp only [List.length_cons] at hd
+                      cases hb : knownListTotal (decInlineFactor c) [body] (argsEas.map Prod.snd) g2 with
+                      | mk bodyEas after =>
+                        obtain ⟨targetBody, bodyApprox, eq⟩ := knownListTotal_single_result (decInlineFactor c) body
+                          (argsEas.map Prod.snd) g2 after bodyEas hb
+                        subst bodyEas
+                        simp [hd, hb] at known
+                        rcases known with ⟨rfl, rfl⟩
+                        simpa using AppInline.inlineApplicationSimulation trace location function first rest env env1 xenv1 env2 xenv2
+                          state final t0 result c aenv g0 g1 g2 argsEas fnExp fnApprox body targetBody bodyApprox after
+                          argsInd fnInd appInd ha hf hd hb run noType
+                          ⟨initialRel, inputSyntax, coSyntax, disjoint, oracle, stateOracleDisjoint, exprSafe, safe,
+                            envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals, sub0, sub1, mono,
+                            free, envRel, unique, stateOracle, envEq⟩
             | op trace op args =>
               have argsIH : KnownSimulationAt args env state := by
                 apply exprIH args env state (by omega)

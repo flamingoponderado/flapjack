@@ -551,7 +551,6 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppNonInline
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.TicksEvaluate
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineClosureRelation
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlinePureEvaluation
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApp
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.PreserveSafetyTotal

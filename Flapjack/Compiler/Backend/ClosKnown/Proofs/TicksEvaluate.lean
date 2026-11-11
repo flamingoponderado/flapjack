@@ -43,6 +43,20 @@ theorem evaluateTicksRw {C F : Type} (trace : BackendCommon.Tra) (index n : Nat)
           simp [decClock, Nat.sub_sub]
         simp [less, enoughSucc, evaluate, nonzero, decEq]
 
+/-- A completed tick sequence either times out or evaluates its body. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "evaluate_mk_Ticks_IMP"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateTicksImp {C F : Type} (trace : BackendCommon.Tra) (index n : Nat)
+    (body : ClosLang.Exp) (env : List ClosSem.Value) (s0 : State C F)
+    (result : Result (List ClosSem.Value) ClosSem.Value) (s : State C F)
+    (run : evaluate [ticks trace index n body] env s0 = (result, s)) :
+    (result = .err (.abort .timeoutError) ∧ s = { s0 with clock := 0 }) ∨
+      evaluate [body] env (decClock n s0) = (result, s) := by
+  rw [evaluateTicksRw] at run
+  split at run
+  · cases run; exact .inl ⟨rfl, rfl⟩
+  · exact .inr run
+
 /-- The inliner's ticks have exactly the observable behavior of an exact
 annotated closure application, including timeouts. This is Flapjack proof
 infrastructure for the inlining branch. -/

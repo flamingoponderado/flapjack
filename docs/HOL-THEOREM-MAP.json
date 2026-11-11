@@ -10509,19 +10509,6 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationApp.lean",
-  "lean_name": "knownCorrect0App",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out. KnownSimulationAt unfolds to the original expression conjunct, and the argument, function-expression and application induction hypotheses retain the source result and nonempty-argument conditions, including the HOL head of the function result. The proof covers empty arguments, unchanged and annotated calls, and both pure and impure inlining, including errors and timeouts. Compiler and FFI carriers remain independent; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "subspt_known_elist_globals",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SubsptComposition.lean",
   "lean_name": "subsptKnownElistGlobals",
@@ -11154,6 +11141,16 @@
   "lean_name": "decideInlineLetInlineFvMax",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared decide_inline_imp_clos_fv_max_typed in clos_known_syntax_probe.out and the source theorem. The location payload remains polymorphic, and the decision, existential closure approximation and original free-variable bound match. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_mk_Ticks_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TicksEvaluate.lean",
+  "lean_name": "evaluateTicksImp",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "reviewer": "Compared known_evaluate_ticks_imp_typed: the original evaluation premise and full timeout-or-body-evaluation disjunction agree. State refs and code use canonical finite maps with the local codec witness. Inherits the reals_as_rational_cuts assumption through its dependencies.",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
