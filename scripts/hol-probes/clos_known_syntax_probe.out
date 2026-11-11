@@ -213,6 +213,7 @@ known_merge_assoc_typed=∀(a1 :val_approx) (a2 :val_approx) (a3 :val_approx). (
 known_subapprox_trans_typed=(a1 :val_approx) ◁ (a2 :val_approx) ∧ a2 ◁ (a3 :val_approx) ⇒ a1 ◁ a3
 known_subapprox_merge_typed=(a :val_approx) ◁ (merge a (b :val_approx) :val_approx) ∧ a ◁ (merge b a :val_approx)
 known_better_definedg_trans_typed=better_definedg (g1 :val_approx sptree$num_map) (g2 :val_approx sptree$num_map) ∧ better_definedg g2 (g3 :val_approx sptree$num_map) ⇒ better_definedg g1 g3
+known_op_better_definedg_typed=known_op (opn :closLang$op) (apxs :val_approx list) (g0 :val_approx sptree$num_map) = ((a :val_approx),(g :val_approx sptree$num_map)) ⇒ better_definedg g0 g
 known_subapprox_int_typed=((a :val_approx) ◁ (Int (i :int) :val_approx) ⇔ a = (Int i :val_approx) ∨ a = Impossible) ∧ ((Int i :val_approx) ◁ a ⇔ a = (Int i :val_approx) ∨ a = Other)
 known_subapprox_clos_noinline_typed=((a :val_approx) ◁ ClosNoInline (m :num) (n :num) ⇔ a = ClosNoInline m n ∨ a = Impossible) ∧ (ClosNoInline m n ◁ a ⇔ a = ClosNoInline m n ∨ a = Other)
 known_subapprox_clos_typed=((a :val_approx) ◁ Clos (m :num) (n :num) (e :closLang$exp) (s :num) ⇔ a = Clos m n e s ∨ a = Impossible) ∧ (Clos m n e s ◁ a ⇔ a = Clos m n e s ∨ a = Other)

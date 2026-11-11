@@ -15,174 +15,102 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
-private inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
-  | simpleApp (op : Op) (args : List AstHOL.Exp) : op ≠ .aallocEmpty → op ≠ .eval →
-      op ≠ .envId → getOpClass op = .simple →
-      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app op args)
-  | literal (lit : Lit) : LocalEnvBoundedArrayExpression (.lit lit)
-  | variable_ (id : Ident ModN VarN) : LocalEnvBoundedArrayExpression (.var id)
-  | function_ (name : VarN) (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression (.fn name body)
-  | eval (args : List AstHOL.Exp) : (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
-      LocalEnvBoundedArrayExpression (.app .eval args)
-  | call (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
-      LocalEnvBoundedArrayExpression (.app .opapp [left, right])
-  | callBadArity (args : List AstHOL.Exp) : args.length ≠ 2 →
-      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app .opapp args)
-  | arrayEmpty (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
-      LocalEnvBoundedArrayExpression (.app .aallocEmpty [body])
-  | arrayEmptyBadArity (args : List AstHOL.Exp) : args.length ≠ 1 →
-      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app .aallocEmpty args)
-  | forceThunk (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
-      LocalEnvBoundedArrayExpression (.app (.thunkOp .forceThunk) [body])
-  | forceThunkBadArity (args : List AstHOL.Exp) : args.length ≠ 1 →
-      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
-      LocalEnvBoundedArrayExpression (.app (.thunkOp .forceThunk) args)
-  | envId (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
-      LocalEnvBoundedArrayExpression (.app .envId [body])
-  | envIdBadArity (args : List AstHOL.Exp) : args.length ≠ 1 →
-      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app .envId args)
-  | tuple (args : List AstHOL.Exp) : (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
-      LocalEnvBoundedArrayExpression (.con none args)
-  | constructor (id : Ident ModN ConN) (args : List AstHOL.Exp) :
-      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.con (some id) args)
-  | mat (body : AstHOL.Exp) (rows : List (Pat × AstHOL.Exp)) : LocalEnvBoundedArrayExpression body →
-      (∀ pattern rowBody, (pattern, rowBody) ∈ rows → LocalEnvBoundedArrayExpression rowBody) →
-      LocalEnvBoundedArrayExpression (.mat body rows)
-  | handle (body : AstHOL.Exp) (rows : List (Pat × AstHOL.Exp)) : LocalEnvBoundedArrayExpression body →
-      (∀ pattern rowBody, (pattern, rowBody) ∈ rows → LocalEnvBoundedArrayExpression rowBody) →
-      LocalEnvBoundedArrayExpression (.handle body rows)
-  | letrec (funs : List (VarN × VarN × AstHOL.Exp)) (body : AstHOL.Exp) :
-      LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.letrec funs body)
-  | letNamed (name : VarN) (first body : AstHOL.Exp) : LocalEnvBoundedArrayExpression first →
-      LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.let_ (some name) first body)
-  | letAnonymous (first body : AstHOL.Exp) : LocalEnvBoundedArrayExpression first → LocalEnvBoundedArrayExpression body →
-      LocalEnvBoundedArrayExpression (.let_ none first body)
-  | if_ (cond yes no : AstHOL.Exp) : LocalEnvBoundedArrayExpression cond → LocalEnvBoundedArrayExpression yes →
-      LocalEnvBoundedArrayExpression no → LocalEnvBoundedArrayExpression (.if_ cond yes no)
-  | log (op : Lop) (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
-      LocalEnvBoundedArrayExpression (.log op left right)
-  | raise_ (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.raise body)
-  | tannot (expr : AstHOL.Exp) (typ : AstT) : LocalEnvBoundedArrayExpression expr → LocalEnvBoundedArrayExpression (.tannot expr typ)
-  | lannot (expr : AstHOL.Exp) (loc : Flapjack.Misc.Location.Locs) : LocalEnvBoundedArrayExpression expr →
-      LocalEnvBoundedArrayExpression (.lannot expr loc)
-
-/-- Function applications are covered for every operand count. -/
-private theorem callExpression_covered (args : List AstHOL.Exp)
-    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
-    LocalEnvBoundedArrayExpression (.app .opapp args) := by
-  cases args with
-  | nil => exact .callBadArity [] (by simp) each
-  | cons first rest =>
-    have firstCovered := each first (by simp)
-    cases rest with
-    | nil => exact .callBadArity [first] (by simp) each
-    | cons second rest =>
-      have secondCovered := each second (by simp)
-      cases rest with
-      | nil => exact .call first second firstCovered secondCovered
-      | cons third rest => exact .callBadArity (first :: second :: third :: rest) (by simp) each
-
-/-- A unary operation is covered by its singleton and bad-arity cases.
-This is private induction infrastructure with no separate HOL declaration. -/
-private theorem unaryExpression_covered (op : Op)
-    (single : ∀ body, LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app op [body]))
+/-- Dispatch unary operations using their actual singleton and bad-arity cases. -/
+private theorem unaryExpression_bounded {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (limit : Nat)
+    (op : Op)
+    (single : ∀ body, LocalEnvBoundedIH (F := F) interp transform limit body → LocalEnvBoundedIH (F := F) interp transform limit (.app op [body]))
     (other : ∀ args : List AstHOL.Exp, args.length ≠ 1 →
-      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app op args))
-    (args : List AstHOL.Exp) (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
-    LocalEnvBoundedArrayExpression (.app op args) := by
+      (∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) → LocalEnvBoundedIH (F := F) interp transform limit (.app op args))
+    (args : List AstHOL.Exp) (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app op args) := by
   by_cases one : args.length = 1
   · obtain ⟨body, rfl⟩ := List.length_eq_one_iff.mp one
     exact single body (each body (by simp))
   · exact other args one each
 
-/-- Every application is either a special evaluator case or a simple operation. -/
-private theorem applicationExpression_covered (op : Op) (args : List AstHOL.Exp)
-    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
-    LocalEnvBoundedArrayExpression (.app op args) := by
+/-- Dispatch the source application's evaluator cases directly. -/
+private theorem applicationExpression_bounded {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (limit : Nat)
+    (calledIH : LocalEnvClockIH (F := F) interp transform limit)
+    (decsIH : FactoredDecClockIH (F := F) interp transform limit)
+    (op : Op) (args : List AstHOL.Exp)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app op args) := by
   by_cases hEmpty : op = .aallocEmpty
-  · subst op; exact unaryExpression_covered _ .arrayEmpty .arrayEmptyBadArity args each
+  · subst op
+    exact unaryExpression_bounded interp transform limit _
+      (localEnvBounded_aallocEmpty interp transform limit)
+      (localEnvBounded_aallocEmpty_badArity interp transform limit) args each
   by_cases hEval : op = .eval
-  · subst op; exact .eval args each
+  · subst op; exact localEnvBounded_eval interp transform limit decsIH args each
   by_cases hEnv : op = .envId
-  · subst op; exact unaryExpression_covered _ .envId .envIdBadArity args each
+  · subst op
+    exact unaryExpression_bounded interp transform limit _
+      (localEnvBounded_envId interp transform limit)
+      (localEnvBounded_envId_badArity interp transform limit) args each
   by_cases hCall : op = .opapp
-  · subst op; exact callExpression_covered args each
+  · subst op
+    cases args with
+    | nil => exact localEnvBounded_opapp_badArity interp transform limit [] (by simp) each
+    | cons first rest =>
+      have firstIH := each first (by simp)
+      cases rest with
+      | nil => exact localEnvBounded_opapp_badArity interp transform limit [first] (by simp) each
+      | cons second rest =>
+        have secondIH := each second (by simp)
+        cases rest with
+        | nil => exact localEnvStep_opapp interp transform limit calledIH first second firstIH secondIH
+        | cons third rest =>
+          exact localEnvBounded_opapp_badArity interp transform limit
+            (first :: second :: third :: rest) (by simp) each
   by_cases hForce : op = .thunkOp .forceThunk
-  · subst op; exact unaryExpression_covered _ .forceThunk .forceThunkBadArity args each
+  · subst op
+    exact unaryExpression_bounded interp transform limit _
+      (localEnvBounded_forceThunk interp transform limit calledIH)
+      (localEnvBounded_forceThunk_badArity interp transform limit) args each
   have simple : getOpClass op = .simple := by
     cases op <;> simp_all [getOpClass]
-  exact .simpleApp op args hEmpty hEval hEnv simple each
+  exact localEnvBounded_simpleApp interp transform limit op hEmpty hEval hEnv simple args each
 
-/-- Every source expression has a structural coverage derivation. The
-simulation itself still depends on the preliminary factored relations. -/
-private theorem allExpressions_covered : (expr : AstHOL.Exp) → LocalEnvBoundedArrayExpression expr
-  | .raise body => .raise_ body (allExpressions_covered body)
-  | .handle body rows => .handle body rows (allExpressions_covered body)
-      (fun pat row _member => allExpressions_covered row)
-  | .lit lit => .literal lit
-  | .con none args => .tuple args (fun expr _member => allExpressions_covered expr)
-  | .con (some id) args => .constructor id args (fun expr _member => allExpressions_covered expr)
-  | .var id => .variable_ id
-  | .fn name body => .function_ name body
-  | .app op args => applicationExpression_covered op args (fun expr _member => allExpressions_covered expr)
-  | .log op left right => .log op left right (allExpressions_covered left) (allExpressions_covered right)
-  | .if_ cond yes no => .if_ cond yes no (allExpressions_covered cond)
-      (allExpressions_covered yes) (allExpressions_covered no)
-  | .mat body rows => .mat body rows (allExpressions_covered body)
-      (fun pat row _member => allExpressions_covered row)
-  | .let_ none first body => .letAnonymous first body (allExpressions_covered first) (allExpressions_covered body)
-  | .let_ (some name) first body => .letNamed name first body (allExpressions_covered first) (allExpressions_covered body)
-  | .letrec funs body => .letrec funs body (allExpressions_covered body)
-  | .tannot body typ => .tannot body typ (allExpressions_covered body)
-  | .lannot body loc => .lannot body loc (allExpressions_covered body)
-termination_by expr => sizeOf expr
-decreasing_by
-  all_goals simp_wf
-  all_goals try omega
-  all_goals have h := List.sizeOf_lt_of_mem _member
-  all_goals try simp only [Prod.mk.sizeOf_spec] at h
-  all_goals omega
-
-/-- Covered expressions satisfy the preliminary arbitrary-local hypothesis;
-the relations remain pending HOL correspondence review. -/
+/-- Structural source-expression induction using the existing bounded cases.
+The factored simulation relations retain their pending HOL correspondence status. -/
 private theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (limit : Nat) (calledIH : LocalEnvClockIH (F := F) interp transform limit)
+    (limit : Nat)
+    (calledIH : LocalEnvClockIH (F := F) interp transform limit)
     (decsIH : FactoredDecClockIH (F := F) interp transform limit)
-    (expr : AstHOL.Exp) (covered : LocalEnvBoundedArrayExpression expr) : LocalEnvBoundedIH (F := F) interp transform limit expr := by
-  induction covered with
-  | literal lit => exact localEnvBounded_literal interp transform limit lit
-  | variable_ id => exact localEnvBounded_variable interp transform limit id
-  | function_ name body => exact localEnvBounded_function interp transform limit name body
-  | simpleApp op args notEmpty notEval notEnvId simple _ ih =>
-    exact localEnvBounded_simpleApp interp transform limit op notEmpty notEval notEnvId simple args ih
-  | eval args _ ih => exact localEnvBounded_eval interp transform limit decsIH args ih
-  | call left right _ _ leftIH rightIH =>
-    exact localEnvStep_opapp interp transform limit calledIH left right leftIH rightIH
-  | callBadArity args badArity _ ih => exact localEnvBounded_opapp_badArity interp transform limit args badArity ih
-  | arrayEmpty body _ ih => exact localEnvBounded_aallocEmpty interp transform limit body ih
-  | arrayEmptyBadArity args badArity _ ih =>
-    exact localEnvBounded_aallocEmpty_badArity interp transform limit args badArity ih
-  | forceThunk body _ ih => exact localEnvBounded_forceThunk interp transform limit calledIH body ih
-  | forceThunkBadArity args badArity _ ih =>
-    exact localEnvBounded_forceThunk_badArity interp transform limit args badArity ih
-  | envId body _ ih => exact localEnvBounded_envId interp transform limit body ih
-  | envIdBadArity args badArity _ ih => exact localEnvBounded_envId_badArity interp transform limit args badArity ih
-  | tuple args _ ih => exact localEnvBounded_tuple interp transform limit args ih
-  | constructor id args _ ih => exact localEnvBounded_constructor interp transform limit id args ih
-  | mat body rows _ _ bodyIH rowsIH => exact localEnvBounded_mat interp transform limit body rows bodyIH rowsIH
-  | handle body rows _ _ bodyIH rowsIH => exact localEnvBounded_handle interp transform limit body rows bodyIH rowsIH
-  | letrec funs body _ ih => exact localEnvBounded_letrec interp transform limit funs body ih
-  | letNamed name first body _ _ firstIH bodyIH => exact localEnvBounded_let_named interp transform limit name first body firstIH bodyIH
-  | letAnonymous first body _ _ firstIH bodyIH => exact localEnvBounded_let_anonymous interp transform limit first body firstIH bodyIH
-  | if_ cond yes no _ _ _ condIH yesIH noIH => exact localEnvBounded_if interp transform limit cond yes no condIH yesIH noIH
-  | log op left right _ _ leftIH rightIH => exact localEnvBounded_log interp transform limit op left right leftIH rightIH
-  | raise_ body _ ih => exact localEnvBounded_raise interp transform limit body ih
-  | tannot expr typ _ ih => exact localEnvBounded_tannot interp transform limit expr typ ih
-  | lannot expr loc _ ih => exact localEnvBounded_lannot interp transform limit expr loc ih
-
-
-
+    (expr : AstHOL.Exp) : LocalEnvBoundedIH (F := F) interp transform limit expr := go expr
+where
+  go : (expr : AstHOL.Exp) → LocalEnvBoundedIH (F := F) interp transform limit expr
+  | .raise body => localEnvBounded_raise interp transform limit body (go body)
+  | .handle body rows => localEnvBounded_handle interp transform limit body rows (go body)
+      (fun pat row _member => go row)
+  | .lit lit => localEnvBounded_literal interp transform limit lit
+  | .con none args => localEnvBounded_tuple interp transform limit args (fun expr _member => go expr)
+  | .con (some id) args => localEnvBounded_constructor interp transform limit id args (fun expr _member => go expr)
+  | .var id => localEnvBounded_variable interp transform limit id
+  | .fn name body => localEnvBounded_function interp transform limit name body
+  | .app op args => applicationExpression_bounded interp transform limit calledIH decsIH op args
+      (fun expr _member => go expr)
+  | .log op left right => localEnvBounded_log interp transform limit op left right (go left) (go right)
+  | .if_ cond yes no => localEnvBounded_if interp transform limit cond yes no (go cond) (go yes) (go no)
+  | .mat body rows => localEnvBounded_mat interp transform limit body rows (go body)
+      (fun pat row _member => go row)
+  | .let_ none first body => localEnvBounded_let_anonymous interp transform limit first body (go first) (go body)
+  | .let_ (some name) first body => localEnvBounded_let_named interp transform limit name first body (go first) (go body)
+  | .letrec funs body => localEnvBounded_letrec interp transform limit funs body (go body)
+  | .tannot body typ => localEnvBounded_tannot interp transform limit body typ (go body)
+  | .lannot body loc => localEnvBounded_lannot interp transform limit body loc (go body)
+  termination_by expr => sizeOf expr
+  decreasing_by
+    all_goals simp_wf
+    all_goals try omega
+    all_goals have h := List.sizeOf_lt_of_mem _member
+    all_goals try simp only [Prod.mk.sizeOf_spec] at h
+    all_goals omega
 
 /-- Every expression satisfies the bounded simulation from the expression and
 declaration induction hypotheses at smaller clocks. -/
@@ -194,6 +122,6 @@ theorem localEnvBounded_arrayTree_of_smaller {C F : Type} [Nonempty C]
     LocalEnvBoundedIH (F := F) interp transform limit expr :=
   localEnvBounded_arrayTree interp transform limit
     smallerExprs
-    smallerDecs expr (allExpressions_covered expr)
+    smallerDecs expr
 
 end Flapjack.Compiler.Backend.SourceToFlat

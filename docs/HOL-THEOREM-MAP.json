@@ -14384,6 +14384,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "known_op_better_definedg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/KnownOp.lean",
+  "lean_name": "knownOpBetterDefinedG",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_op_better_definedg_typed: arbitrary operation and approximation arguments, exact result equation, and full global ordering conclusion agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
   "hol_name": "subapprox_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
   "lean_name": "subapprox",
