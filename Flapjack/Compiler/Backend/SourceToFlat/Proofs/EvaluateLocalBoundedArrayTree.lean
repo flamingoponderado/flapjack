@@ -82,56 +82,33 @@ private theorem callExpression_covered (args : List AstHOL.Exp)
       | nil => exact .call first second firstCovered secondCovered
       | cons third rest => exact .callBadArity (first :: second :: third :: rest) (by simp) each
 
-/-- Thunk forcing is covered for every operand count. -/
-private theorem forceThunkExpression_covered (args : List AstHOL.Exp)
-    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
-    LocalEnvBoundedArrayExpression (.app (.thunkOp .forceThunk) args) := by
-  cases args with
-  | nil => exact .forceThunkBadArity [] (by simp) each
-  | cons first rest =>
-    have firstCovered := each first (by simp)
-    cases rest with
-    | nil => exact .forceThunk first firstCovered
-    | cons second rest => exact .forceThunkBadArity (first :: second :: rest) (by simp) each
-
-/-- Environment-ID applications are covered for every operand count. -/
-private theorem envIdExpression_covered (args : List AstHOL.Exp)
-    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
-    LocalEnvBoundedArrayExpression (.app .envId args) := by
-  cases args with
-  | nil => exact .envIdBadArity [] (by simp) each
-  | cons first rest =>
-    have firstCovered := each first (by simp)
-    cases rest with
-    | nil => exact .envId first firstCovered
-    | cons second rest => exact .envIdBadArity (first :: second :: rest) (by simp) each
-
-/-- Empty-array allocation is covered for every operand count. -/
-private theorem arrayEmptyExpression_covered (args : List AstHOL.Exp)
-    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
-    LocalEnvBoundedArrayExpression (.app .aallocEmpty args) := by
-  cases args with
-  | nil => exact .arrayEmptyBadArity [] (by simp) each
-  | cons first rest =>
-    have firstCovered := each first (by simp)
-    cases rest with
-    | nil => exact .arrayEmpty first firstCovered
-    | cons second rest => exact .arrayEmptyBadArity (first :: second :: rest) (by simp) each
+/-- A unary operation is covered by its singleton and bad-arity cases.
+This is private induction infrastructure with no separate HOL declaration. -/
+private theorem unaryExpression_covered (op : Op)
+    (single : ∀ body, LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app op [body]))
+    (other : ∀ args : List AstHOL.Exp, args.length ≠ 1 →
+      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app op args))
+    (args : List AstHOL.Exp) (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app op args) := by
+  by_cases one : args.length = 1
+  · obtain ⟨body, rfl⟩ := List.length_eq_one_iff.mp one
+    exact single body (each body (by simp))
+  · exact other args one each
 
 /-- Every application is either a special evaluator case or a simple operation. -/
 private theorem applicationExpression_covered (op : Op) (args : List AstHOL.Exp)
     (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedArrayExpression (.app op args) := by
   by_cases hEmpty : op = .aallocEmpty
-  · subst op; exact arrayEmptyExpression_covered args each
+  · subst op; exact unaryExpression_covered _ .arrayEmpty .arrayEmptyBadArity args each
   by_cases hEval : op = .eval
   · subst op; exact .eval args each
   by_cases hEnv : op = .envId
-  · subst op; exact envIdExpression_covered args each
+  · subst op; exact unaryExpression_covered _ .envId .envIdBadArity args each
   by_cases hCall : op = .opapp
   · subst op; exact callExpression_covered args each
   by_cases hForce : op = .thunkOp .forceThunk
-  · subst op; exact forceThunkExpression_covered args each
+  · subst op; exact unaryExpression_covered _ .forceThunk .forceThunkBadArity args each
   have simple : getOpClass op = .simple := by
     cases op <;> simp_all [getOpClass]
   exact .simpleApp op args hEmpty hEval hEnv simple each
