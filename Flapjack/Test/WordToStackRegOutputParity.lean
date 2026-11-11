@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+
+import all Flapjack.Compiler.Backend.WordToStack.NativeCompile
+
+@[expose] public section
 
 namespace Flapjack.Test.WordToStackRegOutputParity
 open Flapjack Flapjack.Compiler.Backend.WordToStack.Native

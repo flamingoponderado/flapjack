@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Primitive
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.DecodeRelations
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
 public import Flapjack.Misc.ShiftSeq
 
 @[expose] public section
@@ -148,19 +149,8 @@ theorem install_pair_related {C F : Type} (s t : State C F)
 theorem install_related {C F : Type} (s t : State C F) (xs ys : List Value)
     (states : StateRel s t) (values : List.Forall₂ ValueRel xs ys) :
     InstallRel (doInstall xs s) (doInstall ys t) := by
-  by_cases arity : xs.length = 2
-  · cases values with
-    | nil => simp at arity
-    | @cons a x rest nextRest first tail =>
-      cases tail with
-      | nil => simp at arity
-      | @cons b y rest nextRest second tail =>
-        cases tail with
-        | nil => exact install_pair_related s t a b x y states first second
-        | cons third tail => simp at arity
-  · have targetArity : ys.length ≠ 2 := by simpa [← values.length_eq] using arity
-    rw [doInstall_wrongArity xs s arity, doInstall_wrongArity ys t targetArity]
-    exact ⟨rfl, states⟩
+  exact ClosProps.install_related install_pair_related
+    (fun s t st => ⟨rfl, st⟩) s t xs ys states values
 
 namespace InstallPort
 /-- The closure state uses canonical finite-map fields. -/

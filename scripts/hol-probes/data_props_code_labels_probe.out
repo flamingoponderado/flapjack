@@ -1,0 +1,15 @@
+get_code_labels_def=⊢ (∀r h d a.
+     get_code_labels (Call r d a h) =
+     (case d of NONE => ∅ | SOME x => {x}) ∪
+     case h of NONE => ∅ | SOME (n,p) => get_code_labels p) ∧
+  (∀v1 v0 loc. get_code_labels (Force v0 loc v1) = {loc}) ∧
+  (∀p2 p1.
+     get_code_labels (Seq p1 p2) = get_code_labels p1 ∪ get_code_labels p2) ∧
+  (∀v2 p2 p1.
+     get_code_labels (If v2 p1 p2) = get_code_labels p1 ∪ get_code_labels p2) ∧
+  (∀v5 v4 v3 op.
+     get_code_labels (Assign v3 op v4 v5) = assign_get_code_label op) ∧
+  get_code_labels Skip = ∅ ∧ (∀v7 v. get_code_labels (Move v v7) = ∅) ∧
+  (∀v22 v21. get_code_labels (MakeSpace v21 v22) = ∅) ∧
+  (∀v23. get_code_labels (Raise v23) = ∅) ∧
+  (∀v24. get_code_labels (Return v24) = ∅) ∧ get_code_labels Tick = ∅

@@ -1,7 +1,21 @@
-import Flapjack.Compiler.Backend.LabFilter
-import Flapjack.Compiler.Backend.LabToTarget.Compile
-import Flapjack.Misc.ListSubset
-import Flapjack.Test.LabToTargetRemoveLabelsParity
+module
+
+public import Flapjack.Compiler.Backend.LabFilter
+public import Flapjack.Compiler.Backend.LabToTarget.Compile
+public import Flapjack.Misc.ListSubset
+public import Flapjack.Test.LabToTargetRemoveLabelsParity
+public import Flapjack.Test.Fixtures.LabToTarget
+import all Flapjack.Compiler.Backend.LabFilter
+import all Flapjack.Compiler.Backend.LabToTarget.Compile
+import all Flapjack.Misc.ListSubset
+import all Flapjack.Test.LabToTargetRemoveLabelsParity
+import all Flapjack.Test.Fixtures.LabToTarget
+import all Flapjack.Compiler.Encoders.Asm
+import all Flapjack.Compiler.Backend.LabToTarget.Encoding
+import all Flapjack.Compiler.Backend.LabLang
+import all Init.Data.Sum.Basic
+
+@[expose] public section
 
 /-!
 # Native kernel replays of `lab_to_target_compile_probe.out`
@@ -26,6 +40,7 @@ open Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Encoders.Asm
 open Flapjack.Misc
 open Flapjack
+open Flapjack.Test.Fixtures.LabToTarget
 
 private abbrev MlS := Flapjack.Basis.Pure.MlString.MlString
 private abbrev Line64 :=
@@ -37,24 +52,6 @@ private instance line64DecidableEq : DecidableEq Line64 := instDecidableEqLine
 private instance sec64DecidableEq : DecidableEq Sec64 := instDecidableEqSection
 
 private def w8 (n : Nat) : BitVec 8 := BitVec.ofNat 8 n
-
-private def cfg : AsmConfigExact 64 :=
-  { isa := .riscv
-    encode := fun _ => []
-    bigEndian := false
-    codeAlignment := 2
-    linkReg := none
-    avoidRegs := [3]
-    regCount := 8
-    fpRegCount := 4
-    twoRegArith := true
-    validImm := fun _ _ => true
-    addrOffset := (0, 100)
-    hwOffset := (0, 100)
-    byteOffset := (0, 100)
-    jumpOffset := (0, 100)
-    cjumpOffset := (0, 100)
-    locOffset := (0, 100) }
 
 private def foo : MlS := Flapjack.Basis.Pure.MlString.MlString.implode [w8 102, w8 111, w8 111]
 

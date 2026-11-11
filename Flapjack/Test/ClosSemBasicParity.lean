@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
+
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
+
+@[expose] public section
 
 /-! Replay block-operation observations from the pinned HOL probe. -/
 namespace Flapjack.Test.ClosSemBasicParity

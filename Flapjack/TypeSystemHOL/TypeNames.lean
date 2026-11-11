@@ -80,13 +80,13 @@ mutual
 @[hol "cakeml/semantics/typeSystemScript.sml" "type_name_subst_def"]
 def typeNameSubst (env : TenvAbbrev) : AstT → SemanticT
   | .atvar tv => .var tv
-  | .attup ts => .app (typeNameSubstList env ts) 9
-  | .atfun t₁ t₂ => .app [typeNameSubst env t₁, typeNameSubst env t₂] 4
+  | .attup ts => Ttup (typeNameSubstList env ts)
+  | .atfun t₁ t₂ => Tfn (typeNameSubst env t₁) (typeNameSubst env t₂)
   | .atapp ts name =>
     let args := typeNameSubstList env ts
     match nsLookup env name with
     | some (tvs, t) => typeSubst (typeSubstMap (tvs.zip args)) t
-    | none => .app args 9
+    | none => Ttup args
 termination_by t => sizeOf t
 
 /-- Flapjack mutual-recursion helper for resolving a list of source types. -/

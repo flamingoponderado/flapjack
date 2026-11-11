@@ -1,0 +1,2 @@
+elist_globals_eq_empty=⊢ elist_globals l = {||} ⇔ ∀e. MEM e l ⇒ set_globals e = {||}
+elist_globals_type=:exp list -> num -> num

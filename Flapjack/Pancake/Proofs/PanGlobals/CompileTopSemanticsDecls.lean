@@ -69,45 +69,18 @@ theorem fupdateListLookup {α β : Type} [BEq α] [LawfulBEq α]
             have h2 : (a == k) = false := by simp [Ne.symm hk]
             simp [FUPDATE, h1, h2, List.lookup_cons]
 
-theorem lookupMem {α β : Type} [BEq α] [LawfulBEq α]
-    (l : List (α × β)) (k : α) (v : β) (h : List.lookup k l = some v) : (k, v) ∈ l := by
-  induction l with
-  | nil => simp at h
-  | cons e l ih =>
-    obtain ⟨a, b⟩ := e
-    by_cases hk : k = a
-    · subst hk; simp at h; subst h; simp
-    · have : (k == a) = false := by simp [hk]
-      simp only [List.lookup_cons, this] at h
-      exact List.mem_cons_of_mem _ (ih h)
-
 theorem lookupNoneOfNotMem {α β : Type} [BEq α] [LawfulBEq α]
     (l : List (α × β)) (k : α) (h : k ∉ l.map Prod.fst) : List.lookup k l = none := by
   cases hl : List.lookup k l with
   | none => rfl
-  | some v => exact absurd (List.mem_map.mpr ⟨(k, v), lookupMem l k v hl, rfl⟩) h
-
-theorem lookupReverseOfNodup {α β : Type} [BEq α] [LawfulBEq α]
-    (l : List (α × β)) (k : α) (hnd : (l.map Prod.fst).Nodup) :
-    List.lookup k l.reverse = List.lookup k l := by
-  have hnd' : (l.reverse.map Prod.fst).Nodup := by
-    rw [List.map_reverse, List.Nodup, List.pairwise_reverse]; exact hnd.imp (fun h => Ne.symm h)
-  cases h : List.lookup k l with
-  | none =>
-    cases h' : List.lookup k l.reverse with
-    | none => rfl
-    | some v =>
-      have hm := lookupMem _ _ _ h'
-      have := Flapjack.Misc.listLookupOfMemNodup l k v (List.mem_reverse.mp hm) hnd
-      rw [h] at this; cases this
-  | some v =>
-    exact Flapjack.Misc.listLookupOfMemNodup _ k v (List.mem_reverse.mpr (lookupMem _ _ _ h)) hnd'
+  | some v => exact absurd (List.mem_map.mpr ⟨(k, v), Misc.lookupMem l k v hl, rfl⟩) h
 
 /-- `FUPDATE_LIST FEMPTY` over distinct keys is `ALOOKUP`. -/
 theorem emptyUpdateListLookup {α β : Type} [BEq α] [LawfulBEq α]
     (l : List (α × β)) (k : α) (hnd : (l.map Prod.fst).Nodup) :
     (HolFiniteMapExact.empty.updateList l).lookup k = List.lookup k l := by
-  rw [HolFiniteMapExact.lookup_updateList, fupdateListLookup, lookupReverseOfNodup l k hnd]
+  rw [HolFiniteMapExact.lookup_updateList, fupdateListLookup,
+    Misc.listLookupReverseOfNodup l k hnd]
   cases List.lookup k l <;> rfl
 
 /-- Flapjack evaluator infrastructure: a successful run of exception
@@ -506,7 +479,7 @@ theorem compileTopSemanticsDeclsHOL {width : Nat} {σ : Type} [NeZero width]
   have hnmFresh : nm ∉ (functionsHOL code).map Prod.fst := by
     rw [hnm]; exact new_main_name_correctHOL code
   have hstartMem : start ∈ (functionsHOL code).map Prod.fst :=
-    List.mem_map.mpr ⟨_, lookupMem _ _ _ hstartLookup, rfl⟩
+    List.mem_map.mpr ⟨_, Misc.lookupMem _ _ _ hstartLookup, rfl⟩
   have hnmStart : nm ≠ start := fun h => hnmFresh (h ▸ hstartMem)
   have hfpNodup := ALL_DISTINCT_fperm_decsHOL start nm code hdistinct
   have hLkeys : ((functionsHOL (fpermDecsHOL start nm code)).map (fun entry =>
@@ -518,7 +491,7 @@ theorem compileTopSemanticsDeclsHOL {width : Nat} {σ : Type} [NeZero width]
       T.code.lookup f = some (entry.1, compileProgExactHOL ctx entry.2.1, entry.2.2) := by
     intro f entry hmem
     rw [hTcode, HolFiniteMapExact.lookup_updateList, fupdateListLookup,
-      lookupReverseOfNodup _ _ hLNodup,
+      Misc.listLookupReverseOfNodup _ _ hLNodup,
       Flapjack.Misc.listLookupOfMemNodup _ f (entry.1, compileProgExactHOL ctx entry.2.1, entry.2.2)
         (List.mem_map.mpr ⟨(f, entry), hmem, rfl⟩) hLNodup]
   have hstartNotRenamed : start ∉ (functionsHOL (fpermDecsHOL start nm code)).map Prod.fst := by
@@ -542,7 +515,7 @@ theorem compileTopSemanticsDeclsHOL {width : Nat} {σ : Type} [NeZero width]
   have hbodyMem : (nm, ([] : List (MlS × ShapeHOL)), fpermHOL start nm body, rshape) ∈
       functionsHOL (fpermDecsHOL start nm code) := by
     rw [functionsFpermDecsHOL]
-    refine List.mem_map.mpr ⟨(start, [], body, rshape), lookupMem _ _ _ hstartLookup, ?_⟩
+    refine List.mem_map.mpr ⟨(start, [], body, rshape), Misc.lookupMem _ _ _ hstartLookup, ?_⟩
     simp [fpermName]
   have hL2 := hTlookup nm _ hbodyMem
   have hinitCall := semanticsInitCall' T start (nestedSeqHOL inits) nm rshape []
@@ -590,7 +563,7 @@ theorem compileTopSemanticsDeclsHOL {width : Nat} {σ : Type} [NeZero width]
         (functionsHOL (fpermDecsHOL start nm code))).lookup f = _ at hlk
       rw [emptyUpdateListLookup _ _ hfpNodup] at hlk
       rw [htcode]
-      exact hTlookup f (ps, p, rs) (lookupMem _ _ _ hlk)
+      exact hTlookup f (ps, p, rs) (Misc.lookupMem _ _ _ hlk)
   have hsem := PanGlobalsStateRelImpSemantics.stateRelImpSemanticsHOL ctx _ t' nm
     ⟨hrelT, by rw [← hempty, hfperm]; exact hnf⟩
   rw [← hfperm, hempty, ← hsem, hinitCall]

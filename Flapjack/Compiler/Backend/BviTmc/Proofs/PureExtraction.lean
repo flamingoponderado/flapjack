@@ -9,6 +9,12 @@ namespace Flapjack.Compiler.Backend.BviTmc
 open BviSem BvlSem
 namespace PureExtraction
 
+/-- A `smallEnoughInt` bound on a natural cast gives the corresponding
+natural upper bound. -/
+private theorem smallEnoughInt_nat_le {n : Nat} (bound : BackendCommon.smallEnoughInt (Int.ofNat n))
+    :
+    n ≤ 268435457 := Int.ofNat_le.mp bound.2
+
 private theorem extractOne_inl_shape (n loc tag : Nat) (e : Bvi.Exp)
     (bs : List Bvi.Exp) (vs : List Nat)
     (run : extractOneSource n loc tag e = some (bs, .inl vs)) :
@@ -110,6 +116,7 @@ private theorem extractList_inl_shape (n loc tag : Nat) (args bs : List Bvi.Exp)
                   rw [List.range_succ_eq_map]
                 · simp only [List.length_cons, List.length_nil, List.length_map, List.length_range,
                     List.length_append, shiftVarsSource] at sizeBound ⊢
+                  have := smallEnoughInt_nat_le sizeBound
                   omega
               next => simp at run
 termination_by args.length

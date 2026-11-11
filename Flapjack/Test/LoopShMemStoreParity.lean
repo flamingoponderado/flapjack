@@ -1,9 +1,11 @@
 module
 
 public import Flapjack.LoopFfi
+public import Flapjack.Test.Fixtures.Loop
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.LoopFfi
+public meta import Flapjack.Test.Fixtures.Loop
 @[expose] public section
 
 /-!
@@ -20,25 +22,7 @@ address remains in the mapped-write payload.
 namespace Flapjack.Test.LoopShMemStoreParity
 
 open Flapjack
-
-def returningState (shared : Bool) : LoopFfiState Nat Unit :=
-  { locals := fun _ => none
-    globals := fun _ => none
-    memory := fun _ => none
-    memaddrs := fun _ => true
-    shMemaddrs := fun _ => shared
-    byteAlign := id
-    clock := 10
-    bigEndian := false
-    baseAddress := 0
-    topAddress := 0
-    ffi :=
-      { oracle := fun _ state _ bytes => .returned state bytes
-        state := ()
-        ioEvents := [] }
-    wordToBytes := fun value _ => [UInt8.ofNat value]
-    wordOfBytes := fun _ bytes => bytes.head?.getD 0 |>.toNat
-    valueToNat := id }
+open Flapjack.Test.Fixtures.Loop
 
 def storeState : LoopFfiState Nat Unit :=
   { returningState true with

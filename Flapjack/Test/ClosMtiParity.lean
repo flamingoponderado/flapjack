@@ -1,21 +1,40 @@
-import Flapjack.Compiler.Backend.ClosMti
-import Flapjack.Test.CakeMLFlatOracle
-import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
-import Flapjack.Test.MtiCakeBviOracle
-import Flapjack.Compiler.Backend.SourceToFlat.ToWord
-import Flapjack.Test.FullMtiInlineCakeWordOracle
-import Flapjack.Test.FullBvlOptimizedCakeWordOracle
-import Flapjack.Test.FullClosCallCakeWordOracle
-import Flapjack.Test.FullClosKnownCakeWordOracle
-import Flapjack.Test.FullDefaultFrontendWordOracle
-import Flapjack.Test.BvlInlineCakeBviOracle
-import Flapjack.Test.BvlHandleCakeBviOracle
-import Flapjack.Test.BvlOptimizedCakeBviOracle
-import Flapjack.Compiler.Backend.BvlInline.Program
-import Flapjack.Compiler.Backend.BvlInline.LetOp
-import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
-import Flapjack.Compiler.Backend.BvlHandle.Compile
-import Flapjack.Compiler.Backend.BvlHandle.Simplify
+module
+
+public import Flapjack.Compiler.Backend.ClosMti
+public import Flapjack.Test.CakeMLFlatOracle
+public import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
+public import Flapjack.Test.MtiCakeBviOracle
+public import Flapjack.Compiler.Backend.SourceToFlat.ToWord
+public import Flapjack.Test.FullMtiInlineCakeWordOracle
+public import Flapjack.Test.FullBvlOptimizedCakeWordOracle
+public import Flapjack.Test.FullDefaultFrontendWordOracle
+public import Flapjack.Test.BvlInlineCakeBviOracle
+public import Flapjack.Test.BvlHandleCakeBviOracle
+public import Flapjack.Test.BvlOptimizedCakeBviOracle
+public import Flapjack.Compiler.Backend.BvlInline.Program
+public import Flapjack.Compiler.Backend.BvlInline.LetOp
+public import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
+public import Flapjack.Compiler.Backend.BvlHandle.Compile
+public import Flapjack.Compiler.Backend.BvlHandle.Simplify
+public meta import Flapjack.Compiler.Backend.ClosLang.Syntax
+public meta import Flapjack.Compiler.Backend.ClosMti
+public meta import Flapjack.Test.CakeMLFlatOracle
+public meta import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
+public meta import Flapjack.Test.MtiCakeBviOracle
+public meta import Flapjack.Test.BvlInlineCakeBviOracle
+public meta import Flapjack.Test.BvlHandleCakeBviOracle
+public meta import Flapjack.Test.BvlOptimizedCakeBviOracle
+public meta import Flapjack.Test.FullMtiInlineCakeWordOracle
+public meta import Flapjack.Compiler.Backend.SourceToFlat.ToWord
+public meta import Flapjack.Test.FullBvlOptimizedCakeWordOracle
+public meta import Flapjack.Test.FullDefaultFrontendWordOracle
+public meta import Flapjack.Compiler.Backend.BvlInline.Program
+public meta import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
+public meta import Flapjack.Compiler.Backend.BvlInline.LetOp
+public meta import Flapjack.Compiler.Backend.BvlHandle.Simplify
+public meta import Flapjack.Compiler.Backend.BvlHandle.Compile
+
+@[expose] public section
 
 /-! Original examples for checked multi-argument introduction. -/
 namespace Flapjack.Test.ClosMtiParity
@@ -138,7 +157,7 @@ private def wordConfig : DataToWord.Config :=
     SourceToFlat.emptyConfig { mtiConfig with doCall := true, knownConf := some (ClosKnown.defaultConfig 2) } wordConfig
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
       (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
-  | some (_, _, _, code, _, _) => Flapjack.Test.FullClosKnownCakeWordOracle.matchesCaptured
+  | some (_, _, _, code, _, _) => Flapjack.Test.FullBvlOptimizedCakeWordOracle.matchesCaptured
       (code.map fun (loc, arity, body) => (loc, arity, body, 0))
   | none => false
 
@@ -146,7 +165,7 @@ private def wordConfig : DataToWord.Config :=
     SourceToFlat.emptyConfig { mtiConfig with doCall := true } wordConfig
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
       (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
-  | some (_, _, _, code, _, _) => Flapjack.Test.FullClosCallCakeWordOracle.matchesCaptured
+  | some (_, _, _, code, _, _) => Flapjack.Test.FullBvlOptimizedCakeWordOracle.matchesCaptured
       (code.map fun (loc, arity, body) => (loc, arity, body, 0))
   | none => false
 

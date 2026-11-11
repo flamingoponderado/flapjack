@@ -310,84 +310,78 @@ theorem evaluate_simp_duplicate_if {width : Nat} [NeZero width] {C : Type} {F : 
 theorem push_out_if_aux_T {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (c2 c2' : WordLangProgHOL (BitVec width)) (res : Option (WordSemResult width))
       (s s' : WordSemStateFiniteExact width C F),
-      pushOutIfAux c2 = (c2', true) → evaluate c2 s = (res, s') → res ≠ none
-  | .mustTerminate q, c2', res, s, s', h, he => by
-      have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.1
-      simp only [pushOutIfAux] at h
-      rcases hq : pushOutIfAux q with ⟨c, b⟩
-      rw [hq] at h
-      simp only [Prod.mk.injEq] at h
-      obtain ⟨-, rfl⟩ := h
-      rw [ht] at he
-      by_cases hz : s.termdep = 0
-      · simp only [hz, if_true, Prod.mk.injEq] at he; rw [← he.1]; simp
-      · simp only [hz, if_false] at he
-        rcases hev : evaluate q { s with
-            clock := wordSemMustTerminateLimit width
-            termdep := s.termdep - 1 } with ⟨r, s1⟩
-        rw [hev] at he
-        have hr := push_out_if_aux_T q c r _ s1 hq hev
-        cases r with
-        | none => exact absurd rfl hr
-        | some x => cases x <;> simp only [Prod.mk.injEq] at he <;> rw [← he.1] <;> simp
-  | .return a b, _, res, s, s', _, he => by
-      rw [evaluate] at he
-      split at he <;> simp only [Prod.mk.injEq] at he <;> rw [← he.1] <;> simp
-  | .raise n, _, res, s, s', _, he => by
-      rw [evaluate] at he
-      split at he
-      · simp only [Prod.mk.injEq] at he; rw [← he.1]; simp
-      · split at he <;> simp only [Prod.mk.injEq] at he <;> rw [← he.1] <;> simp
-  | .call ret dest args handler, c2', res, s, s', h, he => by
-      cases ret with
-      | none =>
-        have := evaluate_call_none_ne_none dest args handler s
-        rw [he] at this; exact this
-      | some _ => simp [pushOutIfAux] at h
-  | .ite cmp r1 ri c1 c2, c2', res, s, s', h, he => by
-      simp only [pushOutIfAux] at h
-      rcases h1 : pushOutIfAux c1 with ⟨c1', b1⟩
-      rcases h2 : pushOutIfAux c2 with ⟨c2'', b2⟩
-      rw [h1, h2] at h
-      rcases b1 <;> rcases b2 <;> simp only [Prod.mk.injEq, Bool.false_eq_true, and_false] at h
-      rw [evaluate_ite_eq] at he
-      rcases hx : getVar r1 s with _ | x <;> rcases hy : getVarImm ri s with _ | y <;>
-        simp only [hx, hy, Prod.mk.injEq] at he
-      all_goals try (rw [← he.1]; exact Option.some_ne_none _)
-      rcases hc : wordSemWordCmp cmp x y with _ | _ | _ <;> simp only [hc, Prod.mk.injEq] at he
-      · rw [← he.1]; simp
-      · exact push_out_if_aux_T c2 c2'' res s s' h2 he
-      · exact push_out_if_aux_T c1 c1' res s s' h1 he
-  | .seq c1 c2, c2', res, s, s', h, he => by
-      simp only [pushOutIfAux] at h
-      rw [evaluate_seq_eq] at he
-      rcases h1 : pushOutIfAux c1 with ⟨c1', b1⟩
-      rw [h1] at h
-      rcases hev : evaluate c1 s with ⟨r1, s1⟩
+      pushOutIfAux c2 = (c2', true) → evaluate c2 s = (res, s') → res ≠ none := by
+  intro c2
+  fun_induction pushOutIfAux c2
+  all_goals intro c2' res s s' h he
+  all_goals simp only [Prod.mk.injEq] at h
+  all_goals obtain ⟨rfl, hb⟩ := h
+  all_goals try simp at hb
+  all_goals try
+    rw [evaluate] at he
+    split at he
+    all_goals simp only [Prod.mk.injEq] at he
+    all_goals simp [← he.1]
+  case case1 q c b hx ih =>
+    rw [hb] at hx
+    have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.1
+    rw [ht] at he
+    by_cases hz : s.termdep = 0
+    · simp only [hz, if_true, Prod.mk.injEq] at he
+      simp [← he.1]
+    · simp only [hz, if_false] at he
+      rcases hev : evaluate q { s with
+          clock := wordSemMustTerminateLimit width
+          termdep := s.termdep - 1 } with ⟨r, s1⟩
       rw [hev] at he
-      rcases b1
-      · simp only at h
-        rcases h2 : pushOutIfAux c2 with ⟨c2'', b2⟩
-        rw [h2] at h
-        simp only [Prod.mk.injEq] at h
-        obtain ⟨-, rfl⟩ := h
-        cases r1 with
-        | none => exact push_out_if_aux_T c2 c2'' res s1 s' h2 he
-        | some x => simp only [Prod.mk.injEq] at he; rw [← he.1]; simp
-      · have hr := push_out_if_aux_T c1 c1' r1 s s1 h1 hev
-        cases r1 with
-        | none => exact absurd rfl hr
-        | some x => simp only [Prod.mk.injEq] at he; rw [← he.1]; simp
-  | .loop _ _ _, _, _, _, _, h, _ => by simp [pushOutIfAux] at h
-  | .skip, _, _, _, _, h, _ | .move _ _, _, _, _, _, h, _ | .inst _, _, _, _, _, h, _
-  | .assign _ _, _, _, _, _, h, _ | .get _ _, _, _, _, _, h, _ | .set _ _, _, _, _, _, h, _
-  | .store _ _, _, _, _, _, h, _ | .alloc _ _, _, _, _, _, h, _
-  | .storeConsts _ _ _ _ _, _, _, _, _, h, _ | .break _, _, _, _, _, h, _
-  | .continue _, _, _, _, _, h, _ | .tick, _, _, _, _, h, _
-  | .opCurrHeap _ _ _, _, _, _, _, h, _ | .locValue _ _, _, _, _, _, h, _
-  | .install _ _ _ _ _, _, _, _, _, h, _ | .codeBufferWrite _ _, _, _, _, _, h, _
-  | .dataBufferWrite _ _, _, _, _, _, h, _ | .ffi _ _ _ _ _ _, _, _, _, _, h, _
-  | .shareInst _ _ _, _, _, _, _, h, _ => by simp [pushOutIfAux] at h
+      have hr := ih c r _ s1 hx hev
+      cases r with
+      | none => exact absurd rfl hr
+      | some x =>
+        cases x
+        all_goals simp only [Prod.mk.injEq] at he
+        all_goals simp [← he.1]
+  case case3 =>
+    rw [evaluate] at he
+    split at he
+    · simp only [Prod.mk.injEq] at he
+      simp [← he.1]
+    · split at he
+      all_goals simp only [Prod.mk.injEq] at he
+      all_goals simp [← he.1]
+  case case4 target arguments handler =>
+    simpa [he] using evaluate_call_none_ne_none target arguments handler s
+  case case5 cmp r1 ri c1 c2 c1' c2' hx2 hx1 ih2 ih1 =>
+    rw [evaluate_ite_eq] at he
+    rcases hx : getVar r1 s with _ | x
+    all_goals rcases hy : getVarImm ri s with _ | y
+    all_goals simp only [hx, hy, Prod.mk.injEq] at he
+    all_goals try simp [← he.1]
+    rcases hc : wordSemWordCmp cmp x y with _ | _ | _
+    all_goals simp only [hc, Prod.mk.injEq] at he
+    · simp [← he.1]
+    · exact ih1 c2' res s s' hx2 he
+    · exact ih2 c1' res s s' hx1 he
+  case case9 c1 c2 c1' hx ih =>
+    rw [evaluate_seq_eq] at he
+    rcases hev : evaluate c1 s with ⟨r1, s1⟩
+    rw [hev] at he
+    have hr := ih c1' r1 s s1 hx hev
+    cases r1 with
+    | none => exact absurd rfl hr
+    | some x =>
+      simp only [Prod.mk.injEq] at he
+      simp [← he.1]
+  case case10 c1 c2 c1' hx1 c b hx2 ih2 ih1 =>
+    rw [hb] at hx2
+    rw [evaluate_seq_eq] at he
+    rcases hev : evaluate c1 s with ⟨r1, s1⟩
+    rw [hev] at he
+    cases r1 with
+    | none => exact ih1 c res s1 s' hx2 he
+    | some x =>
+      simp only [Prod.mk.injEq] at he
+      simp [← he.1]
 
 /-- The `push_out_if_aux_ind` induction inside HOL's `evaluate_simp_push_out_if`
     proof, as a structural recursion over the first projection. Flapjack proof

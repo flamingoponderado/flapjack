@@ -2,10 +2,12 @@ module
 
 public import Flapjack.Pancake.Semantics.PanSemStateEval
 public import Flapjack.Test.PanValueFfiCore
+public import Flapjack.Test.Fixtures.PanSemExact
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.Test.PanValueFfiCore
 public meta import Flapjack.Pancake.Semantics.PanSemStateEval
+public meta import Flapjack.Test.Fixtures.PanSemExact
 @[expose] public section
 
 -- Public declarations below use private helpers.
@@ -40,6 +42,7 @@ namespace Flapjack.Test.PanSemCallErrorExactParity
 
 open Flapjack
 open Flapjack.RiscV
+open Flapjack.Test.Fixtures.PanSemExact
 
 private abbrev Word64 := Word 64
 
@@ -83,19 +86,6 @@ private def evaluate (state : PanSemState Word64 (FfiState Unit)) (program : Pro
     Option (PanValueFfiClockResult Word64 Unit) :=
   panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive
     statefulTestHandler state program
-
-private def isWordValue (expected : Nat) : Option (PanValue Word64) → Bool
-  | some (.word value) => value == BitVec.ofNat 64 expected
-  | _ => false
-
-private def isErrorKeeping (clock localValue : Nat)
-    (result : Option (PanValueFfiClockResult Word64 Unit)) : Bool :=
-  match result with
-  | some (.control control, n) =>
-      match control with
-      | .error locals _ _ _ => n == clock && isWordValue localValue (locals "x")
-      | _ => false
-  | _ => false
 
 private def loadHit : Exp Word64 := .load Shape.one (.const 8)
 

@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.RawCall
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.RawCall
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.RawCall
+public meta import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+
+@[expose] public section
 
 /-! Kernel replay of all seven original HOL observations in
 `scripts/hol-probes/stacksem_rawcall_probe.out`. The concrete `evaluate` stub
@@ -26,7 +33,7 @@ def evaluateStub {width : Nat} [NeZero width] {C F : Type}
   | .continue n => (some (.continue n), s)
   | _ => (some .error, s)
 
-private def fixture {C F : Type} (s : StackSemStateFiniteExact 8 C F) :
+def fixture {C F : Type} (s : StackSemStateFiniteExact 8 C F) :
     StackSemStateFiniteExact 8 C F :=
   { s with
     clock := 5
@@ -38,7 +45,7 @@ private def fixture {C F : Type} (s : StackSemStateFiniteExact 8 C F) :
         (sptInsert 14 (.seq .skip (.continue 3))
           (sptInsert 15 (.seq .skip (.skip : HolProg 8)) .ln)))) }
 
-private def observe {C F : Type}
+def observe {C F : Type}
     (result : Option (StackSemResult 8) × StackSemStateFiniteExact 8 C F) :
     Option (StackSemResult 8) × Nat × Option (WordLocW 8) × Nat :=
   (result.1, result.2.clock, result.2.regs.lookup 1, result.2.stack.length)
@@ -75,7 +82,7 @@ example : observe (evaluateRawCall (evaluateStub (C := C) (F := F)) 15
 
 /-! Closed helper checks: `dest_Seq` decomposes exactly `Seq` and `none`
 otherwise, and `bad_fun_return` classifies `NONE`/`Break`/`Continue`. -/
-private def checks : Bool :=
+def checks : Bool :=
   (Flapjack.StackSemControl.destSeq (.seq .skip (.ret 4) : HolProg 8)).isSome &&
   (Flapjack.StackSemControl.destSeq (.skip : HolProg 8)).isNone &&
   Flapjack.StackSemControl.badFunReturn (none : Option (StackSemResult 8)) &&

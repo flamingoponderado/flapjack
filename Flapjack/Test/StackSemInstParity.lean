@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.InstCase
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.InstCase
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.InstCase
+
+@[expose] public section
 
 /-! Kernel replay of all six original HOL observations in
 `scripts/hol-probes/stacksem_inst_probe.out`. The fixture overrides every

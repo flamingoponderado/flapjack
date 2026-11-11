@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.BviToData.CompileSource
+public import Flapjack.Compiler.Backend.BviToData.CompileSourceAgrees
 public import Flapjack.Compiler.Backend.BviToData.Proofs.CompileAgreement
 public import Mathlib.Tactic
 
@@ -62,17 +62,6 @@ theorem compileSource_RANGE (n : Nat) (env : List Nat) (tail : Bool) (live : Lis
     ∀ v ∈ names, v < next := by
   simpa [compiled] using compileSource_range n env tail live xs
 
-/-- The source traversal agrees with the single-expression and non-tail list
-rewrites used by the executable compiler. -/
-theorem compileSource_agrees (n : Nat) (env : List Nat) (tail : Bool) (live : List Nat) (xs : List Bvi.Exp) :
-    compileSource n env tail live xs =
-      match xs with
-      | [] => (.skip, [], n)
-      | [x] => let (code, name, next) := compileSing n env tail live x; (code, [name], next)
-      | _ => compileList n env live xs := by
-  fun_induction compileSource n env tail live xs <;> simp_all [compileSing, compileList, Flapjack.holHd] <;>
-    aesop (add simp [compileList, Flapjack.holHd])
-
 /-- The original source theorem relating singleton compilation and the
 non-tail list rewrite. -/
 @[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "compile_sing_eq"]
@@ -97,7 +86,6 @@ theorem compileSing_source_eq :
 list-shaped definition of the optimized expression compiler. -/
 theorem compileExp_source (argc : Nat) (exp : Bvi.Exp) :
     compileExp argc exp = optimise (compileSource argc (List.range argc) true [] [exp]).1 := by
-  rw [compileSource_agrees]
   rfl
 
 /-- At any initial fuel, the executable bounded compiler returns the

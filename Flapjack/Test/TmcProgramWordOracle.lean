@@ -1,5 +1,13 @@
 -- Generated from the pinned original HOL compiler; do not edit.
-import Flapjack.Pancake.WordLang
+module
+
+public import Flapjack.Pancake.WordLang
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.TmcProgramWordOracle
 

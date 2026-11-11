@@ -1,52 +1,84 @@
-import Flapjack.Compiler.Backend.FlatElim.Reachability
-import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
-import Flapjack.Compiler.Backend.SourceToFlat.ToClos
-import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
-import Flapjack.Compiler.Backend.SourceToFlat.ToData
-import Flapjack.Compiler.Backend.ClosToBvl.Constants
-import Flapjack.Compiler.Backend.ClosToBvl.Layout
-import Flapjack.Compiler.Backend.ClosToBvl.Sort
-import Flapjack.Compiler.Backend.ClosToBvl.Names
-import Flapjack.Compiler.Backend.ClosNumber
-import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
-import Flapjack.Compiler.Backend.ClosToBvl.Compile
-import Flapjack.Compiler.Backend.BvlJump
-import Flapjack.Compiler.Backend.ClosToBvl.Stubs
-import Flapjack.Compiler.Backend.ClosToBvl.Prepared
-import Flapjack.Compiler.Backend.DbVars
-import Flapjack.Compiler.Backend.ClosAnnotate.Free
-import Flapjack.Compiler.Backend.ClosAnnotate.Shift
-import Flapjack.Compiler.Backend.BvlToBvi.Analysis
-import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
-import Flapjack.Compiler.Backend.BvlToBvi.Stubs
-import Flapjack.Compiler.Backend.BviLet.Compile
-import Flapjack.Compiler.Backend.BvlToBvi.Compile
-import Flapjack.Compiler.Backend.DataLang.Syntax
-import Flapjack.Compiler.Backend.DataSpace.Requirements
-import Flapjack.Compiler.Backend.BviToData.Assign
-import Flapjack.Compiler.Backend.BviToData.Compile
-import Flapjack.Compiler.Backend.DataSimp
-import Flapjack.Compiler.Backend.DataLive
-import Flapjack.Compiler.Backend.BviToData.Optimise
-import Flapjack.Compiler.Backend.DataToWord.Variables
-import Flapjack.Compiler.Backend.FlatPattern.Names
-import Flapjack.Compiler.Backend.FlatPattern.Decode
-import Flapjack.Compiler.Backend.FlatPattern.Encode
-import Flapjack.Compiler.Backend.FlatPattern.Patterns
-import Flapjack.Compiler.Backend.PatternComp.Decision
-import Flapjack.Compiler.Backend.PatternExh.Matrix
-import Flapjack.Compiler.Backend.FlatToClos.Helpers
-import Flapjack.Compiler.Backend.FlatToClos.Arith
-import Flapjack.Compiler.Backend.FlatToClos.CopyByte
-import Flapjack.Compiler.Backend.FlatToClos.Op
-import Flapjack.Compiler.Backend.FlatToClos.Compile
-import Flapjack.Test.CakeMLFlatOracle
-import Flapjack.Test.EmptyCakeBviOracle
-import Flapjack.Test.ReferenceCakeBviOracle
-import Flapjack.Test.MatchCakeBviOracle
-import Flapjack.Test.EmptyCakeDataOracle
-import Flapjack.Test.ReferenceCakeDataOracle
-import Flapjack.Test.MatchCakeDataOracle
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Reachability
+public import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
+public import Flapjack.Compiler.Backend.SourceToFlat.ToClos
+public import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
+public import Flapjack.Compiler.Backend.SourceToFlat.ToData
+public import Flapjack.Compiler.Backend.ClosToBvl.Constants
+public import Flapjack.Compiler.Backend.ClosToBvl.Layout
+public import Flapjack.Compiler.Backend.ClosToBvl.Sort
+public import Flapjack.Compiler.Backend.ClosToBvl.Names
+public import Flapjack.Compiler.Backend.ClosNumber
+public import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
+public import Flapjack.Compiler.Backend.ClosToBvl.Compile
+public import Flapjack.Compiler.Backend.BvlJump
+public import Flapjack.Compiler.Backend.ClosToBvl.Stubs
+public import Flapjack.Compiler.Backend.ClosToBvl.Prepared
+public import Flapjack.Compiler.Backend.DbVars
+public import Flapjack.Compiler.Backend.ClosAnnotate.Free
+public import Flapjack.Compiler.Backend.ClosAnnotate.Shift
+public import Flapjack.Compiler.Backend.BvlToBvi.Analysis
+public import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
+public import Flapjack.Compiler.Backend.BvlToBvi.Stubs
+public import Flapjack.Compiler.Backend.BviLet.Compile
+public import Flapjack.Compiler.Backend.BvlToBvi.Compile
+public import Flapjack.Compiler.Backend.DataLang.Syntax
+public import Flapjack.Compiler.Backend.DataSpace.Requirements
+public import Flapjack.Compiler.Backend.BviToData.Assign
+public import Flapjack.Compiler.Backend.BviToData.Compile
+public import Flapjack.Compiler.Backend.DataSimp
+public import Flapjack.Compiler.Backend.DataLive
+public import Flapjack.Compiler.Backend.BviToData.Optimise
+public import Flapjack.Compiler.Backend.DataToWord.Variables
+public import Flapjack.Compiler.Backend.FlatPattern.Names
+public import Flapjack.Compiler.Backend.FlatPattern.Decode
+public import Flapjack.Compiler.Backend.FlatPattern.Encode
+public import Flapjack.Compiler.Backend.FlatPattern.Patterns
+public import Flapjack.Compiler.Backend.PatternComp.Decision
+public import Flapjack.Compiler.Backend.PatternExh.Matrix
+public import Flapjack.Compiler.Backend.FlatToClos.Helpers
+public import Flapjack.Compiler.Backend.FlatToClos.Arith
+public import Flapjack.Compiler.Backend.FlatToClos.CopyByte
+public import Flapjack.Compiler.Backend.FlatToClos.Op
+public import Flapjack.Compiler.Backend.FlatToClos.Compile
+public import Flapjack.Test.CakeMLFlatOracle
+public import Flapjack.Test.EmptyCakeBviOracle
+public import Flapjack.Test.ReferenceCakeBviOracle
+public import Flapjack.Test.MatchCakeBviOracle
+public import Flapjack.Test.EmptyCakeDataOracle
+public import Flapjack.Test.ReferenceCakeDataOracle
+public import Flapjack.Test.MatchCakeDataOracle
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Compiler.Backend.FlatElim.Reachability
+public meta import Flapjack.Test.CakeMLFlatOracle
+public meta import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
+public meta import Flapjack.Compiler.Backend.ClosLang.Syntax
+public meta import Flapjack.Compiler.Backend.ClosLang.HasInstall
+public meta import Flapjack.Compiler.Backend.ClosInterp.Optimise
+public meta import Flapjack.Compiler.Backend.SourceToFlat.ToClos
+public meta import Flapjack.Compiler.Backend.ClosToBvl.Constants
+public meta import Flapjack.Compiler.Backend.ClosToBvl.Layout
+public meta import Flapjack.Compiler.Backend.ClosToBvl.Sort
+public meta import Flapjack.Compiler.Backend.ClosToBvl.Names
+public meta import Flapjack.Compiler.Backend.BvlJump
+public meta import Flapjack.Compiler.Backend.ClosToBvl.Stubs
+public meta import Flapjack.Compiler.Backend.ClosToBvl.Prepared
+public meta import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
+public meta import Flapjack.Test.EmptyCakeBviOracle
+public meta import Flapjack.Compiler.Backend.SourceToFlat.ToData
+public meta import Flapjack.Test.EmptyCakeDataOracle
+public meta import Flapjack.Test.ReferenceCakeBviOracle
+public meta import Flapjack.Test.ReferenceCakeDataOracle
+public meta import Flapjack.Test.MatchCakeBviOracle
+public meta import Flapjack.Test.MatchCakeDataOracle
+public meta import Flapjack.Compiler.Backend.DataToWord.Variables
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.FlatElim
 open Flapjack Flapjack.Compiler.Backend.FlatLang Flapjack.Compiler.Backend.FlatElim

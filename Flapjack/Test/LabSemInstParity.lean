@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.LabSem.Inst
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Inst
+
+import all Flapjack.Compiler.Backend.LabSem.Inst
+
+@[expose] public section
 
 /-! Kernel replay of all five original asm_inst dispatch branches.
 Inputs and assertions match labsem_inst_probe.out, including failure writes,

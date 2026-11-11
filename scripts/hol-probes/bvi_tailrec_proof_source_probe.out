@@ -1,0 +1,9 @@
+free_names_def_typed=∀(n :num) (name :num). free_names n name ⇔ ∀(k :num). n + bvl_to_bvi_namespaces * k ≠ name
+namespace_rel_def_typed=∀(c1 :α sptree$num_map) (c2 :α sptree$num_map). namespace_rel c1 c2 ⇔ (∀(n :num). n ∈ (domain c2 :num -> bool) ∧ bvl_num_stubs ≤ n ⇒ if n MOD bvl_to_bvi_namespaces = (2 :num) then n ∉ (domain c1 :num -> bool) else n ∈ (domain c1 :num -> bool)) ∧ (∀(n :num). n ∈ (domain c1 :num -> bool) ∧ bvl_num_stubs ≤ n ⇒ n MOD bvl_to_bvi_namespaces ≠ (2 :num)) ∧ ∀(n :num). n ∈ (domain c2 :num -> bool) ∧ n < bvl_num_stubs ⇒ n ∈ (domain c1 :num -> bool)
+from_op_to_op_typed=from_op (to_op (opr :assoc_op)) = opr
+list_to_v_simp_typed=∀(xs :v list). v_to_list (list_to_v xs) = SOME xs
+list_to_v_imp_typed=∀(x :v) (xs :v list). v_to_list x = SOME xs ⇒ list_to_v xs = x
+op_id_val_def_typed=op_id_val Plus = (Number (0 :int) :v) ∧ op_id_val Times = (Number (1 :int) :v) ∧ op_id_val Append = Block nil_tag ([] :v list) ∧ op_id_val Noop = (Number (6333 :int) :v)
+ty_rel_def_typed=ty_rel = LIST_REL (λ(v :v) (t :v_ty). (t = Int ⇒ ∃(k :int). v = (Number k :v)) ∧ (t = List ⇒ ∃(ys :v list). v_to_list v = SOME ys))
+ty_rel_APPEND_typed=∀(env :v list) (ts :v_ty list) (ws :v_ty list) (vs :v list). ty_rel env ts ∧ ty_rel vs ws ⇒ ty_rel (vs ++ env) (ws ++ ts)
+ty_rel_decide_ty_typed=∀(ts :v_ty list) (tt :v_ty list) (env :v list). (ty_rel env ts ∨ ty_rel env tt) ∧ LENGTH ts = LENGTH tt ⇒ ty_rel env (MAP2 decide_ty ts tt :v_ty list)

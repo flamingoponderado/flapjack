@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Evaluate
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.Evaluate
+
+@[expose] public section
 
 /-! Kernel replay of the eleven original HOL observations of
 `scripts/hol-probes/stacksem_control_probe.out` (`Seq`, `If` and `Loop` of

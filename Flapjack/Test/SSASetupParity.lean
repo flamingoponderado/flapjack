@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.EvenListDistinct
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.EvenListDistinct
+
+import all Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.EvenListDistinct
+
+@[expose] public section
 namespace Flapjack.Test.SSASetupParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 -- Kernel regressions replay the same inputs and observations as the original probe.

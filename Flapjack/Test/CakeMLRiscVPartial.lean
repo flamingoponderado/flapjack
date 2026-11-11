@@ -1,5 +1,11 @@
-import Flapjack.Compiler.Backend.SourceToFlat.ToRiscV
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.ToRiscV
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+public meta import Flapjack.Compiler.Backend.SourceToFlat.ToRiscV
+public meta import Flapjack.Compiler.Backend.RiscVConfig.Executable
+
+@[expose] public section
 
 /-! Smoke checks of the configured source-AST to RISC-V route. -/
 namespace Flapjack.Test.CakeMLRiscVPartial

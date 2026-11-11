@@ -1,4 +1,10 @@
-import Flapjack.Misc.FindIndex.ShiftZero
+module
+
+public import Flapjack.Misc.FindIndex.ShiftZero
+
+import all Flapjack.Misc.FindIndex.ShiftZero
+
+@[expose] public section
 namespace Flapjack.Test.FindIndexShiftZeroParity
 open Flapjack.Misc
 -- fiz_empty=T

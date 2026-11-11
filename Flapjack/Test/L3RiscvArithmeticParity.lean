@@ -3,7 +3,10 @@ module
 public import Flapjack.RiscV.L3.Defs
 public import Flapjack.Misc.BinaryIeeeDirectedFp32
 public import Flapjack.Misc.BinaryIeeeDirectedFp64
+public import Flapjack.Test.Fixtures.L3
 
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.L3
 @[expose] public section
 
 /-! All140 original arithmetic regressions from l3_riscv_arithmetic_probe.out.
@@ -15,18 +18,7 @@ set_option maxHeartbeats 0
 set_option synthInstance.maxSize 2048
 namespace Flapjack.Test.L3RiscvArithmeticParity
 open Flapjack.RiscV.L3 Flapjack
-private def state (a b : BitVec 64) (frm : BitVec 3) : riscv_state :=
-  { (default : riscv_state) with
-    procID := 7
-    c_gpr := fun _ _ => 99
-    c_fpr := fun c r => if c = 7 then if r = 1 then a else if r = 2 then b
-      else 0xcafe000000000000 else 0xbbbb000000000000
-    c_NextFetch := fun _ => none
-    c_update := fun _ => { (default : StateDelta) with data1 := some 42 }
-    c_UCSR := fun _ => { (default : UserCSR) with
-      fpcsr := { (default : FPCSR) with NV := false, NX := true, FRM := frm } }
-    c_MCSR := fun _ => { (default : MachineCSR) with
-      mstatus := { (default : mstatus) with MFS := 0, MSD := false } } }
+open Flapjack.Test.Fixtures.L3
 private def observe (s : riscv_state) :=
   (FPRD 3 s, FPRD 1 s, FPRD 2 s, (MCSR s).mstatus.MFS, (MCSR s).mstatus.MSD,
     (Delta s).data1, (fcsr s).NV, (fcsr s).NX, s.c_fpr 8 3,

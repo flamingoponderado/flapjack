@@ -1,5 +1,16 @@
-import Flapjack.CakeParser.SexpPrint
-import Flapjack.CakeParser.ToSexp
+module
+
+public import Flapjack.CakeParser.SexpPrint
+public import Flapjack.CakeParser.ToSexp
+
+import all Flapjack.CakeParser.SexpPrint
+import all Flapjack.CakeParser.ToSexp
+public meta import Flapjack.CakeParser.Sexp
+public meta import Flapjack.Misc.Location
+public meta import Flapjack.AstHOL.Syntax
+public meta import Flapjack.CakeParser.FromSexp.Encode
+
+@[expose] public section
 
 /-! Regression observations from `cake_sexp_parser_probe.out`. These finite
 examples do not prove the direct parser equivalent to HOL's PEG. -/

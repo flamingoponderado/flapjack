@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Int
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Int
+
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.Int
+
+@[expose] public section
 
 /-! Kernel replay of signed division and boundary observations captured in
 `scripts/hol-probes/clos_sem_int_probe.out`. -/

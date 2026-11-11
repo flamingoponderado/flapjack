@@ -1,0 +1,7 @@
+data_to_bvi_v_def_typed=(∀(i :int). data_to_bvi_v (Number i :v) = (Number i :bvlSem$v)) ∧ (∀(w :word64). data_to_bvi_v (Word64 w :v) = (Word64 w :bvlSem$v)) ∧ (∀(p :num). data_to_bvi_v (CodePtr p :v) = (CodePtr p :bvlSem$v)) ∧ (∀(r :num) (b :bool). data_to_bvi_v (RefPtr b r :v) = (RefPtr b r :bvlSem$v)) ∧ ∀(v0 :num) (tag :num) (l :v list). data_to_bvi_v (Block v0 tag l :v) = (Block tag (MAP (λ(a :v). data_to_bvi_v a) l) :bvlSem$v)
+data_to_bvi_v_Unit_typed=data_to_bvi_v Unit = Unit
+data_to_bvi_v_Boolv_typed=∀(b :bool). data_to_bvi_v (Boolv b :v) = (Boolv b :bvlSem$v)
+data_to_bvi_ref_def_typed=(∀(l :v list). data_to_bvi_ref (ValueArray l :v ref) = (ValueArray (MAP data_to_bvi_v l) :bvlSem$v ref)) ∧ (∀(b :bool) (bl :word8 list). data_to_bvi_ref (ByteArray b bl :v ref) = (ByteArray b bl :bvlSem$v ref)) ∧ (∀(m :thunk_mode) (v :v). data_to_bvi_ref (Thunk m v :v ref) = (Thunk m (data_to_bvi_v v) :bvlSem$v ref)) ∧ ∀(tg :num) (fin :bool) (ls :v list) (c :v) (rs :v list). data_to_bvi_ref (MutBlock tg fin ls c rs) = MutBlock tg fin (MAP data_to_bvi_v ls) (data_to_bvi_v c) (MAP data_to_bvi_v rs)
+v_to_bytes_eq_typed=∀(x :v). v_to_bytes (data_to_bvi_v x) = v_to_bytes x
+v_to_words_eq_typed=∀(x :v). v_to_words (data_to_bvi_v x) = v_to_words x
+data_to_bvi_v_list_to_v_Nil_typed=∀(z :v list) (ts :num). data_to_bvi_v (list_to_v ts Block_nil z :v) = (list_to_v (MAP data_to_bvi_v z) :bvlSem$v)

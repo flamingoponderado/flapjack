@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.RegAlloc.Allocator
-import Flapjack.Misc.Sptree.ToAList
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Allocator
+public import Flapjack.Misc.Sptree.ToAList
+
+import all Flapjack.Compiler.Backend.RegAlloc.Allocator
+import all Flapjack.Misc.Sptree.ToAList
+
+@[expose] public section
 namespace Flapjack.Test.RegAllocAllocatorParity
 open Flapjack Flapjack.RegAlloc Flapjack.Translator.Monadic.MonadBase
 

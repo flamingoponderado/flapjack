@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterClass
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterClass
+
+import all Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterClass
+
+@[expose] public section
 namespace Flapjack.Test.SSARegisterClassParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 -- Identical inputs/results as the direct original predicate probe.

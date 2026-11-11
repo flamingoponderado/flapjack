@@ -1,6 +1,9 @@
 """Keep complete decoder oracle expectations concrete and source-derived."""
 import importlib.util
 from pathlib import Path
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from lean_module_header import to_module  # noqa: E402
 import unittest
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = importlib.util.spec_from_file_location("native_decode_fixtures", ROOT / "scripts/l3/check-decode-fixtures.py")
@@ -13,7 +16,7 @@ class DecodeSourceFixtures(unittest.TestCase):
         cls.text = (ROOT / "scripts/hol-probes/l3_decode_probe.out").read_text()
 
     def test_complete_numeric_fixture_reproduces(self):
-        self.assertEqual(CHECK.fixture(self.text), (ROOT / "Flapjack/Test/L3DecodeParity.lean").read_text())
+        self.assertEqual(to_module(CHECK.fixture(self.text)), (ROOT / "Flapjack/Test/L3DecodeParity.lean").read_text())
 
     def test_every_source_guard_path_has_bounded_samples(self):
         data = CHECK.source_samples()

@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopTop
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopTop
+
+import all Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopTop
+
+@[expose] public section
 set_option maxRecDepth 16384
 namespace Flapjack.Test.WordToStackNoShmemopTopParity
 open Flapjack Flapjack.Compiler.Backend.StackLang

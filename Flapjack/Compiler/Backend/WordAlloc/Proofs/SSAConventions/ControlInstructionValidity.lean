@@ -90,7 +90,7 @@ theorem ssaCcTrans_fullInstMustTerminate {width : Nat} [NeZero width]
 
 /-- Flapjack factoring of the original reconciliation proof; no separately
 named HOL declaration is claimed for this helper. -/
-private theorem fix_fullInst {width : Nat} [NeZero width]
+theorem fix_fullInst {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (prio : Option (Unit ⊕ Unit)) (l r : Spt Nat) (next : Nat) :
     let (a, b, _, _) := fixInconsistencies (width := width) prio l r next
     fullInstOkLessExact config a = true ∧ fullInstOkLessExact config b = true := by

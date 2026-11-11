@@ -1,14 +1,19 @@
 module
 
 public import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
+public import Flapjack.Test.Fixtures.LabToTarget
 
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.LabToTarget
 @[expose] public section
+
 namespace Flapjack.Test.StackToLabNonrecursiveValidityParity
 open Flapjack Flapjack.Compiler.Backend.StackToLab
 open Flapjack.Compiler.Backend.StackToLab.Proofs
 open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackProps
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Encoders.Asm
+open Flapjack.Test.Fixtures.LabToTarget
 
 -- Generic full-case applications retain the actual original hypotheses.
 example {width : Nat} [NeZero width]
@@ -353,35 +358,18 @@ example {width : Nat} [NeZero width]
     ∀ line ∈ appListAppend lines, lineOkPreHOL config line :=
   flattenLineOkPreTailCall tail target handler sectionId next conts breaks lines done nextAfter config _zero valid result
 
-private def cfg : AsmConfigExact 8 where
-  isa := .riscv
-  encode := fun _ => []
-  bigEndian := false
-  codeAlignment := 2
-  linkReg := none
-  avoidRegs := [3]
-  regCount := 8
-  fpRegCount := 4
-  twoRegArith := true
-  validImm := fun _ _ => true
-  addrOffset := (0,100)
-  hwOffset := (0,100)
-  byteOffset := (0,100)
-  jumpOffset := (0,100)
-  cjumpOffset := (0,100)
-  locOffset := (0,100)
 
 -- Actual source-valid Cbw and Load instances use the complete case theorem.
 example : ∀ line ∈ appListAppend (.list [.asm (.cbw 1 2) [] 0] : AppList (LabLineHOL 8)),
-    lineOkPreHOL cfg line := by
-  exact flattenLineOkPreCodeBufferWrite false 1 2 7 2 [] [] _ false 2 cfg
+    lineOkPreHOL cfg8 line := by
+  exact flattenLineOkPreCodeBufferWrite false 1 2 7 2 [] [] _ false 2 cfg8
     (by decide +kernel)
     (by simp only [stackAsmOkExact]; decide +kernel)
     (by simp [flattenHOL])
 example : ∀ line ∈ appListAppend
     (.list [.asm (.shareMem .load 2 (.addr 4 0)) [] 0] : AppList (LabLineHOL 8)),
-    lineOkPreHOL cfg line := by
-  exact flattenLineOkPreSharedMemory false .load 2 (.addr 4 0) 7 2 [] [] _ false 2 cfg
+    lineOkPreHOL cfg8 line := by
+  exact flattenLineOkPreSharedMemory false .load 2 (.addr 4 0) 7 2 [] [] _ false 2 cfg8
     (by decide +kernel)
     (by simp only [stackAsmOkExact]; constructor <;> decide +kernel)
     (by simp [flattenHOL])

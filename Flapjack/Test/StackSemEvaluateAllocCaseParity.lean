@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateAllocCase
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateAllocCase
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateAllocCase
+
+@[expose] public section
 
 open Flapjack Flapjack.StackSemEvaluateAlloc
 

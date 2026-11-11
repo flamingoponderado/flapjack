@@ -1,4 +1,13 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.BufferWrites
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.BufferWrites
+public meta import Flapjack.Compiler.Backend.Semantics.WordSem.State
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Kernel replay of all five original HOL observations in
 `scripts/hol-probes/stacksem_buffer_write_probe.out`. The concrete fixture

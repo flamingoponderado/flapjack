@@ -55,38 +55,8 @@ hypothesis or conclusion and is vacuous for this complete theorem. -/
 theorem mapBitmapMore {α : Type} (bs : List Bool) (ls stack a c ls' : List α)
     (h : mapBitmap bs ls stack = some (a, [], c)) :
     mapBitmap bs (ls ++ ls') stack = some (a, ls', c) := by
-  induction bs generalizing ls stack a c with
-  | nil =>
-    simp only [mapBitmap, Option.some.injEq, Prod.mk.injEq] at h
-    rcases h with ⟨ha, hl, hc⟩
-    subst ls
-    simp [mapBitmap, ← ha, ← hc]
-  | cons bit bs ih =>
-    cases stack with
-    | nil => cases bit <;> cases ls <;> simp [mapBitmap] at h
-    | cons v vs =>
-      cases bit with
-      | false =>
-        cases hr : mapBitmap bs ls vs with
-        | none => simp [mapBitmap, hr] at h
-        | some result =>
-          rcases result with ⟨mapped, movedRest, stackRest⟩
-          simp only [mapBitmap, hr, Option.some.injEq, Prod.mk.injEq] at h
-          rcases h with ⟨ha, hl, hc⟩
-          have hm := ih ls vs mapped stackRest (by simpa [hl] using hr)
-          simp [mapBitmap, hm, ha, hc]
-      | true =>
-        cases ls with
-        | nil => simp [mapBitmap] at h
-        | cons m ms =>
-          cases hr : mapBitmap bs ms vs with
-          | none => simp [mapBitmap, hr] at h
-          | some result =>
-            rcases result with ⟨mapped, movedRest, stackRest⟩
-            simp only [mapBitmap, hr, Option.some.injEq, Prod.mk.injEq] at h
-            rcases h with ⟨ha, hl, hc⟩
-            have hm := ih ms vs mapped stackRest (by simpa [hl] using hr)
-            simp [mapBitmap, hm, ha, hc]
+  revert a c ls'
+  fun_induction mapBitmap bs ls stack <;> simp_all [mapBitmap]
 
 /-- Full original arbitrary-list-length prefix/suffix specialization. The
 original l is retained at an independent payload type since its length matters. -/
@@ -105,41 +75,29 @@ theorem mapBitmapLookupFalse {α : Type} (bm : List Bool) (ls stack : List α) (
     (res ls1 stack1 : List α) (hb : bm[n]? = some false)
     (hm : mapBitmap bm ls stack = some (res, ls1, stack1)) :
     ∃ v, res[n]? = some v ∧ stack[n]? = some v := by
-  induction bm generalizing ls stack n res ls1 stack1 with
-  | nil => simp at hb
-  | cons bit bs ih =>
-    cases stack with
-    | nil => cases bit <;> cases ls <;> simp [mapBitmap] at hm
-    | cons v vs =>
-      cases bit with
-      | false =>
-        cases hr : mapBitmap bs ls vs with
-        | none => simp [mapBitmap, hr] at hm
-        | some result =>
-          rcases result with ⟨mapped, movedRest, stackRest⟩
-          simp only [mapBitmap, hr, Option.some.injEq, Prod.mk.injEq] at hm
-          rcases hm with ⟨hres, _, _⟩
-          cases n with
-          | zero => exact ⟨v, by simp [← hres], rfl⟩
-          | succ n =>
-            have hb' : bs[n]? = some false := by simpa using hb
-            obtain ⟨w, hw, hv⟩ := ih ls vs n mapped movedRest stackRest hb' hr
-            exact ⟨w, by simpa [← hres] using hw, by simpa using hv⟩
-      | true =>
-        cases ls with
-        | nil => simp [mapBitmap] at hm
-        | cons m ms =>
-          cases hr : mapBitmap bs ms vs with
-          | none => simp [mapBitmap, hr] at hm
-          | some result =>
-            rcases result with ⟨mapped, movedRest, stackRest⟩
-            simp only [mapBitmap, hr, Option.some.injEq, Prod.mk.injEq] at hm
-            rcases hm with ⟨hres, _, _⟩
-            cases n with
-            | zero => simp at hb
-            | succ n =>
-              have hb' : bs[n]? = some false := by simpa using hb
-              obtain ⟨w, hw, hv⟩ := ih ms vs n mapped movedRest stackRest hb' hr
-              exact ⟨w, by simpa [← hres] using hw, by simpa using hv⟩
+  revert n res ls1 stack1 hb hm
+  fun_induction mapBitmap bm ls stack <;> simp_all
+  case case3 =>
+    rename_i ih
+    intro n res ls1 stack1 hb hres hls hst
+    subst res
+    subst ls1
+    subst stack1
+    cases n with
+    | zero => exact ⟨_, rfl, rfl⟩
+    | succ k =>
+      obtain ⟨w, hw, hv⟩ := ih k _ _ _ (by simpa using hb) rfl rfl rfl
+      exact ⟨w, by simpa using hw, by simpa using hv⟩
+  case case5 =>
+    rename_i ih
+    intro n res ls1 stack1 hb hres hls hst
+    subst res
+    subst ls1
+    subst stack1
+    cases n with
+    | zero => simp at hb
+    | succ k =>
+      obtain ⟨w, hw, hv⟩ := ih k _ _ _ (by simpa using hb) rfl rfl rfl
+      exact ⟨w, by simpa using hw, by simpa using hv⟩
 
 end Flapjack.Compiler.Backend.WordToStack

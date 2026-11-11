@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.Proofs
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs
+
+import all Flapjack.Compiler.Backend.RegAlloc.Proofs
+
+@[expose] public section
 namespace Flapjack.Test.InClashTreeParity
 open Flapjack Flapjack.RegAlloc
 

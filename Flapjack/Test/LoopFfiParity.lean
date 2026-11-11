@@ -1,5 +1,13 @@
-import Flapjack.Pancake.Semantics.LoopSem
-import Flapjack.HolRef
+module
+
+public import Flapjack.Pancake.Semantics.LoopSem
+public import Flapjack.HolRef
+
+import all Flapjack.Pancake.Semantics.LoopSem
+import all Flapjack.HolRef
+public meta import Flapjack.RiscV.PanMemory
+
+@[expose] public section
 
 /-!
 # Loop `byte_align` regression

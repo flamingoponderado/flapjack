@@ -1,9 +1,11 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+public import Flapjack.Test.Fixtures.WordSem
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+public meta import Flapjack.Test.Fixtures.WordSem
 @[expose] public section
 
 -- Public declarations below use private helpers.
@@ -24,6 +26,7 @@ namespace Flapjack.Test.WordSemEnvParity
 
 open Flapjack
 open Flapjack.WordSemStateFiniteExact
+open Flapjack.Test.Fixtures.WordSem
 
 private abbrev W := WordLocW 64
 
@@ -62,34 +65,6 @@ def pureRows : List (String × Bool) :=
    ("cut_env_miss", (wordSemCutEnv (names [1], names [6]) envT).isNone)]
 
 #guard pureRows.all (·.2)
-
-/-- A concrete base state standing in for the probe's free `s`.  Every row
-    below reads only fields that the row itself sets or that the helper
-    computes. -/
-private def s0 : WordSemStateFiniteExact 64 Unit Unit where
-  locals := .ln
-  localsSize := none
-  fpRegs := HolFiniteMapExact.empty
-  store := HolFiniteMapExact.empty
-  stack := []
-  stackLimit := 0
-  stackMax := none
-  stackSize := .ln
-  memory := fun _ => .word 0
-  mdomain := fun _ => false
-  shMdomain := fun _ => false
-  permute := fun _ i => i
-  compile := fun _ _ => none
-  compileOracle := fun _ => ((), [])
-  codeBuffer := { position := 0, buffer := [], spaceLeft := 0 }
-  dataBuffer := { position := 0, buffer := [], spaceLeft := 0 }
-  gcFun := fun _ => none
-  handler := 0
-  clock := 0
-  termdep := 0
-  code := .ln
-  be := false
-  ffi := { oracle := fun _ state _ _ => .ret state [], ffiState := (), ioEvents := [] }
 
 private def frameView : WordSemStackFrame 64 →
     Option Nat × List (Nat × W) × List (Nat × W) × Option (Nat × Nat × Nat)

@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
+
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
+
+@[expose] public section
 
 /-! Replay closure thunk observations from the pinned HOL probe. -/
 namespace Flapjack.Test.ClosSemThunkParity

@@ -1,4 +1,10 @@
-import Flapjack.Arm8.NativeCLIAdapter
+module
+
+public import Flapjack.Arm8.NativeCLIAdapter
+
+import all Flapjack.Arm8.NativeCLIAdapter
+
+@[expose] public section
 
 /-! ARMv8 (AArch64) source-to-assembly parity with the original CakeML Pancake compiler.
 

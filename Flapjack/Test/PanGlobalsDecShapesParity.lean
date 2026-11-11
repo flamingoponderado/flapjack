@@ -1,4 +1,9 @@
-import Flapjack.Pancake.PanGlobals
+module
+
+public import Flapjack.Pancake.PanGlobals
+public meta import Flapjack.Pancake.PanGlobals
+
+@[expose] public section
 
 namespace Flapjack.Test.PanGlobalsDecShapesParity
 

@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.LabSem.Semantics
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Semantics
+
+import all Flapjack.Compiler.Backend.LabSem.Semantics
+
+@[expose] public section
 
 /-! Whole native behavior observations through the genuine clock evaluator.
 These fixture lemmas have no HOL declaration counterparts. -/

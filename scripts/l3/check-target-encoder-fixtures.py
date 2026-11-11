@@ -4,6 +4,10 @@ Finite cases are regression evidence, not universal cross-language equivalence.
 """
 import re,runpy,sys
 from pathlib import Path
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parent.parent))
+from lean_module_header import to_module  # noqa: E402
 ROOT=Path(__file__).resolve().parents[2]
 DECODE=runpy.run_path(str(ROOT/'scripts/l3/check-decode-fixtures.py'))
 m=DECODE['m']; C,A,L,V=[m[x] for x in ['Const','Comb','Lam','Var']]
@@ -200,7 +204,7 @@ def fixture(text):
     return out+'end Flapjack.Test.RiscVNativeTargetParity\n'
 
 if __name__=='__main__':
-    result=fixture((ROOT/'scripts/hol-probes/l3_target_encoder_probe.out').read_text())
+    result=to_module(fixture((ROOT/'scripts/hol-probes/l3_target_encoder_probe.out').read_text()))
     p=ROOT/'Flapjack/Test/RiscVNativeTargetParity.lean'
     if sys.argv[1:]==['--update']:p.write_text(result)
     elif sys.argv[1:] or p.read_text()!=result:raise SystemExit('native target fixture drift')

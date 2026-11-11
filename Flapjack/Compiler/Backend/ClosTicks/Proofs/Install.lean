@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Primitive
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.DecodeRelations
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
 public import Flapjack.Misc.ShiftSeq
 
 @[expose] public section
@@ -155,19 +156,8 @@ Flapjack infrastructure for the installation proof. -/
 theorem install_related {C F : Type} (s t : State C F) (xs ys : List Value)
     (states : StateRel s t) (values : List.Forall₂ ValueRel xs ys) :
     InstallRel (doInstall xs s) (doInstall ys t) := by
-  by_cases arity : xs.length = 2
-  · cases values with
-    | nil => simp at arity
-    | @cons a x rest nextRest first tail =>
-      cases tail with
-      | nil => simp at arity
-      | @cons b y rest nextRest second tail =>
-        cases tail with
-        | nil => exact install_pair_related s t a b x y states first second
-        | cons third tail => simp at arity
-  · have targetArity : ys.length ≠ 2 := by simpa [← values.length_eq] using arity
-    rw [doInstall_wrongArity xs s arity, doInstall_wrongArity ys t targetArity]
-    exact ⟨rfl, states⟩
+  exact ClosProps.install_related install_pair_related
+    (fun s t st => ⟨rfl, st⟩) s t xs ys states values
 
 namespace InstallPort
 /-- The closure state uses canonical finite-map fields. -/
@@ -186,24 +176,12 @@ theorem doInstallLemma {C F : Type} (s t : State C F) (xs ys : List Value)
     | (.err err1, s1) => ∃ err2 t1, doInstall ys t = (.err err2, t1) ∧
         Flapjack.SemanticPrimitivesProps.excRel ValueRel err1 err2 ∧ StateRel s1 t1
     | (.val exps1, s1) => ∃ exps2 t1, StateRel s1 t1 ∧ exps1 ≠ [] ∧ CodeRel exps1 exps2 ∧
-        doInstall ys t = (.val exps2, t1) := by
-  have both := install_related s t xs ys related.1 related.2
-  cases sourceRun : doInstall xs s with
-  | mk sourceResult sourceNext =>
-    cases targetRun : doInstall ys t with
-    | mk targetResult targetNext =>
-      rw [sourceRun, targetRun] at both
-      cases sourceResult with
-      | err error =>
-        cases targetResult with
-        | val values => simp [InstallRel] at both
-        | err targetError =>
-          exact ⟨targetError, targetNext, rfl, both.1, both.2⟩
-      | val program =>
-        cases targetResult with
-        | err error => simp [InstallRel] at both
-        | val targetProgram =>
-          exact ⟨targetProgram, targetNext, both.2.2, both.1, both.2.1, rfl⟩
+        doInstall ys t = (.val exps2, t1) :=
+  ClosProps.doInstallLemmaOf (CodeRel := CodeRel) (InstallRel := InstallRel)
+    (by
+      intro r1 r2 u v
+      cases r1 <;> cases r2 <;> simp [InstallRel])
+    s t xs ys (install_related s t xs ys related.1 related.2)
 end InstallPort
 
 end Flapjack.Compiler.Backend.ClosTicks

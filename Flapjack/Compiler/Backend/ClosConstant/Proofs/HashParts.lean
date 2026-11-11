@@ -83,26 +83,34 @@ theorem addPartsList_related (constants : List Const) (index : Nat) (tree : Spt 
 end
 
 /-- Recursive hash-consing agrees with the association-list flattening model
-for both constants and constant lists. -/
+for both constants and constant lists. HOL quantifies `m1` twice in each
+conjunct of `add_parts_thm`; the first `m1 : α` is immediately shadowed by the
+second `m1 : (const_part # num) list sptree$num_map` and is therefore vacuous.
+The vacuous binders are retained here as `{α : Type} (_unused : α)` (and
+`{β : Type} (_unused : β)` in the second conjunct) so the type variable of
+HOL's first binder is preserved; no Nonempty instance is needed, since a
+universally quantified value binder is meaningful for an empty type too. -/
 @[hol "cakeml/compiler/backend/proofs/clos_constantProofScript.sml" "add_parts_thm"]
 theorem addParts_thm :
-    (∀ constant index tree acc n1 {α : Type} [Nonempty α] (_unused : α) r1 tree1 acc1 aux n2 r2 aux1,
+    (∀ constant index tree acc n1 {α : Type} (_unused : α) r1 tree1 acc1 aux n2 r2 aux1,
       addParts constant index tree acc = (n1, r1, tree1, acc1) ∧
       parts constant index aux = (n2, r2, aux1) ∧
       aux.map (updateTag ∘ Prod.fst) = acc ∧ goodHashTable tree aux →
       n1 = n2 ∧ r1 = r2 ∧ aux1.map (updateTag ∘ Prod.fst) = acc1 ∧ goodHashTable tree1 aux1) ∧
-    (∀ constants index tree acc n1 {β : Type} [Nonempty β] (_unused : β) rs1 tree1 acc1 aux n2 rs2 aux1,
+    (∀ constants index tree acc n1 {β : Type} (_unused : β) rs1 tree1 acc1 aux n2 rs2 aux1,
       addPartsList constants index tree acc = (n1, rs1, tree1, acc1) ∧
       partsList constants index aux = (n2, rs2, aux1) ∧
       aux.map (updateTag ∘ Prod.fst) = acc ∧ goodHashTable tree aux →
       n1 = n2 ∧ rs1 = rs2 ∧ aux1.map (updateTag ∘ Prod.fst) = acc1 ∧ goodHashTable tree1 aux1) := by
   constructor
-  · intro constant index tree acc n1 α inst unused r1 tree1 acc1 aux n2 r2 aux1 ⟨targetRun, sourceRun, accEq, good⟩
+  · intro constant index tree acc n1 α unused r1 tree1 acc1 aux n2 r2 aux1
+      ⟨targetRun, sourceRun, accEq, good⟩
     subst acc
     have result := addParts_related constant index tree aux good
     rw [targetRun, sourceRun] at result
     exact result
-  · intro constants index tree acc n1 β inst unused rs1 tree1 acc1 aux n2 rs2 aux1 ⟨targetRun, sourceRun, accEq, good⟩
+  · intro constants index tree acc n1 β unused rs1 tree1 acc1 aux n2 rs2 aux1
+      ⟨targetRun, sourceRun, accEq, good⟩
     subst acc
     have result := addPartsList_related constants index tree aux good
     rw [targetRun, sourceRun] at result

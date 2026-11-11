@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.ShMemOpCase
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.ShMemOpCase
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.ShMemOpCase
+
+@[expose] public section
 
 /-! Kernel replay of all four original HOL observations in
 `scripts/hol-probes/stacksem_sh_mem_op_probe.out`. The observer records the
@@ -10,13 +16,13 @@ namespace Flapjack.Test.StackSemShMemOpParity
 open Flapjack.StackSemShMemOpCase
 open Flapjack.Compiler.Backend.StackLang
 
-private abbrev W := WordLocW 8
+abbrev W := WordLocW 8
 
-private def incFfi : HolFfiState Nat :=
+def incFfi : HolFfiState Nat :=
   { oracle := fun _ st _ bytes => .ret (st + 1) (bytes.map (· + 1)), ffiState := 0,
     ioEvents := [] }
 
-private def s0 (clock : Nat) (regs : HolFiniteMapExact Nat W) :
+def s0 (clock : Nat) (regs : HolFiniteMapExact Nat W) :
     StackSemStateFiniteExact 8 Unit Nat where
   regs := regs
   fpRegs := HolFiniteMapExact.empty
@@ -41,12 +47,12 @@ private def s0 (clock : Nat) (regs : HolFiniteMapExact Nat W) :
   ffiSaveRegs := fun _ => false
   be := false
 
-private def proj
+def proj
     (r : Option (Option (StackSemResult 8) × StackSemStateFiniteExact 8 Unit Nat)) :
     Option (Option (StackSemResult 8) × Nat × Nat × Option W × Nat) :=
   r.map (fun p => (p.1, p.2.clock, p.2.ffi.ffiState, p.2.regs.lookup 3, p.2.stack.length))
 
-private def reg3 (x : W) : HolFiniteMapExact Nat W :=
+def reg3 (x : W) : HolFiniteMapExact Nat W :=
   (HolFiniteMapExact.empty : HolFiniteMapExact Nat W).updateEq (3, x)
 
 -- sh_mem_op_success=(NONE,4,1,SOME (Word 0w),1)
@@ -69,7 +75,7 @@ example : proj (evaluateShMemOp (.shMemOp .load 5 (.addr 3 8)) (s0 0 (reg3 (.wor
 /-! Closed helper checks: the effective address `0 + 8` reaches 8 at width 8 and
 `dec_clock` subtracts one from a positive clock, matching the successful and
 timeout rows. -/
-private def checks : Bool :=
+def checks : Bool :=
   ((0 : BitVec 8) + 8 == 8) && ((5 : Nat) - 1 == 4)
 
 #guard checks

@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
+
+import all Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
+
+@[expose] public section
 namespace Flapjack.Test.RegAllocAccessorsParity
 open Flapjack Flapjack.RegAlloc Flapjack.Translator.Monadic.MonadBase
 

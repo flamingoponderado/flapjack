@@ -1,0 +1,1 @@
+sing_env_def=⊢ ∀n v. sing_env n v = <|v := nsBind n v nsEmpty; c := nsEmpty|>

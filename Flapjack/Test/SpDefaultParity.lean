@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.TotalColour
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.TotalColour
+
+import all Flapjack.Compiler.Backend.WordAlloc.TotalColour
+
+@[expose] public section
 namespace Flapjack.Test.SpDefaultParity
 open Flapjack Flapjack.WordAlloc
 

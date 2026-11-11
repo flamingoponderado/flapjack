@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
+
+import all Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
+
+@[expose] public section
 namespace Flapjack.Test.WordAllocCanonizeMovesAuxParity
 open Flapjack.WordAlloc
 -- cma_empty=T

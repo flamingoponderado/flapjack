@@ -31,34 +31,7 @@ theorem asmFetchAux_some_ltNumPcs {width : Nat} [NeZero width]
   "pos_val_GE_pc" (words_as_type_indexed_bitvec)]
 theorem posVal_geStart {width : Nat} [NeZero width]
     (i p : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : p ≤ posVal i p code := by
-  induction code generalizing i p with
-  | nil => simp [posVal]
-  | cons sec rest ih =>
-    rcases sec with ⟨sid,lines⟩
-    induction lines generalizing i p with
-    | nil => simpa only [posVal] using ih i p
-    | cons line lines ihLines =>
-      cases line with
-      | label a b len =>
-        have h := ihLines i (p + (if len=0 then 0 else 1))
-        simp only [posVal,isLabelHOL,↓reduceIte,lineLength]
-        omega
-      | asm a bytes len =>
-        cases i with
-        | zero => simp [posVal,isLabelHOL]
-        | succ i =>
-          have h := ihLines i (p + bytes.length)
-          simpa only [posVal,isLabelHOL,Bool.false_eq_true,↓reduceIte,
-            Nat.succ_ne_zero,Nat.add_one_sub_one,lineLength] using
-            Nat.le_trans (Nat.le_add_right p bytes.length) h
-      | labAsm a w bytes len =>
-        cases i with
-        | zero => simp [posVal,isLabelHOL]
-        | succ i =>
-          have h := ihLines i (p + bytes.length)
-          simpa only [posVal,isLabelHOL,Bool.false_eq_true,↓reduceIte,
-            Nat.succ_ne_zero,Nat.add_one_sub_one,lineLength] using
-            Nat.le_trans (Nat.le_add_right p bytes.length) h
+  fun_induction posVal i p code <;> simp_all [isLabelHOL, lineLength] <;> omega
 
 /-- Full original nonempty encoding consequence of complete enc_ok. -/
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
@@ -91,39 +64,7 @@ theorem posVal_numPcs {width : Nat} [NeZero width]
 theorem posVal_geNumPcs {width : Nat} [NeZero width]
     (pc p : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     numPcs code ≤ pc → posVal (numPcs code) p code = posVal pc p code := by
-  induction code generalizing pc p with
-  | nil => simp [posVal]
-  | cons sec rest ih =>
-    rcases sec with ⟨sid,lines⟩
-    induction lines generalizing pc p with
-    | nil => simpa only [posVal,numPcs] using ih pc p
-    | cons line lines ihLines =>
-      cases line with
-      | label a b len =>
-        simpa only [posVal,numPcs,isLabelHOL,↓reduceIte,lineLength] using
-          ihLines pc (p + (if len=0 then 0 else 1))
-      | asm a bytes len =>
-        intro h
-        have hb : numPcs (⟨sid,lines⟩::rest) ≤ pc-1 := by
-          simp only [numPcs,isLabelHOL,Bool.false_eq_true,↓reduceIte] at h
-          omega
-        have hp : pc ≠ 0 := by
-          simp only [numPcs,isLabelHOL,Bool.false_eq_true,↓reduceIte] at h
-          omega
-        simpa only [posVal,numPcs,isLabelHOL,Bool.false_eq_true,↓reduceIte,
-          Nat.add_eq_zero_iff, Nat.one_ne_zero, false_and, hp,
-          Nat.add_sub_cancel_left,lineLength] using ihLines (pc-1) (p+bytes.length) hb
-      | labAsm a w bytes len =>
-        intro h
-        have hb : numPcs (⟨sid,lines⟩::rest) ≤ pc-1 := by
-          simp only [numPcs,isLabelHOL,Bool.false_eq_true,↓reduceIte] at h
-          omega
-        have hp : pc ≠ 0 := by
-          simp only [numPcs,isLabelHOL,Bool.false_eq_true,↓reduceIte] at h
-          omega
-        simpa only [posVal,numPcs,isLabelHOL,Bool.false_eq_true,↓reduceIte,
-          Nat.add_eq_zero_iff, Nat.one_ne_zero, false_and, hp,
-          Nat.add_sub_cancel_left,lineLength] using ihLines (pc-1) (p+bytes.length) hb
+  fun_induction posVal pc p code <;> simp_all [posVal, numPcs, isLabelHOL, lineLength] <;> omega
 
 /-- Flapjack constructor infrastructure extracts nonempty emitted bytes from
 actual line_ok and enc_ok. There is no independently named HOL original. -/

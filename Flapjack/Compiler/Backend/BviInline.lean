@@ -21,15 +21,14 @@ def mkTick : Nat → Exp → Exp
   | 0, e => e
   | n + 1, e => .tick (mkTick n e)
 
-private def isVars (xs : List Exp) (indices : List Nat) : Bool :=
-  xs.length == indices.length && (xs.zip indices).all fun (e, n) =>
-    match e with | .var k => k == n | _ => false
-
-/-- Check the original worker-wrapper shape using exact variable indices. -/
+/-- Check the original worker-wrapper shape: the arguments are exactly the
+worker's `arity` variables in order and the boxed values are exactly the
+reversed `rets` variables, as in HOL's GENLIST equations. -/
 @[hol "cakeml/compiler/backend/bvi_inlineScript.sml" "canonical_wrapper_def"]
 def canonicalWrapper (name arity : Nat) : Exp → Bool
   | .letCall rets _ worker args (.op (.blockOp (.cons _)) values) =>
-      worker != name && isVars args (List.range arity) && isVars values (List.range rets).reverse
+      worker != name && args == (List.range arity).map Exp.var &&
+        values == ((List.range rets).map Exp.var).reverse
   | _ => false
 
 /-- Flapjack's bounded traversal of the BVI inliner. `Proofs.Total` proves a

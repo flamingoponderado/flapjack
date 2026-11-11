@@ -1,6 +1,18 @@
-import Flapjack.Pancake.Proofs.PanToCrep
-import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
-import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep
+public import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
+public import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+
+import all Flapjack.Pancake.Proofs.PanToCrep
+import all Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
+import all Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.PanLang.Decl
+public meta import Flapjack.Pancake.PanToCrep.CompileExact
+
+@[expose] public section
 
 /-! Nonvacuous checks for HOL `code_rel_def`, paired with the direct
 CakeML/HOL oracle in `scripts/hol-probes/code_rel_probe.out`. The source map
@@ -13,30 +25,30 @@ open Flapjack
 open Flapjack.Pancake.PanLang (MlS ShapeHOL ProgHOL ExpHOL DeclHOL functionsHOL)
 open Flapjack.Basis.Pure.MlString
 
-private def ml (name : String) : MlS := Flapjack.Basis.Pure.MlString.ofString name
+def ml (name : String) : MlS := Flapjack.Basis.Pure.MlString.ofString name
 
-private def exactFunctionContext : HolFiniteMapExact MlS
+def exactFunctionContext : HolFiniteMapExact MlS
     (List (MlS × ShapeHOL) × ShapeHOL) :=
   HolFiniteMapExact.update HolFiniteMapExact.empty
     (ml "f", ([(ml "x", .one)], .one))
 
-private def exactCodeContext : PanToCrepContextExact 64 where
+def exactCodeContext : PanToCrepContextExact 64 where
   vars := HolFiniteMapExact.update HolFiniteMapExact.empty
     (ml "x", (.one, [0]))
   funcs := exactFunctionContext
   eids := HolFiniteMapExact.empty
   vmax := 0
 
-private def exactSourceCode : HolFiniteMapExact MlS
+def exactSourceCode : HolFiniteMapExact MlS
     (List (MlS × ShapeHOL) × ProgHOL 64 × ShapeHOL) :=
   HolFiniteMapExact.update HolFiniteMapExact.empty
     (ml "f", ([(ml "x", .one)], .return (.var .local (ml "x")), .one))
 
-private def exactTargetCode : HolFiniteMapExact MlS (List Nat × CrepProgHOL 64) :=
+def exactTargetCode : HolFiniteMapExact MlS (List Nat × CrepProgHOL 64) :=
   HolFiniteMapExact.update HolFiniteMapExact.empty
     (ml "f", ([0], .return [.var 0]))
 
-private def generatedInitialDecls : List (DeclHOL 64) :=
+def generatedInitialDecls : List (DeclHOL 64) :=
   [.function {
     name := ml "f"
     inline := false
@@ -46,16 +58,16 @@ private def generatedInitialDecls : List (DeclHOL 64) :=
     returnShape := .one
   }]
 
-private def generatedInitialContext : PanToCrepContextExact 64 :=
+def generatedInitialContext : PanToCrepContextExact 64 :=
   mkCtxtExactHOL HolFiniteMapExact.empty
     (makeFuncsExactHOL (functionsHOL generatedInitialDecls)) 0
     (getEidsFromDeclsHOL generatedInitialDecls)
 
-private def generatedInitialSource : HolFiniteMapExact MlS
+def generatedInitialSource : HolFiniteMapExact MlS
     (List (MlS × ShapeHOL) × ProgHOL 64 × ShapeHOL) :=
   HolFiniteMapExact.empty.updateList (functionsHOL generatedInitialDecls).reverse
 
-private def generatedInitialTarget : HolFiniteMapExact MlS
+def generatedInitialTarget : HolFiniteMapExact MlS
     (List Nat × CrepProgHOL 64) :=
   HolFiniteMapExact.empty.updateList
     (compileToCrepExactHOLW generatedInitialDecls).reverse
@@ -217,7 +229,7 @@ theorem codeRelImpExtractsMatchingEntry
 
 /-- Exact `PanSemStateFiniteExact` fixture whose `code` field is the direct HOL
     `code_rel` probe's source map. -/
-private def exactPanState : PanSemStateFiniteExact 64 Unit where
+def exactPanState : PanSemStateFiniteExact 64 Unit where
   locals := HolFiniteMapExact.empty
   globals := HolFiniteMapExact.empty
   structs := []
@@ -234,7 +246,7 @@ private def exactPanState : PanSemStateFiniteExact 64 Unit where
 
 /-- Exact `CrepSemHOLState` fixture whose `code` field is the direct HOL
     `code_rel` probe's target map. -/
-private def exactCrepState : CrepSemHOLState 64 Unit where
+def exactCrepState : CrepSemHOLState 64 Unit where
   locals := HolFiniteMapExact.empty
   globals := HolFiniteMapExact.empty
   code := exactTargetCode

@@ -3,6 +3,7 @@ load "inferTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
+val _ = (print "infer_t_axiom="; print_thm infer_tTheory.infer_t_Axiom; print "\n");
 val _ = (print "get_tyname="; print_thm infer_tTheory.get_tyname_def; print "\n");
 val _ = (print "type_ident="; print_thm infer_tTheory.type_ident_to_string_def; print "\n");
 val _ = (print "var_name="; print_thm infer_tTheory.ty_var_name_def; print "\n");

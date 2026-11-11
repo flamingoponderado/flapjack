@@ -34,7 +34,7 @@ theorem riscv_ok_of_projection_eq (d : BitVec 64 → Prop) (ms ns : riscv_state)
   simp only [riscvOk]
   rw [h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.2.2]
 
-private theorem gpr_projection_eq (d : BitVec 64 → Prop) (ms ns : riscv_state)
+theorem gpr_projection_eq (d : BitVec 64 → Prop) (ms ns : riscv_state)
     (r : BitVec 5) (h : riscvProj d ms = riscvProj d ns) : GPR r ms = GPR r ns := by
   simp only [riscvProj, Prod.mk.injEq] at h
   simp [GPR, gpr, h.2.2.2.2.1]
@@ -43,7 +43,7 @@ private theorem write_gpr_ok (ms : riscv_state) (r : BitVec 5) (v : BitVec 64) :
     riscvOk («write'GPR» (v,r) ms) = riscvOk ms := by
   by_cases zero : r = 0#5 <;> simp [«write'GPR», «write'gpr», riscvOk, zero]
 
-private theorem write_gpr_projection_eq (d : BitVec 64 → Prop)
+theorem write_gpr_projection_eq (d : BitVec 64 → Prop)
     (ms ns : riscv_state) (r : BitVec 5) (v : BitVec 64)
     (h : riscvProj d ms = riscvProj d ns) :
     riscvProj d («write'GPR» (v,r) ms) = riscvProj d («write'GPR» (v,r) ns) := by

@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
-import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+
+@[expose] public section
 
 /-! Selected bounded evaluations replay the pinned HOL observations. The
 extra fuel is not part of HOL evaluation and this is not an equivalence proof. -/

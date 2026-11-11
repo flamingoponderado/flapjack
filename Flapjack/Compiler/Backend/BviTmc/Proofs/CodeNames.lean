@@ -46,7 +46,7 @@ def inWorkerNamespace (name : Nat) : Prop := name % Flapjack.bvlToBviNamespaces 
 
 /-- Source program and namespace preconditions for tail-modulo-cons. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "input_condition_def"]
-def inputCondition (next : Nat) (program : List (Nat × Nat × Bvi.Exp)) : Prop :=
+def inputCondition {α : Type} (next : Nat) (program : List (Nat × α × Bvi.Exp)) : Prop :=
   (∀ entry ∈ program, freeNames next entry.1) ∧
   (∀ entry ∈ program, noMutcons entry.2.2) ∧
   (program.map Prod.fst).Nodup ∧
@@ -55,7 +55,7 @@ def inputCondition (next : Nat) (program : List (Nat × Nat × Bvi.Exp)) : Prop 
 
 /-- A program with distinct labels and no mutable-block allocation satisfies
 the TMC input condition when its non-stub labels are outside namespace three. -/
-theorem inputCondition_of_names (next : Nat) (program : List (Nat × Nat × Bvi.Exp))
+theorem inputCondition_of_names {α : Type} (next : Nat) (program : List (Nat × α × Bvi.Exp))
     (distinct : (program.map Prod.fst).Nodup)
     (noMutable : ∀ entry ∈ program, noMutcons entry.2.2)
     (nextBound : Flapjack.bvlNumStubs ≤ next) (worker : inWorkerNamespace next)

@@ -6,6 +6,7 @@ public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallConst
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveNumeric
 
 @[expose] public section
 
@@ -1120,18 +1121,8 @@ theorem boolValue_related (maxApp : Nat) (value : Bool) :
     successful result relates to itself. -/
 theorem doIntApp_result_related (maxApp : Nat) (op : ClosLang.IntOp) (args : List Value) (value : Value)
     (run : doIntApp op args = some value) : ValueRel maxApp value value := by
-  cases op <;> cases args <;> simp_all [doIntApp]
-  all_goals try (subst value; exact .number _)
-  all_goals
-    rename_i head tail
-    cases head <;> cases tail <;> try simp_all
-    all_goals try (obtain ⟨_, rfl⟩ := run; exact boolValue_related _ _)
-    all_goals
-      rename_i head2 tail2
-      cases head2 <;> cases tail2 <;> try simp_all
-      all_goals try (subst value; exact .number _)
-      all_goals try (subst value; exact boolValue_related _ _)
-      all_goals try (obtain ⟨_, rfl⟩ := run; exact .number _)
+  exact ClosProps.PrimitiveNumeric.doIntAppResultRelated (ValueRel maxApp)
+    (simpleValRel maxApp) op args value run
 
 /-- Related arguments give identical word-primitive observations, including
     the existing floating-point operations and their FpSemHOL assumptions. -/
@@ -1153,27 +1144,8 @@ theorem doWordApp_related (maxApp : Nat) (op : ClosLang.WordOp) {args nextArgs :
     values, each related to itself. -/
 theorem doWordApp_result_related (maxApp : Nat) (op : ClosLang.WordOp) (args : List Value) (value : Value)
     (run : doWordApp op args = some value) : ValueRel maxApp value value := by
-  cases op <;> cases args <;> simp_all [doWordApp, doWordAppIntegral]
-  all_goals
-    rename_i head tail
-    cases head <;> cases tail <;> try simp_all
-    all_goals try (subst value; exact .word64 _)
-    all_goals try (subst value; exact .number _)
-    all_goals
-      repeat
-        first
-        | split at run
-        | simp_all
-        | subst value
-        | exact .number _
-        | exact .word64 _
-        | exact boolValue_related _ _
-    all_goals try simp_all
-    all_goals simp [intToByte] at run
-    all_goals split at run <;> simp_all
-    all_goals try (split at run <;> simp_all)
-    all_goals try (subst value; exact .number _)
-    all_goals try (subst value; exact .word64 _)
+  exact ClosProps.PrimitiveNumeric.doWordAppResultRelated (ValueRel maxApp)
+    (simpleValRel maxApp) op args value run
 
 /-- Proof-side simulation obligation for a closure primitive dispatcher. -/
 def PrimitiveSimulation {C F : Type} (op : ClosLang.Op) : Prop :=

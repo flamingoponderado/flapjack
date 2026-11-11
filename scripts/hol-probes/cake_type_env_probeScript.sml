@@ -54,3 +54,5 @@ val _ = (print "can_type_prog="; print_thm semanticsTheory.can_type_prog_def; pr
 val _ = (print "semantics_def="; print_thm semanticsTheory.semantics_def; print "\n");
 val _ = (print "prim_list_lookup="; print_thm (EVAL ``namespace$nsLookup primTypes$prim_tenv.t (Short «list»)``); print "\n");
 val _ = (print "prim_cons_lookup="; print_thm (EVAL ``namespace$nsLookup primTypes$prim_tenv.c (Short «::»)``); print "\n");
+val _ = (print "state_axiom="; print_thm semanticsTheory.state_Axiom; print "\n");
+val _ = (print "semantics_axiom="; print_thm semanticsTheory.semantics_Axiom; print "\n");

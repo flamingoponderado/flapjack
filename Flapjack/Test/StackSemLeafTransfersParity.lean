@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.LeafTransfers
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.LeafTransfers
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.LeafTransfers
+
+@[expose] public section
 
 /-! All sixteen original HOL leaf-transfer observations, over any base state.
 Every field read by these cases is overridden, and the observer checks result,

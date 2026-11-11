@@ -1,14 +1,19 @@
 module
 
 public import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
+public import Flapjack.Test.Fixtures.LabToTarget
 
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.LabToTarget
 @[expose] public section
+
 namespace Flapjack.Test.StackToLabFullEncodingParity
 open Flapjack Flapjack.Compiler.Backend.StackToLab
 open Flapjack.Compiler.Backend.StackToLab.Proofs
 open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackProps
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Encoders.Asm
+open Flapjack.Test.Fixtures.LabToTarget
 
 example {width : Nat} [NeZero width]
     (tail : Bool) (program : HolProg width) (sectionId next : Nat)
@@ -28,23 +33,6 @@ example {width : Nat} [NeZero width]
     allEncOkPreHOL config (programs.map progToSectionHOL) :=
   compileAllEncOkPreHOL config programs zero valid
 
-private def cfg : AsmConfigExact 8 where
-  isa := .riscv
-  encode := fun _ => []
-  bigEndian := false
-  codeAlignment := 2
-  linkReg := none
-  avoidRegs := [3]
-  regCount := 8
-  fpRegCount := 4
-  twoRegArith := true
-  validImm := fun _ _ => true
-  addrOffset := (0,100)
-  hwOffset := (0,100)
-  byteOffset := (0,100)
-  jumpOffset := (0,100)
-  cjumpOffset := (0,100)
-  locOffset := (0,100)
 
 
 -- Same-input original oracle group: all recursive constructors and native Cbw.
@@ -54,10 +42,10 @@ private def programs : List (Nat × HolProg 8) :=
    (9, .ite .less 3 (.reg 4) .tick .skip),
    (10, .call (some (.tick, 3, 8, 9)) (.inr 4) (some (.tick, 10, 11)))]
 
-example : allEncOkPreHOL cfg (programs.map progToSectionHOL) := by
-  exact compileAllEncOkPreHOL cfg programs
+example : allEncOkPreHOL cfg8 (programs.map progToSectionHOL) := by
+  exact compileAllEncOkPreHOL cfg8 programs
     (by decide +kernel)
-    (by simp [programs, stackAsmOkExact, cfg])
+    (by simp [programs, stackAsmOkExact, cfg8])
 
 -- Every line, byte cache, length, and label matches full_compile_all_sections.
 example : programs.map progToSectionHOL =

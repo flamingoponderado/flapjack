@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.JumpLower
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.JumpLower
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.JumpLower
+public meta import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+
+@[expose] public section
 
 /-! Kernel replay of all eight original HOL observations in
 `scripts/hol-probes/stacksem_jumplower_probe.out`. The concrete `evaluate` stub
@@ -26,7 +33,7 @@ def evaluateStub {width : Nat} [NeZero width] {C F : Type}
   | .continue n => (some (.continue n), s)
   | _ => (some .error, s)
 
-private def fixture {C F : Type} (s : StackSemStateFiniteExact 8 C F) :
+def fixture {C F : Type} (s : StackSemStateFiniteExact 8 C F) :
     StackSemStateFiniteExact 8 C F :=
   { s with
     clock := 5
@@ -36,7 +43,7 @@ private def fixture {C F : Type} (s : StackSemStateFiniteExact 8 C F) :
     code := sptInsert 10 (.ret 4) (sptInsert 12 (.break 2)
       (sptInsert 13 (.continue 3) (sptInsert 14 (.skip : HolProg 8) .ln))) }
 
-private def observe {C F : Type}
+def observe {C F : Type}
     (result : Option (StackSemResult 8) × StackSemStateFiniteExact 8 C F) :
     Option (StackSemResult 8) × Nat × Option (WordLocW 8) × Nat :=
   (result.1, result.2.clock, result.2.regs.lookup 1, result.2.stack.length)
@@ -78,7 +85,7 @@ example : observe (evaluateJumpLower (evaluateStub (C := C) (F := F)) 1 2 14
 /-! Closed helper checks: `bad_fun_return` classifies exactly `NONE` and
 `Break`/`Continue`, and the unsigned `Lower` comparison distinguishes the two
 operand orders used by the successful and false-comparison rows. -/
-private def checks : Bool :=
+def checks : Bool :=
   Flapjack.StackSemControl.badFunReturn (none : Option (StackSemResult 8)) &&
   Flapjack.StackSemControl.badFunReturn (some (.break 2) : Option (StackSemResult 8)) &&
   Flapjack.StackSemControl.badFunReturn (some (.continue 3) : Option (StackSemResult 8)) &&

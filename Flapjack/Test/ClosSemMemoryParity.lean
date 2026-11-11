@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
+
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
+
+@[expose] public section
 
 /-! Memory observations from `scripts/hol-probes/clos_sem_memory_probe.out`.
 The HOL byte-update capture retains an unreduced word-existence condition. -/

@@ -1,2 +1,4 @@
 add_type=:α state # v sem_env -> dec list -> (α state # v sem_env) option
 prim_type=:α ffi_state -> (α state # v sem_env) option
+add_def=⊢ ∀(st :'ffi state) (env :v sem_env) (prog :dec list). add_to_sem_env (st,env) prog = case evaluate_decs st env prog of (st,(Rval env' :(v sem_env, v) result)) => SOME (st,((env' +++ env) :v sem_env)) | (st,(Rerr v3 :(v sem_env, v) result)) => (NONE :('ffi state # v sem_env) option)
+prim_def=⊢ ∀(ffi :'ffi ffi_state). prim_sem_env ffi = add_to_sem_env (<|clock := (0 :num); ffi := ffi; refs := ([] :v store_v list); next_type_stamp := (0 :num); next_exn_stamp := (0 :num); eval_state := (NONE :eval_state option)|>,<|v := (nsEmpty :(mlstring, mlstring, v) namespace); c := (nsEmpty :(mlstring, mlstring, num # stamp) namespace)|>) prim_types_program

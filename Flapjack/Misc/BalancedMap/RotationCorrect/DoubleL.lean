@@ -3,6 +3,7 @@ module
 public import Flapjack.Misc.BalancedMap.RotationAux
 public import Flapjack.Misc.BalancedMap.BalanceArithmetic
 public import Flapjack.Misc.BalancedMap.InvariantSemantics
+public import Flapjack.Misc.BalancedMap.OrderTrans
 public import Flapjack.Misc.BalancedMap.StructuralSize
 public import Flapjack.Misc.BalancedMap.KeySets
 
@@ -13,32 +14,6 @@ open FiniteMap.Comparison
 
 noncomputable section
 local instance doubleLSetDecidableEq {κ : Type} : DecidableEq (Set κ) := Classical.typeDecidableEq _
-
-/-- Flapjack induction infrastructure for transitivity over the literal tree
-predicate; no separate HOL declaration is claimed. -/
-private theorem orderedLtTrans {κ ν : Type} (cmp : κ → κ → Ordering)
-    (hgood : goodCmp cmp) (x y : κ) (tree : Map κ ν)
-    (hxy : cmp x y = .lt) (hordered : keyOrdered cmp y tree .lt) :
-    keyOrdered cmp x tree .lt := by
-  induction tree with
-  | tip => trivial
-  | bin n root value left right ihl ihr =>
-    exact ⟨hgood.2.2.2.2.2.2 x y root ⟨hxy, hordered.1⟩,
-      ihl hordered.2.1, ihr hordered.2.2⟩
-
-/-- Tree-wide greater transitivity from the original comparator clauses;
-Flapjack induction infrastructure with no separate HOL original. -/
-private theorem orderedGtTrans {κ ν : Type} (cmp : κ → κ → Ordering)
-    (hgood : goodCmp cmp) (x y : κ) (tree : Map κ ν)
-    (hxy : cmp x y = .gt) (hordered : keyOrdered cmp y tree .gt) :
-    keyOrdered cmp x tree .gt := by
-  induction tree with
-  | tip => trivial
-  | bin n root value left right ihl ihr =>
-    refine ⟨?_, ihl hordered.2.1, ihr hordered.2.2⟩
-    exact (hgood.2.2.1 x root).mpr
-      (hgood.2.2.2.2.2.2 root y x
-        ⟨(hgood.2.2.1 y root).mp hordered.1, (hgood.2.2.1 x y).mp hxy⟩)
 
 /-- A strictly ordered subtree cannot contain the query's own equivalence
 class. Derived from literal order and original goodCmp, not a target premise. -/

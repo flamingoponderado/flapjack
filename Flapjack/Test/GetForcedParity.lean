@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
+
+import all Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
+
+@[expose] public section
 namespace Flapjack.Test.GetForcedParity
 open Flapjack Flapjack.WordAlloc Flapjack.RegAlloc Flapjack.Compiler.Encoders.Asm
 

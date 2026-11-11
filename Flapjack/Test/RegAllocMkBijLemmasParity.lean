@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.MkBij
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.Proofs.MkBij
+
+import all Flapjack.Compiler.Backend.RegAlloc.Proofs.MkBij
+
+@[expose] public section
 namespace Flapjack.Test.RegAllocMkBijLemmasParity
 open Flapjack Flapjack.RegAlloc
 

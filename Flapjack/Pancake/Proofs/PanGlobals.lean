@@ -60,28 +60,12 @@ theorem MEM_functionsHOL {width : Nat} [NeZero width]
       (.function declaration : DeclHOL width) ∈ declarations ∧
         entry = (declaration.name, declaration.params, declaration.body,
           declaration.returnShape) := by
-  induction declarations with
-  | nil => simp [functionsHOL] at hmem
-  | cons declaration declarations ih =>
-      cases declaration with
-      | function funDecl =>
-          simp only [functionsHOL, List.mem_cons] at hmem
-          rcases hmem with hentry | htail
-          · exact ⟨funDecl, by simp, hentry⟩
-          · rcases ih htail with ⟨fi, hmem, heq⟩
-            exact ⟨fi, by simp [hmem], heq⟩
-      | decl shape name value =>
-          simp only [functionsHOL] at hmem
-          rcases ih hmem with ⟨fi, hmem, heq⟩
-          exact ⟨fi, by simp [hmem], heq⟩
-      | exnDecl exceptionName shape =>
-          simp only [functionsHOL] at hmem
-          rcases ih hmem with ⟨fi, hmem, heq⟩
-          exact ⟨fi, by simp [hmem], heq⟩
-      | name struct fields =>
-          simp only [functionsHOL] at hmem
-          rcases ih hmem with ⟨fi, hmem, heq⟩
-          exact ⟨fi, by simp [hmem], heq⟩
+  fun_induction functionsHOL declarations <;> simp_all
+  case case2 =>
+    rename_i ih
+    rcases hmem with h | h
+    · exact Or.inl h
+    · exact Or.inr (ih h)
 
 /-- Exact HOL port of Cake's `fperm_name_cancel`
     (`cakeml/pancake/proofs/pan_globalsProofScript.sml:1622-1626`):
@@ -269,36 +253,16 @@ theorem EVERY_fperm_decsHOL {width : Nat} [NeZero width] (f g : MlS)
           body := fpermHOL f g fi.body })) :
     ∀ d ∈ fpermDecsHOL f g decs, P d := by
   revert hother hfunction
-  induction decs with
-  | nil => intro _ _ d hd; simp [fpermDecsHOL] at hd
-  | cons d ds ih =>
-      intro hother hfunction e he
-      cases d with
-      | function fi =>
-          simp only [fpermDecsHOL, List.mem_cons] at he
-          rcases he with heq | hmem
-          · subst heq
-            exact hfunction (.function fi) (by simp) fi rfl
-          · exact ih (fun x hx => hother x (by simp [hx]))
-              (fun x hx fj hj => hfunction x (by simp [hx]) fj hj) e hmem
-      | decl shape name value =>
-          simp only [fpermDecsHOL, List.mem_cons] at he
-          rcases he with heq | hmem
-          · subst heq; exact hother (.decl shape name value) (by simp) rfl
-          · exact ih (fun x hx => hother x (by simp [hx]))
-              (fun x hx fj hj => hfunction x (by simp [hx]) fj hj) e hmem
-      | exnDecl exceptionName shape =>
-          simp only [fpermDecsHOL, List.mem_cons] at he
-          rcases he with heq | hmem
-          · subst heq; exact hother (.exnDecl exceptionName shape) (by simp) rfl
-          · exact ih (fun x hx => hother x (by simp [hx]))
-              (fun x hx fj hj => hfunction x (by simp [hx]) fj hj) e hmem
-      | name struct fields =>
-          simp only [fpermDecsHOL, List.mem_cons] at he
-          rcases he with heq | hmem
-          · subst heq; exact hother (.name struct fields) (by simp) rfl
-          · exact ih (fun x hx => hother x (by simp [hx]))
-              (fun x hx fj hj => hfunction x (by simp [hx]) fj hj) e hmem
+  fun_induction fpermDecsHOL f g decs <;> simp_all
+  case case2 =>
+    rename_i ih
+    intro _ hotherTail _ hfunctionTail a ha
+    exact ih hotherTail hfunctionTail a ha
+  case case3 =>
+    rename_i ih
+    intro hhead hotherTail hfunctionTail
+    refine ⟨?_, ih hotherTail hfunctionTail⟩
+    simp_all [isFunctionHOL]
 
 /-- Exact port of HOL `FILTER_decs_fperm_decs`
     (`cakeml/pancake/proofs/pan_globalsProofScript.sml:2832-2838`) over the

@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyAux
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyAux
+
+import all Flapjack.Compiler.Backend.Semantics.BviSem.ApplyAux
+
+@[expose] public section
 
 /-! Replays captured integer and delegation observations from
 `bvi_sem_state_probe.out`, with additional byte and index boundary checks. -/

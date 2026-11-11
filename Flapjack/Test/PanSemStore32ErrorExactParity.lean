@@ -2,10 +2,12 @@ module
 
 public import Flapjack.Pancake.Semantics.PanSemStateEval
 public import Flapjack.Test.PanValueFfiCore
+public import Flapjack.Test.Fixtures.PanSem
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.Test.PanValueFfiCore
 public meta import Flapjack.Pancake.Semantics.PanSemStateEval
+public meta import Flapjack.Test.Fixtures.PanSem
 @[expose] public section
 
 -- Public declarations below use private helpers.
@@ -30,35 +32,13 @@ namespace Flapjack.Test.PanSemStore32ErrorExactParity
 
 open Flapjack
 open Flapjack.RiscV
+open Flapjack.Test.Fixtures.PanSem
 
 private abbrev Word64 := Word 64
 
 private def exactDomain (address : Word64) : Bool := address == 8
 
 private def emptyDomain : Word64 → Bool := fun _ => false
-
-private def exactMemory : Word64 → Option (PanValue Word64) := fun _ => some (.word 0)
-
-private def localsWordX : VarName → Option (PanValue Word64) :=
-  fun name => if name == "x" then some (.word 3) else none
-
-/-- State-owned source state used by the sized-store guards: local `x` holds a
-    word and the store domain contains address `8` only when `domain` says so. -/
-private def sourceState (domain : Word64 → Bool) :
-    PanSemState Word64 (FfiState Unit) :=
-  { locals := localsWordX
-    globals := fun _ => none
-    structs := []
-    code := []
-    exceptionShapes := fun _ => none
-    memory := exactMemory
-    memaddrs := domain
-    sharedMemaddrs := fun _ => false
-    clock := 5
-    be := false
-    ffi := statefulTestFfiState
-    baseAddress := BitVec.ofNat 64 0
-    topAddress := BitVec.ofNat 64 100 }
 
 private def evaluate (state : PanSemState Word64 (FfiState Unit)) (program : Prog Word64) :
     Option (PanValueFfiClockResult Word64 Unit) :=

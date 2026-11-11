@@ -1,4 +1,10 @@
-import Flapjack.Pancake.Semantics.PanCommonProps
+module
+
+public import Flapjack.Pancake.Semantics.PanCommonProps
+
+import all Flapjack.Pancake.Semantics.PanCommonProps
+
+@[expose] public section
 
 /-!
 # Direct-HOL parity for the exact `pan_commonProps` zip/fupdate and disjoint

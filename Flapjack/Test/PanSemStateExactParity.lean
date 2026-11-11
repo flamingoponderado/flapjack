@@ -1,10 +1,12 @@
 module
 
 public import Flapjack.Pancake.Semantics.PanSem.StateExact
+public import Flapjack.Test.Fixtures.PanSemExact
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.Pancake.PanLang
 public meta import Flapjack.Pancake.Semantics.PanSem.StateExact
+public meta import Flapjack.Test.Fixtures.PanSemExact
 @[expose] public section
 
 /-!
@@ -19,26 +21,7 @@ Reproduces the original-HOL oracle rows in
 namespace Flapjack.Test.PanSemStateExactParity
 
 open Flapjack
-
-/-- The faithful HOL `mlstring` of a source string. -/
-abbrev ml (s : String) : Flapjack.Pancake.PanLang.MlS :=
-  Flapjack.Basis.Pure.MlString.ofString s
-
-/-- A concrete exact state with `x` a local `7`, `y` a global `9`, clock 5. -/
-def exactState : PanSemStateExact 64 Unit where
-  locals := fun name => if name = ml "x" then some (.val (.word 7)) else none
-  globals := fun name => if name = ml "y" then some (.val (.word 9)) else none
-  structs := []
-  code := fun _ => none
-  eshapes := fun _ => none
-  memory := fun _ => .word 0
-  memaddrs := fun _ => False
-  shMemaddrs := fun _ => False
-  clock := 5
-  be := false
-  ffi := { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
-  baseAddr := 0
-  topAddr := 100
+open Flapjack.Test.Fixtures.PanSemExact
 
 /-- `lookup_kvar` result projected to a natural, for guard comparison. -/
 def lookupWordResult (result : Option (ValueHOL 64)) : Option Nat :=

@@ -1,6 +1,17 @@
-import Flapjack.Test.CrepGlobalShapeParity
-import Flapjack.Pancake.Proofs.PanToCrep
-import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
+module
+
+public import Flapjack.Test.CrepGlobalShapeParity
+public import Flapjack.Pancake.Proofs.PanToCrep
+public import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
+
+import all Flapjack.Test.CrepGlobalShapeParity
+import all Flapjack.Pancake.Proofs.PanToCrep
+import all Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
+public meta import Flapjack.Pancake.Semantics.PanSem
+public meta import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+public meta import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 
 /-!
 Direct Lean counterparts to `scripts/hol-probes/globals_lookup_probe.out`,

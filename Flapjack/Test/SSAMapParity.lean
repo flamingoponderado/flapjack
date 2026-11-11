@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
+
+import all Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
+
+@[expose] public section
 namespace Flapjack.Test.SSAMapParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 -- Identical original quantified predicate observations; kernel simplification.
