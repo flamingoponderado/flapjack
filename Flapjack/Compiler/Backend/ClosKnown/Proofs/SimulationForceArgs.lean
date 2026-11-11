@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationForceBody
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLet
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationCons
 
 @[expose] public section
 

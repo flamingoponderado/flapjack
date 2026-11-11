@@ -550,7 +550,6 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveFfi
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveCopy
 import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationCons
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLet
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppPrefix
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppNonInline
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.TicksEvaluate

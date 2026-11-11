@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLet
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationCons
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxApp
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApplyPartial
 

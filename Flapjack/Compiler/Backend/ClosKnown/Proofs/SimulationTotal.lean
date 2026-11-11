@@ -105,16 +105,143 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
               intro nonzero
               apply smaller [body] env (decClock 1 state)
               simp only [decClock]; omega
-            | «let» trace bindings body =>
-              apply Let.knownCorrect0Let trace bindings body env state ?_ ?_
-              · intro result next values ⟨run, _⟩
-                have bound := evaluate_clock_le bindings env state
-                rw [run] at bound
-                simp only at bound
-                apply exprIH [body] (values ++ env) next (by omega)
+            | «let» trace xs body =>
+              have bindIH : KnownSimulationAt xs env state := by
+                apply exprIH xs env state (by omega)
                 simp only [expsWeight, expWeight] at measure ⊢; omega
-              · apply exprIH bindings env state (by omega)
-                simp only [expsWeight, expWeight] at measure ⊢; omega
+              intro res1 s env1 xenv1 env2 xenv2 t0 c g0 g aenv eas h
+              obtain ⟨run, known, initialRel, inputSyntax, coSyntax, disjoint, oracle, stateOracleDisjoint,
+                exprSafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
+                sub0, sub1, mono, free, envRel, unique, stateOracle, envEq, noType⟩ := h
+              have uniqueBoth : uniqueSetGlobals (xs ++ [body]) state.compileOracle := by
+                intro n i
+                have bound := unique n i
+                simp only [elistGlobals_append, elistGlobals, setGlobals,
+                  FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag] at bound ⊢
+                omega
+              have ⟨bindUnique, bodyUnique, swappedUnique⟩ := CorrectApprox.Cons.uniqueParts xs [body] state.compileOracle uniqueBoth
+              have ⟨bindDisjoint, bodyDisjoint⟩ :=
+                (mglobalsDisjointRw state.globals body body body body body xs trace .install [] none none [] 0 0).2.1.mp disjoint
+              have syntaxParts : everyFnVarsNone xs ∧ everyFnVarsNone [body] := by
+                simpa [everyFnVarsNone, fnVarsNoneExp, and_comm] using inputSyntax
+              have safeParts := exprSafe (.let trace xs body) (by simp)
+              simp only [esgcFree, esgcFreeList_iff] at safeParts
+              have bodySafe : ∀ e ∈ [body], esgcFree e := by simpa using safeParts.2
+              have ⟨bindFree, bodyFree⟩ := (fvMaxLet env1.length trace xs body).1 free
+              have bagDisjoint : ∀ i, elistGlobals xs i = 0 ∨ elistGlobals [body] i = 0 := by
+                intro i
+                have bound := uniqueBoth 0 i
+                simp only [elistGlobals_append] at bound
+                omega
+              cases hk : knownListTotal c xs aenv g0 with
+              | mk bindEas g1 =>
+                cases hb : knownListTotal c [body] (bindEas.map Prod.snd ++ aenv) g1 with
+                | mk bodyEas g2 =>
+                  obtain ⟨be, ba, eq⟩ := knownListTotal_single_result c body (bindEas.map Prod.snd ++ aenv) g1 g2 bodyEas hb
+                  subst bodyEas
+                  rw [knownListTotal_let, hk] at known
+                  dsimp only at known
+                  rw [hb] at known
+                  simp [knownSourceHead] at known
+                  rcases known with ⟨rfl, rfl⟩
+                  have ⟨subBind, subBody⟩ := subsptKnownElistGlobals c xs aenv g0 bindEas g1
+                    [body] (bindEas.map Prod.snd ++ aenv) [(be, ba)] g2 ⟨hk, hb, sub0, bagDisjoint⟩
+                  have subBindNext : sptSubspt g1 (nextG state) := sptSubsptTrans _ _ _ ⟨subBody, sub1⟩
+                  have startSub : sptSubspt g0 (nextG state) := sptSubsptTrans _ _ _ ⟨sub0, sub1⟩
+                  have startApprox := stateGlobalsApproxSubspt g0 (nextG state) state ⟨startSub, globals⟩
+                  have startOracle := oracleGapproxDisjointSubspt g0 (nextG state) state.compileOracle ⟨startSub, oracle⟩
+                  cases hr : evaluate xs env state with
+                  | mk bindResult middle =>
+                    rw [evaluate, fixClock_evaluate, hr] at run
+                    have bindNoType : bindResult ≠ .err (.abort .typeError) := by
+                      intro eq
+                      subst bindResult
+                      simp at run
+                      rcases run with ⟨rfl, rfl⟩
+                      exact noType rfl
+                    have bindApprox := CorrectApprox.Total.knownCorrectApprox c xs aenv g0 bindEas g1 env1 xenv1 state
+                      bindResult middle ⟨hk, by simpa [envEq] using hr, bindUnique, approxRel, startApprox,
+                        bindDisjoint, startOracle, safe, by simpa [← envEq] using envSafe, safeParts.1,
+                        approxSafe, globalSafe⟩
+                    have bindStep := bindIH bindResult middle env1 xenv1 env2 xenv2 t0 c g0 g1 aenv bindEas
+                      ⟨hr, hk, initialRel, syntaxParts.1, coSyntax, bindDisjoint, oracle, stateOracleDisjoint,
+                        safeParts.1, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
+                        subBind, subBindNext, mono, bindFree, envRel, bindUnique, stateOracle, envEq, bindNoType⟩
+                    obtain ⟨targetBindResult, targetMiddle, targetBindRun, bindRel, midState, midGlobals, midStateOracle, midOracle⟩ := bindStep
+                    cases bindResult with
+                    | err error =>
+                      simp at run
+                      rcases run with ⟨rfl, rfl⟩
+                      cases targetBindResult with
+                      | val values => simp [resultRel] at bindRel
+                      | err error2 =>
+                        refine ⟨.err error2, targetMiddle, ?_, bindRel, midState, midGlobals, midStateOracle, midOracle⟩
+                        simp only [List.map_cons, List.map_nil]
+                        rw [evaluate, fixClock_evaluate, targetBindRun]
+                    | val values =>
+                      cases targetBindResult with
+                      | err error => simp [resultRel] at bindRel
+                      | val targetValues =>
+                        have safety := EvaluateGlobalsPort.Total.evaluateChangedGlobals xs env state (.val values) middle
+                          ⟨hr, safe, safeParts.1, envSafe⟩
+                        have valuesSafe : ∀ v ∈ values, vsgcFree v := by simpa [rsgcFree] using safety.2.1
+                        have nextUnique := uniqueSetGlobalsEvaluate xs [body] env state middle (.val values) ⟨bodyUnique, hr⟩
+                        have nextDisjoint := mglobalsDisjointEvaluate state [body] xs env (.val values) middle
+                          ⟨hr, safe, envSafe, safeParts.1, swappedUnique, bodyDisjoint⟩
+                        have nextStateOracleDisjoint := stateOracleMglobalsDisjointEvaluate xs env state (.val values) middle
+                          ⟨hr, safe, safeParts.1, envSafe, bindUnique, bindDisjoint, stateOracleDisjoint⟩
+                        obtain ⟨n, shifted⟩ := evaluateImpShiftSeq xs env state (.val values) middle hr
+                        have nextCoSyntax : coEveryFnVarsNone middle.compileOracle := by
+                          rw [shifted]
+                          exact coEveryFnVarsNoneShift state.compileOracle coSyntax n
+                        have nextOracleSafe : oracleStateSgcFree middle.compileOracle := by
+                          rw [shifted]
+                          exact oracleStateSgcFreeShift state.compileOracle oracleSafe n
+                        have nextMono : oracleGapproxSubspt middle.compileOracle :=
+                          oracleGapproxSubsptEvaluate () xs env state (.val values) middle ⟨mono, hr⟩
+                        have nextTree := nextGEvaluateSubspt xs env state (.val values) middle ⟨mono, hr⟩
+                        have nextRel := valueRelListSubspt c (nextG state) env1 env2 envRel (nextG middle) nextTree
+                        have optimizerSafe := PreserveSafety.knownPreservesEsgcFree c xs aenv g0 bindEas g1
+                          ⟨hk, safeParts.1, approxSafe, globalSafe⟩
+                        have extendSafe : ∀ v ∈ values ++ env, vsgcFree v := by
+                          simpa [List.mem_append, or_imp, forall_and] using And.intro valuesSafe envSafe
+                        have extendApproxSafe : ∀ a ∈ bindEas.map Prod.snd ++ aenv, valApproxSgcFree a := by
+                          simpa [List.mem_append, or_imp, forall_and] using And.intro optimizerSafe.2.1 approxSafe
+                        have extendApproxRel : List.Forall₂ ValApproxVal (bindEas.map Prod.snd ++ aenv) (values ++ env1) :=
+                          List.rel_append (bindApprox.2 values rfl) approxRel
+                        have extendEnvRel : List.Forall₂ (ValueRel c (nextG middle)) (values ++ env1) (targetValues ++ env2) :=
+                          List.rel_append bindRel nextRel
+                        have valueLength := evaluate_length.1 xs env state middle values hr
+                        have extendedFree : fvMax (values ++ env1).length [body] := by
+                          simpa [List.length_append, valueLength, Nat.add_comm] using bodyFree
+                        have bodyIH : KnownSimulationAt [body] (values ++ env) middle := by
+                          have bound := evaluate_clock_le xs env state
+                          rw [hr] at bound
+                          simp only at bound
+                          apply exprIH [body] (values ++ env) middle (by omega)
+                          simp only [expsWeight, expWeight] at measure ⊢; omega
+                        cases bodyRun : evaluate [body] (values ++ env) middle with
+                        | mk bodyResult last =>
+                          have bodyNoType : bodyResult ≠ .err (.abort .typeError) := by
+                            intro eq
+                            subst bodyResult
+                            simp [bodyRun] at run
+                            rcases run with ⟨rfl, rfl⟩
+                            exact noType rfl
+                          have bodyStep := bodyIH bodyResult last
+                            (values ++ env1) xenv1 (targetValues ++ env2) xenv2 targetMiddle c g1 g2
+                            (bindEas.map Prod.snd ++ aenv) [(be, ba)]
+                            ⟨bodyRun, hb, midState, syntaxParts.2, nextCoSyntax, nextDisjoint, midOracle, nextStateOracleDisjoint,
+                              bodySafe, safety.1, extendSafe, extendApproxRel, nextOracleSafe, optimizerSafe.2.2, extendApproxSafe,
+                              midGlobals, subBody, sptSubsptTrans _ _ _ ⟨sub1, nextTree⟩, nextMono, extendedFree, extendEnvRel,
+                              nextUnique, midStateOracle, by simpa [List.append_assoc] using congrArg (values ++ ·) envEq, bodyNoType⟩
+                          obtain ⟨targetBodyResult, targetLast, targetBodyRun, result, finalState, finalGlobals, finalOracle, finalDisjoint⟩ := bodyStep
+                          simp only [bodyRun] at run
+                          cases bodyResult <;> cases run <;>
+                            refine ⟨targetBodyResult, targetLast, ?_, result, finalState, finalGlobals, finalOracle, finalDisjoint⟩ <;>
+                            simp only [List.map_cons, List.map_nil] <;>
+                            rw [evaluate, fixClock_evaluate, targetBindRun] <;>
+                            simpa [List.append_assoc] using targetBodyRun
             | handle trace body handler =>
               apply Handle.knownCorrect0Handle trace body handler env state ?_ ?_
               · intro result next error value ⟨run, _, _⟩
