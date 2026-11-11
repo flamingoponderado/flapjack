@@ -196,8 +196,10 @@ def setCrepHolGlobals (key : BitVec 5) (value : PanWordLab α)
     `FunName → Option _`) which admit infinite-support inhabitants, a strict
     superset of HOL's finite maps (`|->`). The statement quantifies the whole
     unrestricted state, so the `@[hol set_globals_def]` tag was withdrawn in the
-    `flapjack-pxn.18.3.7.1.3.1.1.3` audit; exact finite-support carrier
-    restoration is tracked by `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
+    `flapjack-pxn.18.3.7.1.3.1.1.3` audit; The exact finite-support carrier
+    restoration now exists as the tagged `setGlobals` (`CrepSem/HOLState.lean`,
+    reviewed in the manifest); this production-carrier form stays untagged and
+    its executable re-basing remains tracked by `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
 def setCrepHolGlobalsW {width : Nat} [NeZero width] {σ : Type} (key : BitVec 5)
     (value : PanWordLab (BitVec width)) (state : CrepHolState (BitVec width) σ) :
     CrepHolState (BitVec width) σ :=
@@ -232,10 +234,10 @@ def decCrepHolClock (state : CrepHolState α σ) : CrepHolState α σ :=
     `@[hol dec_clock_def]` tag was withdrawn in the
     `flapjack-pxn.18.3.7.1.3.1.1.3` audit and remains WITHDRAWN
     (`docs/HOL-THEOREM-MAP.json` records `decCrepHolClockW` as
-    `documented_mismatch`); exact finite-support carrier restoration is tracked by
-    `flapjack-pxn.18.3.7.1.3.1.1.3.1` (the `CrepSemHOLState` finite-support carrier
-    at `Flapjack/Pancake/Semantics/CrepSem/HOLState.lean` has no clock-update
-    bridge yet). -/
+    `documented_mismatch`); The exact finite-support carrier restoration now
+    exists as the tagged `decClockCrepSemHOL` (`CrepSem/HOLState.lean`, reviewed
+    in the manifest); this production-carrier form stays untagged and its
+    executable re-basing remains tracked by `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
 def decCrepHolClockW {width : Nat} [NeZero width] {σ : Type} (state : CrepHolState (BitVec width) σ) :
     CrepHolState (BitVec width) σ :=
   { state with clock := state.clock - 1 }
@@ -274,8 +276,10 @@ def setCrepHolVar (name : Nat) (value : PanWordLab α)
     `Flapjack/Test/CrepGlobalShapeParity.lean:227-269`. The `@[hol set_var_def]`
     tag was withdrawn in the `flapjack-pxn.18.3.7.1.3.1.1.3` audit and remains
     WITHDRAWN (`docs/HOL-THEOREM-MAP.json` records `setCrepHolVarW` as
-    `documented_mismatch`); exact finite-support carrier restoration is tracked by
-    `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
+    `documented_mismatch`); The exact finite-support carrier restoration now
+    exists as the tagged `setVar` (`CrepSem/HOLState.lean`, reviewed in the
+    manifest); this production-carrier form stays untagged and its executable
+    re-basing remains tracked by `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
 def setCrepHolVarW {width : Nat} [NeZero width] {σ : Type} (name : Nat)
     (value : PanWordLab (BitVec width)) (state : CrepHolState (BitVec width) σ) :
     CrepHolState (BitVec width) σ :=
@@ -353,10 +357,10 @@ def emptyCrepHolLocals (state : CrepHolState α σ) : CrepHolState α σ :=
     `@[hol empty_locals_def]` tag was withdrawn in the
     `flapjack-pxn.18.3.7.1.3.1.1.3` audit and remains WITHDRAWN
     (`docs/HOL-THEOREM-MAP.json` records `emptyCrepHolLocalsW` as
-    `documented_mismatch`); exact finite-support carrier restoration is tracked by
-    `flapjack-pxn.18.3.7.1.3.1.1.3.1` (the `CrepSemHOLState` finite-support carrier
-    at `Flapjack/Pancake/Semantics/CrepSem/HOLState.lean` has no locals-clearing
-    bridge yet). -/
+    `documented_mismatch`); The exact finite-support carrier restoration now
+    exists as the tagged `emptyLocals` (`CrepSem/HOLState.lean`, reviewed in the
+    manifest); this production-carrier form stays untagged and its executable
+    re-basing remains tracked by `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
 def emptyCrepHolLocalsW {width : Nat} [NeZero width] {σ : Type} (state : CrepHolState (BitVec width) σ) :
     CrepHolState (BitVec width) σ :=
   { state with locals := FEMPTY }
@@ -384,8 +388,10 @@ def resVar [BEq α] [LawfulBEq α] (f : FiniteMap α β) (entry : α × Option �
     `FiniteMap Nat (PanWordLab (BitVec width))` (`= Nat → Option _`), which admits
     infinite-support inhabitants, a strict superset of HOL's `num |-> 'a word_lab`.
     The `@[hol res_var_def]` tag was withdrawn in the
-    `flapjack-pxn.18.3.7.1.3.1.1.3` audit; an exact finite-support `res_var` and
-    tag restoration are tracked by `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
+    `flapjack-pxn.18.3.7.1.3.1.1.3` audit; The exact finite-support carrier
+    restoration now exists as the tagged `resVarEq` (`CrepSem/HOLState.lean`,
+    reviewed in the manifest); this production-carrier form stays untagged and
+    its executable re-basing remains tracked by `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
 def resVarW {width : Nat} [NeZero width] (f : FiniteMap Nat (PanWordLab (BitVec width)))
     (entry : Nat × Option (PanWordLab (BitVec width))) :
     FiniteMap Nat (PanWordLab (BitVec width)) :=
@@ -949,11 +955,10 @@ def fixCrepHolClock (oldState : CrepHolState α σ)
     `Flapjack/Test/CrepGlobalShapeParity.lean:292-296`. The `@[hol fix_clock_def]`
     tag was withdrawn in the `flapjack-pxn.18.3.7.1.3.1.1.3` audit and remains
     WITHDRAWN (`docs/HOL-THEOREM-MAP.json` records `fixCrepHolClockW` as
-    `documented_mismatch`); exact finite-support carrier restoration is tracked by
-    `flapjack-pxn.18.3.7.1.3.1.1.3.1` (the `CrepSemHOLState` finite-support carrier
-    at `Flapjack/Pancake/Semantics/CrepSem/HOLState.lean` now has the `set_var`/
-    `set_globals`/`upd_locals`/`empty_locals`/`res_var` helpers but still no
-    `fix_clock` bridge). -/
+    `documented_mismatch`); The exact finite-support carrier restoration now
+    exists as the tagged `fixClockCrepSemHOL` (`CrepSem/HOLState.lean`, reviewed
+    in the manifest); this production-carrier form stays untagged and its
+    executable re-basing remains tracked by `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
 def fixCrepHolClockW {width : Nat} [NeZero width] {σ : Type} {β : Type}
     (oldState : CrepHolState (BitVec width) σ)
     (step : β × CrepHolState (BitVec width) σ) :
@@ -1004,10 +1009,10 @@ theorem fixCrepHolClock_clock_le (oldState : CrepHolState α σ)
     `@[hol fix_clock_IMP_LESS_EQ]` tag was withdrawn in the
     `flapjack-pxn.18.3.7.1.3.1.1.3` audit and remains WITHDRAWN
     (`docs/HOL-THEOREM-MAP.json` records `fixCrepHolClock_IMP_LESS_EQW` as
-    `documented_mismatch`); exact finite-support carrier restoration is tracked by
-    `flapjack-pxn.18.3.7.1.3.1.1.3.1` (the `CrepSemHOLState` finite-support carrier
-    at `Flapjack/Pancake/Semantics/CrepSem/HOLState.lean` has no `fix_clock`
-    bridge yet). -/
+    `documented_mismatch`); The exact finite-support carrier restoration now
+    exists as the tagged `fixClockCrepSemHOL_IMP_LESS_EQ` (`CrepSem/HOLState.lean`,
+    reviewed in the manifest); this production-carrier form stays untagged and
+    its executable re-basing remains tracked by `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
 theorem fixCrepHolClock_IMP_LESS_EQW {width : Nat} [NeZero width] {σ : Type} {β : Type}
     (oldState : CrepHolState (BitVec width) σ)
     (step : β × CrepHolState (BitVec width) σ)
