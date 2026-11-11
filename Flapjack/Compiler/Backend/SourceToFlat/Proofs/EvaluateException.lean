@@ -226,29 +226,6 @@ theorem factoredInvariant_installException {C F : Type} [Nonempty C]
     simpa [finiteUpdate, FUPDATE_HOL] using present
   exact ⟨constructorOk, typesOk', nextStates, nextRange, nextInvs, oracle, globals, reserved, genInv, fin⟩
 
-/-- The source and compiler exception declarations export the same domains. -/
-theorem envDomainEq_exception (name : ConN) (idx arity stamp : Nat) :
-    EnvDomainEq { v := nsEmpty, c := nsSing name (idx, none) }
-      ({ v := nsEmpty, c := nsSing name (arity, .exnStamp stamp) } : SemEnv Value) := by
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · funext id
-    apply propext
-    cases id <;> simp [nsDom, nsLookup, nsEmpty]
-  · funext path
-    apply propext
-    cases path <;> simp [nsDomMod, nsLookupMod, nsEmpty]
-  · funext id
-    apply propext
-    cases id with
-    | short key =>
-      by_cases same : key = name
-      · subst key; simp [nsDom, nsLookup, nsSing]
-      · simp [nsDom, nsLookup, nsSing, List.lookup, BEq.beq, same]
-    | long moduleName rest => simp [nsDom, nsLookup, nsSing]
-  · funext path
-    apply propext
-    cases path <;> simp [nsDomMod, nsLookupMod, nsSing]
-
 /-- The newly installed exception stamp relates the singleton constructor
 environments returned by source and compiler. -/
 theorem globalEnvInv_exception (genv : GlobalEnv) (name : ConN) (idx arity stamp : Nat) :
@@ -307,8 +284,13 @@ theorem factoredDecBoundedIH_dexn {C F : Type} [Nonempty C]
     exact ⟨finalInvariant, oracForwardRel_refl interp source.evalState, growth⟩
   · intro resultEnv same
     cases same
-    exact ⟨rfl, envDomainEq_exception name start.eidx types.length source.nextExnStamp,
-      generation, globalEnvInv_exception genv name start.eidx types.length source.nextExnStamp⟩
+    obtain ⟨values, valueModules⟩ := alistToNs_domains_eq (M := ModN) (N := VarN)
+      (V := VarName) (W := Value) [] [] rfl
+    obtain ⟨ctors, ctorModules⟩ := alistToNs_domains_eq (M := ModN)
+      [(name, (start.eidx, (none : Option (Nat × List (Nat × Nat)))))]
+      [(name, (types.length, Stamp.exnStamp source.nextExnStamp))] rfl
+    exact ⟨rfl, ⟨values, valueModules, ctors, ctorModules⟩, generation,
+      globalEnvInv_exception genv name start.eidx types.length source.nextExnStamp⟩
   · intro error impossible
     cases impossible
 

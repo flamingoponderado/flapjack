@@ -21,29 +21,22 @@ def EnvDomainEq {α : Type} (compMap : Environment) (env : SemEnv α) : Prop :=
   nsDom compMap.v = nsDom env.v ∧ nsDomMod compMap.v = nsDomMod env.v ∧
     nsDom compMap.c = nsDom env.c ∧ nsDomMod compMap.c = nsDomMod env.c
 
-/-- The compiler and source singleton bindings have the same value and module
-domains, and their constructor namespaces are empty. -/
-theorem envDomainEq_denv {α : Type} (name : VarN) (idx : Nat) (value : α) :
-    EnvDomainEq { v := nsBind name (.glob .none idx) nsEmpty, c := nsEmpty }
-      { v := nsSing name value, c := nsEmpty } := by
-  refine ⟨?_, ?_, ?_, ?_⟩
+/-- Association-list namespaces with the same keys have the same domains.
+This follows from HOL's two association-list domain equations. -/
+theorem alistToNs_domains_eq {M N V W : Type} [DecidableEq M] [DecidableEq N]
+    (left : List (N × V)) (right : List (N × W)) (keys : left.map Prod.fst = right.map Prod.fst) :
+    nsDom (alistToNs (ModuleName := M) left) = nsDom (alistToNs right) ∧
+      nsDomMod (alistToNs (ModuleName := M) left) = nsDomMod (alistToNs right) := by
+  constructor
   · funext id
     apply propext
     cases id with
     | short key =>
-      by_cases equal : key = name
-      · subst key; simp [nsDom, nsLookup, nsBind, nsSing, nsEmpty]
-      · simp [nsDom, nsLookup, nsBind, nsSing, nsEmpty, List.lookup, BEq.beq, equal]
-    | long moduleName inner => simp [nsDom, nsLookup, nsBind, nsSing, nsEmpty]
+      simp only [nsDom, nsLookup, alistToNs, Flapjack.lookup_exists_iff_mem_keys, keys]
+    | long moduleName rest => simp [nsDom, nsLookup, alistToNs]
   · funext path
     apply propext
-    cases path <;> simp [nsDomMod, nsLookupMod, nsBind, nsSing, nsEmpty]
-  · funext id
-    apply propext
-    cases id <;> simp [nsDom, nsLookup, nsEmpty]
-  · funext path
-    apply propext
-    cases path <;> simp [nsDomMod, nsLookupMod, nsEmpty]
+    cases path <;> simp [nsDomMod, nsLookupMod, alistToNs]
 
 /-- The next declaration's first global slot is blank whenever its one-slot
 allocation fits in the current index block. -/
@@ -523,9 +516,15 @@ theorem evaluateDenv_factored_complete {C F : Type} [Nonempty C]
     { genv with v := genv.v.set start.vidx (some (.conv none
       [.litv (.intLit (gen.generation : Int)), .litv (.intLit (gen.next : Int))])) }
     name start.vidx value _ (by simpa using bound) (by simp [bound]) step.2.2.2.1
-  exact ⟨step.1, step.2.1, invariant, step.2.2.1, step.2.2.2.1,
+  refine ⟨step.1, step.2.1, invariant, step.2.2.1, step.2.2.2.1,
     step.2.2.2.2.1, genRel, step.2.2.2.2.2.2.2, by simpa [compileDecs] using newEnvInv,
-    by simpa [compileDecs] using envDomainEq_denv name start.vidx value⟩
+    ?_⟩
+  simp only [compileDecs]
+  obtain ⟨values, valueModules⟩ := alistToNs_domains_eq (M := ModN)
+    [(name, VarName.glob .none start.vidx)] [(name, value)] rfl
+  obtain ⟨ctors, ctorModules⟩ := alistToNs_domains_eq (M := ModN) (N := ConN)
+    (V := Nat × Option (Nat × List (Nat × Nat))) (W := Nat × Stamp) [] [] rfl
+  exact ⟨values, valueModules, ctors, ctorModules⟩
 
 /-- A `Denv` evaluation that does not end in a source type error must have
 successfully declared its environment. -/

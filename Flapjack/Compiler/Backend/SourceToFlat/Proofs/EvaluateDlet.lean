@@ -76,29 +76,6 @@ theorem globalEnvInv_alias (genv : GlobalEnv) (name : VarN) (idx : Nat) (trace :
   · intro id arity stamp lookup
     cases id <;> simp [nsLookup, nsEmpty] at lookup
 
-/-- Singleton alias environments have the same domains for any global trace. -/
-theorem envDomainEq_alias {α : Type} (name : VarN) (idx : Nat) (trace : Tra) (value : α) :
-    EnvDomainEq { v := nsSing name (.glob trace idx), c := nsEmpty }
-      { v := nsSing name value, c := nsEmpty } := by
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · funext id
-    apply propext
-    cases id with
-    | short key =>
-      by_cases equal : key = name
-      · subst key; simp [nsDom, nsLookup, nsSing]
-      · simp [nsDom, nsLookup, nsSing, List.lookup, BEq.beq, equal]
-    | long moduleName inner => simp [nsDom, nsLookup, nsSing]
-  · funext path
-    apply propext
-    cases path <;> simp [nsDomMod, nsLookupMod, nsSing]
-  · funext id
-    apply propext
-    cases id <;> simp [nsDom, nsLookup, nsEmpty]
-  · funext path
-    apply propext
-    cases path <;> simp [nsDomMod, nsLookupMod, nsEmpty]
-
 /-- Allocating a binding for every distinct source pattern name preserves
 the value and module domains of the source binding environment. -/
 theorem envDomainEq_patternBindings (genv : GlobalEnv)
@@ -699,8 +676,12 @@ theorem evaluateDlet_alias_growing {C F : Type} [Nonempty C]
     rw [compiled] at flatDec
     unfold DletOutcome
     rw [sourceDec, compiled]
+    obtain ⟨values, valueModules⟩ := alistToNs_domains_eq (M := ModN)
+      [(name, VarName.glob nameTrace idx)] [(name, value)] rfl
+    obtain ⟨ctors, ctorModules⟩ := alistToNs_domains_eq (M := ModN) (N := ConN)
+      (V := Nat × Option (Nat × List (Nat × Nat))) (W := Nat × Stamp) [] [] rfl
     exact ⟨flat, genv, none, flatDec, states, GlobalGrowth.refl genv, rfl,
-      envDomainEq_alias name idx nameTrace value, newEnv, invariant⟩
+      ⟨values, valueModules, ctors, ctorModules⟩, newEnv, invariant⟩
   exact DletOutcome.toGrowing interp transform genv genv start finish other source flat sourceEnv trace n compMap gen
     location (.pvar name) (.var id) (GlobalGrowth.refl genv) outcome
     (dlet_effects_of_expression interp gen source sourceEnv location (.pvar name) (.var id) effects)
