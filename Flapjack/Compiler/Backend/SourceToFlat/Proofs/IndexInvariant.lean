@@ -436,24 +436,6 @@ theorem allDisjoint_four_advance {α : Type} (oldBlock oldFuture other allocated
     | exact q23 x a b
     | exact q23 x b a
 
-/-- The variable-index projection is precisely the initialized-slot predicate
-used by the declaration initialization proof. -/
-theorem allocatedIndices_variable (genv : GlobalEnv) (i : Nat) :
-    (i, .variable) ∈ genvAllocatedIndices genv ↔ allocatedGlobalSlot genv i := by
-  change (i < genv.v.length ∧ genv.v[i]?.getD none ≠ none) ↔ allocatedGlobalSlot genv i
-  simp [allocatedGlobalSlot, Option.isSome_iff_ne_none]
-
-/-- Disjointness of the current compiler block and allocated indices gives the
-free-range premise needed to initialize declaration globals. -/
-theorem free_variable_range (genv : GlobalEnv) (start finish : NextIndices)
-    (disjoint : ∀ key, key ∈ idxBlock start finish → key ∈ genvAllocatedIndices genv → False)
-    (count : Nat) (fits : start.vidx + count ≤ finish.vidx) :
-    ∀ i, start.vidx ≤ i → i < start.vidx + count → ¬ allocatedGlobalSlot genv i := by
-  intro i low high allocated
-  have reserved : (i, .variable) ∈ idxBlock start finish := ⟨low, by omega⟩
-  have used : (i, .variable) ∈ genvAllocatedIndices genv := (allocatedIndices_variable genv i).mpr allocated
-  exact disjoint (i, .variable) reserved used
-
 /-- The first and fourth sets in HOL's index-range condition are disjoint. -/
 theorem currentBlock_disjoint_allocated (genv : GlobalEnv) (start finish final : NextIndices)
     (other : Set (Nat × IndexKind))
@@ -494,9 +476,14 @@ theorem indexInvariant_blank_block (genv : GlobalEnv) (start finish final : Next
     ∃ pre post, genv.v = pre ++ (List.replicate count none ++ post) ∧ pre.length = start.vidx := by
   have finishBound := endIdx_le_length genv.v.length finish final next previous nextMatch lengthMatch
   have rangeBound : start.vidx + count ≤ genv.v.length := Nat.le_trans fits finishBound
-  have free := free_variable_range genv start finish
-    (currentBlock_disjoint_allocated genv start finish final other disjoint) count fits
-  exact split_blank_slots genv.v start.vidx count rangeBound
-    (blank_of_unallocated genv start.vidx count rangeBound free)
+  have separate := currentBlock_disjoint_allocated genv start finish final other disjoint
+  apply split_blank_slots genv.v start.vidx count rangeBound
+  intro i low high
+  cases slot : genv.v[i]?.getD none with
+  | none => rfl
+  | some value =>
+    exfalso
+    apply separate (i, .variable) ⟨low, by omega⟩
+    exact ⟨by omega, by simp [slot]⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat
