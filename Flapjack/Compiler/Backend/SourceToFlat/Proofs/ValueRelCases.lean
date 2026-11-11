@@ -303,15 +303,8 @@ theorem factoredEnvAllRel_names (genv : GlobalEnv) (compMap : Environment) (sour
   obtain ⟨_, _, bindings, _, localEq, names, _, localRel⟩ := related
   rw [localEq] at localRel
   have pairs := (envRel_alist_iff genv bindings flatEnv.v).mp localRel
-  have namesOfPairs : ∀ (xs : List (VarN × Value)) (ys : List (VarN × FlatSem.Value)),
-      List.Forall₂ (fun a b => a.1 = b.1 ∧ ValueRel genv a.2 b.2) xs ys →
-      xs.map Prod.fst = ys.map Prod.fst := by
-    intro xs ys pairs
-    induction pairs with
-    | nil => rfl
-    | cons head tail ih =>
-      simp only [List.map_cons]
-      rw [head.1, ih]
-  exact names.symm.trans (namesOfPairs bindings flatEnv.v pairs)
+  have keys : List.Forall₂ Eq (bindings.map Prod.fst) (flatEnv.v.map Prod.fst) :=
+    List.rel_map (fun _ _ h => h.1) pairs
+  exact names.symm.trans (by simpa only [List.forall₂_eq_eq_eq] using keys)
 
 end Flapjack.Compiler.Backend.SourceToFlat
