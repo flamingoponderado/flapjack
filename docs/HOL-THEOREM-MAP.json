@@ -129705,6 +129705,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Arity.lean",
+  "statement_status": "reviewed_exact",
+  "hol_name": "remove_fvs_obeys_max_app",
+  "lean_name": "removeSource_obeysMaxApp",
+  "reviewer": "Compared the typed original: arbitrary free application bound, removal bound and complete expression list, with the full equivalence of EVERY before and after source free-variable removal."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Syntax.lean",
   "statement_status": "reviewed_exact",
   "hol_name": "remove_fvs_every_Fn_vs_NONE",
