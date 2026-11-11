@@ -1212,6 +1212,19 @@ python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake 
   --lex-cases 0 --token-cases 0 --raw-byte-cases 0 --edge-seed 992414 --timeout 20
 ```
 
+On 2026-11-11, seed `20261113` also matched complete RISC-V output for 25
+composed programs and 25 composed programs with varied backend options:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 0 --compile-cases 0 --compile-config-cases 0 --rich-cases 0 \
+  --extended-cases 0 --composed-cases 25 --composed-config-cases 25 \
+  --integration-cases 0 --declaration-cases 0 --handler-cases 0 --annotation-cases 0 \
+  --config-cases 0 --config-error-cases 0 --sexp-cases 0 --byte-cases 0 \
+  --structured-cases 0 --lex-cases 0 --token-cases 0 --raw-byte-cases 0 \
+  --compile-seed 20261113 --timeout 45
+```
+
 `python3 scripts/check-cake-benchmark-parity.py` compares the complete RISC-V
 output for 28 benchmark programs, three bootstrap hello programs, and the
 S-expression bootstrap code extractor from the pinned CakeML submodule with

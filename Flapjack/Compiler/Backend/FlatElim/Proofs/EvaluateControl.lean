@@ -153,23 +153,6 @@ theorem selectRow_error {C F : Type} (state : FlatSem.State C F)
     · simp [FlatSem.selectRow, matched, distinct] at selected
       exact Or.inl selected.symm
 
-/-- Each recursive body contributes its lookups to the function-list analysis. -/
-theorem findGlobalsFuns_member (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp))
-    (name arg : Flapjack.AstHOL.VarN) (body : FlatLang.Exp) (member : (name, arg, body) ∈ funs)
-    (reachable : NumSet) (closed : globalsWithin (findGlobalsFuns destGlobalVarLookup funs) reachable) :
-    globalsWithin (findLookups body) reachable := by
-  rw [findFunctionGlobals_eq_map] at closed
-  apply (findLookupsList_within_iff _ _).mp closed body
-  exact List.mem_map.mpr ⟨(name, arg, body), member, rfl⟩
-
-/-- Each recursive body is Eval-free when the function list is Eval-free. -/
-theorem hasEvalFuns_member (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp))
-    (name arg : Flapjack.AstHOL.VarN) (body : FlatLang.Exp) (member : (name, arg, body) ∈ funs)
-    (safe : hasEvalFuns funs = false) : hasEval body = false := by
-  rw [hasEvalFuns_eq_map] at safe
-  have h := (List.any_eq_false.mp safe) body (List.mem_map.mpr ⟨(name, arg, body), member, rfl⟩)
-  simpa using h
-
 /-- Applying an ordinary closure preserves the bounds on the selected body
 and the extended environment. -/
 theorem closureApplication_invariants (env : FlatSem.Environment FlatSem.Value)
@@ -217,8 +200,12 @@ theorem recclosureApplication_invariants (env : FlatSem.Environment FlatSem.Valu
       intro binding bindingMember
       exact valuesSafe binding.2 (List.mem_map.mpr ⟨binding, bindingMember, rfl⟩)
     have built := buildRecEnv_invariants funs ⟨bindings⟩ reachable closureClosed.1 envSafe closureClosed.2 closureSafe.2
-    refine ⟨findGlobalsFuns_member funs name arg body member reachable closureClosed.2,
-      hasEvalFuns_member funs name arg body member closureSafe.2, ?_, ?_⟩
+    simp only [findFunctionGlobals_eq_map] at closureClosed
+    simp only [hasEvalFuns_eq_map] at closureSafe
+    have bodyMember : body ∈ funs.map (fun entry => entry.2.2) :=
+      List.mem_map.mpr ⟨(name, arg, body), member, rfl⟩
+    refine ⟨(findLookupsList_within_iff _ _).mp closureClosed.2 body bodyMember, ?_, ?_, ?_⟩
+    · simpa using (List.any_eq_false.mp closureSafe.2) body bodyMember
     · exact (bindingsWithin_cons arg value _ reachable).mpr ⟨valueClosed, built.1⟩
     · simpa [bindingsNoEval] using And.intro valueSafe built.2
 
