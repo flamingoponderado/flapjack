@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosKnown.Fuel
+public import Flapjack.Misc.Sptree.InsertProperty
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic.LabelsAndArity
 
 @[expose] public section
@@ -43,6 +44,97 @@ theorem valApproxObeysMaxAppMerge (limit : Nat) (a b : ValApprox)
     obtain ⟨hx, hy⟩ := List.of_mem_zip paired
     have smaller := List.sizeOf_lt_of_mem hx
     exact ih x (by simp_wf; omega) y (ha x hx) (hb y hy)
+
+/-- Primitive approximation preserves value and global application bounds. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_op_obeys_max_app"]
+theorem knownOpObeysMaxApp (limit : Nat) (op : ClosLang.Op) (args : List ValApprox)
+    (g0 : Spt ValApprox) (a : ValApprox) (g : Spt ValApprox)
+    (h : knownOpHOL op args g0 = (a, g) ∧
+      (∀ x ∈ args, valApproxObeysMaxApp limit x) ∧ globalsApproxObeysMaxApp limit g0) :
+    valApproxObeysMaxApp limit a ∧ globalsApproxObeysMaxApp limit g := by
+  obtain ⟨known, safe, globals⟩ := h
+  cases op with
+  | globOp op =>
+    cases op with
+    | global index =>
+      cases args with
+      | nil =>
+        simp only [knownOpHOL, Prod.mk.injEq] at known
+        rcases known with ⟨rfl, rfl⟩
+        cases h : sptLookup index g0 with
+        | none => exact ⟨by simp [valApproxObeysMaxApp], globals⟩
+        | some value => exact ⟨by simpa [h] using globals index value h, globals⟩
+      | cons x xs =>
+        simp only [knownOpHOL, Prod.mk.injEq] at known
+        rcases known with ⟨rfl, rfl⟩
+        exact ⟨by simp [valApproxObeysMaxApp], globals⟩
+    | setGlobal index =>
+      cases args with
+      | nil =>
+        simp only [knownOpHOL, Prod.mk.injEq] at known
+        rcases known with ⟨rfl, rfl⟩
+        exact ⟨by simp [valApproxObeysMaxApp], globals⟩
+      | cons x xs =>
+        have xSafe := safe x (by simp)
+        simp only [knownOpHOL, Prod.mk.injEq] at known
+        rcases known with ⟨rfl, rfl⟩
+        constructor
+        · simp [valApproxObeysMaxApp]
+        · apply sptInsert_preservesProperty _ _ _ _ _ globals
+          cases h : sptLookup index g0 with
+          | none => exact xSafe
+          | some old => exact valApproxObeysMaxAppMerge limit old x ⟨globals index old h, xSafe⟩
+    | _ =>
+      simp only [knownOpHOL, Prod.mk.injEq] at known
+      rcases known with ⟨rfl, rfl⟩
+      exact ⟨by simp [valApproxObeysMaxApp], globals⟩
+  | blockOp op =>
+    cases op with
+    | cons tag =>
+      simp only [knownOpHOL, Prod.mk.injEq] at known
+      rcases known with ⟨rfl, rfl⟩
+      exact ⟨by simpa [valApproxObeysMaxApp] using safe, globals⟩
+    | _ =>
+      simp only [knownOpHOL, Prod.mk.injEq] at known
+      rcases known with ⟨rfl, rfl⟩
+      exact ⟨by simp [valApproxObeysMaxApp], globals⟩
+  | intOp op =>
+    cases op <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
+      rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxObeysMaxApp], globals⟩
+  | memOp op =>
+    cases op with
+    | el =>
+      cases args with
+      | nil =>
+        simp only [knownOpHOL, Prod.mk.injEq] at known
+        rcases known with ⟨rfl, rfl⟩
+        exact ⟨by simp [valApproxObeysMaxApp], globals⟩
+      | cons x xs =>
+        cases xs with
+        | nil =>
+          cases x <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
+            rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxObeysMaxApp], globals⟩
+        | cons y ys =>
+          cases ys with
+          | nil =>
+            cases x <;> cases y <;> simp only [knownOpHOL, Prod.mk.injEq] at known
+            all_goals try (rcases known with ⟨rfl, rfl⟩; exact ⟨by simp [valApproxObeysMaxApp], globals⟩)
+            split at known <;> simp_all [valApproxObeysMaxApp]
+            all_goals rcases known with ⟨rfl, rfl⟩
+            · exact safe _ (List.getElem_mem ..)
+            · simp [valApproxObeysMaxApp]
+          | cons z zs =>
+            cases x <;> cases y <;> simp only [knownOpHOL, Prod.mk.injEq] at known <;>
+              rcases known with ⟨rfl, rfl⟩ <;> exact ⟨by simp [valApproxObeysMaxApp], globals⟩
+    | _ =>
+      simp only [knownOpHOL, Prod.mk.injEq] at known
+      rcases known with ⟨rfl, rfl⟩
+      exact ⟨by simp [valApproxObeysMaxApp], globals⟩
+  | _ =>
+    simp only [knownOpHOL, Prod.mk.injEq] at known
+    rcases known with ⟨rfl, rfl⟩
+    exact ⟨by simp [valApproxObeysMaxApp], globals⟩
+
 
 /-- A body selected for inlining obeys the approximation's application bound. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "decide_inline_obeys_max_app"]

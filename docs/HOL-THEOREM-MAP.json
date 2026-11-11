@@ -9042,6 +9042,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxArity.lean",
+  "lean_name": "knownOpObeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: full operation and sparse-tree carriers, the grouped operation-result and input safety premises, and both value and global arity conclusions are preserved at the same arbitrary bound."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "val_approx_obeys_max_app_merge",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxArity.lean",
   "lean_name": "valApproxObeysMaxAppMerge",

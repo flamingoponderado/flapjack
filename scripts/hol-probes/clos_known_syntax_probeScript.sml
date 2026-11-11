@@ -40,6 +40,7 @@ val _ = show "ticks_no_labels_typed=" clos_knownProofTheory.no_Labels_mk_Ticks;
 val _ = show "ticks_obeys_max_app_typed=" clos_knownProofTheory.obeys_max_app_mk_Ticks;
 val _ = show "val_approx_obeys_max_app_typed=" clos_knownProofTheory.val_approx_obeys_max_app_def;
 val _ = show "val_approx_obeys_max_app_merge_typed=" clos_knownProofTheory.val_approx_obeys_max_app_merge;
+val _ = show "known_op_obeys_max_app_typed=" clos_knownProofTheory.known_op_obeys_max_app;
 val _ = show "decide_inline_obeys_max_app_typed=" clos_knownProofTheory.decide_inline_obeys_max_app;
 val _ = show "globals_approx_obeys_max_app_typed=" clos_knownProofTheory.globals_approx_obeys_max_app_def;
 val _ = show "clos_gen_noinline_obeys_max_app_typed=" clos_knownProofTheory.clos_gen_no_inline_obeys_max_app;
