@@ -122,18 +122,6 @@ theorem factoredDecBoundedIH_denv {C F : Type} [Nonempty C]
   · intro error impossible
     cases impossible
 
-/-- The source-safety condition for a value declaration excludes a type
-error from its initializer. -/
-theorem dlet_expression_safe {F : Type} (source : State F) (env : SemEnv Value)
-    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
-    (safe : ∀ last, EvaluateHOL.evaluateDecs source env [.dlet location pattern expr] ≠
-      (last, .err (.abort .typeError))) :
-    ∀ last, EvaluateHOL.evaluate source env [expr] ≠ (last, .err (.abort .typeError)) := by
-  obtain ⟨distinct, wellformed⟩ := dlet_conditions_of_safe source env location pattern expr safe
-  intro last bad
-  apply safe last
-  simp [EvaluateHOL.evaluateDecs, distinct, wellformed, bad]
-
 /-- Compose a successful first declaration with a tail induction hypothesis.
 The tail hypothesis has the same invariant, environment, generation and
 future premises as the declaration compiler theorem; it does not assume a

@@ -236,9 +236,8 @@ def DletOutcome {C F : Type} [Nonempty C]
         | .abort _ => True
         | .raise _ => factoredInvariant interp transform gen newGenv (start, finish, other) sourceResult.1 flatLast
 
-/-- Assemble the non-alias `Dlet` cases from the expression induction
-hypothesis. The hypothesis preserves the factored invariant for successful
-and raised expression results; aborts need only the state relation. -/
+/-- Simulate matching and binding after a non-aborting initializer in the
+ordinary `Dlet` case. -/
 theorem evaluateDlet_pattern_cases {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
@@ -248,6 +247,9 @@ theorem evaluateDlet_pattern_cases {C F : Type} [Nonempty C]
     (notAlias : simpleDlet pattern expr = none)
     (safe : ∀ next, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] ≠
       (next, .err (.abort .typeError)))
+    (distinct : (AstHOL.patBindings pattern).Nodup)
+    (wellformed : AstHOL.everyExp (oneConCheck sourceEnv.c) expr = true)
+    (notAbort : ¬ ∃ kind, (EvaluateHOL.evaluate source sourceEnv [expr]).2 = .err (.abort kind))
     (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
     (expressionSim : ExprSim genv compMap ((AstHOL.patBindings pattern).reverse ++ trace)
       sourceEnv ⟨[]⟩ source flat expr)
@@ -260,12 +262,11 @@ theorem evaluateDlet_pattern_cases {C F : Type} [Nonempty C]
       | _ => factoredInvariant interp transform gen genv (start, finish, other) result.1 flatResult.1)
     (fits : start.vidx + (AstHOL.patBindings pattern).length ≤ finish.vidx) :
     DletOutcome interp transform genv start finish other source flat sourceEnv trace n compMap gen location pattern expr := by
-  obtain ⟨distinct, wellformed⟩ := dlet_conditions_of_safe source sourceEnv location pattern expr safe
   have expressionRel := expressionSim
   unfold ExprSim at expressionRel
   cases sourceRun : EvaluateHOL.evaluate source sourceEnv [expr] with
   | mk sourceMiddle sourceResult =>
-    rw [sourceRun] at expressionRel expressionInvariant
+    rw [sourceRun] at expressionRel expressionInvariant notAbort
     cases flatRun : FlatSem.evaluate ⟨[]⟩ flat
         [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr] with
     | mk flatMiddle flatResult =>
@@ -284,16 +285,7 @@ theorem evaluateDlet_pattern_cases {C F : Type} [Nonempty C]
           rw [sourceDec]
           refine ⟨flatMiddle, genv, some (.raise flatValue), flatDec, states, GlobalGrowth.refl genv, ?_⟩
           exact ⟨.raise flatValue, rfl, .raise related, by simpa using expressionInvariant⟩
-        | abort kind =>
-          have sourceDec : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
-              (sourceMiddle, .err (.abort kind)) := by
-            simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun]
-          have flatDec := evaluateDlet_pattern_flat_error flat flatMiddle trace n start compMap gen location
-            pattern expr (.abort kind) notAlias flatRun
-          unfold DletOutcome
-          rw [sourceDec]
-          exact ⟨flatMiddle, genv, some (.abort kind), flatDec, states, GlobalGrowth.refl genv,
-            _, rfl, .abort kind, trivial⟩
+        | abort kind => exact (notAbort ⟨kind, rfl⟩).elim
       | val values =>
         obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull source sourceEnv expr sourceMiddle values sourceRun
         cases resultRel with
@@ -617,7 +609,8 @@ theorem evaluateDlet_pattern_growing {C F : Type} [Nonempty C]
           | raise value => exact expressionPost.2.2
       have envInv' := globalEnvInv_growth genv middleGenv growth compMap (fun _ => False) sourceEnv envInv
       have outcome := evaluateDlet_pattern_cases interp transform middleGenv start finish other source flat sourceEnv
-        trace n compMap gen location pattern expr notAlias safe envInv' expressionSim postInvariant fits
+        trace n compMap gen location pattern expr notAlias safe distinct wellformed
+        (by simpa only [sourceRun] using aborted) envInv' expressionSim postInvariant fits
       exact DletOutcome.toGrowing interp transform genv middleGenv start finish other source flat sourceEnv trace n
         compMap gen location pattern expr growth outcome
         (dlet_effects_of_expression interp gen source sourceEnv location pattern expr expressionEffects)
