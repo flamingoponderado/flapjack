@@ -14344,6 +14344,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "mk_Ticks_alt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Ticks.lean",
+  "lean_name": "mkTicksAlt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_mk_ticks_alt_typed: independently quantified zero and successor equations use the full trace and expression carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
   "hol_name": "subapprox_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
   "lean_name": "subapprox",

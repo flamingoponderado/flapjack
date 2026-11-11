@@ -213,6 +213,7 @@ known_subapprox_int_typed=((a :val_approx) ◁ (Int (i :int) :val_approx) ⇔ a 
 known_subapprox_clos_noinline_typed=((a :val_approx) ◁ ClosNoInline (m :num) (n :num) ⇔ a = ClosNoInline m n ∨ a = Impossible) ∧ (ClosNoInline m n ◁ a ⇔ a = ClosNoInline m n ∨ a = Other)
 known_subapprox_clos_typed=((a :val_approx) ◁ Clos (m :num) (n :num) (e :closLang$exp) (s :num) ⇔ a = Clos m n e s ∨ a = Impossible) ∧ (Clos m n e s ◁ a ⇔ a = Clos m n e s ∨ a = Other)
 known_subapprox_tuple_typed=Tuple (tg1 :num) (as1 :val_approx list) ◁ Tuple (tg2 :num) (as2 :val_approx list) ⇔ tg1 = tg2 ∧ LIST_REL $◁ as1 as2
+known_mk_ticks_alt_typed=(∀(t :tra) (tc :num) (e :closLang$exp). (mk_Ticks t tc (0 :num) e :closLang$exp) = e) ∧ ∀(t :tra) (tc :num) (n :num) (e :closLang$exp). (mk_Ticks t tc (SUC n) e :closLang$exp) = (mk_Ticks t (tc + (1 :num)) n (Tick (t § tc) e) :closLang$exp)
 known_merge_other_typed=(merge Other (a :val_approx) :val_approx) = Other ∧ (merge a Other :val_approx) = Other
 known_merge_impossible_typed=(merge (a :val_approx) Impossible :val_approx) = a
 known_subapprox_other_typed=(Other ◁ (a :val_approx) ⇔ a = Other) ∧ a ◁ Other

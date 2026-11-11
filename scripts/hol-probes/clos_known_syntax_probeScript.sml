@@ -229,6 +229,7 @@ val _ = show "known_subapprox_int_typed=" clos_knownPropsTheory.subapprox_Int;
 val _ = show "known_subapprox_clos_noinline_typed=" clos_knownPropsTheory.subapprox_ClosNoInline;
 val _ = show "known_subapprox_clos_typed=" clos_knownPropsTheory.subapprox_Clos;
 val _ = show "known_subapprox_tuple_typed=" clos_knownPropsTheory.subapprox_Tuple;
+val _ = show "known_mk_ticks_alt_typed=" clos_knownPropsTheory.mk_Ticks_alt;
 val _ = show "known_merge_other_typed=" clos_knownPropsTheory.merge_Other;
 val _ = show "known_merge_impossible_typed=" clos_knownPropsTheory.merge_Impossible;
 val _ = show "known_subapprox_other_typed=" clos_knownPropsTheory.subapprox_Other;
