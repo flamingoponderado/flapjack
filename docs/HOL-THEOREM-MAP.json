@@ -660,6 +660,12 @@
   "reviewer": "Source comparison: the typed original universally quantifies the location, list of number-expression pairs and calls state, with the complete equivalence to the prior property and EVERY predicate over the second projections."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/SyntaxPreservation.lean", "lean_name": "callsNoLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original retains all four quantified list and calls-state arguments, the direct-call result equation, both input label-absence premises and both output and accumulated-code conclusions."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "semantics_calls",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Semantics.lean", "lean_name": "semanticsCalls",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations",
