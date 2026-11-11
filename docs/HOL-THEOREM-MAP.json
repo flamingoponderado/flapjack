@@ -133075,6 +133075,14 @@
   "reviewer": "Compared every_imp_hd_typed: the original EVERY and nonempty-list premises imply the head predicate; the latter premise supplies holHd's element witness without an extra typeclass premise."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "IMP_PAIR",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
+  "lean_name": "impPair",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local source theorem and imp_pair_replay_typed: arbitrary pair equality implies both original projection equalities."
+},
+{
   "hol_path": "HOL/src/bag/bagScript.sml",
   "hol_name": "BAG_UNION_EMPTY",
   "lean_path": "Flapjack/Misc/Bag.lean",

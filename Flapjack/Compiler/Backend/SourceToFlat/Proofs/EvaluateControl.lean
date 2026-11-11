@@ -173,23 +173,13 @@ theorem exprSim_if_error {C F : Type} (genv : GlobalEnv) (compMap : Environment)
   | mk flatNext flatResult =>
     rw [flatCondition] at conditionSim
     obtain ⟨resultRel, nextRel⟩ := conditionSim
-    cases error with
-    | raise value =>
-      cases resultRel with
-      | raise valueRel =>
-        unfold ExprSim
-        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [cond] []).1, sourceCondition]
-        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
-          [compileExp trace compMap cond] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatCondition]
-        exact ⟨.raise valueRel, nextRel⟩
-    | abort error =>
-      cases resultRel with
-      | abort =>
-        unfold ExprSim
-        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [cond] []).1, sourceCondition]
-        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
-          [compileExp trace compMap cond] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatCondition]
-        exact ⟨.abort error, nextRel⟩
+    cases resultRel
+    all_goals
+      unfold ExprSim
+      rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [cond] []).1, sourceCondition]
+      rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
+        [compileExp trace compMap cond] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatCondition]
+      exact ⟨by constructor <;> assumption, nextRel⟩
 
 /-- A logical expression propagates a related left-operand error. -/
 theorem exprSim_log_error {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
@@ -206,23 +196,13 @@ theorem exprSim_log_error {C F : Type} (genv : GlobalEnv) (compMap : Environment
   | mk flatNext flatResult =>
     rw [flatLeft] at leftSim
     obtain ⟨resultRel, nextRel⟩ := leftSim
-    cases error with
-    | raise value =>
-      cases resultRel with
-      | raise valueRel =>
-        unfold ExprSim
-        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [left] []).1, sourceLeft]
-        cases op <;> rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
-          [compileExp trace compMap left] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatLeft]
-        all_goals exact ⟨.raise valueRel, nextRel⟩
-    | abort error =>
-      cases resultRel with
-      | abort =>
-        unfold ExprSim
-        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [left] []).1, sourceLeft]
-        cases op <;> rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
-          [compileExp trace compMap left] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatLeft]
-        all_goals exact ⟨.abort error, nextRel⟩
+    cases resultRel
+    all_goals
+      unfold ExprSim
+      rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [left] []).1, sourceLeft]
+      cases op <;> rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
+        [compileExp trace compMap left] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatLeft]
+      all_goals exact ⟨by constructor <;> assumption, nextRel⟩
 
 /-- Raise simulation from the operand induction hypothesis. -/
 theorem exprSim_raise {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)

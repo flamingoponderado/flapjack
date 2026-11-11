@@ -11,6 +11,13 @@ namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Compiler.Backend.ClosProps
 
+/-- The components of a pair equal its projections. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "IMP_PAIR"]
+theorem impPair {α β : Type} (z : α × β) (x : α) (y : β)
+    (h : z = (x, y)) : x = z.1 ∧ y = z.2 := by
+  cases h
+  exact ⟨rfl, rfl⟩
+
 /-- A predicate holding for a nonempty list also holds for its head.
 The nonempty-list premise supplies the element witness required by `holHd`. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "EVERY_IMP_HD"]
