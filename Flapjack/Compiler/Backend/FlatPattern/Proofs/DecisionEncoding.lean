@@ -219,63 +219,92 @@ theorem encodePatMatch_simulation {C F : Type} :
     rw [run] at sim
     cases result <;> simp_all [encodeMatchResult]
 
-/-- Encoded pattern lists retain the source row ordering and selected index;
-an original type error imposes no result obligation. -/
-theorem encodeRows_simulation {C F E : Type} (state : FlatSem.State C F) (value : FlatSem.Value)
-    (rows : List (FlatLang.Pat × E)) (offset : Nat) :
-    let encodedRows := (rows.zipIdx offset).map (fun (row, index) => (encodePat row.1, index))
-    match FlatSem.pmatchRows rows state value with
-    | .typeError => True
-    | .noMatch => PatternSemantics.matchRows (encodeRefs state) encodedRows (encodeValue value) = some .failure
-    | .match (_, pattern, body) =>
-      ∃ index, rows[index]? = some (pattern, body) ∧
-        PatternSemantics.matchRows (encodeRefs state) encodedRows (encodeValue value) = some (.success (offset + index)) := by
-  induction rows generalizing offset with
-  | nil => simp [FlatSem.pmatchRows, PatternSemantics.matchRows]
-  | cons row rows ih =>
-    obtain ⟨pattern, body⟩ := row
-    cases head : FlatSem.pmatch state pattern value [] with
-    | typeError => simp [FlatSem.pmatchRows, head]
-    | noMatch =>
-      have headEncoded := encodePmatch_simulation state pattern value [] (by simp [head])
-      have abstractHead : PatternSemantics.pmatch (encodeRefs state) (encodePat pattern) (encodeValue value) = .failure := by
-        simpa [head, encodeMatchResult] using headEncoded
-      have tail := ih (offset + 1)
-      cases sourceTail : FlatSem.pmatchRows rows state value with
-      | typeError => simp [FlatSem.pmatchRows, head, sourceTail]
+/-- Encoding rows preserves the result and selected binding of every
+non-type-error source match. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "pmatch_rows_encode"
+  (fmap_as_finite_support_result_observations := [encodeRefs])]
+theorem pmatchRows_encode {C F E : Type} (state : FlatSem.State C F) (value : FlatSem.Value)
+    (rows : List (FlatLang.Pat × E)) (offset : Nat)
+    (safe : FlatSem.pmatchRows rows state value ≠ .typeError) :
+    match PatternSemantics.matchRows (encodeRefs state)
+        ((rows.zipIdx offset).map (fun (row, index) => (encodePat row.1, index))) (encodeValue value) with
+    | none => False
+    | some (.success n) =>
+      ∃ i bindings, n = i + offset ∧ ∃ bound : i < rows.length,
+        FlatSem.pmatch state (rows[i]'bound).1 value [] = .match bindings ∧
+        FlatSem.pmatchRows rows state value = .match (bindings, (rows[i]'bound).1, (rows[i]'bound).2)
+    | some .failure => FlatSem.pmatchRows rows state value = .noMatch := by
+  have encoding :
+      let encodedRows := (rows.zipIdx offset).map (fun (row, index) => (encodePat row.1, index))
+      match FlatSem.pmatchRows rows state value with
+      | .typeError => True
+      | .noMatch => PatternSemantics.matchRows (encodeRefs state) encodedRows (encodeValue value) = some .failure
+      | .match (bindings, pattern, body) =>
+        ∃ index, rows[index]? = some (pattern, body) ∧
+          FlatSem.pmatch state pattern value [] = .match bindings ∧
+          PatternSemantics.matchRows (encodeRefs state) encodedRows (encodeValue value) = some (.success (offset + index))
+    := by
+    clear safe
+    induction rows generalizing offset with
+    | nil => simp [FlatSem.pmatchRows, PatternSemantics.matchRows]
+    | cons row rows ih =>
+      obtain ⟨pattern, body⟩ := row
+      cases head : FlatSem.pmatch state pattern value [] with
+      | typeError => simp [FlatSem.pmatchRows, head]
       | noMatch =>
-        simp only [sourceTail] at tail
-        simpa [FlatSem.pmatchRows, PatternSemantics.matchRows, List.zipIdx, head, abstractHead, sourceTail] using tail
-      | «match» selected =>
-        rcases selected with ⟨tailBindings, tailPattern, tailBody⟩
-        simp only [sourceTail] at tail
-        obtain ⟨index, rowAt, target⟩ := tail
-        simp only [FlatSem.pmatchRows, head, sourceTail]
-        refine ⟨index + 1, ?_, ?_⟩
-        · simpa using rowAt
-        · simpa [FlatSem.pmatchRows, PatternSemantics.matchRows, List.zipIdx, head, abstractHead, sourceTail,
-            Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using target
-    | «match» bindings =>
-      have headEncoded := encodePmatch_simulation state pattern value [] (by simp [head])
-      have abstractHead : PatternSemantics.pmatch (encodeRefs state) (encodePat pattern) (encodeValue value) = .success := by
-        simpa [head, encodeMatchResult] using headEncoded
-      have tail := ih (offset + 1)
-      cases sourceTail : FlatSem.pmatchRows rows state value with
-      | typeError => simp [FlatSem.pmatchRows, head, sourceTail]
-      | noMatch =>
-        simp only [sourceTail] at tail
-        simp only [FlatSem.pmatchRows, head, sourceTail]
-        refine ⟨0, ?_, ?_⟩
-        · rfl
-        · simp [PatternSemantics.matchRows, List.zipIdx, abstractHead, tail]
-      | «match» selected =>
-        rcases selected with ⟨tailBindings, tailPattern, tailBody⟩
-        simp only [sourceTail] at tail
-        obtain ⟨index, rowAt, target⟩ := tail
-        simp only [FlatSem.pmatchRows, head, sourceTail]
-        refine ⟨0, ?_, ?_⟩
-        · rfl
-        · simp [PatternSemantics.matchRows, List.zipIdx, abstractHead, target]
+        have headEncoded := encodePmatch_simulation state pattern value [] (by simp [head])
+        have abstractHead : PatternSemantics.pmatch (encodeRefs state) (encodePat pattern) (encodeValue value) = .failure := by
+          simpa [head, encodeMatchResult] using headEncoded
+        have tail := ih (offset + 1)
+        cases sourceTail : FlatSem.pmatchRows rows state value with
+        | typeError => simp [FlatSem.pmatchRows, head, sourceTail]
+        | noMatch =>
+          simp only [sourceTail] at tail
+          simpa [FlatSem.pmatchRows, PatternSemantics.matchRows, List.zipIdx, head, abstractHead, sourceTail] using tail
+        | «match» selected =>
+          rcases selected with ⟨tailBindings, tailPattern, tailBody⟩
+          simp only [sourceTail] at tail
+          obtain ⟨index, rowAt, selectedMatch, target⟩ := tail
+          simp only [FlatSem.pmatchRows, head, sourceTail]
+          refine ⟨index + 1, ?_, selectedMatch, ?_⟩
+          · simpa using rowAt
+          · simpa [FlatSem.pmatchRows, PatternSemantics.matchRows, List.zipIdx, head, abstractHead, sourceTail,
+              Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using target
+      | «match» bindings =>
+        have headEncoded := encodePmatch_simulation state pattern value [] (by simp [head])
+        have abstractHead : PatternSemantics.pmatch (encodeRefs state) (encodePat pattern) (encodeValue value) = .success := by
+          simpa [head, encodeMatchResult] using headEncoded
+        have tail := ih (offset + 1)
+        cases sourceTail : FlatSem.pmatchRows rows state value with
+        | typeError => simp [FlatSem.pmatchRows, head, sourceTail]
+        | noMatch =>
+          simp only [sourceTail] at tail
+          simp only [FlatSem.pmatchRows, head, sourceTail]
+          refine ⟨0, ?_, trivial, ?_⟩
+          · rfl
+          · simp [PatternSemantics.matchRows, List.zipIdx, abstractHead, tail]
+        | «match» selected =>
+          rcases selected with ⟨tailBindings, tailPattern, tailBody⟩
+          simp only [sourceTail] at tail
+          obtain ⟨index, rowAt, _, target⟩ := tail
+          simp only [FlatSem.pmatchRows, head, sourceTail]
+          refine ⟨0, ?_, trivial, ?_⟩
+          · rfl
+          · simp [PatternSemantics.matchRows, List.zipIdx, abstractHead, target]
+  cases source : FlatSem.pmatchRows rows state value with
+  | typeError => exact (safe source).elim
+  | noMatch =>
+    simp only [source] at encoding
+    simp [encoding]
+  | «match» selected =>
+    rcases selected with ⟨bindings, pattern, body⟩
+    simp only [source] at encoding
+    obtain ⟨index, rowAt, selectedMatch, target⟩ := encoding
+    have atIndex := List.getElem?_eq_some_iff.mp rowAt
+    rw [target]
+    refine ⟨index, bindings, Nat.add_comm offset index, atIndex.1, ?_, ?_⟩
+    · simpa [atIndex.2] using selectedMatch
+    · simp [atIndex.2]
 
 /-- Following an encoded position can be replayed by evaluating the generated
 flat projections, yielding a value with the same encoding. -/

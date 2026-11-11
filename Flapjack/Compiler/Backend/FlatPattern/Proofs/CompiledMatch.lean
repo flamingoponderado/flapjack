@@ -126,12 +126,22 @@ theorem evaluate_compilePats {C F : Type} (rows : List (FlatLang.Pat × FlatLang
   | false =>
     let encoded := (rows.zipIdx 0).map (fun (row, index) => (encodePat row.1, index))
     let branches := rows.map (compilePatRhs trace n expression)
-    have encoding := encodeRows_simulation state value rows 0
+    have encoding := pmatchRows_encode state value rows 0 safe
     cases source : FlatSem.pmatchRows rows state value with
     | typeError => exact (safe source).elim
     | noMatch =>
       have abstractMatch : PatternSemantics.matchRows (encodeRefs state) encoded (encodeValue value) = some .failure := by
-        simpa [source, encoded] using encoding
+        cases abstract : PatternSemantics.matchRows (encodeRefs state) encoded (encodeValue value) with
+        | none => simp [encoded, abstract] at encoding
+        | some result =>
+          cases result with
+          | failure => rfl
+          | success index =>
+            dsimp only [encoded] at abstract
+            simp only [abstract] at encoding
+            obtain ⟨i, bindings, _, bound, _, selected⟩ := encoding
+            rw [source] at selected
+            contradiction
       have treeEval : PatternSemantics.dtEval (encodeRefs state) (encodeValue value) (PatternComp.comp encoded) =
           some .failure := compThm (encodeRefs state) encoded (encodeValue value) .failure abstractMatch
       have decoded := decodeDtree_simulation state value (PatternComp.comp encoded) .failure env expression trace
@@ -141,7 +151,24 @@ theorem evaluate_compilePats {C F : Type} (rows : List (FlatLang.Pat × FlatLang
       rcases selected with ⟨bindings, pattern, body⟩
       obtain ⟨index, rowAt, abstractMatch⟩ : ∃ index, rows[index]? = some (pattern, body) ∧
           PatternSemantics.matchRows (encodeRefs state) encoded (encodeValue value) = some (.success index) := by
-        simpa [source, encoded] using encoding
+        cases abstract : PatternSemantics.matchRows (encodeRefs state) encoded (encodeValue value) with
+        | none => simp [encoded, abstract] at encoding
+        | some result =>
+          cases result with
+          | failure =>
+            dsimp only [encoded] at abstract
+            simp [abstract, source] at encoding
+          | success index =>
+            dsimp only [encoded] at abstract
+            simp only [abstract] at encoding
+            obtain ⟨i, foundBindings, equal, bound, _, selected⟩ := encoding
+            simp only [Nat.add_zero] at equal
+            subst index
+            rw [source] at selected
+            cases selected
+            refine ⟨i, ?_, ?_⟩
+            · exact List.getElem?_eq_some_iff.mpr ⟨bound, rfl⟩
+            · rfl
       have treeEval : PatternSemantics.dtEval (encodeRefs state) (encodeValue value) (PatternComp.comp encoded) =
           some (.success index) := compThm (encodeRefs state) encoded (encodeValue value) (.success index) abstractMatch
       have branchAt : branches[index]? = some (compilePatRhs trace n expression (pattern, body)) := by

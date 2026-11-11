@@ -133404,6 +133404,16 @@
 }
 ,
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "pmatch_rows_encode",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding.lean",
+  "lean_name": "pmatchRows_encode",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["encodeRefs"],
+  "reviewer": "Compared the HOL source and pmatch_rows_encode typed capture: independent state and row-body types, the non-type-error premise and all NONE, MatchSuccess and MatchFailure conclusions are retained, including the selected index, binding and matching row. A dependent bound supplies the original in-bounds EL. The imported reviewed encodeRefs producer models the computed finite map."
+}
+,
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "find_recfun_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",
