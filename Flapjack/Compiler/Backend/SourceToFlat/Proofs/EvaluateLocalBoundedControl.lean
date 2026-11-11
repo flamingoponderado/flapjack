@@ -543,15 +543,8 @@ theorem localEnvBounded_letrec {C F : Type} [Nonempty C]
       localRel envInv (by simp [newTraces, tracesLen])
     simpa only [sourceLocal', sourceEnv, flatLocal', compiled, newMap, compMap, mapBind] using related
   have extendedInv : GlobalEnvInv genv baseMap (fun n => n ∈ flatLocal'.map Prod.fst) baseEnv := by
-    cases envInv with
-    | intro _ _ _ values constructors =>
-      apply GlobalEnvInv.intro
-      · intro id v fresh lookup
-        apply values id v _ lookup
-        intro ⟨n, mem, eq⟩
-        apply fresh
-        exact ⟨n, by rw [names]; simp [mem], eq⟩
-      · exact constructors
+    simpa only [names, List.mem_append] using globalEnvInv_addLocals genv baseMap
+      (fun n => n ∈ flatEnv.v.map Prod.fst) (fun n => n ∈ funs.map Prod.fst) baseEnv envInv
   have sourceBind : nsAppend sourceLocal' baseEnv.v = buildRecEnv funs sourceEnv sourceEnv.v := by
     simp only [sourceLocal', sourceEnv, Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs (), ← nsAppend_assoc]
   have bodySafe : ∀ last, EvaluateHOL.evaluate source { sourceEnv with v := buildRecEnv funs sourceEnv sourceEnv.v }

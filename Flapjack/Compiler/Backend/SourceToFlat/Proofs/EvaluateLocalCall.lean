@@ -57,15 +57,8 @@ theorem doOpApp_closure_local (genv : GlobalEnv)
     have extendedRel := EnvRel.bind genv name argument captured flatCaptured.v flatArgument locals argumentRel
     have extendedInv : GlobalEnvInv genv baseMap
         (fun n => n ∈ ((name, flatArgument) :: flatCaptured.v).map Prod.fst) baseEnv := by
-      cases globals with
-      | intro _ _ _ values constructors =>
-        apply GlobalEnvInv.intro
-        · intro id value fresh lookup
-          apply values id value _ lookup
-          intro ⟨n, mem, eq⟩
-          apply fresh
-          exact ⟨n, by simp [mem], eq⟩
-        · exact constructors
+      simpa using globalEnvInv_addLocals genv baseMap
+        (fun n => n ∈ flatCaptured.v.map Prod.fst) (fun n => n = name) baseEnv globals
     refine ⟨baseMap, baseEnv, nsBind name argument captured,
       { flatCaptured with v := (name, flatArgument) :: flatCaptured.v }, trace, head :: rest, ?_, ?_, extendedRel, extendedInv, ?_⟩
     · rw [sourceEq]
@@ -111,15 +104,8 @@ theorem doOpApp_recclosure_local (genv : GlobalEnv) (baseMap : Environment) (bas
   have recursiveRel : EnvRel genv recursiveLocal recursiveFlat := by
     exact localRecEnv_related genv baseMap baseEnv captured flatCaptured funs trace traces locals globals len
   have newInv : GlobalEnvInv genv baseMap (fun n => n ∈ ((arg, flatArgument) :: recursiveFlat).map Prod.fst) baseEnv := by
-    cases globals with
-    | intro _ _ _ values constructors =>
-      apply GlobalEnvInv.intro
-      · intro id value fresh lookup
-        apply values id value _ lookup
-        intro ⟨n, mem, eq⟩
-        apply fresh
-        exact ⟨n, by simp [names, mem], eq⟩
-      · exact constructors
+    simpa [names, or_assoc] using globalEnvInv_addLocals genv baseMap
+      (fun n => n ∈ flatCaptured.v.map Prod.fst) (fun n => n = arg ∨ n ∈ funs.map Prod.fst) baseEnv globals
   have sourceBind : nsAppend (nsBind arg argument recursiveLocal) baseEnv.v =
       nsBind arg argument (buildRecEnv funs sourceEnv sourceEnv.v) := by
     have recBind : buildRecEnv funs sourceEnv sourceEnv.v = nsAppend recursiveLocal baseEnv.v := by
@@ -286,12 +272,8 @@ theorem doOpApp_topRecclosure_local (genv : GlobalEnv) (sourceEnv : SemEnv Value
     exact .bind genv arg argument nsEmpty [] flatArgument (.empty genv) argumentRel
   have rebuilt := topRec_rebuilt_globalInv genv baseMap sourceEnv funs flatEnv newVars names globals empty closures
   have extendedInv : GlobalEnvInv genv extendedMap (fun n => n ∈ flatLocal.v.map Prod.fst) extendedEnv := by
-    cases rebuilt with
-    | intro _ _ _ values constructors =>
-      apply GlobalEnvInv.intro
-      · intro id value _ lookup
-        exact values id value (by simp) lookup
-      · exact constructors
+    simpa [flatLocal] using globalEnvInv_addLocals genv extendedMap
+      (fun _ => False) (fun n => n = arg) extendedEnv rebuilt
   refine ⟨extendedMap, extendedEnv, localEnv, flatLocal, trace, [argTrace], body, ?_, ?_, localRel, extendedInv, rfl⟩
   · rw [sourceApp]
     cases h : buildRecEnv funs sourceEnv sourceEnv.v
