@@ -133441,6 +133441,16 @@
 }
 ,
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "app_pos_Term_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding.lean",
+  "lean_name": "appPos_term_imp",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["refs"],
+  "reviewer": "Compared the HOL source and app_pos_term_imp_typed: successful traversal into a term retains the original index bound and recursive traversal on the HOL EL field. The reference map uses the canonical finite-support carrier and same-module roundtrip witness."
+}
+,
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "find_recfun_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",

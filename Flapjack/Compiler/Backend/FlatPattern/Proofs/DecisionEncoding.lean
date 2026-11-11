@@ -534,6 +534,34 @@ theorem holFmapAsFiniteSupportParamWitness_simpGuard_preserves_refs
   cases refs
   exact ⟨rfl, rfl, rfl⟩
 
+/-- The reference-map parameter retains its canonical lookup and support. -/
+theorem holFmapAsFiniteSupportParamWitness_appPos_term_imp_refs
+    (refs : HolFiniteMapExact Nat PatternSemantics.Term) (key : Nat) :
+    (ofBroadGuardRefs (toBroadGuardRefs refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroadGuardRefs (toBroadGuardRefs refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroadGuardRefs (toBroadGuardRefs refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_simpGuard_preserves_refs refs key
+
+/-- A successful term-field traversal has an in-bounds selected field. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "app_pos_Term_IMP"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem appPos_term_imp (refs : HolFiniteMapExact Nat PatternSemantics.Term)
+    (pos : PatternCommon.Position) (tag : Option Nat) (result : PatternSemantics.Term) :
+    ∀ (xs : List PatternSemantics.Term) (n : Nat),
+      PatternSemantics.appPos refs (.pos n pos) (.term tag xs) = some result →
+      n < xs.length ∧ PatternSemantics.appPos refs pos
+        (@Flapjack.holEl PatternSemantics.Term ⟨.other⟩ n xs) = some result := by
+  let : Nonempty PatternSemantics.Term := ⟨.other⟩
+  intro xs n found
+  rw [PatternSemantics.appPos_term] at found
+  cases selected : xs[n]? with
+  | none => simp [selected] at found
+  | some value =>
+    have index := List.getElem?_eq_some_iff.mp selected
+    refine ⟨index.1, ?_⟩
+    rw [Flapjack.holEl_eq_getElem _ _ index.1, index.2]
+    simpa [selected] using found
+
 /-- Guard simplification preserves every successful abstract guard outcome. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "simp_guard_thm"
   (fmap_as_finite_support_parameters := [refs])]
