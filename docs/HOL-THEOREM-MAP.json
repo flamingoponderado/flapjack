@@ -92690,14 +92690,6 @@
     "reviewer": "Flapjack-specific support: BitVec.ofNat width is injective below 2^width (HOL's LESS_MOD step). No HOL original declaration."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "code_rel_def",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "codeRel",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.5.3): HOL `code_rel_def` (`pan_to_crepProofScript.sml:32-43`) relates source `s_code` FLOOKUP entries to `ctxt.funcs`, the constructed `ctxt_fc`, and target `t_code = SOME (ns, compile nctxt prog)`; Lean `codeRel` matches the FLOOKUP/ctxtFc/compile shape but is generic over the global value type `α` with `String` identifiers and production finite maps/carriers, while HOL is word-indexed with `funname`/`varname`/`eid` = `mlstring`. The carrier difference is beyond name representation; tag stays withheld. Declaration-local notes at `PanToCrep.lean:2474` and `:2621`; the production wrapper `codeRelW` was removed. Exact-carrier replacement tracked by flapjack-pxn.18.3.5.8."
-  },
-  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
@@ -92835,14 +92827,6 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "ctxt_fc_def",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "ctxtFc",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.5.2): HOL `ctxt_fc_def` (`pan_to_crepProofScript.sml:25-30`) builds the `<|vars; funcs; eids; vmax|>` record via `FEMPTY |++ ZIP (vs, ZIP (shs, with_shape shs ns))` and `MAX_LIST ns`; Lean `ctxtFc` mirrors `FUPDATE_LIST`/`zip`/`withShape`/`maxList` clause-for-clause, but every finite map is keyed by `FunName`/`VarName`/`ExceptionId` = `String` while HOL keys by `funname`/`varname`/`eid` = `mlstring`. `names_as_string` cannot authorize the keyed-map carriers and no `NameRanged` premise is present; tag stays withheld. Declaration-local note at `PanToCrep.lean:759-764`. Exact-carrier replacement tracked by flapjack-pxn.18.3.5.8."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "ctxt_fc_eids_eq",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "ctxtFcEidsEqHOL",
@@ -92957,14 +92941,6 @@
     "words_as_type_indexed_bitvec": true
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "globals_lookup_def",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "globalsLookup",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.5.15): HOL `globals_lookup_def` (`pan_to_crepProofScript.sml:435-438`) `OPT_MMAP (FLOOKUP t.globals) (GENLIST (λx. n2w x) (size_of_shape (shape_of v)))` matches this `List.range (Shape.shapeSize (panSemShapeOf value))).mapM (fun index => state.globals (BitVec.ofNat 5 index))` clause-for-clause (5-bit indices, shape-size count, optional-map traversal). Tag withheld: HOL inputs are `panSem$value`/`crepSem$state`, whereas the Lean statement uses production `PanValue α` with String struct/field names, untagged production `panSemShapeOf`/`Shape.shapeSize` instead of HOL `shape_of`/`size_of_shape`, and `CrepRuntimeState α σ`, only a production projection of the HOL state; `names_as_string` cannot authorize the value/shape/state carriers and no `NameRanged` witness is statable for an `Option (List (PanWordLab α))` output. Declaration-local note at `PanToCrep.lean:26-45`; direct HOL-EVAL rows (`lookup_success`, `lookup_missing`, `lookup_struct`) in `scripts/hol-probes/globals_lookup_probe.out` reproduced by `Flapjack/Test/PanToCrepGlobalsLookupParity.lean`. Exact-carrier replacement tracked by flapjack-pxn.18.3.5.8.8."
-  },
-  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
@@ -93003,14 +92979,6 @@
     "lean_name": "loadShapeBytes_length",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (Lean indexing bridge)"
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "locals_rel_def",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "localsRel",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.5.7): HOL `locals_rel_def` (`pan_to_crepProofScript.sml:71`) requires the context variable map well formed and each live source variable recovered in the target locals with flattened value equal to the produced word list and shape well formed against the empty context; Lean `localsRel` matches clause-for-clause but uses production `PanToCrepProofContext α`, `FiniteMap String (PanValue α)` source locals (keys `VarName` = `String`) and `FiniteMap Nat (PanWordLab α)` target locals, while HOL keys by `varname`/`eid` = `mlstring` and uses `word_lab`. Beyond name representation; tag stays withheld. Declaration-local note at `PanToCrep.lean:1891-1896`. Exact-carrier replacement tracked by flapjack-pxn.18.3.5.8."
   },
   {
     "hol_path": null,
@@ -93198,28 +93166,12 @@
     "reviewer": "Codex (source comparison)"
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "state_rel_def",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "stateRel",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.5.4): HOL `state_rel_def` (`pan_to_crepProofScript.sml:45-69`) ties a `panSem$state` to a `crepSem$state` (memory, addresses, clock, endianness, FFI, bounds, structs/globals); Lean `stateRel` matches the conjunct layout but uses production `PanSemState α (FfiState σ)`/`CrepRuntimeState α σ`, an optional target memory reconstructed with `PanValue.word`/`panTheWord` (a source cell holding a structure cannot be recovered), `s.structs = []`, `s.globals = FEMPTY`, and `VarName` = `String` keys, while HOL uses total `word_lab` memory and `varname`/`eid` = `mlstring`. This is beyond name representation; tag stays withheld. Declaration-local note at `PanToCrep.lean:1643-1648`. Exact-carrier replacement tracked by flapjack-pxn.18.3.5.8 and the state-carrier dependency flapjack-pxn.18.3.7.1.3."
-  },
-  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "stateRel_ffiUpdate",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only preservation lemma: installing the same call_FFI result on both sides keeps state_rel; no single CakeML HOL declaration"
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "state_rel_globals",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "stateRel_globals",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Flapjack-specific source-shaped statement (NOT an exact HOL port; reviewed under flapjack-pxn.18.3.7.1.3): hypothesis is the Flapjack-specific stateRel over production PanSemState/CrepRuntimeState (optional PanValue source memory vs total word_lab target memory), not HOL state_rel; conclusion is over FiniteMap VarName (PanValue alpha) vs HOL varname-keyed value map; VarName = String vs varname = mlstring is only one of several mismatches, so the names_as_string qualifier does not apply. Exact projection tracked by flapjack-pxn.18.3.7.1.3.1 (carrier flapjack-pxn.18.3.5.8, parent flapjack-pxn.18.3.5.7.2)."
   },
   {
     "hol_path": null,
@@ -133851,5 +133803,13 @@
     "lean_name": "every_coind",
     "statement_status": "reviewed_exact",
     "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1596-1600 Theorem every_coind: !P Q. (!h t. Q (h:::t) ==> P h /\\ Q t) ==> !ll. Q ll ==> every P ll. The Lean statement is the same two-step implication with P : alpha -> Prop and Q : HolLList alpha -> Prop (HOL bool predicates read as Prop as throughout this file), the same forall h t premise with the same conjunction order P h /\\ Q t, and the same forall ll conclusion with every P ll the tagged llistEvery of every_def (llistScript:1591, ported in the previous batch). The proof is the source's exists_ind coinduction translated to the rep-index induction used by llistExists_iff/llistEvery_iff, with the same lcons hd (ltail ll) case step; no hypothesis or finiteness premise is added."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "state_rel_globals",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "stateRel_globals",
+    "statement_status": "documented_mismatch",
+    "reviewer": "Flapjack-specific source-shaped statement (NOT an exact HOL port; reviewed under flapjack-pxn.18.3.7.1.3): hypothesis is the Flapjack-specific stateRel over production PanSemState/CrepRuntimeState (optional PanValue source memory vs total word_lab target memory), not HOL state_rel; conclusion is over FiniteMap VarName (PanValue alpha) vs HOL varname-keyed value map; VarName = String vs varname = mlstring is only one of several mismatches, so the names_as_string qualifier does not apply. Exact projection is the tagged panToCrepStateRelFiniteExact_globals (Proofs/PanToCrep/StateRelFiniteSupport.lean); this production theorem is Flapjack-specific infrastructure and keeps this row only because Proofs theorems require manifest coverage (carrier flapjack-pxn.18.3.5.8, parent flapjack-pxn.18.3.5.7.2)."
   }
 ]
