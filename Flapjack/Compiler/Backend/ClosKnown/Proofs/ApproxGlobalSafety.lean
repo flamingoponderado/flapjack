@@ -22,6 +22,19 @@ def valApproxSgcFree : ValApprox → Prop
 termination_by a => sizeOf a
 decreasing_by all_goals have := List.sizeOf_lt_of_mem ‹_›; simp_wf; omega
 
+/-- A body selected from a globally safe approximation writes no globals. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "decide_inline_inlD_LetInline_sgc_free"]
+theorem decideInlineSgcFree {L : Type} (c : Config) (a : ValApprox) (loc : Option L)
+    (n : Nat) (body : ClosLang.Exp)
+    (h : decideInlineHOL c a loc n = .letInline body ∧ valApproxSgcFree a) :
+    setGlobals body = emptyGlobalBag := by
+  obtain ⟨decision, safe⟩ := h
+  cases a <;> simp [decideInlineHOL] at decision
+  case closNoInline target arity => split at decision <;> simp_all
+  case clos target arity source size =>
+    split at decision <;> simp_all [valApproxSgcFree]
+    split at decision <;> simp_all
+
 /-- All stored global approximations satisfy the closure-body invariant. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "globals_approx_sgc_free_def"]
 def globalsApproxSgcFree (g : Spt ValApprox) : Prop :=

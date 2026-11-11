@@ -57,6 +57,7 @@ known_co_known_mk_co_typed=known_co (kc :config option) (syntax_to_full_oracle (
 pure_co_progs_typed=∀(f :α -> β) (orac :num -> α). pure_co_progs f orac = f ∘ orac
 state_co_add_state_co_typed=state_co (f :γ -> δ -> γ # β) (syntax_to_full_oracle (add_state_co f (st :γ) (mk :(num -> β) -> num -> α)) (progs :num -> δ)) = syntax_to_full_oracle mk (state_co_progs f st progs)
 pure_co_syntax_to_full_oracle_typed=(pure_co (f :γ -> β) :α # γ -> α # β) ∘ syntax_to_full_oracle ((mk :(num -> β) -> num -> α) ∘ pure_co_progs f) (progs :num -> γ) = syntax_to_full_oracle mk (pure_co_progs f progs)
+decide_inline_sgc_free_typed=∀(c :config) (a :val_approx) (lopt :α option) (n :num) (body :closLang$exp). decide_inline c a lopt n = inlD_LetInline body ∧ val_approx_sgc_free a ⇒ set_globals body = ({||} :num -> num)
 contains_closures_code_locs_typed=∀(es :closLang$exp list). ¬contains_closures es ⇒ code_locs es = ([] :num list)
 inline_code_locs_typed=decide_inline (a :config) (b :val_approx) (c :α option) (d :num) = inlD_LetInline (e :closLang$exp) ⇒ code_locs [e] = ([] :num list)
 known_code_bag_typed=∀(c :config) (xs :closLang$exp list) (aenv :val_approx list) (g0 :val_approx sptree$num_map) (eas :(closLang$exp # val_approx) list) (g :val_approx sptree$num_map). known c xs aenv g0 = (eas,g) ⇒ LIST_TO_BAG (code_locs (MAP (FST :closLang$exp # val_approx -> closLang$exp) eas)) ≤ LIST_TO_BAG (code_locs xs)

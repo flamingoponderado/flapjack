@@ -10498,19 +10498,6 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationIf.lean",
-  "lean_name": "knownCorrect0If",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed (typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. KnownSimulationAt unfolds to the complete source expression conjunct with its original premises and existential target conclusion. The source condition, true-branch and false-branch induction hypotheses are retained, including the exact HOL HD Boolean tests. Both branches, condition errors and invalid condition values are covered. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "v_rel_Block",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationBool.lean",
   "lean_name": "valueRelBlockTarget",
@@ -129288,6 +129275,14 @@
   "lean_name": "pureCoSyntaxToFullOracle",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared pure_co_syntax_to_full_oracle_typed: independent program and configuration types, pure pass, oracle maker and complete function equality agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "decide_inline_inlD_LetInline_sgc_free",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxGlobalSafety.lean",
+  "lean_name": "decideInlineSgcFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared decide_inline_sgc_free_typed: arbitrary config, approximation, independently polymorphic optional location, arity and body; both decision and safety premises and empty global-write bag conclusion agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",

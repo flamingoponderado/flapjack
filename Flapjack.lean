@@ -560,7 +560,6 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApp
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationHandle
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationIf
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.PreserveSafetyTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
 import Flapjack.Compiler.Backend.Semantics.ClosProps.GlobalSafety

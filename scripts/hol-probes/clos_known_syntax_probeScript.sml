@@ -69,6 +69,7 @@ val _ = show "known_co_known_mk_co_typed=" clos_knownProofTheory.known_co_known_
 val _ = show "pure_co_progs_typed=" backendPropsTheory.pure_co_progs_def;
 val _ = show "state_co_add_state_co_typed=" backendPropsTheory.state_co_add_state_co;
 val _ = show "pure_co_syntax_to_full_oracle_typed=" backendPropsTheory.pure_co_syntax_to_full_oracle;
+val _ = show "decide_inline_sgc_free_typed=" clos_knownProofTheory.decide_inline_inlD_LetInline_sgc_free;
 val _ = show "contains_closures_code_locs_typed=" clos_knownProofTheory.contains_closures_code_locs;
 val _ = show "inline_code_locs_typed=" clos_knownProofTheory.code_locs_decide_inline;
 val _ = show "known_code_bag_typed=" clos_knownProofTheory.known_code_locs_bag;
