@@ -1,5 +1,11 @@
-import Flapjack.RiscV.L3.Defs.Fetch
-import Flapjack.Test.Fixtures.L3
+module
+
+public import Flapjack.RiscV.L3.Defs.Fetch
+public import Flapjack.Test.Fixtures.L3
+import all Init.Data.Nat.Bitwise.Basic
+
+@[expose] public section
+
 set_option maxRecDepth 200000
 namespace Flapjack.Test
 open Flapjack.RiscV.L3
