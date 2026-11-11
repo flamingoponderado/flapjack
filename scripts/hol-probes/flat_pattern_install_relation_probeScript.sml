@@ -165,6 +165,13 @@ val comp_thm_local_replay = pattern_compTheory.comp_thm
   |> REWRITE_RULE [GSYM quantHeuristicsTheory.IS_SOME_EQ_NOT_NONE]
   |> SIMP_RULE bool_ss [optionTheory.IS_SOME_EXISTS, PULL_EXISTS];
 val _ = show_thm "comp_thm_local_typed=" comp_thm_local_replay;
+(* Reproduce the singleton specialization used by the naive matcher proof. *)
+val naive_match_inst_replay = flat_patternProofTheory.naive_pattern_match_correct
+  |> Q.SPECL [`t`, `[(p, x)]`, `[v]`, `[]`]
+  |> REWRITE_RULE [flat_patternProofTheory.pure_eval_to_def]
+  |> SIMP_RULE list_ss []
+  |> GEN_ALL;
+val _ = show_thm "naive_match_inst_typed=" naive_match_inst_replay;
 val _ = show_thm "pattern_filter_safe=" pattern_compTheory.matdch_FILTER_NOT_NONE;
 val _ = show_thm "pattern_const_row=" pattern_compTheory.is_const_row_lemma;
 val _ = show_thm "pattern_move_const_up=" pattern_compTheory.match_move_const_up;

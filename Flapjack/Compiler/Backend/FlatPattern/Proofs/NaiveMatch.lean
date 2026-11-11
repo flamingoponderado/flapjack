@@ -598,4 +598,20 @@ theorem evaluate_compilePats_naive {C F : Type} (cfg : Config) (trace : Tra) (n 
     rw [selectedMapped] at target
     simpa [compilePats, compiledRows, mapped, f, original, target] using dispatch
 
+open Classical in
+/-- The naive guard agrees with a singleton pattern match. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "naive_pattern_match_correct_inst"]
+theorem naivePatternMatch_correct_inst {C F : Type} (expression : FlatLang.Exp) (value : FlatSem.Value)
+    (trace : Tra) (state : FlatSem.State C F) (pattern : FlatLang.Pat)
+    (env : FlatSem.Environment FlatSem.Value)
+    (premises : pureEvalTo state env expression value ∧
+      FlatSem.pmatchList state [pattern] [value] [] ≠ .typeError) :
+    FlatSem.evaluate env state [naivePatternMatch trace [(pattern, expression)]] =
+      (state, .val [FlatSem.boolValue (decide (FlatSem.pmatchList state [pattern] [value] [] ≠ .noMatch))]) := by
+  have pure : List.Forall₂ (pureEvalTo state env) [expression] [value] := .cons premises.1 .nil
+  have result := naivePatternMatch_correct state env trace [(pattern, expression)] [value] []
+    (naivePatternMatch trace [(pattern, expression)]) (FlatSem.pmatchList state [pattern] [value] [])
+    ⟨by simpa using pure, rfl, premises.2, rfl⟩
+  exact result
+
 end Flapjack.Compiler.Backend.FlatPattern

@@ -133394,6 +133394,16 @@
 }
 ,
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "naive_pattern_match_correct_inst",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NaiveMatch.lean",
+  "lean_name": "naivePatternMatch_correct_inst",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared naive_match_inst_typed obtained by the original HOL specialization and rewrites: the singleton pattern, expression and value, empty bindings, pure evaluation and non-type-error premises, and original Boolean-valued evaluator result match. The evaluator inherits reals_as_rational_cuts."
+}
+,
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "find_recfun_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",
