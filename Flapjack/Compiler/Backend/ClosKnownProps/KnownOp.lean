@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosKnown.KnownOp
+public import Flapjack.Compiler.Backend.ClosKnown.Total
 public import Flapjack.Compiler.Backend.ClosKnownProps.Merge
 
 @[expose] public section
@@ -46,5 +47,25 @@ theorem knownOpBetterDefinedG (op : Op) (apxs : List ValApprox)
     obtain ⟨_, rfl⟩ := run
     rename_i op args key value tail x old lookup left
     simpa only [lookup] using betterDefinedGInsert key value g0
+
+private theorem knownExprBetterDefinedG (c : Config) (e : Exp)
+    (env : List ValApprox) (globals : Spt ValApprox) :
+    betterDefinedG globals (knownExprTotal c e env globals).2.2 := by
+  induction c, e, env, globals using knownExprTotal.induct
+    (motive2 := fun _ _ _ _ _ => True)
+    (motive3 := fun c xs env globals =>
+      betterDefinedG globals (knownListTotal c xs env globals).2) <;>
+    simp_all [knownExprTotal, knownListTotal, betterDefinedGRefl]
+  all_goals try (split <;> simp_all)
+  all_goals try (rw [knownExprTotal.eq_def]; simp_all)
+  all_goals grind [betterDefinedGTrans, knownOpBetterDefinedG]
+
+/-- Traversing any list of expressions only improves the global approximation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "known_better_definedg"]
+theorem knownBetterDefinedG (c : Config) (es : List Exp) (apxs : List ValApprox)
+    (g0 : Spt ValApprox) (alist : List (Exp × ValApprox)) (g : Spt ValApprox)
+    (run : knownListTotal c es apxs g0 = (alist, g)) : betterDefinedG g0 g := by
+  have h := knownExprBetterDefinedG c (.call BackendCommon.orphanTrace 0 0 es) apxs g0
+  simpa [knownExprTotal, run] using h
 
 end Flapjack.Compiler.Backend.ClosKnownProps
