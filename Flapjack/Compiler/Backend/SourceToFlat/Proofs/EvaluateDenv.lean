@@ -67,18 +67,6 @@ theorem GlobalGrowth.fillSlot (genv : GlobalEnv) (idx : Nat) (value : FlatSem.Va
     simp [empty] at slot
   · simpa [List.getElem?_set, Ne.symm same] using slot
 
-/-- The factored invariant is insensitive to the generation store beyond its
-allocation-bound condition. -/
-theorem factoredInvariant_changeGen {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (gen newGen : EnvironmentGenerationStore) (genv : GlobalEnv)
-    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
-    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
-    (valid : factoredInvariant interp transform gen genv idxs source flat)
-    (newValid : envGenInv newGen) : factoredInvariant interp transform newGen genv idxs source flat := by
-  obtain ⟨a, b, c, d, e, f, g, h, _, i⟩ := valid
-  exact ⟨a, b, c, d, e, f, g, h, newValid, i⟩
-
 /-- Filling the next blank global advances the current index block and
 preserves the factored invariant. -/
 theorem factoredInvariant_fillSlot {C F : Type} [Nonempty C]
@@ -387,10 +375,10 @@ theorem factoredInvariant_denv {C F : Type} [Nonempty C]
       have newGenInv : envGenInv
           { gen with next := gen.next + 1, envs := Flapjack.sptInsert gen.next compMap gen.envs } := by
         simpa [compileDecs] using (compileDecs_envGenInv trace n start compMap gen [.denv name] _ _ _ _ _ ⟨rfl, genInv⟩).1
-      have changed := factoredInvariant_changeGen interp transform _ _ genv (start, finish, other)
-        _ flat afterDecl newGenInv
+      obtain ⟨cOk, tysOk, states, range, invs, orac, globals, reserved, _, fin⟩ := afterDecl
       have final := factoredInvariant_fillSlot interp transform _ genv start finish other _ flat
-        (.conv none [.litv (.intLit (gen.generation : Int)), .litv (.intLit (gen.next : Int))]) changed fits
+        (.conv none [.litv (.intLit (gen.generation : Int)), .litv (.intLit (gen.next : Int))])
+        ⟨cOk, tysOk, states, range, invs, orac, globals, reserved, newGenInv, fin⟩ fits
       simpa [compileDecs] using final
 
 /-- Successful `Denv` execution preserves the full factored invariant and
