@@ -133432,6 +133432,15 @@
 }
 ,
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "fold_Boolv",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NaiveMatch.lean",
+  "lean_name": "fold_boolValue",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fold_boolv_typed: both separately quantified equations, their direction, Boolean constructor and tag choices match the HOL conjunction."
+}
+,
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "find_recfun_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",

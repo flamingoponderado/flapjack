@@ -16,6 +16,14 @@ open Flapjack.Compiler.Backend.BackendCommon
 open Flapjack.SemanticPrimitivesHOL (storeLookup)
 open Flapjack.SemanticPrimitivesProps (litSameType_refl litSameType_sym)
 
+/-- Boolean values and tags are the corresponding source constructors. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "fold_Boolv"]
+theorem fold_boolValue :
+    (∀ b : Bool, FlatSem.Value.conv (some (boolToTag b, some FlatLang.boolId)) [] =
+      FlatSem.boolValue b) ∧
+    (∀ b : Bool, (if b then trueTag else falseTag) = boolToTag b) :=
+  ⟨fun _ => rfl, fun _ => rfl⟩
+
 /-- Equality of encoded Boolean values returns Boolean equality. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "do_eq_Boolv"]
 theorem doEq_boolValue (x y : Bool) :
@@ -29,7 +37,7 @@ theorem doEq_boolValue (x y : Bool) :
 theorem evaluate_bool {C F : Type}
     (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (trace : Tra) (b : Bool) :
     FlatSem.evaluate env state [FlatLang.mkBool trace b] = (state, .val [FlatSem.boolValue b]) := by
-  cases b <;> simp [FlatSem.evaluate, FlatLang.mkBool, FlatSem.boolValue]
+  simp [FlatSem.evaluate, FlatLang.mkBool, fold_boolValue.1]
 
 /-- The Boolean result of a successful pattern test; a type error has no
 Boolean result. -/
