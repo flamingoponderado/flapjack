@@ -14280,6 +14280,38 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "merge_Other",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "mergeOther",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_merge_other_typed: full approximation carrier and original merge or ordering equation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "merge_Impossible",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "mergeImpossible",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_merge_impossible_typed: full approximation carrier and original merge or ordering equation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_Other",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxOther",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_other_typed: full approximation carrier and original merge or ordering equation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_Impossible",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxImpossible",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_impossible_typed: full approximation carrier and original merge or ordering equation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
   "hol_name": "subapprox_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
   "lean_name": "subapprox",

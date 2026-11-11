@@ -10,6 +10,17 @@ public import Flapjack.Misc.Sptree
 namespace Flapjack.Compiler.Backend.ClosKnownProps
 open ClosKnown
 
+/-- Merging with the unknown approximation yields the unknown approximation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "merge_Other"]
+theorem mergeOther (a : ValApprox) :
+    mergeHOL .other a = .other ∧ mergeHOL a .other = .other := by
+  cases a <;> simp [mergeHOL]
+
+/-- The impossible approximation is a right identity for merging. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "merge_Impossible"]
+theorem mergeImpossible (a : ValApprox) : mergeHOL a .impossible = a := by
+  cases a <;> simp [mergeHOL]
+
 private theorem mergeListComm (xs ys : List ValApprox) (len : xs.length = ys.length)
     (step : ∀ x ∈ xs, ∀ y, mergeHOL x y = mergeHOL y x) :
     mergeListHOL xs ys = mergeListHOL ys xs := by
@@ -98,6 +109,18 @@ def subapprox (a1 a2 : ValApprox) : Prop := mergeHOL a1 a2 = a2
 /-- Every approximation is below itself. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_refl"]
 theorem subapproxRefl (a : ValApprox) : subapprox a a := mergeIdem a
+
+/-- Unknown is the greatest approximation in the source ordering. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_Other"]
+theorem subapproxOther (a : ValApprox) :
+    (subapprox .other a ↔ a = .other) ∧ subapprox a .other := by
+  simp [subapprox, (mergeOther a).1, (mergeOther a).2, eq_comm]
+
+/-- Impossible is the least approximation in the source ordering. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_Impossible"]
+theorem subapproxImpossible (a : ValApprox) :
+    (subapprox a .impossible ↔ a = .impossible) ∧ subapprox .impossible a := by
+  simp [subapprox, mergeImpossible, mergeHOL]
 
 /-- Approximation ordering is antisymmetric. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_antisym"]
