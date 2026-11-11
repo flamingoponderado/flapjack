@@ -20,6 +20,10 @@ val _ = show_thm "elist_globals_SND_renumber_code_locs_list_typed=" clos_to_bvlP
 val _ = show_thm "elist_globals_SND_ncompile_inc_typed=" clos_to_bvlProofTheory.elist_globals_SND_ncompile_inc;
 val _ = show_thm "compile_elist_globals_typed=" clos_to_bvlProofTheory.compile_elist_globals;
 val _ = show_thm "mcompile_inc_uncurry_typed=" clos_to_bvlProofTheory.mcompile_inc_uncurry;
+val _ = show_thm "acompile_inc_uncurry_typed=" clos_to_bvlProofTheory.acompile_inc_uncurry;
+val _ = show_thm "ccompile_inc_uncurry_typed=" clos_to_bvlProofTheory.ccompile_inc_uncurry;
+val _ = show_thm "compile_inc_uncurry_typed=" clos_to_bvlProofTheory.compile_inc_uncurry;
+val _ = show_thm "fcompile_inc_uncurry_typed=" clos_to_bvlProofTheory.fcompile_inc_uncurry;
 val _ = show_thm "semantics_cond_call_compile_inc_typed=" clos_to_bvlProofTheory.semantics_cond_call_compile_inc;
 val _ = show_thm "compile_common_semantics_typed=" clos_to_bvlProofTheory.compile_common_semantics;
 val _ = show_thm "compile_semantics_typed=" clos_to_bvlProofTheory.compile_semantics;

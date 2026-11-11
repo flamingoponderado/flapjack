@@ -2594,6 +2594,38 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "acompile_inc_uncurry",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalEquations.lean",
+  "lean_name": "acompileInc_uncurry",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and typed capture confirms arbitrary label type, zero-arity annotation and the complete auxiliary-code result with no additional premises."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "ccompile_inc_uncurry",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalEquations.lean",
+  "lean_name": "ccompileInc_uncurry",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and typed capture confirms arbitrary input payload and known tree, the original empty initial auxiliary list, and all three result projections in order."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "compile_inc_uncurry",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalEquations.lean",
+  "lean_name": "compileInc_uncurry",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and typed capture confirms arbitrary maximum arity, full source name extraction, chaining and subsequent auxiliary append, and the original labeled BVL program compiler."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "fcompile_inc_uncurry",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalEquations.lean",
+  "lean_name": "fcompileInc_uncurry",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and typed capture confirms arbitrary input payload and independently typed output list, original free-variable compilation, and unconditional empty auxiliary output."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "compile_elist_globals",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean",
   "lean_name": "mtiCompile_elistGlobals",
