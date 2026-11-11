@@ -17,14 +17,6 @@ theorem removeList_eq_map (expressions : List Exp) :
   | nil => rfl
   | cons first rest ih => simp [removeList, ih]
 
-theorem removeFuns_eq_map (functions : List (Nat × Exp)) :
-    removeFuns functions = functions.map (fun (arity, body) => (arity, removeSing body)) := by
-  induction functions with
-  | nil => rfl
-  | cons function rest ih =>
-    obtain ⟨arity, body⟩ := function
-    simp [removeFuns, ih]
-
 /-- Every successful bounded traversal returns the source traversal. -/
 theorem removeFuel_eq_source (fuel : Nat) (expression result : Exp)
     (run : removeFuel fuel expression = some result) : result = removeSing expression := by
