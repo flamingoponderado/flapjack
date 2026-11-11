@@ -16,6 +16,14 @@ open Flapjack.Compiler.Backend.BackendCommon
 open Flapjack.SemanticPrimitivesHOL (storeLookup)
 open Flapjack.SemanticPrimitivesProps (litSameType_refl litSameType_sym)
 
+/-- Equality of encoded Boolean values returns Boolean equality. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "do_eq_Boolv"]
+theorem doEq_boolValue (x y : Bool) :
+    FlatSem.doEq (FlatSem.boolValue x) (FlatSem.boolValue y) = .val (decide (x = y)) := by
+  cases x <;> cases y <;>
+    simp [FlatSem.doEq, FlatSem.doEqList, FlatSem.boolValue, FlatSem.ctorSameType,
+      boolToTag, trueTag, falseTag, FlatLang.boolId]
+
 /-- Evaluating the flat Boolean expression yields the corresponding value. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "evaluate_Bool"]
 theorem evaluate_bool {C F : Type}

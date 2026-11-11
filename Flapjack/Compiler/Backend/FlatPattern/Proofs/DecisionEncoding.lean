@@ -440,8 +440,8 @@ theorem evaluate_bool_negation {C F : Type} (trace : BackendCommon.Tra)
     FlatSem.evaluate env state [.app trace (.src .equality) [expression, FlatLang.mkBool trace false]] =
       (state, .val [FlatSem.boolValue (!value)]) := by
   cases value <;> simp [FlatSem.evaluate, pure, FlatSem.fixClock, FlatSem.applyResult, FlatSem.doApp,
-    FlatSem.doAppNumeric, FlatSem.doEq, FlatSem.doEqList, FlatSem.boolValue, FlatSem.ctorSameType,
-    FlatLang.mkBool, FlatLang.boolId, BackendCommon.boolToTag, BackendCommon.trueTag, BackendCommon.falseTag]
+    FlatSem.doAppNumeric, FlatLang.mkBool]
+  all_goals rw [← FlatSem.boolValue, doEq_boolValue]; rfl
 
 /-- A successful abstract guard evaluates to the same Boolean after decoding
 to flat expressions, including short-circuiting conjunction and disjunction. -/

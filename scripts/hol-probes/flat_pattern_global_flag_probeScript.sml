@@ -32,6 +32,7 @@ val _ = show_thm "inv_on_foldr_typed=" flat_patternProofTheory.inv_on_FOLDR;
 val _ = show_thm "evaluate_decs_sing_typed=" flat_patternProofTheory.evaluate_decs_sing;
 val _ = show_thm "option_all_forall_typed=" flat_patternProofTheory.OPTION_ALL_FORALL;
 val _ = show_thm "smart_if_thm_typed=" flat_patternProofTheory.SmartIf_thm;
+val _ = show_thm "do_eq_boolv_typed=" flat_patternProofTheory.do_eq_Boolv;
 val _ = show_thm "global_bag_list_empty=" flatPropsTheory.elist_globals_eq_empty;
 val _ = show_thm "sum_string_ords=" flat_patternProofTheory.sum_string_ords_eq;
 val _ = show_thm "sum_string_ords_def=" flat_patternTheory.sum_string_ords_def;

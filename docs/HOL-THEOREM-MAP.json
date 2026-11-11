@@ -133423,6 +133423,15 @@
 }
 ,
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "do_eq_Boolv",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NaiveMatch.lean",
+  "lean_name": "doEq_boolValue",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared do_eq_boolv_typed: the original Boolean operands and full equality-result constructor are preserved, with decidable Boolean equality representing HOL Boolean equivalence."
+}
+,
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "find_recfun_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",
