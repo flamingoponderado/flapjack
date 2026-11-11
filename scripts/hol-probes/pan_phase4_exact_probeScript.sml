@@ -64,4 +64,11 @@ val _ = (print "evaluate_nested_decs_load_globals_typed=";
 val _ = print ("evaluate_nested_decs_load_globals_hypotheses=" ^
   Int.toString (length (hyp pan_to_crepProofTheory.evaluate_nested_decs_load_globals)) ^ "\n");
 
+val _ = (print "globals_lookup_def_typed=";
+  Lib.with_flag (Globals.show_types, true)
+    print_term (concl pan_to_crepProofTheory.globals_lookup_def);
+  print "\n");
+val _ = print ("globals_lookup_def_hypotheses=" ^
+  Int.toString (length (hyp pan_to_crepProofTheory.globals_lookup_def)) ^ "\n");
+
 val _ = print "pan_phase4_exact_probe_done\n";

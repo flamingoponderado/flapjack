@@ -2169,6 +2169,7 @@ run_probe pan_phase4_exact_probeScript.sml pan_phase4_exact_probe.out \
   make_funcs_def_typed make_funcs_def_hypotheses \
   compile_prog_def_typed compile_prog_def_hypotheses \
   evaluate_nested_decs_load_globals_typed evaluate_nested_decs_load_globals_hypotheses \
+  globals_lookup_def_typed globals_lookup_def_hypotheses \
   pan_phase4_exact_probe_done \
   "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_sem_lookup_code_probeScript.sml pan_sem_lookup_code_probe.out \

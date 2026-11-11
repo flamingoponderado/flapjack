@@ -100,4 +100,9 @@ LENGTH vs = size_of_shape (shape_of rv) ⇒
                   num # α word_lab option -> (num |-> α word_lab)) s'.locals
         (ZIP (vs,MAP (FLOOKUP s.locals) vs))))
 evaluate_nested_decs_load_globals_hypotheses=0
+globals_lookup_def_typed=∀(t :(α, β) state) (v :γ v).
+  globals_lookup t v =
+  OPT_MMAP (FLOOKUP t.globals)
+    (GENLIST (λ(x :num). (n2w x :word5)) (size_of_shape (shape_of v)))
+globals_lookup_def_hypotheses=0
 pan_phase4_exact_probe_done
