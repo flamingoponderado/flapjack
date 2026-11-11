@@ -3150,6 +3150,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectExact
 import Flapjack.Pancake.Semantics.PanProps.SemanticsWrapper
 import Flapjack.Pancake.Semantics.PanProps.SemanticsWrapperEquality
 import Flapjack.Pancake.Semantics.PanProps.PanSemIsWrapper
+import Flapjack.Pancake.Semantics.PanCommonProps.FiniteMapExact
 import Flapjack.Pancake.Proofs.PanStructs.SemanticsEq
 import Flapjack.Pancake.Proofs.PanStructs.CompileTopSemanticsDeclsExact
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2

@@ -1,0 +1,18 @@
+ctxt_max_def_typed=∀(n :num) (fm :α |-> β # num list).
+  ctxt_max n fm ⇔
+  (0 :num) ≤ n ∧
+  ∀(v :α) (a :β) (xs :num list).
+    FLOOKUP fm v = SOME (a,xs) ⇒ ∀(x :num). MEM x xs ⇒ x ≤ n
+ctxt_max_def_hypotheses=0
+no_overlap_def_typed=∀(fm :α |-> β # γ list).
+  no_overlap fm ⇔
+  (∀(x :α) (a :β) (xs :γ list). FLOOKUP fm x = SOME (a,xs) ⇒ ALL_DISTINCT xs) ∧
+  ∀(x :α) (y :α) (a :β) (b :β) (xs :γ list) (ys :γ list).
+    FLOOKUP fm x = SOME (a,xs) ∧ FLOOKUP fm y = SOME (b,ys) ∧
+    ¬DISJOINT (set xs) (set ys) ⇒
+    x = y
+no_overlap_def_hypotheses=0
+update_eq_zip_flookup_typed=∀(xs :α list) (f :α |-> β) (ys :β list) (n :num).
+  ALL_DISTINCT xs ∧ LENGTH xs = LENGTH ys ∧ n < LENGTH xs ⇒
+  FLOOKUP (f |++ ZIP (xs,ys)) xs❲n❳ = SOME ys❲n❳
+update_eq_zip_flookup_hypotheses=0

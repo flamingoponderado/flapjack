@@ -3521,6 +3521,11 @@ run_probe pan_common_props_zip_disjoint_probeScript.sml pan_common_props_zip_dis
   "$cake_dir/pancake/semantics/pan_commonPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 
+run_probe pan_common_props_finite_map_probeScript.sml pan_common_props_finite_map_probe.out \
+  ctxt_max_def_typed ctxt_max_def_hypotheses no_overlap_def_typed no_overlap_def_hypotheses update_eq_zip_flookup_typed update_eq_zip_flookup_hypotheses \
+  "$cake_dir/pancake/semantics/pan_commonPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
+
 # The crepProps assigned_vars / var_cexp probe observes the nested_decs append,
 # stores emptiness, and load_shape EXACT lemmas
 # (crepPropsScript.sml:390, :400, :429, :439, :215).

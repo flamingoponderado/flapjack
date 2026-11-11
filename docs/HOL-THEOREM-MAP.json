@@ -102056,6 +102056,39 @@
     "reviewer": "Raw lookup functions admit infinite-support maps unlike HOL finite maps; Boolean equality instances are extra assumptions. Retained as support for finite-map lookup proofs; the faithful HOL declaration remains unported."
   },
   {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "ctxt_max_def",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps/FiniteMapExact.lean",
+    "lean_name": "ctxtMaxHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "fm"
+    ],
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.4.26; pan_commonPropsScript.sml:8-14): typed HOL capture ctxt_max_def_typed in pan_common_props_finite_map_probe.out gives ∀(n :num) (fm :α |-> β # num list), ctxt_max n fm ⇔ 0 ≤ n ∧ ∀(v :α) (a :β) (xs :num list), FLOOKUP fm v = SOME (a,xs) ⇒ ∀(x :num), MEM x xs ⇒ x ≤ n, with 0 hypotheses. Lean keeps the polymorphic key/value carriers, the Nat bound, the lookup premise and the per-slot bound over HolFiniteMapExact, with witness holFmapAsFiniteSupportParamWitness_ctxtMaxHOL_fm. The raw-function ctxtMax helper stays untagged infrastructure for the production-carrier proofs."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "no_overlap_def",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps/FiniteMapExact.lean",
+    "lean_name": "noOverlapHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "fm"
+    ],
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.4.27; pan_commonPropsScript.sml:18-24): typed HOL capture no_overlap_def_typed in pan_common_props_finite_map_probe.out gives ∀(fm :α |-> β # γ list), no_overlap fm ⇔ (∀(x :α) (a :β) (xs :γ list), FLOOKUP fm x = SOME (a,xs) ⇒ ALL_DISTINCT xs) ∧ ∀(x y :α) (a b :β) (xs ys :γ list), FLOOKUP fm x = SOME (a,xs) ∧ FLOOKUP fm y = SOME (b,ys) ∧ ¬DISJOINT (set xs) (set ys) ⇒ x = y, with 0 hypotheses. Lean keeps both polymorphic carriers, ALL_DISTINCT as Nodup, and renders ¬DISJOINT (set xs) (set ys) as the equivalent shared-slot existence, over HolFiniteMapExact, with witness holFmapAsFiniteSupportParamWitness_noOverlapHOL_fm. The raw-function noOverlap helper stays untagged infrastructure for the production-carrier proofs."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "update_eq_zip_flookup",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps/FiniteMapExact.lean",
+    "lean_name": "updateEqZipFlookupExactHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "f"
+    ],
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.4.28; pan_commonPropsScript.sml:244-251): typed HOL capture update_eq_zip_flookup_typed in pan_common_props_finite_map_probe.out gives ∀(xs :α list) (f :α |-> β) (ys :β list) (n :num), ALL_DISTINCT xs ∧ LENGTH xs = LENGTH ys ∧ n < LENGTH xs ⇒ FLOOKUP (f |++ ZIP (xs,ys)) xs❲n❳ = SOME ys❲n❳, with 0 hypotheses. Lean keeps the same binders and hypotheses (curried rather than conjoined), renders f |++ as updateListEq, FLOOKUP as .lookup and EL as getElem, over HolFiniteMapExact, with witness holFmapAsFiniteSupportParamWitness_updateEqZipFlookupExactHOL_f. The raw-function updateEqZipFlookupHOL helper stays untagged infrastructure for the production-carrier proofs."
+  },
+  {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
     "hol_name": "OPT_MMAP_MEM_IMP",
     "lean_path": "Flapjack/Pancake/Semantics/PanProps.lean",
