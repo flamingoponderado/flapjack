@@ -16,6 +16,23 @@ multiple of `4096` below `2^24`.  The proofs are bitwise, since arithmetic on
 
 namespace Flapjack.Compiler.Encoders.Arm8
 
+/-- A word killed by the shifted mask is a multiple of `4096` below `2 ^ 24`, so
+it is `m <<< 12` for the twelve-bit value the shifted encoding needs. -/
+theorem arm8ShiftedMask_eq (w : BitVec 64) (hmod : w.toNat % 4096 = 0)
+    (hlt : w.toNat < 2 ^ 24) :
+    BitVec.ofNat 64 (((w >>> 12).toNat % 4096) <<< 12) = w := by
+  have hshift : (w >>> 12).toNat = w.toNat / 4096 := by
+    rw [show (w >>> 12).toNat = w.toNat >>> 12 from BitVec.toNat_ushiftRight w 12,
+      Nat.shiftRight_eq_div_pow]
+  have hquo : w.toNat / 4096 % 4096 = w.toNat / 4096 := by
+    apply Nat.mod_eq_of_lt
+    omega
+  apply BitVec.eq_of_toNat_eq
+  rw [BitVec.toNat_ofNat, hshift, hquo, Nat.shiftLeft_eq]
+  have hdvd : 4096 ∣ w.toNat := Nat.dvd_of_mod_eq_zero hmod
+  rw [show (2 : Nat) ^ 12 = 4096 from rfl, Nat.div_mul_cancel hdvd]
+  exact Nat.mod_eq_of_lt w.isLt
+
 theorem and_not_fff_eq_zero_toNat_lt {w : BitVec 64}
     (h : w &&& ~~~(BitVec.ofNat 64 4095) = 0) : w.toNat < 4096 := by
   have hbit : ∀ i, 12 ≤ i → i < 64 → w.getLsbD i = false := by
