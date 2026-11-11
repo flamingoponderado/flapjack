@@ -6,10 +6,40 @@ public import Flapjack.Misc.Sptree.ToList
 
 @[expose] public section
 
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
+
 /-! The decision-tree path of flat pattern compilation. Its evaluator and
 finite-map carrier remain pending HOL correspondence review. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.Compiler.Backend
+
+private def toBroad (refs : HolFiniteMapExact Nat PatternSemantics.Term) : Nat → Option PatternSemantics.Term :=
+  refs.lookup
+
+private def ofBroad (lookup : Nat → Option PatternSemantics.Term)
+    (support : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat PatternSemantics.Term := ⟨lookup, support⟩
+
+/-- The pattern-reference map roundtrips through its lookup view. -/
+theorem holFmapAsFiniteSupportParamWitness_compThm_refs
+    (refs : HolFiniteMapExact Nat PatternSemantics.Term) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs := by
+  cases refs
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Non-error pattern matching is preserved by decision-tree compilation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "comp_thm"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem compThm (refs : HolFiniteMapExact Nat PatternSemantics.Term)
+    (rows : List (PatternSemantics.Pat × Nat)) (value : PatternSemantics.Term) :
+    ∀ result, PatternSemantics.matchRows refs rows value = some result →
+      PatternSemantics.dtEval refs value (PatternComp.comp rows) = some result := by
+  intro result matched
+  have safe : PatternSemantics.matchRows refs rows value ≠ none := by rw [matched]; simp
+  exact (PatternComp.comp_correct refs value rows safe).trans matched
 
 /-- Inserting sequential branches leaves earlier keys unchanged. -/
 theorem branchFold_lookup_before {α : Type} (branches : List α) (start key : Nat)
@@ -102,9 +132,8 @@ theorem evaluate_compilePats {C F : Type} (rows : List (FlatLang.Pat × FlatLang
     | noMatch =>
       have abstractMatch : PatternSemantics.matchRows (encodeRefs state) encoded (encodeValue value) = some .failure := by
         simpa [source, encoded] using encoding
-      have compiled := PatternComp.comp_correct (encodeRefs state) (encodeValue value) encoded (by rw [abstractMatch]; simp)
       have treeEval : PatternSemantics.dtEval (encodeRefs state) (encodeValue value) (PatternComp.comp encoded) =
-          some .failure := compiled.trans abstractMatch
+          some .failure := compThm (encodeRefs state) encoded (encodeValue value) .failure abstractMatch
       have decoded := decodeDtree_simulation state value (PatternComp.comp encoded) .failure env expression trace
         (branchTree branches) default ⟨treeEval, pure⟩
       simpa [compilePats, encoded, branches, source] using decoded
@@ -113,9 +142,8 @@ theorem evaluate_compilePats {C F : Type} (rows : List (FlatLang.Pat × FlatLang
       obtain ⟨index, rowAt, abstractMatch⟩ : ∃ index, rows[index]? = some (pattern, body) ∧
           PatternSemantics.matchRows (encodeRefs state) encoded (encodeValue value) = some (.success index) := by
         simpa [source, encoded] using encoding
-      have compiled := PatternComp.comp_correct (encodeRefs state) (encodeValue value) encoded (by rw [abstractMatch]; simp)
       have treeEval : PatternSemantics.dtEval (encodeRefs state) (encodeValue value) (PatternComp.comp encoded) =
-          some (.success index) := compiled.trans abstractMatch
+          some (.success index) := compThm (encodeRefs state) encoded (encodeValue value) (.success index) abstractMatch
       have branchAt : branches[index]? = some (compilePatRhs trace n expression (pattern, body)) := by
         simp [branches, List.getElem?_map, rowAt]
       have lookup : sptLookup index (branchTree branches) = some (compilePatRhs trace n expression (pattern, body)) := by

@@ -160,6 +160,11 @@ val _ = show_thm "pattern_match_append=" pattern_compTheory.match_append;
 val _ = show_thm "pattern_match_take_until_any=" pattern_compTheory.match_take_until_Any;
 val _ = show_thm "pattern_match_insert_any=" pattern_compTheory.match_insert_Any;
 val _ = show_thm "pattern_comp_correct=" pattern_compTheory.comp_thm;
+(* Reproduce the local transformed pattern-compiler correctness theorem. *)
+val comp_thm_local_replay = pattern_compTheory.comp_thm
+  |> REWRITE_RULE [GSYM quantHeuristicsTheory.IS_SOME_EQ_NOT_NONE]
+  |> SIMP_RULE bool_ss [optionTheory.IS_SOME_EXISTS, PULL_EXISTS];
+val _ = show_thm "comp_thm_local_typed=" comp_thm_local_replay;
 val _ = show_thm "pattern_filter_safe=" pattern_compTheory.matdch_FILTER_NOT_NONE;
 val _ = show_thm "pattern_const_row=" pattern_compTheory.is_const_row_lemma;
 val _ = show_thm "pattern_move_const_up=" pattern_compTheory.match_move_const_up;

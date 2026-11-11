@@ -133384,6 +133384,16 @@
 }
 ,
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "comp_thm",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/CompiledMatch.lean",
+  "lean_name": "compThm",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["refs"],
+  "reviewer": "Compared the HOL source and comp_thm_local_typed, obtained by the original HOL rewrite: every match result is quantified after the original references, rows and value; a SOME result implies the same decision-tree result. The refs finite map uses the canonical finite-support carrier and same-module roundtrip witness."
+}
+,
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "find_recfun_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",
