@@ -9,6 +9,8 @@ public meta import Flapjack.Pancake.Proofs.PanGlobals
 namespace Flapjack.Test.PanGlobalsCompileDecsStructuralParity
 
 open Flapjack
+open Flapjack.Basis.Pure.MlString (ofString toStringOfBytes)
+open Flapjack.Pancake.PanLang
 
 def compileContext : GlobalPassContext Nat :=
   { globals := []
@@ -44,12 +46,21 @@ def compileDecsStructuralGuard : Bool :=
 /-- Predicate that recognizes the function declaration renamed from `f` to
     `b`; true on every other declaration, matching the HOL hypothesis shape of
     `EVERY_fperm_decs`. -/
-def renamedPredicate : Decl Nat → Bool
-  | .function function => function.name == "b"
+def renamedPredicate : DeclHOL 64 → Bool
+  | .function function => toStringOfBytes function.name == "b"
   | _ => true
 
+/-- Exact-carrier `EVERY_fperm_decs` observation over `fpermDecsHOL`. -/
+def exactDeclarations : List (DeclHOL 64) :=
+  [.function
+    { name := ofString "f", inline := false, exported := false, params := [],
+      body := .skip, returnShape := .one },
+   .decl .one (ofString "g") (.const 7), .name (ofString "S") [],
+   .exnDecl (ofString "E") .one]
+
 def everyFpermDecsGuard : Bool :=
-  (globalRenameDecls "f" "b" declarations).all renamedPredicate
+  (fpermDecsHOL (width := 64) (ofString "f") (ofString "b")
+    exactDeclarations).all renamedPredicate
 
 def compileDecsFilterDeclsGuard : Bool :=
   let result := globalCompileDecs compileContext

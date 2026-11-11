@@ -500,15 +500,6 @@ DOCUMENTED_MISMATCHES = {
         "HOL states it over the exact mlstring-keyed panLang syntax. Tag withdrawn; exact port "
         "tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
     ),
-    ("Flapjack/Pancake/Proofs/PanGlobals/ShapeInfrastructure.lean", "evaluateDeclsFunctionsWf"): (
-        "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-        "evaluate_decls_functions_wf",
-        "flapjack-ds8 (bead flapjack-4ac.7): HOL declares evaluate_decls_functions_wf[local] "
-        "over the exact panSem evaluate_decls and exact panLang decl/shape carriers; it is not "
-        "exported, and the Lean analogue reads the production PanSemDeclarationState/Decl/isWfShape "
-        "String/Shape carriers. The @[hol] tag was withdrawn; the public consequence "
-        "evaluate_decls_functions is the exact port (evaluateDeclsHOLFinite_functions)."
-    ),
     ("Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean", "evaluateDeclsHOLFinite_functions"): (
         "cakeml/pancake/semantics/panPropsScript.sml",
         "evaluate_decls_functions",
@@ -1007,59 +998,6 @@ DOCUMENTED_MISMATCHES = {
         "functional maps, while HOL is word-indexed with varname = mlstring. "
         "Beyond name representation; keep @[hol] withheld pending exact-carrier "
         "work flapjack-pxn.18.3.5.8.)"
-    ),
-    ("Flapjack/Pancake/PanGlobals.lean", "globalRenameProg"): (
-        "cakeml/pancake/pan_globalsScript.sml",
-        "fperm_def",
-        "flapjack-ds4 (source comparison, bead flapjack-dlc.14) against "
-        "pan_globalsScript.sml:191-214: the seven fperm equations (Dec, Seq, If, "
-        "While, Call with optional rtyp/handler, DecCall, default) match "
-        "globalRenameProg clause-for-clause; fperm recurses only on program "
-        "structure and leaves expression payloads untouched. The mismatch is the "
-        "imported program/expression carrier: HOL fperm maps 'a prog with "
-        "Const : 'a word and mlstring identifiers, while Lean ranges over generic "
-        "Prog α with Exp α.Const : α, Shape.Named : String and String identifiers "
-        "(PanLang.lean:14-28, 226-269). names_as_string can only classify the "
-        "call/decCall FunName arguments (equality/map-key-only); it cannot "
-        "authorize the program carrier, so the tag remains withdrawn pending the "
-        "exact-carrier transformation flapjack-6nn.3.1 / flapjack-pxn.18.3.5.8. "
-        "Direct HOL rows recursive_control / handler / deccall / unchanged / "
-        "fperm_done are in pan_globals_fperm_probe.out and sampled by "
-        "Flapjack/Test/PanGlobalsFpermParity.lean."
-    ),
-    ("Flapjack/Pancake/PanGlobals.lean", "globalRenameDecls"): (
-        "cakeml/pancake/pan_globalsScript.sml",
-        "fperm_decs_def",
-        "flapjack-ds4 (source comparison, bead flapjack-dlc.13) against "
-        "pan_globalsScript.sml:216-221: the three fperm_decs equations ([], "
-        "Function fi::decs renaming fi.name via fperm_name and fi.body via fperm, "
-        "other d::decs unchanged) match globalRenameDecls clause-for-clause. The "
-        "mismatch is the imported declaration carrier: production Decl α contains "
-        "Prog α/Exp α (Const : α, String identifiers) and Shape (Named : String), "
-        "while HOL decl carries word-valued expressions with mlstring identifiers "
-        "and shape (PanLang.lean:14-28, 226-269). names_as_string cannot repair "
-        "the expression/Shape carrier difference, so the tag remains withdrawn "
-        "pending the exact-carrier transformation flapjack-6nn.3.1 / "
-        "flapjack-pxn.18.3.5.8. Direct HOL rows mixed / empty / "
-        "singleton_nonfunction are in pan_globals_fperm_decs_probe.out and sampled "
-        "by Flapjack/Test/PanGlobalsFpermDecsParity.lean."
-    ),
-    ("Flapjack/Pancake/PanGlobals.lean", "globalResortDecls"): (
-        "cakeml/pancake/pan_globalsScript.sml",
-        "resort_decls_def",
-        "flapjack-ds4 (source comparison, bead flapjack-dlc.16) against "
-        "pan_globalsScript.sml:179: the filter order FILTER is_name ++ "
-        "FILTER is_exn_decl ++ FILTER is_decl ++ FILTER is_function matches "
-        "globalResortDecls, and globalDeclIsName/globalDeclIsException/"
-        "globalDeclIsGlobal/globalDeclIsFunction are the HOL predicates. The "
-        "mismatch is the executed Decl α carrier, which is not DeclHOL width: "
-        "production Exp α stores α in Const, HOL ExpHOL width stores BitVec width "
-        "('a word), and names/Shape use String instead of mlstring. "
-        "names_as_string only accounts for the name difference, so the tag "
-        "remains withdrawn pending the exact-carrier transformation "
-        "flapjack-6nn.3.1 / flapjack-pxn.18.3.5.8. Direct HOL rows mixed / "
-        "stable_groups / empty are in pan_globals_resort_decls_probe.out and "
-        "sampled by Flapjack/Test/PanGlobalsResortDeclsParity.lean."
     ),
     ("Flapjack/Pancake/Semantics/CrepSem.lean", "setCrepHolGlobalsW"): (
         "cakeml/pancake/semantics/crepSemScript.sml",

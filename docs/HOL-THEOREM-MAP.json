@@ -75325,30 +75325,6 @@
   },
   {
     "hol_path": "cakeml/pancake/pan_globalsScript.sml",
-    "hol_name": "fperm_decs_def",
-    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
-    "lean_name": "globalRenameDecls",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.13) against pan_globalsScript.sml:216-221: the three fperm_decs equations ([], Function fi::decs renaming fi.name via fperm_name and fi.body via fperm, other d::decs unchanged) match globalRenameDecls clause-for-clause. The mismatch is the imported declaration carrier: production Decl α contains Prog α/Exp α (Const : α, String identifiers) and Shape (Named : String), while HOL decl carries word-valued expressions with mlstring identifiers and shape (PanLang.lean:14-28, 226-269). names_as_string cannot repair the expression/Shape carrier difference, so the tag remains withdrawn pending the exact-carrier transformation flapjack-6nn.3.1 / flapjack-pxn.18.3.5.8. Direct HOL rows mixed / empty / singleton_nonfunction are in pan_globals_fperm_decs_probe.out and sampled by Flapjack/Test/PanGlobalsFpermDecsParity.lean."
-  },
-  {
-    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
-    "hol_name": "fperm_def",
-    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
-    "lean_name": "globalRenameProg",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.14) against pan_globalsScript.sml:191-214: the seven fperm equations (Dec, Seq, If, While, Call with optional rtyp/handler, DecCall, default) match globalRenameProg clause-for-clause; fperm recurses only on program structure and leaves expression payloads untouched. The mismatch is the imported program/expression carrier: HOL fperm maps 'a prog with Const : 'a word and mlstring identifiers, while Lean ranges over generic Prog α with Exp α.Const : α, Shape.Named : String and String identifiers (PanLang.lean:14-28, 226-269). names_as_string can only classify the call/decCall FunName arguments (equality/map-key-only); it cannot authorize the program carrier, so the tag remains withdrawn pending the exact-carrier transformation flapjack-6nn.3.1 / flapjack-pxn.18.3.5.8. Direct HOL rows recursive_control / handler / deccall / unchanged / fperm_done are in pan_globals_fperm_probe.out and sampled by Flapjack/Test/PanGlobalsFpermParity.lean."
-  },
-  {
-    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
-    "hol_name": "resort_decls_def",
-    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
-    "lean_name": "globalResortDecls",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.16) against pan_globalsScript.sml:179: the filter order FILTER is_name ++ FILTER is_exn_decl ++ FILTER is_decl ++ FILTER is_function matches globalResortDecls, and globalDeclIsName/globalDeclIsException/globalDeclIsGlobal/globalDeclIsFunction are the HOL predicates. The mismatch is the executed Decl α carrier, which is not DeclHOL width: production Exp α stores α in Const, HOL ExpHOL width stores BitVec width ('a word), and names/Shape use String instead of mlstring. names_as_string only accounts for the name difference, so the tag remains withdrawn pending the exact-carrier transformation flapjack-6nn.3.1 / flapjack-pxn.18.3.5.8. Direct HOL rows mixed / stable_groups / empty are in pan_globals_resort_decls_probe.out and sampled by Flapjack/Test/PanGlobalsResortDeclsParity.lean."
-  },
-  {
-    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
     "hol_name": "new_main_name_def",
     "lean_path": "Flapjack/Pancake/PanGlobals.lean",
     "lean_name": "newMainNameHOL",
@@ -87877,78 +87853,6 @@
     "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.30.1) compared pan_globalsProofScript.sml:737-742 (local): v <> v ^ «'» over the exact MlS (mlstring) carrier, ^ as the untagged mlstrAppend (implode of appended explodes, as used by the tagged fresh_name_def port) and «'» as ofString \"'\"; same free variable. Coordinator source review pending."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "evaluate_decls_functions_wf",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShapeInfrastructure.lean",
-    "lean_name": "evaluateDeclsFunctionsWf",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.7): HOL pan_globalsProofScript.sml:2367 declares evaluate_decls_functions_wf[local] over the exact panSem evaluate_decls and exact panLang decl/shape carriers, and it is [local] so not exported by the theory. The Lean evaluateDeclsFunctionsWf is stated over the production PanSemDeclarationState/Decl/isWfShape String/Shape carriers. The @[hol] tag was withdrawn; the public consequence evaluate_decls_functions is the exact port (evaluateDeclsHOLFinite_functions)."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShapeInfrastructure.lean",
-    "lean_name": "globalCompileDecs_result_shapes_wf",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShapeInfrastructure.lean",
-    "lean_name": "globalDeclsFilter_all_of_all",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShapeInfrastructure.lean",
-    "lean_name": "globalDeclsFilter_isException_all_shapes",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShapeInfrastructure.lean",
-    "lean_name": "globalFindFunction_mem",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShapeInfrastructure.lean",
-    "lean_name": "globalRenameDecls_all_of_body_compiled",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShapeInfrastructure.lean",
-    "lean_name": "globalResortDecls_all_of_renamed",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShapeInfrastructure.lean",
-    "lean_name": "globalResortDecls_all_shapes",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShapeInfrastructure.lean",
-    "lean_name": "mem_globalDeclsFilter_original",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShapeValueEval.lean",
     "lean_name": "evalShapeValNone",
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -89104,14 +89008,6 @@
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
     "lean_name": "evalPanValueDeclarationsWithStructs_only_funs_and_exn_decls",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
-    "lean_name": "evalPanValueDeclarationsWithStructs_resortDecls",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },

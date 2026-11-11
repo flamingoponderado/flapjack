@@ -1,11 +1,11 @@
 module
 
 public import Flapjack.Pancake.PanGlobals.CompileTopExact
-public import Flapjack.Pancake.PanGlobalsByteRanged
+public import Flapjack.Pancake.PanGlobals
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.Pancake.PanGlobals.CompileTopExact
-public meta import Flapjack.Pancake.PanGlobalsByteRanged
+public meta import Flapjack.Pancake.PanGlobals
 public meta import Flapjack.Pancake.PanLang.Decl
 @[expose] public section
 

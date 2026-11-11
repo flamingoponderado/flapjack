@@ -9,28 +9,31 @@ public meta import Flapjack.Pancake.Proofs.PanGlobals
 namespace Flapjack.Test.PanGlobalsFunctionPreservationParity
 
 open Flapjack
+open Flapjack.Basis.Pure.MlString (ofString toStringOfBytes)
+open Flapjack.Pancake.PanLang
 
 /-! Executable observations corresponding to the HOL lemmas `resort_decls_preserve_functions`
     (`pan_globalsProofScript.sml:2055`) and `fperm_decs_FILTER_is_function`
-    (`pan_globalsProofScript.sml:2032`). -/
+    (`pan_globalsProofScript.sml:2032`), replayed on the tagged exact
+    `resortDeclsHOL`/`fpermDecsHOL` twins. -/
 
-def functionDeclaration : Decl Nat :=
+def functionDeclaration : DeclHOL 64 :=
   .function
-    { name := "f", inline := false, exported := false, params := [],
+    { name := ofString "f", inline := false, exported := false, params := [],
       body := .skip, returnShape := .one }
 
-def declarations : List (Decl Nat) :=
+def declarations : List (DeclHOL 64) :=
   [functionDeclaration,
-   .decl (.comb [.one, .named "S"]) "g" (.const 7),
-   .name "S" [], .exnDecl "E" (.named "T"),
-   .decl .one "h" (.const 9)]
+   .decl (.comb [.one, .named (ofString "S")]) (ofString "g") (.const 7),
+   .name (ofString "S") [], .exnDecl (ofString "E") (.named (ofString "T")),
+   .decl .one (ofString "h") (.const 9)]
 
 def functionPreservationGuard : Bool :=
-  ((functions (globalResortDecls declarations)).map (fun entry => entry.1) ==
-      ["f"]) &&
-    ((functions (globalRenameDecls "f" "b"
-        (globalDeclsFilter globalDeclIsFunction declarations))).map
-      (fun entry => entry.1) == ["b"])
+  (((functionsHOL (resortDeclsHOL (width := 64) declarations)).map
+      (fun entry => toStringOfBytes entry.1)) == ["f"]) &&
+    (((functionsHOL (fpermDecsHOL (width := 64) (ofString "f") (ofString "b")
+        (List.filter isFunctionHOL declarations))).map
+      (fun entry => toStringOfBytes entry.1)) == ["b"])
 
 #guard functionPreservationGuard
 

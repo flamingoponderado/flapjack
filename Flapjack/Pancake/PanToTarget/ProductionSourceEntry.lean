@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
-public import Flapjack.Pancake.PanGlobalsByteRanged
+public import Flapjack.Pancake.PanGlobals
 public import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
 public import Flapjack.CompileFunctionDistinct
 public import Flapjack.Pancake.CrepToLoop.ProductionCompileProg

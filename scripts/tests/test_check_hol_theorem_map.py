@@ -173,41 +173,22 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         )
 
     def test_pan_globals_transformation_carrier_mismatches_are_documented(self):
-        cases = {
-            ("Flapjack/Pancake/PanGlobals.lean", "globalRenameProg"): (
-                "cakeml/pancake/pan_globalsScript.sml",
-                "fperm_def",
-            ),
-            ("Flapjack/Pancake/PanGlobals.lean", "globalRenameDecls"): (
-                "cakeml/pancake/pan_globalsScript.sml",
-                "fperm_decs_def",
-            ),
-            ("Flapjack/Pancake/PanGlobals.lean", "globalResortDecls"): (
-                "cakeml/pancake/pan_globalsScript.sml",
-                "resort_decls_def",
-            ),
-        }
         inventory = {
             (record["lean_path"], record["lean_name"]): record
             for record in MAP["build_inventory"]()
         }
         tagged = MAP["tagged_declarations"]()
-        for key, (hol_path, hol_name) in cases.items():
-            with self.subTest(lean_name=key[1]):
-                record = inventory[key]
-                self.assertEqual(
-                    (record["hol_path"], record["hol_name"]),
-                    (hol_path, hol_name),
-                )
-                self.assertEqual(record["statement_status"], "documented_mismatch")
-                self.assertIn("flapjack-6nn.3.1", record["reviewer"])
-                self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
-                self.assertNotIn(key, tagged)
-        # The generic-α dec_shapes/new_main_name production forms are retired;
-        # the HOL declarations stay mapped by the exact tagged twins.
-        for key in (("Flapjack/Pancake/PanGlobals.lean", "globalNewMainName"),
+        # The generic-α fperm/resort production forms are retired; the HOL
+        # declarations stay mapped by the exact tagged twins.
+        for key in (("Flapjack/Pancake/PanGlobals.lean", "globalRenameProg"),
+                    ("Flapjack/Pancake/PanGlobals.lean", "globalRenameDecls"),
+                    ("Flapjack/Pancake/PanGlobals.lean", "globalResortDecls"),
+                    ("Flapjack/Pancake/PanGlobals.lean", "globalNewMainName"),
                     ("Flapjack/Pancake/PanGlobals.lean", "globalDeclShapes")):
             self.assertNotIn(key, inventory)
+        self.assertIn(("Flapjack/Pancake/PanGlobals.lean", "fpermHOL"), tagged)
+        self.assertIn(("Flapjack/Pancake/PanGlobals.lean", "fpermDecsHOL"), tagged)
+        self.assertIn(("Flapjack/Pancake/PanGlobals.lean", "resortDeclsHOL"), tagged)
         self.assertIn(("Flapjack/Pancake/PanGlobals.lean", "decShapesHOL"), tagged)
         self.assertIn(("Flapjack/Pancake/PanGlobals.lean", "newMainNameHOL"), tagged)
 
