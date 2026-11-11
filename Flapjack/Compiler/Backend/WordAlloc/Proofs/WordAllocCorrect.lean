@@ -90,7 +90,7 @@ theorem post_to_goal {width : Nat} [NeZero width] {C F : Type} (f : Nat → Nat)
     unfold applyColourLocals at e3
     rcases res with _ | r
     · trivial
-    · cases r <;> first | trivial | exact e3
+    · cases r <;> trivial
 
 open Classical in
 /-- Exact HOL `word_alloc_correct` (`word_allocProofScript.sml:3399-3477`). HOL's
