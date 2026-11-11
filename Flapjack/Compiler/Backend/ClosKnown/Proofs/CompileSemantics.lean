@@ -17,6 +17,12 @@ set_option backward.privateInPublic.warn false
 namespace Flapjack.Compiler.Backend.ClosKnown
 open ClosSem BackendProps
 
+/-- The incremental free-variable pass discards its auxiliary input. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "fvs_compile_uncurry"]
+theorem fvsCompileUncurry {α β : Type} (p : List ClosLang.Exp × β) :
+    (ClosFvs.compileIncSource p : List ClosLang.Exp × List α) =
+      (ClosFvs.removeSource 0 p.1, []) := rfl
+
 private noncomputable abbrev fvsInc : Program → Program := ClosFvs.compileIncSource
 private noncomputable abbrev ticksInc : Program → Program := ClosTicks.compileIncSource
 private noncomputable abbrev letopInc : Program → Program := ClosLetop.compileIncSource

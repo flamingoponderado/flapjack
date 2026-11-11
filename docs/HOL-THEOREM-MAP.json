@@ -129267,6 +129267,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fvs_compile_uncurry",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileSemantics.lean",
+  "lean_name": "fvsCompileUncurry",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fvs_compile_uncurry_typed: the arbitrary expression-list/input-payload pair, independent output-list element type, bound-zero source removal and empty auxiliary output agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_no_Labels",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLabels.lean",
   "lean_name": "knownNoLabels",
