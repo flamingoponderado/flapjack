@@ -160,13 +160,6 @@ theorem evaluateDlet_pattern_factored {C F : Type} [Nonempty C]
   · simpa [emptyEnv, names] using finalEnv
   · simpa [names] using finalInv
 
-/-- The simple-declaration optimization only recognizes a variable pattern
-whose expression is itself a variable. -/
-theorem simpleDlet_some_shape (pattern : Pat) (expr : AstHOL.Exp) (aliasValue : VarN × Ident ModN VarN)
-    (found : simpleDlet pattern expr = some aliasValue) :
-    ∃ name id, pattern = .pvar name ∧ expr = .var id := by
-  cases pattern <;> cases expr <;> simp_all [simpleDlet]
-
 /-- Compiling one value declaration leaves the environment-generation store
 unchanged, including its identifier counter and stored maps. -/
 theorem compileDlet_generationStore (trace : List VarN) (n : Nat) (start : NextIndices)
@@ -375,34 +368,6 @@ theorem evaluateDlet_alias_growing {C F : Type} [Nonempty C]
       globalEnvInv_alias genv name idx nameTrace value stored bound slot related,
       GlobalGrowth.refl genv, invariant, generation, oracForwardRel_refl interp source.evalState⟩
 
-/-- The internal abort-sensitive `Dlet` outcome follows from the expression
-induction hypothesis for both alias and general pattern compilation. -/
-theorem evaluateDlet_growing {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
-    (trace : List VarN) (n : Nat) (compMap : Environment) (gen : EnvironmentGenerationStore)
-    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
-    (safe : ∀ next, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] ≠
-      (next, .err (.abort .typeError)))
-    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
-    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
-    (generation : envGenRel gen source.evalState)
-    (expressionStep : DletExpressionStep interp transform genv start finish other source flat sourceEnv
-      ((AstHOL.patBindings pattern).reverse ++ trace) compMap gen expr)
-    (fits : start.vidx + (match simpleDlet pattern expr with
-      | some _ => 0 | none => (AstHOL.patBindings pattern).length) ≤ finish.vidx) :
-    DletOutcomeGrowing interp transform genv start finish other source flat sourceEnv trace n compMap gen
-      location pattern expr := by
-  cases aliasEq : simpleDlet pattern expr with
-  | none =>
-    exact evaluateDlet_pattern_growing interp transform genv start finish other source flat sourceEnv trace n
-      compMap gen location pattern expr aliasEq safe envInv expressionStep (by simpa [aliasEq] using fits)
-  | some found =>
-    obtain ⟨name, id, rfl, rfl⟩ := simpleDlet_some_shape pattern expr found aliasEq
-    exact evaluateDlet_alias_growing interp transform genv start finish other source flat sourceEnv trace n compMap gen
-      location name id safe envInv invariant generation
-
 /-- The `Dlet` declaration case in the shared factored result shape, using
 the expression simulation and oracle effects supplied by its induction step. -/
 theorem evaluateDlet_case_factored {C F : Type} [Nonempty C]
@@ -437,8 +402,17 @@ theorem evaluateDlet_case_factored {C F : Type} [Nonempty C]
   have fits : start.vidx + (match simpleDlet pattern expr with
       | some _ => 0 | none => (AstHOL.patBindings pattern).length) ≤ finish.vidx := by
     cases found : simpleDlet pattern expr <;> simpa [numBindings.eq_1, found] using slots
-  have outcome := evaluateDlet_growing interp transform genv start finish other source flat sourceEnv trace n
-    env gen location pattern expr safe envInv invariant generation expressionStep fits
+  have outcome : DletOutcomeGrowing interp transform genv start finish other source flat sourceEnv trace n
+      env gen location pattern expr := by
+    cases found : simpleDlet pattern expr with
+    | none =>
+      exact evaluateDlet_pattern_growing interp transform genv start finish other source flat sourceEnv trace n
+        env gen location pattern expr found safe envInv expressionStep (by simpa only [found] using fits)
+    | some binding =>
+      cases pattern <;> cases expr <;> simp only [simpleDlet, reduceCtorEq] at found
+      rename_i name id
+      exact evaluateDlet_alias_growing interp transform genv start finish other source flat sourceEnv trace n
+        env gen location name id safe envInv invariant generation
   unfold DletOutcomeGrowing at outcome
   rw [sourceRun, compiled] at outcome
   obtain ⟨flatLast, finalGenv, flatError, flatRun, states, post⟩ := outcome
