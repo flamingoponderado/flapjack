@@ -27,17 +27,6 @@ namespace Flapjack.Compiler.Backend.LabProps
 
 open Flapjack.Compiler.Backend.LabLang
 
-/-- Imported HOL asm operations needed by `line_ok_pre` and its CBW adapter.
-
-`instMem` constructs the HOL `Inst (Mem op r address)` asm carrier, and
-`asmOk` is the supplied `asm_ok` predicate for the chosen configuration. -/
-structure AsmChecks (Asm Memop Addr Word : Type) where
-  zeroWord : Word
-  addr : Nat → Word → Addr
-  store8 : Memop
-  instMem : Memop → Nat → Addr → Asm
-  asmOk : Asm → Bool
-
 /-- Flapjack-specific Boolean section-label check over generic payloads. -/
 def secEndsWithLabel {AsmOrCbw AsmWithLab Word : Type}
     (sec : Section (Line AsmOrCbw AsmWithLab Word)) : Bool :=
