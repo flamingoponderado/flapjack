@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedControl
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalMatch
+public import Flapjack.Compiler.Backend.FlatProps.PatternMatch
 
 @[expose] public section
 
@@ -123,8 +124,9 @@ theorem boundedEvaluateMatch_related_flatSafe {C F : Type} [Nonempty C]
     | noMatch => simp [flatSelected, MatchRowsRel] at rowRel
     | «match» selectedFlat =>
       obtain ⟨flatBindings, flatPattern, flatBody⟩ := selectedFlat
-      have names := flatPmatchRows_bindingNames flat flatValue (compilePes trace compMap rows)
-        flatBindings flatPattern flatBody flatSelected
+      have names := FlatProps.pmatchBindings.1 flat flatPattern flatValue [] flatBindings
+        (FlatProps.pmatchRows_imp_pmatch (compilePes trace compMap rows) flat flatValue
+          flatBindings flatPattern flatBody flatSelected).1
       simp only [flatSelected, MatchRowsRel] at rowRel
       obtain ⟨bindingsRel, rfl, rfl⟩ := rowRel
       have names : flatBindings.map Prod.fst = patBindings pattern := by simpa [compilePat_bindings] using names
