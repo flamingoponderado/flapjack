@@ -24,9 +24,12 @@ class TargetHelperLinkTests(unittest.TestCase):
         fields = re.findall(r"^  (\w+) :",carrier,re.M)
         relation = (ROOT / "Flapjack/Compiler/Encoders/RiscV/Target/HelperLinks.lean").read_text()
         theorem = relation.split("theorem riscvConfig_checks_projections :",1)[1].split(":= by",1)[0]
-        actual = re.findall(r"riscvConfigForChecks\.(\w+) = riscvConfig\.(\w+)",theorem)
-        self.assertEqual(actual, [(field,field) for field in ["isa","regCount","avoidRegs","fpRegCount","linkReg","twoRegArith","bigEndian","validImm","addrOffset","hwOffset","byteOffset","jumpOffset","cjumpOffset","locOffset","codeAlignment"]])
-        self.assertEqual({a for a,b in actual},set(fields)-{"encode"})
+        projected = re.findall(r"riscvConfig\.(\w+) =",
+                               theorem)
+        self.assertEqual(projected, ["isa","regCount","avoidRegs","fpRegCount","linkReg","twoRegArith","bigEndian","addrOffset","hwOffset","byteOffset","jumpOffset","cjumpOffset","locOffset","codeAlignment"])
+        imm = relation.split("theorem riscvConfig_validImm_checks",1)[1].split(":= by",1)[0]
+        self.assertIn("riscvConfig.validImm operator i =",imm)
+        self.assertEqual(set(projected)|{"validImm"},set(fields)-{"encode"})
         self.assertNotIn("@[hol", relation)
 
 if __name__ == "__main__":
