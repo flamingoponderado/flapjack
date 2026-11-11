@@ -100698,31 +100698,6 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
-    "hol_name": "evaluate_def",
-    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
-    "lean_name": "evalCrepSemHOLProgExact_seq_fixClockFree",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Untagged Flapjack-specific Seq analogue of HOL evaluate_def at crepSemScript.sml:443. Its evaluator is evalCrepSemHOLProgExact; whole-evaluator agreement with HOL evaluate has not yet been reviewed across Call, domain stamping, and FFI. The equation remains useful infrastructure but cannot claim an exact HOL port. Superseded as the evaluator-agreement gap by the tagged assembly evalCrepSemHOLProgExact_eq_evaluate_def (bead flapjack-4ac.5.16.5.37); this clause lemma stays untagged."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
-    "hol_name": "evaluate_def",
-    "hol_line": 443,
-    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
-    "lean_name": "evalCrepSemHOLProgExact_skip",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Coordinator review HOLD flapjack-l60u (2026-09-27): HOL crepSemScript.sml:443 rewrites evaluate_def; its Skip conjunct originates at line 241 and is the unconditional equation evaluate (Skip,s)=(NONE,s). The local evalCrepSemHOLProgExact_skip equation matches that constructor clause, but it only checks the Skip behavior of Flapjack's evalCrepSemHOLProgExact. No source-reviewed theorem establishes agreement of this total evaluator with HOL evaluate across all constructors, including FFI cases, so this constructor equation alone is not tagged as a port of evaluate_def. The tag and reviewed-type lock were withdrawn; the useful local Skip equation remains untagged infrastructure. Faithful evaluator port remains open under flapjack-4ac.5.16.5 and flapjack-4ac.5.16.5.25. Superseded as the evaluator-agreement gap by the tagged assembly evalCrepSemHOLProgExact_eq_evaluate_def (bead flapjack-4ac.5.16.5.37); this clause lemma stays untagged."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
-    "hol_name": "evaluate_def",
-    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
-    "lean_name": "evalCrepSemHOLProgExact_while_fixClockFree",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Untagged Flapjack-specific While analogue of HOL evaluate_def at crepSemScript.sml:443. Its evaluator is evalCrepSemHOLProgExact; whole-evaluator agreement with HOL evaluate has not yet been reviewed across Call, domain stamping, and FFI. The equation remains useful infrastructure but cannot claim an exact HOL port. Superseded as the evaluator-agreement gap by the tagged assembly evalCrepSemHOLProgExact_eq_evaluate_def (bead flapjack-4ac.5.16.5.37); this clause lemma stays untagged."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "exit_loop_def",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "exitLoopCrepResult",

@@ -4619,8 +4619,9 @@ eliminates it using `fix_clock_evaluate` (`:432-437`), giving a plain
 evaluator by rewriting the reviewed line-240 `Seq` equation with the exact
 `fixClockCrepSemHOL_evalCrepSemHOLProgExact` identity (bead
 `flapjack-4ac.5.16.5.25`). This is a Flapjack-specific analogue, not a tagged
-port: whole-evaluator agreement with HOL `evaluate` remains unreviewed, including
-the exact Call equation, domain stamping, and FFI behavior. -/
+port: HOL's `evaluate_def` is mapped by the tagged assembly
+`evalCrepSemHOLProgExact_eq_evaluate_def`, and this clause lemma is kept as
+untagged Flapjack-specific infrastructure with no manifest row. -/
 theorem evalCrepSemHOLProgExact_seq_fixClockFree {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ) (first second : CrepProgHOL width) :
     evalCrepSemHOLProgExact state (.seq first second) =
@@ -4644,9 +4645,10 @@ line-240 `While` equation `evalCrepSemHOLProgExact_while_unstamped` with the
 exact `fixClockCrepSemHOL_evalCrepSemHOLProgExact` identity (bead
 `flapjack-4ac.5.16.5.25`). The statement must keep a named match on the
 unfixed body run so both sides are syntactically identical named matches.
-This is a Flapjack-specific analogue, not a tagged port: whole-evaluator
-agreement with HOL `evaluate` remains unreviewed, including the exact Call
-equation, domain stamping, and FFI behavior. -/
+This is a Flapjack-specific analogue, not a tagged port: HOL's `evaluate_def`
+is mapped by the tagged assembly `evalCrepSemHOLProgExact_eq_evaluate_def`, and
+this clause lemma is kept as untagged Flapjack-specific infrastructure with no
+manifest row. -/
 theorem evalCrepSemHOLProgExact_while_fixClockFree {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ) (condition : CrepExpHOL width)
     (body : CrepProgHOL width) :
