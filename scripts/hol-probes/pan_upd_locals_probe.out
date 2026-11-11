@@ -27,3 +27,27 @@ fix_clock_IMP_LESS_EQ_hypotheses=0
 res_var_def_typed=res_var (lc :α |-> β) ((n :α),(NONE :β option)) = lc \\ n ∧
 res_var lc (n,SOME (v :β)) = lc⟨n ↦ v⟩
 res_var_def_hypotheses=0
+sh_mem_store_def_typed=∀(w :γ word) (addr :α word) (nb :num) (s :(α, 'ffi) state).
+  (sh_mem_store w addr nb s :β result option # (α, 'ffi) state) =
+  if nb = (0 :num) then
+    if addr ∈ s.sh_memaddrs then
+      case
+        call_FFI s.ffi (SharedMem MappedWrite) [(n2w nb :word8)]
+          (word_to_bytes w F ++ word_to_bytes addr F)
+      of
+        FFI_return new_ffi new_bytes =>
+          ((NONE :β result option),s with ffi := new_ffi)
+      | (FFI_final outcome :'ffi ffi_result) =>
+        (SOME (FinalFFI outcome :β result),s)
+    else (SOME (Error :β result),s)
+  else if byte_align addr ∈ s.sh_memaddrs then
+    case
+      call_FFI s.ffi (SharedMem MappedWrite) [(n2w nb :word8)]
+        (TAKE nb (word_to_bytes w F) ++ word_to_bytes addr F)
+    of
+      FFI_return new_ffi new_bytes =>
+        ((NONE :β result option),s with ffi := new_ffi)
+    | (FFI_final outcome :'ffi ffi_result) =>
+      (SOME (FinalFFI outcome :β result),s)
+  else (SOME (Error :β result),s)
+sh_mem_store_def_hypotheses=0

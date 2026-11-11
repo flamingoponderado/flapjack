@@ -509,6 +509,39 @@ theorem shMemLoadHOLFiniteExact_toExact {width : Nat} {σ : Type} [NeZero width]
           simp [shMemLoadHOLFiniteExact, shMemLoadHOLExact, hnb, haddr, hffi]
     · simp [shMemLoadHOLFiniteExact, shMemLoadHOLExact, hnb, haddr]
 
+/-- HOL `sh_mem_store_def` (`cakeml/pancake/semantics/panSemScript.sml:529-547`)
+    over the finite-map state carrier.  The typed HOL statement quantifies the
+    stored word and the address at independent word types (`w :γ word`,
+    `addr :α word`, state `(α,'ffi)`), so the exact twin keeps two widths; the
+    production `shMemStoreHOLExact` uses a single width.  The branches follow
+    HOL directly: test the raw address when `nb = 0`, otherwise the byte-aligned
+    address; call `call_FFI` with `SharedMem MappedWrite`, `[n2w nb]`, and the
+    stored word's bytes followed by the address bytes (truncated to `nb` in the
+    second branch); on `FFI_final` return `FinalFFI`, on `FFI_return` update only
+    `ffi`, otherwise `Error`.  The four map fields use the canonical
+    finite-support carrier recorded by the tag. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "sh_mem_store_def"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+def shMemStoreHOLFiniteExact {w : Nat} [NeZero w] {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs]
+    (word : RiscV.Word w) (address : RiscV.Word width) (nb : Nat) :
+    Option (PanSemResultExact width) × PanSemStateFiniteExact width σ :=
+  if nb = 0 then
+    if state.shMemaddrs address then
+      match callFFIHOL state.ffi (.sharedMem .mappedWrite) [BitVec.ofNat 8 nb]
+          (panWordToBytesHOL word false ++ panWordToBytesHOL address false) with
+      | .final event => (some (.finalFfi event), state)
+      | .ret newFfi _ => (none, { state with ffi := newFfi })
+    else (some .error, state)
+  else
+    if state.shMemaddrs (panByteAlignHOL address) then
+      match callFFIHOL state.ffi (.sharedMem .mappedWrite) [BitVec.ofNat 8 nb]
+          ((panWordToBytesHOL word false).take nb ++ panWordToBytesHOL address false) with
+      | .final event => (some (.finalFfi event), state)
+      | .ret newFfi _ => (none, { state with ffi := newFfi })
+    else (some .error, state)
+
 /-- Flapjack-specific proof-irrelevance bridge for the finite/broad carrier
     roundtrip. HOL has no declaration for this proof plumbing. -/
 private theorem ofExact_eq_finite_of_toExact_eq {width : Nat} {σ : Type}

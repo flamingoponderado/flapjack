@@ -134667,5 +134667,20 @@
     "statement_status": "reviewed_fmap_as_finite_support_result",
     "fmap_as_finite_support_result": true,
     "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.3.41; panSemScript.sml:505-508: typed capture res_var_def_typed in pan_upd_locals_probe.out gives res_var (lc :\u03b1 |-> \u03b2) ((n :\u03b1),(NONE :\u03b2 option)) = lc \\\\ n \u2227 res_var lc (n,SOME (v :\u03b2)) = lc\u27e8n \u21a6 v\u27e9, 0 hypotheses). Lean keeps both HOL clauses and the map-level carrier: \\\\ is eraseEq (FDOMSUB_HOL) and \u27e8n \u21a6 v\u27e9 is updateEq (FUPDATE_HOL) on HolFiniteMapExact \u03b1 \u03b2, with DecidableEq \u03b1 as HOL key equality. The same-module witness holFmapAsFiniteSupportResultWitness_resVarHOLFinite states the lookup correspondence with the raw FDOMSUB_HOL/FUPDATE_HOL operations. The production function-backed resVarHOLExact stays untagged with its documented_mismatch row. Qualifier is representation-only."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "sh_mem_store_def",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "shMemStoreHOLFiniteExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.3.43; panSemScript.sml:529-547: typed capture sh_mem_store_def_typed in pan_upd_locals_probe.out gives \u2200(w :\u03b3 word) (addr :\u03b1 word) (nb :num) (s :(\u03b1,'ffi) state). sh_mem_store w addr nb s :\u03b2 result option # (\u03b1,'ffi) state = if nb = 0 then if addr \u2208 s.sh_memaddrs then case call_FFI s.ffi (SharedMem MappedWrite) [(n2w nb :word8)] (word_to_bytes w F ++ word_to_bytes addr F) of FFI_return new_ffi _ => (NONE, s with ffi := new_ffi) | FFI_final outcome => (SOME (FinalFFI outcome), s) else (SOME Error, s) else if byte_align addr \u2208 s.sh_memaddrs then (same call with TAKE nb (word_to_bytes w F) ++ word_to_bytes addr F) else (SOME Error, s), 0 hypotheses). Lean keeps every branch, the two FFI outcomes and the ffi-only update; the stored word keeps its own width \u03b3 (Lean {w} [NeZero w]) separate from the address/state width, matching HOL's independent type variables; byte_align is panByteAlignHOL, word_to_bytes is panWordToBytesHOL, TAKE is List.take, call_FFI is callFFIHOL. The map fields locals/globals/code/eshapes are the canonical HolFiniteMapExact translation (witness holFmapAsFiniteSupportWitness). The production single-width shMemStoreHOLExact stays untagged with its documented_mismatch row. Qualifier is representation-only."
   }
 ]

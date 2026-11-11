@@ -56,3 +56,10 @@ val _ = (print "res_var_def_typed=";
   print "\n");
 val _ = print ("res_var_def_hypotheses=" ^
   Int.toString (length (hyp panSemTheory.res_var_def)) ^ "\n");
+
+val _ = (print "sh_mem_store_def_typed=";
+  Lib.with_flag (Globals.show_types, true)
+    print_term (concl panSemTheory.sh_mem_store_def);
+  print "\n");
+val _ = print ("sh_mem_store_def_hypotheses=" ^
+  Int.toString (length (hyp panSemTheory.sh_mem_store_def)) ^ "\n");

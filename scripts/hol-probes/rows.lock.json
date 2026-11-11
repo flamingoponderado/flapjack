@@ -1218,7 +1218,7 @@
     {"bytes": 2177, "out": "pan_to_word_semantics_probe.out", "rows": 3, "sha256": "258b57880f9c0d856727ef4a75c66f51eb8e82756bad2ba8325f0ffa7ba4c7ea"},
     {"bytes": 1078, "out": "pan_to_word_structs_names_probe.out", "rows": 4, "sha256": "80b3214176dca881470e983f3d255e0a6254f7e555d6c3463c84d2b61eb7766b"},
     {"bytes": 2465, "out": "pan_to_word_structural_probe.out", "rows": 6, "sha256": "d0c709eaa41c008cf6548b6b729abd550e2b289919a7e933ab9a395c826b1399"},
-    {"bytes": 1421, "out": "pan_upd_locals_probe.out", "rows": 10, "sha256": "58f18664446b7c1c46c0eea94e6d3bd059bb523d16d12e1c37fa9cefb0f19654"},
+    {"bytes": 2447, "out": "pan_upd_locals_probe.out", "rows": 12, "sha256": "228f067ae878e1bb4353a52ac21dae7fba6905546a99f99d730cc59b73f00bd2"},
     {"bytes": 72, "out": "pan_word_helpers_probe.out", "rows": 5, "sha256": "ec81a37a0f09d6db89e1355d748778f24cdb3fe348574e8300d229a2f2243d1c"},
     {"bytes": 513, "out": "pan_word_of_bytes_overlong_probe.out", "rows": 17, "sha256": "413f95c14359ac90e03392a24a7149c10183db056e5fe0c94457c3b1e5995b5b"},
     {"bytes": 290, "out": "pancake_backend_conf_probe.out", "rows": 3, "sha256": "a867530c524a69581fcad519efe2be60d50f49fd898b974a67d91957458d3540"},
