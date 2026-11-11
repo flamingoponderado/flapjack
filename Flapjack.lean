@@ -859,6 +859,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeGrowth
 import Flapjack.Misc.SuccSet
 import Flapjack.Compiler.Backend.ClosCall.Proofs.InstallSimulation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.CallsCorrect
+import Flapjack.Compiler.Backend.ClosCall.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FiniteMap
 import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
 import Flapjack.Compiler.Backend.BviInline

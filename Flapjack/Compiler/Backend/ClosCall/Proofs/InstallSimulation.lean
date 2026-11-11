@@ -21,7 +21,7 @@ theorem holFmapAsFiniteSupportRelationWitness_ClosSem.State {C F : Type} :
 
 /-- HOL uses distinct-key update commutation to reverse the update list in
 its installation proof; this is the corresponding lookup-side calculation. -/
-private theorem updateList_reverse_distinct {K V : Type} [DecidableEq K] (m : FiniteMap K V)
+theorem updateList_reverse_distinct {K V : Type} [DecidableEq K] (m : FiniteMap K V)
     (xs : List (K × V)) (distinct : (xs.map Prod.fst).Nodup) :
     FUPDATE_LIST_HOL m xs = FUPDATE_LIST_HOL m xs.reverse := by
   induction xs generalizing m with

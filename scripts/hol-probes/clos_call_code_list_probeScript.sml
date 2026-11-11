@@ -79,6 +79,9 @@ val code_locs_code_list_mem_replay = prove
    rw [] >> EVAL_TAC >> rw [EQ_IMP_THM] >> fs [Once closPropsTheory.code_locs_cons, closPropsTheory.code_locs_def]);
 val _ = (print "code_locs_code_list_mem_replay_type="; Lib.with_flag (Globals.show_types,true) print_term (concl code_locs_code_list_mem_replay); print "\n");
 val _ = (print "oracle_monotonic_init_union_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.oracle_monotonic_init_UNION); print "\n");
+val _ = (print "fupdate_list_type="; Lib.with_flag (Globals.show_types,true) print_term (concl finite_mapTheory.FUPDATE_LIST); print "\n");
+val _ = (print "semantics_calls_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.semantics_calls); print "\n");
+val _ = (print "semantics_compile_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.semantics_compile); print "\n");
 val _ = (print "calls_correct_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_correct); print "\n");
 val entry = EVAL ``clos_call$code_list 10 [(2,closLang$Var None 4);(0,closLang$Var None 9);(1,closLang$Var None 2)] (sptree$LN,[(90,3,closLang$Var None 0)])``;
 val _ = (print "example="; print_term (rhs (concl entry)); print "\n");

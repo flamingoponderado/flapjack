@@ -3429,7 +3429,8 @@ private theorem forceThunkCase {C F : Type} (trace : BackendCommon.Tra)
                           simp only
                           rw [targetValuesEq, targetUpdate]
                         · exact .cons forcedRelated .nil
-private theorem alistToFmapLookup {V : Type} (entries : List (Nat × V)) (key : Nat) :
+/-- Flapjack-specific lookup correspondence used when initializing code invariants. -/
+theorem alistToFmapLookup {V : Type} (entries : List (Nat × V)) (key : Nat) :
     (HolFiniteMapExact.alistToFmap entries).lookup key = holALookup entries key := by
   induction entries with
   | nil => simp [HolFiniteMapExact.alistToFmap, HolFiniteMapExact.empty, holALookup]

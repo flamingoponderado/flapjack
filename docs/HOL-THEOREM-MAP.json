@@ -642,6 +642,22 @@
   "reviewer": "Source comparison: the typed original preserves independent oracle and element types, function and relation arguments, both initial sets and the full union equivalence."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "semantics_calls",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Semantics.lean", "lean_name": "semanticsCalls",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.holUpdateList"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: compared the complete typed semantics_calls statement, including nonfailure, compilation, syntax, oracle and code invariant premises, and the target-to-source behavior equality. The holEmpty and holUpdateList producers represent HOL empty and list-updated finite maps. The evaluator inherits reals_as_rational_cuts and the real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "semantics_compile",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Semantics.lean", "lean_name": "semanticsCompile",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.holUpdateList"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: compared the complete typed semantics_compile statement, including nonfailure, compilation and both enabled/disabled callback and oracle conditions, and the target-to-source behavior equality. The holEmpty and holUpdateList producers represent HOL empty and list-updated finite maps. The evaluator inherits reals_as_rational_cuts and the real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_correct",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CallsCorrect.lean", "lean_name": "callsCorrect",
   "statement_status": "reviewed_fmap_as_finite_support_relation",
@@ -15985,6 +16001,15 @@
   "fmap_as_finite_support_result": true,
   "reviewer": "Source comparison: Compared fempty_typed and flookup_empty_typed: HOL's empty finite map is polymorphic independently in key and value types and has no binding at any key. The result is the canonical finite-support carrier; the local unconditional lookup witness compares it with the independent raw empty-map codec."
 },
+  {
+    "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
+    "hol_name": "FUPDATE_LIST",
+    "lean_path": "Flapjack/FiniteMap/UpdateListExact.lean",
+    "lean_name": "holUpdateList",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "Source comparison: compared the polymorphic FUPDATE_LIST definition and its typed fold: both input and result use the canonical finite-support map and entries update left to right using HOL equality. The unconditional lookup witness compares the result with the independent raw update fold."
+  },
   {
     "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
     "hol_name": "FUNION_DEF",
