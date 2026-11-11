@@ -110,9 +110,23 @@ private theorem factoredDecBoundedIH_dmod {C F : Type} [Nonempty C]
   have inner := innerIH genv env innerEnv sourceEnv (moduleName :: trace) source innerLast flat start finish
     innerNext other n innerN gen innerGen innerCode innerResult clockBound innerRun invariant innerCompiled envInv innerSafe
     generation future bounded
-  cases innerResult <;>
-    exact factoredDecCase_liftModule interp transform genv source innerLast flat finish innerNext other innerGen
-      innerEnv moduleName innerCode _ inner
+  cases innerResult with
+  | err error =>
+    exact factoredDecCase_error_changeEnv interp transform genv source innerLast flat finish innerNext other
+      innerGen innerEnv (liftEnv moduleName innerEnv) innerCode error inner
+  | val returnedEnv =>
+    obtain ⟨finalState, finalGenv, flatError, flatRun, states, post, success, _⟩ := inner
+    refine ⟨finalState, finalGenv, flatError, flatRun, states, post, ?_, ?_⟩
+    · intro resultEnv same
+      cases same
+      obtain ⟨noError, ⟨values, valueModules, constructors, constructorModules⟩, finalGen, finalInv⟩ :=
+        success returnedEnv rfl
+      exact ⟨noError, ⟨nsDom_lift_eq moduleName _ _ values,
+        nsDomMod_lift_eq moduleName _ _ valueModules, nsDom_lift_eq moduleName _ _ constructors,
+        nsDomMod_lift_eq moduleName _ _ constructorModules⟩, finalGen,
+        globalEnvInv_lift finalGenv moduleName innerEnv returnedEnv finalInv⟩
+    · intro error impossible
+      cases impossible
 
 private theorem factoredDecBoundedIH_dlocal {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
