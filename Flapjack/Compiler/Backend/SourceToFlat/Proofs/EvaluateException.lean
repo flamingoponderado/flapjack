@@ -285,10 +285,10 @@ theorem factoredDecBoundedIH_dexn {C F : Type} [Nonempty C]
   · intro resultEnv same
     cases same
     obtain ⟨values, valueModules⟩ := alistToNs_domains_eq (M := ModN) (N := VarN)
-      (V := VarName) (W := Value) [] [] rfl
+      (V := VarName) (W := Value) [] [] (fun _ => Iff.rfl)
     obtain ⟨ctors, ctorModules⟩ := alistToNs_domains_eq (M := ModN)
       [(name, (start.eidx, (none : Option (Nat × List (Nat × Nat)))))]
-      [(name, (types.length, Stamp.exnStamp source.nextExnStamp))] rfl
+      [(name, (types.length, Stamp.exnStamp source.nextExnStamp))] (fun _ => Iff.rfl)
     exact ⟨rfl, ⟨values, valueModules, ctors, ctorModules⟩, generation,
       globalEnvInv_exception genv name start.eidx types.length source.nextExnStamp⟩
   · intro error impossible

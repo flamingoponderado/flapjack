@@ -44,34 +44,6 @@ theorem compileFuns_names (trace : List VarN) (env : Environment)
     (compileFuns trace env funs).map Prod.fst = funs.map Prod.fst := by
   simp [compileFuns_map, List.map_map, Function.comp_def]
 
-/-- The compiled recursive group and source recursive environment have the
-same value and module domains. -/
-theorem dletrec_envDomainEq (env : Environment) (sourceEnv : SemEnv Value) (trace : List VarN)
-    (n : Nat) (start : NextIndices) (gen : EnvironmentGenerationStore)
-    (location : Flapjack.Misc.Location.Locs) (funs : List (VarN × VarN × AstHOL.Exp)) :
-    EnvDomainEq (compileDecs trace n start env gen [.dletrec location funs]).2.2.1
-      ⟨SemanticPrimitivesHOL.buildRecEnv funs sourceEnv nsEmpty, nsEmpty⟩ := by
-  simp only [compileDecs, Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs (),
-    (nsAppend_nsEmpty _).1, List.map_map, Function.comp_def]
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · funext id
-    apply propext
-    cases id with
-    | short name =>
-      simp only [nsDom, alistToNs, nsLookup]
-      rw [Flapjack.lookup_exists_iff_mem_keys, Flapjack.lookup_exists_iff_mem_keys, fst_allocDefs]
-      simp [List.map_map, Function.comp_def]
-    | long moduleName id => simp [nsDom, alistToNs, nsLookup]
-  · funext path
-    apply propext
-    cases path <;> simp [nsDomMod, alistToNs, nsLookupMod]
-  · funext id
-    apply propext
-    cases id <;> simp [nsDom, nsLookup, nsEmpty]
-  · funext path
-    apply propext
-    cases path <;> simp [nsDomMod, nsLookupMod, nsEmpty]
-
 /-- A safe recursive declaration preserves the factored compiler invariant
 after filling its reserved globals. Its relations and evaluator carriers
 still need review against HOL's full `compile_correct` statement. -/
@@ -158,13 +130,21 @@ theorem evaluateDletrec_factored {C F : Type} [Nonempty C]
   constructor
   · simp [EvaluateHOL.evaluateDecs, distinct, wellformed]
   refine ⟨finalGenv, finalState, ?_, growth, stateResult,
-    dletrec_envDomainEq env sourceEnv trace n start gen location funs, ?_, ?_, ?_, oracForwardRel_refl interp _⟩
+    ?_, ?_, ?_, ?_, oracForwardRel_refl interp _⟩
   · have beforeClock := ((stateRel_iff genv sourceState flatState).mp invariant.2.2.1).2.2.1
     have afterClock := ((stateRel_iff finalGenv sourceState finalState).mp stateResult).2.2.1
     have clock : finalState.clock = flatState.clock := afterClock.symm.trans beforeClock
     simp only [compileDecs, FlatSem.evaluateDecs, FlatSem.evaluate, compileFuns_names, distinct, if_true]
     rw [bodyRun]
     simp [FlatSem.fixClock, ← clock, FlatSem.unitValue]
+  · simp only [compileDecs, Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs (),
+      (nsAppend_nsEmpty _).1]
+    obtain ⟨values, valueModules⟩ := alistToNs_domains_eq (M := ModN)
+      (allocDefs (n + 1) start.vidx (funs.map Prod.fst).reverse)
+      (funs.map (fun fn => (fn.1, Value.recclosure sourceEnv funs fn.1))) (by
+        intro key
+        simp [fst_allocDefs, List.map_map, Function.comp_def])
+    exact ⟨values, valueModules, envDomainEq_empty.2.2⟩
   · simpa only [compileDecs, Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs (),
       (nsAppend_nsEmpty _).1, List.map_map, Function.comp_def, ← nameShape, List.map_reverse, emptyEnv,
       sourceBindings, allocDefs_ignoreCounter _ (n + 1) 0 start.vidx] using envResult'

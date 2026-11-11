@@ -76,41 +76,6 @@ theorem globalEnvInv_alias (genv : GlobalEnv) (name : VarN) (idx : Nat) (trace :
   · intro id arity stamp lookup
     cases id <;> simp [nsLookup, nsEmpty] at lookup
 
-/-- Allocating a binding for every distinct source pattern name preserves
-the value and module domains of the source binding environment. -/
-theorem envDomainEq_patternBindings (genv : GlobalEnv)
-    (bindings : List (VarN × Value)) (flatBindings : List (VarN × FlatSem.Value))
-    (pattern : Pat) (n base : Nat)
-    (related : EnvRel genv (alistToNs bindings) flatBindings)
-    (names : flatBindings.map Prod.fst = AstHOL.patBindings pattern) :
-    EnvDomainEq { emptyEnv with v := alistToNs (allocDefs n base (AstHOL.patBindings pattern).reverse) }
-      ⟨alistToNs bindings, nsEmpty⟩ := by
-  have namesRelated : bindings.map Prod.fst = flatBindings.map Prod.fst := by
-    have pairs := (envRel_alist_iff genv bindings flatBindings).mp related
-    clear related names
-    induction pairs with
-    | nil => rfl
-    | cons head tail ih => simp only [List.map_cons, head.1, ih]
-  have namesEq : bindings.map Prod.fst = AstHOL.patBindings pattern := namesRelated.trans names
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · funext id
-    apply propext
-    cases id with
-    | short name =>
-      simp only [nsDom, alistToNs, nsLookup]
-      rw [Flapjack.lookup_exists_iff_mem_keys, Flapjack.lookup_exists_iff_mem_keys, fst_allocDefs, namesEq]
-      simp
-    | long moduleName id => simp [nsDom, alistToNs, nsLookup]
-  · funext path
-    apply propext
-    cases path <;> simp [nsDomMod, alistToNs, nsLookupMod]
-  · funext id
-    apply propext
-    cases id <;> simp [emptyEnv, nsDom, nsLookup, nsEmpty]
-  · funext path
-    apply propext
-    cases path <;> simp [emptyEnv, nsDomMod, nsLookupMod, nsEmpty]
-
 /-- A simple variable declaration reuses the original global binding and
 emits no flat declarations. The source and flat states stay related; the
 returned environments retain the factored global invariant. -/
@@ -215,7 +180,17 @@ theorem evaluateDlet_pattern_factored {C F : Type} [Nonempty C]
     · rw [types]; exact fun _ _ h => h
   have related' := envRel_growth genv finalGenv growth _ _ related
   have finalEnv := envResult bindings (n + 4) related'
-  have domain := envDomainEq_patternBindings genv bindings flatBindings pattern (n + 4) start.vidx related names
+  have domain : EnvDomainEq
+      { emptyEnv with v := alistToNs (allocDefs (n + 4) start.vidx (AstHOL.patBindings pattern).reverse) }
+      ⟨alistToNs bindings, nsEmpty⟩ := by
+    obtain ⟨entries, entriesEq, entriesNames⟩ := envRel_dom genv (alistToNs bindings) flatBindings related
+    simp only [alistToNs, Namespace.bind.injEq, and_true] at entriesEq
+    subst entries
+    obtain ⟨values, valueModules⟩ := alistToNs_domains_eq (M := ModN)
+      (allocDefs (n + 4) start.vidx (AstHOL.patBindings pattern).reverse) bindings (by
+        intro key
+        simp [fst_allocDefs, entriesNames, names])
+    exact ⟨values, valueModules, envDomainEq_empty.2.2⟩
   refine ⟨finalGenv, finalFlat, ?_, ?_, ?_, growth, finalInv.2.2.1, domain, ?_, ?_⟩
   · simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, matched,
       EvaluateHOL.headValue, Flapjack.holHd]
@@ -677,9 +652,9 @@ theorem evaluateDlet_alias_growing {C F : Type} [Nonempty C]
     unfold DletOutcome
     rw [sourceDec, compiled]
     obtain ⟨values, valueModules⟩ := alistToNs_domains_eq (M := ModN)
-      [(name, VarName.glob nameTrace idx)] [(name, value)] rfl
+      [(name, VarName.glob nameTrace idx)] [(name, value)] (fun _ => Iff.rfl)
     obtain ⟨ctors, ctorModules⟩ := alistToNs_domains_eq (M := ModN) (N := ConN)
-      (V := Nat × Option (Nat × List (Nat × Nat))) (W := Nat × Stamp) [] [] rfl
+      (V := Nat × Option (Nat × List (Nat × Nat))) (W := Nat × Stamp) [] [] (fun _ => Iff.rfl)
     exact ⟨flat, genv, none, flatDec, states, GlobalGrowth.refl genv, rfl,
       ⟨values, valueModules, ctors, ctorModules⟩, newEnv, invariant⟩
   exact DletOutcome.toGrowing interp transform genv genv start finish other source flat sourceEnv trace n compMap gen

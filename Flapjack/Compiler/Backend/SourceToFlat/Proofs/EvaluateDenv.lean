@@ -24,7 +24,8 @@ def EnvDomainEq {α : Type} (compMap : Environment) (env : SemEnv α) : Prop :=
 /-- Association-list namespaces with the same keys have the same domains.
 This follows from HOL's two association-list domain equations. -/
 theorem alistToNs_domains_eq {M N V W : Type} [DecidableEq M] [DecidableEq N]
-    (left : List (N × V)) (right : List (N × W)) (keys : left.map Prod.fst = right.map Prod.fst) :
+    (left : List (N × V)) (right : List (N × W))
+    (keys : ∀ key, key ∈ left.map Prod.fst ↔ key ∈ right.map Prod.fst) :
     nsDom (alistToNs (ModuleName := M) left) = nsDom (alistToNs right) ∧
       nsDomMod (alistToNs (ModuleName := M) left) = nsDomMod (alistToNs right) := by
   constructor
@@ -521,9 +522,9 @@ theorem evaluateDenv_factored_complete {C F : Type} [Nonempty C]
     ?_⟩
   simp only [compileDecs]
   obtain ⟨values, valueModules⟩ := alistToNs_domains_eq (M := ModN)
-    [(name, VarName.glob .none start.vidx)] [(name, value)] rfl
+    [(name, VarName.glob .none start.vidx)] [(name, value)] (fun _ => Iff.rfl)
   obtain ⟨ctors, ctorModules⟩ := alistToNs_domains_eq (M := ModN) (N := ConN)
-    (V := Nat × Option (Nat × List (Nat × Nat))) (W := Nat × Stamp) [] [] rfl
+    (V := Nat × Option (Nat × List (Nat × Nat))) (W := Nat × Stamp) [] [] (fun _ => Iff.rfl)
   exact ⟨values, valueModules, ctors, ctorModules⟩
 
 /-- A `Denv` evaluation that does not end in a source type error must have
