@@ -68,15 +68,8 @@ theorem localEnvBounded_let_named {C F : Type} [Nonempty C]
           (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv envInv
         have extendedInv : GlobalEnvInv middleGenv baseMap
             (fun n => n ∈ ((name, flatValue) :: flatEnv.v).map Prod.fst) baseEnv := by
-          cases middleEnv with
-          | intro _ _ _ values constructors =>
-            apply GlobalEnvInv.intro
-            · intro id v fresh lookup
-              apply values id v _ lookup
-              intro ⟨n, mem, eq⟩
-              apply fresh
-              exact ⟨n, by simp [mem], eq⟩
-            · exact constructors
+          simpa using globalEnvInv_addLocals middleGenv baseMap
+            (fun n => n ∈ flatEnv.v.map Prod.fst) (fun n => n = name) baseEnv middleEnv
         have extendedRel := EnvRel.bind middleGenv name value sourceLocal flatEnv.v flatValue
           (envRel_growth genv middleGenv firstGrowth sourceLocal flatEnv.v localRel) related
         have sourceBind : nsAppend (nsBind name value sourceLocal) baseEnv.v = nsBind name value sourceEnv.v := by

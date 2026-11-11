@@ -96,15 +96,8 @@ theorem boundedEvaluateMatch_related_flatSafe {C F : Type} [Nonempty C]
         (patBindings pattern) .none traces (flatEnv.v.map Prod.fst) baseMap.v
       have extendedRel := envRel_nsAppend genv (alistToNs bindings) sourceLocal flatBindings flatEnv.v ⟨bindingsRel, localRel⟩
       have extendedInv : GlobalEnvInv genv baseMap (fun n => n ∈ (flatBindings ++ flatEnv.v).map Prod.fst) baseEnv := by
-        cases envInv with
-        | intro _ _ _ values constructors =>
-          apply GlobalEnvInv.intro
-          · intro id v fresh lookup
-            apply values id v _ lookup
-            intro ⟨n, mem, eq⟩
-            apply fresh
-            exact ⟨n, by simp [mem], eq⟩
-          · exact constructors
+        simpa only [List.map_append, List.mem_append] using globalEnvInv_addLocals genv baseMap
+          (fun n => n ∈ flatEnv.v.map Prod.fst) (fun n => n ∈ flatBindings.map Prod.fst) baseEnv envInv
       have bindingLength : flatBindings.length = (patBindings pattern).length := by
         have h := congrArg List.length names
         simpa using h
