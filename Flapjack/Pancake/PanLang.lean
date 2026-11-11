@@ -610,8 +610,10 @@ decreasing_by
     `ShapeHOL`) and the reviewed `size_of_shape` (`sizeOfShapeHOL`,
     `Flapjack/Pancake/PanLang/Shape.lean`).  No supported qualifier authorizes a
     `Shape`/`shapeSize` substitution, so this declaration is deliberately
-    untagged with a documented carrier mismatch; the faithful port over
-    `ShapeHOL`/`sizeOfShapeHOL` is tracked by `flapjack-pxn.18.3.5.8`.  Values
+    untagged production-carrier infrastructure: the faithful `with_shape` is the
+    tagged `withShapeHOL` (`Flapjack/Pancake/PanLang/Shape.lean`), and its
+    `panPropsScript.sml` lemmas are ported exactly over `ShapeHOL` in
+    `Flapjack/Pancake/Semantics/PanProps/WithShape.lean`.  Values
     left over after the requested shapes are intentionally ignored, and short
     inputs are handled by `List.take`/`List.drop` just like CakeML's
     `TAKE`/`DROP`.  Direct HOL oracle rows are
@@ -633,10 +635,13 @@ theorem withShape_length (shapes : List Shape) (values : List α) :
   | nil => simp [withShape]
   | cons shape shapes ih => simp [withShape, ih]
 
-/-! Counterpart of Cake's `length_with_shape_eq_shape`
+/-! Production-carrier form of Cake's `length_with_shape_eq_shape`
     (`cakeml/pancake/semantics/panPropsScript.sml:265`): the flat-value split
     produces one sub-list per requested shape, so the hypothesis on the flat
-    value count is retained only for fidelity with the original statement. -/
+    value count is retained only for fidelity with the original statement.  The
+    exact port over `ShapeHOL` is the tagged `lengthWithShapeEqShapeHOL`
+    (`PanProps/WithShape.lean`); this `Shape`-carrier version is
+    Flapjack-specific infrastructure and carries no manifest row. -/
 theorem length_withShape_eq_shape (shapes : List Shape) (values : List α)
     (hvalues : values.length = Shape.shapeSize (.comb shapes)) :
     shapes.length = (withShape shapes values).length := by
@@ -660,10 +665,12 @@ theorem shapeSize_comb_cons (head : Shape) (tail : List Shape) :
   simp only [Shape.shapeSize, List.foldl_cons, Nat.zero_add]
   rw [hfold tail (Shape.shapeSize head)]
 
-/-! Counterpart of Cake's `all_distinct_with_shape`
+/-! Production-carrier form of Cake's `all_distinct_with_shape`
     (`cakeml/pancake/semantics/panPropsScript.sml:286`): the `n`-th component
     produced by the flat-value split is distinct whenever the flat value list
-    is distinct. -/
+    is distinct.  The exact port over `ShapeHOL` is the tagged
+    `allDistinctWithShapeHOL` (`PanProps/WithShape.lean`); this `Shape`-carrier
+    version is Flapjack-specific infrastructure and carries no manifest row. -/
 theorem all_distinct_withShape (shapes : List Shape) (values : List α) (n : Nat)
     (hdistinct : values.Nodup)
     (hn : n < shapes.length)
@@ -687,8 +694,11 @@ theorem all_distinct_withShape (shapes : List Shape) (values : List α) (n : Nat
             rw [List.length_drop, hvalues, shapeSize_comb_cons, Nat.add_sub_cancel_left]
           exact ih (values.drop (Shape.shapeSize shape)) k hdistinct.drop hn' hvalues'
 
-/-! Counterpart of Cake's `mem_with_shape_length`
-    (`cakeml/pancake/semantics/panPropsScript.sml:328`). -/
+/-! Production-carrier form of Cake's `mem_with_shape_length`
+    (`cakeml/pancake/semantics/panPropsScript.sml:328`).  The exact port over
+    `ShapeHOL` is the tagged `memWithShapeLengthHOL` (`PanProps/WithShape.lean`);
+    this `Shape`-carrier version is Flapjack-specific infrastructure and carries
+    no manifest row. -/
 theorem mem_withShape_length (shapes : List Shape) (values : List α) (n : Nat)
     (hvalues : values.length = Shape.shapeSize (.comb shapes))
     (hn : n < shapes.length) :
@@ -697,8 +707,11 @@ theorem mem_withShape_length (shapes : List Shape) (values : List α) (n : Nat)
   have _ := hvalues
   exact List.getElem_mem _
 
-/-! Counterpart of Cake's `el_mem_with_shape`
-    (`cakeml/pancake/semantics/panPropsScript.sml:307`). -/
+/-! Production-carrier form of Cake's `el_mem_with_shape`
+    (`cakeml/pancake/semantics/panPropsScript.sml:307`).  The exact port over
+    `ShapeHOL` is the tagged `elMemWithShapeHOL` (`PanProps/WithShape.lean`);
+    this `Shape`-carrier version is Flapjack-specific infrastructure and carries
+    no manifest row. -/
 theorem mem_of_withShape_mem (shapes : List Shape) (values : List α) (n : Nat)
     (x : α)
     (hn : n < (withShape shapes values).length)
@@ -725,8 +738,11 @@ theorem mem_of_withShape_mem (shapes : List Shape) (values : List α) (n : Nat)
             rw [List.length_drop, hvalues, shapeSize_comb_cons, Nat.add_sub_cancel_left]
           exact ih (values.drop (Shape.shapeSize shape)) k x hk hvalues' hmem
 
-/-! Counterpart of Cake's `with_shape_el_take_drop_eq`
-    (`cakeml/pancake/semantics/panPropsScript.sml:341`). -/
+/-! Production-carrier form of Cake's `with_shape_el_take_drop_eq`
+    (`cakeml/pancake/semantics/panPropsScript.sml:341`).  The exact port over
+    `ShapeHOL` is the tagged `withShapeElTakeDropEqHOL` (`PanProps/WithShape.lean`);
+    this `Shape`-carrier version is Flapjack-specific infrastructure and carries
+    no manifest row. -/
 theorem withShape_getElem_eq_take_drop (shapes : List Shape) (values : List α)
     (n : Nat)
     (hvalues : values.length = Shape.shapeSize (.comb shapes))
@@ -967,9 +983,11 @@ theorem shapeSize_comb_append (left right : List Shape) :
   simp only [Shape.shapeSize, List.foldl_append]
   rw [hfold right (left.foldl (fun total field => total + Shape.shapeSize field) 0)]
 
-/-! Counterpart of Cake's `all_distinct_disjoint_with_shape`
+/-! Production-carrier form of Cake's `all_distinct_disjoint_with_shape`
     (`cakeml/pancake/semantics/panPropsScript.sml:409`), in the strictly
-    increasing index case. -/
+    increasing index case.  Untagged support: the tagged exact port with HOL's
+    `n <> n'` hypothesis is `allDistinctDisjointWithShapeHOL`
+    (`PanProps/WithShape.lean`). -/
 theorem listDisjoint_withShape_getElem_lt (shapes : List Shape) (values : List α)
     (n n' : Nat) (hdistinct : values.Nodup)
     (hn : n < shapes.length) (hn' : n' < shapes.length) (hlt : n < n')
@@ -1000,10 +1018,13 @@ theorem listDisjoint_withShape_getElem_lt (shapes : List Shape) (values : List �
     (Shape.shapeSize (.comb ((shapes.drop n).take (n' - n))))
     (Shape.shapeSize (shapes[n']'hn')) hle hdistinct
 
-/-! Counterpart of Cake's `all_distinct_disjoint_with_shape`
+/-! Production-carrier form of Cake's `all_distinct_disjoint_with_shape`
     (`cakeml/pancake/semantics/panPropsScript.sml:409`): two distinct components
     of the flat-value split are disjoint whenever the flat value list is
-    distinct. -/
+    distinct.  The exact port over `ShapeHOL` is the tagged
+    `allDistinctDisjointWithShapeHOL` (`PanProps/WithShape.lean`); this
+    `Shape`-carrier version is Flapjack-specific infrastructure and carries no
+    manifest row. -/
 theorem listDisjoint_withShape_getElem (shapes : List Shape) (values : List α)
     (n n' : Nat) (hdistinct : values.Nodup)
     (hn : n < shapes.length) (hn' : n' < shapes.length) (hne : n ≠ n')
@@ -1033,10 +1054,13 @@ theorem mem_zip_getElem (left : List α) (right : List β) (pair : α × β)
   · exact congrArg Prod.fst hpi
   · exact congrArg Prod.snd hpi
 
-/-! Counterpart of Cake's `all_distinct_mem_zip_disjoint_with_shape`
+/-! Production-carrier form of Cake's `all_distinct_mem_zip_disjoint_with_shape`
     (`cakeml/pancake/semantics/panPropsScript.sml:452`): two triples of the
     aligned `(label, shape, component)` view whose labels differ have disjoint
-    components. -/
+    components.  The exact port over `ShapeHOL` is the tagged
+    `allDistinctMemZipDisjointWithShapeHOL` (`PanProps/WithShape.lean`); this
+    `Shape`-carrier version is Flapjack-specific infrastructure and carries no
+    manifest row. -/
 theorem listDisjoint_of_mem_zip_withShape (labels : List α) (shapes : List Shape)
     (values : List β) (left right : α × (Shape × List β))
     (hlabels : labels.length = shapes.length)
@@ -1317,11 +1341,15 @@ theorem zipWith_pair_fst {α β : Type} (xs : List α) (ys : List β) :
               min xs.length ys.length + 1 := by omega
           rw [hk, List.take_succ_cons]
 
-/-! Counterpart of Cake's `all_distinct_with_shape_distinct`
+/-! Production-carrier form of Cake's `all_distinct_with_shape_distinct`
     (`cakeml/pancake/semantics/panPropsScript.sml:357`): two distinct members of
     the flat-value split are disjoint.  Cake's extra hypotheses `x <> []` and
     `y <> []` are implied here, because membership of a list in
-    `withShape shapes values` already forces the component to be nonempty. -/
+    `withShape shapes values` already forces the component to be nonempty; the
+    exact port over `ShapeHOL` keeps them explicitly in the tagged
+    `allDistinctWithShapeDistinctHOL` (`PanProps/WithShape.lean`).  This
+    `Shape`-carrier version is Flapjack-specific infrastructure and carries no
+    manifest row. -/
 theorem listDisjoint_of_withShape_mem (shapes : List Shape) (values : List α)
     (x y : List α) (hdistinct : values.Nodup)
     (hvalues : values.length = Shape.shapeSize (.comb shapes))
@@ -1351,12 +1379,15 @@ theorem shapeSize_drop_head_le (shapes : List Shape) (n : Nat)
   rw [List.drop_eq_getElem_cons (l := shapes) hn, shapeSize_comb_cons]
   omega
 
-/-! Counterpart of Cake's `el_el_with_shape`
+/-! Production-carrier form of Cake's `el_el_with_shape`
     (`cakeml/pancake/semantics/panPropsScript.sml:568`): the `n'`-th element of
     the `n`-th group produced by `with_shape` is the
     `n' + size_of_shape (Comb (TAKE n shs))`-th element of the flat list.  Cake's
     `EVERY is_wf_shape_nil shs` hypothesis is not needed here because
-    `Shape.shapeSize` is total. -/
+    `Shape.shapeSize` is total; the exact port over `ShapeHOL` keeps it
+    explicitly in the tagged `elElWithShapeHOL` (`PanProps/WithShape.lean`).
+    This `Shape`-carrier version is Flapjack-specific infrastructure and carries
+    no manifest row. -/
 theorem withShape_getElem_getElem (shapes : List Shape) (values : List α)
     (n n' : Nat)
     (hvalues : values.length = Shape.shapeSize (.comb shapes))

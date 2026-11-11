@@ -3513,6 +3513,13 @@ run_probe pan_props_shape_res_var_probeScript.sml pan_props_shape_res_var_probe.
   "$cake_dir/pancake/semantics/panPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 
+# The panProps with_shape probe captures the typed statements and hypothesis
+# counts of the nine with_shape lemmas (panPropsScript.sml:265-583).
+run_probe pan_props_with_shape_probeScript.sml pan_props_with_shape_probe.out \
+  length_with_shape_eq_shape_typed length_with_shape_eq_shape_hypotheses   all_distinct_with_shape_typed all_distinct_with_shape_hypotheses   el_mem_with_shape_typed el_mem_with_shape_hypotheses   mem_with_shape_length_typed mem_with_shape_length_hypotheses   with_shape_el_take_drop_eq_typed with_shape_el_take_drop_eq_hypotheses   all_distinct_with_shape_distinct_typed all_distinct_with_shape_distinct_hypotheses   all_distinct_disjoint_with_shape_typed all_distinct_disjoint_with_shape_hypotheses   all_distinct_mem_zip_disjoint_with_shape_typed all_distinct_mem_zip_disjoint_with_shape_hypotheses   el_el_with_shape_typed el_el_with_shape_hypotheses \
+  "$cake_dir/pancake/semantics/panPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
+
 # The pan_commonProps zip/fupdate and disjoint take/drop probe observes the
 # finite-map update-not-mem and list-disjointness lemmas
 # (pan_commonPropsScript.sml:289, :399, :413).

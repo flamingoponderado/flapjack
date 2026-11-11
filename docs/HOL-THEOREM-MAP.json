@@ -75501,78 +75501,6 @@
     "reviewer": "flapjack-ds8 (source comparison, 2026-09-26; bead flapjack-4ac.1.4). HOL `Type varname = ``:mlstring``` (panLangScript.sml:25) aliases the tagged exact Cake `mlstring` datatype `Flapjack.Basis.Pure.MlString.MlString` (`@[hol ... \"mlstring\"]`). Lean `Flapjack.Varname` (PanLang.lean, `abbrev Varname := Flapjack.Basis.Pure.MlString.MlString`) is the exact alias over that carrier: no payload, side condition, or representation difference. The production String-backed `VarName := String` alias is the separate untagged implementation tracked by `flapjack-pxn.18.3.5.8`."
   },
   {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "all_distinct_with_shape",
-    "lean_path": "Flapjack/Pancake/PanLang.lean",
-    "lean_name": "all_distinct_withShape",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.4.26; FLAPJACK-SPECIFIC, documented_mismatch). HOL panProps$all_distinct_with_shape (panPropsScript.sml:286-289) states ALL_DISTINCT ns /\\ n < LENGTH sh /\\ LENGTH ns = size_of_shape (Comb sh) ==> ALL_DISTINCT (EL n (with_shape sh ns)). The Lean analogue all_distinct_withShape (PanLang.lean:581) keeps the three hypotheses (values.Nodup, n < shapes.length, values.length = Shape.shapeSize (.comb shapes)) and the conclusion (the n-th component is Nodup) but uses the production Shape/dimensions rather than HOL's mlstring-named shape, so the tag is withheld; exact ShapeHOL carrier route tracked by flapjack-pxn.18.3.5.8."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "length_with_shape_eq_shape",
-    "lean_path": "Flapjack/Pancake/PanLang.lean",
-    "lean_name": "length_withShape_eq_shape",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.4.24; FLAPJACK-SPECIFIC, documented_mismatch). HOL panProps$length_with_shape_eq_shape (panPropsScript.sml:265-267) states LENGTH ns = size_of_shape (Comb sh) ==> LENGTH sh = LENGTH (with_shape sh ns) over HOL's mlstring-named shape and an arbitrary value list. The Lean analogue length_withShape_eq_shape (PanLang.lean:554) keeps the same hypothesis, quantifiers, and conclusion but uses the production Shape carrier (StructName = String) and Shape.shapeSize rather than the exact ShapeHOL/sizeOfShapeHOL, so the @[hol] tag is withheld. names_as_string does not authorize substituting the whole Shape/ShapeHOL datatype. Exact carrier route tracked by flapjack-pxn.18.3.5.8. Sibling of the with_shape definition (panLangScript.sml:216)."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "all_distinct_mem_zip_disjoint_with_shape",
-    "lean_path": "Flapjack/Pancake/PanLang.lean",
-    "lean_name": "listDisjoint_of_mem_zip_withShape",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.4.32; FLAPJACK-SPECIFIC, documented_mismatch). HOL panProps$all_distinct_mem_zip_disjoint_with_shape (panPropsScript.sml:452-...) states LENGTH l = LENGTH sh, LENGTH sh = LENGTH (with_shape sh ns), ALL_DISTINCT ns, LENGTH ns = size_of_shape (Comb sh), MEM (x,a,xs) (ZIP (l,ZIP (sh,with_shape sh ns))), MEM (y,b,ys) (ZIP (l,ZIP (sh,with_shape sh ns))) and x != y imply DISJOINT (set xs) (set ys). The Lean analogue listDisjoint_of_mem_zip_withShape (PanLang.lean:988) reads the aligned (label, shape, component) triples by an indexed helper mem_zip_getElem (Lean core has no List.mem_zip) and concludes element-level ListDisjoint instead of HOL DISJOINT (set ...), over the production Shape carrier and Shape.shapeSize instead of HOL's mlstring-named shape, so the tag is withheld; exact ShapeHOL route tracked by flapjack-pxn.18.3.5.8."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "all_distinct_with_shape_distinct",
-    "lean_path": "Flapjack/Pancake/PanLang.lean",
-    "lean_name": "listDisjoint_withShape_getElem",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.4.30; FLAPJACK-SPECIFIC, documented_mismatch). HOL panProps$all_distinct_with_shape_distinct (panPropsScript.sml:357-408) states ALL_DISTINCT ns, LENGTH ns = size_of_shape (Comb sh), MEM x (with_shape sh ns), MEM y (with_shape sh ns), x != y, x != [] and y != [] imply DISJOINT (set x) (set y). The Lean analogue listDisjoint_withShape_getElem (PanLang.lean:955) selects the two components by two distinct indices n != n' (membership is reduced to indexed getElem) and concludes element-level ListDisjoint rather than HOL DISJOINT (set ...); it also uses the production Shape carrier and Shape.shapeSize instead of HOL's mlstring-named shape, so the tag is withheld; exact ShapeHOL route tracked by flapjack-pxn.18.3.5.8."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "all_distinct_disjoint_with_shape",
-    "lean_path": "Flapjack/Pancake/PanLang.lean",
-    "lean_name": "listDisjoint_withShape_getElem_lt",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.4.31; FLAPJACK-SPECIFIC, documented_mismatch). HOL panProps$all_distinct_disjoint_with_shape (panPropsScript.sml:409-451) states ALL_DISTINCT ns, n < LENGTH sh, n' < LENGTH sh, n != n' and LENGTH ns = size_of_shape (Comb sh) imply DISJOINT (set (EL n (with_shape sh ns))) (set (EL n' (with_shape sh ns))). The Lean analogue listDisjoint_withShape_getElem_lt (PanLang.lean:921) keeps the same shape hypotheses in the strictly increasing case n < n' and concludes element-level ListDisjoint instead of HOL DISJOINT (set ...), over the production Shape carrier and Shape.shapeSize instead of HOL's mlstring-named shape, so the tag is withheld; exact ShapeHOL route tracked by flapjack-pxn.18.3.5.8."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "el_mem_with_shape",
-    "lean_path": "Flapjack/Pancake/PanLang.lean",
-    "lean_name": "mem_of_withShape_mem",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.4.27; FLAPJACK-SPECIFIC, documented_mismatch). HOL panProps$el_mem_with_shape (panPropsScript.sml:307-310) states n < LENGTH (with_shape sh ns) /\\ LENGTH ns = size_of_shape (Comb sh) /\\ MEM x (EL n (with_shape sh ns)) ==> MEM x ns. The Lean analogue mem_of_withShape_mem (PanLang.lean:616) keeps the indexed length and membership hypotheses and the conclusion x MEM values, but with the production Shape carrier instead of HOL's mlstring-named shape, so the tag is withheld; exact ShapeHOL route tracked by flapjack-pxn.18.3.5.8."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "mem_with_shape_length",
-    "lean_path": "Flapjack/Pancake/PanLang.lean",
-    "lean_name": "mem_withShape_length",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.4.28; FLAPJACK-SPECIFIC, documented_mismatch). HOL panProps$mem_with_shape_length (panPropsScript.sml:328-331) states LENGTH ns = size_of_shape (Comb sh) /\\ n < LENGTH sh ==> MEM (EL n (with_shape sh ns)) (with_shape sh ns). The Lean analogue mem_withShape_length (PanLang.lean:606) keeps the same hypotheses and conclusion but with the production Shape carrier and indexed getElem, not HOL's mlstring-named shape, so the tag is withheld; exact ShapeHOL route tracked by flapjack-pxn.18.3.5.8."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "with_shape_el_take_drop_eq",
-    "lean_path": "Flapjack/Pancake/PanLang.lean",
-    "lean_name": "withShape_getElem_eq_take_drop",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.4.29; FLAPJACK-SPECIFIC, documented_mismatch). HOL panProps$with_shape_el_take_drop_eq (panPropsScript.sml:341-344) states LENGTH ns = size_of_shape (Comb sh) /\\ n < LENGTH sh ==> EL n (with_shape sh ns) = TAKE (size_of_shape (EL n sh)) (DROP (size_of_shape (Comb (TAKE n sh))) ns). The Lean analogue withShape_getElem_eq_take_drop (PanLang.lean:644) keeps the same hypotheses with indexed TAKE/DROP rendered via List.take/drop and the same equality, but uses the production Shape carrier and Shape.shapeSize instead of HOL's mlstring-named shape, so the tag is withheld; exact ShapeHOL route tracked by flapjack-pxn.18.3.5.8."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "el_el_with_shape",
-    "lean_path": "Flapjack/Pancake/PanLang.lean",
-    "lean_name": "withShape_getElem_getElem",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.4.36; FLAPJACK-SPECIFIC, documented_mismatch). HOL panProps$el_el_with_shape (panPropsScript.sml:568-583) states LENGTH xs = size_of_shape (Comb shs), n < LENGTH shs, n' < size_of_shape (EL n shs) and EVERY is_wf_shape_nil shs imply EL n' (EL n (with_shape shs xs)) = EL (n' + size_of_shape (Comb (TAKE n shs))) xs. The Lean analogue withShape_getElem_getElem (PanLang.lean:1340) keeps the same indexed equality with List.take/drop/getElem, but drops the EVERY is_wf_shape_nil hypothesis (Shape.shapeSize is total in Lean) and uses the production Shape carrier and Shape.shapeSize instead of HOL's mlstring-named shape, so the tag is withheld; exact ShapeHOL route tracked by flapjack-pxn.18.3.5.8."
-  },
-  {
     "hol_path": "cakeml/pancake/panLangScript.sml",
     "hol_name": "decl",
     "lean_path": "Flapjack/Pancake/PanLang/Decl.lean",
@@ -103700,6 +103628,78 @@
       "lc'"
     ],
     "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.4.19; panPropsScript.sml:220-222): typed HOL capture flookup_res_var_some_eq_lookup_typed in pan_props_shape_res_var_probe.out gives FLOOKUP (res_var (lc :β |-> α) ((v :β),FLOOKUP (lc' :β |-> α) v)) v = SOME (value :α) ⇒ FLOOKUP lc' v = SOME value, with 0 hypotheses. res_var is panSem$res_var_def, the same clauses as HolFiniteMapExact.resVarEq; FLOOKUP is .lookup and HOL = is DecidableEq. Lean α/β name the key/value carriers, matching HOL β/α; both maps are bare relation-qualifier entries."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "length_with_shape_eq_shape",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/WithShape.lean",
+    "lean_name": "lengthWithShapeEqShapeHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.4.24/.26-.32/.36 family; typed HOL capture in scripts/hol-probes/pan_props_with_shape_probe.out). panPropsScript.sml:265-267: \u2200(sh :shape list) (ns :\u03b1 list). LENGTH ns = size_of_shape (Comb sh) \u21d2 LENGTH sh = LENGTH (with_shape sh ns), 0 hypotheses. Lean keeps HOL's single hypothesis, quantifier order and conclusion over ShapeHOL (tagged shape) and withShapeHOL/sizeOfShapeHOL; the hypothesis is retained although the proof does not need it."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "all_distinct_with_shape",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/WithShape.lean",
+    "lean_name": "allDistinctWithShapeHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.4.24/.26-.32/.36 family; typed HOL capture in scripts/hol-probes/pan_props_with_shape_probe.out). panPropsScript.sml:286-289: \u2200(sh :shape list) (ns :\u03b1 list) (n :num). ALL_DISTINCT ns \u2227 n < LENGTH sh \u2227 LENGTH ns = size_of_shape (Comb sh) \u21d2 ALL_DISTINCT (with_shape sh ns)\u2772n\u2773, 0 hypotheses. Lean keeps all three hypotheses in HOL order, ALL_DISTINCT as List.Nodup, and the indexed conclusion with the getElem bound discharged from n < LENGTH sh via withShapeHOLLength."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "el_mem_with_shape",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/WithShape.lean",
+    "lean_name": "elMemWithShapeHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.4.24/.26-.32/.36 family; typed HOL capture in scripts/hol-probes/pan_props_with_shape_probe.out). panPropsScript.sml:307-310: \u2200(sh :shape list) (ns :\u03b1 list) (n :num) (x :\u03b1). n < LENGTH (with_shape sh ns) \u2227 LENGTH ns = size_of_shape (Comb sh) \u2227 MEM x (with_shape sh ns)\u2772n\u2773 \u21d2 MEM x ns, 0 hypotheses. Lean keeps the binder order (n then x), all three hypotheses and the conclusion over ShapeHOL/withShapeHOL; the indexed bound is HOL's own hypothesis."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "mem_with_shape_length",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/WithShape.lean",
+    "lean_name": "memWithShapeLengthHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.4.24/.26-.32/.36 family; typed HOL capture in scripts/hol-probes/pan_props_with_shape_probe.out). panPropsScript.sml:328-331: \u2200(sh :shape list) (ns :\u03b1 list) (n :num). LENGTH ns = size_of_shape (Comb sh) \u2227 n < LENGTH sh \u21d2 MEM (with_shape sh ns)\u2772n\u2773 (with_shape sh ns), 0 hypotheses. Lean keeps both hypotheses and the membership conclusion; the getElem bound is discharged from n < LENGTH sh via withShapeHOLLength and the size hypothesis is retained for fidelity."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "with_shape_el_take_drop_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/WithShape.lean",
+    "lean_name": "withShapeElTakeDropEqHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.4.24/.26-.32/.36 family; typed HOL capture in scripts/hol-probes/pan_props_with_shape_probe.out). panPropsScript.sml:341-344: \u2200(sh :shape list) (ns :\u03b1 list) (n :num). LENGTH ns = size_of_shape (Comb sh) \u2227 n < LENGTH sh \u21d2 (with_shape sh ns)\u2772n\u2773 = TAKE (size_of_shape sh\u2772n\u2773) (DROP (size_of_shape (Comb (TAKE n sh))) ns), 0 hypotheses. Lean keeps the hypotheses, the equality and the TAKE/DROP nesting; TAKE/DROP are List.take/List.drop and size_of_shape is sizeOfShapeHOL."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "all_distinct_with_shape_distinct",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/WithShape.lean",
+    "lean_name": "allDistinctWithShapeDistinctHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.4.24/.26-.32/.36 family; typed HOL capture in scripts/hol-probes/pan_props_with_shape_probe.out). panPropsScript.sml:357-408: \u2200(sh :shape list) (ns :\u03b1 list) (x :\u03b1 list) (y :\u03b1 list). ALL_DISTINCT ns \u2227 LENGTH ns = size_of_shape (Comb sh) \u2227 MEM x (with_shape sh ns) \u2227 MEM y (with_shape sh ns) \u2227 x \u2260 y \u2227 x \u2260 ([] :\u03b1 list) \u2227 y \u2260 ([] :\u03b1 list) \u21d2 DISJOINT (set x) (set y), 0 hypotheses. Lean keeps all six hypotheses including both nonemptiness premises and concludes the element-level ListDisjoint rendering of DISJOINT (set x) (set y) over ShapeHOL/withShapeHOL."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "all_distinct_disjoint_with_shape",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/WithShape.lean",
+    "lean_name": "allDistinctDisjointWithShapeHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.4.24/.26-.32/.36 family; typed HOL capture in scripts/hol-probes/pan_props_with_shape_probe.out). panPropsScript.sml:409-451: \u2200(sh :shape list) (ns :\u03b1 list) (n :num) (n' :num). ALL_DISTINCT ns \u2227 n < LENGTH sh \u2227 n' < LENGTH sh \u2227 n \u2260 n' \u2227 LENGTH ns = size_of_shape (Comb sh) \u21d2 DISJOINT (set (with_shape sh ns)\u2772n\u2773) (set (with_shape sh ns)\u2772n'\u2773), 0 hypotheses. Lean keeps the five hypotheses in HOL order (n \u2260 n', not a strict ordering) and concludes ListDisjoint of the two indexed components."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "all_distinct_mem_zip_disjoint_with_shape",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/WithShape.lean",
+    "lean_name": "allDistinctMemZipDisjointWithShapeHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.4.24/.26-.32/.36 family; typed HOL capture in scripts/hol-probes/pan_props_with_shape_probe.out). panPropsScript.sml:452-475: LENGTH (l :\u03b1 list) = LENGTH (sh :shape list) \u2227 LENGTH sh = LENGTH (with_shape sh (ns :\u03b2 list)) \u2227 ALL_DISTINCT ns \u2227 LENGTH ns = size_of_shape (Comb sh) \u2227 MEM ((x :\u03b1),(a :shape),(xs :\u03b2 list)) (ZIP (l,ZIP (sh,with_shape sh ns))) \u2227 MEM ((y :\u03b1),(b :shape),(ys :\u03b2 list)) (ZIP (l,ZIP (sh,with_shape sh ns))) \u2227 x \u2260 y \u21d2 DISJOINT (set xs) (set ys), 0 hypotheses. Lean keeps both length hypotheses, the distinctness and size hypotheses, both ZIP memberships as nested labels.zip/shapes.zip memberships of \u03b1 \u00d7 (ShapeHOL \u00d7 List \u03b2) triples, and x \u2260 y; membership is read through the untagged mem_zip_getElem (Lean core has no List.mem_zip) and the conclusion is ListDisjoint."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "el_el_with_shape",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/WithShape.lean",
+    "lean_name": "elElWithShapeHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.4.24/.26-.32/.36 family; typed HOL capture in scripts/hol-probes/pan_props_with_shape_probe.out). panPropsScript.sml:568-583: LENGTH (xs :\u03b1 list) = size_of_shape (Comb (shs :shape list)) \u2227 (n :num) < LENGTH shs \u2227 (n' :num) < size_of_shape shs\u2772n\u2773 \u2227 EVERY is_wf_shape_nil shs \u21d2 (with_shape shs xs)\u2772n\u2773\u2772n'\u2773 = xs\u2772n' + size_of_shape (Comb (TAKE n shs))\u2773, 0 hypotheses. Lean keeps all four hypotheses including EVERY is_wf_shape_nil shs (as \u2200 shape \u2208 shs, isWfShapeNilHOL shape = true) and the index sum in HOL's order; the inner getElem bound is discharged from the size hypotheses (withShapeHOLGetElemLength) rather than assumed, matching HOL's total EL."
   },
   {
     "lean_path": "Flapjack/Pancake/Semantics/PanProps/SemanticsWrapper.lean",
