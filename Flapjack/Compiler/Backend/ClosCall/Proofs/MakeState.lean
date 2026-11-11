@@ -4,6 +4,8 @@ public import Flapjack.Compiler.Backend.ClosCall.Proofs.Wellformed
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
 public import Flapjack.FiniteMap.AlistExact
 public import Flapjack.FiniteMap.DomainExact
+public import Flapjack.FiniteMap.EmptyExact
+public import Flapjack.FiniteMap.UpdateListExact
 public import Flapjack.Misc.Option
 public import Flapjack.Misc.Sptree.ToAList
 
@@ -102,15 +104,16 @@ private theorem fupdateList_of_distinct_member {K V : Type} [DecidableEq K]
 
 /-- Constructing a state from its own well-formed auxiliary code extends it. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "make_g_subg"
-  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.alistToFmap])]
+  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty, Flapjack.HolFiniteMapExact.holUpdateList])]
 theorem makeState_subg {A B : Type} [Nonempty B] (cfg : Spt A)
     (aux : List (Nat × B)) (newState : Spt A × List (Nat × B))
-    (h : makeState cfg (HolFiniteMapExact.alistToFmap aux.reverse) = some newState ∧
+    (h : makeState cfg (HolFiniteMapExact.holUpdateList HolFiniteMapExact.holEmpty aux) = some newState ∧
       wellFormed (cfg, aux)) : stateExtends (cfg, aux) newState := by
   classical
   obtain ⟨run, well⟩ := h
-  have mapEq : HolFiniteMapExact.alistToFmap aux.reverse = HolFiniteMapExact.empty.updateListEq aux := by
-    simp only [HolFiniteMapExact.alistToFmap, List.reverse_reverse]
+  have mapEq : HolFiniteMapExact.holUpdateList HolFiniteMapExact.holEmpty aux =
+      HolFiniteMapExact.empty.updateListEq aux := by
+    simp only [HolFiniteMapExact.holUpdateList, HolFiniteMapExact.holEmpty]
     congr 1
     exact Subsingleton.elim _ _
   rw [mapEq] at run
