@@ -743,28 +743,6 @@ theorem factoredInvariant_installTypeConstructor {C F : Type} [Nonempty C]
       start finish other idx tag arity name stamp tags range table older,
     nextInvs, oracle, globals, reserved, genInv, fin⟩
 
-/-- Subsequent constructors of a reserved type inherit compatibility from
-an existing constructor of that type. -/
-theorem factoredInvariant_installSiblingConstructor {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
-    (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source : State F) (flat : FlatSem.State C F)
-    (idx tag arity anchorTag anchorArity : Nat) (name anchorName : ConN)
-    (stamp : Nat) (tags : List (Nat × Nat))
-    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
-    (table : genv.tys.lookup idx = some tags) (member : (tag, arity) ∈ tags)
-    (older : stamp < source.nextTypeStamp)
-    (anchor : genv.c.lookup ((anchorTag, some idx), anchorArity) = some (.typeStamp anchorName stamp))
-    (free : genv.c.lookup ((tag, some idx), arity) = none)
-    (fresh : ∀ key, genv.c.lookup key ≠ some (.typeStamp name stamp)) :
-    factoredInvariant interp transform gen
-      { genv with c := finiteUpdate genv.c ((tag, some idx), arity) (.typeStamp name stamp) }
-      (start, finish, other) source flat :=
-  factoredInvariant_installTypeConstructor interp transform gen genv start finish other source flat
-    idx tag arity name stamp tags valid table member older free fresh
-    (genvCOk_sameType_compatible genv idx tag anchorTag anchorArity name anchorName stamp valid.1 anchor)
-
 /-- Reserving a type and installing its first constructor preserves the
 factored invariant, deriving the compatibility conditions from the original
 fresh index and stamp. -/
@@ -977,9 +955,10 @@ theorem factoredInvariant_installConstructorList {C F : Type} [Nonempty C]
     have growth := GlobalGrowth.installTypeConstructor genv idx tag arity name stamp headFree
     let next := { genv with c := finiteUpdate genv.c ((tag, some idx), arity) (.typeStamp name stamp) }
     have nextValid : factoredInvariant interp transform gen next (start, finish, other) source flat :=
-      factoredInvariant_installSiblingConstructor interp transform gen genv start finish other source flat
-        idx tag arity anchorTag anchorArity name anchorName stamp tags valid table
-        (members name tag arity headMember) older anchor headFree (fresh name tag arity headMember)
+      factoredInvariant_installTypeConstructor interp transform gen genv start finish other source flat
+        idx tag arity name stamp tags valid table (members name tag arity headMember) older headFree
+        (fresh name tag arity headMember)
+        (genvCOk_sameType_compatible genv idx tag anchorTag anchorArity name anchorName stamp valid.1 anchor)
     have nextAnchor : next.c.lookup ((anchorTag, some idx), anchorArity) = some (.typeStamp anchorName stamp) :=
       growth.constructors _ _ anchor
     apply ih next nextValid table older nextAnchor names'.2 keys'.2
