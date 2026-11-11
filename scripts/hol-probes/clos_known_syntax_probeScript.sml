@@ -198,6 +198,7 @@ val _ = show "decide_inline_imp_clos_lopt_typed=" clos_knownProofTheory.decide_i
 val _ = show "known_def_typed=" clos_knownTheory.known_def;
 val _ = show "known_length_typed=" clos_knownTheory.known_LENGTH;
 val _ = show "known_length_eq_typed=" clos_knownTheory.known_LENGTH_EQ_E;
+val _ = show "known_imp_length_typed=" clos_knownProofTheory.known_IMP_LENGTH;
 val _ = show "known_sing_typed=" clos_knownTheory.known_sing;
 val _ = show "known_sing_eq_typed=" clos_knownTheory.known_sing_EQ_E;
 val _ = show "mapped_globals_typed=" clos_knownProofTheory.mapped_globals_def;

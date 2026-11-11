@@ -9042,6 +9042,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_IMP_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SourceEquations.lean",
+  "lean_name": "knownImpliesLength",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: the complete optimizer configuration, expression and approximation lists, sparse input and output trees, result pair list, and exact traversal equation premise are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_op_obeys_max_app",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxArity.lean",
   "lean_name": "knownOpObeysMaxApp",

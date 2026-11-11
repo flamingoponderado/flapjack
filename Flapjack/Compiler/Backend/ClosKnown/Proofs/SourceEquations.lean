@@ -8,6 +8,13 @@ public import Flapjack.Compiler.Backend.ClosKnown.Total
 namespace Flapjack.Compiler.Backend.ClosKnown
 open ClosLang
 
+/-- A successful traversal result has the same length as its input. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_IMP_LENGTH"]
+theorem knownImpliesLength (c : Config) (xs : List Exp) (env : List ValApprox)
+    (globals : Spt ValApprox) (out : List (Exp × ValApprox)) (final : Spt ValApprox)
+    (run : knownListTotal c xs env globals = (out, final)) : out.length = xs.length :=
+  knownListTotal_length_eq c xs env globals out final run
+
 /-- The default is unreachable when used on the result of a singleton
 traversal, by `knownListTotal_length`. It makes the source's `HD` explicit in
 these Flapjack review equations. -/
