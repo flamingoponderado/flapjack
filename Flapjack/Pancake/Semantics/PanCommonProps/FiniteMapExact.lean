@@ -62,20 +62,28 @@ def ctxtMaxHOL {α β : Type} (n : Nat) (fm : HolFiniteMapExact α (β × List N
   0 ≤ n ∧ ∀ (v : α) (a : β) (xs : List Nat),
     fm.lookup v = some (a, xs) → ∀ x ∈ xs, x ≤ n
 
+/-- Flapjack-only support: HOL `no_overlap_def`'s negated disjointness premise
+    implies the shared-slot existential used by the finite-map lookup proofs. -/
+theorem notListDisjointExists {γ : Type} (xs ys : List γ)
+    (h : ¬ ListDisjoint xs ys) : ∃ z, z ∈ xs ∧ z ∈ ys := by
+  exact Classical.byContradiction (fun hnone =>
+    h (fun z hx hy => hnone ⟨z, hx, hy⟩))
+
 /-- Exact port of HOL `pan_commonProps$no_overlap_def`
     (`pan_commonPropsScript.sml:18-24`).  The typed capture gives
     `∀(fm :α |-> β # γ list), no_overlap fm ⇔ (∀ x a xs, FLOOKUP fm x = SOME
     (a,xs) ⇒ ALL_DISTINCT xs) ∧ ∀ x y a b xs ys, FLOOKUP fm x = SOME (a,xs) ∧
     FLOOKUP fm y = SOME (b,ys) ∧ ¬DISJOINT (set xs) (set ys) ⇒ x = y`.  HOL's
-    `¬DISJOINT (set xs) (set ys)` is rendered as the equivalent existence of a
-    shared slot; `ALL_DISTINCT` is `Nodup`. -/
+    `¬DISJOINT (set xs) (set ys)` is kept as the negated `ListDisjoint` premise;
+    the untagged `notListDisjointExists` derives the shared-slot existential for
+    the lookup proofs.  `ALL_DISTINCT` is `Nodup`. -/
 @[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "no_overlap_def"
   (fmap_as_finite_support_parameters := [fm])]
 def noOverlapHOL {α β γ : Type} (fm : HolFiniteMapExact α (β × List γ)) : Prop :=
   (∀ (x : α) (a : β) (xs : List γ), fm.lookup x = some (a, xs) → xs.Nodup) ∧
     ∀ (x y : α) (a b : β) (xs ys : List γ),
       fm.lookup x = some (a, xs) ∧ fm.lookup y = some (b, ys) ∧
-        (∃ z, z ∈ xs ∧ z ∈ ys) → x = y
+        ¬ ListDisjoint xs ys → x = y
 
 /-- HOL-equality update of a lookup list; local to the exact `|++` rendering. -/
 private theorem lookup_FUPDATE_LIST_HOL_not_mem [DecidableEq α] (f : FiniteMap α β)

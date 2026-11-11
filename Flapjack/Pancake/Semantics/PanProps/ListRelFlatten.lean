@@ -290,11 +290,14 @@ theorem listRelFlattenWithShapeFlookupHOL {α : Type} [DecidableEq α]
   have hgroupElem :
       ((withShapeHOL shapes names)[n]'(by rw [withShapeHOLLength]; omega))[n']'hn' =
         names[sizeOfShapeHOL (.comb (shapes.take n)) + n']'hbound := by
-    simp only [elElWithShapeHOL shapes names n n'
+    have hstep := elElWithShapeHOL shapes names n n'
       ⟨hvalues, hnshapes, (by
         rw [elHOL_eq_getElem shapes n hnshapes]
         rw [hgroupSize]
-        exact hn'val), hwfShapes⟩]
+        exact hn'val), hwfShapes⟩
+    rw [hstep]
+    congr 1
+    omega
   have hflat? : ((args.map flattenHOL).flatten)[
       sizeOfShapeHOL (.comb (shapes.take n)) + n']? = (flattenHOL value)[n']? := by
     rw [hident, List.length_flatten, List.map_take,

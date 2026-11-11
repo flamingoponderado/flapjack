@@ -328,42 +328,55 @@ theorem allDistinctDisjointWithShapeHOL (shapes : List ShapeHOL) (values : List 
 /-- Exact port of HOL `panProps$all_distinct_mem_zip_disjoint_with_shape`
     (`panPropsScript.sml:452-475`): two triples of the aligned
     `(label, shape, component)` view whose labels differ have disjoint
-    components, with HOL's seven conjuncts as one premise.  Lean core has no
+    components.  The binders are HOL's own (`x a xs y b ys`), the seven
+    conjuncts are one premise, and each HOL triple `(x,a,xs)` is the nested pair
+    `(x, (a, xs))` inside `labels.zip (shapes.zip ...)`.  Lean core has no
     `List.mem_zip`, so the membership conjuncts are read through the untagged
     `mem_zip_getElem`. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "all_distinct_mem_zip_disjoint_with_shape"]
 theorem allDistinctMemZipDisjointWithShapeHOL (labels : List α)
-    (shapes : List ShapeHOL) (values : List β) (left right : α × (ShapeHOL × List β))
+    (shapes : List ShapeHOL) (values : List β)
+    (x : α) (a : ShapeHOL) (xs : List β) (y : α) (b : ShapeHOL) (ys : List β)
     (h : labels.length = shapes.length ∧
       shapes.length = (withShapeHOL shapes values).length ∧ values.Nodup ∧
       values.length = sizeOfShapeHOL (.comb shapes) ∧
-      left ∈ labels.zip (shapes.zip (withShapeHOL shapes values)) ∧
-      right ∈ labels.zip (shapes.zip (withShapeHOL shapes values)) ∧
-      left.1 ≠ right.1) :
-    ListDisjoint left.2.2 right.2.2 := by
+      (x, (a, xs)) ∈ labels.zip (shapes.zip (withShapeHOL shapes values)) ∧
+      (y, (b, ys)) ∈ labels.zip (shapes.zip (withShapeHOL shapes values)) ∧
+      x ≠ y) :
+    ListDisjoint xs ys := by
   obtain ⟨hlabels, hshapes, hdistinct, hvalues, hleft, hright, hne⟩ := h
   obtain ⟨i, hi, _hiInner, hleftFirst, hleftSecond⟩ :=
-    mem_zip_getElem labels (shapes.zip (withShapeHOL shapes values)) left hleft
+    mem_zip_getElem labels (shapes.zip (withShapeHOL shapes values)) (x, (a, xs)) hleft
   obtain ⟨j, hj, _hjInner, hrightFirst, hrightSecond⟩ :=
-    mem_zip_getElem labels (shapes.zip (withShapeHOL shapes values)) right hright
+    mem_zip_getElem labels (shapes.zip (withShapeHOL shapes values)) (y, (b, ys)) hright
   rw [List.getElem_zip] at hleftSecond
   rw [List.getElem_zip] at hrightSecond
-  have hiShapes : i < shapes.length := by rw [hlabels] at hi; exact hi
-  have hjShapes : j < shapes.length := by rw [hlabels] at hj; exact hj
+  have hiShapes : i < shapes.length := by
+    rw [hlabels] at hi
+    exact hi
+  have hjShapes : j < shapes.length := by
+    rw [hlabels] at hj
+    exact hj
   have hiValues : i < (withShapeHOL shapes values).length := by
     rw [hshapes] at hiShapes
     exact hiShapes
   have hjValues : j < (withShapeHOL shapes values).length := by
     rw [hshapes] at hjShapes
     exact hjShapes
-  have hleftComponent : left.2.2 = (withShapeHOL shapes values)[i]'hiValues := by
-    simpa using (congrArg Prod.snd hleftSecond).symm
-  have hrightComponent : right.2.2 = (withShapeHOL shapes values)[j]'hjValues := by
-    simpa using (congrArg Prod.snd hrightSecond).symm
+  have hleftLabel : labels[i]'hi = x := hleftFirst
+  have hrightLabel : labels[j]'hj = y := hrightFirst
+  have hleftComponent : xs = (withShapeHOL shapes values)[i]'hiValues := by
+    have hpair : (shapes[i]'hiShapes, (withShapeHOL shapes values)[i]'hiValues) =
+        (a, xs) := hleftSecond
+    exact (Prod.mk.inj hpair).2.symm
+  have hrightComponent : ys = (withShapeHOL shapes values)[j]'hjValues := by
+    have hpair : (shapes[j]'hjShapes, (withShapeHOL shapes values)[j]'hjValues) =
+        (b, ys) := hrightSecond
+    exact (Prod.mk.inj hpair).2.symm
   have hneIndex : i ≠ j := by
     intro heq
     subst heq
-    exact hne (by rw [← hleftFirst, ← hrightFirst])
+    exact hne (by rw [← hleftLabel, ← hrightLabel])
   rw [hleftComponent, hrightComponent]
   exact allDistinctDisjointWithShapeHOL shapes values i j
     ⟨hdistinct, hiShapes, hjShapes, hneIndex, hvalues⟩
@@ -386,7 +399,7 @@ theorem elElWithShapeHOL (shapes : List ShapeHOL) (values : List α) (n n' : Nat
         rw [withShapeHOLGetElemLength shapes values n h.1 h.2.1]
         rw [← elHOL_eq_getElem shapes n h.2.1]
         exact h.2.2.1) =
-      values[(sizeOfShapeHOL (.comb (shapes.take n))) + n']'(by
+      values[n' + sizeOfShapeHOL (.comb (shapes.take n))]'(by
         have hdrop : sizeOfShapeHOL (.comb (shapes.take n)) +
               sizeOfShapeHOL (.comb (shapes.drop n)) =
             sizeOfShapeHOL (.comb shapes) := by
@@ -401,7 +414,7 @@ theorem elElWithShapeHOL (shapes : List ShapeHOL) (values : List α) (n n' : Nat
         rw [withShapeHOLGetElemLength shapes values n hvalues hn]
         rw [← elHOL_eq_getElem shapes n hn]
         exact hn') =
-      values[(sizeOfShapeHOL (.comb (shapes.take n))) + n']'(by
+      values[n' + sizeOfShapeHOL (.comb (shapes.take n))]'(by
         have hdrop : sizeOfShapeHOL (.comb (shapes.take n)) +
               sizeOfShapeHOL (.comb (shapes.drop n)) =
             sizeOfShapeHOL (.comb shapes) := by
@@ -415,5 +428,7 @@ theorem elElWithShapeHOL (shapes : List ShapeHOL) (values : List α) (n n' : Nat
   have _ := hwf
   simp only [withShapeElTakeDropEqHOL shapes values n ⟨hvalues, hn⟩,
     List.getElem_take, List.getElem_drop]
+  congr 1
+  omega
 
 end Flapjack
