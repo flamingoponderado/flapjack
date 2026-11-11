@@ -420,45 +420,6 @@ theorem invariantBeginAllocBlanks {C F A : Type} [Nonempty C]
         omega
   simpa [outputNext, globalsEq, startVar] using invariant
 
-/-- Compose whole-program prefix execution with the factored declaration
-simulation. The prepared invariant and oracle conditions are explicit until
-their derivation from the original whole-program precondition is ported. -/
-private theorem factoredCompileProg_prepared {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (config : Config) (decs : List Dec) (genv : GlobalEnv) (sourceEnv : SemEnv Value)
-    (source sourceLast : State F) (flat : FlatSem.State C F)
-    (n : Nat) (next : NextIndices) (outEnv : Environment) (outGen : EnvironmentGenerationStore)
-    (body : List FlatLang.Exp) (result : Result (SemEnv Value) Value)
-    (compiled : compileDecs [] 1 { config.next with vidx := config.next.vidx + 1 } config.modEnv
-      ⟨0, config.envs.next, .ln⟩ decs = (n, next, outEnv, outGen, body))
-    (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv decs = (sourceLast, result))
-    (globalsEmpty : flat.globals = []) (refsEmpty : flat.refs = [])
-    (initialEnv : InitialEnv.initGlobalEnvInv genv config.modEnv sourceEnv)
-    (invariant : factoredInvariant interp transform ⟨0, config.envs.next, .ln⟩ genv
-      ({ config.next with vidx := config.next.vidx + 1 }, next, ∅) source
-      { flat with globals := some (.loc true 0) :: List.replicate (next.vidx - config.next.vidx - 1) none,
-                  refs := [.refv (.conv none [])] })
-    (safe : result ≠ .err (.abort .typeError))
-    (generation : envGenRel ⟨0, config.envs.next, .ln⟩ source.evalState)
-    (future : envGenFutureRel interp outGen source.evalState) :
-    ∃ finalFlat nextGenv flatError,
-      FlatSem.evaluateDecs flat (compileProg config decs).2 = (finalFlat, flatError) ∧
-      StateRel nextGenv sourceLast finalFlat ∧
-      (∀ resultEnv, result = .val resultEnv → flatError = none ∧ EnvDomainEq outEnv resultEnv ∧
-        envGenRel outGen sourceLast.evalState ∧ GlobalEnvInv nextGenv outEnv (fun _ => False) resultEnv) ∧
-      (∀ error, result = .err error → ∃ flatErr, flatError = some flatErr ∧
-        ResultRel (fun _ (_ : SemEnv Value) (_ : Unit) => True) nextGenv (.err error) (.err flatErr)) := by
-  obtain ⟨finalFlat, nextGenv, flatError, flatRun, states, _, success, errors⟩ :=
-    factoredCompileDeclarations interp transform decs genv config.modEnv outEnv sourceEnv [] source sourceLast
-      { flat with globals := some (.loc true 0) :: List.replicate (next.vidx - config.next.vidx - 1) none,
-                  refs := [.refv (.conv none [])] }
-      { config.next with vidx := config.next.vidx + 1 } next next ∅ 1 n ⟨0, config.envs.next, .ln⟩ outGen body result
-      sourceRun invariant compiled (initGlobalEnvInv_imp genv config.modEnv sourceEnv initialEnv)
-      safe generation future (idxPrev_refl next)
-  refine ⟨finalFlat, nextGenv, flatError, ?_, states, success, errors⟩
-  rw [evaluateCompileProg_continue flat config decs n next outEnv outGen body globalsEmpty refsEmpty compiled]
-  exact flatRun
-
 /-- Changing the source clock preserves the whole-program precondition. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "precondition1_change_clock"]
 theorem factoredPrecondition1_changeClock {C F A : Type} [Nonempty C]
@@ -515,10 +476,18 @@ theorem factoredCompileProg_correct {C F : Type} [Nonempty C]
     simpa [emptyStore, emptyConfig] using initEvalStateOk_envGenRel source.evalState initialEval
   have future := compileProg_envGenFutureRel interp source.evalState config decs n next outEnv outGen body
     bodyCompiled oracleConfig
-  have actual := factoredCompileProg_prepared interp transform config decs { initGenv with v := blanks }
-    sourceEnv source sourceLast (FlatSem.initialState source.ffi source.clock evalConfig)
-    n next outEnv outGen body result bodyCompiled sourceRun rfl rfl envInv invariant safe generation future
-  obtain ⟨finalFlat, nextGenv, flatError, flatRun, states, success, errors⟩ := actual
+  obtain ⟨finalFlat, nextGenv, flatError, bodyRun, states, _, success, errors⟩ :=
+    factoredCompileDeclarations interp transform decs { initGenv with v := blanks } config.modEnv outEnv
+      sourceEnv [] source sourceLast
+      { FlatSem.initialState source.ffi source.clock evalConfig with
+        globals := blanks, refs := [.refv (.conv none [])] }
+      { config.next with vidx := config.next.vidx + 1 } next next ∅ 1 n ⟨0, config.envs.next, .ln⟩ outGen body result
+      sourceRun invariant bodyCompiled
+      (initGlobalEnvInv_imp _ config.modEnv sourceEnv envInv) safe generation future (idxPrev_refl next)
+  have flatRun : FlatSem.evaluateDecs (FlatSem.initialState source.ffi source.clock evalConfig)
+      (compileProg config decs).2 = (finalFlat, flatError) := by
+    rw [evaluateCompileProg_continue _ config decs n next outEnv outGen body rfl rfl bodyCompiled]
+    exact bodyRun
   refine ⟨FlatSem.initialState source.ffi source.clock evalConfig, finalFlat, nextGenv, flatError,
     rfl, ?_, states, ?_, ?_⟩
   · simpa [compiled] using flatRun
