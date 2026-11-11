@@ -133076,6 +133076,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "dest_pat_from_case",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
+  "lean_name": "destPatFromCase",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared dest_pat_from_case_typed: the singleton variable-pattern premise, polymorphic handler body and existential extracted name and body match the original."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "IMP_PAIR",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
   "lean_name": "impPair",

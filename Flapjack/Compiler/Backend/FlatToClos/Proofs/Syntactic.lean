@@ -11,6 +11,19 @@ namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Compiler.Backend.ClosProps
 
+/-- A singleton variable-pattern handler can be extracted. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "dest_pat_from_case"]
+theorem destPatFromCase {α : Type} (pes : List (FlatLang.Pat × α))
+    (h : match pes with | [(.pvar _, _)] => True | _ => False) :
+    ∃ nm rhs, destPat pes = some (nm, rhs) := by
+  cases pes with
+  | nil => contradiction
+  | cons row rest =>
+    rcases row with ⟨pat, rhs⟩
+    cases rest with
+    | cons row rest => cases pat <;> simp_all
+    | nil => cases pat <;> simp_all [destPat]
+
 /-- The components of a pair equal its projections. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "IMP_PAIR"]
 theorem impPair {α β : Type} (z : α × β) (x : α) (y : β)

@@ -51,6 +51,7 @@ val _ = show "contains_app_def=" closPropsTheory.contains_App_SOME_def;
 val _ = show "contains_app_append_typed=" flat_to_closProofTheory.contains_App_SOME_APPEND;
 val _ = show "fst_snd_eq_case_typed=" flat_to_closProofTheory.FST_SND_EQ_CASE;
 val _ = show "every_imp_hd_typed=" flat_to_closProofTheory.EVERY_IMP_HD;
+val _ = show "dest_pat_from_case_typed=" flat_to_closProofTheory.dest_pat_from_case;
 val imp_pair_replay = Q.prove (
   `z = (x,y) ==> x = FST z /\ y = SND z`,
   Cases_on `z` >> fs []);
