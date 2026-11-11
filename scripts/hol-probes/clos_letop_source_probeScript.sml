@@ -18,6 +18,7 @@ val _ = show "let_op_vars_none_typed" clos_letopProofTheory.let_op_every_Fn_vs_N
 val _ = show "var_list_length_typed" clos_letopProofTheory.var_list_IMP_LENGTH;
 val _ = show "var_list_no_labels_typed" clos_letopProofTheory.var_list_no_Labels;
 val _ = show "let_op_obeys_max_app_typed" clos_letopProofTheory.let_op_obeys_max_app;
+val _ = show "let_op_no_labels_typed" clos_letopProofTheory.let_op_no_Labels;
 val var_list_evaluate_replay = prove(
   ``!a2 a1 xs (ys:closLang$exp list) (s:('c,'ffi) closSem$state) env.
       var_list (LENGTH a1) xs ys /\ LENGTH ys = LENGTH a2 ==>

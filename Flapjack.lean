@@ -1068,6 +1068,7 @@ import Flapjack.Compiler.Backend.ClosTicks.Proofs.Simulation
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.Arity
+import Flapjack.Compiler.Backend.ClosTicks.Proofs.Labels
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Production
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Total
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.VarListEvaluate
@@ -1087,10 +1088,12 @@ import Flapjack.Compiler.Backend.ClosLetop.Proofs.Simulation
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Arity
+import Flapjack.Compiler.Backend.ClosLetop.Proofs.Labels
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownLabelOracle
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownAddresses
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Arity
+import Flapjack.Compiler.Backend.ClosFvs.Proofs.Labels
 import Flapjack.Compiler.Backend.SourceToSource
 import Flapjack.Compiler.Backend.ClosToBvl.Constants
 import Flapjack.Compiler.Backend.ClosToBvl.Layout
