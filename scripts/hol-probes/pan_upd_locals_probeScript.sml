@@ -49,3 +49,10 @@ val _ = (print "fix_clock_IMP_LESS_EQ_typed=";
   print "\n");
 val _ = print ("fix_clock_IMP_LESS_EQ_hypotheses=" ^
   Int.toString (length (hyp panSemTheory.fix_clock_IMP_LESS_EQ)) ^ "\n");
+
+val _ = (print "res_var_def_typed=";
+  Lib.with_flag (Globals.show_types, true)
+    print_term (concl panSemTheory.res_var_def);
+  print "\n");
+val _ = print ("res_var_def_hypotheses=" ^
+  Int.toString (length (hyp panSemTheory.res_var_def)) ^ "\n");

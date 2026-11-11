@@ -2158,6 +2158,7 @@ run_probe pan_upd_locals_probeScript.sml pan_upd_locals_probe.out \
   upd_locals_def_typed upd_locals_def_hypotheses \
   kvar_defs_typed kvar_defs_hypotheses \
   fix_clock_IMP_LESS_EQ_typed fix_clock_IMP_LESS_EQ_hypotheses \
+  res_var_def_typed res_var_def_hypotheses \
   "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_sem_lookup_code_probeScript.sml pan_sem_lookup_code_probe.out \
   lookup_code_nonempty_success lookup_code_wf_shape_invariant_step_success \

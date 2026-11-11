@@ -401,6 +401,31 @@ def updLocalsHOLFinite {width : Nat} {σ : Type} [NeZero width]
     PanSemStateFiniteExact width σ :=
   { state with locals := HolFiniteMapExact.empty.updateList varargs }
 
+/-- HOL `res_var_def` (`cakeml/pancake/semantics/panSemScript.sml:505-508`):
+    `res_var lc (n, NONE) = lc \\ n` and `res_var lc (n, SOME v) = lc |+ (n,v)`.
+    Both clauses are the canonical finite-map operations on `HolFiniteMapExact`:
+    `\\` is `eraseEq` (`FDOMSUB_HOL`) and `|+` is `updateEq` (`FUPDATE_HOL`).
+    HOL's key equality is Lean `DecidableEq`; no other carrier changes. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "res_var_def"
+  (fmap_as_finite_support_result)]
+def resVarHOLFinite {α β : Type} [DecidableEq α]
+    (locals : HolFiniteMapExact α β) (entry : α × Option β) : HolFiniteMapExact α β :=
+  match entry.2 with
+  | none => locals.eraseEq entry.1
+  | some value => locals.updateEq (entry.1, value)
+
+/-- Checked lookup witness for the `fmap_as_finite_support_result` translation:
+    the finite-map `res_var` agrees pointwise with the raw HOL-shaped
+    `FDOMSUB_HOL`/`FUPDATE_HOL` clauses. -/
+theorem holFmapAsFiniteSupportResultWitness_resVarHOLFinite {α β : Type} [DecidableEq α]
+    (locals : HolFiniteMapExact α β) (entry : α × Option β) (key : α) :
+    (resVarHOLFinite locals entry).lookup key =
+      match entry.2 with
+      | none => FDOMSUB_HOL locals.lookup entry.1 key
+      | some value => FUPDATE_HOL locals.lookup (entry.1, value) key := by
+  obtain ⟨name, value⟩ := entry
+  cases value <;> rfl
+
 /-- Flapjack-specific composition of finite-map `set_kvar` with the FFI field
     update used by a successful shared-memory read. HOL has no standalone
     declaration for this composed helper; `sh_mem_load_def` names the two

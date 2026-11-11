@@ -24,3 +24,6 @@ fix_clock_IMP_LESS_EQ_typed=∀(x :β # (γ, δ) state).
   fix_clock (s :(α, 'ffi) state) x = ((res :β),(s1 :(γ, δ) state)) ⇒
   s1.clock ≤ s.clock
 fix_clock_IMP_LESS_EQ_hypotheses=0
+res_var_def_typed=res_var (lc :α |-> β) ((n :α),(NONE :β option)) = lc \\ n ∧
+res_var lc (n,SOME (v :β)) = lc⟨n ↦ v⟩
+res_var_def_hypotheses=0

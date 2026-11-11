@@ -134658,5 +134658,14 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.3.31; panSemScript.sml:431-434: typed capture upd_locals_def_typed in pan_upd_locals_probe.out gives \u2200(varargs :(mlstring # \u03b1 v) list) (s :(\u03b1, 'ffi) state). upd_locals varargs s = s with locals := (FEMPTY :mlstring |-> \u03b1 v) |++ varargs, 0 hypotheses). Lean keeps HOL's binder order varargs s, the mlstring keyed finite map and the FUPDATE_LIST semantics: FEMPTY |++ varargs is HolFiniteMapExact.empty.updateList varargs, so later duplicate bindings win as in HOL. The finite-map fields locals/globals/code/eshapes are the canonical HolFiniteMapExact translation (witness holFmapAsFiniteSupportWitness); word payloads use the type-indexed BitVec translation. The production updLocalsHOLExact stays untagged with its documented_mismatch row. Qualifier is representation-only."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "res_var_def",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "resVarHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.3.41; panSemScript.sml:505-508: typed capture res_var_def_typed in pan_upd_locals_probe.out gives res_var (lc :\u03b1 |-> \u03b2) ((n :\u03b1),(NONE :\u03b2 option)) = lc \\\\ n \u2227 res_var lc (n,SOME (v :\u03b2)) = lc\u27e8n \u21a6 v\u27e9, 0 hypotheses). Lean keeps both HOL clauses and the map-level carrier: \\\\ is eraseEq (FDOMSUB_HOL) and \u27e8n \u21a6 v\u27e9 is updateEq (FUPDATE_HOL) on HolFiniteMapExact \u03b1 \u03b2, with DecidableEq \u03b1 as HOL key equality. The same-module witness holFmapAsFiniteSupportResultWitness_resVarHOLFinite states the lookup correspondence with the raw FDOMSUB_HOL/FUPDATE_HOL operations. The production function-backed resVarHOLExact stays untagged with its documented_mismatch row. Qualifier is representation-only."
   }
 ]
