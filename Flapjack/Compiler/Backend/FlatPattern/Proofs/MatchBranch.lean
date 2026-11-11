@@ -68,9 +68,11 @@ theorem evaluate_compiled_match_default {C F : Type} (cfg stateCfg : Config) (tr
       [compilePats cfg (compileMatch cfg rows).2.1 trace n
         (.varLocal trace (encNumToName n)) default (compileMatch cfg rows).2.2] =
       FlatSem.evaluate dispatchEnv target [default] := by
-  have related := compileMatch_pmatchRows_related cfg stateCfg m source target value value' states values rows
-  have targetMatch : FlatSem.pmatchRows (compileMatch cfg rows).2.2 target value' = .noMatch := by
-    simpa [sourceMatch] using related
+  have targetMatch := compileMatch_pmatchRows cfg stateCfg source target value value'
+    (max m (compileMatch cfg rows).1) rows (compileMatch cfg rows).1
+    (compileMatch cfg rows).2.1 (compileMatch cfg rows).2.2 .noMatch
+    ⟨by cases h : compileMatch cfg rows with | mk a b => cases b; rfl,
+      states, values, Nat.le_max_right _ _, sourceMatch⟩
   have found : dispatchEnv.v.lookup (encNumToName n) = some value' := by simp [dispatchEq]
   have pure : FlatSem.evaluate dispatchEnv target [.varLocal trace (encNumToName n)] =
       (target, .val [value']) := by simp [FlatSem.evaluate, found]

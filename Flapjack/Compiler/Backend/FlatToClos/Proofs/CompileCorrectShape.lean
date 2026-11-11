@@ -26,7 +26,7 @@ theorem compileSingle_deepIntro (names : List (Option MlString)) (exp : FlatLang
   simpa [compile, compileExps] using h (compileExp names exp) (by simp [compile, compileExps])
 
 /-- The specialized expression relation implies the source result relation. -/
-theorem evalResultRel_to_source {source target}
+private theorem evalResultRel_to_source {source target}
     (related : EvalResultRel source target) :
     SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel source target := by
   cases related with
@@ -36,7 +36,7 @@ theorem evalResultRel_to_source {source target}
 
 /-- The declaration relation supplies the source's independently polymorphic
 success-list witness; HOL types are inhabited. -/
-theorem decResultRel_to_source {α : Type} [Nonempty α] {source target}
+private theorem decResultRel_to_source {α : Type} [Nonempty α] {source target}
     (related : DecResultRel source target) :
     ∃ values : List α, SemanticPrimitivesProps.resultRel
       (List.Forall₂ (fun (_ : α) (_ : ClosSem.Value) => True)) ValueRel

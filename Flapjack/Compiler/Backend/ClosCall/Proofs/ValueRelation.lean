@@ -4,7 +4,7 @@ public import Flapjack.Compiler.Backend.ClosCall.Proofs.RecClosureRelation
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.Environment
 public import Flapjack.Compiler.Backend.Semantics.ClosSem
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
-public import Flapjack.Compiler.Backend.Semantics.ClosProps.SimpleRelations
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.ListRelations
 
 @[expose] public section
 
@@ -14,6 +14,12 @@ set_option backward.privateInPublic.warn false
 /-! Value relation for the direct-call simulation. -/
 namespace Flapjack.Compiler.Backend.ClosCall
 open Flapjack ClosSem
+
+/-- Recognize recursive closures in the source value datatype. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "is_Recclosure_def"]
+def isRecClosure : Value → Bool
+  | .recclosure _ _ _ _ _ => true
+  | _ => false
 
 private def toBroad {K V : Type} (code : HolFiniteMapExact K V) : K → Option V := code.lookup
 private def ofBroad {K V : Type} (lookup : K → Option V)
@@ -437,6 +443,114 @@ decreasing_by
   simp_wf
   omega
 
+/-- The direct-call value relation satisfies the generic primitive-operation
+simulation's value conditions. HOL proves these clauses inline in do_app_thm. -/
+theorem valueRel_simple (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) :
+    ClosProps.simpleValRel (valueRel g allowed code) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro x n
+    cases x <;> simp [valueRel, eq_comm]
+  · intro x fields tag
+    cases x with
+    | block sourceTag sourceFields =>
+      simp only [(valueRel_sourceEquations g allowed code).1]
+      simp [eq_comm]
+    | number n => simp [valueRel]
+    | word64 n => simp [valueRel]
+    | byteVector bytes => simp [valueRel]
+    | refPtr b n => simp [valueRel]
+    | closure loco values env arity body => simp [valueRel]
+    | recclosure loco values env fns index => simp [valueRel]
+  · intro x p
+    cases x <;> simp [valueRel, eq_comm]
+  · intro x p
+    cases x <;> simp [valueRel, eq_comm]
+  · intro x p b
+    cases x <;> simp [valueRel, eq_comm]
+  · intro body arity env args loc x related
+    cases x <;> simp_all [valueRel, ClosProps.isClos]
+  · intro index fns env args loc x related
+    cases x <;> simp_all [valueRel, ClosProps.isClos]
+
+/-- HOL proves the scalar-list cases directly by induction. This shared
+infrastructure transfers either scalar encoding across related list values. -/
+private theorem scalarListIff {A : Type} (r : Value → Value → Prop) (simple : ClosProps.simpleValRel r)
+    (embed : A → Value) (left right : Value) (related : r left right)
+    (source : ∀ a y, r (embed a) y → y = embed a)
+    (target : ∀ a x, r x (embed a) → x = embed a) (ns : List A) :
+    valueToList left = some (ns.map embed) ↔ valueToList right = some (ns.map embed) := by
+  have observed := ClosProps.valueToList_related r simple left right related
+  cases l : valueToList left with
+  | none => cases rr : valueToList right <;> simp_all
+  | some xs =>
+    cases rr : valueToList right with
+    | none => simp_all
+    | some ys =>
+      simp only [l, rr] at observed
+      simp only [Option.some.injEq]
+      clear l rr related
+      constructor
+      · intro eq
+        subst xs
+        induction ns generalizing ys with
+        | nil => cases observed; rfl
+        | cons a rest ih =>
+          cases observed with
+          | cons head tail => simp [source a _ head, ih _ tail]
+      · intro eq
+        subst ys
+        induction ns generalizing xs with
+        | nil => cases observed; rfl
+        | cons a rest ih =>
+          cases observed with
+          | cons head tail => simp [target a _ head, ih _ tail]
+
+
+/-- Canonical code-map codec for the byte-list equivalence. -/
+theorem holFmapAsFiniteSupportParamWitness_valueRel_bytesList_lemma_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code code key
+
+/-- Related values decode to the same encoded list of bytes in either direction. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "v_rel_IMP_v_to_bytes_lemma"
+  (fmap_as_finite_support_parameters := [code])]
+theorem valueRel_bytesList_lemma (x y : Value) (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (related : valueRel g allowed code x y) :
+    ∀ ns : List (BitVec 8), valueToList x = some (ns.map (fun b => Value.number b.toNat)) ↔
+      valueToList y = some (ns.map (fun b => Value.number b.toNat)) := by
+  intro ns
+  apply scalarListIff (valueRel g allowed code) (valueRel_simple g allowed code) _ x y related
+  · intro a y h
+    simpa [valueRel] using h
+  · intro a x h
+    exact ((valueRel_simple g allowed code).1 x _).mp h
+
+/-- Canonical code-map codec for the word-list equivalence. -/
+theorem holFmapAsFiniteSupportParamWitness_valueRel_wordsList_lemma_code
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
+    (ofBroad (toBroad code) code.finiteSupport).lookup key = code.lookup key ∧
+    (ofBroad (toBroad code) code.finiteSupport).finiteSupport = code.finiteSupport ∧
+    ofBroad (toBroad code) code.finiteSupport = code :=
+  holFmapAsFiniteSupportParamWitness_valueRel_code code key
+
+/-- Related values decode to the same encoded list of 64-bit words in either direction. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "v_rel_IMP_v_to_words_lemma"
+  (fmap_as_finite_support_parameters := [code])]
+theorem valueRel_wordsList_lemma (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
+    (x y : Value) (g : State) (allowed : Nat → Prop) (related : valueRel g allowed code x y) :
+    ∀ ns : List (BitVec 64), valueToList x = some (ns.map Value.word64) ↔
+      valueToList y = some (ns.map Value.word64) := by
+  intro ns
+  apply scalarListIff (valueRel g allowed code) (valueRel_simple g allowed code) _ x y related
+  · intro a y h
+    simpa [valueRel] using h
+  · intro a x h
+    exact ((valueRel_simple g allowed code).2.2.1 x _).mp h
+
 /-- Canonical code-map codec for byte decoding preservation. -/
 theorem holFmapAsFiniteSupportParamWitness_valueToBytes_thm_code
     (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (key : Nat) :
@@ -452,18 +566,9 @@ theorem valueToBytes_thm (g : State) (allowed : Nat → Prop)
     (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (h h' : Value) (x : List (BitVec 8))
     (assumptions : valueToBytes h = some x ∧ valueRel g allowed code h h') :
     valueToBytes h' = some x := by
-  have decoded := (valueToBytes_eq_some h x).mp assumptions.1
-  obtain ⟨ys, target, related⟩ := valueToList_thm g allowed code h h' _ ⟨decoded, assumptions.2⟩
-  have same : ys = x.map (fun b => Value.number b.toNat) := by
-    clear assumptions decoded target
-    induction x generalizing ys with
-    | nil => cases related; rfl
-    | cons b bs ih =>
-      cases related with
-      | cons head tail =>
-        simp only [valueRel] at head
-        simp [head, ih _ tail]
-  exact (valueToBytes_eq_some h' x).mpr (same ▸ target)
+  apply (valueToBytes_eq_some h' x).mpr
+  exact (valueRel_bytesList_lemma h h' g allowed code assumptions.2 x).mp
+    ((valueToBytes_eq_some h x).mp assumptions.1)
 
 /-- Canonical code-map codec for word decoding preservation. -/
 theorem holFmapAsFiniteSupportParamWitness_valueToWords_thm_code
@@ -480,18 +585,9 @@ theorem valueToWords_thm (g : State) (allowed : Nat → Prop)
     (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (h h' : Value) (x : List (BitVec 64))
     (assumptions : valueToWords h = some x ∧ valueRel g allowed code h h') :
     valueToWords h' = some x := by
-  have decoded := (valueToWords_eq_some h x).mp assumptions.1
-  obtain ⟨ys, target, related⟩ := valueToList_thm g allowed code h h' _ ⟨decoded, assumptions.2⟩
-  have same : ys = x.map Value.word64 := by
-    clear assumptions decoded target
-    induction x generalizing ys with
-    | nil => cases related; rfl
-    | cons b bs ih =>
-      cases related with
-      | cons head tail =>
-        simp only [valueRel] at head
-        simp [head, ih _ tail]
-  exact (valueToWords_eq_some h' x).mpr (same ▸ target)
+  apply (valueToWords_eq_some h' x).mpr
+  exact (valueRel_wordsList_lemma code h h' g allowed assumptions.2 x).mp
+    ((valueToWords_eq_some h x).mp assumptions.1)
 
 /-- Canonical code-map codec for re-encoding related lists. -/
 theorem holFmapAsFiniteSupportParamWitness_valueRel_decodeEncode_code
@@ -539,36 +635,6 @@ theorem valueRel_listAppend (g : State) (allowed : Nat → Prop)
     simp only [List.cons_append, listToValue]
     apply (valueRel_sourceEquations g allowed code).1 _ _ _ |>.mpr
     exact ⟨_, rfl, .cons head (.cons ih .nil)⟩
-
-/-- The direct-call value relation satisfies the generic primitive-operation
-simulation's value conditions. HOL proves these clauses inline in do_app_thm. -/
-theorem valueRel_simple (g : State) (allowed : Nat → Prop)
-    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) :
-    ClosProps.simpleValRel (valueRel g allowed code) := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · intro x n
-    cases x <;> simp [valueRel, eq_comm]
-  · intro x fields tag
-    cases x with
-    | block sourceTag sourceFields =>
-      simp only [(valueRel_sourceEquations g allowed code).1]
-      simp [eq_comm]
-    | number n => simp [valueRel]
-    | word64 n => simp [valueRel]
-    | byteVector bytes => simp [valueRel]
-    | refPtr b n => simp [valueRel]
-    | closure loco values env arity body => simp [valueRel]
-    | recclosure loco values env fns index => simp [valueRel]
-  · intro x p
-    cases x <;> simp [valueRel, eq_comm]
-  · intro x p
-    cases x <;> simp [valueRel, eq_comm]
-  · intro x p b
-    cases x <;> simp [valueRel, eq_comm]
-  · intro body arity env args loc x related
-    cases x <;> simp_all [valueRel, ClosProps.isClos]
-  · intro index fns env args loc x related
-    cases x <;> simp_all [valueRel, ClosProps.isClos]
 
 /-- Canonical code-map codec for Boolean value correspondence. -/
 theorem holFmapAsFiniteSupportParamWitness_valueRel_bool_code

@@ -103,17 +103,6 @@ theorem idxRangeRel_type_free {C : Type}
       left
       exact ⟨cn, arity, by simp [lookup]⟩
 
-/-- The next source type stamp is absent from the global constructor map. -/
-theorem idxRangeRel_typeStamp_fresh {C : Type}
-    (interp : Option (Value → Option (Config × C))) (genv : GlobalEnv)
-    (nextType nextExn : Nat) (evalState : Option EvalState)
-    (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (range : idxRangeRel interp genv nextType nextExn evalState (start, finish, other)) :
-    ∀ name key, genv.c.lookup key ≠ some (.typeStamp name nextType) := by
-  obtain ⟨_, _, _, _, _, _, _, _, fresh, _⟩ := range
-  intro name key found
-  exact fresh name nextType (Nat.le_refl _) ⟨key, found⟩
-
 /-- Tag allocation records the arity of every constructor in input order. -/
 theorem allocTags1_arities {M N A : Type} (constructors : List (N × List A)) :
     ((allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2).map Prod.snd =
@@ -221,13 +210,6 @@ def allocatedConstructorEntries {M N A : Type} (constructors : List (N × List A
     ((allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2)).map
       fun (name, tag, arity) => (name, tag, arity)
 
-/-- The allocator emits one tag per source constructor. -/
-theorem allocTags1_length {M N A : Type} (constructors : List (N × List A)) :
-    ((allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2).length =
-      constructors.length := by
-  have h := congrArg List.length (allocTags1_arities (M := M) constructors)
-  simpa using h
-
 /-- Projections of the zipped allocation entries are exactly the source
 names and the allocator's tag table. -/
 theorem allocatedConstructorEntries_projections {M N A : Type} (constructors : List (N × List A)) :
@@ -236,7 +218,7 @@ theorem allocatedConstructorEntries_projections {M N A : Type} (constructors : L
       (allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2 := by
   have lengths : (constructors.map Prod.fst).length =
       ((allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2).length := by
-    simp [allocTags1_length]
+    simpa using (congrArg List.length (allocTags1_arities (M := M) constructors)).symm
   constructor
   · simp only [allocatedConstructorEntries, List.map_map]
     change (((constructors.map Prod.fst).zip
@@ -259,43 +241,6 @@ theorem allocatedConstructorEntries_nodup {M N A : Type} (constructors : List (N
     (allocatedConstructorEntries_projections (M := M) constructors).2]
   exact ⟨names, allocTags1_tags_nodup (M := M) constructors⟩
 
-private theorem zipConstructor_member_arity {N A : Type} (constructors : List (N × List A))
-    (tags : List (Nat × Nat)) (arities : tags.map Prod.snd = constructors.map (fun c => c.2.length)) :
-    ∀ name tag arity, (name, tag, arity) ∈ ((constructors.map Prod.fst).zip tags).map
-      (fun (name, tag, arity) => (name, tag, arity)) →
-      ∃ args, (name, args) ∈ constructors ∧ args.length = arity := by
-  induction constructors generalizing tags with
-  | nil =>
-    intro name tag arity member
-    simp at member
-  | cons constructor rest ih =>
-    rcases constructor with ⟨headName, headArgs⟩
-    cases tags with
-    | nil => simp at arities
-    | cons headTag restTags =>
-      rcases headTag with ⟨headTag, headArity⟩
-      have arities' : headArity = headArgs.length ∧
-          restTags.map Prod.snd = rest.map (fun c => c.2.length) := by simpa using arities
-      intro name tag arity member
-      simp only [List.map_cons, List.zip_cons_cons, List.mem_cons] at member
-      rcases member with same | member
-      · have fields : name = headName ∧ tag = headTag ∧ arity = headArity := by simpa [and_assoc] using same
-        obtain ⟨rfl, rfl, rfl⟩ := fields
-        exact ⟨headArgs, by simp, arities'.1.symm⟩
-      · obtain ⟨args, found, length⟩ := ih restTags arities'.2 name tag arity member
-        exact ⟨args, List.mem_cons_of_mem _ found, length⟩
-
-private theorem constructorLookup_exists_iff_key_mem {α : Type} (entries : List (ConN × α)) (name : ConN) :
-    (∃ value, entries.lookup name = some value) ↔ name ∈ entries.map Prod.fst := by
-  induction entries with
-  | nil => simp
-  | cons entry entries ih =>
-    obtain ⟨key, value⟩ := entry
-    by_cases equal : name = key
-    · subst key
-      simp
-    · simp [List.lookup_cons, BEq.beq, equal, ih]
-
 /-- A named source constructor with a unique name appears in the allocator's
 entry list with its source arity. -/
 theorem allocatedConstructorEntries_find {M A : Type} (constructors : List (ConN × List A))
@@ -309,10 +254,20 @@ theorem allocatedConstructorEntries_find {M A : Type} (constructors : List (ConN
   obtain ⟨entryName', tag, arity⟩ := entry
   change entryName' = name at entryName
   subst entryName'
-  obtain ⟨args', sourceMember, length⟩ :=
-    zipConstructor_member_arity constructors _ (allocTags1_arities (M := M) constructors) name tag arity entryMember
-  have found := lookup_of_mem_nodup constructors name args member distinct
-  have found' := lookup_of_mem_nodup constructors name args' sourceMember distinct
+  have rawMember : (name, tag, arity) ∈ (constructors.map Prod.fst).zip
+      (allocTags1 constructors : Namespace M ConN Nat × Spt Nat × List (Nat × Nat)).2.2 := by
+    simpa [allocatedConstructorEntries] using entryMember
+  have pairMember : (name, arity) ∈ (constructors.map Prod.fst).zip
+      ((allocTags1 constructors : Namespace M ConN Nat × Spt Nat × List (Nat × Nat)).2.2.map Prod.snd) := by
+    rw [List.zip_map_right]
+    exact List.mem_map.mpr ⟨(name, tag, arity), rawMember, rfl⟩
+  rw [allocTags1_arities, List.zip_map'] at pairMember
+  obtain ⟨⟨sourceName, args'⟩, sourceMember, pairEq⟩ := List.mem_map.mp pairMember
+  have fields : sourceName = name ∧ args'.length = arity := Prod.mk.inj pairEq
+  obtain ⟨nameEq, length⟩ := fields
+  rw [nameEq] at sourceMember
+  have found := holALookup_of_distinct_member constructors name args ⟨distinct, member⟩
+  have found' := holALookup_of_distinct_member constructors name args' ⟨distinct, sourceMember⟩
   have same : args' = args := Option.some.inj (found'.symm.trans found)
   subst args'
   subst arity
@@ -391,38 +346,14 @@ theorem envDomainEq_allocTags (idx stamp : Nat) (constructors : List (ConN × Li
     EnvDomainEq { v := nsEmpty, c := (allocTags idx constructors :
       Namespace ModN ConN (Nat × Option (Nat × List (Nat × Nat))) × Spt Nat).1 }
       ({ v := nsEmpty, c := alistToNs (buildConstrs stamp constructors).reverse } : SemEnv Value) := by
-  have namespaceEq := allocTags1_namespace (M := ModN) constructors.reverse
-  have lengthEq := allocTags1_length (M := ModN) constructors.reverse
-  generalize eq : (allocTags1 constructors.reverse : Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)) = result
-    at namespaceEq lengthEq ⊢
-  rcases result with ⟨ns, cids, tags⟩
-  change ns = alistToNs ((constructors.reverse.map Prod.fst).zip (tags.map Prod.fst)) at namespaceEq
-  change tags.length = constructors.reverse.length at lengthEq
-  have keys : (((constructors.reverse.map Prod.fst).zip (tags.map Prod.fst)).map Prod.fst) =
-      constructors.reverse.map Prod.fst := by
-    apply List.map_fst_zip
-    simp [lengthEq]
-  simp only [allocTags, eq, namespaceEq, nsMap, alistToNs]
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · funext id
-    apply propext
-    cases id <;> simp [nsDom, nsLookup, nsEmpty]
-  · funext path
-    apply propext
-    cases path <;> simp [nsDomMod, nsLookupMod, nsEmpty]
-  · funext id
-    apply propext
-    cases id with
-    | short name =>
-      simp only [nsDom, nsLookup]
-      rw [constructorLookup_exists_iff_key_mem, constructorLookup_exists_iff_key_mem]
-      simp only [List.map_map, Function.comp_def, List.map_reverse, buildConstrs]
-      simpa only [List.map_map, Function.comp_def, List.map_reverse] using
-        Iff.of_eq (congrArg (fun xs => name ∈ xs) keys)
-    | long moduleName rest => simp [nsDom, nsLookup]
-  · funext path
-    apply propext
-    cases path <;> simp [nsDomMod, nsLookupMod]
+  refine ⟨envDomainEq_empty.1, envDomainEq_empty.2.1, ?_⟩
+  rw [allocTags_namespace_entries]
+  apply alistToNs_domains_eq
+  intro name
+  simp only [List.map_map, Function.comp_def, List.map_reverse, buildConstrs]
+  change name ∈ (allocatedConstructorEntries (M := ModN) constructors.reverse).map Prod.fst ↔
+    name ∈ (constructors.map Prod.fst).reverse
+  rw [(allocatedConstructorEntries_projections (M := ModN) constructors.reverse).1, List.map_reverse]
 
 /-- Recording a type's tag table allocates exactly that type index. -/
 theorem allocatedIndices_installTypeTable (genv : GlobalEnv) (idx : Nat) (tags : List (Nat × Nat)) :
@@ -583,36 +514,6 @@ theorem genvCOk_installConstructor (genv : GlobalEnv) (cn : FlatLang.CtorId × F
     · subst s
       exact False.elim (fresh (cn1, a1) old1)
     · exact valid.2.2.2.2 cn1 cn2 a1 a2 s old1 old2
-
-/-- The first constructor of a newly reserved type is compatible with all
-existing entries when both its type index and source stamp are fresh. -/
-theorem genvCOk_installFreshTypeConstructor (genv : GlobalEnv) (idx tag arity : Nat)
-    (name : ConN) (stamp : Nat) (valid : genvCOk genv.c)
-    (free : ∀ tag' arity', genv.c.lookup ((tag', some idx), arity') = none)
-    (fresh : ∀ name' key, genv.c.lookup key ≠ some (.typeStamp name' stamp)) :
-    genvCOk (finiteUpdate genv.c ((tag, some idx), arity) (.typeStamp name stamp)) := by
-  apply genvCOk_installConstructor genv (tag, some idx) arity (.typeStamp name stamp) valid
-    (free tag arity) (fresh name)
-  intro cn' arity' stamp' lookup
-  have otherIndex : cn'.2 ≠ some idx := by
-    intro same
-    cases cn' with
-    | mk tag' typ =>
-      change typ = some idx at same
-      subst typ
-      rw [free tag' arity'] at lookup
-      contradiction
-  cases stamp' with
-  | exnStamp n =>
-    simp [SemanticPrimitivesHOL.ctorSameType, SemanticPrimitivesHOL.sameType,
-      FlatSem.ctorSameType, Ne.symm otherIndex]
-  | typeStamp name' n =>
-    have otherStamp : n ≠ stamp := by
-      intro same
-      subst n
-      exact fresh name' (cn', arity') lookup
-    simp [SemanticPrimitivesHOL.ctorSameType, SemanticPrimitivesHOL.sameType,
-      FlatSem.ctorSameType, Ne.symm otherIndex, Ne.symm otherStamp]
 
 /-- Once one constructor of a type has been installed, its compatibility
 establishes the type relation for any additional constructor of that type. -/
@@ -785,76 +686,6 @@ theorem factoredInvariant_installTypeConstructor {C F : Type} [Nonempty C]
       start finish other idx tag arity name stamp tags range table older,
     nextInvs, oracle, globals, reserved, genInv, fin⟩
 
-/-- Subsequent constructors of a reserved type inherit compatibility from
-an existing constructor of that type. -/
-theorem factoredInvariant_installSiblingConstructor {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
-    (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source : State F) (flat : FlatSem.State C F)
-    (idx tag arity anchorTag anchorArity : Nat) (name anchorName : ConN)
-    (stamp : Nat) (tags : List (Nat × Nat))
-    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
-    (table : genv.tys.lookup idx = some tags) (member : (tag, arity) ∈ tags)
-    (older : stamp < source.nextTypeStamp)
-    (anchor : genv.c.lookup ((anchorTag, some idx), anchorArity) = some (.typeStamp anchorName stamp))
-    (free : genv.c.lookup ((tag, some idx), arity) = none)
-    (fresh : ∀ key, genv.c.lookup key ≠ some (.typeStamp name stamp)) :
-    factoredInvariant interp transform gen
-      { genv with c := finiteUpdate genv.c ((tag, some idx), arity) (.typeStamp name stamp) }
-      (start, finish, other) source flat :=
-  factoredInvariant_installTypeConstructor interp transform gen genv start finish other source flat
-    idx tag arity name stamp tags valid table member older free fresh
-    (genvCOk_sameType_compatible genv idx tag anchorTag anchorArity name anchorName stamp valid.1 anchor)
-
-/-- Reserving a type and installing its first constructor preserves the
-factored invariant, deriving the compatibility conditions from the original
-fresh index and stamp. -/
-theorem factoredInvariant_allocateFirstTypeConstructor {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
-    (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source : State F) (flat : FlatSem.State C F)
-    (tag arity : Nat) (name : ConN) (tags : List (Nat × Nat))
-    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
-    (fits : start.tidx + 1 ≤ finish.tidx) (member : (tag, arity) ∈ tags) :
-    factoredInvariant interp transform gen
-      { { genv with tys := finiteUpdate genv.tys start.tidx tags } with
-        c := finiteUpdate genv.c ((tag, some start.tidx), arity) (.typeStamp name source.nextTypeStamp) }
-      ({ start with tidx := start.tidx + 1 }, finish, other)
-      { source with nextTypeStamp := source.nextTypeStamp + 1 } flat := by
-  classical
-  let reserved := { genv with tys := finiteUpdate genv.tys start.tidx tags }
-  let nextSource := { source with nextTypeStamp := source.nextTypeStamp + 1 }
-  have reservedInv : factoredInvariant interp transform gen reserved
-      ({ start with tidx := start.tidx + 1 }, finish, other) nextSource flat :=
-    factoredInvariant_installTypeTable interp transform gen genv start finish other source flat tags valid fits
-  have range := valid.2.2.2.1
-  have free := (idxRangeRel_type_free interp genv source.nextTypeStamp source.nextExnStamp source.evalState
-    start finish other range (by omega)).2
-  have fresh := idxRangeRel_typeStamp_fresh interp genv source.nextTypeStamp source.nextExnStamp source.evalState
-    start finish other range
-  have table : reserved.tys.lookup start.tidx = some tags := by
-    simp [reserved, finiteUpdate, FUPDATE_HOL]
-  have cOk := genvCOk_installFreshTypeConstructor reserved start.tidx tag arity name source.nextTypeStamp
-    reservedInv.1 free fresh
-  have growth := GlobalGrowth.installTypeConstructor reserved start.tidx tag arity name source.nextTypeStamp
-    (free tag arity)
-  have newLookup : (finiteUpdate reserved.c ((tag, some start.tidx), arity)
-      (.typeStamp name source.nextTypeStamp)).lookup ((tag, some start.tidx), arity) =
-      some (.typeStamp name source.nextTypeStamp) := by
-    simp [finiteUpdate, FUPDATE_HOL]
-  have compatible : ∀ cn' arity' stamp', reserved.c.lookup (cn', arity') = some stamp' →
-      (SemanticPrimitivesHOL.ctorSameType (some (.typeStamp name source.nextTypeStamp)) (some stamp') = true ↔
-        FlatSem.ctorSameType (some (tag, some start.tidx)) (some cn')) := by
-    intro cn' arity' stamp' old
-    exact cOk.2.2.2.1 (tag, some start.tidx) cn' arity arity' (.typeStamp name source.nextTypeStamp) stamp'
-      newLookup (growth.constructors (cn', arity') stamp' old)
-  have result := factoredInvariant_installTypeConstructor interp transform gen reserved
-    { start with tidx := start.tidx + 1 } finish other nextSource flat start.tidx tag arity name
-    source.nextTypeStamp tags reservedInv table member (by simp [nextSource]) (free tag arity) (fresh name) compatible
-  simpa [reserved, nextSource] using result
-
 /-- Install a list of named constructor tags for one type. This proof-side
 operation uses the same finite-map updates used by the allocation invariant. -/
 noncomputable def installTypeConstructorList (idx stamp : Nat) :
@@ -909,18 +740,6 @@ theorem installTypeConstructorList_lookup_entry (idx stamp : Nat) (entries : Lis
     · simp only [installTypeConstructorList]
       exact ih distinct'.2 member _
 
-/-- Each constructor entry generated by `allocTags` is installed at its
-allocated flat key with the corresponding source stamp. -/
-theorem installAllocatedConstructor_lookup (idx stamp : Nat) (constructors : List (ConN × List AstT))
-    (name : ConN) (tag arity : Nat)
-    (member : (name, tag, arity) ∈ allocatedConstructorEntries (M := ModN) constructors.reverse)
-    (genv : GlobalEnv) :
-    (installTypeConstructorList idx stamp (allocatedConstructorEntries (M := ModN) constructors.reverse) genv).c.lookup
-      ((tag, some idx), arity) = some (.typeStamp name stamp) := by
-  apply installTypeConstructorList_lookup_entry idx stamp _ _ name tag arity member genv
-  rw [(allocatedConstructorEntries_projections (M := ModN) constructors.reverse).2]
-  exact allocTags1_tags_nodup (M := ModN) constructors.reverse
-
 /-- Installing constructor entries leaves the type table unchanged. -/
 theorem installTypeConstructorList_tys (idx stamp : Nat) (entries : List (ConN × Nat × Nat))
     (genv : GlobalEnv) : (installTypeConstructorList idx stamp entries genv).tys = genv.tys := by
@@ -948,8 +767,8 @@ theorem globalEnvInv_allocTags (genv : GlobalEnv) (idx stamp : Nat)
   have reversedNames : (constructors.reverse.map Prod.fst).Nodup := by
     rw [List.map_reverse, List.Nodup, List.pairwise_reverse]
     exact names.imp (fun h => Ne.symm h)
-  have entryNames : (entries.map Prod.fst).Nodup :=
-    (allocatedConstructorEntries_nodup (M := ModN) constructors.reverse reversedNames).1
+  obtain ⟨entryNames, entryKeys⟩ :=
+    allocatedConstructorEntries_nodup (M := ModN) constructors.reverse reversedNames
   have compilerNames : ((entries.map fun (name, tag, _) => (name, (tag, some (idx, tags)))).map Prod.fst).Nodup := by
     simpa [List.map_map, Function.comp_def] using entryNames
   apply GlobalEnvInv.intro
@@ -973,11 +792,14 @@ theorem globalEnvInv_allocTags (genv : GlobalEnv) (idx stamp : Nat)
       have compilerMember : (constructorName, (tag, some (idx, tags))) ∈
           entries.map (fun (name, tag, _) => (name, (tag, some (idx, tags)))) :=
         List.mem_map.mpr ⟨(constructorName, tag, args.length), entryMember, rfl⟩
-      have compilerLookup := lookup_of_mem_nodup _ constructorName (tag, some (idx, tags)) compilerMember compilerNames
+      have compilerLookup := holALookup_of_distinct_member _ constructorName (tag, some (idx, tags))
+        ⟨compilerNames, compilerMember⟩
       refine ⟨tag, some (idx, tags), ?_, ?_, ?_⟩
       · rw [allocTags_namespace_entries]
+        rw [holALookup_eq_lookup] at compilerLookup
         exact compilerLookup
-      · exact installAllocatedConstructor_lookup idx stamp constructors constructorName tag args.length entryMember reserved
+      · exact installTypeConstructorList_lookup_entry idx stamp entries entryKeys
+          constructorName tag args.length entryMember reserved
       · intro tyId ctors same
         cases same
         rw [installTypeConstructorList_tys]
@@ -1017,9 +839,10 @@ theorem factoredInvariant_installConstructorList {C F : Type} [Nonempty C]
     have growth := GlobalGrowth.installTypeConstructor genv idx tag arity name stamp headFree
     let next := { genv with c := finiteUpdate genv.c ((tag, some idx), arity) (.typeStamp name stamp) }
     have nextValid : factoredInvariant interp transform gen next (start, finish, other) source flat :=
-      factoredInvariant_installSiblingConstructor interp transform gen genv start finish other source flat
-        idx tag arity anchorTag anchorArity name anchorName stamp tags valid table
-        (members name tag arity headMember) older anchor headFree (fresh name tag arity headMember)
+      factoredInvariant_installTypeConstructor interp transform gen genv start finish other source flat
+        idx tag arity name stamp tags valid table (members name tag arity headMember) older headFree
+        (fresh name tag arity headMember)
+        (genvCOk_sameType_compatible genv idx tag anchorTag anchorArity name anchorName stamp valid.1 anchor)
     have nextAnchor : next.c.lookup ((anchorTag, some idx), anchorArity) = some (.typeStamp anchorName stamp) :=
       growth.constructors _ _ anchor
     apply ih next nextValid table older nextAnchor names'.2 keys'.2
@@ -1074,16 +897,47 @@ theorem factoredInvariant_allocateConstructorList {C F : Type} [Nonempty C]
     have headMember : (name, tag, arity) ∈ (name, tag, arity) :: rest := by simp
     let next := { { genv with tys := finiteUpdate genv.tys start.tidx tags } with
       c := finiteUpdate genv.c ((tag, some start.tidx), arity) (.typeStamp name source.nextTypeStamp) }
-    have nextValid := factoredInvariant_allocateFirstTypeConstructor interp transform gen genv start finish other
-      source flat tag arity name tags valid fits (members name tag arity headMember)
     have table : next.tys.lookup start.tidx = some tags := by simp [next, finiteUpdate, FUPDATE_HOL]
     have anchor : next.c.lookup ((tag, some start.tidx), arity) = some (.typeStamp name source.nextTypeStamp) := by
       simp [next, finiteUpdate, FUPDATE_HOL]
     have range := valid.2.2.2.1
     have free := (idxRangeRel_type_free interp genv source.nextTypeStamp source.nextExnStamp source.evalState
       start finish other range (by omega)).2
-    have fresh := idxRangeRel_typeStamp_fresh interp genv source.nextTypeStamp source.nextExnStamp source.evalState
-      start finish other range
+    have fresh (name : ConN) (key : ConstructorKey) :
+        genv.c.lookup key ≠ some (.typeStamp name source.nextTypeStamp) := by
+      obtain ⟨_, _, _, _, _, _, _, _, typeFresh, _⟩ := range
+      intro found
+      exact typeFresh name source.nextTypeStamp (Nat.le_refl _) ⟨key, found⟩
+    let reserved := { genv with tys := finiteUpdate genv.tys start.tidx tags }
+    have reservedInv := factoredInvariant_installTypeTable interp transform gen genv start finish other
+      source flat tags valid fits
+    have compatible : ∀ cn' arity' stamp', genv.c.lookup (cn', arity') = some stamp' →
+        (SemanticPrimitivesHOL.ctorSameType (some (.typeStamp name source.nextTypeStamp)) (some stamp') = true ↔
+          FlatSem.ctorSameType (some (tag, some start.tidx)) (some cn')) := by
+      intro cn' arity' stamp' lookup
+      have otherIndex : cn'.2 ≠ some start.tidx := by
+        intro same
+        cases cn' with
+        | mk tag' typ =>
+          change typ = some start.tidx at same
+          subst typ
+          rw [free tag' arity'] at lookup
+          contradiction
+      cases stamp' with
+      | exnStamp n =>
+        simp [SemanticPrimitivesHOL.ctorSameType, SemanticPrimitivesHOL.sameType,
+          FlatSem.ctorSameType, Ne.symm otherIndex]
+      | typeStamp name' n =>
+        have otherStamp : n ≠ source.nextTypeStamp := by
+          intro same
+          subst n
+          exact fresh name' (cn', arity') lookup
+        simp [SemanticPrimitivesHOL.ctorSameType, SemanticPrimitivesHOL.sameType,
+          FlatSem.ctorSameType, Ne.symm otherIndex, Ne.symm otherStamp]
+    have nextValid := factoredInvariant_installTypeConstructor interp transform gen reserved
+      { start with tidx := start.tidx + 1 } finish other { source with nextTypeStamp := source.nextTypeStamp + 1 }
+      flat start.tidx tag arity name source.nextTypeStamp tags reservedInv table
+      (members name tag arity headMember) (by simp) (free tag arity) (fresh name) compatible
     change factoredInvariant interp transform gen
       (installTypeConstructorList start.tidx source.nextTypeStamp rest next)
       ({ start with tidx := start.tidx + 1 }, finish, other)
@@ -1272,33 +1126,6 @@ theorem datatypeConstructorNamespace_fold (types : TypeDef) (idx offset : Nat)
     rw [← nsAppend_assoc]
     simp only [Nat.add_assoc]
 
-/-- The compiler's datatype case returns this recursively described
-constructor namespace. -/
-theorem compileDecs_dtype_constructorNamespace (trace : List VarN) (n : Nat) (next : NextIndices)
-    (env : Environment) (gen : EnvironmentGenerationStore) (location : Flapjack.Misc.Location.Locs)
-    (types : TypeDef) :
-    (compileDecs trace n next env gen [.dtype location types]).2.2.1.c =
-      datatypeConstructorNamespace next.tidx types := by
-  simp only [compileDecs]
-  rw [datatypeConstructorNamespace_fold]
-  cases result : datatypeConstructorNamespace next.tidx types
-  simp [nsAppend, nsEmpty]
-
-/-- Each type definition preserves constructor and module domains, and the
-property composes in the declaration's shadowing order. -/
-theorem envDomainEq_datatypeConstructorNamespace (idx stamp : Nat) (types : TypeDef) :
-    EnvDomainEq { v := nsEmpty, c := datatypeConstructorNamespace idx types }
-      ({ v := nsEmpty, c := buildTdefs stamp types } : SemEnv Value) := by
-  induction types generalizing idx stamp with
-  | nil =>
-    simpa [datatypeConstructorNamespace, buildTdefs, emptyEnv] using envDomainEq_empty
-  | cons td rest ih =>
-    rcases td with ⟨parameters, typeName, constructors⟩
-    have first := envDomainEq_allocTags idx stamp constructors
-    have remaining := ih (idx + 1) (stamp + 1)
-    have combined := envDomainEq_append _ _ _ _ ⟨remaining, first⟩
-    simpa [datatypeConstructorNamespace, buildTdefs, extendEnv, extendDecEnv, nsAppend, nsEmpty] using combined
-
 /-- Proof-side global environment produced by allocating each type in a
 declaration, using consecutive compiler IDs and source stamps. -/
 noncomputable def allocateTypeDefinitions : Nat → Nat → TypeDef → GlobalEnv → GlobalEnv
@@ -1324,12 +1151,15 @@ theorem factoredInvariant_allocateTypeDefinitions {C F : Type} [Nonempty C]
         { source with nextTypeStamp := source.nextTypeStamp + types.length } flat ∧
       GlobalGrowth genv finalGenv ∧
       GlobalEnvInv finalGenv { v := nsEmpty, c := datatypeConstructorNamespace start.tidx types }
-        (fun _ => False) { v := nsEmpty, c := buildTdefs source.nextTypeStamp types } := by
+        (fun _ => False) { v := nsEmpty, c := buildTdefs source.nextTypeStamp types } ∧
+      EnvDomainEq { v := nsEmpty, c := datatypeConstructorNamespace start.tidx types }
+        ({ v := nsEmpty, c := buildTdefs source.nextTypeStamp types } : SemEnv Value) := by
   induction types with
   | nil =>
     intro genv start source valid _ _
     exact ⟨by simpa [allocateTypeDefinitions] using valid, GlobalGrowth.refl genv,
-      by simpa [allocateTypeDefinitions, datatypeConstructorNamespace, buildTdefs, emptyEnv] using globalEnvInv_empty genv⟩
+      by simpa [allocateTypeDefinitions, datatypeConstructorNamespace, buildTdefs, emptyEnv] using globalEnvInv_empty genv,
+      by simpa [datatypeConstructorNamespace, buildTdefs, emptyEnv] using envDomainEq_empty⟩
   | cons td rest ih =>
     rcases td with ⟨parameters, typeName, constructors⟩
     intro genv start source valid fits checked
@@ -1355,15 +1185,18 @@ theorem factoredInvariant_allocateTypeDefinitions {C F : Type} [Nonempty C]
           Namespace ModN ConN (Nat × Option (Nat × List (Nat × Nat))) × Spt Nat).1 }
         (fun _ => False) { v := nsEmpty, c := alistToNs (buildConstrs source.nextTypeStamp constructors).reverse } :=
       globalEnvInv_allocTags genv start.tidx source.nextTypeStamp constructors names
-    obtain ⟨lastValid, lastGrowth, lastInv⟩ := ih nextGenv nextStart nextSource nextValid (by simp [nextStart] at fits ⊢; omega) checkedRest
+    obtain ⟨lastValid, lastGrowth, lastInv, lastDomain⟩ := ih nextGenv nextStart nextSource nextValid (by simp [nextStart] at fits ⊢; omega) checkedRest
     have carriedInv := globalEnvInv_growth nextGenv _ lastGrowth _ (fun _ => False) _ nextInv
-    have domain := envDomainEq_datatypeConstructorNamespace nextStart.tidx nextSource.nextTypeStamp rest
-    have combined := globalEnvInv_append_factored _ _ _ _ _ ⟨domain, lastInv, carriedInv⟩
-    refine ⟨?_, ?_, ?_⟩
+    have combined := globalEnvInv_append_factored _ _ _ _ _ ⟨lastDomain, lastInv, carriedInv⟩
+    have headDomain := envDomainEq_allocTags start.tidx source.nextTypeStamp constructors
+    have combinedDomain := envDomainEq_append _ _ _ _ ⟨lastDomain, headDomain⟩
+    refine ⟨?_, ?_, ?_, ?_⟩
     · simpa [allocateTypeDefinitions, nextGenv, nextStart, nextSource, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using lastValid
     · simpa [allocateTypeDefinitions, nextGenv, nextStart, nextSource] using nextGrowth.trans lastGrowth
     · simpa [allocateTypeDefinitions, datatypeConstructorNamespace, buildTdefs, extendEnv, extendDecEnv,
         nsAppend, nsEmpty, nextGenv, nextStart, nextSource] using combined
+    · simpa [datatypeConstructorNamespace, buildTdefs, extendEnv, extendDecEnv,
+        nsAppend, nsEmpty, nextStart, nextSource] using combinedDomain
 
 /-- Datatype declarations satisfy the factored declaration simulation. The
 factored relations remain subject to the separate HOL correspondence review. -/
@@ -1389,8 +1222,8 @@ theorem factoredDecBoundedIH_dtype {C F : Type} [Nonempty C]
   subst result
   have foldEq : ((types.zipIdx.map fun (td, tid) => allocTags (start.tidx + tid) td.2.2).foldl
       (fun ns lc => nsAppend lc.1 ns) nsEmpty) = datatypeConstructorNamespace start.tidx types := by
-    have result := compileDecs_dtype_constructorNamespace trace n start env gen location types
-    simpa only [compileDecs] using result
+    simpa only [Nat.add_zero, (nsAppend_nsEmpty _).1] using
+      datatypeConstructorNamespace_fold types start.tidx 0 nsEmpty
   have compiledEq := compiled
   simp only [compileDecs, foldEq, Prod.mk.injEq] at compiledEq
   obtain ⟨_, nextEq, envEq, genEq, codeEq⟩ := compiledEq
@@ -1399,7 +1232,7 @@ theorem factoredDecBoundedIH_dtype {C F : Type} [Nonempty C]
   subst nextGen
   subst flatDecs
   have fits : start.tidx + types.length ≤ finish.tidx := bounded.2.1
-  obtain ⟨finalInvariant, growth, envResult⟩ :=
+  obtain ⟨finalInvariant, growth, envResult, domain⟩ :=
     factoredInvariant_allocateTypeDefinitions interp transform gen finish other flat types genv start source
       invariant fits checked
   refine ⟨flat, _, none, ?_, finalInvariant.2.2.1, ?_, ?_, ?_⟩
@@ -1408,8 +1241,7 @@ theorem factoredDecBoundedIH_dtype {C F : Type} [Nonempty C]
     exact ⟨finalInvariant, oracForwardRel_refl interp source.evalState, growth⟩
   · intro resultEnv same
     cases same
-    exact ⟨rfl, envDomainEq_datatypeConstructorNamespace start.tidx source.nextTypeStamp types,
-      generation, envResult⟩
+    exact ⟨rfl, domain, generation, envResult⟩
   · intro error impossible
     cases impossible
 

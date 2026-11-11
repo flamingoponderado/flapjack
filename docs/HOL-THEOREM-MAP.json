@@ -1,5 +1,406 @@
 [
  {
+  "hol_path": "cakeml/misc/miscScript.sml", "hol_name": "subspt_domain_SUBSET",
+  "lean_path": "Flapjack/Misc/Sptree/Subspt/DomainSubset.lean", "lean_name": "sptSubspt_domainSubset",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared subspt_domain_subset_type and source: both sparse trees share the original unrestricted polymorphic value carrier, and the full subspt premise implies inclusion of the first tree domain in the second."
+ },
+ {
+  "hol_path": "cakeml/misc/miscScript.sml", "hol_name": "DISJOINT_IMAGE_SUC",
+  "lean_path": "Flapjack/Misc/SuccSet.lean", "lean_name": "disjointImageSucc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared disjoint_image_suc_type and source: the two natural-number sets retain their order, and disjointness of their successor images is equivalent to their original disjointness."
+ },
+ {
+  "hol_path": "cakeml/misc/miscScript.sml", "hol_name": "IMAGE_SUC_SUBSET_UNION",
+  "lean_path": "Flapjack/Misc/SuccSet.lean", "lean_name": "imageSucc_subset_union",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared image_suc_subset_union_type and source: all three natural-number sets retain their order, and the successor-image subset of the image union is equivalent to the original subset of the union."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_mono",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/CodeGrowth.lean", "lean_name": "evaluate_mono",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_mono_type and source: expressions, environment, independently polymorphic state carriers, unrestricted result and final state retain the original order; the complete evaluation equation implies the full code-submap conclusion. Closure state refs and code use canonical finite support. The faithful evaluator inherits reals_as_rational_cuts and SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_add_to_clock",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/ClockShift.lean", "lean_name": "evaluate_addToClock",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_add_to_clock_type and the source: the shared extra clock, original tuple binder and equality, independent state parameters, complete non-timeout premises, both evaluation and application conjuncts and final clock updates agree. Closure state refs and code use canonical finite support. The faithful evaluator inherits reals_as_rational_cuts and SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_add_clock",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/ClockShift.lean", "lean_name": "evaluate_addClock",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_add_clock_type and the source: final and initial states, result, expressions and environment keep their HOL binder order; the full evaluation and non-timeout premise implies the original universally quantified clock update. Closure state refs and code use canonical finite support. The faithful evaluator inherits reals_as_rational_cuts and SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml", "hol_name": "every_error_result_def",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean", "lean_name": "everyErrorResult",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_error_result_type and the source: the generic raised payload is checked by the predicate and all aborts satisfy it unconditionally."
+ },
+ {
+  "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml", "hol_name": "every_result_def",
+  "lean_path": "Flapjack/SemanticPrimitivesProps/ResultRelation.lean", "lean_name": "everyResult",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_result_type and the source: success and error payload types remain independent; success uses the first predicate and errors use everyErrorResult with the second."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "state_rel_opt_rel_refs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateRelation.lean", "lean_name": "stateRel_optRefs",
+  "statement_status": "reviewed_fmap_as_finite_support_relation", "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code"],
+  "reviewer": "Compared the local HOL source and state_rel_refs_replay_type, replaying the original proof with inferred types: both directions preserve the original state relation and lookup premises, existential optional lookup and ref relation, including absent references, and independent compiler and FFI carriers. Both closure-state fields use canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "pure_correct_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/PureCorrect.lean", "lean_name": "pureCorrectEq",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared pure_correct_eq_type and the source: expression, environment, independently polymorphic state carriers, result and final state have the original order; the singleton evaluation and purity premises imply the complete value, raise and abort cases. Closure state refs and code use canonical finite support. The faithful evaluator inherits reals_as_rational_cuts and SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "mk_code_g_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeCodeState.lean", "lean_name": "mkCodeG",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared mk_code_g_type and the complete source equation: code is the canonical finite-support map, both projections use the same choice-ordered finite domain, PRE and right-recursive tree insertion are preserved, and holThe matches FAPPLY on domain keys by mkCodeG_keys_defined. HOL CHOICE and Lean epsilon share an interpretation; concrete enumeration order across implementations is not asserted."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfg_subg_refl",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateExtension.lean", "lean_name": "wfg_subg_refl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and wfg_subg_refl_type capture: the sparse-map payload and auxiliary-code payload remain independent; original well-formedness implies the same reflexive extension."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfg_subg_EX_helper",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateExtension.lean", "lean_name": "wfg_subg_ex_helper",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source and wfg_subg_ex_helper_type capture: independent sparse-map and code payloads, arbitrary state predicate, original conjunctive premise, and existential extension satisfying the predicate are preserved."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_pure",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Purity.lean", "lean_name": "calls_pure",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and calls_pure_type capture: the input expression list, direct-call state, output expression list and final state have the original carriers and order; input EVERY purity and the complete calls equation imply output EVERY purity."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_pure_sing",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Purity.lean", "lean_name": "calls_pure_sing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and calls_pure_sing_type capture: the input and output expressions and initial and final direct-call states retain their carriers and order; input purity and the singleton calls equation imply output purity."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "evaluate_app_mono",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ApplicationGrowth.lean", "lean_name": "evaluateApp_mono",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed evaluate_app_mono_type source capture: independent compiler and FFI types, arbitrary application arguments and result, the full evaluation premise and code-submap conclusion agree. The closure state refs and code use canonical finite support. The faithful evaluator inherits reals_as_rational_cuts and SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "evaluate_includes_state",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/OracleIncludes.lean", "lean_name": "evaluate_includesState",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed evaluate_includes_type source capture: independently polymorphic state, configuration and pair payloads, original included-state and complete evaluation premises, and included-state conclusion agree. Closure state refs and code use canonical finite support. The faithful evaluator inherits reals_as_rational_cuts and SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "evaluate_app_includes_state",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/OracleIncludes.lean", "lean_name": "evaluateApp_includesState",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed evaluate_app_includes_type source capture: free application arguments precede all quantified variables, including the two unused independent types, and the original included-state and full application premises imply the same conclusion. Closure state refs and code use canonical finite support. The faithful evaluator inherits reals_as_rational_cuts and SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "fv_GENLIST_Var_alt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubInvariants.lean", "lean_name": "freeVars_variables_alt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed fv_genlist_alt_type source capture: the free variable index precedes quantified count, starting index and trace, and the full free-variable iff is unchanged."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "env_rel_env_exists",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueExistence.lean", "lean_name": "envRel_exists",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared the typed env_exists_type source capture: the free compiler state, allowed set, code and source environment precede vars; every source value is well formed, and the result existential retains the complete environment relation and equal-length conclusion. The code parameter uses canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_rel_state_rel_install",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InstallSimulation.lean", "lean_name": "codeRel_stateRel_install",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code"],
+  "reviewer": "Compared the full typed code_rel_state_rel_install_type source capture: independent compiler and FFI types, seven original premises, generated-label disjointness and distinctness, and all existential compiler, state, oracle, code-submap and location conclusions agree. The closure state refs and code fields use canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "oracle_monotonic_shift_seq",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonic.lean", "lean_name": "oracleMonotonic_shiftSeq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source monotonic_shift capture: independent oracle entry and identifier types, ordering relation, positive shift and original subset premise yield the full oracle monotonicity conclusion."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml", "hol_name": "oracle_monotonic_DISJOINT_init",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleMonotonic.lean", "lean_name": "oracleMonotonic_disjointInit",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source monotonic_disjoint_init capture: arbitrary entry and identifier types, oracle monotonicity and irreflexive ordering imply disjointness of the initial set and each oracle entry."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_rel_IMP_v_to_bytes_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "valueRel_bytesList_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared the typed local source proof replay bytes_replay in clos_call_scalar_lists_probe.out: the original value relation implies, for every word8 list, the full equivalence of the two exact number-encoded list decodings. The code parameter uses canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_rel_IMP_v_to_words_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "valueRel_wordsList_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared the typed local source proof replay words_replay in clos_call_scalar_lists_probe.out: the free code parameter precedes quantified values and state, and the original value relation implies the full decoding equivalence for every word64 list. The code parameter uses canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "subg_insert_each'",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertWithCode.lean", "lean_name": "stateExtends_insertWithCode",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared subg_insert_each_prime_type in clos_call_code_list_probe.out with the HOL source: the sparse-map payload, code payload, function metadata and body types remain independent, and all original extension, suffix, length, well-formedness, disjointness and indexed lookup premises imply the full state extension."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "dest_closure_v_rel",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ClosureLookup.lean", "lean_name": "destClosure_valueRel",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared dest_closure_v_rel_type in clos_call_code_list_probe.out and HOL source: all three premises and both result cases agree, including the actual target application, related partial closure, full-application witnesses, recursive offset, prefix and environment relations, remaining arguments, group relation, index bound and selected source body. The code parameter uses canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "dest_closure_v_rel_lookup",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ClosureLookup.lean", "lean_name": "destClosure_valueRel_lookup",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared dest_closure_v_rel_lookup_type in clos_call_code_list_probe.out and HOL source: the actual source closure run, value and environment relations, state well-formedness, known location and exclusion imply all original witnesses, source and target applications, converted bodies, state extension, code lookup and inclusion. The unused HOL existential retains its independent inhabited type; the code parameter uses canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_includes_SUBMAP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeIncludes.lean", "lean_name": "codeIncludes_submap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["y1", "y2"],
+  "reviewer": "Compared code_includes_submap_replay_type in clos_call_code_list_probe.out, replayed from the local HOL source statement and proof: independent key and value types, the original inclusion and SUBMAP premises, and the full inclusion conclusion agree. Both finite-map parameters use canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "make_g_IMP_subg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeState.lean", "lean_name": "makeState_imp_subg",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared make_g_imp_subg_type in clos_call_code_list_probe.out and HOL source: both sparse num_sets, code payload, constructed states and program list retain their carriers; both successful make_g results, disjointness, distinctness, subspt and generated-label inclusion imply the full subg conclusion. The code parameter and its HOL-equality update list use canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "make_g_make_g_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeState.lean", "lean_name": "makeState_eq",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["x2", "y2"],
+  "reviewer": "Compared make_g_make_g_eq_type in clos_call_code_list_probe.out and HOL source: independent sparse-tree and code payload types, both finite maps and states, same-tree and extension conditions, and both successful constructions imply equality of the complete states. Both code parameters use canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "make_g_subg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeState.lean", "lean_name": "makeState_subg",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.holUpdateList"],
+  "reviewer": "Compared make_g_subg_type in clos_call_code_list_probe.out and HOL source: independent sparse-map and code payload carriers, the successful make_g and full wfg premises, and the entire subg conclusion are preserved. The reviewed holEmpty and holUpdateList producers directly represent HOL FEMPTY |++ aux, retaining last-update lookup behavior."
+ },
+ {
+  "hol_path": "HOL/src/finite_maps/alistScript.sml", "hol_name": "ALOOKUP_ALL_DISTINCT_MEM",
+  "lean_path": "Flapjack/FiniteMap/AlistExact/Lookup.lean", "lean_name": "holALookup_of_distinct_member",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alookup_all_distinct_mem_type in clos_call_code_list_probe.out and HOL source: key and value types remain independent, and distinct keys plus pair membership imply the original association-list lookup result."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "is_Recclosure_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "isRecClosure",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared is_recclosure_def_type in clos_call_code_list_probe.out and HOL source: the recursive-closure constructor returns true and all six other original value constructors return false, with their exact carriers and fixed word widths."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "env_rel_DROP_args",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Environment.lean", "lean_name": "envRel_dropArgs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared env_rel_drop_args in clos_call_env_rel_probe.out and HOL source: relation domain and codomain remain independent, and the original singleton shifted-function environment relation, related prefixes and both length bounds imply the original whole-environment relation with zero function arity."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "env_rel_DROP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Environment.lean", "lean_name": "envRel_drop",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared env_rel_drop in clos_call_env_rel_probe.out and HOL source: relation domain and codomain remain independent, and the original shifted-tail relation, prefix list relation and both length bounds imply the complete zero-offset environment relation."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "dest_closure_full_wfv",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ClosureWellFormed.lean", "lean_name": "destClosure_fullWellFormed",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared dest_closure_full_wfv_type in clos_call_code_list_probe.out and HOL source: successful full application and the original value and operand well-formedness premises imply well-formed arguments and remainder, the original recursive-closure relation and indexed body. The two unused HOL existential witnesses retain independently inhabited polymorphic types. The code parameter uses canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "dest_closure_partial_wfv",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ClosureWellFormed.lean", "lean_name": "destClosure_partialWellFormed",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared dest_closure_partial_wfv_type in clos_call_code_list_probe.out and HOL source: the original successful partial application, well-formed operand list and well-formed input value imply well-formedness of the actual resulting closure. The code parameter uses canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_rel_exists",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueExistence.lean", "lean_name": "valueRel_exists",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["code"],
+  "reviewer": "Compared v_rel_exists_type in clos_call_code_list_probe.out and HOL source: for arbitrary compiler state, allowed locations, finite code map and source value, the original well-formedness premise yields an existential target satisfying the full value relation. The code parameter uses canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_el_sing",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/IndexedCalls.lean", "lean_name": "calls_el_sing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_el_sing_type in clos_call_code_list_probe.out and source: the ordered input/output lists, states and index retain their carriers; the original calls, bounds, distinctness, disjointness, well-formedness and annotation premises imply both existential intermediate states and all original run, extension, well-formedness, freshness, prefix-label and remaining-location conclusions. HOL fEL is holEl."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "insert_each'_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertWithCode.lean", "lean_name": "insertWithCode",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared insert_each_prime_def_type in clos_call_code_list_probe.out and HOL source: the generic code payload, zero case, sparse insertion, p+2 recursion and prepended p+1 lookup agree. holALookup and holThe preserve HOL lookup and THE, including the unspecified missing value for the inhabited payload."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "wfg_insert_each'",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertWithCode.lean", "lean_name": "insertWithCode_wellFormed",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared wfg_insert_each_prime_type and source: arbitrary code entries, starting location, count and state retain their carriers; the original full well-formedness and generated-location/domain disjointness premises imply full well-formedness after insertion. Disjointness is expressed pointwise."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "FST_insert_each'",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertWithCode.lean", "lean_name": "insertWithCode_fst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fst_insert_each_prime_type and source: generic code payload and ordered inputs agree, and the whole sparse-state first component equals ordinary location insertion."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "MAP_FST_insert_each'",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertWithCode.lean", "lean_name": "insertWithCode_labels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared map_fst_insert_each_prime_type and source: generic inputs retain their order and the reversed generated label list is appended before the unchanged old labels."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "SND_insert_each'",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertWithCode.lean", "lean_name": "insertWithCode_snd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared snd_insert_each_prime_type and source: the exact reversed generated label and HOL THE/ALOOKUP payload list precedes the unchanged old code; generic payload remains inhabited only for HOL THE."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_size_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueSize.lean", "lean_name": "valueSize_mem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original-proof replay preserves a closure value and closure-value list, the membership premise, and the strict inequality using the datatype-generated HOL value and list sizes. Their full typed equations and concrete evaluations are captured in clossem_generated_size_probe.out."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "IMP_EXISTS_IFF",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FreeCorrect.lean", "lean_name": "impExistsIff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original-proof replay preserves the polymorphic list and both arbitrary predicates, the pointwise membership-restricted equivalence premise, and the full existential equivalence."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "ALL_DISTINCT_MAP_FST_ADD1",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeState.lean", "lean_name": "distinctMapFstAdd1",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original-proof replay retains an arbitrary list of natural-number and polymorphic payload pairs and the complete distinctness equivalence after incrementing first components."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_acc_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/SuffixReplacement.lean", "lean_name": "callsAcc0",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed local-theorem replay preserves expression list, complete calls state, code lists and the suffix equality premise; the conclusion maps the unchanged output and first state component while appending the suffix to the returned code."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_acc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/SuffixReplacement.lean", "lean_name": "calls_acc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_acc_type in clos_call_code_list_probe.out and source: the expression list, input sparse state, old code, result expressions, final sparse state and generated code retain their original order and carriers. The empty-accumulator equation implies the same result with old code appended."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_replace_SND",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/SuffixReplacement.lean", "lean_name": "calls_replace_snd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_replace_snd_type in clos_call_code_list_probe.out and source: all six inputs retain their original order and state/code carriers; the calls equation, equality of initial first components and output suffix equation imply the complete replacement calls equation."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_fv1_subset",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FreeVarsPreservation.lean", "lean_name": "calls_freeVar_subset",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_fv1_subset_typed in clos_call_stub_probe.out and source: the input expression list, initial state, output list and final state retain their original order and carriers, and the calls equation implies the full elementwise list relation from output free variables to input free variables."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_fv_imp",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FreeVarsPreservation.lean", "lean_name": "calls_freeVars_imp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_fv_imp_typed in clos_call_stub_probe.out and source: input list, initial state, output list, final state and variable retain their carriers and the original calls-equation and output-freeness conjunction implies input freeness."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_domain",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateGrowth.lean", "lean_name": "calls_domain",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_domain_type in clos_call_code_list_probe.out and HOL source: the input expressions, initial state, output expressions and final state retain their order and original carriers. The calls equality implies inclusion of the final domain in the union of the initial domain and predecessor image of final auxiliary labels."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_wfg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CallsWellformed.lean", "lean_name": "calls_wellFormed",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_wfg_type in clos_call_wfg_probe.out and HOL source: the original calls equation, input-location distinctness, disjointness, every-function-location and initial well-formedness premises imply the full final domain/label equality and label distinctness. Disjointness is expressed pointwise."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_wfg'",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CallsWellformed.lean", "lean_name": "calls_weaklyWellFormed",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_wfg_prime_type in clos_call_wfg_probe.out and source: input expressions, initial state, output expressions and final state remain in order; the total calls equation, every-function-location condition and initial one-sided invariant imply the unchanged final invariant."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_code_subset",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateGrowth.lean", "lean_name": "calls_codeSubset",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_code_subset_type in clos_call_code_list_probe.out and source: input expressions, initial state, output expressions and final state retain their order and carriers. The total calls equation implies all three original inclusions, including successor-domain growth, preservation of old labels and the final-label domain-or-old-label bound."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_list_replace_SND",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeList.lean", "lean_name": "codeListSource_replace_snd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_list_replace_snd_type in clos_call_code_list_probe.out and source: all six quantified inputs and the three independent payload types agree; the original run, equal first components and suffix equation imply the original replacement-state equation."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "ALOOKUP_code_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeLookup.lean", "lean_name": "codeListSource_alookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alookup_code_list_type in clos_call_code_list_probe.out and source: location, generic function pairs, independent state payload and key retain their HOL order. HOL's optional choice is holOptionSome, and fEL is HOL EL rendered by holEl with inhabited pair carrier; both the indexed result and fallback lookup are unchanged."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_list_MAPi",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubInvariants.lean", "lean_name": "callsListSource_mapIdx",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_list_mapi in clos_call_stub_probe.out and HOL source: the free trace and quantified location, unused independently polymorphic argument, and index retain their order; the function equality retains the independent function payload type and original indexed call and variable generation."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "SND_code_list_ZIP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CodeList.lean", "lean_name": "codeListSource_snd_zip",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared snd_zip_type in clos_call_code_list_probe.out and source: location, function pairs and state retain the original order and three independent payload types; the reversed zip of the generated label range and function list precedes the unchanged incoming code list."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_list_length",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "length_callsList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared calls_list_length_typed in clos_call_stub_probe.out and the source statement: trace, index, location and independently polymorphic function payload retain their original order and carriers, and the generated stub list has the original function-list length."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "compile_ALL_DISTINCT",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LabelDistinct.lean", "lean_name": "compile_allDistinct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_ALL_DISTINCT_typed in clos_call_stub_probe.out and HOL source: the Boolean, input and output expressions, sparse state, and auxiliary code retain their original carriers and order. The original conjunction and distinctness conclusion are unchanged; both enabled and disabled compiler branches are covered."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "evaluate_GENLIST_Var_tra",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubEvaluation.lean", "lean_name": "evaluate_variables",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_GENLIST_Var_tra_typed in clos_call_stub_probe.out: count, trace and index retain their quantified order, the environment and state retain independent HOL carriers, and both the prefix result and out-of-bounds type error leave the state unchanged. The clocked evaluator uses the canonical refs and code finite-map state with the local roundtrip witness and inherits the rational-cut real representation. Inherits the reals_as_rational_cuts assumption through its dependencies."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "FST_insert_each_same",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/InsertDomain.lean", "lean_name": "insertEach_fst_same",
   "statement_status": "reviewed_exact",
@@ -185,7 +586,7 @@
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_domain_locs",
-  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/DomainLocations.lean", "lean_name": "calls_domainLocations",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateGrowth.lean", "lean_name": "calls_domainLocations",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared clos_call_calls_domain_locs_typed: quantified input list, state, output list and final state occur in order; the original total calls equation implies the full domain inclusion in the initial domain union input code locations."
  },
@@ -245,6 +646,93 @@
   "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code"],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Source comparison: compared clos_call_do_app_thm_typed: all free arguments, result cases, error alternatives, grouped premises, success conclusions and existential target state match. Source and target configurations are NumSet × C and C with shared FFI. State refs and code use canonical finite support. The proof instantiates simple_val_rel_do_app using valueRel_simple, stateRel_simple, valueWellFormed_simple and stateValuesWellFormed_simple, mirroring the HOL proof's inline conditions. ClosSem.doApp inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_locs_calls_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "locations_callsList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original-proof replay preserves the polymorphic function metadata, argument order and complete empty location-list equality."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_locs_code_list_MEM",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "codeLocations_codeList_mem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original-proof replay preserves independent function metadata and state types, argument order and the complete location membership equivalence."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "oracle_monotonic_init_UNION",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/OracleInvariant.lean", "lean_name": "oracleMonotonic_initUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original preserves independent oracle and element types, function and relation arguments, both initial sets and the full union equivalence."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "state_syntax_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateSyntax.lean", "lean_name": "stateSyntax",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original uses a predicate on closure expressions and the fixed calls state of a number set and list of two numbers paired with an expression; the predicate holds for every expression in the list."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "state_syntax_insert_each",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateSyntax.lean", "lean_name": "stateSyntax_insertEach",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original universally quantifies the count, location and complete calls state and states the unconditional equivalence after insert_each."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "state_syntax_code_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateSyntax.lean", "lean_name": "stateSyntax_codeList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original universally quantifies the location, list of number-expression pairs and calls state, with the complete equivalence to the prior property and EVERY predicate over the second projections."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ArityPreservation.lean", "lean_name": "callsObeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original retains the free application limit, all four quantified list and calls-state arguments, the direct-call result equation, both input arity premises, and both output and accumulated-code conclusions."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/SyntaxPreservation.lean", "lean_name": "callsNoLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original retains all four quantified list and calls-state arguments, the direct-call result equation, both input label-absence premises and both output and accumulated-code conclusions."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "semantics_calls",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Semantics.lean", "lean_name": "semanticsCalls",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.holUpdateList"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: compared the complete typed semantics_calls statement, including nonfailure, compilation, syntax, oracle and code invariant premises, and the target-to-source behavior equality. The holEmpty and holUpdateList producers represent HOL empty and list-updated finite maps. The evaluator inherits reals_as_rational_cuts and the real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "semantics_compile",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Semantics.lean", "lean_name": "semanticsCompile",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.holUpdateList"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: compared the complete typed semantics_compile statement, including nonfailure, compilation and both enabled/disabled callback and oracle conditions, and the target-to-source behavior equality. The holEmpty and holUpdateList producers represent HOL empty and list-updated finite maps. The evaluator inherits reals_as_rational_cuts and the real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "FUNION_FEMPTY_FUPDATE_LIST",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FiniteMap.lean", "lean_name": "unionEmptyUpdateList",
+  "statement_status": "reviewed_fmap_as_finite_support_parameter_observations",
+  "fmap_as_finite_support_parameters": ["code"],
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.union", "Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.holUpdateList"],
+  "reviewer": "Source comparison: compared the typed FUNION_FEMPTY_FUPDATE_LIST statement, including independent key/value types, the sole disjointness premise, left-biased union and left-to-right updates with duplicate keys allowed. code is a canonical map parameter; Flapjack.HolFiniteMapExact.union, Flapjack.HolFiniteMapExact.holEmpty and Flapjack.HolFiniteMapExact.holUpdateList are reviewed computed-map producers."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "nth_code_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/NthCode.lean", "lean_name": "nthCode",
+  "statement_status": "reviewed_fmap_as_finite_support_result",
+  "fmap_as_finite_support_result": true,
+  "reviewer": "Source comparison: compared the typed nth_code_def equations, including independent configuration and auxiliary payload types, recursive oracle shift, compile_inc arguments and left-to-right code update. The input and result use canonical finite support; the unconditional lookup witness compares the full recursive result to an independent raw update fold."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_correct",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CallsCorrect.lean", "lean_name": "callsCorrect",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: compared both complete conjuncts with calls_correct_type from the original HOL theory: binder order, independent compiler and FFI carriers, the unused independent application-location type, all premises, existential results and conclusions agree. The full clocked evaluator covers installation, force, closure application and errors. ClosSem.State refs and code use canonical finite support. The evaluator inherits reals_as_rational_cuts and the real-agreement assumption documented in SOUNDNESS item 8."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "vrel_list_to_v",
@@ -1185,13 +1673,13 @@
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_add_SUC_code_locs",
-  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LabelsOriginal.lean", "lean_name": "calls_addSucc_codeLocations",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LabelOrigins.lean", "lean_name": "calls_addSucc_codeLocations",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared calls_add_SUC_code_locs_typed and independent review: quantified binders, sparse-tree state, calls equation and old-or-successor label set inclusion agree."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_ALL_DISTINCT",
-  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LabelsOriginal.lean", "lean_name": "calls_allDistinct",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LabelDistinct.lean", "lean_name": "calls_allDistinct",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared calls_ALL_DISTINCT_typed and source: quantified binders, grouped equation and distinctness premises, pointwise ordered disjointness, and final label distinctness agree."
  },
@@ -1600,6 +2088,28 @@
   "reviewer": "Compared FOLDR_mk_Union_local_typed, replayed with the original HOL proof: the list payload type is polymorphic, and the pair fold, seed, projections, append and variable-set fold have the same order and no premises."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "shift_code_locs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/CodeLocations.lean", "lean_name": "shiftSource_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared shift_code_locs_local_typed, replayed with the original HOL proof: the universally quantified expression list, two natural-number indices and sparse-tree map retain their types and order, and source-shaped shifting preserves exactly the code-location list."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "state_rel_opt_rel_refs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/StateRelation/Original.lean", "lean_name": "stateRelSource_optRelRefs",
+  "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
+  "fmap_as_finite_support": ["refs", "code"],
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "reviewer": "Compared state_rel_opt_rel_refs_local_typed, replayed with the original HOL proof: both lookup directions preserve the original states, index, option binders, grouped premises and existential option relations. Compiler and FFI carriers remain independent. fmap_as_finite_support records refs and code; nested_list_rel_as_mutual records the source value relation witnessed by functionsRel_iff."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "state_rel_clocks_eqs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/StateRelation/Original.lean", "lean_name": "stateRelSource_clocks",
+  "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
+  "fmap_as_finite_support": ["refs", "code"],
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "reviewer": "Source comparison with state_rel_clocks_eqs_local_typed, replayed using the original HOL proof: the two states share unrestricted compiler and FFI carriers, and the state relation implies equality of their clocks. fmap_as_finite_support records the canonical refs and code fields; nested_list_rel_as_mutual records the value relation witnessed by functionsRel_iff."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "state_rel_max_app",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/StateRelation/Original.lean", "lean_name": "stateRelSource_maxApp",
   "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
@@ -1632,6 +2142,33 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/Compile.lean", "lean_name": "compileSource_append",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared compile_append_typed: the two unrestricted program lists share the original polymorphic key type, and compilation distributes over append in the same order."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "do_app_err_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/Primitive.lean", "lean_name": "doAppErrThm",
+  "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
+  "fmap_as_finite_support": ["refs", "code"],
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_err_thm_local_typed, replayed with the original HOL proof: related states and value lists, the source error and the original non-type-error premise imply an existential related target error in the same order; compiler and FFI state carriers are independent. fmap_as_finite_support records refs and code; nested_list_rel_as_mutual records the source value relation witnessed by functionsRel_iff. doApp inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "do_app_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/Primitive.lean", "lean_name": "doAppThm",
+  "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
+  "fmap_as_finite_support": ["refs", "code"],
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_thm_local_typed, replayed with the original HOL proof: related initial states and value lists and the successful source operation imply the target operation and related value and final state, in the same order; compiler and FFI state carriers are independent. fmap_as_finite_support records refs and code; nested_list_rel_as_mutual records the source value relation witnessed by functionsRel_iff. doApp inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "do_app_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/Primitive.lean", "lean_name": "doAppLemma",
+  "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",
+  "fmap_as_finite_support": ["refs", "code"],
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_lemma_local_typed, replayed with the original HOL proof: state and value-list premises, operation and case analysis, existential target results, error relation and success relation agree; compiler and FFI state carriers are independent. fmap_as_finite_support records refs and code; nested_list_rel_as_mutual records the source value relation witnessed by functionsRel_iff. doApp inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "do_install_thm",
@@ -1668,6 +2205,123 @@
   "statement_status": "reviewed_nested_list_rel_as_mutual",
   "nested_list_rel_as_mutual": ["FunctionsRel"],
   "reviewer": "Source comparison with list_to_v_v_rel_typed: both unrestricted value lists, their pointwise relation premise and the related list-encoding conclusion agree. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_locs_GENLIST_Var",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "locations_variables",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared code_locs_GENLIST_Var_typed: the universally quantified count, trace and index retain their types and order, and the source variable generator has the empty code-location list."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "fv_GENLIST_Var_tra",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubInvariants.lean", "lean_name": "freeVars_variables",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fv_GENLIST_Var_tra_typed: the free variable index is independent of the universally quantified count, trace and generator index; their order and the equivalence with the strict index bound match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "closed_Fn_fv",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FreeCorrect.lean", "lean_name": "closedFn_fv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared closed_fn_fv in clos_call_free_correct_probe.out: the name, location, variable annotation, arity and body retain their source types and order; source closedness is equivalent to the universally quantified free-variable bound. Names use the reviewed MlString carrier."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "closed_Fn",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FreeCorrect.lean", "lean_name": "closedFn",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared closed_fn in clos_call_free_correct_probe.out: the name, location, variable annotation, arity and body retain their source types and order; source closedness is equivalent to the bound on every variable in the SND of the source free traversal. Names use the reviewed MlString carrier."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "free_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FreeCorrect.lean", "lean_name": "freeThm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared free_thm in clos_call_free_correct_probe.out: the universally quantified source expression list and index, source free traversal, let-bound output and variable set, and both output-then-input free-variable equivalences retain their original order and meaning. The successful fuel traversal used in the proof is established unconditionally and is not a theorem premise."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "no_Labels_GENLIST_Var",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubInvariants.lean", "lean_name": "noLabels_variables",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared no_Labels_GENLIST_Var_typed: the universally quantified trace, index and count retain their order and types, and EVERY no_Labels is the bounded universal over the source variable generator."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "no_Labels_calls_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubInvariants.lean", "lean_name": "noLabels_callsList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared no_Labels_calls_list_typed: trace, two indices and function list retain their order; the ignored payload type remains polymorphic, and EVERY no_Labels over mapped SND is a bounded universal over the source stub generator."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "obeys_max_app_GENLIST_Var",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubInvariants.lean", "lean_name": "obeysMaxApp_variables",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared obeys_max_app_GENLIST_Var_typed: the free application limit and quantified trace, index and count retain their types and order, and EVERY obeys_max_app is a bounded universal over the source variable generator."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "obeys_max_app_calls_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StubInvariants.lean", "lean_name": "obeysMaxApp_callsList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared obeys_max_app_calls_list_typed: the free application limit and quantified trace, two indices and function list retain their order; the ignored payload type remains polymorphic, and EVERY obeys_max_app over mapped SND is a bounded universal over the source stub generator."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "EVERY_pure_correct",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/PureEvaluate.lean", "lean_name": "everyPureCorrect",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared EVERY_pure_correct_typed: the exported HOL theorem has one universally quantified conjunct, with independent compiler and FFI carriers, the EVERY pure premise, and the complete value, raised-exception and abort cases in order. The finite-map qualifier records refs and code in the closure state; evaluate inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "evaluate_pure",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/PureEvaluate.lean", "lean_name": "evaluatePure",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_pure_typed: binder order, grouped evaluation and EVERY pure premises, and the existential over the success-or-type-error disjunction match. Compiler and FFI carriers are independent. The finite-map qualifier records refs and code in the closure state; evaluate inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "evaluate_pure_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/PureEvaluate.lean", "lean_name": "evaluatePureImp",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_pure_IMP_local_typed, replayed with the original HOL proof: binder order, grouped evaluation, EVERY pure and non-type-error premises, and the existential result, state and length conjunction match. Compiler and FFI carriers are independent. The finite-map qualifier records refs and code in the closure state; evaluate inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_fv1_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "altFvOneSource_equations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alt_fv1_thm_typed: the twelve universally quantified conjuncts retain their order, binder order, constructors, iff and disjunction structure, and index arithmetic. Singleton observations use altFvOneSource; EVERY pure and EXISTS over recursive function pairs use bounded quantification, and names use the reviewed MlString carrier."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_fv",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "altFvSource_equations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alt_fv_typed: all thirteen universally quantified conjuncts retain their order, individual binder order, constructors, iff and disjunction structure, and index arithmetic. EVERY pure is a bounded universal in the Let condition; EXISTS over recursive function pairs is a bounded existential. Fn and Letrec names use the reviewed MlString carrier. The source alt_free and alt_fv observations are used directly."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "alt_fv1_intro",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/FreeVariables/Original.lean", "lean_name": "altFvOneSource_intro",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared alt_fv1_intro_typed: the universally quantified index and expression retain their order and types, and the singleton-list free-variable observation is equivalent to altFvOneSource in the same direction."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "v_rel_simp",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ValueRelation.lean", "lean_name": "valueRel_simp",
+  "statement_status": "reviewed_nested_list_rel_as_mutual",
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "reviewer": "Source comparison with v_rel_simp_typed: all fourteen equivalences retain their original conjunct order, shared variables, existential order, source-shaped shift, alt_fv1, nested LIST_REL and inequality clauses. HOL variables named x at types int and num are independent (xInt and xNat); variables named n at types word64, num and num option are independent (nWord, nBlock and nLoc). Other same-name same-type variables remain shared. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "v_rel_Boolv",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ValueRelation.lean", "lean_name": "valueRel_bool",
+  "statement_status": "reviewed_nested_list_rel_as_mutual",
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "reviewer": "Source comparison with v_rel_Boolv_typed: the unrestricted value and boolean retain their order and both relation directions are equivalent to the original equality. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "v_rel_Unit",
+  "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ValueRelation.lean", "lean_name": "valueRel_unit",
+  "statement_status": "reviewed_nested_list_rel_as_mutual",
+  "nested_list_rel_as_mutual": ["FunctionsRel"],
+  "reviewer": "Source comparison with v_rel_Unit_typed: the unrestricted value and both relation directions retain the original equality and conjunct order. nested_list_rel_as_mutual records the factored value relation witnessed by functionsRel_iff."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "v_rel_Number",
@@ -8388,6 +9042,86 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_IMP_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SourceEquations.lean",
+  "lean_name": "knownImpliesLength",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: the complete optimizer configuration, expression and approximation lists, sparse input and output trees, result pair list, and exact traversal equation premise are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxArity.lean",
+  "lean_name": "knownOpObeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: full operation and sparse-tree carriers, the grouped operation-result and input safety premises, and both value and global arity conclusions are preserved at the same arbitrary bound."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_obeys_max_app_merge",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxArity.lean",
+  "lean_name": "valApproxObeysMaxAppMerge",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: arbitrary approximation operands share the same free bound, both input invariants form the sole grouped premise, and the full merged approximation satisfies that bound."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_obeys_max_app_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxArity.lean",
+  "lean_name": "valApproxObeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all typed original equations: inlined closure bodies obey the bound, tuple approximations satisfy it recursively for every member, and non-inlineable and other approximations satisfy it unconditionally."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "decide_inline_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxArity.lean",
+  "lean_name": "decideInlineObeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: the optional-location payload remains polymorphic, the approximation-bound and exact inlining-decision premises stay grouped, and the selected body obeys the same bound."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "globals_approx_obeys_max_app_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxArity.lean",
+  "lean_name": "globalsApproxObeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original lookup condition over the exact sparse number-map carrier, with every found approximation required to obey the bound."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "clos_gen_no_inline_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxArity.lean",
+  "lean_name": "closGenNoInline_obeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original with its fixed list of number-expression pairs, arbitrary indices and free application limit, and complete EVERY conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "no_Labels_mk_Ticks",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TicksSyntax.lean",
+  "lean_name": "ticks_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: trace, index, tick count and expression retain their order, with exactly the input label-absence premise and output label-absence conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "obeys_max_app_mk_Ticks",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TicksSyntax.lean",
+  "lean_name": "ticks_obeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: the free application limit and quantified trace, index, tick count and expression are retained, with exactly the input bound premise and output bound conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "get_code_labels_mk_Ticks",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InlineCodeLocations.lean",
+  "lean_name": "ticks_getCodeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: arbitrary trace, index, tick count and complete expression retain their order, and the full code-label set equality is unconditional."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "code_locs_mk_Ticks",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InlineCodeLocations.lean",
   "lean_name": "ticks_codeLocations",
@@ -8765,6 +9499,14 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxSyntax.lean", "lean_name": "closGenNoInlineVarsNone",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared clos_gen_vars_none_typed: the generated non-inline approximations all satisfy the source invariant for the fixed natural-number and closure-expression pair list and both natural indices. Source review does not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+  "hol_name": "remove_ticks_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Arity.lean",
+  "lean_name": "removeSource_obeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: arbitrary free application bound and complete expression list, with the sole EVERY premise and the source tick-removal EVERY conclusion."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
@@ -13235,32 +13977,6 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "do_app_ssgc",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
-  "lean_name": "doAppSsgcIntConst",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared do_app_ssgc_typed with the original integer constant case: only the operation is specialized, with the evaluation equality, EVERY value-safety and state-safety premises and both universally quantified success and raise conclusions unchanged. In this case successful execution returns the safe numeric constant and preserves the state. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full source theorem. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "do_app_ssgc",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
-  "lean_name": "doAppSsgcCons",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared do_app_ssgc_typed with the original block constructor case: only the operation is specialized, with the evaluation equality, EVERY value-safety and state-safety premises and both universally quantified success and raise conclusions unchanged. In this case the block contains exactly the safe input values and the state is preserved. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full source theorem. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "do_app_ssgc",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
   "lean_name": "doAppSsgcGlobal",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [
@@ -15418,6 +16134,15 @@
 },
   {
     "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
+    "hol_name": "FUPDATE_LIST",
+    "lean_path": "Flapjack/FiniteMap/UpdateListExact.lean",
+    "lean_name": "holUpdateList",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "Source comparison: compared the polymorphic FUPDATE_LIST definition and its typed fold: both input and result use the canonical finite-support map and entries update left to right using HOL equality. The unconditional lookup witness compares the result with the independent raw update fold."
+  },
+  {
+    "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
     "hol_name": "FUNION_DEF",
     "lean_path": "Flapjack/FiniteMap/UnionExact.lean",
     "lean_name": "union",
@@ -16686,7 +17411,7 @@
       "c",
       "tys"
     ],
-    "reviewer": "Compared all typed HOL value-relation rules, induction and case equations. The eight cases preserve literal, constructor lookup and pointwise fields, tuple, local and top-level recursive closures, offset locations and vectors; the additional Lean list and lookup relations are positivity helpers. valueRel_source_cases and valueRel_source_induction_all establish the source-shaped cases and least-relation induction. GlobalEnv.c and GlobalEnv.tys use the reviewed canonical finite-map representation. Every global-list access is guarded by the original bound, under which globalSlot_eq_get proves agreement with list indexing."
+    "reviewer": "Compared all typed HOL value-relation rules, induction and case equations. The eight cases preserve literal, constructor lookup and pointwise fields, tuple, local and top-level recursive closures, offset locations and vectors; the additional Lean list and lookup relations are positivity helpers. valueRel_source_cases and valueRel_ind establish the source-shaped cases and least-relation induction. GlobalEnv.c and GlobalEnv.tys use the reviewed canonical finite-map representation. Every global-list access is guarded by the original bound, under which globalSlot_eq_get proves agreement with list indexing."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -19349,7 +20074,7 @@
     "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "calls_sing_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosCall/Calls.lean", "lean_name": "callsSing",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared all single-expression clauses and concrete state carriers with calls_sing_def_typed in clos_call_frontend_probe.out. EVERY2 is encoded by equal lengths and pairwise zip/all; callsSingList_length establishes the equal lengths used by ZIP in the else branch. This is the single-expression component of HOL's mutual definition. callsFuel_correct proves every successful bounded expression traversal agrees with it."
+    "reviewer": "Compared all single-expression clauses and concrete state carriers with calls_sing_def_typed in clos_call_frontend_probe.out. EVERY2 is encoded by equal lengths and pairwise zip/all; callsSingList_length establishes the equal lengths used by ZIP in the else branch. This is the single-expression component of HOL's mutual definition. The private callsFuel_refines proof establishes that every successful bounded expression traversal agrees with it."
   },
   {
     "hol_path": "cakeml/compiler/backend/clos_callScript.sml", "hol_name": "calls_sing_def",
@@ -21259,7 +21984,7 @@
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PatternRelation.lean",
     "lean_name": "pmatch_Match_reachable",
     "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed pmatch_reachable in flat_elim_value_globals_probe.out: two conjuncts for pmatch and pmatch_list, each with Match a, the value/list domain and refs domain premises, concluding the result bindings' domain within reachable. Lean's two conjuncts match with bindingsWithin (domain of findValuesGlobals over the mapped bindings) for the MAP SND domain statements."
+    "reviewer": "Compared the full typed pmatch and pmatch_list statements, including Match, value and reference domain premises and binding reachability conclusions. Reviewed FlatSem values, list-backed reference store, matcher failure and type-error behavior, global analyses, and sparse-tree lookup and domain against HOL."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
@@ -118399,17 +119124,6 @@
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
     "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
     "hol_name": "exh_matrix_thm",
-    "lean_name": "exhMatrix_sound",
-    "statement_status": "reviewed_fmap_as_finite_support_parameters",
-    "fmap_as_finite_support_parameters": [
-      "refs"
-    ],
-    "reviewer": "Compared the matrix conjunct of the source theorem and typed local HOL proof replay, preserving accepted matrix, non-type-failure of every row, and an existential successful row. The same-module witness checks the canonical finite-map parameter."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
-    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
-    "hol_name": "exh_matrix_thm",
     "lean_name": "exh_matrix_thm",
     "statement_status": "reviewed_fmap_as_finite_support_relation",
     "fmap_as_finite_support_relation": [
@@ -128480,6 +129194,126 @@
   "reviewer": "Compared all typed source clauses in clos_call_env_rel_probe.out: independent value types, LIST_REL for arrays, fixed word8 byte-list equality, thunk-mode equality and related payloads, and false for every constructor mismatch. The Lean Ref carrier and fixed byte widths match. Source comparison does not establish cross-language equivalence."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+  "hol_name": "remove_fvs_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Labels.lean",
+  "lean_name": "removeSource_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared remove_no_labels_typed in clos_fvs_correctness_probe.out: arbitrary bound and expression list and the full label-free equivalence agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+  "hol_name": "remove_ticks_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Labels.lean",
+  "lean_name": "removeSource_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared remove_no_labels_typed in clos_ticks_source_probe.out: the arbitrary expression list, label-free premise and forward preservation conclusion agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "let_op_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Labels.lean",
+  "lean_name": "compileSource_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared let_op_no_labels_typed in clos_letop_source_probe.out: arbitrary expression list and full label-free equivalence agree, including the optimized operator."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_no_Labels_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLabels.lean",
+  "lean_name": "valApproxNoLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared val_approx_no_labels_typed: closures inspect the complete body, tuples recurse over all elements, and all other approximation constructors are true."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "globals_approx_no_Labels_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLabels.lean",
+  "lean_name": "globalsApproxNoLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared globals_approx_no_labels_typed: every successful sparse-tree lookup yields a label-free approximation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_no_Labels_merge",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLabels.lean",
+  "lean_name": "valApproxNoLabelsMerge",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared val_approx_no_labels_merge_typed: both approximations are label-free and the full merged result is label-free."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLabels.lean",
+  "lean_name": "knownOpNoLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_op_no_labels_typed: operation equation, all argument and incoming global assumptions, and both resulting invariants agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "decide_inline_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLabels.lean",
+  "lean_name": "decideInlineNoLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared decide_inline_no_labels_typed: the independently polymorphic optional location, source premises, and label-free selected body agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "clos_gen_no_inline_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLabels.lean",
+  "lean_name": "closGenNoInline_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_gen_noinline_no_labels_typed: arbitrary natural/function-body pairs and both numeric inputs produce entirely label-free approximations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLabels.lean",
+  "lean_name": "knownNoLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_no_labels_typed: arbitrary configuration, expression and approximation lists and sparse-tree globals retain all three source premises and mapped-result conclusions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "compile_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileLabels.lean",
+  "lean_name": "compileNoLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_no_labels_typed: enabled source compiler equation, input label-freedom, existential output configuration, output label-freedom and global approximation conclusion agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalArity.lean",
+  "lean_name": "knownObeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_obeys_max_app_typed in clos_known_syntax_probe.out: arbitrary optimizer configuration, expression and approximation lists, sparse-tree globals and common bound retain all three premises and all three mapped-result conclusions. The proof covers the complete total traversal, including inlining and recursive function bodies."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "compile_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileArity.lean",
+  "lean_name": "compileObeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_obeys_max_app_typed in clos_known_syntax_probe.out: the enabled source compiler equation, input EVERY premise, existential output configuration, output EVERY conclusion, and global approximation invariant agree. Source and executed compiler agree via compileSource_eq_compile."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "var_list_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Syntax.lean",
+  "lean_name": "varList_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared var_list_no_labels_typed in clos_letop_source_probe.out: the index, expression list, independently polymorphic comparison list, recognition premise, and both label-free and arbitrary application-bound conclusions agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "let_op_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Arity.lean",
+  "lean_name": "compileSource_obeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared let_op_obeys_max_app_typed in clos_letop_source_probe.out: both EVERY predicates, their equivalence, arbitrary expression list and common arbitrary application bound agree. The source traversal agrees with the executed list traversal by compileSource_eq_list."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
   "hol_name": "var_list_IMP_LENGTH",
   "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/VarListEvaluate.lean",
@@ -128970,6 +129804,14 @@
   "hol_name": "known_compile_inc_def",
   "lean_name": "knownCompileIncSource",
   "reviewer": "Compared known_compile_inc_typed in clos_letop_source_probe.out: input and output auxiliary lists have the same independently polymorphic element type, the intermediate closure-code list is fixed to natural-number triples containing closure expressions, and NONE returns the original tree and program. SOME runs free-variable cleanup, incremental known optimization, tick removal and let-operation cleanup in order, threading the approximation tree. compileIncFuel_eq_source proves the executed driver agrees at its concrete closure-code carrier after static configuration and configuration update. Source comparison and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Arity.lean",
+  "statement_status": "reviewed_exact",
+  "hol_name": "remove_fvs_obeys_max_app",
+  "lean_name": "removeSource_obeysMaxApp",
+  "reviewer": "Compared the typed original: arbitrary free application bound, removal bound and complete expression list, with the full equivalence of EVERY before and after source free-variable removal."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",

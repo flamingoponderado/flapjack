@@ -14,28 +14,13 @@ theorem compileExps_rows (cfg : Config) (expressions : List FlatLang.Exp) :
     (compileExps cfg expressions).2.2 = expressions.map (fun expression => (compileExp cfg expression).2.2) := by
   induction expressions with
   | nil => rfl
-  | cons expression rest ih =>
-    cases first : compileExp cfg expression with
-    | mk bound part =>
-      cases part with
-      | mk flag compiled =>
-        cases tail : compileExps cfg rest with
-        | mk tailBound part =>
-          cases part with
-          | mk tailFlag compiledTail => simpa [compileExps, first, tail] using ih
+  | cons expression rest ih => simp [compileExps, ih]
 
 /-- List compilation bounds the head and tail compiler measures. -/
 theorem compileExps_cons_bounds (cfg : Config) (first : FlatLang.Exp) (rest : List FlatLang.Exp) :
     (compileExp cfg first).1 ≤ (compileExps cfg (first :: rest)).1 ∧
       (compileExps cfg rest).1 ≤ (compileExps cfg (first :: rest)).1 := by
-  cases head : compileExp cfg first with
-  | mk bound part =>
-    cases part with
-    | mk flag compiled =>
-      cases tail : compileExps cfg rest with
-      | mk tailBound part =>
-        cases part with
-        | mk tailFlag compiledTail => simp [compileExps, head, tail]
+  simp [compileExps]
 
 /-- An error in the first expression stops a nonempty expression list. -/
 theorem evaluate_list_first_error {C F : Type} (env : FlatSem.Environment FlatSem.Value)
@@ -70,22 +55,7 @@ theorem compileExps_bound_iff (cfg : Config) (expressions : List FlatLang.Exp) (
     (compileExps cfg expressions).1 < n ↔ ∀ expression ∈ expressions, (compileExp cfg expression).1 < n := by
   induction expressions with
   | nil => simp [compileExps, positive]
-  | cons first rest ih =>
-    cases head : compileExp cfg first with
-    | mk headBound part =>
-      cases part with
-      | mk headFlag headBody =>
-        cases tail : compileExps cfg rest with
-        | mk tailBound part =>
-          cases part with
-          | mk tailFlag tailBody =>
-            simp only [compileExps, head, tail, List.mem_cons, forall_eq_or_imp] at ih ⊢
-            constructor
-            · intro bound
-              exact ⟨by omega, ih.mp (by omega)⟩
-            · intro ⟨firstBound, restBound⟩
-              have tailBoundLt := ih.mpr restBound
-              omega
+  | cons first rest ih => simp [compileExps, ih]
 
 /-- Reversing an expression list does not change whether its compilation bound
 is below a positive limit. -/

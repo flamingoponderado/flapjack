@@ -66,7 +66,8 @@ decreasing_by
   all_goals try (cases y <;> simp_wf <;> omega)
   all_goals (cases entry; simp only [Prod.mk.sizeOf_spec] at *; omega)
 
-private theorem removeFuns_as_map (functions : List (Nat × Exp)) :
+/-- The recursive bundle traversal is the pointwise singleton traversal. -/
+theorem removeFuns_eq_map (functions : List (Nat × Exp)) :
     removeFuns functions = functions.map (fun (n, x) => (n, removeSing x)) := by
   induction functions with
   | nil => rfl
@@ -76,7 +77,7 @@ private theorem removeFuns_as_map (functions : List (Nat × Exp)) :
 @[simp] theorem removeSource_eq_list (expressions : List Exp) :
     removeSource expressions = removeList expressions := by
   induction expressions using removeSource.induct <;>
-    simp_all [removeSource, removeList, removeSing, Flapjack.holHd, removeFuns_as_map]
+    simp_all [removeSource, removeList, removeSing, Flapjack.holHd, removeFuns_eq_map]
   case case13 =>
     rename_i names loc vs fns x ihF ihBody
     simp only [List.map_attach_eq_pmap, List.pmap_eq_map]
@@ -96,7 +97,7 @@ theorem removeSource_sing_eq :
   · intro e
     simp [removeList]
   · intro fns
-    simp [removeFuns_as_map, removeSource_eq_list, removeList, Flapjack.holHd]
+    simp [removeFuns_eq_map, removeSource_eq_list, removeList, Flapjack.holHd]
 
 /-- The optimized list traversal preserves length; the original HOL theorem
 is stated separately about the source-shaped traversal. -/

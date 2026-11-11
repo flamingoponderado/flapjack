@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.Length
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.TotalCorrespondence
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
 
 @[expose] public section
@@ -38,13 +39,6 @@ private theorem labelsBound_append {s0 s1 s2 : State} {xs ys : List Nat}
     · exact Or.inr ⟨loc, List.mem_append_left _ inX, eq⟩
   · exact Or.inr ⟨loc, List.mem_append_right _ inY, eq⟩
 
-/-- Flapjack bookkeeping for locating function bodies; no separate HOL theorem. -/
-theorem codeLocations_map_snd (fns : List (Nat × Exp)) :
-    codeLocations (fns.map Prod.snd) = codeLocationsFuns fns := by
-  induction fns with
-  | nil => rfl
-  | cons fn fns ih => cases fn; simp [codeLocations, codeLocationsFuns, ih]
-
 /-- Flapjack bookkeeping for labels emitted by code lists; no separate HOL theorem. -/
 theorem codeList_bound (loc : Nat) (fns : List (Nat × Exp)) (state : State) :
     LabelsBound state (codeList loc fns state)
@@ -62,7 +56,7 @@ mutual
 /-- Every label emitted by a successful expression traversal originates in
 the incoming code or at an input closure location. The fuel condition makes
 this an executable-pass invariant rather than an exact HOL theorem port. -/
-theorem callsFuel_labelsBound (fuel : Nat) (e : Exp) (initial final : State) (out : Exp)
+private theorem callsFuel_labelsBound (fuel : Nat) (e : Exp) (initial final : State) (out : Exp)
     (run : callsFuel fuel e initial = some (out, final)) :
     LabelsBound initial final (codeLocationsExp e) := by
   cases fuel with
@@ -150,14 +144,14 @@ theorem callsFuel_labelsBound (fuel : Nat) (e : Exp) (initial final : State) (ou
           (callsListFuel_labelsBound fuel (fns.map Prod.snd) initial s2 bodies' hb')
           (callsFuel_labelsBound fuel body s2 s3 body' he)
         apply labelsBound_mono bounds
-        simp only [codeLocations_map_snd, codeLocationsExp, List.mem_append]
+        simp only [← codeLocationsFuns_map, codeLocationsExp, List.mem_append]
         aesop
       | true =>
         simp only [↓reduceIte, Option.bind_eq_some_iff, Option.some.injEq,
           Prod.mk.injEq] at rest
         obtain ⟨⟨body', s2⟩, he, _, rfl⟩ := rest
         have before : LabelsBound initial s1 (codeLocationsFuns fns) := by
-          simpa only [LabelsBound, insertEach, codeLocations_map_snd] using
+          simpa only [LabelsBound, insertEach, ← codeLocationsFuns_map] using
             callsListFuel_labelsBound fuel (fns.map Prod.snd)
               (insertEach (loc.getD 0) fns.length initial) s1 bodies hb
         have generated := codeList_bound (loc.getD 0) ((fns.map Prod.fst).zip bodies) s1
@@ -169,7 +163,7 @@ theorem callsFuel_labelsBound (fuel : Nat) (e : Exp) (initial final : State) (ou
 termination_by fuel
 
 /-- The list traversal obeys the same label-origin invariant. -/
-theorem callsListFuel_labelsBound (fuel : Nat) (es : List Exp) (initial final : State)
+private theorem callsListFuel_labelsBound (fuel : Nat) (es : List Exp) (initial final : State)
     (out : List Exp) (run : callsListFuel fuel es initial = some (out, final)) :
     LabelsBound initial final (codeLocations es) := by
   cases es with
@@ -187,7 +181,7 @@ termination_by fuel
 end
 
 /-- The production retry wrapper satisfies the same origin bound. -/
-theorem callsListBounded_labelsBound (fuel : Nat) (es : List Exp) (initial final : State)
+private theorem callsListBounded_labelsBound (fuel : Nat) (es : List Exp) (initial final : State)
     (out : List Exp) (run : callsListBounded fuel es initial = some (out, final)) :
     LabelsBound initial final (codeLocations es) := by
   unfold callsListBounded at run
@@ -199,5 +193,22 @@ theorem callsListBounded_labelsBound (fuel : Nat) (es : List Exp) (initial final
   | none =>
     simp only [first] at run
     exact callsListFuel_labelsBound _ es initial final out run
+
+/-- Every emitted auxiliary label is old or the successor of an input
+closure location. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_add_SUC_code_locs"]
+theorem calls_addSucc_codeLocations (xs : List Exp) (initial : State) (ys : List Exp)
+    (final : State) (run : calls xs initial = (ys, final)) :
+    {x | x ∈ final.2.map Prod.fst} ⊆
+      {x | x ∈ initial.2.map Prod.fst} ∪ Nat.succ '' {x | x ∈ codeLocations xs} := by
+  have bounded := callsListBounded_correct 0 xs initial
+  change callsSingList xs initial = (ys, final) at run
+  rw [run] at bounded
+  have bound := callsListBounded_labelsBound 0 xs initial final ys bounded
+  intro label member
+  rcases bound label member with old | ⟨loc, inLocations, eq⟩
+  · exact Or.inl old
+  · exact Or.inr ⟨loc, inLocations, by simpa [Nat.succ_eq_add_one] using eq.symm⟩
+
 
 end Flapjack.Compiler.Backend.ClosCall

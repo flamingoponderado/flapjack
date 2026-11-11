@@ -20,13 +20,6 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
       (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
   ClosSem.holFmapAsFiniteSupportWitness
 
-/-- Sparse-tree inclusion composes. This is Flapjack infrastructure. -/
-private theorem subsptTrans {A : Type} (a b c : Spt A) (h1 : sptSubspt a b) (h2 : sptSubspt b c) : sptSubspt a c := by
-  intro k member
-  obtain ⟨mid, e1⟩ := h1 k member
-  obtain ⟨last, e2⟩ := h2 k mid
-  exact ⟨last, e2.trans e1⟩
-
 /-- Sequential-list case of the original optimizer simulation, with the
 source evaluator's head and successful-head tail induction hypotheses. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_correct0"
@@ -80,7 +73,7 @@ theorem knownCorrect0Cons {C F : Type} (x y : ClosLang.Exp) (xs : List ClosLang.
       rcases known with ⟨rfl, rfl⟩
       have ⟨subHead, subTail⟩ := subsptKnownElistGlobals c [x] aenv g0 [(xe, xa)] g1
         (y :: xs) aenv tailEas g2 ⟨hk, ht, sub0, bagDisjoint⟩
-      have subHeadNext : sptSubspt g1 (nextG s0) := subsptTrans _ _ _ subTail sub1
+      have subHeadNext : sptSubspt g1 (nextG s0) := sptSubsptTrans _ _ _ ⟨subTail, sub1⟩
       cases hr : evaluate [x] env1full s0 with
       | mk headResult middle =>
         have headNoType : headResult ≠ .err (.abort .typeError) := by
@@ -151,7 +144,7 @@ theorem knownCorrect0Cons {C F : Type} (x y : ClosLang.Exp) (xs : List ClosLang.
                 env1 xenv1 env2 xenv2 targetMiddle c g1 g2 aenv tailEas
                 ⟨tr, ht, midState, tailSyntax, nextCoSyntax, nextDisjoint, midOracle, nextStateOracleDisjoint,
                   tailSafe, safety.1, envSafe, approxRel, nextOracleSafe, nextSafe, approxSafe, midGlobals,
-                  subTail, subsptTrans _ _ _ sub1 nextTree, nextMono, tailFree, nextRel, nextUnique,
+                  subTail, sptSubsptTrans _ _ _ ⟨sub1, nextTree⟩, nextMono, tailFree, nextRel, nextUnique,
                   midStateOracle, envEq, tailNoType⟩
               obtain ⟨targetTailResult, targetLast, targetTailRun, tailRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩ := tailStep
               simp only [tr] at run

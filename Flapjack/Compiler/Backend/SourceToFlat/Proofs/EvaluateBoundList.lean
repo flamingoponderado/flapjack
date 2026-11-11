@@ -5,7 +5,6 @@ public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Equality
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveTest
-public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveArith
 
 @[expose] public section
 

@@ -8,6 +8,8 @@ env_rel_type=:('a -> 'b -> bool) -> 'a list -> 'b list -> num -> (num # closLang
 env_rel_def=!(R :'a -> 'b -> bool) (env1 :'a list) (env2 :'b list) (a :num) (es :(num # closLang$exp) list). env_rel R env1 env2 a es <=> if LENGTH env1 = LENGTH env2 then LIST_REL R env1 env2 else !(x :num). EXISTS (\((n :num),(p :closLang$exp)). fv1 (n + a + x) p) es ==> x < LENGTH env1 /\ x < LENGTH env2 /\ R (fEL env1 x) (fEL env2 x)
 env_rel_mono=(!(x :'a) (y :'b). MEM x (env1 :'a list) /\ MEM y (env2 :'b list) /\ (R :'a -> 'b -> bool) x y ==> (R' :'a -> 'b -> bool) x y) ==> env_rel R env1 env2 (a :num) (es :(num # closLang$exp) list) ==> env_rel R' env1 env2 a es
 env_rel_cong=(!(x :'a) (y :'b). MEM x (env1 :'a list) /\ MEM y (env2 :'b list) ==> ((R :'a -> 'b -> bool) x y <=> (R' :'a -> 'b -> bool) x y)) ==> (env_rel R env1 env2 (a :num) (es :(num # closLang$exp) list) <=> env_rel R' env1 env2 a es)
+env_rel_drop=env_rel (R :'a -> 'b -> bool) (DROP (x :num) (l1 :'a list)) (DROP x (l2 :'b list)) x (es :(num # closLang$exp) list) /\ LIST_REL R (TAKE x l1) (TAKE x l2) /\ x <= LENGTH l1 /\ x <= LENGTH l2 ==> env_rel R l1 l2 (0 :num) es
+env_rel_drop_args=env_rel (R :'a -> 'b -> bool) (DROP (n :num) (l1 :'a list)) (DROP n (l2 :'b list)) (a :num) [(n,(e :closLang$exp))] /\ LIST_REL R (TAKE n l1) (TAKE n l2) /\ n <= LENGTH l1 /\ n <= LENGTH l2 ==> env_rel R l1 l2 a [((0 :num),e)]
 fv_cases=(T,T,T,T)
 fv_negative=(F,F,F,F)
 env_cases=(T,F,F,T)

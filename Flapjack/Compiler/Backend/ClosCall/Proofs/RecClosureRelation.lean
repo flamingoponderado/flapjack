@@ -56,6 +56,38 @@ noncomputable def recClosureRel (g : State) (allowed : Nat → Prop)
       {n | n ∈ (List.range fns1.length).map (fun i => 2 * i + loc)} ⊆ allowed ∧
       codeIncludes next.2 code
 
+private theorem stubArities {A : Type} (tr : BackendCommon.Tra) (n loc : Nat)
+    (fns : List (Nat × A)) : (callsListSource tr n loc fns).map Prod.fst = fns.map Prod.fst := by
+  induction fns generalizing n loc with
+  | nil => rfl
+  | cons fn rest ih =>
+    cases fn
+    simp [callsListSource, ih]
+
+/-- The HOL closure-application proof derives this arity preservation when
+unfolding `recclosure_rel`: both generated stubs and converted bodies keep
+the original function group's arities. -/
+theorem recClosureRel_arities (g : State) (allowed : Nat → Prop)
+    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc : Nat)
+    (fns1 fns2 : List (Nat × ClosLang.Exp))
+    (h : recClosureRel g allowed code loc fns1 fns2) :
+    fns2.map Prod.fst = fns1.map Prod.fst := by
+  classical
+  unfold recClosureRel at h
+  obtain ⟨g0, _, _, _, _, h⟩ := h
+  dsimp only at h
+  split at h
+  · obtain ⟨⟨tra, n, rfl⟩, _⟩ := h
+    exact stubArities tra n loc fns1
+  · cases run : calls (fns1.map Prod.snd) g0 with
+    | mk es next =>
+      change callsSingList (fns1.map Prod.snd) g0 = (es, next) at run
+      rw [run] at h
+      obtain ⟨rfl, _⟩ := h
+      have len := calls_length (fns1.map Prod.snd) g0 es next run
+      simp only [List.length_map] at len
+      simp [List.map_fst_zip, len]
+
 /-- Monotonicity used to prove the HOL value well-formedness extension theorem. -/
 theorem recClosureRel_mono (g g' : State) (allowed allowed' : Nat → Prop)
     (code code' : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (loc : Nat)
@@ -74,16 +106,14 @@ theorem recClosureRel_mono (g g' : State) (allowed allowed' : Nat → Prop)
     obtain ⟨out, ext, subset, includes⟩ := branch
     refine ⟨out, stateExtends_trans _ _ _ ext stateSub, ?_, ?_⟩
     · exact fun x member => allowedSub x (subset member)
-    · intro key value found
-      exact codeSub key value (includes key value found)
+    · exact codeIncludes_submap _ code code' ⟨includes, codeSub⟩
   next condition =>
     simp only [condition, ↓reduceIte]
     obtain ⟨out, ext, subset, group, includes⟩ := branch
     refine ⟨out, stateExtends_trans _ _ _ ext stateSub, ?_, ?_, ?_⟩
     · exact fun x member => allowedSub x (subset member)
     · exact fun x member => allowedSub x (group member)
-    · intro key value found
-      exact codeSub key value (includes key value found)
+    · exact codeIncludes_submap _ code code' ⟨includes, codeSub⟩
 
 /-- The state reached by a recursive-closure relation has distinct labels,
 so it extends itself. Used in the HOL code-submap preservation proof. -/

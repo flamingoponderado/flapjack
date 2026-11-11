@@ -269,9 +269,28 @@ theorem idxRangeRel_blank {C : Type} (interp : Option (Value → Option (Config 
   obtain ⟨range, lengthMatch, fits⟩ := premises
   obtain ⟨i, e, final, rest, tuple, nextMatch, previous, disjoint, _, _⟩ := range
   cases tuple
-  apply indexInvariant_blank_block genv start finish final other (srcOracNextCfg interp evalState) count
-    previous nextMatch lengthMatch disjoint
-  omega
+  have finishBound : finish.vidx ≤ genv.v.length := by
+    cases cfg : srcOracNextCfg interp evalState with
+    | none => simpa [cfg, finIdxMatch] using lengthMatch
+    | some config =>
+      have finalEq : final = config.next := by simpa [cfg] using nextMatch
+      have finalLength : config.next.vidx = genv.v.length := by
+        simpa [cfg, finIdxMatch] using lengthMatch
+      simpa [finalEq, finalLength] using previous.1
+  have rangeBound : start.vidx + count ≤ genv.v.length := by omega
+  have separate := (allDisjoint_iff_bounded _).mp disjoint 0 3 (by simp) (by simp) (by decide)
+  simp only [List.getElem_cons_zero, List.getElem_cons_succ] at separate
+  apply split_blank_slots genv.v start.vidx count rangeBound
+  intro i low high
+  cases slot : genv.v[i]?.getD none with
+  | none => rfl
+  | some value =>
+    have reserved : (i, IndexKind.variable) ∈ idxBlock start finish := ⟨low, by omega⟩
+    have allocated : (i, IndexKind.variable) ∈ genvAllocatedIndices genv := ⟨by omega, by simp [slot]⟩
+    have impossible : (i, IndexKind.variable) ∈ (∅ : Set (Nat × IndexKind)) := by
+      rw [← separate]
+      exact ⟨reserved, allocated⟩
+    exact impossible.elim
 
 end OracleInvariant
 end Flapjack.Compiler.Backend.SourceToFlat

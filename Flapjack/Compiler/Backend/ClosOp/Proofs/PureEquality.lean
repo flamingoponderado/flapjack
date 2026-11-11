@@ -75,8 +75,11 @@ private theorem purePair {C F : Type} (x y : ClosLang.Exp) (vx vy : Value)
       cases run
     | val headValues =>
       obtain ⟨v, rfl⟩ := evaluate_singleton_value x env s headState headValues headRun
-      obtain ⟨_, _, stateEq⟩ := ClosProps.evaluate_pure [x] env s headState (.val [v])
-        headPure headRun (by simp)
+      have stateEq : headState = s := by
+        have correct := ClosProps.everyPureCorrect [x] env s
+          (by simpa [ClosLang.pureList_eq_all, List.all_eq_true] using headPure)
+        rw [headRun] at correct
+        exact correct.1
       subst headState
       rw [ClosProps.evaluate_cons_value x [y] env s s v headRun] at run
       cases tailRun : evaluate [y] env s with
@@ -131,8 +134,11 @@ private theorem pureEvalList {C F : Type} (xs : List ClosLang.Exp) (values : Lis
         cases run
       | val headValues =>
         obtain ⟨v, rfl⟩ := evaluate_singleton_value x env s headState headValues headRun
-        obtain ⟨_, _, stateEq⟩ := ClosProps.evaluate_pure [x] env s headState (.val [v])
-          headPure headRun (by simp)
+        have stateEq : headState = s := by
+          have correct := ClosProps.everyPureCorrect [x] env s
+            (by simpa [ClosLang.pureList_eq_all, List.all_eq_true] using headPure)
+          rw [headRun] at correct
+          exact correct.1
         subst headState
         rw [ClosProps.evaluate_cons_value x xs env s s v headRun] at run
         cases tailRun : evaluate xs env s with

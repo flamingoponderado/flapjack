@@ -59,35 +59,6 @@ theorem listRelALookup {K V : Type} (relation : K × V → K × V → Prop)
   cases leftEq : holALookup left key <;> cases rightEq : holALookup right key <;>
     simp_all [optionRel]
 
-/-- Flapjack helper: filtering twice is one filter when the second predicate
-implies the first on the list. This is not a separate HOL declaration. -/
-private theorem filter_filter_of_subsumed {A : Type} (first second : A → Bool)
-    (xs : List A) (subsumed : ∀ x ∈ xs, second x = true → first x = true) :
-    (xs.filter first).filter second = xs.filter second := by
-  induction xs with
-  | nil => rfl
-  | cons x xs ih =>
-    cases firstAt : first x <;> cases secondAt : second x <;>
-      simp_all [List.filter]
-
-/-- Flapjack helper: aligned list elements that agree on a filter predicate
-remain related after filtering. This is not a separate HOL declaration. -/
-private theorem forall₂_filter_of_members {A B : Type} (relation : A → B → Prop)
-    (first : A → Bool) (second : B → Bool) {xs : List A} {ys : List B}
-    (related : List.Forall₂ relation xs ys)
-    (agree : ∀ x ∈ xs, ∀ y ∈ ys, relation x y → first x = second y) :
-    List.Forall₂ relation (xs.filter first) (ys.filter second) := by
-  induction related with
-  | nil => simp
-  | @cons x y xs ys head tail ih =>
-    have same := agree x (by simp) y (by simp) head
-    have tailAgree : ∀ x ∈ xs, ∀ y ∈ ys, relation x y → first x = second y := by
-      intro a ha b hb hab
-      exact agree a (List.mem_cons_of_mem _ ha) b (List.mem_cons_of_mem _ hb) hab
-    have tailRelated := ih tailAgree
-    cases firstAt : first x <;> cases secondAt : second y <;>
-      simp_all [List.filter]
-
 /-- Related filtered lists remain related when both filters are narrowed in
 the same way on related entries. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "LIST_REL_FILTER_MONO"]
@@ -99,15 +70,30 @@ theorem listRelFilterMono {A B : Type} (relation : A → B → Prop)
       (∀ x y, x ∈ xs ∧ y ∈ ys ∧ relation x y → p3 x = p4 y)) :
     List.Forall₂ relation (xs.filter p3) (ys.filter p4) := by
   obtain ⟨related, leftNarrow, rightNarrow, agree⟩ := premises
-  have narrowed := forall₂_filter_of_members relation p3 p4 related (by
-    intro x hx y hy hxy
-    exact agree x y ⟨(List.mem_filter.mp hx).1, (List.mem_filter.mp hy).1, hxy⟩)
-  have leftNarrow' : ∀ x ∈ xs, p3 x = true → p1 x = true := by
-    intro x member test; exact leftNarrow x ⟨member, test⟩
-  have rightNarrow' : ∀ y ∈ ys, p4 y = true → p2 y = true := by
-    intro y member test; exact rightNarrow y ⟨member, test⟩
-  simpa [filter_filter_of_subsumed p1 p3 xs leftNarrow',
-    filter_filter_of_subsumed p2 p4 ys rightNarrow'] using narrowed
+  have enriched : List.Forall₂ (fun x y => x ∈ xs ∧ y ∈ ys ∧ relation x y)
+      (xs.filter p1) (ys.filter p2) := by
+    rw [List.forall₂_iff_get] at related ⊢
+    exact ⟨related.1, fun i h1 h2 => ⟨(List.mem_filter.mp (List.get_mem _ _)).1,
+      (List.mem_filter.mp (List.get_mem _ _)).1, related.2 i h1 h2⟩⟩
+  have narrowed := List.rel_filter (p := p3) (q := p4) (fun {_ _} h => by
+    change (_ = true ↔ _ = true)
+    rw [agree _ _ h]) enriched
+  have leftEq : (xs.filter p1).filter p3 = xs.filter p3 := by
+    rw [List.filter_filter]
+    apply List.filter_congr
+    intro x member
+    cases h : p3 x with
+    | false => simp
+    | true => simp [leftNarrow x ⟨member, h⟩]
+  have rightEq : (ys.filter p2).filter p4 = ys.filter p4 := by
+    rw [List.filter_filter]
+    apply List.filter_congr
+    intro y member
+    cases h : p4 y with
+    | false => simp
+    | true => simp [rightNarrow y ⟨member, h⟩]
+  rw [leftEq, rightEq] at narrowed
+  exact narrowed.imp (fun _ _ h => h.2.2)
 
 /-- A false condition selects the second branch. Lean Bool represents HOL bool. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "COND_false"]

@@ -28,63 +28,45 @@ inductive ValApproxVal : ValApprox → Value → Prop where
   | clos (loc arity size : Nat) (body : ClosLang.Exp) (env : List Value) :
       ValApproxVal (.clos loc arity body size) (.closure (some loc) [] env arity body)
 
-/-- Pairwise merge preserves a pointwise relation when each left element
-does. This is proof infrastructure. -/
-private theorem mergeListRel (as : List ValApprox) (vs : List Value) (bs : List ValApprox)
-    (rel : List.Forall₂ ValApproxVal as vs) (lengthEq : as.length = bs.length)
-    (step : ∀ a ∈ as, ∀ v, ValApproxVal a v → ∀ b, ValApproxVal (mergeHOL a b) v) :
-    List.Forall₂ ValApproxVal (mergeListHOL as bs) vs := by
-  induction rel generalizing bs with
-  | nil => cases bs <;> simp_all [mergeListHOL]
-  | cons h rest ih =>
-    cases bs with
-    | nil => simp at lengthEq
-    | cons b bs =>
-      simp only [List.length_cons, Nat.succ.injEq] at lengthEq
-      rw [mergeListHOL]
-      apply List.Forall₂.cons (step _ (by simp) _ h b)
-      exact ih bs lengthEq (fun a ha => step a (by simp [ha]))
-
 /-- Merging another approximation preserves a value described by the first. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "val_approx_val_merge_I_lemma"]
 theorem valApproxValMergeLeft (a : ValApprox) (v : Value) (h : ValApproxVal a v) :
     ∀ b, ValApproxVal (mergeHOL a b) v := by
-  have all : ∀ n (a : ValApprox) (v : Value), sizeOf a < n → ValApproxVal a v →
-      ∀ b, ValApproxVal (mergeHOL a b) v := by
-    intro n
-    induction n using Nat.strongRecOn with
-    | ind n ih =>
-      intro a v bound rel b
-      cases rel with
-      | other v => cases b <;> simp [mergeHOL, ValApproxVal.other]
-      | int i =>
-        cases b <;> simp [mergeHOL, ValApproxVal.other, ValApproxVal.int]
-        case int j => split <;> simp [ValApproxVal.other, ValApproxVal.int]
-      | tuple tag as vs rel =>
-        cases b <;> simp [mergeHOL, ValApproxVal.other, ValApproxVal.tuple, rel]
-        case tuple tag' bs =>
-          split
-          · apply ValApproxVal.tuple
-            apply mergeListRel as vs bs rel
-            · simp_all
-            · intro child member value childRel otherApprox
-              have small := List.sizeOf_lt_of_mem member
-              have childBound : sizeOf child + 1 < n := by
-                simp only [ValApprox.tuple.sizeOf_spec] at bound
-                omega
-              exact (ih (sizeOf child + 1) childBound) child value (by omega) childRel otherApprox
-          · exact ValApproxVal.other _
-      | closNoInline loc arity env body =>
-        cases b <;> simp [mergeHOL, ValApproxVal.other, ValApproxVal.closNoInline]
-        case closNoInline l a => split <;> simp [ValApproxVal.other, ValApproxVal.closNoInline]
-      | recNoInline loc arity base env fns index recConditions =>
-        cases b <;> simp [mergeHOL, ValApproxVal.other, ValApproxVal.recNoInline, recConditions]
-        case closNoInline l a =>
-          split <;> simp [ValApproxVal.other, ValApproxVal.recNoInline, recConditions]
-      | clos loc arity size body env =>
-        cases b <;> simp [mergeHOL, ValApproxVal.other, ValApproxVal.clos]
-        case clos l a b' sz => split <;> simp [ValApproxVal.other, ValApproxVal.clos]
-  exact all (sizeOf a + 1) a v (by omega) h
+  induction a using (measure (fun a : ValApprox => sizeOf a)).wf.induction generalizing v with
+  | h a ih =>
+    intro b
+    cases h with
+    | other v => cases b <;> simp [mergeHOL, ValApproxVal.other]
+    | int i =>
+      cases b <;> simp [mergeHOL, ValApproxVal.other, ValApproxVal.int]
+      case int j => split <;> simp [ValApproxVal.other, ValApproxVal.int]
+    | tuple tag as vs rel =>
+      cases b <;> simp [mergeHOL, ValApproxVal.other, ValApproxVal.tuple, rel]
+      case tuple tag' bs =>
+        split
+        · apply ValApproxVal.tuple
+          rw [mergeListHOL_eq_zip]
+          apply List.forall₂_of_length_eq_of_get
+          · simp_all [rel.length_eq]
+          · intro i hi hv
+            have ha : i < as.length := by simpa only [rel.length_eq] using hv
+            have hb : i < bs.length := by simp_all
+            have childRel := rel.get ha hv
+            have member := List.getElem_mem ha
+            have small := List.sizeOf_lt_of_mem member
+            simpa only [List.get_eq_getElem, List.getElem_map, List.getElem_zip] using
+              ih (as[i]) (by simp_wf; omega) (vs[i]) childRel (bs[i])
+        · exact ValApproxVal.other _
+    | closNoInline loc arity env body =>
+      cases b <;> simp [mergeHOL, ValApproxVal.other, ValApproxVal.closNoInline]
+      case closNoInline l a => split <;> simp [ValApproxVal.other, ValApproxVal.closNoInline]
+    | recNoInline loc arity base env fns index recConditions =>
+      cases b <;> simp [mergeHOL, ValApproxVal.other, ValApproxVal.recNoInline, recConditions]
+      case closNoInline l a =>
+        split <;> simp [ValApproxVal.other, ValApproxVal.recNoInline, recConditions]
+    | clos loc arity size body env =>
+      cases b <;> simp [mergeHOL, ValApproxVal.other, ValApproxVal.clos]
+      case clos l a b' sz => split <;> simp [ValApproxVal.other, ValApproxVal.clos]
 
 /-- Merging either sound approximation remains sound for the same value. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "val_approx_val_merge_I"]

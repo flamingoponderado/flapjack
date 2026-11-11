@@ -20,12 +20,18 @@ val _ = show "shift_sing_eq_typed=" clos_annotateTheory.shift_sing_eq;
 val _ = show "shift_sing_typed=" clos_annotateTheory.shift_sing_def;
 val _ = show "annotate_def_typed=" clos_annotateTheory.annotate_def;
 val _ = show "alt_fv_def_typed=" clos_annotateProofTheory.alt_fv_def;
+val _ = show "alt_fv_typed=" clos_annotateProofTheory.alt_fv;
+val _ = show "alt_fv1_intro_typed=" clos_annotateProofTheory.alt_fv1_intro;
+val _ = show "alt_fv1_thm_typed=" clos_annotateProofTheory.alt_fv1_thm;
 val _ = show "alt_free_thm_typed=" clos_annotateProofTheory.alt_free_thm;
 val _ = show "alt_fv1_def_typed=" clos_annotateProofTheory.alt_fv1_def;
 val _ = show "alt_fv_nil_typed=" clos_annotateProofTheory.alt_fv_nil;
 val _ = show "alt_fv_cons_typed=" clos_annotateProofTheory.alt_fv_cons;
 val _ = show "alt_fv_REPLICATE_typed=" clos_annotateProofTheory.alt_fv_REPLICATE;
 val _ = show "v_rel_rules_typed=" clos_annotateProofTheory.v_rel_rules;
+val _ = show "v_rel_simp_typed=" clos_annotateProofTheory.v_rel_simp;
+val _ = show "v_rel_Boolv_typed=" clos_annotateProofTheory.v_rel_Boolv;
+val _ = show "v_rel_Unit_typed=" clos_annotateProofTheory.v_rel_Unit;
 val _ = show "annotate_sing_typed=" clos_annotateTheory.annotate_sing_def;
 val _ = show "annotate_list_typed=" clos_annotateTheory.annotate_list_def;
 val _ = show "annotate_sing_eq_typed=" clos_annotateTheory.annotate_sing_eq;
@@ -47,6 +53,17 @@ val _ = show "app_call_dests_def_typed=" closPropsTheory.app_call_dests_def;
 val _ = show "app_call_dests_append_typed=" closPropsTheory.app_call_dests_append;
 val _ = show "call_dests_shift_typed=" clos_annotateProofTheory.call_dests_shift;
 val _ = show "code_locs_shift_typed=" clos_annotateProofTheory.code_locs_shift;
+(* Replay the local shift theorem and its source proof. *)
+val IF_MAP_EQ_replay = MAP_EQ_f |> SPEC_ALL |> EQ_IMP_RULE |> snd;
+val shift_code_locs_replay = prove (
+  ``!xs env s1 env'. code_locs (shift xs env s1 env') = code_locs xs``,
+  ho_match_mp_tac shift_ind
+  >> simp[shift_def,code_locs_def,shift_LENGTH_LEMMA]
+  >> srw_tac[][code_locs_append]
+  >> full_simp_tac(srw_ss())[MAP_MAP_o,o_DEF]
+  >> ONCE_REWRITE_TAC [code_locs_map]
+  >> AP_TERM_TAC >> MATCH_MP_TAC IF_MAP_EQ_replay >> full_simp_tac(srw_ss())[FORALL_PROD]);
+val _ = show "shift_code_locs_local_typed=" shift_code_locs_replay;
 val _ = show "code_locs_alt_free_typed=" clos_annotateProofTheory.code_locs_alt_free;
 val _ = show "code_locs_annotate_typed=" clos_annotateProofTheory.code_locs_annotate;
 val _ = show "annotate_code_locs_typed=" clos_annotateProofTheory.annotate_code_locs;
@@ -241,5 +258,91 @@ val _ = show "ALOOKUP_compile_typed=" clos_annotateProofTheory.ALOOKUP_compile;
 val _ = show "compile_append_typed=" clos_annotateProofTheory.compile_append;
 val _ = show "state_rel_def_typed=" clos_annotateProofTheory.state_rel_def;
 val _ = show "do_install_thm_typed=" clos_annotateProofTheory.do_install_thm;
+(* Replay the original local primitive simulation proof; it is not exported. *)
+val do_app_lemma_replay = prove (
+  ``state_rel s t /\ LIST_REL v_rel xs ys ==>
+    case do_app opp xs s of
+      Rval (x,s1) =>
+        ?y t1. v_rel x y /\ state_rel s1 t1 /\ do_app opp ys t = Rval (y,t1)
+    | Rerr err1 =>
+        ?err2. do_app opp ys t = Rerr err2 /\ exc_rel v_rel err1 err2``,
+  match_mp_tac simple_val_rel_do_app
+  >> conj_tac >-
+   (fs [simple_val_rel_def]
+    >> once_rewrite_tac [clos_annotateProofTheory.v_rel_cases]
+    >> fs [] >> rw [] >> fs [])
+  >> fs [simple_state_rel_def,clos_annotateProofTheory.state_rel_def]
+  >> rpt strip_tac >> fs [FLOOKUP_DEF]
+  >- (`ref_rel v_rel (s.refs ' ptr) (t.refs ' ptr)` by fs []
+    >> rpt (qpat_x_assum `!x. _` kall_tac) >> rfs []
+    >> Cases_on `s.refs ' ptr` >> fs [ref_rel_def])
+  >- (`ref_rel v_rel (s.refs ' ptr) (t.refs ' ptr)` by fs []
+    >> rpt (qpat_x_assum `!x. _` kall_tac) >> rfs []
+    >> Cases_on `s.refs ' ptr` >> fs [ref_rel_def])
+  >- (`ref_rel v_rel (s.refs ' ptr) (t.refs ' ptr)` by fs []
+    >> rpt (qpat_x_assum `!x. _` kall_tac) >> rfs []
+    >> Cases_on `s.refs ' ptr` >> fs [ref_rel_def])
+  >> rfs [] >> fs [FAPPLY_FUPDATE_THM] >> rveq
+  >> fs [ref_rel_def] >> rw []);
+val _ = show "do_app_lemma_local_typed=" do_app_lemma_replay;
+val do_app_thm_replay = prove (
+  ``state_rel s1 t1 /\ EVERY2 v_rel xs ys /\
+    (do_app op xs s1 = Rval (v,s2)) ==>
+    ?w t2. (do_app op ys t1 = Rval (w,t2)) /\
+      v_rel v w /\ state_rel s2 t2``,
+  rpt strip_tac
+  >> drule (GEN_ALL do_app_lemma_replay)
+  >> disch_then drule
+  >> disch_then (qspec_then `op` mp_tac) >> fs []
+  >> rpt strip_tac >> fs []);
+val _ = show "do_app_thm_local_typed=" do_app_thm_replay;
+val do_app_err_thm_replay = prove (
+  ``state_rel s1 t1 /\ EVERY2 v_rel xs ys /\
+    do_app op xs s1 = Rerr err /\ (err <> Rabort Rtype_error) ==>
+    ?w. do_app op ys t1 = Rerr w /\ exc_rel v_rel err w``,
+  srw_tac[][]
+  >> imp_res_tac do_app_err >> fsrw_tac[][]
+  >> gvs [oneline do_app_def, AllCaseEqs()]
+  >> fs[clos_annotateProofTheory.v_rel_simp,clos_annotateProofTheory.state_rel_def]
+  >> res_tac >> gvs []);
+val _ = show "do_app_err_thm_local_typed=" do_app_err_thm_replay;
+val state_rel_opt_rel_refs_replay = prove (
+  ``(state_rel s1 s2 /\ FLOOKUP s1.refs n = r1 ==>
+       ?r2. FLOOKUP s2.refs n = r2 /\ OPTREL (ref_rel v_rel) r1 r2) /\
+    (state_rel s1 s2 /\ FLOOKUP s2.refs n = r2 ==>
+       ?r1. FLOOKUP s1.refs n = r1 /\ OPTREL (ref_rel v_rel) r1 r2)``,
+  rw [] >> gvs [clos_annotateProofTheory.state_rel_def, FLOOKUP_DEF] >> rw []);
+val _ = show "state_rel_opt_rel_refs_local_typed=" state_rel_opt_rel_refs_replay;
+val rel_update_thunk_replay = prove (
+  ``state_rel s1 s2 /\ LIST_REL v_rel vs ys ==>
+    (update_thunk [RefPtr v ptr] s1.refs vs = SOME refs1 ==>
+      ?refs2. update_thunk [RefPtr v ptr] s2.refs ys = SOME refs2 /\
+        state_rel (s1 with refs := refs1) (s2 with refs := refs2))``,
+  rw []
+  >> gvs [oneline update_thunk_def, AllCaseEqs()] >> rw []
+  >> gvs [oneline dest_thunk_def, AllCaseEqs(), PULL_EXISTS]
+  >> (gvs [Once clos_annotateProofTheory.v_rel_cases, oneline store_thunk_def, AllCaseEqs(), PULL_EXISTS]
+      >> rpt (imp_res_tac state_rel_opt_rel_refs_replay >> rw []
+              >> gvs [oneline OPTREL_THM] >> FULL_CASE_TAC >> gvs [])
+      >> gvs [clos_annotateProofTheory.state_rel_def, FLOOKUP_UPDATE] >> rw []
+      >> simp [ref_rel_def, Once clos_annotateProofTheory.v_rel_cases]
+      >> metis_tac []));
+val _ = show "rel_update_thunk_local_typed=" rel_update_thunk_replay;
+val evaluate_pure_IMP_replay = prove (
+  ``evaluate (xs,env,(s:('c,'ffi)closSem$state)) = (q,r) /\ EVERY pure xs /\
+    q <> Rerr (Rabort Rtype_error) ==>
+    ?vs. q = Rval vs /\ r = s /\ LENGTH vs = LENGTH xs``,
+  rw[] >> imp_res_tac EVERY_pure_correct >> fs[]
+  >> first_x_assum(qspecl_then[`s`,`env`]mp_tac)
+  >> simp[case_eq_thms] >> CASE_TAC >> simp[] >> CASE_TAC >> simp[]
+  >> strip_tac >> fs[]);
+val _ = show "evaluate_pure_IMP_local_typed=" evaluate_pure_IMP_replay;
+val _ = show "EVERY_pure_correct_typed=" closPropsTheory.EVERY_pure_correct;
+val _ = show "evaluate_pure_typed=" closPropsTheory.evaluate_pure;
+(* Replay the source-local theorem, which is not exported by the theory. *)
+val state_rel_clocks_eqs_replay = prove (
+  ``state_rel s t ==> s.clock = t.clock``,
+  gvs [clos_annotateProofTheory.state_rel_def]);
+val _ = show "state_rel_clocks_eqs_local_typed=" state_rel_clocks_eqs_replay;
 val _ = show "state_rel_max_app_typed=" clos_annotateProofTheory.state_rel_max_app;
 val _ = show "annotate_correct_typed=" clos_annotateProofTheory.annotate_correct;

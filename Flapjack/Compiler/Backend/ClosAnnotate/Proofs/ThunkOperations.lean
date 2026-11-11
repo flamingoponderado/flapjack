@@ -1,12 +1,24 @@
 module
 
-public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Memory
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Primitive
 
 @[expose] public section
 
 /-! Thunk primitive operations under closure annotation. -/
 namespace Flapjack.Compiler.Backend.ClosAnnotate
 open Flapjack Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.ClosProps
+
+private theorem stateRel_updateRefFfi {C F : Type} (source target : State C F) (states : StateRel source target)
+    (index : Nat) (left right : Ref Value) (refsRel : (ClosProps.refRel ValueRel) left right) (ffi : HolFfiState F) :
+    StateRel { source with refs := source.refs.updateEq (index, left), ffi := ffi }
+      { target with refs := target.refs.updateEq (index, right), ffi := ffi } := by
+  refine ⟨states.1, rfl, states.2.2.1, states.2.2.2.1, states.2.2.2.2.1,
+    states.2.2.2.2.2.1, ?_, states.2.2.2.2.2.2.2⟩
+  intro key
+  by_cases same : key = index
+  · subst key
+    simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, optionRel] using refsRel
+  · simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using states.2.2.2.2.2.2.1 key
 
 /-- Related thunk observations have the same status and related payloads. -/
 def DestThunkRel : DestThunkResult → DestThunkResult → Prop
@@ -96,124 +108,5 @@ theorem updateThunk_related {C F : Type} (source target : State C F)
               simpa [states.2.1] using updated
           | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
             simp [updateThunk]
-
-/-- Allocating a thunk keeps its stored values and fresh address related. -/
-theorem primitiveSimulation_thunkAlloc {C F : Type} (mode : AstHOL.ThunkMode) :
-    PrimitiveSimulation (C := C) (F := F) (.thunkOp (.allocThunk mode)) := by
-  intro values nextValues source target valuesRel states
-  cases valuesRel with
-  | nil => exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
-  | cons head tail =>
-    cases tail with
-    | nil =>
-      rename_i value nextValue
-      have same := badThunkUpdate_related source target mode value nextValue head states
-      cases bad : badThunkUpdate mode value source.refs with
-      | true =>
-        have nextBad : badThunkUpdate mode nextValue target.refs = true := by rw [← same, bad]
-        exact ⟨.err (.abort .typeError), by simp [doApp, nextBad], by simp [doApp, bad, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
-      | false =>
-        have nextBad : badThunkUpdate mode nextValue target.refs = false := by rw [← same, bad]
-        let index := leastUnusedRef source.refs
-        have fresh : leastUnusedRef target.refs = index := (stateRel_leastUnusedRef source target states).symm
-        have nextStates := stateRel_updateRefFfi source target states index (.thunk mode value)
-          (.thunk mode nextValue) ⟨rfl, head⟩ source.ffi
-        refine ⟨.val (.refPtr false index,
-          { target with refs := target.refs.updateEq (index, .thunk mode nextValue) }), ?_, ?_⟩
-        · simp [doApp, nextBad, fresh, index]
-        · simp only [doApp, bad, Bool.false_eq_true, ↓reduceIte, AppResultRel]
-          refine ⟨.refPtr false index, ?_⟩
-          simpa [index, states.2.1] using nextStates
-    | cons first rest =>
-      exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
-
-/-- Updating an unevaluated thunk preserves related values and rejects the
-same invalid pointers and thunk states. -/
-theorem primitiveSimulation_thunkUpdate {C F : Type} (mode : AstHOL.ThunkMode) :
-    PrimitiveSimulation (C := C) (F := F) (.thunkOp (.updateThunk mode)) := by
-  intro values nextValues source target valuesRel states
-  cases valuesRel with
-  | nil => exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
-  | cons first rest =>
-    cases rest with
-    | nil => exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
-    | cons second rest =>
-      cases rest with
-      | nil =>
-        cases first with
-        | refPtr flag index =>
-          cases flag with
-          | true => exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
-          | false =>
-            rename_i value nextValue
-            have same := badThunkUpdate_related source target mode value nextValue second states
-            cases bad : badThunkUpdate mode value source.refs with
-            | true =>
-              have nextBad : badThunkUpdate mode nextValue target.refs = true := by rw [← same, bad]
-              exact ⟨.err (.abort .typeError), by simp [doApp, nextBad], by simp [doApp, bad, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
-            | false =>
-              have nextBad : badThunkUpdate mode nextValue target.refs = false := by rw [← same, bad]
-              have refs := states.2.2.2.2.2.2.1 index
-              cases left : source.refs.lookup index with
-              | none =>
-                cases right : target.refs.lookup index with
-                | none => exact ⟨.err (.abort .typeError), by simp [doApp, nextBad, right], by
-                    simp [doApp, bad, left, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
-                | some ref => simp [left, right, optionRel] at refs
-              | some ref =>
-                cases right : target.refs.lookup index with
-                | none => simp [left, right, optionRel] at refs
-                | some nextRef =>
-                  have refRel : (ClosProps.refRel ValueRel) ref nextRef := by simpa [left, right, optionRel] using refs
-                  cases ref with
-                  | valueArray fields =>
-                    cases nextRef <;> simp [ClosProps.refRel] at refRel
-                    exact ⟨.err (.abort .typeError), by simp [doApp, nextBad, right], by
-                      simp [doApp, bad, left, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
-                  | byteArray bytes =>
-                    cases nextRef <;> simp [ClosProps.refRel] at refRel
-                    exact ⟨.err (.abort .typeError), by simp [doApp, nextBad, right], by
-                      simp [doApp, bad, left, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
-                  | thunk oldMode oldValue =>
-                    cases nextRef with
-                    | valueArray fields => simp [ClosProps.refRel] at refRel
-                    | byteArray bytes => simp [ClosProps.refRel] at refRel
-                    | thunk nextMode nextOldValue =>
-                      obtain ⟨modeEq, oldValuesRel⟩ := refRel
-                      subst nextMode
-                      cases oldMode with
-                      | evaluated =>
-                        exact ⟨.err (.abort .typeError), by simp [doApp, nextBad, right], by
-                          simp [doApp, bad, left, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
-                      | notEvaluated =>
-                        have nextStates := stateRel_updateRefFfi source target states index (.thunk mode value)
-                          (.thunk mode nextValue) ⟨rfl, second⟩ source.ffi
-                        refine ⟨.val (unitValue, { target with refs := target.refs.updateEq (index, .thunk mode nextValue) }), ?_, ?_⟩
-                        · simp [doApp, nextBad, right]
-                        · simp only [doApp, bad, Bool.false_eq_true, ↓reduceIte, left, AppResultRel]
-                          exact ⟨.block _ [] [] .nil, by simpa [states.2.1] using nextStates⟩
-        | _ => exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
-      | cons third rest =>
-        exact ⟨.err (.abort .typeError), by simp [doApp], by simp [doApp, AppResultRel, ResultRel, Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]⟩
-
-/-- The current proof-side primitive dispatcher is simulated for every ordinary
-operation; installation and forcing have separate evaluator control flow. -/
-theorem primitiveSimulation_ordinary {C F : Type} (op : ClosLang.Op)
-    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk) :
-    PrimitiveSimulation (C := C) (F := F) op := by
-  cases op with
-  | memOp operation => exact primitiveSimulation_memory operation
-  | label label => exact primitiveSimulation_label label
-  | ffi name => exact primitiveSimulation_ffi name
-  | intOp operation => exact primitiveSimulation_int operation
-  | wordOp operation => exact primitiveSimulation_word operation
-  | blockOp operation => exact primitiveSimulation_block operation
-  | globOp operation => exact primitiveSimulation_globalOp operation
-  | thunkOp operation =>
-    cases operation with
-    | forceThunk => exact False.elim (notForce rfl)
-    | allocThunk mode => exact primitiveSimulation_thunkAlloc mode
-    | updateThunk mode => exact primitiveSimulation_thunkUpdate mode
-  | install => exact False.elim (notInstall rfl)
 
 end Flapjack.Compiler.Backend.ClosAnnotate

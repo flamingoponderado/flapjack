@@ -2135,6 +2135,34 @@ def fmap_as_finite_support_parameters_errors(
     return errors
 
 
+def fmap_parameter_observations_site_allowed(
+    hol_path: str, hol_name: str, lean_path: str, lean_name: str,
+) -> bool:
+    """Limit combined map observations to individually reviewed declarations."""
+    chain = (hol_path == "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" and
+             hol_name in {"chain_exps_semantics", "chain_exps_semantics_call"} and
+             lean_path == "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainSemantics.lean")
+    union = (hol_path == "cakeml/compiler/backend/proofs/clos_callProofScript.sml" and
+             hol_name == "FUNION_FEMPTY_FUPDATE_LIST" and
+             lean_path == "Flapjack/Compiler/Backend/ClosCall/Proofs/FiniteMap.lean" and
+             lean_name == "unionEmptyUpdateList")
+    return chain or union
+
+
+def fmap_parameter_observations_site_errors(
+    hol_path: str, hol_name: str, lean_path: str, lean_name: str,
+    parameters: tuple[str, ...], producers: tuple[str, ...],
+) -> list[str]:
+    if not fmap_parameter_observations_site_allowed(hol_path, hol_name, lean_path, lean_name):
+        return ["combined parameter observations are restricted to reviewed declarations"]
+    if hol_name == "FUNION_FEMPTY_FUPDATE_LIST":
+        expected = ("Flapjack.HolFiniteMapExact.union", "Flapjack.HolFiniteMapExact.holEmpty",
+                    "Flapjack.HolFiniteMapExact.holUpdateList")
+        if parameters != ("code",) or producers != expected:
+            return ["the reviewed union theorem requires its code parameter and all three map producers"]
+    return []
+
+
 def fmap_parameter_observations_errors(
     lines: list[str], module: str, declaration_text: str, decl_name: str,
     parameters: tuple[str, ...], producers: tuple[str, ...], records: list[dict],
@@ -5092,10 +5120,9 @@ def main(argv: list[str]) -> int:
                     reals_cuts or fmap_equality):
                     errors.append(f"{where}: result observations cannot combine with other representation qualifiers")
                 if combined:
-                    if (hol_path != "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" or
-                            hol_name not in {"chain_exps_semantics", "chain_exps_semantics_call"} or
-                            rel != "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainSemantics.lean"):
-                        errors.append(f"{where}: combined parameter observations are restricted to the reviewed closure-chain semantics declarations")
+                    errors.extend(f"{where}: {error}" for error in fmap_parameter_observations_site_errors(
+                        hol_path, hol_name, rel, find_lean_decl(lines, number - 1),
+                        fmap_parameters, result_observations))
                     errors.extend(f"{where}: {error}" for error in fmap_parameter_observations_errors(
                         lines, module, declaration_source, find_lean_decl(lines, number - 1),
                         fmap_parameters, result_observations, observation_records))

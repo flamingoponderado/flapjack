@@ -54,25 +54,4 @@ theorem split_blank_slots {α : Type} (slots : List (Option α)) (start count : 
       refine ⟨head :: pre, post, ?_, by simp [size]⟩
       simpa using congrArg (fun xs => head :: xs) split
 
-/-- The variable-index part of the original allocated-index set. -/
-def allocatedGlobalSlot (genv : GlobalEnv) (i : Nat) : Prop :=
-  i < genv.v.length ∧ (genv.v[i]?.getD none).isSome
-
-/-- A bounded interval disjoint from allocated variable indices contains
-only empty slots. This is the variable-index consequence used by HOL's
-`idx_range_rel_v_REPLICATE_NONE`. -/
-theorem blank_of_unallocated (genv : GlobalEnv) (start count : Nat)
-    (bound : start + count ≤ genv.v.length)
-    (free : ∀ i, start ≤ i → i < start + count → ¬ allocatedGlobalSlot genv i) :
-    ∀ i, start ≤ i → i < start + count → genv.v[i]?.getD none = none := by
-  intro i low high
-  have inRange : i < genv.v.length := by omega
-  have unallocated := free i low high
-  cases slot : genv.v[i]?.getD none with
-  | none => rfl
-  | some value =>
-    exfalso
-    apply unallocated
-    exact ⟨inRange, by rw [slot]; rfl⟩
-
 end Flapjack.Compiler.Backend.SourceToFlat

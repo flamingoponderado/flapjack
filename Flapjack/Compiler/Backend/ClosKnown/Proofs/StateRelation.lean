@@ -1,5 +1,6 @@
 module
 
+public import Flapjack.Misc.ListLookupRel
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ValueRelation
 public import Flapjack.Compiler.Backend.ClosKnown.Compile
 public import Flapjack.Compiler.Backend.ClosMti.Proofs.StateRelation
@@ -70,35 +71,16 @@ theorem stateRelSubspt {C F : Type} (c : Config) (g : Spt ValApprox)
     obtain ⟨other, foundOther, related⟩ := entries key value found
     exact ⟨other, foundOther, refRelSubspt c g value other g' ⟨related, sub⟩⟩
 
-/-- Lookup in related global lists preserves the value relation. This is
-Flapjack induction infrastructure. -/
-private theorem globalsLookupRelated (c : Config) (g : Spt ValApprox)
-    (xs ys : List (Option ClosSem.Value))
-    (related : List.Forall₂ (optionRel (ValueRel c g)) xs ys) :
-    ∀ n v, getGlobal n xs = some (some v) →
-      ∃ w, getGlobal n ys = some (some w) ∧ ValueRel c g v w := by
-  induction related with
-  | nil => intro n v h; simp [getGlobal] at h
-  | @cons x y xs ys head tail ih =>
-    intro n v found
-    cases n with
-    | zero =>
-      simp [getGlobal] at found
-      subst x
-      cases y with
-      | none => simp [optionRel] at head
-      | some w => exact ⟨w, rfl, head⟩
-    | succ n =>
-      apply ih n v
-      simpa [getGlobal] using found
-
 /-- A mapped source global has a related target global at the same index. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "state_rel_get_global_IMP"
   (fmap_as_finite_support := [refs, code])]
 theorem stateRelGetGlobal {C F : Type} (c : Config) (g : Spt ValApprox)
     (s : State (Spt ValApprox × C) F) (t : State C F) (n : Nat) (v1 : ClosSem.Value)
     (h : StateRel c g s t ∧ getGlobal n s.globals = some (some v1)) :
-    ∃ v2, getGlobal n t.globals = some (some v2) ∧ ValueRel c g v1 v2 :=
-  globalsLookupRelated c g s.globals t.globals h.1.2.2.2.2.2.2.2.1 n v1 h.2
+    ∃ v2, getGlobal n t.globals = some (some v2) ∧ ValueRel c g v1 v2 := by
+  obtain ⟨next, found, related⟩ := Flapjack.forall₂_lookup h.1.2.2.2.2.2.2.2.1 n (some v1) h.2
+  cases next with
+  | none => simp [optionRel] at related
+  | some v2 => exact ⟨v2, found, related⟩
 
 end Flapjack.Compiler.Backend.ClosKnown.Relations.StateRelation

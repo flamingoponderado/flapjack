@@ -129,33 +129,25 @@ theorem valueRel_hol_induction (state : EvalOracleState) (P : Value → Value �
   · intro a b xs ys _ _ ihA ihList
     exact .cons ihA ihList
 
-mutual
-private theorem concreteValueRel (state : EvalOracleState) (value : Value)
-    (h : concreteValue value = true) : ValueRel state value value := by
-  cases value with
-  | litv lit => exact .lit lit
-  | loc flag index => exact .loc flag index
-  | conv stamp values => exact .con (concreteValuesRel state values (by simpa [concreteValue] using h))
-  | vectorv values => exact .vector (concreteValuesRel state values (by simpa [concreteValue] using h))
-  | closure _ _ _ | recclosure _ _ _ | env _ _ => simp [concreteValue] at h
-termination_by sizeOf value
-
-private theorem concreteValuesRel (state : EvalOracleState) (values : List Value)
-    (h : concreteValues values = true) : List.Forall₂ (ValueRel state) values values := by
-  cases values with
-  | nil => exact .nil
-  | cons value rest =>
-    simp only [concreteValues, Bool.and_eq_true] at h
-    exact .cons (concreteValueRel state value h.1) (concreteValuesRel state rest h.2)
-termination_by sizeOf values
-end
-
 /-- Concrete values and concrete value lists are related to themselves. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "v_rel_concrete_v"]
 theorem valueRel_concrete (state : EvalOracleState) :
     (∀ value, concreteValue value = true → ValueRel state value value) ∧
-      (∀ values, concreteValues values = true → List.Forall₂ (ValueRel state) values values) :=
-  ⟨concreteValueRel state, concreteValuesRel state⟩
+      (∀ values, concreteValues values = true → List.Forall₂ (ValueRel state) values values) := by
+  refine concreteValue.mutual_induct
+    (fun value => concreteValue value = true → ValueRel state value value)
+    (fun values => concreteValues values = true → List.Forall₂ (ValueRel state) values values)
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  · intro flag index _; exact .loc flag index
+  · intro lit _; exact .lit lit
+  · intro stamp values ih h; exact .con (ih (by simpa [concreteValue] using h))
+  · intro values ih h; exact .vector (ih (by simpa [concreteValue] using h))
+  · intro value noLoc noLit noCon noVector h
+    cases value <;> simp_all [concreteValue]
+  · intro _; exact .nil
+  · intro value rest head tail h
+    simp only [concreteValues, Bool.and_eq_true] at h
+    exact .cons (head h.1) (tail h.2)
 
 /-- An environment containing only concrete values is related to itself. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "env_rel_concrete_v"]

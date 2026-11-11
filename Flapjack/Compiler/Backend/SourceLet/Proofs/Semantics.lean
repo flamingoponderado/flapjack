@@ -12,7 +12,7 @@ open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL Flapjac
 
 /-- Non-failing source programs and their lifted versions have the same
 clock-indexed observations. This is Flapjack proof infrastructure. -/
-theorem compileDecs_clock_observations {F : Type} (state : State F) (env : SemEnv Value)
+private theorem compileDecs_clock_observations {F : Type} (state : State F) (env : SemEnv Value)
     (program : List Dec) (noFail : ¬ semanticsProg state env program .fail) (clock : Nat) :
     evaluateProgWithClock state env clock (compileDecs program) =
       evaluateProgWithClock state env clock program := by

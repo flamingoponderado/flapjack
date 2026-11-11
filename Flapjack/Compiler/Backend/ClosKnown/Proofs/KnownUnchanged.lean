@@ -14,34 +14,14 @@ structurally unchanged. This is Flapjack proof infrastructure. -/
 private theorem knownOpEmpty (op : ClosLang.Op) (args : List ValApprox) (g0 : Spt ValApprox)
     (a : ValApprox) (g : Spt ValApprox) (run : knownOpHOL op args g0 = (a, g))
     (empty : opGlobalBag op = FlatProps.emptyGlobalBag) : g = g0 := by
-  cases op with
-  | globOp op =>
-    cases op with
-    | setGlobal i =>
-      have contradiction := congrFun empty i
-      simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag] at contradiction
-    | global i =>
-      cases args <;> simp_all [knownOpHOL]
-      all_goals split at run <;> simp_all
-    | _ => simp_all [knownOpHOL]
-  | blockOp op => cases op <;> simp_all [knownOpHOL]
-  | intOp op => cases op <;> simp_all [knownOpHOL]
-  | memOp op =>
-    cases op with
-    | el =>
-      cases args with
-      | nil => simp_all [knownOpHOL]
-      | cons x xs =>
-        cases xs with
-        | nil => cases x <;> simp_all [knownOpHOL]
-        | cons y ys =>
-          cases ys with
-          | nil =>
-            cases x <;> cases y <;> simp_all [knownOpHOL]
-            all_goals split at run <;> simp_all
-          | cons z zs => cases x <;> cases y <;> simp_all [knownOpHOL]
-    | _ => simp_all [knownOpHOL]
-  | _ => simp_all [knownOpHOL]
+  have noWrite : ∀ index, op ≠ .globOp (.setGlobal index) := by
+    intro index same
+    subst op
+    have zero := congrFun empty index
+    simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag] at zero
+  unfold knownOpHOL at run
+  split at run <;> simp_all
+  all_goals split at run <;> simp_all
 
 /-- A write-free expression leaves the complete approximation tree unchanged.
 This is Flapjack induction infrastructure. -/

@@ -87,7 +87,8 @@ decreasing_by
   all_goals try (cases y <;> simp_wf <;> omega)
   all_goals (cases entry; simp only [Prod.mk.sizeOf_spec] at *; omega)
 
-private theorem removeFuns_as_map (count captured : Nat) (functions : List (Nat × Exp)) :
+/-- The recursive bundle traversal preserves arities and source order. -/
+theorem removeFuns_eq_map (count captured : Nat) (functions : List (Nat × Exp)) :
     removeFuns count captured functions =
       functions.map (fun (arity, body) => (arity, removeSing (arity + count + captured) body)) := by
   induction functions with
@@ -98,7 +99,7 @@ private theorem removeFuns_as_map (count captured : Nat) (functions : List (Nat 
 @[simp] theorem removeSource_eq_list (bound : Nat) (expressions : List Exp) :
     removeSource bound expressions = removeList bound expressions := by
   induction bound, expressions using removeSource.induct <;>
-    simp_all [removeSource, removeList, removeSing, Flapjack.holHd, removeFuns_as_map]
+    simp_all [removeSource, removeList, removeSing, Flapjack.holHd, removeFuns_eq_map]
   case case4 => split <;> rfl
   case case6 =>
     rename_i bound trace xs body ys ihList ihBody
@@ -129,7 +130,7 @@ theorem removeSource_sing_eq :
   · intro bound e
     simp [removeList]
   · intro count captured fns
-    simp [removeFuns_as_map, removeList, Flapjack.holHd]
+    simp [removeFuns_eq_map, removeList, Flapjack.holHd]
 
 /-- The executable list traversal preserves length. -/
 theorem removeList_length (bound : Nat) (xs : List Exp) : (removeList bound xs).length = xs.length := by

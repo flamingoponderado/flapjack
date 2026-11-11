@@ -19,16 +19,6 @@ theorem compileList_eq_map (expressions : List Exp) :
   | nil => rfl
   | cons first rest ih => simp [compileList, ih]
 
-/-- Recursive bodies retain their arities. This is Flapjack infrastructure
-for the production agreement proof. -/
-theorem compileFuns_eq_map (functions : List (Nat × Exp)) :
-    compileFuns functions = functions.map (fun (arity, body) => (arity, compileSing body)) := by
-  induction functions with
-  | nil => rfl
-  | cons function rest ih =>
-    obtain ⟨arity, body⟩ := function
-    simp [compileFuns, ih]
-
 private theorem varList_range {α : Type} (args : List α) (xs : List Exp) (n : Nat) :
     varList n xs args =
       ((xs.length == args.length) && (xs.zip (List.range' n args.length)).all fun (x, i) =>

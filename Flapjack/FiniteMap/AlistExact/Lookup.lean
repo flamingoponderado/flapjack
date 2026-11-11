@@ -61,5 +61,27 @@ theorem holALookup_member {K V : Type} (entries : List (K × V)) (key : K) (valu
     · simp [holALookup, same] at found
       exact List.mem_cons_of_mem _ (ih found)
 
+/-- A member of an association list with distinct keys is found by lookup. -/
+@[hol "HOL/src/finite_maps/alistScript.sml" "ALOOKUP_ALL_DISTINCT_MEM"]
+theorem holALookup_of_distinct_member {K V : Type} (entries : List (K × V)) (key : K) (value : V)
+    (h : (entries.map Prod.fst).Nodup ∧ (key, value) ∈ entries) :
+    holALookup entries key = some value := by
+  classical
+  induction entries with
+  | nil => simp at h
+  | cons entry rest ih =>
+    obtain ⟨entryKey, entryValue⟩ := entry
+    simp only [List.map_cons, List.nodup_cons] at h
+    simp only [List.mem_cons, Prod.mk.injEq] at h
+    obtain ⟨⟨outside, distinct⟩, member⟩ := h
+    by_cases same : key = entryKey
+    · subst entryKey
+      rcases member with ⟨_, rfl⟩ | member
+      · simp [holALookup]
+      · exact False.elim (outside (List.mem_map.mpr ⟨(key, value), member, rfl⟩))
+    · rcases member with ⟨equal, _⟩ | member
+      · exact (same equal).elim
+      · simpa [holALookup, same] using ih ⟨distinct, member⟩
+
 
 end Flapjack
