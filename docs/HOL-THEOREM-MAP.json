@@ -624,6 +624,14 @@
   "reviewer": "Source comparison: compared clos_call_do_app_thm_typed: all free arguments, result cases, error alternatives, grouped premises, success conclusions and existential target state match. Source and target configurations are NumSet × C and C with shared FFI. State refs and code use canonical finite support. The proof instantiates simple_val_rel_do_app using valueRel_simple, stateRel_simple, valueWellFormed_simple and stateValuesWellFormed_simple, mirroring the HOL proof's inline conditions. ClosSem.doApp inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_correct",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CallsCorrect.lean", "lean_name": "callsCorrect",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: compared both complete conjuncts with calls_correct_type from the original HOL theory: binder order, independent compiler and FFI carriers, the unused independent application-location type, all premises, existential results and conclusions agree. The full clocked evaluator covers installation, force, closure application and errors. ClosSem.State refs and code use canonical finite support. The evaluator inherits reals_as_rational_cuts and the real-agreement assumption documented in SOUNDNESS item 8."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "vrel_list_to_v",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueRelation.lean", "lean_name": "valueRel_listAppend",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",

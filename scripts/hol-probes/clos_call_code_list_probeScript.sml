@@ -65,5 +65,6 @@ val _ = (print "disjoint_image_suc_type="; Lib.with_flag (Globals.show_types,tru
 val _ = (print "image_suc_subset_union_type="; Lib.with_flag (Globals.show_types,true) print_term (concl miscTheory.IMAGE_SUC_SUBSET_UNION); print "\n");
 val _ = (print "subspt_domain_subset_type="; Lib.with_flag (Globals.show_types,true) print_term (concl miscTheory.subspt_domain_SUBSET); print "\n");
 val _ = (print "suffix_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.code_list_IS_SUFFIX); print "\n");
+val _ = (print "calls_correct_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_correct); print "\n");
 val entry = EVAL ``clos_call$code_list 10 [(2,closLang$Var None 4);(0,closLang$Var None 9);(1,closLang$Var None 2)] (sptree$LN,[(90,3,closLang$Var None 0)])``;
 val _ = (print "example="; print_term (rhs (concl entry)); print "\n");
