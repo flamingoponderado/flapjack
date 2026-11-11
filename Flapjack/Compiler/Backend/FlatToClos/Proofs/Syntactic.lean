@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.NoMti
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
+public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
@@ -9,6 +10,16 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Compiler.Backend.ClosProps
+
+/-- A predicate holding for a nonempty list also holds for its head.
+The nonempty-list premise supplies the element witness required by `holHd`. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "EVERY_IMP_HD"]
+theorem everyImpHd {α : Type} (P : α → Prop) (xs : List α)
+    (h : (∀ x ∈ xs, P x) ∧ xs ≠ []) :
+    P (@Flapjack.holHd α ⟨xs.head h.2⟩ xs) := by
+  cases xs with
+  | nil => exact False.elim (h.2 rfl)
+  | cons x xs => exact h.1 x (by simp)
 
 /-- Pair projections agree with their pattern-matching definitions. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "FST_SND_EQ_CASE"]

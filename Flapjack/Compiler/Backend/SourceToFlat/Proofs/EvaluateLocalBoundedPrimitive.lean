@@ -209,13 +209,12 @@ theorem localEnvBounded_constructor {C F : Type} [Nonempty C]
   have sim : ExprSim nextGenv compMap trace sourceEnv flatEnv source flat (.con (some id) args) := by
     generalize sourceRun : EvaluateHOL.evaluate source sourceEnv args.reverse = result at post
     obtain ⟨nextSource, result⟩ := result
-    cases result with
-    | err error =>
-      cases error with
-      | abort abort =>
-        exact exprSim_constructor_abort nextGenv compMap trace sourceEnv flatEnv source flat (some id) args
-          check argsSim nextSource abort sourceRun
-      | raise value =>
+    cases result
+    case' err error => cases error
+    case err.abort abort =>
+      exact exprSim_constructor_abort nextGenv compMap trace sourceEnv flatEnv source flat (some id) args
+        check argsSim nextSource abort sourceRun
+    all_goals
         have growth : GlobalGrowth genv nextGenv := post.1
         have nextInv := globalEnvInv_growth genv nextGenv growth baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv envInv
         cases lookup : nsLookup sourceEnv.c id with
@@ -229,20 +228,6 @@ theorem localEnvBounded_constructor {C F : Type} [Nonempty C]
             obtain ⟨cn, group, compiled, stampLookup, _⟩ := constructors id args.length stamp lookup
             exact exprSim_constructor_local_valid nextGenv compMap trace sourceEnv flatEnv source flat id args stamp
               lookup ⟨cn, group, compiled, stampLookup⟩ argsSim
-    | val values =>
-      have growth : GlobalGrowth genv nextGenv := post.1
-      have nextInv := globalEnvInv_growth genv nextGenv growth baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv envInv
-      cases lookup : nsLookup sourceEnv.c id with
-      | none => simp [doConCheck, lookup] at check
-      | some entry =>
-        obtain ⟨arity, stamp⟩ := entry
-        have same : args.length = arity := by simpa [doConCheck, lookup] using check
-        subst arity
-        cases nextInv with
-        | intro _ _ _ _ constructors =>
-          obtain ⟨cn, group, compiled, stampLookup, _⟩ := constructors id args.length stamp lookup
-          exact exprSim_constructor_local_valid nextGenv compMap trace sourceEnv flatEnv source flat id args stamp
-            lookup ⟨cn, group, compiled, stampLookup⟩ argsSim
   refine ⟨nextGenv, sim, ?_⟩
   unfold ExprListSim at argsSim
   rw [compileExps_reverse] at argsSim post

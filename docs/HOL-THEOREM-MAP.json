@@ -133067,6 +133067,14 @@
   "reviewer": "Compared fst_snd_eq_case_typed: both projection equalities retain independently quantified input component types."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "EVERY_IMP_HD",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
+  "lean_name": "everyImpHd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_imp_hd_typed: the original EVERY and nonempty-list premises imply the head predicate; the latter premise supplies holHd's element witness without an extra typeclass premise."
+},
+{
   "hol_path": "HOL/src/bag/bagScript.sml",
   "hol_name": "BAG_UNION_EMPTY",
   "lean_path": "Flapjack/Misc/Bag.lean",
