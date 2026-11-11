@@ -37,16 +37,16 @@ def GlobalContextShapesByteRanged [BEq String] {width : Nat}
   ∀ name shape address,
     lookupInfo name context.globals = some (shape, address) → ShapeByteRanged shape
 
-private theorem globalRenameFunctionName_byteRanged [DecidableEq String]
+private theorem fpermName_byteRanged [DecidableEq String]
     (source target name : String)
     (hsource : NameRanged source) (htarget : NameRanged target)
     (hname : NameRanged name) :
-    NameRanged (globalRenameFunctionName source target name) := by
+    NameRanged (fpermName source target name) := by
   by_cases hsourceName : source = name
-  · simpa [globalRenameFunctionName, fpermName, hsourceName] using htarget
+  · simpa [fpermName, hsourceName] using htarget
   · by_cases htargetName : target = name
-    · simpa [globalRenameFunctionName, fpermName, hsourceName, htargetName] using hsource
-    · simpa [globalRenameFunctionName, fpermName, hsourceName, htargetName] using hname
+    · simpa [fpermName, hsourceName, htargetName] using hsource
+    · simpa [fpermName, hsourceName, htargetName] using hname
 
 private theorem globalDeclsFilter_mem_source {α : Type} {predicate : Decl α → Bool}
     {declarations : List (Decl α)} {declaration : Decl α}
@@ -85,40 +85,40 @@ private theorem globalRenameProg_byteRanged {width : Nat} [BEq String]
   case case4 name value hinput => exact hinput.1
   case case5 name operator arguments hinput => exact hinput.1
   case case12 function arguments hinput =>
-    exact globalRenameFunctionName_byteRanged source target function
+    exact fpermName_byteRanged source target function
       hsource htarget hinput.1
   case case13 function arguments hinput =>
-    exact globalRenameFunctionName_byteRanged source target function
+    exact fpermName_byteRanged source target function
       hsource htarget hinput.1
   case case14 function arguments exception handlerVar handler ih hinput =>
-    exact ⟨globalRenameFunctionName_byteRanged source target function
+    exact ⟨fpermName_byteRanged source target function
         hsource htarget hinput.1,
       hinput.2.2.1, hinput.2.2.2.1⟩
   case case15 function arguments name hinput =>
-    exact ⟨globalRenameFunctionName_byteRanged source target function
+    exact ⟨fpermName_byteRanged source target function
         hsource htarget hinput.1,
       hinput.2.2⟩
   case case16 function arguments name exception handlerVar handler ih hinput =>
-    exact ⟨globalRenameFunctionName_byteRanged source target function
+    exact ⟨fpermName_byteRanged source target function
         hsource htarget hinput.1,
       hinput.2.2.1, hinput.2.2.2.1, hinput.2.2.2.2.1⟩
   case case17 function arguments name shape address hlookup hinput =>
-    exact ⟨globalRenameFunctionName_byteRanged source target function
+    exact ⟨fpermName_byteRanged source target function
         hsource htarget hinput.1, hinput.2.2⟩
   case case18 function arguments name hlookup hinput =>
-    exact ⟨globalRenameFunctionName_byteRanged source target function
+    exact ⟨fpermName_byteRanged source target function
         hsource htarget hinput.1, hinput.2.2⟩
   case case19 function arguments name exception handlerVar handler shape address hlookup ih hinput =>
-    exact ⟨globalRenameFunctionName_byteRanged source target function
+    exact ⟨fpermName_byteRanged source target function
         hsource htarget hinput.1,
       hinput.2.2.1, hinput.2.2.2.1, hinput.2.2.2.2.1⟩
   case case20 function arguments name exception handlerVar handler hlookup ih hinput =>
-    exact ⟨globalRenameFunctionName_byteRanged source target function
+    exact ⟨fpermName_byteRanged source target function
         hsource htarget hinput.1,
       hinput.2.2.1, hinput.2.2.2.1, hinput.2.2.2.2.1⟩
   case case21 name shape function arguments body ih hinput =>
     exact ⟨hinput.1,
-      globalRenameFunctionName_byteRanged source target function
+      fpermName_byteRanged source target function
         hsource htarget hinput.2.2.1⟩
   case case22 function configuration configurationLength array arrayLength hinput => exact hinput.1
   case case23 exception value hinput => exact hinput.1

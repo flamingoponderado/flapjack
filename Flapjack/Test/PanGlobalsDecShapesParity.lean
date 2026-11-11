@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Pancake.PanGlobals
+public import Flapjack.Pancake.Proofs.PanGlobals
 public meta import Flapjack.Pancake.PanGlobals
 
 @[expose] public section
@@ -276,15 +277,15 @@ def renameFilterGuard : Bool :=
 /-! Counterparts of Cake's `fperm_name_cancel`/`fperm_name_cong`
     (`pan_globalsProofScript.sml:1622,1629`). -/
 example : True := by
-  have h := globalRenameFunctionName_cancel "main" "entry" "main"
-  have h2 := globalRenameFunctionName_cong "main" "entry" "foo" "foo"
+  have h := fpermName_cancel "main" "entry" "main"
+  have h2 := fpermName_cong "main" "entry" "foo" "foo"
   trivial
 
 def renameNameGuard : Bool :=
-  (globalRenameFunctionName "main" "entry"
-      (globalRenameFunctionName "main" "entry" "main") == "main") &&
-  (globalRenameFunctionName "main" "entry" "other" == "other") &&
-  (globalRenameFunctionName "main" "entry" "entry" == "main")
+  (fpermName "main" "entry"
+      (fpermName "main" "entry" "main") == "main") &&
+  (fpermName "main" "entry" "other" == "other") &&
+  (fpermName "main" "entry" "entry" == "main")
 
 #eval renameNameGuard
 #guard renameNameGuard

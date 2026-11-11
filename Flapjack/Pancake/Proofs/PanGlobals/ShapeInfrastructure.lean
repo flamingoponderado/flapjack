@@ -236,7 +236,7 @@ theorem globalResortDecls_all_of_renamed (structs : StructContext)
       (fun declaration => match declaration with
         | .function function =>
             panDeclShapesWellFormed structs (.function { function with
-              name := globalRenameFunctionName source target function.name
+              name := fpermName source target function.name
               body := globalRenameProg source target function.body })
         | _ => true) = true := by
   refine List.all_eq_true.mpr (fun declaration hmem => ?_)

@@ -75306,7 +75306,7 @@
     "lean_path": "Flapjack/Pancake/PanGlobals.lean",
     "lean_name": "fpermName",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.52) HOL fperm_name_def (pan_globalsScript.sml:184-189) carries no type annotation, so HOL generalizes it to the polymorphic 'a -> 'a -> 'a -> 'a (HOL equality is defined on every type, with no typeclass side condition). The exact Lean port fpermName is generic in alpha with [DecidableEq alpha] (the afindi_def/distinct_lists_def generic-alpha convention); the clauses, branch order, comparison = and result names match HOL exactly with no side condition. The String-specialized globalRenameFunctionName is recorded separately as a documented mismatch and retained as production infrastructure. Direct HOL rows in pan_globals_fperm_name_probe.out."
+    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.52) HOL fperm_name_def (pan_globalsScript.sml:184-189) carries no type annotation, so HOL generalizes it to the polymorphic 'a -> 'a -> 'a -> 'a (HOL equality is defined on every type, with no typeclass side condition). The exact Lean port fpermName is generic in alpha with [DecidableEq alpha] (the afindi_def/distinct_lists_def generic-alpha convention); the clauses, branch order, comparison = and result names match HOL exactly with no side condition. Call sites now use this polymorphic definition directly at alpha := String (FunName); the former String-specialized wrapper globalRenameFunctionName was deleted, so no separate documented-mismatch row remains. Direct HOL rows in pan_globals_fperm_name_probe.out."
   },
   {
     "hol_path": "cakeml/pancake/pan_globalsScript.sml",
@@ -75354,14 +75354,6 @@
     "lean_name": "globalRenameDecls",
     "statement_status": "documented_mismatch",
     "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.13) against pan_globalsScript.sml:216-221: the three fperm_decs equations ([], Function fi::decs renaming fi.name via fperm_name and fi.body via fperm, other d::decs unchanged) match globalRenameDecls clause-for-clause. The mismatch is the imported declaration carrier: production Decl α contains Prog α/Exp α (Const : α, String identifiers) and Shape (Named : String), while HOL decl carries word-valued expressions with mlstring identifiers and shape (PanLang.lean:14-28, 226-269). names_as_string cannot repair the expression/Shape carrier difference, so the tag remains withdrawn pending the exact-carrier transformation flapjack-6nn.3.1 / flapjack-pxn.18.3.5.8. Direct HOL rows mixed / empty / singleton_nonfunction are in pan_globals_fperm_decs_probe.out and sampled by Flapjack/Test/PanGlobalsFpermDecsParity.lean."
-  },
-  {
-    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
-    "hol_name": "fperm_name_def",
-    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
-    "lean_name": "globalRenameFunctionName",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; tag withdrawn on flapjack-main coordinator request; classified jointly with flapjack-ds4 under bead flapjack-dlc.52): String-specialized production form of HOL's polymorphic fperm_name_def (pan_globalsScript.sml:184). HOL carries no type annotation and generalizes the constant to 'a -> 'a -> 'a -> 'a, while this definition instantiates alpha := String (FunName); it is a specialization of the HOL constant, so the names_as_string qualifier does not authorize a tag. Exact polymorphic port: fpermName (reviewed_exact, above). Retained as production infrastructure. Direct HOL rows in pan_globals_fperm_name_probe.out; Lean fixture Flapjack.Test.PanGlobalsFpermNameParity covers 7 HOL rows. Faithful-port dependency flapjack-pxn.18.3.5.8 (parent flapjack-pxn.18.3.5.7.2)."
   },
   {
     "hol_path": "cakeml/pancake/pan_globalsScript.sml",

@@ -249,21 +249,12 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 self.assertEqual(record["statement_status"], "reviewed_exact")
                 self.assertIn("polymorphic", record["reviewer"])
                 self.assertIn(key, tagged)
-        mismatch_cases = {
-            ("Flapjack/Pancake/PanGlobals.lean", "globalRenameFunctionName"): (
-                "cakeml/pancake/pan_globalsScript.sml", "fperm_name_def"
-            ),
-        }
-        for key, (hol_path, hol_name) in mismatch_cases.items():
-            with self.subTest(lean_name=key[1]):
-                record = manifest_by_key[key]
-                self.assertEqual(
-                    (record["hol_path"], record["hol_name"]),
-                    (hol_path, hol_name),
-                )
-                self.assertEqual(record["statement_status"], "documented_mismatch")
-                self.assertIn("specialization", record["reviewer"])
-                self.assertNotIn(key, tagged)
+        # The String-specialized wrapper is gone: call sites use the tagged
+        # polymorphic fpermName directly, so no documented-mismatch row remains.
+        self.assertNotIn(
+            ("Flapjack/Pancake/PanGlobals.lean", "globalRenameFunctionName"),
+            manifest_by_key,
+        )
 
     def test_pan_globals_fresh_name_exact_ports_and_production_forms(self):
         tagged = MAP["tagged_declarations"]()
@@ -659,26 +650,6 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             else:
                 self.assertIn(dep, record["reviewer"])
                 self.assertNotIn(key, MAP["tagged_declarations"]())
-
-    def test_global_rename_function_name_polymorphic_hol_mismatch_is_documented(
-        self,
-    ):
-        key = ("Flapjack/Pancake/PanGlobals.lean", "globalRenameFunctionName")
-        inventory = {
-            (record["lean_path"], record["lean_name"]): record
-            for record in MAP["build_inventory"]()
-        }
-        record = inventory[key]
-        self.assertEqual(
-            (record["hol_path"], record["hol_name"]),
-            ("cakeml/pancake/pan_globalsScript.sml", "fperm_name_def"),
-        )
-        self.assertEqual(record["statement_status"], "documented_mismatch")
-        self.assertNotIn("names_as_string", record)
-        self.assertIn("polymorphic", record["reviewer"])
-        self.assertIn("flapjack-pxn.18.3.5.8", record["reviewer"])
-        self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
-        self.assertNotIn(key, MAP["tagged_declarations"]())
 
     def test_crep_set_globals_state_carrier_mismatch_is_documented(self):
         key = ("Flapjack/Pancake/Semantics/CrepSem.lean", "setCrepHolGlobalsW")

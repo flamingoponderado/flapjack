@@ -47,10 +47,10 @@ theorem fpermNameCongNatFixture :
   fpermName_cong 1 2 3 4
 
 def fpermClusterGuard : Bool :=
-  (globalRenameFunctionName "foo" "bar"
-      (globalRenameFunctionName "foo" "bar" "foo") == "foo") &&
-  (globalRenameFunctionName "foo" "bar" "foo" !=
-      globalRenameFunctionName "foo" "bar" "bar") &&
+  (fpermName "foo" "bar"
+      (fpermName "foo" "bar" "foo") == "foo") &&
+  (fpermName "foo" "bar" "foo" !=
+      fpermName "foo" "bar" "bar") &&
   ((functions (globalRenameDecls "foo" "bar" declarations)).map
       (fun entry => entry.1) == ["bar", "foo"]) &&
   ((functions declarations).map (fun entry => entry.1)).Nodup &&

@@ -379,9 +379,8 @@ termination_by program => sizeOf program
     (`Flapjack/Pancake/PanStructs.lean:20-21`) and `distinct_lists_def`
     (`Flapjack/Pancake/PanCommon.lean:24-25`).  The clauses, branch order, the
     comparison `=` and the result names match HOL exactly with no side
-    condition.  The production `String`-specialized form is
-    `globalRenameFunctionName` below; it is only a specialization of this
-    polymorphic original, so it is deliberately left untagged.  Direct
+    condition.  Call sites use this definition directly at `α := String`
+    (`FunName`), so no `String`-specialized wrapper remains.  Direct
     HOL/Lean edge-case fixtures: `scripts/hol-probes/pan_globals_fperm_name_probe.out`
     and `Flapjack/Test/PanGlobalsFpermNameParity.lean`. -/
 @[hol "cakeml/pancake/pan_globalsScript.sml" "fperm_name_def"]
@@ -468,56 +467,14 @@ decreasing_by
 
 end FpermExact
 
-/-- Production `String`-specialized form of Cake's polymorphic `fperm_name`
-    (`fpermName` above): renaming swaps the `source` and `target` function
-    names and leaves every other name unchanged.  Its body is exactly the
-    reviewed `@[hol]` port `fpermName source target name`, so the executed
-    compiler path runs the HOL-shaped definition. -/
--- FLAPJACK-SPECIFIC (`@[hol]` tag WITHDRAWN, documented mismatch, audit beads
--- `flapjack-dlc.52`/`flapjack-dlc.53`): HOL's `fperm_name_def`
--- (`pan_globalsScript.sml:184`) has no type annotation and HOL generalizes it
--- to the polymorphic `'a -> 'a -> 'a -> 'a`.  This declaration instantiates
--- `α := String` (`FunName`), so it is a specialization of the HOL constant
--- rather than the constant itself; the `names_as_string` qualifier does not
--- authorize specializing a polymorphic HOL name to `String`.  The exact
--- polymorphic port is `fpermName` above, which this declaration calls, so the
--- executed path uses the reviewed definition and only the type instantiation
--- remains Flapjack-specific.  Direct HOL/Lean edge-case fixtures:
--- `scripts/hol-probes/pan_globals_fperm_name_probe.out` and
--- `Flapjack/Test/PanGlobalsFpermNameParity.lean`.
-def globalRenameFunctionName
-    (source target name : FunName) : FunName :=
-  fpermName source target name
-
-/-- Checked bridge for the name component of the executed rename path: the
-    production `String` helper is definitionally the reviewed exact polymorphic
-    HOL `fperm_name` port applied at `α := String`, so the executed compiler
-    path already runs the exact definition. -/
-@[simp] theorem globalRenameFunctionName_eq_fpermName (source target name : FunName) :
-    globalRenameFunctionName source target name = fpermName source target name := rfl
-
-/-! Counterparts of Cake's `fperm_name_cancel` and `fperm_name_cong`
-    (`pan_globalsProofScript.sml:1622,1629`): the source/target renaming is an
-    involutive bijection of function names. -/
-theorem globalRenameFunctionName_cancel [BEq String] [LawfulBEq String]
-    (source target name : FunName) :
-    globalRenameFunctionName source target
-        (globalRenameFunctionName source target name) = name := by
-  unfold globalRenameFunctionName fpermName
-  repeat' split <;> simp_all
-
-theorem globalRenameFunctionName_cong [BEq String] [LawfulBEq String]
-    (source target left right : FunName) :
-    globalRenameFunctionName source target left =
-        globalRenameFunctionName source target right ↔
-      left = right := by
-  constructor
-  · intro h
-    have := congrArg (globalRenameFunctionName source target) h
-    rw [globalRenameFunctionName_cancel, globalRenameFunctionName_cancel] at this
-    exact this
-  · intro h
-    rw [h]
+/-! Cake's polymorphic `fperm_name` (`pan_globalsScript.sml:184`) is the
+    reviewed exact port `fpermName` above; its `cancel`/`cong` lemmas are the
+    tagged `fpermName_cancel`/`fpermName_cong` in the HOL proof counterpart
+    `Flapjack/Pancake/Proofs/PanGlobals.lean`.  Call sites use `fpermName`
+    directly at `α := String`, so no `String`-specialized wrapper remains.
+    Direct HOL/Lean edge-case fixtures:
+    `scripts/hol-probes/pan_globals_fperm_name_probe.out` and
+    `Flapjack/Test/PanGlobalsFpermNameParity.lean`. -/
 
 /-! Flapjack-specific structural renaming corresponding clause-for-clause to
     Cake's `fperm_def` (`pan_globalsScript.sml:191-214`). The direct HOL/Lean
@@ -563,9 +520,9 @@ def globalRenameProg
         | some (returns, some (exception, handlerVar, handler)) =>
             some (returns, some (exception, handlerVar,
               globalRenameProg source target handler))
-      .call renamedInfo (globalRenameFunctionName source target function) arguments
+      .call renamedInfo (fpermName source target function) arguments
   | .decCall name shape function arguments body =>
-      .decCall name shape (globalRenameFunctionName source target function) arguments
+      .decCall name shape (fpermName source target function) arguments
         (globalRenameProg source target body)
   | program => program
 termination_by program => sizeOf program
@@ -597,7 +554,7 @@ def globalRenameDecls
   | [] => []
   | .function declaration :: declarations =>
       .function { declaration with
-        name := globalRenameFunctionName source target declaration.name
+        name := fpermName source target declaration.name
         body := globalRenameProg source target declaration.body } ::
         globalRenameDecls source target declarations
   | declaration :: declarations =>
@@ -639,16 +596,32 @@ theorem functions_globalRenameDecls [BEq String] (source target : FunName)
     (declarations : List (Decl α)) :
     functions (globalRenameDecls source target declarations) =
       (functions declarations).map (fun entry =>
-        (globalRenameFunctionName source target entry.1, entry.2.1,
+        (fpermName source target entry.1, entry.2.1,
           globalRenameProg source target entry.2.2.1, entry.2.2.2)) := by
   induction declarations with
   | nil => simp [globalRenameDecls, functions, functionEntries]
   | cons declaration declarations ih =>
       cases declaration <;> simp [globalRenameDecls, functions, functionEntries, ih]
 
+/-- Flapjack infrastructure: `fpermName` at a decidable type is injective,
+    because it is its own inverse. This is the local factoring of the tagged
+    HOL `fperm_name_cong` (`fpermName_cong` in the proof counterpart
+    `Flapjack/Pancake/Proofs/PanGlobals.lean`); it cannot carry the tag here
+    because the proof-script counterpart imports this module. -/
+private theorem fpermName_injective {α : Type u} [DecidableEq α] (f g : α) :
+    Function.Injective (fpermName f g) := by
+  intro left right h
+  have hcancel : ∀ name : α, fpermName f g (fpermName f g name) = name := by
+    intro name
+    unfold fpermName
+    repeat' split <;> simp_all
+  have := congrArg (fpermName f g) h
+  rw [hcancel, hcancel] at this
+  exact this
+
 theorem nodup_globalRenameFunctionName_map [BEq String] [LawfulBEq String]
     (source target : FunName) (names : List FunName) (hnodup : names.Nodup) :
-    (names.map (globalRenameFunctionName source target)).Nodup := by
+    (names.map (fpermName source target)).Nodup := by
   induction names with
   | nil => simp
   | cons head tail ih =>
@@ -658,7 +631,7 @@ theorem nodup_globalRenameFunctionName_map [BEq String] [LawfulBEq String]
       intro hmem
       obtain ⟨name, hname, heq⟩ := List.mem_map.mp hmem
       have hnamehead : name = head :=
-        (globalRenameFunctionName_cong source target name head).mp heq
+        fpermName_injective source target heq
       rw [hnamehead] at hname
       exact hhead hname
 
@@ -672,9 +645,9 @@ theorem globalRenameDecls_names_nodup [BEq String] [LawfulBEq String]
       ((fun entry : FunName × List (VarName × Shape) × Prog α × Shape =>
           entry.1) ∘
         (fun entry : FunName × List (VarName × Shape) × Prog α × Shape =>
-          (globalRenameFunctionName source target entry.1, entry.2.1,
+          (fpermName source target entry.1, entry.2.1,
             globalRenameProg source target entry.2.2.1, entry.2.2.2))) =
-      (globalRenameFunctionName source target) ∘
+      (fpermName source target) ∘
         (fun entry : FunName × List (VarName × Shape) × Prog α × Shape =>
           entry.1) := by
     funext entry
@@ -756,7 +729,7 @@ theorem globalRenameDecls_all_of_predicate [BEq String]
       (fun declaration => match declaration with
         | .function function =>
             predicate (.function { function with
-              name := globalRenameFunctionName source target function.name
+              name := fpermName source target function.name
               body := globalRenameProg source target function.body })
         | _ => true) = true) :
     (globalRenameDecls source target declarations).all predicate = true := by
@@ -772,7 +745,7 @@ theorem globalRenameDecls_all_of_predicate [BEq String]
           (fun declaration => match declaration with
             | .function function =>
                 predicate (.function { function with
-                  name := globalRenameFunctionName source target function.name
+                  name := fpermName source target function.name
                   body := globalRenameProg source target function.body })
             | _ => true) = true := by
         simp only [List.all_cons, Bool.and_eq_true] at hfunction
