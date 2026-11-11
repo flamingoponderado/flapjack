@@ -12,6 +12,18 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack.Compiler.Backend.BackendCommon FlatLang PatternCommon PatternSemantics
 open Flapjack.Compiler.Backend.FlatProps
 
+/-- An invariant of every fold step is preserved by the whole right fold. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "inv_on_FOLDR"]
+theorem invOnFoldr {α β γ : Type} (xs : List γ) (g : γ → α → α) (v : α) :
+    ∀ f : α → β, (∀ x w, x ∈ xs → f (g x w) = f w) → f (xs.foldr g v) = f v := by
+  intro f invariant
+  induction xs with
+  | nil => rfl
+  | cons x xs ih =>
+    simp only [List.foldr_cons]
+    rw [invariant x _ (by simp)]
+    exact ih (fun y w member => invariant y w (by simp [member]))
+
 private theorem esgcFree_mkBool (t : Tra) (b : Bool) : esgcFree (mkBool t b) := by
   simp [mkBool, esgcFree, esgcFreeList]
 

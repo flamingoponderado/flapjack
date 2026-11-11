@@ -133356,6 +133356,15 @@
 }
 ,
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "inv_on_FOLDR",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean",
+  "lean_name": "invOnFoldr",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared inv_on_foldr_typed: the element, accumulator and result types remain independent, and the original universal invariant on list members and all accumulators implies the unchanged right-fold result."
+}
+,
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "find_recfun_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",
