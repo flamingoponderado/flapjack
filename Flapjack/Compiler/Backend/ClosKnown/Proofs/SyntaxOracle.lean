@@ -18,6 +18,14 @@ open ClosLang ClosProps BackendProps
 open Relations.StateRelation.Oracle PreserveSafety
 open OracleGlobals UniqueGlobalsPort KnownSubspt OracleMonotonic
 
+/-- Applying a pure program transformation preserves both oracle properties. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "pure_co_oracle_props"]
+theorem pureCoOracleProps {C P Q : Type} (f : P → Q)
+    (co : Nat → (Spt ValApprox × C) × P) :
+    (oracleGapproxSubspt (pureCo f ∘ co) ↔ oracleGapproxSubspt co) ∧
+      (oracleStateSgcFree (pureCo f ∘ co) ↔ oracleStateSgcFree co) := by
+  simp [oracleGapproxSubspt, oracleStateSgcFree, pureCo]
+
 /-- The source optimizer's assumptions on its future compilation oracle. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "syntax_oracle_ok_def"]
 def syntaxOracleOk {C : Type} (c : Config) (xs : List ClosLang.Exp)

@@ -2,7 +2,8 @@ module
 
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApp
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApplyFullBody
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationCons
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SubsptComposition
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxCons
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationBool
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLetrec
@@ -79,15 +80,160 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
         | cons first rest =>
           cases rest with
           | cons second tail =>
-            apply Cons.knownCorrect0Cons first second tail env state ?_ ?_
-            · intro result next values ⟨run, _⟩
-              have bound := evaluate_clock_le [first] env state
-              rw [run] at bound
-              simp only at bound
-              apply exprIH (second :: tail) env next (by omega)
+            have headIH : KnownSimulationAt [first] env state := by
+              apply exprIH [first] env state (by omega)
               simp only [expsWeight] at measure ⊢; omega
-            · apply exprIH [first] env state (by omega)
-              simp only [expsWeight] at measure ⊢; omega
+            intro res1 s env1 xenv1 env2 xenv2 t0 c g0 g aenv eas h
+            obtain ⟨run, known, initialRel, inputSyntax, coSyntax, disjoint, oracle, stateOracleDisjoint,
+              exprSafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
+              sub0, sub1, mono, free, envRel, unique, stateOracle, envEq, noType⟩ := h
+            have ⟨headUnique, tailUnique, swappedUnique⟩ := CorrectApprox.Cons.uniqueParts [first] (second :: tail) state.compileOracle unique
+            have ⟨headDisjoint, tailDisjoint⟩ :=
+              (mglobalsDisjointRw state.globals first second first first first tail .none .install [] none none [] 0 0).1.mp disjoint
+            have syntaxParts : everyFnVarsNone [first] ∧ everyFnVarsNone (second :: tail) := by
+              simpa [everyFnVarsNone] using inputSyntax
+            have headSyntax := syntaxParts.1
+            have tailSyntax := syntaxParts.2
+            have headSafe : ∀ e ∈ [first], esgcFree e := by simpa using exprSafe first (by simp)
+            have tailSafe : ∀ e ∈ second :: tail, esgcFree e := by
+              intro e member
+              exact exprSafe e (List.mem_cons_of_mem _ member)
+            have ⟨headFree, tailFree⟩ := (fvMaxCons env1.length first (second :: tail)).1 free
+            have bagDisjoint : ∀ i, elistGlobals [first] i = 0 ∨ elistGlobals (second :: tail) i = 0 := by
+              intro i
+              have bound := unique 0 i
+              simp only [elistGlobals_append, elistGlobals, FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag,
+                Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag] at bound ⊢
+              omega
+            cases hk : knownListTotal c [first] aenv g0 with
+            | mk headEas g1 =>
+              obtain ⟨xe, xa, eq⟩ := knownListTotal_single_result c first aenv g0 g1 headEas hk
+              subst headEas
+              cases ht : knownListTotal c (second :: tail) aenv g1 with
+              | mk tailEas g2 =>
+                have tailNonempty : tailEas ≠ [] := by
+                  intro empty
+                  subst tailEas
+                  have len := knownListTotal_length c (second :: tail) aenv g1
+                  rw [ht] at len
+                  simp at len
+                rw [knownListTotal_cons_cons, hk] at known
+                dsimp only at known
+                rw [ht] at known
+                simp only [Prod.mk.injEq] at known
+                rcases known with ⟨rfl, rfl⟩
+                have ⟨subHead, subTail⟩ := subsptKnownElistGlobals c [first] aenv g0 [(xe, xa)] g1
+                  (second :: tail) aenv tailEas g2 ⟨hk, ht, sub0, bagDisjoint⟩
+                have subHeadNext : sptSubspt g1 (nextG state) := sptSubsptTrans _ _ _ ⟨subTail, sub1⟩
+                cases hr : evaluate [first] env state with
+                | mk headResult middle =>
+                  have headNoType : headResult ≠ .err (.abort .typeError) := by
+                    intro eq
+                    subst headResult
+                    rw [evaluate, fixClock_evaluate, hr] at run
+                    simp at run
+                    rcases run with ⟨rfl, rfl⟩
+                    exact noType rfl
+                  have step := headIH headResult middle env1 xenv1 env2 xenv2 t0 c g0 g1 aenv [(xe, xa)]
+                    ⟨hr, hk, initialRel, headSyntax, coSyntax, headDisjoint, oracle, stateOracleDisjoint,
+                      headSafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
+                      subHead, subHeadNext, mono, headFree, envRel, headUnique, stateOracle, envEq, headNoType⟩
+                  obtain ⟨targetHeadResult, targetMiddle, targetHeadRun, headRel, midState, midGlobals, midStateOracle, midOracle⟩ := step
+                  have targetHeadRun' : evaluate [xe] (env2 ++ xenv2) t0 = (targetHeadResult, targetMiddle) := by
+                    simpa using targetHeadRun
+                  rw [evaluate, fixClock_evaluate, hr] at run
+                  cases headResult with
+                  | err error =>
+                    simp at run
+                    rcases run with ⟨rfl, rfl⟩
+                    cases targetHeadResult with
+                    | val values => simp [resultRel] at headRel
+                    | err error2 =>
+                      refine ⟨.err error2, targetMiddle, ?_, headRel, midState, midGlobals, midStateOracle, midOracle⟩
+                      cases tailEas with
+                      | nil => contradiction
+                      | cons entry rest =>
+                        simp only [List.map_cons, List.cons_append, List.nil_append]
+                        rw [evaluate, fixClock_evaluate, targetHeadRun']
+                  | val headValues =>
+                    obtain ⟨head, rfl⟩ := evaluate_singleton_value first env state middle headValues hr
+                    cases targetHeadResult with
+                    | err error => simp [resultRel] at headRel
+                    | val targetValues =>
+                      obtain ⟨targetHead, rfl⟩ := evaluate_singleton_value xe (env2 ++ xenv2) t0 targetMiddle targetValues targetHeadRun'
+                      have valuesRel : ValueRel c (nextG middle) head targetHead := by
+                        cases headRel with | cons rel _ => exact rel
+                      have safety := EvaluateGlobalsPort.Total.evaluateChangedGlobals [first] env state (.val [head]) middle
+                        ⟨hr, safe, headSafe, envSafe⟩
+                      have nextUnique := uniqueSetGlobalsEvaluate [first] (second :: tail) env state middle (.val [head]) ⟨tailUnique, hr⟩
+                      have nextDisjoint := mglobalsDisjointEvaluate state (second :: tail) [first] env (.val [head]) middle
+                        ⟨hr, safe, envSafe, headSafe, swappedUnique, tailDisjoint⟩
+                      have nextStateOracleDisjoint := stateOracleMglobalsDisjointEvaluate [first] env state (.val [head]) middle
+                        ⟨hr, safe, headSafe, envSafe, headUnique, headDisjoint, stateOracleDisjoint⟩
+                      obtain ⟨n, shifted⟩ := evaluateImpShiftSeq [first] env state (.val [head]) middle hr
+                      have nextCoSyntax : coEveryFnVarsNone middle.compileOracle := by
+                        rw [shifted]
+                        exact coEveryFnVarsNoneShift state.compileOracle coSyntax n
+                      have nextOracleSafe : oracleStateSgcFree middle.compileOracle := by
+                        rw [shifted]
+                        exact oracleStateSgcFreeShift state.compileOracle oracleSafe n
+                      have nextMono : oracleGapproxSubspt middle.compileOracle :=
+                        oracleGapproxSubsptEvaluate () [first] env state (.val [head]) middle ⟨mono, hr⟩
+                      have nextTree := nextGEvaluateSubspt [first] env state (.val [head]) middle ⟨mono, hr⟩
+                      have nextRel := valueRelListSubspt c (nextG state) env1 env2 envRel (nextG middle) nextTree
+                      have nextSafe := (PreserveSafety.knownPreservesEsgcFree c [first] aenv g0 [(xe, xa)] g1
+                        ⟨hk, headSafe, approxSafe, globalSafe⟩).2.2
+                      cases tr : evaluate (second :: tail) env middle with
+                      | mk tailResult last =>
+                        have tailNoType : tailResult ≠ .err (.abort .typeError) := by
+                          intro eq
+                          subst tailResult
+                          simp [tr] at run
+                          rcases run with ⟨rfl, rfl⟩
+                          exact noType rfl
+                        have tailIH : KnownSimulationAt (second :: tail) env middle := by
+                          have bound := evaluate_clock_le [first] env state
+                          rw [hr] at bound
+                          simp only at bound
+                          apply exprIH (second :: tail) env middle (by omega)
+                          simp only [expsWeight] at measure ⊢; omega
+                        have tailStep := tailIH tailResult last
+                          env1 xenv1 env2 xenv2 targetMiddle c g1 g2 aenv tailEas
+                          ⟨tr, ht, midState, tailSyntax, nextCoSyntax, nextDisjoint, midOracle, nextStateOracleDisjoint,
+                            tailSafe, safety.1, envSafe, approxRel, nextOracleSafe, nextSafe, approxSafe, midGlobals,
+                            subTail, sptSubsptTrans _ _ _ ⟨sub1, nextTree⟩, nextMono, tailFree, nextRel, nextUnique,
+                            midStateOracle, envEq, tailNoType⟩
+                        obtain ⟨targetTailResult, targetLast, targetTailRun, tailRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩ := tailStep
+                        simp only [tr] at run
+                        cases tailResult with
+                        | err error =>
+                          simp at run
+                          rcases run with ⟨rfl, rfl⟩
+                          cases targetTailResult with
+                          | val values => simp [resultRel] at tailRel
+                          | err error2 =>
+                            refine ⟨.err error2, targetLast, ?_, tailRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩
+                            cases tailEas with
+                            | nil => contradiction
+                            | cons entry rest =>
+                              simp only [List.map_cons, List.cons_append, List.nil_append] at targetTailRun ⊢
+                              rw [evaluate, fixClock_evaluate, targetHeadRun', targetTailRun]
+                        | val tailValues =>
+                          simp at run
+                          rcases run with ⟨rfl, rfl⟩
+                          cases targetTailResult with
+                          | err error => simp [resultRel] at tailRel
+                          | val targetTailValues =>
+                            have nextTreeFinal := nextGEvaluateSubspt (second :: tail) env middle (.val tailValues) last ⟨nextMono, tr⟩
+                            have finalHeadRel := valueRelSubspt c (nextG middle) head targetHead (nextG last) ⟨valuesRel, nextTreeFinal⟩
+                            refine ⟨.val (targetHead :: targetTailValues), targetLast, ?_, ?_, finalState, finalGlobals, finalOracle, finalDisjoint⟩
+                            · cases tailEas with
+                              | nil => contradiction
+                              | cons entry rest =>
+                                simp only [List.map_cons, List.cons_append, List.nil_append] at targetTailRun ⊢
+                                rw [evaluate, fixClock_evaluate, targetHeadRun', targetTailRun]
+                                simp
+                            · exact .cons finalHeadRel tailRel
           | nil =>
             cases first with
             | var trace index => exact knownCorrect0Var trace index env state
