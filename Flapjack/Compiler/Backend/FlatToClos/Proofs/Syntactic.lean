@@ -84,17 +84,6 @@ theorem containsAppSome_compileInit (maxApp : Nat) (b : Bool) :
   have absent := (noMtiList_syntactic maxApp positive _ safe).2
   exact ⟨fun present => (absent present).elim, False.elim⟩
 
-private theorem compile_noMti (m : List (Option MlString)) (xs : List FlatLang.Exp) :
-    ∀ e ∈ compile m xs, noMti e := by
-  induction xs with
-  | nil => simp [compile, compileExps]
-  | cons x xs ih =>
-    simp only [compile, compileExps] at ih ⊢
-    intro e member
-    rcases List.mem_cons.mp member with rfl | member
-    · exact compileExp_noMti m x
-    · exact ih e member
-
 /-- Compiled expressions have the three original closure syntax properties. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_syntactic_props"]
 theorem compile_syntacticProps (maxApp : Nat) (positive : 0 < maxApp)
@@ -110,7 +99,7 @@ theorem compile_syntacticProps (maxApp : Nat) (positive : 0 < maxApp)
 theorem compileDecs_syntacticProps (maxApp : Nat) (ds : List FlatLang.Exp) :
     (∀ e ∈ compileDecs ds, noMti e) ∧ everyFnVarsNone (compileDecs ds) ∧
       (0 < maxApp → ¬ containsAppSome maxApp (compileDecs ds)) := by
-  have safe := compileDecs_noMti ds
+  have safe := compile_noMti [] ds
   have properties := noMtiList_syntactic 1 (by decide) (compileDecs ds) safe
   exact ⟨safe, properties.1, fun positive => (noMtiList_syntactic maxApp positive _ safe).2⟩
 
@@ -120,7 +109,7 @@ theorem compileProg_syntacticProps (maxApp : Nat) (ds : List FlatLang.Exp) :
     (∀ e ∈ compileProg ds, noMti e) ∧ everyFnVarsNone (compileProg ds) ∧
       (0 < maxApp → ¬ containsAppSome maxApp (compileProg ds)) := by
   have safe : ∀ e ∈ compileProg ds, noMti e := by
-    have compiled := compileDecs_noMti ds
+    have compiled := (compileDecs_syntacticProps maxApp ds).1
     simpa [compileProg, ClosInterp.attachInterpreter, compileInit_noMti] using compiled
   have properties := noMtiList_syntactic 1 (by decide) (compileProg ds) safe
   exact ⟨safe, properties.1, fun positive => (noMtiList_syntactic maxApp positive _ safe).2⟩
@@ -136,8 +125,8 @@ theorem incCompileDecs_syntacticProps {α β γ : Type} (maxApp : Nat) (ds : Lis
     apply ClosInterp.insertInterp_noMti e _ member
     intro x sourceMember
     rcases List.mem_append.mp sourceMember with original | unit
-    · exact compileDecs_noMti ds x original
-    · exact compileDecs_noMti [.con .none none []] x unit
+    · exact (compileDecs_syntacticProps maxApp ds).1 x original
+    · exact (compileDecs_syntacticProps maxApp [.con .none none []]).1 x unit
   have safe := safeAll (X := α)
   have safeBeta := safeAll (X := β)
   have safeGamma := safeAll (X := γ)

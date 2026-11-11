@@ -151,18 +151,17 @@ theorem compileExp_noMti (m : List (Option MlString)) (exp : FlatLang.Exp) :
   | case16 m => simp [compileExps, noMtiList]
   | case17 m e es ihe ihes => simp [compileExps, noMtiList, ihe, ihes]
 
-/-- Flapjack helper: compilation of any flat declaration list has pre-MTI
-syntax. The HOL theorem additionally states two other syntax properties. -/
-theorem compileDecs_noMti (ds : List FlatLang.Exp) :
-    ∀ e ∈ compileDecs ds, noMti e := by
-  induction ds with
-  | nil => simp [compileDecs, compile, compileExps]
-  | cons e ds ih =>
-    simp only [compileDecs, compile, compileExps] at ih ⊢
-    intro x member
+/-- Flapjack helper: compilation in any local environment preserves pre-MTI syntax. -/
+theorem compile_noMti (m : List (Option MlString)) (xs : List FlatLang.Exp) :
+    ∀ e ∈ compile m xs, noMti e := by
+  induction xs with
+  | nil => simp [compile, compileExps]
+  | cons x xs ih =>
+    simp only [compile, compileExps] at ih ⊢
+    intro e member
     rcases List.mem_cons.mp member with rfl | member
-    · exact compileExp_noMti [] e
-    · exact ih x member
+    · exact compileExp_noMti m x
+    · exact ih e member
 
 private theorem interpreter_noMti : noMti ClosInterp.closInterpreter := by
   simp [ClosInterp.closInterpreter, ClosInterp.closInterpreterBody,
