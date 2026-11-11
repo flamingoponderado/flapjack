@@ -78,6 +78,22 @@ private def secOkB (sec : S) : Bool := sec.lines.all lineOkB
 
 private def allEncOkB (sections : List S) : Bool := sections.all secOkB
 
+/-- The Bool harness states exactly the reviewed `lineOkPreHOL` clause. -/
+private theorem lineOkB_iff (line : L) : lineOkB line = true ↔ lineOkPreHOL cfg8 line := by
+  cases line with
+  | label => simp [lineOkB, lineOkPreHOL]
+  | asm => simp [lineOkB, lineOkPreHOL]
+  | labAsm => simp [lineOkB, lineOkPreHOL]
+
+/-- The section harness agrees with the reviewed `secOkPreHOL`. -/
+private theorem secOkB_iff (sec : S) : secOkB sec = true ↔ secOkPreHOL cfg8 sec := by
+  simp [secOkB, secOkPreHOL, List.all_eq_true, lineOkB_iff]
+
+/-- The program harness agrees with the reviewed `allEncOkPreHOL`. -/
+private theorem allEncOkB_iff (sections : List S) :
+    allEncOkB sections = true ↔ allEncOkPreHOL cfg8 sections := by
+  simp [allEncOkB, allEncOkPreHOL, List.all_eq_true, secOkB_iff]
+
 private def asmSkipLine : L := .asm (.asmi (.inst (.skip : HolInst 8))) [] 0
 private def asmCbwLine : L := .asm (.cbw 1 2) [] 0
 private def labelLine : L := .label 0 1 0
@@ -90,18 +106,42 @@ private def secEmpty : S := { sectionId := 0, lines := [] }
 private def secLabel : S := { sectionId := 0, lines := [labelLine] }
 private def secOk2 : S := { sectionId := 1, lines := [asmSkipLine] }
 
-example : lineOkB asmSkipLine = true := by decide
-example : lineOkB asmCbwLine = true := by decide
-example : lineOkB labelLine = true := by decide
-example : lineOkB labAsmHaltLine = true := by decide
-example : lineOkB asmBadRegLine = false := by decide
-example : allEncOkB [secOk] = true := by decide
-example : allEncOkB [secBad] = false := by decide
-example : secOkB secOk = true := by decide
-example : secOkB secBad = false := by decide
-example : secOkB secEmpty = true := by decide
-example : allEncOkB [secLabel, secOk2] = true := by decide
-example : allEncOkB ([] : List S) = true := by decide
+example : lineOkPreHOL cfg8 asmSkipLine := by
+  rw [← lineOkB_iff]
+  decide
+example : lineOkPreHOL cfg8 asmCbwLine := by
+  rw [← lineOkB_iff]
+  decide
+example : lineOkPreHOL cfg8 labelLine := by
+  rw [← lineOkB_iff]
+  decide
+example : lineOkPreHOL cfg8 labAsmHaltLine := by
+  rw [← lineOkB_iff]
+  decide
+example : ¬ lineOkPreHOL cfg8 asmBadRegLine := by
+  rw [← lineOkB_iff]
+  decide
+example : allEncOkPreHOL cfg8 [secOk] := by
+  rw [← allEncOkB_iff]
+  decide
+example : ¬ allEncOkPreHOL cfg8 [secBad] := by
+  rw [← allEncOkB_iff]
+  decide
+example : secOkPreHOL cfg8 secOk := by
+  rw [← secOkB_iff]
+  decide
+example : ¬ secOkPreHOL cfg8 secBad := by
+  rw [← secOkB_iff]
+  decide
+example : secOkPreHOL cfg8 secEmpty := by
+  rw [← secOkB_iff]
+  decide
+example : allEncOkPreHOL cfg8 [secLabel, secOk2] := by
+  rw [← allEncOkB_iff]
+  decide
+example : allEncOkPreHOL cfg8 ([] : List S) := by
+  rw [← allEncOkB_iff]
+  decide
 example : (match cbwToAsmHOL (.cbw 1 2) with
   | .inst (.mem .store8 2 (.addr 1 (0 : BitVec 8))) => true
   | _ => false) := rfl
@@ -117,13 +157,17 @@ private def cbwRowOk (instruction : AsmOrCbw (HolAsm 8) HolMemop (HolAddr 8)) : 
 
 /-- The emitted base-line reductions of `line_ok_pre` at the concrete config,
 mirroring the direct HOL oracle rows. -/
-example : lineOkB (.asm (.asmi (.inst (.skip : HolInst 8))) [] 0 : L) = true := by
+example : lineOkPreHOL cfg8 (.asm (.asmi (.inst (.skip : HolInst 8))) [] 0 : L) := by
+  rw [← lineOkB_iff]
   decide
 
-example : lineOkB (.asm (.asmi (.inst (.const 9 (w8 0)))) [] 0 : L) = false := by
+example : ¬ lineOkPreHOL cfg8 (.asm (.asmi (.inst (.const 9 (w8 0)))) [] 0 : L) := by
+  rw [← lineOkB_iff]
   decide
 
-example : lineOkB (.label 0 1 0 : L) = true := by decide
+example : lineOkPreHOL cfg8 (.label 0 1 0 : L) := by
+  rw [← lineOkB_iff]
+  decide
 
 /-- The `flattenHOL` clause for `inst` embeds the instruction unchanged. -/
 example : ∀ line ∈ appListAppend
@@ -142,7 +186,9 @@ example : ∀ line ∈ appListAppend
 
 /-- The emitted `JumpReg` line's `line_ok_pre` is exactly `asmRegOkExact`,
 as in the legacy `lineOkPreConfig_flattenOps_jumpReg` row. -/
-example : lineOkB (.asm (.asmi (.jumpReg 3)) [] 0 : L) = asmRegOkExact 3 cfg8 := by
+example : lineOkPreHOL cfg8 (.asm (.asmi (.jumpReg 3)) [] 0 : L) ↔
+    asmRegOkExact 3 cfg8 = true := by
+  rw [← lineOkB_iff]
   decide
 
 example : asmInstOkExact (.skip : HolInst 8) cfg8 = true := by decide

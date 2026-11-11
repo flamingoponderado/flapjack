@@ -70,6 +70,22 @@ private def secOkB (sec : S) : Bool := sec.lines.all lineOkB
 
 private def allEncOkB (sections : List S) : Bool := sections.all secOkB
 
+/-- The Bool harness states exactly the reviewed `lineOkPreHOL` clause. -/
+private theorem lineOkB_iff (line : L) : lineOkB line = true ↔ lineOkPreHOL cfg line := by
+  cases line with
+  | label => simp [lineOkB, lineOkPreHOL]
+  | asm => simp [lineOkB, lineOkPreHOL]
+  | labAsm => simp [lineOkB, lineOkPreHOL]
+
+/-- The section harness agrees with the reviewed `secOkPreHOL`. -/
+private theorem secOkB_iff (sec : S) : secOkB sec = true ↔ secOkPreHOL cfg sec := by
+  simp [secOkB, secOkPreHOL, List.all_eq_true, lineOkB_iff]
+
+/-- The program harness agrees with the reviewed `allEncOkPreHOL`. -/
+private theorem allEncOkB_iff (sections : List S) :
+    allEncOkB sections = true ↔ allEncOkPreHOL cfg sections := by
+  simp [allEncOkB, allEncOkPreHOL, List.all_eq_true, secOkB_iff]
+
 #guard (match cbwToAsmHOL (.asmi (.inst (.skip : HolInst 8))) with
   | .inst .skip => true
   | _ => false)
