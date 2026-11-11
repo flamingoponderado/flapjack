@@ -427,7 +427,11 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
       name == "FUNION_FEMPTY_FUPDATE_LIST" && fmapAsFiniteSupportParameters == #["code"] &&
       fmapAsFiniteSupportResultObservations == #["Flapjack.HolFiniteMapExact.union",
         "Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.holUpdateList"]
-    unless chainAllowed || unionAllowed do
+    let callAllowed := path == "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" &&
+      name == "semantics_cond_call_compile_inc" && fmapAsFiniteSupportParameters == #["code"] &&
+      fmapAsFiniteSupportResultObservations == #["Flapjack.HolFiniteMapExact.holEmpty",
+        "Flapjack.HolFiniteMapExact.alistToFmap"]
+    unless chainAllowed || unionAllowed || callAllowed do
       throwError "@[hol]: parameter observations are restricted to reviewed declarations and their map lists"
     unless fmapAsFiniteSupportResultObservations.all (fun p => p.startsWith "Flapjack.") do
       throwError "@[hol]: parameter observation producers must use fully qualified Flapjack names"
@@ -1245,6 +1249,25 @@ run_cmd do
     catch _ => pure true
   unless incompleteUnionRejected do
     throwError "@[hol] union observations must name every reviewed producer"
+  let callSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "semantics_cond_call_compile_inc"
+    (fmap_as_finite_support_parameter_observations :=
+      (map_parameters := [code]) (map_producers := [Flapjack.HolFiniteMapExact.holEmpty,
+        Flapjack.HolFiniteMapExact.alistToFmap])))
+  let callRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute callSyntax)
+  unless callRef.fmapAsFiniteSupportParameterObservations &&
+      callRef.fmapAsFiniteSupportParameters == #["code"] &&
+      callRef.fmapAsFiniteSupportResultObservations.size == 2 do
+    throwError "@[hol] conditional call parameter observation syntax regression"
+  let incompleteCallSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "semantics_cond_call_compile_inc"
+    (fmap_as_finite_support_parameter_observations :=
+      (map_parameters := [code]) (map_producers := [Flapjack.HolFiniteMapExact.holEmpty])))
+  let incompleteCallRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute incompleteCallSyntax
+      pure false
+    catch _ => pure true
+  unless incompleteCallRejected do
+    throwError "@[hol] conditional call observations must name both reviewed producers"
   let combinedConflictSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_exps_semantics"
     (fmap_as_finite_support_parameter_observations :=
       (map_parameters := [code]) (map_producers := [Flapjack.HolFiniteMapExact.alistToFmap]))

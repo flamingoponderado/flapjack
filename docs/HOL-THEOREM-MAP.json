@@ -2594,6 +2594,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "semantics_cond_call_compile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallSemantics.lean",
+  "lean_name": "semanticsCondCallCompileInc",
+  "statement_status": "reviewed_fmap_as_finite_support_parameter_observations",
+  "fmap_as_finite_support_parameters": ["code"],
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.alistToFmap"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Independent comparison with semantics_cond_call_compile_inc_typed confirms the code input and Flapjack.HolFiniteMapExact.holEmpty and Flapjack.HolFiniteMapExact.alistToFmap observations, separate FFI and compiler-state types, fixed word widths, all original enabled-case premises, and the complete semantics equality. The proof derives distinct auxiliary keys and the initial invariant from those premises. Inherits reals_as_rational_cuts and the SOUNDNESS item 8 assumption through ClosSem.semantics."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "chain_exps_semantics",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainSemantics.lean",
   "lean_name": "chainExps_semantics",
