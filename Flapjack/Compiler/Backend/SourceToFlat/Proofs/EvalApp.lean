@@ -227,66 +227,6 @@ theorem exprSim_eval_timeout_from_callback {C F : Type} [Nonempty C]
       cases states with
       | intro nonempty refs clock ffi => exact .intro _ _ nonempty refs clock ffi
 
-/-- Compose the successful declaration induction hypothesis with the whole
-generated Eval expression and the stored environment ID. The factored
-invariant and value relation still require HOL correspondence review. -/
-theorem evaluate_compileEval_declare_success {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (envId : Nat × Nat) (config nextConfig : Config) (decs : List Dec) (flatDecs : List FlatLang.Exp)
-    (before : Option EvalState) (source : SemanticPrimitivesHOL.State F)
-    (flatEnv : FlatSem.Environment FlatSem.Value) (flatInitial flatArguments flatMiddle : FlatSem.State C F)
-    (oldGenv newGenv : GlobalEnv) (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
-    (sourceEnv sourceNew : SemEnv Value) (value : Value) (after : Option EvalState)
-    (n : Nat) (next : NextIndices) (newMap : Environment) (gen : EnvironmentGenerationStore)
-    (body : List FlatLang.Exp) (trace : List VarN) (compMap : Environment) (exprs : List AstHOL.Exp)
-    (a b c d bytes words : FlatSem.Value) (flatNextConfig : FlatSem.InstallConfig C)
-    (operandRun : FlatSem.evaluate flatEnv flatInitial (compileExps trace compMap exprs).reverse =
-      (flatArguments, .val [words, bytes, d, c, b, a]))
-    (decoded : FlatSem.doEval [bytes, words] flatArguments.evalConfig =
-      some (flatDecs, flatNextConfig, FlatSem.unitValue))
-    (positive : 0 < flatArguments.clock)
-    (compiled : incCompileProg envId config decs = (nextConfig, flatDecs))
-    (compiledBody : compileDecs [] 1 config.next (lookupEnvId envId config.envs)
-      ⟨0, config.envs.next, .ln⟩ decs = (n, next, newMap, gen, body))
-    (bodyRun : FlatSem.evaluateDecs
-      { FlatSem.decClock { flatArguments with evalConfig := flatNextConfig } with
-        globals := flatArguments.globals ++ List.replicate (next.vidx - config.next.vidx) none } body =
-      (flatMiddle, none))
-    (nextCfg : OracleInvariant.srcOracNextCfg interp before = some nextConfig)
-    (forward : OracleInvariant.oracForwardRel interp before source.evalState)
-    (growth : GlobalGrowth oldGenv newGenv)
-    (baseInv : GlobalEnvInv oldGenv (lookupEnvId envId config.envs) (fun _ => False) sourceEnv)
-    (newDomain : EnvDomainEq newMap sourceNew)
-    (newInv : GlobalEnvInv newGenv newMap (fun _ => False) sourceNew)
-    (invariant : OracleInvariant.factoredInvariant interp transform gen newGenv idxs source flatMiddle)
-    (generation : OracleInvariant.envGenRel gen source.evalState)
-    (declared : declareEnv source.evalState (extendDecEnv sourceNew sourceEnv) = some (value, after)) :
-    ∃ stored : FlatSem.Value,
-      FlatSem.evaluate flatEnv flatInitial [compileExp trace compMap (.app .eval exprs)] =
-        ({ flatMiddle with refs := .refv stored :: flatMiddle.refs.tail }, .val [stored]) ∧
-      OracleInvariant.factoredInvariant interp transform { gen with next := gen.next + 1 } newGenv idxs
-        { source with evalState := after } { flatMiddle with refs := .refv stored :: flatMiddle.refs.tail } ∧
-      ValueRel newGenv value stored ∧ OracleInvariant.oracForwardRel interp source.evalState after ∧
-      OracleInvariant.envGenRel { gen with next := gen.next + 1 } after := by
-  let flatStart := FlatSem.decClock { flatArguments with evalConfig := flatNextConfig }
-  have bodyRun' : FlatSem.evaluateDecs
-      { flatStart with globals := flatStart.globals ++ List.replicate (next.vidx - config.next.vidx) none } body =
-      (flatMiddle, none) := by simpa [flatStart, FlatSem.decClock] using bodyRun
-  obtain ⟨stored, declarationRun, nextInvariant, related, nextForward, nextGeneration⟩ :=
-    evalDeclare_incremental_success interp transform envId config nextConfig decs flatDecs before source
-      flatStart flatMiddle oldGenv newGenv idxs sourceEnv sourceNew value after n next newMap gen body
-      compiled compiledBody bodyRun' nextCfg forward growth baseInv newDomain newInv invariant generation declared
-  let last := { flatMiddle with refs := .refv stored :: flatMiddle.refs.tail }
-  have reserved := nextInvariant.2.2.2.2.2.2.2.1
-  obtain ⟨globalsTail, oldValue, refsTail, globalEq, refsEq⟩ :=
-    OracleInvariant.evalRefInv_heads last reserved
-  have globals : last.globals[0]? = some (some (.loc true 0)) := by simp [globalEq]
-  have refs : last.refs[0]? = some (.refv stored) := by simp [last]
-  refine ⟨stored, ?_, nextInvariant, related, nextForward, nextGeneration⟩
-  exact evaluate_compileEval_declarations flatEnv flatInitial flatArguments last trace compMap exprs
-    a b c d bytes words flatDecs flatNextConfig (.val [stored]) operandRun decoded positive
-    (by simpa [flatStart, last] using declarationRun) ⟨stored, rfl, globals, refs⟩
-
 /-- Successful Eval simulation through the declaration induction hypothesis,
 including restoration of the caller's oracle invariant and generation. The
 factored relations have not yet been reviewed as the original HOL invariant. -/
@@ -357,13 +297,24 @@ theorem evaluate_eval_declare_and_restore {C F : Type} [Nonempty C]
         (resetEnvGeneration sourceArguments.evalState after) ∧
       (OracleInvariant.envGenRel oldGen sourceArguments.evalState →
         OracleInvariant.envGenRel oldGen (resetEnvGeneration sourceArguments.evalState after)) := by
-  obtain ⟨stored, flatResult, nextInvariant, related, nextForward, _⟩ :=
-    evaluate_compileEval_declare_success interp transform envId config nextConfig decs flatDecs begin sourceLast
-      flatEnv flatInitial flatArguments flatMiddle baseGenv newGenv
-      (innerStart, innerFinish, idxBlock start finish ∪ other) evalEnv newEnv value after
-      n next newMap gen body trace compMap exprs a b c d bytes words flatNextConfig flatRun flatDecoded
-      flatPositive compiled compiledBody bodyRun nextCfg forward growth baseInv newDomain newInv invariant
-      generation declared
+  let flatStart := FlatSem.decClock { flatArguments with evalConfig := flatNextConfig }
+  have bodyRun' : FlatSem.evaluateDecs
+      { flatStart with globals := flatStart.globals ++ List.replicate (next.vidx - config.next.vidx) none } body =
+      (flatMiddle, none) := by simpa [flatStart, FlatSem.decClock] using bodyRun
+  obtain ⟨stored, declarationRun, nextInvariant, related, nextForward, _⟩ :=
+    evalDeclare_incremental_success interp transform envId config nextConfig decs flatDecs begin sourceLast
+      flatStart flatMiddle baseGenv newGenv (innerStart, innerFinish, idxBlock start finish ∪ other)
+      evalEnv newEnv value after n next newMap gen body
+      compiled compiledBody bodyRun' nextCfg forward growth baseInv newDomain newInv invariant generation declared
+  let last := { flatMiddle with refs := .refv stored :: flatMiddle.refs.tail }
+  have reserved := nextInvariant.2.2.2.2.2.2.2.1
+  obtain ⟨globalsTail, oldValue, refsTail, globalEq, refsEq⟩ :=
+    OracleInvariant.evalRefInv_heads last reserved
+  have globals : last.globals[0]? = some (some (.loc true 0)) := by simp [globalEq]
+  have refs : last.refs[0]? = some (.refv stored) := by simp [last]
+  have flatResult := evaluate_compileEval_declarations flatEnv flatInitial flatArguments last trace compMap exprs
+    a b c d bytes words flatDecs flatNextConfig (.val [stored]) flatRun flatDecoded flatPositive
+    (by simpa [flatStart, last] using declarationRun) ⟨stored, rfl, globals, refs⟩
   have fullForward := OracleInvariant.oracForwardRel_trans interp begin sourceLast.evalState after
     ⟨forward, nextForward⟩
   have restored := OracleInvariant.invariantEndEval interp transform
