@@ -252,32 +252,6 @@ theorem allocatedConstructorEntries_nodup {M N A : Type} (constructors : List (N
     (allocatedConstructorEntries_projections (M := M) constructors).2]
   exact ⟨names, allocTags1_tags_nodup (M := M) constructors⟩
 
-private theorem zipConstructor_member_arity {N A : Type} (constructors : List (N × List A))
-    (tags : List (Nat × Nat)) (arities : tags.map Prod.snd = constructors.map (fun c => c.2.length)) :
-    ∀ name tag arity, (name, tag, arity) ∈ ((constructors.map Prod.fst).zip tags).map
-      (fun (name, tag, arity) => (name, tag, arity)) →
-      ∃ args, (name, args) ∈ constructors ∧ args.length = arity := by
-  induction constructors generalizing tags with
-  | nil =>
-    intro name tag arity member
-    simp at member
-  | cons constructor rest ih =>
-    rcases constructor with ⟨headName, headArgs⟩
-    cases tags with
-    | nil => simp at arities
-    | cons headTag restTags =>
-      rcases headTag with ⟨headTag, headArity⟩
-      have arities' : headArity = headArgs.length ∧
-          restTags.map Prod.snd = rest.map (fun c => c.2.length) := by simpa using arities
-      intro name tag arity member
-      simp only [List.map_cons, List.zip_cons_cons, List.mem_cons] at member
-      rcases member with same | member
-      · have fields : name = headName ∧ tag = headTag ∧ arity = headArity := by simpa [and_assoc] using same
-        obtain ⟨rfl, rfl, rfl⟩ := fields
-        exact ⟨headArgs, by simp, arities'.1.symm⟩
-      · obtain ⟨args, found, length⟩ := ih restTags arities'.2 name tag arity member
-        exact ⟨args, List.mem_cons_of_mem _ found, length⟩
-
 /-- A named source constructor with a unique name appears in the allocator's
 entry list with its source arity. -/
 theorem allocatedConstructorEntries_find {M A : Type} (constructors : List (ConN × List A))
@@ -291,8 +265,18 @@ theorem allocatedConstructorEntries_find {M A : Type} (constructors : List (ConN
   obtain ⟨entryName', tag, arity⟩ := entry
   change entryName' = name at entryName
   subst entryName'
-  obtain ⟨args', sourceMember, length⟩ :=
-    zipConstructor_member_arity constructors _ (allocTags1_arities (M := M) constructors) name tag arity entryMember
+  have rawMember : (name, tag, arity) ∈ (constructors.map Prod.fst).zip
+      (allocTags1 constructors : Namespace M ConN Nat × Spt Nat × List (Nat × Nat)).2.2 := by
+    simpa [allocatedConstructorEntries] using entryMember
+  have pairMember : (name, arity) ∈ (constructors.map Prod.fst).zip
+      ((allocTags1 constructors : Namespace M ConN Nat × Spt Nat × List (Nat × Nat)).2.2.map Prod.snd) := by
+    rw [List.zip_map_right]
+    exact List.mem_map.mpr ⟨(name, tag, arity), rawMember, rfl⟩
+  rw [allocTags1_arities, List.zip_map'] at pairMember
+  obtain ⟨⟨sourceName, args'⟩, sourceMember, pairEq⟩ := List.mem_map.mp pairMember
+  have fields : sourceName = name ∧ args'.length = arity := Prod.mk.inj pairEq
+  obtain ⟨nameEq, length⟩ := fields
+  rw [nameEq] at sourceMember
   have found := holALookup_of_distinct_member constructors name args ⟨distinct, member⟩
   have found' := holALookup_of_distinct_member constructors name args' ⟨distinct, sourceMember⟩
   have same : args' = args := Option.some.inj (found'.symm.trans found)
