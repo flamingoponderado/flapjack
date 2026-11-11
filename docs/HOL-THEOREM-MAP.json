@@ -119461,7 +119461,7 @@
     "hol_path": "cakeml/compiler/backend/bvi_letScript.sml",
     "hol_name": "extract_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Independently compared the typed bvi_let_helpers_probe capture (`extract (Var n) ys = n + LENGTH ys + 1` and 0 for every other constructor, printed one clause per constructor) with extract: the Var clause is n + ys.length + 1 and the wildcard `_ => 0` covers exactly the other nine constructors shown in the capture."
+    "reviewer": "Independently compared the typed bvi_let_helpers_probe capture (`extract (Var n) ys = n + LENGTH ys + 1` and 0 for every other constructor, printed one clause per constructor) with extract: the Var clause is n + ys.length + 1 and the wildcard `_ => 0` covers exactly the other nine constructors shown in the capture. Task 147: the typed capture keeps the displaced list's element type generic (ys :α list) while the expression argument is the fixed BVI exp type; the twin now binds {α : Type} for the list and keeps Bvi.Exp for the expression, so the statement matches HOL's polymorphic ys with no identification."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviLet/Helpers.lean",
@@ -120477,12 +120477,12 @@
   {
     "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "evalLongid",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_token_longid_check_alt_def",
-    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed eval_token_longid_check_alt_def_typed: tail_nonempty (str,s) ⇔ s ≠ «»; tail_nonempty_head_alpha_not_upper ⇔ if s = «» then F else isAlpha (strsub s 0) ⇒ ¬isUpper (strsub s 0); ctor_upper_initial ⇔ if s = «» then F else isAlpha (strsub s 0) ∧ isUpper (strsub s 0). Lean's empty-guard clauses match, with alpha (65..90 or 97..122) as HOL's isAlpha and upper as isUpper."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed eval_token_longid_check_alt_def_typed: tail_nonempty (str,s) ⇔ s ≠ «»; tail_nonempty_head_alpha_not_upper ⇔ if s = «» then F else isAlpha (strsub s 0) ⇒ ¬isUpper (strsub s 0); ctor_upper_initial ⇔ if s = «» then F else isAlpha (strsub s 0) ∧ isUpper (strsub s 0). Lean's empty-guard clauses match, with alpha (65..90 or 97..122) as HOL's isAlpha and upper as isUpper. Task 147: the typed capture keeps the pair's first component generic ((str :α), (s :mlstring)); the twin now binds {α : Type} and ignores that component, matching HOL's polymorphic str while keeping the fixed mlstring tail."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "evalToken",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_token_check_def",
-    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed eval_token_check_def_typed gives all seventeen clauses: always T, never F, eq t0 ⇔ t = t0, isInt/isString/isCharT/isWordT/destFFIT, alpha/symbol/longid via destAlphaT/destSymbolT/destLongidT and the three checks, isTyvarT/isAlphaSym/isLongidT, and the three opid nonempty cases. Lean's pattern clauses match; the tokenUtils predicates are one-line token-case definitions that Lean inlines (isInt t = case t of IntT _ => T | _ => F, etc.)."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed eval_token_check_def_typed gives all seventeen clauses: always T, never F, eq t0 ⇔ t = t0, isInt/isString/isCharT/isWordT/destFFIT, alpha/symbol/longid via destAlphaT/destSymbolT/destLongidT and the three checks, isTyvarT/isAlphaSym/isLongidT, and the three opid nonempty cases. Lean's pattern clauses match; the tokenUtils predicates are one-line token-case definitions that Lean inlines (isInt t = case t of IntT _ => T | _ => F, etc.). Task 147: the typed capture keeps the location type generic (∀(t :token) (l :α)); the twin now binds {α : Type} for the location pair component while the token stays HOL's fixed token type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "Unary",
