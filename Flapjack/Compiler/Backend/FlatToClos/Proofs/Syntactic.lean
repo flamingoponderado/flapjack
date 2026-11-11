@@ -10,6 +10,13 @@ namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Compiler.Backend.ClosProps
 
+/-- Pair projections agree with their pattern-matching definitions. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "FST_SND_EQ_CASE"]
+theorem fstSndEqCase {α β γ δ : Type} :
+    (@Prod.fst α β = fun (p : α × β) => match p with | (a, _) => a) ∧
+      (@Prod.snd γ δ = fun (p : γ × δ) => match p with | (_, b) => b) := by
+  exact ⟨rfl, rfl⟩
+
 /-- An application occurs in an append exactly when it occurs in either list. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "contains_App_SOME_APPEND"]
 theorem containsAppSomeAppend (maxApp : Nat) (xs ys : List ClosLang.Exp) :

@@ -133059,6 +133059,14 @@
   "reviewer": "Compared contains_app_append_typed: the full closure application predicate over appended lists is equivalent to the original disjunction."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "FST_SND_EQ_CASE",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
+  "lean_name": "fstSndEqCase",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fst_snd_eq_case_typed: both projection equalities retain independently quantified input component types."
+},
+{
   "hol_path": "HOL/src/bag/bagScript.sml",
   "hol_name": "BAG_UNION_EMPTY",
   "lean_path": "Flapjack/Misc/Bag.lean",

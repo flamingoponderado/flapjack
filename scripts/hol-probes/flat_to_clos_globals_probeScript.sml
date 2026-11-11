@@ -49,6 +49,7 @@ val _ = show "no_mti_smartcons=" flat_to_closProofTheory.no_mti_SmartCons;
 val _ = show "insert_interp_no_mti=" clos_interpProofTheory.insert_interp_no_mti;
 val _ = show "contains_app_def=" closPropsTheory.contains_App_SOME_def;
 val _ = show "contains_app_append_typed=" flat_to_closProofTheory.contains_App_SOME_APPEND;
+val _ = show "fst_snd_eq_case_typed=" flat_to_closProofTheory.FST_SND_EQ_CASE;
 val _ = show "every_fn_vars_def=" closPropsTheory.every_Fn_vs_NONE_def;
 val _ = show "compile_syntactic=" flat_to_closProofTheory.compile_syntactic_props;
 val _ = show "compile_decs_syntactic=" flat_to_closProofTheory.compile_decs_syntactic_props;
