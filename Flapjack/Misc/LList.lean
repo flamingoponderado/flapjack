@@ -1695,7 +1695,9 @@ theorem lappendHOL_left_cancel {l1 l2 l3 : HolLList α} (hfin : LFinite l1) :
     obtain ⟨k, hk⟩ := exists_LLengthRel_of_LFinite hfin
     have hkrep : l1.rep k = none := rep_none_of_LLengthRel hk k (Nat.le_refl k)
     cases hf : firstNone l1 with
-    | none => exact absurd (firstNone_none hf k) (by rw [hkrep]; simp)
+    | none => exact absurd (firstNone_none hf k) (by
+                                                   rw [hkrep]
+                                                   simp)
     | some m =>
       apply ext_of_rep
       intro n

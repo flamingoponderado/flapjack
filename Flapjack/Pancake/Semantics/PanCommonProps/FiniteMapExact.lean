@@ -115,10 +115,14 @@ theorem updateEqZipFlookupExactHOL {α β : Type} [DecidableEq α]
     (xs : List α) (f : HolFiniteMapExact α β) (ys : List β) (n : Nat)
     (h : xs.Nodup ∧ xs.length = ys.length ∧ n < xs.length) :
     (f.updateListEq (xs.zip ys)).lookup (xs[n]'h.2.2) =
-      some (ys[n]'(by rw [← h.2.1]; exact h.2.2)) := by
+      some (ys[n]'(by
+                    rw [← h.2.1]
+                    exact h.2.2)) := by
   obtain ⟨hdistinct, hlen, hn⟩ := h
   show (f.updateListEq (xs.zip ys)).lookup (xs[n]'hn) =
-      some (ys[n]'(by rw [← hlen]; exact hn))
+      some (ys[n]'(by
+                    rw [← hlen]
+                    exact hn))
   induction xs generalizing f ys n with
   | nil => simp at hn
   | cons a xs ih =>
@@ -134,7 +138,9 @@ theorem updateEqZipFlookupExactHOL {α β : Type} [DecidableEq α]
               rw [List.zip_cons_cons, HolFiniteMapExact.lookup_updateListEq,
                 FUPDATE_LIST_HOL_cons]
               rw [lookup_FUPDATE_LIST_HOL_not_mem (FUPDATE_HOL f.lookup (a, y))
-                (xs.zip ys) a (by rw [List.map_fst_zip (by omega)]; exact ha)]
+                (xs.zip ys) a (by
+                                rw [List.map_fst_zip (by omega)]
+                                exact ha)]
               simp [FUPDATE_HOL]
           | succ k =>
               have hk : k < xs.length := by

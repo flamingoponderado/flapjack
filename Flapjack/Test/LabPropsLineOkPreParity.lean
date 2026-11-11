@@ -230,7 +230,11 @@ example : ∀ line ∈ appListAppend
 example : allEncOkPreHOL cfg8
     ([(0, (.tick : HolProg 8))].map progToSectionHOL) :=
   compileAllEncOkPreHOL cfg8 [(0, (.tick : HolProg 8))] (by decide)
-    (by intro entry member; simp at member; subst member; simp [stackAsmOkExact])
+    (by
+      intro entry member
+      simp at member
+      subst member
+      simp [stackAsmOkExact])
 
 def runChecks : IO Bool := do
   let guards : List Bool :=

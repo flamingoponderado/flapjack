@@ -4520,7 +4520,8 @@ theorem kvarSimpHOLFinite {width : Nat} {σ : Type} [NeZero width]
     shape_of value = shape_of w`; the helper exists so the tagged
     `isValidValueSimpHOLFinite` can keep that independence without changing the
     reviewed `isValidValueHOLFinite` interface.  Untagged infrastructure. -/
-def isValidValueMixedHOLFinite {width : Nat} {σ : Type} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
+def isValidValueMixedHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    {valueWidth : Nat} [NeZero valueWidth]
     (state : PanSemStateFiniteExact width σ) (kind : VarKind) (name : MlS)
     (value : ValueHOL valueWidth) : Bool :=
   match lookupKvarHOLFinite kind name state with

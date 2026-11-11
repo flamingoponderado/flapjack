@@ -129,7 +129,9 @@ private theorem retToTailCorrect_seq {width : Nat} {σ : Type} [NeZero width]
         dsimp only at h ⊢
         exact ih.1 none s1 ⟨hr.symm, rfl⟩ h
       | some _ => rfl
-  rw [retToTailHOL.eq_3, evaluateSeqCallRetEqHOL _ s (by rw [hseq]; exact h), hseq]
+  rw [retToTailHOL.eq_3, evaluateSeqCallRetEqHOL _ s (by
+                                                       rw [hseq]
+                                                       exact h), hseq]
 
 /-- Resume `ret_to_tail_correct[If]`. -/
 private theorem retToTailCorrect_if {width : Nat} {σ : Type} [NeZero width]
@@ -223,7 +225,9 @@ private theorem retToTailCorrect_while {width : Nat} {σ : Type} [NeZero width]
           | mk r s1 =>
             rw [hb] at h hbIH
             have hne : r ≠ some .error := by
-              intro hr; subst hr; exact h rfl
+              intro hr
+              subst hr
+              exact h rfl
             rw [hbIH hne]
             dsimp only at h ⊢
             rcases r with _ | r
@@ -331,28 +335,37 @@ private theorem retToTailCorrect_call {width : Nat} {σ : Type} [NeZero width]
     evaluateHOLFiniteState_call s (some (returns, some (eid, evar, hp)))]
   cases hargs : evalListHOLFinite s
       (h := fun address => Classical.propDecidable (s.memaddrs address)) argexps with
-  | none => intro _; rfl
+  | none =>
+    intro _
+    rfl
   | some values =>
   dsimp only
   cases hl : lookupCodeHOLFinite s.code.lookup fname values with
-  | none => intro _; rfl
+  | none =>
+    intro _
+    rfl
   | some entry =>
   obtain ⟨body, callee, returnShape⟩ := entry
   dsimp only
   by_cases hc : s.clock = 0
-  · rw [if_pos hc, if_pos hc]; intro _; rfl
+  · rw [if_pos hc, if_pos hc]
+    intro _
+    rfl
   rw [if_neg hc, if_neg hc]
   cases hb : evaluateHOLFiniteState (callEntryStateHOLFinite s callee) body with
   | mk res st =>
   rcases res with _ | r
-  · intro _; rfl
+  · intro _
+    rfl
   cases r with
   | exception exceptionId value =>
     dsimp only
     by_cases heid : exceptionId = eid
     · rw [if_pos heid, if_pos heid]
       cases hesh : s.eshapes.lookup exceptionId with
-      | none => intro _; rfl
+      | none =>
+        intro _
+        rfl
       | some shape =>
         dsimp only
         by_cases hcond : (shapeEqHOL (shapeOfHOLExact value) shape &&
@@ -364,10 +377,16 @@ private theorem retToTailCorrect_call {width : Nat} {σ : Type} [NeZero width]
             returnShape _ _ st _ exceptionId value _ returns _ _ eid _ evar hp shape
             ⟨hargs, hl, rfl, rfl, hc, hb.symm, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, heid,
               hesh, (shapeEqHOL_eq_true _ _).mp hcond.1, hcond.2⟩ h
-        · rw [if_neg hcond, if_neg hcond]; intro _; rfl
-    · rw [if_neg heid, if_neg heid]; intro _; rfl
+        · rw [if_neg hcond, if_neg hcond]
+          intro _
+          rfl
+    · rw [if_neg heid, if_neg heid]
+      intro _
+      rfl
   | returned v => rcases returns with _ | ⟨k, n⟩ <;> intro _ <;> rfl
-  | _ => intro _; rfl
+  | _ =>
+    intro _
+    rfl
 
 /-- Resume `ret_to_tail_correct[DecCall]`. -/
 private theorem retToTailCorrect_decCall {width : Nat} {σ : Type} [NeZero width]
@@ -385,22 +404,29 @@ private theorem retToTailCorrect_decCall {width : Nat} {σ : Type} [NeZero width
     evaluateHOLFiniteState_decCall_fixClockRewrite s rt shape fname argexps prog1]
   cases hargs : evalListHOLFinite s
       (h := fun address => Classical.propDecidable (s.memaddrs address)) argexps with
-  | none => intro _; rfl
+  | none =>
+    intro _
+    rfl
   | some values =>
   dsimp only
   cases hl : lookupCodeHOLFinite s.code.lookup fname values with
-  | none => intro _; rfl
+  | none =>
+    intro _
+    rfl
   | some entry =>
   obtain ⟨body, callee, returnShape⟩ := entry
   dsimp only
   by_cases hc : s.clock = 0
-  · rw [if_pos hc, if_pos hc]; intro _; rfl
+  · rw [if_pos hc, if_pos hc]
+    intro _
+    rfl
   rw [if_neg hc, if_neg hc]
   cases hb : evaluateHOLFiniteState (callEntryStateHOLFinite s callee) body with
   | mk res st =>
   dsimp only
   rcases res with _ | r
-  · intro _; rfl
+  · intro _
+    rfl
   cases r with
   | returned v =>
     dsimp only
@@ -414,8 +440,12 @@ private theorem retToTailCorrect_decCall {width : Nat} {σ : Type} [NeZero width
         ⟨hargs, hl, rfl, rfl, hc, hb.symm, rfl, rfl, rfl,
           (shapeEqHOL_eq_true _ _).mp hcond.1, (shapeEqHOL_eq_true _ _).mp hcond.2⟩ h
       rw [hIH]
-    · rw [if_neg hcond, if_neg hcond]; intro _; rfl
-  | _ => intro _; rfl
+    · rw [if_neg hcond, if_neg hcond]
+      intro _
+      rfl
+  | _ =>
+    intro _
+    rfl
 
 @[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "ret_to_tail_correct"
   (fmap_as_finite_support := [locals, globals, code, eshapes])

@@ -541,13 +541,16 @@ theorem mem_globalDeclsFilter {predicate : Decl α → Bool} {declaration : Decl
     (hmem : declaration ∈ globalDeclsFilter predicate declarations) :
     predicate declaration = true := by
   induction declarations with
-  | nil => rw [globalDeclsFilter.eq_def] at hmem; simp at hmem
+  | nil =>
+    rw [globalDeclsFilter.eq_def] at hmem
+    simp at hmem
   | cons head tail ih =>
       simp only [globalDeclsFilter] at hmem
       by_cases hpred : predicate head = true
       · simp [hpred] at hmem
         rcases hmem with heq | htail
-        · subst heq; exact hpred
+        · subst heq
+          exact hpred
         · exact ih htail
       · simp [hpred] at hmem
         exact ih hmem

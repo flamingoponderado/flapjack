@@ -100,12 +100,18 @@ theorem lengthWithShapeEqShapeHOL (shapes : List ShapeHOL) (values : List α)
 theorem allDistinctWithShapeHOL (shapes : List ShapeHOL) (values : List α) (n : Nat)
     (h : values.Nodup ∧ n < shapes.length ∧
       values.length = sizeOfShapeHOL (.comb shapes)) :
-    ((withShapeHOL shapes values)[n]'(by rw [withShapeHOLLength]; exact h.2.1)).Nodup := by
+    ((withShapeHOL shapes values)[n]'(by
+                                       rw [withShapeHOLLength]
+                                       exact h.2.1)).Nodup := by
   obtain ⟨hdistinct, hn, hvalues⟩ := h
-  show ((withShapeHOL shapes values)[n]'(by rw [withShapeHOLLength]; exact hn)).Nodup
+  show ((withShapeHOL shapes values)[n]'(by
+                                          rw [withShapeHOLLength]
+                                          exact hn)).Nodup
   revert values n
   induction shapes with
-  | nil => intro values n hdistinct hn hvalues; exact absurd hn (Nat.not_lt_zero n)
+  | nil =>
+    intro values n hdistinct hn hvalues
+    exact absurd hn (Nat.not_lt_zero n)
   | cons shape shapes ih =>
       intro values n hdistinct hn hvalues
       cases n with
@@ -166,7 +172,9 @@ theorem elMemWithShapeHOL (shapes : List ShapeHOL) (values : List α) (n : Nat)
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "mem_with_shape_length"]
 theorem memWithShapeLengthHOL (shapes : List ShapeHOL) (values : List α) (n : Nat)
     (h : values.length = sizeOfShapeHOL (.comb shapes) ∧ n < shapes.length) :
-    (withShapeHOL shapes values)[n]'(by rw [withShapeHOLLength]; exact h.2) ∈
+    (withShapeHOL shapes values)[n]'(by
+                                      rw [withShapeHOLLength]
+                                      exact h.2) ∈
       withShapeHOL shapes values := by
   exact List.getElem_mem _
 
@@ -179,16 +187,22 @@ theorem memWithShapeLengthHOL (shapes : List ShapeHOL) (values : List α) (n : N
 theorem withShapeElTakeDropEqHOL (shapes : List ShapeHOL) (values : List α)
     (n : Nat)
     (h : values.length = sizeOfShapeHOL (.comb shapes) ∧ n < shapes.length) :
-    (withShapeHOL shapes values)[n]'(by rw [withShapeHOLLength]; exact h.2) =
+    (withShapeHOL shapes values)[n]'(by
+                                      rw [withShapeHOLLength]
+                                      exact h.2) =
       (values.drop (sizeOfShapeHOL (.comb (shapes.take n)))).take
         (sizeOfShapeHOL (shapes[n]'h.2)) := by
   obtain ⟨hvalues, hn⟩ := h
-  show (withShapeHOL shapes values)[n]'(by rw [withShapeHOLLength]; exact hn) =
+  show (withShapeHOL shapes values)[n]'(by
+                                         rw [withShapeHOLLength]
+                                         exact hn) =
       (values.drop (sizeOfShapeHOL (.comb (shapes.take n)))).take
         (sizeOfShapeHOL (shapes[n]'hn))
   revert values n
   induction shapes with
-  | nil => intro values n hvalues hn; exact absurd hn (Nat.not_lt_zero n)
+  | nil =>
+    intro values n hvalues hn
+    exact absurd hn (Nat.not_lt_zero n)
   | cons shape shapes ih =>
       intro values n hvalues hn
       cases n with
@@ -221,7 +235,9 @@ theorem withShapeHOLGetElemLength (shapes : List ShapeHOL) (values : List α)
     (n : Nat)
     (hvalues : values.length = sizeOfShapeHOL (.comb shapes))
     (hn : n < shapes.length) :
-    ((withShapeHOL shapes values)[n]'(by rw [withShapeHOLLength]; exact hn)).length =
+    ((withShapeHOL shapes values)[n]'(by
+                                       rw [withShapeHOLLength]
+                                       exact hn)).length =
       sizeOfShapeHOL (shapes[n]'hn) := by
   rw [withShapeElTakeDropEqHOL shapes values n ⟨hvalues, hn⟩, List.length_take]
   have hdrop : (values.drop (sizeOfShapeHOL (.comb (shapes.take n)))).length =
@@ -243,8 +259,12 @@ theorem listDisjointWithShapeHOLGetElemLt (shapes : List ShapeHOL) (values : Lis
     (hn : n < shapes.length) (hn' : n' < shapes.length) (hlt : n < n')
     (hvalues : values.length = sizeOfShapeHOL (.comb shapes)) :
     ListDisjoint
-      ((withShapeHOL shapes values)[n]'(by rw [withShapeHOLLength]; exact hn))
-      ((withShapeHOL shapes values)[n']'(by rw [withShapeHOLLength]; exact hn')) := by
+      ((withShapeHOL shapes values)[n]'(by
+                                         rw [withShapeHOLLength]
+                                         exact hn))
+      ((withShapeHOL shapes values)[n']'(by
+                                          rw [withShapeHOLLength]
+                                          exact hn')) := by
   have hnPre : values.length = sizeOfShapeHOL (.comb shapes) ∧ n < shapes.length :=
     ⟨hvalues, hn⟩
   have hn'Pre : values.length = sizeOfShapeHOL (.comb shapes) ∧ n' < shapes.length :=
@@ -287,8 +307,12 @@ theorem allDistinctWithShapeDistinctHOL (shapes : List ShapeHOL) (values : List 
   obtain ⟨hdistinct, hvalues, hx, hy, hne, _, _⟩ := h
   obtain ⟨n, hn, hnx⟩ := List.getElem_of_mem hx
   obtain ⟨n', hn', hn'y⟩ := List.getElem_of_mem hy
-  have hnlen : n < shapes.length := by rw [withShapeHOLLength] at hn; exact hn
-  have hn'len : n' < shapes.length := by rw [withShapeHOLLength] at hn'; exact hn'
+  have hnlen : n < shapes.length := by
+    rw [withShapeHOLLength] at hn
+    exact hn
+  have hn'len : n' < shapes.length := by
+    rw [withShapeHOLLength] at hn'
+    exact hn'
   by_cases heq : n = n'
   · subst n'
     exact absurd (hnx.symm.trans hn'y) hne
@@ -312,12 +336,20 @@ theorem allDistinctDisjointWithShapeHOL (shapes : List ShapeHOL) (values : List 
     (h : values.Nodup ∧ n < shapes.length ∧ n' < shapes.length ∧ n ≠ n' ∧
       values.length = sizeOfShapeHOL (.comb shapes)) :
     ListDisjoint
-      ((withShapeHOL shapes values)[n]'(by rw [withShapeHOLLength]; exact h.2.1))
-      ((withShapeHOL shapes values)[n']'(by rw [withShapeHOLLength]; exact h.2.2.1)) := by
+      ((withShapeHOL shapes values)[n]'(by
+                                         rw [withShapeHOLLength]
+                                         exact h.2.1))
+      ((withShapeHOL shapes values)[n']'(by
+                                          rw [withShapeHOLLength]
+                                          exact h.2.2.1)) := by
   obtain ⟨hdistinct, hn, hn', hne, hvalues⟩ := h
   show ListDisjoint
-      ((withShapeHOL shapes values)[n]'(by rw [withShapeHOLLength]; exact hn))
-      ((withShapeHOL shapes values)[n']'(by rw [withShapeHOLLength]; exact hn'))
+      ((withShapeHOL shapes values)[n]'(by
+                                         rw [withShapeHOLLength]
+                                         exact hn))
+      ((withShapeHOL shapes values)[n']'(by
+                                          rw [withShapeHOLLength]
+                                          exact hn'))
   rcases Nat.lt_or_gt_of_ne hne with hlt | hlt
   · exact listDisjointWithShapeHOLGetElemLt shapes values n n' hdistinct hn hn'
       hlt hvalues
@@ -395,7 +427,9 @@ theorem elElWithShapeHOL (shapes : List ShapeHOL) (values : List α) (n n' : Nat
     (h : values.length = sizeOfShapeHOL (.comb shapes) ∧ n < shapes.length ∧
       n' < sizeOfShapeHOL (elHOL shapes n) ∧
       (∀ shape, shape ∈ shapes → isWfShapeNilHOL shape = true)) :
-    ((withShapeHOL shapes values)[n]'(by rw [withShapeHOLLength]; exact h.2.1))[n']'(by
+    ((withShapeHOL shapes values)[n]'(by
+                                       rw [withShapeHOLLength]
+                                       exact h.2.1))[n']'(by
         rw [withShapeHOLGetElemLength shapes values n h.1 h.2.1]
         rw [← elHOL_eq_getElem shapes n h.2.1]
         exact h.2.2.1) =
@@ -410,7 +444,9 @@ theorem elElWithShapeHOL (shapes : List ShapeHOL) (values : List α) (n n' : Nat
         have hle := sizeOfShapeHOLDropHeadSizeLe shapes n h.2.1
         omega) := by
   obtain ⟨hvalues, hn, hn', hwf⟩ := h
-  show ((withShapeHOL shapes values)[n]'(by rw [withShapeHOLLength]; exact hn))[n']'(by
+  show ((withShapeHOL shapes values)[n]'(by
+                                          rw [withShapeHOLLength]
+                                          exact hn))[n']'(by
         rw [withShapeHOLGetElemLength shapes values n hvalues hn]
         rw [← elHOL_eq_getElem shapes n hn]
         exact hn') =
