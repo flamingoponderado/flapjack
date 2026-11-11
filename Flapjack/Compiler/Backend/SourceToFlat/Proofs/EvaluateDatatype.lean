@@ -221,13 +221,6 @@ def allocatedConstructorEntries {M N A : Type} (constructors : List (N × List A
     ((allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2)).map
       fun (name, tag, arity) => (name, tag, arity)
 
-/-- The allocator emits one tag per source constructor. -/
-theorem allocTags1_length {M N A : Type} (constructors : List (N × List A)) :
-    ((allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2).length =
-      constructors.length := by
-  have h := congrArg List.length (allocTags1_arities (M := M) constructors)
-  simpa using h
-
 /-- Projections of the zipped allocation entries are exactly the source
 names and the allocator's tag table. -/
 theorem allocatedConstructorEntries_projections {M N A : Type} (constructors : List (N × List A)) :
@@ -236,7 +229,7 @@ theorem allocatedConstructorEntries_projections {M N A : Type} (constructors : L
       (allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2 := by
   have lengths : (constructors.map Prod.fst).length =
       ((allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2).length := by
-    simp [allocTags1_length]
+    simpa using (congrArg List.length (allocTags1_arities (M := M) constructors)).symm
   constructor
   · simp only [allocatedConstructorEntries, List.map_map]
     change (((constructors.map Prod.fst).zip
@@ -1239,18 +1232,6 @@ theorem datatypeConstructorNamespace_fold (types : TypeDef) (idx offset : Nat)
     rw [← nsAppend_assoc]
     simp only [Nat.add_assoc]
 
-/-- The compiler's datatype case returns this recursively described
-constructor namespace. -/
-theorem compileDecs_dtype_constructorNamespace (trace : List VarN) (n : Nat) (next : NextIndices)
-    (env : Environment) (gen : EnvironmentGenerationStore) (location : Flapjack.Misc.Location.Locs)
-    (types : TypeDef) :
-    (compileDecs trace n next env gen [.dtype location types]).2.2.1.c =
-      datatypeConstructorNamespace next.tidx types := by
-  simp only [compileDecs]
-  rw [datatypeConstructorNamespace_fold]
-  cases result : datatypeConstructorNamespace next.tidx types
-  simp [nsAppend, nsEmpty]
-
 /-- Proof-side global environment produced by allocating each type in a
 declaration, using consecutive compiler IDs and source stamps. -/
 noncomputable def allocateTypeDefinitions : Nat → Nat → TypeDef → GlobalEnv → GlobalEnv
@@ -1347,8 +1328,8 @@ theorem factoredDecBoundedIH_dtype {C F : Type} [Nonempty C]
   subst result
   have foldEq : ((types.zipIdx.map fun (td, tid) => allocTags (start.tidx + tid) td.2.2).foldl
       (fun ns lc => nsAppend lc.1 ns) nsEmpty) = datatypeConstructorNamespace start.tidx types := by
-    have result := compileDecs_dtype_constructorNamespace trace n start env gen location types
-    simpa only [compileDecs] using result
+    simpa only [Nat.add_zero, (nsAppend_nsEmpty _).1] using
+      datatypeConstructorNamespace_fold types start.tidx 0 nsEmpty
   have compiledEq := compiled
   simp only [compileDecs, foldEq, Prod.mk.injEq] at compiledEq
   obtain ⟨_, nextEq, envEq, genEq, codeEq⟩ := compiledEq
