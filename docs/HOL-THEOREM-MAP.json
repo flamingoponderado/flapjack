@@ -74126,22 +74126,6 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
-    "hol_name": "globals_rel_def",
-    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
-    "lean_name": "crepToLoopGlobalsRel",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn. This production helper takes raw option-valued functions rather than HOL |-> finite maps and uses PanWordLab/LoopValue rather than HolWordLab/WordLocW, so it is not an exact port of globals_rel_def. Preserve it as executable bridge infrastructure. Exact-carrier port: crepToLoopGlobalsRelHOLExact in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
-    "hol_name": "globals_rel_intro",
-    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
-    "lean_name": "crepToLoopGlobalsRel_intro",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn with its production relation because it inherits the raw option-function and PanWordLab/LoopValue carrier mismatch documented for crepToLoopGlobalsRel. Preserve this implication helper for the executable bridge. Exact-carrier port: crepToLoopGlobalsRelHOLExact_intro in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "locals_rel_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopLocalsRelExact",
@@ -74191,22 +74175,6 @@
       "CrepToLoopContextExact.vars",
       "sLocals"
     ]
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
-    "hol_name": "mem_rel_def",
-    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
-    "lean_name": "crepToLoopMemRel",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn. This production analogue uses PanWordLab/LoopValue rather than HolWordLab/WordLocW, and a Bool domain rather than HOL set membership (Prop); its bridge also adapts production Option-valued loop memory to a total view. These are representation/carrier differences, not authorized by an exact tag. Preserve the helper for production. Exact total-memory, Prop-domain port: crepToLoopMemRelHOLExact in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
-    "hol_name": "mem_rel_intro",
-    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
-    "lean_name": "crepToLoopMemRel_intro",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn with its production relation because it inherits the Bool-domain and PanWordLab/LoopValue carrier mismatch documented for crepToLoopMemRel. Preserve the implication helper for the executable bridge. Exact-carrier port: crepToLoopMemRelHOLExact_intro in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
