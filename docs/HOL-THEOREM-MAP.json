@@ -134658,7 +134658,7 @@
   "lean_name": "doApp_shift_source",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared the complete original shift clause and typed flat do_app_def, including every word size, shift, literal and independent state payload. It delegates directly to doShift, as in HOL. Independently source-reviewed; inherits the reals_as_rational_cuts assumption through doApp."
+  "reviewer": "Compared the original shift clause and fallback with do_app_shift_all_typed, replayed for every argument list: every word size, shift, literal and independent state payload is retained, and malformed lists return NONE. It delegates directly to doShift, as in HOL, and inherits reals_as_rational_cuts through doApp."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",

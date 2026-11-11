@@ -18,6 +18,17 @@ fun show_int_eval label tm =
 fun show_word_eval label tm = (print label; print_term (rhs (concl
   ((EVAL THENC DEPTH_CONV (CHANGED_CONV wordsLib.WORD_EVAL_CONV) THENC EVAL) tm))); print "\n");
 val _ = show_thm "do_app_typed=" flatSemTheory.do_app_def;
+(* Replay the shift clause for every argument list, including malformed inputs. *)
+val do_app_shift_all_replay = Q.prove (
+  `flatSem$do_app s (Src (Shift wz sh n)) vs =
+    case vs of
+      [Litv w] => (case semanticPrimitivesProps$do_shift sh n wz w of
+        NONE => NONE | SOME w' => SOME (s, Rval (Litv w')))
+    | _ => NONE`,
+  Cases_on `vs` >> simp [flatSemTheory.do_app_def] >>
+  Cases_on `t` >> simp [flatSemTheory.do_app_def] >>
+  Cases_on `h` >> simp [flatSemTheory.do_app_def]);
+val _ = show_thm "do_app_shift_all_typed=" do_app_shift_all_replay;
 val _ = show_eval "fallback_opapp=" ``OPTION_MAP SND
   (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Opapp) [Litv (IntLit 1); Litv (IntLit 2)])``;
 val _ = show_eval "fallback_eval=" ``OPTION_MAP SND
