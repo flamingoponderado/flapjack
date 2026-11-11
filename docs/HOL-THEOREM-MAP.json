@@ -658,6 +658,13 @@
   "reviewer": "Source comparison: compared the complete typed semantics_compile statement, including nonfailure, compilation and both enabled/disabled callback and oracle conditions, and the target-to-source behavior equality. The holEmpty and holUpdateList producers represent HOL empty and list-updated finite maps. The evaluator inherits reals_as_rational_cuts and the real-agreement assumption in SOUNDNESS item 8."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "nth_code_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/NthCode.lean", "lean_name": "nthCode",
+  "statement_status": "reviewed_fmap_as_finite_support_result",
+  "fmap_as_finite_support_result": true,
+  "reviewer": "Source comparison: compared the typed nth_code_def equations, including independent configuration and auxiliary payload types, recursive oracle shift, compile_inc arguments and left-to-right code update. The input and result use canonical finite support; the unconditional lookup witness compares the full recursive result to an independent raw update fold."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_correct",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CallsCorrect.lean", "lean_name": "callsCorrect",
   "statement_status": "reviewed_fmap_as_finite_support_relation",

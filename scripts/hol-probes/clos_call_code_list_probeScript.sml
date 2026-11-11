@@ -82,6 +82,8 @@ val _ = (print "oracle_monotonic_init_union_type="; Lib.with_flag (Globals.show_
 val _ = (print "fupdate_list_type="; Lib.with_flag (Globals.show_types,true) print_term (concl finite_mapTheory.FUPDATE_LIST); print "\n");
 val _ = (print "semantics_calls_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.semantics_calls); print "\n");
 val _ = (print "semantics_compile_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.semantics_compile); print "\n");
+val _ = (print "nth_code_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.nth_code_def); print "\n");
+val _ = (print "funion_fempty_fupdate_list_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.FUNION_FEMPTY_FUPDATE_LIST); print "\n");
 val _ = (print "calls_correct_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_correct); print "\n");
 val entry = EVAL ``clos_call$code_list 10 [(2,closLang$Var None 4);(0,closLang$Var None 9);(1,closLang$Var None 2)] (sptree$LN,[(90,3,closLang$Var None 0)])``;
 val _ = (print "example="; print_term (rhs (concl entry)); print "\n");
