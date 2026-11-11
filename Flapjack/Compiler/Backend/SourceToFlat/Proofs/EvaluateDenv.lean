@@ -529,62 +529,6 @@ theorem evaluateDenv_factored_complete {C F : Type} [Nonempty C]
     (V := Nat × Option (Nat × List (Nat × Nat))) (W := Nat × Stamp) [] [] (fun _ => Iff.rfl)
   exact ⟨values, valueModules, ctors, ctorModules⟩
 
-/-- A `Denv` evaluation that does not end in a source type error must have
-successfully declared its environment. -/
-theorem declareEnv_of_safeDenv {F : Type} (source : SemanticPrimitivesHOL.State F)
-    (env : SemEnv Value) (name : VarN)
-    (safe : ∀ next, EvaluateHOL.evaluateDecs source env [.denv name] ≠
-      (next, .err (.abort .typeError))) :
-    ∃ value after, declareEnv source.evalState env = some (value, after) := by
-  cases declared : declareEnv source.evalState env with
-  | none =>
-    have bad : EvaluateHOL.evaluateDecs source env [.denv name] =
-        (source, .err (.abort .typeError)) := by simp [EvaluateHOL.evaluateDecs, declared, EvaluateHOL.typeError]
-    exact False.elim (safe source bad)
-  | some pair =>
-    obtain ⟨value, after⟩ := pair
-    exact ⟨value, after, rfl⟩
-
-/-- The `Denv` case under the source theorem's non-type-error premise. This
-uses the factored relations and is not yet a reviewed HOL theorem port. -/
-theorem evaluateDenv_factored_safe {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (genv : GlobalEnv) (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
-    (env : SemEnv Value) (trace : List VarN) (n : Nat) (start finish : NextIndices)
-    (other : Set (Nat × IndexKind)) (compMap : Environment) (gen : EnvironmentGenerationStore)
-    (name : VarN)
-    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
-    (generation : envGenRel gen source.evalState)
-    (safe : ∀ next, EvaluateHOL.evaluateDecs source env [.denv name] ≠
-      (next, .err (.abort .typeError)))
-    (envInv : GlobalEnvInv genv compMap (fun _ => False) env)
-    (future : envGenFutureRel interp (compileDecs trace n start compMap gen [.denv name]).2.2.2.1
-      source.evalState)
-    (nextBound : idxPrev (compileDecs trace n start compMap gen [.denv name]).2.1 finish) :
-    ∃ value after,
-    let stored : FlatSem.Value := .conv none
-      [.litv (.intLit (gen.generation : Int)), .litv (.intLit (gen.next : Int))]
-    let newGen := (compileDecs trace n start compMap gen [.denv name]).2.2.2.1
-    let newGenv := { genv with v := genv.v.set start.vidx (some stored) }
-    let newSource := { source with evalState := after }
-    let newFlat := { flat with globals := flat.globals.set start.vidx (some stored) }
-    EvaluateHOL.evaluateDecs source env [.denv name] =
-      (newSource, .val { v := nsSing name value, c := nsEmpty }) ∧
-    FlatSem.evaluateDecs flat (compileDecs trace n start compMap gen [.denv name]).2.2.2.2 =
-      (newFlat, none) ∧
-    factoredInvariant interp transform newGen newGenv
-      ((compileDecs trace n start compMap gen [.denv name]).2.1, finish, other) newSource newFlat ∧
-    GlobalGrowth genv newGenv ∧ ValueRel newGenv value stored ∧ StateRel newGenv newSource newFlat ∧
-    envGenRel newGen after ∧ oracForwardRel interp source.evalState after ∧
-    GlobalEnvInv newGenv (compileDecs trace n start compMap gen [.denv name]).2.2.1
-      (fun _ => False) { v := nsSing name value, c := nsEmpty } ∧
-    EnvDomainEq (compileDecs trace n start compMap gen [.denv name]).2.2.1
-      { v := nsSing name value, c := nsEmpty } := by
-  obtain ⟨value, after, declared⟩ := declareEnv_of_safeDenv source env name safe
-  have fits : start.vidx + 1 ≤ finish.vidx := by simpa [compileDecs] using nextBound.1
-  exact ⟨value, after, evaluateDenv_factored_complete interp transform genv source flat env trace n
-    start finish other compMap gen name value after valid generation declared envInv future fits⟩
-
 /-- Source-result form of the `Denv` simulation. The flat state and global
 environment are constructed by the proof, with no target evaluation assumed. -/
 theorem evaluateDenv_factored_result {C F : Type} [Nonempty C]
@@ -620,14 +564,18 @@ theorem evaluateDenv_factored_result {C F : Type} [Nonempty C]
       (fun _ => False) { v := nsSing name value, c := nsEmpty } ∧
     EnvDomainEq (compileDecs trace n start compMap gen [.denv name]).2.2.1
       { v := nsSing name value, c := nsEmpty } := by
-  have noError : ∀ next, EvaluateHOL.evaluateDecs source env [.denv name] ≠
-      (next, .err (.abort .typeError)) := by
-    intro next bad
-    rw [run] at bad
-    exact safe (congrArg Prod.snd bad)
-  obtain ⟨value, after, sourceRun, flatRun, inv, growth, valueRel, states, genRel, forward, envRel, domain⟩ :=
-    evaluateDenv_factored_safe interp transform genv source flat env trace n start finish other compMap gen
-      name valid generation noError envInv future nextBound
+  obtain ⟨value, after, declared⟩ :
+      ∃ value after, declareEnv source.evalState env = some (value, after) := by
+    cases declared : declareEnv source.evalState env with
+    | none =>
+      have bad := congrArg Prod.snd run
+      simp only [EvaluateHOL.evaluateDecs, declared, EvaluateHOL.typeError] at bad
+      exact (safe bad.symm).elim
+    | some pair => exact ⟨pair.1, pair.2, rfl⟩
+  have fits : start.vidx + 1 ≤ finish.vidx := by simpa [compileDecs] using nextBound.1
+  obtain ⟨sourceRun, flatRun, inv, growth, valueRel, states, genRel, forward, envRel, domain⟩ :=
+    evaluateDenv_factored_complete interp transform genv source flat env trace n start finish other
+      compMap gen name value after valid generation declared envInv future fits
   have eq := run.symm.trans sourceRun
   have stateEq := congrArg Prod.fst eq
   have resultEq := congrArg Prod.snd eq
