@@ -47,5 +47,6 @@ evaluate_add_to_clock_type=(!(p :closLang$exp list # v list # ('c, 'ffi) state) 
 evaluate_mono_type=!(xs :closLang$exp list) (env :v list) (s1 :('a, 'b) state) (vs :(v list, v) result) (s2 :('a, 'b) state). evaluate (xs,env,s1) = (vs,s2) ==> s1.code SUBMAP s2.code
 disjoint_image_suc_type=DISJOINT (IMAGE SUC (x :num -> bool)) (IMAGE SUC (y :num -> bool)) <=> DISJOINT x y
 image_suc_subset_union_type=IMAGE SUC (x :num -> bool) SUBSET IMAGE SUC (y :num -> bool) UNION IMAGE SUC (z :num -> bool) <=> x SUBSET y UNION z
+subspt_domain_subset_type=subspt (t1 :'a sptree$num_map) (t2 :'a sptree$num_map) ==> (domain t1 :num -> bool) SUBSET (domain t2 :num -> bool)
 suffix_type=!(loc :num) (fns :('a # 'b) list) (g :'c # (num # 'a # 'b) list). IS_SUFFIX (SND (code_list loc fns g)) (SND g)
 example=(LN,[(15,1,Var None 2); (13,0,Var None 9); (11,2,Var None 4); (90,3,Var None 0)])

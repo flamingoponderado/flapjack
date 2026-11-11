@@ -266,6 +266,7 @@ the cited name occurs in one of the two syntactic forms.
 | `misc/miscScript.sml` (`MOD_SUB_LEMMA`, `IMP_MULT_DIV_LESS`, `DIV_LESS_DIV`) | `Flapjack/Misc/DivModLemmas.lean` |
 | `misc/miscScript.sml` (`DISJOINT_INTER`) | `Flapjack/Misc/DisjointInter.lean` |
 | `misc/miscScript.sml` (successor set images) | `Flapjack/Misc/SuccSet.lean` |
+| `misc/miscScript.sml` (sparse subtree domain) | `Flapjack/Misc/Sptree/Subspt/DomainSubset.lean` |
 | `misc/miscScript.sml` (`WORD_LS_IMP`) | `Flapjack/Misc/WordLsImp.lean` |
 | `compiler/backend/proofs/data_to_word_memoryProofScript.sml` | `Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Representation.lean`, `Memory/Heap.lean`, `Memory/Store.lean`, `Memory/Abstract.lean`, `Memory/Values.lean`, `Memory/Values/Thunk.lean`, `Memory/ValueInv.lean`, `Memory/ValueInv/Reference.lean`, `Memory/Relation.lean`, `Memory/Relation/SmallNumber.lean`, `Memory/Relation/ThunkHeap.lean`, and `Memory/Relation/Thunk.lean` (heap representation, store and GC conditions, value/reference traversals, and preliminary unreviewed value and full memory relations; monotonicity and all unbounded value cases are proved for the preliminary relation) |
 | `compiler/backend/proofs/data_to_word_gcProofScript.sml` | `Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/` (`WordLemmas.lean` opening word lemmas: `lsr_lsl`; `InitStoreOk.lean`, `GcFunOk.lean`, `GcFunConstOk.lean`, `StackRel.lean` for stack-frame, environment-join, stack-flattening, global-value and handler-location relations, and `Limits.lean` for architecture and heap limits) |

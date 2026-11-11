@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/misc/miscScript.sml", "hol_name": "subspt_domain_SUBSET",
+  "lean_path": "Flapjack/Misc/Sptree/Subspt/DomainSubset.lean", "lean_name": "sptSubspt_domainSubset",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared subspt_domain_subset_type and source: both sparse trees share the original unrestricted polymorphic value carrier, and the full subspt premise implies inclusion of the first tree domain in the second."
+ },
+ {
   "hol_path": "cakeml/misc/miscScript.sml", "hol_name": "DISJOINT_IMAGE_SUC",
   "lean_path": "Flapjack/Misc/SuccSet.lean", "lean_name": "disjointImageSucc",
   "statement_status": "reviewed_exact",

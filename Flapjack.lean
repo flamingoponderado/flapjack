@@ -1921,6 +1921,7 @@ import Flapjack.RiscV.L3.Defs.IntegerLoadMode
 import Flapjack.RiscV.L3.Defs.AddressException
 import Flapjack.RiscV.L3.Defs.Fetch
 import Flapjack.Misc.Sptree.Subspt
+import Flapjack.Misc.Sptree.Subspt.DomainSubset
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.ControlLeaves
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.If
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.BasicLeaves
