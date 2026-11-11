@@ -96,24 +96,12 @@ theorem sptWfDelete {α : Type} : ∀ (tree : Spt α) (key : Nat),
       split <;> rfl
   | bn left right ihl ihr =>
       intro key hw
-      have hl : sptWf left = true := by simp_all [sptWf]
-      have hr : sptWf right = true := by simp_all [sptWf]
       rw [sptDelete]
-      split
-      · exact hw
-      · split
-        · exact wfMkBN _ _ (ihl _ hl) hr
-        · exact wfMkBN _ _ hl (ihr _ hr)
+      repeat' split <;> simp_all [sptWf, wfMkBN]
   | bs left value right ihl ihr =>
       intro key hw
-      have hl : sptWf left = true := by simp_all [sptWf]
-      have hr : sptWf right = true := by simp_all [sptWf]
       rw [sptDelete]
-      split
-      · simpa [sptWf] using hw
-      · split
-        · exact wfMkBS _ _ _ (ihl _ hl) hr
-        · exact wfMkBS _ _ _ hl (ihr _ hr)
+      repeat' split <;> simp_all [sptWf, wfMkBS]
 
 /-- `isEmpty` of a union (HOL's `isEmpty_union` rewrite, used by `wf_union`;
 Flapjack infrastructure). -/
