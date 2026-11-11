@@ -1,10 +1,8 @@
 module
 
-public import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeTotal
 public import Flapjack.Compiler.Backend.ClosCall.Free
 public import Flapjack.Compiler.Backend.ClosKnown.Inline.Free.Correct
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.FreeVars
-public import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
 public import Mathlib.Tactic
 
 @[expose] public section
