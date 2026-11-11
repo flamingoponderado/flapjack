@@ -74,7 +74,7 @@ def ctxtMaxHOL {α β : Type} (n : Nat) (fm : HolFiniteMapExact α (β × List N
 def noOverlapHOL {α β γ : Type} (fm : HolFiniteMapExact α (β × List γ)) : Prop :=
   (∀ (x : α) (a : β) (xs : List γ), fm.lookup x = some (a, xs) → xs.Nodup) ∧
     ∀ (x y : α) (a b : β) (xs ys : List γ),
-      fm.lookup x = some (a, xs) → fm.lookup y = some (b, ys) →
+      fm.lookup x = some (a, xs) ∧ fm.lookup y = some (b, ys) ∧
         (∃ z, z ∈ xs ∧ z ∈ ys) → x = y
 
 /-- HOL-equality update of a lookup list; local to the exact `|++` rendering. -/
@@ -105,9 +105,12 @@ private theorem lookup_FUPDATE_LIST_HOL_not_mem [DecidableEq α] (f : FiniteMap 
   (fmap_as_finite_support_parameters := [f])]
 theorem updateEqZipFlookupExactHOL {α β : Type} [DecidableEq α]
     (xs : List α) (f : HolFiniteMapExact α β) (ys : List β) (n : Nat)
-    (hdistinct : xs.Nodup) (hlen : xs.length = ys.length) (hn : n < xs.length) :
-    (f.updateListEq (xs.zip ys)).lookup (xs[n]'hn) =
-      some (ys[n]'(by rw [← hlen]; exact hn)) := by
+    (h : xs.Nodup ∧ xs.length = ys.length ∧ n < xs.length) :
+    (f.updateListEq (xs.zip ys)).lookup (xs[n]'h.2.2) =
+      some (ys[n]'(by rw [← h.2.1]; exact h.2.2)) := by
+  obtain ⟨hdistinct, hlen, hn⟩ := h
+  show (f.updateListEq (xs.zip ys)).lookup (xs[n]'hn) =
+      some (ys[n]'(by rw [← hlen]; exact hn))
   induction xs generalizing f ys n with
   | nil => simp at hn
   | cons a xs ih =>
