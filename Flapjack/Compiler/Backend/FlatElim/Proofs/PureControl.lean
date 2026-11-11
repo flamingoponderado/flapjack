@@ -309,7 +309,8 @@ theorem pureEvaluation_mat {C F : Type} (env : FlatSem.Environment FlatSem.Value
         apply (interEmpty_iff_disjoint _ _).mpr
         intro key found reach
         exact (interEmpty_iff_disjoint _ _).mp disjoint.2 key (findLocPats_member rows pattern branch member key found) reach
-      have extendedSafe := bindingsNoEval_append bindings env.v bindingSafe envSafe
+      have extendedSafe : bindingsNoEval (bindings ++ env.v) := by
+        simpa only [bindingsNoEval, List.forall_mem_append] using And.intro bindingSafe envSafe
       exact rowIH pattern branch member { env with v := bindings ++ env.v } bodyState (by omega)
         next result reachable target run (singletonPure branch branchPure) extendedSafe
         (singletonExpression_noEval branch branchSafe) (singletonLocations branch reachable branchEmpty) bodyRelated notTypeError

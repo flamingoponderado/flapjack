@@ -454,7 +454,7 @@ theorem evaluate_selectedRow_bounded {C F : Type} (rows : List (FlatLang.Pat × 
     (singletonLookups_within body reachable invariants.1) related
     (by simpa only [bindingsWithin, findEnvGlobals, List.map_append, findValuesGlobals_append,
       globalsWithin_union] using And.intro invariants.2.2.1 envClosed)
-    (bindingsNoEval_append bindings env.v invariants.2.2.2 envSafe)
+    (by simpa only [bindingsNoEval, List.forall_mem_append] using And.intro invariants.2.2.2 envSafe)
     (singletonExpression_noEval body invariants.2.1) notTypeError
 
 /-- Mat simulation at a fixed source state with row hypotheses

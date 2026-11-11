@@ -105,14 +105,6 @@ theorem hasEvalPats_member (rows : List (FlatLang.Pat × FlatLang.Exp))
       exact safe.1
     · exact ih member safe.2
 
-/-- Appending two Eval-free pattern environments preserves that invariant. -/
-theorem bindingsNoEval_append (left right : List (Flapjack.AstHOL.VarN × FlatSem.Value))
-    (leftSafe : bindingsNoEval left) (rightSafe : bindingsNoEval right) : bindingsNoEval (left ++ right) := by
-  intro binding member
-  rcases List.mem_append.mp member with leftMember | rightMember
-  · exact leftSafe binding leftMember
-  · exact rightSafe binding rightMember
-
 /-- A selected row and its environment satisfy the invariants required to
 apply the branch induction hypothesis. -/
 theorem selectRow_invariants {C F : Type} (reachable : NumSet) (state : FlatSem.State C F)
