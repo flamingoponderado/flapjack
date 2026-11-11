@@ -430,22 +430,6 @@ noncomputable def flatCallResult {C F : Type} (flat : FlatSem.State C F)
     if flat.clock = 0 then (flat, .err (.abort .timeoutError))
     else FlatSem.evaluate env (FlatSem.decClock flat) [body]
 
-/-- A successful function-body evaluation returns exactly one value, including
-when the function is called by thunk forcing. -/
-theorem sourceCallResult_value_singleton {F : Type} (source : State F) (function argument : Value)
-    (after : State F) (values : List Value)
-    (called : sourceCallResult source function argument = (after, .val values)) :
-    ∃ value, values = [value] := by
-  cases h : doOpApp [function, argument] with
-  | none => simp [sourceCallResult, h, EvaluateHOL.typeError] at called
-  | some call =>
-    obtain ⟨env, body⟩ := call
-    by_cases zero : source.clock = 0
-    · simp [sourceCallResult, h, zero, EvaluateHOL.timeoutError] at called
-    · have run : EvaluateHOL.evaluate (EvaluateHOL.decClock source) env [body] = (after, .val values) := by
-        simpa [sourceCallResult, h, zero] using called
-      exact EvaluateProps.evaluateSingFull (EvaluateHOL.decClock source) env body after values run
-
 /-- The flat thunk-forcing expansion applies its stored function to unit.
 This relates the evaluator's synthetic expression to the call simulation. -/
 theorem flatCallResult_appUnit {C F : Type} (flat : FlatSem.State C F) (function : FlatSem.Value) :
@@ -604,7 +588,12 @@ theorem localThunkCallUpdate_related {C F : Type} [Nonempty C]
         And.intro (ResultRel.raise valueRel) states
     · simpa [sourceThunkCallResult, flatThunkCallResult, srcRun, dstRun] using post
   | @value sourceValues flatValues valuesRel =>
-    obtain ⟨value, rfl⟩ := sourceCallResult_value_singleton source function (.conv none []) after sourceValues srcRun
+    obtain ⟨⟨callEnv, body⟩, callApp⟩ := Option.ne_none_iff_exists'.mp successful
+    have nonzero : source.clock ≠ 0 := by
+      intro zero
+      simp [sourceCallResult, callApp, zero, EvaluateHOL.timeoutError] at srcRun
+    obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull (EvaluateHOL.decClock source) callEnv body after sourceValues
+      (by simpa [sourceCallResult, callApp, nonzero] using srcRun)
     cases valuesRel with
     | cons valueRel tail =>
       cases tail with
