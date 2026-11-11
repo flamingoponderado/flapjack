@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.ClosKnown.Merge
 public import Flapjack.Misc.Option
 public import Flapjack.Misc.Sptree
+public import Batteries.Data.List.Basic
 
 @[expose] public section
 
@@ -152,6 +153,29 @@ theorem subapproxClos (a : ValApprox) (m n : Nat) (e : ClosLang.Exp) (size : Nat
   case clos x y body count =>
     by_cases hm : x = m <;> by_cases hn : y = n <;> by_cases he : body = e <;>
       by_cases hs : count = size <;> simp [hm, hn, he, hs, Ne.symm]
+
+private theorem mergeList_eq_right_iff (xs ys : List ValApprox) :
+    (xs.length = ys.length ∧ mergeListHOL xs ys = ys) ↔
+      List.Forall₂ subapprox xs ys := by
+  induction xs generalizing ys with
+  | nil =>
+    cases ys with
+    | nil => simp [mergeListHOL]
+    | cons y ys => simp only [List.length_nil, List.length_cons, Nat.zero_ne_add_one, false_and, false_iff]; intro h; cases h
+  | cons x xs ih =>
+    cases ys with
+    | nil => simp only [List.length_cons, List.length_nil, Nat.add_one_ne_zero, false_and, false_iff]; intro h; cases h
+    | cons y ys => simp [mergeListHOL, List.forall₂_cons, subapprox, ← ih, and_left_comm]
+
+/-- Tuple approximations are ordered elementwise when their tags agree. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_Tuple"]
+theorem subapproxTuple (tag1 : Nat) (xs : List ValApprox) (tag2 : Nat) (ys : List ValApprox) :
+    subapprox (.tuple tag1 xs) (.tuple tag2 ys) ↔
+      tag1 = tag2 ∧ List.Forall₂ subapprox xs ys := by
+  have listEq := mergeList_eq_right_iff xs ys
+  by_cases len : xs.length = ys.length <;> by_cases tag : tag1 = tag2 <;>
+    simp [subapprox, mergeHOL, len, tag, beq_iff_eq] at *
+  all_goals assumption
 
 /-- Approximation ordering is antisymmetric. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_antisym"]

@@ -14336,6 +14336,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_Tuple",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxTuple",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_tuple_typed: full approximation carrier, tuple tags and elementwise list relation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
   "hol_name": "subapprox_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
   "lean_name": "subapprox",

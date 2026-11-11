@@ -126,45 +126,6 @@ theorem valueComparisonSim_locations (flag₁ flag₂ : Bool) (index₁ index₂
   cases second
   simp_all [FlatSem.doEq, ClosSem.doEq, Bool.beq_eq_decide_eq]
 
-/-- Related ordinary closures compare alike. -/
-theorem valueComparisonSim_closures (env₁ env₂ : FlatSem.Environment FlatSem.Value)
-    (name₁ name₂ : Flapjack.AstHOL.VarN) (body₁ body₂ : FlatLang.Exp) :
-    ValueComparisonSim (.closure env₁ name₁ body₁) (.closure env₂ name₂ body₂) := by
-  intro t₁ t₂ b first second result
-  cases first
-  cases second
-  simpa [FlatSem.doEq, ClosSem.doEq] using result
-
-/-- Related ordinary and recursive closures compare alike. -/
-theorem valueComparisonSim_closure_rec (env₁ env₂ : FlatSem.Environment FlatSem.Value)
-    (name₁ name₂ : Flapjack.AstHOL.VarN) (body : FlatLang.Exp)
-    (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp)) :
-    ValueComparisonSim (.closure env₁ name₁ body) (.recclosure env₂ funs name₂) := by
-  intro t₁ t₂ b first second result
-  cases first
-  cases second
-  simpa [FlatSem.doEq, ClosSem.doEq] using result
-
-/-- Related recursive and ordinary closures compare alike. -/
-theorem valueComparisonSim_rec_closure (env₁ env₂ : FlatSem.Environment FlatSem.Value)
-    (name₁ name₂ : Flapjack.AstHOL.VarN) (body : FlatLang.Exp)
-    (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp)) :
-    ValueComparisonSim (.recclosure env₁ funs name₁) (.closure env₂ name₂ body) := by
-  intro t₁ t₂ b first second result
-  cases first
-  cases second
-  simpa [FlatSem.doEq, ClosSem.doEq] using result
-
-/-- Related recursive closures compare alike. -/
-theorem valueComparisonSim_rec_rec (env₁ env₂ : FlatSem.Environment FlatSem.Value)
-    (name₁ name₂ : Flapjack.AstHOL.VarN)
-    (funs₁ funs₂ : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp)) :
-    ValueComparisonSim (.recclosure env₁ funs₁ name₁) (.recclosure env₂ funs₂ name₂) := by
-  intro t₁ t₂ b first second result
-  cases first
-  cases second
-  simpa [FlatSem.doEq, ClosSem.doEq] using result
-
 /-- Related literals preserve every successful comparison. -/
 theorem valueComparisonSim_literals (left right : Flapjack.AstHOL.Lit) :
     ValueComparisonSim (.litv left) (.litv right) := by
@@ -272,10 +233,22 @@ theorem doEq_simulation :
   · intro a xs b ys diff _; exact valueComparisonSim_conv_no_rec a b xs ys diff
   · intro xs ys _ ih; exact valueComparisonSim_vector ih
   · intro xs ys diff; exact valueComparisonSim_vector_no_rec xs ys diff
-  · intro a n body b m body₂; exact valueComparisonSim_closures a b n m body body₂
-  · intro a n body b funs m; exact valueComparisonSim_closure_rec a b n m body funs
-  · intro a funs n b m body; exact valueComparisonSim_rec_closure a b n m body funs
-  · intro a funs₁ n b funs₂ m; exact valueComparisonSim_rec_rec a b n m funs₁ funs₂
+  · intro a n body b m body₂ t₁ t₂ result first second run
+    cases first
+    cases second
+    simpa [FlatSem.doEq, ClosSem.doEq] using run
+  · intro a n body b funs m t₁ t₂ result first second run
+    cases first
+    cases second
+    simpa [FlatSem.doEq, ClosSem.doEq] using run
+  · intro a funs n b m body t₁ t₂ result first second run
+    cases first
+    cases second
+    simpa [FlatSem.doEq, ClosSem.doEq] using run
+  · intro a funs₁ n b funs₂ m t₁ t₂ result first second run
+    cases first
+    cases second
+    simpa [FlatSem.doEq, ClosSem.doEq] using run
   · intro left right noLit noLoc noCon noVector noCC noCR noRC noRR target₁ target₂ b first second result
     cases left <;> cases right
     all_goals first
