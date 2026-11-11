@@ -39,21 +39,32 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
       cases args with
       | nil => exact knownCorrect0AppNil location f state
       | cons first rest =>
-        apply ApplyFull.knownCorrect0AppCons location f first rest state ?_ ?_
-        · intro kind body env remaining bodyResult middle values value tail h
-          obtain ⟨found, rfl, enough, run, rfl, rfl, rfl⟩ := h
-          have shorter := destClosure_full_remaining_lt _ _ _ _ _ _ _ found
-          have bound := evaluate_clock_le [body] env (decClock ((first :: rest).length - remaining.length) state)
-          rw [run] at bound
-          simp only at bound
-          have small : middle.clock < clock := by simp only [decClock] at bound; omega
-          exact (clockIH _ small).1 location value remaining middle rfl
-        · intro kind body env remaining h
-          obtain ⟨found, rfl, enough⟩ := h
-          have shorter := destClosure_full_remaining_lt _ _ _ _ _ _ _ found
-          have small : (decClock ((first :: rest).length - remaining.length) state).clock < clock := by
-            simp only [decClock]; omega
-          exact (clockIH _ small).2 _ [body] env _ rfl rfl
+        cases found : destClosure state.maxApp location f (first :: rest) with
+        | none =>
+          intro res1 s loc2 f2 args2 t0 c argsopt h
+          obtain ⟨run, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, noType⟩ := h
+          rw [evaluateApp, found] at run
+          simp at run
+          rcases run with ⟨rfl, rfl⟩
+          exact (noType rfl).elim
+        | some kind =>
+          cases kind with
+          | partialApp value => exact ApplyPartial.knownAppPartialCase location f first rest state value found
+          | fullApp body env remaining =>
+            by_cases timeout : state.clock < (first :: rest).length - remaining.length
+            · exact ApplyFull.fullApplicationTimeoutCase location f first rest state body env remaining found timeout
+            · apply ApplyFull.fullApplicationBodyCase location f first rest state body env remaining found timeout
+              · have shorter := destClosure_full_remaining_lt _ _ _ _ _ _ _ found
+                have small : (decClock ((first :: rest).length - remaining.length) state).clock < clock := by
+                  simp only [decClock]; omega
+                exact (clockIH _ small).2 _ [body] env _ rfl rfl
+              · intro value middle run
+                have shorter := destClosure_full_remaining_lt _ _ _ _ _ _ _ found
+                have bound := evaluate_clock_le [body] env (decClock ((first :: rest).length - remaining.length) state)
+                rw [run] at bound
+                simp only at bound
+                have small : middle.clock < clock := by simp only [decClock] at bound; omega
+                exact (clockIH _ small).1 location value remaining middle rfl
     constructor
     · exact appAll
     · intro weight

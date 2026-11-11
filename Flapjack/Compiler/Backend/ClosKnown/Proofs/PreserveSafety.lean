@@ -20,8 +20,9 @@ theorem ticksSetGlobals (trace : BackendCommon.Tra) (index n : Nat) (e : ClosLan
   | zero => rfl
   | succ n ih => simpa [ticks, setGlobals] using ih (index + 1) (.tick (BackendCommon.mkCons trace index) e)
 
-/-- Tick insertion retains closure-body safety; Flapjack infrastructure. -/
-private theorem ticksEsgcFree (trace : BackendCommon.Tra) (index n : Nat) (e : ClosLang.Exp) :
+/-- Tick insertion retains closure-body safety. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "mk_Ticks_esgc_free"]
+theorem ticksEsgcFree (trace : BackendCommon.Tra) (index n : Nat) (e : ClosLang.Exp) :
     esgcFree (ticks trace index n e) ↔ esgcFree e := by
   induction n generalizing index e with
   | zero => rfl

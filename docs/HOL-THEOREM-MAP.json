@@ -10734,19 +10734,6 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationApplyFullBody.lean",
-  "lean_name": "knownCorrect0AppCons",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out against the original evaluate_app CONS proof. The theorem retains the source nonempty arguments and the full body and recursive-application induction hypotheses, including closure result, clock bound, body result and singleton decomposition. KnownAppSimulationAt unfolds to the original application conjunct. The proof covers rejected, partial and full closures, timeout, body errors, returned singleton and further application; it preserves the special exact-argument relation and handles changed direct annotations only when no arguments remain. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpGlobal.lean",
   "lean_name": "knownCorrect0OpGlobal",
   "statement_status": "reviewed_fmap_as_finite_support",
@@ -11141,6 +11128,14 @@
   "lean_name": "decideInlineLetInlineFvMax",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared decide_inline_imp_clos_fv_max_typed in clos_known_syntax_probe.out and the source theorem. The location payload remains polymorphic, and the decision, existential closure approximation and original free-variable bound match. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "mk_Ticks_esgc_free",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafety.lean",
+  "lean_name": "ticksEsgcFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_ticks_esgc_free_typed: arbitrary trace, index, count and complete expression retain the original global-write safety iff."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
