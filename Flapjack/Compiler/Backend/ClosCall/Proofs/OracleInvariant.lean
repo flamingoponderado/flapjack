@@ -6,6 +6,7 @@ public import Flapjack.Compiler.Backend.ClosCall.Compile
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
 public import Flapjack.Misc.ShiftSeq
 public import Flapjack.FiniteMap.BroadCodec
+public import Flapjack.Compiler.Backend.BackendProps.OracleMonotonic
 
 @[expose] public section
 
@@ -15,6 +16,15 @@ set_option backward.privateInPublic.warn false
 /-! Direct-call compiler oracle invariant. -/
 namespace Flapjack.Compiler.Backend.ClosCall
 open Flapjack ClosLang ClosProps
+
+/-- Oracle monotonicity over a union is equivalent to monotonicity over each part. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "oracle_monotonic_init_UNION"]
+theorem oracleMonotonic_initUnion {A B : Type} (f : A → Set B) (R : B → B → Prop)
+    (initial1 initial2 : Set B) (co : Nat → A) :
+    BackendProps.oracleMonotonic f R (initial1 ∪ initial2) co ↔
+      BackendProps.oracleMonotonic f R initial1 co ∧ BackendProps.oracleMonotonic f R initial2 co := by
+  simp only [BackendProps.oracleMonotonic, Set.mem_union, or_imp, forall_and]
+  tauto
 
 private def toBroad {K V : Type} (code : HolFiniteMapExact K V) : K → Option V := code.lookup
 private def ofBroad {K V : Type} (lookup : K → Option V)

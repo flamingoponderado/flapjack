@@ -624,6 +624,24 @@
   "reviewer": "Source comparison: compared clos_call_do_app_thm_typed: all free arguments, result cases, error alternatives, grouped premises, success conclusions and existential target state match. Source and target configurations are NumSet × C and C with shared FFI. State refs and code use canonical finite support. The proof instantiates simple_val_rel_do_app using valueRel_simple, stateRel_simple, valueWellFormed_simple and stateValuesWellFormed_simple, mirroring the HOL proof's inline conditions. ClosSem.doApp inherits reals_as_rational_cuts and the HOL real-agreement assumption in SOUNDNESS item 8."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_locs_calls_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "locations_callsList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original-proof replay preserves the polymorphic function metadata, argument order and complete empty location-list equality."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "code_locs_code_list_MEM",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/LocationMembership.lean", "lean_name": "codeLocations_codeList_mem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original-proof replay preserves independent function metadata and state types, argument order and the complete location membership equivalence."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "oracle_monotonic_init_UNION",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/OracleInvariant.lean", "lean_name": "oracleMonotonic_initUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original preserves independent oracle and element types, function and relation arguments, both initial sets and the full union equivalence."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_correct",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/CallsCorrect.lean", "lean_name": "callsCorrect",
   "statement_status": "reviewed_fmap_as_finite_support_relation",

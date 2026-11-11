@@ -21,7 +21,9 @@ theorem locations_variables (n : Nat) (t : BackendCommon.Tra) (i : Nat) :
   | succ n ih =>
     simp [variablesSource, codeLocations_append, ih, codeLocations, codeLocationsExp]
 
-private theorem locations_callsList {A : Type} (fns : List (Nat × A))
+/-- Generated call stubs contain no code locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "code_locs_calls_list"]
+theorem locations_callsList {A : Type} (fns : List (Nat × A))
     (n : Nat) (tr : BackendCommon.Tra) (i : Nat) :
     codeLocations ((callsListSource tr i n fns).map Prod.snd) = [] := by
   induction fns generalizing n i with
@@ -360,6 +362,8 @@ private theorem locations_perm {xs ys : List Exp} (h : xs.Perm ys) :
   simp only [locations_flatMap]
   exact h.flatMap (fun _ _ => List.Perm.refl _)
 
+/-- Flapjack-specific multiplicity infrastructure: the membership theorem alone
+cannot prove the distinctness and location-count consumers. -/
 private theorem codeLocations_codeList_perm {A C : Type} (ls : List (A × Exp))
     (n : Nat) (rest : C × List (Nat × A × Exp)) :
     (codeLocations ((codeListSource n ls rest).2.map (fun t => t.2.2))).Perm
@@ -367,6 +371,14 @@ private theorem codeLocations_codeList_perm {A C : Type} (ls : List (A × Exp))
   rw [codeList_bodies, codeLocations_append, codeLocations_append]
   exact ((locations_perm (List.reverse_perm (ls.map Prod.snd))).append_right _).trans
     List.perm_append_comm
+
+/-- Emitting code preserves membership in the combined set of body locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "code_locs_code_list_MEM"]
+theorem codeLocations_codeList_mem {A C : Type} (ls : List (A × Exp))
+    (n : Nat) (rest : C × List (Nat × A × Exp)) (x : Nat) :
+    x ∈ codeLocations ((codeListSource n ls rest).2.map (fun t => t.2.2)) ↔
+      x ∈ codeLocations (rest.2.map (fun t => t.2.2) ++ ls.map Prod.snd) :=
+  (codeLocations_codeList_perm ls n rest).mem_iff
 
 /-- Moving the bodies into the auxiliary code list preserves location
 distinctness, including when the state and function metadata are polymorphic. -/
