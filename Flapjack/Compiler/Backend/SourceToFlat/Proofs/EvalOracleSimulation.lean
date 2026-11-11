@@ -814,65 +814,6 @@ theorem doEval_oracle_envGenFuture {C : Type} [Nonempty C]
       rw [compiled] at future
       simpa [envGenFutureRel, nextCfg] using future
 
-/-- A successful oracle-mode source Eval on related arguments yields a
-successful flat Eval on the last two arguments, with the same source oracle
-entry and corresponding incremental compilation result. The later declaration
-evaluation and full source-to-flat state invariant are separate obligations. -/
-theorem doEval_oracle_related {C : Type} [Nonempty C]
-    (decode : Value → Option (Config × C)) (transform : List Dec → List Dec)
-    (state : EvalOracleState) (flatConfig : FlatSem.InstallConfig C)
-    (steps : srcOracStepInvs (some decode) transform (some (.evalOracle state)))
-    (oracleRel : oracRel (some decode) transform (some (.evalOracle state)) flatConfig)
-    (genv : GlobalEnv) (constructors : genvCOk genv.c)
-    (sourceValues : List Value) (flatValues : List FlatSem.Value)
-    (valuesRel : List.Forall₂ (ValueRel genv) sourceValues flatValues)
-    (output : SemEnv Value × List Dec × Option EvalState)
-    (sourceSuccess : SemanticPrimitivesHOL.doEval sourceValues (some (.evalOracle state)) = some output) :
-    ∃ envId stateValue decs config payload flatDecs,
-      state.oracle 0 = (envId, stateValue, decs) ∧
-      decode stateValue = some (config, payload) ∧ output.2.1 = transform decs ∧
-      flatDecs = (incCompileProg envId config (transform decs)).2 ∧ flatValues.length = 6 ∧
-      FlatSem.doEval (flatValues.drop 4) flatConfig =
-        some (flatDecs, { flatConfig with compileOracle := Flapjack.holShiftSeq 1 flatConfig.compileOracle },
-          FlatSem.unitValue) ∧
-      srcOracStepInvs (some decode) transform output.2.2 ∧
-      oracRel (some decode) transform output.2.2
-        { flatConfig with compileOracle := Flapjack.holShiftSeq 1 flatConfig.compileOracle } ∧
-      srcOracGenInv output.2.2 ∧
-      envGenRel ⟨0, state.envs.length, .ln⟩ output.2.2 := by
-  have oracleRelCopy := oracleRel
-  obtain ⟨compiler, callback, _⟩ := oracleRelCopy
-  cases called : state.customDoEval sourceValues state.oracle with
-  | none => simp [SemanticPrimitivesHOL.doEval, called] at sourceSuccess
-  | some result =>
-    have success : SourceEval.Proofs.doEvalOracle compiler transform sourceValues state.oracle = some result := by
-      simpa [callback] using called
-    have length := SourceEval.Proofs.doEvalOracle_success_length compiler transform sourceValues state.oracle result success
-    obtain ⟨a, b, c, d, bytes, words, rfl⟩ := list_length_six sourceValues length
-    cases valuesRel with
-    | cons _ tail1 =>
-      cases tail1 with
-      | cons _ tail2 =>
-        cases tail2 with
-        | cons _ tail3 =>
-          cases tail3 with
-          | cons _ tail4 =>
-            cases tail4 with
-            | cons bytesRel tail5 =>
-              cases tail5 with
-              | cons wordsRel tail6 =>
-                cases tail6
-                obtain ⟨envId, stateValue, decs, config, payload, flatDecs,
-                  entry, decoded, sourceDecls, flatEq, flatSuccess⟩ :=
-                  doEval_oracle_flatCallback decode transform state flatConfig steps oracleRel genv constructors
-                    a b c d bytes words _ _ bytesRel wordsRel output sourceSuccess
-                obtain ⟨_, nextSteps, nextRelated, nextGenInv, nextGenRel⟩ :=
-                  doEval_oracle_preserves_oracles decode transform state flatConfig steps oracleRel
-                    a b c d bytes words output sourceSuccess
-                exact ⟨envId, stateValue, decs, config, payload, flatDecs,
-                  entry, decoded, sourceDecls, flatEq, rfl, flatSuccess, nextSteps, nextRelated,
-                  nextGenInv, nextGenRel⟩
-
 /-- Combined oracle-mode Eval simulation over the factored value and state
 relations. This establishes the callback, source oracle, generation,
 environment, state, and index-range postconditions with common witnesses.
@@ -918,12 +859,33 @@ theorem doEval_oracle_combined {C F : Type} [Nonempty C]
           ⟨0, config.envs.next, .ln⟩ output.2.1).2.2.2.1 output.2.2 ∧
       GlobalEnvInv expanded (lookupEnvId envId config.envs) (fun _ => False) output.1 ∧
       idxPrev finish next.next ∧ Flapjack.sptSubspt config.envs.envGens next.envs.envGens := by
-  obtain ⟨envId, value, decs, config, payload, flatDecs, entry, decoded, sourceDecls,
-    flatEq, flatLength, flatSuccess, _, _, _, _⟩ :=
-    doEval_oracle_related decode transform state flat.evalConfig invs.1 related genv constructors
-      sourceValues flatValues valuesRel output success
-  have sourceLength : sourceValues.length = 6 := valuesRel.length_eq.trans flatLength
+  have sourceLength : sourceValues.length = 6 := by
+    obtain ⟨compiler, callback, _⟩ := related
+    cases called : state.customDoEval sourceValues state.oracle with
+    | none => simp [SemanticPrimitivesHOL.doEval, called] at success
+    | some result =>
+      have callbackSuccess : SourceEval.Proofs.doEvalOracle compiler transform sourceValues state.oracle = some result := by
+        simpa [callback] using called
+      exact SourceEval.Proofs.doEvalOracle_success_length compiler transform sourceValues state.oracle result callbackSuccess
   obtain ⟨a, b, c, d, bytes, words, rfl⟩ := list_length_six sourceValues sourceLength
+  cases valuesRel
+  rename_i tail1
+  cases tail1
+  rename_i tail2
+  cases tail2
+  rename_i tail3
+  cases tail3
+  rename_i tail4
+  cases tail4
+  rename_i bytesRel tail5
+  cases tail5
+  rename_i wordsRel tail6
+  cases tail6
+  obtain ⟨envId, value, decs, config, payload, flatDecs,
+    entry, decoded, sourceDecls, flatEq, flatSuccess⟩ :=
+    doEval_oracle_flatCallback decode transform state flat.evalConfig invs.1 related genv constructors
+      a b c d bytes words _ _ bytesRel wordsRel output success
+  have flatLength : (6 : Nat) = 6 := rfl
   obtain ⟨envId', value', decs', config', payload', next, flatDecs', entry', decoded', decls', lookup,
     currentCfg, nextCfg, compiled, prev, future⟩ :=
     doEval_oracle_envGenFuture decode transform state flat.evalConfig invs.1 related
