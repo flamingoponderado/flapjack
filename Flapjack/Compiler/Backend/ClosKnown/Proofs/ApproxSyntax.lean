@@ -6,7 +6,7 @@ public import Flapjack.Compiler.Backend.ClosKnown.Inline
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
 public import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
-public import Flapjack.Misc.Sptree
+public import Flapjack.Misc.Sptree.InsertProperty
 
 @[expose] public section
 
@@ -44,19 +44,6 @@ theorem valApproxVarsNoneMerge (a b : ValApprox)
     have smaller := List.sizeOf_lt_of_mem hx
     exact ih x (by simp_wf; omega) y (ha x hx) (hb y hy)
 
-/-- Inserting a safe approximation preserves safety of the map. -/
-private theorem globalsInsertSafe (g : Spt ValApprox) (index : Nat) (a : ValApprox)
-    (safe : valApproxVarsNone a) (globals : globalsApproxVarsNone g) :
-    globalsApproxVarsNone (sptInsert index a g) := by
-  intro key value lookup
-  by_cases same : key = index
-  · subst key
-    rw [sptLookup_sptInsert_same] at lookup
-    cases lookup
-    exact safe
-  · rw [sptLookup_sptInsert_ne index key a g same] at lookup
-    exact globals key value lookup
-
 /-- Primitive approximation preserves both value and global safety. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_op_every_Fn_vs_NONE"]
 theorem knownOpVarsNone (op : ClosLang.Op) (args : List ValApprox)
@@ -92,7 +79,7 @@ theorem knownOpVarsNone (op : ClosLang.Op) (args : List ValApprox)
         rcases known with ⟨rfl, rfl⟩
         constructor
         · simp [valApproxVarsNone]
-        · apply globalsInsertSafe _ _ _ _ globals
+        · apply sptInsert_preservesProperty _ _ _ _ _ globals
           cases h : sptLookup index g0 with
           | none => exact xSafe
           | some old => exact valApproxVarsNoneMerge old x ⟨globals index old h, xSafe⟩
