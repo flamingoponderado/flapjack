@@ -6,6 +6,7 @@ public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Semantics
 public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Semantics
 public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.AdjustOracleSimulation
+public import Flapjack.Compiler.Backend.BackendProps.OracleCombinators
 
 @[expose] public section
 
@@ -44,6 +45,43 @@ noncomputable def knownCo {C : Type} (config : Option Config) (co : CompileOracl
   | some c => pureCo letopInc ∘ pureCo ticksInc ∘
       stateCo (compileInc c) (pureCo fvsInc ∘ co)
   | none => stateCo (fun g p => (g, p)) co
+
+/-- Factor the optional oracle adaptation into pure and stateful stages. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_co_eq_pure_state"]
+theorem knownCoEqPureState {C : Type} (config : Option Config)
+    (co : CompileOracle (Spt ValApprox × C)) :
+    knownCo config co =
+      pureCo (if config.isSome then letopInc ∘ ticksInc else id) ∘
+        stateCo (match config with | some c => compileInc c | none => fun g p => (g, p))
+          (pureCo (if config.isSome then fvsInc else id) ∘ co) := by
+  cases config <;> funext n <;> simp [knownCo, pureCo, stateCo, Function.comp_def]
+
+/-- Construct stateful oracle configurations for the optional known pass. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_mk_co_def"]
+noncomputable def knownMkCo {C : Type} (config next : Option Config)
+    (mk : (Nat → Program) → Nat → C) : (Nat → Program) → Nat → Spt ValApprox × C :=
+  addStateCo (match config with | some c => compileInc c | none => fun g p => (g, p))
+    (optionValApproxSpt next)
+    (mk ∘ pureCoProgs (if config.isSome then letopInc ∘ ticksInc else id)) ∘
+    pureCoProgs (if config.isSome then fvsInc else id)
+
+/-- Transform oracle programs through the optional known pass. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_co_progs_def"]
+noncomputable def knownCoProgs (config next : Option Config) : (Nat → Program) → Nat → Program :=
+  pureCoProgs (if config.isSome then letopInc ∘ ticksInc else id) ∘
+    stateCoProgs (match config with | some c => compileInc c | none => fun g p => (g, p))
+      (optionValApproxSpt next) ∘
+    pureCoProgs (if config.isSome then fvsInc else id)
+
+/-- The adapted full oracle is the full oracle of the adapted programs. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_co_known_mk_co"]
+theorem knownCoKnownMkCo {C : Type} (config next : Option Config)
+    (mk : (Nat → Program) → Nat → C) (co : Nat → Program) :
+    knownCo config (syntaxToFullOracle (knownMkCo config next mk) co) =
+      syntaxToFullOracle mk (knownCoProgs config next co) := by
+  cases config <;> funext n <;>
+    simp [knownCo, knownMkCo, knownCoProgs, pureCoProgs, pureCo, stateCo,
+      syntaxToFullOracle, addStateCo, stateCoProgs, Function.comp_def]
 
 /-- The enabled branch of the whole-pass theorem, using the original
 syntax-oracle precondition. This composition is Lean infrastructure; the

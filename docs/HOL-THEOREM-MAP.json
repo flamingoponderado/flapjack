@@ -129266,6 +129266,62 @@
   "reviewer": "Compared known_ticks_locations_typed: arbitrary trace, counters and expression retain the original singleton location premise and forward tick-insertion conclusion."
 },
 {
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+  "hol_name": "pure_co_progs_def",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleCombinators.lean",
+  "lean_name": "pureCoProgs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pure_co_progs_typed: independent input/output program types, natural-number oracle index and function composition agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+  "hol_name": "state_co_add_state_co",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleCombinators.lean",
+  "lean_name": "stateCoAddStateCo",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared state_co_add_state_co_typed: independent state, input/output program and configuration types, threaded state and complete oracle function equality agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+  "hol_name": "pure_co_syntax_to_full_oracle",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleCombinators.lean",
+  "lean_name": "pureCoSyntaxToFullOracle",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pure_co_syntax_to_full_oracle_typed: independent program and configuration types, pure pass, oracle maker and complete function equality agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_co_eq_pure_state",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileSemantics.lean",
+  "lean_name": "knownCoEqPureState",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_co_eq_pure_state_typed: arbitrary optional config and polymorphic compiler oracle, pure and stateful adapters, optional branches and full function equality agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_mk_co_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileSemantics.lean",
+  "lean_name": "knownMkCo",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_mk_co_typed: optional pass configurations, polymorphic oracle maker, source stages and composition order agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_co_progs_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileSemantics.lean",
+  "lean_name": "knownCoProgs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_co_progs_typed: optional configurations, initial sparse-tree state and complete pure/stateful program-oracle composition agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_co_known_mk_co",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileSemantics.lean",
+  "lean_name": "knownCoKnownMkCo",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_co_known_mk_co_typed: arbitrary optional configurations, polymorphic oracle maker and program oracle retain the complete function equality."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "fvs_compile_uncurry",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileSemantics.lean",
