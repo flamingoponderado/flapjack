@@ -9042,6 +9042,38 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_obeys_max_app_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxArity.lean",
+  "lean_name": "valApproxObeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all typed original equations: inlined closure bodies obey the bound, tuple approximations satisfy it recursively for every member, and non-inlineable and other approximations satisfy it unconditionally."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "decide_inline_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxArity.lean",
+  "lean_name": "decideInlineObeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: the optional-location payload remains polymorphic, the approximation-bound and exact inlining-decision premises stay grouped, and the selected body obeys the same bound."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "globals_approx_obeys_max_app_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxArity.lean",
+  "lean_name": "globalsApproxObeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original lookup condition over the exact sparse number-map carrier, with every found approximation required to obey the bound."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "clos_gen_no_inline_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxArity.lean",
+  "lean_name": "closGenNoInline_obeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original with its fixed list of number-expression pairs, arbitrary indices and free application limit, and complete EVERY conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "no_Labels_mk_Ticks",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TicksSyntax.lean",
   "lean_name": "ticks_noLabels",
