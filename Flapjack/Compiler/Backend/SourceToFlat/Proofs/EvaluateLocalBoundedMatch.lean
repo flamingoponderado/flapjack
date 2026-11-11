@@ -11,53 +11,6 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
-/-- A selected pattern body can use the arbitrary-local induction hypothesis
-with its related pattern bindings and compiler-generated traces. -/
-theorem localEnvBounded_patternBody {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (limit : Nat) (pattern : Pat) (body : AstHOL.Exp) (bodyIH : LocalEnvBoundedIH (F := F) interp transform limit body)
-    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source : State F) (flat : FlatSem.State C F) (baseEnv : SemEnv Value)
-    (sourceLocal : Namespace ModN VarN Value) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (traces : List BackendCommon.Tra) (trace : List VarN) (baseMap : Environment) (gen : EnvironmentGenerationStore)
-    (clockBound : source.clock ≤ limit) (localRel : EnvRel genv sourceLocal flatEnv.v)
-    (envInv : GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv)
-    (tracesLen : traces.length = flatEnv.v.length)
-    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
-    (generation : envGenRel gen source.evalState)
-    (bindings : List (VarN × Value)) (flatBindings : List (VarN × FlatSem.Value))
-    (bindingRel : EnvRel genv (alistToNs bindings) flatBindings)
-    (bindingNames : flatBindings.map Prod.fst = patBindings pattern)
-    (safe : ∀ last, EvaluateHOL.evaluate source
-      { baseEnv with v := nsAppend (alistToNs bindings) (nsAppend sourceLocal baseEnv.v) } [body] ≠
-      (last, .err (.abort .typeError))) :
-    LocalExpressionStep interp transform genv start finish other source flat
-      { baseEnv with v := nsAppend (alistToNs bindings) (nsAppend sourceLocal baseEnv.v) }
-      { flatEnv with v := flatBindings ++ flatEnv.v } trace
-      { baseMap with v := nsBindList (patTups .none (patBindings pattern)) (bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v) } gen body := by
-  obtain ⟨patternTraces, mapBind, patternLength⟩ := nsBindList_patTups_bindLocals
-    (patBindings pattern) .none traces (flatEnv.v.map Prod.fst) baseMap.v
-  have extendedRel := envRel_nsAppend genv (alistToNs bindings) sourceLocal flatBindings flatEnv.v ⟨bindingRel, localRel⟩
-  have extendedInv : GlobalEnvInv genv baseMap (fun n => n ∈ (flatBindings ++ flatEnv.v).map Prod.fst) baseEnv := by
-    cases envInv with
-    | intro _ _ _ values constructors =>
-      apply GlobalEnvInv.intro
-      · intro id v fresh lookup
-        apply values id v _ lookup
-        intro ⟨n, mem, eq⟩
-        apply fresh
-        exact ⟨n, by simp [mem], eq⟩
-      · exact constructors
-  have bindingLength : flatBindings.length = (patBindings pattern).length := by
-    have h := congrArg List.length bindingNames
-    simpa using h
-  obtain result := bodyIH genv start finish other source flat baseEnv
-    (nsAppend (alistToNs bindings) sourceLocal) { flatEnv with v := flatBindings ++ flatEnv.v }
-    (patternTraces ++ traces) trace baseMap gen clockBound extendedRel extendedInv
-    (by simp [patternLength, bindingLength, tracesLen]) invariant generation
-    (by simpa [← nsAppend_assoc] using safe)
-  simpa [← nsAppend_assoc, List.map_append, bindingNames, ← mapBind] using result
-
 /-- Match simulation using the compiled-row safety premise, without an
 all-source-rows compatibility premise. -/
 theorem boundedEvaluateMatch_related_flatSafe {C F : Type} [Nonempty C]
@@ -139,9 +92,29 @@ theorem boundedEvaluateMatch_related_flatSafe {C F : Type} [Nonempty C]
         apply safe last
         rw [sourceRun]
         exact bad
-      obtain ⟨nextGenv, bodySim, bodyPost⟩ := localEnvBounded_patternBody interp transform limit pattern body (each pattern body member)
-        genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen
-        invariant generation bindings flatBindings bindingsRel names bodySafe
+      obtain ⟨patternTraces, mapBind, patternLength⟩ := nsBindList_patTups_bindLocals
+        (patBindings pattern) .none traces (flatEnv.v.map Prod.fst) baseMap.v
+      have extendedRel := envRel_nsAppend genv (alistToNs bindings) sourceLocal flatBindings flatEnv.v ⟨bindingsRel, localRel⟩
+      have extendedInv : GlobalEnvInv genv baseMap (fun n => n ∈ (flatBindings ++ flatEnv.v).map Prod.fst) baseEnv := by
+        cases envInv with
+        | intro _ _ _ values constructors =>
+          apply GlobalEnvInv.intro
+          · intro id v fresh lookup
+            apply values id v _ lookup
+            intro ⟨n, mem, eq⟩
+            apply fresh
+            exact ⟨n, by simp [mem], eq⟩
+          · exact constructors
+      have bindingLength : flatBindings.length = (patBindings pattern).length := by
+        have h := congrArg List.length names
+        simpa using h
+      have bodyStep := (each pattern body member) genv start finish other source flat baseEnv
+        (nsAppend (alistToNs bindings) sourceLocal) { flatEnv with v := flatBindings ++ flatEnv.v }
+        (patternTraces ++ traces) trace baseMap gen clockBound extendedRel extendedInv
+        (by simp [patternLength, bindingLength, tracesLen]) invariant generation
+        (by simpa [← nsAppend_assoc] using bodySafe)
+      simp only [← nsAppend_assoc, List.map_append, names, ← mapBind] at bodyStep
+      obtain ⟨nextGenv, bodySim, bodyPost⟩ := bodyStep
       dsimp only [sourceEnv] at sourceRun
       dsimp only [compMap] at flatSelected
       refine ⟨nextGenv, ?_, ?_⟩
