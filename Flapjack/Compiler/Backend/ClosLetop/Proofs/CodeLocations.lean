@@ -9,12 +9,6 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
 namespace Flapjack.Compiler.Backend.ClosLetop
 open ClosLang ClosProps
 
-private theorem compileFuns_length (fns : List (Nat × Exp)) : (compileFuns fns).length = fns.length := by
-  induction fns with
-  | nil => rfl
-  | cons first rest ih => cases first; simp [compileFuns, ih]
-
-
 private theorem varList_codeLocations {α : Type} (n : Nat) (xs : List Exp) (ys : List α)
     (h : varList n xs ys = true) : codeLocations xs = [] := by
   induction xs generalizing n ys with
@@ -53,7 +47,9 @@ theorem compileSing_codeLocations (e : Exp) : codeLocationsExp (compileSing e) =
   | call t ticks dest xs => simp [compileSing, codeLocationsExp, compileList_codeLocations xs]
   | app t loc x xs => simp [compileSing, codeLocationsExp, compileSing_codeLocations x, compileList_codeLocations xs]
   | fn name loc vs arity body => simp [compileSing, codeLocationsExp, compileSing_codeLocations body]
-  | letrec names loc vs fns body => simp [compileSing, codeLocationsExp, compileFuns_codeLocations fns, compileSing_codeLocations body, compileFuns_length]
+  | letrec names loc vs fns body =>
+    have length : (compileFuns fns).length = fns.length := by simp [compileFuns_eq_map]
+    simp [compileSing, codeLocationsExp, compileFuns_codeLocations fns, compileSing_codeLocations body, length]
   | op t op xs => simp [compileSing, codeLocationsExp, compileList_codeLocations xs]
 termination_by sizeOf e
 
