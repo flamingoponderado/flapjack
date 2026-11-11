@@ -21,6 +21,18 @@ val finite_bag_union_1_replay = Q.prove (
 val _ = show "finite_bag_union_1_replay_typed=" finite_bag_union_1_replay;
 val _ = show "flat_finite_bag_globals_typed=" flat_to_closProofTheory.flat_FINITE_BAG_set_globals;
 val _ = show "clos_finite_bag_globals_typed=" flat_to_closProofTheory.clos_FINITE_BAG_set_globals;
+val bag_image_suc_finite = Q.prove (
+  `!b:num -> num. FINITE_BAG b ==> BAG_IMAGE SUC b = (\x. if x = 0 then 0 else b (x - 1))`,
+  ho_match_mp_tac bagTheory.STRONG_FINITE_BAG_INDUCT >>
+  simp [bagTheory.BAG_IMAGE_FINITE_INSERT, bagTheory.BAG_INSERT, bagTheory.EMPTY_BAG, FUN_EQ_THM] >>
+  rw [] >> simp []);
+val _ = show "bag_image_suc_finite_typed=" bag_image_suc_finite;
+val bag_image_foldr_replay = Q.prove (
+  `!xs. BAG_IMAGE SUC (FOLDR $⊎ {||} (MAP flatProps$set_globals xs)) =
+        FOLDR $⊎ {||} (MAP (BAG_IMAGE SUC o flatProps$set_globals) xs) /\
+        FINITE_BAG (FOLDR $⊎ {||} (MAP flatProps$set_globals xs))`,
+  Induct >> fs []);
+val _ = show "bag_image_foldr_replay_typed=" bag_image_foldr_replay;
 val _ = show "compile_globals=" flat_to_closProofTheory.compile_set_globals;
 val _ = show "compile_decs_globals=" flat_to_closProofTheory.compile_decs_set_globals;
 val _ = show "compile_eq_globals=" flat_to_closProofTheory.compile_eq_set_globals;

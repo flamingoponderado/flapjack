@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.FlatProps.Globals
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.CompileGlobals
 
 @[expose] public section
 
@@ -64,5 +65,25 @@ theorem closFiniteBagSetGlobals :
     | nil => simpa [ClosProps.elistGlobals, FlatProps.emptyGlobalBag] using (finiteEmptyBag (α := Nat))
     | cons e es ih =>
       simpa [ClosProps.elistGlobals, FlatProps.unionGlobalBag] using finiteBagUnion _ (closSetFinite e) _ ih
+
+/-- Shifting a fold of flat global bags distributes over the fold, which is finite.
+The original `BAG_IMAGE SUC` equals `shiftGlobalBag` on finite bags; the
+`bag_image_suc_finite_typed` HOL replay checks that source-side equation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "BAG_IMAGE_FOLDR_lemma"]
+theorem bagImageFoldrLemma (xs : List FlatLang.Exp) :
+    shiftGlobalBag ((xs.map FlatProps.setGlobals).foldr bagUnion emptyBag) =
+      (xs.map (fun e => shiftGlobalBag (FlatProps.setGlobals e))).foldr bagUnion emptyBag ∧
+    finiteBag ((xs.map FlatProps.setGlobals).foldr bagUnion emptyBag) := by
+  induction xs with
+  | nil => simp [shiftEmpty, finiteEmptyBag]
+  | cons e es ih =>
+    simp only [List.map_cons, List.foldr_cons]
+    constructor
+    · have shiftUnion (a b : FlatProps.GlobalBag) :
+          shiftGlobalBag (bagUnion a b) = bagUnion (shiftGlobalBag a) (shiftGlobalBag b) := by
+        funext key
+        by_cases h : key = 0 <;> simp [shiftGlobalBag, bagUnion, h]
+      rw [shiftUnion, ih.1]
+    · exact finiteBagUnion _ (flatFiniteBagSetGlobals.1 e) _ ih.2
 
 end Flapjack.Compiler.Backend.FlatToClos

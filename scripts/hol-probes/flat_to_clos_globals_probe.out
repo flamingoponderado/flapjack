@@ -12,6 +12,8 @@ finite_bag_insert_typed=∀(b :α -> num). FINITE_BAG b ⇒ ∀(e :α). FINITE_B
 finite_bag_union_1_replay_typed=∀(b1 :α -> num). FINITE_BAG b1 ⇒ ∀(b2 :α -> num). FINITE_BAG b2 ⇒ FINITE_BAG (b1 ⊎ b2)
 flat_finite_bag_globals_typed=(∀(e :exp). FINITE_BAG (set_globals e)) ∧ ∀(e :exp list). FINITE_BAG (elist_globals e)
 clos_finite_bag_globals_typed=(∀(e :closLang$exp). FINITE_BAG (set_globals e)) ∧ ∀(e :closLang$exp list). FINITE_BAG (elist_globals e)
+bag_image_suc_finite_typed=∀(b :num -> num). FINITE_BAG b ⇒ BAG_IMAGE SUC b = (λ(x :num). if x = (0 :num) then (0 :num) else b (x − (1 :num)))
+bag_image_foldr_replay_typed=∀(xs :exp list). BAG_IMAGE SUC (FOLDR ($⊎ :(num -> num) -> (num -> num) -> num -> num) ({||} :num -> num) (MAP set_globals xs)) = FOLDR ($⊎ :(num -> num) -> (num -> num) -> num -> num) ({||} :num -> num) (MAP (BAG_IMAGE SUC ∘ set_globals) xs) ∧ FINITE_BAG (FOLDR ($⊎ :(num -> num) -> (num -> num) -> num -> num) ({||} :num -> num) (MAP set_globals xs))
 compile_globals=∀(m :mlstring option list) (e :exp list). EVERY no_Mat e ⇒ elist_globals (compile m e) = BAG_IMAGE SUC (elist_globals e)
 compile_decs_globals=∀(decs :exp list). no_Mat_decs decs ⇒ elist_globals (compile_decs decs) = BAG_IMAGE SUC (elist_globals decs)
 compile_eq_globals=compile (m :mlstring option list) (exps :exp list) = (exps' :closLang$exp list) ∧ EVERY no_Mat exps ⇒ elist_globals exps' = BAG_IMAGE SUC (elist_globals exps)

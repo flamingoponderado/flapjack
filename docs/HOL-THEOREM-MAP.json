@@ -133043,6 +133043,14 @@
   "reviewer": "Compared clos_finite_bag_globals_typed: both all-expression and all-expression-list finite bag conclusions hold over the full closure syntax."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "BAG_IMAGE_FOLDR_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/FiniteGlobals.lean",
+  "lean_name": "bagImageFoldrLemma",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local source theorem and bag_image_foldr_replay_typed; bag_image_suc_finite_typed proves the source BAG_IMAGE SUC agrees with shiftGlobalBag for the finite fold and its finite elements."
+},
+{
   "hol_path": "HOL/src/bag/bagScript.sml",
   "hol_name": "BAG_UNION_EMPTY",
   "lean_path": "Flapjack/Misc/Bag.lean",
