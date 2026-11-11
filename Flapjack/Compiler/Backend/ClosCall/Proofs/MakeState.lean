@@ -48,6 +48,13 @@ theorem holFmapAsFiniteSupportParamWitness_makeState_wellFormed_code {B : Type}
     ofBroad (toBroad code) code.finiteSupport = code :=
   holFmapAsFiniteSupportParamWitness_makeState_code code key
 
+/-- Incrementing the first components preserves list distinctness. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "ALL_DISTINCT_MAP_FST_ADD1"]
+theorem distinctMapFstAdd1 {A : Type} (xs : List (Nat × A)) :
+    (xs.map (fun k => k.1 + 1)).Nodup ↔ (xs.map Prod.fst).Nodup := by
+  simpa [List.map_map, Function.comp_def] using
+    (List.nodup_map_iff (l := xs.map Prod.fst) (fun _ _ eq => Nat.add_right_cancel eq))
+
 /-- Every state produced by makeState satisfies the full compiler-state invariant. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "make_g_wfg"
   (fmap_as_finite_support_parameters := [code])]
@@ -74,9 +81,7 @@ theorem makeState_wellFormed {A B : Type} [Nonempty B] (d : Spt A)
         refine ⟨(loc, value), (sptMemToAList d loc value).2 found, ?_⟩
         simpa [Nat.succ_eq_add_one] using eq
     · have distinct := sptAllDistinctMapFstToAList d
-      have shifted : (((sptToAList d).map Prod.fst).map (fun k => k + 1)).Nodup :=
-        (List.nodup_map_iff (fun _ _ eq => Nat.add_right_cancel eq)).2 distinct
-      simpa [List.map_map, Function.comp_def] using shifted
+      simpa [List.map_map, Function.comp_def] using (distinctMapFstAdd1 _).2 distinct
   next invalid => simp at h
 
 private theorem fupdateList_of_distinct_member {K V : Type} [DecidableEq K]

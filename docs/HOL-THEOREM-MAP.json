@@ -287,6 +287,12 @@
   "reviewer": "Compared snd_insert_each_prime_type and source: the exact reversed generated label and HOL THE/ALOOKUP payload list precedes the unchanged old code; generic payload remains inhabited only for HOL THE."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "ALL_DISTINCT_MAP_FST_ADD1",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/MakeState.lean", "lean_name": "distinctMapFstAdd1",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original-proof replay retains an arbitrary list of natural-number and polymorphic payload pairs and the complete distinctness equivalence after incrementing first components."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_acc_0",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/SuffixReplacement.lean", "lean_name": "callsAcc0",
   "statement_status": "reviewed_exact",

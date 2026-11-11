@@ -27,6 +27,11 @@ val calls_acc_0_replay = prove
      (irule clos_callProofTheory.calls_acc >> simp []) >>
    fs [listTheory.APPEND_ASSOC] >> metis_tac []);
 val _ = (print "calls_acc_0_replay_type="; Lib.with_flag (Globals.show_types,true) print_term (concl calls_acc_0_replay); print "\n");
+(* Replay the local distinctness lemma with its original HOL proof. *)
+val distinct_map_fst_add1_replay = prove
+  (``!xs. ALL_DISTINCT (MAP (\k. FST k + 1n) xs) = ALL_DISTINCT (MAP FST xs)``,
+   Induct >> fs [listTheory.MEM_MAP]);
+val _ = (print "distinct_map_fst_add1_replay_type="; Lib.with_flag (Globals.show_types,true) print_term (concl distinct_map_fst_add1_replay); print "\n");
 val _ = (print "calls_el_sing_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_el_sing); print "\n");
 val _ = (print "v_rel_exists_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.v_rel_exists); print "\n");
 val _ = (print "is_recclosure_def_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.is_Recclosure_def); print "\n");
