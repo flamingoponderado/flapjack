@@ -38,3 +38,11 @@ val flookup_funion_submap_replay = prove (
   rw [finite_mapTheory.SUBMAP_DEF, finite_mapTheory.FLOOKUP_DEF] >> metis_tac []);
 val _ = show_thm "flookup_funion_submap_typed=" flookup_funion_submap_replay;
 val _ = show_thm "flookup_funion_submap_gen_all=" (GEN_ALL flookup_funion_submap_replay);
+
+(* Replay the earlier local disjoint-union submap theorem. *)
+val funion_submap_replay = prove (
+  ``FUNION x y SUBMAP z ∧ DISJOINT (FDOM x) (FDOM y) ⇒ y SUBMAP z``,
+  rw [finite_mapTheory.SUBMAP_DEF, pred_setTheory.DISJOINT_DEF, pred_setTheory.EXTENSION, finite_mapTheory.FUNION_DEF] >>
+    metis_tac []);
+val _ = show_thm "funion_submap_typed=" funion_submap_replay;
+val _ = show_thm "funion_submap_gen_all=" (GEN_ALL funion_submap_replay);

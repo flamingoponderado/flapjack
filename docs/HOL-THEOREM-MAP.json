@@ -133919,6 +133919,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "funion_submap",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/FiniteMapGrowth.lean",
+  "lean_name": "funionSubmap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["x", "y", "z"],
+  "reviewer": "Compared the freshly replayed typed local theorem and its GEN_ALL closure: independent generic key and value types, z/y/x over the same finite-map carriers, and the original conjunction of left-biased union submap and disjoint domains implying the right map is a submap. Disjointness is essential. Parameters x, y and z use HolFiniteMapExact with same-module codec roundtrip witnesses. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "flookup_funion_submap",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/FiniteMapGrowth.lean",
   "lean_name": "flookupFUnionSubmap",
