@@ -342,69 +342,6 @@ theorem evaluateDenv_oracle {C F : Type}
   · simp [EvaluateHOL.evaluateDecs, declared]
   · simpa [sourceState] using forward
 
-/-- The factored compiler invariant supplies the oracle mode and blank slot
-needed for the concrete `Denv` simulation. -/
-theorem evaluateDenv_factored {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (genv : GlobalEnv) (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
-    (env : SemEnv Value) (trace : List VarN) (n : Nat) (start finish : NextIndices)
-    (other : Set (Nat × IndexKind)) (compMap : Environment) (gen : EnvironmentGenerationStore)
-    (name : VarN) (value : Value) (after : Option EvalState)
-    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
-    (generation : envGenRel gen source.evalState)
-    (declared : declareEnv source.evalState env = some (value, after))
-    (fits : start.vidx + 1 ≤ finish.vidx) :
-    let stored : FlatSem.Value := .conv none
-      [.litv (.intLit (gen.generation : Int)), .litv (.intLit (gen.next : Int))]
-    EvaluateHOL.evaluateDecs source env [.denv name] =
-      ({ source with evalState := after }, .val { v := nsSing name value, c := nsEmpty }) ∧
-    FlatSem.evaluateDecs flat (compileDecs trace n start compMap gen [.denv name]).2.2.2.2 =
-      ({ flat with globals := flat.globals.set start.vidx (some stored) }, none) ∧
-    GlobalGrowth genv { genv with v := genv.v.set start.vidx (some stored) } ∧
-    ValueRel { genv with v := genv.v.set start.vidx (some stored) } value stored ∧
-    StateRel { genv with v := genv.v.set start.vidx (some stored) }
-      { source with evalState := after }
-      { flat with globals := flat.globals.set start.vidx (some stored) } ∧
-    idxRangeRel interp { genv with v := genv.v.set start.vidx (some stored) }
-      source.nextTypeStamp source.nextExnStamp after
-      ({ start with vidx := start.vidx + 1 }, finish, other) ∧
-    envGenRel { gen with next := gen.next + 1 } after ∧
-    oracForwardRel interp source.evalState after := by
-  have ⟨_, _, related, range, _, oracle, globals, _, _, _⟩ := valid
-  have empty := factoredInvariant_nextSlot_blank interp transform gen genv start finish other
-    source flat valid fits
-  cases sourceState : source.evalState with
-  | none => simp [sourceState, declareEnv] at declared
-  | some mode =>
-    obtain ⟨_, state, _, modeEq⟩ := oracRel_some interp transform mode flat.evalConfig
-      (by simpa [sourceState] using oracle)
-    subst mode
-    have result := evaluateDenv_oracle interp genv source flat state env trace n start compMap gen
-      name value after sourceState generation declared related globals empty
-    have cfgEq : srcOracNextCfg interp after = srcOracNextCfg interp source.evalState := by
-      have decl : declareEnv (some (.evalOracle state)) env = some (value, after) := by
-        simpa [sourceState] using declared
-      cases found : state.envs[state.generation]? with
-      | none => simp [declareEnv, found] at decl
-      | some storedEnvs =>
-        simp [declareEnv, found] at decl
-        obtain ⟨_, afterEq⟩ := decl
-        subst after
-        simp [sourceState, srcOracNextCfg]
-    have range' := idxRangeRel_fillSlot interp genv source.nextTypeStamp source.nextExnStamp
-      source.evalState start finish other
-      (.conv none [.litv (.intLit (gen.generation : Int)), .litv (.intLit (gen.next : Int))])
-      range (by simpa [globals] using empty) fits
-    have nextRange : idxRangeRel interp
-        { genv with v := genv.v.set start.vidx (some (.conv none
-          [.litv (.intLit (gen.generation : Int)), .litv (.intLit (gen.next : Int))])) }
-        source.nextTypeStamp source.nextExnStamp after
-        ({ start with vidx := start.vidx + 1 }, finish, other) := by
-      simpa [idxRangeRel, cfgEq] using range'
-    exact ⟨result.1, result.2.1, result.2.2.2.2.1, result.2.2.2.2.2.1,
-      result.2.2.2.2.2.2.1, nextRange, result.2.2.2.2.2.2.2.1,
-      by simpa [sourceState] using result.2.2.2.2.2.2.2.2⟩
-
 /-- Under the declaration compiler's future-generation premise, `Denv`
 preserves the complete factored simulation invariant. The factored value and
 environment relations still require review against the original HOL ones. -/
@@ -502,25 +439,37 @@ theorem evaluateDenv_factored_complete {C F : Type} [Nonempty C]
       (fun _ => False) { v := nsSing name value, c := nsEmpty } ∧
     EnvDomainEq (compileDecs trace n start compMap gen [.denv name]).2.2.1
       { v := nsSing name value, c := nsEmpty } := by
-  have step := evaluateDenv_factored interp transform genv source flat env trace n start finish other
-    compMap gen name value after valid generation declared fits
+  have ⟨_, _, related, _, _, oracle, globals, _, _, _⟩ := valid
+  have blank := factoredInvariant_nextSlot_blank interp transform gen genv start finish other source flat valid fits
+  obtain ⟨state, sourceState⟩ : ∃ state, source.evalState = some (.evalOracle state) := by
+    cases sourceState : source.evalState with
+    | none => simp [sourceState, declareEnv] at declared
+    | some mode =>
+      obtain ⟨_, state, _, modeEq⟩ := oracRel_some interp transform mode flat.evalConfig
+        (by simpa [sourceState] using oracle)
+      subst mode
+      exact ⟨state, rfl⟩
+  obtain ⟨sourceRun, flatRun, _, _, growth, valueRelated, states, genStep, forward⟩ :=
+    evaluateDenv_oracle interp genv source flat state env trace n start compMap gen name value after
+      sourceState generation declared related globals blank
   have invariant := factoredInvariant_denv interp transform genv source flat env trace n start finish other
     compMap gen name value after valid generation declared envInv future fits
   have genRel : envGenRel (compileDecs trace n start compMap gen [.denv name]).2.2.2.1 after := by
     cases after with
     | none => trivial
-    | some state => cases state <;> simpa [compileDecs, envGenRel] using step.2.2.2.2.2.2.1
-  have ⟨_, _, _, _, _, _, globals, _, _, _⟩ := valid
-  have blank := factoredInvariant_nextSlot_blank interp transform gen genv start finish other source flat valid fits
+    | some state =>
+      cases state with
+      | evalDecs _ => trivial
+      | evalOracle _ => simpa only [compileDecs, envGenRel] using genStep
   have bound : start.vidx < genv.v.length := by
     rw [globals]
     exact (List.getElem?_eq_some_iff.mp blank).1
   have newEnvInv := globalEnvInv_singleton
     { genv with v := genv.v.set start.vidx (some (.conv none
       [.litv (.intLit (gen.generation : Int)), .litv (.intLit (gen.next : Int))])) }
-    name start.vidx .none value _ (by simpa using bound) (by simp [bound]) step.2.2.2.1
-  refine ⟨step.1, step.2.1, invariant, step.2.2.1, step.2.2.2.1,
-    step.2.2.2.2.1, genRel, step.2.2.2.2.2.2.2, by simpa [compileDecs] using newEnvInv,
+    name start.vidx .none value _ (by simpa using bound) (by simp [bound]) valueRelated
+  refine ⟨sourceRun, flatRun, invariant, growth, valueRelated,
+    states, genRel, forward, by simpa [compileDecs] using newEnvInv,
     ?_⟩
   simp only [compileDecs]
   obtain ⟨values, valueModules⟩ := alistToNs_domains_eq (M := ModN)
