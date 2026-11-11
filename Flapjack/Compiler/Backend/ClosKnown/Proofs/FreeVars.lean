@@ -9,6 +9,19 @@ public import Flapjack.Compiler.Backend.ClosKnown.Fuel
 namespace Flapjack.Compiler.Backend.ClosKnown
 open ClosLang ClosProps
 
+/-- Recursive-closure approximations enumerate the input arities in order. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "clos_gen_noinline_eq"]
+theorem closGenNoInlineEq {α : Type} (n c : Nat) (fns : List (Nat × α)) :
+    closGenNoInline n c fns =
+      List.ofFn (fun i : Fin fns.length =>
+        ValApprox.closNoInline (2 * (i.val + c) + n) (fns[i.val]'i.isLt).1) := by
+  induction fns generalizing c with
+  | nil => simp [closGenNoInline]
+  | cons head tail ih =>
+    cases head with
+    | mk arity body =>
+      simp [closGenNoInline, List.ofFn_succ, ih, Nat.add_comm, Nat.add_left_comm, Nat.mul_add]
+
 /-- Check a predicate on every variable represented by a shifted set. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "every_var_def"]
 def everyVar (P : Nat → Prop) : DbVars.DbVarSet → Prop

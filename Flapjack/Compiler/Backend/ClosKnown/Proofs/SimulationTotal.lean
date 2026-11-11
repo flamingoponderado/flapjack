@@ -1097,7 +1097,72 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
                   (by intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]) argsIH
               | globOp operation =>
                 cases operation with
-                | global index => exact Global.knownCorrect0OpGlobal trace index args env state argsIH
+                | global index =>
+                  intro res1 s env1 xenv1 env2 xenv2 t0 c g0 g aenv eas h
+                  obtain ⟨run, known, initialRel, inputSyntax, coSyntax, disjoint, oracle, stateOracleDisjoint,
+                    exprSafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
+                    sub0, sub1, mono, free, envRel, unique, stateOracle, envEq, noType⟩ := h
+                  have argsUnique : uniqueSetGlobals args state.compileOracle := by
+                    simpa [uniqueSetGlobals, elistGlobals_append, elistGlobals, setGlobals, opGlobalBag,
+                      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
+                  have argsDisjoint : mglobalsDisjoint state.globals args := by
+                    simpa [mglobalsDisjoint, elistGlobals, setGlobals, opGlobalBag,
+                      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using disjoint
+                  have argsSafe : ∀ e ∈ args, esgcFree e := by
+                    have safeOp := exprSafe (.op trace (.globOp (.global index)) args) (by simp)
+                    simpa [esgcFree, esgcFreeList_iff] using safeOp
+                  have argsSyntax : everyFnVarsNone args := by
+                    simpa [everyFnVarsNone, fnVarsNoneExp] using inputSyntax
+                  have argsFree : fvMax env1.length args := by
+                    simpa [fvMax, freeVars, freeVarExp] using free
+                  cases hk : knownListTotal c args aenv g0 with
+                  | mk argEas g1 =>
+                    cases ho : knownOpHOL (.globOp (.global index)) (argEas.map Prod.snd).reverse g1 with
+                    | mk a g2 =>
+                      rw [knownListTotal_op, hk] at known
+                      dsimp only at known
+                      rw [ho] at known
+                      dsimp only at known
+                      change ([(Ordinary.selectedOutput trace (.globOp (.global index)) a (argEas.map Prod.fst), a)], g2) = (eas, g) at known
+                      simp only [Prod.mk.injEq] at known
+                      rcases known with ⟨rfl, rfl⟩
+                      have ⟨subArgs, subOp⟩ := subsptKnownOpElistGlobals c args aenv g0 argEas g1
+                        (.globOp (.global index)) (argEas.map Prod.snd).reverse g2 a ⟨hk, ho, sub0, by simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]⟩
+                      have subArgsNext : sptSubspt g1 (nextG state) := sptSubsptTrans _ _ _ ⟨subOp, sub1⟩
+                      cases hr : evaluate args env state with
+                      | mk argResult middle =>
+                        have argsNoType : argResult ≠ .err (.abort .typeError) := by
+                          intro eq
+                          subst argResult
+                          rw [evaluate_ordinaryOp_eq trace (.globOp (.global index)) args env state (by simp) (by simp), hr] at run
+                          simp at run
+                          rcases run with ⟨rfl, rfl⟩
+                          exact noType rfl
+                        obtain ⟨targetArgResult, targetMiddle, targetArgs, argsRelated, midState, midGlobals,
+                            midOracleState, midOracle⟩ := argsIH argResult middle env1 xenv1 env2 xenv2 t0 c g0 g1
+                          aenv argEas ⟨hr, hk, initialRel, argsSyntax, coSyntax, argsDisjoint, oracle, stateOracleDisjoint,
+                            argsSafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
+                            subArgs, subArgsNext, mono, argsFree, envRel, argsUnique, stateOracle, envEq, argsNoType⟩
+                        have startSub : sptSubspt g0 (nextG state) := sptSubsptTrans _ _ _ ⟨sub0, sub1⟩
+                        have startGlobals := stateGlobalsApproxSubspt g0 (nextG state) state ⟨startSub, globals⟩
+                        have startOracle := oracleGapproxDisjointSubspt g0 (nextG state) state.compileOracle ⟨startSub, oracle⟩
+                        have argApprox := CorrectApprox.Total.knownCorrectApprox c args aenv g0 argEas g1 env1 xenv1 state
+                          argResult middle ⟨hk, by simpa [envEq] using hr, argsUnique, approxRel, startGlobals,
+                            argsDisjoint, startOracle, safe, by simpa [← envEq] using envSafe, argsSafe, approxSafe, globalSafe⟩
+                        have nextTree := nextGEvaluateSubspt args env state argResult middle ⟨mono, hr⟩
+                        have subMiddle : sptSubspt g1 (nextG middle) := sptSubsptTrans _ _ _ ⟨subArgsNext, nextTree⟩
+                        have middleApprox := stateGlobalsApproxSubspt g1 (nextG middle) middle ⟨subMiddle, midGlobals⟩
+                        obtain ⟨targetResult, targetFinal, targetRun, resultRelated, finalState⟩ :=
+                          Global.globalSelectedSimulation c (nextG middle) trace index a g1 g2 argEas args env (env2 ++ xenv2)
+                            state middle t0 targetMiddle argResult targetArgResult res1 s ho hr targetArgs midState
+                            argsRelated argApprox.2 middleApprox run noType
+                        have ⟨nextEq, finalGlobals, finalOracle, finalDisjoint⟩ :=
+                          Ordinary.ordinaryOpStateInvariants trace (.globOp (.global index)) args env state middle s
+                            argResult res1 (by simp) (by simp) (by simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag])
+                            hr run midGlobals midOracleState midOracle
+                        exact ⟨targetResult, targetFinal, by simpa using targetRun,
+                          by simpa [nextEq] using resultRelated, by simpa [nextEq] using finalState,
+                          finalGlobals, finalOracle, finalDisjoint⟩
                 | setGlobal index => exact SetGlobal.knownCorrect0OpSetGlobal trace index args env state argsIH
                 | allocGlobal =>
                   exact Ordinary.knownCorrect0OpNoWrites trace (.globOp .allocGlobal) args env state

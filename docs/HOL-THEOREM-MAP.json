@@ -10591,19 +10591,6 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpGlobal.lean",
-  "lean_name": "knownCorrect0OpGlobal",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out with the original global-read operation branch. KnownSimulationAt unfolds to the full expression conjunct and retains the argument induction hypothesis; the installation and force hypotheses are inapplicable. The proof covers unreplaced reads and integer and empty-constructor replacements, using the source argument approximation and runtime global invariant to recover the exact value; global read errors are type errors excluded by the source theorem. The primitive state frame and oracle conditions are retained. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpForce.lean",
   "lean_name": "knownCorrect0OpForce",
   "statement_status": "reviewed_fmap_as_finite_support",
@@ -10985,6 +10972,14 @@
   "lean_name": "decideInlineLetInlineFvMax",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared decide_inline_imp_clos_fv_max_typed in clos_known_syntax_probe.out and the source theorem. The location payload remains polymorphic, and the decision, existential closure approximation and original free-variable bound match. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "clos_gen_noinline_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "closGenNoInlineEq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_clos_gen_noinline_eq_typed: arbitrary payload type, generated length, index calculation and in-range input element agree. List.ofFn uses exactly the indices produced by GENLIST, so each EL is in bounds."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
