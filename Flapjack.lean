@@ -521,6 +521,7 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownUnchanged
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxLetrec
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxTotal
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ValueRelation
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.GeneratedSize
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.AppExact
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracle
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownSubspt

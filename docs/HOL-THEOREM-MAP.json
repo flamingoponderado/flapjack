@@ -10472,19 +10472,6 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationLetrec.lean",
-  "lean_name": "knownCorrect0Letrec",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out. The recursive-closure evaluator case retains the original body induction hypothesis, including the arity checks, closure generator, optional capture lookup and environment extension. KnownSimulationAt unfolds to the original expression conjunct. Source and target states have independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "v_rel_Block",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationBool.lean",
   "lean_name": "valueRelBlockTarget",
@@ -10992,6 +10979,14 @@
   "lean_name": "valueRelWordsList",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared known_words_list_replay_typed, replaying the original source-local proof: related full values agree on decoding the arbitrary fixed-width list, with the same hypotheses and iff conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v1_size_append",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/GeneratedSize.lean",
+  "lean_name": "valueListSizeAppend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_v1_size_append_typed and known_v_size_def_typed: generated value-list size and concatenation retain the original equations and statement."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",

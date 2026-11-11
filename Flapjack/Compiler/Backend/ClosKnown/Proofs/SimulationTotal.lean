@@ -673,10 +673,105 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
                                   rw [evaluate, fixClock_evaluate, targetCondRun'] <;>
                                   simpa [asBool, ClosSem.boolValue, BackendCommon.falseTag] using targetRun
             | letrec names location selected functions body =>
-              apply Letrec.knownCorrect0Letrec names location selected functions body env state
-              intro buildRc envdelta ed _
-              apply exprIH [body] (ed ++ env) state (by omega)
-              simp only [expsWeight, expWeight] at measure ⊢; omega
+              intro res1 s env1 xenv1 env2 xenv2 t0 c g0 g aenv eas h
+              obtain ⟨run, known, initialRel, inputSyntax, coSyntax, disjoint, oracle, stateOracleDisjoint,
+                exprSafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
+                sub0, sub1, mono, free, envRel, unique, stateOracle, envEq, noType⟩ := h
+              have syntaxParts : selected = none ∧ fnVarsNoneFuns functions ∧ everyFnVarsNone [body] := by
+                simpa [everyFnVarsNone, fnVarsNoneExp] using inputSyntax
+              obtain ⟨selectedEq, fnsSyntax, bodySyntax⟩ := syntaxParts
+              have fnSyntaxAux : ∀ fs : List (Nat × ClosLang.Exp), fnVarsNoneFuns fs →
+                  ∀ f ∈ fs, everyFnVarsNone [f.2] := by
+                intro fs hs
+                induction fs with
+                | nil => simp
+                | cons f fs ih =>
+                  obtain ⟨n, e⟩ := f
+                  simp only [fnVarsNoneFuns] at hs
+                  intro f member
+                  simp only [List.mem_cons] at member
+                  rcases member with rfl | member
+                  · simpa [everyFnVarsNone] using hs.1
+                  · exact ih hs.2 f member
+              have fnSyntax := fnSyntaxAux functions fnsSyntax
+              subst selected
+              have safeParts : funGlobals functions = FlatProps.emptyGlobalBag ∧ esgcFree body := by
+                simpa [esgcFree] using exprSafe (.letrec names location none functions body) (by simp)
+              let clos := match location with | none => List.replicate functions.length ValApprox.other | some n => closGenNoInline n 0 functions
+              let newFns := functions.map (fun (n, e) =>
+                (n, (knownSourceHead (knownListTotal c [e] (List.replicate n ValApprox.other ++ clos ++ aenv) g0).1).1))
+              have closSafe : ∀ a ∈ clos, valApproxSgcFree a := by
+                cases location with
+                | none => simp [clos, valApproxSgcFree]
+                | some n => exact closGenNoInlineSafe n 0 functions
+              have subStart : sptSubspt g0 (nextG state) := sptSubsptTrans _ _ _ ⟨sub0, sub1⟩
+              have fnRel : List.Forall₂ (fRel c (clos ++ aenv) (nextG state)) functions newFns :=
+                Letrec.optimizedFunctionsRelated c functions clos aenv g0 (nextG state) safeParts.1 closSafe approxSafe globalSafe subStart
+              have freeParts := (fvMaxLetrec env1.length names location none functions body).1 free
+              have fnFree : ∀ f ∈ functions, fvMax (f.1 + functions.length + env1.length) [f.2] := by
+                intro f member
+                simpa [Nat.add_comm, Nat.add_left_comm, Nat.add_assoc] using freeParts.1 f member
+              let recs1 := (List.range functions.length).map (fun i => ClosSem.Value.recclosure location [] env functions i)
+              let recs2 := (List.range functions.length).map (fun i => ClosSem.Value.recclosure location [] (env2 ++ xenv2) newFns i)
+              have recRel : List.Forall₂ (ValueRel c (nextG state)) recs1 recs2 := by
+                simpa [recs1, recs2, envEq, clos] using Letrec.recursiveClosuresRelated c (nextG state) location functions newFns
+                  env1 xenv1 env2 xenv2 aenv fnSyntax fnFree envRel approxRel (by cases location <;> simpa [clos] using fnRel)
+                  (List.range functions.length)
+              have recApprox : List.Forall₂ ValApproxVal clos recs1 := by
+                exact CorrectApprox.Letrec.recClosuresApprox location env functions
+              have recSafe : ∀ v ∈ recs1, vsgcFree v := by
+                intro v member
+                obtain ⟨i, _, rfl⟩ := List.mem_map.mp member
+                simpa [recs1, vsgcFree, ← funGlobals_eq_elist] using And.intro safeParts.1 envSafe
+              have bodyUnique : uniqueSetGlobals [body] state.compileOracle := by
+                simpa [uniqueSetGlobals, elistGlobals, setGlobals, safeParts.1,
+                  FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
+              have bodyDisjoint : mglobalsDisjoint state.globals [body] := by
+                simpa [mglobalsDisjoint, elistGlobals, setGlobals, safeParts.1,
+                  FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using disjoint
+              have bodySafe : ∀ e ∈ [body], esgcFree e := by simpa using safeParts.2
+              have extendedSafe : ∀ v ∈ (recs1 ++ env1) ++ xenv1, vsgcFree v := by
+                simpa [List.mem_append, or_imp, forall_and, ← envEq] using And.intro recSafe envSafe
+              have extendedApproxSafe : ∀ a ∈ clos ++ aenv, valApproxSgcFree a := by
+                simpa [List.mem_append, or_imp, forall_and] using And.intro closSafe approxSafe
+              cases hk : knownListTotal c [body] (clos ++ aenv) g0 with
+              | mk bodyEas bodyG =>
+                obtain ⟨bodyExpr, bodyApprox, bodyEq⟩ :=
+                  knownListTotal_single_result c body (clos ++ aenv) g0 bodyG bodyEas hk
+                subst bodyEas
+                rw [knownListTotal_letrec] at known
+                change (let clos' := clos; let fs := newFns; let (ea, gg) := knownListTotal c [body] (clos' ++ aenv) g0
+                  ([(.letrec names location none fs (knownSourceHead ea).1, (knownSourceHead ea).2)], gg)) = (eas, g) at known
+                dsimp only at known
+                rw [hk] at known
+                simp [knownSourceHead] at known
+                rcases known with ⟨rfl, rfl⟩
+                by_cases valid : (functions.all (fun (arity, _) => arity ≤ state.maxApp && arity != 0)) = true
+                · have ih : KnownSimulationAt [body] (recs1 ++ env) state := by
+                    apply exprIH [body] (recs1 ++ env) state (by omega)
+                    simp only [expsWeight, expWeight] at measure ⊢; omega
+                  have bodyRun : evaluate [body] (recs1 ++ env) state = (res1, s) := by
+                    simpa [evaluate, valid, recs1] using run
+                  have bodyEnvSafe : ∀ v ∈ recs1 ++ env, vsgcFree v := by
+                    simpa [envEq, List.append_assoc] using extendedSafe
+                  have bodyFree : fvMax (recs1 ++ env1).length [body] := by
+                    simpa [recs1, Nat.add_comm] using freeParts.2
+                  have result := ih res1 s (recs1 ++ env1) xenv1 (recs2 ++ env2) xenv2 t0 c g0 bodyG
+                    (clos ++ aenv) [(bodyExpr, bodyApprox)]
+                    ⟨bodyRun, hk, initialRel, bodySyntax, coSyntax, bodyDisjoint, oracle, stateOracleDisjoint,
+                      bodySafe, safe, bodyEnvSafe, List.rel_append recApprox approxRel, oracleSafe, globalSafe,
+                      extendedApproxSafe, globals, sub0, sub1, mono, bodyFree, List.rel_append recRel envRel,
+                      bodyUnique, stateOracle, by simp [envEq, List.append_assoc], noType⟩
+                  obtain ⟨res2, t, targetRun, related, finalState, finalGlobals, finalOracle, finalDisjoint⟩ := result
+                  refine ⟨res2, t, ?_, related, finalState, finalGlobals, finalOracle, finalDisjoint⟩
+                  have maxEq : state.maxApp = t0.maxApp := initialRel.2.2.2.2.2.2.1
+                  have targetValid : (newFns.all (fun (arity, _) => arity ≤ t0.maxApp && arity != 0)) = true := by
+                    simpa [newFns, List.all_map, ← maxEq] using valid
+                  simp only [List.map_cons, List.map_nil, evaluate, targetValid, if_true]
+                  simpa [recs2, newFns, List.append_assoc] using targetRun
+                · simp [evaluate, valid] at run
+                  rcases run with ⟨rfl, rfl⟩
+                  exact False.elim (noType rfl)
             | call trace ticks location args =>
               have argsIH : KnownSimulationAt args env state := by
                 apply exprIH args env state (by omega)
