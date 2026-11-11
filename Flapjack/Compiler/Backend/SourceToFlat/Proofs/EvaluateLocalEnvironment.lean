@@ -2,6 +2,8 @@ module
 
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundConstructor
 public import Flapjack.NamespaceProps
+public import Flapjack.Compiler.Backend.FlatProps.ValueBasics
+public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
 public import Flapjack.SemanticPrimitivesProps.RecursiveFunctions
 
 @[expose] public section
@@ -106,26 +108,13 @@ theorem localRecEnv_related (genv : GlobalEnv) (baseMap : Environment)
     let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
     let compiled := compileFuns trace compMap funs
     EnvRel genv (buildRecEnv funs sourceEnv sourceLocal) (FlatSem.buildRecEnv compiled flatEnv flatEnv.v) := by
-  let compMap := { baseMap with v := bindLocals traces (funs.map Prod.fst ++ flatEnv.v.map Prod.fst) baseMap.v }
-  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
-  let compiled := compileFuns trace compMap funs
-  have recRel : ∀ name, ValueRel genv (.recclosure sourceEnv funs name) (.recclosure flatEnv compiled name) := by
-    intro name
-    exact .recclosure genv baseMap baseEnv sourceLocal funs name flatEnv trace traces localRel envInv length
-  have helper : ∀ remaining : List (VarN × VarN × AstHOL.Exp),
-      EnvRel genv
-        (remaining.foldr (fun (name, _, _) rest => nsBind name (.recclosure sourceEnv funs name) rest) sourceLocal)
-        ((compileFuns trace compMap remaining).foldr
-          (fun (name, _, _) rest => (name, .recclosure flatEnv compiled name) :: rest) flatEnv.v) := by
-    intro remaining
-    induction remaining with
-    | nil => exact localRel
-    | cons head rest ih =>
-      obtain ⟨name, arg, body⟩ := head
-      simp only [List.foldr_cons, compileFuns]
-      exact .bind genv name _ _ _ _ ih (recRel name)
-  exact helper funs
-
+  dsimp only
+  rw [Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs (),
+    FlatProps.buildRecEnv_merge _ ()]
+  apply envRel_nsAppend genv _ _ _ _ ⟨?_, localRel⟩
+  simpa only [bindLocals, nsBindList] using
+    (doApp_rec_help (α := Unit) (baseEnv := baseEnv) (traces := traces) (capturedFuns := funs)
+      genv baseMap sourceLocal flatEnv () funs trace ⟨localRel, envInv, length⟩)
 
 /-- Variable lookup respects local shadowing and falls back to the related
 global environment for names absent from the local stack. -/
