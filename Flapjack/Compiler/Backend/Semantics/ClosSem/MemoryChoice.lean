@@ -1,5 +1,6 @@
 module
 
+public import Flapjack.Misc.ByteDecoding
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
 public import Flapjack.Misc.Option.Characterization
 public import Aesop
@@ -59,29 +60,9 @@ def byteNaturalValues (values : List Value) : Option (List Nat) :=
 /-- Natural decoding preserves precisely the original element bounds. -/
 theorem byteNaturalValues_eq_some (values : List Value) (numbers : List Nat) :
     byteNaturalValues values = some numbers ↔
-      values = numbers.map (fun n => .number n) ∧ ∀ n ∈ numbers, n < 256 := by
-  simp only [byteNaturalValues, Option.map_eq_some_iff, byteNumbers_eq_some]
-  constructor
-  · rintro ⟨bytes, encoded, rfl⟩
-    constructor
-    · simpa [List.map_map, Function.comp_def] using encoded
-    · intro n member
-      obtain ⟨byte, _, rfl⟩ := List.mem_map.mp member
-      simpa using byte.isLt
-  · rintro ⟨encoded, bound⟩
-    let bytes : List (BitVec 8) := numbers.map (BitVec.ofNat 8)
-    have roundtrip : bytes.map BitVec.toNat = numbers := by
-      simp only [bytes, List.map_map]
-      conv_rhs => rw [← List.map_id numbers]
-      apply List.map_congr_left
-      intro n member
-      simp [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (bound n member)]
-    refine ⟨bytes, ?_, roundtrip⟩
-    have mapped : bytes.map (fun b => Value.number b.toNat) =
-        numbers.map (fun (n : Nat) => Value.number n) := by
-      rw [← roundtrip]
-      simp [List.map_map, Function.comp_def]
-    exact encoded.trans mapped.symm
+      values = numbers.map (fun n => .number n) ∧ ∀ n ∈ numbers, n < 256 :=
+  byteNaturalValues_eq_some_generic (fun n => Value.number (n : Int)) byteNumbers
+    byteNumbers_eq_some values numbers
 
 /-- The naturals selected by the source `FromListByte` predicate. -/
 def byteNaturalList (value : Value) : Option (List Nat) :=
