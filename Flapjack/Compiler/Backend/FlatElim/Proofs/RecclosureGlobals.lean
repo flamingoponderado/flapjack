@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
+
+@[expose] public section
 
 /-! Global dependencies of mapped recursive closures. -/
 namespace Flapjack.Compiler.Backend.FlatElim
