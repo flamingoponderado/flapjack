@@ -93,14 +93,18 @@ theorem condMti_monotonic_elistGlobals {α β : Type} (es : List ClosLang.Exp)
       simpa [Function.comp_def, pureCo, ClosMti.condCompileInc, ClosMti.compileInc,
         ClosMti.intro_multi_preserves_elist_globals] using hx
 
-/-- Flapjack proof infrastructure: the preceding constant contributes no
-global write, so the reviewed numbering bag theorem applies to the oracle. -/
-private theorem numberCompileInc_globals (start : Nat) (es : List ClosLang.Exp) :
+/-- Renumbering preserves the global-write bag of an expression list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "elist_globals_SND_renumber_code_locs_list"]
+theorem elistGlobals_renumberList (start : Nat) (es : List ClosLang.Exp) :
+    elistGlobals (ClosNumber.renumberList start es).2 = elistGlobals es := by
+  exact ClosNumber.renumberCodeLocs_elistGlobals.1 start es
+    (ClosNumber.renumberList start es).1 (ClosNumber.renumberList start es).2 (Prod.eta _).symm
+
+/-- Incremental numbering preserves the global-write bag. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "elist_globals_SND_ncompile_inc"]
+theorem numberCompileInc_globals (start : Nat) (es : List ClosLang.Exp) :
     elistGlobals (ClosNumber.compileInc start es).2 = elistGlobals es := by
-  have h := ClosNumber.renumberCodeLocs_elistGlobals.1
-    (makeEven (start + max es.length 1)) es
-    (ClosNumber.renumberList (makeEven (start + max es.length 1)) es).1
-    (ClosNumber.renumberList (makeEven (start + max es.length 1)) es).2 (Prod.eta _).symm
+  have h := elistGlobals_renumberList (makeEven (start + max es.length 1)) es
   simp [ClosNumber.compileInc, elistGlobals, setGlobals, opGlobalBag,
     FlatProps.emptyGlobalBag, FlatProps.unionGlobalBag, h]
   funext key

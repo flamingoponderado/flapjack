@@ -16,6 +16,8 @@ val _ = show_thm "chain_exps_semantics_typed=" clos_to_bvlProofTheory.chain_exps
 val _ = show_thm "chain_exps_semantics_call_typed=" clos_to_bvlProofTheory.chain_exps_semantics_call;
 val _ = show_thm "clos_state_cc_def_typed=" clos_to_bvlProofTheory.clos_state_cc_def;
 val _ = show_thm "kcompile_csyntax_ok_typed=" clos_to_bvlProofTheory.kcompile_csyntax_ok;
+val _ = show_thm "elist_globals_SND_renumber_code_locs_list_typed=" clos_to_bvlProofTheory.elist_globals_SND_renumber_code_locs_list;
+val _ = show_thm "elist_globals_SND_ncompile_inc_typed=" clos_to_bvlProofTheory.elist_globals_SND_ncompile_inc;
 val _ = show_thm "semantics_cond_call_compile_inc_typed=" clos_to_bvlProofTheory.semantics_cond_call_compile_inc;
 val _ = show_thm "compile_common_semantics_typed=" clos_to_bvlProofTheory.compile_common_semantics;
 val _ = show_thm "compile_semantics_typed=" clos_to_bvlProofTheory.compile_semantics;

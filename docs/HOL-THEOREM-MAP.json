@@ -2594,6 +2594,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "elist_globals_SND_renumber_code_locs_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean",
+  "lean_name": "elistGlobals_renumberList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and typed capture confirms arbitrary natural start and expression list, unconditional equality, and the num-to-num global-write bag with multiplicities. The proof specializes the reviewed numbering theorem to its actual result pair."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "elist_globals_SND_ncompile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean",
+  "lean_name": "numberCompileInc_globals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and typed capture confirms arbitrary start and expression list, the complete incremental compiler including its prepended constant, and unconditional equality of num-to-num global-write bags with multiplicities."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "kcompile_csyntax_ok",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownSyntax.lean",
   "lean_name": "kcompile_csyntaxOk",
