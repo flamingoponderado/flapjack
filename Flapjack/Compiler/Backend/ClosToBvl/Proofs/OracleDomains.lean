@@ -15,6 +15,12 @@ import Mathlib.Data.Set.Lattice
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack ClosLang ClosProps BackendProps
 
+/-- Optional multi-argument introduction preserves the global-write bag. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_elist_globals"]
+theorem mtiCompile_elistGlobals (enabled : Bool) (maxApp : Nat) (es : List ClosLang.Exp) :
+    elistGlobals (ClosMti.compile enabled maxApp es) = elistGlobals es :=
+  ClosMti.compile_preserves_elist_globals maxApp enabled es
+
 /-- Accumulated code contains exactly the labels from earlier oracle entries. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "domain_nth_code"]
 theorem domain_nthCode {C A : Type} (n : Nat) (orac : Nat → C × List (Nat × A)) :

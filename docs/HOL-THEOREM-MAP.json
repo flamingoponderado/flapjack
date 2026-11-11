@@ -2594,6 +2594,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "compile_elist_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean",
+  "lean_name": "mtiCompile_elistGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and typed capture confirms arbitrary Boolean flag, maximum arity, and expression list, with unconditional equality of the full natural-multiplicity global-write bags. Both enabled and disabled compiler cases are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "mcompile_inc_uncurry",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiInvariants.lean",
+  "lean_name": "mcompileInc_uncurry",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and typed capture confirms the complete incremental compiler equation, arbitrary input payload and independently typed output list, with no additional premises. The reviewed total introduction traversal implements the original intro_multi."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "elist_globals_SND_renumber_code_locs_list",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean",
   "lean_name": "elistGlobals_renumberList",
