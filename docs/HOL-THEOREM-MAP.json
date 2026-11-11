@@ -74270,14 +74270,6 @@
     "reviewer": "Exact port over the exact finite-map context carrier CrepToLoopFiniteMapContext (vars : FiniteMap Nat Nat, funcs : FiniteMap FunName (Nat × Nat)), matching HOL crep_to_loop$context fields (crepLang$varname = num, crepLang$funname = mlstring); default 0 on lookup miss; word-length independent so no width-indexing. Direct HOL oracle rows find_var_hit/find_var_miss/find_lab_hit/find_lab_miss in scripts/hol-probes/crep_to_loop_context_defs_probe.out reproduced by Lean guards in Flapjack/Test/CrepToLoopParity.lean."
   },
   {
-    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
-    "hol_name": "make_vmap_def",
-    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
-    "lean_name": "makeVmapHOL",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Raw function lookup map admits infinite support, unlike HOL finite maps. Retained as support for faithful finite-map lookup proofs; exact HOL declaration remains unported."
-  },
-  {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "mem_lookup_fromalist_some",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
@@ -133832,5 +133824,14 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.3.30/.3.38/.3.39; panSemScript.sml:489-500: typed capture is_valid_value_simps2_typed in pan_sem_state_simp_probe.out gives the eight clock/ffi/code/memory update-invariance equations for is_valid_value and lookup_kvar over (s :(\u03b1,\u03b2) state), with free variables s k vk v vl ffi cd m and 0 hypotheses. Lean keeps HOL's binder order s k vk v vl ffi cd m, all eight conjuncts in HOL order, and the finite-support carrier fields locals/globals/code/eshapes (code is a HolFiniteMapExact, memory a total word_lab map). Binder order and premise grouping compared with HOL; the function-backed StateSimpExact versions stay untagged with no manifest row."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "make_vmap_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "makeVmapExact",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-pxn.18.5.6.31.3 family; typed capture make_vmap_def_typed in scripts/hol-probes/crep_to_loop_make_vmap_probe.out gives \u2200(params :\u03b1 list). make_vmap params = (FEMPTY :\u03b1 |-> num) |++ ZIP (params,GENLIST I (LENGTH params)), 0 hypotheses). Lean keeps HOL's generic key type \u03b1 (DecidableEq is HOL equality) and num values, and renders FEMPTY |++ ZIP as updateListEq over HolFiniteMapExact.empty with the zipped params/GENLIST list; the same-module witness holFmapAsFiniteSupportResultWitness_makeVmapExact states the lookup correspondence with the raw FUPDATE_LIST_HOL operation. Binder order and equation compared with HOL."
   }
 ]

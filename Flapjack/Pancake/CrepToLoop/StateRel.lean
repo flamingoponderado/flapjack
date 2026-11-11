@@ -963,8 +963,10 @@ def mkCtxtHOL (target : Compiler.Encoders.Asm.AsmArchitecture) (vmap : FiniteMap
   { vars := vmap, funcs := functions, vmax := vmax, target := target }
 
 /-- Flapjack-specific lookup-map rendering of HOL `make_vmap_def`.
-    Its result is a raw function, not a finite map; `makeVmapExact` provides
-    the finite-support carrier needed for a faithful port. -/
+    Its result is a raw function, not a finite map; the exact finite-support
+    port is the tagged `makeVmapExact` (`CrepToLoop/ContextExact.lean`), and
+    this production rendering is untagged infrastructure with no manifest
+    row. -/
 def makeVmapHOL (params : List Nat) : FiniteMap Nat Nat :=
   FUPDATE_LIST FEMPTY (params.zip (List.range params.length))
 

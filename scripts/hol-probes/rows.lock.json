@@ -382,6 +382,7 @@
     {"bytes": 357, "out": "crep_to_loop_locals_rel_probe.out", "rows": 15, "sha256": "e15c12e899e5557ada8e73deba3d0f5397afdd3392c476e11a614e33eae008f1"},
     {"bytes": 45, "out": "crep_to_loop_make_funcs_probe.out", "rows": 4, "sha256": "71d53e3752b6d9e7cf1dfe7d21df69ee1af8de5342d33cf5d1275c982e03256e"},
     {"bytes": 56, "out": "crep_to_loop_make_vmap_dup_probe.out", "rows": 3, "sha256": "43ff416a292e567228005c4c852c51c355f98a52be6a04b9cb1965824918d0fd"},
+    {"bytes": 172, "out": "crep_to_loop_make_vmap_probe.out", "rows": 2, "sha256": "da9fcc5b6b37f8f9af5e1ff560f3f9298440f79c4d94978db163c850fb6dcc1a"},
     {"bytes": 26, "out": "crep_to_loop_map_map2_fst_probe.out", "rows": 2, "sha256": "4b43f512bbaf00af23614355e7658d049ea77308d9de94a3f93f26f819c3963b"},
     {"bytes": 33, "out": "crep_to_loop_mem_lookup_probe.out", "rows": 3, "sha256": "7a8d2bb7c83f79834f92809230cb9cbc42850110812d8d7b6d9b5db4ffabadd0"},
     {"bytes": 99, "out": "crep_to_loop_mem_rel_probe.out", "rows": 5, "sha256": "14a61785ec89cf74f9566a23da6574651edf2f4aebf409209b7c86da51a2e9cc"},

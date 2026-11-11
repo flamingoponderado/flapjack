@@ -3522,6 +3522,13 @@ run_probe pan_props_with_shape_probeScript.sml pan_props_with_shape_probe.out \
   "$cake_dir/pancake/semantics/panPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 
+# The crep_to_loop make_vmap probe captures the typed statement of
+# make_vmap_def (crep_to_loopScript.sml:230-233).
+run_probe crep_to_loop_make_vmap_probeScript.sml crep_to_loop_make_vmap_probe.out \
+  make_vmap_def_typed make_vmap_def_hypotheses \
+  "$cake_dir/pancake/crep_to_loopScript.sml" \
+  "$cake_dir/pancake"
+
 # The panSem state-accessor simplification probe captures the typed statements
 # of kvar_simps / is_valid_value_simps / is_valid_value_simps2
 # (panSemScript.sml:422-429, :476-487, :489-500).
