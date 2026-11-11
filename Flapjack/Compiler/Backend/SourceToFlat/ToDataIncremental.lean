@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.SourceToFlat.ToBviIncremental
-public import Flapjack.Compiler.Backend.BviToData.Compile
+public import Flapjack.Compiler.Backend.BviToData.CompileSource
 
 @[expose] public section
 
@@ -17,8 +17,8 @@ def compileCakeIncToDataFuel (fuel : Nat)
     (declarations : List AstHOL.Dec) :
     Option ((Config × ClosToBvl.Config × BvlToBvi.Config) × List (Nat × Nat × DataLang.Prog)) := do
   let (config, program) ← compileCakeIncToBviFuel fuel config envId declarations
-  let program ← program.mapM fun (name, args, body) => do
-    pure (name, args, ← BviToData.compileExpBounded fuel args body)
+  let program := program.map fun (name, args, body) =>
+    (name, args, BviToData.compileExp args body)
   pure (config, program)
 
 end Flapjack.Compiler.Backend.SourceToFlat

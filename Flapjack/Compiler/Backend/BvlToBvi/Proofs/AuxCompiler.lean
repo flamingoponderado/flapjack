@@ -16,7 +16,7 @@ theorem compileAuxFuel_eq_source (fuel k args : Nat) (body : Bvi.Exp) :
     compileAuxFuel fuel k args body =
       some [(bvlNumStubs + bvlToBviNamespaces * k + 1, args,
         BviLet.compileSing [] 0 body)] := by
-  simp [compileAuxFuel, BviLet.compileBounded_eq_compileSing]
+  simp [compileAuxFuel, BviLet.compileExp_eq]
 
 /-- The executed auxiliary list is precisely the flattening of the
 source-shaped auxiliary tree, for every optimizer fuel. -/
@@ -34,6 +34,6 @@ theorem compileSingleFuel_eq_source (fuel optFuel n name args : Nat) (body : Bvl
     compileSingleFuel fuel optFuel n (name, args, body) =
       some ((bvlNumStubs + bvlToBviNamespaces * name, args,
         BviLet.compileSing [] 0 converted) :: aux, next) := by
-  simp [compileSingleFuel, run, BviLet.compileBounded_eq_compileSing]
+  simp [compileSingleFuel, run, BviLet.compileExp_eq]
 
 end Flapjack.Compiler.Backend.BvlToBvi
