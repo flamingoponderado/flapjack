@@ -129291,6 +129291,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_no_Labels_simp",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLabels.lean",
+  "lean_name": "valApproxNoLabelsSimp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared val_approx_no_labels_simp_replay_typed: the locally filtered HOL simplification bundle contains precisely the two quantified non-body constructors and the Other and Impossible cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_co_eq_pure_state",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileSemantics.lean",
   "lean_name": "knownCoEqPureState",

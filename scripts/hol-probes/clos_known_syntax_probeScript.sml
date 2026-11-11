@@ -47,6 +47,11 @@ val _ = show "clos_gen_noinline_obeys_max_app_typed=" clos_knownProofTheory.clos
 val _ = show "known_obeys_max_app_typed=" clos_knownProofTheory.known_obeys_max_app;
 val _ = show "compile_obeys_max_app_typed=" clos_knownProofTheory.compile_obeys_max_app;
 val _ = show "val_approx_no_labels_typed=" clos_knownProofTheory.val_approx_no_Labels_def;
+fun no_labels_trivial th =
+  aconv (snd (dest_eq (snd (strip_forall (concl th))))) T;
+val no_labels_simps_replay =
+  LIST_CONJ (List.filter no_labels_trivial (CONJUNCTS clos_knownProofTheory.val_approx_no_Labels_def));
+val _ = show "val_approx_no_labels_simp_replay_typed=" no_labels_simps_replay;
 val _ = show "globals_approx_no_labels_typed=" clos_knownProofTheory.globals_approx_no_Labels_def;
 val _ = show "val_approx_no_labels_merge_typed=" clos_knownProofTheory.val_approx_no_Labels_merge;
 val _ = show "known_op_no_labels_typed=" clos_knownProofTheory.known_op_no_Labels;
