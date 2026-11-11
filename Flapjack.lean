@@ -825,6 +825,7 @@ import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelsOriginal
 import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationMembership
 import Flapjack.Compiler.Backend.ClosCall.Proofs.StateSyntax
 import Flapjack.Compiler.Backend.ClosCall.Proofs.SyntaxPreservation
+import Flapjack.Compiler.Backend.ClosCall.Proofs.ArityPreservation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.StubInvariants
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeVarsPreservation
 import Flapjack.Compiler.Backend.ClosCall.Proofs.StubEvaluation

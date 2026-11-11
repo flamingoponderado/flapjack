@@ -660,6 +660,12 @@
   "reviewer": "Source comparison: the typed original universally quantifies the location, list of number-expression pairs and calls state, with the complete equivalence to the prior property and EVERY predicate over the second projections."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ArityPreservation.lean", "lean_name": "callsObeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original retains the free application limit, all four quantified list and calls-state arguments, the direct-call result equation, both input arity premises, and both output and accumulated-code conclusions."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_no_Labels",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/SyntaxPreservation.lean", "lean_name": "callsNoLabels",
   "statement_status": "reviewed_exact",
