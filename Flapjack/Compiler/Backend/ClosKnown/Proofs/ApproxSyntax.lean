@@ -28,39 +28,21 @@ decreasing_by all_goals have := List.sizeOf_lt_of_mem ‹_›; simp_wf; omega
 def globalsApproxVarsNone (g : Spt ValApprox) : Prop :=
   ∀ n a, sptLookup n g = some a → valApproxVarsNone a
 
-/-- Pairwise merge preserves a property when it holds for each paired input. -/
-private theorem mergeListSafe (xs ys : List ValApprox)
-    (step : ∀ x ∈ xs, ∀ y ∈ ys, valApproxVarsNone (mergeHOL x y)) :
-    ∀ z ∈ mergeListHOL xs ys, valApproxVarsNone z := by
-  induction xs generalizing ys with
-  | nil => simp [mergeListHOL]
-  | cons x xs ih =>
-    cases ys with
-    | nil => simp [mergeListHOL]
-    | cons y ys =>
-      simp only [mergeListHOL, List.mem_cons, forall_eq_or_imp]
-      constructor
-      · exact step x (by simp) y (by simp)
-      · exact ih ys (fun a ha b hb => step a (by simp [ha]) b (by simp [hb]))
-
 /-- Merging two safe approximations preserves closure-body safety. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "val_approx_every_Fn_vs_NONE_merge"]
 theorem valApproxVarsNoneMerge (a b : ValApprox)
     (safe : valApproxVarsNone a ∧ valApproxVarsNone b) : valApproxVarsNone (mergeHOL a b) := by
-  have all : ∀ n (a b : ValApprox), sizeOf a < n →
-      valApproxVarsNone a → valApproxVarsNone b → valApproxVarsNone (mergeHOL a b) := by
-    intro n
-    induction n using Nat.strongRecOn with
-    | ind n ih =>
-      intro a b bound ha hb
-      cases a <;> cases b <;> simp_all [mergeHOL, valApproxVarsNone]
-      all_goals split <;> simp_all [valApproxVarsNone]
-      apply mergeListSafe
-      intro x hx y hy
-      have smaller := List.sizeOf_lt_of_mem hx
-      have xbound : sizeOf x + 1 < n := by omega
-      exact ih (sizeOf x + 1) xbound x y (by omega) (ha x hx) (hb y hy)
-  exact all (sizeOf a + 1) a b (by omega) safe.1 safe.2
+  obtain ⟨ha, hb⟩ := safe
+  induction a using (measure (fun a : ValApprox => sizeOf a)).wf.induction generalizing b with
+  | h a ih =>
+    cases a <;> cases b <;> simp_all [mergeHOL, valApproxVarsNone]
+    all_goals split <;> simp_all [valApproxVarsNone]
+    rw [mergeListHOL_eq_zip]
+    intro z member
+    obtain ⟨⟨x, y⟩, paired, rfl⟩ := List.mem_map.mp member
+    obtain ⟨hx, hy⟩ := List.of_mem_zip paired
+    have smaller := List.sizeOf_lt_of_mem hx
+    exact ih x (by simp_wf; omega) y (ha x hx) (hb y hy)
 
 /-- Inserting a safe approximation preserves safety of the map. -/
 private theorem globalsInsertSafe (g : Spt ValApprox) (index : Nat) (a : ValApprox)
