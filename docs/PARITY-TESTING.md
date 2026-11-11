@@ -1239,6 +1239,11 @@ python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake 
   --compile-seed 20261114 --edge-seed 20261114 --timeout 45
 ```
 
+The same harness also compared type reports for parentheses and local bindings
+nested 40,000 levels deep using `--nesting-depth 40000` with the case counts
+above set to zero. This checks finite inputs; it does not prove that the
+bounded parser has sufficient fuel for all inputs.
+
 `python3 scripts/check-cake-benchmark-parity.py` compares the complete RISC-V
 output for 28 benchmark programs, three bootstrap hello programs, and the
 S-expression bootstrap code extractor from the pinned CakeML submodule with
