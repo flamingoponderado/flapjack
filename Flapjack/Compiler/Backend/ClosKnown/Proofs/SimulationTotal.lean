@@ -1,6 +1,7 @@
 module
 
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppInline
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineClosureRelation
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineLetEvaluation
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppNonInline
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApplyFullBody
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SubsptComposition
@@ -1226,12 +1227,150 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
                         subst bodyEas
                         simp [hd, hb] at known
                         rcases known with ⟨rfl, rfl⟩
-                        simpa using AppInline.inlineApplicationSimulation trace location function first rest env env1 xenv1 env2 xenv2
-                          state final t0 result c aenv g0 g1 g2 argsEas fnExp fnApprox body targetBody bodyApprox after
-                          argsInd fnInd appInd ha hf hd hb run noType
-                          ⟨initialRel, inputSyntax, coSyntax, disjoint, oracle, stateOracleDisjoint, exprSafe, safe,
-                            envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals, sub0, sub1, mono,
-                            free, envRel, unique, stateOracle, envEq⟩
+                        have uniqueBoth : uniqueSetGlobals ((first :: rest) ++ [function]) state.compileOracle := by
+                          intro n i
+                          have bound := unique n i
+                          simp only [elistGlobals_append, elistGlobals, setGlobals,
+                            FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Nat.add_zero, Flapjack.bagUnion, Flapjack.emptyBag] at bound ⊢
+                          omega
+                        have ⟨argsUnique, _, _⟩ := CorrectApprox.Cons.uniqueParts (first :: rest) [function] state.compileOracle uniqueBoth
+                        have ⟨_, argsDisjoint⟩ :=
+                          (mglobalsDisjointRw state.globals function function function function function (first :: rest) trace .install [] location none [] 0 0).2.2.2.2.2.2.2.2.1.mp disjoint
+                        have argsSyntax : everyFnVarsNone (first :: rest) := by
+                          simpa [everyFnVarsNone, fnVarsNoneExp] using (show everyFnVarsNone [function] ∧ everyFnVarsNone (first :: rest) by
+                            simpa [everyFnVarsNone, fnVarsNoneExp] using inputSyntax).2
+                        have safeParts := exprSafe (.app trace location function (first :: rest)) (by simp)
+                        simp only [esgcFree, esgcFreeList_iff] at safeParts
+                        have argsFree : fvMax env1.length (first :: rest) := by
+                          have parts : fvMax env1.length [function] ∧ fvMax env1.length (first :: rest) := by
+                            simpa [fvMax, freeVars, freeVarExp, or_imp, forall_and] using free
+                          exact parts.2
+                        have bagDisjoint : ∀ i, elistGlobals (first :: rest) i = 0 ∨ elistGlobals [function] i = 0 := by
+                          intro i
+                          have bound := uniqueBoth 0 i
+                          simp only [elistGlobals_append] at bound
+                          omega
+                        have ⟨subArgs, subFn⟩ := subsptKnownElistGlobals c (first :: rest) aenv g0 argsEas g1
+                          [function] aenv [(fnExp, fnApprox)] g2 ⟨ha, hf, sub0, bagDisjoint⟩
+                        have subArgsNext := sptSubsptTrans g1 g2 (nextG state) ⟨subFn, sub1⟩
+                        have argsOptimizer := PreserveSafety.knownPreservesEsgcFree c (first :: rest) aenv g0 argsEas g1
+                          ⟨ha, safeParts.2, approxSafe, globalSafe⟩
+                        have fnSafe : ∀ e ∈ [function], esgcFree e := by simpa using safeParts.1
+                        have fnOptimizer := PreserveSafety.knownPreservesEsgcFree c [function] aenv g1 [(fnExp, fnApprox)] g2
+                          ⟨hf, fnSafe, approxSafe, argsOptimizer.2.2⟩
+                        have fnApproxSafe : valApproxSgcFree fnApprox := by simpa using fnOptimizer.2.1
+                        cases argsRun : evaluate (first :: rest) env state with
+                        | mk argsResult middle =>
+                          have fixArgs : fixClock state (argsResult, middle) = (argsResult, middle) := by
+                            simpa only [argsRun] using fixClock_evaluate (first :: rest) env state
+                          have argsNoType : argsResult ≠ .err (.abort .typeError) := by
+                            intro eq
+                            subst argsResult
+                            simp [evaluate, argsRun, fixArgs] at run
+                            rcases run with ⟨rfl, rfl⟩
+                            exact noType rfl
+                          cases argsResult with
+                          | err error =>
+                            have argsStep := argsInd (.err error) middle env1 xenv1 env2 xenv2 t0 c g0 g1 aenv argsEas
+                              ⟨argsRun, ha, initialRel, argsSyntax, coSyntax, argsDisjoint, oracle, stateOracleDisjoint,
+                                safeParts.2, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
+                                subArgs, subArgsNext, mono, argsFree, envRel, argsUnique, stateOracle, envEq, argsNoType⟩
+                            obtain ⟨targetResult, targetFinal, targetRun, resultRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩ := argsStep
+                            simp [evaluate, argsRun, fixArgs] at run
+                            rcases run with ⟨rfl, rfl⟩
+                            cases targetResult with
+                            | val vals => simp [Flapjack.SemanticPrimitivesProps.resultRel] at resultRel
+                            | err targetError =>
+                              refine ⟨.err targetError, targetFinal, ?_, resultRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩
+                              exact InlineLetEvaluation.inlineLetArgsError (BackendCommon.mkCons trace 0) (ClosLang.pure function)
+                                (argsEas.map Prod.fst) fnExp (ticks trace 1 (first :: rest).length targetBody)
+                                (env2 ++ xenv2) t0 targetFinal targetError targetRun
+                          | val values =>
+                            cases fnRun : evaluate [function] env middle with
+                            | mk fnResult next =>
+                              have fixFn : fixClock middle (fnResult, next) = (fnResult, next) := by
+                                simpa only [fnRun] using fixClock_evaluate [function] env middle
+                              have fnNoType : fnResult ≠ .err (.abort .typeError) := by
+                                intro eq
+                                subst fnResult
+                                simp [evaluate, argsRun, fixArgs, fnRun, fixFn] at run
+                                rcases run with ⟨rfl, rfl⟩
+                                exact noType rfl
+                              obtain ⟨targetValues, targetFnResult, targetMiddle, targetNext, targetArgsRun, targetFnRun,
+                                argsRel, valuesApprox, fnRel, fnSound, nextSafe, fnSafe, valuesSafe, nextOracleSafe, nextCoSyntax,
+                                nextUnique, nextDisjoint, nextMono, nextState, nextGlobals, nextStateOracle, nextOracle⟩ :=
+                                AppPrefix.applicationPrefixSimulation trace location function (first :: rest) env env1 xenv1 env2 xenv2
+                                  state middle next t0 values fnResult c aenv g0 g1 g2 argsEas fnExp fnApprox argsInd
+                                  (fnInd middle values argsRun) argsRun fnRun fnNoType ha hf ⟨initialRel, inputSyntax, coSyntax, disjoint, oracle, stateOracleDisjoint, exprSafe, safe,
+                                    envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals, sub0, sub1, mono,
+                                    free, envRel, unique, stateOracle, envEq⟩
+                              cases fnResult with
+                              | err error =>
+                                simp [evaluate, argsRun, fixArgs, fnRun, fixFn] at run
+                                rcases run with ⟨rfl, rfl⟩
+                                cases targetFnResult with
+                                | val vals => simp [resultRel] at fnRel
+                                | err targetError =>
+                                  have impure : ClosLang.pure function = false := by
+                                    cases hp : ClosLang.pure function with
+                                    | false => rfl
+                                    | true =>
+                                      have sourcePure : ClosLang.pureList [function] = true := by simpa [ClosLang.pureList] using hp
+                                      obtain ⟨_, outcome⟩ := evaluatePure [function] env middle (.err error) next
+                                        ⟨fnRun, by simpa [ClosLang.pureList_eq_all, List.all_eq_true] using sourcePure⟩
+                                      rcases outcome with ⟨impossible, _⟩ | bad
+                                      · cases impossible
+                                      · exact False.elim (fnNoType bad)
+                                  refine ⟨.err targetError, targetNext, ?_, fnRel, nextState, nextGlobals, nextStateOracle, nextOracle⟩
+                                  simpa [impure] using InlineLetEvaluation.inlineLetFunctionError
+                                    (BackendCommon.mkCons trace 0) (argsEas.map Prod.fst) fnExp
+                                    (ticks trace 1 (first :: rest).length targetBody) (env2 ++ xenv2) targetValues
+                                    t0 targetMiddle targetNext targetError targetArgsRun targetFnRun
+                              | val fnValues =>
+                                obtain ⟨fn, rfl⟩ := evaluate_singleton_value function env middle next fnValues fnRun
+                                cases targetFnResult with
+                                | err error => simp [resultRel] at fnRel
+                                | val targetFns =>
+                                  cases fnRel with
+                                  | cons fnRelated relatedTail =>
+                                    cases relatedTail
+                                    have sound := fnSound [fn] rfl
+                                    cases sound with
+                                    | cons fnSound _ =>
+                                      have fnValueSafe : vsgcFree fn := by simpa [rsgcFree] using fnSafe
+                                      have lengthEq := evaluate_length.1 (first :: rest) env state middle values argsRun
+                                      have valuesNonempty : values ≠ [] := by
+                                        intro eq
+                                        simp [eq] at lengthEq
+                                      have tree1 := nextGEvaluateSubspt (first :: rest) env state (.val values) middle ⟨mono, argsRun⟩
+                                      have mono1 := oracleGapproxSubsptEvaluate () (first :: rest) env state (.val values) middle ⟨mono, argsRun⟩
+                                      have tree2 := nextGEvaluateSubspt [function] env middle (.val [fn]) next ⟨mono1, fnRun⟩
+                                      have subNext := sptSubsptTrans g2 (nextG state) (nextG next) ⟨sub1,
+                                        sptSubsptTrans (nextG state) (nextG middle) (nextG next) ⟨tree1, tree2⟩⟩
+                                      have targetUnchanged : ClosLang.pure function = true → targetNext = targetMiddle := by
+                                        intro hp
+                                        obtain ⟨_, _, _, _, _, targetEq, _⟩ := InlinePureEvaluation.pureFunctionEvaluation
+                                          c function fnExp env (env2 ++ xenv2) aenv g1 g2 (nextG next) fnApprox
+                                          middle next targetMiddle targetNext (.val [fn]) (.val [_]) hf hp fnRun targetFnRun
+                                          (by simpa [resultRel] using List.Forall₂.cons fnRelated List.Forall₂.nil) (by simp)
+                                        exact targetEq
+                                      cases appRun : evaluateApp location fn values next with
+                                      | mk appResult last =>
+                                        simp [evaluate, argsRun, fixArgs, fnRun, fixFn, appRun] at run
+                                        rcases run with ⟨rfl, rfl⟩
+                                        obtain ⟨targetResult, targetFinal, targetBodyRun, resultRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩ :=
+                                          InlineClosureRelation.inlineApplicationContinuation c trace location (first :: rest).length
+                                            fnApprox body targetBody bodyApprox g2 after (argsEas.map Prod.snd) fn _ values targetValues
+                                            (if ClosLang.pure function then env2 ++ xenv2 else _ :: (env2 ++ xenv2)) next targetNext appResult last
+                                            (appInd middle values next fn argsRun fnRun) hd fnSound valuesApprox argsOptimizer.2.1
+                                            fnApproxSafe fnOptimizer.2.2 hb subNext lengthEq.symm valuesNonempty
+                                            ⟨argsRel, fnRelated, nextSafe, fnValueSafe, valuesSafe, nextOracleSafe, nextCoSyntax,
+                                              nextUnique, nextDisjoint, nextMono, nextState, nextGlobals, nextStateOracle, nextOracle⟩ appRun noType
+                                        refine ⟨targetResult, targetFinal, ?_, resultRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩
+                                        exact InlineLetEvaluation.inlineLetSuccess (BackendCommon.mkCons trace 0) (ClosLang.pure function)
+                                          (argsEas.map Prod.fst) fnExp (ticks trace 1 (first :: rest).length targetBody)
+                                          (env2 ++ xenv2) targetValues _ t0 targetMiddle targetNext targetFinal targetResult
+                                          targetArgsRun targetFnRun targetUnchanged targetBodyRun
             | op trace op args =>
               have argsIH : KnownSimulationAt args env state := by
                 apply exprIH args env state (by omega)

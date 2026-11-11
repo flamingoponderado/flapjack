@@ -10955,6 +10955,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "set_globals_empty_unique_set_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/UniqueGlobals.lean",
+  "lean_name": "setGlobalsEmptyUniqueSetGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_empty_unique_globals_typed: original write-free premise, polymorphic oracle and full uniqueness equivalence agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "letrec_case_eq",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
   "lean_name": "letrecCaseEq",

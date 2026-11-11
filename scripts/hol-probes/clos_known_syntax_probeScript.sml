@@ -72,6 +72,7 @@ val _ = show "pure_co_syntax_to_full_oracle_typed=" backendPropsTheory.pure_co_s
 val _ = show "decide_inline_sgc_free_typed=" clos_knownProofTheory.decide_inline_inlD_LetInline_sgc_free;
 val _ = show "known_dest_closure_shape_typed=" clos_knownProofTheory.dest_closure_SOME_IMP;
 val _ = show "known_ref_rel_simps_typed=" clos_knownProofTheory.ref_rel_simps;
+val _ = show "known_empty_unique_globals_typed=" clos_knownProofTheory.set_globals_empty_unique_set_globals;
 val _ = show "known_val_approx_simps_typed=" clos_knownProofTheory.val_approx_val_simps;
 val _ = show "known_fv_alt_typed=" clos_knownProofTheory.fv_alt;
 val _ = show "known_fv1_alt_typed=" clos_knownProofTheory.fv1_alt;
