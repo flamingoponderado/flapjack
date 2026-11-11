@@ -44,49 +44,6 @@ theorem compileFuns_names (trace : List VarN) (env : Environment)
     (compileFuns trace env funs).map Prod.fst = funs.map Prod.fst := by
   simp [compileFuns_map, List.map_map, Function.comp_def]
 
-/-- Each source recursive closure corresponds to the flat recursive closure
-formed by compiling the entire mutually recursive group. This uses the
-preliminary factored value relation and is not a reviewed HOL theorem. -/
-theorem dletrec_closure_rel (genv : GlobalEnv) (env : Environment) (sourceEnv : SemEnv Value)
-    (trace : List VarN) (funs : List (VarN × VarN × AstHOL.Exp)) (name : VarN)
-    (envInv : GlobalEnvInv genv env (fun _ => False) sourceEnv) :
-    ValueRel genv (.recclosure sourceEnv funs name)
-      (.recclosure ⟨[]⟩ (compileFuns trace
-        { env with v := nsBindList ((funs.map Prod.fst).map
-          (fun f => (f, VarName.localName .none f))) env.v } funs) name) := by
-  have inv : GlobalEnvInv genv env (fun n => n ∈ ([] : List VarN)) sourceEnv := by
-    simpa using envInv
-  have related := ValueRel.recclosure genv env sourceEnv nsEmpty funs name ⟨[]⟩ trace
-    (List.replicate funs.length .none) (.empty genv) inv (by simp)
-  have appendEmpty : nsAppend (nsEmpty : Namespace ModN VarN Value) sourceEnv.v = sourceEnv.v := by
-    cases sourceEnv.v
-    simp [nsEmpty, nsAppend]
-  have bindEq : bindLocals (List.replicate funs.length .none) (funs.map Prod.fst) env.v =
-      nsBindList ((funs.map Prod.fst).map (fun f => (f, VarName.localName .none f))) env.v := by
-    have empty : bindLocals [] [] env.v = env.v := rfl
-    simpa only [List.append_nil, empty, nsAppend_to_nsBindList] using
-      (nsAppend_bindLocals funs .none [] [] env.v).symm
-  dsimp only at related
-  simp only [List.map_nil, List.append_nil, bindEq, appendEmpty] at related
-  cases sourceEnv
-  simpa using related
-
-/-- Any ordered list of names from a recursive group gives related source and
-flat closure bindings. Repeated names remain in their original order. -/
-theorem dletrec_bindings_rel (genv : GlobalEnv) (env : Environment) (sourceEnv : SemEnv Value)
-    (trace : List VarN) (funs : List (VarN × VarN × AstHOL.Exp)) (names : List VarN)
-    (envInv : GlobalEnvInv genv env (fun _ => False) sourceEnv) :
-    let compiled := compileFuns trace
-      { env with v := nsBindList ((funs.map Prod.fst).map
-        (fun f => (f, VarName.localName .none f))) env.v } funs
-    EnvRel genv (alistToNs (names.map (fun name => (name, Value.recclosure sourceEnv funs name))))
-      (names.map (fun name => (name, FlatSem.Value.recclosure ⟨[]⟩ compiled name))) := by
-  induction names with
-  | nil => simpa [alistToNs, nsEmpty] using EnvRel.empty genv
-  | cons name names ih =>
-    have head := dletrec_closure_rel genv env sourceEnv trace funs name envInv
-    simpa [alistToNs, nsBind] using EnvRel.bind genv name _ _ _ _ ih head
-
 /-- The compiled recursive group and source recursive environment have the
 same value and module domains. -/
 theorem dletrec_envDomainEq (env : Environment) (sourceEnv : SemEnv Value) (trace : List VarN)
@@ -159,8 +116,23 @@ theorem evaluateDletrec_factored {C F : Type} [Nonempty C]
   have names : flatBindings.map Prod.fst = funs.map Prod.fst := by
     simp [flatBindings, List.map_map, Function.comp_def]
   have flatDistinct : (flatBindings.map Prod.fst).Nodup := by simpa [names] using distinct
-  have related : EnvRel genv (alistToNs sourceBindings) flatBindings :=
-    dletrec_bindings_rel genv env sourceEnv trace funs (funs.map Prod.fst) envInv
+  have related : EnvRel genv (alistToNs sourceBindings) flatBindings := by
+    rw [envRel_alist_iff]
+    simp only [sourceBindings, flatBindings, List.forall₂_map_left_iff, List.forall₂_map_right_iff,
+      List.forall₂_same]
+    intro fn _
+    refine ⟨trivial, ?_⟩
+    have inv : GlobalEnvInv genv env (fun n => n ∈ ([] : List VarN)) sourceEnv := by
+      simpa using envInv
+    have closure := ValueRel.recclosure genv env sourceEnv nsEmpty funs fn.1 ⟨[]⟩ trace
+      (List.replicate funs.length .none) (.empty genv) inv (by simp)
+    have bindEq : bindLocals (List.replicate funs.length .none) (funs.map Prod.fst) env.v =
+        nsBindList ((funs.map Prod.fst).map (fun f => (f, VarName.localName .none f))) env.v := by
+      have empty : bindLocals [] [] env.v = env.v := rfl
+      simpa only [List.append_nil, empty, nsAppend_to_nsBindList] using
+        (nsAppend_bindLocals funs .none [] [] env.v).symm
+    dsimp only at closure
+    simpa only [List.map_nil, List.append_nil, bindEq, (nsAppend_nsEmpty sourceEnv.v).2, compiled] using closure
   obtain ⟨finalGenv, finalState, run, finalInv, constructors, types, slots, envResult⟩ :=
     invariantMakeVarls interp transform gen genv start finish other sourceState flatState start.vidx
       (flatBindings.map Prod.fst).reverse ⟨flatBindings⟩ 0 .none
