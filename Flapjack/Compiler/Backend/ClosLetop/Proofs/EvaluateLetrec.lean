@@ -43,9 +43,7 @@ Lean-side infrastructure, not a standalone HOL declaration. -/
 theorem compileFuns_all (maxApp : Nat) (functions : List (Nat × ClosLang.Exp)) :
     (compileFuns functions).all (fun (arity, _) => arity ≤ maxApp && arity != 0) =
       functions.all (fun (arity, _) => arity ≤ maxApp && arity != 0) := by
-  induction functions with
-  | nil => rfl
-  | cons function rest ih => cases function; simp [compileFuns, ih]
+  simp [compileFuns_eq_map, Function.comp_def]
 
 /-- Recursive closures preserve their indices and related captures. This
 helper is Lean-side infrastructure, not a standalone HOL declaration. -/
