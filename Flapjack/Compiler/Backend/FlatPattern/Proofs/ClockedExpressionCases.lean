@@ -10,16 +10,6 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-/-- Literal expressions preserve the state and value relation. -/
-theorem compile_lit_simulation {C F : Type} (cfg stateCfg : Config) (clock : Nat) (trace : BackendCommon.Tra) (literal : Lit) :
-    ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock (.lit trace literal) := by
-  intro sourceEnv targetEnv source target sourceFinal sourceResult n _ sourceEval envs states bound safe
-  simp [FlatSem.evaluate] at sourceEval
-  rcases sourceEval with ⟨rfl, rfl⟩
-  refine ⟨target, .val [.litv literal], ?_, states, ?_⟩
-  · simp [compileExp, FlatSem.evaluate]
-  · exact .cons ((valueRel_lit literal _).2 rfl) .nil
-
 /-- Variables are looked up at related names within the compiler's bound. -/
 theorem compile_var_simulation {C F : Type} (cfg stateCfg : Config) (clock : Nat) (trace : BackendCommon.Tra) (name : VarN) :
     ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock (.varLocal trace name) := by
@@ -41,22 +31,6 @@ theorem compile_var_simulation {C F : Type} (cfg stateCfg : Config) (clock : Nat
       rcases sourceEval with ⟨rfl, rfl⟩
       refine ⟨target, .val [value'], ?_, states, (.cons values .nil)⟩
       simp [compileExp, FlatSem.evaluate, targetLookup]
-
-/-- Functions compile their bodies inside related closures. -/
-theorem compile_fn_simulation {C F : Type} (cfg stateCfg : Config) (clock : Nat) (trace : VarN)
-    (name : VarN) (body : FlatLang.Exp) :
-    ExpressionSimulationUpTo (C := C) (F := F) cfg stateCfg clock (.fn trace name body) := by
-  intro sourceEnv targetEnv source target sourceFinal sourceResult n _ sourceEval envs states bound safe
-  have bodyBound : (compileExp cfg body).1 < n := by
-    cases h : compileExp cfg body with
-    | mk i rest => cases rest with | mk flag compiled => simpa [compileExp, h] using bound
-  simp [FlatSem.evaluate] at sourceEval
-  rcases sourceEval with ⟨rfl, rfl⟩
-  have closureRel : ValueRel (.closure sourceEnv name body) (.closure targetEnv name (compileDec cfg body)) :=
-    .closure envs bodyBound
-  refine ⟨target, .val [.closure targetEnv name (compileDec cfg body)], ?_, states, (.cons closureRel .nil)⟩
-  cases h : compileExp cfg body with
-  | mk i rest => cases rest with | mk flag compiled => simp [compileExp, compileDec, FlatSem.evaluate, h]
 
 /-- Clock-bounded version of the corresponding expression case. -/
 theorem compile_raise_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock : Nat) (trace : BackendCommon.Tra)

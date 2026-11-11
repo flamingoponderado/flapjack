@@ -133375,6 +133375,15 @@
 }
 ,
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "OPTION_ALL_FORALL",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DynamicEvaluation.lean",
+  "lean_name": "optionAll_forall",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared option_all_forall_typed: the polymorphic predicate and option are unrestricted; the none/some match is the HOL OPTION_ALL definition and the original universally quantified implication is unchanged."
+}
+,
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "find_recfun_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",
