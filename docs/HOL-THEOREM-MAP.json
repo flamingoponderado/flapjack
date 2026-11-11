@@ -133051,6 +133051,14 @@
   "reviewer": "Compared the local source theorem and bag_image_foldr_replay_typed; bag_image_suc_finite_typed proves the source BAG_IMAGE SUC agrees with shiftGlobalBag for the finite fold and its finite elements."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "contains_App_SOME_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
+  "lean_name": "containsAppSomeAppend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared contains_app_append_typed: the full closure application predicate over appended lists is equivalent to the original disjunction."
+},
+{
   "hol_path": "HOL/src/bag/bagScript.sml",
   "hol_name": "BAG_UNION_EMPTY",
   "lean_path": "Flapjack/Misc/Bag.lean",

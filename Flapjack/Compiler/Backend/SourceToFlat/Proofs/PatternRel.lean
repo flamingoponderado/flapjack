@@ -44,45 +44,6 @@ theorem matchResultRel_cases (genv : GlobalEnv) (suffix : List (VarN × Semantic
       ∃ sourceEnv flatEnv, source = .match sourceEnv ∧ flat = .match flatEnv := by
   cases source <;> cases flat <;> simp_all [MatchResultRel]
 
-/-- A variable-pattern binding preserves related environments. This is a
-Flapjack infrastructure lemma over the factored value relation. -/
-theorem matchResultRel_bind (genv : GlobalEnv) (suffix bound : List (VarN × SemanticPrimitivesHOL.Value))
-    (flatEnv : List (VarN × FlatSem.Value)) (name : VarN)
-    (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value)
-    (envRel : EnvRel genv (alistToNs bound) flatEnv) (valueRel : ValueRel genv source flat) :
-    MatchResultRel genv suffix (.match ((name, source) :: (bound ++ suffix)))
-      (.match ((name, flat) :: flatEnv)) := by
-  refine ⟨(name, source) :: bound, rfl, ?_⟩
-  change EnvRel genv (nsBind name source (alistToNs bound)) ((name, flat) :: flatEnv)
-  exact .bind genv name source (alistToNs bound) flatEnv flat envRel valueRel
-
-/-- The variable case of pattern matching preserves related bindings. This is
-infrastructure over the factored value and environment relations. -/
-theorem pmatch_variable_related {C F : Type} (genv : GlobalEnv) (compMap : Environment)
-    (constructors : Namespace ModN ConN (Nat × Stamp)) (store : Store SemanticPrimitivesHOL.Value)
-    (state : FlatSem.State C F) (suffix bound : List (VarN × SemanticPrimitivesHOL.Value))
-    (flatEnv : List (VarN × FlatSem.Value)) (name : VarN)
-    (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value)
-    (envRel : EnvRel genv (alistToNs bound) flatEnv) (valueRel : ValueRel genv source flat) :
-    MatchResultRel genv suffix
-      (SemanticPrimitivesHOL.pmatch constructors store (.pvar name) source (bound ++ suffix))
-      (FlatSem.pmatch state (compilePat compMap (.pvar name)) flat flatEnv) := by
-  simpa only [SemanticPrimitivesHOL.pmatch, FlatSem.pmatch, compilePat] using
-    matchResultRel_bind genv suffix bound flatEnv name source flat envRel valueRel
-
-/-- The wildcard case of pattern matching preserves related bindings. This is
-infrastructure over the factored environment relation. -/
-theorem pmatch_wildcard_related {C F : Type} (genv : GlobalEnv) (compMap : Environment)
-    (constructors : Namespace ModN ConN (Nat × Stamp)) (store : Store SemanticPrimitivesHOL.Value)
-    (state : FlatSem.State C F) (suffix bound : List (VarN × SemanticPrimitivesHOL.Value))
-    (flatEnv : List (VarN × FlatSem.Value)) (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value)
-    (envRel : EnvRel genv (alistToNs bound) flatEnv) :
-    MatchResultRel genv suffix
-      (SemanticPrimitivesHOL.pmatch constructors store .pany source (bound ++ suffix))
-      (FlatSem.pmatch state (compilePat compMap .pany) flat flatEnv) := by
-  simp only [SemanticPrimitivesHOL.pmatch, FlatSem.pmatch, compilePat, MatchResultRel]
-  exact ⟨bound, rfl, envRel⟩
-
 /-- The literal case of pattern matching preserves successful and nonmatching
 results, and permits the original source type error. This is infrastructure
 over the factored value and environment relations. -/
@@ -209,21 +170,6 @@ theorem pmatch_as_related {C F : Type} (genv : GlobalEnv) (compMap : Environment
     exact .bind genv name source (alistToNs bound) flatEnv flat envRel valueRel
   simpa [SemanticPrimitivesHOL.pmatch, FlatSem.pmatch, compilePat] using
     ih ((name, source) :: bound) ((name, flat) :: flatEnv) nextRel
-
-/-- Type annotations disappear from compiled patterns and do not change
-matching. This is infrastructure over the factored match-result relation. -/
-theorem pmatch_typeAnnotation_related {C F : Type} (genv : GlobalEnv) (compMap : Environment)
-    (constructors : Namespace ModN ConN (Nat × Stamp)) (store : Store SemanticPrimitivesHOL.Value)
-    (state : FlatSem.State C F) (suffix bound : List (VarN × SemanticPrimitivesHOL.Value))
-    (flatEnv : List (VarN × FlatSem.Value)) (pattern : Pat) (typ : AstT)
-    (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value)
-    (ih : MatchResultRel genv suffix
-      (SemanticPrimitivesHOL.pmatch constructors store pattern source (bound ++ suffix))
-      (FlatSem.pmatch state (compilePat compMap pattern) flat flatEnv)) :
-    MatchResultRel genv suffix
-      (SemanticPrimitivesHOL.pmatch constructors store (.ptannot pattern typ) source (bound ++ suffix))
-      (FlatSem.pmatch state (compilePat compMap (.ptannot pattern typ)) flat flatEnv) := by
-  simpa only [SemanticPrimitivesHOL.pmatch, compilePat] using ih
 
 /-- The tuple-constructor case uses the related value-list length and the
 pattern-list induction hypothesis. This is infrastructure over the factored

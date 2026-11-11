@@ -10,6 +10,15 @@ namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Compiler.Backend.ClosProps
 
+/-- An application occurs in an append exactly when it occurs in either list. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "contains_App_SOME_APPEND"]
+theorem containsAppSomeAppend (maxApp : Nat) (xs ys : List ClosLang.Exp) :
+    containsAppSome maxApp (xs ++ ys) ↔
+      containsAppSome maxApp xs ∨ containsAppSome maxApp ys := by
+  induction xs with
+  | nil => simp [containsAppSome]
+  | cons x xs ih => simp [containsAppSome, ih, or_assoc]
+
 private theorem destConstant_noApp (maxApp : Nat) (e : ClosLang.Exp) (c : ClosLang.Const)
     (decoded : destConstant e = some c) : ¬ containsAppSomeExp maxApp e := by
   cases e <;> simp [destConstant] at decoded

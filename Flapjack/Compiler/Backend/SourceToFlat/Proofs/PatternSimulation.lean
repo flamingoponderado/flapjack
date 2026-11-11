@@ -42,10 +42,14 @@ theorem patternSimulation {C F : Type} (genv : GlobalEnv) (compMap compMap2 : En
     (motive_2 := PatternListSimulation genv compMap sourceEnv sourceState flatState suffix)
   case pany =>
     intro source flat bound flatEnv envRel valueRel
-    exact pmatch_wildcard_related genv compMap sourceEnv.c sourceState.refs flatState suffix bound flatEnv source flat envRel
+    simp only [SemanticPrimitivesHOL.pmatch, FlatSem.pmatch, compilePat, MatchResultRel]
+    exact ⟨bound, rfl, envRel⟩
   case pvar =>
     intro name source flat bound flatEnv envRel valueRel
-    exact pmatch_variable_related genv compMap sourceEnv.c sourceState.refs flatState suffix bound flatEnv name source flat envRel valueRel
+    simp only [SemanticPrimitivesHOL.pmatch, FlatSem.pmatch, compilePat, MatchResultRel]
+    refine ⟨(name, source) :: bound, rfl, ?_⟩
+    change EnvRel genv (nsBind name source (alistToNs bound)) ((name, flat) :: flatEnv)
+    exact .bind genv name source (alistToNs bound) flatEnv flat envRel valueRel
   case plit =>
     intro lit source flat bound flatEnv envRel valueRel
     exact pmatch_literal_related genv compMap sourceEnv.c sourceState.refs flatState suffix bound flatEnv lit source flat envRel valueRel
@@ -86,8 +90,8 @@ theorem patternSimulation {C F : Type} (genv : GlobalEnv) (compMap compMap2 : En
     exact ih source flat bound flatEnv envRel valueRel
   case ptannot =>
     intro pattern typ ih source flat bound flatEnv envRel valueRel
-    exact pmatch_typeAnnotation_related genv compMap sourceEnv.c sourceState.refs flatState suffix bound flatEnv pattern typ source flat
-      (ih source flat bound flatEnv envRel valueRel)
+    simpa only [SemanticPrimitivesHOL.pmatch, compilePat] using
+      ih source flat bound flatEnv envRel valueRel
   case nil =>
     intro sources flats bound flatEnv envRel related
     cases sources with
