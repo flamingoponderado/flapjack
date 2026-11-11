@@ -15,6 +15,10 @@ with `python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-p
 This compares complete compiler output, diagnostics, and exit status; it is
 not a general equivalence proof.
 
+At Flapjack commit `3027f7f3a2`, a rebuilt `cake` matched the pinned CakeML
+compiler on all 143 fixed corpus cases, including output, diagnostics and exit
+status.
+
 At Flapjack commit `05992bd4b9`, all 143 fixed corpus cases matched the
 compiler built from the pinned CakeML submodule revision `857f0d98da8f`.
 
