@@ -587,6 +587,7 @@ import Flapjack.Compiler.Backend.WordBignum.Proofs.CompileEquations
 import Flapjack.Compiler.Backend.WordBignum.Generate
 import Flapjack.Compiler.Backend.WordBignum.Proofs.GenerateTotal
 import Flapjack.Compiler.Backend.ClosLang.Syntax
+import Flapjack.Compiler.Backend.ClosLang.GeneratedSize
 import Flapjack.AstHOL.BackendOperators
 import Flapjack.AstHOL.LitOp
 import Flapjack.AstHOL.GeneratedSize
@@ -651,6 +652,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternSimulation
 import Flapjack.Compiler.Backend.Semantics.FlatSem
 import Flapjack.Compiler.Backend.Semantics.ClosSem
+import Flapjack.Compiler.Backend.Semantics.ClosSem.GeneratedSize
 import Flapjack.Compiler.Backend.Semantics.ClosSem.State
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Int
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
@@ -814,6 +816,7 @@ import Flapjack.Compiler.Backend.ClosCall.Calls
 import Flapjack.Compiler.Backend.ClosCall.Compile
 import Flapjack.Compiler.Backend.ClosCall.Proofs.TotalCorrespondence
 import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeCorrect
+import Flapjack.Compiler.Backend.ClosCall.Proofs.ValueSize
 import Flapjack.Compiler.Backend.ClosCall.Proofs.GroupClosed
 import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeList
 import Flapjack.Compiler.Backend.ClosCall.Proofs.CodeLookup

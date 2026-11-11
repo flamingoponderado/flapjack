@@ -287,6 +287,12 @@
   "reviewer": "Compared snd_insert_each_prime_type and source: the exact reversed generated label and HOL THE/ALOOKUP payload list precedes the unchanged old code; generic payload remains inhabited only for HOL THE."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "v_size_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/ValueSize.lean", "lean_name": "valueSize_mem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original-proof replay preserves a closure value and closure-value list, the membership premise, and the strict inequality using the datatype-generated HOL value and list sizes. Their full typed equations and concrete evaluations are captured in clossem_generated_size_probe.out."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "IMP_EXISTS_IFF",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FreeCorrect.lean", "lean_name": "impExistsIff",
   "statement_status": "reviewed_exact",

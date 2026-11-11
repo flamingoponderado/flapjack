@@ -1,4 +1,5 @@
 import Flapjack.Test.NestedRelationAudit
+import Flapjack.Test.ClosSemGeneratedSizeParity
 import Flapjack.Test.DataToWordWordEqualityParity
 import Flapjack.Test.CopyingGcParity
 import Flapjack.Test.MemcpyParity

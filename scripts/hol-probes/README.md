@@ -9923,3 +9923,10 @@ The capture supports source comparison; it does not establish Lean correspondenc
 `code_locs_code_list_ALL_DISTINCT` proof and captures its independent
 polymorphic metadata and state types for statement comparison. It also captures
 the known-oracle address invariant and its entry-marker and length prerequisites.
+
+`clossem_generated_size_probe.out` captures the typed datatype-generated
+closure-value, closure-expression, and closure-operator size equations, the
+original local value-size lemma proof, and concrete closure, word and nested
+constant sizes. Regenerate with
+`HOL_PROBE_ONLY=clossem_generated_size_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source review; it is not a cross-language proof.
