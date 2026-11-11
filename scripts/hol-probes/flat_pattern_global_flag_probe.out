@@ -23,6 +23,7 @@ smart_if_thm_typed=SmartIf (t :tra) (e :exp) (p :exp) (q :exp) = if ∃(t :tra).
 do_eq_boolv_typed=do_eq (Boolv (x :bool) :v) (Boolv (y :bool) :v) = Eq_val (x ⇔ y)
 fold_boolv_typed=(∀(b :bool). Conv (SOME (bool_to_tag b,SOME bool_id)) ([] :v list) = (Boolv b :v)) ∧ ∀(b :bool). (if b then true_tag else false_tag) = bool_to_tag b
 max_list_less_every_typed=MAX_LIST (xs :num list) < (N :num) ⇔ (0 :num) < N ∧ EVERY (λ(x :num). x < N) xs
+do_if_helper_typed=do_if (b :v) (x :α) (y :α) = SOME (e :α) ∧ v_rel b (b' :v) ⇒ (b' = (Boolv T :v) ⇔ b = (Boolv T :v)) ∧ (b' = (Boolv F :v) ⇔ b = (Boolv F :v))
 global_bag_list_empty=elist_globals (l :exp list) = ({||} :num -> num) ⇔ ∀(e :exp). MEM e l ⇒ set_globals e = ({||} :num -> num)
 sum_string_ords=sum_string_ords (i :num) (s :mlstring) = (SUM (MAP (λ(c :char). ORD c − (35 :num)) (DROP i (explode s))) :num)
 sum_string_ords_def=∀(str :mlstring) (i :num). sum_string_ords i str = if i < strlen str then ORD (strsub str i) − (35 :num) + sum_string_ords (i + (1 :num)) str else (0 :num)

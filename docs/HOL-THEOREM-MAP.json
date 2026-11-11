@@ -133460,6 +133460,15 @@
 }
 ,
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "do_if_helper",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ExpressionCases.lean",
+  "lean_name": "doIf_helper",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared do_if_helper_typed: the branch carrier remains polymorphic, the successful do_if and value-relation premises are grouped as in HOL, and both true and false Boolean identity equivalences are retained."
+}
+,
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "find_recfun_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",
