@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingRecursive
 public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
+public import Flapjack.PanToCrepMaxList
 
 @[expose] public section
 
@@ -10,6 +11,15 @@ proof-side value relation are not yet reviewed as HOL ports. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
+
+/-- A list maximum is below a bound exactly when the bound is positive and
+every element is below it. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "MAX_LIST_LESS_EVERY"]
+theorem maxList_less_every (xs : List Nat) (bound : Nat) :
+    Flapjack.maxList xs < bound ↔ 0 < bound ∧ ∀ x ∈ xs, x < bound := by
+  induction xs with
+  | nil => simp [Flapjack.maxList]
+  | cons x xs ih => simp [Flapjack.maxList, ih, and_left_comm]
 
 /-- The maximum decoded name is below a bound exactly when the bound is
 positive and every decoded name is below it. -/

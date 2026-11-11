@@ -139,15 +139,8 @@ theorem encodePmatch_simulation {C F : Type} (state : FlatSem.State C F)
         | refv contents =>
           have nestedSafe : FlatSem.pmatch state pattern contents bindings ≠ .typeError := by
             simpa [FlatSem.pmatch, found] using safe
-          have bound : index < state.refs.length :=
-            (List.getElem?_eq_some_iff.mp (by simpa [storeLookup] using found)).1
-          have item : state.refs[index]'bound = .refv contents := by
-            apply Option.some.inj
-            simpa [storeLookup, List.getElem?_eq_getElem bound] using found
           have lookup : (encodeRefs state).lookup index = some (encodeValue contents) := by
-            rw [flookup_encodeRefs]
-            let : Nonempty (Flapjack.SemanticPrimitivesHOL.StoreValue FlatSem.Value) := ⟨.w8array []⟩
-            simp [bound, Flapjack.holEl_eq_getElem index state.refs bound, item]
+            simp [encodeRefs, found]
           simpa [encodePat, encodeValue, PatternSemantics.pmatch, lookup, FlatSem.pmatch, found] using
             encodePmatch_simulation state pattern contents bindings nestedSafe
   | pcon stamp patterns =>
@@ -344,26 +337,14 @@ theorem decodePos_simulation {C F : Type} (state : FlatSem.State C F)
       | zero =>
         cases found : storeLookup address state.refs with
         | none =>
-          have outside : state.refs.length ≤ address :=
-            List.getElem?_eq_none_iff.mp (by simpa [storeLookup] using found)
-          have lookup : (encodeRefs state).lookup address = none := by
-            simp [flookup_encodeRefs, Nat.not_lt.mpr outside]
-          simp [encodeValue, PatternSemantics.appPos, lookup] at selected
+          simp [encodeValue, PatternSemantics.appPos, encodeRefs, found] at selected
         | some entry =>
-          have bound : address < state.refs.length :=
-            (List.getElem?_eq_some_iff.mp (by simpa [storeLookup] using found)).1
-          have item : state.refs[address]'bound = entry := by
-            apply Option.some.inj
-            simpa [storeLookup, List.getElem?_eq_getElem bound] using found
           have lookup : (encodeRefs state).lookup address = match entry with
               | .refv value => some (encodeValue value)
               | .w8array _ => none
               | .varray _ => none
               | .thunk _ _ => none := by
-            rw [flookup_encodeRefs]
-            let : Nonempty (Flapjack.SemanticPrimitivesHOL.StoreValue FlatSem.Value) := ⟨.w8array []⟩
-            simp [bound, Flapjack.holEl_eq_getElem address state.refs bound, item]
-            cases entry <;> rfl
+            cases entry <;> simp [encodeRefs, found]
           cases entry with
           | w8array _ | varray _ | thunk _ _ =>
             simp [encodeValue, PatternSemantics.appPos, lookup] at selected

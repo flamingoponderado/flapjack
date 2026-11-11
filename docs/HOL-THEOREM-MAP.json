@@ -133451,6 +133451,15 @@
 }
 ,
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "MAX_LIST_LESS_EVERY",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/BranchEvaluation.lean",
+  "lean_name": "maxList_less_every",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared max_list_less_every_typed: the original MAX_LIST strict bound is equivalent to a positive bound and the EVERY element bound, including the empty-list case. The existing maxList implements the HOL MAX_LIST recursion."
+}
+,
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "find_recfun_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",
